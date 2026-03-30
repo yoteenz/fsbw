@@ -5240,3 +5240,128 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 - **`product-wig-preview-images`**: **`overflow: 'visible'`**, restore **`minHeight: BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`** for all; **removed** bundles-only **`aspectRatio`** / **`maxHeight: 100%`** clipping.
 - Bundle **`img`/`video`**: **`width: '100%'`**, **`maxWidth: BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX`**, **`height: 'auto'`**.
 
+---
+
+## 2026-03-30 — Bundles PDP: remove hero clip; taller hero min height
+
+**Context:** User reported bundle **hero still cut off** top/bottom; needed **more height** on the main hero container so the **full image** shows.
+
+**Cause:** **`product-wig-preview-images`** still used **`overflow: 'hidden'`** + **`aspectRatio: '3 / 4'`** for **`category === 'bundles'`**, which **cropped** tall portrait assets.
+
+**Changes:** **`texture-category-product/page.tsx`** — Bundles: **removed** **`aspectRatio`** and **`overflow: hidden`** (**`overflow: 'visible'`** for all). Added **`BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX`** = **`round(BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX × 1.75)`** for bundles-only **`minHeight`** on **`product-wig-preview-images`**; closures/frontals keep **`BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`**.
+
+---
+
+## 2026-03-30 — BCF PDP: main card bottom padding so DETAILS tabs stay inside (match Noir clearance)
+
+**Context:** User asked to fix spacing **below the details tabs** on BCF product pages — content **spilling outside** the main card — and match **Noir** tab clearance; ensure **no weaker overrides**.
+
+**Cause:** Noir tab lines use **`whiteSpace: nowrap`**; BCF **`detailsCopy`** **wraps**, so the tab block is **taller** while both still use **`marginBottom: '-93px'`** on the tab body → wrapped copy extends past the card’s **34px** bottom padding.
+
+**Changes:**
+- **`texture-category-product/page.tsx`** — Main card: class **`bcf-pdp-main-card`**, **`pb-4`** (parity with Noir **`pt-6 pb-4`**); **removed** inline **`paddingBottom: 34px`** (owned by CSS).
+- **`index.css`** — **`.bcf-pdp-main-card.border.border-black.flex-col.pt-6:has(.product-wig-preview)`** → **`padding-bottom: calc(34px + 5.5rem) !important`** (Noir’s **34px** base + room for wrapped tabs; **`!important`** beats Tailwind **`pb-4`**).
+
+---
+
+## 2026-03-30 — BCF PDP: 10px above texture ThumbBox row
+
+**Context:** User asked for **10px spacing above** the **three thumbnail images** on **BCF product pages** (bundles / closures / frontals).
+
+**Changes:** **`texture-category-product/page.tsx`** — Hero **`ThumbBox`** row wrapper: **`marginTop: '10px'`**.
+
+---
+
+## 2026-03-30 — BCF PDP: +4px above texture thumbnails
+
+**Context:** User asked for **another 4px** spacing above the **three thumbnails**.
+
+**Changes:** **`texture-category-product/page.tsx`** — Thumb row **`marginTop`**: **`10px` → `14px`**.
+
+---
+
+## 2026-03-30 — Closures/frontals: straight photo+video; remove back view
+
+**Context:** User asked to add **`straight-closure-product`**, **`straight-frontal-product`**, **`straight-closure-video`**, **`straight-frontal-video`** on closures/frontals PDPs and **remove back view** assets/UI.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- **`BCF_CF_PHOTO`** / **`BCF_CF_VIDEO`**: **`Record<Texture, string>`** per category — **straight** uses **`/assets/straight-closure-product.JPG`**, **`straight-frontal-product.JPG`**, **`straight-closure-video.MP4`**, **`straight-frontal-video.MP4`**; **wavy/curly** keep **front-only** stills/videos (no **`-back`** paths).
+- **FRONT/BACK** row, **`bcfCfShowBack`**, and **`-back`** media keys removed.
+- **PHOTO | VIDEO** for **all** textures on closures/frontals; CF video **`useEffect`** runs for **straight** too (removed wavy/curly-only guard).
+- **`heroThumbSrc`** / **`bcfHeroThumbSrcForTexture`** / cart image use **`BCF_CF_PHOTO`** for every texture on CF PDPs. CF hero **`img`** **`onError`** second fallback: **`shopTextureCategoryThumbSrc`**.
+
+**Note:** Place the four new files under **`public/assets/`** with the extensions above (or adjust paths if your filenames differ).
+
+---
+
+## 2026-03-30 — BCF closures/frontals: wavy/curly asset base names (no `-front`)
+
+**Context:** User renamed wavy/curly assets to **`wavy-closure-product`**, **`wavy-frontal-product`**, **`wavy-closure-video`**, **`wavy-frontal-video`**, and curly equivalents.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BCF_CF_PHOTO`** / **`BCF_CF_VIDEO`** wavy+curly paths: **`/assets/wavy-closure-product.JPG`**, **`wavy-frontal-product.JPG`**, **`wavy-closure-video.MP4`**, **`wavy-frontal-video.mov`**, **`curly-closure-product.JPG`**, **`curly-frontal-product.JPG`**, **`curly-closure-video.MP4`**, **`curly-frontal-video.MP4`** (extensions match **`public/assets`**).
+
+---
+
+## 2026-03-30 — Closures/frontals hero: fix broken media (object vs string paths)
+
+**Context:** User reported **closures & frontals photos/videos not showing**.
+
+**Cause:** **`BCF_CF_PHOTO`** / **`BCF_CF_VIDEO`** were still typed as nested **`{ front, back }`** objects while JSX used **`BCF_CF_PHOTO[category][texture]`** as a **string** **`src`** → **`[object Object]`** / wrong type; **straight** keys were missing from those objects.
+
+**Changes:** **`texture-category-product/page.tsx`** — Replaced with **`Record<Texture, string>`** for each category, matching **`public/assets`** exactly: **straight** videos **`straight-closure-video.mp4`** / **`straight-frontal-video.mp4`** (**lowercase `.mp4`** on disk); wavy/curly unchanged extensions (**`.JPG`**, **`.MP4`**, **`.mov`** as files are named).
+
+---
+
+## 2026-03-30 — Bundles PDP: fix wavy VIDEO src (wrong filename)
+
+**Context:** User reported **wavy bundle video** not loading.
+
+**Cause:** **`BUNDLE_VIDEO_BY_TEXTURE.wavy`** pointed to **`/assets/wavy-bundle-product.MP4`**; repo file is **`public/assets/wavy-bundle-video.MP4`** (matches **straight-bundle-video** / **curly-bundle-video** naming).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`wavy: '/assets/wavy-bundle-video.MP4'`**; comment updated.
+
+---
+
+## 2026-03-30 — BCF PDP: shift title → Klarna block up 50px
+
+**Context:** User asked to move **only** the **BUNDLES/CLOSURES/FRONTALS** title, **red RAW HUMAN HAIR** line, **price**, **sales tax**, **stars**, and **Klarna** line **up 50px together** (not the hair options below).
+
+**Changes:** **`texture-category-product/page.tsx`** — Wrapped that block in a **`div`** with **`transform: 'translateY(-50px)'`** when **`bcfUsesBundleStyleHero`**; **hair profile** section and below unchanged.
+
+---
+
+## 2026-03-30 — BCF PDP: −20px above product name, −30px above hair profile
+
+**Context:** User asked to **reduce spacing above** the **BUNDLES/CLOSURES/FRONTALS** product name by **20px**, and **reduce spacing above** **hair profile** by **30px**.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- **`BUNDLE_COPY_MARGIN_TOP_PX`**: subtract **20** more from the prior formula (**`−60` → `−80`** after **`round(100 × BUNDLE_HERO_LAYOUT_SCALE)`**).
+- **Hair profile** wrapper **`div`**: **`marginTop: '-30px'`** when **`bcfUsesBundleStyleHero`**.
+
+---
+
+## 2026-03-30 — BCF PDP: −10px more above title, −4px more above hair profile
+
+**Context:** User asked to **reduce spacing above** the **BUNDLES/CLOSURES/FRONTALS** name by **10px** and above **hair profile** by **4px** (on top of prior tweaks).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_COPY_MARGIN_TOP_PX`**: **`−80` → `−90`**; hair profile wrapper **`marginTop`**: **`−30px` → `−34px`** when **`bcfUsesBundleStyleHero`**.
+
+---
+
+## 2026-03-30 — BCF PDP: +10px above product name
+
+**Context:** User asked to **increase spacing above** the **BUNDLES/CLOSURES/FRONTALS** product name by **10px**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_COPY_MARGIN_TOP_PX`**: **`−90` → `−80`** (larger **`marginTop`** value by **10px**).
+
+---
+
+## 2026-03-30 — BCF PDP: SIMILAR strip spacing + Noir 2D thumb sizing
+
+**Context:** User wanted **spacing between ADD TO BAG and SIMILAR PRODUCTS** to match **Noir** (**CUSTOMIZE** row **`marginTop` 10px + button + SIMILAR **`marginTop` 20px**), and **similar-product images** to match **Noir 2D** marble strip thumbs.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- **`BCF_SIMILAR_STRIP_MARGIN_TOP_PX`** = **10 + 40 + 20** (**70px**); SIMILAR outer wrapper: Noir-style **`marginLeft/Right` −16px**, **`width: calc(100% + 32px)`**, **`minWidth/maxWidth`** like Noir; inner card **`minWidth/maxWidth`** full width.
+- SIMILAR cells: **`marbleStripCellBand(false)`**, **`marbleStripThumbWrap(false)`**, **`marbleStripThumbImg(false)`**, **`marbleStripTextColStrip(false)`**, **`marbleStripStarsRowStyle(false)`**; copy typography aligned with **`noir/page.tsx`** similar strip; removed BCF-only **`translateX(10px)`** / PDP display-scale transforms on those thumbs.
+- Dropped unused **`isShopTextureCurlyFrontals`** import.
+

@@ -14,8 +14,7 @@ import {
   shopTextureCategoryProductPageDisplayScale,
   shopTextureCategoryCurlyThumbTranslateYPx,
   shopTextureCategoryThumbFallbackSrc,
-  shopTextureCategoryThumbSrc,
-  isShopTextureCurlyFrontals
+  shopTextureCategoryThumbSrc
 } from '../../../utils/shopTextureCategoryThumb';
 import {
   BCF_LENGTH_OPTIONS,
@@ -36,11 +35,16 @@ import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } f
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import {
+  marbleStripCellBand,
   marbleStripCellOuter,
   marbleStripNavArrowStyle,
   marbleStripNavMiddleColStyle,
   marbleStripNavRowStyle,
   marbleStripScrollRowStyle,
+  marbleStripStarsRowStyle,
+  marbleStripTextColStrip,
+  marbleStripThumbImg,
+  marbleStripThumbWrap,
   marbleStripViewportStyle
 } from '../../../utils/marbleStripStyles';
 
@@ -84,7 +88,7 @@ function shopBcfUrl(category: Category, texture: Texture): string {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
-/** Bundles PDP only — `public/assets` (wavy video file is `wavy-bundle-product.MP4` in repo). */
+/** Bundles PDP only — `public/assets` (wavy video on disk: `wavy-bundle-video.MP4`, same pattern as straight/curly). */
 const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
   straight: '/assets/straight-bundle-product.JPG',
   wavy: '/assets/wavy-bundle-product.JPG',
@@ -93,60 +97,37 @@ const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
 
 const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
   straight: '/assets/straight-bundle-video.MP4',
-  wavy: '/assets/wavy-bundle-product.MP4',
+  wavy: '/assets/wavy-bundle-video.MP4',
   curly: '/assets/curly-bundle-video.MP4'
 };
 
-/** Wavy/curly closures & frontals — same PHOTO/VIDEO + FRONT/BACK assets as `public/assets`. */
-const BCF_CF_PHOTO: Record<
-  'closures' | 'frontals',
-  Record<'wavy' | 'curly', { front: string; back: string }>
-> = {
+/**
+ * Closures & frontals hero — paths must match `public/assets` filenames exactly (case-sensitive on Linux).
+ * Videos: straight uses `.mp4` lowercase; wavy frontal uses `.mov` lowercase per repo.
+ */
+const BCF_CF_PHOTO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   closures: {
-    wavy: {
-      front: '/assets/wavy-closure-product-front.JPG',
-      back: '/assets/wavy-closure-product-back.JPG'
-    },
-    curly: {
-      front: '/assets/curly-closure-product-front.JPG',
-      back: '/assets/curly-closure-product-back.JPG'
-    }
+    straight: '/assets/straight-closure-product.JPG',
+    wavy: '/assets/wavy-closure-product.JPG',
+    curly: '/assets/curly-closure-product.JPG'
   },
   frontals: {
-    wavy: {
-      front: '/assets/wavy-frontal-product-front.JPG',
-      back: '/assets/wavy-frontal-product-back.JPG'
-    },
-    curly: {
-      front: '/assets/curly-frontal-product-front.JPG',
-      back: '/assets/curly-frontal-product-back.JPG'
-    }
+    straight: '/assets/straight-frontal-product.JPG',
+    wavy: '/assets/wavy-frontal-product.JPG',
+    curly: '/assets/curly-frontal-product.JPG'
   }
 };
 
-const BCF_CF_VIDEO: Record<
-  'closures' | 'frontals',
-  Record<'wavy' | 'curly', { front: string; back: string }>
-> = {
+const BCF_CF_VIDEO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   closures: {
-    wavy: {
-      front: '/assets/wavy-closure-video-front.MP4',
-      back: '/assets/wavy-closure-video-back.mov'
-    },
-    curly: {
-      front: '/assets/curly-closure-video-front.MP4',
-      back: '/assets/curly-closure-video-back.mov'
-    }
+    straight: '/assets/straight-closure-video.mp4',
+    wavy: '/assets/wavy-closure-video.MP4',
+    curly: '/assets/curly-closure-video.MP4'
   },
   frontals: {
-    wavy: {
-      front: '/assets/wavy-frontal-video-front.mov',
-      back: '/assets/wavy-frontal-video-back.MP4'
-    },
-    curly: {
-      front: '/assets/curly-frontal-video-front.MP4',
-      back: '/assets/curly-frontal-video-back.mov'
-    }
+    straight: '/assets/straight-frontal-video.mp4',
+    wavy: '/assets/wavy-frontal-video.mov',
+    curly: '/assets/curly-frontal-video.MP4'
   }
 };
 
@@ -160,7 +141,14 @@ const BUNDLE_THUMB_INNER_H_PX = Math.round(64 * BUNDLE_HERO_LAYOUT_SCALE);
 const BUNDLE_THUMB_OUTER_W_PX = BUNDLE_THUMB_INNER_W_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
 const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
 const BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(120 * BUNDLE_HERO_LAYOUT_SCALE);
-const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 60;
+/** Space between hero/thumbs and product title stack (BCF bundle-style PDP). */
+const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 80;
+
+/**
+ * Space above SIMILAR strip vs ADD TO BAG: matches Noir stack — CUSTOMIZE `marginTop` 10px +
+ * button row (~`py-2` + 11px label) + SIMILAR `marginTop` 20px (BCF has no customize button).
+ */
+const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
 
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   return BUNDLE_HERO_BASE_MAX_WIDTH_PX * BUNDLE_HERO_LAYOUT_SCALE * shopTextureCategoryProductPageDisplayScale(tex);
@@ -178,9 +166,9 @@ const BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(BUNDLE_PDP_BUNDLES_HERO_M
 /** Closures/frontals bundle-style column: wide enough for any texture’s scaled hero. */
 const BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX = Math.max(...TEXTURE_ORDER.map((t) => bundlePdpHeroMaxWidthPx(t)));
 
-type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE + STORAGE' | 'REVIEWS';
+type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'care/storage' | 'REVIEWS';
 
-const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'CARE + STORAGE', 'REVIEWS'];
+const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'care/storage', 'REVIEWS'];
 
 const bcfBohemySubLabelStyle: React.CSSProperties = {
   fontFamily: '"Bohemy", cursive',
@@ -268,7 +256,6 @@ export default function ShopTextureCategoryProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [bundleShowVideo, setBundleShowVideo] = useState(false);
   const [bcfCfShowVideo, setBcfCfShowVideo] = useState(false);
-  const [bcfCfShowBack, setBcfCfShowBack] = useState(false);
   const bundleVideoRef = useRef<HTMLVideoElement>(null);
   const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -334,7 +321,6 @@ export default function ShopTextureCategoryProductPage() {
 
   useEffect(() => {
     if (category !== 'closures' && category !== 'frontals') return;
-    if (texture !== 'wavy' && texture !== 'curly') return;
     const v = bcfCfVideoRef.current;
     if (!v) return;
     if (bcfCfShowVideo) {
@@ -342,12 +328,11 @@ export default function ShopTextureCategoryProductPage() {
     } else {
       v.pause();
     }
-  }, [category, texture, bcfCfShowVideo, bcfCfShowBack]);
+  }, [category, texture, bcfCfShowVideo]);
 
   useEffect(() => {
     if (category !== 'closures' && category !== 'frontals') return;
     setBcfCfShowVideo(false);
-    setBcfCfShowBack(false);
   }, [texture, category]);
 
   useEffect(() => {
@@ -527,8 +512,6 @@ export default function ShopTextureCategoryProductPage() {
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
-  const bcfCfMediaHero =
-    !!category && (category === 'closures' || category === 'frontals');
   const heroThumbSrc = ((): string => {
     if (!category) return shopTextureCategoryThumbSrc(texture, 'bundles');
     if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[texture];
@@ -847,15 +830,14 @@ export default function ShopTextureCategoryProductPage() {
           ) : (
             <>
               <div
-                className="border border-black flex flex-col pt-6 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+                className="bcf-pdp-main-card border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
                 style={{
                   borderWidth: '1.3px',
                   minWidth: '100%',
                   maxWidth: 'none',
                   overflow: 'visible',
-                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  /* Match `/straight/noir` main build card — room for tab strip + DETAILS body above ADD TO BAG */
-                  paddingBottom: '34px'
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)'
+                  /* Bottom padding: `index.css` `.bcf-pdp-main-card` + `:has(.product-wig-preview)` — matches Noir card + room for wrapped tab copy */
                 }}
               >
                 {bcfUsesBundleStyleHero ? (
@@ -899,7 +881,7 @@ export default function ShopTextureCategoryProductPage() {
                             minHeight: 'clamp(18px, 2.2vw, 26px)'
                           }}
                         >
-                          {(category === 'bundles' || bcfCfWavyCurlyHero) && (
+                          {bcfUsesBundleStyleHero && (
                             <div
                               role="button"
                               tabIndex={0}
@@ -923,7 +905,7 @@ export default function ShopTextureCategoryProductPage() {
                               className="product-view-toggle-text"
                               style={{
                                 position: 'absolute',
-                                right: 'clamp(4px, 1vw, 12px)',
+                                right: 'calc(clamp(4px, 1vw, 12px) + 2px)',
                                 top: '0',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -988,82 +970,6 @@ export default function ShopTextureCategoryProductPage() {
                           )}
                         </div>
 
-                        {bcfCfWavyCurlyHero && (
-                          <div
-                            style={{
-                              position: 'relative',
-                              width: '100%',
-                              marginBottom: '4px',
-                              transform: 'translateY(0)',
-                              minHeight: 'clamp(18px, 2.2vw, 26px)'
-                            }}
-                          >
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => setBcfCfShowBack((prev: boolean) => !prev)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  setBcfCfShowBack((prev: boolean) => !prev);
-                                }
-                              }}
-                              className="product-view-toggle-text"
-                              style={{
-                                position: 'absolute',
-                                right: 'clamp(4px, 1vw, 12px)',
-                                top: '0',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 'clamp(2px, 0.4vw, 6px)',
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              <span
-                                className="product-view-toggle-text"
-                                style={{
-                                  color: bcfCfShowBack ? '#000000' : '#EB1C24',
-                                  fontFamily: bcfCfShowBack
-                                    ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
-                                    : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                  fontSize: '11px',
-                                  fontWeight: bcfCfShowBack ? '400' : '500',
-                                  margin: '0'
-                                }}
-                              >
-                                FRONT
-                              </span>
-                              <span
-                                className="product-view-toggle-text"
-                                style={{
-                                  color: '#000000',
-                                  fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                                  fontSize: '11px',
-                                  fontWeight: '400',
-                                  margin: '0'
-                                }}
-                              >
-                                /
-                              </span>
-                              <span
-                                className="product-view-toggle-text"
-                                style={{
-                                  color: bcfCfShowBack ? '#EB1C24' : '#000000',
-                                  fontFamily: bcfCfShowBack
-                                    ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
-                                    : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
-                                  fontSize: '11px',
-                                  fontWeight: bcfCfShowBack ? '500' : '400',
-                                  margin: '0'
-                                }}
-                              >
-                                BACK
-                              </span>
-                            </div>
-                          </div>
-                        )}
-
                         <div
                           className="product-wig-preview-images"
                           style={{
@@ -1122,14 +1028,12 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                               />
                             )
-                          ) : bcfCfWavyCurlyHero ? (
+                          ) : (
                             bcfCfShowVideo ? (
                               <video
-                                key={`${category}-${texture}-v-${bcfCfShowBack ? 'b' : 'f'}`}
+                                key={`${category}-${texture}-video`}
                                 ref={bcfCfVideoRef}
-                                src={
-                                  BCF_CF_VIDEO[category][texture][bcfCfShowBack ? 'back' : 'front']
-                                }
+                                src={BCF_CF_VIDEO[category][texture]}
                                 playsInline
                                 muted
                                 loop
@@ -1146,13 +1050,13 @@ export default function ShopTextureCategoryProductPage() {
                               />
                             ) : (
                               <img
-                                src={BCF_CF_PHOTO[category][texture][bcfCfShowBack ? 'back' : 'front']}
+                                src={BCF_CF_PHOTO[category][texture]}
                                 alt={displayProductName}
                                 onError={(e) => {
                                   const img = e.currentTarget;
                                   if (img.getAttribute('data-fallback-tried') === '1') return;
                                   img.setAttribute('data-fallback-tried', '1');
-                                  img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                                  img.src = shopTextureCategoryThumbSrc(texture, category);
                                 }}
                                 style={{
                                   width: '100%',
@@ -1161,33 +1065,14 @@ export default function ShopTextureCategoryProductPage() {
                                   marginLeft: 'auto',
                                   marginRight: 'auto',
                                   display: 'block',
-                                  objectFit: 'contain'
+                                  objectFit: 'contain',
+                                  ...((): { transform?: string } => {
+                                    const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                                    return y != null ? { transform: `translateY(${y}px)` } : {};
+                                  })()
                                 }}
                               />
                             )
-                          ) : (
-                            <img
-                              src={shopTextureCategoryThumbSrc(texture, category)}
-                              alt={displayProductName}
-                              onError={(e) => {
-                                const img = e.currentTarget;
-                                if (img.getAttribute('data-fallback-tried') === '1') return;
-                                img.setAttribute('data-fallback-tried', '1');
-                                img.src = shopTextureCategoryThumbFallbackSrc[texture];
-                              }}
-                              style={{
-                                width: '100%',
-                                maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                height: 'auto',
-                                margin: '0 auto',
-                                display: 'block',
-                                objectFit: 'contain',
-                                ...((): { transform?: string } => {
-                                  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-                                  return y != null ? { transform: `translateY(${y}px)` } : {};
-                                })()
-                              }}
-                            />
                           )}
                         </div>
 
@@ -1198,6 +1083,7 @@ export default function ShopTextureCategoryProductPage() {
                             zIndex: 30,
                             width: '100%',
                             gap: `${Math.round(8 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
+                            marginTop: '14px',
                             marginBottom: `${Math.round(15 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
                             paddingLeft: '2px',
                             paddingRight: '2px',
@@ -1241,6 +1127,11 @@ export default function ShopTextureCategoryProductPage() {
                     bcfUsesBundleStyleHero ? { marginTop: `${BUNDLE_COPY_MARGIN_TOP_PX}px` } : undefined
                   }
                 >
+                    <div
+                      style={
+                        bcfUsesBundleStyleHero ? { transform: 'translateY(-50px)' } : undefined
+                      }
+                    >
                     <p
                       className={
                         bcfUsesBundleStyleHero
@@ -1338,6 +1229,7 @@ export default function ShopTextureCategoryProductPage() {
                       <span dangerouslySetInnerHTML={formatPrice(Math.ceil(displayPrice / 4))} /> WITH{' '}
                       <span style={{ fontWeight: '600', color: '#EB1C24' }}>KLARNA</span>
                     </p>
+                    </div>
 
                     {/* BCF: hair profile (Bohemy) + length/color (Bohemy sublabels); lace size on closures/frontals */}
                     <div
@@ -1345,7 +1237,8 @@ export default function ShopTextureCategoryProductPage() {
                         transform: `translateY(${bcfPdpCopyTy(-106)}px)`,
                         width: '100%',
                         padding: '0 8px 12px',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        ...(bcfUsesBundleStyleHero ? { marginTop: '-30px' } : {})
                       }}
                     >
                       <p
@@ -1655,7 +1548,7 @@ export default function ShopTextureCategoryProductPage() {
                           {line}
                         </p>
                       ))}
-                    {activeTab === 'CARE + STORAGE' &&
+                    {activeTab === 'care/storage' &&
                       careStorageCopy.map((line, i) => (
                         <p
                           key={i}
@@ -1719,15 +1612,27 @@ export default function ShopTextureCategoryProductPage() {
                 </button>
               </div>
 
-              {/* SIMILAR — other textures, same category (gift card carousel pattern) */}
-              <div className="px-0 md:px-0" style={{ marginTop: '0', marginBottom: '20px' }}>
+              {/* SIMILAR — other textures; spacing + thumb sizing aligned with Noir 2D similar strip */}
+              <div
+                className="px-0 md:px-0"
+                style={{
+                  marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX}px`,
+                  marginBottom: '20px',
+                  minWidth: '100%',
+                  maxWidth: 'none',
+                  marginLeft: '-16px',
+                  marginRight: '-16px',
+                  width: 'calc(100% + 32px)'
+                }}
+              >
                 <div
                   className="backdrop-blur-sm"
                   style={{
                     border: '1.3px solid black',
                     backgroundColor: 'rgba(255, 255, 255, 0.6)',
                     padding: '0px',
-                    maxWidth: '100%',
+                    minWidth: '100%',
+                    maxWidth: 'none',
                     margin: '0 auto'
                   }}
                 >
@@ -1809,96 +1714,68 @@ export default function ShopTextureCategoryProductPage() {
                                 }}
                                 style={marbleStripCellOuter}
                               >
-                                <div
-                                  style={{
-                                    padding: '10px 10px 4px 10px',
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    boxSizing: 'border-box'
-                                  }}
-                                >
-                                  <img
-                                    src={simThumbSrc}
-                                    alt={simTitle}
-                                    onError={(e) => {
-                                      const img = e.currentTarget;
-                                      if (img.getAttribute('data-fallback-tried') === '1') return;
-                                      img.setAttribute('data-fallback-tried', '1');
-                                      img.src = shopTextureCategoryThumbFallbackSrc[ot];
-                                    }}
-                                    style={{
-                                      width: '100%',
-                                      height: 'auto',
-                                      marginBottom: '10px',
-                                      marginLeft: '10px',
-                                      cursor: 'pointer',
-                                      pointerEvents: 'none',
-                                      ...(() => {
-                                        const scale = shopTextureCategoryProductPageDisplayScale(ot);
-                                        const nudge = isShopTextureCurlyFrontals(ot, category);
-                                        const parts: string[] = [];
-                                        if (scale !== 1) parts.push(`scale(${scale})`);
-                                        if (nudge) parts.push('translateY(-2px)');
-                                        if (parts.length === 0) return {};
-                                        return {
-                                          transform: parts.join(' '),
-                                          ...(scale !== 1 ? { transformOrigin: 'center top' as const } : {})
-                                        };
-                                      })()
-                                    }}
-                                  />
-                                  <div
-                                    className={ot === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
-                                  >
+                                <div style={marbleStripCellBand(false)}>
+                                  <div style={marbleStripThumbWrap(false)}>
+                                    <img
+                                      src={simThumbSrc}
+                                      alt={simTitle}
+                                      onError={(e) => {
+                                        const img = e.currentTarget;
+                                        if (img.getAttribute('data-fallback-tried') === '1') return;
+                                        img.setAttribute('data-fallback-tried', '1');
+                                        img.src = shopTextureCategoryThumbFallbackSrc[ot];
+                                      }}
+                                      style={{
+                                        ...marbleStripThumbImg(false),
+                                        cursor: 'pointer',
+                                        pointerEvents: 'none'
+                                      }}
+                                    />
+                                  </div>
+                                  <div style={marbleStripTextColStrip(false)}>
                                     <p
                                       style={{
-                                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                        fontFamily: '"Covered By Your Grace", cursive',
                                         fontSize: '18px',
                                         color: 'black',
                                         textTransform: 'uppercase',
-                                        margin: '-10px 0 -3px 0',
+                                        margin: '0 0 2px 0',
                                         fontWeight: '500',
-                                        transform: 'translateX(10px)'
+                                        lineHeight: 1.05,
+                                        minHeight: '22px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                       }}
                                     >
                                       {simTitle}
                                     </p>
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Medium"',
+                                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                         fontSize: '10px',
                                         color: '#EB1C24',
                                         textTransform: 'uppercase',
-                                        margin: '0 0 5px 0',
+                                        margin: '2px 0 5px 0',
                                         fontWeight: '500',
-                                        lineHeight: '0.84',
-                                        transform: 'translateX(10px) translateY(1px)'
+                                        lineHeight: '0.84'
                                       }}
                                     >
                                       {categoryTitle} · RAW HUMAN HAIR
                                     </p>
                                     <p
                                       style={{
-                                        fontFamily: '"Futura PT Medium"',
+                                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                         fontSize: '12px',
                                         color: 'black',
                                         textTransform: 'uppercase',
                                         margin: '0 0 5px 0',
                                         fontWeight: '500',
-                                        lineHeight: '0.84',
-                                        transform: 'translateX(10px) translateY(-1px)'
+                                        lineHeight: '0.84'
                                       }}
                                       dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
                                     />
-                                    <div
-                                      style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        gap: '2px',
-                                        marginTop: '2px',
-                                        transform: 'translateX(10px)'
-                                      }}
-                                    >
+                                    <div style={marbleStripStarsRowStyle(false)}>
                                       {[...Array(5)].map((_, si) => (
                                         <img
                                           key={si}
@@ -1907,7 +1784,8 @@ export default function ShopTextureCategoryProductPage() {
                                           style={{
                                             width: '10px',
                                             height: '10px',
-                                            filter: 'drop-shadow(0 0 0 1px black)'
+                                            filter: 'drop-shadow(0 0 0 1px black)',
+                                            stroke: '1px black'
                                           }}
                                         />
                                       ))}

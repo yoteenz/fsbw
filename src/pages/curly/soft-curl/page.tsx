@@ -1388,7 +1388,7 @@ function SoftCurlSelection() {
                   <button 
                     onClick={() => handleFlexibleCapSelect('XXS/XS/S')}
                     style={{ 
-                      ...bcfOptionSelectedChrome(selectedFlexibleCap === 'XXS/XS/S'),
+                      border: '1.3px solid black',
                       paddingTop: 'clamp(4px, 0.5vw, 8px)',
                       paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                       paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -1400,6 +1400,7 @@ function SoftCurlSelection() {
                       fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
+                      color: selectedFlexibleCap === 'XXS/XS/S' ? '#EB1C24' : 'black',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -1412,7 +1413,7 @@ function SoftCurlSelection() {
                   <button 
                     onClick={() => handleFlexibleCapSelect('S/M/L')}
                     style={{ 
-                      ...bcfOptionSelectedChrome(selectedFlexibleCap === 'S/M/L'),
+                      border: '1.3px solid black',
                       paddingTop: 'clamp(4px, 0.5vw, 8px)',
                       paddingBottom: 'clamp(4px, 0.5vw, 8px)',
                       paddingLeft: 'clamp(8px, 1vw, 12px)',
@@ -1424,6 +1425,7 @@ function SoftCurlSelection() {
                       fontSize: '11px',
                       boxSizing: 'border-box' as const,
                       backgroundColor: 'white',
+                      color: selectedFlexibleCap === 'S/M/L' ? '#EB1C24' : 'black',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -1679,11 +1681,11 @@ function SoftCurlSelection() {
                     POLICY
                   </button>
                   <button
-                    onClick={() => handleTabClick('CARE + STORAGE')}
-                    className={`py-1 text-xs font-medium ${activeTab === 'CARE + STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE + STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
+                    onClick={() => handleTabClick('care/storage')}
+                    className={`py-1 text-xs font-medium ${activeTab === 'care/storage' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'care/storage' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
-                    CARE + STORAGE
+                    care/storage
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
@@ -1756,7 +1758,7 @@ function SoftCurlSelection() {
                     </>
                   )}
                   
-                  {activeTab === 'CARE + STORAGE' && (
+                  {activeTab === 'care/storage' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.

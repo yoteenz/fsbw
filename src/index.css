@@ -3904,6 +3904,12 @@ img.object-contain {
   padding-top: 0.75rem !important; /* was pt-6 (1.5rem); reduce excess above 2D/3D */
 }
 
+/* BCF PDP (`/shop/bundles|closures|frontals`): Noir uses `paddingBottom: 34px` + tab body `marginBottom: -93px` with nowrap lines.
+   BCF tab copy wraps → taller body; extra bottom padding keeps DETAILS+ tabs inside the card. Scoped + !important so utilities don’t shrink it. */
+.bcf-pdp-main-card.border.border-black.flex-col.pt-6:has(.product-wig-preview) {
+  padding-bottom: calc(34px + 5.5rem) !important;
+}
+
 /* Client details orders tab: center status tag text vertically in pill (override any conflicting styles) */
 .admin-order-status-pill {
   display: inline-flex !important;
