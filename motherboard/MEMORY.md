@@ -6163,7 +6163,7 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Context:** User wanted **4px** less space above **“I WILL ONLY RE-INSTALL…”** (second policy line).
 
-**Changes:** **`booking/appointment/page.tsx`** — second policy line **`marginTop` `-2px` → `-6px` → `-8px`** (**`i === 1`**).
+**Changes:** **`booking/appointment/page.tsx`** — second policy line **`marginTop` `-2px` → `-6px` → `-8px` → `-10px`** (**`i === 1`**).
 
 ---
 
@@ -6196,3 +6196,11 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User wanted calendar **black day numbers** in **Covered By Your Grace**; red **duration** lines (**+2 HOURS**, etc.) in **Futura PT Medium**; **SERVICE TYPE** / **ADD TO YOUR APPOINTMENT** headings **1px smaller**; **CLEAR DATE** without underline.
 
 **Changes:** **`BrandExpiresDatePicker.tsx`** — unselected day cells use **`bookingFontScript`**; selected stays **Futura Medium**; **CLEAR DATE** **`textDecoration`** removed. **`BookingSectionHeading`** — optional **`fontSize`** (default **`12px`**); appointment uses **`fontSize="11px"`** for those two headings. **`appointment/page.tsx`** — install + add-on red **`sub`** spans **`bookingFontBook` → `bookingFontMedium`**.
+
+---
+
+## 2026-03-31 — CLEAN LACE detail + consult follow-up copy
+
+**Context:** User wanted **CLEAN LACE** expandable detail to say **glue & gunk** (not dirt); consult second body paragraph to end with **payment details** (not deposit details).
+
+**Changes:** **`booking/appointment/page.tsx`** — **`ADDON_DETAIL_LINES['clean-lace']`** **`DIRT` → `GUNK`**. **`booking/consultation/page.tsx`** — **`DEPOSIT DETAILS` → `PAYMENT DETAILS`** in the **72 hours** sentence.

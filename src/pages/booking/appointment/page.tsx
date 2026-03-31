@@ -83,7 +83,7 @@ const ADDON_TRAVEL: AppointmentAddon = {
 /** Shown below the red duration line when the add-on row is selected (checked). */
 const ADDON_DETAIL_LINES: Record<string, ReactNode> = {
   'clean-lace':
-    'THIS SERVICE INCLUDES REMOVING GLUE & DIRT FROM YOUR LACE. MUST BE DROPPED OFF 1 WEEK PRIOR TO SERVICE.',
+    'THIS SERVICE INCLUDES REMOVING GLUE & GUNK FROM YOUR LACE. MUST BE DROPPED OFF 1 WEEK PRIOR TO SERVICE.',
   braids:
     'THIS SERVICE INCLUDES 8-10 BRAIDS, DEPENDING ON HAIR DENSITY. COME WASHED & BLOW DRYED.',
   'brow-clean': 'THIS SERVICE INCLUDES WAXING, TWEEZING & SCULPTING.',
@@ -493,7 +493,7 @@ export default function BookingAppointmentPage() {
           >
             ESTIMATED APPOINTMENT TIME: {formatEstimatedAppointmentTime(estimatedMinutes)}.
             <br />
-            FINAL TIME CONFIRMED AFTER CHECKOUT.
+            FINAL DURATION CONFIRMED AFTER CHECKOUT.
           </p>
 
           <div className="text-center" style={{ paddingTop: '6px' }}>
