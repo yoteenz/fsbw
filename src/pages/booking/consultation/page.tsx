@@ -235,24 +235,22 @@ export default function BookingConsultationPage() {
           </div>
 
           <div>
-            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'center' }}>
-              <span style={{ color: '#EB1C24', fontFamily: bookingFontMedium }}>HAIR OPTION</span>
-              <span style={{ color: '#EB1C24' }}>*</span>
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>HAIR OPTION:*</p>
+            <div className="flex flex-wrap gap-2 justify-start">
               {(['WIG + INSTALL', 'WIG ONLY'] as const).map((opt) => (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => setHairOption(opt)}
-                  className="border border-black bg-white/80 backdrop-blur-sm"
+                  className="bg-white/80 backdrop-blur-sm"
                   style={{
-                    borderWidth: '1.3px',
+                    border: '1.3px solid',
+                    borderColor: hairOption === opt ? '#EB1C24' : '#000000',
                     fontFamily: bookingFontMedium,
                     fontSize: '10px',
                     fontWeight: 500,
                     padding: '10px 14px',
-                    color: hairOption === opt ? '#EB1C24' : '#000000',
+                    color: '#000000',
                     cursor: 'pointer',
                     textTransform: 'uppercase',
                     letterSpacing: '0.03em'
