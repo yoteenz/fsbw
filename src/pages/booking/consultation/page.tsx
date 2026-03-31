@@ -1,7 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
-import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   BookingBodyParagraph,
   BookingCrumbTitle,
@@ -12,16 +11,14 @@ import {
 } from '../../../components/booking/BookingPageChrome';
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
-import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 
 const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
-/** Standard `/booking/consultation`: any signed-in tier. Premium `/booking/premium/consultation`: same gate as appointments (modal + no add-to-bag without premium). */
+/** Standard `/booking/consultation`: any signed-in tier. Premium `/booking/premium/consultation`: same consult flow with premium badge/tier metadata. */
 export default function BookingConsultationPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
@@ -30,7 +27,6 @@ export default function BookingConsultationPage() {
   const [inspoPreview, setInspoPreview] = useState<string | null>(null);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [formError, setFormError] = useState<string | null>(null);
-  const [showPremiumConsultUpgradeModal, setShowPremiumConsultUpgradeModal] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,10 +48,6 @@ export default function BookingConsultationPage() {
   };
 
   const handleAddToBag = () => {
-    if (isPremiumBooking && !isPremiumMemberForGatedFeatures()) {
-      setShowPremiumConsultUpgradeModal(true);
-      return;
-    }
     setFormError(null);
     setAddToBagState('adding');
     setTimeout(() => {
@@ -314,20 +306,6 @@ export default function BookingConsultationPage() {
       </div>
     </BookingFlowLayout>
 
-    <ConfirmationModal
-      isOpen={showPremiumConsultUpgradeModal}
-      onClose={() => setShowPremiumConsultUpgradeModal(false)}
-      onConfirm={() => {
-        setShowPremiumConsultUpgradeModal(false);
-        prepareMembershipUpgradeNavigation();
-        navigate('/account/rewards');
-      }}
-      title="UPGRADE YOUR SUBSCRIPTION?"
-      message="PREMIUM-PATH WIG CONSULTS REQUIRE AN ACTIVE PREMIUM OR BLACK TIER MEMBERSHIP. STANDARD CONSULTS ARE AVAILABLE FROM THE SHOP MENU."
-      confirmText="UPGRADE"
-      cancelText="CANCEL"
-      dataAttribute="upgrade-subscription-modal-booking-premium-consult"
-    />
     </>
   );
 }

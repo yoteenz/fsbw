@@ -315,8 +315,6 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
               border: 'none',
               cursor: 'pointer',
               textTransform: 'uppercase',
-              textDecoration: 'underline',
-              textUnderlineOffset: '2px',
             }}
           >
             CLEAR DATE

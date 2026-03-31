@@ -6270,3 +6270,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User requested weekends blocked for appointments, with policy that bookings are limited to **2-3 per day** (as time permits) in a **12-hour** Mon-Fri window.
 
 **Changes:** **`BrandExpiresDatePicker.tsx`** — added optional **`isDateDisabled(isoYmd)`** prop and disabled-day UI/interaction. **`booking/appointment/page.tsx`** — passes weekday guard to block Saturdays/Sundays in the inline calendar and appends policy copy: **Monday-Friday only**, **2-3 appointments/day**, **12-hour daily booking window**.
+
+---
+
+## 2026-03-31 — Appointment calendar constraints: remove customer-facing line, block past dates
+
+**Context:** User clarified the Mon-Fri / capacity note was internal context only (not customer-facing), requested removing that paragraph, removing the CLEAR DATE underline, and disabling all dates before today (gray/unselectable like weekends).
+
+**Changes:** **`booking/appointment/page.tsx`** — removed the customer-facing **Monday-Friday / 2-3 appointments** paragraph; date guard now blocks **past dates + weekends**. **`BrandExpiresDatePicker.tsx`** — removed `CLEAR DATE` underline styles.
+
+---
+
+## 2026-03-31 — Appointment: new "CHOOSE A STYLE" section
+
+**Context:** User requested a no-price style selector under **SERVICE TYPE** with options **BONE STRAIGHT**, **LAYERS & CURLS**, **CRIMPS**.
+
+**Changes:** **`booking/appointment/page.tsx`** — added `AppointmentStyle` state and `CHOOSE A STYLE:` section below service type with selectable rows; selected style is included in `bookingBagSubtitle` and saved to cart item metadata as `bookingStyle`.
+
+---
+
+## 2026-03-31 — Appointment: add "CHOOSE PART DIRECTION" section
+
+**Context:** User requested a no-price section below **CHOOSE A STYLE** with options **LEFT SIDE**, **MIDDLE**, **RIGHT SIDE**.
+
+**Changes:** **`booking/appointment/page.tsx`** — added `PartDirection` state/options and a new **CHOOSE PART DIRECTION:** selectable block; selected direction is included in `bookingBagSubtitle` and saved in cart item metadata as `bookingPartDirection`.
+
+---
+
+## 2026-03-31 — Appointment upgrade modal copy matches premium-feature standard
+
+**Context:** User wanted the booking appointment premium popup to use the same generic premium-gate message used elsewhere, instead of the consult/shop-menu specific sentence.
+
+**Changes:** **`booking/appointment/page.tsx`** — `ConfirmationModal` message updated to **"YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."**
+
+---
+
+## 2026-03-31 — Consult premium gate removed; keep area vs feature modal rule
+
+**Context:** User clarified modal policy: **area pages** should use **"YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."** and **feature gates** should use **"YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."**. They also confirmed consult should not be premium-gated because it serves both standard and premium users.
+
+**Changes:** **`booking/consultation/page.tsx`** — removed premium gate logic and verbose upgrade modal (deleted premium-membership checks, modal state, `ConfirmationModal` block, and related imports). Premium-path consult still keeps route-based badge/tier metadata via `isPremiumBooking`, but Add to bag no longer blocks non-premium users.
+
+**Verification:** **`npx tsc --noEmit`** passes.

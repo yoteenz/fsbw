@@ -18,6 +18,11 @@ import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 
 type InstallKind = 'NEW_INSTALL' | 'RE_INSTALL';
+type AppointmentStyle = 'BONE STRAIGHT' | 'LAYERS & CURLS' | 'CRIMPS';
+type PartDirection = 'LEFT SIDE' | 'MIDDLE' | 'RIGHT SIDE';
+
+const APPOINTMENT_STYLE_OPTIONS: AppointmentStyle[] = ['BONE STRAIGHT', 'LAYERS & CURLS', 'CRIMPS'];
+const PART_DIRECTION_OPTIONS: PartDirection[] = ['LEFT SIDE', 'MIDDLE', 'RIGHT SIDE'];
 
 const INSTALL_BASE: Record<InstallKind, { label: string; sub: string; price: number }> = {
   NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 250 },
@@ -213,6 +218,8 @@ export default function BookingAppointmentPage() {
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [installKind, setInstallKind] = useState<InstallKind>('NEW_INSTALL');
+  const [appointmentStyle, setAppointmentStyle] = useState<AppointmentStyle>('BONE STRAIGHT');
+  const [partDirection, setPartDirection] = useState<PartDirection>('MIDDLE');
   const [addonIds, setAddonIds] = useState<Set<string>>(() => new Set());
   const [preferredDateIso, setPreferredDateIso] = useState('');
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
@@ -269,12 +276,12 @@ export default function BookingAppointmentPage() {
   }, [installKind, addonIds, visibleAddons]);
 
   const bookingBagSubtitle = useMemo(() => {
-    const parts = [INSTALL_BASE[installKind].label];
+    const parts = [INSTALL_BASE[installKind].label, appointmentStyle, partDirection];
     visibleAddons.forEach((a) => {
       if (addonIds.has(a.id)) parts.push(a.label);
     });
     return parts.join(' · ');
-  }, [installKind, addonIds, visibleAddons]);
+  }, [installKind, appointmentStyle, partDirection, addonIds, visibleAddons]);
 
   const isAppointmentDateDisabled = useCallback((isoYmd: string) => {
     const [ys, ms, ds] = isoYmd.split('-');
@@ -282,9 +289,13 @@ export default function BookingAppointmentPage() {
     const m = Number(ms) - 1;
     const d = Number(ds);
     if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
-    const dayOfWeek = new Date(y, m, d).getDay();
+    const date = new Date(y, m, d);
+    const dayOfWeek = date.getDay();
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isPastDate = date < startOfToday;
     // Block weekends: 0=Sunday, 6=Saturday.
-    return dayOfWeek === 0 || dayOfWeek === 6;
+    return isPastDate || dayOfWeek === 0 || dayOfWeek === 6;
   }, []);
 
   const handleScheduleToBag = () => {
@@ -312,6 +323,8 @@ export default function BookingAppointmentPage() {
           type: 'booking-appointment',
           bookingTier: tier,
           bookingInstallKind: installKind,
+          bookingStyle: appointmentStyle,
+          bookingPartDirection: partDirection,
           bookingAddonIds: addonList,
           bookingBagSubtitle,
           ...(preferredDateIso.trim() ? { bookingPreferredDate: preferredDateIso.trim() } : {})
@@ -336,8 +349,7 @@ export default function BookingAppointmentPage() {
     'I WILL ONLY RE-INSTALL WIGS I HAVE PREVIOUSLY CUT & LAID.',
     'IF YOU NEED HELP CHOOSING A UNIT FOR YOUR DESIRED LOOK, BOOK A WIG CONSULTATION FROM THE SHOP MENU.',
     'NEW INSTALLS SHOULD BE BOOKED AT LEAST TWO MONTHS IN ADVANCE SO YOUR UNIT CAN BE CONSTRUCTED, CUSTOMIZED, STYLED & READY FOR INSTALLATION. RE-INSTALLS SHOULD BE BOOKED AT LEAST ONE WEEK IN ADVANCE USING THE "CLEAN LACE" ADD ON IF APPLICABLE.',
-    'ABSOLUTELY NO GUESTS ARE ALLOWED AT YOUR APPOINTMENT DUE TO PRIVACY & SAFETY PRECAUTIONS. APPOINTMENTS MUST BE CANCELLED WITHIN 48 HOURS & RESCHEDULED WITHIN 24 HOURS OF APPOINTMENT TO AVOID A NO SHOW FEE OF $50 USD.',
-    'APPOINTMENTS ARE BOOKED MONDAY THROUGH FRIDAY ONLY. I ACCEPT 2-3 APPOINTMENTS PER DAY (AS TIME PERMITS) WITHIN A 12-HOUR DAILY BOOKING WINDOW.'
+    'ABSOLUTELY NO GUESTS ARE ALLOWED AT YOUR APPOINTMENT DUE TO PRIVACY & SAFETY PRECAUTIONS. APPOINTMENTS MUST BE CANCELLED WITHIN 48 HOURS & RESCHEDULED WITHIN 24 HOURS OF APPOINTMENT TO AVOID A NO SHOW FEE OF $50 USD.'
   ];
 
   return (
@@ -473,6 +485,86 @@ export default function BookingAppointmentPage() {
           </div>
 
           <BookingSectionHeading align="left" fontSize="11px">
+            CHOOSE A STYLE:
+          </BookingSectionHeading>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+            {APPOINTMENT_STYLE_OPTIONS.map((style) => {
+              const checked = appointmentStyle === style;
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => setAppointmentStyle(style)}
+                  className="flex w-full text-left border border-black bg-white/80 backdrop-blur-sm"
+                  style={{
+                    borderWidth: '1.3px',
+                    borderColor: checked ? '#EB1C24' : '#000',
+                    padding: '12px 12px',
+                    cursor: 'pointer',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: 0
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: bookingFontMedium,
+                      fontSize: '10px',
+                      textTransform: 'uppercase',
+                      color: checked ? '#EB1C24' : '#000',
+                      display: 'block',
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.35
+                    }}
+                  >
+                    {style}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <BookingSectionHeading align="left" fontSize="11px">
+            CHOOSE PART DIRECTION:
+          </BookingSectionHeading>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+            {PART_DIRECTION_OPTIONS.map((direction) => {
+              const checked = partDirection === direction;
+              return (
+                <button
+                  key={direction}
+                  type="button"
+                  onClick={() => setPartDirection(direction)}
+                  className="flex w-full text-left border border-black bg-white/80 backdrop-blur-sm"
+                  style={{
+                    borderWidth: '1.3px',
+                    borderColor: checked ? '#EB1C24' : '#000',
+                    padding: '12px 12px',
+                    cursor: 'pointer',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: 0
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: bookingFontMedium,
+                      fontSize: '10px',
+                      textTransform: 'uppercase',
+                      color: checked ? '#EB1C24' : '#000',
+                      display: 'block',
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.35
+                    }}
+                  >
+                    {direction}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <BookingSectionHeading align="left" fontSize="11px">
             ADD TO YOUR APPOINTMENT:
           </BookingSectionHeading>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '22px' }}>
@@ -538,7 +630,7 @@ export default function BookingAppointmentPage() {
         navigate('/account/rewards');
       }}
       title="UPGRADE YOUR SUBSCRIPTION?"
-      message="HAIR APPOINTMENTS AND INSTALLS ARE FOR PREMIUM MEMBERS. WIG CONSULTS ARE STILL AVAILABLE TO YOU FROM THE SHOP MENU."
+      message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
       confirmText="UPGRADE"
       cancelText="CANCEL"
       dataAttribute="upgrade-subscription-modal-booking-appointment"
