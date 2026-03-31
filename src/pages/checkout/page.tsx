@@ -30,12 +30,15 @@ import {
 } from '../../utils/adminBrandCodes';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { bcfBundleDealResolvedListSubtotal } from '../../utils/bcfProductOptions';
+import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import {
-  BOOKING_BADGE_CART_CELL_WIDTH_PX,
-  BOOKING_BADGE_DISPLAY_PX,
-  bookingCartItemThumbnailSrc,
-  isBookingCartBadgeItem,
-} from '../../utils/bookingBadges';
+  orderStripRedSubtitle,
+  orderStripThumbnailSrc,
+  orderStripThumbMetrics,
+  orderStripTitleLine,
+  orderStripUseDigitalStackLayout
+} from '../../utils/checkoutOrderStripDisplay';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -470,7 +473,17 @@ function CheckoutPage() {
             regularCartItems = items;
           }
         }
-        
+        const strip = stripIneligibleBcfBundleDealLines(regularCartItems);
+        if (strip.removedUnitCount > 0) {
+          localStorage.setItem('cartItems', JSON.stringify(strip.next));
+          const newCount = strip.next.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+          localStorage.setItem('cartCount', String(newCount));
+          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+          window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+          window.dispatchEvent(new Event('cartUpdated'));
+          regularCartItems = strip.next;
+        }
+
         setIsSubscriptionUpgrade(false);
         setCartItems(regularCartItems);
         return;
@@ -2443,118 +2456,28 @@ function CheckoutPage() {
                           {cartItems.map((item, index) => {
                           const itemId = item.id || `cart-item-${index}`;
                           const itemName = item.name || 'NOIR';
-                          
-                          // Get the correct thumbnail based on product name and hairline (same logic as account/orders page)
-                          const getItemImage = () => {
-                            if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                              return '/assets/gift-card asset.png';
-                            }
-                            const bookingThumb = bookingCartItemThumbnailSrc(item);
-                            if (bookingThumb) return bookingThumb;
-                            if (item.type === 'shop-texture-category' && item.image) {
-                              return item.image;
-                            }
-                            if (
-                              item.subscriptionTier === '12months' ||
-                              (isSubscriptionUpgrade && /\b12\s*MONTHS\b/i.test(String(item.name || '')))
-                            ) {
-                              return '/assets/12-months-premium.png';
-                            }
-                            if (
-                              item.subscriptionTier === '6months' ||
-                              (isSubscriptionUpgrade && /\b6\s*MONTHS\b/i.test(String(item.name || '')))
-                            ) {
-                              return '/assets/6-months-premium.png';
-                            }
-                            if (
-                              item.subscriptionTier === '3months' ||
-                              (isSubscriptionUpgrade && /\b3\s*MONTHS\b/i.test(String(item.name || '')))
-                            ) {
-                              return '/assets/3-months-premium.png';
-                            }
+                          const thumbM = orderStripThumbMetrics(item, isSubscriptionUpgrade, {
+                            checkoutStrip: true
+                          });
+                          const itemImage = orderStripThumbnailSrc(item, isSubscriptionUpgrade);
+                          const displayTitle = orderStripTitleLine(item);
+                          const useDigitalStack = orderStripUseDigitalStackLayout(item, isSubscriptionUpgrade);
 
-                            const productName = item.name || 'NOIR';
-                            
-                            // For NOIR, check hairline to use appropriate front image
-                            if (productName.toUpperCase() === 'NOIR') {
-                            const hairline = item.hairline || 'NATURAL';
-                            const hairlineUpper = hairline.toUpperCase();
-                            const hasPeak = hairlineUpper.includes('PEAK');
-                            const hasLagos = hairlineUpper.includes('LAGOS');
-                            
-                              if (hasPeak) {
-                                return '/assets/peak front.png';
-                              } else if (hasLagos) {
-                                return '/assets/lagos front.png';
-                              }
-                              // Default to natural front image
-                              return '/assets/natural front.png';
-                            }
-                            
-                            switch (productName.toUpperCase()) {
-                              case 'BLANCO':
-                                return '/assets/2D BLANCO FRONT.png';
-                              case 'SOFT WAVE':
-                              case 'BEACH WAVE':
-                                return '/assets/2D WAVY FRONT.png';
-                              case 'SOFT CURL':
-                              case 'OCEAN CURL':
-                                return '/assets/2D CURLY FRONT.png';
-                              default:
-                                return '/assets/natural front.png';
-                            }
-                          };
-                          const itemImage = getItemImage();
-                          const isMembershipTierThumb =
-                            item.subscriptionTier === '3months' ||
-                            item.subscriptionTier === '6months' ||
-                            item.subscriptionTier === '12months' ||
-                            (isSubscriptionUpgrade &&
-                              /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || '')));
-                          const isBookingBadgeThumb = isBookingCartBadgeItem(item);
-                          const cartThumbPx = isBookingBadgeThumb
-                            ? BOOKING_BADGE_DISPLAY_PX
-                            : isMembershipTierThumb
-                              ? 138
-                              : 120; /* 120 * 1.15 for upgrade tiers */
-                          const cartCellWidthPx =
-                            item.name === 'GIFT CARD' || item.type === 'gift-card'
-                              ? 165
-                              : isBookingBadgeThumb
-                                ? BOOKING_BADGE_CART_CELL_WIDTH_PX
-                                : isMembershipTierThumb
-                                  ? 173
-                                  : 150; /* ~150 * 1.15 when thumb grows */
-
-                          const getHairOrigin = (productName: string) => {
-                            switch (productName) {
-                              case 'NOIR':
-                                return 'CAMBODIAN';
-                              case 'BLANCO':
-                                return 'RUSSIAN';
-                              case 'SOFT CURL':
-                                return 'FILIPINO';
-                              case 'OCEAN CURL':
-                                return 'VIETNAMESE';
-                              case 'SOFT WAVE':
-                                return 'INDIAN';
-                              case 'BEACH WAVE':
-                                return 'INDONESIAN';
-                              default:
-                                return 'CAMBODIAN';
-                            }
-                          };
-                          
                           const itemLength = item.length || '24"';
-                          const itemHairOrigin = getHairOrigin(item.name);
+                          const redSubtitle = orderStripRedSubtitle(item, itemLength);
                           const itemPrice = item.price || 580;
+                          const isBcfBundleDeal = Boolean((item as { bcfBundleDeal?: boolean }).bcfBundleDeal);
+                          const bundleDealListCheckout = bcfBundleDealResolvedListSubtotal(item);
+                          const bundleLineTotalCheckout = itemPrice * (item.quantity || 1);
+
+                          const titleFontPx = orderStripTitleFontPx(item);
 
                           return (
                             <div
                               key={itemId}
                               className="flex-shrink-0"
                               style={{
-                                width: `${cartCellWidthPx}px`,
+                                width: `${thumbM.cellWidthPx}px`,
                                 minHeight: '150px',
                                 height: 'auto',
                                 display: 'flex',
@@ -2562,38 +2485,64 @@ function CheckoutPage() {
                                 alignItems: 'center',
                                 justifyContent: 'flex-start',
                                 paddingTop:
-                                  isSubscriptionUpgrade && isMembershipTierThumb ? '5px' : '8px',
+                                  isSubscriptionUpgrade && thumbM.kind === 'membership' ? '5px' : '8px',
                                 paddingRight: '8px',
                                 paddingBottom: '8px',
                                 paddingLeft: '8px',
                                 boxSizing: 'border-box',
                               }}
                             >
-                              <img
-                                src={itemImage}
-                                alt={itemName}
-                                style={{
-                                  width:
-                                    item.name === 'GIFT CARD' || item.type === 'gift-card'
-                                      ? '165px'
-                                      : `${cartThumbPx}px`,
-                                  height:
-                                    item.name === 'GIFT CARD' || item.type === 'gift-card'
-                                      ? '165px'
-                                      : `${cartThumbPx}px`,
-                                  objectFit: 'contain'
-                                }}
-                                draggable={false}
-                              />
+                              {thumbM.imgWrapperTransform ? (
+                                <div
+                                  className="flex items-center justify-center"
+                                  style={{
+                                    width: `${thumbM.slotPx}px`,
+                                    minHeight: `${thumbM.slotPx}px`
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      transform: thumbM.imgWrapperTransform
+                                    }}
+                                  >
+                                    <img
+                                      src={itemImage}
+                                      alt={displayTitle}
+                                      className="object-contain rounded"
+                                      style={{
+                                        width: `${thumbM.imgPx}px`,
+                                        height: `${thumbM.imgPx}px`,
+                                        objectFit: 'contain'
+                                      }}
+                                      draggable={false}
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                <img
+                                  src={itemImage}
+                                  alt={displayTitle}
+                                  className="object-contain rounded"
+                                  style={{
+                                    width: `${thumbM.imgPx}px`,
+                                    height: `${thumbM.imgPx}px`,
+                                    objectFit: 'contain'
+                                  }}
+                                  draggable={false}
+                                />
+                              )}
                               <div
                                 style={{
-                                  transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-25px)' : 'none'
+                                  transform: useDigitalStack ? 'translateY(-25px)' : 'none'
                                 }}
                               >
                               <p
                                 style={{
                                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                  fontSize: itemName === '6 MONTHS PREMIUM' ? '14.8px' : '16.8px',
+                                  fontSize: titleFontPx,
                                   color: '#000000',
                                     marginTop: '4px',
                                     marginBottom: '0',
@@ -2601,18 +2550,14 @@ function CheckoutPage() {
                                     textAlign: 'center',
                                     lineHeight: '1.2',
                                     transform:
-                                      item.name === 'GIFT CARD' || item.type === 'gift-card'
-                                        ? 'translateY(-1px)'
-                                        : isSubscriptionUpgrade && isMembershipTierThumb
-                                          ? 'translateY(-1px)'
-                                          : 'none'
+                                      useDigitalStack ? 'translateY(-1px)' : 'none'
                                   }}
                                 >
-                                  {itemName}
+                                  {displayTitle}
                               </p>
                               <div
                                 style={
-                                  isSubscriptionUpgrade && isMembershipTierThumb
+                                  isSubscriptionUpgrade && thumbM.kind === 'membership'
                                     ? { transform: 'translateY(1.5px)' }
                                     : undefined
                                 }
@@ -2644,15 +2589,7 @@ function CheckoutPage() {
                                     textAlign: 'center'
                                 }}
                               >
-                                {(() => {
-                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                    return 'DIGITAL ONLY';
-                                  }
-                                  if (item.type === 'digital' || isSubscriptionUpgrade) {
-                                    return 'DIGITAL ONLY';
-                                  }
-                                  return `${itemLength} RAW ${itemHairOrigin}`;
-                                })()}
+                                {redSubtitle}
                               </p>
                                 {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
                                   <p
@@ -2669,18 +2606,52 @@ function CheckoutPage() {
                                     CAP SIZE: {item.capSize}
                                   </p>
                                 )}
+                                {isBcfBundleDeal ? (
+                                  <div
+                                    style={{
+                                      margin: '1px 0 0 0',
+                                      textAlign: 'center',
+                                      textTransform: 'uppercase'
+                                    }}
+                                  >
+                                    {bundleDealListCheckout != null &&
+                                      bundleDealListCheckout > bundleLineTotalCheckout && (
+                                        <span
+                                          style={{
+                                            fontFamily: '"Futura PT Medium"',
+                                            fontSize: '9px',
+                                            fontWeight: '500',
+                                            color: '#808080',
+                                            textDecoration: 'line-through',
+                                            marginRight: '6px'
+                                          }}
+                                          dangerouslySetInnerHTML={formatPrice(bundleDealListCheckout)}
+                                        />
+                                      )}
+                                    <span
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '10px',
+                                        fontWeight: '500',
+                                        color: '#000000'
+                                      }}
+                                      dangerouslySetInnerHTML={formatPrice(bundleLineTotalCheckout)}
+                                    />
+                                  </div>
+                                ) : (
                                 <p
                                   style={{
                                     fontFamily: '"Futura PT Medium"',
                                     fontSize: '10px',
                                     fontWeight: '500',
                                     color: '#000000',
-                                    margin: (item.name === 'GIFT CARD' || item.type === 'gift-card' || item.type === 'digital' || isSubscriptionUpgrade) ? '4px 0 0 0' : '1px 0 0 0',
+                                    margin: useDigitalStack ? '4px 0 0 0' : '1px 0 0 0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
                                   }}
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
+                                )}
                               </div>
                               </div>
                             </div>

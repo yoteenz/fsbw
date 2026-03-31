@@ -17,6 +17,10 @@ export interface CartItem {
   styling?: string;
   partSelection?: string;
   addOns?: string[];
+  /** BCF bundles PDP: 3× line with $40 off combined (see texture-category-product). */
+  bcfBundleDeal?: boolean;
+  /** Pre-discount line subtotal (3× list unit price) for strikethrough at checkout/bag. */
+  bcfBundleDealListSubtotal?: number;
 }
 
 

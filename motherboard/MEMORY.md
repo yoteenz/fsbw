@@ -5746,3 +5746,47 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Changes:** **`BookingFlowLayout.tsx`** — **`belowCard`** rendered **after** the bordered card **`</div>`** (still only when menu closed). **`BookingPageChrome.tsx`** — **`BookingCrumbTitle`**: optional **`children`** (badge-only when omitted); **`BookingSectionHeading`**: gray **`borderBottom` rule removed**; bottom margin **14px** on title. **`consultation/page.tsx`** — **`BookingCrumbTitle`** without title text; hair inspo label without optional; **`ADDITIONAL NOTES:`**; textarea **no** **`placeholder`**; total block **no** **`borderTop`**. **`appointment/page.tsx`** — crumb title only badge; estimated total **no** **`borderTop`**.
 
+---
+
+## 2026-03-30 — BCF PDP: 12px less space above details tabs
+
+**Context:** User wanted **12px** less vertical gap above the **DETAILS** / **SHIPPING** / … tab row on BCF PDP.
+
+**Changes:** **`texture-category-product/page.tsx`** — tabs wrapper **`mt-6` → `mt-3`** (default Tailwind **1.5rem → 0.75rem**, **−12px** at **16px** root); **`paddingTop: 4px`** unchanged.
+
+---
+
+## 2026-03-30 — BCF PDP: another 6px less above details tabs
+
+**Context:** User wanted **6px** less again above the BCF details tabs (follow-up to prior **−12px** change).
+
+**Changes:** **`texture-category-product/page.tsx`** — tabs wrapper **`mt-3` → `mt-1.5`** (**0.75rem → 0.375rem**, **−6px** at **16px** root).
+
+---
+
+## 2026-03-30 — BCF bundle deal: thumb, strikethrough list price, locked qty
+
+**Context:** User wanted bundle-deal cart lines to use the **same bundle thumbnail** as regular BCF bundles (PDP hero assets), show **list price struck through** and **discounted line total** (like shipping discounts on checkout), and **lock quantity** (no ±) on bag — checkout order strip has no qty controls; bag enforces **qty 3** on load.
+
+**Changes:** **`bcfProductOptions.ts`** — **`shopBcfCartLineThumbnailSrc`** (PDP JPG paths; prefers **`item.image`**), **`BCF_BUNDLE_DEAL_DISCOUNT_USD`**, **`bcfBundleDealResolvedListSubtotal`**. **`cart.ts`** — **`bcfBundleDealListSubtotal`**. **`texture-category-product`** — deal line sets **`bcfBundleDealListSubtotal`**. **`CartDropdown`**, **`shopping-bag`**, **`checkout`** — BCF thumb via helper; bundle-deal **strikethrough + line total**; bag **disabled** ± and quantity handlers no-op for **`bcfBundleDeal`**; **`loadCartItems` / `loadSavedForLater`** clamp deal qty to **3**.
+
+---
+
+## 2026-03-30 — Checkout + summary strip aligned with cart dropdown; “A/C” shorthand
+
+**Context:** User wanted **checkout** and **checkout summary** (`/checkout/summary`) horizontal cart tiles to match **cart dropdown** typography/thumbnails for **BCF** and **A/C** (appointment + consult booking lines), replacing outdated large booking badge sizing and raw cart **`name`** titles.
+
+**Decisions / terminology:** **A/C** = internal shorthand for **booking appointment** + **consult** lines (`booking-appointment`, `booking-consult`); use **BOOKING** / **CONSULT** titles and **66px** badge in **88px** slot with **+2px** nudge, same as dropdown. Documented in **`motherboard/CORE.md`**.
+
+**Changes:** New **`src/utils/checkoutOrderStripDisplay.ts`** — **`orderStripThumbnailSrc`**, **`orderStripThumbMetrics`**, **`orderStripTitleLine`**, **`orderStripRedSubtitle`**, **`orderStripUseDigitalStackLayout`** (gift / membership digital stack only — not A/C or BCF). **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`** — order strip uses util; **BCF** **+4px** nudge, **`object-contain`**; titles **BUNDLES** / **CLOSURES** / **FRONTALS** / **BOOKING** / **CONSULT**; red line matches bag/dropdown. Confirm: **`summaryScrollItemWidthPx`** uses **`orderStripThumbMetrics`**. **`bcfBundleDeal`** strikethrough price block added on summary strip to match checkout.
+
+---
+
+## 2026-03-30 — Bundle deal bag UI like A/C; auto-remove when not premium
+
+**Context:** User wanted **BCF bundle-deal** cart rows to behave like **A/C** (booking) lines: **QTY** + **×** only (no ± / **+ LIST** / **SAVE FOR LATER** on the main bag row). When the client **stops being premium** (same gate as bundle PDP: **`isPremiumMemberForGatedFeatures`** — subscription and/or **BLACK** tier), bundle-deal lines should **disappear** from cart (and saved) automatically.
+
+**Decisions:** Strip uses the **same** premium gate as **`handleBundleDealToBag`** on the BCF PDP. **`MOVE TO BAG`** does not re-add a saved bundle deal if the user is not premium. **Cart dropdown** already used QTY+× for all lines; added **no VIEW DETAILS** for **`bcfBundleDeal`** (aligned with booking). Order summary from **`location.state`** is unchanged (post-checkout snapshot).
+
+**Changes:** **`premiumMemberAccess.ts`** — **`stripIneligibleBcfBundleDealLines`**, **`applyStripIneligibleBcfBundleDealsToStoredCart`**, **`applyStripIneligibleBcfBundleDealsToStoredSavedForLater`**, **`applyStripIneligibleBcfBundleDealsToAllStoredCarts`**. **`App.tsx`** — effect on mount + **`signInStateChanged`** + **`focus`**. **`shopping-bag/page.tsx`** — **`isQtyOnlyLine`** includes bundle deal; saved list **`isSavedQtyOnlyLine`**; strip on **`loadCartItems` / `loadSavedForLater`**. **`CartDropdown.tsx`** — strip on load + **VIEW DETAILS** spacer for bundle deal. **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`** (localStorage path) — strip when loading cart. **`motherboard/CORE.md`** updated.
+

@@ -189,3 +189,61 @@ export function shopBcfPdpHrefFromCartItem(item: {
   if (t !== 'straight' && t !== 'wavy' && t !== 'curly') return null;
   return shopBcfPdpHref(c, t);
 }
+
+/** PDP hero assets — same paths as `texture-category-product` (not marble PNG thumbs). */
+const BCF_CART_BUNDLE_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
+  straight: '/assets/straight-bundle-product.JPG',
+  wavy: '/assets/wavy-bundle-product.JPG',
+  curly: '/assets/curly-bundle-product.JPG'
+};
+
+const BCF_CART_CLOSURE_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
+  straight: '/assets/straight-closure-product.JPG',
+  wavy: '/assets/wavy-closure-product.JPG',
+  curly: '/assets/curly-closure-product.JPG'
+};
+
+const BCF_CART_FRONTAL_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
+  straight: '/assets/straight-frontal-product.JPG',
+  wavy: '/assets/wavy-frontal-product.JPG',
+  curly: '/assets/curly-frontal-product.JPG'
+};
+
+/**
+ * BCF shop cart thumbnail: prefer stored `image` (PDP hero), else category+texture → same asset as bundles PDP.
+ */
+export function shopBcfCartLineThumbnailSrc(item: {
+  type?: string;
+  category?: string;
+  texture?: string;
+  image?: string;
+}): string | null {
+  if (item.type !== 'shop-texture-category') return null;
+  if (item.image && String(item.image).trim()) return String(item.image).trim();
+  const t = item.texture as ShopTextureCategoryThumbTexture | undefined;
+  const c = item.category;
+  if (!t || (t !== 'straight' && t !== 'wavy' && t !== 'curly')) return null;
+  if (c === 'bundles') return BCF_CART_BUNDLE_IMG[t];
+  if (c === 'closures') return BCF_CART_CLOSURE_IMG[t];
+  if (c === 'frontals') return BCF_CART_FRONTAL_IMG[t];
+  return null;
+}
+
+/** Known bundle-deal discount (USD) for inferring list subtotal on legacy cart lines. */
+export const BCF_BUNDLE_DEAL_DISCOUNT_USD = 40;
+
+/** List (pre-deal) line total for strikethrough; uses stored value or infers from discounted line + fixed $40 off. */
+export function bcfBundleDealResolvedListSubtotal(item: {
+  bcfBundleDeal?: boolean;
+  bcfBundleDealListSubtotal?: number;
+  price?: number;
+  quantity?: number;
+}): number | null {
+  if (!item.bcfBundleDeal) return null;
+  const stored = item.bcfBundleDealListSubtotal;
+  if (stored != null && stored > 0) return stored;
+  const q = item.quantity ?? 1;
+  const p = item.price ?? 0;
+  if (q <= 0 || p < 0) return null;
+  return p * q + BCF_BUNDLE_DEAL_DISCOUNT_USD;
+}

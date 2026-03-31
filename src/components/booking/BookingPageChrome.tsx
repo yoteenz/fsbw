@@ -33,24 +33,26 @@ export const bookingFontScript = '"Covered By Your Grace", "Covered By Your Grac
 
 const ruleGray = '#e5e7eb';
 
-/** Matches brand inner card: small red uppercase label + optional middle (e.g. tier badge) + gray rule. */
-export function BookingCrumbTitle({ children, middle }: { children: ReactNode; middle?: ReactNode }) {
+/** Matches brand inner card: optional red uppercase label + optional middle (e.g. tier badge) + gray rule. */
+export function BookingCrumbTitle({ children, middle }: { children?: ReactNode; middle?: ReactNode }) {
   return (
     <>
-      <p
-        style={{
-          fontFamily: bookingFontMedium,
-          fontSize: '12px',
-          color: '#EB1C24',
-          margin: '0 0 8px',
-          textTransform: 'uppercase',
-          fontWeight: 500,
-          textAlign: 'center',
-          letterSpacing: '0.04em'
-        }}
-      >
-        {children}
-      </p>
+      {children != null && children !== false && (
+        <p
+          style={{
+            fontFamily: bookingFontMedium,
+            fontSize: '12px',
+            color: '#EB1C24',
+            margin: '0 0 8px',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            textAlign: 'center',
+            letterSpacing: '0.04em'
+          }}
+        >
+          {children}
+        </p>
+      )}
       {middle}
       <div style={{ borderBottom: `1px solid ${ruleGray}`, marginBottom: '16px' }} />
     </>
@@ -95,26 +97,23 @@ export function BookingHeroSubline({ children }: { children: ReactNode }) {
   );
 }
 
-/** Section title + rule (accent red or neutral black). */
+/** Section title (accent red or neutral black). */
 export function BookingSectionHeading({ accent, children }: { accent?: boolean; children: ReactNode }) {
   return (
-    <>
-      <p
-        style={{
-          fontFamily: bookingFontMedium,
-          fontSize: '12px',
-          color: accent ? '#EB1C24' : '#000',
-          textTransform: 'uppercase',
-          margin: '0 0 8px',
-          textAlign: 'center',
-          fontWeight: 500,
-          letterSpacing: '0.02em'
-        }}
-      >
-        {children}
-      </p>
-      <div style={{ borderBottom: `1px solid ${ruleGray}`, marginBottom: '14px' }} />
-    </>
+    <p
+      style={{
+        fontFamily: bookingFontMedium,
+        fontSize: '12px',
+        color: accent ? '#EB1C24' : '#000',
+        textTransform: 'uppercase',
+        margin: '0 0 14px',
+        textAlign: 'center',
+        fontWeight: 500,
+        letterSpacing: '0.02em'
+      }}
+    >
+      {children}
+    </p>
   );
 }
 

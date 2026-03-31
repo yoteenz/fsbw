@@ -9,9 +9,17 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { sortCartPremiumBookingFirst } from '../../utils/bookingCart';
 import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem } from '../../utils/bookingMemberRoutes';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
-import { shopBcfPdpHrefFromCartItem } from '../../utils/bcfProductOptions';
+import {
+  shopBcfPdpHrefFromCartItem,
+  shopBcfCartLineThumbnailSrc,
+  bcfBundleDealResolvedListSubtotal
+} from '../../utils/bcfProductOptions';
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
+import {
+  isPremiumMemberForGatedFeatures,
+  stripIneligibleBcfBundleDealLines
+} from '../../utils/premiumMemberAccess';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
@@ -315,9 +323,12 @@ function ShoppingBagPage() {
       if (stored) {
         const items = JSON.parse(stored);
         if (Array.isArray(items)) {
-          const clamped = items.map((i: any) =>
-            i.isSpecialOffer && (i.quantity ?? 1) > 2 ? { ...i, quantity: 2 } : i
-          );
+          const clamped = items.map((i: any) => {
+            let row = i;
+            if (i.isSpecialOffer && (i.quantity ?? 1) > 2) row = { ...row, quantity: 2 };
+            if (i.bcfBundleDeal) row = { ...row, quantity: 3 };
+            return row;
+          });
           const cartChanged = items.some((i: any, idx: number) => (i.quantity ?? 1) !== (clamped[idx].quantity ?? 1));
           if (cartChanged) {
             localStorage.setItem('cartItems', JSON.stringify(clamped));
@@ -325,7 +336,16 @@ function ShoppingBagPage() {
             localStorage.setItem('cartCount', String(newCount));
             window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
           }
-          setCartItems(sortCartPremiumBookingFirst(clamped));
+          const strip = stripIneligibleBcfBundleDealLines(clamped);
+          if (strip.removedUnitCount > 0) {
+            localStorage.setItem('cartItems', JSON.stringify(strip.next));
+            const newCount = strip.next.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+            localStorage.setItem('cartCount', String(newCount));
+            window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+            window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+            window.dispatchEvent(new Event('cartUpdated'));
+          }
+          setCartItems(sortCartPremiumBookingFirst(strip.next));
         }
       }
     } catch (e) {
@@ -340,14 +360,22 @@ function ShoppingBagPage() {
       if (stored) {
         const items = JSON.parse(stored);
         if (Array.isArray(items)) {
-          const clamped = items.map((i: any) =>
-            i.isSpecialOffer && (i.quantity ?? 1) > 2 ? { ...i, quantity: 2 } : i
-          );
+          const clamped = items.map((i: any) => {
+            let row = i;
+            if (i.isSpecialOffer && (i.quantity ?? 1) > 2) row = { ...row, quantity: 2 };
+            if (i.bcfBundleDeal) row = { ...row, quantity: 3 };
+            return row;
+          });
           const savedChanged = items.some((i: any, idx: number) => (i.quantity ?? 1) !== (clamped[idx].quantity ?? 1));
           if (savedChanged) {
             localStorage.setItem('savedForLater', JSON.stringify(clamped));
           }
-          setSavedForLater(clamped);
+          const stripSaved = stripIneligibleBcfBundleDealLines(clamped);
+          if (stripSaved.removedUnitCount > 0) {
+            localStorage.setItem('savedForLater', JSON.stringify(stripSaved.next));
+            window.dispatchEvent(new Event('savedItemsChanged'));
+          }
+          setSavedForLater(stripSaved.next);
         }
       }
     } catch (e) {
@@ -490,6 +518,7 @@ function ShoppingBagPage() {
     try {
       const currentItem = cartItems.find(i => i.id === itemId);
       if (!currentItem) return;
+      if (currentItem.bcfBundleDeal) return;
       const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
@@ -618,6 +647,9 @@ function ShoppingBagPage() {
 
   const handleMoveToCart = (item: any) => {
     try {
+      if (item.bcfBundleDeal && !isPremiumMemberForGatedFeatures()) {
+        return;
+      }
       // Remove from saved for later
       const newSavedForLater = savedForLater.filter(i => i.id !== item.id);
       setSavedForLater(newSavedForLater);
@@ -660,6 +692,7 @@ function ShoppingBagPage() {
     try {
       const currentItem = savedForLater.find(i => i.id === itemId);
       if (!currentItem) return;
+      if (currentItem.bcfBundleDeal) return;
       const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
@@ -1254,7 +1287,9 @@ function ShoppingBagPage() {
                         }
                         const bookingThumb = bookingCartItemThumbnailSrc(item);
                         if (bookingThumb) return bookingThumb;
-                        
+                        const bcfThumb = shopBcfCartLineThumbnailSrc(item);
+                        if (bcfThumb) return bcfThumb;
+
                         // Determine thumbnail based on product name and hairline selection
                         const hairline = item.hairline || 'NATURAL';
                         const hairlineUpper = hairline.toUpperCase();
@@ -1281,6 +1316,10 @@ function ShoppingBagPage() {
                       const itemQuantity = item.quantity ?? 1;
                       const isBookingLine =
                         item.type === 'booking-consult' || item.type === 'booking-appointment';
+                      const isBundleDealLine = Boolean(item.bcfBundleDeal);
+                      const isQtyOnlyLine = isBookingLine || isBundleDealLine;
+                      const bundleDealListTot = bcfBundleDealResolvedListSubtotal(item);
+                      const bundleDealLineTot = itemPrice * itemQuantity;
 
                        return (
                          <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
@@ -1374,6 +1413,32 @@ function ShoppingBagPage() {
                                   CAP SIZE: {item.capSize}
                                 </p>
                               )}
+                              {isBundleDealLine ? (
+                                <div
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#000000',
+                                    fontSize: '12px',
+                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                    marginBottom: '0',
+                                    fontWeight: '600',
+                                    textAlign: 'left'
+                                  }}
+                                >
+                                  {bundleDealListTot != null && bundleDealListTot > bundleDealLineTot && (
+                                    <span
+                                      style={{
+                                        color: '#808080',
+                                        textDecoration: 'line-through',
+                                        marginRight: '6px',
+                                        fontSize: '11px'
+                                      }}
+                                      dangerouslySetInnerHTML={formatPrice(bundleDealListTot)}
+                                    />
+                                  )}
+                                  <span dangerouslySetInnerHTML={formatPrice(bundleDealLineTot)} />
+                                </div>
+                              ) : (
                               <p
                                 style={{
                                   fontFamily: '"Futura PT Book"',
@@ -1387,19 +1452,20 @@ function ShoppingBagPage() {
                                 }}
                                 dangerouslySetInnerHTML={formatPrice(itemPrice)}
                               />
+                              )}
                             </div>
 
-                            {/* Booking: QTY + × only (6px left vs other lines); cart dropdown aligns QTY above × */}
+                            {/* Booking + bundle deal: QTY + × only (same inset as cart dropdown booking) */}
                             <div
                               className="flex flex-col items-center justify-center absolute"
                               style={{
-                                right: isBookingLine ? '14px' : '8px',
+                                right: isQtyOnlyLine ? '14px' : '8px',
                                 top: '0',
                                 bottom: '0',
                                 marginLeft: 'auto'
                               }}
                             >
-                              {isBookingLine ? (
+                              {isQtyOnlyLine ? (
                                 <>
                                   <span
                                     style={{
@@ -1453,10 +1519,16 @@ function ShoppingBagPage() {
                                   >
                                     + LIST
                                   </button>
-                                  <div className="flex items-center">
+                                  <div
+                                    className={`flex items-center ${isBundleDealLine ? 'opacity-60' : ''}`}
+                                  >
                                     <button
+                                      type="button"
                                       onClick={() => handleQuantityChange(itemId, -1)}
-                                      className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                                      disabled={isBundleDealLine}
+                                      className={`px-2 py-0.5 text-red-500 bg-white quantity-minus-btn flex items-center justify-center ${
+                                        isBundleDealLine ? 'cursor-not-allowed opacity-70' : 'hover:bg-gray-50 cursor-pointer'
+                                      }`}
                                       style={{
                                         borderTop: '1.3px solid black !important',
                                         borderLeft: '1.3px solid black !important',
@@ -1497,9 +1569,16 @@ function ShoppingBagPage() {
                                       {itemQuantity}
                                     </div>
                                     <button
+                                      type="button"
                                       onClick={() => handleQuantityChange(itemId, 1)}
-                                      disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
-                                      className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                      disabled={
+                                        isBundleDealLine || itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                      }
+                                      className={`px-2 py-0.5 text-red-500 bg-white quantity-plus-btn flex items-center justify-center ${
+                                        isBundleDealLine || itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                          ? 'opacity-50 cursor-not-allowed'
+                                          : 'hover:bg-gray-50 cursor-pointer'
+                                      }`}
                                       style={{
                                         borderTop: '1.3px solid black !important',
                                         borderRight: '1.3px solid black !important',
@@ -1697,6 +1776,8 @@ function ShoppingBagPage() {
                     }
                     const bookingThumb = bookingCartItemThumbnailSrc(item);
                     if (bookingThumb) return bookingThumb;
+                    const bcfSaved = shopBcfCartLineThumbnailSrc(item);
+                    if (bcfSaved) return bcfSaved;
                     const hairline = item.hairline || 'NATURAL';
                     const hairlineUpper = hairline.toUpperCase();
                     const hasPeak = hairlineUpper.includes('PEAK');
@@ -1716,8 +1797,12 @@ function ShoppingBagPage() {
                   const itemLength = item.length || '24"';
                   const itemPrice = item.price || 580;
                   const itemQuantity = item.quantity ?? 0;
+                  const isSavedBundleDeal = Boolean(item.bcfBundleDeal);
+                  const savedBundleListTot = bcfBundleDealResolvedListSubtotal(item);
+                  const savedBundleLineTot = itemPrice * itemQuantity;
                   const isSavedBookingLine =
                     item.type === 'booking-consult' || item.type === 'booking-appointment';
+                  const isSavedQtyOnlyLine = isSavedBookingLine || isSavedBundleDeal;
 
                   return (
                     <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
@@ -1812,6 +1897,31 @@ function ShoppingBagPage() {
                                CAP SIZE: {item.capSize}
                              </p>
                            )}
+                           {isSavedBundleDeal ? (
+                             <div
+                               style={{
+                                 fontFamily: '"Futura PT Book"',
+                                 color: '#000000',
+                                 fontSize: '12px',
+                                 marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                 marginBottom: '0',
+                                 fontWeight: '600'
+                               }}
+                             >
+                               {savedBundleListTot != null && savedBundleListTot > savedBundleLineTot && (
+                                 <span
+                                   style={{
+                                     color: '#808080',
+                                     textDecoration: 'line-through',
+                                     marginRight: '6px',
+                                     fontSize: '11px'
+                                   }}
+                                   dangerouslySetInnerHTML={formatPrice(savedBundleListTot)}
+                                 />
+                               )}
+                               <span dangerouslySetInnerHTML={formatPrice(savedBundleLineTot)} />
+                             </div>
+                           ) : (
                            <p
                              style={{
                                fontFamily: '"Futura PT Book"',
@@ -1825,11 +1935,27 @@ function ShoppingBagPage() {
                              }}
                              dangerouslySetInnerHTML={formatPrice(itemPrice)}
                            />
+                           )}
                          </div>
 
-                         {/* Quantity / +LIST — omitted for saved booking lines; MOVE TO BAG kept */}
-                         <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
-                           {!isSavedBookingLine ? (
+                         {/* Quantity / +LIST — booking + bundle deal: QTY only (like bag); else full controls */}
+                         <div
+                           className="flex flex-col items-center justify-center absolute"
+                           style={{ right: isSavedQtyOnlyLine ? '14px' : '8px', top: '0', bottom: '0', marginLeft: 'auto' }}
+                         >
+                           {isSavedQtyOnlyLine ? (
+                             <span
+                               style={{
+                                 fontFamily: '"Futura PT Medium"',
+                                 fontSize: '8px',
+                                 color: '#000000',
+                                 textTransform: 'uppercase',
+                                 marginBottom: '6px'
+                               }}
+                             >
+                               QTY: {itemQuantity}
+                             </span>
+                           ) : (
                              <>
                                <button
                                  type="button"
@@ -1853,8 +1979,9 @@ function ShoppingBagPage() {
                                </button>
                                <div className="flex items-center">
                                  <button
+                                   type="button"
                                    onClick={() => handleSavedQuantityChange(itemId, -1)}
-                                   className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                                   className="px-2 py-0.5 text-red-500 bg-white quantity-minus-btn flex items-center justify-center hover:bg-gray-50 cursor-pointer"
                                    style={{
                                      borderTop: '1.3px solid black !important',
                                      borderLeft: '1.3px solid black !important',
@@ -1895,9 +2022,14 @@ function ShoppingBagPage() {
                                    {itemQuantity}
                                  </div>
                                  <button
+                                   type="button"
                                    onClick={() => handleSavedQuantityChange(itemId, 1)}
                                    disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
-                                   className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                   className={`px-2 py-0.5 text-red-500 bg-white quantity-plus-btn flex items-center justify-center ${
+                                     itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                       ? 'opacity-50 cursor-not-allowed'
+                                       : 'hover:bg-gray-50 cursor-pointer'
+                                   }`}
                                    style={{
                                      borderTop: '1.3px solid black !important',
                                      borderRight: '1.3px solid black !important',
@@ -1918,7 +2050,7 @@ function ShoppingBagPage() {
                                  </button>
                                </div>
                              </>
-                           ) : null}
+                           )}
                            {(item.stockStatus || 'in_stock') === 'out_of_stock' ? (
                              <span
                                style={{

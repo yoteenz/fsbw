@@ -633,7 +633,8 @@ export default function ShopTextureCategoryProductPage() {
       try {
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
         const currentCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
-        const subtotal = BUNDLE_DEAL_QTY * displayPrice - BUNDLE_DEAL_DISCOUNT_USD;
+        const listSubtotal = BUNDLE_DEAL_QTY * displayPrice;
+        const subtotal = listSubtotal - BUNDLE_DEAL_DISCOUNT_USD;
         const unitPrice = subtotal / BUNDLE_DEAL_QTY;
         const newItem = {
           id: `shop-${texture}-bundles-deal-${Date.now()}`,
@@ -647,7 +648,8 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          bcfBundleDeal: true
+          bcfBundleDeal: true,
+          bcfBundleDealListSubtotal: listSubtotal
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -1649,8 +1651,8 @@ export default function ShopTextureCategoryProductPage() {
                     </div>
                   </div>
 
-                {/* Tabs — same vertical treatment as Noir (`noir/page.tsx` ~2844–2885) */}
-                <div className="mt-6 w-full" style={{ paddingTop: '4px' }}>
+                {/* Tabs — Noir-aligned; margin above tab row: was mt-6, then −12px (mt-3), then −6px more (mt-1.5) */}
+                <div className="mt-1.5 w-full" style={{ paddingTop: '4px' }}>
                   <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button

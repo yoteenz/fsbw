@@ -337,6 +337,21 @@ function App() {
     void flushQueuedProfilePatch();
   }, [location.pathname]);
 
+  // Drop BCF bundle-deal cart/saved lines when the user no longer qualifies (premium / BLACK tier gate).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const run = () => {
+      void import('./utils/premiumMemberAccess').then((m) => m.applyStripIneligibleBcfBundleDealsToAllStoredCarts());
+    };
+    run();
+    window.addEventListener('signInStateChanged', run);
+    window.addEventListener('focus', run);
+    return () => {
+      window.removeEventListener('signInStateChanged', run);
+      window.removeEventListener('focus', run);
+    };
+  }, []);
+
   // When the app loads while already signed in (localStorage + Supabase session), pull server state automatically.
   // bootstrap in main.tsx skips API sync when isSignedIn was already true — this effect covers that gap so users
   // do not need to sign out/in or use admin "Sync my account" to refresh profile from Supabase.

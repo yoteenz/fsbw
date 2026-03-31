@@ -9,7 +9,12 @@ import { getPointsMultiplier } from '../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../utils/adminAuth';
 import { bookingCartItemThumbnailSrc } from '../utils/bookingBadges';
 import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem } from '../utils/bookingMemberRoutes';
-import { shopBcfPdpHrefFromCartItem } from '../utils/bcfProductOptions';
+import {
+  shopBcfPdpHrefFromCartItem,
+  shopBcfCartLineThumbnailSrc,
+  bcfBundleDealResolvedListSubtotal
+} from '../utils/bcfProductOptions';
+import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -303,7 +308,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               updatedItems: itemsWithCorrectPrices.map((i: any) => ({ id: i.id, price: i.price }))
             });
           }
-          setCartItems(itemsWithCorrectPrices);
+          const strip = stripIneligibleBcfBundleDealLines(itemsWithCorrectPrices);
+          if (strip.removedUnitCount > 0) {
+            localStorage.setItem('cartItems', JSON.stringify(strip.next));
+            const newCount = strip.next.reduce((sum: number, ci: CartItem) => sum + (ci.quantity || 1), 0);
+            localStorage.setItem('cartCount', String(newCount));
+            window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+            window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+            window.dispatchEvent(new Event('cartUpdated'));
+          }
+          setCartItems(strip.next);
         } else {
           // Generate mock cart items based on cart count
           const actualPrice = calculateActualPrice();
@@ -1556,6 +1570,62 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             CAP SIZE: {item.capSize}
                           </p>
                         )}
+                        {(item as CartItem).bcfBundleDeal ? (
+                          <div
+                            style={{
+                              marginTop: (() => {
+                                const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
+                                const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
+                                const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
+                                const hasSpecs =
+                                  (item.density && item.density !== '200%') ||
+                                  (item.lace && item.lace !== '13X6') ||
+                                  (item.texture && item.texture !== defaultTexture) ||
+                                  (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
+                                  (item.hairline && item.hairline !== 'NATURAL') ||
+                                  (item.styling && item.styling !== 'NONE') ||
+                                  (item.addOns && item.addOns.length > 0);
+                                return hasSpecs ? '2px' : '1px';
+                              })(),
+                              marginBottom: '0',
+                              textAlign: 'center',
+                              width: '100%'
+                            }}
+                          >
+                            {(() => {
+                              const listTot = bcfBundleDealResolvedListSubtotal(item as CartItem);
+                              const lineTot = (item.price || 0) * (item.quantity || 1);
+                              return (
+                                <>
+                                  {listTot != null && listTot > lineTot && (
+                                    <span
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        color: '#808080',
+                                        textTransform: 'uppercase',
+                                        fontSize: '11px',
+                                        fontWeight: '600',
+                                        textDecoration: 'line-through',
+                                        marginRight: '6px'
+                                      }}
+                                      dangerouslySetInnerHTML={formatPrice(listTot)}
+                                    />
+                                  )}
+                                  <span
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      color: '#000000',
+                                      textTransform: 'uppercase',
+                                      fontSize: '12px',
+                                      fontWeight: '600'
+                                    }}
+                                    dangerouslySetInnerHTML={formatPrice(lineTot)}
+                                  />
+                                </>
+                              );
+                            })()}
+                          </div>
+                        ) : (
                         <p 
                           style={{ 
                             fontFamily: '"Futura PT Book"',
@@ -1584,6 +1654,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           }}
                           dangerouslySetInnerHTML={formatPrice(item.price)}
                         />
+                        )}
                       </div>
                     </div>
                   
@@ -1618,6 +1689,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>×</span>
                       </button>
                       {(() => {
+                        if (
+                          item.type === 'booking-consult' ||
+                          item.type === 'booking-appointment' ||
+                          (item as CartItem).bcfBundleDeal
+                        ) {
+                          return <div style={{ height: '20px', marginTop: '6px' }}></div>;
+                        }
                         // Check if item has specifications (sub page selections)
                         // Only show VIEW DETAILS if item has actual customizations beyond defaults
                         // For BLANCO, flex cap options (XXS/XS/S, S/M/L) are default options, not customizations
