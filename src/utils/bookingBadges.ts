@@ -7,6 +7,12 @@
  */
 export const BOOKING_BADGE_DISPLAY_PX = 182.16;
 
+/**
+ * Consult header PNGs read shorter than appointment at the same box size (wider artwork in-frame).
+ * Use a slightly larger square on booking consult pages only so vertical presence matches appointment.
+ */
+export const BOOKING_BADGE_HEADER_CONSULT_PX = 198;
+
 /** Cart row width for booking badge thumbs (thumb + horizontal padding). */
 export const BOOKING_BADGE_CART_CELL_WIDTH_PX = Math.ceil(BOOKING_BADGE_DISPLAY_PX + 16);
 

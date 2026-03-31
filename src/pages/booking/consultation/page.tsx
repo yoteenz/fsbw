@@ -1,25 +1,28 @@
 import { useRef, useState, type ChangeEvent } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   BookingBodyParagraph,
   BookingCrumbTitle,
   BookingHeroSubline,
-  BookingMutedNote,
   BookingTierBadgeImg,
   NoirStyleAddToBagButton,
   bookingFontBook,
   bookingFontMedium
 } from '../../../components/booking/BookingPageChrome';
+import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 
-const CONSULT_DEPOSIT_USD = 25;
+const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
-/** Consult deposits: all members (standard and premium). Hair appointment / install flow is premium-gated on the appointment page only. */
+/** Standard `/booking/consultation`: any signed-in tier. Premium `/booking/premium/consultation`: same gate as appointments (modal + no add-to-bag without premium). */
 export default function BookingConsultationPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
@@ -28,6 +31,8 @@ export default function BookingConsultationPage() {
   const [inspoPreview, setInspoPreview] = useState<string | null>(null);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [formError, setFormError] = useState<string | null>(null);
+  const [showPremiumConsultUpgradeModal, setShowPremiumConsultUpgradeModal] = useState(false);
+  const { formatUsd } = useSelectedCurrencyDisplay();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -48,6 +53,10 @@ export default function BookingConsultationPage() {
   };
 
   const handleAddToBag = () => {
+    if (isPremiumBooking && !isPremiumMemberForGatedFeatures()) {
+      setShowPremiumConsultUpgradeModal(true);
+      return;
+    }
     setFormError(null);
     setAddToBagState('adding');
     setTimeout(() => {
@@ -86,41 +95,44 @@ export default function BookingConsultationPage() {
   };
 
   const labelStyle = {
-    fontFamily: bookingFontBook,
+    fontFamily: bookingFontMedium,
     fontSize: '11px' as const,
     color: '#000000',
     textTransform: 'uppercase' as const,
     marginBottom: '6px',
     display: 'block' as const,
-    letterSpacing: '0.03em'
+    letterSpacing: '0.03em',
+    fontWeight: 500 as const
   };
 
   return (
+    <>
     <BookingFlowLayout
       crumbHighlight="CONSULT"
       belowCard={
-        <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '8px' }}>
+        <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '2px' }}>
           <NoirStyleAddToBagButton
             state={addToBagState}
             disabled={addToBagState === 'adding'}
             onClick={handleAddToBag}
           />
-          <BookingMutedNote style={{ marginTop: '10px', marginBottom: 0 }}>
-            DEPOSIT IS NON-REFUNDABLE AND CREDITED WHEN YOU PURCHASE YOUR WIG OR BOOK INSTALLATION.
-          </BookingMutedNote>
         </div>
       }
     >
       <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingBottom: '12px' }}>
-        <BookingCrumbTitle middle={<BookingTierBadgeImg />} />
-        <BookingHeroSubline>NON-REFUNDABLE DEPOSIT APPLIES TOWARD YOUR WIG OR INSTALL</BookingHeroSubline>
+        <BookingCrumbTitle middle={<BookingTierBadgeImg />} hideRule>
+          {null}
+        </BookingCrumbTitle>
+        <BookingHeroSubline>
+          NON-REFUNDABLE DEPOSIT APPLIES TOWARD YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 60 DAYS OF PURCHASE.
+        </BookingHeroSubline>
 
-        <div style={{ marginBottom: '22px' }}>
+        <div style={{ marginBottom: '24px' }}>
           <BookingBodyParagraph>
-            BOOK A COMPLIMENTARY-STYLE CONSULT TO NARROW TEXTURE, ORIGIN, LENGTH, DENSITY, AND FINISH. YOUR DEPOSIT HOLDS YOUR SPOT AND CREDITS TOWARD YOUR UNIT OR INSTALL WHEN YOU MOVE FORWARD.
+            BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY & OVERALL FINISH. THIS DEPOSIT HOLDS YOUR APPOINTMENT & CREDITS TOWARD YOUR UNIT OR INSTALL.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            PICK WIG + INSTALL OR WIG ONLY, ADD NOTES, AND OPTIONALLY ADD A CLEAR INSPO PHOTO. YOU WILL RECEIVE A FOLLOW-UP WITH A CHECKLIST, PRICE BREAKDOWN, AND DEPOSIT DETAILS BY EMAIL.
+            SELECT WIG + INSTALL OR WIG ONLY. ADD NOTES & A HAIR INSPO PHOTO FOR THE BEST RESULTS. YOU WILL RECEIVE A FOLLOW-UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & DEPOSIT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -135,8 +147,7 @@ export default function BookingConsultationPage() {
         >
           <div>
             <label htmlFor="hair-inspo" style={labelStyle}>
-              <span style={{ color: '#EB1C24', fontFamily: bookingFontMedium }}>HAIR INSPO</span>
-              <span style={{ color: '#808080', fontFamily: bookingFontBook, fontSize: '9px' }}> (OPTIONAL)</span>
+              HAIR INSPO:
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -148,55 +159,73 @@ export default function BookingConsultationPage() {
                 style={{
                   position: 'absolute',
                   width: '100%',
-                  height: '40px',
+                  height: '36px',
                   opacity: 0,
                   cursor: 'pointer',
                   zIndex: 2
                 }}
               />
               <div
-                role="button"
-                tabIndex={0}
                 onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    fileInputRef.current?.click();
-                  }
-                }}
-                className="bg-white/80 backdrop-blur-sm"
                 style={{
                   width: '100%',
-                  minHeight: '40px',
-                  padding: '10px',
+                  minHeight: '36px',
+                  height: inspoPreview ? 'auto' : '36px',
+                  padding: '8px',
                   border: '1.3px solid #000000',
-                  fontFamily: bookingFontBook,
+                  fontFamily: bookingFontMedium,
                   fontSize: '11px',
+                  fontWeight: 500,
+                  backgroundColor: '#FFFFFF',
+                  color: inspoFileName ? '#808080' : '#000000',
                   boxSizing: 'border-box',
+                  borderRadius: '0',
                   cursor: 'pointer',
                   textTransform: 'uppercase',
-                  letterSpacing: '0.03em'
+                  position: 'relative',
+                  overflow: inspoPreview ? 'visible' : 'hidden',
+                  display: inspoPreview ? 'block' : 'flex',
+                  alignItems: inspoPreview ? 'normal' : 'center'
                 }}
               >
                 {inspoPreview ? (
-                  <img src={inspoPreview} alt="Hair inspo preview" style={{ maxWidth: '100%', maxHeight: '160px', objectFit: 'contain' }} />
+                  <img
+                    src={inspoPreview}
+                    alt="Hair inspo preview"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      objectPosition: 'left center',
+                      display: 'block'
+                    }}
+                  />
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span
                       style={{
-                        padding: '5px 10px',
-                        border: '1.3px solid #000',
-                        borderRadius: '8px',
-                        backgroundColor: '#fff',
+                        padding: '4px 8px',
+                        border: '1px solid #808080',
+                        borderRadius: '4px',
+                        backgroundColor: '#F5F5F5',
                         color: '#000000',
-                        fontSize: '10px',
+                        textTransform: 'uppercase',
+                        fontSize: '11px',
                         fontFamily: bookingFontMedium,
-                        letterSpacing: '0.04em'
+                        fontWeight: 500
                       }}
                     >
                       CHOOSE FILE
                     </span>
-                    <span style={{ color: '#808080', fontFamily: bookingFontBook, fontSize: '10px' }}>
+                    <span
+                      style={{
+                        marginLeft: '8px',
+                        color: '#808080',
+                        fontFamily: bookingFontMedium,
+                        fontWeight: 500,
+                        fontSize: '10px'
+                      }}
+                    >
                       {inspoFileName || 'NO FILE SELECTED'}
                     </span>
                   </div>
@@ -237,21 +266,22 @@ export default function BookingConsultationPage() {
 
           <div>
             <label htmlFor="consult-notes" style={labelStyle}>
-              ADDITIONAL NOTES
+              ADDITIONAL NOTES:
             </label>
             <textarea
               id="consult-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="WRITE YOUR COMMENT HERE."
               rows={5}
               className="bg-white/80 backdrop-blur-sm"
               style={{
                 width: '100%',
                 boxSizing: 'border-box',
                 border: '1.3px solid #000',
-                fontFamily: bookingFontBook,
+                fontFamily: bookingFontMedium,
                 fontSize: '11px',
+                color: '#000000',
+                fontWeight: 500,
                 padding: '12px',
                 textTransform: 'uppercase',
                 resize: 'vertical',
@@ -267,25 +297,35 @@ export default function BookingConsultationPage() {
             </p>
           )}
 
-          <div style={{ paddingTop: '6px', textAlign: 'center' }}>
-            <p
-              style={{
-                fontFamily: bookingFontBook,
-                fontSize: '10px',
-                color: '#808080',
-                textTransform: 'uppercase',
-                margin: '0 0 6px',
-                letterSpacing: '0.04em'
-              }}
-            >
+          <div className="text-center" style={{ paddingTop: '6px' }}>
+            <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
               TOTAL DUE
             </p>
-            <p style={{ fontFamily: bookingFontMedium, fontSize: '20px', color: '#000', margin: 0, letterSpacing: '0.02em' }}>
-              ${CONSULT_DEPOSIT_USD} USD
+            <p
+              className="text-black font-medium text-base md:text-xl lg:text-2xl"
+              style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
+            >
+              {formatUsd(CONSULT_DEPOSIT_USD)}
             </p>
           </div>
         </div>
       </div>
     </BookingFlowLayout>
+
+    <ConfirmationModal
+      isOpen={showPremiumConsultUpgradeModal}
+      onClose={() => setShowPremiumConsultUpgradeModal(false)}
+      onConfirm={() => {
+        setShowPremiumConsultUpgradeModal(false);
+        prepareMembershipUpgradeNavigation();
+        navigate('/account/rewards');
+      }}
+      title="UPGRADE YOUR SUBSCRIPTION?"
+      message="PREMIUM-PATH WIG CONSULTS REQUIRE AN ACTIVE PREMIUM OR BLACK TIER MEMBERSHIP. STANDARD CONSULTS ARE AVAILABLE FROM THE SHOP MENU."
+      confirmText="UPGRADE"
+      cancelText="CANCEL"
+      dataAttribute="upgrade-subscription-modal-booking-premium-consult"
+    />
+    </>
   );
 }

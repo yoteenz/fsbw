@@ -10,6 +10,8 @@ import { clearAppAuth } from '../../utils/adminAuth';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 
 interface WigCustomization {
   capSize: string;
@@ -28,7 +30,8 @@ export default function BuildAWigPage() {
   const location = useLocation();
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
-  
+  const [showPremiumMembershipHubModal, setShowPremiumMembershipHubModal] = useState(false);
+
   // Track the current route to detect navigation changes
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
@@ -331,7 +334,19 @@ export default function BuildAWigPage() {
     if (pathname.startsWith('/build-a-wig/noir')) return 740; // Noir base price is 740
     return 740; // Default noir base price, flexible caps add $40 via capSizePrice
   }, [location.pathname]);
-  
+
+  useEffect(() => {
+    const refreshPremiumHubModal = () => {
+      if (isPremiumMemberForGatedFeatures()) setShowPremiumMembershipHubModal(false);
+    };
+    window.addEventListener('signInStateChanged', refreshPremiumHubModal);
+    window.addEventListener('focus', refreshPremiumHubModal);
+    return () => {
+      window.removeEventListener('signInStateChanged', refreshPremiumHubModal);
+      window.removeEventListener('focus', refreshPremiumHubModal);
+    };
+  }, []);
+
   // Helper function to calculate prices from selections
   const calculatePricesFromSelections = useCallback((selections: WigCustomization) => {
     // Calculate cap size price: flexible caps (XXS/XS/S, S/M/L) cost $40 more than regular caps
@@ -3780,7 +3795,11 @@ export default function BuildAWigPage() {
   }, [currencyRates, selectedCurrency]);
 
   const handleOptionSelect = (category: string, optionId: string) => {
-    
+    if (isBuildWigPremiumMembershipOptionCategory(category) && !isPremiumMemberForGatedFeatures()) {
+      setShowPremiumMembershipHubModal(true);
+      return;
+    }
+
     // CRITICAL: Save current customization to localStorage BEFORE navigating
     // This ensures sub-pages see the correct current selections
     localStorage.setItem('selectedCapSize', customization.capSize);
@@ -5803,6 +5822,21 @@ export default function BuildAWigPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <ConfirmationModal
+        isOpen={showPremiumMembershipHubModal}
+        onClose={() => setShowPremiumMembershipHubModal(false)}
+        onConfirm={() => {
+          setShowPremiumMembershipHubModal(false);
+          prepareMembershipUpgradeNavigation();
+          navigate('/account/rewards');
+        }}
+        title="UPGRADE YOUR SUBSCRIPTION?"
+        message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
+        confirmText="UPGRADE"
+        cancelText="CANCEL"
+        dataAttribute="upgrade-subscription-modal-build-a-wig-hub-premium-options"
       />
     </>
   );

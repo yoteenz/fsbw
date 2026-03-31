@@ -31,11 +31,13 @@ import {
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { bcfBundleDealResolvedListSubtotal } from '../../utils/bcfProductOptions';
+import { cartItemsToQuoteLines, fetchCheckoutQuote, type ServerCheckoutQuote } from '../../utils/checkoutQuote';
 import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import {
   orderStripRedSubtitle,
   orderStripThumbnailSrc,
   orderStripThumbMetrics,
+  orderStripTitleFontPx,
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../utils/checkoutOrderStripDisplay';
@@ -547,6 +549,28 @@ function CheckoutPage() {
       window.removeEventListener('focus', refreshSession);
     };
   }, [isSubscriptionUpgrade]);
+
+  useEffect(() => {
+    if (isSubscriptionUpgrade) {
+      setServerQuote(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      if (!cartItems.length) {
+        if (!cancelled) setServerQuote(null);
+        return;
+      }
+      const lines = cartItemsToQuoteLines(cartItems);
+      const result = await fetchCheckoutQuote(lines);
+      if (cancelled) return;
+      if (result.ok) setServerQuote(result.quote);
+      else setServerQuote(null);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [cartItems, isSubscriptionUpgrade]);
 
   useEffect(() => {
     if (location.pathname !== '/checkout/upgrade') return;
@@ -2455,7 +2479,6 @@ function CheckoutPage() {
                         >
                           {cartItems.map((item, index) => {
                           const itemId = item.id || `cart-item-${index}`;
-                          const itemName = item.name || 'NOIR';
                           const thumbM = orderStripThumbMetrics(item, isSubscriptionUpgrade, {
                             checkoutStrip: true
                           });
@@ -4735,6 +4758,30 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(orderAmount)}></span>
                     </div>
+                    {serverQuote && serverQuote.totalCents > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', lineHeight: 1.35 }}>
+                          SERVER LIST (USD, VERIFIED LINES):
+                        </span>
+                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000', textAlign: 'right' }}>
+                          ${(serverQuote.totalCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+                          USD
+                        </span>
+                      </div>
+                    )}
+                    {serverQuote && !serverQuote.fullyResolved && serverQuote.warnings.length > 0 && (
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '9px',
+                          color: '#808080',
+                          margin: '4px 0 0',
+                          lineHeight: 1.35
+                        }}
+                      >
+                        Some items (e.g. BCF bundle deals or custom builds) are not fully priced on the server yet. This page total still uses your cart. Currency selector remains display-only for settlement.
+                      </p>
+                    )}
                     {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
                       <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>

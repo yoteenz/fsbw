@@ -1,0 +1,30 @@
+﻿src/components/CartDropdown.tsx(314,48): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(callbackfn: (previousValue: CartLinePremiumGated, currentValue: CartLinePremiumGated, currentIndex: number, array: CartLinePremiumGated[]) => CartLinePremiumGated, initialValue: CartLinePremiumGated): CartLinePremiumGated', gave the following error.
+    Argument of type '(sum: number, ci: CartItem) => number' is not assignable to parameter of type '(previousValue: CartLinePremiumGated, currentValue: CartLinePremiumGated, currentIndex: number, array: CartLinePremiumGated[]) => CartLinePremiumGated'.
+      Types of parameters 'sum' and 'previousValue' are incompatible.
+        Type 'CartLinePremiumGated' is not assignable to type 'number'.
+  Overload 2 of 3, '(callbackfn: (previousValue: number, currentValue: CartLinePremiumGated, currentIndex: number, array: CartLinePremiumGated[]) => number, initialValue: number): number', gave the following error.
+    Argument of type '(sum: number, ci: CartItem) => number' is not assignable to parameter of type '(previousValue: number, currentValue: CartLinePremiumGated, currentIndex: number, array: CartLinePremiumGated[]) => number'.
+      Types of parameters 'ci' and 'currentValue' are incompatible.
+        Type 'CartLinePremiumGated' is missing the following properties from type 'CartItem': id, name, price, image
+src/components/CartDropdown.tsx(320,24): error TS2345: Argument of type 'CartLinePremiumGated[]' is not assignable to parameter of type 'SetStateAction<CartItem[]>'.
+  Type 'CartLinePremiumGated[]' is not assignable to type 'CartItem[]'.
+    Type 'CartLinePremiumGated' is missing the following properties from type 'CartItem': id, name, price, image
+src/pages/build-a-wig/addons/page.tsx(13,1): error TS6133: 'useBuildWigPremiumMembershipStepGate' is declared but its value is never read.
+src/pages/build-a-wig/addons/page.tsx(1312,8): error TS2304: Cannot find name 'premiumMembershipStepModal'.
+src/pages/build-a-wig/color/page.tsx(14,1): error TS6133: 'useBuildWigPremiumMembershipStepGate' is declared but its value is never read.
+src/pages/build-a-wig/color/page.tsx(1438,8): error TS2304: Cannot find name 'premiumMembershipStepModal'.
+src/pages/build-a-wig/lace/page.tsx(14,1): error TS6133: 'useBuildWigPremiumMembershipStepGate' is declared but its value is never read.
+src/pages/build-a-wig/lace/page.tsx(1181,8): error TS2304: Cannot find name 'premiumMembershipStepModal'.
+src/pages/build-a-wig/texture/page.tsx(14,1): error TS6133: 'useBuildWigPremiumMembershipStepGate' is declared but its value is never read.
+src/pages/build-a-wig/texture/page.tsx(1050,8): error TS2304: Cannot find name 'premiumMembershipStepModal'.
+src/pages/shop/texture-category-product/page.tsx(3,10): error TS6133: 'Navigate' is declared but its value is never read.
+src/pages/shop/texture-category-product/page.tsx(1511,74): error TS2345: Argument of type 'Category | null' is not assignable to parameter of type 'Category'.
+  Type 'null' is not assignable to type 'Category'.
+src/pages/shop/texture-category-product/page.tsx(1906,81): error TS2345: Argument of type 'Category | null' is not assignable to parameter of type 'ShopTextureCategoryThumbCategory'.
+  Type 'null' is not assignable to type 'ShopTextureCategoryThumbCategory'.
+src/pages/shop/texture-category-product/page.tsx(1912,68): error TS2345: Argument of type 'Category | null' is not assignable to parameter of type 'Category'.
+  Type 'null' is not assignable to type 'Category'.
+src/pages/shop/texture-category-product/page.tsx(1916,57): error TS2345: Argument of type 'Category | null' is not assignable to parameter of type 'Category'.
+  Type 'null' is not assignable to type 'Category'.
+src/pages/shop/texture-category-product/page.tsx(1980,94): error TS2538: Type 'null' cannot be used as an index type.

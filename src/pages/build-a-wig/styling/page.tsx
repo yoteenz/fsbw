@@ -11,10 +11,12 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedView, setSelectedView] = useState(1);
   // We do NOT auto-select a style when BLEACH/PLUCK are selected — styling is optional; user may want bleach/pluck only.
   const [selectedHairStyling, setSelectedHairStyling] = useState<string[]>(() => {
@@ -1438,6 +1440,7 @@ export default function StylingSelectionPage() {
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
       />
+      {premiumMembershipStepModal}
     </div>
     </>
   );

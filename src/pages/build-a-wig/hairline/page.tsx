@@ -5,6 +5,7 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 
 interface HairlineOption {
   id: string;
@@ -19,6 +20,7 @@ interface HairlineOption {
 function HairlineSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [showLoading, setShowLoading] = useState(true);
   const [selectedHairline, setSelectedHairline] = useState<string[]>(() => {
     const pathname = window.location.pathname;
@@ -849,6 +851,7 @@ function HairlineSelection() {
       </div>
     </div>
     </div>
+      {premiumMembershipStepModal}
     </>
   );
 }

@@ -1,7 +1,10 @@
 /**
  * Social click/follow tracking for admin analytics.
- * Events are stored in localStorage and read by the admin Analytics page.
+ * Events are stored in localStorage (offline / fallback) and POSTed to `/api/analytics/event` (Supabase).
  */
+
+import { getOrCreateVisitorId } from './analyticsVisitor';
+import { postAnalyticsEvent } from './api';
 
 const STORAGE_KEY = 'socialClickAnalytics';
 const MAX_EVENTS = 5000;
@@ -60,6 +63,27 @@ export function recordSocialClick(platform: SocialPlatform, source: SocialSource
       userId,
     });
     setStoredEvents(events);
+
+    const visitorId = getOrCreateVisitorId();
+    if (visitorId) {
+      let userEmail: string | undefined;
+      try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          const user = JSON.parse(currentUser);
+          userEmail = typeof user?.email === 'string' ? user.email : undefined;
+        }
+      } catch {
+        /* ignore */
+      }
+      void postAnalyticsEvent({
+        visitorId,
+        eventType: 'social_click',
+        platform,
+        source,
+        userEmail: userEmail ?? null,
+      });
+    }
   } catch {
     // fail silently so we don't break the link
   }

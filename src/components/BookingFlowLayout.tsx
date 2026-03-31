@@ -365,7 +365,9 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
           ) : (
             <>
               <div
-                className="border border-black flex flex-col pt-6 px-5 pb-8 mb-2 bg-white/60 backdrop-blur-sm"
+                className={`border border-black flex flex-col pt-6 px-5 mb-2 bg-white/60 backdrop-blur-sm ${
+                  belowCard != null ? 'pb-2' : 'pb-8'
+                }`}
                 style={{
                   borderWidth: '1.3px',
                   minWidth: '100%',

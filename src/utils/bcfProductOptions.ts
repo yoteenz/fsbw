@@ -3,7 +3,10 @@
  */
 
 import type { CSSProperties } from 'react';
-import type { ShopTextureCategoryThumbTexture } from './shopTextureCategoryThumb';
+import {
+  shopTextureCategoryThumbSrc,
+  type ShopTextureCategoryThumbTexture
+} from './shopTextureCategoryThumb';
 
 /** Brand red for selected PDP option chips (BCF + six unit PDPs). */
 export const BCF_OPTION_RED = '#EB1C24';
@@ -190,13 +193,7 @@ export function shopBcfPdpHrefFromCartItem(item: {
   return shopBcfPdpHref(c, t);
 }
 
-/** PDP hero assets — same paths as `texture-category-product` (not marble PNG thumbs). */
-const BCF_CART_BUNDLE_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
-  straight: '/assets/straight-bundle-product.JPG',
-  wavy: '/assets/wavy-bundle-product.JPG',
-  curly: '/assets/curly-bundle-product.JPG'
-};
-
+/** PDP hero assets for cart fallback when no `image` (closures/frontals). Bundles use `shopTextureCategoryThumbSrc` PNGs. */
 const BCF_CART_CLOSURE_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
   straight: '/assets/straight-closure-product.JPG',
   wavy: '/assets/wavy-closure-product.JPG',
@@ -210,29 +207,34 @@ const BCF_CART_FRONTAL_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
 };
 
 /**
- * BCF shop cart thumbnail: prefer stored `image` (PDP hero), else category+texture → same asset as bundles PDP.
+ * BCF shop cart thumbnail: **bundles** (regular + bundle deal) always use marble **`bundle-{texture}.png`**
+ * (`shopTextureCategoryThumbSrc`) so cart / bag / checkout match texture selection. Closures/frontals: prefer stored
+ * `image`, else PDP hero JPG map.
  */
 export function shopBcfCartLineThumbnailSrc(item: {
   type?: string;
   category?: string;
   texture?: string;
   image?: string;
+  bcfBundleDeal?: boolean;
 }): string | null {
   if (item.type !== 'shop-texture-category') return null;
-  if (item.image && String(item.image).trim()) return String(item.image).trim();
   const t = item.texture as ShopTextureCategoryThumbTexture | undefined;
   const c = item.category;
   if (!t || (t !== 'straight' && t !== 'wavy' && t !== 'curly')) return null;
-  if (c === 'bundles') return BCF_CART_BUNDLE_IMG[t];
+  if (c === 'bundles') {
+    return shopTextureCategoryThumbSrc(t, 'bundles');
+  }
+  if (item.image && String(item.image).trim()) return String(item.image).trim();
   if (c === 'closures') return BCF_CART_CLOSURE_IMG[t];
   if (c === 'frontals') return BCF_CART_FRONTAL_IMG[t];
   return null;
 }
 
 /** Known bundle-deal discount (USD) for inferring list subtotal on legacy cart lines. */
-export const BCF_BUNDLE_DEAL_DISCOUNT_USD = 40;
+export const BCF_BUNDLE_DEAL_DISCOUNT_USD = 60;
 
-/** List (pre-deal) line total for strikethrough; uses stored value or infers from discounted line + fixed $40 off. */
+/** List (pre-deal) line total for strikethrough; uses stored value or infers from discounted line + fixed $60 off. */
 export function bcfBundleDealResolvedListSubtotal(item: {
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;

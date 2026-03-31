@@ -53,15 +53,25 @@ export default function AdminAnalytics() {
     if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
       getAdminAnalytics()
         .then((r) => {
-          if (r && Number(r.total) > 0) {
-            setSummary({
-              total: r.total,
-              bySource: r.bySource as Record<SocialSource, number>,
-              byPlatform: r.byPlatform as Record<SocialPlatform, number>,
-              byPlatformAndSource: r.byPlatformAndSource as Record<SocialPlatform, Record<SocialSource, number>>,
-              recentEvents: [],
-            });
-          }
+          if (!r) return;
+          const recent = (r.recentEvents ?? []).filter(
+            (e): e is typeof e & { platform: SocialPlatform; source: SocialSource } =>
+              e != null &&
+              typeof e.platform === 'string' &&
+              typeof e.source === 'string' &&
+              typeof e.timestamp === 'number'
+          );
+          setSummary({
+            total: r.total,
+            bySource: r.bySource as Record<SocialSource, number>,
+            byPlatform: r.byPlatform as Record<SocialPlatform, number>,
+            byPlatformAndSource: r.byPlatformAndSource as Record<SocialPlatform, Record<SocialSource, number>>,
+            recentEvents: recent.map((e) => ({
+              platform: e.platform as SocialPlatform,
+              source: e.source as SocialSource,
+              timestamp: e.timestamp,
+            })),
+          });
         })
         .catch(() => {});
     }
@@ -288,7 +298,16 @@ export default function AdminAnalytics() {
             <PageActionsBelowCard>
               <button
                 type="button"
-                onClick={() => {}}
+                onClick={() => {
+                  const blob = new Blob([JSON.stringify(summary, null, 2)], {
+                    type: 'application/json',
+                  });
+                  const a = document.createElement('a');
+                  a.href = URL.createObjectURL(blob);
+                  a.download = `admin-analytics-${new Date().toISOString().slice(0, 10)}.json`;
+                  a.click();
+                  URL.revokeObjectURL(a.href);
+                }}
                 className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
                 style={pageActionButtonStyle}
               >

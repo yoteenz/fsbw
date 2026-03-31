@@ -1,6 +1,10 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BOOKING_BADGE_DISPLAY_PX, bookingPageHeaderBadgeSrc } from '../../utils/bookingBadges';
+import {
+  BOOKING_BADGE_DISPLAY_PX,
+  BOOKING_BADGE_HEADER_CONSULT_PX,
+  bookingPageHeaderBadgeSrc
+} from '../../utils/bookingBadges';
 
 export { booking_badge_display_px } from '../../utils/bookingBadges';
 
@@ -9,14 +13,16 @@ export function BookingTierBadgeImg() {
   const { pathname } = useLocation();
   const src = bookingPageHeaderBadgeSrc(pathname);
   if (!src) return null;
+  const isConsult = pathname.toLowerCase().includes('consult');
+  const headerPx = isConsult ? BOOKING_BADGE_HEADER_CONSULT_PX : BOOKING_BADGE_DISPLAY_PX;
   return (
-    <div className="flex justify-center w-full" style={{ margin: '10px 0 12px' }}>
+    <div className="flex justify-center w-full" style={{ margin: '10px 0 0' }}>
       <img
         src={src}
         alt=""
         style={{
-          width: `${BOOKING_BADGE_DISPLAY_PX}px`,
-          height: `${BOOKING_BADGE_DISPLAY_PX}px`,
+          width: `${headerPx}px`,
+          height: `${headerPx}px`,
           objectFit: 'contain',
           display: 'block'
         }}
@@ -34,7 +40,16 @@ export const bookingFontScript = '"Covered By Your Grace", "Covered By Your Grac
 const ruleGray = '#e5e7eb';
 
 /** Matches brand inner card: optional red uppercase label + optional middle (e.g. tier badge) + gray rule. */
-export function BookingCrumbTitle({ children, middle }: { children?: ReactNode; middle?: ReactNode }) {
+export function BookingCrumbTitle({
+  children,
+  middle,
+  hideRule
+}: {
+  children?: ReactNode;
+  middle?: ReactNode;
+  /** When true, omit the gray rule below the badge (e.g. hair appointment Memphis subline). */
+  hideRule?: boolean;
+}) {
   return (
     <>
       {children != null && children !== false && (
@@ -54,7 +69,13 @@ export function BookingCrumbTitle({ children, middle }: { children?: ReactNode; 
         </p>
       )}
       {middle}
-      <div style={{ borderBottom: `1px solid ${ruleGray}`, marginBottom: '16px' }} />
+      <div
+        style={{
+          borderBottom: hideRule ? 'none' : `1px solid ${ruleGray}`,
+          marginTop: hideRule ? 0 : '12px',
+          marginBottom: hideRule ? '28px' : '16px'
+        }}
+      />
     </>
   );
 }
@@ -98,16 +119,27 @@ export function BookingHeroSubline({ children }: { children: ReactNode }) {
 }
 
 /** Section title (accent red or neutral black). */
-export function BookingSectionHeading({ accent, children }: { accent?: boolean; children: ReactNode }) {
+export function BookingSectionHeading({
+  accent,
+  align = 'center',
+  fontSize = '12px',
+  children
+}: {
+  accent?: boolean;
+  align?: 'left' | 'center';
+  /** Default 12px; hair appointment uses 11px for SERVICE TYPE / ADD TO YOUR APPOINTMENT. */
+  fontSize?: string;
+  children: ReactNode;
+}) {
   return (
     <p
       style={{
         fontFamily: bookingFontMedium,
-        fontSize: '12px',
+        fontSize,
         color: accent ? '#EB1C24' : '#000',
         textTransform: 'uppercase',
         margin: '0 0 14px',
-        textAlign: 'center',
+        textAlign: align,
         fontWeight: 500,
         letterSpacing: '0.02em'
       }}
@@ -128,7 +160,11 @@ export function BookingBodyParagraph({ children, style }: { children: ReactNode;
         textTransform: 'uppercase',
         textAlign: 'center',
         lineHeight: 1.55,
-        margin: '0 0 12px',
+        marginTop: 0,
+        marginRight: 0,
+        marginBottom: '12px',
+        marginLeft: 0,
+        padding: 0,
         letterSpacing: '0.03em',
         ...style
       }}

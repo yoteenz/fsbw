@@ -5790,3 +5790,409 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Changes:** **`premiumMemberAccess.ts`** — **`stripIneligibleBcfBundleDealLines`**, **`applyStripIneligibleBcfBundleDealsToStoredCart`**, **`applyStripIneligibleBcfBundleDealsToStoredSavedForLater`**, **`applyStripIneligibleBcfBundleDealsToAllStoredCarts`**. **`App.tsx`** — effect on mount + **`signInStateChanged`** + **`focus`**. **`shopping-bag/page.tsx`** — **`isQtyOnlyLine`** includes bundle deal; saved list **`isSavedQtyOnlyLine`**; strip on **`loadCartItems` / `loadSavedForLater`**. **`CartDropdown.tsx`** — strip on load + **VIEW DETAILS** spacer for bundle deal. **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`** (localStorage path) — strip when loading cart. **`motherboard/CORE.md`** updated.
 
+---
+
+## 2026-03-30 — Bundle deal price: stacked in bag/dropdown, inline on checkout
+
+**Context:** User wanted **BCF bundle-deal** strikethrough list price and deal total **stacked vertically** in **cart dropdown** and **shopping bag** (cart + saved) so prices do not wrap on one line; **checkout** and **checkout summary** order strips stay **inline** (strikethrough + deal price side by side).
+
+**Changes:** **`CartDropdown.tsx`** — bundle-deal price block: **`flexDirection: 'column'`**, **`alignItems: 'center'`**, **`gap: 2px`**, **`whiteSpace: 'nowrap'`** on price spans. **`shopping-bag/page.tsx`** — same column stack with **`alignItems: 'flex-start'`** for main cart and saved bundle-deal rows. **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`** — unchanged (inline **`marginRight: 6px`** on strikethrough).
+
+---
+
+## 2026-03-30 — Bundle deal cart thumb: `bundle-*.png` not `*-bundle-product.JPG`
+
+**Context:** User wanted **BCF bundle-deal** line thumbnails in cart, bag, checkout strip, etc. to use **`bundle-straight.png` / `bundle-wavy.png` / `bundle-curly.png`** (same as **`shopTextureCategoryThumbSrc`**) instead of PDP hero assets **`straight-bundle-product.JPG`**, etc.
+
+**Changes:** **`bcfProductOptions.ts`** — **`shopBcfCartLineThumbnailSrc`**: when **`bcfBundleDeal`** and **`category === 'bundles'`**, return **`shopTextureCategoryThumbSrc(texture, 'bundles')`** before considering **`item.image`**. Regular BCF bundle lines still prefer stored **`image`** then JPG fallbacks.
+
+---
+
+## 2026-03-31 — Checkout + summary: BCF/A/C title row + larger strip thumbs only there
+
+**Context:** User wanted **BUNDLES** / **CLOSURES** / **FRONTALS** and **BOOKING** / **CONSULT** black title text on the **same horizontal row** as **NOIR** / **BLANCO** / etc. on **checkout** and **checkout summary** only, and **~20–40% larger** BCF + A/C thumbnails on those pages only to balance layout after aligning copy.
+
+**Changes:** **`checkoutOrderStripDisplay.ts`** — optional **`OrderStripThumbOptions.checkoutStrip`** on **`orderStripThumbMetrics`**: BCF + booking **`imgPx`** × **`ORDER_STRIP_CHECKOUT_BCF_BOOKING_SCALE` (1.3)**; **`slotPx`** **`ORDER_STRIP_UNIT_IMG_SLOT_PX` (120)** so title block starts like **120×120** unit tiles; **`cellWidthPx`** widened as needed. **`orderStripTitleFontPx`**: BCF + booking always **21px** (same as Blanco path); Noir wig **22px**. **`checkout/page.tsx`** / **`confirm/page.tsx`** — pass **`{ checkoutStrip: true }`**; use **`orderStripTitleFontPx`**. **Confirm** — tile column **`justifyContent: flex-start`**, **`minHeight`/`height: auto`**; horizontal strip **`alignItems: flex-start`**; **`summaryScrollItemWidthPx`** uses checkout metrics + subscription flag for scroll math.
+
+---
+
+## 2026-03-31 — Appointment page: no checkboxes; price right; duration line without @ price
+
+**Context:** User wanted **checkboxes removed** (add-ons had box **left**; **service type** had box **right**); **price** on the **right** of each row in **gray Futura PT Medium**, **vertically centered**; duration sublines **without** **`@ $…`** (e.g. **`+40 MINUTES`** only).
+
+**Changes:** **`booking/appointment/page.tsx`** — **`INSTALL_BASE`** / **`ADDONS`** **`sub`** strings stripped of **` @ $…`**; **`ToggleRow`**: drop faux checkbox, **`alignItems: center`**, right column **`$price`** **`#808080`** **`bookingFontMedium`**; **service type** buttons same (no right checkbox, price right). Selection still via red border + tap.
+
+---
+
+## 2026-03-31 — Vercel `tsc`: BCF PDP null category, unused imports, `BookingCrumbTitle` children
+
+**Context:** **`npm run build`** failed on Vercel: **`BookingCrumbTitle`** missing **`children`** (appointment + consultation); **`soft-curl`** unused **`bcfOptionSelectedChrome`**; **`texture-category-product`** unused **`Navigate`** / **`BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`**; **`Category | null`** passed where **`Category`** required (similar strip + texture nav).
+
+**Changes:** **`texture-category-product/page.tsx`** — after hooks, **`if (!category) return <Navigate to="/home/shop" replace />`** ( **`Navigate`** used); removed unused **`BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`**. **`soft-curl/page.tsx`** — removed unused import. **`appointment/page.tsx`** / **`consultation/page.tsx`** — **`BookingCrumbTitle`** given explicit **`children={null}`**. **`checkout/page.tsx`** — removed unused **`itemName`** in order strip map.
+
+---
+
+## 2026-03-31 — BCF bundle cart thumbs: always `bundle-{texture}.png` + dropdown uses helper
+
+**Context:** User wanted **bundle** and **bundle deal** line thumbnails to use **`bundle-straight` / `bundle-wavy` / `bundle-curly`** assets by **hair texture** everywhere: **shopping bag**, **cart dropdown**, **checkout**, **checkout summary**.
+
+**Changes:** **`bcfProductOptions.ts`** — **`shopBcfCartLineThumbnailSrc`**: for **`category === 'bundles'`** always **`shopTextureCategoryThumbSrc(t, 'bundles')`** (no **`item.image`** JPG first); removed unused **`BCF_CART_BUNDLE_IMG`**. **`CartDropdown.tsx`** — resolve BCF **`thumbSrc`** via **`shopBcfCartLineThumbnailSrc`** before unit/gift fallbacks. Bag + **`orderStripThumbnailSrc`** already called the helper — they pick up the change.
+
+---
+
+## 2026-03-31 — Premium gate: strip hair appointments + premium consult from cart; build-a-wig premium options modal
+
+**Context:** User wanted the **same premium eligibility gate** as bundle deals applied to **hair appointments** in the cart when the user is no longer premium, and to **build-a-wig premium membership options** (lace through add-ons): standard members should get the **same upgrade modal** as elsewhere when tapping those options in customize/edit or when opening those sub-routes.
+
+**Decisions:** **`isPremiumGatedCartLine`**: **`bcfBundleDeal`**, **`booking-appointment`** (all), **`booking-consult`** only when **`bookingTier === 'premium'`** — standard consult lines stay. **`stripIneligibleBcfBundleDealLines`** filters on **`isPremiumGatedCartLine`** (name kept for existing imports). **`MOVE TO BAG`** uses **`isPremiumGatedCartLine`** when not premium.
+
+**Changes:** **`premiumMemberAccess.ts`** — **`isPremiumGatedCartLine`**, expanded strip. **`shopping-bag/page.tsx`** — move-to-bag guard. **`buildWigPremiumOptions.ts`** — category list. **`useBuildWigPremiumMembershipStepGate.tsx`** — modal on lace/texture/color/hairline/styling/addons URLs. **`build-a-wig/page.tsx`** — hub **`handleOptionSelect`** gate + **`ConfirmationModal`**. Sub-pages **lace, texture, color, hairline, styling, addons** — hook + render. **`motherboard/CORE.md`** cart/build-a-wig bullets updated.
+
+---
+
+## 2026-03-31 — Cart dropdown: bundle-deal price lines left-aligned with other rows
+
+**Context:** User saw **bundle deal** strikethrough + deal price stacked vertically sitting **too far right** vs **CONSULT** / **BCF** single-line prices in the cart dropdown.
+
+**Cause:** Bundle-deal block used **`alignItems: 'center'`** on a column flex; the rest of the copy column uses **`alignItems: 'flex-start'`** for title, subtitle, and default `<p>` prices.
+
+**Changes:** **`CartDropdown.tsx`** — bundle-deal price container **`alignItems: 'flex-start'`** (shopping bag already used **`flex-start`**).
+
+---
+
+## 2026-03-31 — Booking: makeup $200, travel $1,200; consult $40; A/C add-to-bag spacing vs Noir
+
+**Context:** User wanted **appointment** add-on prices: **makeup $200**, **travel $1,200**; **wig consult** deposit **$40** for both **WIG + INSTALL** and **WIG ONLY** (was **$25**); **spacing above** appointment + consult **add to bag** to match **Noir** (**2px** above button, less padding under the frosted card when **`belowCard`** is used).
+
+**Changes:** **`booking/appointment/page.tsx`** — **`ADDONS`** makeup **200**, travel **1200**; **`belowCard`** wrapper **`paddingTop`** **8px → 2px**. **`booking/consultation/page.tsx`** — **`CONSULT_DEPOSIT_USD`** **25 → 40**; same **`paddingTop`** on **`belowCard`**. **`BookingFlowLayout.tsx`** — main card **`pb-8`** when no **`belowCard`**, **`pb-2`** when **`belowCard`** is set (tighter gap above the button).
+
+---
+
+## 2026-03-31 — Premium-path consult: modal + blocked add-to-bag (no URL hole)
+
+**Context:** Close the gap where **`/booking/premium/consultation`** (or **`/consult`**) could add a **premium-tier** consult line without membership; align with **appointments** + cart strip.
+
+**Changes:** **`booking/consultation/page.tsx`** — if **`isPremiumBooking`** and **`!isPremiumMemberForGatedFeatures()`**: **`useEffect`** opens upgrade **`ConfirmationModal`**; **`handleAddToBag`** returns early and opens modal; **`signInStateChanged`** / **`focus`** close modal when user becomes eligible. **`motherboard/CORE.md`** booking bullet updated. SHOP menu already sends non-premium users to **`/booking/consultation`** via **`bookingMenuUsesPremiumPaths()`**.
+
+---
+
+## 2026-03-30 — Build-a-wig premium upgrade modal copy matches BCF color gate
+
+**Context:** User wanted the **premium build-a-wig** “upgrade subscription” popup to use the **same short body** as the **BCF hair-color** upgrade modal (**“YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE.”**) instead of the long parenthetical list (lace, texture, color, etc.).
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`** — hub **`ConfirmationModal`** **`message`** aligned with **`texture-category-product/page.tsx`** BCF color modal. **`src/hooks/useBuildWigPremiumMembershipStepGate.tsx`** — same **`message`** for direct navigation to premium steps.
+
+---
+
+## 2026-03-30 — BCF bundle deal discount $40 → $60
+
+**Context:** User wanted the **bundles** bundle-deal discount to be **$60** instead of **$40** (cart strikethrough inference, checkout display, and PDP add-to-bag math).
+
+**Changes:** **`src/utils/bcfProductOptions.ts`** — **`BCF_BUNDLE_DEAL_DISCOUNT_USD`** **40 → 60**; JSDoc for **`bcfBundleDealResolvedListSubtotal`**. **`texture-category-product/page.tsx`** — **`handleBundleDealToBag`** uses imported **`BCF_BUNDLE_DEAL_DISCOUNT_USD`** (removed duplicate local **`BUNDLE_DEAL_DISCOUNT_USD`**). **`src/types/cart.ts`** — **`bcfBundleDeal`** comment points at the shared constant.
+
+---
+
+## 2026-03-30 — Booking premium consult: fix JSX (fragment + imports + modal state)
+
+**Context:** Vite/Babel errors on **`booking/consultation/page.tsx`**: unterminated JSX (stray **`</>`** without **`<>`**), then **adjacent JSX** (**`BookingFlowLayout`** + **`ConfirmationModal`**) without a wrapper; **`showPremiumConsultUpgradeModal`**, **`isPremiumMemberForGatedFeatures`**, and **`prepareMembershipUpgradeNavigation`** were referenced but not defined/imported.
+
+**Changes:** Wrap return in **`<>...</>`** (same pattern as **`booking/appointment/page.tsx`**). Import **`isPremiumMemberForGatedFeatures`** and **`prepareMembershipUpgradeNavigation`**. Add **`useState`** for **`showPremiumConsultUpgradeModal`**. Remove unused **`useEffect`** import.
+
+---
+
+## 2026-03-30 — Supabase site analytics + admin Brand/Analytics tabs
+
+**Context:** User chose **storing events in Supabase** (vs GA4-only) for anonymous + signed-in marketing analytics, surfaced on **Admin → Brand → ANALYTICS** and **Admin → Analytics**.
+
+**Decisions:** Table **`site_analytics_events`** (visitor_id, optional user_email, event_type, platform, source, path, meta). **RLS enabled, no policies** — only service role via API. **POST `/api/analytics/event`** is public (validates social_click + platform/source); **GET `/api/admin/analytics`** aggregates + last 50 rows (admin JWT). Client: **`fsaVisitorId`** in localStorage via **`getOrCreateVisitorId()`**; **`recordSocialClick`** still updates localStorage then **`postAnalyticsEvent`**. Admin UI replaces summary with server data on success (including zero totals); **EXPORT ANALYTICS** downloads JSON.
+
+**Changes:** **`supabase/migrations/20260330180000_site_analytics_events.sql`**. **`api/analytics/event.ts`**, **`api/admin/analytics.ts`** (Supabase queries). **`src/utils/analyticsVisitor.ts`**, **`src/utils/api.ts`** (**`postAnalyticsEvent`**, **`getAdminAnalytics`** type). **`src/utils/socialAnalytics.ts`**. **`src/pages/admin/brand/page.tsx`**, **`src/pages/admin/analytics/page.tsx`**. **`motherboard/CORE.md`** stack line.
+
+**Deploy:** Run the new migration in Supabase SQL Editor; **`SUPABASE_SERVICE_ROLE_KEY`** required on Vercel for ingest + admin reads.
+
+---
+
+## 2026-03-30 — Booking appointment policy copy (unit purchase, lead time, clean lace)
+
+**Context:** User wanted the **hair appointment** page policy paragraphs updated: require **unit** purchase before install, consult from shop menu unchanged in intent, **two months** lead time for new installs (constructed / customized / styled), **one week** for re-installs with **"CLEAN LACE"** add-on when applicable.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`** three strings replaced with the new copy.
+
+---
+
+## 2026-03-30 — Booking appointment: section headings black, left, colons
+
+**Context:** User wanted **ADD TO YOUR APPOINTMENT** and **APPOINTMENT DATE** (drop **PREFERRED**) styled like **SERVICE TYPE** (black, not red accent), **colons** on all three labels, and **left-aligned** instead of centered.
+
+**Changes:** **`BookingSectionHeading`** in **`BookingPageChrome.tsx`** — optional **`align?: 'left' | 'center'`** (default **`center`**). **`appointment/page.tsx`** — **`ADD TO YOUR APPOINTMENT:`**, **`SERVICE TYPE:`**, **`APPOINTMENT DATE:`** with **`align="left"`**, **`accent`** removed from add-ons and date headings.
+
+---
+
+## 2026-03-30 — Appointment policy: “your unit” → “a unit”
+
+**Context:** User wanted the first policy line to say **PURCHASE A UNIT** instead of **PURCHASE YOUR UNIT**.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — first **`policyLines`** string updated.
+
+---
+
+## 2026-03-30 — Booking appointment: CLEAN LACE add-on for RE-INSTALL only
+
+**Context:** User wanted **CLEAN LACE** (**$40**, **+40 MINUTES**) in **ADD TO YOUR APPOINTMENT**, shown only when **RE-INSTALL** is selected, **above travel** and **below makeup**.
+
+**Changes:** **`appointment/page.tsx`** — split add-ons into **`ADDONS_BASE`**, **`ADDON_CLEAN_LACE`**, **`ADDON_TRAVEL`**; **`appointmentAddonsForInstall`** inserts clean lace between makeup and travel for **`RE_INSTALL`** only. **`visibleAddons`** drives list, totals, subtitle, and cart **`bookingAddonIds`**. **`useEffect`** clears **`clean-lace`** from selection when switching to **NEW INSTALL**.
+
+---
+
+## 2026-03-30 — Cart dropdown: booking top = Noir; scroll shows ~2 lines only
+
+**Context:** User wanted the cart dropdown on **A/C (booking)** pages to match **Noir** top offset, and the compact list scroll area should show **only the first two products** (no peek of a third) until the user scrolls.
+
+**Changes:** **`CartDropdown.tsx`** — **`useDropdown2pxUp`** includes **`path.startsWith('/booking')`** so **`dropdownTop`** is **`86px`** (same as straight/wavy/curly product pages). Multi-item scroll **`maxHeight`** **`340px` → `284px`** (still bounded by **`calc(100vh - 230px)`**) so ~two compact rows fit before scroll.
+
+---
+
+## 2026-03-30 — Booking appointment: SERVICE TYPE first; APPOINTMENT DATE: black/left; add-to-bag addon list fix
+
+**Context:** User wanted **APPOINTMENT DATE:** (no “preferred”) **black**, **left**, with **colon**; **SERVICE TYPE** block **above** **ADD TO YOUR APPOINTMENT**. **`handleScheduleToBag`** still referenced removed **`ADDONS`** array.
+
+**Changes:** **`booking/appointment/page.tsx`** — reordered sections; **`BookingSectionHeading align="left"`** for **`APPOINTMENT DATE:`** (no **`accent`**). **`addonList`** uses **`appointmentAddonsForInstall(installKind)`**.
+
+---
+
+## 2026-03-30 — Booking appointment add-ons: clean lace first on re-install; brow + mink pricing
+
+**Context:** User wanted **CLEAN LACE** **first** in the re-install add-on list (above **BRAIDS**); **mink lashes** **$20** / **+20 MINUTES**; **brow clean up** **$40** / **+40 MINUTES**.
+
+**Changes:** **`appointment/page.tsx`** — **`appointmentAddonsForInstall(RE_INSTALL)`** returns **`[ADDON_CLEAN_LACE, ...ADDONS_BASE, ADDON_TRAVEL]`**. **`ADDONS_BASE`** brow + mink price/sub; **`ADDON_DURATION_MINUTES`** for **`brow-clean`** / **`mink-lashes`** aligned.
+
+---
+
+## 2026-03-30 — Hair appointment: confirm copy before estimated time; no rule above Memphis
+
+**Context:** User wanted the **final time & date are confirmed…** line **above** the **estimated appointment time** line (near the date picker), and to **remove the gray rule** above **LOCATED IN MEMPHIS, TN.**
+
+**Changes:** **`BookingCrumbTitle`** — optional **`hideRule`** (appointment uses it so no gray line under badge). **`appointment/page.tsx`** — two **`BookingMutedNote`** lines: confirm copy first, then **`ESTIMATED APPOINTMENT TIME: …`** only (removed duplicate final-time sentence from that line).
+
+---
+
+## 2026-03-30 — Hair appointment: expandable add-on & service-type detail lines
+
+**Context:** User wanted each add-on and service-type row to **grow** when **selected** (add-on checked / install kind active), showing a **black Futura PT Book** detail paragraph **under the red duration line**; **collapse** when deselected. Shortened labels: **BROW CLEAN UP**, **MAKEUP**, **TRAVEL FEE** (removed parentheticals).
+
+**Changes:** **`booking/appointment/page.tsx`** — **`ADDON_DETAIL_LINES`**, **`INSTALL_KIND_DETAIL_LINES`**; **`ToggleRow`** column layout + optional **`detailLine`**; service-type buttons same pattern; add-on duration subline uses **`bookingFontBook`** (red) to match install rows.
+
+---
+
+## 2026-03-30 — Hair appointment: SERVICE TYPE first; estimated time below calendar (red, two lines)
+
+**Context:** User wanted **SERVICE TYPE** **before** **ADD TO YOUR APPOINTMENT**; **estimated appointment time** moved **below** the date picker; that copy **red** (not gray); **FINAL TIME CONFIRMED AFTER CHECKOUT.** on its **own line** under the estimated time line.
+
+**Changes:** **`booking/appointment/page.tsx`** — section order; **`BrandExpiresDatePicker`** then a red **`bookingFontBook`** `<p>` with **`<br />`** between the two sentences; removed gray **`BookingMutedNote`** above the calendar for that block.
+
+---
+
+## 2026-03-30 — Calendar nav arrows borderless; no preferred-date heading; consult hideRule
+
+**Context:** User wanted **no black borders** on the **red month ‹ ›** controls in **`BrandExpiresDatePicker`**; remove **PREFERRED APPOINTMENT DATE:** heading on hair appointment; remove **gray rule** under consult badge (**`BookingCrumbTitle`**) on consult page.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — prev/next **`border: none`**, transparent bg. **`booking/appointment/page.tsx`** — dropped **`BookingSectionHeading`** for preferred date. **`booking/consultation/page.tsx`** — **`BookingCrumbTitle`** **`hideRule`**.
+
+---
+
+## 2026-03-31 — Booking A/C: currency + thousands formatting (travel fee, totals)
+
+**Context:** User reported travel add-on and other booking prices showing **`1200`** without a comma, and wanted **appointment + consult** and **BCF** display prices to follow the **currency selector** and **account** (per-user **`selectedCurrency`**).
+
+**Changes:**
+- **`src/utils/defaultCurrencyRates.ts`** — single **`DEFAULT_CURRENCY_RATES`** table (same as former inline **`CartDropdown`** block).
+- **`src/utils/currencyFormat.ts`** — **`formatPriceUsdPlain`** (string output for React text, same math as **`formatPriceUsd`**).
+- **`src/hooks/useSelectedCurrencyDisplay.ts`** — reads per-user **`selectedCurrency`**, listens **`currencyChanged`** / **`storage`** / **`signInStateChanged`**, exposes **`formatUsd(usd)`**.
+- **`src/pages/booking/appointment/page.tsx`** — **`ToggleRow`**, install rows, **ESTIMATED TOTAL** use **`formatUsd`** (comma-separated + conversion + ISO code).
+- **`src/pages/booking/consultation/page.tsx`** — **TOTAL DUE** uses **`formatUsd(CONSULT_DEPOSIT_USD)`**; hook import added.
+- **`src/components/CartDropdown.tsx`** — imports **`DEFAULT_CURRENCY_RATES`**; **`stripIneligibleBcfBundleDealLines<CartItem>(...)`** so **`setCartItems`** / reduce types align.
+
+**Conventions:** Cart and booking UIs should use **`DEFAULT_CURRENCY_RATES`** + **`formatPriceUsd` / `formatPriceUsdPlain`** + per-user currency key rather than raw **`$` + number** for list prices in USD.
+
+---
+
+## 2026-03-31 — Appointment: braids $60, duration estimate, inline date calendar
+
+**Context:** User wanted **braids** at **$60** with red sub **+60 MINUTES**; **service-type** copy to reflect **2.5 h new install** vs **2 h re-install**; replace the **“same calendar as admin…”** note with **estimated appointment time** from selections; show the **calendar inline** on the card (no popup trigger).
+
+**Changes:** **`appointment/page.tsx`** — braids **price 60**, sub **+60 MINUTES**; **`INSTALL_BASE`** subs **+2.5 HOURS** / **+2 HOURS**; **`INSTALL_BASE_MINUTES`** (150 / 120) + **`ADDON_DURATION_MINUTES`**; **`estimatedMinutes`** + **`formatEstimatedAppointmentTime`**; muted note shows estimate + checkout disclaimer; **`BrandExpiresDatePicker`** **`inline`**; **`PREFERRED APPOINTMENT DATE:`** left-aligned heading; cart **`bookingAddonIds`** uses **`visibleAddons`** (fixes undefined **`ADDONS`**). **`BrandExpiresDatePicker.tsx`** — optional **`inline`** prop renders the month grid in-flow (no trigger/portal); shared **`calendarInner`** for inline and modal modes.
+
+---
+
+## 2026-03-31 — Booking appointment: restore `estimatedMinutes` useMemo (runtime ReferenceError)
+
+**Context:** Error screen **“can't find variable: estimatedminutes”** — JSX called **`formatEstimatedAppointmentTime(estimatedMinutes)`** without defining **`estimatedMinutes`** in the component.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — added **`estimatedMinutes`** **`useMemo`** (base **`INSTALL_BASE_MINUTES`** + selected **`ADDON_DURATION_MINUTES`**).
+
+---
+
+## 2026-03-31 — Server checkout quote API, PaymentIntent, webhook (partial hardening)
+
+**Context:** User asked to implement or scaffold **server-side price resolution**, **quote API**, **checkout UI wired to quote**, **Stripe PaymentIntent from server totals**, **webhook writing orders**, and **USD settlement vs display FX**.
+
+**Changes:**
+- **`api/_lib/pricing/resolveQuote.ts`** — USD resolution for **`booking-appointment`**, **`booking-consult`**, simple **unit** names + cap surcharge; **BCF / gift / membership** marked unresolved with warnings.
+- **`api/checkout/quote.ts`** — **`POST /api/checkout/quote`** (public).
+- **`api/stripe/create-product-payment-intent.ts`** — **`POST /api/stripe/create-product-payment-intent`** (auth); **rejects** if not **`fullyResolved`**.
+- **`api/_lib/recordProductOrderFromPaymentIntent.ts`** — webhook appends **`orders.active_orders`** JSON (idempotent on **`stripePaymentIntentId`**).
+- **`api/stripe/webhook.ts`** — **`payment_intent.succeeded`** when **`metadata.purpose === 'product_order'`**.
+- **`src/utils/checkoutQuote.ts`**, **`src/types/cart.ts`** (**`bookingInstallKind`**, **`bookingAddonIds`**), **`src/utils/api.ts`** (**`createProductPaymentIntent`**), **`src/pages/checkout/page.tsx`** (server quote row + warning).
+- **`docs/CHECKOUT_SERVER_QUOTE.md`**, **`.env.example`** webhook events, **`motherboard/CORE.md`** API bullet.
+
+**Conventions:** Settlement stays **USD** for PI; currency selector remains **display** until server FX + charge currency are added.
+
+---
+
+## 2026-03-30 — Hair appointment policy wrap; remove below-bag note; consult file picker matches order form
+
+**Context:** User wanted the **“I will only re-install wigs…”** sentence on its **own line** after the new-clients sentence; **removed** the **FINAL TIME AND DATE ARE CONFIRMED…** **`BookingMutedNote`** under **Add to bag**; **HAIR INSPO / CHOOSE FILE** on consult to match **shop order-form** photo-ID control (white box, 36px row, 8px padding, 1.3px black border, gray chip styling, **Futura PT Book** 11px, **NO FILE SELECTED** 10px gray).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`** first item split into two strings; dropped **`BookingMutedNote`** after **`NoirStyleAddToBagButton`**. **`src/pages/booking/consultation/page.tsx`** — file row restyled to mirror order-form (solid **`#FFFFFF`**, **`36px`** hit target, **`#F5F5F5`** choose chip **`4px 8px`**, preview **`width: 100%`** block layout).
+
+---
+
+## 2026-03-31 — Booking consult: hero + body copy (60-day deposit, 72h follow-up)
+
+**Context:** User replaced consult marketing copy with three paragraphs: **non-refundable deposit** redeemable within **60 days**; **complimentary consult** + **preferred appointment spot** / credits; **select WIG + INSTALL or WIG only**, notes + **clear inspo photo**, **72-hour** follow-up with checklist / price / deposit details.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`BookingHeroSubline`** + two **`BookingBodyParagraph`**s updated to that text; removed redundant **`BookingMutedNote`** under **Add to bag** and its import.
+
+---
+
+## 2026-03-31 — Calendar arrows +60%, policy gap −2px, HAIR INSPO no “(optional)”, cart scroll +28px
+
+**Context:** User wanted larger appointment **month arrows** (~60%), **2px** less space above **“I will only re-install…”**, no gray **(OPTIONAL)** on consult **HAIR INSPO**, and a taller **cart** multi-item scroll so the **second item’s border** isn’t clipped.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — prev/next **`fontSize` 10→16** (+**`lineHeight: 1`**). **`appointment/page.tsx`** — policy line index **1** **`marginTop: '-2px'`**. **`consultation/page.tsx`** — removed gray **(OPTIONAL)** span. **`CartDropdown.tsx`** — **`min(284px → min(312px, …)`** for compact multi-item list.
+
+---
+
+## 2026-03-31 — Consult page: fix runtime `BookingMutedNote` ReferenceError
+
+**Context:** Error **“can't find variable: bookingmutednote”** / component failed to load on consult — **`BookingMutedNote`** import had been removed but **JSX still referenced** the component.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — removed the stray **`<BookingMutedNote>…</BookingMutedNote>`** block under **Add to bag** (copy already in hero/body).
+
+---
+
+## 2026-03-30 — Booking: calendar top spacing; consult/appointment badge + hero subline alignment
+
+**Context:** User wanted **10px** above the hair appointment **inline calendar**; **consult** and **appointment** tier badges on the **same vertical axis**; black hero sublines (**LOCATED IN MEMPHIS, TN.** vs **NON-REFUNDABLE DEPOSIT…**) with **matching top spacing** after the badge stack.
+
+**Topics covered:** Continued from a summarized handoff that planned **`marginTop: 10px`** on the date picker wrapper, **`BookingTierBadgeImg`** margin tweaks, and **`hideRule`** spacer rhythm; consult first body block already aligned to appointment at **`24px`** bottom margin.
+
+**Decisions / outcomes:** Single spacer under the badge for **`hideRule`** carries **28px** bottom margin (replacing separate **12px** badge bottom + **16px** rule margin) so both booking routes share one rhythm to **`BookingHeroSubline`**. Non-**`hideRule`** **`BookingCrumbTitle`** keeps the old gap via **`marginTop: 12px`** on the rule row after removing badge bottom margin.
+
+**Changes:** **`booking/appointment/page.tsx`** — calendar wrapper **`marginTop: '10px'`** (keeps **`marginBottom: '16px'`**). **`BookingPageChrome.tsx`** — **`BookingTierBadgeImg`** wrapper **`margin: '10px 0 0'`**; rule **`div`** **`marginBottom: hideRule ? '28px' : '16px'`**, **`marginTop: hideRule ? 0 : '12px'`**.
+
+**Conventions:** When adjusting **`hideRule`** booking headers, keep **consult** and **appointment** stacks in sync via shared **`BookingCrumbTitle`** / **`BookingTierBadgeImg`** / **`BookingHeroSubline`**.
+
+---
+
+## 2026-03-31 — Consult notes placeholder; appointment estimated time centered
+
+**Context:** User wanted no gray **deposit** footnote under consult **Add to bag** (already absent after **`BookingMutedNote`** removal), no gray **“write your comment here”** placeholder on the notes field, and the red **estimated appointment time** block under the calendar **centered**.
+
+**Changes:** **`consultation/page.tsx`** — removed **`placeholder="WRITE YOUR COMMENT HERE."`** from **ADDITIONAL NOTES** **`textarea`**. **`appointment/page.tsx`** — red estimated-time **`<p>`** **`textAlign: 'left'` → `'center'`**.
+
+---
+
+## 2026-03-31 — BrandExpiresDatePicker: SVG calendar arrows
+
+**Context:** User wanted month navigation to use **`public/assets/calendar-left-arrow.svg`** and **`calendar-right-arrow.svg`** instead of text chevrons.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — prev/next buttons render **`<img>`** (**24×24**, **`alt=""`**, **`draggable={false}`**) with **`/assets/calendar-left-arrow.svg`** and **`/assets/calendar-right-arrow.svg`**; shared constants **`CALENDAR_LEFT_ARROW_SRC`** / **`CALENDAR_RIGHT_ARROW_SRC`**.
+
+---
+
+## 2026-03-31 — Appointment policy: second line −2px spacing fix (margin longhand + flex stack)
+
+**Context:** User reported **`marginTop: '-2px'`** on the second policy line (**“I WILL ONLY RE-INSTALL…”**) did not visibly change spacing; asked to rule out padding/overrides.
+
+**Changes:** **`BookingBodyParagraph`** — replaced **`margin: '0 0 12px'`** with **`marginTop/Right/Bottom/Left`** longhands plus **`padding: 0`** so **`...style`** overrides (**`marginTop`**, **`marginBottom`**) are reliable and not fighting the shorthand. **`appointment/page.tsx`** — policy list wrapper is **`display: 'flex'`**, **`flexDirection: 'column'`**, **`gap: 0`**, **`padding: 0`** so adjacent paragraph margins use flex spacing behavior instead of block margin-collapse quirks.
+
+---
+
+## 2026-03-31 — Hair appointment: install & travel expandable detail copy
+
+**Context:** User set **NEW INSTALL** / **RE-INSTALL** detail to **THIS SERVICE INCLUDES LACE CUSTOMIZATION & STYLING.**; **TRAVEL FEE** detail to two lines: **THIS IS AN ESTIMATE AMOUNT FOR FLIGHT & OVERNIGHT STAY.** then **FINAL COSTS WILL BE CALCULATED BASED ON YOUR CITY & COUNTRY.**
+
+**Changes:** **`booking/appointment/page.tsx`** — **`INSTALL_KIND_DETAIL_LINES`** updated for both kinds; **`ADDON_DETAIL_LINES.travel`** as **`ReactNode`** with **`<br />`**; **`ADDON_DETAIL_LINES`** typed **`Record<string, ReactNode>`**; **`ToggleRow`** **`detailLine?: ReactNode`** (import **`ReactNode`** from **React**).
+
+---
+
+## 2026-03-31 — Cart dropdown compact list maxHeight: 312px → 298px
+
+**Context:** **`min(312px, …)`** for 2+ compact rows fixed second-row border clipping but exposed the top of a third row when only two should read as “full” in the viewport.
+
+**Changes:** **`CartDropdown.tsx`** — **`cartItemsScrollMaxHeight`** multi-item branch **`min(312px, …)` → `min(298px, …)`** (middle ground vs original **`284px`**).
+
+---
+
+## 2026-03-31 — Cart dropdown compact list: 298px → 296px → 294px
+
+**Context:** User wanted **2–4px** less scroll height after **`298px`** felt almost perfect; later set cap to **`294px`**.
+
+**Changes:** **`CartDropdown.tsx`** — multi-item compact **`min(298px, …)` → `min(296px, …)` → `min(294px, …)`**.
+
+---
+
+## 2026-03-31 — Booking A/C: TOTAL DUE styling; install prices; calendar +12px
+
+**Context:** User wanted **ESTIMATED TOTAL** → **TOTAL DUE** on appointment; **TOTAL DUE** + price styling to match **`/build-a-wig` main page** (**`font-futura`** label **`12px` / `md:sm` / `lg:base`**, gray **`#808080`**; price **`text-base` / `md:xl` / `lg:2xl`**, **Futura PT Medium**); **+12px** space above appointment inline calendar; **NEW INSTALL** **$250**, **RE-INSTALL** **$200**.
+
+**Changes:** **`booking/appointment/page.tsx`** — **`INSTALL_BASE`** prices; calendar wrapper **`marginTop` `10px` → `22px`**; total block uses same **Tailwind** pattern as **`build-a-wig/page.tsx`**; label **TOTAL DUE**. **`booking/consultation/page.tsx`** — same **TOTAL DUE** block classes. **`api/_lib/pricing/resolveQuote.ts`** — **`INSTALL_USD`** **NEW_INSTALL** **250**, **RE_INSTALL** **200** (aligned with UI).
+
+---
+
+## 2026-03-31 — Booking consult: body copy (& overall finish, & ampersands)
+
+**Context:** User updated the two **`BookingBodyParagraph`** blocks under the consult hero: **narrow down** … **DENSITY & OVERALL FINISH**; **THIS DEPOSIT** holds spot **&** credits; second paragraph uses periods after **WIG ONLY** and **&** before inspo / deposit details.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — replaced both paragraph strings accordingly.
+
+---
+
+## 2026-03-31 — Hair appointment: policy line 2 spacing −4px
+
+**Context:** User wanted **4px** less space above **“I WILL ONLY RE-INSTALL…”** (second policy line).
+
+**Changes:** **`booking/appointment/page.tsx`** — second policy line **`marginTop` `-2px` → `-6px` → `-8px`** (**`i === 1`**).
+
+---
+
+## 2026-03-31 — Appointment estimated time: Futura Medium +6px; calendar arrows SVG 22px symmetrical
+
+**Context:** User wanted red **estimated appointment time** copy in **Futura PT Medium** and **+6px** space above it; **BrandExpiresDatePicker** month **‹** (smaller than right **SVG**) replaced so **left** matches **right**; both arrow images **−2px** (**24 → 22**).
+
+**Changes:** **`appointment/page.tsx`** — **`bookingFontMedium`**, **`margin` `0 0 20px` → `6px 0 20px`**. **`BrandExpiresDatePicker.tsx`** — prev button uses **`calendar-left-arrow.svg`** **`22×22`** like next; **`flex items-center justify-center`** on both nav buttons.
+
+---
+
+## 2026-03-31 — Booking consult: body copy (appointment + credits; hair inspo photo)
+
+**Context:** User shortened first paragraph to **THIS DEPOSIT HOLDS YOUR APPOINTMENT & CREDITS TOWARD YOUR UNIT OR INSTALL.** (dropped preferred spot / once you move forward); second paragraph **CLEAR INSPO** → **HAIR INSPO PHOTO**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — two **`BookingBodyParagraph`** strings updated.
+
+---
+
+## 2026-03-31 — Appointment: remove `~` from estimated time formatter
+
+**Context:** User wanted no **tilde** in **ESTIMATED APPOINTMENT TIME** line.
+
+**Changes:** **`booking/appointment/page.tsx`** — **`formatEstimatedAppointmentTime`** returns **`0 MINUTES`** / joined parts without **`~`** prefix.
+
+---
+
+## 2026-03-31 — Hair appointment calendar + section headings typography
+
+**Context:** User wanted calendar **black day numbers** in **Covered By Your Grace**; red **duration** lines (**+2 HOURS**, etc.) in **Futura PT Medium**; **SERVICE TYPE** / **ADD TO YOUR APPOINTMENT** headings **1px smaller**; **CLEAR DATE** without underline.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — unselected day cells use **`bookingFontScript`**; selected stays **Futura Medium**; **CLEAR DATE** **`textDecoration`** removed. **`BookingSectionHeading`** — optional **`fontSize`** (default **`12px`**); appointment uses **`fontSize="11px"`** for those two headings. **`appointment/page.tsx`** — install + add-on red **`sub`** spans **`bookingFontBook` → `bookingFontMedium`**.

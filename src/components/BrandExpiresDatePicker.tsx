@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
+import { bookingFontScript } from './booking/BookingPageChrome';
 
 const POPOVER_WIDTH = 300;
+
+const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
+const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
 const MONTH_LABELS = [
   'JANUARY',
@@ -58,13 +62,15 @@ function formatTriggerLabel(iso: string): string {
 type Props = {
   value: string;
   onChange: (isoYmd: string) => void;
+  /** When true, calendar is always visible on the page (no trigger button or modal popover). */
+  inline?: boolean;
 };
 
 /**
  * Branded expiry date picker (replaces native `type="date"` popup).
  * Value/onChange use `YYYY-MM-DD` to match prior admin form state.
  */
-export default function BrandExpiresDatePicker({ value, onChange }: Props) {
+export default function BrandExpiresDatePicker({ value, onChange, inline = false }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -74,13 +80,12 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
   const [viewMonth, setViewMonth] = useState(now.getMonth());
 
   useEffect(() => {
-    if (!open) return;
     const p = parseIsoLocal(value);
     if (p) {
       setViewYear(p.y);
       setViewMonth(p.m);
     }
-  }, [open, value]);
+  }, [value]);
 
   useEffect(() => {
     if (!open) return;
@@ -148,13 +153,22 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
 
   const label = formatTriggerLabel(value);
 
-  const popover = open && (
-    <div
-      ref={popoverRef}
-      className="border border-black overflow-hidden brand-expires-picker-popover"
-      onPointerDown={(e) => e.stopPropagation()}
-      onMouseDown={(e) => e.stopPropagation()}
-      style={{
+  const calendarShellClass = inline
+    ? 'border border-black overflow-hidden w-full brand-expires-picker-inline'
+    : 'border border-black overflow-hidden brand-expires-picker-popover';
+
+  const calendarShellStyle: CSSProperties = inline
+    ? {
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        borderWidth: '1.3px',
+        backgroundImage: `url('/assets/marble-half.png')`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'repeat',
+      }
+    : {
         position: 'fixed',
         top: '50%',
         left: '50%',
@@ -170,9 +184,17 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'repeat',
-      }}
-      role="dialog"
-      aria-label="Select expiry date"
+      };
+
+  const calendarInner = (
+    <div
+      ref={inline ? undefined : popoverRef}
+      className={calendarShellClass}
+      onPointerDown={inline ? undefined : (e) => e.stopPropagation()}
+      onMouseDown={inline ? undefined : (e) => e.stopPropagation()}
+      style={calendarShellStyle}
+      role={inline ? undefined : 'dialog'}
+      aria-label={inline ? undefined : 'Select expiry date'}
     >
       <div
         className="backdrop-blur-sm"
@@ -185,16 +207,11 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
           <button
             type="button"
             onClick={goPrev}
-            className="shrink-0 border border-black bg-white px-2 py-1 cursor-pointer"
-            style={{
-              fontFamily: '"Futura PT Medium", Futura, sans-serif',
-              fontSize: '10px',
-              color: '#EB1C24',
-              borderWidth: '1px',
-            }}
+            className="shrink-0 bg-transparent px-2 py-1 cursor-pointer flex items-center justify-center"
+            style={{ border: 'none' }}
             aria-label="Previous month"
           >
-            ‹
+            <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={22} height={22} draggable={false} />
           </button>
           <p
             style={{
@@ -213,16 +230,11 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
           <button
             type="button"
             onClick={goNext}
-            className="shrink-0 border border-black bg-white px-2 py-1 cursor-pointer"
-            style={{
-              fontFamily: '"Futura PT Medium", Futura, sans-serif',
-              fontSize: '10px',
-              color: '#EB1C24',
-              borderWidth: '1px',
-            }}
+            className="shrink-0 bg-transparent px-2 py-1 cursor-pointer flex items-center justify-center"
+            style={{ border: 'none' }}
             aria-label="Next month"
           >
-            ›
+            <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={24} height={24} draggable={false} />
           </button>
         </div>
 
@@ -276,7 +288,7 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
                   borderColor: isSelected || showTodayOutline ? '#EB1C24' : 'transparent',
                   color: isSelected ? '#EB1C24' : '#000000',
                   backgroundColor: isSelected ? '#FFFFFF' : 'transparent',
-                  minHeight: '36px',
+                  minHeight: inline ? '32px' : '36px',
                   padding: 0,
                 }}
               >
@@ -298,8 +310,6 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
               border: 'none',
               cursor: 'pointer',
               textTransform: 'uppercase',
-              textDecoration: 'underline',
-              textUnderlineOffset: '2px',
             }}
           >
             CLEAR DATE
@@ -308,6 +318,12 @@ export default function BrandExpiresDatePicker({ value, onChange }: Props) {
       </div>
     </div>
   );
+
+  if (inline) {
+    return <div className="w-full min-w-0 brand-expires-picker-root">{calendarInner}</div>;
+  }
+
+  const popover = open ? calendarInner : null;
 
   return (
     <div className="w-full min-w-0 brand-expires-picker-root">

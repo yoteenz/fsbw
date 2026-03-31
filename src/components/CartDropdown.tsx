@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
@@ -15,6 +15,7 @@ import {
   bcfBundleDealResolvedListSubtotal
 } from '../utils/bcfProductOptions';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
+import { DEFAULT_CURRENCY_RATES } from '../utils/defaultCurrencyRates';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -84,52 +85,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<string | null>(null);
 
-  // Currency exchange rates
-  const currencyRates = useMemo(() => ({
-    USD: { symbol: '$', rate: 1.0, name: 'US Dollar' },
-    EUR: { symbol: '€', rate: 0.85, name: 'Euro' },
-    GBP: { symbol: '£', rate: 0.73, name: 'British Pound' },
-    CAD: { symbol: 'C$', rate: 1.25, name: 'Canadian Dollar' },
-    AUD: { symbol: 'A$', rate: 1.35, name: 'Australian Dollar' },
-    JPY: { symbol: '¥', rate: 110.0, name: 'Japanese Yen' },
-    CNY: { symbol: '¥', rate: 6.45, name: 'Chinese Yuan' },
-    INR: { symbol: '₹', rate: 75.0, name: 'Indian Rupee' },
-    BRL: { symbol: 'R$', rate: 5.2, name: 'Brazilian Real' },
-    MXN: { symbol: '$', rate: 20.0, name: 'Mexican Peso' },
-    CHF: { symbol: 'CHF', rate: 0.92, name: 'Swiss Franc' },
-    SEK: { symbol: 'kr', rate: 8.5, name: 'Swedish Krona' },
-    NOK: { symbol: 'kr', rate: 8.8, name: 'Norwegian Krone' },
-    DKK: { symbol: 'kr', rate: 6.3, name: 'Danish Krone' },
-    PLN: { symbol: 'zł', rate: 3.9, name: 'Polish Zloty' },
-    CZK: { symbol: 'Kč', rate: 21.5, name: 'Czech Koruna' },
-    HUF: { symbol: 'Ft', rate: 310.0, name: 'Hungarian Forint' },
-    RUB: { symbol: '₽', rate: 75.0, name: 'Russian Ruble' },
-    TRY: { symbol: '₺', rate: 8.5, name: 'Turkish Lira' },
-    ZAR: { symbol: 'R', rate: 15.2, name: 'South African Rand' },
-    KRW: { symbol: '₩', rate: 1200.0, name: 'South Korean Won' },
-    THB: { symbol: '฿', rate: 32.5, name: 'Thai Baht' },
-    SGD: { symbol: 'S$', rate: 1.35, name: 'Singapore Dollar' },
-    HKD: { symbol: 'HK$', rate: 7.8, name: 'Hong Kong Dollar' },
-    NZD: { symbol: 'NZ$', rate: 1.45, name: 'New Zealand Dollar' },
-    ILS: { symbol: '₪', rate: 3.2, name: 'Israeli Shekel' },
-    AED: { symbol: 'د.إ', rate: 3.67, name: 'UAE Dirham' },
-    SAR: { symbol: '﷼', rate: 3.75, name: 'Saudi Riyal' },
-    QAR: { symbol: '﷼', rate: 3.64, name: 'Qatari Riyal' },
-    KWD: { symbol: 'د.ك', rate: 0.30, name: 'Kuwaiti Dinar' },
-    ARS: { symbol: '$', rate: 180.0, name: 'Argentine Peso' },
-    IDR: { symbol: 'Rp', rate: 14500.0, name: 'Indonesian Rupiah' },
-    EGP: { symbol: '£', rate: 30.8, name: 'Egyptian Pound' },
-    NGN: { symbol: '₦', rate: 410.0, name: 'Nigerian Naira' },
-    CLP: { symbol: '$', rate: 850.0, name: 'Chilean Peso' },
-    MYR: { symbol: 'RM', rate: 4.2, name: 'Malaysian Ringgit' },
-    PHP: { symbol: '₱', rate: 55.0, name: 'Philippine Peso' },
-    VND: { symbol: '₫', rate: 24000.0, name: 'Vietnamese Dong' },
-    RON: { symbol: 'lei', rate: 4.5, name: 'Romanian Leu' },
-    COP: { symbol: '$', rate: 4200.0, name: 'Colombian Peso' },
-    JOD: { symbol: 'د.ا', rate: 0.71, name: 'Jordanian Dinar' },
-    GTQ: { symbol: 'Q', rate: 7.8, name: 'Guatemalan Quetzal' },
-    BGN: { symbol: 'лв', rate: 1.66, name: 'Bulgarian Lev' }
-  }), []);
+  const currencyRates = DEFAULT_CURRENCY_RATES;
 
   // Calculate actual price based on localStorage values
   const calculateActualPrice = () => {
@@ -308,10 +264,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               updatedItems: itemsWithCorrectPrices.map((i: any) => ({ id: i.id, price: i.price }))
             });
           }
-          const strip = stripIneligibleBcfBundleDealLines(itemsWithCorrectPrices);
+          const strip = stripIneligibleBcfBundleDealLines<CartItem>(itemsWithCorrectPrices);
           if (strip.removedUnitCount > 0) {
             localStorage.setItem('cartItems', JSON.stringify(strip.next));
-            const newCount = strip.next.reduce((sum: number, ci: CartItem) => sum + (ci.quantity || 1), 0);
+            const newCount = strip.next.reduce((sum, ci) => sum + (ci.quantity || 1), 0);
             localStorage.setItem('cartCount', String(newCount));
             window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
             window.dispatchEvent(new CustomEvent('cartItemsChanged'));
@@ -759,10 +715,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   if (!isOpen) return null;
 
-  /** Scroll the list only when it would show 2+ compact rows; one item uses natural height. Two rows need ~300px+ (120px row ×2 + gaps/padding/borders). */
+  /** 2+ compact rows: maxHeight balances row-2 border vs row-3 peek (284→312→298→296→294). */
   const multiItemCompactList = !viewingDetailsFor && cartItems.length > 1;
   const cartItemsScrollMaxHeight = multiItemCompactList
-    ? 'min(340px, calc(100vh - 230px))'
+    ? 'min(294px, calc(100vh - 230px))'
     : viewingDetailsFor
       ? 'min(380px, calc(100vh - 230px))'
       : 'none';
@@ -773,6 +729,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const path = location.pathname;
   const useDropdown2pxUp =
     /^\/(straight|wavy|curly)\//.test(path) ||
+    path.startsWith('/booking') ||
     path.startsWith('/wishlist') ||
     path.startsWith('/build-a-wig') ||
     path.startsWith('/account') ||
@@ -987,6 +944,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const thumbSrc = (() => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
+                            }
+                            if (item.type === 'shop-texture-category') {
+                              const bcf = shopBcfCartLineThumbnailSrc(item as CartItem);
+                              if (bcf) return bcf;
                             }
 
                             const hairline = item.hairline || 'NATURAL';
@@ -1588,8 +1549,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                 return hasSpecs ? '2px' : '1px';
                               })(),
                               marginBottom: '0',
-                              textAlign: 'center',
-                              width: '100%'
+                              width: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'flex-start',
+                              gap: '2px',
+                              lineHeight: '1.15'
                             }}
                           >
                             {(() => {
@@ -1606,7 +1571,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                         fontSize: '11px',
                                         fontWeight: '600',
                                         textDecoration: 'line-through',
-                                        marginRight: '6px'
+                                        whiteSpace: 'nowrap'
                                       }}
                                       dangerouslySetInnerHTML={formatPrice(listTot)}
                                     />
@@ -1617,7 +1582,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                       color: '#000000',
                                       textTransform: 'uppercase',
                                       fontSize: '12px',
-                                      fontWeight: '600'
+                                      fontWeight: '600',
+                                      whiteSpace: 'nowrap'
                                     }}
                                     dangerouslySetInnerHTML={formatPrice(lineTot)}
                                   />

@@ -27,7 +27,6 @@ import {
 } from '../../../utils/marbleStripStyles';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
-import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 
 function SoftCurlSelection() {
   const navigate = useNavigate();

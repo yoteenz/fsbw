@@ -42,3 +42,12 @@ export function formatPriceRangeUsd(
     __html: `${currency.symbol}${fmt(lo)} – ${currency.symbol}${fmt(hi)} ${selectedCurrency}`
   };
 }
+
+/** Plain string for React text nodes (same math/format as `formatPriceUsd`). */
+export function formatPriceUsdPlain(
+  priceUsd: number,
+  selectedCurrency: string,
+  currencyRates: CurrencyRatesRecord
+): string {
+  return formatPriceUsd(priceUsd, selectedCurrency, currencyRates).__html;
+}

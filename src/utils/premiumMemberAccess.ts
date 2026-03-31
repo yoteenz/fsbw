@@ -31,13 +31,27 @@ export function prepareMembershipUpgradeNavigation(): void {
   }
 }
 
-type CartLineWithBundleFlag = { bcfBundleDeal?: boolean; quantity?: number };
+type CartLinePremiumGated = {
+  bcfBundleDeal?: boolean;
+  quantity?: number;
+  type?: string;
+  bookingTier?: string;
+};
+
+/** True when this cart row requires premium and should be removed if the user no longer qualifies. */
+export function isPremiumGatedCartLine(item: CartLinePremiumGated): boolean {
+  if (item.bcfBundleDeal) return true;
+  if (item.type === 'booking-appointment') return true;
+  if (item.type === 'booking-consult' && item.bookingTier === 'premium') return true;
+  return false;
+}
 
 /**
- * BCF bundle-deal lines require premium (same gate as PDP). When the user no longer qualifies,
- * those lines are removed from the returned array; `removedUnitCount` is the sum of quantities removed.
+ * Removes premium-only rows when the user no longer qualifies (`isPremiumMemberForGatedFeatures`):
+ * **BCF bundle-deal**, **hair appointments** (`booking-appointment`), **premium-tier consults**
+ * (`booking-consult` + `bookingTier === 'premium'`). Standard consults stay in the cart.
  */
-export function stripIneligibleBcfBundleDealLines<T extends CartLineWithBundleFlag>(
+export function stripIneligibleBcfBundleDealLines<T extends CartLinePremiumGated>(
   items: T[] | null | undefined
 ): { next: T[]; removedLineCount: number; removedUnitCount: number } {
   const list = Array.isArray(items) ? items : [];
@@ -47,7 +61,7 @@ export function stripIneligibleBcfBundleDealLines<T extends CartLineWithBundleFl
   let removedLineCount = 0;
   let removedUnitCount = 0;
   const next = list.filter((item) => {
-    if (item.bcfBundleDeal) {
+    if (isPremiumGatedCartLine(item)) {
       removedLineCount += 1;
       removedUnitCount += item.quantity ?? 1;
       return false;
@@ -59,7 +73,7 @@ export function stripIneligibleBcfBundleDealLines<T extends CartLineWithBundleFl
 
 function persistCartAfterBundleDealStrip(next: unknown[]): void {
   localStorage.setItem('cartItems', JSON.stringify(next));
-  const newCount = (next as CartLineWithBundleFlag[]).reduce(
+  const newCount = (next as CartLinePremiumGated[]).reduce(
     (sum, ci) => sum + (ci.quantity ?? 1),
     0
   );

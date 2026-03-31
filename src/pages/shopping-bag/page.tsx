@@ -17,6 +17,7 @@ import {
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 import {
+  isPremiumGatedCartLine,
   isPremiumMemberForGatedFeatures,
   stripIneligibleBcfBundleDealLines
 } from '../../utils/premiumMemberAccess';
@@ -647,7 +648,7 @@ function ShoppingBagPage() {
 
   const handleMoveToCart = (item: any) => {
     try {
-      if (item.bcfBundleDeal && !isPremiumMemberForGatedFeatures()) {
+      if (!isPremiumMemberForGatedFeatures() && isPremiumGatedCartLine(item)) {
         return;
       }
       // Remove from saved for later
@@ -1422,7 +1423,12 @@ function ShoppingBagPage() {
                                     marginTop: item.name === 'BLANCO' ? '0px' : '2px',
                                     marginBottom: '0',
                                     fontWeight: '600',
-                                    textAlign: 'left'
+                                    textAlign: 'left',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                    gap: '2px',
+                                    lineHeight: '1.15'
                                   }}
                                 >
                                   {bundleDealListTot != null && bundleDealListTot > bundleDealLineTot && (
@@ -1430,13 +1436,13 @@ function ShoppingBagPage() {
                                       style={{
                                         color: '#808080',
                                         textDecoration: 'line-through',
-                                        marginRight: '6px',
-                                        fontSize: '11px'
+                                        fontSize: '11px',
+                                        whiteSpace: 'nowrap'
                                       }}
                                       dangerouslySetInnerHTML={formatPrice(bundleDealListTot)}
                                     />
                                   )}
-                                  <span dangerouslySetInnerHTML={formatPrice(bundleDealLineTot)} />
+                                  <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(bundleDealLineTot)} />
                                 </div>
                               ) : (
                               <p
@@ -1905,7 +1911,12 @@ function ShoppingBagPage() {
                                  fontSize: '12px',
                                  marginTop: item.name === 'BLANCO' ? '0px' : '2px',
                                  marginBottom: '0',
-                                 fontWeight: '600'
+                                 fontWeight: '600',
+                                 display: 'flex',
+                                 flexDirection: 'column',
+                                 alignItems: 'flex-start',
+                                 gap: '2px',
+                                 lineHeight: '1.15'
                                }}
                              >
                                {savedBundleListTot != null && savedBundleListTot > savedBundleLineTot && (
@@ -1913,13 +1924,13 @@ function ShoppingBagPage() {
                                    style={{
                                      color: '#808080',
                                      textDecoration: 'line-through',
-                                     marginRight: '6px',
-                                     fontSize: '11px'
+                                     fontSize: '11px',
+                                     whiteSpace: 'nowrap'
                                    }}
                                    dangerouslySetInnerHTML={formatPrice(savedBundleListTot)}
                                  />
                                )}
-                               <span dangerouslySetInnerHTML={formatPrice(savedBundleLineTot)} />
+                               <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(savedBundleLineTot)} />
                              </div>
                            ) : (
                            <p

@@ -164,6 +164,39 @@ export async function createStripeMembershipCheckoutSession(
   return data.url;
 }
 
+/**
+ * Product cart PaymentIntent — amount is computed only on the server (`/api/stripe/create-product-payment-intent`).
+ * Requires Supabase session. Cart must only contain server-resolvable lines (see `/api/checkout/quote`).
+ * Wire Stripe.js `confirmCardPayment(clientSecret)` when you replace the founder card flow.
+ */
+export async function createProductPaymentIntent(lines: unknown[]): Promise<{
+  clientSecret: string | null;
+  paymentIntentId: string;
+  quote: unknown;
+}> {
+  const res = await apiFetch('/api/stripe/create-product-payment-intent', {
+    method: 'POST',
+    body: { lines },
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string' && j.error.trim()) msg = j.error;
+    } catch {
+      /* use raw */
+    }
+    throw new Error(msg || 'Payment intent failed');
+  }
+  const data = JSON.parse(text) as { clientSecret?: string; paymentIntentId?: string; quote?: unknown };
+  return {
+    clientSecret: data.clientSecret ?? null,
+    paymentIntentId: typeof data.paymentIntentId === 'string' ? data.paymentIntentId : '',
+    quote: data.quote,
+  };
+}
+
 /** Admin: list membership charges from Supabase (Stripe webhooks). */
 export async function getAdminMembershipPayments(): Promise<MembershipPaymentRecord[]> {
   const res = await apiFetch('/api/admin/membership-payments');
@@ -463,17 +496,55 @@ export async function getAdminDeletedAccounts(): Promise<{ deleted: unknown[] }>
   return { deleted: Array.isArray(data.deleted) ? data.deleted : [] };
 }
 
-/** Admin: analytics summary (empty on server until storage exists). */
+/** Admin: social analytics aggregates + recent events (Supabase `site_analytics_events` when configured). */
 export async function getAdminAnalytics(): Promise<{
   total: number;
   bySource: Record<string, number>;
   byPlatform: Record<string, number>;
   byPlatformAndSource: Record<string, Record<string, number>>;
+  recentEvents?: Array<{
+    platform: string;
+    source: string;
+    timestamp: number;
+    visitorId?: string;
+    userEmail?: string | null;
+  }>;
 }> {
   const res = await apiFetch('/api/admin/analytics');
   if (res.status === 403) throw new Error('Forbidden');
   if (!res.ok) throw new Error(await res.text());
   return await res.json();
+}
+
+/** Public POST — no auth. Records marketing events (e.g. social clicks) for admin analytics. */
+export async function postAnalyticsEvent(payload: {
+  visitorId: string;
+  eventType: 'social_click';
+  platform: string;
+  source: string;
+  path?: string;
+  userEmail?: string | null;
+}): Promise<boolean> {
+  const base = API_BASE.replace(/\/$/, '');
+  const path = 'api/analytics/event';
+  const url = base ? `${base}/${path}` : `/${path}`;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitorId: payload.visitorId,
+        eventType: payload.eventType,
+        platform: payload.platform,
+        source: payload.source,
+        path: payload.path ?? (typeof window !== 'undefined' ? window.location.pathname : undefined),
+        userEmail: payload.userEmail ?? undefined,
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /** Admin: list auth users (paginated). */

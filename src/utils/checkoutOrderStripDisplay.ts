@@ -1,5 +1,7 @@
 /**
- * Checkout + `/checkout/summary` horizontal order strip: thumbnails and copy aligned with `CartDropdown`.
+ * Checkout + `/checkout/summary` horizontal order strip: thumbnails and copy aligned with `CartDropdown` by default.
+ * Pass `{ checkoutStrip: true }` to `orderStripThumbMetrics` on **checkout** + **confirm** only for larger BCF/booking
+ * thumbs and a **120px** slot so black titles line up with unit tiles.
  *
  * **A/C** (internal shorthand): **appointment** + **consult** booking lines (`booking-appointment`, `booking-consult`).
  */

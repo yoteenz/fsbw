@@ -39,8 +39,8 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
   return cartItems.every(isMembershipTierCartItem);
 }
 
-function summaryScrollItemWidthPx(item: any): number {
-  return orderStripThumbMetrics(item, false).cellWidthPx;
+function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): number {
+  return orderStripThumbMetrics(item, isSubscriptionUpgrade, { checkoutStrip: true }).cellWidthPx;
 }
 
 function CheckoutConfirmPage() {
@@ -614,7 +614,7 @@ function CheckoutConfirmPage() {
     
     // Calculate total content width
     const totalContentWidth = cartItems.reduce((sum, item) => {
-      return sum + summaryScrollItemWidthPx(item) + gap;
+      return sum + summaryScrollItemWidthPx(item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
     }, 0) + paddingRight - gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
@@ -646,7 +646,7 @@ function CheckoutConfirmPage() {
     
     // Calculate total content width
     const totalContentWidth = cartItems.reduce((sum, item) => {
-      return sum + summaryScrollItemWidthPx(item) + gap;
+      return sum + summaryScrollItemWidthPx(item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
     }, 0) + paddingRight - gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
@@ -1085,14 +1085,14 @@ function CheckoutConfirmPage() {
                     transition: 'none',
                     gap: '20px',
                     height: '100%',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     willChange: 'transform',
                     paddingRight: '10px'
                   }}
                 >
                   {cartItems.map((item, index) => {
                     const stripUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
-                    const thumbM = orderStripThumbMetrics(item, stripUpgrade);
+                    const thumbM = orderStripThumbMetrics(item, stripUpgrade, { checkoutStrip: true });
                     const itemImage = orderStripThumbnailSrc(item, stripUpgrade);
                     const displayTitle = orderStripTitleLine(item);
                     const itemLength = item.length || '24"';
@@ -1102,12 +1102,7 @@ function CheckoutConfirmPage() {
                     const isBcfBundleDeal = Boolean(item.bcfBundleDeal);
                     const bundleDealListSum = bcfBundleDealResolvedListSubtotal(item);
                     const bundleLineTotalSum = itemPrice * (item.quantity || 1);
-                    const titleFontPx =
-                      item.name === 'NOIR'
-                        ? '22px'
-                        : item.name === '6 MONTHS PREMIUM'
-                          ? '14.8px'
-                          : '21px';
+                    const titleFontPx = orderStripTitleFontPx(item);
 
                     return (
                       <div
@@ -1115,11 +1110,12 @@ function CheckoutConfirmPage() {
                         className="flex-shrink-0"
                         style={{
                           width: `${thumbM.cellWidthPx}px`,
-                          height: '150px',
+                          minHeight: '150px',
+                          height: 'auto',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: 'center',
+                          justifyContent: 'flex-start',
                           paddingTop: '8px',
                           paddingRight: '8px',
                           paddingBottom: '8px',

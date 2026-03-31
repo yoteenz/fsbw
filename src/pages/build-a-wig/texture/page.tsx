@@ -11,6 +11,7 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 
 interface TextureOption {
   id: string;
@@ -1046,6 +1047,7 @@ function TextureSelection() {
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
       />
+      {premiumMembershipStepModal}
     </>
   );
 }

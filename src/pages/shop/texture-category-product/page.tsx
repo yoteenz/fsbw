@@ -28,6 +28,7 @@ import {
   bcfOptionSelectedChrome,
   bcfPriceAdjustments,
   bcfTexturesForOrigin,
+  BCF_BUNDLE_DEAL_DISCOUNT_USD,
   BCF_OPTION_RED,
   type BcfOriginId
 } from '../../../utils/bcfProductOptions';
@@ -142,7 +143,6 @@ const BUNDLE_THUMB_INNER_H_PX = Math.round(64 * BUNDLE_HERO_LAYOUT_SCALE);
 /** Outer frame: inner + padding (no title/label captions on bundle hero thumbs). 8px total → 4px mat each side. */
 const BUNDLE_THUMB_OUTER_W_PX = BUNDLE_THUMB_INNER_W_PX + 8;
 const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + 8;
-const BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(120 * BUNDLE_HERO_LAYOUT_SCALE);
 /** Space between hero/thumbs and product title stack (BCF bundle-style PDP). */
 const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 80;
 
@@ -618,9 +618,8 @@ export default function ShopTextureCategoryProductPage() {
     }, 500);
   };
 
-  /** Bundles only: 3× line at $40 off combined unit price (subtotal = 3×displayPrice − 40). */
+  /** Bundles only: 3× line at bundle-deal discount (subtotal = 3×displayPrice − `BCF_BUNDLE_DEAL_DISCOUNT_USD`). */
   const BUNDLE_DEAL_QTY = 3;
-  const BUNDLE_DEAL_DISCOUNT_USD = 40;
 
   const handleBundleDealToBag = () => {
     if (category !== 'bundles') return;
@@ -634,7 +633,7 @@ export default function ShopTextureCategoryProductPage() {
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
         const currentCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
         const listSubtotal = BUNDLE_DEAL_QTY * displayPrice;
-        const subtotal = listSubtotal - BUNDLE_DEAL_DISCOUNT_USD;
+        const subtotal = listSubtotal - BCF_BUNDLE_DEAL_DISCOUNT_USD;
         const unitPrice = subtotal / BUNDLE_DEAL_QTY;
         const newItem = {
           id: `shop-${texture}-bundles-deal-${Date.now()}`,

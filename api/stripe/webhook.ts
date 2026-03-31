@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent';
 
 export const config = { runtime: 'edge' };
 
@@ -189,6 +190,29 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription): Promise<void
   if (error) console.error('[stripe webhook] subscription.updated', error);
 }
 
+async function handlePaymentIntentSucceeded(pi: Stripe.PaymentIntent): Promise<void> {
+  if (pi.metadata?.purpose !== 'product_order') return;
+  const userId = pi.metadata?.supabase_user_id;
+  if (!userId || typeof userId !== 'string') return;
+  let supabase: SupabaseClient;
+  try {
+    supabase = getServiceSupabase();
+  } catch {
+    console.error('[stripe webhook] payment_intent.succeeded: missing Supabase service role');
+    return;
+  }
+  const amountCents = typeof pi.amount_received === 'number' ? pi.amount_received : pi.amount ?? 0;
+  const currency = (pi.currency || 'usd').toLowerCase();
+  const result = await appendOrderFromProductPaymentIntent(supabase, userId, {
+    paymentIntentId: pi.id,
+    amountCents,
+    currency
+  });
+  if (!result.ok) {
+    console.error('[stripe webhook] payment_intent.succeeded order append', result.error);
+  }
+}
+
 async function handleSubscriptionDeleted(sub: Stripe.Subscription): Promise<void> {
   const supabase = getServiceSupabase();
   const { error } = await supabase
@@ -255,6 +279,9 @@ export default async function handler(request: Request): Promise<Response> {
         break;
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+        break;
+      case 'payment_intent.succeeded':
+        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
       default:
         break;
