@@ -393,7 +393,7 @@ export default function AdminBrand() {
                       >
                         EXPIRES (OPTIONAL)
                         <div className="mt-1 w-full min-w-0 max-w-full overflow-visible">
-                          <BrandExpiresDatePicker value={codeExpires} onChange={setCodeExpires} />
+                          <BrandExpiresDatePicker inline value={codeExpires} onChange={setCodeExpires} />
                         </div>
                       </label>
                       <label style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', display: 'block' }}>

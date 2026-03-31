@@ -18,6 +18,7 @@ import {
   fetchStripeMembershipAvailable,
   createStripeMembershipCheckoutSession,
   getAccessToken,
+  postBookingAppointmentMeeting,
 } from '../../utils/api';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import {
@@ -315,6 +316,66 @@ function CheckoutPage() {
   const [customTipAmount, setCustomTipAmount] = useState(0);
   const [customTipApplied, setCustomTipApplied] = useState(false);
   const [customTipDisplay, setCustomTipDisplay] = useState('');
+
+  const syncBookingAppointmentsToAdminMeetings = useCallback(
+    async (orderNumberForNotes: string) => {
+      const appointmentItems = cartItems.filter(
+        (item: any) =>
+          item?.type === 'booking-appointment' &&
+          typeof item?.bookingPreferredDate === 'string' &&
+          item.bookingPreferredDate.trim() &&
+          typeof item?.bookingPreferredTime === 'string' &&
+          item.bookingPreferredTime.trim()
+      );
+      if (appointmentItems.length === 0) return;
+
+      const durationByAddonId: Record<string, number> = {
+        braids: 60,
+        'brow-clean': 40,
+        'brow-tint': 60,
+        'mink-lashes': 20,
+        makeup: 120,
+        'clean-lace': 40,
+        travel: 24 * 60
+      };
+
+      await Promise.allSettled(
+        appointmentItems.map(async (item: any, idx: number) => {
+          const installKind = String(item?.bookingInstallKind || '').toUpperCase();
+          const baseDuration = installKind === 'RE_INSTALL' ? 120 : 150;
+          const addonIds = Array.isArray(item?.bookingAddonIds)
+            ? item.bookingAddonIds.filter((id: unknown): id is string => typeof id === 'string')
+            : [];
+          const addonDuration = addonIds.reduce((sum, id) => sum + (durationByAddonId[id] || 0), 0);
+          const durationMinutes = baseDuration + addonDuration;
+
+          const serviceTypeLabel = installKind === 'RE_INSTALL' ? 'RE-INSTALL' : 'NEW INSTALL';
+          const styleLabel = String(item?.bookingStyle || '').trim().toUpperCase();
+          const partDirectionLabel = String(item?.bookingPartDirection || '').trim().toUpperCase();
+          const type = [serviceTypeLabel, styleLabel, partDirectionLabel].filter(Boolean).join(' · ') || serviceTypeLabel;
+
+          const subtitle = String(item?.bookingBagSubtitle || '')
+            .trim()
+            .toUpperCase();
+          const notes = subtitle ? `BOOKING DETAILS: ${subtitle}` : 'BOOKING DETAILS';
+          const meetingDate = String(item.bookingPreferredDate).trim();
+          const meetingTime = String(item.bookingPreferredTime).trim();
+          const idempotencyKey = `BOOKING_APPT:${orderNumberForNotes}:${meetingDate}:${meetingTime}:${idx}`;
+
+          await postBookingAppointmentMeeting({
+            meetingDate,
+            meetingTime,
+            type,
+            durationMinutes,
+            notes,
+            orderNumber: orderNumberForNotes,
+            idempotencyKey
+          });
+        })
+      );
+    },
+    [cartItems]
+  );
   
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
@@ -5904,6 +5965,12 @@ function CheckoutPage() {
 
                   if (usedFounderDummyPan) {
                     trackActivity('founder_test_checkout_order', { orderNumber: nextOrderNumber });
+                  }
+
+                  try {
+                    await syncBookingAppointmentsToAdminMeetings(orderNumber);
+                  } catch (e) {
+                    console.error('Failed to sync booking appointments to admin meetings:', e);
                   }
 
                   navigate('/checkout/summary', {

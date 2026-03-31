@@ -1,6 +1,7 @@
-import { useRef, useState, type ChangeEvent } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   BookingBodyParagraph,
   BookingCrumbTitle,
@@ -11,15 +12,18 @@ import {
 } from '../../../components/booking/BookingPageChrome';
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
+import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 
 const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
-/** Standard `/booking/consultation`: any signed-in tier. Premium `/booking/premium/consultation`: same consult flow with premium badge/tier metadata. */
+/** Standard consult is open to all users; premium members are canonicalized to premium consult path for badge/tier consistency. */
 export default function BookingConsultationPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
+  const isPremiumMember = isPremiumMemberForGatedFeatures();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
   const [notes, setNotes] = useState('');
@@ -27,7 +31,20 @@ export default function BookingConsultationPage() {
   const [inspoPreview, setInspoPreview] = useState<string | null>(null);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [formError, setFormError] = useState<string | null>(null);
+  const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
+
+  useEffect(() => {
+    if (!isPremiumBooking && isPremiumMember) {
+      navigate('/booking/premium/consultation', { replace: true });
+      return;
+    }
+    if (isPremiumBooking && !isPremiumMember) {
+      setShowConsultAccessModal(true);
+      return;
+    }
+    setShowConsultAccessModal(false);
+  }, [isPremiumBooking, isPremiumMember, navigate]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -305,6 +322,23 @@ export default function BookingConsultationPage() {
         </div>
       </div>
     </BookingFlowLayout>
+
+    <ConfirmationModal
+      isOpen={showConsultAccessModal}
+      onClose={() => {
+        setShowConsultAccessModal(false);
+        navigate('/booking/consultation', { replace: true });
+      }}
+      onConfirm={() => {
+        setShowConsultAccessModal(false);
+        navigate('/booking/consultation', { replace: true });
+      }}
+      title="UPGRADE YOUR SUBSCRIPTION?"
+      message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
+      confirmText="GO TO STANDARD CONSULT"
+      cancelText="CANCEL"
+      dataAttribute="upgrade-subscription-modal-booking-premium-consult"
+    />
 
     </>
   );

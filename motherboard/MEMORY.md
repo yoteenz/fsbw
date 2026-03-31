@@ -6297,6 +6297,14 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-03-31 — Appointment style label rename
+
+**Context:** User requested changing **"LAYERS & CURLS"** to **"LAYERED CURLS"** in **CHOOSE A STYLE**.
+
+**Changes:** **`booking/appointment/page.tsx`** — updated `AppointmentStyle` union and `APPOINTMENT_STYLE_OPTIONS` label to **`LAYERED CURLS`**.
+
+---
+
 ## 2026-03-31 — Appointment upgrade modal copy matches premium-feature standard
 
 **Context:** User wanted the booking appointment premium popup to use the same generic premium-gate message used elsewhere, instead of the consult/shop-menu specific sentence.
@@ -6310,5 +6318,69 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User clarified modal policy: **area pages** should use **"YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."** and **feature gates** should use **"YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."**. They also confirmed consult should not be premium-gated because it serves both standard and premium users.
 
 **Changes:** **`booking/consultation/page.tsx`** — removed premium gate logic and verbose upgrade modal (deleted premium-membership checks, modal state, `ConfirmationModal` block, and related imports). Premium-path consult still keeps route-based badge/tier metadata via `isPremiumBooking`, but Add to bag no longer blocks non-premium users.
+
+**Verification:** **`npx tsc --noEmit`** passes.
+
+---
+
+## 2026-03-31 — Appointment time-slot dropdown: special-offer style popup + red arrow
+
+**Context:** User wanted the time selector to match admin special-offer/client sort dropdown style (custom popup, red arrow), placeholder in **Futura Medium**, and scheduled line to end with a period after time.
+
+**Changes:** **`booking/appointment/page.tsx`** — replaced native `<select>` with custom button+popup dropdown (same visual pattern as admin special-offer tab controls), removed gray native arrow, added red chevron + overlay-dismiss popup list; placeholder **SELECT A TIME** uses `bookingFontMedium`. Scheduled line now ends with `.` and shows compact time (`4:00PM.`).
+
+---
+
+## 2026-03-31 — Booking appointment checkout auto-sync to admin meetings (Supabase)
+
+**Context:** User approved implementing automatic sync so booking appointments create admin meeting records recognized in Supabase.
+
+**Changes:** Added **`POST /api/booking/appointment-meeting`** (`api/booking/appointment-meeting.ts`) authenticated via `getAuthUser`; inserts pending rows into Supabase `meetings` with `user_id`, `client_email`, `meeting_date`, `meeting_time`, `type`, `duration_minutes`, and `notes` (includes order number). Added **`postBookingAppointmentMeeting(...)`** in `src/utils/api.ts`. Updated checkout success flow (`src/pages/checkout/page.tsx`) to detect `booking-appointment` items with `bookingPreferredDate` + `bookingPreferredTime` and auto-create meetings via API (non-blocking with `Promise.allSettled` semantics wrapped in try/catch).
+
+**Verification:** `ReadLints` reports no linter errors in the touched files.
+
+---
+
+## 2026-03-31 — Appointment scheduled-date line visibility/format + tighter grouping
+
+**Context:** User wanted the red **SCHEDULED DATE & TIME** line to appear only after both date and time are selected, formatted like **`03-31-2026 @ 2:00pm`** (no trailing period), grouped tightly with estimated-time lines, and the time-slot dropdown to mirror client-overview sort control sizing.
+
+**Changes:** **`booking/appointment/page.tsx`** — scheduled line now renders only when both `preferredDateIso` and `preferredTimeSlot` exist; added `formatTimeSlotForDisplay()` for lowercase compact time (`2:00pm`); removed placeholder/repetitive text and period; grouped scheduled+estimated copy in one wrapper with symmetrical spacing (`0/4px/0` rhythm). Time-slot dropdown restyled to `36px` height with `8px 10px` padding and Futura PT Book `11px`.
+
+---
+
+## 2026-03-31 — Booking appointment route canonicalization + premium-path fallback
+
+**Context:** User asked to apply the same auto-recognition/page-routing pattern to other premium routes if missing.
+
+**Changes:** **`booking/appointment/page.tsx`** — added route-level canonicalization/guard like consult: premium users on `/booking/appointment` auto-redirect to `/booking/premium/appointment`; non-premium direct premium-path access opens area-gate modal. On close of that modal (premium-path non-member), route falls back to `/booking/consultation`; confirm keeps upgrade/sign-in flow.
+
+**Verification:** **`npx tsc --noEmit`** passes.
+
+---
+
+## 2026-03-31 — Admin Brand create-code date picker: inline calendar on card
+
+**Context:** User requested the **Create Code → Select Date** control to show the full calendar inline on the main card like the appointment page, and asked to confirm appointment/admin meetings/Supabase wiring.
+
+**Changes:** **`admin/brand/page.tsx`** — changed code-expiry picker to inline mode: **`<BrandExpiresDatePicker inline ... />`**.
+
+**Verification note:** Current booking appointment checkout stores `bookingPreferredDate`/`bookingPreferredTime` on cart items, but there is no automatic flow from booking checkout into `POST /api/admin/meetings`; admin meetings are created via `/admin/meetings/schedule` (`postAdminMeeting`) and persisted to Supabase `meetings` table through `api/admin/meetings.ts`.
+
+---
+
+## 2026-03-31 — Appointment calendar: scheduled date/time line + weekday slot dropdown
+
+**Context:** User requested a red **SCHEDULED DATE & TIME:** line below the calendar (above estimated appointment time), with a date-based time-slot dropdown. Weekday slots should start at **10AM** and latest accepted appointment should be **6PM**.
+
+**Changes:** **`booking/appointment/page.tsx`** — added weekday `WEEKDAY_TIME_SLOTS` (**10:00 AM → 6:00 PM**) and `preferredTimeSlot` state; date picker `onChange` clears time when date changes; when a date is selected, an **AVAILABLE TIME SLOTS** dropdown appears; added red **SCHEDULED DATE & TIME** line that renders selected date + selected slot; cart payload now includes `bookingPreferredTime` when chosen.
+
+---
+
+## 2026-03-31 — Booking premium-route behavior: consult auto-canonicalize; area gate wording
+
+**Context:** User clarified routing/gate behavior: consult should auto-route by membership status (**premium → `/booking/premium/consultation`**, signed-out/standard → regular consult); direct premium-path access should use **ACCESS THIS AREA** behavior; appointment route should use area-gate semantics with upgrade chart for signed-in members and sign-in for signed-out users.
+
+**Changes:** **`booking/consultation/page.tsx`** — added route-level canonicalization/guard: premium users on standard consult are redirected to premium consult path; non-premium users hitting premium consult path get **"YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."** modal and are redirected to **`/booking/consultation`**. **`booking/appointment/page.tsx`** — appointment gate message changed to **ACCESS THIS AREA**; confirm now routes to **`/account/rewards`** (with upgrade prep) if signed in, otherwise **`/sign-in`**.
 
 **Verification:** **`npx tsc --noEmit`** passes.

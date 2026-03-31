@@ -18,11 +18,22 @@ import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 
 type InstallKind = 'NEW_INSTALL' | 'RE_INSTALL';
-type AppointmentStyle = 'BONE STRAIGHT' | 'LAYERS & CURLS' | 'CRIMPS';
+type AppointmentStyle = 'BONE STRAIGHT' | 'LAYERED CURLS' | 'CRIMPS';
 type PartDirection = 'LEFT SIDE' | 'MIDDLE' | 'RIGHT SIDE';
 
-const APPOINTMENT_STYLE_OPTIONS: AppointmentStyle[] = ['BONE STRAIGHT', 'LAYERS & CURLS', 'CRIMPS'];
+const APPOINTMENT_STYLE_OPTIONS: AppointmentStyle[] = ['BONE STRAIGHT', 'LAYERED CURLS', 'CRIMPS'];
 const PART_DIRECTION_OPTIONS: PartDirection[] = ['LEFT SIDE', 'MIDDLE', 'RIGHT SIDE'];
+const WEEKDAY_TIME_SLOTS = [
+  '10:00 AM',
+  '11:00 AM',
+  '12:00 PM',
+  '1:00 PM',
+  '2:00 PM',
+  '3:00 PM',
+  '4:00 PM',
+  '5:00 PM',
+  '6:00 PM'
+] as const;
 
 const INSTALL_BASE: Record<InstallKind, { label: string; sub: string; price: number }> = {
   NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 250 },
@@ -59,6 +70,18 @@ function formatEstimatedAppointmentTime(totalMinutes: number): string {
   if (mins > 0) parts.push(`${mins} MINUTE${mins === 1 ? '' : 'S'}`);
   if (parts.length === 0) parts.push('0 MINUTES');
   return parts.join(' ');
+}
+
+function formatIsoForDisplay(isoYmd: string): string {
+  const [y, m, d] = isoYmd.split('-');
+  if (!y || !m || !d) return '';
+  return `${m}-${d}-${y}`;
+}
+
+function formatTimeSlotForDisplay(slot: string): string {
+  const t = slot.trim();
+  if (!t) return '';
+  return t.replace(/\s+/g, '');
 }
 
 type AppointmentAddon = { id: string; label: string; sub: string; price: number };
@@ -217,21 +240,30 @@ export default function BookingAppointmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
+  const isPremiumMember = isPremiumMemberForGatedFeatures();
   const [installKind, setInstallKind] = useState<InstallKind>('NEW_INSTALL');
   const [appointmentStyle, setAppointmentStyle] = useState<AppointmentStyle>('BONE STRAIGHT');
   const [partDirection, setPartDirection] = useState<PartDirection>('MIDDLE');
   const [addonIds, setAddonIds] = useState<Set<string>>(() => new Set());
   const [preferredDateIso, setPreferredDateIso] = useState('');
+  const [preferredTimeSlot, setPreferredTimeSlot] = useState('');
+  const [showTimeSlotDropdown, setShowTimeSlotDropdown] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [showAppointmentUpgradeModal, setShowAppointmentUpgradeModal] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
-  /** Installs / hair appointments: premium only. Standard consult: `/booking/consultation`. Premium-path consult: `/booking/premium/*` — same membership gate as this page (see consultation page). */
+  /** Route-level canonicalization/guard: premium members use premium path; non-premium direct premium-path access is area-gated. */
   useEffect(() => {
-    if (!isPremiumMemberForGatedFeatures()) {
-      setShowAppointmentUpgradeModal(true);
+    if (!isPremiumBooking && isPremiumMember) {
+      navigate('/booking/premium/appointment', { replace: true });
+      return;
     }
-  }, []);
+    if (isPremiumBooking && !isPremiumMember) {
+      setShowAppointmentUpgradeModal(true);
+      return;
+    }
+    setShowAppointmentUpgradeModal(false);
+  }, [isPremiumBooking, isPremiumMember, navigate]);
 
   /** CLEAN LACE is only valid for RE-INSTALL; drop selection when switching to NEW INSTALL. */
   useEffect(() => {
@@ -325,6 +357,7 @@ export default function BookingAppointmentPage() {
           bookingInstallKind: installKind,
           bookingStyle: appointmentStyle,
           bookingPartDirection: partDirection,
+          ...(preferredTimeSlot ? { bookingPreferredTime: preferredTimeSlot } : {}),
           bookingAddonIds: addonList,
           bookingBagSubtitle,
           ...(preferredDateIso.trim() ? { bookingPreferredDate: preferredDateIso.trim() } : {})
@@ -585,26 +618,133 @@ export default function BookingAppointmentPage() {
             <BrandExpiresDatePicker
               inline
               value={preferredDateIso}
-              onChange={setPreferredDateIso}
+              onChange={(iso) => {
+                setPreferredDateIso(iso);
+                setPreferredTimeSlot('');
+                setShowTimeSlotDropdown(false);
+              }}
               isDateDisabled={isAppointmentDateDisabled}
             />
           </div>
-          <p
-            style={{
-              fontFamily: bookingFontMedium,
-              fontSize: '10px',
-              color: '#EB1C24',
-              textTransform: 'uppercase',
-              textAlign: 'center',
-              margin: '6px 0 20px',
-              lineHeight: 1.45,
-              letterSpacing: '0.02em'
-            }}
-          >
-            ESTIMATED APPOINTMENT TIME: {formatEstimatedAppointmentTime(estimatedMinutes)}.
-            <br />
-            FINAL DURATION CONFIRMED AFTER CHECKOUT.
-          </p>
+          {preferredDateIso ? (
+            <div style={{ marginBottom: '12px' }}>
+              <label
+                style={{
+                  fontFamily: bookingFontMedium,
+                  fontSize: '10px',
+                  color: '#000',
+                  textTransform: 'uppercase',
+                  margin: '0 0 6px',
+                  display: 'block',
+                  letterSpacing: '0.02em'
+                }}
+              >
+                AVAILABLE TIME SLOTS:
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowTimeSlotDropdown((v) => !v)}
+                  className="w-full"
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    height: '36px',
+                    border: '1.3px solid #000',
+                    borderRadius: 0,
+                    fontFamily: bookingFontMedium,
+                    fontSize: '11px',
+                    background: '#fff',
+                    textTransform: 'uppercase',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    color: preferredTimeSlot ? '#000' : '#808080',
+                    letterSpacing: '0.02em'
+                  }}
+                >
+                  <span>{preferredTimeSlot || 'SELECT A TIME'}</span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    className="flex-shrink-0"
+                    style={{
+                      transform: showTimeSlotDropdown ? 'rotate(180deg)' : 'none',
+                      color: '#EB1C24',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                {showTimeSlotDropdown ? (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      aria-hidden="true"
+                      onClick={() => setShowTimeSlotDropdown(false)}
+                    />
+                    <div
+                      className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
+                      style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+                    >
+                      {WEEKDAY_TIME_SLOTS.map((slot) => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => {
+                            setPreferredTimeSlot(slot);
+                            setShowTimeSlotDropdown(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                          style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+          <div style={{ marginBottom: '20px' }}>
+            {preferredDateIso && preferredTimeSlot ? (
+              <p
+                style={{
+                  fontFamily: bookingFontMedium,
+                  fontSize: '10px',
+                  color: '#EB1C24',
+                  textTransform: 'uppercase',
+                  textAlign: 'center',
+                  margin: '0 0 4px',
+                  lineHeight: 1.45,
+                  letterSpacing: '0.02em'
+                }}
+              >
+                SCHEDULED DATE & TIME: {formatIsoForDisplay(preferredDateIso)} @ {formatTimeSlotForDisplay(preferredTimeSlot)}.
+              </p>
+            ) : null}
+            <p
+              style={{
+                fontFamily: bookingFontMedium,
+                fontSize: '10px',
+                color: '#EB1C24',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                margin: 0,
+                lineHeight: 1.45,
+                letterSpacing: '0.02em'
+              }}
+            >
+              ESTIMATED APPOINTMENT TIME: {formatEstimatedAppointmentTime(estimatedMinutes)}.
+              <br />
+              FINAL DURATION CONFIRMED AFTER CHECKOUT.
+            </p>
+          </div>
 
           <div className="text-center" style={{ paddingTop: '6px' }}>
             <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
@@ -623,14 +763,23 @@ export default function BookingAppointmentPage() {
 
     <ConfirmationModal
       isOpen={showAppointmentUpgradeModal}
-      onClose={() => setShowAppointmentUpgradeModal(false)}
+      onClose={() => {
+        setShowAppointmentUpgradeModal(false);
+        if (isPremiumBooking && !isPremiumMember) {
+          navigate('/booking/consultation', { replace: true });
+        }
+      }}
       onConfirm={() => {
         setShowAppointmentUpgradeModal(false);
-        prepareMembershipUpgradeNavigation();
-        navigate('/account/rewards');
+        if (localStorage.getItem('isSignedIn') === 'true') {
+          prepareMembershipUpgradeNavigation();
+          navigate('/account/rewards');
+          return;
+        }
+        navigate('/sign-in');
       }}
       title="UPGRADE YOUR SUBSCRIPTION?"
-      message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
+      message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
       confirmText="UPGRADE"
       cancelText="CANCEL"
       dataAttribute="upgrade-subscription-modal-booking-appointment"

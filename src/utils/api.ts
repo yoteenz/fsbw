@@ -660,3 +660,18 @@ export async function deleteAdminMeeting(id: string): Promise<void> {
   const res = await apiFetch(`/api/admin/meetings?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
   if (!res.ok) throw new Error(await res.text());
 }
+
+/** Booking checkout: create a pending appointment meeting row for admin calendar (authenticated user only). */
+export async function postBookingAppointmentMeeting(body: {
+  meetingDate: string;
+  meetingTime: string;
+  type?: string;
+  durationMinutes?: number;
+  notes?: string;
+  orderNumber?: string;
+  idempotencyKey?: string;
+}): Promise<unknown> {
+  const res = await apiFetch('/api/booking/appointment-meeting', { method: 'POST', body });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
