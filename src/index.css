@@ -3894,6 +3894,11 @@ img.object-contain {
 .product-wig-preview-images {
   margin-bottom: 4px !important;
 }
+
+/* BCF PDP PHOTO/VIDEO: keep `right` from losing to other rules; match `BCF_PHOTO_VIDEO_TOGGLE_RIGHT_PX` in texture-category-product */
+.bcf-pdp-main-card .bcf-hero-photo-video-toggle {
+  right: 18px !important;
+}
 /* Prevent disclaimer from overlapping images - lock spacing below 2D/3D block */
 .product-wig-disclaimer {
   transform: translateY(0) !important;
@@ -3942,8 +3947,7 @@ select.careers-apply-checkout-field option {
 }
 
 /*
- * BUNDLES / CLOSURES / FRONTALS — CURLY row only: lift product copy (label + lines).
- * Uses `top` + !important so it wins over nested transforms (/home/shop + texture PDP). Curly copy only (+0.5px vs prior −5px); thumbnails not nudged.
+ * `/home/shop` product grid: curly row title nudge only (BCF texture PDP no longer uses this — copy aligns with straight/wavy there).
  */
 .shop-bcf-curly-product-copy-lift {
   position: relative !important;
@@ -3951,12 +3955,13 @@ select.careers-apply-checkout-field option {
 }
 
 /* `/shop/bundles` PDP: product title must not use `.gift-card-product-name` (−128px + z-index) or it covers texture ThumbBoxes and blocks taps */
+/* BCF shop PDP title: 48px (was 50px); keep normal wrap for BUNDLES/CLOSURES/FRONTALS */
 .bcf-bundles-pdp-product-name,
 p.bcf-bundles-pdp-product-name {
   font-family: 'Covered By Your Grace', 'Covered By Your Grace Preload', sans-serif !important;
-  font-size: 32px !important;
+  font-size: 48px !important;
   font-weight: 400 !important;
-  line-height: 1.15 !important;
+  line-height: 1.2 !important;
   transform: translateY(0) !important;
   z-index: 1 !important;
   white-space: normal !important;

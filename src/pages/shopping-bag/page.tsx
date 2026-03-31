@@ -16,6 +16,198 @@ import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 
+/** Match `CartDropdown` thumb sizes / booking + BCF layout. */
+const BAG_UNIT_THUMB_PX = 88;
+const BAG_BCF_THUMB_PX = Math.round(BAG_UNIT_THUMB_PX * 0.85 * 1.05);
+const BAG_BOOKING_BADGE_PX = 66;
+const BAG_GIFT_THUMB_PX = 108;
+
+function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return BAG_GIFT_THUMB_PX;
+  if (item.type === 'booking-consult' || item.type === 'booking-appointment') return BAG_BOOKING_BADGE_PX;
+  if (item.type === 'shop-texture-category') return BAG_BCF_THUMB_PX;
+  return BAG_UNIT_THUMB_PX;
+}
+
+/** Black title line — same rules as cart dropdown. */
+function bagProductTitleLine(item: { name?: string; type?: string; category?: string }): string {
+  if (item.type === 'booking-appointment') {
+    return 'BOOKING';
+  }
+  if (item.type === 'booking-consult') {
+    return 'CONSULT';
+  }
+  if (item.type === 'shop-texture-category') {
+    const c = item.category;
+    if (c === 'bundles') return 'BUNDLES';
+    if (c === 'closures') return 'CLOSURES';
+    if (c === 'frontals') return 'FRONTALS';
+    const head = (item.name || '').split('·')[0]?.trim();
+    return head ? head.toUpperCase() : (item.name || '').replace(/WIG/gi, '').trim();
+  }
+  return (item.name || 'NOIR').replace(/WIG/gi, '').trim();
+}
+
+/** Red subtitle — same rules as cart dropdown. */
+function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName: (productName: string) => string): string {
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 'DIGITAL ONLY';
+  if (
+    (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
+    item.bookingBagSubtitle
+  ) {
+    return item.bookingBagSubtitle;
+  }
+  if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
+    return 'BOOKING DEPOSIT';
+  }
+  if (item.type === 'shop-texture-category') {
+    const origin = (item.hairOrigin || 'CAMBODIAN').toString().toUpperCase();
+    return `${itemLength} RAW ${origin}`;
+  }
+  return `${itemLength} RAW ${hairOriginForName(item.name || 'NOIR')}`;
+}
+
+/** Unit wig lines: same origins as cart dropdown. */
+function bagHairOriginForProductName(productName: string): string {
+  switch (productName) {
+    case 'NOIR':
+      return 'CAMBODIAN';
+    case 'BLANCO':
+      return 'RUSSIAN';
+    case 'SOFT CURL':
+      return 'FILIPINO';
+    case 'OCEAN CURL':
+      return 'VIETNAMESE';
+    case 'SOFT WAVE':
+      return 'INDIAN';
+    case 'BEACH WAVE':
+      return 'INDONESIAN';
+    default:
+      return 'CAMBODIAN';
+  }
+}
+
+function ShoppingBagLineThumb({
+  item,
+  itemImage,
+  itemName,
+  navigate,
+  onEditUnit
+}: {
+  item: any;
+  itemImage: string;
+  itemName: string;
+  navigate: (path: string) => void;
+  onEditUnit?: (item: any) => void;
+}) {
+  const isGift = item.name === 'GIFT CARD' || item.type === 'gift-card';
+  const isBooking = item.type === 'booking-consult' || item.type === 'booking-appointment';
+  const isBcf = item.type === 'shop-texture-category';
+  const cartThumbBoxPx = bagRowCartThumbBoxPx(item);
+
+  const goPdp = () => {
+    let productRoute = '/straight/noir';
+    if (isGift) {
+      productRoute = '/tools/gift-card';
+    } else if (item.type === 'booking-consult') {
+      productRoute = bookingConsultationHrefForCartItem(item);
+    } else if (item.type === 'booking-appointment') {
+      productRoute = bookingAppointmentHrefForCartItem(item);
+    } else {
+      const bcfHref = shopBcfPdpHrefFromCartItem(item);
+      if (bcfHref) productRoute = bcfHref;
+      else if (item.name === 'NOIR') productRoute = '/straight/noir';
+      else if (item.name === 'BLANCO') productRoute = '/straight/blanco';
+      else if (item.name === 'SOFT WAVE') productRoute = '/wavy/soft-wave';
+      else if (item.name === 'SOFT CURL') productRoute = '/curly/soft-curl';
+      else if (item.name === 'BEACH WAVE') productRoute = '/wavy/beach-wave';
+      else if (item.name === 'OCEAN CURL') productRoute = '/curly/ocean-curl';
+    }
+    navigate(productRoute);
+  };
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center"
+      style={{
+        flexShrink: 0,
+        width: `${BAG_UNIT_THUMB_PX}px`,
+        height: '120px',
+        minHeight: '120px',
+        alignSelf: isBcf || isBooking ? 'center' : 'flex-start'
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: isBcf || isBooking ? 'none' : 'translateY(-8px)',
+          position: 'relative'
+        }}
+      >
+        <div
+          className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+          style={{
+            width: `${isBooking ? BAG_UNIT_THUMB_PX : cartThumbBoxPx}px`,
+            height: `${isBooking ? BAG_UNIT_THUMB_PX : cartThumbBoxPx}px`,
+            margin: '0'
+          }}
+          onClick={goPdp}
+        >
+          {isBooking ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transform: 'translateX(2px)'
+              }}
+            >
+              <img
+                src={itemImage}
+                alt={itemName}
+                className="object-contain rounded"
+                style={{ width: `${BAG_BOOKING_BADGE_PX}px`, height: `${BAG_BOOKING_BADGE_PX}px` }}
+              />
+            </div>
+          ) : (
+            (() => {
+              const imgEl = (
+                <img
+                  src={itemImage}
+                  alt={itemName}
+                  className={isBcf ? 'object-contain rounded' : 'object-cover rounded'}
+                  style={{ width: `${cartThumbBoxPx}px`, height: `${cartThumbBoxPx}px` }}
+                />
+              );
+              return isBcf ? <div style={{ transform: 'translateX(4px)' }}>{imgEl}</div> : imgEl;
+            })()
+          )}
+        </div>
+        {!isGift && !isBooking && !isBcf && onEditUnit ? (
+          <p
+            className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
+            style={{
+              fontFamily: '"Futura PT Book"',
+              color: '#EB1C24',
+              textTransform: 'uppercase',
+              fontSize: '8px',
+              marginTop: '4px',
+              marginBottom: '0',
+              lineHeight: '1.1'
+            }}
+            onClick={() => onEditUnit(item)}
+          >
+            EDIT IN BUILD-A-WIG
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function ShoppingBagPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1083,32 +1275,11 @@ function ShoppingBagPage() {
                         return item.image || '/assets/NOIR/noir-thumb.png';
                       };
                       const itemImage = getItemImage();
-                      
-                      // Get the correct hair origin based on product name (same logic as cart dropdown)
-                      const getHairOrigin = (productName: string) => {
-                        switch (productName) {
-                          case 'NOIR':
-                            return 'CAMBODIAN';
-                          case 'BLANCO':
-                            return 'CAMBODIAN';
-                          case 'SOFT CURL':
-                            return 'FILIPINO';
-                          case 'OCEAN CURL':
-                            return 'VIETNAMESE';
-                          case 'SOFT WAVE':
-                            return 'INDIAN';
-                          case 'BEACH WAVE':
-                            return 'INDONESIAN';
-                          default:
-                            return 'CAMBODIAN';
-                        }
-                      };
-                      
+
                       const itemLength = item.length || '24"';
-                      const itemHairOrigin = getHairOrigin(itemName);
                       const itemPrice = item.price || 580;
                       const itemQuantity = item.quantity ?? 1;
-                      const isBookingCartLine =
+                      const isBookingLine =
                         item.type === 'booking-consult' || item.type === 'booking-appointment';
 
                        return (
@@ -1123,72 +1294,13 @@ function ShoppingBagPage() {
                                flexShrink: 0
                              }}
                            >
-                          {/* Thumbnail Container - Matching cart dropdown */}
-                          <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
-                              {/* Item Image */}
-                              <div 
-                                className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                                style={{ 
-                                  width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
-                                  height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
-                                  margin: '0'
-                                }}
-                                onClick={() => {
-                                  let productRoute = '/straight/noir';
-                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                    productRoute = '/tools/gift-card';
-                                  } else if (item.type === 'booking-consult') {
-                                    productRoute = bookingConsultationHrefForCartItem(item);
-                                  } else if (item.type === 'booking-appointment') {
-                                    productRoute = bookingAppointmentHrefForCartItem(item);
-                                  } else {
-                                    const bcfHref = shopBcfPdpHrefFromCartItem(item);
-                                    if (bcfHref) productRoute = bcfHref;
-                                    else if (item.name === 'NOIR') productRoute = '/straight/noir';
-                                    else if (item.name === 'BLANCO') productRoute = '/straight/blanco';
-                                    else if (item.name === 'SOFT WAVE') productRoute = '/wavy/soft-wave';
-                                    else if (item.name === 'SOFT CURL') productRoute = '/curly/soft-curl';
-                                    else if (item.name === 'BEACH WAVE') productRoute = '/wavy/beach-wave';
-                                    else if (item.name === 'OCEAN CURL') productRoute = '/curly/ocean-curl';
-                                  }
-                                  navigate(productRoute);
-                                }}
-                              >
-                                <img
-                                  src={itemImage}
-                                  alt={itemName}
-                                  className={isBookingCartLine ? 'object-contain rounded' : 'object-cover rounded'}
-                                  style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
-                                />
-                              </div>
-                              
-                              {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                              {!(
-                                item.name === 'GIFT CARD' ||
-                                item.type === 'gift-card' ||
-                                item.type === 'booking-consult' ||
-                                item.type === 'booking-appointment' ||
-                                item.type === 'shop-texture-category'
-                              ) && (
-                                <p 
-                                  className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                                  style={{ 
-                                    fontFamily: '"Futura PT Book"',
-                                    color: '#EB1C24',
-                                    textTransform: 'uppercase',
-                                    fontSize: '8px',
-                                    marginTop: '4px',
-                                    marginBottom: '0',
-                                    lineHeight: '1.1'
-                                  }}
-                                  onClick={() => handleEdit(item)}
-                                >
-                                  EDIT IN BUILD-A-WIG
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                          <ShoppingBagLineThumb
+                            item={item}
+                            itemImage={itemImage}
+                            itemName={itemName}
+                            navigate={navigate}
+                            onEditUnit={handleEdit}
+                          />
 
                           {/* Item Details - Matching cart dropdown */}
                           <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: '100%' }}>
@@ -1209,7 +1321,7 @@ function ShoppingBagPage() {
                                   margin: '0'
                                 }}
                               >
-                                {itemName.replace(/WIG/gi, '').trim()}
+                                {bagProductTitleLine(item)}
                               </p>
                               <p 
                                 className="font-bold"
@@ -1223,18 +1335,7 @@ function ShoppingBagPage() {
                                   lineHeight: '1.1'
                                 }}
                               >
-                                {(() => {
-                                  if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                    return 'DIGITAL ONLY';
-                                  }
-                                  if (
-                                    (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
-                                    item.bookingBagSubtitle
-                                  ) {
-                                    return item.bookingBagSubtitle;
-                                  }
-                                  return `${itemLength} RAW ${itemHairOrigin}`;
-                                })()}
+                                {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                               </p>
                               {item.capSize && (
                                 <p 
@@ -1288,112 +1389,156 @@ function ShoppingBagPage() {
                               />
                             </div>
 
-                            {/* Quantity Counter with Save For Later */}
-                            <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setAddToListModalItem(item);
-                                  setAddToListModalOpen(true);
-                                }}
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '9px',
-                                  color: '#EB1C24',
-                                  textTransform: 'uppercase',
-                                  marginBottom: '6px',
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  padding: 0
-                                }}
-                              >
-                                + LIST
-                              </button>
-                              <div className="flex items-center">
-                                <button 
-                                  onClick={() => handleQuantityChange(itemId, -1)}
-                                  className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
-                                  style={{ 
-                                    borderTop: '1.3px solid black !important',
-                                    borderLeft: '1.3px solid black !important', 
-                                    borderBottom: '1.3px solid black !important',
-                                    borderRight: 'none !important',
-                                    height: '20.25px',
-                                    minHeight: '20.25px',
-                                    maxHeight: '20.25px',
-                                    boxSizing: 'border-box',
-                                    outline: 'none',
-                                    border: 'none !important',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                  }}
-                                >
-                                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
-                                </button>
-                                <div 
-                                  className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number" 
-                                  style={{ 
-                                    borderTop: '1.3px solid black !important',
-                                    borderBottom: '1.3px solid black !important',
-                                    borderLeft: 'none !important',
-                                    borderRight: 'none !important',
-                                    fontFamily: '"Futura PT Medium"', 
-                                    fontWeight: '500', 
-                                    fontSize: '9px', 
-                                    height: '20.25px',
-                                    minHeight: '20.25px',
-                                    maxHeight: '20.25px',
-                                    boxSizing: 'border-box',
-                                    border: 'none !important'
-                                  }}
-                                >
-                                  <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
-                                  <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
-                                  {itemQuantity}
-                                </div>
-                                <button 
-                                  onClick={() => handleQuantityChange(itemId, 1)}
-                                  disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
-                                  className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                                  style={{ 
-                                    borderTop: '1.3px solid black !important',
-                                    borderRight: '1.3px solid black !important',
-                                    borderBottom: '1.3px solid black !important',
-                                    borderLeft: 'none !important',
-                                    height: '20.25px',
-                                    minHeight: '20.25px',
-                                    maxHeight: '20.25px',
-                                    boxSizing: 'border-box',
-                                    outline: 'none',
-                                    border: 'none !important',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                  }}
-                                >
-                                  <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
-                                </button>
-                              </div>
-                              <button
-                                onClick={() => handleSaveForLater(item)}
-                                style={{
-                                  fontFamily: '"Futura PT Demi"',
-                                  fontSize: '9px',
-                                  color: '#808080',
-                                  background: 'none',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  padding: '0',
-                                  textTransform: 'uppercase',
-                                  marginTop: '6px',
-                                  textAlign: 'center'
-                                }}
-                                type="button"
-                              >
-                                SAVE FOR LATER
-                              </button>
+                            {/* Booking: QTY + × only (6px left vs other lines); cart dropdown aligns QTY above × */}
+                            <div
+                              className="flex flex-col items-center justify-center absolute"
+                              style={{
+                                right: isBookingLine ? '14px' : '8px',
+                                top: '0',
+                                bottom: '0',
+                                marginLeft: 'auto'
+                              }}
+                            >
+                              {isBookingLine ? (
+                                <>
+                                  <span
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '8px',
+                                      color: '#000000',
+                                      textTransform: 'uppercase',
+                                      marginBottom: '6px'
+                                    }}
+                                  >
+                                    QTY: {itemQuantity}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDeleteItemConfirm({ itemId, type: 'cart' })}
+                                    className="px-2 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center cursor-pointer"
+                                    style={{
+                                      border: '1.3px solid black',
+                                      height: '25px',
+                                      minHeight: '25px',
+                                      maxHeight: '25px',
+                                      boxSizing: 'border-box',
+                                      outline: 'none',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center'
+                                    }}
+                                  >
+                                    <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>×</span>
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setAddToListModalItem(item);
+                                      setAddToListModalOpen(true);
+                                    }}
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '9px',
+                                      color: '#EB1C24',
+                                      textTransform: 'uppercase',
+                                      marginBottom: '6px',
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      padding: 0
+                                    }}
+                                  >
+                                    + LIST
+                                  </button>
+                                  <div className="flex items-center">
+                                    <button
+                                      onClick={() => handleQuantityChange(itemId, -1)}
+                                      className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                                      style={{
+                                        borderTop: '1.3px solid black !important',
+                                        borderLeft: '1.3px solid black !important',
+                                        borderBottom: '1.3px solid black !important',
+                                        borderRight: 'none !important',
+                                        height: '20.25px',
+                                        minHeight: '20.25px',
+                                        maxHeight: '20.25px',
+                                        boxSizing: 'border-box',
+                                        outline: 'none',
+                                        border: 'none !important',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                      }}
+                                    >
+                                      <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
+                                    </button>
+                                    <div
+                                      className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number"
+                                      style={{
+                                        borderTop: '1.3px solid black !important',
+                                        borderBottom: '1.3px solid black !important',
+                                        borderLeft: 'none !important',
+                                        borderRight: 'none !important',
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontWeight: '500',
+                                        fontSize: '9px',
+                                        height: '20.25px',
+                                        minHeight: '20.25px',
+                                        maxHeight: '20.25px',
+                                        boxSizing: 'border-box',
+                                        border: 'none !important'
+                                      }}
+                                    >
+                                      <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                                      <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                                      {itemQuantity}
+                                    </div>
+                                    <button
+                                      onClick={() => handleQuantityChange(itemId, 1)}
+                                      disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
+                                      className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                      style={{
+                                        borderTop: '1.3px solid black !important',
+                                        borderRight: '1.3px solid black !important',
+                                        borderBottom: '1.3px solid black !important',
+                                        borderLeft: 'none !important',
+                                        height: '20.25px',
+                                        minHeight: '20.25px',
+                                        maxHeight: '20.25px',
+                                        boxSizing: 'border-box',
+                                        outline: 'none',
+                                        border: 'none !important',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                      }}
+                                    >
+                                      <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
+                                    </button>
+                                  </div>
+                                  <button
+                                    onClick={() => handleSaveForLater(item)}
+                                    style={{
+                                      fontFamily: '"Futura PT Demi"',
+                                      fontSize: '9px',
+                                      color: '#808080',
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      padding: '0',
+                                      textTransform: 'uppercase',
+                                      marginTop: '6px',
+                                      textAlign: 'center'
+                                    }}
+                                    type="button"
+                                  >
+                                    SAVE FOR LATER
+                                  </button>
+                                </>
+                              )}
                             </div>
                             </div>
                           </div>
@@ -1567,32 +1712,11 @@ function ShoppingBagPage() {
                     return item.image || '/assets/NOIR/noir-thumb.png';
                   };
                   const itemImage = getItemImage();
-                  
-                  // Get the correct hair origin based on product name
-                  const getHairOrigin = (productName: string) => {
-                    switch (productName) {
-                      case 'NOIR':
-                        return 'CAMBODIAN';
-                      case 'BLANCO':
-                        return 'RUSSIAN';
-                      case 'SOFT CURL':
-                        return 'FILIPINO';
-                      case 'OCEAN CURL':
-                        return 'VIETNAMESE';
-                      case 'SOFT WAVE':
-                        return 'INDIAN';
-                      case 'BEACH WAVE':
-                        return 'INDONESIAN';
-                      default:
-                        return 'CAMBODIAN';
-                    }
-                  };
-                  
+
                   const itemLength = item.length || '24"';
-                  const itemHairOrigin = getHairOrigin(itemName);
                   const itemPrice = item.price || 580;
                   const itemQuantity = item.quantity ?? 0;
-                  const isBookingSavedLine =
+                  const isSavedBookingLine =
                     item.type === 'booking-consult' || item.type === 'booking-appointment';
 
                   return (
@@ -1607,72 +1731,13 @@ function ShoppingBagPage() {
                           flexShrink: 0
                         }}
                       >
-                      {/* Thumbnail Container - Matching cart dropdown */}
-                      <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '88px', height: '100%' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: !(item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-4px)' : 'none' }}>
-                          {/* Item Image */}
-                          <div 
-                            className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ 
-                              width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', 
-                              height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px',
-                              margin: '0'
-                            }}
-                            onClick={() => {
-                              let productRoute = '/straight/noir';
-                              if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                productRoute = '/tools/gift-card';
-                              } else if (item.type === 'booking-consult') {
-                                productRoute = bookingConsultationHrefForCartItem(item);
-                              } else if (item.type === 'booking-appointment') {
-                                productRoute = bookingAppointmentHrefForCartItem(item);
-                              } else {
-                                const bcfHref = shopBcfPdpHrefFromCartItem(item);
-                                if (bcfHref) productRoute = bcfHref;
-                                else if (item.name === 'NOIR') productRoute = '/straight/noir';
-                                else if (item.name === 'BLANCO') productRoute = '/straight/blanco';
-                                else if (item.name === 'SOFT WAVE') productRoute = '/wavy/soft-wave';
-                                else if (item.name === 'SOFT CURL') productRoute = '/curly/soft-curl';
-                                else if (item.name === 'BEACH WAVE') productRoute = '/wavy/beach-wave';
-                                else if (item.name === 'OCEAN CURL') productRoute = '/curly/ocean-curl';
-                              }
-                              navigate(productRoute);
-                            }}
-                          >
-                            <img
-                              src={itemImage}
-                              alt={itemName}
-                              className={isBookingSavedLine ? 'object-contain rounded' : 'object-cover rounded'}
-                              style={{ width: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px', height: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? '106px' : '88px' }}
-                            />
-                          </div>
-                          
-                          {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
-                          {!(
-                            item.name === 'GIFT CARD' ||
-                            item.type === 'gift-card' ||
-                            item.type === 'booking-consult' ||
-                            item.type === 'booking-appointment' ||
-                            item.type === 'shop-texture-category'
-                          ) && (
-                            <p 
-                              className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
-                              style={{ 
-                                fontFamily: '"Futura PT Book"',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                fontSize: '8px',
-                                marginTop: '4px',
-                                marginBottom: '0',
-                                lineHeight: '1.1'
-                              }}
-                              onClick={() => handleEdit(item)}
-                            >
-                              EDIT IN BUILD-A-WIG
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                      <ShoppingBagLineThumb
+                        item={item}
+                        itemImage={itemImage}
+                        itemName={itemName}
+                        navigate={navigate}
+                        onEditUnit={handleEdit}
+                      />
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ marginLeft: '18px', position: 'relative', height: '100%' }}>
@@ -1693,7 +1758,7 @@ function ShoppingBagPage() {
                                margin: '0'
                              }}
                            >
-                             {itemName.replace(/WIG/gi, '').trim()}
+                             {bagProductTitleLine(item)}
                            </p>
                            <p 
                              className="font-bold"
@@ -1707,18 +1772,7 @@ function ShoppingBagPage() {
                                lineHeight: '1.1'
                              }}
                            >
-                             {(() => {
-                               if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
-                                 return 'DIGITAL ONLY';
-                               }
-                               if (
-                                 (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
-                                 item.bookingBagSubtitle
-                               ) {
-                                 return item.bookingBagSubtitle;
-                               }
-                               return `${itemLength} RAW ${itemHairOrigin}`;
-                             })()}
+                             {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                            </p>
                            {/* Removed black detail text for symmetry */}
                            {item.capSize && (
@@ -1773,94 +1827,98 @@ function ShoppingBagPage() {
                            />
                          </div>
 
-                         {/* Quantity Counter */}
+                         {/* Quantity / +LIST — omitted for saved booking lines; MOVE TO BAG kept */}
                          <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>
-                           <button
-                             type="button"
-                             onClick={() => {
-                               setAddToListModalItem(item);
-                               setAddToListModalOpen(true);
-                             }}
-                             style={{
-                               fontFamily: '"Futura PT Medium"',
-                               fontSize: '9px',
-                               color: '#EB1C24',
-                               textTransform: 'uppercase',
-                               marginBottom: '6px',
-                               background: 'none',
-                               border: 'none',
-                               cursor: 'pointer',
-                               padding: 0
-                             }}
-                           >
-                             + LIST
-                           </button>
-                           <div className="flex items-center">
-                             <button 
-                               onClick={() => handleSavedQuantityChange(itemId, -1)}
-                               className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
-                               style={{ 
-                                 borderTop: '1.3px solid black !important',
-                                 borderLeft: '1.3px solid black !important', 
-                                 borderBottom: '1.3px solid black !important',
-                                 borderRight: 'none !important',
-                                 height: '20.25px',
-                                 minHeight: '20.25px',
-                                 maxHeight: '20.25px',
-                                 boxSizing: 'border-box',
-                                 outline: 'none',
-                                 border: 'none !important',
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center'
-                               }}
-                             >
-                               <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
-                             </button>
-                             <div 
-                               className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number" 
-                               style={{ 
-                                 borderTop: '1.3px solid black !important',
-                                 borderBottom: '1.3px solid black !important',
-                                 borderLeft: 'none !important',
-                                 borderRight: 'none !important',
-                                 fontFamily: '"Futura PT Medium"', 
-                                 fontWeight: '500', 
-                                 fontSize: '9px', 
-                                 height: '20.25px',
-                                 minHeight: '20.25px',
-                                 maxHeight: '20.25px',
-                                 boxSizing: 'border-box',
-                                 border: 'none !important'
-                               }}
-                             >
-                               <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
-                               <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
-                               {itemQuantity}
-                             </div>
-                             <button 
-                               onClick={() => handleSavedQuantityChange(itemId, 1)}
-                               disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
-                               className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                               style={{ 
-                                 borderTop: '1.3px solid black !important',
-                                 borderRight: '1.3px solid black !important',
-                                 borderBottom: '1.3px solid black !important',
-                                 borderLeft: 'none !important',
-                                 height: '20.25px',
-                                 minHeight: '20.25px',
-                                 maxHeight: '20.25px',
-                                 boxSizing: 'border-box',
-                                 outline: 'none',
-                                 border: 'none !important',
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'center'
-                               }}
-                             >
-                               <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
-                             </button>
-                           </div>
+                           {!isSavedBookingLine ? (
+                             <>
+                               <button
+                                 type="button"
+                                 onClick={() => {
+                                   setAddToListModalItem(item);
+                                   setAddToListModalOpen(true);
+                                 }}
+                                 style={{
+                                   fontFamily: '"Futura PT Medium"',
+                                   fontSize: '9px',
+                                   color: '#EB1C24',
+                                   textTransform: 'uppercase',
+                                   marginBottom: '6px',
+                                   background: 'none',
+                                   border: 'none',
+                                   cursor: 'pointer',
+                                   padding: 0
+                                 }}
+                               >
+                                 + LIST
+                               </button>
+                               <div className="flex items-center">
+                                 <button
+                                   onClick={() => handleSavedQuantityChange(itemId, -1)}
+                                   className="px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-minus-btn flex items-center justify-center cursor-pointer"
+                                   style={{
+                                     borderTop: '1.3px solid black !important',
+                                     borderLeft: '1.3px solid black !important',
+                                     borderBottom: '1.3px solid black !important',
+                                     borderRight: 'none !important',
+                                     height: '20.25px',
+                                     minHeight: '20.25px',
+                                     maxHeight: '20.25px',
+                                     boxSizing: 'border-box',
+                                     outline: 'none',
+                                     border: 'none !important',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     justifyContent: 'center'
+                                   }}
+                                 >
+                                   <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>-</span>
+                                 </button>
+                                 <div
+                                   className="px-3 py-0.5 text-black bg-white flex items-center justify-center relative quantity-number"
+                                   style={{
+                                     borderTop: '1.3px solid black !important',
+                                     borderBottom: '1.3px solid black !important',
+                                     borderLeft: 'none !important',
+                                     borderRight: 'none !important',
+                                     fontFamily: '"Futura PT Medium"',
+                                     fontWeight: '500',
+                                     fontSize: '9px',
+                                     height: '20.25px',
+                                     minHeight: '20.25px',
+                                     maxHeight: '20.25px',
+                                     boxSizing: 'border-box',
+                                     border: 'none !important'
+                                   }}
+                                 >
+                                   <div className="absolute left-0 top-0 bottom-0 w-px bg-black"></div>
+                                   <div className="absolute right-0 top-0 bottom-0 w-px bg-black"></div>
+                                   {itemQuantity}
+                                 </div>
+                                 <button
+                                   onClick={() => handleSavedQuantityChange(itemId, 1)}
+                                   disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
+                                   className={`px-2 py-0.5 text-red-500 bg-white hover:bg-gray-50 quantity-plus-btn flex items-center justify-center ${itemQuantity >= (item.isSpecialOffer ? 2 : 10) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                   style={{
+                                     borderTop: '1.3px solid black !important',
+                                     borderRight: '1.3px solid black !important',
+                                     borderBottom: '1.3px solid black !important',
+                                     borderLeft: 'none !important',
+                                     height: '20.25px',
+                                     minHeight: '20.25px',
+                                     maxHeight: '20.25px',
+                                     boxSizing: 'border-box',
+                                     outline: 'none',
+                                     border: 'none !important',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     justifyContent: 'center'
+                                   }}
+                                 >
+                                   <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
+                                 </button>
+                               </div>
+                             </>
+                           ) : null}
                            {(item.stockStatus || 'in_stock') === 'out_of_stock' ? (
                              <span
                                style={{

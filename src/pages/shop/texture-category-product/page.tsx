@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
@@ -134,12 +134,14 @@ const BCF_CF_VIDEO: Record<'closures' | 'frontals', Record<Texture, string>> = {
 /** Portrait bundle hero + texture row: wider/taller so card side margins aren’t excessive (mobile PDP). */
 const BUNDLE_HERO_LAYOUT_SCALE = 1.35;
 const BUNDLE_HERO_BASE_MAX_WIDTH_PX = 400;
+/** Portrait hero JPG/video: widen ~30% so narrow assets fill more of the card (fewer L/R gutters). */
+const BCF_MAIN_HERO_WIDTH_SCALE = 1.3;
 /** Portrait bundle shots: outer frame + inner slot are slender (not square). */
 const BUNDLE_THUMB_INNER_W_PX = Math.round(36 * BUNDLE_HERO_LAYOUT_SCALE);
 const BUNDLE_THUMB_INNER_H_PX = Math.round(64 * BUNDLE_HERO_LAYOUT_SCALE);
-/** Outer frame: inner + padding (no title/label captions on bundle hero thumbs). */
-const BUNDLE_THUMB_OUTER_W_PX = BUNDLE_THUMB_INNER_W_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
-const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + Math.round(10 * BUNDLE_HERO_LAYOUT_SCALE);
+/** Outer frame: inner + padding (no title/label captions on bundle hero thumbs). 8px total → 4px mat each side. */
+const BUNDLE_THUMB_OUTER_W_PX = BUNDLE_THUMB_INNER_W_PX + 8;
+const BUNDLE_THUMB_OUTER_H_PX = BUNDLE_THUMB_INNER_H_PX + 8;
 const BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(120 * BUNDLE_HERO_LAYOUT_SCALE);
 /** Space between hero/thumbs and product title stack (BCF bundle-style PDP). */
 const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 80;
@@ -151,24 +153,26 @@ const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 8
 const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
 
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
-  return BUNDLE_HERO_BASE_MAX_WIDTH_PX * BUNDLE_HERO_LAYOUT_SCALE * shopTextureCategoryProductPageDisplayScale(tex);
+  return Math.round(
+    BUNDLE_HERO_BASE_MAX_WIDTH_PX *
+      BUNDLE_HERO_LAYOUT_SCALE *
+      shopTextureCategoryProductPageDisplayScale(tex) *
+      BCF_MAIN_HERO_WIDTH_SCALE
+  );
 }
 
-/** Bundles PDP only: same hero + column width for straight / wavy / curly (no curly-only upscale). */
-const BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX = bundlePdpHeroMaxWidthPx('straight');
-
-/**
- * Bundles PDP hero slot: tall enough for portrait product JPG/video at `BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX`
- * (no fixed aspect-ratio clip — min height only so flex parents don’t collapse).
- */
-const BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX = Math.round(BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX * 1.5);
-
-/** Closures/frontals bundle-style column: wide enough for any texture’s scaled hero. */
+/** BCF hero column: max width across textures (bundles + closures + frontals). */
 const BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX = Math.max(...TEXTURE_ORDER.map((t) => bundlePdpHeroMaxWidthPx(t)));
 
-type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'care/storage' | 'REVIEWS';
+/** BCF hero slot height (bundles + closures + frontals): 1.5× max column width. */
+const BUNDLE_PDP_CF_HERO_MEDIA_SLOT_HEIGHT_PX = Math.round(BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX * 1.5);
 
-const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'care/storage', 'REVIEWS'];
+/** PHOTO/VIDEO toggle: px from the right of the hero strip (same `maxWidth` as the main image). */
+const BCF_PHOTO_VIDEO_TOGGLE_RIGHT_PX = 18;
+
+type BcfProductTab = 'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE/STORAGE' | 'REVIEWS';
+
+const BCF_PRODUCT_TAB_ORDER: BcfProductTab[] = ['DETAILS', 'SHIPPING', 'POLICY', 'CARE/STORAGE', 'REVIEWS'];
 
 const bcfBohemySubLabelStyle: React.CSSProperties = {
   fontFamily: '"Bohemy", cursive',
@@ -253,11 +257,13 @@ export default function ShopTextureCategoryProductPage() {
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [showBcfColorUpgradeModal, setShowBcfColorUpgradeModal] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const [bundleDealState, setBundleDealState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [bundleShowVideo, setBundleShowVideo] = useState(false);
   const [bcfCfShowVideo, setBcfCfShowVideo] = useState(false);
   const bundleVideoRef = useRef<HTMLVideoElement>(null);
   const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
+  /** Until true, hero video stays transparent so the JPG underlay shows (avoids white flash while buffering). */
+  const [bcfHeroVideoPaintReady, setBcfHeroVideoPaintReady] = useState(false);
 
   const [bcfOrigin, setBcfOrigin] = useState<BcfOriginId>(() =>
     typeof window !== 'undefined'
@@ -276,7 +282,56 @@ export default function ShopTextureCategoryProductPage() {
 
   const skipBcfOriginDefaultOnNextPathRef = useRef(false);
 
+  /** Fixed hero slot height so thumbs don’t move while the next texture’s media decodes/buffers. */
+  const bcfHeroMediaSlotHeightPx = BUNDLE_PDP_CF_HERO_MEDIA_SLOT_HEIGHT_PX;
+
+  const bcfShowHeroVideo =
+    category === 'bundles'
+      ? bundleShowVideo
+      : category === 'closures' || category === 'frontals'
+        ? bcfCfShowVideo
+        : false;
+
   const bcfColorsAvailable = React.useMemo(() => bcfColorOptionsForOrigin(bcfOrigin), [bcfOrigin]);
+
+  useLayoutEffect(() => {
+    const bundlesV = category === 'bundles' && bundleShowVideo;
+    const cfV =
+      (category === 'closures' || category === 'frontals') && bcfCfShowVideo;
+    if (!bundlesV && !cfV) {
+      setBcfHeroVideoPaintReady(false);
+      return;
+    }
+    setBcfHeroVideoPaintReady(false);
+    const el = bundlesV ? bundleVideoRef.current : bcfCfVideoRef.current;
+    if (el && el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setBcfHeroVideoPaintReady(true);
+    }
+  }, [texture, category, bundleShowVideo, bcfCfShowVideo]);
+
+  // Warm cache for all three textures’ hero JPGs + videos so switching thumbs reuses network/disk cache.
+  useEffect(() => {
+    if (!category || (category !== 'bundles' && category !== 'closures' && category !== 'frontals')) return;
+    const photos =
+      category === 'bundles'
+        ? TEXTURE_ORDER.map((t) => BUNDLE_PHOTO_BY_TEXTURE[t])
+        : TEXTURE_ORDER.map((t) => BCF_CF_PHOTO[category][t]);
+    photos.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+    const videos =
+      category === 'bundles'
+        ? TEXTURE_ORDER.map((t) => BUNDLE_VIDEO_BY_TEXTURE[t])
+        : TEXTURE_ORDER.map((t) => BCF_CF_VIDEO[category][t]);
+    videos.forEach((src) => {
+      const v = document.createElement('video');
+      v.preload = 'auto';
+      v.muted = true;
+      v.src = src;
+      v.load();
+    });
+  }, [category]);
 
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
     try {
@@ -330,10 +385,12 @@ export default function ShopTextureCategoryProductPage() {
     }
   }, [category, texture, bcfCfShowVideo]);
 
+  // Reset hero to photo only when switching BCF product type — not when changing texture via thumbs
+  // (otherwise VIDEO mode would flip back to PHOTO on every thumbnail tap).
   useEffect(() => {
     if (category !== 'closures' && category !== 'frontals') return;
     setBcfCfShowVideo(false);
-  }, [texture, category]);
+  }, [category]);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => setCartCount(event.detail);
@@ -379,14 +436,6 @@ export default function ShopTextureCategoryProductPage() {
     const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
     localStorage.setItem(key, selectedCurrency);
   }, [selectedCurrency]);
-
-  const handleQuantityIncrease = () => {
-    setQuantity((prev) => Math.min(prev + 1, 10));
-  };
-
-  const handleQuantityDecrease = () => {
-    setQuantity((prev) => Math.max(prev - 1, 1));
-  };
 
   useEffect(() => {
     if (!category) return;
@@ -543,7 +592,7 @@ export default function ShopTextureCategoryProductPage() {
           id: `shop-${texture}-${category}-${Date.now()}`,
           name: cartLineName,
           price: displayPrice,
-          quantity,
+          quantity: 1,
           image: heroThumbSrc,
           type: 'shop-texture-category',
           texture,
@@ -555,7 +604,7 @@ export default function ShopTextureCategoryProductPage() {
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
-        const newCartCount = currentCount + quantity;
+        const newCartCount = currentCount + 1;
         localStorage.setItem('cartCount', String(newCartCount));
         setCartCount(newCartCount);
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
@@ -565,6 +614,53 @@ export default function ShopTextureCategoryProductPage() {
       } catch (e) {
         console.error(e);
         setAddToBagState('idle');
+      }
+    }, 500);
+  };
+
+  /** Bundles only: 3× line at $40 off combined unit price (subtotal = 3×displayPrice − 40). */
+  const BUNDLE_DEAL_QTY = 3;
+  const BUNDLE_DEAL_DISCOUNT_USD = 40;
+
+  const handleBundleDealToBag = () => {
+    if (category !== 'bundles') return;
+    if (!isPremiumMemberForGatedFeatures()) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
+    setBundleDealState('adding');
+    setTimeout(() => {
+      try {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
+        const subtotal = BUNDLE_DEAL_QTY * displayPrice - BUNDLE_DEAL_DISCOUNT_USD;
+        const unitPrice = subtotal / BUNDLE_DEAL_QTY;
+        const newItem = {
+          id: `shop-${texture}-bundles-deal-${Date.now()}`,
+          name: cartLineName,
+          price: unitPrice,
+          quantity: BUNDLE_DEAL_QTY,
+          image: heroThumbSrc,
+          type: 'shop-texture-category',
+          texture,
+          category: 'bundles' as const,
+          hairOrigin: bcfOrigin,
+          length: bcfLength,
+          color: bcfColor,
+          bcfBundleDeal: true
+        };
+        const updated = [newItem, ...cartItems];
+        localStorage.setItem('cartItems', JSON.stringify(updated));
+        const newCartCount = currentCount + BUNDLE_DEAL_QTY;
+        localStorage.setItem('cartCount', String(newCartCount));
+        setCartCount(newCartCount);
+        window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
+        window.dispatchEvent(new Event('cartUpdated'));
+        setBundleDealState('added');
+        setTimeout(() => setBundleDealState('idle'), 2000);
+      } catch (e) {
+        console.error(e);
+        setBundleDealState('idle');
       }
     }, 500);
   };
@@ -855,18 +951,32 @@ export default function ShopTextureCategoryProductPage() {
                       maxWidth: 'none'
                     }}
                   >
-                    <div style={{ transform: 'translateY(-4px)', marginBottom: '8px', width: '100%', alignSelf: 'stretch' }}>
+                    {/*
+                      Hero strip width must match `bundlePdpHeroMaxWidthPx(texture)` (not shrink-to-fit from img vs video).
+                      Inline-flex shrink-wrap used different widths for photo `<img>` vs `<video>` intrinsic min-width,
+                      so PHOTO/VIDEO `right: Npx` jumped horizontally when toggling. Same maxWidth as hero media.
+                    */}
+                    <div
+                      style={{
+                        transform: 'translateY(-4px)',
+                        marginBottom: '8px',
+                        width: '100%',
+                        maxWidth: `${BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX}px`,
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        boxSizing: 'border-box'
+                      }}
+                    >
                       <div
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'stretch',
                           width: '100%',
-                          maxWidth: `${
-                            category === 'bundles'
-                              ? BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX
-                              : BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX
-                          }px`,
+                          maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
                           marginLeft: 'auto',
                           marginRight: 'auto',
                           boxSizing: 'border-box'
@@ -902,10 +1012,10 @@ export default function ShopTextureCategoryProductPage() {
                                   }
                                 }
                               }}
-                              className="product-view-toggle-text"
+                              className="bcf-hero-photo-video-toggle product-view-toggle-text"
                               style={{
                                 position: 'absolute',
-                                right: 'calc(clamp(4px, 1vw, 12px) + 2px)',
+                                right: `${BCF_PHOTO_VIDEO_TOGGLE_RIGHT_PX}px`,
                                 top: '0',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -917,18 +1027,15 @@ export default function ShopTextureCategoryProductPage() {
                               <span
                                 className="product-view-toggle-text"
                                 style={{
-                                  color:
-                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                      ? '#000000'
-                                      : '#EB1C24',
-                                  fontFamily:
-                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                      ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
-                                      : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  display: 'inline-block',
+                                  width: '3.35em',
+                                  textAlign: 'center',
+                                  color: bcfShowHeroVideo ? '#000000' : '#EB1C24',
+                                  fontFamily: bcfShowHeroVideo
+                                    ? '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif'
+                                    : '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                   fontSize: '11px',
-                                  fontWeight: (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                    ? '400'
-                                    : '500',
+                                  fontWeight: bcfShowHeroVideo ? '400' : '500',
                                   margin: '0'
                                 }}
                               >
@@ -949,18 +1056,15 @@ export default function ShopTextureCategoryProductPage() {
                               <span
                                 className="product-view-toggle-text"
                                 style={{
-                                  color:
-                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                      ? '#EB1C24'
-                                      : '#000000',
-                                  fontFamily:
-                                    (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                      ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
-                                      : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
+                                  display: 'inline-block',
+                                  width: '3.35em',
+                                  textAlign: 'center',
+                                  color: bcfShowHeroVideo ? '#EB1C24' : '#000000',
+                                  fontFamily: bcfShowHeroVideo
+                                    ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
+                                    : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                                   fontSize: '11px',
-                                  fontWeight: (category === 'bundles' ? bundleShowVideo : bcfCfShowVideo)
-                                    ? '500'
-                                    : '400',
+                                  fontWeight: bcfShowHeroVideo ? '500' : '400',
                                   margin: '0'
                                 }}
                               >
@@ -970,6 +1074,7 @@ export default function ShopTextureCategoryProductPage() {
                           )}
                         </div>
 
+                        {/* Full-width slot: curly used a wider `width` than straight/wavy (display scale), shifting thumbs + title. Media still capped by `maxWidth` per texture. */}
                         <div
                           className="product-wig-preview-images"
                           style={{
@@ -977,101 +1082,218 @@ export default function ShopTextureCategoryProductPage() {
                             justifyContent: 'center',
                             alignItems: 'center',
                             width: '100%',
+                            maxWidth: '100%',
                             marginBottom: `${Math.round(14 * BUNDLE_HERO_LAYOUT_SCALE)}px`,
-                            overflow: 'visible',
+                            overflow: 'hidden',
                             transform: 'translateY(0)',
                             boxSizing: 'border-box',
-                            minHeight:
-                              category === 'bundles'
-                                ? `${BUNDLE_PDP_HERO_MEDIA_MIN_HEIGHT_PX}px`
-                                : `${BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX}px`
+                            minHeight: `${bcfHeroMediaSlotHeightPx}px`,
+                            height: `${bcfHeroMediaSlotHeightPx}px`
                           }}
                         >
                           {category === 'bundles' ? (
                             bundleShowVideo ? (
-                              <video
-                                key={`${texture}-video`}
-                                ref={bundleVideoRef}
-                                src={BUNDLE_VIDEO_BY_TEXTURE[texture]}
-                                playsInline
-                                muted
-                                loop
-                                autoPlay
+                              <div
                                 style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                   width: '100%',
-                                  maxWidth: `${BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX}px`,
-                                  height: 'auto',
-                                  display: 'block',
-                                  objectFit: 'contain',
-                                  marginLeft: 'auto',
-                                  marginRight: 'auto'
+                                  height: '100%'
                                 }}
-                              />
+                              >
+                                <img
+                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  alt=""
+                                  aria-hidden
+                                  draggable={false}
+                                  style={{
+                                    position: 'absolute',
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    left: '50%',
+                                    top: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    pointerEvents: 'none',
+                                    userSelect: 'none'
+                                  }}
+                                />
+                                <video
+                                  key={`${texture}-video`}
+                                  ref={bundleVideoRef}
+                                  src={BUNDLE_VIDEO_BY_TEXTURE[texture]}
+                                  poster={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  preload="auto"
+                                  playsInline
+                                  muted
+                                  loop
+                                  autoPlay
+                                  onLoadedData={() => setBcfHeroVideoPaintReady(true)}
+                                  onCanPlay={() => setBcfHeroVideoPaintReady(true)}
+                                  style={{
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    display: 'block',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    opacity: bcfHeroVideoPaintReady ? 1 : 0,
+                                    transition: 'opacity 0.2s ease-out',
+                                    backgroundColor: 'transparent'
+                                  }}
+                                />
+                              </div>
                             ) : (
-                              <img
-                                src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
-                                alt={displayProductName}
-                                onError={(e) => {
-                                  const img = e.currentTarget;
-                                  if (img.getAttribute('data-fallback-tried') === '1') return;
-                                  img.setAttribute('data-fallback-tried', '1');
-                                  img.src = shopTextureCategoryThumbFallbackSrc[texture];
-                                }}
+                              <div
                                 style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                   width: '100%',
-                                  maxWidth: `${BUNDLE_PDP_BUNDLES_HERO_MAX_WIDTH_PX}px`,
-                                  height: 'auto',
-                                  marginLeft: 'auto',
-                                  marginRight: 'auto',
-                                  display: 'block',
-                                  objectFit: 'contain'
+                                  height: '100%'
                                 }}
-                              />
+                              >
+                                <img
+                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  alt={displayProductName}
+                                  onError={(e) => {
+                                    const img = e.currentTarget;
+                                    if (img.getAttribute('data-fallback-tried') === '1') return;
+                                    img.setAttribute('data-fallback-tried', '1');
+                                    img.src = shopTextureCategoryThumbFallbackSrc[texture];
+                                  }}
+                                  style={{
+                                    position: 'relative',
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    display: 'block',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto'
+                                  }}
+                                />
+                              </div>
                             )
                           ) : (
                             bcfCfShowVideo ? (
-                              <video
-                                key={`${category}-${texture}-video`}
-                                ref={bcfCfVideoRef}
-                                src={BCF_CF_VIDEO[category][texture]}
-                                playsInline
-                                muted
-                                loop
-                                autoPlay
+                              <div
                                 style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                   width: '100%',
-                                  maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                  height: 'auto',
-                                  display: 'block',
-                                  objectFit: 'contain',
-                                  marginLeft: 'auto',
-                                  marginRight: 'auto'
+                                  height: '100%'
                                 }}
-                              />
+                              >
+                                <img
+                                  src={BCF_CF_PHOTO[category][texture]}
+                                  alt=""
+                                  aria-hidden
+                                  draggable={false}
+                                  style={{
+                                    position: 'absolute',
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    left: '50%',
+                                    top: '50%',
+                                    transform: ((): string => {
+                                      const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                                      const base = 'translate(-50%, -50%)';
+                                      return y != null ? `${base} translateY(${y}px)` : base;
+                                    })(),
+                                    pointerEvents: 'none',
+                                    userSelect: 'none'
+                                  }}
+                                />
+                                <video
+                                  key={`${category}-${texture}-video`}
+                                  ref={bcfCfVideoRef}
+                                  src={BCF_CF_VIDEO[category][texture]}
+                                  poster={BCF_CF_PHOTO[category][texture]}
+                                  preload="auto"
+                                  playsInline
+                                  muted
+                                  loop
+                                  autoPlay
+                                  onLoadedData={() => setBcfHeroVideoPaintReady(true)}
+                                  onCanPlay={() => setBcfHeroVideoPaintReady(true)}
+                                  style={{
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    display: 'block',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    opacity: bcfHeroVideoPaintReady ? 1 : 0,
+                                    transition: 'opacity 0.2s ease-out',
+                                    backgroundColor: 'transparent',
+                                    ...((): { transform?: string } => {
+                                      const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                                      return y != null ? { transform: `translateY(${y}px)` } : {};
+                                    })()
+                                  }}
+                                />
+                              </div>
                             ) : (
-                              <img
-                                src={BCF_CF_PHOTO[category][texture]}
-                                alt={displayProductName}
-                                onError={(e) => {
-                                  const img = e.currentTarget;
-                                  if (img.getAttribute('data-fallback-tried') === '1') return;
-                                  img.setAttribute('data-fallback-tried', '1');
-                                  img.src = shopTextureCategoryThumbSrc(texture, category);
-                                }}
+                              <div
                                 style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                   width: '100%',
-                                  maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                  height: 'auto',
-                                  marginLeft: 'auto',
-                                  marginRight: 'auto',
-                                  display: 'block',
-                                  objectFit: 'contain',
-                                  ...((): { transform?: string } => {
-                                    const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-                                    return y != null ? { transform: `translateY(${y}px)` } : {};
-                                  })()
+                                  height: '100%'
                                 }}
-                              />
+                              >
+                                <img
+                                  src={BCF_CF_PHOTO[category][texture]}
+                                  alt={displayProductName}
+                                  onError={(e) => {
+                                    const img = e.currentTarget;
+                                    if (img.getAttribute('data-fallback-tried') === '1') return;
+                                    img.setAttribute('data-fallback-tried', '1');
+                                    img.src = shopTextureCategoryThumbSrc(texture, category);
+                                  }}
+                                  style={{
+                                    position: 'relative',
+                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                    display: 'block',
+                                    objectFit: 'contain',
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    ...((): { transform?: string } => {
+                                      const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+                                      return y != null ? { transform: `translateY(${y}px)` } : {};
+                                    })()
+                                  }}
+                                />
+                              </div>
                             )
                           )}
                         </div>
@@ -1122,7 +1344,6 @@ export default function ShopTextureCategoryProductPage() {
                 ) : null}
 
                 <div
-                  className={texture === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
                   style={
                     bcfUsesBundleStyleHero ? { marginTop: `${BUNDLE_COPY_MARGIN_TOP_PX}px` } : undefined
                   }
@@ -1140,9 +1361,9 @@ export default function ShopTextureCategoryProductPage() {
                       }
                       style={{
                         fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif !important',
-                        fontSize: '32px !important',
+                        fontSize: bcfUsesBundleStyleHero ? '48px !important' : '50px !important',
                         fontWeight: '400 !important',
-                        lineHeight: '1.15 !important',
+                        lineHeight: '1.2 !important',
                         margin: '0 !important',
                         padding: '0 8px !important',
                         display: 'block !important',
@@ -1158,39 +1379,42 @@ export default function ShopTextureCategoryProductPage() {
                     </p>
 
                     <p
-                      className="text-center text-red-500 uppercase"
+                      className="text-center text-red-500 uppercase mb-2"
                       style={{
-                        fontFamily: '"Futura PT Medium"',
+                        fontFamily: '"Futura PT", futuristic-pt, Futura, Inter, sans-serif',
                         fontWeight: '500',
                         transform: `translateY(${bcfPdpCopyTy(-128)}px)`,
-                        fontSize: '12px',
+                        fontSize: '10px',
                         padding: '0 12px',
-                        marginTop: '-2px',
-                        marginBottom: '6px'
+                        marginTop: '-3px',
+                        marginBottom: '2px'
                       }}
                     >
                       {meta.subline}
                     </p>
 
                     <p
-                      className="text-center text-black mb-1"
+                      className="text-center text-black"
                       style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '16px',
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '21px',
                         fontWeight: '500',
                         transform: `translateY(${bcfPdpCopyTy(-137)}px)`,
-                        width: '100%'
+                        width: '100%',
+                        marginTop: 0,
+                        marginBottom: '2px'
                       }}
                       dangerouslySetInnerHTML={formatPrice(displayPrice)}
                     />
 
                     <p
-                      className="text-center text-black mb-1"
+                      className="text-center text-black"
                       style={{
                         fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                         fontSize: '10px',
                         fontWeight: '500',
-                        transform: `translateY(${bcfPdpCopyTy(-137)}px)`
+                        transform: `translateY(${bcfPdpCopyTy(-137)}px)`,
+                        marginBottom: 'calc(0.25rem + 2px)'
                       }}
                     >
                       (EXCLUDING SALES TAX)
@@ -1367,30 +1591,53 @@ export default function ShopTextureCategoryProductPage() {
                               key={c.id}
                               type="button"
                               onClick={() => handleBcfColorSelect(c.id)}
-                              className="flex flex-col items-center bg-white"
+                              className="bg-white"
                               style={{
+                                position: 'relative',
                                 borderWidth: '1.3px',
                                 borderStyle: 'solid',
                                 ...bcfOptionSelectedChrome(sel),
-                                padding: '4px 4px 6px',
                                 width: '60px',
+                                height: '65px',
                                 boxSizing: 'border-box',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                padding: '2px 3px 3px'
                               }}
                             >
-                              <div className="flex items-center justify-center" style={{ height: '38px' }}>
+                              {/* Vertically centered in chip; label sits absolute at bottom. */}
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  left: '50%',
+                                  top: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  width: '35px',
+                                  height: '35px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  pointerEvents: 'none'
+                                }}
+                              >
                                 <BcfColorSwatchDonut colorCode={c.swatch} />
                               </div>
                               <span
                                 style={{
+                                  position: 'absolute',
+                                  left: '50%',
+                                  bottom: '1px',
+                                  transform: 'translateX(-50%) translateY(6px)',
                                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                   fontSize: '9px',
                                   fontWeight: 500,
                                   textAlign: 'center',
                                   lineHeight: 1.05,
                                   textTransform: 'uppercase',
-                                  marginTop: '2px',
-                                  color: sel ? BCF_OPTION_RED : '#000000'
+                                  color: sel ? BCF_OPTION_RED : '#000000',
+                                  width: '100%',
+                                  maxWidth: '100%',
+                                  display: 'block',
+                                  pointerEvents: 'none'
                                 }}
                               >
                                 {c.label}
@@ -1399,84 +1646,11 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
-
-                      {/* Quantity — BCF-only vertical nudge */}
-                      <div className="flex justify-center mb-6 w-full" style={{ transform: 'translateY(20px)' }}>
-                        <div
-                          className="inline-flex"
-                          style={{
-                            border: '1.3px solid #000',
-                            boxSizing: 'border-box',
-                            backgroundColor: '#fff'
-                          }}
-                        >
-                          <button
-                            type="button"
-                            onClick={handleQuantityDecrease}
-                            disabled={quantity <= 1}
-                            className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${
-                              quantity <= 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                            }`}
-                            style={{
-                              border: 'none',
-                              height: 'clamp(27px, 4vw, 36px)',
-                              minHeight: 'clamp(27px, 4vw, 36px)',
-                              boxSizing: 'border-box',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              paddingLeft: 'clamp(8px, 1vw, 14px)',
-                              paddingRight: 'clamp(8px, 1vw, 14px)'
-                            }}
-                          >
-                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>-</span>
-                          </button>
-                          <div
-                            className="px-4 py-1 text-black bg-white flex items-center justify-center relative"
-                            style={{
-                              border: 'none',
-                              borderLeft: '1.3px solid #000',
-                              borderRight: '1.3px solid #000',
-                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                              fontWeight: 500,
-                              fontSize: '12px',
-                              height: 'clamp(27px, 4vw, 36px)',
-                              minHeight: 'clamp(27px, 4vw, 36px)',
-                              boxSizing: 'border-box',
-                              paddingLeft: 'clamp(12px, 1.5vw, 18px)',
-                              paddingRight: 'clamp(12px, 1.5vw, 18px)'
-                            }}
-                          >
-                            {quantity}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={handleQuantityIncrease}
-                            disabled={quantity >= 10}
-                            className={`px-3 py-1 text-red-500 bg-white hover:bg-gray-50 flex items-center justify-center ${
-                              quantity >= 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                            }`}
-                            style={{
-                              border: 'none',
-                              height: 'clamp(27px, 4vw, 36px)',
-                              minHeight: 'clamp(27px, 4vw, 36px)',
-                              boxSizing: 'border-box',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              paddingLeft: 'clamp(8px, 1vw, 14px)',
-                              paddingRight: 'clamp(8px, 1vw, 14px)'
-                            }}
-                          >
-                            <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
-                          </button>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
                 {/* Tabs — same vertical treatment as Noir (`noir/page.tsx` ~2844–2885) */}
-                <div className="mt-6 w-full" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
+                <div className="mt-6 w-full" style={{ paddingTop: '4px' }}>
                   <div className="flex justify-center w-full" style={{ gap: '16px' }}>
                     {BCF_PRODUCT_TAB_ORDER.map((tab) => (
                       <button
@@ -1548,7 +1722,7 @@ export default function ShopTextureCategoryProductPage() {
                           {line}
                         </p>
                       ))}
-                    {activeTab === 'care/storage' &&
+                    {activeTab === 'CARE/STORAGE' &&
                       careStorageCopy.map((line, i) => (
                         <p
                           key={i}
@@ -1610,6 +1784,35 @@ export default function ShopTextureCategoryProductPage() {
                     </span>
                   )}
                 </button>
+                {category === 'bundles' && (
+                  <button
+                    type="button"
+                    onClick={handleBundleDealToBag}
+                    disabled={bundleDealState === 'adding' || addToBagState === 'adding'}
+                    className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold mt-2 ${
+                      bundleDealState === 'adding'
+                        ? 'bg-white cursor-not-allowed'
+                        : bundleDealState === 'added'
+                          ? 'bg-white cursor-pointer'
+                          : 'bg-white cursor-pointer hover:bg-gray-50'
+                    }`}
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                  >
+                    {bundleDealState === 'idle' && 'BUNDLE DEAL'}
+                    {bundleDealState === 'adding' && 'ADDING...'}
+                    {bundleDealState === 'added' && (
+                      <span className="flex items-center justify-center gap-1">
+                        <img src="/assets/check.svg" alt="" width={9} height={9} />
+                        <span style={{ color: '#808080' }}>IN THE BAG</span>
+                      </span>
+                    )}
+                  </button>
+                )}
               </div>
 
               {/* SIMILAR — other textures; spacing + thumb sizing aligned with Noir 2D similar strip */}

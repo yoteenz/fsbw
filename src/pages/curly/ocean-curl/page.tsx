@@ -1779,11 +1779,11 @@ function OceanCurlSelection() {
                     POLICY
                   </button>
                   <button
-                    onClick={() => handleTabClick('care/storage')}
-                    className={`py-1 text-xs font-medium ${activeTab === 'care/storage' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
-                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'care/storage' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
+                    onClick={() => handleTabClick('CARE/STORAGE')}
+                    className={`py-1 text-xs font-medium ${activeTab === 'CARE/STORAGE' ? 'text-red-500' : 'text-black hover:text-red-500'}`}
+                    style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', borderBottom: activeTab === 'CARE/STORAGE' ? '1px solid #EB1C24' : 'none', paddingLeft: 0, paddingRight: 0 }}
                   >
-                    care/storage
+                    CARE/STORAGE
                   </button>
                   <button
                     onClick={() => handleTabClick('REVIEWS')}
@@ -1856,7 +1856,7 @@ function OceanCurlSelection() {
                     </>
                   )}
                   
-                  {activeTab === 'care/storage' && (
+                  {activeTab === 'CARE/STORAGE' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
                         WASH WITH MILD SHAMPOO, AVOID GETTING CONDITIONER DIRECTLY ON THE LACE.

@@ -5365,3 +5365,384 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 - SIMILAR cells: **`marbleStripCellBand(false)`**, **`marbleStripThumbWrap(false)`**, **`marbleStripThumbImg(false)`**, **`marbleStripTextColStrip(false)`**, **`marbleStripStarsRowStyle(false)`**; copy typography aligned with **`noir/page.tsx`** similar strip; removed BCF-only **`translateX(10px)`** / PDP display-scale transforms on those thumbs.
 - Dropped unused **`isShopTextureCurlyFrontals`** import.
 
+---
+
+## 2026-03-30 — PDP tab label: CARE + STORAGE → CARE/STORAGE (uppercase)
+
+**Context:** User replaced the details-area tab **CARE + STORAGE** with a slash form on **BCF** (`texture-category-product`) and all **six unit PDPs** (Noir, Blanco, Soft Wave, Beach Wave, Soft Curl, Ocean Curl), then asked for **uppercase** to match brand guidelines.
+
+**Decisions / outcomes:** Tab id and visible label use **`CARE/STORAGE`** (all caps, slash separator).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BcfProductTab`**, **`BCF_PRODUCT_TAB_ORDER`**, and **`activeTab === 'CARE/STORAGE'`** branch. **`noir/page.tsx`**, **`blanco/page.tsx`**, **`wavy/soft-wave/page.tsx`**, **`wavy/beach-wave/page.tsx`**, **`curly/soft-curl/page.tsx`**, **`curly/ocean-curl/page.tsx`** — **`handleTabClick`**, **`activeTab`** checks, and button text set to **`CARE/STORAGE`**.
+
+---
+
+## 2026-03-30 — BCF closures/frontals: keep VIDEO when switching texture thumbs
+
+**Context:** On BCF PDP, **VIDEO** mode jumped back to **PHOTO** when tapping through **texture thumbnail** videos (URL texture changes).
+
+**Cause:** **`useEffect`** called **`setBcfCfShowVideo(false)`** on **`[texture, category]`**, so every thumb navigation reset video mode.
+
+**Changes:** **`texture-category-product/page.tsx`** — same reset only on **`category`** (closures vs frontals), not on **`texture`**, with a short comment explaining why.
+
+---
+
+## 2026-03-30 — BCF PDP: tighter RAW / price vertical rhythm
+
+**Context:** User asked to **reduce spacing above and below the price** by **2px** each, and **reduce spacing above RAW HUMAN HAIR** by **1px**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`meta.subline`**: **`marginTop` −2px → −3px**, **`marginBottom` 6px → 4px** (tighter to title + to price). Price **`<p>`**: dropped **`mb-1`**, **`marginTop: 0`**, **`marginBottom: '2px'`** (was ~4px from **`mb-1`**).
+
+---
+
+## 2026-03-30 — BCF PDP: hair color chips like build-a-wig color `ThumbBox`
+
+**Context:** User wanted **color names** on the **bottom** of each chip (like **build-a-wig color**), not floating mid-layout, and **donuts vertically centered** in the space above the label.
+
+**Changes:** **`texture-category-product/page.tsx`** — Each hair color **`button`**: **`60×80px`** (same footprint as **`ThumbBox`** **`containerSize` 60 + label band); **`flex` column** with **`flex: 1`** swatch wrapper **`alignItems/justifyContent: center`** for **`BcfColorSwatchDonut`**; label **`span`** **`flexShrink: 0`** on bottom row (no **`marginTop`** in the middle). Tight **`padding`**; removed fixed **`38px`** swatch box.
+
+---
+
+## 2026-03-30 — Cart dropdown: BCF thumb 50% + title without texture
+
+**Context:** User wanted **BCF** (`shop-texture-category`) line items in the **cart dropdown only**: **thumbnail 50% smaller** than normal (half of **88px**), and **product title** only **BUNDLES** / **CLOSURES** / **FRONTALS** (no **STRAIGHT/WAVY/CURLY** in the script title) because the **red** subtitle carries texture.
+
+**Changes:** **`CartDropdown.tsx`** — **`cartThumbBoxPx`** **44** for **`type === 'shop-texture-category'`**; title uses **`category`** (fallback: **`name`** before **`·`**); red line for BCF: **`{length} RAW {STRAIGHT|WAVY|CURLY} {hairOrigin}`** using **`texture`** + **`hairOrigin`** from the cart line (fixes prior default **CAMBODIAN** from **`getHairOrigin(item.name)`**).
+
+---
+
+## 2026-03-30 — BCF PDP: Noir-sized title / spec / price; tighter gap above price
+
+**Context:** User asked **−2px spacing above the price only** on BCF, and to **match Noir** product name / red spec / **price** **font sizes**.
+
+**Prior BCF vs Noir:** BCF used **32px** title, **12px** red, **16px** price; Noir uses **50px**, **10px** (`Futura PT` stack), **21px** (`Futura PT Medium`).
+
+**Changes:**
+- **`texture-category-product/page.tsx`** — **`meta.subline`**: **`marginBottom` 4px → 2px** (−2px above price). Red line: **`fontSize` 10px**, **`fontFamily`** **`"Futura PT", futuristic-pt, …`**. Price: **`fontSize` 21px**, **`futuristic-pt`** on **`Futura PT Medium`**. Title inline: **`50px` / `1.2`** when **`bcfUsesBundleStyleHero`**, else **`38px`** (gift-card path).
+- **`index.css`** — **`.bcf-bundles-pdp-product-name`**: **50px**, **`line-height` 1.2** (was 32 / 1.15).
+
+---
+
+## 2026-03-30 — BCF hero: stable slot + posters + prefetch (no thumb jump / white flash)
+
+**Context:** Tapping **BCF** texture thumbs showed a **white gap**, then content loaded and **thumbnails moved up**. User also asked why media didn’t feel **instant** after already loading once.
+
+**Causes:** Closures/frontals used **`BUNDLE_HERO_MEDIA_MIN_HEIGHT_PX`** (~162px) while real hero JPG/video is much taller → **layout grew** when media decoded. **`<video>`** remounted per texture with **no `poster`** → blank until first frame. No **warm cache** for other textures’ assets.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- **`BUNDLE_PDP_CF_HERO_MEDIA_SLOT_HEIGHT_PX`** = **`BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX × 1.5`**; **`bcfHeroMediaSlotHeightPx`** (bundles = existing bundles slot height).
+- Hero wrapper: fixed **`minHeight` + `height`** = slot px; light **`#f5f5f5`** background; **`img`/`video`**: **`maxHeight: '100%'`**, **`width/height: auto`**, **`objectFit: contain`**.
+- **Videos:** **`poster`** = matching product JPG; **`preload="auto"`**.
+- **`useEffect([category])`:** prefetch all three textures’ hero photos (**`Image`**) and videos (**hidden `video.load()`**) for that BCF category.
+
+---
+
+## 2026-03-30 — BCF PDP: tighter RAW + price vertical rhythm (−2px)
+
+**Context:** User asked to **reduce spacing above and below the price** by **2px** each, and **reduce spacing above** the red **RAW** line by **2px**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`meta.subline`**: **`marginTop` −3px → −5px**, **`marginBottom` 2px → 0**, dropped stray **`mb-2`** class. Price **`<p>`**: **`marginBottom` 2px → 0**.
+
+---
+
+## 2026-03-30 — BCF hero: PHOTO/VIDEO in slot + clip overflow (thumbs overlap fix)
+
+**Context:** User reported **PHOTO/VIDEO** felt removed, **hero moved up**, and **three texture thumbs overlapped** the main hero.
+
+**Causes:** **PHOTO/VIDEO** sat in a **separate** row with **only absolutely positioned** children (unstable layout). **Bundles** hero media still used **`width: 100%` + `height: auto`**, so it could **overflow** the fixed slot and paint **over** the thumb row.
+
+**Changes:** **`texture-category-product/page.tsx`**
+- Moved **PHOTO/VIDEO** toggle **inside** **`.product-wig-preview-images`** (**`position: absolute`**, **`top`/`right`**, **`zIndex: 2`**).
+- Hero slot: **`overflow: 'hidden'`** so media stays in the slot.
+- **Bundles** video/img: **`maxHeight: '100%'`**, **`poster`** + **`preload="auto"`** on video.
+
+---
+
+## 2026-03-30 — BCF hair color chips: 7px label nudge + ThumbBox-style swatch anchor
+
+**Context:** User asked for color **name** **`translateY(7px)`** (3px lower than **4px**) and **donuts vertically aligned** like they sit correctly in the **60×80** square.
+
+**Cause:** Flex **`flex: 1`** + **`alignItems: center`** centers the swatch only in the **upper band** above the label, not at the same **55%** vertical anchor as **`ThumbBox`** color (`top: 55%` + **`translateY(-50%)`**).
+
+**Changes:** **`texture-category-product/page.tsx`** — Chip **`button`**: **`position: relative`**; swatch wrapper **`position: absolute`**, **`left: 50%`**, **`top: 55%`**, **`transform: translate(-50%, -50%)`** (35×35 cell, **`pointerEvents: 'none'`**); label **`position: absolute`**, **`bottom: 1px`**, **`transform: translateX(-50%) translateY(7px)`**; removed **`flex flex-col`** / flex-row swatch stack.
+
+---
+
+## 2026-03-30 — BCF hero: PHOTO/VIDEO row restored + no gray hero gutters
+
+**Context:** User said **PHOTO/VIDEO** was **overlapped** by the main hero and should sit in its **previous position**; remove **left/right “borders”** on BCF hero images.
+
+**Changes:** **`texture-category-product/page.tsx`** — **PHOTO/VIDEO** moved back to the **dedicated row above** the hero (same **`minHeight` + absolute right** pattern as before). Hero **`.product-wig-preview-images`** keeps **`overflow: 'hidden'`** and fixed slot height; removed **`backgroundColor: '#f5f5f5'`** (that fill read as side gutters next to **`object-fit: contain`** media).
+
+---
+
+## 2026-03-30 — BCF main hero ~30% wider
+
+**Context:** User wanted the **BCF** main hero **~30% bigger** so **narrow portrait** images fill more horizontal space (**fewer L/R gaps**).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BCF_MAIN_HERO_WIDTH_SCALE = 1.3`** applied inside **`bundlePdpHeroMaxWidthPx`** (rounded). Propagates to **column `maxWidth`**, **bundles/CF hero `maxWidth`**, and **slot heights** (**`× 1.5`**) so layout stays consistent. Texture thumbs unchanged.
+
+---
+
+## 2026-03-30 — BCF PHOTO/VIDEO toggle aligned to hero image right (+2px)
+
+**Context:** After scaling the BCF hero, **PHOTO/VIDEO** still used the old **`right: calc(clamp…)`**; user wanted it **2px left of the hero image’s right edge**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`bcfPhotoVideoToggleRightPx`**: **`round((columnW − heroMaxW) / 2 + 2)`** where **`columnW`** is bundles vs CF column max width and **`heroMaxW`** is **`bundlePdpHeroMaxWidthPx(texture)`** (bundles: same as column). Toggle **`right: `${bcfPhotoVideoToggleRightPx}px`**.
+
+**Follow-up:** User asked to move **PHOTO/VIDEO** **6px further left** → formula uses **`+ 8`** instead of **`+ 2`** (fallback **`8`**). **Another 6px left** → **`+ 14`**, fallback **`14`**. **+2px left** on all BCF → **`+ 16`**, fallback **`16`**.
+
+**Bundles = CF alignment:** **Bundles** now uses **`BUNDLE_PDP_CF_COLUMN_MAX_WIDTH_PX`**, **`bundlePdpHeroMaxWidthPx(texture)`** on hero media, **`BUNDLE_PDP_CF_HERO_MEDIA_SLOT_HEIGHT_PX`**, and **`bcfShowHeroVideo`** like **closures/frontals**.
+
+**PHOTO/VIDEO position:** Toggle row sits in a **`maxWidth: bundlePdpHeroMaxWidthPx(texture)`** strip (**`margin: 0 auto`**), same width box as the hero image — **`right: BCF_PHOTO_VIDEO_TOGGLE_RIGHT_PX` (16)** — not **`(columnW − heroM) / 2`**, which misaligned **bundles** vs **closures** when measuring from the full column.
+
+---
+
+## 2026-03-30 — BCF hero video: no white flash (poster underlay + fade-in)
+
+**Context:** **VIDEO** on BCF showed **white** until the file buffered; **PHOTO** felt instant when switching textures.
+
+**Changes:** **`texture-category-product/page.tsx`** — For bundles + CF hero **`<video>`**: wrap in a **relative** container; **`<img>`** underlay (same JPG as **`poster`**, **`position: absolute`**, centered); video **`opacity: 0`** until **`onLoadedData` / `onCanPlay`** (and **`useLayoutEffect`** if **`readyState >= HAVE_CURRENT_DATA`** for cache). Short **`opacity`** transition. **`useLayoutEffect`** replaces a separate reset **`useEffect`** so a cached ready state isn’t cleared after promote.
+
+---
+
+## 2026-03-30 — BCF chip label 6px + noir color upcharge $80
+
+**Context:** User wanted hair color chip label **`translateY(6px)`** (was **7px**). BCF **premium hair colors** should add **$80** (was **$100** in **`BCF_COLOR_OPTIONS`**; build-a-wig color page still uses **$100** for custom wigs).
+
+**Changes:** **`texture-category-product/page.tsx`** — label **`translateY(6px)`**. **`bcfProductOptions.ts`** — all noir palette entries with **`price: 100, swatch`** → **`80`** (**JET BLACK** through **CITRINE**). Russian Blanco trio (**GOLDEN** / **PLATINUM** / **ASH**) unchanged (**−20** / **0** / **20**).
+
+---
+
+## 2026-03-30 — BCF hero texture thumbs: tighter white mat (4px/side)
+
+**Context:** User wanted the **white inset** around the **three** hero **`ThumbBox`** thumbs to be **4px** per side instead of **~7px** (was **`inner + round(10 × BUNDLE_HERO_LAYOUT_SCALE)`** ≈ **14px** total width/height → **7px** each side at scale **1.35**).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_THUMB_OUTER_W_PX` / `BUNDLE_THUMB_OUTER_H_PX`**: **`inner + 8`** (**4px** mat left/right/top/bottom when centered).
+
+---
+
+## 2026-03-30 — BCF hero texture thumbs: white mat 6px/side
+
+**Context:** User wanted **6px** mat per side instead of **4px**.
+
+**Changes:** **`texture-category-product/page.tsx`** — **`BUNDLE_THUMB_OUTER_*`**: **`inner + 12`** (was **`inner + 8`**).
+
+---
+
+## 2026-03-30 — BCF curly: product copy same vertical position as straight/wavy
+
+**Context:** User said **curly** **PHOTO/VIDEO** made **product text** shift **up** vs **straight/wavy**.
+
+**Cause:** **`texture-category-product/page.tsx`** wrapped the title stack in **`shop-bcf-curly-product-copy-lift`** for **`texture === 'curly'`** only; **`index.css`** applies **`top: -5.5px`** on that class.
+
+**Changes:** Removed curly-only class from BCF PDP copy wrapper. **`index.css`** comment updated: class remains for **`/home/shop`** grid curly row (**`products/page.tsx`**).
+
+---
+
+## 2026-03-30 — BCF curly title shift: hero slot width + curly class (follow-up)
+
+**Context:** User said **curly** product text still moved **up** vs **straight/wavy**; suspected **options/padding** below.
+
+**Causes found:**
+1. **`shop-bcf-curly-product-copy-lift`** was still on the copy wrapper (**`top: -5.5px`**) — removed again.
+2. **`.product-wig-preview-images`** used **`width: bundlePdpHeroMaxWidthPx(texture)`** — **curly** uses a **larger** `shopTextureCategoryProductPageDisplayScale` than straight/wavy, so the **hero slot box** was **wider** on curly, changing flex layout and shifting **thumbs + title** stack.
+
+**Changes:** **`texture-category-product/page.tsx`** — hero slot **`width: '100%'`** (keep **`maxWidth: '100%'`**); **img/video** still use **`maxWidth: bundlePdpHeroMaxWidthPx(texture)`** so assets size correctly inside a **fixed-height, full-width** slot.
+
+---
+
+## 2026-03-30 — BCF hair color chip height −4px
+
+**Context:** User wanted BCF PDP hair color chip squares **4px shorter** so there is less empty space above and below the color swatch donuts.
+
+**Changes:** **`texture-category-product/page.tsx`** — hair color option **`button`** **`height: '80px'`** → **`'76px'`** (**60px** width, border, padding, **55%** swatch anchor, and label styles unchanged).
+
+---
+
+## 2026-03-30 — BCF PDP: fix adjacent JSX / missing `</div>` in hero
+
+**Context:** Vite/Babel error **“Adjacent JSX elements must be wrapped”** at **`texture-category-product/page.tsx`** ~1758 (add-to-bag block); **`tsc`** also reported **`JSX element 'div' has no corresponding closing tag`**, **`JSX expressions must have one parent element`** at the hero (~901), and **`Unexpected token`** at **`) : null}`** (~1271).
+
+**Cause:** In the **`bcfUsesBundleStyleHero`** hero block, the **`inline-flex`** column (**~934**) was never closed after the texture **`ThumbBox`** row. Only two **`</div>`** followed the thumbs instead of three (**inline-flex**, **column wrapper ~920**, **`product-wig-preview` ~901**), so the ternary’s first branch was structurally invalid and everything below parsed as siblings.
+
+**Changes:** **`texture-category-product/page.tsx`** — after the thumbs **`</div>`**, added one **`</div>`** so the stack closes **inline-flex → column → `product-wig-preview`** before **`) : null}`**.
+
+---
+
+## 2026-03-30 — BCF hair color chip height 65px
+
+**Context:** User asked to set BCF PDP hair color chip **`button`** height to **`65px`** instead of **`76px`** (previously reduced from **80px**).
+
+**Changes:** **`texture-category-product/page.tsx`** — **`height: '65px'`** on the hair color chips.
+
+---
+
+## 2026-03-30 — Cart dropdown: BCF raw line, thumbs; booking badges + titles
+
+**Context:** User wanted **BCF** cart dropdown red subtitle without **STRAIGHT/WAVY/CURLY**; **BCF thumbnails** not clipped (**full** asset in the thumb slot); **booking** cart copy without **PREMIUM/STANDARD** in titles (subtitle stays install/consult lines only); **appointment/consult** badge **4px** right and **horizontally centered** in the same **88px** column as unit mannequin thumbs.
+
+**Decisions / outcomes:** BCF red line = **`{length} RAW {origin}`** only. BCF thumbs use **88px** + **`object-contain`**. New booking cart items use plain **`WIG INSTALLATION`** / **`WIG CONSULT`** (tier still in **`bookingTier`** for badge PNG). Cart dropdown booking: **88×88** hit area, **66px** badge **`object-contain`**, wrapper **`translateX(4px)`**, centered in the **88px** box.
+
+**Changes:** **`CartDropdown.tsx`** — BCF subtitle + **`object-contain`** at **88px**; booking thumb layout; title strip for legacy **`(PREMIUM)`/`(STANDARD)`**. **`booking/appointment/page.tsx`** & **`booking/consultation/page.tsx`** — cart **`name`** no longer includes premium suffix. **`shopping-bag/page.tsx`** — BCF subtitle + **`object-contain`**; strip tier suffixes from displayed titles for old rows.
+
+---
+
+## 2026-03-30 — Cart dropdown: booking badge 2px left + BCF thumb vertical center
+
+**Context:** User follow-up after prior cart dropdown booking/BCF work.
+
+**Changes:** **`CartDropdown.tsx`** — appointment/consult badge inner wrapper **`translateX(2px)`** (was **4px**, **2px further left**). **BCF** (`shop-texture-category`): thumbnail column **`alignSelf: 'center'`**; inner flex wrapper **`transform: 'none'`** instead of **`translateY(-8px)`** so thumbnails sit **vertically centered** in the gray bordered row.
+
+---
+
+## 2026-03-30 — Cart dropdown: BCF thumbnails 15% smaller
+
+**Context:** User wanted **BCF** (`shop-texture-category`) cart dropdown thumbnails **15% smaller** than the **88px** unit thumb size.
+
+**Changes:** **`CartDropdown.tsx`** — **`bcfCartThumbPx = Math.round(unitThumbPx * 0.85)`** (**75px**); **`cartThumbBoxPx`** uses it for **BCF** only (units stay **88px**).
+
+---
+
+## 2026-03-30 — BCF hero PHOTO aligned with VIDEO (same flex wrapper)
+
+**Context:** User said **PHOTO** hero on BCF sat **further left** than **VIDEO**; they should match.
+
+**Cause:** **VIDEO** mode wraps poster + **`<video>`** in a **full slot** **`display: flex`**, **`justifyContent/alignItems: center`**, **`width/height: 100%`**, and the video uses **`position: relative`** + same **`maxWidth`/`maxHeight`** as photo. **PHOTO** mode used a bare **`<img>`** as the direct child of **`.product-wig-preview-images`**, so horizontal centering differed.
+
+**Changes:** **`texture-category-product/page.tsx`** — **bundles** and **closures/frontals** photo-only branches: wrap the hero **`<img>`** in the **same inner flex wrapper** as the video branch; **`img`** styles mirror the **`<video>`** ( **`position: relative`**, **`marginLeft`/`marginRight: auto`**, etc.). **CF** curly **`translateY`** nudge unchanged on the photo **`img`**.
+
+---
+
+## 2026-03-30 — BCF hair color swatch vertically centered in chip
+
+**Context:** After shortening hair color chip height (**`65px`**), the color donut looked **vertically off-center** in the box.
+
+**Changes:** **`texture-category-product/page.tsx`** — swatch wrapper **`top: '55%'`** → **`'50%'`** (keeps **`translate(-50%, -50%)`**); comment updated. Bottom label positioning unchanged.
+
+---
+
+## 2026-03-30 — Cart dropdown: booking thumbs vertically centered in gray row
+
+**Context:** User wanted **appointment/consult** cart dropdown thumbnails **vertically centered** in the gray bordered line (same idea as **BCF**).
+
+**Changes:** **`CartDropdown.tsx`** — for **`isBookingCartThumb`**: thumbnail column **`alignSelf: 'center'`**; inner stack **`transform: 'none'`** (no **`translateY(-8px)`**), matching **BCF** behavior.
+
+---
+
+## 2026-03-30 — BCF PHOTO/VIDEO toggle: no horizontal jump on mode switch
+
+**Context:** Toggling **VIDEO → PHOTO** (and back) moved the **PHOTO/VIDEO** label ~**3px** horizontally even though **`right`** is fixed.
+
+**Cause:** Toggle is **`position: absolute; right: …`**, so its width tracks content. Swapping **Futura PT Book** vs **Medium** on **PHOTO** / **VIDEO** changes glyph widths, so the box width changes and the **left** edge shifts while the **right** stays pinned.
+
+**Changes:** **`texture-category-product/page.tsx`** — **PHOTO** and **VIDEO** spans: **`display: 'inline-block'`**, **`width: '3.35em'`** ( **`11px`** font size), **`textAlign: 'center'`** so both states use the same advance width.
+
+---
+
+## 2026-03-30 — BCF PHOTO/VIDEO toggle: hero strip width pinned (mode shift root cause)
+
+**Context:** User said **something else** still moved **PHOTO/VIDEO** left in **photo** vs **video**; fixed **em** widths on labels were not enough.
+
+**Cause:** Inner hero wrapper used **`display: inline-flex`** with **shrink-to-fit** width. **`<img>`** vs **`<video>`** contribute different **intrinsic min widths**, so the strip’s used width changed between modes. Toggle stays **`right: 16px`** from that strip, but the **whole strip** re-centered in the card → apparent horizontal jump.
+
+**Changes:** **`texture-category-product/page.tsx`** — replace **`inline-flex`** with **`flex`**; set **`width: '100%'`**, **`maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`**, **`marginLeft`/`marginRight: auto`** on that inner column so strip width always matches the **same** cap as hero media, independent of photo vs video. Prior **`3.35em`** label slots kept.
+
+---
+
+## 2026-03-30 — Booking: consults open to standard; appointments premium-only (clarify + modal fix)
+
+**Context:** User confirmed **standard members can still book consults**; only **installs / hair appointments** are premium-gated.
+
+**Changes:** **`appointment/page.tsx`** — Comments; upgrade modal copy notes consults stay available from shop menu; **`ConfirmationModal`** moved **outside** **`BookingFlowLayout`** (sibling **`<>…</>`**) so it does not render inside the frosted card. Removed admin-calendar **`BookingMutedNote`**; **`belowCard`** width matches in-card column (no extra **`px-5`**). **`consultation/page.tsx`** — File comment that consult is not gated like appointment; same **`belowCard`** width tweak.
+
+---
+
+## 2026-03-30 — Shopping bag: BCF + booking rows match cart dropdown
+
+**Context:** User wanted **shopping bag** (cart + saved-for-later lines) aligned with **cart dropdown** for **BCF** and **appointment/consult** thumbs and text.
+
+**Changes:** **`shopping-bag/page.tsx`** — Module helpers: thumb constants (**`BAG_BCF_THUMB_PX`** = **`round(88×0.85×1.05)`**, gift **108**, booking badge **66** in **88** slot), **`bagProductTitleLine`**, **`bagProductRedSubtitle`** (incl. **`BOOKING DEPOSIT`** fallback), **`bagHairOriginForProductName`** (matches cart dropdown, e.g. **BLANCO** → **RUSSIAN**). **`ShoppingBagLineThumb`**: booking **translateX(2px)** + **66** badge, BCF **translateX(4px)** + **`object-contain`**, vertical center for booking/BCF, **translateY(-8px)** for units/gift. Both item maps use shared thumb + title + red line.
+
+---
+
+## 2026-03-30 — Cart dropdown: show QTY for booking lines again
+
+**Context:** User asked to **keep** **`QTY:`** for appointment/consult rows in the cart dropdown (revert hiding it).
+
+**Changes:** **`CartDropdown.tsx`** — **`QTY: {quantity}`** always shown for all line types, including **`booking-consult`** / **`booking-appointment`**.
+
+---
+
+## 2026-03-30 — BCF PHOTO/VIDEO toggle 2px left
+
+**Context:** User wanted BCF **PHOTO/VIDEO** label **2px further left**.
+
+**Changes:** **`BCF_PHOTO_VIDEO_TOGGLE_RIGHT_PX`** **16 → 18** in **`texture-category-product/page.tsx`** (**`right`** on abs toggle). **`index.css`** **`.bcf-hero-photo-video-toggle`** **`right: 18px !important`** (kept in sync).
+
+---
+
+## 2026-03-30 — BCF PDP: +2px below sales tax line
+
+**Context:** User wanted **2px** extra space below **(EXCLUDING SALES TAX)** on **BCF** only.
+
+**Changes:** **`texture-category-product/page.tsx`** — removed **`mb-1`** on that **`<p>`**; **`marginBottom: 'calc(0.25rem + 2px)'`** (prior **`mb-1`** gap **+ 2px**). Only this BCF PDP file; unit PDPs unchanged.
+
+---
+
+## 2026-03-30 — Booking titles BOOKING/CONSULT; bag hides qty for booking only
+
+**Context:** User wanted black product title in cart dropdown always **BOOKING** (appointments) and **CONSULT** (consults); red line + badge carry detail. Shopping bag should **not** show **+LIST** / **− qty +** / **SAVE FOR LATER** for booking lines (cart dropdown **keeps QTY**).
+
+**Changes:** **`CartDropdown.tsx`** — **`booking-consult`** title fixed **`CONSULT`** (was derived from **`name`**). **`shopping-bag/page.tsx`** — **`bagProductTitleLine`**: consult **`CONSULT`**. **Bag cart:** booking rows → **×** remove only (confirm modal). **Saved for later:** booking rows → hide **+LIST** and qty strip; **MOVE TO BAG** / **OUT OF STOCK** unchanged.
+
+---
+
+## 2026-03-30 — BCF PDP: remove qty above tabs; bundles-only BUNDLE DEAL
+
+**Context:** User wanted the **quantity counter removed** above the details tabs on **BCF** PDPs (`texture-category-product`). On **bundles** only, add a **BUNDLE DEAL** button **below ADD TO BAG** that adds **3** of the current configuration at **$40 off** the combined list total (line subtotal = `3 × displayPrice − 40`, implemented via per-unit `price = subtotal / 3`).
+
+**Topics covered:** Handoff from prior turn; implementation completed in this chat.
+
+**Decisions / outcomes:** Regular **ADD TO BAG** always adds **quantity 1** (no quantity UI). **BUNDLE DEAL** only when `category === 'bundles'`; cart line includes **`bcfBundleDeal: true`** for optional future display/checkout. Tabs block spacing adjusted (removed paired `translateY` nudge used with the old quantity row).
+
+**Changes:** **`src/pages/shop/texture-category-product/page.tsx`** — removed quantity state/UI and +/- handlers; **`handleAddToBag`** uses **`quantity: 1`**; **`handleBundleDealToBag`** + **`bundleDealState`** + conditional button; **`src/types/cart.ts`** — optional **`bcfBundleDeal?: boolean`** on **`CartItem`**.
+
+**Conventions:** None.
+
+---
+
+## 2026-03-30 — Shopping bag: booking QTY above ×, 6px left
+
+**Context:** User wanted **appointment/consult** rows on the **shopping bag** to show **QTY** text with the **×** remove control (like the cart dropdown), and to move that **QTY + ×** cluster **6px left** on the bag **only** (not dropdown). Prior bag behavior was × only for booking cart lines.
+
+**Changes:** **`shopping-bag/page.tsx`** — active cart booking lines: **`QTY: {quantity}`** label above the × button (**`Futura PT Medium`**, **8px**, same stack as **`CartDropdown`**). Absolute column **`right`** **`8px` → `14px`** when **`isBookingLine`** (6px left). Non-booking lines stay **`right: 8px`**. Saved-for-later booking layout unchanged (**+LIST** / qty strip still hidden; **MOVE TO BAG** / **OUT OF STOCK** unchanged).
+
+---
+
+## 2026-03-30 — BCF BUNDLE DEAL: premium-only (same upgrade modal as colors)
+
+**Context:** User wanted **BUNDLE DEAL** on bundles BCF PDP to apply only for **premium** members, with the same **upgrade** popup used when non-premium users pick a gated **color**.
+
+**Decisions / outcomes:** Reuse **`showBcfColorUpgradeModal`**, **`handleBcfColorUpgradeConfirm`** / **`handleBcfColorUpgradeClose`**, and existing **`ConfirmationModal`** (**UPGRADE YOUR SUBSCRIPTION?** / premium message / **UPGRADE** → rewards). Non-premium taps **BUNDLE DEAL** → modal only; no cart change.
+
+**Changes:** **`texture-category-product/page.tsx`** — at start of **`handleBundleDealToBag`**, after **`category === 'bundles'`** check, **`if (!isPremiumMemberForGatedFeatures()) { setShowBcfColorUpgradeModal(true); return; }`** (same helper as **`handleBcfColorSelect`**).
+
+**Follow-up (same topic):** Gate had been missing from **`handleBundleDealToBag`** in tree (signed-out / non-premium could add deal). Re-applied the same **`isPremiumMemberForGatedFeatures()`** check + **`setShowBcfColorUpgradeModal(true)`** before **`setBundleDealState('adding')`**.
+
+---
+
+## 2026-03-30 — Internal: wig consult pricing vs deposit (no site copy change)
+
+**Context:** User provided **internal** business context only — **not** to add this wording to the customer-facing site.
+
+**Facts (for agents / future implementation):** Standalone **wig consult** is **$40** (not **$25**). **$25** is a **deposit** when paired with **wig + install**. **Wig-only** consult: **non-refundable** policy rationale (no guarantee of unit purchase). **No code or public copy updated** from this message.
+
+---
+
+## 2026-03-30 — Booking consult + appointment UI cleanup
+
+**Context:** User wanted consult and appointment booking flows updated: no red **CONSULT** / **APPOINTMENT** label above tier badges; no gray rule above **TOTAL DUE** / **ESTIMATED TOTAL**; **ADD TO BAG** below the frosted main card (not inside); consult **ADDITIONAL NOTES:** with colon, no textarea placeholder; remove **(OPTIONAL)** from hair inspo; remove gray rules under **ADD TO YOUR APPOINTMENT**, **SERVICE TYPE**, **PREFERRED APPOINTMENT DATE**.
+
+**Changes:** **`BookingFlowLayout.tsx`** — **`belowCard`** rendered **after** the bordered card **`</div>`** (still only when menu closed). **`BookingPageChrome.tsx`** — **`BookingCrumbTitle`**: optional **`children`** (badge-only when omitted); **`BookingSectionHeading`**: gray **`borderBottom` rule removed**; bottom margin **14px** on title. **`consultation/page.tsx`** — **`BookingCrumbTitle`** without title text; hair inspo label without optional; **`ADDITIONAL NOTES:`**; textarea **no** **`placeholder`**; total block **no** **`borderTop`**. **`appointment/page.tsx`** — crumb title only badge; estimated total **no** **`borderTop`**.
+

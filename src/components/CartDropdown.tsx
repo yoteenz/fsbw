@@ -883,25 +883,48 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   return itemsToShow.map((item) => {
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
-                    /** Cart dropdown: booking badge PNGs 25% smaller than standard 88px thumb (88 × 0.75 = 66). */
+                    const isBcfShopItem = item.type === 'shop-texture-category';
+                    /** Cart dropdown: booking badge image 66px, centered in 88px column to align with unit mannequin thumbs. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
+                    const unitThumbPx = 88;
+                    const bcfCartThumbPx = Math.round(unitThumbPx * 0.85 * 1.05);
+                    const bookingBadgeImgPx = 66;
                     const cartThumbBoxPx =
                       item.name === 'GIFT CARD' || item.type === 'gift-card'
                         ? 108
                         : isBookingCartThumb
-                          ? 66
-                          : 88;
+                          ? bookingBadgeImgPx
+                          : isBcfShopItem
+                            ? bcfCartThumbPx
+                            : unitThumbPx;
                     return (
                     <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
                     <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
-                    <div className="flex flex-col items-center justify-center" style={{ height: '120px', minHeight: '120px', alignSelf: 'flex-start' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 'translateY(-8px)' : 'translateY(-8px)', position: 'relative' }}>
+                    <div
+                      className="flex flex-col items-center justify-center"
+                      style={{
+                        height: '120px',
+                        minHeight: '120px',
+                        alignSelf: isBcfShopItem || isBookingCartThumb ? 'center' : 'flex-start'
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transform:
+                            isBcfShopItem || isBookingCartThumb ? 'none' : 'translateY(-8px)',
+                          position: 'relative'
+                        }}
+                      >
                         {/* Item Image */}
                         <div 
                           className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
                           style={{ 
-                            width: `${cartThumbBoxPx}px`, 
-                            height: `${cartThumbBoxPx}px`,
+                            width: `${isBookingCartThumb ? unitThumbPx : cartThumbBoxPx}px`,
+                            height: `${isBookingCartThumb ? unitThumbPx : cartThumbBoxPx}px`,
                             margin: '0'
                           }}
                         onClick={() => {
@@ -927,69 +950,89 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           navigate(productRoute);
                         }}
                       >
-                        <img
-                          src={(() => {
-                            // Gift card uses specific thumbnail
+                        {isBookingCartThumb ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transform: 'translateX(2px)'
+                            }}
+                          >
+                            <img
+                              src={bookingCartItemThumbnailSrc(item as any) || '/assets/appointment-standard.png'}
+                              alt={item.name}
+                              className="object-contain rounded"
+                              style={{
+                                width: `${bookingBadgeImgPx}px`,
+                                height: `${bookingBadgeImgPx}px`
+                              }}
+                            />
+                          </div>
+                        ) : (() => {
+                          const thumbSrc = (() => {
                             if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                               return '/assets/gift-card asset.png';
                             }
-                            const bookingThumb = bookingCartItemThumbnailSrc(item as any);
-                            if (bookingThumb) return bookingThumb;
 
-                            // Determine thumbnail based on product name and hairline selection
                             const hairline = item.hairline || 'NATURAL';
                             const hairlineUpper = hairline.toUpperCase();
                             const hasPeak = hairlineUpper.includes('PEAK');
                             const hasLagos = hairlineUpper.includes('LAGOS');
-                            
-                            // For NOIR product: use peak/lagos thumbnails if selected
+
                             if (item.name === 'NOIR') {
                               if (hasPeak) {
                                 return '/assets/noir-peak-thumb.png';
-                              } else if (hasLagos) {
+                              }
+                              if (hasLagos) {
                                 return '/assets/noir-lagos-thumb.png';
                               }
-                              // Default to noir thumbnail for natural hairline
                               return item.image || '/assets/NOIR/noir-thumb.png';
                             }
-                            
-                            // For other products (BLANCO, SOFT WAVE, SOFT CURL):
-                            // Use product-specific peak/lagos thumbnails when available
-                            // TODO: Update these paths when product-specific thumbnails are added
+
                             if (item.name === 'BLANCO') {
                               if (hasPeak) {
-                                // return '/assets/blanco peak front.png'; // Uncomment when available
+                                // return '/assets/blanco peak front.png';
                               } else if (hasLagos) {
-                                // return '/assets/blanco lagos front.png'; // Uncomment when available
+                                // return '/assets/blanco lagos front.png';
                               }
                             } else if (item.name === 'SOFT WAVE') {
                               if (hasPeak) {
-                                // return '/assets/soft-wave peak front.png'; // Uncomment when available
+                                // return '/assets/soft-wave peak front.png';
                               } else if (hasLagos) {
-                                // return '/assets/soft-wave lagos front.png'; // Uncomment when available
+                                // return '/assets/soft-wave lagos front.png';
                               }
                             } else if (item.name === 'SOFT CURL') {
                               if (hasPeak) {
-                                // return '/assets/soft-curl peak front.png'; // Uncomment when available
+                                // return '/assets/soft-curl peak front.png';
                               } else if (hasLagos) {
-                                // return '/assets/soft-curl lagos front.png'; // Uncomment when available
+                                // return '/assets/soft-curl lagos front.png';
                               }
                             }
-                            
-                            // Default: use the product's default thumbnail
+
                             return item.image || '/assets/NOIR/noir-thumb.png';
-                          })()}
-                          alt={item.name}
-                          className={
-                            item.type === 'booking-consult' || item.type === 'booking-appointment'
-                              ? 'object-contain rounded'
-                              : 'object-cover rounded'
-                          }
-                          style={{ 
-                            width: `${cartThumbBoxPx}px`,
-                            height: `${cartThumbBoxPx}px`
-                          }}
-                        />
+                          })();
+
+                          const imgEl = (
+                            <img
+                              src={thumbSrc}
+                              alt={item.name}
+                              className={
+                                isBcfShopItem ? 'object-contain rounded' : 'object-cover rounded'
+                              }
+                              style={{
+                                width: `${cartThumbBoxPx}px`,
+                                height: `${cartThumbBoxPx}px`
+                              }}
+                            />
+                          );
+
+                          return isBcfShopItem ? (
+                            <div style={{ transform: 'translateX(4px)' }}>{imgEl}</div>
+                          ) : (
+                            imgEl
+                          );
+                        })()}
                       </div>
                       
                         {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
@@ -1156,7 +1199,23 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             paddingTop: '0'
                           }}
                         >
-                          {item.name.replace(/WIG/gi, '').trim()}
+                          {(() => {
+                            if (item.type === 'booking-appointment') {
+                              return 'BOOKING';
+                            }
+                            if (item.type === 'booking-consult') {
+                              return 'CONSULT';
+                            }
+                            if (item.type === 'shop-texture-category') {
+                              const c = (item as CartItem & { category?: string }).category;
+                              if (c === 'bundles') return 'BUNDLES';
+                              if (c === 'closures') return 'CLOSURES';
+                              if (c === 'frontals') return 'FRONTALS';
+                              const head = item.name.split('·')[0]?.trim();
+                              return head ? head.toUpperCase() : item.name.replace(/WIG/gi, '').trim();
+                            }
+                            return item.name.replace(/WIG/gi, '').trim();
+                          })()}
                         </p>
                         <p 
                           className="font-bold"
@@ -1183,6 +1242,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           }
                           if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
                             return 'BOOKING DEPOSIT';
+                          }
+
+                          if (item.type === 'shop-texture-category') {
+                            const origin = (
+                              (item as CartItem & { hairOrigin?: string }).hairOrigin || 'CAMBODIAN'
+                            ).toUpperCase();
+                            return `${item.length || '24"'} RAW ${origin}`;
                           }
 
                           // Get the correct hair origin based on product name

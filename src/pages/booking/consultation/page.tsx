@@ -17,6 +17,7 @@ const CONSULT_DEPOSIT_USD = 25;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
+/** Consult deposits: all members (standard and premium). Hair appointment / install flow is premium-gated on the appointment page only. */
 export default function BookingConsultationPage() {
   const location = useLocation();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
@@ -58,7 +59,7 @@ export default function BookingConsultationPage() {
           '/assets/consultation-standard.png';
         const newItem = {
           id: `booking-consult-${Date.now()}`,
-          name: isPremiumBooking ? 'WIG CONSULT (PREMIUM)' : 'WIG CONSULT',
+          name: 'WIG CONSULT',
           price: CONSULT_DEPOSIT_USD,
           quantity: 1,
           image: badgeImage,
@@ -98,22 +99,20 @@ export default function BookingConsultationPage() {
     <BookingFlowLayout
       crumbHighlight="CONSULT"
       belowCard={
-        <div className="w-full px-5" style={{ boxSizing: 'border-box' }}>
-          <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto' }}>
-            <NoirStyleAddToBagButton
-              state={addToBagState}
-              disabled={addToBagState === 'adding'}
-              onClick={handleAddToBag}
-            />
-            <BookingMutedNote style={{ marginTop: '10px', marginBottom: 0 }}>
-              DEPOSIT IS NON-REFUNDABLE AND CREDITED WHEN YOU PURCHASE YOUR WIG OR BOOK INSTALLATION.
-            </BookingMutedNote>
-          </div>
+        <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '8px' }}>
+          <NoirStyleAddToBagButton
+            state={addToBagState}
+            disabled={addToBagState === 'adding'}
+            onClick={handleAddToBag}
+          />
+          <BookingMutedNote style={{ marginTop: '10px', marginBottom: 0 }}>
+            DEPOSIT IS NON-REFUNDABLE AND CREDITED WHEN YOU PURCHASE YOUR WIG OR BOOK INSTALLATION.
+          </BookingMutedNote>
         </div>
       }
     >
       <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingBottom: '12px' }}>
-        <BookingCrumbTitle middle={<BookingTierBadgeImg />}>CONSULT</BookingCrumbTitle>
+        <BookingCrumbTitle middle={<BookingTierBadgeImg />} />
         <BookingHeroSubline>NON-REFUNDABLE DEPOSIT APPLIES TOWARD YOUR WIG OR INSTALL</BookingHeroSubline>
 
         <div style={{ marginBottom: '22px' }}>
@@ -268,13 +267,7 @@ export default function BookingConsultationPage() {
             </p>
           )}
 
-          <div
-            style={{
-              borderTop: '1px solid #e5e7eb',
-              paddingTop: '18px',
-              textAlign: 'center'
-            }}
-          >
+          <div style={{ paddingTop: '6px', textAlign: 'center' }}>
             <p
               style={{
                 fontFamily: bookingFontBook,

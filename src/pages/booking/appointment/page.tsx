@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
 import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   BookingBodyParagraph,
   BookingCrumbTitle,
@@ -14,6 +15,7 @@ import {
   bookingFontMedium
 } from '../../../components/booking/BookingPageChrome';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 
 type InstallKind = 'NEW_INSTALL' | 'RE_INSTALL';
 
@@ -107,11 +109,20 @@ function ToggleRow({
 
 export default function BookingAppointmentPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [installKind, setInstallKind] = useState<InstallKind>('NEW_INSTALL');
   const [addonIds, setAddonIds] = useState<Set<string>>(() => new Set());
   const [preferredDateIso, setPreferredDateIso] = useState('');
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  const [showAppointmentUpgradeModal, setShowAppointmentUpgradeModal] = useState(false);
+
+  /** Installs / hair appointments: premium only. Consultation booking stays open to all signed-in tiers (see consultation page). */
+  useEffect(() => {
+    if (!isPremiumMemberForGatedFeatures()) {
+      setShowAppointmentUpgradeModal(true);
+    }
+  }, []);
 
   const toggleAddon = (id: string) => {
     setAddonIds((prev) => {
@@ -139,6 +150,10 @@ export default function BookingAppointmentPage() {
   }, [installKind, addonIds]);
 
   const handleScheduleToBag = () => {
+    if (!isPremiumMemberForGatedFeatures()) {
+      setShowAppointmentUpgradeModal(true);
+      return;
+    }
     setAddToBagState('adding');
     setTimeout(() => {
       try {
@@ -150,7 +165,7 @@ export default function BookingAppointmentPage() {
           '/assets/appointment-standard.png';
         const newItem = {
           id: `booking-appt-${Date.now()}`,
-          name: isPremiumBooking ? 'WIG INSTALLATION (PREMIUM)' : 'WIG INSTALLATION',
+          name: 'WIG INSTALLATION',
           price: totalUsd,
           quantity: 1,
           image: badgeImage,
@@ -183,25 +198,24 @@ export default function BookingAppointmentPage() {
   ];
 
   return (
+    <>
     <BookingFlowLayout
       crumbHighlight="APPOINTMENT"
       belowCard={
-        <div className="w-full px-5" style={{ boxSizing: 'border-box' }}>
-          <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto' }}>
-            <NoirStyleAddToBagButton
-              state={addToBagState}
-              disabled={addToBagState === 'adding'}
-              onClick={handleScheduleToBag}
-            />
-            <BookingMutedNote style={{ marginTop: '10px', marginBottom: 0 }}>
-              FINAL TIME AND DATE ARE CONFIRMED AFTER CHECKOUT. USE ORDER NOTES OR CONCIERGE FOR SPECIAL REQUESTS.
-            </BookingMutedNote>
-          </div>
+        <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '8px' }}>
+          <NoirStyleAddToBagButton
+            state={addToBagState}
+            disabled={addToBagState === 'adding'}
+            onClick={handleScheduleToBag}
+          />
+          <BookingMutedNote style={{ marginTop: '10px', marginBottom: 0 }}>
+            FINAL TIME AND DATE ARE CONFIRMED AFTER CHECKOUT. USE ORDER NOTES OR CONCIERGE FOR SPECIAL REQUESTS.
+          </BookingMutedNote>
         </div>
       }
     >
       <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingBottom: '12px' }}>
-        <BookingCrumbTitle middle={<BookingTierBadgeImg />}>APPOINTMENT</BookingCrumbTitle>
+        <BookingCrumbTitle middle={<BookingTierBadgeImg />} />
         <BookingHeroSubline>LOCATED IN MEMPHIS, TN.</BookingHeroSubline>
 
         <div style={{ marginBottom: '24px' }}>
@@ -304,13 +318,7 @@ export default function BookingAppointmentPage() {
             <BrandExpiresDatePicker value={preferredDateIso} onChange={setPreferredDateIso} />
           </div>
 
-          <div
-            style={{
-              borderTop: '1px solid #e5e7eb',
-              paddingTop: '18px',
-              textAlign: 'center'
-            }}
-          >
+          <div style={{ paddingTop: '6px', textAlign: 'center' }}>
             <p
               style={{
                 fontFamily: bookingFontBook,
@@ -330,5 +338,21 @@ export default function BookingAppointmentPage() {
         </div>
       </div>
     </BookingFlowLayout>
+
+    <ConfirmationModal
+      isOpen={showAppointmentUpgradeModal}
+      onClose={() => setShowAppointmentUpgradeModal(false)}
+      onConfirm={() => {
+        setShowAppointmentUpgradeModal(false);
+        prepareMembershipUpgradeNavigation();
+        navigate('/account/rewards');
+      }}
+      title="UPGRADE YOUR SUBSCRIPTION?"
+      message="HAIR APPOINTMENTS AND INSTALLS ARE FOR PREMIUM MEMBERS. WIG CONSULTS ARE STILL AVAILABLE TO YOU FROM THE SHOP MENU."
+      confirmText="UPGRADE"
+      cancelText="CANCEL"
+      dataAttribute="upgrade-subscription-modal-booking-appointment"
+    />
+    </>
   );
 }
