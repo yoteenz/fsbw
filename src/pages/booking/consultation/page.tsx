@@ -235,7 +235,10 @@ export default function BookingConsultationPage() {
           </div>
 
           <div>
-            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>HAIR OPTION:*</p>
+            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>
+              HAIR OPTION:
+              <span style={{ color: '#EB1C24' }}>*</span>
+            </p>
             <div className="flex flex-wrap gap-2 justify-start">
               {(['WIG + INSTALL', 'WIG ONLY'] as const).map((opt) => (
                 <button
