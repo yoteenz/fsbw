@@ -184,6 +184,7 @@ function CheckoutPage() {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);

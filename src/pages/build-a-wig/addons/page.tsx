@@ -25,6 +25,7 @@ function isStylingValueConfirmed(raw: string | null): boolean {
 export default function AddOnsSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedView, setSelectedView] = useState(1);
   const ADDONS_CORRECT_ORDER = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
 

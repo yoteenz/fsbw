@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
 import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
@@ -276,6 +276,17 @@ export default function BookingAppointmentPage() {
     return parts.join(' · ');
   }, [installKind, addonIds, visibleAddons]);
 
+  const isAppointmentDateDisabled = useCallback((isoYmd: string) => {
+    const [ys, ms, ds] = isoYmd.split('-');
+    const y = Number(ys);
+    const m = Number(ms) - 1;
+    const d = Number(ds);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
+    const dayOfWeek = new Date(y, m, d).getDay();
+    // Block weekends: 0=Sunday, 6=Saturday.
+    return dayOfWeek === 0 || dayOfWeek === 6;
+  }, []);
+
   const handleScheduleToBag = () => {
     if (!isPremiumMemberForGatedFeatures()) {
       setShowAppointmentUpgradeModal(true);
@@ -323,8 +334,10 @@ export default function BookingAppointmentPage() {
   const policyLines = [
     'NEW CLIENTS ARE REQUIRED TO PURCHASE A UNIT PRIOR TO INSTALLATION.',
     'I WILL ONLY RE-INSTALL WIGS I HAVE PREVIOUSLY CUT & LAID.',
-    'IF YOU NEED HELP CHOOSING A UNIT FOR YOUR LOOK, BOOK A WIG CONSULTATION FROM THE SHOP MENU.',
-    'NEW INSTALLS SHOULD BE BOOKED AT LEAST TWO MONTHS IN ADVANCE SO YOUR UNIT CAN BE CONSTRUCTED, CUSTOMIZED, STYLED & READY FOR INSTALLATION. RE-INSTALLS SHOULD BE BOOKED AT LEAST ONE WEEK IN ADVANCE USING THE "CLEAN LACE" ADD ON IF APPLICABLE.'
+    'IF YOU NEED HELP CHOOSING A UNIT FOR YOUR DESIRED LOOK, BOOK A WIG CONSULTATION FROM THE SHOP MENU.',
+    'NEW INSTALLS SHOULD BE BOOKED AT LEAST TWO MONTHS IN ADVANCE SO YOUR UNIT CAN BE CONSTRUCTED, CUSTOMIZED, STYLED & READY FOR INSTALLATION. RE-INSTALLS SHOULD BE BOOKED AT LEAST ONE WEEK IN ADVANCE USING THE "CLEAN LACE" ADD ON IF APPLICABLE.',
+    'ABSOLUTELY NO GUESTS ARE ALLOWED AT YOUR APPOINTMENT DUE TO PRIVACY & SAFETY PRECAUTIONS. APPOINTMENTS MUST BE CANCELLED WITHIN 48 HOURS & RESCHEDULED WITHIN 24 HOURS OF APPOINTMENT TO AVOID A NO SHOW FEE OF $50 USD.',
+    'APPOINTMENTS ARE BOOKED MONDAY THROUGH FRIDAY ONLY. I ACCEPT 2-3 APPOINTMENTS PER DAY (AS TIME PERMITS) WITHIN A 12-HOUR DAILY BOOKING WINDOW.'
   ];
 
   return (
@@ -361,7 +374,7 @@ export default function BookingAppointmentPage() {
               key={line.slice(0, 28)}
               style={{
                 ...(i === policyLines.length - 1 ? { marginBottom: 0 } : {}),
-                ...(i === 1 ? { marginTop: '-8px' } : {})
+                ...(i === 1 ? { marginTop: '-12px' } : {})
               }}
             >
               {line}
@@ -409,7 +422,7 @@ export default function BookingAppointmentPage() {
                       </span>
                       <span
                         style={{
-                          fontFamily: bookingFontBook,
+                          fontFamily: bookingFontMedium,
                           fontSize: '9px',
                           textTransform: 'uppercase',
                           color: '#EB1C24',
@@ -477,12 +490,17 @@ export default function BookingAppointmentPage() {
           </div>
 
           <div style={{ marginTop: '22px', marginBottom: '16px' }}>
-            <BrandExpiresDatePicker inline value={preferredDateIso} onChange={setPreferredDateIso} />
+            <BrandExpiresDatePicker
+              inline
+              value={preferredDateIso}
+              onChange={setPreferredDateIso}
+              isDateDisabled={isAppointmentDateDisabled}
+            />
           </div>
           <p
             style={{
               fontFamily: bookingFontMedium,
-              fontSize: '9px',
+              fontSize: '10px',
               color: '#EB1C24',
               textTransform: 'uppercase',
               textAlign: 'center',

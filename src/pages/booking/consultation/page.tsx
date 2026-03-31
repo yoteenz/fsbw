@@ -8,7 +8,6 @@ import {
   BookingHeroSubline,
   BookingTierBadgeImg,
   NoirStyleAddToBagButton,
-  bookingFontBook,
   bookingFontMedium
 } from '../../../components/booking/BookingPageChrome';
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
@@ -123,16 +122,18 @@ export default function BookingConsultationPage() {
         <BookingCrumbTitle middle={<BookingTierBadgeImg />} hideRule>
           {null}
         </BookingCrumbTitle>
-        <BookingHeroSubline>
-          NON-REFUNDABLE DEPOSIT APPLIES TOWARD YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 60 DAYS OF PURCHASE.
-        </BookingHeroSubline>
+        <div style={{ marginTop: '-2px' }}>
+          <BookingHeroSubline>
+            DEPOSIT IS APPLIED TOWARDS YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 60 DAYS OF PURCHASE.
+          </BookingHeroSubline>
+        </div>
 
         <div style={{ marginBottom: '24px' }}>
           <BookingBodyParagraph>
-            BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY & OVERALL FINISH. THIS DEPOSIT HOLDS YOUR APPOINTMENT & CREDITS TOWARD YOUR UNIT OR INSTALL.
+            BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. THIS DEPOSIT HOLDS YOUR APPOINTMENT & WILL BE A CREDIT TOWARDS YOUR UNIT OR INSTALL.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            SELECT WIG + INSTALL OR WIG ONLY. ADD NOTES ALONG WITH A HAIR INSPO PHOTO FOR THE BEST RESULTS. YOU WILL RECEIVE A FOLLOW-UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
+            SELECT WIG + INSTALL OR WIG ONLY. ADD NOTES ALONG WITH A HAIR INSPO PHOTO FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW-UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -253,7 +254,7 @@ export default function BookingConsultationPage() {
                     fontSize: '10px',
                     fontWeight: 500,
                     padding: '10px 14px',
-                    color: '#000000',
+                    color: hairOption === opt ? '#EB1C24' : '#000000',
                     cursor: 'pointer',
                     textTransform: 'uppercase',
                     letterSpacing: '0.03em'
@@ -266,7 +267,7 @@ export default function BookingConsultationPage() {
           </div>
 
           <div>
-            <label htmlFor="consult-notes" style={labelStyle}>
+            <label htmlFor="consult-notes" style={{ ...labelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
             </label>
             <textarea
@@ -281,7 +282,7 @@ export default function BookingConsultationPage() {
                 border: '1.3px solid #000',
                 fontFamily: bookingFontMedium,
                 fontSize: '11px',
-                color: '#000000',
+                color: '#EB1C24',
                 fontWeight: 500,
                 padding: '12px',
                 textTransform: 'uppercase',

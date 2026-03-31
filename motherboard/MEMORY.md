@@ -6204,3 +6204,69 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User wanted **CLEAN LACE** expandable detail to say **glue & gunk** (not dirt); consult second body paragraph to end with **payment details** (not deposit details).
 
 **Changes:** **`booking/appointment/page.tsx`** — **`ADDON_DETAIL_LINES['clean-lace']`** **`DIRT` → `GUNK`**. **`booking/consultation/page.tsx`** — **`DEPOSIT DETAILS` → `PAYMENT DETAILS`** in the **72 hours** sentence.
+
+---
+
+## 2026-03-31 — Consult notes copy; appointment duration line; EST time +1px; hair option red
+
+**Context:** User wanted **ADD NOTES ALONG WITH A HAIR INSPO PHOTO** phrasing; appointment second line **FINAL DURATION CONFIRMED AFTER CHECKOUT.**; red **estimated appointment time** block **+1px**; consult **HAIR OPTION** asterisk **red**; selected **WIG + INSTALL / WIG ONLY** text **red** again.
+
+**Changes:** **`consultation/page.tsx`** — second **`BookingBodyParagraph`**; **`HAIR OPTION:`** + red **`*`** span; button **`color`** selected **#EB1C24**. **`appointment/page.tsx`** — estimated time **`fontSize` `9px` → `10px`**; **FINAL TIME** → **FINAL DURATION**.
+
+---
+
+## 2026-03-31 — Consult notes spacing/red input; install/re-install red subline font
+
+**Context:** User wanted **1px** more space below **ADDITIONAL NOTES:** on consult; notes input text in **uppercase red Futura Medium**; and the **NEW INSTALL / RE-INSTALL** red duration subline to match other red appointment time lines (Futura Medium).
+
+**Changes:** **`booking/consultation/page.tsx`** — notes label uses **`marginBottom: '7px'`**; textarea text color **`#000000` → `#EB1C24`** with existing uppercase + **`bookingFontMedium`**. **`booking/appointment/page.tsx`** — service-type red subline font **`bookingFontBook` → `bookingFontMedium`**.
+
+---
+
+## 2026-03-31 — Appointment policy line 2: -8px to -12px
+
+**Context:** User requested another tighter adjustment above **"I WILL ONLY RE-INSTALL..."**.
+
+**Changes:** **`booking/appointment/page.tsx`** — second policy line (**`i === 1`**) **`marginTop` `-8px` → `-12px`**.
+
+---
+
+## 2026-03-31 — Consult copy: OR phrasing + "towards" wording
+
+**Context:** User requested consult text updates to use **"DENSITY OR OVERALL FINISH"**, **"WILL BE A CREDIT TOWARDS..."**, and hero line **"DEPOSIT IS APPLIED TOWARDS YOUR WIG..."**.
+
+**Changes:** **`booking/consultation/page.tsx`** — first body paragraph updated exactly to requested sentence; hero subline changed from **`TOWARD`** to **`TOWARDS`**.
+
+---
+
+## 2026-03-31 — Appointment policy copy: "desired look"
+
+**Context:** User wanted the policy sentence updated to **"if you need help choosing a unit for your desired look, book a wig..."**.
+
+**Changes:** **`booking/appointment/page.tsx`** — policy line changed from **`FOR YOUR LOOK`** to **`FOR YOUR DESIRED LOOK`**.
+
+---
+
+## 2026-03-31 — Appointment policy: add guests/cancellation paragraph
+
+**Context:** User asked to add a new paragraph below the **"NEW INSTALLS SHOULD BE BOOKED..."** policy line on the appointment page.
+
+**Changes:** **`booking/appointment/page.tsx`** — appended a new `policyLines` paragraph: **no guests allowed** plus **48-hour cancellation / 24-hour reschedule / $50 no-show fee** copy.
+
+---
+
+## 2026-03-31 — Vercel build unblock: TS errors across booking/BAW/checkout/shop pages
+
+**Context:** Vercel build failed on TS errors: unused imports, undefined **`premiumMembershipStepModal`** in several BAW steps, missing **`serverQuote`** state in checkout quote effect/UI, and nullable **`category`** usage in shop texture-category PDP.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — removed unused **`bookingFontScript`** import. **`build-a-wig/addons|color|texture/page.tsx`** — restored **`const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();`**; **`build-a-wig/lace/page.tsx`** — rendered **`{premiumMembershipStepModal}`** near modals. **`checkout/page.tsx`** — added **`const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);`** to match existing quote effect/summary UI. **`shop/texture-category-product/page.tsx`** — early guard **`if (!category) return <Navigate ... />;`** so downstream category usage is non-null typed.
+
+**Verification:** **`npx tsc --noEmit`** passes locally after these fixes.
+
+---
+
+## 2026-03-31 — Appointment schedule policy: weekdays only + 2-3/day note
+
+**Context:** User requested weekends blocked for appointments, with policy that bookings are limited to **2-3 per day** (as time permits) in a **12-hour** Mon-Fri window.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — added optional **`isDateDisabled(isoYmd)`** prop and disabled-day UI/interaction. **`booking/appointment/page.tsx`** — passes weekday guard to block Saturdays/Sundays in the inline calendar and appends policy copy: **Monday-Friday only**, **2-3 appointments/day**, **12-hour daily booking window**.

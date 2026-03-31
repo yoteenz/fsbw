@@ -24,6 +24,7 @@ interface TextureOption {
 function TextureSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedTexture, setSelectedTexture] = useState(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');

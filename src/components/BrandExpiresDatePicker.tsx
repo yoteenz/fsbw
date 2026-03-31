@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { bookingFontScript } from './booking/BookingPageChrome';
 
 const POPOVER_WIDTH = 300;
 
@@ -64,13 +63,15 @@ type Props = {
   onChange: (isoYmd: string) => void;
   /** When true, calendar is always visible on the page (no trigger button or modal popover). */
   inline?: boolean;
+  /** Optional date guard (return true to disable a day). */
+  isDateDisabled?: (isoYmd: string) => boolean;
 };
 
 /**
  * Branded expiry date picker (replaces native `type="date"` popup).
  * Value/onChange use `YYYY-MM-DD` to match prior admin form state.
  */
-export default function BrandExpiresDatePicker({ value, onChange, inline = false }: Props) {
+export default function BrandExpiresDatePicker({ value, onChange, inline = false, isDateDisabled }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -265,6 +266,7 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
               return <div key={idx} className="aspect-square" />;
             }
             const iso = toIsoDateLocal(viewYear, viewMonth, d);
+            const isDisabled = isDateDisabled?.(iso) ?? false;
             const isSelected =
               selectedParsed != null &&
               selectedParsed.y === viewYear &&
@@ -276,7 +278,8 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
               <button
                 key={iso}
                 type="button"
-                onClick={() => selectDay(d)}
+                onClick={isDisabled ? undefined : () => selectDay(d)}
+                disabled={isDisabled}
                 className="aspect-square flex items-center justify-center cursor-pointer"
                 style={{
                   fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -286,10 +289,12 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
                   borderStyle: 'solid',
                   borderWidth: isSelected || showTodayOutline ? '1.3px' : '1px',
                   borderColor: isSelected || showTodayOutline ? '#EB1C24' : 'transparent',
-                  color: isSelected ? '#EB1C24' : '#000000',
+                  color: isDisabled ? '#B8B8B8' : isSelected ? '#EB1C24' : '#000000',
                   backgroundColor: isSelected ? '#FFFFFF' : 'transparent',
                   minHeight: inline ? '32px' : '36px',
                   padding: 0,
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                  opacity: isDisabled ? 0.65 : 1,
                 }}
               >
                 {d}
@@ -310,6 +315,8 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
               border: 'none',
               cursor: 'pointer',
               textTransform: 'uppercase',
+              textDecoration: 'underline',
+              textUnderlineOffset: '2px',
             }}
           >
             CLEAR DATE

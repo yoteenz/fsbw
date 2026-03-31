@@ -24,6 +24,7 @@ interface LaceOption {
 function LaceSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedLace, setSelectedLace] = useState(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');

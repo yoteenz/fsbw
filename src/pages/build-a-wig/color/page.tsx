@@ -25,6 +25,7 @@ interface ColorOption {
 function ColorSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedColor, setSelectedColor] = useState(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');

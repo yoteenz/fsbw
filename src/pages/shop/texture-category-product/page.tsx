@@ -242,6 +242,9 @@ export default function ShopTextureCategoryProductPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const category = parseShopBcfCategory(location.pathname);
+  if (!category) {
+    return <Navigate to="/shop/bundles?texture=straight" replace />;
+  }
   const texture: Texture = parseTextureSearch(location.search) ?? 'straight';
 
   const [activeTab, setActiveTab] = useState<BcfProductTab>('DETAILS');
