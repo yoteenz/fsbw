@@ -6402,3 +6402,125 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Changes:** **`src/pages/checkout/page.tsx`** — (1) Typed the reduce callback as **`(sum: number, id: string) => ...`**. (2) Wrapped sync + **`navigate('/checkout/summary', ...)`** in **`void (async () => { ... })()`** so **`await`** is legal and navigation still runs after sync (or after a logged failure).
 
 **Verification:** **`npm run build`** (`tsc --noEmit && vite build`) completes successfully locally.
+
+---
+
+## 2026-03-31 — Booking appointment: premium-only on both URLs; lobby-style cancel navigation
+
+**Context:** Signed-out and standard members could still use **`/booking/appointment`** because the area gate only ran on **`/booking/premium/appointment`**. User wanted the same **"ACCESS THIS AREA"** **`ConfirmationModal`** (not a separate feature flow) and **cancel → previous page** like **`/lobby`** (**`navigate(-1)`** if history length > 1, else **`/home/shop`**).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — Route guard now treats **both** paths as premium-only: after optional **`syncAllFromApi`** when signed in (lobby pattern), non-premium users always get **`showAppointmentUpgradeModal`**. Premium users still **`replace`** navigate to **`/booking/premium/appointment`**. Modal **`onClose`** no longer sends users to **`/booking/consultation`**; it matches lobby **`handleCancel`**.
+
+**Verification:** **`npx tsc --noEmit`** passes.
+
+---
+
+## 2026-03-31 — Account profile: standard rewards member label
+
+**Context:** User clarified the gray profile line should read **standard rewards member** (not basic / not “member awards”). The line is **`{displayMembershipType} REWARDS MEMBER`** with uppercase styling.
+
+**Changes:** **`src/pages/account/page.tsx`** — Non-premium **`displayMembershipType`** is **`STANDARD`** instead of **`BASIC`**, so the UI shows **STANDARD REWARDS MEMBER**. Comment updated for the gray styling branch.
+
+---
+
+## 2026-03-31 — Shop frontals PDP: lace size row single line
+
+**Context:** On **`/shop/frontals`**, the four frontal lace options (**13×4, 13×6, 360, FULL** per **`bcfLaceOptionsForCategory`**) were in a **`flex flex-wrap`** row with wide **`minWidth`** chips, so they wrapped to two lines on typical mobile widths.
+
+**Changes:** **`src/pages/shop/texture-category-product/page.tsx`** — For **`category === 'frontals'`** only, lace size uses the same **`grid grid-cols-4`** pattern as hair length: **`max-w-[min(100%,400px)]`**, tighter gaps, buttons **`width: 100%`**, **`minWidth: 0`**, reduced horizontal padding. Closures keep the previous flex-wrap + scroll behavior.
+
+---
+
+## 2026-03-31 — Booking appointment: policy + clean lace copy
+
+**Context:** User asked to update the appointment policy line about choosing a unit / consultation, and the **CLEAN LACE** add-on detail (**glue & residue** wording).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`**: consultation sentence → **IF YOU NEED ANY ASSISTANCE… FEEL FREE TO BOOK A COMPLIMENTARY CONSULTATION FROM THE SHOP MENU.** **`ADDON_DETAIL_LINES['clean-lace']`**: **GUNK** → **RESIDUE** (…removing glue & residue from your lace…).
+
+---
+
+## 2026-03-31 — Central membership ↔ booking routes (`membershipRoutePolicy` + `MembershipRouteSync`)
+
+**Context:** User wanted membership status **wired across routes** so premium vs standard booking paths and related behavior are decided consistently, not only inside individual pages.
+
+**Changes:**
+- **`src/utils/membershipRoutePolicy.ts`** — Defines **`BOOKING_PATHS`**, scoped path list, **`resolveBookingMembershipRedirect`**, **`bookingConsultPathForMenu`** / **`bookingAppointmentPathForMenu`**, and documents where gates live (build-a-wig hook, lobby, cart strip, menu helpers).
+- **`src/components/MembershipRouteSync.tsx`** — Mounted in **`App.tsx`** next to **`Routes`**: on booking scoped paths, **`syncAllFromApi`** when signed in, then **replace** navigate — premium users **standard → premium** consult/appointment; **`/booking/premium/consult` → `/booking/premium/consultation`**; listens to **`signInStateChanged`** via internal tick.
+- **`bookingMemberRoutes.ts`** — Uses policy constants/helpers for hrefs.
+- **`booking/consultation/page.tsx`** — Removed duplicate premium canonicalization **`navigate`**; modal gate + **`BOOKING_PATHS.STANDARD_CONSULT`**; **`authRev`** on **`signInStateChanged`**.
+- **`booking/appointment/page.tsx`** — Removed in-page premium URL redirect (central handles); gate effect + **`authRev`**.
+- **`lobby/page.tsx`** — Lounge appointment hit target uses **`BOOKING_PATHS.PREMIUM_APPOINTMENT`**.
+
+**Verification:** **`npx tsc --noEmit`** passes.
+
+---
+
+## 2026-03-31 — Booking appointment policy line copy tweak
+
+**Context:** User updated the consultation sentence in appointment **`policyLines`**: drop **ANY** — **IF YOU NEED ASSISTANCE CHOOSING A UNIT…** (still **COMPLIMENTARY CONSULTATION** / **SHOP MENU**).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`**.
+
+---
+
+## 2026-03-31 — Clean lace add-on: drop-off 3 days prior
+
+**Context:** User updated **CLEAN LACE** detail copy: keep glue & residue wording; **1 WEEK** → **3 DAYS** prior to service.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`ADDON_DETAIL_LINES['clean-lace']`** (drop-off timing).
+
+---
+
+## 2026-03-31 — Booking install base prices: new $300, re-install $250
+
+**Context:** User raised **NEW INSTALL** and **RE-INSTALL** USD amounts on the appointment flow.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`INSTALL_BASE`** (**NEW_INSTALL** **300**, **RE_INSTALL** **250**). **`api/_lib/pricing/resolveQuote.ts`** — **`INSTALL_USD`** kept in sync for server checkout quotes.
+
+---
+
+## 2026-03-31 — Clean lace copy: “at least 3 days”
+
+**Context:** User refined **CLEAN LACE** drop-off line to **AT LEAST 3 DAYS** prior.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`ADDON_DETAIL_LINES['clean-lace']`** (added **AT LEAST** before **3 DAYS**).
+
+---
+
+## 2026-03-31 — Booking install base prices: new $275, re-install $225
+
+**Context:** User adjusted **NEW INSTALL** and **RE-INSTALL** USD amounts.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`INSTALL_BASE`**. **`api/_lib/pricing/resolveQuote.ts`** — **`INSTALL_USD`** (server quotes).
+
+---
+
+## 2026-03-31 — Booking appointment: duration excludes travel; brow copy + label
+
+**Context:** User asked to omit **travel fee** from estimated appointment time; rename **brow clean up** → **brow sculpting** with new detail text; update **brow tint** detail text.
+
+**Changes:** **`appointment/page.tsx`** — **`ADDON_DURATION_MINUTES`** no **`travel`**; **`ADDONS_BASE`** label **BROW SCULPTING**; **`ADDON_DETAIL_LINES`** for **`brow-clean`** / **`brow-tint`**. **`checkout/page.tsx`** — **`durationByAddonId`** for admin meeting sync matches (no travel minutes). **`adminMeetingsMock.ts`** — **`APPOINTMENT_SERVICE_OPTIONS`**.
+
+---
+
+## 2026-03-31 — Booking add-ons: mutual exclusion (makeup/mink, brow tint/sculpting)
+
+**Context:** User wanted to avoid double-paying: selecting **makeup** clears **mink lashes** (makeup includes mink); selecting **mink** clears **makeup**. Selecting **brow tint** clears **brow sculpting** (**brow-clean**); selecting **brow sculpting** clears **brow tint**.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`toggleAddon`** applies exclusions when an add-on is turned **on** only.
+
+---
+
+## 2026-03-31 — Cart red line: BCF + booking → RAW HUMAN HAIR; VIEW DETAILS
+
+**Context:** User wanted collapsed red subtitle for **BCF** (`shop-texture-category`) and **A/C** booking lines to show only **RAW HUMAN HAIR** in cart dropdown, shopping bag, and checkout/summary strip; full specs under **VIEW DETAILS** (like unit wigs).
+
+**Changes:** **`src/utils/cartLineRedAndDetails.ts`** — **`CART_RED_LINE_BCF_BOOKING`**, **`bookingCartViewDetailsHtml`**, **`bcfCartViewDetailsHtml`**. **`checkoutOrderStripDisplay.ts`** — **`orderStripRedSubtitle`**. **`CartDropdown.tsx`** — red line + early return in details **`dangerouslySetInnerHTML`**; **VIEW DETAILS** for booking + BCF (removed spacer-only branch). **`shopping-bag/page.tsx`** — **`bagProductRedSubtitle`**, **`bagViewDetailsFor`**, toggle + details for cart + saved.
+
+---
+
+## 2026-03-31 — Checkout: remove founder QA payment hint
+
+**Context:** User wanted the admin **FOUNDER QA** test-card instructions removed from checkout UI.
+
+**Changes:** **`src/pages/checkout/page.tsx`** — removed **`showFounderTestCheckoutHint`** state, sync **`useEffect`**, payment-section hint block, and unused imports **`isAyoteenzAdminAccount`**, **`FOUNDER_CHECKOUT_DUMMY_PAN`**.

@@ -7,8 +7,8 @@ import { createRouteProtection, prepareRouteProtectionData } from '../../utils/r
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getSubscriptionPriceUsd, isSubscriptionTierId } from '../../constants/subscriptionPricing';
 import { recordMembershipPayment } from '../../utils/membershipPayments';
-import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth, isAyoteenzAdminAccount } from '../../utils/adminAuth';
-import { validateCheckoutCardInput, FOUNDER_CHECKOUT_DUMMY_PAN } from '../../utils/checkoutCardValidation';
+import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../utils/adminAuth';
+import { validateCheckoutCardInput } from '../../utils/checkoutCardValidation';
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -329,14 +329,14 @@ function CheckoutPage() {
       );
       if (appointmentItems.length === 0) return;
 
+      /** In-salon duration only; travel fee excluded from appointment block time. */
       const durationByAddonId: Record<string, number> = {
         braids: 60,
         'brow-clean': 40,
         'brow-tint': 60,
         'mink-lashes': 20,
         makeup: 120,
-        'clean-lace': 40,
-        travel: 24 * 60
+        'clean-lace': 40
       };
 
       await Promise.allSettled(
@@ -385,8 +385,6 @@ function CheckoutPage() {
   const [validationMessage, setValidationMessage] = useState('');
   const [fieldToFocus, setFieldToFocus] = useState<string | null>(null);
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
-  const [showFounderTestCheckoutHint, setShowFounderTestCheckoutHint] = useState(false);
-
   // Refs for input fields
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
@@ -842,29 +840,6 @@ function CheckoutPage() {
       window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
     };
   }, []);
-
-  useEffect(() => {
-    const syncFounderHint = () => {
-      try {
-        if (!isSignedIn) {
-          setShowFounderTestCheckoutHint(false);
-          return;
-        }
-        const raw = localStorage.getItem('currentUser');
-        const u = raw ? JSON.parse(raw) : null;
-        setShowFounderTestCheckoutHint(isAyoteenzAdminAccount(u));
-      } catch {
-        setShowFounderTestCheckoutHint(false);
-      }
-    };
-    syncFounderHint();
-    window.addEventListener('signInStateChanged', syncFounderHint);
-    window.addEventListener('focus', syncFounderHint);
-    return () => {
-      window.removeEventListener('signInStateChanged', syncFounderHint);
-      window.removeEventListener('focus', syncFounderHint);
-    };
-  }, [isSignedIn]);
 
   // Auto-populate billing address from shipping address when checkbox is checked
   useEffect(() => {
@@ -3899,26 +3874,6 @@ function CheckoutPage() {
                   >
                     PAYMENT:
                   </h2>
-                  {showFounderTestCheckoutHint && (
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '9px',
-                        color: '#000000',
-                        margin: '0 0 12px 0',
-                        lineHeight: 1.45,
-                        textTransform: 'uppercase',
-                        border: '1.3px solid #000000',
-                        padding: '10px',
-                        boxSizing: 'border-box',
-                        backgroundColor: '#FAFAFA',
-                      }}
-                    >
-                      FOUNDER QA: USE CARD {FOUNDER_CHECKOUT_DUMMY_PAN.replace(/(\d{4})(?=\d)/g, '$1 ')} — ANY FUTURE
-                      EXPIRATION (E.G. 12/30) AND ANY 3–4 DIGIT CVV. NO REAL CHARGE. CHECKOUT EMAIL MUST MATCH YOUR
-                      SIGNED-IN ACCOUNT. OTHER ACCOUNTS NEED A VALID CARD NUMBER (LUHN).
-                    </p>
-                  )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                           <div>
                             <label 

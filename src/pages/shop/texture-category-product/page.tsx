@@ -1540,11 +1540,20 @@ export default function ShopTextureCategoryProductPage() {
                             lace size
                           </p>
                           <div
-                            className="flex flex-wrap justify-center gap-3 mb-3"
-                            style={{ maxHeight: '100px', overflowY: 'auto' }}
+                            className={
+                              category === 'frontals'
+                                ? 'grid w-full grid-cols-4 gap-2 sm:gap-3 mb-3 max-w-[min(100%,400px)] mx-auto'
+                                : 'flex flex-wrap justify-center gap-3 mb-3'
+                            }
+                            style={
+                              category === 'frontals'
+                                ? undefined
+                                : { maxHeight: '100px', overflowY: 'auto' }
+                            }
                           >
                             {bcfLaceOptions.map((l) => {
                               const sel = bcfLace === l.id;
+                              const isFrontalRow = category === 'frontals';
                               return (
                                 <button
                                   key={l.id}
@@ -1553,7 +1562,14 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{
                                     ...bcfOptionBtnTypography,
                                     ...bcfOptionSelectedChrome(sel),
-                                    minWidth: 'clamp(72px, 18vw, 130px)'
+                                    ...(isFrontalRow
+                                      ? {
+                                          width: '100%',
+                                          minWidth: 0,
+                                          paddingLeft: 'clamp(4px, 1.2vw, 12px)',
+                                          paddingRight: 'clamp(4px, 1.2vw, 12px)'
+                                        }
+                                      : { minWidth: 'clamp(72px, 18vw, 130px)' })
                                   }}
                                 >
                                   {l.label}

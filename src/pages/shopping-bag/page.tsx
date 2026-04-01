@@ -14,6 +14,11 @@ import {
   shopBcfCartLineThumbnailSrc,
   bcfBundleDealResolvedListSubtotal
 } from '../../utils/bcfProductOptions';
+import {
+  CART_RED_LINE_BCF_BOOKING,
+  bookingCartViewDetailsHtml,
+  bcfCartViewDetailsHtml
+} from '../../utils/cartLineRedAndDetails';
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
 import {
@@ -60,18 +65,11 @@ function bagProductTitleLine(item: { name?: string; type?: string; category?: st
 /** Red subtitle — same rules as cart dropdown. */
 function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName: (productName: string) => string): string {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 'DIGITAL ONLY';
-  if (
-    (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
-    item.bookingBagSubtitle
-  ) {
-    return item.bookingBagSubtitle;
-  }
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
-    return 'BOOKING DEPOSIT';
+    return CART_RED_LINE_BCF_BOOKING;
   }
   if (item.type === 'shop-texture-category') {
-    const origin = (item.hairOrigin || 'CAMBODIAN').toString().toUpperCase();
-    return `${itemLength} RAW ${origin}`;
+    return CART_RED_LINE_BCF_BOOKING;
   }
   return `${itemLength} RAW ${hairOriginForName(item.name || 'NOIR')}`;
 }
@@ -257,6 +255,7 @@ function ShoppingBagPage() {
   const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [addToListModalOpen, setAddToListModalOpen] = useState(false);
   const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
+  const [bagViewDetailsFor, setBagViewDetailsFor] = useState<string | null>(null);
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -1377,6 +1376,69 @@ function ShoppingBagPage() {
                               >
                                 {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                               </p>
+                              {(() => {
+                                const detailsKey = `c-${itemId}`;
+                                const showBcfBookingDetails =
+                                  isBookingLine || item.type === 'shop-texture-category';
+                                return (
+                                  <>
+                                    {bagViewDetailsFor === detailsKey && showBcfBookingDetails && (
+                                      <p
+                                        className="font-bold"
+                                        style={{
+                                          fontFamily: '"Futura PT Book"',
+                                          color: '#000000',
+                                          textTransform: 'uppercase',
+                                          fontSize: '9px',
+                                          marginTop: '2px',
+                                          marginBottom: '6px',
+                                          marginRight: '20px',
+                                          lineHeight: '1.44',
+                                          wordBreak: 'break-word',
+                                          maxWidth: 'calc(100% - 20px)'
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                          __html:
+                                            item.type === 'shop-texture-category'
+                                              ? bcfCartViewDetailsHtml(item)
+                                              : bookingCartViewDetailsHtml(item)
+                                        }}
+                                      />
+                                    )}
+                                    {showBcfBookingDetails && (
+                                      <span
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setBagViewDetailsFor((v) =>
+                                              v === detailsKey ? null : detailsKey
+                                            );
+                                          }
+                                        }}
+                                        style={{
+                                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                          fontSize: '8px',
+                                          color: '#EB1C24',
+                                          textTransform: 'uppercase',
+                                          marginTop: '2px',
+                                          marginBottom: '0',
+                                          cursor: 'pointer',
+                                          display: 'inline-block'
+                                        }}
+                                        onClick={() =>
+                                          setBagViewDetailsFor((v) =>
+                                            v === detailsKey ? null : detailsKey
+                                          )
+                                        }
+                                      >
+                                        {bagViewDetailsFor === detailsKey ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                                      </span>
+                                    )}
+                                  </>
+                                );
+                              })()}
                               {item.capSize && (
                                 <p 
                                   className="font-semibold"
@@ -1865,6 +1927,69 @@ function ShoppingBagPage() {
                            >
                              {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                            </p>
+                           {(() => {
+                             const detailsKey = `s-${itemId}`;
+                             const showBcfBookingDetails =
+                               isSavedBookingLine || item.type === 'shop-texture-category';
+                             return (
+                               <>
+                                 {bagViewDetailsFor === detailsKey && showBcfBookingDetails && (
+                                   <p
+                                     className="font-bold"
+                                     style={{
+                                       fontFamily: '"Futura PT Book"',
+                                       color: '#000000',
+                                       textTransform: 'uppercase',
+                                       fontSize: '9px',
+                                       marginTop: '2px',
+                                       marginBottom: '6px',
+                                       marginRight: '20px',
+                                       lineHeight: '1.44',
+                                       wordBreak: 'break-word',
+                                       maxWidth: 'calc(100% - 20px)'
+                                     }}
+                                     dangerouslySetInnerHTML={{
+                                       __html:
+                                         item.type === 'shop-texture-category'
+                                           ? bcfCartViewDetailsHtml(item)
+                                           : bookingCartViewDetailsHtml(item)
+                                     }}
+                                   />
+                                 )}
+                                 {showBcfBookingDetails && (
+                                   <span
+                                     role="button"
+                                     tabIndex={0}
+                                     onKeyDown={(e) => {
+                                       if (e.key === 'Enter' || e.key === ' ') {
+                                         e.preventDefault();
+                                         setBagViewDetailsFor((v) =>
+                                           v === detailsKey ? null : detailsKey
+                                         );
+                                       }
+                                     }}
+                                     style={{
+                                       fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                       fontSize: '8px',
+                                       color: '#EB1C24',
+                                       textTransform: 'uppercase',
+                                       marginTop: '2px',
+                                       marginBottom: '0',
+                                       cursor: 'pointer',
+                                       display: 'inline-block'
+                                     }}
+                                     onClick={() =>
+                                       setBagViewDetailsFor((v) =>
+                                         v === detailsKey ? null : detailsKey
+                                       )
+                                     }
+                                   >
+                                     {bagViewDetailsFor === detailsKey ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                                   </span>
+                                 )}
+                               </>
+                             );
+                           })()}
                            {/* Removed black detail text for symmetry */}
                            {item.capSize && (
                              <p 

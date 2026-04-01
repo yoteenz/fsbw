@@ -4,6 +4,7 @@ import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
+import { BOOKING_PATHS } from '../../utils/membershipRoutePolicy';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -256,11 +257,11 @@ const LobbyPage: React.FC = () => {
             <span
               role="button"
               tabIndex={0}
-              onClick={() => navigate('/booking/premium/appointment')}
+              onClick={() => navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  navigate('/booking/premium/appointment');
+                  navigate(BOOKING_PATHS.PREMIUM_APPOINTMENT);
                 }
               }}
               className="hover:opacity-90 transition-opacity"

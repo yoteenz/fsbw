@@ -14,6 +14,11 @@ import {
   shopBcfCartLineThumbnailSrc,
   bcfBundleDealResolvedListSubtotal
 } from '../utils/bcfProductOptions';
+import {
+  CART_RED_LINE_BCF_BOOKING,
+  bookingCartViewDetailsHtml,
+  bcfCartViewDetailsHtml
+} from '../utils/cartLineRedAndDetails';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { DEFAULT_CURRENCY_RATES } from '../utils/defaultCurrencyRates';
 
@@ -1210,20 +1215,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             return 'DIGITAL ONLY';
                           }
                           if (
-                            (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
-                            (item as any).bookingBagSubtitle
+                            item.type === 'booking-consult' ||
+                            item.type === 'booking-appointment' ||
+                            item.type === 'shop-texture-category'
                           ) {
-                            return (item as any).bookingBagSubtitle;
-                          }
-                          if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
-                            return 'BOOKING DEPOSIT';
-                          }
-
-                          if (item.type === 'shop-texture-category') {
-                            const origin = (
-                              (item as CartItem & { hairOrigin?: string }).hairOrigin || 'CAMBODIAN'
-                            ).toUpperCase();
-                            return `${item.length || '24"'} RAW ${origin}`;
+                            return CART_RED_LINE_BCF_BOOKING;
                           }
 
                           // Get the correct hair origin based on product name
@@ -1265,6 +1261,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             }}
                           dangerouslySetInnerHTML={{
                           __html: (() => {
+                          if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
+                            return bookingCartViewDetailsHtml(item as CartItem & Record<string, unknown>);
+                          }
+                          if (item.type === 'shop-texture-category') {
+                            return bcfCartViewDetailsHtml(item as CartItem & Record<string, unknown>);
+                          }
                           // Build text with non-breaking spaces within comma sections
                           let text = '';
                           
@@ -1658,9 +1660,30 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         if (
                           item.type === 'booking-consult' ||
                           item.type === 'booking-appointment' ||
-                          (item as CartItem).bcfBundleDeal
+                          item.type === 'shop-texture-category'
                         ) {
-                          return <div style={{ height: '20px', marginTop: '6px' }}></div>;
+                          return (
+                            <span
+                              style={{
+                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                fontSize: '8px',
+                                color: '#EB1C24',
+                                textTransform: 'uppercase',
+                                marginTop: '7px',
+                                cursor: 'pointer'
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (viewingDetailsFor === item.id) {
+                                  setViewingDetailsFor(null);
+                                } else {
+                                  setViewingDetailsFor(item.id);
+                                }
+                              }}
+                            >
+                              {viewingDetailsFor === item.id ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                            </span>
+                          );
                         }
                         // Check if item has specifications (sub page selections)
                         // Only show VIEW DETAILS if item has actual customizations beyond defaults

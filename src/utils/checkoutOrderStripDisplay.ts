@@ -8,6 +8,7 @@
 
 import { bookingCartItemThumbnailSrc, isBookingCartBadgeItem } from './bookingBadges';
 import { shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
+import { CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -74,18 +75,11 @@ export function orderStripRedSubtitle(item: any, itemLength: string): string {
   if (item.type === 'digital') {
     return 'DIGITAL ONLY';
   }
-  if (
-    (item.type === 'booking-consult' || item.type === 'booking-appointment') &&
-    item.bookingBagSubtitle
-  ) {
-    return item.bookingBagSubtitle;
-  }
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
-    return 'BOOKING DEPOSIT';
+    return CART_RED_LINE_BCF_BOOKING;
   }
   if (item.type === 'shop-texture-category') {
-    const origin = (item.hairOrigin || 'CAMBODIAN').toString().toUpperCase();
-    return `${itemLength} RAW ${origin}`;
+    return CART_RED_LINE_BCF_BOOKING;
   }
   return `${itemLength} RAW ${hairOriginForProductName(item.name || 'NOIR')}`;
 }

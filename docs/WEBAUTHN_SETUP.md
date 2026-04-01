@@ -70,7 +70,7 @@ Return JSON that matches what the app expects for a signed-in user, for example:
   "email": "user@example.com",
   "firstName": "...",
   "lastName": "...",
-  "membershipType": "BASIC",
+  "membershipType": "STANDARD",
   "role": "user"
 }
 ```

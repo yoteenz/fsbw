@@ -2552,7 +2552,7 @@ fontFamily: '"Futura PT Book"',
                           </div>
                         )}
 
-                      {/* UPGRADE YOUR BASIC MEMBERSHIP - Show when effective tier is Standard (no premium), so admin Standard tab shows this section as-is; 3/6/12 tabs show INCLUDED instead */}
+                      {/* UPGRADE YOUR STANDARD MEMBERSHIP - Show when effective tier is Standard (no premium), so admin Standard tab shows this section as-is; 3/6/12 tabs show INCLUDED instead */}
                       {!showLoyaltyRewards && (
                       <>
                         {!hasEffectivePremium && (

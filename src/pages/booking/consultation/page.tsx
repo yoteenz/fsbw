@@ -13,6 +13,7 @@ import {
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
 import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
+import { BOOKING_PATHS } from '../../../utils/membershipRoutePolicy';
 
 const CONSULT_DEPOSIT_USD = 40;
 
@@ -23,7 +24,7 @@ export default function BookingConsultationPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
-  const isPremiumMember = isPremiumMemberForGatedFeatures();
+  const [authRev, setAuthRev] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
   const [notes, setNotes] = useState('');
@@ -35,16 +36,20 @@ export default function BookingConsultationPage() {
   const { formatUsd } = useSelectedCurrencyDisplay();
 
   useEffect(() => {
-    if (!isPremiumBooking && isPremiumMember) {
-      navigate('/booking/premium/consultation', { replace: true });
-      return;
-    }
-    if (isPremiumBooking && !isPremiumMember) {
+    const bump = () => setAuthRev((n) => n + 1);
+    window.addEventListener('signInStateChanged', bump);
+    return () => window.removeEventListener('signInStateChanged', bump);
+  }, []);
+
+  /** Premium vs standard URL alignment: `MembershipRouteSync` + `membershipRoutePolicy`. Modal when non-premium hits premium path. */
+  useEffect(() => {
+    const premium = isPremiumMemberForGatedFeatures();
+    if (isPremiumBooking && !premium) {
       setShowConsultAccessModal(true);
       return;
     }
     setShowConsultAccessModal(false);
-  }, [isPremiumBooking, isPremiumMember, navigate]);
+  }, [isPremiumBooking, authRev]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -327,11 +332,11 @@ export default function BookingConsultationPage() {
       isOpen={showConsultAccessModal}
       onClose={() => {
         setShowConsultAccessModal(false);
-        navigate('/booking/consultation', { replace: true });
+        navigate(BOOKING_PATHS.STANDARD_CONSULT, { replace: true });
       }}
       onConfirm={() => {
         setShowConsultAccessModal(false);
-        navigate('/booking/consultation', { replace: true });
+        navigate(BOOKING_PATHS.STANDARD_CONSULT, { replace: true });
       }}
       title="UPGRADE YOUR SUBSCRIPTION?"
       message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."

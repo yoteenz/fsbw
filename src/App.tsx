@@ -15,6 +15,7 @@ import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
+import MembershipRouteSync from './components/MembershipRouteSync';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
@@ -396,6 +397,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <MembershipRouteSync />
       <Routes>
         <Route index element={<Navigate to="/home/shop" replace />} />
         <Route path="/" element={<Navigate to="/home/shop" replace />} />

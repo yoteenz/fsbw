@@ -16,6 +16,8 @@ import {
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
+import { syncAllFromApi } from '../../../utils/syncFromApi';
+import { isSupabaseConfigured } from '../../../utils/supabase';
 
 type InstallKind = 'NEW_INSTALL' | 'RE_INSTALL';
 type AppointmentStyle = 'BONE STRAIGHT' | 'LAYERED CURLS' | 'CRIMPS';
@@ -36,8 +38,8 @@ const WEEKDAY_TIME_SLOTS = [
 ] as const;
 
 const INSTALL_BASE: Record<InstallKind, { label: string; sub: string; price: number }> = {
-  NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 250 },
-  RE_INSTALL: { label: 'RE-INSTALL', sub: '+2 HOURS', price: 200 }
+  NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 275 },
+  RE_INSTALL: { label: 'RE-INSTALL', sub: '+2 HOURS', price: 225 }
 };
 
 /** Base service length in minutes (before add-ons). */
@@ -46,15 +48,14 @@ const INSTALL_BASE_MINUTES: Record<InstallKind, number> = {
   RE_INSTALL: 120
 };
 
-/** Extra minutes per add-on id (must match `AppointmentAddon` ids). */
+/** Extra minutes per add-on id (must match `AppointmentAddon` ids). Travel is omitted — not part of in-salon time. */
 const ADDON_DURATION_MINUTES: Record<string, number> = {
   braids: 60,
   'brow-clean': 40,
   'brow-tint': 60,
   'mink-lashes': 20,
   makeup: 120,
-  'clean-lace': 40,
-  travel: 24 * 60
+  'clean-lace': 40
 };
 
 function formatEstimatedAppointmentTime(totalMinutes: number): string {
@@ -88,7 +89,7 @@ type AppointmentAddon = { id: string; label: string; sub: string; price: number 
 
 const ADDONS_BASE: AppointmentAddon[] = [
   { id: 'braids', label: 'BRAIDS', sub: '+60 MINUTES', price: 60 },
-  { id: 'brow-clean', label: 'BROW CLEAN UP', sub: '+40 MINUTES', price: 40 },
+  { id: 'brow-clean', label: 'BROW SCULPTING', sub: '+40 MINUTES', price: 40 },
   { id: 'brow-tint', label: 'BROW TINT', sub: '+60 MINUTES', price: 60 },
   { id: 'mink-lashes', label: 'MINK LASHES', sub: '+20 MINUTES', price: 20 },
   { id: 'makeup', label: 'MAKEUP', sub: '+2 HOURS', price: 200 }
@@ -111,11 +112,11 @@ const ADDON_TRAVEL: AppointmentAddon = {
 /** Shown below the red duration line when the add-on row is selected (checked). */
 const ADDON_DETAIL_LINES: Record<string, ReactNode> = {
   'clean-lace':
-    'THIS SERVICE INCLUDES REMOVING GLUE & GUNK FROM YOUR LACE. MUST BE DROPPED OFF 1 WEEK PRIOR TO SERVICE.',
+    'THIS SERVICE INCLUDES REMOVING GLUE & RESIDUE FROM YOUR LACE. MUST BE DROPPED OFF AT LEAST 3 DAYS PRIOR TO SERVICE.',
   braids:
     'THIS SERVICE INCLUDES 8-10 BRAIDS, DEPENDING ON HAIR DENSITY. COME WASHED & BLOW DRYED.',
-  'brow-clean': 'THIS SERVICE INCLUDES WAXING, TWEEZING & SCULPTING.',
-  'brow-tint': 'THIS SERVICE INCLUDES WAXING, TWEEZING & SEMI-PERMANENT TINT.',
+  'brow-clean': 'THIS SERVICE INCLUDES WAXING & TWEEZING.',
+  'brow-tint': 'THIS SERVICE INCLUDES BROW SCULPTING & SEMI-PERMANENT TINT.',
   'mink-lashes': 'THIS SERVICE INCLUDES APPLICATION OF AUTHENTIC MINK LASHES.',
   makeup: 'THIS SERVICE INCLUDES LIP WAXING, BROW SCULPTING & MINK LASHES.',
   travel: (
@@ -240,7 +241,6 @@ export default function BookingAppointmentPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
-  const isPremiumMember = isPremiumMemberForGatedFeatures();
   const [installKind, setInstallKind] = useState<InstallKind>('NEW_INSTALL');
   const [appointmentStyle, setAppointmentStyle] = useState<AppointmentStyle>('BONE STRAIGHT');
   const [partDirection, setPartDirection] = useState<PartDirection>('MIDDLE');
@@ -250,20 +250,40 @@ export default function BookingAppointmentPage() {
   const [showTimeSlotDropdown, setShowTimeSlotDropdown] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [showAppointmentUpgradeModal, setShowAppointmentUpgradeModal] = useState(false);
+  const [authRev, setAuthRev] = useState(0);
   const { formatUsd } = useSelectedCurrencyDisplay();
 
-  /** Route-level canonicalization/guard: premium members use premium path; non-premium direct premium-path access is area-gated. */
   useEffect(() => {
-    if (!isPremiumBooking && isPremiumMember) {
-      navigate('/booking/premium/appointment', { replace: true });
-      return;
-    }
-    if (isPremiumBooking && !isPremiumMember) {
-      setShowAppointmentUpgradeModal(true);
-      return;
-    }
-    setShowAppointmentUpgradeModal(false);
-  }, [isPremiumBooking, isPremiumMember, navigate]);
+    const bump = () => setAuthRev((n) => n + 1);
+    window.addEventListener('signInStateChanged', bump);
+    return () => window.removeEventListener('signInStateChanged', bump);
+  }, []);
+
+  /**
+   * Hair install booking is premium-only (both `/booking/appointment` and `/booking/premium/appointment`).
+   * Premium members are canonicalized to `/booking/premium/appointment` by `MembershipRouteSync`.
+   * Sync + modal: non-premium users see the lobby-style area gate; sync avoids stale localStorage.
+   */
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (isSupabaseConfigured() && localStorage.getItem('isSignedIn') === 'true') {
+        try {
+          await syncAllFromApi();
+        } catch {
+          /* ignore */
+        }
+      }
+      if (cancelled) return;
+
+      const premium = isPremiumMemberForGatedFeatures();
+      setShowAppointmentUpgradeModal(!premium);
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [isPremiumBooking, authRev]);
 
   /** CLEAN LACE is only valid for RE-INSTALL; drop selection when switching to NEW INSTALL. */
   useEffect(() => {
@@ -280,8 +300,16 @@ export default function BookingAppointmentPage() {
   const toggleAddon = (id: string) => {
     setAddonIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        return next;
+      }
+      next.add(id);
+      // Makeup already includes mink lashes; brow tint already includes brow sculpting — avoid double charge.
+      if (id === 'makeup') next.delete('mink-lashes');
+      if (id === 'mink-lashes') next.delete('makeup');
+      if (id === 'brow-tint') next.delete('brow-clean');
+      if (id === 'brow-clean') next.delete('brow-tint');
       return next;
     });
   };
@@ -380,7 +408,7 @@ export default function BookingAppointmentPage() {
   const policyLines = [
     'NEW CLIENTS ARE REQUIRED TO PURCHASE A UNIT PRIOR TO INSTALLATION.',
     'I WILL ONLY RE-INSTALL WIGS I HAVE PREVIOUSLY CUT & LAID.',
-    'IF YOU NEED HELP CHOOSING A UNIT FOR YOUR DESIRED LOOK, BOOK A WIG CONSULTATION FROM THE SHOP MENU.',
+    'IF YOU NEED ASSISTANCE CHOOSING A UNIT FOR YOUR DESIRED LOOK, FEEL FREE TO BOOK A COMPLIMENTARY CONSULTATION FROM THE SHOP MENU.',
     'NEW INSTALLS SHOULD BE BOOKED AT LEAST TWO MONTHS IN ADVANCE SO YOUR UNIT CAN BE CONSTRUCTED, CUSTOMIZED, STYLED & READY FOR INSTALLATION. RE-INSTALLS SHOULD BE BOOKED AT LEAST ONE WEEK IN ADVANCE USING THE "CLEAN LACE" ADD ON IF APPLICABLE.',
     'ABSOLUTELY NO GUESTS ARE ALLOWED AT YOUR APPOINTMENT DUE TO PRIVACY & SAFETY PRECAUTIONS. APPOINTMENTS MUST BE CANCELLED WITHIN 48 HOURS & RESCHEDULED WITHIN 24 HOURS OF APPOINTMENT TO AVOID A NO SHOW FEE OF $50 USD.'
   ];
@@ -765,8 +793,10 @@ export default function BookingAppointmentPage() {
       isOpen={showAppointmentUpgradeModal}
       onClose={() => {
         setShowAppointmentUpgradeModal(false);
-        if (isPremiumBooking && !isPremiumMember) {
-          navigate('/booking/consultation', { replace: true });
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+          navigate(-1);
+        } else {
+          navigate('/home/shop');
         }
       }}
       onConfirm={() => {

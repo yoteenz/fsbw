@@ -985,7 +985,7 @@ function AccountPage() {
       }
     }
 
-    // No tier unlocked yet - return null to show "BASIC/PREMIUM REWARDS MEMBER"
+    // No tier unlocked yet - return null to show "STANDARD/PREMIUM REWARDS MEMBER"
     // Only becomes SILVER tier once they reach $1k spending threshold
     return currentTier;
   };
@@ -2109,11 +2109,11 @@ function AccountPage() {
                           : getEffectiveSubscriptionTier(userData);
                       const userMembershipType = userData?.membershipType?.toUpperCase() || membershipType;
                       const displayMembershipType = isAyoteenzAdminAccount(userData) && !founderViewAsClient
-                        ? (effectiveSubTier != null ? 'PREMIUM' : 'BASIC')
+                        ? (effectiveSubTier != null ? 'PREMIUM' : 'STANDARD')
                         : userMembershipType === 'PREMIUM' || Boolean(userData?.subscriptionTier)
                           ? 'PREMIUM'
-                          : 'BASIC';
-                      // For BASIC: always use gray regardless of tier
+                          : 'STANDARD';
+                      // For standard (non-premium): always use gray regardless of spend tier
                       // Premium = black, Standard = gray; rewards page explains tier levels
                       const membershipTextColor = displayMembershipType === 'PREMIUM' ? '#000000' : '#808080';
                       return (

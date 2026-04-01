@@ -1,4 +1,9 @@
 import { getEffectiveSubscriptionTier, getEffectiveTierName } from './adminAuth';
+import {
+  BOOKING_PATHS,
+  bookingAppointmentPathForMenu,
+  bookingConsultPathForTier
+} from './membershipRoutePolicy';
 
 /**
  * Same idea as lobby `isPremiumMember`: active subscription / PREMIUM membership or BLACK tier
@@ -26,18 +31,22 @@ export function bookingMenuUsesPremiumPaths(): boolean {
 }
 
 export function bookingAppointmentHref(): string {
-  return bookingMenuUsesPremiumPaths() ? '/booking/premium/appointment' : '/booking/appointment';
+  return bookingAppointmentPathForMenu(bookingMenuUsesPremiumPaths());
 }
 
 export function bookingConsultationHref(): string {
-  return bookingMenuUsesPremiumPaths() ? '/booking/premium/consultation' : '/booking/consultation';
+  return bookingConsultPathForTier(bookingMenuUsesPremiumPaths());
 }
 
 /** Re-open the booking PDP that matches how the line was added to the bag. */
 export function bookingAppointmentHrefForCartItem(item: { bookingTier?: string }): string {
-  return item.bookingTier === 'premium' ? '/booking/premium/appointment' : '/booking/appointment';
+  return item.bookingTier === 'premium'
+    ? BOOKING_PATHS.PREMIUM_APPOINTMENT
+    : BOOKING_PATHS.STANDARD_APPOINTMENT;
 }
 
 export function bookingConsultationHrefForCartItem(item: { bookingTier?: string }): string {
-  return item.bookingTier === 'premium' ? '/booking/premium/consultation' : '/booking/consultation';
+  return item.bookingTier === 'premium'
+    ? BOOKING_PATHS.PREMIUM_CONSULT
+    : BOOKING_PATHS.STANDARD_CONSULT;
 }
