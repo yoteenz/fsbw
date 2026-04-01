@@ -6323,6 +6323,14 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-03-31 — Booking meeting sync idempotency (retry-safe)
+
+**Context:** User approved adding idempotency so checkout retries cannot create duplicate `meetings` rows for the same order/date/time.
+
+**Changes:** **`api/booking/appointment-meeting.ts`** — added `idempotencyKey` support and dedupe check before insert (`meetings` query by user/date/time/type + notes contains `IDEMPOTENCY:<key>`); returns existing row with `idempotent: true` when matched. **`checkout/page.tsx`** — generates deterministic per-item key `BOOKING_APPT:<order>:<date>:<time>:<idx>` and sends with `postBookingAppointmentMeeting(...)`. **`utils/api.ts`** — updated booking meeting API type to include `idempotencyKey`.
+
+---
+
 ## 2026-03-31 — Appointment time-slot dropdown: special-offer style popup + red arrow
 
 **Context:** User wanted the time selector to match admin special-offer/client sort dropdown style (custom popup, red arrow), placeholder in **Futura Medium**, and scheduled line to end with a period after time.
