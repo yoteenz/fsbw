@@ -6392,3 +6392,13 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Changes:** **`booking/consultation/page.tsx`** — added route-level canonicalization/guard: premium users on standard consult are redirected to premium consult path; non-premium users hitting premium consult path get **"YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."** modal and are redirected to **`/booking/consultation`**. **`booking/appointment/page.tsx`** — appointment gate message changed to **ACCESS THIS AREA**; confirm now routes to **`/account/rewards`** (with upgrade prep) if signed in, otherwise **`/sign-in`**.
 
 **Verification:** **`npx tsc --noEmit`** passes.
+
+---
+
+## 2026-03-31 — Vercel build: checkout TypeScript fixes (reduce types + async sync)
+
+**Context:** Vercel `npm run build` failed with **`tsc --noEmit`** errors in **`src/pages/checkout/page.tsx`**: **`TS7006`** on **`addonIds.reduce`** (`sum` / `id` implicit **`any`**); **`TS1308`** — **`await syncBookingAppointmentsToAdminMeetings`** inside the CONFIRM ORDER **`onClick`** handler, which was not **`async`**.
+
+**Changes:** **`src/pages/checkout/page.tsx`** — (1) Typed the reduce callback as **`(sum: number, id: string) => ...`**. (2) Wrapped sync + **`navigate('/checkout/summary', ...)`** in **`void (async () => { ... })()`** so **`await`** is legal and navigation still runs after sync (or after a logged failure).
+
+**Verification:** **`npm run build`** (`tsc --noEmit && vite build`) completes successfully locally.

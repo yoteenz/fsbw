@@ -346,7 +346,10 @@ function CheckoutPage() {
           const addonIds = Array.isArray(item?.bookingAddonIds)
             ? item.bookingAddonIds.filter((id: unknown): id is string => typeof id === 'string')
             : [];
-          const addonDuration = addonIds.reduce((sum, id) => sum + (durationByAddonId[id] || 0), 0);
+          const addonDuration = addonIds.reduce(
+            (sum: number, id: string) => sum + (durationByAddonId[id] || 0),
+            0
+          );
           const durationMinutes = baseDuration + addonDuration;
 
           const serviceTypeLabel = installKind === 'RE_INSTALL' ? 'RE-INSTALL' : 'NEW INSTALL';
@@ -5967,34 +5970,35 @@ function CheckoutPage() {
                     trackActivity('founder_test_checkout_order', { orderNumber: nextOrderNumber });
                   }
 
-                  try {
-                    await syncBookingAppointmentsToAdminMeetings(orderNumber);
-                  } catch (e) {
-                    console.error('Failed to sync booking appointments to admin meetings:', e);
-                  }
-
-                  navigate('/checkout/summary', {
-                    state: {
-                      orderNumber,
-                      orderDate,
-                      orderTotal: subtotal,
-                      shippingMethod: shippingMethodDisplay,
-                      processingTime: processingTimeText,
-                      firstName,
-                      lastName,
-                      shippingAddress,
-                      city,
-                      state,
-                      zip,
-                      country: selectedCountry || 'US',
-                      paymentMethod: paymentMethodDisplay,
-                      email,
-                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
-                      tier: effectiveTierSummary,
-                      cartItems: cartItems,
-                      isSubscriptionUpgrade
+                  void (async () => {
+                    try {
+                      await syncBookingAppointmentsToAdminMeetings(orderNumber);
+                    } catch (e) {
+                      console.error('Failed to sync booking appointments to admin meetings:', e);
                     }
-                  });
+                    navigate('/checkout/summary', {
+                      state: {
+                        orderNumber,
+                        orderDate,
+                        orderTotal: subtotal,
+                        shippingMethod: shippingMethodDisplay,
+                        processingTime: processingTimeText,
+                        firstName,
+                        lastName,
+                        shippingAddress,
+                        city,
+                        state,
+                        zip,
+                        country: selectedCountry || 'US',
+                        paymentMethod: paymentMethodDisplay,
+                        email,
+                        pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                        tier: effectiveTierSummary,
+                        cartItems: cartItems,
+                        isSubscriptionUpgrade
+                      }
+                    });
+                  })();
                     }}
                 className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={{
