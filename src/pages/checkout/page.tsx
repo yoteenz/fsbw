@@ -335,7 +335,7 @@ function CheckoutPage() {
         'brow-clean': 40,
         'brow-tint': 60,
         'mink-lashes': 20,
-        makeup: 120,
+        makeup: 150,
         'clean-lace': 40
       };
 
@@ -2480,7 +2480,7 @@ function CheckoutPage() {
                     {/* Body — flexShrink 0; no overflow-hidden (was clipping tops of tall cart tiles). Horizontal swipe still contained via overflow-x. */}
                     <div className="flex-1 flex flex-col" style={{ flexShrink: 0, minHeight: 0, overflow: 'visible' }}>
                       {/* Space above thumbnails only (not via loyalty margin, which squeezed this row) */}
-                      <div style={{ paddingTop: '0px', marginTop: '-6px', flexShrink: 0 }}>
+                      <div style={{ paddingTop: '0px', marginTop: '-12px', flexShrink: 0 }}>
                       {/* Cart Items - horizontal scrollable; height auto so image+labels are never vertically clipped */}
                       <div 
                         ref={scrollContainerRef}
@@ -2547,8 +2547,16 @@ function CheckoutPage() {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'flex-start',
-                                paddingTop:
-                                  isSubscriptionUpgrade && thumbM.kind === 'membership' ? '5px' : '8px',
+                                paddingTop: (() => {
+                                  if (isSubscriptionUpgrade && thumbM.kind === 'membership') return '5px';
+                                  if (
+                                    item?.type === 'booking-appointment' ||
+                                    item?.type === 'booking-consult'
+                                  ) {
+                                    return '2px';
+                                  }
+                                  return '8px';
+                                })(),
                                 paddingRight: '8px',
                                 paddingBottom: '8px',
                                 paddingLeft: '8px',

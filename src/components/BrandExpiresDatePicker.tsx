@@ -268,12 +268,14 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
             const iso = toIsoDateLocal(viewYear, viewMonth, d);
             const isDisabled = isDateDisabled?.(iso) ?? false;
             const isSelected =
+              !isDisabled &&
               selectedParsed != null &&
               selectedParsed.y === viewYear &&
               selectedParsed.m === viewMonth &&
               selectedParsed.d === d;
             const isToday = viewYear === todayY && viewMonth === todayM && d === todayD;
-            const showTodayOutline = isToday && (selectedParsed == null || isSelected);
+            const showTodayOutline =
+              !isDisabled && isToday && (selectedParsed == null || isSelected);
             return (
               <button
                 key={iso}

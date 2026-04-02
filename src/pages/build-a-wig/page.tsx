@@ -12,6 +12,13 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
+import {
+  BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY,
+  BUILD_WIG_APPOINTMENT_MODE_KEY,
+  BUILD_WIG_APPOINTMENT_RETURN_KEY,
+  clearBuildWigAppointmentMode,
+  isActiveBuildWigAppointmentMode
+} from '../../utils/bookingNewInstallUnit';
 
 interface WigCustomization {
   capSize: string;
@@ -4088,6 +4095,11 @@ export default function BuildAWigPage() {
         return; // Don't check normal button state in edit mode
       }
     }
+
+    if (isActiveBuildWigAppointmentMode()) {
+      setAddToBagState('idle');
+      return;
+    }
     
     // Normal mode: check localStorage for button state
     const savedButtonState = localStorage.getItem('addToBagButtonState');
@@ -4104,6 +4116,15 @@ export default function BuildAWigPage() {
         localStorage.removeItem('addToBagButtonState');
         localStorage.removeItem('lastAddedItemId');
       }
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (typeof localStorage === 'undefined') return;
+    const mode = localStorage.getItem(BUILD_WIG_APPOINTMENT_MODE_KEY);
+    const ret = localStorage.getItem(BUILD_WIG_APPOINTMENT_RETURN_KEY);
+    if (mode === '1' && (!ret || !ret.startsWith('/booking'))) {
+      clearBuildWigAppointmentMode();
     }
   }, [location.pathname]);
 
@@ -4124,8 +4145,15 @@ export default function BuildAWigPage() {
     // Prevent double-clicks
     if (addToBagState === 'adding') return;
     
-    // In normal mode, prevent if already added
-    if (!isEditPage && addToBagState === 'added') {
+    const apptReturnEarly =
+      typeof localStorage !== 'undefined' ? localStorage.getItem(BUILD_WIG_APPOINTMENT_RETURN_KEY) : null;
+    const apptModeEarly =
+      typeof localStorage !== 'undefined' && localStorage.getItem(BUILD_WIG_APPOINTMENT_MODE_KEY) === '1';
+    const inApptAttachFlowEarly =
+      !isEditPage && apptModeEarly && !!apptReturnEarly && apptReturnEarly.startsWith('/booking');
+
+    // In normal mode, prevent if already added (appointment attach flow uses bag separately)
+    if (!isEditPage && addToBagState === 'added' && !inApptAttachFlowEarly) {
       return;
     }
     
@@ -4138,6 +4166,81 @@ export default function BuildAWigPage() {
     // CRITICAL: Only use edit mode logic if we're actually on the edit page
     const editingCartItem = localStorage.getItem('editingCartItem');
     const editingCartItemId = localStorage.getItem('editingCartItemId');
+
+    const apptReturn = localStorage.getItem(BUILD_WIG_APPOINTMENT_RETURN_KEY);
+    const inApptAttachFlow =
+      !isEditPage &&
+      localStorage.getItem(BUILD_WIG_APPOINTMENT_MODE_KEY) === '1' &&
+      !!apptReturn &&
+      apptReturn.startsWith('/booking');
+
+    if (inApptAttachFlow) {
+      let validStyling = customization.styling;
+      const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+      if (partSelectionOptions.includes(validStyling)) {
+        validStyling = 'NONE';
+      }
+
+      const pathname = location.pathname;
+      let productName = 'NOIR';
+      let productImage = '/assets/NOIR/noir-thumb.png';
+
+      if (pathname.startsWith('/build-a-wig/blanco')) {
+        productName = 'BLANCO';
+        productImage = '/assets/NOIR/blanco-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
+        productName = 'SOFT WAVE';
+        productImage = '/assets/NOIR/wave-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/soft-curl')) {
+        productName = 'SOFT CURL';
+        productImage = '/assets/NOIR/curl-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/beach-wave')) {
+        productName = 'BEACH WAVE';
+        productImage = '/assets/NOIR/wave-thumb.png';
+      } else if (pathname.startsWith('/build-a-wig/ocean-curl')) {
+        productName = 'OCEAN CURL';
+        productImage = '/assets/NOIR/curl-thumb.png';
+      }
+
+      const hairOriginByProduct: Record<string, string> = {
+        NOIR: 'CAMBODIAN',
+        BLANCO: 'RUSSIAN',
+        'SOFT WAVE': 'INDIAN',
+        'BEACH WAVE': 'INDONESIAN',
+        'SOFT CURL': 'VIETNAMESE',
+        'OCEAN CURL': 'FILIPINO'
+      };
+      const appointmentCartItem = {
+        id: `build-a-wig-appt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        name: productName,
+        productName,
+        price: totalPrice,
+        quantity: 1,
+        image: productImage,
+        capSize: customization.capSize,
+        length: customization.length,
+        density: customization.density,
+        color: customization.color,
+        texture: customization.texture,
+        lace: customization.lace,
+        hairline: customization.hairline,
+        hairOrigin: hairOriginByProduct[productName] || 'CAMBODIAN',
+        styling: validStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: customization.addOns
+      };
+
+      try {
+        localStorage.setItem(BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY, JSON.stringify(appointmentCartItem));
+      } catch {
+        /* quota */
+      }
+      clearBuildWigAppointmentMode();
+      setAddToBagState('idle');
+      window.dispatchEvent(new CustomEvent('bookingNewInstallUnitAttached'));
+      navigate(apptReturn!);
+      return;
+    }
     
     if (isEditPage && editingCartItem && editingCartItemId) {
       // CRITICAL: Recalculate price RIGHT BEFORE saving to ensure it's always correct
@@ -5789,6 +5892,19 @@ export default function BuildAWigPage() {
                         </span>
                       );
                     }
+                  }
+
+                  if (isActiveBuildWigAppointmentMode()) {
+                    if (addToBagState === 'adding') return 'ADDING...';
+                    if (addToBagState === 'added') {
+                      return (
+                        <span className="flex items-center justify-center gap-1">
+                          <img src="/assets/check.svg" alt="Check" width="9" height="9" />
+                          <span style={{ color: '#808080' }}>ADDED TO APPOINTMENT</span>
+                        </span>
+                      );
+                    }
+                    return 'ADD TO APPOINTMENT';
                   }
                   
                   // Normal mode: standard button states

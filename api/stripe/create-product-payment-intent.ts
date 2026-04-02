@@ -70,6 +70,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       quantity: typeof o.quantity === 'number' && !Number.isNaN(o.quantity) ? o.quantity : 1,
       type: typeof o.type === 'string' ? o.type : undefined,
       bookingInstallKind: typeof o.bookingInstallKind === 'string' ? o.bookingInstallKind : undefined,
+      bookingStyle: typeof o.bookingStyle === 'string' ? o.bookingStyle : undefined,
       bookingAddonIds: Array.isArray(o.bookingAddonIds)
         ? (o.bookingAddonIds as unknown[]).filter((a): a is string => typeof a === 'string')
         : undefined,

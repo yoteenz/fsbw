@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-  BOOKING_BADGE_DISPLAY_PX,
+  BOOKING_BADGE_HEADER_APPOINTMENT_PX,
   BOOKING_BADGE_HEADER_CONSULT_PX,
   bookingPageHeaderBadgeSrc
 } from '../../utils/bookingBadges';
@@ -13,8 +13,9 @@ export function BookingTierBadgeImg() {
   const { pathname } = useLocation();
   const src = bookingPageHeaderBadgeSrc(pathname);
   if (!src) return null;
-  const isConsult = pathname.toLowerCase().includes('consult');
-  const headerPx = isConsult ? BOOKING_BADGE_HEADER_CONSULT_PX : BOOKING_BADGE_DISPLAY_PX;
+  const p = pathname.toLowerCase();
+  const isConsult = p.includes('consult');
+  const headerPx = isConsult ? BOOKING_BADGE_HEADER_CONSULT_PX : BOOKING_BADGE_HEADER_APPOINTMENT_PX;
   return (
     <div className="flex justify-center w-full" style={{ margin: '10px 0 0' }}>
       <img

@@ -7,7 +7,11 @@ import { trackActivity } from '../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../utils/perUserStorage';
 import { getPointsMultiplier } from '../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier } from '../utils/adminAuth';
-import { bookingCartItemThumbnailSrc } from '../utils/bookingBadges';
+import {
+  bookingCartItemThumbnailSrc,
+  BOOKING_APPOINTMENT_CART_BADGE_IMG_PX,
+  BOOKING_CART_BADGE_IMG_PX
+} from '../utils/bookingBadges';
 import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem } from '../utils/bookingMemberRoutes';
 import {
   shopBcfPdpHrefFromCartItem,
@@ -21,6 +25,11 @@ import {
 } from '../utils/cartLineRedAndDetails';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
 import { DEFAULT_CURRENCY_RATES } from '../utils/defaultCurrencyRates';
+import {
+  beginEditAppointmentFromCart,
+  bookingEditLinkClassName,
+  bookingEditLinkStyle
+} from '../utils/bookingAppointmentFormDraft';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -860,15 +869,18 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
-                    /** Cart dropdown: booking badge image 66px, centered in 88px column to align with unit mannequin thumbs. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
+                    /** Cart dropdown: booking badge ~66px (appointment +5%), centered in 88px column. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
                     const unitThumbPx = 88;
                     const bcfCartThumbPx = Math.round(unitThumbPx * 0.85 * 1.05);
-                    const bookingBadgeImgPx = 66;
+                    const bookingBadgeImgPx =
+                      item.type === 'booking-appointment'
+                        ? BOOKING_APPOINTMENT_CART_BADGE_IMG_PX
+                        : BOOKING_CART_BADGE_IMG_PX;
                     const cartThumbBoxPx =
                       item.name === 'GIFT CARD' || item.type === 'gift-card'
                         ? 108
                         : isBookingCartThumb
-                          ? bookingBadgeImgPx
+                          ? BOOKING_CART_BADGE_IMG_PX
                           : isBcfShopItem
                             ? bcfCartThumbPx
                             : unitThumbPx;
@@ -1014,6 +1026,19 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           );
                         })()}
                       </div>
+
+                        {item.type === 'booking-appointment' ? (
+                          <p
+                            className={bookingEditLinkClassName}
+                            style={bookingEditLinkStyle}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              beginEditAppointmentFromCart(item as CartItem, navigate, onClose);
+                            }}
+                          >
+                            EDIT APPOINTMENT
+                          </p>
+                        ) : null}
                       
                         {/* EDIT IN BUILD-A-WIG text - Only show for units, not gift cards */}
                         {!(

@@ -1116,7 +1116,10 @@ function CheckoutConfirmPage() {
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'flex-start',
-                          paddingTop: '8px',
+                          paddingTop:
+                            item?.type === 'booking-appointment' || item?.type === 'booking-consult'
+                              ? '2px'
+                              : '8px',
                           paddingRight: '8px',
                           paddingBottom: '8px',
                           paddingLeft: '8px'

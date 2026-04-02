@@ -9,6 +9,7 @@ export type CheckoutQuoteLinePayload = {
   quantity: number;
   type?: string;
   bookingInstallKind?: string;
+  bookingStyle?: string;
   bookingAddonIds?: string[];
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
@@ -37,6 +38,7 @@ export function cartItemsToQuoteLines(items: CartItem[]): CheckoutQuoteLinePaylo
     quantity: item.quantity ?? 1,
     type: item.type,
     bookingInstallKind: item.bookingInstallKind,
+    bookingStyle: item.bookingStyle,
     bookingAddonIds: item.bookingAddonIds,
     bcfBundleDeal: item.bcfBundleDeal === true,
     bcfBundleDealListSubtotal: item.bcfBundleDealListSubtotal,

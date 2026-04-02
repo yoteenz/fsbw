@@ -5,6 +5,7 @@
 import type { CSSProperties } from 'react';
 import {
   shopTextureCategoryThumbSrc,
+  type ShopTextureCategoryThumbCategory,
   type ShopTextureCategoryThumbTexture
 } from './shopTextureCategoryThumb';
 
@@ -193,42 +194,72 @@ export function shopBcfPdpHrefFromCartItem(item: {
   return shopBcfPdpHref(c, t);
 }
 
-/** PDP hero assets for cart fallback when no `image` (closures/frontals). Bundles use `shopTextureCategoryThumbSrc` PNGs. */
-const BCF_CART_CLOSURE_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
-  straight: '/assets/straight-closure-product.JPG',
-  wavy: '/assets/wavy-closure-product.JPG',
-  curly: '/assets/curly-closure-product.JPG'
-};
+function normalizeBcfCartTexture(raw?: string): ShopTextureCategoryThumbTexture | null {
+  if (raw == null) return null;
+  const t = String(raw).toLowerCase().trim();
+  if (t === 'straight' || t === 'wavy' || t === 'curly') return t;
+  return null;
+}
 
-const BCF_CART_FRONTAL_IMG: Record<ShopTextureCategoryThumbTexture, string> = {
-  straight: '/assets/straight-frontal-product.JPG',
-  wavy: '/assets/wavy-frontal-product.JPG',
-  curly: '/assets/curly-frontal-product.JPG'
-};
+function bcfCartTextureFromShopId(id?: string): ShopTextureCategoryThumbTexture | null {
+  if (!id) return null;
+  const m = String(id).match(/^shop-(straight|wavy|curly)-/);
+  return (m?.[1] as ShopTextureCategoryThumbTexture) ?? null;
+}
+
+/** Legacy / partial rows: infer STRAIGHT|WAVY|CURLY from cart line title (e.g. `BUNDLES · WAVY`). */
+function bcfCartTextureFromName(name?: string): ShopTextureCategoryThumbTexture | null {
+  if (!name) return null;
+  const u = name.toUpperCase();
+  if (/\bCURLY\b/.test(u)) return 'curly';
+  if (/\bWAVY\b/.test(u)) return 'wavy';
+  if (/\bSTRAIGHT\b/.test(u)) return 'straight';
+  return null;
+}
+
+function bcfCartCategoryFromShopId(id?: string): ShopTextureCategoryThumbCategory | null {
+  if (!id) return null;
+  const s = String(id);
+  if (/^shop-(straight|wavy|curly)-bundles/.test(s)) return 'bundles';
+  if (/^shop-(straight|wavy|curly)-closures-/.test(s)) return 'closures';
+  if (/^shop-(straight|wavy|curly)-frontals-/.test(s)) return 'frontals';
+  return null;
+}
 
 /**
- * BCF shop cart thumbnail: **bundles** (regular + bundle deal) always use marble **`bundle-{texture}.png`**
- * (`shopTextureCategoryThumbSrc`) so cart / bag / checkout match texture selection. Closures/frontals: prefer stored
- * `image`, else PDP hero JPG map.
+ * BCF shop cart thumbnail: **bundles**, **closures**, and **frontals** all use the same marble PNGs as the home/shop
+ * grid (`shopTextureCategoryThumbSrc`) — not PDP hero photos or any stored `image` on the line.
  */
 export function shopBcfCartLineThumbnailSrc(item: {
   type?: string;
+  id?: string;
   category?: string;
   texture?: string;
   image?: string;
+  name?: string;
   bcfBundleDeal?: boolean;
 }): string | null {
   if (item.type !== 'shop-texture-category') return null;
-  const t = item.texture as ShopTextureCategoryThumbTexture | undefined;
-  const c = item.category;
-  if (!t || (t !== 'straight' && t !== 'wavy' && t !== 'curly')) return null;
-  if (c === 'bundles') {
+  const t =
+    normalizeBcfCartTexture(item.texture) ??
+    bcfCartTextureFromShopId(item.id) ??
+    bcfCartTextureFromName(item.name);
+  if (!t) return null;
+
+  const cRaw = item.category;
+  const c: ShopTextureCategoryThumbCategory | null =
+    cRaw === 'bundles' || cRaw === 'closures' || cRaw === 'frontals'
+      ? cRaw
+      : bcfCartCategoryFromShopId(item.id);
+
+  const isBundleLine = c === 'bundles' || Boolean(item.bcfBundleDeal);
+  if (isBundleLine) {
     return shopTextureCategoryThumbSrc(t, 'bundles');
   }
-  if (item.image && String(item.image).trim()) return String(item.image).trim();
-  if (c === 'closures') return BCF_CART_CLOSURE_IMG[t];
-  if (c === 'frontals') return BCF_CART_FRONTAL_IMG[t];
-  return null;
+
+  if (c !== 'closures' && c !== 'frontals') return null;
+
+  return shopTextureCategoryThumbSrc(t, c);
 }
 
 /** Known bundle-deal discount (USD) for inferring list subtotal on legacy cart lines. */

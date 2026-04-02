@@ -6524,3 +6524,260 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User wanted the admin **FOUNDER QA** test-card instructions removed from checkout UI.
 
 **Changes:** **`src/pages/checkout/page.tsx`** — removed **`showFounderTestCheckoutHint`** state, sync **`useEffect`**, payment-section hint block, and unused imports **`isAyoteenzAdminAccount`**, **`FOUNDER_CHECKOUT_DUMMY_PAN`**.
+
+---
+
+## 2026-03-31 — BCF cart/bag thumbnails: bundle marble PNGs (incl. bundle deal)
+
+**Context:** User wanted cart dropdown / shopping bag thumbnails for BCF bundles to always use **`/assets/bundle-straight.png`**, **`bundle-wavy.png`**, **`bundle-curly.png`**, including **bundle-deal** (`bcfBundleDeal`) lines—not the PDP hero JPG stored on the line.
+
+**Topics covered:** Prior investigation noted **`shopBcfCartLineThumbnailSrc`** already returned marble for **`category === 'bundles'`**, but **`item.image`** (JPG) won when texture/category was missing or inconsistent; PDP wrote **`image: heroThumbSrc`** (bundle JPG) for adds.
+
+**Changes:**
+- **`src/utils/bcfProductOptions.ts`** — **`shopBcfCartLineThumbnailSrc`**: normalize texture (case); infer texture from **`id`** (`shop-{texture}-…`) and from **`name`** (e.g. **BUNDLES · WAVY**); infer **`category`** from id when missing; treat **`bcfBundleDeal`** as bundle lines so marble always wins.
+- **`src/pages/shop/texture-category-product/page.tsx`** — **`image`** on add-to-bag / bundle-deal lines uses **`shopTextureCategoryThumbSrc(texture, 'bundles')`** for bundles instead of hero JPG.
+
+**Conventions:** Bundle cart rows should keep **`texture`** + **`category`** / **`bcfBundleDeal`**; thumbnails resolve to marble via helper + consistent stored **`image`**.
+
+---
+
+## 2026-04-01 — Consult booking: required hair inspo, hair option layout, deposit copy
+
+**Context:** User wanted the consult flow updated: **hair inspo** required; consult inputs full-width like the file picker and appointment install rows; **WIG + INSTALL** and **WIG ONLY** stacked (WIG + INSTALL first, WIG ONLY below), not side-by-side; hero/deposit line updated to the 72-hour quote hold message.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`BookingHeroSubline`** uses **THIS DEPOSIT TEMPORARILY HOLDS YOUR DESIRED APPOINTMENT TIME FOR 72 HOURS AFTER RECEIVING YOUR QUOTE.**; first body paragraph keeps consult intro and moves **60-day redeem** credit line there; **HAIR INSPO** label **\*** + **`required`** on file input; **`handleAddToBag`** blocks without file with **`PLEASE UPLOAD A HAIR INSPO PHOTO.`**; hair option as full-width stacked buttons (appointment-style borders/padding), order **WIG + INSTALL** then **WIG ONLY**; hair inspo / notes wrappers **`width: 100%`**, **`minWidth: 0`**, textarea **`maxWidth: 100%`**.
+
+---
+
+## 2026-04-01 — Booking appointment: makeup shade, mink volume, pricing, headings, toggle rules
+
+**Context:** User wanted **makeup** row to include BCF-style **select your shade:** (8+ skin tones fair → deep), **mink lashes** with **select your volume:** **NATURAL** / **DRAMATIC** below the shade block (makeup ordered before mink in the list); makeup **$250** / **+2.5 hours**; **brow sculpting** cleared when makeup is selected (and selecting brow sculpting clears makeup); section titles **SELECT A SERVICE / STYLE / PART DIRECTION**; server/checkout duration and USD aligned.
+
+**Changes:**
+- **`src/pages/booking/appointment/page.tsx`** — **`ADDONS_BASE`**: makeup before mink; makeup **250** / **+2.5 HOURS**; **`ADDON_DURATION_MINUTES.makeup`** **150**; **`MAKEUP_SKIN_TONES`** (8) + **`AppointmentSkinToneSwatchDonut`** + Bohemy sublabels; **`minkLashVolume`** state; **`toggleAddon`**: makeup removes mink + **brow-clean**; **brow-clean** removes makeup + **brow-tint**; cart fields **`bookingMakeupSkinTone`** / **`bookingMinkLashVolume`**; imports **`bcfOptionSelectedChrome`**, **`BCF_OPTION_RED`**.
+- **`api/_lib/pricing/resolveQuote.ts`** — **`ADDON_USD.makeup`** **250**.
+- **`src/pages/checkout/page.tsx`** — admin meeting sync **`durationByAddonId.makeup`** **150**.
+- **`src/types/cart.ts`** — optional **`bookingMakeupSkinTone`**, **`bookingMinkLashVolume`**.
+- **`src/utils/cartLineRedAndDetails.ts`** — **`bookingCartViewDetailsHtml`** lines for makeup shade + mink volume.
+
+---
+
+## 2026-04-01 — Consult WIG+INSTALL premium + calendar; booking lead times (2 months / 1 week)
+
+**Context:** User wanted **WIG + INSTALL** to show black detail copy **THIS OPTION IS FOR PREMIUM MEMBERS ONLY.**; standard members who add to bag with that option get the same **“this feature”** upgrade modal as build-a-wig (**YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE.** → **UPGRADE** / Rewards or sign-in). When **WIG + INSTALL** is selected and the user is premium, show the appointment-style **inline calendar + time slots** below **ADDITIONAL NOTES**; persist **`bookingPreferredDate`** / **`bookingPreferredTime`** on the consult cart line. Scheduling rules: **new install** and **consult WIG + INSTALL** use a **two-calendar-month** minimum lead from today (e.g. Apr 1 → earliest Jun 1), weekends disabled; **RE-INSTALL** uses **seven days** minimum. Earlier dates grayed via **`BrandExpiresDatePicker`** **`isDateDisabled`**.
+
+**Changes:**
+- **`src/utils/bookingDateRules.ts`** (new) — **`bookingMinSelectableLocalDate`**, **`createBookingDateDisabledFn`** (`two_calendar_months` | `seven_days`).
+- **`src/pages/booking/appointment/page.tsx`** — replace old “past + weekend” rule with shared helper; clear date when install kind makes it invalid; clear time when date cleared.
+- **`src/pages/booking/consultation/page.tsx`** — premium-only note on **WIG + INSTALL** row; gate add-to-bag + **`ConfirmationModal`** for non-premium; calendar UI + validation for premium **WIG + INSTALL**; cart fields for preferred date/time.
+- **`src/utils/cartLineRedAndDetails.ts`** — **VIEW DETAILS** for **`booking-consult`** includes **DATE** / **TIME** when present.
+
+---
+
+## 2026-04-01 — Appointment: Layered Curls $40, draft persistence, notes + inspo, quote sync
+
+**Context:** User wanted **LAYERED CURLS** to show **$40 USD** in gray (and pricing before “complimentary” policy copy), form **photos/details** to survive refresh, and an **ADDITIONAL NOTES** block below the travel add-on row.
+
+**Changes:**
+- **`src/pages/booking/appointment/page.tsx`** — **`LAYERED_CURLS_UPCHARGE_USD`** (40): gray price on style row, included in **`totalUsd`**, policy line before complimentary consult line; **`localStorage`** draft **`bookingAppointmentFormDraftV1`** (hydrate on mount, persist on change, clear after add-to-bag); optional **HAIR INSPO** (data URL in draft) + **ADDITIONAL NOTES**; cart **`bookingNotes`** / **`bookingInspoFileName`**.
+- **`api/_lib/pricing/resolveQuote.ts`** — **`bookingStyle`** on **`QuoteLineInput`**; **+40 USD** when style is **LAYERED CURLS**.
+- **`api/checkout/quote.ts`**, **`api/stripe/create-product-payment-intent.ts`** — pass **`bookingStyle`**.
+- **`src/utils/checkoutQuote.ts`**, **`src/types/cart.ts`** — **`bookingStyle`** (+ appointment **`bookingPreferredDate`/`Time`** on type where missing), quote payload.
+- **`src/utils/cartLineRedAndDetails.ts`** — appointment **VIEW DETAILS**: **NOTES** + **INSPO FILE** when set.
+
+---
+
+## 2026-04-01 — Build-a-wig menu parity (Noir), checkout A/C thumbs, consult deposit copy
+
+**Context:** User wanted **Build-a-Wig** hub step pages’ **hamburger menu** to match **Noir** (full-height inline card, HOME > MENU header, SHOP/TOOLS/BRAND tabs, footer sign-in + socials—not the old centered modal). **Checkout** horizontal strip: **hair appointment** badge image **+6px** vs consult (consult unchanged); **6px less** top padding on **booking-appointment** and **booking-consult** tiles only. **Consult** body copy: deposit credit line → **DEPOSIT IS A CREDIT TOWARDS YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 72 HOURS OF QUOTE.**
+
+**Changes:**
+- **`src/utils/checkoutOrderStripDisplay.ts`** — checkout strip: **`booking-appointment`** **`imgPx`** = scaled badge **+6**; consult unchanged.
+- **`src/pages/checkout/page.tsx`** — cart tile **`paddingTop`**: **2px** for **`booking-appointment`** / **`booking-consult`** (else unchanged logic including membership).
+- **`src/pages/checkout/confirm/page.tsx`** — same **2px** top padding for those two line types.
+- **`src/pages/booking/consultation/page.tsx`** — first **`BookingBodyParagraph`** sentence updated to the **72 HOURS OF QUOTE** credit line.
+- **Build-a-wig subpages:** **`length`**, **`color`**, **`density`** — main card uses **`menu-toggle-card`**, **`calc(100dvh - 80px)`** when menu open. **`lace`**, **`texture`**, **`styling`**, **`addons`** — inline Noir-style menu (no fullscreen popup); confirm wrapped in **`!showMobileMenu`**. **`cap-size`** and **`hairline`** still use the **old** popup / **no** menu wiring on hairline—mirror **`lace/page.tsx`** to finish.
+
+**Conventions:** Prefer **`menu-toggle-card`** + **`calc(100dvh - 80px)`** for open mobile menu panels on shop-style pages; keep **`ShopMobileMenuShopTab`** / **`Tools`** / **`BrandMenuLinks`** + **`SocialMenuIcons`** footer layout consistent with **`straight/noir/page.tsx`**.
+
+---
+
+## 2026-04-01 — Consult hair inspo: up to 4 photos, persistent choose file, max modal, affiliate X
+
+**Context:** User wanted the consult **CHOOSE FILE** row to stay visible (not replaced by a large preview); up to **4** inspo images; **MAX PHOTOS REACHED** marble **`ConfirmationModal`** with **REMOVE OR REPLACE AN IMAGE.** and single **CLOSE**; thumbnails in one row with top-right delete matching **account affiliate** VIEW POINTS **photo** tab (**close-icon** in white circle).
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`inspoItems`** state, **`multiple`** file input, async **`readImageFileAsDataUrl`**; cart **`bookingInspoFileNames`** + joined **`bookingInspoFileName`**; **`src/types/cart.ts`** — **`bookingInspoFileNames`**; **`src/utils/cartLineRedAndDetails.ts`** — consult + appointment **VIEW DETAILS** list each **INSPO FILE** from array when present.
+
+---
+
+## 2026-04-01 — Appointment: SELECT A STYLE, no inspo / layered curls policy, shade & volume inside add-on card
+
+**Context:** User wanted **CHOOSE A STYLE** → **SELECT A STYLE:**; remove appointment **hair inspo** block and the policy line **LAYERED CURLS INCLUDES…**; **select your shade** / **select your volume** inside the same bordered **MAKEUP** / **MINK LASHES** card below **THIS SERVICE INCLUDES…**, not below the whole row.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`ToggleRow`** refactored to outer bordered **`div`**, toggle **`button`** for header, then detail text, then optional **`expandedContent`** (clicks **`stopPropagation`**); makeup/mink shade & volume passed as **`expandedContent`**; removed **`appointmentInspo*`** state, draft fields, handler, cart **`bookingInspoFileName`** on appointment add; removed layered curls upcharge policy sentence from **`policyLines`**.
+
+---
+
+## 2026-04-01 — Consult hero: deposit as credit (72 hours of quote)
+
+**Context:** User updated consult deposit messaging.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`BookingHeroSubline`**: deposit-as-credit copy (later consolidated to one line); first body paragraph no longer repeats the deposit credit sentence.
+
+---
+
+## 2026-04-01 — Appointment cart thumb +5%, makeup shade labels, consult “your quote”
+
+**Context:** User wanted **`booking-appointment`** thumbnail **+5%** only (not consult); makeup swatch labels **BEIGE**, **TAN**, **MAHOGANY**, **EBONY**; consult hero **72 HOURS OF YOUR QUOTE**.
+
+**Changes:** **`src/utils/bookingBadges.ts`** — **`BOOKING_CART_BADGE_IMG_PX`**, **`BOOKING_APPOINTMENT_CART_BADGE_IMG_PX`**. **`checkoutOrderStripDisplay.ts`** — checkout strip appointment **`Math.round((base+6)*1.05)`**; non-checkout appointment uses appointment px. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`**. **`appointment/page.tsx`** — **`MAKEUP_SKIN_TONES`** labels. **`consultation/page.tsx`** — hero **YOUR QUOTE**.
+
+---
+
+## 2026-04-01 — Consult: fix inspo file picker + WIG+INSTALL calendar; hero one line
+
+**Context:** User reported consult **choose file** not loading/showing images, **calendar** missing when **WIG + INSTALL** selected (premium), and hero deposit copy as one sentence.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`handleFileChange`**: read files async **outside** `setState` updater (avoids Strict Mode / batching issues); **`isProbablyImageFile`** for empty mobile MIME types; **`<label>`** + full-size **`opacity: 0`** input over **CHOOSE FILE** row (no `overflow: hidden`); **`BrandExpiresDatePicker`** + time dropdown when **`hairOption === 'WIG + INSTALL' && isPremium`**; hero single line **WHEN REDEEMED WITHIN 72 HOURS OF QUOTE.**
+
+---
+
+## 2026-04-01 — Build-a-wig cap-size + hairline: finish Noir inline menu
+
+**Context (full chat arc):** Same thread as Build-a-Wig **Noir-style** mobile menu on hub steps, checkout **A/C** strip tweaks (+6px appointment thumb, tighter top padding), consult **72 HOURS OF QUOTE** deposit copy. Remaining gaps were **`cap-size`** (inline menu existed but a legacy fullscreen popup still called removed **`handleCloseMobileMenu`**) and **`hairline`** (hamburger had no **`onClick`**, no menu state).
+
+**Topics covered:** Close out cap-size structure to match **`lace/page.tsx`**; port menu pattern to hairline (header swap, **`menu-toggle-card`**, full-height panel, hide **CONFIRM** when menu open, sign-out **`ConfirmationModal`**).
+
+**Decisions / outcomes:** Single inline menu path only—no duplicate modal. Hairline matches lace imports and handlers (**`ShopMobileMenuShopTab`**, **`Tools`**, **`BrandMenuLinks`**, **`SocialMenuIcons`**, **`clearAppAuth`**).
+
+**Changes:**
+- **`src/pages/build-a-wig/cap-size/page.tsx`** — Removed **MOBILE MENU POP-UP** block; after page content **`</> )}`** closes the **`showMobileMenu`** ternary; **CONFIRM** wrapped in **`!showMobileMenu`** (same shell as lace).
+- **`src/pages/build-a-wig/hairline/page.tsx`** — Added mobile menu state, route tab effects, toggle/tab/expand/sign-out handlers; conditional header (**HOME > MENU** / account–wishlist); main card **`menu-toggle-card`** + **`calc(100dvh - 80px)`** when open; inline tab content; **CONFIRM** only when menu closed; **`ConfirmationModal`** for sign-out.
+
+---
+
+## 2026-04-01 — Appointment makeup/mink: Bohemy label spacing + no colons
+
+**Context:** User wanted **+10px** space below the makeup shade and mink volume **selection boxes**, **+10px** above **select your shade** / **select your volume**, and to **drop the colons** from those labels.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`ToggleRow`** expanded block **`paddingBottom`** **12px → 22px**; Bohemy **`<p>`** **`marginTop` `10px`**, copy **select your shade** / **select your volume** (no **`:`**).
+
+---
+
+## 2026-04-01 — Consult: disabled calendar days + hair inspo previews
+
+**Context (full thread):** Consult **WIG+INSTALL** calendar must not show a **red selection box** on **disabled/gray** dates (e.g. Apr 2). **Hair inspo** “choose file” should add images reliably and show **thumbnails** under the picker (mobile had empty MIME types, fragile async `setState`, and thumbnails collapsing).
+
+**Decisions / outcomes:** Disabled days never use selected/today-red chrome when `isDateDisabled` is true. Inspo previews use **`URL.createObjectURL`** + **`revokeObjectURL`** (no `FileReader` in the update path). Picker uses a **visually hidden** file input and a **button** that calls **`input.click()`**. Thumbnails use **fixed 88×88** cells so one image cannot collapse. If stored consult date becomes disabled, **clear date/time** in an effect.
+
+**Changes:**
+- **`src/components/BrandExpiresDatePicker.tsx`** — **`isSelected`** and **today outline** require **`!isDisabled`** so value matching a disabled cell does not get red border.
+- **`src/pages/booking/consultation/page.tsx`** — **`ConsultInspoItem.previewUrl`**; **`isProbablyImageFile`** also allows **extensionless** non-empty names; **`handleFileChange`** builds object URLs then **one** `setInspoItems`; cleanup on remove/unmount; **`useEffect`** clears **`consultPreferredDateIso` / time** when **`consultWigInstallDateDisabled`**.
+
+---
+
+## 2026-04-01 — Appointment page: +2px under shade/volume; header badge +5%
+
+**Context:** User wanted **2px** more space below makeup & mink **selection boxes**, and the **appointment** booking header thumbnail **5% larger** only on that flow (not cart/checkout).
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`ToggleRow`** expanded **`paddingBottom` `22px` → `24px`**. **`src/utils/bookingBadges.ts`** — **`BOOKING_BADGE_HEADER_APPOINTMENT_PX`** = **`BOOKING_BADGE_DISPLAY_PX * 1.05`**. **`src/components/booking/BookingPageChrome.tsx`** — **`BookingTierBadgeImg`** uses it for non-consult booking routes (appointment); consult still **`BOOKING_BADGE_HEADER_CONSULT_PX`**.
+
+---
+
+## 2026-04-01 — Consult copy: notes + inspo photos + follow up wording
+
+**Context:** User updated the second body paragraph on the consult booking page.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`BookingBodyParagraph`**: **ADD ADDITIONAL NOTES ALONG WITH HAIR INSPO PHOTOS** … **FOLLOW UP** (no hyphen) … same 72h / checklist / price / payment line.
+
+---
+
+## 2026-04-01 — Consult hair inspo: thumbnails below picker
+
+**Context:** User wanted selected **hair inspo** images to show **below** the file picker and **above** **HAIR OPTION**, not hidden / not above the chooser; keep visually hidden file input + button **`click()`** pattern.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — Reordered **HAIR INSPO** column: **CHOOSE FILE** row first, then thumbnail row (`minHeight: 88px`, **`loading="eager"`** on preview **`img`**).
+
+---
+
+## 2026-04-01 — Consult hair inspo: survive premium URL redirect + show thumbnails
+
+**Context:** User reported selected **hair inspo** images still not appearing (“something overwriting”). Root cause: **`MembershipRouteSync`** **`replace` navigates** premium users from **`/booking/consultation`** to **`/booking/premium/consultation`** (and **`/premium/consult` → `/premium/consultation`**), so **`BookingConsultationPage` unmounts/remounts**; **blob `URL.createObjectURL`** previews were cleared and **`revokeObjectURL`** on unmount invalidated URLs.
+
+**Decisions / outcomes:** Store previews as **`data:` URLs**; persist **`inspoItems`** in **`sessionStorage`** (`bawBookingConsultHairInspoDraft`) with **`loadInspoDraftFromSession`** as **`useState` initializer**; sync on change; after async **`FileReader`** merge, **`sessionStorage.setItem`** then **`queueMicrotask` + `bawConsultInspoHydrate`** so a **new** mount hydrates if **`setState` was dropped**; clear draft + **`setInspoItems([])`** on successful add-to-bag. Removed blob **`revokeObjectURL`** lifecycle.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`**.
+
+---
+
+## 2026-04-01 — Appointment policy: RE-INSTALLS / CLEAN LACE comma
+
+**Context:** User updated the combined new-install / re-install policy sentence.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`**: **…USING THE "CLEAN LACE" ADD ON, IF APPLICABLE.** (comma before **IF APPLICABLE**).
+
+---
+
+## 2026-04-01 — Appointment no-show line + consult body split
+
+**Context:** User updated cancellation copy (**OF YOUR APPOINTMENT** / **BEING CHARGED** no-show fee) and consult intro: one paragraph for consult + options + notes/inspo, second paragraph for 72h follow-up.
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`**: **NO GUESTS** and **APPOINTMENTS MUST BE CANCELLED… OF YOUR APPOINTMENT TO AVOID BEING CHARGED A NO SHOW FEE OF $50 USD.** as **two** entries. **`src/pages/booking/consultation/page.tsx`** — first **`BookingBodyParagraph`**: **BOOK A COMPLIMENTARY…** through **…MOST ACCURATE RESULTS.**; second: **YOU WILL RECEIVE A FOLLOW UP…**
+
+---
+
+## 2026-04-01 — Appointment guests + no-show one line; consult body two paragraphs
+
+**Context:** User supplied final copy: appointment **NO GUESTS** + **48h / 24h OF YOUR APPOINTMENT / $50** as **one** sentence; consult first paragraph ends after **SELECT WIG + INSTALL OR WIG ONLY.**; second paragraph **ADD ADDITIONAL NOTES…** through **…PAYMENT DETAILS.**
+
+**Changes:** **`src/pages/booking/appointment/page.tsx`** — **`policyLines`**: merged last two bullets into one string. **`src/pages/booking/consultation/page.tsx`** — split **`BookingBodyParagraph`** text per user strings.
+
+---
+
+## 2026-03-31 — NEW INSTALL: select unit, attach build-a-wig, attach prior order
+
+**Context:** User wanted **NEW INSTALL** on the hair appointment flow to include **select your unit** (Bohemy styling like makeup shade) **below** “THIS SERVICE INCLUDES…”, with an **attach unit** control (60×65-style box + dropdown of all six hub units) that opens the matching **`/build-a-wig/{slug}`** hub in **appointment mode**; primary CTA on the hub becomes **ADD TO APPOINTMENT**, saving a **custom unit snapshot** to localStorage (not the shopping bag) and returning to the appointment page. **Attach order**: second control listing **previously purchased units** from **`userOrders_${email}`** (heuristic on product names), or **NO ELIGIBLE ORDERS.** when none. Attachments persist on the **`booking-appointment`** cart line (`bookingNewInstallUnitJson`, `bookingAttachedOrderId` / `bookingAttachedOrderSummary`) and appear in **VIEW DETAILS** via **`bookingCartViewDetailsHtml`**.
+
+**Decisions / outcomes:** Dedicated keys in **`src/utils/bookingNewInstallUnit.ts`** (`buildWigAppointmentMode`, return URL, attached unit JSON, attached order JSON). Stale appointment mode cleared if return path is not under **`/booking`**. RE-INSTALL clears new-install attachments; **`EMPTY_ELIGIBLE_WIG_UNITS`** avoids an effect/`useMemo` loop when not NEW INSTALL.
+
+**Changes:** **`src/utils/bookingNewInstallUnit.ts`** (new). **`src/pages/booking/appointment/page.tsx`** (service card layout + UI + bag fields + clear on schedule). **`src/pages/build-a-wig/page.tsx`** (appointment branch in **`handleAddToBag`**, button copy, sanitization **`useEffect`**). **`src/types/cart.ts`**, **`src/utils/cartLineRedAndDetails.ts`**.
+
+**Conventions:** Appointment attach flow must not use **`editingCartItem`**; hub **`ADD TO APPOINTMENT`** writes **`bookingNewInstallAttachedUnit`** and navigates back via **`buildWigAppointmentReturn`**.
+
+---
+
+## 2026-04-02 — Consult copy: “ADD NOTES” (hair inspo paragraph)
+
+**Context:** User updated the second consult body paragraph to start with **ADD NOTES** instead of **ADD ADDITIONAL NOTES**; remainder unchanged (72h follow-up, checklist, price, payment).
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — second **`BookingBodyParagraph`** string.
+
+---
+
+## 2026-04-02 — Cart / bag: EDIT APPOINTMENT → hydrate booking PDP + replace line on save
+
+**Context:** User wanted red **EDIT APPOINTMENT** under the appointment thumbnail in **cart dropdown** and **bag** (same styling as **EDIT IN BUILD-A-WIG**), opening the appointment booking page with selections from that cart line.
+
+**Decisions / outcomes:** Central **`src/utils/bookingAppointmentFormDraft.ts`**: **`applyCartItemToAppointmentFormDraft`**, **`beginEditAppointmentFromCart`** (sets **`editingBookingAppointmentCartItemId`**, persists **`bookingAppointmentFormDraftV1`**, **`bawBookingAppointmentDraftHydrate`**, navigates via **`bookingAppointmentHrefForCartItem`**). **`CartItem.bookingPartDirection`**. Appointment PDP imports draft helpers + listens for hydrate; **`handleScheduleToBag`** removes **`editingBookingAppointmentCartItemId`** line before push so re-add **replaces** the edited row.
+
+**Changes:** **`src/utils/bookingAppointmentFormDraft.ts`** (new). **`src/pages/booking/appointment/page.tsx`**, **`src/types/cart.ts`**, **`src/components/CartDropdown.tsx`**, **`src/pages/shopping-bag/page.tsx`**.
+
+---
+
+## 2026-04-02 — Consult hair inspo: fix missing `latestInspoRef` + hydrate listener
+
+**Context:** User reported hair inspo thumbnails **still never appearing**; premium URL remount was not the only cause.
+
+**Root cause:** **`handleFileChange`** async path used **`latestInspoRef.current`** but **`latestInspoRef` was never declared**, causing a **runtime `ReferenceError`** after **`FileReader`** finished so **`setInspoItems` never ran**. **`CONSULT_INSPO_HYDRATE_EVENT`** was dispatched with **no listener**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — restore **`latestInspoRef`** synced each render; **`useEffect`** subscribes to **`bawConsultInspoHydrate`** → **`setInspoItems(loadInspoDraftFromSession())`**; **`isProbablyImageFile`** allows **empty name + empty type** when **`size > 0`**.
+
+---
+
+## 2026-04-02 — BCF closures/frontals cart thumbs = shop marbles (not PDP photos)
+
+**Context:** User reported **closures** and **frontals** line thumbnails in **cart dropdown**, **shopping bag**, **checkout**, and **checkout summary** still showed **PDP hero** images instead of the **home/shop** marble PNGs (`closure-{texture}.png`, `frontal-{texture}.png`).
+
+**Decisions / outcomes:** Align with **bundles**: **`shopBcfCartLineThumbnailSrc`** always maps texture + category through **`shopTextureCategoryThumbSrc`** for closures/frontals; do **not** prefer cart line **`image`** (JPG heroes).
+
+**Changes:** **`src/utils/bcfProductOptions.ts`** — removed PDP JPG fallback maps; closures/frontals branch returns **`shopTextureCategoryThumbSrc(t, c)`** only.

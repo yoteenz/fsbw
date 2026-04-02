@@ -13,6 +13,9 @@ export const BOOKING_BADGE_DISPLAY_PX = 182.16;
  */
 export const BOOKING_BADGE_HEADER_CONSULT_PX = 198;
 
+/** Appointment booking flow page only (`BookingTierBadgeImg`); 5% larger than base display. */
+export const BOOKING_BADGE_HEADER_APPOINTMENT_PX = BOOKING_BADGE_DISPLAY_PX * 1.05;
+
 /** Cart row width for booking badge thumbs (thumb + horizontal padding). */
 export const BOOKING_BADGE_CART_CELL_WIDTH_PX = Math.ceil(BOOKING_BADGE_DISPLAY_PX + 16);
 
@@ -48,3 +51,8 @@ export function bookingCartItemThumbnailSrc(item: { type?: string; bookingTier?:
 export function isBookingCartBadgeItem(item: { type?: string }): boolean {
   return item?.type === 'booking-appointment' || item?.type === 'booking-consult';
 }
+
+/** Cart dropdown / bag / order strip: consult + install badge image (square). */
+export const BOOKING_CART_BADGE_IMG_PX = 66;
+/** `booking-appointment` only: 5% larger than consult in those UIs. */
+export const BOOKING_APPOINTMENT_CART_BADGE_IMG_PX = Math.round(BOOKING_CART_BADGE_IMG_PX * 1.05);

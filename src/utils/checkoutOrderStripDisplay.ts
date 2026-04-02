@@ -6,15 +6,20 @@
  * **A/C** (internal shorthand): **appointment** + **consult** booking lines (`booking-appointment`, `booking-consult`).
  */
 
-import { bookingCartItemThumbnailSrc, isBookingCartBadgeItem } from './bookingBadges';
+import {
+  bookingCartItemThumbnailSrc,
+  BOOKING_APPOINTMENT_CART_BADGE_IMG_PX,
+  BOOKING_CART_BADGE_IMG_PX,
+  isBookingCartBadgeItem
+} from './bookingBadges';
 import { shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
 import { CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
 export const ORDER_STRIP_BCF_THUMB_PX = Math.round(ORDER_STRIP_UNIT_SLOT_PX * 0.85 * 1.05);
-/** Booking badge image size in strip (same as cart dropdown). */
-export const ORDER_STRIP_BOOKING_BADGE_PX = 66;
+/** Booking badge image size in strip — consult / default (same as cart consult). */
+export const ORDER_STRIP_BOOKING_BADGE_PX = BOOKING_CART_BADGE_IMG_PX;
 /** Unit strip uses 120×120 image slot — BCF/booking checkout rows use this min slot so black title lines align. */
 export const ORDER_STRIP_UNIT_IMG_SLOT_PX = 120;
 /**
@@ -191,7 +196,12 @@ export function orderStripThumbMetrics(
   }
   if (isBooking) {
     if (checkout) {
-      const imgPx = Math.round(ORDER_STRIP_BOOKING_BADGE_PX * ORDER_STRIP_CHECKOUT_BCF_BOOKING_SCALE);
+      const baseImgPx = Math.round(BOOKING_CART_BADGE_IMG_PX * ORDER_STRIP_CHECKOUT_BCF_BOOKING_SCALE);
+      /** Hair-install row: prior +6 vs consult, then +5% vs that size (appointment only). */
+      const imgPx =
+        item?.type === 'booking-appointment'
+          ? Math.round((baseImgPx + 6) * 1.05)
+          : baseImgPx;
       return {
         kind: 'booking',
         cellWidthPx: Math.max(ORDER_STRIP_UNIT_SLOT_PX + 16, imgPx + 24),
@@ -204,7 +214,10 @@ export function orderStripThumbMetrics(
     return {
       kind: 'booking',
       cellWidthPx: ORDER_STRIP_UNIT_SLOT_PX + 16,
-      imgPx: ORDER_STRIP_BOOKING_BADGE_PX,
+      imgPx:
+        item?.type === 'booking-appointment'
+          ? BOOKING_APPOINTMENT_CART_BADGE_IMG_PX
+          : BOOKING_CART_BADGE_IMG_PX,
       slotPx: ORDER_STRIP_UNIT_SLOT_PX,
       imgWrapperTransform: 'translateX(2px)',
       objectContain: true

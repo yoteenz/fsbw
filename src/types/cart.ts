@@ -23,7 +23,25 @@ export interface CartItem {
   bcfBundleDealListSubtotal?: number;
   /** Booking appointment (server quote / PaymentIntent). */
   bookingInstallKind?: string;
+  bookingStyle?: string;
+  bookingPartDirection?: string;
   bookingAddonIds?: string[];
+  bookingNotes?: string;
+  bookingInspoFileName?: string;
+  bookingPreferredDate?: string;
+  bookingPreferredTime?: string;
+  /** Makeup add-on: selected skin tone label (e.g. FAIR, MEDIUM DEEP). */
+  bookingMakeupSkinTone?: string;
+  /** Mink lashes add-on: NATURAL | DRAMATIC. */
+  bookingMinkLashVolume?: string;
+  /** NEW INSTALL: JSON snapshot of custom unit from build-a-wig (appointment flow). */
+  bookingNewInstallUnitJson?: string;
+  /** NEW INSTALL: prior order id when user attaches an owned unit. */
+  bookingAttachedOrderId?: string;
+  /** NEW INSTALL: display line for attached order (e.g. product + order #). */
+  bookingAttachedOrderSummary?: string;
+  /** Consult: multiple inspo filenames (max 4 on PDP). */
+  bookingInspoFileNames?: string[];
 }
 
 

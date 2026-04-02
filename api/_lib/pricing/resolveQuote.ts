@@ -9,6 +9,8 @@ export type QuoteLineInput = {
   quantity: number;
   type?: string;
   bookingInstallKind?: string;
+  /** Matches booking appointment page `bookingStyle` (e.g. LAYERED CURLS → +$40). */
+  bookingStyle?: string;
   bookingAddonIds?: string[];
   bcfBundleDeal?: boolean;
   bcfBundleDealListSubtotal?: number;
@@ -45,12 +47,15 @@ const ADDON_USD: Record<string, number> = {
   'brow-clean': 40,
   'brow-tint': 60,
   'mink-lashes': 20,
-  makeup: 200,
+  makeup: 250,
   'clean-lace': 40,
   travel: 1200
 };
 
 const CONSULT_DEPOSIT_USD = 40;
+
+/** Matches `src/pages/booking/appointment/page.tsx` — LAYERED CURLS style upcharge. */
+const LAYERED_CURLS_STYLE_UPCHARGE_USD = 40;
 
 /** Known unit / wig list prices (USD) — extend as catalog grows. */
 const UNIT_BASE_USD_BY_NAME: Record<string, number> = {
@@ -102,6 +107,10 @@ function resolveBookingAppointment(line: QuoteLineInput, idx: number): ResolvedQ
     if (!allowedAddons.has(id)) continue;
     const add = ADDON_USD[id];
     if (add != null) usd += add;
+  }
+  const style = String(line.bookingStyle || '').trim().toUpperCase();
+  if (style === 'LAYERED CURLS') {
+    usd += LAYERED_CURLS_STYLE_UPCHARGE_USD;
   }
   const totalUsd = usd * q;
   return {

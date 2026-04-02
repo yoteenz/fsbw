@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BookingFlowLayout from '../../../components/BookingFlowLayout';
+import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   BookingBodyParagraph,
@@ -8,16 +9,96 @@ import {
   BookingHeroSubline,
   BookingTierBadgeImg,
   NoirStyleAddToBagButton,
+  bookingFontBook,
   bookingFontMedium
 } from '../../../components/booking/BookingPageChrome';
 import { useSelectedCurrencyDisplay } from '../../../hooks/useSelectedCurrencyDisplay';
 import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
-import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
+import { createBookingDateDisabledFn } from '../../../utils/bookingDateRules';
+import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { BOOKING_PATHS } from '../../../utils/membershipRoutePolicy';
 
 const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
+
+const MAX_HAIR_INSPO_PHOTOS = 4;
+
+/** Persists across consult URL remounts (`/booking/consultation` → `/booking/premium/consultation` from MembershipRouteSync). */
+const CONSULT_INSPO_SESSION_KEY = 'bawBookingConsultHairInspoDraft';
+
+type ConsultInspoItem = { id: string; name: string; dataUrl: string };
+
+function loadInspoDraftFromSession(): ConsultInspoItem[] {
+  if (typeof sessionStorage === 'undefined') return [];
+  try {
+    const raw = sessionStorage.getItem(CONSULT_INSPO_SESSION_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (x): x is ConsultInspoItem =>
+        Boolean(x) &&
+        typeof x === 'object' &&
+        typeof (x as ConsultInspoItem).id === 'string' &&
+        typeof (x as ConsultInspoItem).name === 'string' &&
+        typeof (x as ConsultInspoItem).dataUrl === 'string' &&
+        (x as ConsultInspoItem).dataUrl.startsWith('data:')
+    );
+  } catch {
+    return [];
+  }
+}
+
+function readImageFileAsDataUrl(file: File): Promise<string | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const r = reader.result;
+      resolve(typeof r === 'string' && r.startsWith('data:') ? r : null);
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Some mobile cameras leave `type` empty; still treat common extensions as images. */
+function isProbablyImageFile(f: File): boolean {
+  if (f.type.startsWith('image/')) return true;
+  if (!f.type || f.type === 'application/octet-stream') {
+    if (/\.(jpe?g|png|gif|webp|heic|heif|bmp|tif?f)$/i.test(f.name)) return true;
+    // iOS/Android sometimes use a bare filename with no extension but a real image payload.
+    if (f.size > 0 && f.name && !f.name.includes('.')) return true;
+    // Camera/library pick can yield empty name + empty type but valid image bytes.
+    if (!f.type && f.size > 0 && !f.name) return true;
+    return false;
+  }
+  return false;
+}
+
+const CONSULT_WIG_INSTALL_TIME_SLOTS = [
+  '10:00 AM',
+  '11:00 AM',
+  '12:00 PM',
+  '1:00 PM',
+  '2:00 PM',
+  '3:00 PM',
+  '4:00 PM',
+  '5:00 PM',
+  '6:00 PM'
+] as const;
+
+function formatConsultIsoForDisplay(isoYmd: string): string {
+  const [y, m, d] = isoYmd.split('-');
+  if (!y || !m || !d) return '';
+  return `${m}-${d}-${y}`;
+}
+
+function formatConsultTimeSlotForDisplay(slot: string): string {
+  const t = slot.trim();
+  if (!t) return '';
+  return t.replace(/\s+/g, '');
+}
 
 /** Standard consult is open to all users; premium members are canonicalized to premium consult path for badge/tier consistency. */
 export default function BookingConsultationPage() {
@@ -28,12 +109,39 @@ export default function BookingConsultationPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
   const [notes, setNotes] = useState('');
-  const [inspoFileName, setInspoFileName] = useState('');
-  const [inspoPreview, setInspoPreview] = useState<string | null>(null);
+  const [inspoItems, setInspoItems] = useState<ConsultInspoItem[]>(loadInspoDraftFromSession);
+  const [showMaxInspoModal, setShowMaxInspoModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [formError, setFormError] = useState<string | null>(null);
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
+  const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
+  const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
+  const [consultPreferredTime, setConsultPreferredTime] = useState('');
+  const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
   const { formatUsd } = useSelectedCurrencyDisplay();
+
+  const isPremium = isPremiumMemberForGatedFeatures();
+  const consultWigInstallDateDisabled = useMemo(() => createBookingDateDisabledFn('two_calendar_months'), []);
+
+  useEffect(() => {
+    try {
+      if (inspoItems.length === 0) {
+        sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+      } else {
+        sessionStorage.setItem(CONSULT_INSPO_SESSION_KEY, JSON.stringify(inspoItems));
+      }
+    } catch {
+      /* quota / private mode */
+    }
+  }, [inspoItems]);
+
+  useEffect(() => {
+    const d = consultPreferredDateIso.trim();
+    if (!d || !consultWigInstallDateDisabled(d)) return;
+    setConsultPreferredDateIso('');
+    setConsultPreferredTime('');
+    setShowConsultTimeDropdown(false);
+  }, [consultPreferredDateIso, consultWigInstallDateDisabled]);
 
   useEffect(() => {
     const bump = () => setAuthRev((n) => n + 1);
@@ -51,26 +159,87 @@ export default function BookingConsultationPage() {
     setShowConsultAccessModal(false);
   }, [isPremiumBooking, authRev]);
 
+  useEffect(() => {
+    if (hairOption !== 'WIG + INSTALL' || !isPremiumMemberForGatedFeatures()) {
+      setConsultPreferredDateIso('');
+      setConsultPreferredTime('');
+      setShowConsultTimeDropdown(false);
+    }
+  }, [hairOption, authRev]);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) {
-      setInspoFileName('');
-      setInspoPreview(null);
-      return;
-    }
-    setInspoFileName(f.name);
-    setFormError(null);
-    if (f.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => setInspoPreview(typeof reader.result === 'string' ? reader.result : null);
-      reader.readAsDataURL(f);
-    } else {
-      setInspoPreview(null);
-    }
+    const list = e.target.files;
+    e.target.value = '';
+    if (!list?.length) return;
+
+    const picked = Array.from(list).filter(isProbablyImageFile);
+    if (!picked.length) return;
+
+    void Promise.all(picked.map((f) => readImageFileAsDataUrl(f))).then((urls) => {
+      const built: ConsultInspoItem[] = [];
+      picked.forEach((f, i) => {
+        const dataUrl = urls[i];
+        if (!dataUrl) return;
+        built.push({
+          id: `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 11)}-${(f.name || 'img').slice(0, 24)}`,
+          name: f.name || 'IMAGE',
+          dataUrl
+        });
+      });
+      if (built.length === 0) return;
+
+      setInspoItems((prev) => {
+        const room = MAX_HAIR_INSPO_PHOTOS - prev.length;
+        if (room <= 0) {
+          setShowMaxInspoModal(true);
+          return prev;
+        }
+        const toAdd = built.slice(0, room);
+        if (picked.length > room || built.length > room) {
+          setShowMaxInspoModal(true);
+        }
+        return [...prev, ...toAdd].slice(0, MAX_HAIR_INSPO_PHOTOS);
+      });
+    });
+  };
+
+  const confirmRemoveInspoItem = () => {
+    if (!inspoRemoveTargetId) return;
+    setInspoItems((prev) => prev.filter((x) => x.id !== inspoRemoveTargetId));
+    setInspoRemoveTargetId(null);
   };
 
   const handleAddToBag = () => {
-    setFormError(null);
+    setConsultFormNotice(null);
+    if (inspoItems.length === 0) {
+      setConsultFormNotice({
+        title: 'HAIR INSPO REQUIRED',
+        message: 'PLEASE UPLOAD A HAIR INSPO PHOTO.'
+      });
+      return;
+    }
+    if (hairOption === 'WIG + INSTALL' && !isPremiumMemberForGatedFeatures()) {
+      setShowWigInstallFeatureModal(true);
+      return;
+    }
+    if (hairOption === 'WIG + INSTALL' && isPremiumMemberForGatedFeatures()) {
+      const d = consultPreferredDateIso.trim();
+      const tm = consultPreferredTime.trim();
+      if (!d || !tm) {
+        setConsultFormNotice({
+          title: 'DATE & TIME REQUIRED',
+          message: 'PLEASE SELECT A PREFERRED DATE AND TIME.'
+        });
+        return;
+      }
+      if (consultWigInstallDateDisabled(d)) {
+        setConsultFormNotice({
+          title: 'DATE NOT AVAILABLE',
+          message: 'SELECTED DATE IS NOT AVAILABLE. PLEASE CHOOSE ANOTHER.'
+        });
+        return;
+      }
+    }
     setAddToBagState('adding');
     setTimeout(() => {
       try {
@@ -89,8 +258,15 @@ export default function BookingConsultationPage() {
           bookingTier: tier,
           bookingHairOption: hairOption,
           bookingNotes: notes.trim(),
-          bookingInspoFileName: inspoFileName.trim(),
-          bookingBagSubtitle: hairOption
+          bookingInspoFileNames: inspoItems.map((it) => it.name),
+          bookingInspoFileName: inspoItems.map((it) => it.name).join(' · '),
+          bookingBagSubtitle: hairOption,
+          ...(hairOption === 'WIG + INSTALL' && consultPreferredDateIso.trim()
+            ? { bookingPreferredDate: consultPreferredDateIso.trim() }
+            : {}),
+          ...(hairOption === 'WIG + INSTALL' && consultPreferredTime.trim()
+            ? { bookingPreferredTime: consultPreferredTime.trim() }
+            : {})
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -98,6 +274,12 @@ export default function BookingConsultationPage() {
         localStorage.setItem('cartCount', String(newCartCount));
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
         window.dispatchEvent(new Event('cartUpdated'));
+        try {
+          sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        } catch {
+          /* ignore */
+        }
+        setInspoItems([]);
         setAddToBagState('added');
         setTimeout(() => setAddToBagState('idle'), 2000);
       } catch (err) {
@@ -138,16 +320,16 @@ export default function BookingConsultationPage() {
         </BookingCrumbTitle>
         <div style={{ marginTop: '-2px' }}>
           <BookingHeroSubline>
-            DEPOSIT IS APPLIED TOWARDS YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 60 DAYS OF PURCHASE.
+            THIS DEPOSIT SERVES AS A CREDIT TOWARDS YOUR WIG OR INSTALL WHEN REDEEMED WITHIN 72 HOURS OF YOUR QUOTE.
           </BookingHeroSubline>
         </div>
 
         <div style={{ marginBottom: '24px' }}>
           <BookingBodyParagraph>
-            BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. THIS DEPOSIT HOLDS YOUR APPOINTMENT & WILL BE A CREDIT TOWARDS YOUR UNIT OR INSTALL.
+            BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. SELECT WIG + INSTALL OR WIG ONLY.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            SELECT WIG + INSTALL OR WIG ONLY. ADD NOTES ALONG WITH A HAIR INSPO PHOTO FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW-UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
+            ADD NOTES ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -160,63 +342,215 @@ export default function BookingConsultationPage() {
             paddingTop: '20px'
           }}
         >
-          <div>
-            <label htmlFor="hair-inspo" style={labelStyle}>
+          <div style={{ width: '100%', minWidth: 0 }}>
+            <p id="consult-inspo-heading" style={{ ...labelStyle, marginTop: 0 }}>
               HAIR INSPO:
-            </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                ref={fileInputRef}
-                id="hair-inspo"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '36px',
-                  opacity: 0,
-                  cursor: 'pointer',
-                  zIndex: 2
-                }}
-              />
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                style={{
-                  width: '100%',
-                  minHeight: '36px',
-                  height: inspoPreview ? 'auto' : '36px',
-                  padding: '8px',
-                  border: '1.3px solid #000000',
-                  fontFamily: bookingFontMedium,
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  backgroundColor: '#FFFFFF',
-                  color: inspoFileName ? '#808080' : '#000000',
-                  boxSizing: 'border-box',
-                  borderRadius: '0',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                  position: 'relative',
-                  overflow: inspoPreview ? 'visible' : 'hidden',
-                  display: inspoPreview ? 'block' : 'flex',
-                  alignItems: inspoPreview ? 'normal' : 'center'
-                }}
-              >
-                {inspoPreview ? (
-                  <img
-                    src={inspoPreview}
-                    alt="Hair inspo preview"
+              <span style={{ color: '#EB1C24' }}>*</span>
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              {inspoItems.length > 0 ? (
+                <div
+                  className="consult-hair-inspo-thumbs"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    minHeight: '88px'
+                  }}
+                >
+                  {inspoItems.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        position: 'relative',
+                        width: '88px',
+                        height: '88px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setInspoRemoveTargetId(item.id)}
+                        aria-label="Remove inspo photo"
+                        style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          right: '-10px',
+                          width: '20px',
+                          height: '20px',
+                          backgroundColor: '#FFFFFF',
+                          border: '0.97px solid #000000',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          zIndex: 10,
+                          padding: 0,
+                          flexShrink: 0
+                        }}
+                      >
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt=""
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            objectFit: 'contain',
+                            display: 'block',
+                            flexShrink: 0,
+                            filter:
+                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                          }}
+                        />
+                      </button>
+                      <div
+                        style={{
+                          position: 'relative',
+                          padding: '1px',
+                          border: '3px solid white',
+                          boxShadow: '0 0 0 1.1px black',
+                          boxSizing: 'border-box',
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: '#f5f5f5',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <img
+                          src={item.dataUrl}
+                          alt=""
+                          loading="eager"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            display: 'block'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              <div style={{ position: 'relative', width: '100%' }}>
+                {inspoItems.length < MAX_HAIR_INSPO_PHOTOS ? (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      id="consult-hair-inspo-file"
+                      type="file"
+                      accept="image/*,.heic,.heif"
+                      multiple
+                      aria-labelledby="consult-inspo-heading"
+                      onChange={handleFileChange}
+                      style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '36px',
+                        opacity: 0,
+                        cursor: 'pointer',
+                        zIndex: 3,
+                        top: 0,
+                        left: 0,
+                        margin: 0,
+                        fontSize: 0
+                      }}
+                    />
+                    <div
+                      role="presentation"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        width: '100%',
+                        minHeight: '36px',
+                        height: '36px',
+                        padding: '8px',
+                        border: '1.3px solid #000000',
+                        fontFamily: bookingFontMedium,
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        backgroundColor: '#FFFFFF',
+                        color: inspoItems.length > 0 ? '#808080' : '#000000',
+                        boxSizing: 'border-box',
+                        borderRadius: '0',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        alignItems: 'center',
+                        textAlign: 'left'
+                      }}
+                    >
+                      <span
+                        style={{
+                          padding: '4px 8px',
+                          border: '1px solid #808080',
+                          borderRadius: '4px',
+                          backgroundColor: '#F5F5F5',
+                          color: '#000000',
+                          textTransform: 'uppercase',
+                          fontSize: '11px',
+                          fontFamily: bookingFontMedium,
+                          fontWeight: 500,
+                          flexShrink: 0,
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        CHOOSE FILE
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: '8px',
+                          color: '#808080',
+                          fontFamily: bookingFontMedium,
+                          fontWeight: 500,
+                          fontSize: '10px',
+                          flex: 1,
+                          minWidth: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {inspoItems.length > 0
+                          ? `${inspoItems.length} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS`
+                          : 'NO FILE SELECTED'}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowMaxInspoModal(true)}
                     style={{
                       width: '100%',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      objectPosition: 'left center',
-                      display: 'block'
+                      minHeight: '36px',
+                      height: '36px',
+                      padding: '8px',
+                      border: '1.3px solid #000000',
+                      fontFamily: bookingFontMedium,
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      backgroundColor: '#FFFFFF',
+                      color: '#808080',
+                      boxSizing: 'border-box',
+                      borderRadius: '0',
+                      cursor: 'pointer',
+                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center'
                     }}
-                  />
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                  >
                     <span
                       style={{
                         padding: '4px 8px',
@@ -241,46 +575,76 @@ export default function BookingConsultationPage() {
                         fontSize: '10px'
                       }}
                     >
-                      {inspoFileName || 'NO FILE SELECTED'}
+                      {`${inspoItems.length} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS`}
                     </span>
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
           </div>
 
-          <div>
+          <div style={{ width: '100%', minWidth: 0 }}>
             <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>
               HAIR OPTION:
               <span style={{ color: '#EB1C24' }}>*</span>
             </p>
-            <div className="flex flex-wrap gap-2 justify-start">
-              {(['WIG + INSTALL', 'WIG ONLY'] as const).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setHairOption(opt)}
-                  className="bg-white/80 backdrop-blur-sm"
-                  style={{
-                    border: '1.3px solid',
-                    borderColor: hairOption === opt ? '#EB1C24' : '#000000',
-                    fontFamily: bookingFontMedium,
-                    fontSize: '10px',
-                    fontWeight: 500,
-                    padding: '10px 14px',
-                    color: hairOption === opt ? '#EB1C24' : '#000000',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.03em'
-                  }}
-                >
-                  {opt}
-                </button>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {(['WIG + INSTALL', 'WIG ONLY'] as const).map((opt) => {
+                const checked = hairOption === opt;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => setHairOption(opt)}
+                    className="flex w-full text-left border border-black bg-white/80 backdrop-blur-sm"
+                    style={{
+                      borderWidth: '1.3px',
+                      borderColor: checked ? '#EB1C24' : '#000',
+                      padding: '12px 12px',
+                      cursor: 'pointer',
+                      flexDirection: 'column',
+                      alignItems: 'stretch',
+                      gap: 0
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: bookingFontMedium,
+                        fontSize: '10px',
+                        textTransform: 'uppercase',
+                        color: checked ? '#EB1C24' : '#000',
+                        display: 'block',
+                        letterSpacing: '0.02em',
+                        lineHeight: 1.35
+                      }}
+                    >
+                      {opt}
+                    </span>
+                    {opt === 'WIG + INSTALL' && checked ? (
+                      <p
+                        style={{
+                          fontFamily: bookingFontBook,
+                          fontSize: '9px',
+                          color: '#000000',
+                          textTransform: 'uppercase',
+                          margin: '10px 0 0',
+                          padding: 0,
+                          lineHeight: 1.45,
+                          letterSpacing: '0.02em',
+                          textAlign: 'left',
+                          width: '100%'
+                        }}
+                      >
+                        THIS OPTION IS FOR PREMIUM MEMBERS ONLY.
+                      </p>
+                    ) : null}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div>
+          <div style={{ width: '100%', minWidth: 0 }}>
             <label htmlFor="consult-notes" style={{ ...labelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
             </label>
@@ -292,6 +656,8 @@ export default function BookingConsultationPage() {
               className="bg-white/80 backdrop-blur-sm"
               style={{
                 width: '100%',
+                minWidth: 0,
+                maxWidth: '100%',
                 boxSizing: 'border-box',
                 border: '1.3px solid #000',
                 fontFamily: bookingFontMedium,
@@ -307,11 +673,130 @@ export default function BookingConsultationPage() {
             />
           </div>
 
-          {formError && (
-            <p style={{ fontFamily: bookingFontMedium, fontSize: '10px', color: '#EB1C24', textAlign: 'center', margin: 0, letterSpacing: '0.02em' }}>
-              {formError}
-            </p>
-          )}
+          {hairOption === 'WIG + INSTALL' && isPremium ? (
+            <>
+              <div style={{ marginTop: '2px', marginBottom: '16px' }}>
+                <BrandExpiresDatePicker
+                  inline
+                  value={consultPreferredDateIso}
+                  onChange={(iso) => {
+                    setConsultPreferredDateIso(iso);
+                    setConsultPreferredTime('');
+                    setShowConsultTimeDropdown(false);
+                  }}
+                  isDateDisabled={consultWigInstallDateDisabled}
+                />
+              </div>
+              {consultPreferredDateIso ? (
+                <div style={{ marginBottom: '12px' }}>
+                  <label
+                    style={{
+                      fontFamily: bookingFontMedium,
+                      fontSize: '10px',
+                      color: '#000',
+                      textTransform: 'uppercase',
+                      margin: '0 0 6px',
+                      display: 'block',
+                      letterSpacing: '0.02em'
+                    }}
+                  >
+                    AVAILABLE TIME SLOTS:
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowConsultTimeDropdown((v) => !v)}
+                      className="w-full"
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        height: '36px',
+                        border: '1.3px solid #000',
+                        borderRadius: 0,
+                        fontFamily: bookingFontMedium,
+                        fontSize: '11px',
+                        background: '#fff',
+                        textTransform: 'uppercase',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        color: consultPreferredTime ? '#000' : '#808080',
+                        letterSpacing: '0.02em'
+                      }}
+                    >
+                      <span>{consultPreferredTime || 'SELECT A TIME'}</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                        className="flex-shrink-0"
+                        style={{
+                          transform: showConsultTimeDropdown ? 'rotate(180deg)' : 'none',
+                          color: '#EB1C24',
+                          marginLeft: '8px'
+                        }}
+                      >
+                        <path
+                          d="M3 4.5L6 7.5L9 4.5"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    {showConsultTimeDropdown ? (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          aria-hidden="true"
+                          onClick={() => setShowConsultTimeDropdown(false)}
+                        />
+                        <div
+                          className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
+                          style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+                        >
+                          {CONSULT_WIG_INSTALL_TIME_SLOTS.map((slot) => (
+                            <button
+                              key={slot}
+                              type="button"
+                              onClick={() => {
+                                setConsultPreferredTime(slot);
+                                setShowConsultTimeDropdown(false);
+                              }}
+                              className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                              style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+                            >
+                              {slot}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+              {consultPreferredDateIso && consultPreferredTime ? (
+                <p
+                  style={{
+                    fontFamily: bookingFontMedium,
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textTransform: 'uppercase',
+                    textAlign: 'center',
+                    margin: '0 0 12px',
+                    lineHeight: 1.45,
+                    letterSpacing: '0.02em'
+                  }}
+                >
+                  SCHEDULED DATE & TIME: {formatConsultIsoForDisplay(consultPreferredDateIso)} @{' '}
+                  {formatConsultTimeSlotForDisplay(consultPreferredTime)}.
+                </p>
+              ) : null}
+            </>
+          ) : null}
 
           <div className="text-center" style={{ paddingTop: '6px' }}>
             <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
@@ -329,6 +814,30 @@ export default function BookingConsultationPage() {
     </BookingFlowLayout>
 
     <ConfirmationModal
+      isOpen={Boolean(consultFormNotice)}
+      onClose={() => setConsultFormNotice(null)}
+      onConfirm={() => setConsultFormNotice(null)}
+      title={consultFormNotice?.title ?? ''}
+      message={consultFormNotice?.message ?? ''}
+      confirmText="OK"
+      cancelText=""
+      dataAttribute="consult-form-notice-modal"
+    />
+
+    <ConfirmationModal
+      isOpen={inspoRemoveTargetId !== null}
+      onClose={() => setInspoRemoveTargetId(null)}
+      onConfirm={() => {
+        confirmRemoveInspoItem();
+      }}
+      title="REMOVE PHOTO?"
+      message="REMOVE THIS HAIR INSPO PHOTO?"
+      confirmText="REMOVE"
+      cancelText="CANCEL"
+      dataAttribute="consult-remove-inspo-modal"
+    />
+
+    <ConfirmationModal
       isOpen={showConsultAccessModal}
       onClose={() => {
         setShowConsultAccessModal(false);
@@ -343,6 +852,36 @@ export default function BookingConsultationPage() {
       confirmText="GO TO STANDARD CONSULT"
       cancelText="CANCEL"
       dataAttribute="upgrade-subscription-modal-booking-premium-consult"
+    />
+
+    <ConfirmationModal
+      isOpen={showWigInstallFeatureModal}
+      onClose={() => setShowWigInstallFeatureModal(false)}
+      onConfirm={() => {
+        setShowWigInstallFeatureModal(false);
+        if (localStorage.getItem('isSignedIn') === 'true') {
+          prepareMembershipUpgradeNavigation();
+          navigate('/account/rewards');
+          return;
+        }
+        navigate('/sign-in');
+      }}
+      title="UPGRADE YOUR SUBSCRIPTION?"
+      message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
+      confirmText="UPGRADE"
+      cancelText="CANCEL"
+      dataAttribute="upgrade-subscription-modal-booking-consult-wig-install"
+    />
+
+    <ConfirmationModal
+      isOpen={showMaxInspoModal}
+      onClose={() => setShowMaxInspoModal(false)}
+      onConfirm={() => setShowMaxInspoModal(false)}
+      title="MAX PHOTOS REACHED"
+      message="REMOVE OR REPLACE AN IMAGE."
+      confirmText="CLOSE"
+      cancelText=""
+      dataAttribute="consult-max-hair-inspo-photos-modal"
     />
 
     </>

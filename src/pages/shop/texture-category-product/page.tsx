@@ -596,7 +596,8 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: displayPrice,
           quantity: 1,
-          image: heroThumbSrc,
+          image:
+            category === 'bundles' ? shopTextureCategoryThumbSrc(texture, 'bundles') : heroThumbSrc,
           type: 'shop-texture-category',
           texture,
           category,
@@ -643,7 +644,7 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: unitPrice,
           quantity: BUNDLE_DEAL_QTY,
-          image: heroThumbSrc,
+          image: shopTextureCategoryThumbSrc(texture, 'bundles'),
           type: 'shop-texture-category',
           texture,
           category: 'bundles' as const,

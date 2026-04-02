@@ -8,7 +8,16 @@ import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { sortCartPremiumBookingFirst } from '../../utils/bookingCart';
 import { bookingAppointmentHrefForCartItem, bookingConsultationHrefForCartItem } from '../../utils/bookingMemberRoutes';
-import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import {
+  beginEditAppointmentFromCart,
+  bookingEditLinkClassName,
+  bookingEditLinkStyle
+} from '../../utils/bookingAppointmentFormDraft';
+import {
+  bookingCartItemThumbnailSrc,
+  BOOKING_APPOINTMENT_CART_BADGE_IMG_PX,
+  BOOKING_CART_BADGE_IMG_PX
+} from '../../utils/bookingBadges';
 import {
   shopBcfPdpHrefFromCartItem,
   shopBcfCartLineThumbnailSrc,
@@ -33,12 +42,14 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
 const BAG_BCF_THUMB_PX = Math.round(BAG_UNIT_THUMB_PX * 0.85 * 1.05);
-const BAG_BOOKING_BADGE_PX = 66;
+const BAG_BOOKING_BADGE_PX = BOOKING_CART_BADGE_IMG_PX;
+const BAG_BOOKING_APPOINTMENT_BADGE_PX = BOOKING_APPOINTMENT_CART_BADGE_IMG_PX;
 const BAG_GIFT_THUMB_PX = 108;
 
 function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return BAG_GIFT_THUMB_PX;
-  if (item.type === 'booking-consult' || item.type === 'booking-appointment') return BAG_BOOKING_BADGE_PX;
+  if (item.type === 'booking-appointment') return BAG_BOOKING_APPOINTMENT_BADGE_PX;
+  if (item.type === 'booking-consult') return BAG_BOOKING_BADGE_PX;
   if (item.type === 'shop-texture-category') return BAG_BCF_THUMB_PX;
   return BAG_UNIT_THUMB_PX;
 }
@@ -99,18 +110,22 @@ function ShoppingBagLineThumb({
   itemImage,
   itemName,
   navigate,
-  onEditUnit
+  onEditUnit,
+  onEditAppointment
 }: {
   item: any;
   itemImage: string;
   itemName: string;
   navigate: (path: string) => void;
   onEditUnit?: (item: any) => void;
+  onEditAppointment?: (item: any) => void;
 }) {
   const isGift = item.name === 'GIFT CARD' || item.type === 'gift-card';
   const isBooking = item.type === 'booking-consult' || item.type === 'booking-appointment';
   const isBcf = item.type === 'shop-texture-category';
   const cartThumbBoxPx = bagRowCartThumbBoxPx(item);
+  const bookingBadgeImgPx =
+    item.type === 'booking-appointment' ? BAG_BOOKING_APPOINTMENT_BADGE_PX : BAG_BOOKING_BADGE_PX;
 
   const goPdp = () => {
     let productRoute = '/straight/noir';
@@ -176,7 +191,7 @@ function ShoppingBagLineThumb({
                 src={itemImage}
                 alt={itemName}
                 className="object-contain rounded"
-                style={{ width: `${BAG_BOOKING_BADGE_PX}px`, height: `${BAG_BOOKING_BADGE_PX}px` }}
+                style={{ width: `${bookingBadgeImgPx}px`, height: `${bookingBadgeImgPx}px` }}
               />
             </div>
           ) : (
@@ -193,7 +208,18 @@ function ShoppingBagLineThumb({
             })()
           )}
         </div>
-        {!isGift && !isBooking && !isBcf && onEditUnit ? (
+        {item.type === 'booking-appointment' && onEditAppointment ? (
+          <p
+            className={bookingEditLinkClassName}
+            style={bookingEditLinkStyle}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditAppointment(item);
+            }}
+          >
+            EDIT APPOINTMENT
+          </p>
+        ) : !isGift && !isBooking && !isBcf && onEditUnit ? (
           <p
             className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
             style={{
@@ -841,6 +867,10 @@ function ShoppingBagPage() {
     }
   };
 
+  const handleEditAppointment = (item: any) => {
+    beginEditAppointmentFromCart(item, navigate);
+  };
+
   // Update active tab based on current route
   useEffect(() => {
     const pathname = location.pathname;
@@ -1339,6 +1369,7 @@ function ShoppingBagPage() {
                             itemName={itemName}
                             navigate={navigate}
                             onEditUnit={handleEdit}
+                            onEditAppointment={handleEditAppointment}
                           />
 
                           {/* Item Details - Matching cart dropdown */}
@@ -1378,11 +1409,10 @@ function ShoppingBagPage() {
                               </p>
                               {(() => {
                                 const detailsKey = `c-${itemId}`;
-                                const showBcfBookingDetails =
-                                  isBookingLine || item.type === 'shop-texture-category';
+                                const showBookingDetailsOnBag = isBookingLine;
                                 return (
                                   <>
-                                    {bagViewDetailsFor === detailsKey && showBcfBookingDetails && (
+                                    {bagViewDetailsFor === detailsKey && showBookingDetailsOnBag && (
                                       <p
                                         className="font-bold"
                                         style={{
@@ -1398,14 +1428,11 @@ function ShoppingBagPage() {
                                           maxWidth: 'calc(100% - 20px)'
                                         }}
                                         dangerouslySetInnerHTML={{
-                                          __html:
-                                            item.type === 'shop-texture-category'
-                                              ? bcfCartViewDetailsHtml(item)
-                                              : bookingCartViewDetailsHtml(item)
+                                          __html: bookingCartViewDetailsHtml(item)
                                         }}
                                       />
                                     )}
-                                    {showBcfBookingDetails && (
+                                    {showBookingDetailsOnBag && (
                                       <span
                                         role="button"
                                         tabIndex={0}
@@ -1890,6 +1917,7 @@ function ShoppingBagPage() {
                         itemName={itemName}
                         navigate={navigate}
                         onEditUnit={handleEdit}
+                        onEditAppointment={handleEditAppointment}
                       />
 
                       {/* Product Details */}
@@ -1929,11 +1957,10 @@ function ShoppingBagPage() {
                            </p>
                            {(() => {
                              const detailsKey = `s-${itemId}`;
-                             const showBcfBookingDetails =
-                               isSavedBookingLine || item.type === 'shop-texture-category';
+                             const showBookingDetailsOnBag = isSavedBookingLine;
                              return (
                                <>
-                                 {bagViewDetailsFor === detailsKey && showBcfBookingDetails && (
+                                 {bagViewDetailsFor === detailsKey && showBookingDetailsOnBag && (
                                    <p
                                      className="font-bold"
                                      style={{
@@ -1949,14 +1976,11 @@ function ShoppingBagPage() {
                                        maxWidth: 'calc(100% - 20px)'
                                      }}
                                      dangerouslySetInnerHTML={{
-                                       __html:
-                                         item.type === 'shop-texture-category'
-                                           ? bcfCartViewDetailsHtml(item)
-                                           : bookingCartViewDetailsHtml(item)
+                                       __html: bookingCartViewDetailsHtml(item)
                                      }}
                                    />
                                  )}
-                                 {showBcfBookingDetails && (
+                                 {showBookingDetailsOnBag && (
                                    <span
                                      role="button"
                                      tabIndex={0}
