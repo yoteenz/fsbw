@@ -5,6 +5,7 @@ import {
   getAdminMeetings,
   patchAdminMeeting,
   postAdminConsultQuote,
+  postAdminMeetingClientAlert,
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -246,7 +247,7 @@ export default function AdminMeetingsHub() {
     }
   };
 
-  const submitEditMeeting = async () => {
+  const submitEditMeeting = async (action: 'reschedule' | 'cancel') => {
     if (!editMeeting) return;
     const uuid = /^[0-9a-f-]{36}$/i.test(editMeeting.id);
     setEditSubmitting(true);
@@ -257,9 +258,37 @@ export default function AdminMeetingsHub() {
           status: 'scheduled',
         });
       }
+      const email = editMeeting.clientEmail?.trim().toLowerCase();
+      const uid = editMeeting.userId?.trim();
+      let doneNotice = 'UPDATE RECORDED.';
+      if (isSupabaseConfigured() && (email || uid)) {
+        try {
+          await postAdminMeetingClientAlert({
+            meetingId: editMeeting.id,
+            reason: editReason,
+            message: editMessage,
+            action,
+            ...(uid ? { userId: uid } : {}),
+            ...(email ? { clientEmail: email } : {}),
+          });
+          doneNotice = 'UPDATE SENT — CLIENT ALERT ADDED.';
+        } catch (alertErr) {
+          setHubNotice(
+            alertErr instanceof Error
+              ? `${alertErr.message.toUpperCase()} (NOTES SAVED)`
+              : 'ALERT FAILED (NOTES SAVED)'
+          );
+          setEditMeeting(null);
+          setEditMessage('');
+          refreshLocal();
+          return;
+        }
+      } else if (isSupabaseConfigured()) {
+        doneNotice = 'NOTES SAVED — ADD CLIENT EMAIL ON MEETING TO SEND ALERTS.';
+      }
       setEditMeeting(null);
       setEditMessage('');
-      setHubNotice('UPDATE RECORDED. CLIENT ALERT FLOW WILL USE NOTIFICATIONS API NEXT.');
+      setHubNotice(doneNotice);
       refreshLocal();
     } catch (e) {
       setHubNotice(e instanceof Error ? e.message.toUpperCase() : 'UPDATE FAILED');
@@ -776,17 +805,22 @@ export default function AdminMeetingsHub() {
                 onChange={(e) => setEditMessage(e.target.value)}
               />
             </label>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '6px' }}>
-              RESCHEDULE / CANCEL WORKFLOW: PATCHES MEETING NOTES; FULL CLIENT ACCEPT FLOW WIRES NEXT TO NOTIFICATIONS API.
-            </p>
             <div className="flex flex-col gap-2 mt-3">
               <button
                 type="button"
                 className="py-2 border border-black text-[10px]"
                 disabled={editSubmitting}
-                onClick={() => void submitEditMeeting()}
+                onClick={() => void submitEditMeeting('reschedule')}
               >
-                SAVE / NOTIFY (NOTES)
+                RESCHEDULE APPOINTMENT (NOTIFY CLIENT)
+              </button>
+              <button
+                type="button"
+                className="py-2 border border-black text-[10px]"
+                disabled={editSubmitting}
+                onClick={() => void submitEditMeeting('cancel')}
+              >
+                CANCEL APPOINTMENT (NOTIFY CLIENT)
               </button>
               <button type="button" className="py-2 border border-gray-300 text-[10px]" onClick={() => setEditMeeting(null)}>
                 CLOSE

@@ -338,6 +338,7 @@ export default function BookingConsultationPage() {
         <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '2px' }}>
           <NoirStyleAddToBagButton
             idleLabel="PROCEED TO CHECKOUT"
+            alwaysShowIdleLabel
             state={addToBagState}
             disabled={addToBagState === 'adding'}
             onClick={handleAddToBag}
@@ -526,7 +527,8 @@ export default function BookingConsultationPage() {
                     flexWrap: 'wrap',
                     gap: '10px',
                     width: '100%',
-                    justifyContent: 'flex-start',
+                    marginTop: '14px',
+                    justifyContent: 'center',
                     alignItems: 'flex-start',
                     minHeight: '88px'
                   }}
@@ -705,7 +707,14 @@ export default function BookingConsultationPage() {
 
           {hairOption === 'WIG + INSTALL' && isPremium ? (
             <>
-              <div style={{ marginTop: '2px', marginBottom: '16px' }}>
+              <div
+                style={{
+                  borderTop: '1px solid #e5e7eb',
+                  paddingTop: '20px',
+                  marginTop: 0,
+                  marginBottom: '16px'
+                }}
+              >
                 <BrandExpiresDatePicker
                   inline
                   value={consultPreferredDateIso}

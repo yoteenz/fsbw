@@ -803,6 +803,7 @@ export default function BookingAppointmentPage() {
         <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '2px' }}>
           <NoirStyleAddToBagButton
             idleLabel="PROCEED TO CHECKOUT"
+            alwaysShowIdleLabel
             state={addToBagState}
             disabled={addToBagState === 'adding'}
             onClick={handleScheduleToBag}
@@ -1332,7 +1333,7 @@ export default function BookingAppointmentPage() {
             ))}
           </div>
 
-          <div style={{ width: '100%', minWidth: 0, marginBottom: '22px' }}>
+          <div style={{ width: '100%', minWidth: 0, marginBottom: 0 }}>
             <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
             </label>
@@ -1361,7 +1362,14 @@ export default function BookingAppointmentPage() {
             />
           </div>
 
-          <div style={{ marginTop: '22px', marginBottom: '16px' }}>
+          <div
+            style={{
+              borderTop: '1px solid #e5e7eb',
+              paddingTop: '20px',
+              marginTop: 0,
+              marginBottom: '16px'
+            }}
+          >
             <BrandExpiresDatePicker
               inline
               value={preferredDateIso}

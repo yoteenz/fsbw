@@ -6859,3 +6859,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User asked that the red subtitle for **booking** lines in **cart dropdown**, **shopping bag**, **checkout**, and **checkout summary** not show **RAW HUMAN HAIR** (that copy stays for **BCF** shop lines). Appointments should show **NEW INSTALL** or **RE-INSTALL**; consults **WIG + INSTALL** or **WIG ONLY**.
 
 **Changes:** **`src/utils/cartLineRedAndDetails.ts`** — new **`bookingCartRedSubtitle`**: **`booking-appointment`** from **`bookingInstallKind`** (**`RE_INSTALL`** → **RE-INSTALL**, else **NEW INSTALL**); **`booking-consult`** from **`bookingHairOption`** or fallback **`bookingBagSubtitle`**. **`CartDropdown`**, **`shopping-bag/page.tsx`** (**`bagProductRedSubtitle`**), **`checkoutOrderStripDisplay.ts`** (**`orderStripRedSubtitle`**) use it for A/C types only; **`shop-texture-category`** still uses **`CART_RED_LINE_BCF_BOOKING`**. **`src/types/cart.ts`** — **`bookingHairOption?: string`** on **`CartItem`**.
+
+---
+
+## 2026-04-01 — A/C booking: centered hair inspo thumbs + divider above calendar
+
+**Context:** User wanted **hair inspo thumbnails** centered horizontally on the consult card with **8px** space above the row; a **gray border** between **ADDITIONAL NOTES** and the **calendar** on **appointment** and **consultation** pages.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — inspo thumb flex row **`marginTop: '14px'`**, **`justifyContent: 'center'`**; premium **WIG + INSTALL** calendar wrapper **`borderTop: '1px solid #e5e7eb'`**, **`paddingTop: '20px'`** (replaces **`marginTop: '2px'`**). **`src/pages/booking/appointment/page.tsx`** — notes block **`marginBottom: 0`**; calendar wrapper same **`borderTop`** / **`paddingTop`** (replaces stacked **`marginTop`/`marginBottom`** **22px** gap).
+
+---
+
+## 2026-04-01 — Consult inspo spacing + A/C checkout CTA label locked
+
+**Context:** User asked for **6px more** space above hair inspo attachment thumbnails; **PROCEED TO CHECKOUT** on appointment/consult should **not** switch to **ADDING...** / **IN THE BAG** when clicked — label stays **PROCEED TO CHECKOUT**.
+
+**Changes:** **`consultation/page.tsx`** — thumb row **`marginTop: '14px'`** (was 8px). **`BookingPageChrome.tsx`** — **`NoirStyleAddToBagButton`** prop **`alwaysShowIdleLabel`** (keeps **`idleLabel`** for all states; still **`disabled`** while **`adding`**). **`consultation/page.tsx`** and **`appointment/page.tsx`** pass **`alwaysShowIdleLabel`** on the checkout CTA.
+
+---
+
+## 2026-04-02 — Checkout: TS6133 `redeemConsultQuote` unused import (Vercel build)
+
+**Context:** User’s **Vercel** **`npm run build`** failed with **`src/pages/checkout/page.tsx`**: **`redeemConsultQuote` is declared but its value is never read** (**TS6133**).
+
+**Changes:** Removed **`redeemConsultQuote`** from the top-level **`../../utils/api`** import list; after a successful order with an applied consult quote, **`redeemConsultQuote`** is loaded via **`await import('../../utils/api')`** inside that **`try`** block, then called — same runtime behavior without an unused static import binding.

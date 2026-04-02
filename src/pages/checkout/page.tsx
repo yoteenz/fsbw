@@ -2235,6 +2235,12 @@ function CheckoutPage() {
               console.error('Error preparing Route protection data:', error);
             }
           }
+
+          if (appliedConsultQuote && consultDiscountAmount > 0 && !isSubscriptionUpgrade) {
+            void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err) =>
+              console.error('Error redeeming consult quote code:', err)
+            );
+          }
           
           sessionStorage.setItem(
             'checkoutSummaryRewards',
@@ -2990,6 +2996,7 @@ function CheckoutPage() {
                         setDiscountCodeError('');
                         setAppliedDiscount(0);
                         setAppliedBrandDiscountPromo(null);
+                        setAppliedConsultQuote(null);
                         setAppliedReferralCode('');
                         setReferralDiscount(0);
                       }}
@@ -6052,6 +6059,12 @@ function CheckoutPage() {
                     } catch (err) {
                       console.error('Error recording brand discount order:', err);
                     }
+                  }
+
+                  if (appliedConsultQuote && consultDiscountAmount > 0 && !isSubscriptionUpgrade) {
+                    void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err) =>
+                      console.error('Error redeeming consult quote code:', err)
+                    );
                   }
                   
                   // Create Route protection if package protection is selected (non-blocking)

@@ -201,13 +201,16 @@ export function NoirStyleAddToBagButton({
   onClick,
   disabled,
   state,
-  idleLabel = 'ADD TO BAG'
+  idleLabel = 'ADD TO BAG',
+  /** When true, label stays `idleLabel` in adding/added (e.g. A/C “proceed to checkout”). */
+  alwaysShowIdleLabel = false
 }: {
   onClick: () => void;
   disabled?: boolean;
   state: 'idle' | 'adding' | 'added';
   /** Default `ADD TO BAG`; appointment/consult use the same string. */
   idleLabel?: string;
+  alwaysShowIdleLabel?: boolean;
 }) {
   return (
     <div className="w-full" style={{ marginTop: '2px' }}>
@@ -229,9 +232,11 @@ export function NoirStyleAddToBagButton({
           backgroundColor: '#FFFFFF'
         }}
       >
-        {state === 'idle' && idleLabel}
-        {state === 'adding' && 'ADDING...'}
-        {state === 'added' && (
+        {alwaysShowIdleLabel || state === 'idle' ? (
+          idleLabel
+        ) : state === 'adding' ? (
+          'ADDING...'
+        ) : (
           <span className="flex items-center justify-center gap-1">
             <img src="/assets/check.svg" alt="" width={9} height={9} />
             <span style={{ color: '#808080' }}>IN THE BAG</span>
