@@ -113,7 +113,7 @@ export function applyCartItemToAppointmentFormDraft(item: CartItem): boolean {
 
   const installRaw = item.bookingInstallKind;
   const installKind: InstallKind =
-    installRaw === 'RE_INSTALL' || installRaw === 'NEW_INSTALL' ? installRaw : 'NEW_INSTALL';
+    installRaw === 'RE_INSTALL' || installRaw === 'NEW_INSTALL' ? installRaw : 'RE_INSTALL';
 
   const styleRaw = item.bookingStyle;
   const appointmentStyle: AppointmentStyle =

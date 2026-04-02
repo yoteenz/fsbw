@@ -17,6 +17,7 @@ import { getCarrierTrackingUrl, getOrderTrackingStageFromOrder, ORDER_TRACKING_S
 import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 interface OrderLineItem {
   productName: string;
@@ -1299,7 +1300,7 @@ function OrdersPage() {
       setShowSignOutConfirm(true);
     } else {
       // Navigate to sign-in page
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -1309,7 +1310,7 @@ function OrdersPage() {
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
 
   // Sync isSignedIn state with localStorage and sign-in events
@@ -1375,7 +1376,7 @@ function OrdersPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -1387,7 +1388,7 @@ function OrdersPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

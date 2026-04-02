@@ -98,6 +98,23 @@ function consultInspo(m: AdminMeeting): string[] {
   return Array.isArray(arr) ? arr.map(String) : [];
 }
 
+/** Match rewards / tier-benefits close control (brand red). */
+const CLOSE_ICON_RED_FILTER =
+  'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
+
+function groupMeetingsByClientEmail(rows: AdminMeeting[]): { email: string; rows: AdminMeeting[] }[] {
+  return rows.reduce<{ email: string; rows: AdminMeeting[] }[]>((acc, m) => {
+    const em = (m.clientEmail || 'UNKNOWN').toLowerCase();
+    let g = acc.find((x) => x.email === em);
+    if (!g) {
+      g = { email: em, rows: [] };
+      acc.push(g);
+    }
+    g.rows.push(m);
+    return acc;
+  }, []);
+}
+
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -112,7 +129,7 @@ export default function AdminMeetingsHub() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [localTick, setLocalTick] = useState(0);
-  const [showViewAll, setShowViewAll] = useState(false);
+  const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(null);
   const [quoteMeeting, setQuoteMeeting] = useState<AdminMeeting | null>(null);
   const [editMeeting, setEditMeeting] = useState<AdminMeeting | null>(null);
   const [quoteUnit, setQuoteUnit] = useState<string>(UNIT_OPTIONS[0].id);
@@ -304,6 +321,14 @@ export default function AdminMeetingsHub() {
 
   const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
 
+  const viewAllGroups = useMemo(
+    () =>
+      viewAllMode
+        ? groupMeetingsByClientEmail(viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings)
+        : [],
+    [viewAllMode, appointmentMeetings, consultMeetings]
+  );
+
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
@@ -347,42 +372,81 @@ export default function AdminMeetingsHub() {
                   MEETINGS
                 </h2>
               </div>
-              <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                <div className="flex justify-center gap-8">
-                  <button
-                    type="button"
-                    onClick={() => setMainTab('bookings')}
+              {viewAllMode ? (
+                <div
+                  className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
+                  style={{ borderBottom: '1px solid #e5e7eb', marginBottom: 0 }}
+                >
+                  <h2
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
-                      color: mainTab === 'bookings' ? '#EB1C24' : '#808080',
+                      color: '#EB1C24',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      margin: 0,
+                    }}
+                  >
+                    {viewAllMode === 'bookings' ? 'VIEW ALL BOOKINGS' : 'VIEW ALL CONSULTS'}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setViewAllMode(null)}
+                    aria-label="Close view all"
+                    style={{
+                      padding: 0,
                       border: 'none',
                       background: 'none',
                       cursor: 'pointer',
-                      borderBottom: mainTab === 'bookings' ? '1px solid #EB1C24' : '1px solid transparent',
-                      paddingBottom: '4px',
+                      lineHeight: 0,
                     }}
                   >
-                    BOOKINGS
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMainTab('consults')}
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
-                      color: mainTab === 'consults' ? '#EB1C24' : '#808080',
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      borderBottom: mainTab === 'consults' ? '1px solid #EB1C24' : '1px solid transparent',
-                      paddingBottom: '4px',
-                    }}
-                  >
-                    CONSULTS
+                    <img
+                      src="/assets/close-icon.svg"
+                      alt=""
+                      width={16}
+                      height={16}
+                      style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
+                    />
                   </button>
                 </div>
-              </div>
+              ) : (
+                <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                  <div className="flex justify-center gap-8">
+                    <button
+                      type="button"
+                      onClick={() => setMainTab('bookings')}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        color: mainTab === 'bookings' ? '#EB1C24' : '#808080',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        borderBottom: mainTab === 'bookings' ? '1px solid #EB1C24' : '1px solid transparent',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      BOOKINGS
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMainTab('consults')}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        color: mainTab === 'consults' ? '#EB1C24' : '#808080',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        borderBottom: mainTab === 'consults' ? '1px solid #EB1C24' : '1px solid transparent',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      CONSULTS
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {hubNotice && (
                 <div className="px-5 py-2" style={{ background: 'rgba(235,28,36,0.08)' }}>
@@ -394,7 +458,25 @@ export default function AdminMeetingsHub() {
               )}
 
               <div className="flex-1 min-h-0 overflow-y-auto px-5 py-3" style={{ maxHeight: 'calc(100dvh - 240px)' }}>
-                {mainTab === 'bookings' ? (
+                {viewAllMode ? (
+                  <>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '0 0 12px 0' }}>
+                      GROUPED BY CLIENT EMAIL (CURRENT MONTH RANGE).
+                    </p>
+                    <div className="space-y-3">
+                      {viewAllGroups.map((g) => (
+                        <div key={g.email} style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>{g.email}</p>
+                          {g.rows.map((m) => (
+                            <p key={m.id} style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
+                              {m.date} {m.time} — {m.type}
+                            </p>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : mainTab === 'bookings' ? (
                   <>
                     <div className="flex items-center justify-between mb-2">
                       <button
@@ -602,73 +684,48 @@ export default function AdminMeetingsHub() {
                     )}
                   </>
                 )}
+              </div>
+            </div>
 
+            <div className="w-full px-0 md:px-0" style={{ marginTop: '10px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
                   type="button"
-                  className="w-full mt-4 py-2"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '10px',
-                    border: '1px solid #000',
-                    background: '#fff',
-                    cursor: 'pointer',
+                  onClick={() => {
+                    setMainTab('bookings');
+                    setViewAllMode((m) => (m === 'bookings' ? null : 'bookings'));
                   }}
-                  onClick={() => setShowViewAll(true)}
+                  className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px',
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                  }}
                 >
-                  VIEW ALL ({mainTab === 'bookings' ? 'BOOKINGS' : 'CONSULTS'})
+                  VIEW ALL BOOKINGS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMainTab('consults');
+                    setViewAllMode((m) => (m === 'consults' ? null : 'consults'));
+                  }}
+                  className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px',
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                  }}
+                >
+                  VIEW ALL CONSULTS
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {showViewAll && (
-        <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
-          style={{ background: 'rgba(0,0,0,0.45)' }}
-          onClick={() => setShowViewAll(false)}
-          role="presentation"
-        >
-          <div
-            className="bg-white w-full max-w-md max-h-[80vh] overflow-y-auto p-4 border border-black m-4"
-            style={{ borderWidth: '1.3px' }}
-            onClick={(e) => e.stopPropagation()}
-            role="presentation"
-          >
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24' }}>VIEW ALL</p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080' }}>
-              GROUPED BY CLIENT EMAIL (CURRENT MONTH RANGE).
-            </p>
-            <div className="mt-3 space-y-3">
-              {(mainTab === 'bookings' ? appointmentMeetings : consultMeetings)
-                .reduce<{ email: string; rows: AdminMeeting[] }[]>((acc, m) => {
-                  const em = (m.clientEmail || 'UNKNOWN').toLowerCase();
-                  let g = acc.find((x) => x.email === em);
-                  if (!g) {
-                    g = { email: em, rows: [] };
-                    acc.push(g);
-                  }
-                  g.rows.push(m);
-                  return acc;
-                }, [])
-                .map((g) => (
-                  <div key={g.email} style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}>{g.email}</p>
-                    {g.rows.map((m) => (
-                      <p key={m.id} style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555' }}>
-                        {m.date} {m.time} — {m.type}
-                      </p>
-                    ))}
-                  </div>
-                ))}
-            </div>
-            <button type="button" className="mt-4 w-full py-2 border border-black text-[10px]" onClick={() => setShowViewAll(false)}>
-              CLOSE
-            </button>
-          </div>
-        </div>
-      )}
 
       {quoteMeeting && (
         <div
@@ -761,7 +818,7 @@ export default function AdminMeetingsHub() {
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
         title="SEND ALERT?"
-        message="CLIENT WILL SEE AN ALERT WITH VIEW ORDER (CONSULT OFFER)."
+        message="CLIENT WILL SEE AN ALERT WITH VIEW QUOTE (CONSULT OFFER)."
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"

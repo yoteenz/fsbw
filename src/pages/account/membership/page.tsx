@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
@@ -28,6 +28,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { trackActivity } from '../../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -132,6 +133,7 @@ const EARN_TASKS = [
 
 function MembershipPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -780,9 +782,9 @@ function MembershipPage() {
       clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -983,7 +985,7 @@ function MembershipPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -995,7 +997,7 @@ function MembershipPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
@@ -2738,7 +2740,7 @@ fontFamily: '"Futura PT Book"',
         isOpen={showValidationModal}
         onClose={() => setShowValidationModal(false)}
         onConfirm={() => setShowValidationModal(false)}
-        title="SUBSCRIPTION REQUIRED"
+        title="FORGETTING SOMETHING?"
         message="PLEASE SELECT A SUBSCRIPTION TIER TO CONTINUE."
         confirmText="OK"
         cancelText=""

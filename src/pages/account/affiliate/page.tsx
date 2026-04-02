@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import ImageViewerModal from '../../../components/ImageViewerModal';
@@ -11,6 +11,7 @@ import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 interface Order {
   id: string;
@@ -45,6 +46,7 @@ interface Order {
 
 function AffiliatePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -1679,9 +1681,9 @@ function AffiliatePage() {
       clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -1718,7 +1720,7 @@ function AffiliatePage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -1730,7 +1732,7 @@ function AffiliatePage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

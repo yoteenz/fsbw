@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -8,6 +8,7 @@ import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 interface Notification {
   id: string;
@@ -363,6 +364,7 @@ export function mergeAccountNotifications(stored: Notification[], account: Notif
 
 function NotificationsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -635,7 +637,7 @@ function NotificationsPage() {
     if (isSignedIn) {
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -683,7 +685,7 @@ function NotificationsPage() {
                 {showMobileMenu ? (
                   <>
                     <button 
-                      onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                      onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                       className="cursor-pointer" 
                       style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                     >
@@ -695,7 +697,7 @@ function NotificationsPage() {
                       />
                     </button>
                     <button 
-                      onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                      onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                       className="cursor-pointer"
                       style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                     >

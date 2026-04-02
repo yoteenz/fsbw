@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -58,6 +58,7 @@ function getHairOrigin(productName: string): string {
 
 export default function ViewListsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [lists, setLists] = useState<UserList[]>([]);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(() => {
@@ -112,7 +113,7 @@ export default function ViewListsPage() {
   };
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) navigate('/account');
-    else navigate('/sign-in');
+    else navigate(signInHrefWithReturnTo(location));
   };
   const handleDeleteList = () => {
     if (listToDelete) {
@@ -191,7 +192,7 @@ export default function ViewListsPage() {
                     <img alt="Account" width="16" height="16" src="/assets/NOIR/account-icon.svg" />
                   </button>
                   <button
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

@@ -22,6 +22,7 @@ import {
   orderStripUseDigitalStackLayout
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -446,9 +447,17 @@ function CheckoutConfirmPage() {
           }
         } catch (_) {}
 
-        // Same as checkout: basePoints = isSignedIn ? round(pointsEligibleAmount) : 0; pointsEarned = round(basePoints * multiplier)
+        // Same as checkout: base on net merchandise after discounts when snapshot exists
         const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+        let baseUsd = pointsEligibleAmount;
+        try {
+          const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
+          if (snap != null && snap !== '') {
+            const n = parseFloat(snap);
+            if (Number.isFinite(n) && n >= 0) baseUsd = n;
+          }
+        } catch (_) {}
+        const basePoints = signedIn ? Math.round(baseUsd) : 0;
         pointsEarned = Math.round(basePoints * multiplier);
       }
 
@@ -726,7 +735,7 @@ function CheckoutConfirmPage() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in?returnTo=checkout/summary');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -787,7 +796,7 @@ function CheckoutConfirmPage() {
                 {showMobileMenu ? (
                   <>
                     <button 
-                      onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                      onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                       className="cursor-pointer" 
                       style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                     >
@@ -799,7 +808,7 @@ function CheckoutConfirmPage() {
                       />
                     </button>
                     <button 
-                      onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                      onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                       className="cursor-pointer"
                       style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                     >
@@ -1607,10 +1616,17 @@ function CheckoutConfirmPage() {
                     const tier = getEffectiveTierName(user) || (user?.currentTierName || user?.tier || '')?.toString().toUpperCase() || null;
                     const subTier = getEffectiveSubscriptionTier(user);
                     const mult = getPointsMultiplier(tier, subTier).multiplier;
-                    const pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
+                    let pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
                       if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
                       return sum + (item?.price || 0) * (item?.quantity || 1);
                     }, 0);
+                    try {
+                      const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
+                      if (snap != null && snap !== '') {
+                        const n = parseFloat(snap);
+                        if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
+                      }
+                    } catch (_) {}
                     const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
                     if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
                     if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
@@ -1684,7 +1700,7 @@ function CheckoutConfirmPage() {
                       if (isSignedIn) {
                         navigate('/account/orders');
                       } else {
-                        navigate('/sign-in?returnTo=checkout/summary');
+                        navigate(signInHrefWithReturnTo(location));
                       }
                     }}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"

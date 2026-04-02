@@ -11,6 +11,7 @@ import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 function ProductsUnitsPage() {
   const navigate = useNavigate();
@@ -313,7 +314,7 @@ function ProductsUnitsPage() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -954,7 +955,7 @@ function ProductsUnitsPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -966,7 +967,7 @@ function ProductsUnitsPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

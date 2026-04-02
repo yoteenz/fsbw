@@ -16,6 +16,7 @@ import {
 } from '../../utils/shopTextureCategoryThumb';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 function ProductsPage() {
   const navigate = useNavigate();
@@ -621,7 +622,7 @@ function ProductsPage() {
       setShowSignOutConfirm(true);
     } else {
       // Navigate to sign-in page
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -634,7 +635,7 @@ function ProductsPage() {
     // Close mobile menu
     setShowMobileMenu(false);
     // Navigate to sign-in page
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
 
   // Sync isSignedIn state with localStorage and sign-in events
@@ -707,7 +708,7 @@ function ProductsPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -719,7 +720,7 @@ function ProductsPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

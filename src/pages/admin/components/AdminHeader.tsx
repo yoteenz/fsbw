@@ -1,6 +1,7 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isAdminFounderAccount } from '../../../utils/adminAuth';
 
 /** Debug: long-press (500ms) on messages/notifications icons toggles active/inactive for testing "no new" state */
 const LONG_PRESS_MS = 500;
@@ -182,6 +183,32 @@ export default function AdminHeader({
   showAccountIcon = false,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
+
+  const headerNotifications = useMemo(() => {
+    const base = [...notifications];
+    let email: string | null = null;
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+      const u = raw ? JSON.parse(raw) : null;
+      email = (u?.email || '').trim().toLowerCase() || null;
+    } catch {
+      /* ignore */
+    }
+    if (isAdminFounderAccount({ email: email ?? undefined })) {
+      const afterAffiliate = base.findIndex((n) => n.id === 61);
+      const row = {
+        id: 62,
+        text: 'ACCOUNT ALERT - CONSULT QUOTE (VIEW QUOTE)',
+        urgent: false,
+        unread: true,
+        timestamp: 'JUST NOW',
+        category: 'ALERTS',
+      };
+      if (afterAffiliate >= 0) base.splice(afterAffiliate + 1, 0, row);
+      else base.unshift(row);
+    }
+    return base;
+  }, []);
 
   const [isBackPressed, setIsBackPressed] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -445,10 +472,10 @@ export default function AdminHeader({
 
   // Filter notifications and messages based on active/inactive state
   const displayedNotifications = showInactiveNotifications
-    ? notifications.filter(
+    ? headerNotifications.filter(
         n => !n.unread || readNotifications.includes(n.id)
       )
-    : notifications.filter(
+    : headerNotifications.filter(
         n => n.unread && !readNotifications.includes(n.id)
       );
 

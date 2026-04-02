@@ -15,3 +15,8 @@ export function filterBookingCartLines<T extends { type?: string }>(items: T[]):
 export function isBookingsCheckoutPath(pathname: string): boolean {
   return pathname.includes('/checkout/bookings');
 }
+
+/** True when `/checkout/bookings` is showing a non-empty cart of only A/C lines (appointment + consult). */
+export function isBookingsOnlyCheckoutState(pathname: string, items: { type?: string }[]): boolean {
+  return isBookingsCheckoutPath(pathname) && items.length > 0 && items.every((i) => isBookingCartLine(i));
+}

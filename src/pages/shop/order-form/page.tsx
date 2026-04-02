@@ -7,6 +7,7 @@ import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -188,7 +189,7 @@ function OrderFormPage() {
     if (isSignedIn) {
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -623,7 +624,7 @@ function OrderFormPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -635,7 +636,7 @@ function OrderFormPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
@@ -1593,7 +1594,7 @@ function OrderFormPage() {
             }
           }, 100);
         }}
-        title="INPUT FIELD REQUIRED"
+        title="FORGETTING SOMETHING?"
         message={validationMessage}
         confirmText="OK"
         cancelText="CLOSE"

@@ -19,6 +19,7 @@ import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } f
 import { syncAllFromApi } from '../../../utils/syncFromApi';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { createBookingDateDisabledFn } from '../../../utils/bookingDateRules';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { bcfOptionSelectedChrome, BCF_OPTION_RED } from '../../../utils/bcfProductOptions';
 import {
   BUILD_WIG_HUB_UNITS,
@@ -375,7 +376,7 @@ export default function BookingAppointmentPage() {
 
   const [installKind, setInstallKind] = useState<InstallKind>(() => {
     const d = initialDraft.current;
-    return d?.installKind === 'NEW_INSTALL' || d?.installKind === 'RE_INSTALL' ? d.installKind : 'NEW_INSTALL';
+    return d?.installKind === 'NEW_INSTALL' || d?.installKind === 'RE_INSTALL' ? d.installKind : 'RE_INSTALL';
   });
   const [appointmentStyle, setAppointmentStyle] = useState<AppointmentStyle>(() => {
     const d = initialDraft.current;
@@ -417,6 +418,9 @@ export default function BookingAppointmentPage() {
   const [newInstallAttachmentsRev, setNewInstallAttachmentsRev] = useState(0);
   const [attachedOrderSelectValue, setAttachedOrderSelectValue] = useState('');
   const { formatUsd } = useSelectedCurrencyDisplay();
+
+  const appointmentScheduledSummaryVisible =
+    Boolean(preferredDateIso.trim()) && Boolean(preferredTimeSlot.trim());
 
   const appointmentNotesLabelStyle: CSSProperties = {
     fontFamily: bookingFontMedium,
@@ -1372,6 +1376,7 @@ export default function BookingAppointmentPage() {
           >
             <BrandExpiresDatePicker
               inline
+              navArrowScale={0.75}
               value={preferredDateIso}
               onChange={(iso) => {
                 setPreferredDateIso(iso);
@@ -1466,7 +1471,7 @@ export default function BookingAppointmentPage() {
               </div>
             </div>
           ) : null}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: appointmentScheduledSummaryVisible ? '20px' : '14px' }}>
             {preferredDateIso && preferredTimeSlot ? (
               <p
                 style={{
@@ -1533,7 +1538,7 @@ export default function BookingAppointmentPage() {
           navigate('/account/rewards');
           return;
         }
-        navigate('/sign-in');
+        navigate(signInHrefWithReturnTo(location));
       }}
       title="UPGRADE YOUR SUBSCRIPTION?"
       message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."

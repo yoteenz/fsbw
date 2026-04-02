@@ -27,6 +27,7 @@ import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
 import { syncAllFromApi } from '../../utils/syncFromApi';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -280,7 +281,7 @@ function AccountPage() {
     const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
     if (!isLocalhost) {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   }, [isSignedIn, navigate]);
 
@@ -742,7 +743,7 @@ function AccountPage() {
       setShowSignOutConfirm(true);
     } else {
       // Navigate to sign-in page (will default to account page after sign-in)
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -774,7 +775,7 @@ function AccountPage() {
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
 
   const handleChangePhotoClick = () => {
@@ -1705,7 +1706,7 @@ function AccountPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >

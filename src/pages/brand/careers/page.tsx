@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, type CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -10,6 +10,7 @@ import RoleCardSectionHeader from '../../../components/RoleCardSectionHeader';
 import { workerRoleHeaderIconSrc } from '../../../utils/workerRoleHeaderIcon';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 const MAX_RESUME_BYTES = 1.5 * 1024 * 1024;
 
@@ -102,6 +103,7 @@ const REQUIRED_EDUCATION_OPTIONS = [
 
 export default function BrandCareersPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -266,7 +268,7 @@ export default function BrandCareersPage() {
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
 
   return (
@@ -307,7 +309,7 @@ export default function BrandCareersPage() {
                 <>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '15px !important',
@@ -322,7 +324,7 @@ export default function BrandCareersPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '21px !important',

@@ -17,12 +17,17 @@ import { bookingCartItemThumbnailSrc } from '../../../utils/bookingBadges';
 import { createBookingDateDisabledFn } from '../../../utils/bookingDateRules';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { BOOKING_PATHS } from '../../../utils/membershipRoutePolicy';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
 const MAX_HAIR_INSPO_PHOTOS = 3;
+
+function hairInspoSubmittedLabel(count: number): string {
+  return `${count} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS SUBMITTED.`;
+}
 
 /** Persists across consult URL remounts (`/booking/consultation` → `/booking/premium/consultation` from MembershipRouteSync). */
 const CONSULT_INSPO_SESSION_KEY = 'bawBookingConsultHairInspoDraft';
@@ -108,7 +113,7 @@ const CONSULT_WIG_INSTALL_TIME_SLOTS = [
 function formatConsultIsoForDisplay(isoYmd: string): string {
   const [y, m, d] = isoYmd.split('-');
   if (!y || !m || !d) return '';
-  return `${m}-${d}-${y}`;
+  return `${m}/${d}/${y}`;
 }
 
 function formatConsultTimeSlotForDisplay(slot: string): string {
@@ -124,7 +129,11 @@ export default function BookingConsultationPage() {
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [authRev, setAuthRev] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [hairOption, setHairOption] = useState<HairOption>('WIG + INSTALL');
+  const [hairOption, setHairOption] = useState<HairOption>(() =>
+    isPremiumMemberForGatedFeatures() ? 'WIG + INSTALL' : 'WIG ONLY'
+  );
+  /** Only reset hair option when premium ↔ standard actually changes (not every `signInStateChanged`). */
+  const prevPremiumForHairRef = useRef<boolean | null>(null);
   const [notes, setNotes] = useState('');
   const [inspoItems, setInspoItems] = useState<ConsultInspoItem[]>(loadInspoDraftFromSession);
   const [showMaxInspoModal, setShowMaxInspoModal] = useState(false);
@@ -141,6 +150,8 @@ export default function BookingConsultationPage() {
   const { formatUsd } = useSelectedCurrencyDisplay();
 
   const isPremium = isPremiumMemberForGatedFeatures();
+  const consultScheduledSummaryVisible =
+    Boolean(consultPreferredDateIso.trim()) && Boolean(consultPreferredTime.trim());
   const consultWigInstallDateDisabled = useMemo(() => createBookingDateDisabledFn('two_calendar_months'), []);
 
   useEffect(() => {
@@ -168,6 +179,19 @@ export default function BookingConsultationPage() {
     window.addEventListener('signInStateChanged', bump);
     return () => window.removeEventListener('signInStateChanged', bump);
   }, []);
+
+  useEffect(() => {
+    const premium = isPremiumMemberForGatedFeatures();
+    const prev = prevPremiumForHairRef.current;
+    if (prev === null) {
+      prevPremiumForHairRef.current = premium;
+      return;
+    }
+    if (prev !== premium) {
+      prevPremiumForHairRef.current = premium;
+      setHairOption(premium ? 'WIG + INSTALL' : 'WIG ONLY');
+    }
+  }, [authRev]);
 
   /** Premium vs standard URL alignment: `MembershipRouteSync` + `membershipRoutePolicy`. Modal when non-premium hits premium path. */
   useEffect(() => {
@@ -240,7 +264,7 @@ export default function BookingConsultationPage() {
     setConsultFormNotice(null);
     if (inspoItems.length === 0) {
       setConsultFormNotice({
-        title: 'HAIR INSPO REQUIRED',
+        title: 'FORGETTING SOMETHING?',
         message: 'PLEASE UPLOAD A HAIR INSPO PHOTO.'
       });
       return;
@@ -254,7 +278,7 @@ export default function BookingConsultationPage() {
       const tm = consultPreferredTime.trim();
       if (!d || !tm) {
         setConsultFormNotice({
-          title: 'DATE & TIME REQUIRED',
+          title: 'FORGETTING SOMETHING?',
           message: 'PLEASE SELECT A PREFERRED DATE AND TIME.'
         });
         return;
@@ -459,9 +483,7 @@ export default function BookingConsultationPage() {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                        {inspoItems.length > 0
-                          ? `${inspoItems.length} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS`
-                          : 'NO FILE SELECTED'}
+                        {inspoItems.length > 0 ? hairInspoSubmittedLabel(inspoItems.length) : 'NO FILE SELECTED'}
                       </span>
                     </div>
                   </>
@@ -512,7 +534,7 @@ export default function BookingConsultationPage() {
                         fontSize: '10px'
                       }}
                     >
-                      {`${inspoItems.length} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS`}
+                      {hairInspoSubmittedLabel(inspoItems.length)}
                     </span>
                   </button>
                 )}
@@ -525,7 +547,7 @@ export default function BookingConsultationPage() {
                     display: 'flex',
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    gap: '10px',
+                    gap: '13px',
                     width: '100%',
                     marginTop: '14px',
                     justifyContent: 'center',
@@ -549,10 +571,10 @@ export default function BookingConsultationPage() {
                         aria-label="Remove inspo photo"
                         style={{
                           position: 'absolute',
-                          top: '-10px',
-                          right: '-10px',
-                          width: '20px',
-                          height: '20px',
+                          top: '-6px',
+                          right: '-4px',
+                          width: '14px',
+                          height: '14px',
                           backgroundColor: '#FFFFFF',
                           border: '0.97px solid #000000',
                           borderRadius: '50%',
@@ -569,8 +591,8 @@ export default function BookingConsultationPage() {
                           src="/assets/close-icon.svg"
                           alt=""
                           style={{
-                            width: '12px',
-                            height: '12px',
+                            width: '8.4px',
+                            height: '8.4px',
                             objectFit: 'contain',
                             display: 'block',
                             flexShrink: 0,
@@ -652,7 +674,7 @@ export default function BookingConsultationPage() {
                     >
                       {opt}
                     </span>
-                    {opt === 'WIG + INSTALL' && checked ? (
+                    {opt === 'WIG + INSTALL' && checked && !isPremium ? (
                       <p
                         style={{
                           fontFamily: bookingFontBook,
@@ -712,11 +734,12 @@ export default function BookingConsultationPage() {
                   borderTop: '1px solid #e5e7eb',
                   paddingTop: '20px',
                   marginTop: 0,
-                  marginBottom: '16px'
+                  marginBottom: consultScheduledSummaryVisible ? '16px' : '10px'
                 }}
               >
                 <BrandExpiresDatePicker
                   inline
+                  navArrowScale={0.75}
                   value={consultPreferredDateIso}
                   onChange={(iso) => {
                     setConsultPreferredDateIso(iso);
@@ -903,7 +926,7 @@ export default function BookingConsultationPage() {
           navigate('/account/rewards');
           return;
         }
-        navigate('/sign-in');
+        navigate(signInHrefWithReturnTo(location));
       }}
       title="UPGRADE YOUR SUBSCRIPTION?"
       message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
@@ -917,7 +940,7 @@ export default function BookingConsultationPage() {
       onClose={() => setShowMaxInspoModal(false)}
       onConfirm={() => setShowMaxInspoModal(false)}
       title="MAX PHOTOS REACHED."
-      message=""
+      message="REMOVE OR REPLACE AN IMAGE TO ADD MORE."
       confirmText="CLOSE"
       cancelText=""
       dataAttribute="consult-max-hair-inspo-photos-modal"

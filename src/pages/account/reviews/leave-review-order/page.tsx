@@ -9,6 +9,7 @@ import { trackActivity } from '../../../../utils/activity';
 import { clearAppAuth } from '../../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../../utils/signInReturnTo';
 
 interface OrderLineItem {
   productName: string;
@@ -167,7 +168,7 @@ function LeaveReviewOrderPage() {
     if (isSignedIn) {
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -178,7 +179,7 @@ function LeaveReviewOrderPage() {
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
 
   const eligibleItems = order ? getEligibleReviewItems(order) : [];
@@ -841,7 +842,7 @@ function LeaveReviewOrderPage() {
       isOpen={showRequiredFieldsModal}
       onClose={() => setShowRequiredFieldsModal(false)}
       onConfirm={() => setShowRequiredFieldsModal(false)}
-      title="REQUIRED FIELD"
+      title="FORGETTING SOMETHING?"
       message={requiredFieldsMessage}
       confirmText="OK"
       cancelText=""

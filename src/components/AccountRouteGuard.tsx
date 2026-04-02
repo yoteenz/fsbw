@@ -11,6 +11,7 @@ import {
 } from '../utils/syncFromApi';
 import { registerServerSessionCookie } from '../utils/sessionRestore';
 import { tryServerSessionRestore } from '../utils/sessionRestore';
+import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 
 const SERVER_RESTORE_ATTEMPT_KEY = 'baw_server_restore_attempted_v1';
 
@@ -112,7 +113,7 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
   }
 
   if (!isSignedIn()) {
-    return <Navigate to={{ pathname: '/sign-in', search: location.search || '' }} state={{ from: location.pathname }} replace />;
+    return <Navigate to={signInHrefWithReturnTo(location)} replace />;
   }
 
   return <>{children}</>;

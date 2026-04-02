@@ -82,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       text: notifText,
       read: false,
       createdAt: new Date().toISOString(),
-      actionText: 'VIEW ORDER',
+      actionText: 'VIEW QUOTE',
       actionRoute: `/account/consult-offer?id=${encodeURIComponent(quoteId)}`,
       consultQuoteId: quoteId,
     };

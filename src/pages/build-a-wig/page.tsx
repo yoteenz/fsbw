@@ -10,6 +10,7 @@ import { clearAppAuth } from '../../utils/adminAuth';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import {
@@ -4722,7 +4723,7 @@ export default function BuildAWigPage() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -4871,7 +4872,7 @@ export default function BuildAWigPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -4883,7 +4884,7 @@ export default function BuildAWigPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

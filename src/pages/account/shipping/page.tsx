@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -24,6 +24,7 @@ interface AddressEntry {
 
 function ShippingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -131,7 +132,7 @@ function ShippingPage() {
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
   const handleBack = () => navigate('/account');
 
@@ -573,10 +574,10 @@ function ShippingPage() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
-                  <button onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}>
+                  <button onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}>
                     <img alt="Account" width="16" height="16" src="/assets/NOIR/account-icon.svg" />
                   </button>
-                  <button onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
+                  <button onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
                     <img alt="Wishlist" width="18" height="18" src="/assets/wishlist-heart.svg" />
                   </button>
                 </>
@@ -1064,7 +1065,7 @@ function ShippingPage() {
         isOpen={showValidationModal}
         onClose={() => setShowValidationModal(false)}
         onConfirm={() => setShowValidationModal(false)}
-        title="MISSING INPUT FIELD"
+        title="FORGETTING SOMETHING?"
         message={validationMessage}
         confirmText="OK"
         cancelText="CLOSE"

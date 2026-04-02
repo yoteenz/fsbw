@@ -11,6 +11,7 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 interface LengthOption {
   id: string;
@@ -494,7 +495,7 @@ function LengthSelection() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -698,7 +699,7 @@ function LengthSelection() {
             {showMobileMenu ? (
               <>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : '/sign-in')}
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : signInHrefWithReturnTo(location))}
                   className="cursor-pointer" 
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                 >
@@ -710,7 +711,7 @@ function LengthSelection() {
                   />
                 </button>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : signInHrefWithReturnTo(location))} 
                   className="cursor-pointer"
                   style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >

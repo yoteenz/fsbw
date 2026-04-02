@@ -10,6 +10,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -479,7 +480,7 @@ function WishlistSelection() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -524,7 +525,7 @@ function WishlistSelection() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '21px', width: '21px', padding: 0, border: 'none', background: 'none', transform: 'translateX(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
@@ -537,7 +538,7 @@ function WishlistSelection() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px', width: '21px', padding: 0, border: 'none', background: 'none', transform: 'translateX(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
@@ -596,7 +597,7 @@ function WishlistSelection() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                   >
                     ACCOUNT &gt;
                   </span>{' '}

@@ -12,6 +12,7 @@ import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../uti
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 interface ColorOption {
   id: string;
@@ -466,7 +467,7 @@ function ColorSelection() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -970,7 +971,7 @@ function ColorSelection() {
             {showMobileMenu ? (
               <>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : '/sign-in')}
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : signInHrefWithReturnTo(location))}
                   className="cursor-pointer" 
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                 >
@@ -982,7 +983,7 @@ function ColorSelection() {
                   />
                 </button>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : signInHrefWithReturnTo(location))} 
                   className="cursor-pointer"
                   style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >

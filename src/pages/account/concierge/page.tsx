@@ -13,6 +13,7 @@ import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 /** Currency rates (USD base) and display symbols for special offer and elsewhere. */
 const CURRENCY_RATES: Record<string, { rate: number; symbol: string }> = {
@@ -1919,9 +1920,9 @@ function ConciergePage() {
       clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -2111,7 +2112,7 @@ function ConciergePage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

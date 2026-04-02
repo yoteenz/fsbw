@@ -33,6 +33,7 @@ import {
 } from '../../constants/reviews';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { resolveReturnToAfterSignIn } from '../../utils/signInReturnTo';
 
 /** Fetch motherboard (canonical admin profile) from public/admin-profile.json so Chrome (and any browser) gets same name, photo, birthday etc. as Safari. Update motherboard via Account → Add to motherboard, then save the downloaded file as public/admin-profile.json. */
 async function fetchCanonicalAdminProfile(): Promise<Record<string, unknown>> {
@@ -193,11 +194,7 @@ function SignInPage() {
     ensureAuthRestoredFromBackup();
     if (localStorage.getItem('isSignedIn') !== 'true') return;
     const returnTo = new URLSearchParams(location.search).get('returnTo');
-    const from = (location.state as { from?: string } | null)?.from;
-    if (returnTo === 'checkout') navigate('/checkout', { replace: true });
-    else if (returnTo?.startsWith('/admin')) navigate(returnTo, { replace: true });
-    else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
-    else navigate('/account', { replace: true });
+    navigate(resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null), { replace: true });
   }, [navigate, location.search, location.state]);
 
   // When Supabase is configured: restore session on load (e.g. after email confirm redirect) so user is signed in
@@ -223,11 +220,7 @@ function SignInPage() {
           trackActivity('sign_in', { method: 'session_restore' });
           window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
           const returnTo = new URLSearchParams(location.search).get('returnTo');
-          const from = (location.state as { from?: string } | null)?.from;
-          if (returnTo === 'checkout') navigate('/checkout');
-          else if (returnTo?.startsWith('/admin')) navigate(returnTo);
-          else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
-          else navigate('/account', { replace: true });
+          navigate(resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null), { replace: true });
           return;
         }
         // Session exists but getProfile failed (e.g. just confirmed email, API not ready): still sign in from session; create profile so user appears in admin clients
@@ -243,11 +236,7 @@ function SignInPage() {
         trackActivity('sign_in', { method: 'session_restore' });
         window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
         const returnTo = new URLSearchParams(location.search).get('returnTo');
-        const from = (location.state as { from?: string } | null)?.from;
-        if (returnTo === 'checkout') navigate('/checkout');
-        else if (returnTo?.startsWith('/admin')) navigate(returnTo);
-        else if (from?.startsWith('/account') || from?.startsWith('/wishlist')) navigate(from, { replace: true });
-        else navigate('/account', { replace: true });
+        navigate(resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null), { replace: true });
       });
     });
     return () => { cancelled = true; };
@@ -307,12 +296,7 @@ function SignInPage() {
   /** Redirect URL after successful sign-in. Full-page navigation so Chrome can offer to save password. */
   const getSignInRedirectUrl = (): string => {
     const returnTo = new URLSearchParams(location.search).get('returnTo');
-    const from = (location.state as { from?: string } | null)?.from;
-    if (returnTo === 'checkout') return '/checkout';
-    if (returnTo?.startsWith('/admin')) return returnTo;
-    if (returnTo === 'account/settings') return '/account/settings';
-    if (from?.startsWith('/account') || from?.startsWith('/wishlist')) return from;
-    return '/account';
+    return resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null);
   };
 
   const doRedirectAfterSignIn = () => {
@@ -1898,7 +1882,12 @@ function SignInPage() {
                                 window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
                                 setFirstName(''); setLastName(''); setBirthday(''); setPhoneNumber(''); setEmail(''); setPassword(''); setConfirmPassword('');
                                 setFacebook(''); setInstagram(''); setYoutube(''); setTiktok(''); setTwitter('');
-                                navigate('/account');
+                                navigate(
+                                  resolveReturnToAfterSignIn(
+                                    new URLSearchParams(location.search).get('returnTo'),
+                                    location.state as { from?: string } | null,
+                                  ),
+                                );
                                 return;
                               }
                             } else {
@@ -2044,9 +2033,13 @@ function SignInPage() {
                       setSignUpAttempted(false);
                       setEmailError('');
                       
-                      // Navigate to account page or back to the account route they tried to open
-                      const fromAccountGuard = (location.state as { from?: string } | null)?.from;
-                      navigate(fromAccountGuard && (fromAccountGuard.startsWith('/account') || fromAccountGuard.startsWith('/wishlist')) ? fromAccountGuard : '/account', { replace: true });
+                      navigate(
+                        resolveReturnToAfterSignIn(
+                          new URLSearchParams(location.search).get('returnTo'),
+                          location.state as { from?: string } | null,
+                        ),
+                        { replace: true },
+                      );
                     } catch (error) {
                       console.error('Error creating account:', error);
                       setValidationMessage('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
@@ -2078,7 +2071,7 @@ function SignInPage() {
       isOpen={showValidationModal}
       onClose={() => setShowValidationModal(false)}
       onConfirm={() => setShowValidationModal(false)}
-      title="INPUT FIELD REQUIRED"
+      title="FORGETTING SOMETHING?"
       message={validationMessage}
       confirmText="OK"
       cancelText="CLOSE"

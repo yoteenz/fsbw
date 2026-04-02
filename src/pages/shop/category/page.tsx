@@ -8,6 +8,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { clearAppAuth } from '../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 const TITLES: Record<string, string> = {
   '/shop/bundles': 'BUNDLES',
@@ -185,7 +186,7 @@ export default function ShopCategoryPage() {
 
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) setShowSignOutConfirm(true);
-    else navigate('/sign-in');
+    else navigate(signInHrefWithReturnTo(location));
   };
 
   const handleSignOut = () => {
@@ -229,7 +230,7 @@ export default function ShopCategoryPage() {
                 <>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '15px !important',
@@ -244,7 +245,7 @@ export default function ShopCategoryPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '21px !important',

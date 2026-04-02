@@ -6883,3 +6883,115 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context:** User’s **Vercel** **`npm run build`** failed with **`src/pages/checkout/page.tsx`**: **`redeemConsultQuote` is declared but its value is never read** (**TS6133**).
 
 **Changes:** Removed **`redeemConsultQuote`** from the top-level **`../../utils/api`** import list; after a successful order with an applied consult quote, **`redeemConsultQuote`** is loaded via **`await import('../../utils/api')`** inside that **`try`** block, then called — same runtime behavior without an unused static import binding.
+
+---
+
+## 2026-04-02 — Consult hair option defaults + premium-only subcopy
+
+**Context:** User asked: **standard** members should land on **WIG ONLY**; **THIS OPTION IS FOR PREMIUM MEMBERS ONLY** should appear when they select **WIG + INSTALL**. **Premium** members should default to **WIG + INSTALL** and **not** see that line under the option.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`hairOption`** lazy-initializes from **`isPremiumMemberForGatedFeatures()`**; **`prevPremiumForHairRef` + `useEffect` on `authRev`** resets to **WIG + INSTALL** / **WIG ONLY** only when premium status **changes** (avoids wiping **WIG + INSTALL** on repeated **`signInStateChanged`**). Inline subcopy under **WIG + INSTALL** renders only when **`!isPremium`** and that option is selected.
+
+---
+
+## 2026-04-02 — Consult codes at checkout + edit-meeting client alerts
+
+**Context:** User asked to implement **both** priorities: **(1) migration + consult code at checkout** and **(2) edit-meeting client alerts** (from admin meetings handoff).
+
+**Consult checkout:** New migration **`supabase/migrations/20260403140000_consult_quotes_redeemed_at.sql`** — **`consult_quotes.redeemed_at`**. APIs **`api/checkout/validate-consult-code.ts`**, **`api/checkout/redeem-consult-code.ts`**. **`src/utils/api.ts`** — **`validateConsultDiscountCode`**, **`redeemConsultQuote`**. **`src/pages/checkout/page.tsx`** — **`appliedConsultQuote`** state; **`CONSULT-`** branch in **`handleApplyDiscountCode`** (async); excludes **booking** lines from eligible subtotal and blocks **`/checkout/bookings`**; mutual exclusion with referral / gift card / brand / flat codes; **`consultDiscountAmount`** in **`totalDiscount`**; order-success paths call **`redeemConsultQuote`** (card submit + wallet **`handlePaymentClick`**).
+
+**Meeting alerts:** **`api/admin/meeting-client-alert.ts`** (admin-only) appends **notifications** with **`REVIEW APPOINTMENT`** → **`/account/notifications`** and **`meetingAlert`** payload. **`postAdminMeetingClientAlert`** in **`api.ts`**. **`AdminMeetingsHub`** — **RESCHEDULE APPOINTMENT (NOTIFY CLIENT)** / **CANCEL APPOINTMENT (NOTIFY CLIENT)** after **`patchAdminMeeting`**; resolves client via **`userId`** or **`clientEmail`**.
+
+**Also:** **`motherboard/CORE.md`** updated with consult-code + meeting-alert flow.
+
+---
+
+## 2026-04-02 — A/C calendar gap + consult hair inspo “SUBMITTED” copy
+
+**Context:** User asked: when the **SCHEDULED DATE & TIME** red line is **not** shown below the calendar flow on **appointment** and **consultation** pages, **tighten vertical spacing by 6px**; change hair inspo row from **`N OF 3 PHOTOS`** to **`N OF 3 PHOTOS SUBMITTED.`** (e.g. **1 OF 3 PHOTOS SUBMITTED.**).
+
+**Changes:** **`consultation/page.tsx`** — **`hairInspoSubmittedLabel`**, used on the CHOOSE FILE row (open + max-photos states); **`consultScheduledSummaryVisible`**; calendar block **`marginBottom`** **`16px`** vs **`10px`** when the scheduled summary is absent. **`appointment/page.tsx`** — **`appointmentScheduledSummaryVisible`**; block wrapping **SCHEDULED** + **ESTIMATED** lines uses **`marginBottom`** **`20px`** vs **`14px`** when the scheduled line is absent.
+
+---
+
+## 2026-04-02 — Admin meetings: VIEW ALL below card, in-card toggle + close
+
+**Context:** User wanted **VIEW ALL BOOKINGS** and **VIEW ALL CONSULTS** **below** the main meetings card (not inside), styled like **Concierge** **SUBMIT MESSAGE** (black border, red text); no parentheses in labels; **not** a modal — toggle **inside** the main card with **X** close like **Rewards** tier-benefits / loyalty inner cards (**close-icon.svg**, red filter).
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — Replaced **`showViewAll`** modal with **`viewAllMode: 'bookings' | 'consults' | null`**; **`groupMeetingsByClientEmail`** helper + **`viewAllGroups`** memo; when **`viewAllMode`** set, tabs swap for header **VIEW ALL BOOKINGS** / **VIEW ALL CONSULTS** + close button; scroll area shows grouped list; two full-width buttons under the card (**concierge** classes + **`#EB1C24`**); buttons toggle open/close per mode and set **`mainTab`**.
+
+---
+
+## 2026-04-02 — Validation modals: unified “FORGETTING SOMETHING?” header
+
+**Context:** User asked to replace repetitive red **`ConfirmationModal`** titles (**INPUT FIELD REQUIRED**, **MISSING INPUT FIELD**, **HAIR INSPO REQUIRED**, etc.) with a single uppercase header **FORGETTING SOMETHING?**, keeping black body text for the specific missing item or action.
+
+**Changes:** **`title="FORGETTING SOMETHING?"`** (or equivalent **`setConsultFormNotice` / `setCheckoutNotice` / `setLoadCardNotice`**) in **`checkout/page.tsx`** (field validation, terms-before-checkout, Stripe sign-in notice), **`sign-in/page.tsx`**, **`shop/order-form/page.tsx`**, **`account/payment/page.tsx`**, **`account/shipping/page.tsx`**, **`account/reviews/leave-review-order/page.tsx`**, **`booking/consultation/page.tsx`** (hair inspo + date/time required), **`account/membership/page.tsx`** (tier selection), **`account/load-card/page.tsx`** (sign-in gate). **Consult** **DATE NOT AVAILABLE** left unchanged (not a “missing field” notice). Trimmed leading space on checkout terms modal message.
+
+---
+
+## 2026-04-02 — Consult alert CTA: VIEW QUOTE; admin founder + header example
+
+**Context:** User wanted the consult **“YOUR ORDER IS READY!”** client notification red link to say **VIEW QUOTE** instead of **VIEW ORDER**; an **example** of that alert on the **admin founder** notifications UI; and to treat **`kateenaarmstrong@gmail.com`** as **admin founder** in ongoing copy (recorded in motherboard).
+
+**Decisions / terminology:** **Admin founder** = **`kateenaarmstrong@gmail.com`** (same as **`FOUNDER_PRIVILEGED_ADMIN_EMAIL`**). **`isAdminFounderAccount`** aliases **`isAyoteenzAdminAccount`** in **`adminAuth.ts`**. **`motherboard/CORE.md`** updated.
+
+**Changes:** **`api/admin/consult-quotes.ts`** — **`actionText: 'VIEW QUOTE'`** on the consult-quote notification item. **`AdminMeetingsHub.tsx`** — send-alert confirm copy **VIEW QUOTE (CONSULT OFFER)**. **`AdminHeader.tsx`** — when signed-in admin is admin founder, inject mock row **ACCOUNT ALERT - CONSULT QUOTE (VIEW QUOTE)** (id **62**) after the affiliate account-alert row in the bell dropdown list.
+
+---
+
+## 2026-04-02 — Appointment default RE-INSTALL + A/C calendar nav arrows 25% smaller
+
+**Context:** User asked for **RE-INSTALL** to be the default selection on the **appointment** booking PDP, and **25% smaller** red **left/right** month arrows on the **A/C** inline calendars only.
+
+**Changes:** **`appointment/page.tsx`** — **`installKind`** initial state fallback when no valid draft: **`RE_INSTALL`** (was **`NEW_INSTALL`**). **`bookingAppointmentFormDraft.ts`** — cart→draft fallback **`installKind`**: **`RE_INSTALL`** when **`bookingInstallKind`** missing/invalid. **`BrandExpiresDatePicker.tsx`** — optional **`navArrowScale`** (default **1**); arrows use **`round(base * scale)`** (**22** / **24** px bases). **`appointment/page.tsx`** and **`consultation/page.tsx`** pass **`navArrowScale={0.75}`**; **admin brand** picker unchanged (**scale 1**).
+
+---
+
+## 2026-04-02 — Consult max-photos copy, checkout booking nav, bookings checkout = digital ship, inspo × smaller
+
+**Context:** User asked why the **MAX PHOTOS REACHED** modal had no black body text; to show nav **CHECKOUT > BOOKING** on bookings checkout; to treat **A/C** bookings checkout like **digital** (no shipping flow); to shrink hair inspo thumbnail **remove** (**×**) control by **30%** on the consult page.
+
+**Decisions / outcomes:** Max-photos modal body restored (**REMOVE OR REPLACE AN IMAGE TO ADD MORE.**). Bookings checkout uses **`checkoutSkipsShipping`** (**subscription OR digital-only OR bookings-only**) so shipping address, calculator, method, delivery, address-confirm, tax/shipping summary rows, validations, Route protection, and related paths match digital-style checkout; **taxable** and **points-eligible** amounts are **0** for bookings-only cart. **`isBookingsOnlyCheckoutState(pathname, items)`** added to **`bookingCheckout.ts`**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`ConfirmationModal`** **`message`** for max inspo; delete button **14×14** px, icon **8.4×8.4** px. **`src/pages/checkout/page.tsx`** — nav **BOOKING**; **`checkoutSkipsShipping`** wiring. **`src/utils/bookingCheckout.ts`** — **`isBookingsOnlyCheckoutState`**. **`motherboard/CORE.md`** — short **`/checkout/bookings`** note.
+
+---
+
+## 2026-04-02 — Consult hair inspo ×: nudge down 2px, left 1px
+
+**Context (full chat):** Same session as consult max-photos modal copy, **CHECKOUT > BOOKING**, bookings-only checkout like digital (no shipping), and hair inspo remove control **30% smaller**; user then asked to move those remove icons **down 2px** and **left 1px**.
+
+**Changes (this turn):** **`src/pages/booking/consultation/page.tsx`** — absolute remove button **`top: '-8px'`** (was **`-10px`**), **`right: '-9px'`** (was **`-10px`**).
+
+---
+
+## 2026-04-02 — Consult hair inspo ×: another 2px left
+
+**Context (full chat):** Consult/checkout/inspo work above; user asked to move hair inspo remove controls **2px further left** from **`right: '-9px'`**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — remove button **`right: '-7px'`** (was **`-9px`**); **`top: '-8px'`** unchanged.
+
+---
+
+## 2026-04-02 — Consult hair inspo ×: right −4px, down 3px
+
+**Context (full chat):** Continues consult hair inspo remove-button positioning; user asked for **`right: '-4px'`** (was **`-7px`**) and **3px lower** (**`top: '-5px'`**, was **`-8px`**).
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — remove control **`top: '-5px'`**, **`right: '-4px'`**.
+
+---
+
+## 2026-04-02 — Consult hair inspo thumbnails: +3px gap
+
+**Context (full chat):** Continues consult hair inspo UI; user asked for **3px more spacing** between attachment thumbnails.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`.consult-hair-inspo-thumbs`** flex **`gap`** **`'13px'`** (was **`'10px'`**).
+
+---
+
+## 2026-04-02 — Consult hair inspo ×: up 1px
+
+**Context (full chat):** Consult hair inspo remove control; user asked to move it **up 1px**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — remove control **`top: '-6px'`** (was **`-5px`**); **`right: '-4px'`** unchanged.

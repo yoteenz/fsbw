@@ -23,7 +23,11 @@ import {
   redeemConsultQuote,
   validateConsultDiscountCode,
 } from '../../utils/api';
-import { filterBookingCartLines, isBookingsCheckoutPath } from '../../utils/bookingCheckout';
+import {
+  filterBookingCartLines,
+  isBookingsCheckoutPath,
+  isBookingsOnlyCheckoutState,
+} from '../../utils/bookingCheckout';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import {
   discountPromoCheckoutBlockReason,
@@ -46,6 +50,8 @@ import {
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../utils/checkoutOrderStripDisplay';
+import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -754,7 +760,7 @@ function CheckoutPage() {
       const token = await getAccessToken();
       if (!token) {
         setCheckoutNotice({
-          title: 'SIGN IN REQUIRED',
+          title: 'FORGETTING SOMETHING?',
           message: 'SIGN IN WITH YOUR SUPABASE ACCOUNT TO USE STRIPE SUBSCRIPTIONS.',
         });
         return;
@@ -1295,7 +1301,7 @@ function CheckoutPage() {
       setShowSignOutConfirm(true);
     } else {
       // Navigate to sign-in page with returnTo parameter
-      navigate('/sign-in?returnTo=checkout');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -1437,7 +1443,12 @@ function CheckoutPage() {
 
   // Calculate premium shipping discount based on selected method and tier
   const calculatePremiumShippingDiscount = (): { discount: number; originalCost: number; finalCost: number } => {
-    if (!selectedShippingMethod || isSubscriptionUpgrade || isOnlyDigitalProducts) {
+    if (
+      !selectedShippingMethod ||
+      isSubscriptionUpgrade ||
+      isOnlyDigitalProducts ||
+      isBookingsOnlyCheckoutState(location.pathname, cartItems)
+    ) {
       return { discount: 0, originalCost: 0, finalCost: 0 };
     }
 
@@ -1495,6 +1506,10 @@ function CheckoutPage() {
     return item.name === 'GIFT CARD' || item.type === 'gift-card';
   });
 
+  const isBookingsOnlyCheckout = isBookingsOnlyCheckoutState(location.pathname, cartItems);
+  const checkoutSkipsShipping =
+    isSubscriptionUpgrade || isOnlyDigitalProducts || isBookingsOnlyCheckout;
+
   // Calculate Route protection fee based on order value (scales with cart total)
   // Structure: Flat $20 for orders up to $1,000, then percentage-based for larger orders
   // This aligns with Route's typical 2.5% rate for high-value orders
@@ -1521,37 +1536,39 @@ function CheckoutPage() {
   const orderAmountExcludingSpecialOffer = cartItems.reduce((sum, item) =>
     item.isSpecialOffer ? sum : sum + (item.price || 0) * (item.quantity || 1), 0);
   
-  // Calculate taxable amount (exclude gift cards and digital items)
-  const taxableAmount = cartItems.reduce((sum, item) => {
-    // Skip gift cards and digital items
-    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-    const isDigital = item.type === 'digital';
-    
-    if (isGiftCard || isDigital) {
-      return sum; // Don't add to taxable amount
-    }
-    
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
-  
-  // Calculate points-eligible amount (exclude gift cards and digital items like memberships)
-  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
-    // Skip gift cards and digital items (memberships)
-    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-    const isDigital = item.type === 'digital';
-    
-    if (isGiftCard || isDigital) {
-      return sum; // Don't add to points-eligible amount
-    }
-    
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
+  // Calculate taxable amount (exclude gift cards, digital items, and bookings-only A/C checkout — same as digital flow)
+  const taxableAmount = isBookingsOnlyCheckout
+    ? 0
+    : cartItems.reduce((sum, item) => {
+        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+        const isDigital = item.type === 'digital';
+
+        if (isGiftCard || isDigital) {
+          return sum;
+        }
+
+        return sum + (item.price || 0) * (item.quantity || 1);
+      }, 0);
+
+  // Calculate points-eligible amount (exclude gift cards, digital items, and bookings-only checkout)
+  const pointsEligibleAmount = isBookingsOnlyCheckout
+    ? 0
+    : cartItems.reduce((sum, item) => {
+        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+        const isDigital = item.type === 'digital';
+
+        if (isGiftCard || isDigital) {
+          return sum;
+        }
+
+        return sum + (item.price || 0) * (item.quantity || 1);
+      }, 0);
   
   const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
   // Calculate shipping based on selected method (applies premium discount)
   const getShippingCost = () => {
-    if (isSubscriptionUpgrade || isOnlyDigitalProducts) return 0; // No shipping for digital subscription upgrades or digital-only carts
+    if (checkoutSkipsShipping) return 0; // No shipping for upgrades, digital-only carts, or A/C bookings checkout
     if (!selectedShippingMethod) return 0;
     
     // Get premium discount
@@ -2047,6 +2064,48 @@ function CheckoutPage() {
     effectiveGiftCardDiscount +
     voucherDiscount +
     consultDiscountAmount;
+
+  const pointsEligibleNetAmount = useMemo(
+    () =>
+      isBookingsOnlyCheckout
+        ? 0
+        : computePointsEligibleNetUsd({
+            cartItems,
+            hasSpecialOfferInCart,
+            hasOnlySpecialOfferInCart,
+            orderAmount,
+            orderAmountExcludingSpecialOffer,
+            effectiveDiscount,
+            effectiveReferralDiscount,
+            effectiveGiftCardDiscount,
+            voucherDiscount,
+            consultDiscountAmount,
+          }),
+    [
+      isBookingsOnlyCheckout,
+      cartItems,
+      hasSpecialOfferInCart,
+      hasOnlySpecialOfferInCart,
+      orderAmount,
+      orderAmountExcludingSpecialOffer,
+      effectiveDiscount,
+      effectiveReferralDiscount,
+      effectiveGiftCardDiscount,
+      voucherDiscount,
+      consultDiscountAmount,
+    ],
+  );
+
+  useEffect(() => {
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('checkoutLoyaltyBaseUsd', String(pointsEligibleNetAmount));
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [pointsEligibleNetAmount]);
+
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   // Always calculate the protection fee amount (for display), but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
@@ -2088,8 +2147,8 @@ function CheckoutPage() {
   const handlePaymentClick = async (provider: PaymentProvider) => {
     if (processingPayment) return; // Prevent multiple clicks
 
-    // Validate shipping method is selected (skip for subscription upgrades)
-    if (!isSubscriptionUpgrade && !selectedShippingMethod) {
+    // Validate shipping method is selected (skip when checkout does not collect shipping)
+    if (!checkoutSkipsShipping && !selectedShippingMethod) {
       setValidationMessage('SHIPPING METHOD IS REQUIRED.');
       setShowValidationModal(true);
       return;
@@ -2130,7 +2189,7 @@ function CheckoutPage() {
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
           // Calculate points earned (tier + 12mo premium multiplier)
-          const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2196,12 +2255,12 @@ function CheckoutPage() {
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
           // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
-          const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
           // Create Route protection if package protection is selected (non-blocking)
-          if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
+          if (packageProtection && !checkoutSkipsShipping) {
             try {
               const routeProtectionData = prepareRouteProtectionData(
                 `order-${nextOrderNumber}`,
@@ -2237,7 +2296,7 @@ function CheckoutPage() {
           }
 
           if (appliedConsultQuote && consultDiscountAmount > 0 && !isSubscriptionUpgrade) {
-            void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err) =>
+            void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
               console.error('Error redeeming consult quote code:', err)
             );
           }
@@ -2394,7 +2453,7 @@ function CheckoutPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -2406,7 +2465,7 @@ function CheckoutPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
@@ -2471,7 +2530,7 @@ function CheckoutPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE' : isBookingsCheckoutRoute ? 'BOOKINGS' : 'BAG'}
+                    {isSubscriptionUpgrade ? 'UPGRADE' : isBookingsCheckoutRoute ? 'BOOKING' : 'BAG'}
                   </span>
                 </>
               )}
@@ -2926,7 +2985,10 @@ function CheckoutPage() {
                           {isSignedIn ? (
                             <>
                               {(() => {
-                                const basePoints = isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleAmount);
+                                const basePoints =
+                                  isOnlyDigitalProducts || isBookingsOnlyCheckout
+                                    ? 0
+                                    : Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -2936,7 +2998,7 @@ function CheckoutPage() {
                           ) : (
                             <>
                               <span 
-                                onClick={() => navigate('/sign-in?returnTo=checkout')}
+                                onClick={() => navigate(signInHrefWithReturnTo(location))}
                                 style={{ 
                                   color: '#EB1C24', 
                                   cursor: 'pointer'
@@ -3227,7 +3289,7 @@ function CheckoutPage() {
                 )}
 
                 {/* SHIPPING ADDRESS SECTION - hidden for digital-only (membership upgrade / gift card only) */}
-                {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
+                {!checkoutSkipsShipping && (
                 <div>
                   <h2 
                     style={{ 
@@ -4003,7 +4065,7 @@ function CheckoutPage() {
                     </div>
                   </div>
                   </div>
-                  {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
+                  {!checkoutSkipsShipping && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
                     <div
                       onClick={() => setSameAsBilling(!sameAsBilling)}
@@ -4335,7 +4397,7 @@ function CheckoutPage() {
                 </div>
 
                 {/* SHIPPING CALCULATOR SECTION - Hidden for subscription upgrades and digital-only carts */}
-                {!isSubscriptionUpgrade && !isOnlyDigitalProducts && (
+                {!checkoutSkipsShipping && (
                   <div style={{ marginTop: '24px', marginBottom: '24px' }}>
                   <h2 
                       style={{ 
@@ -4551,8 +4613,8 @@ function CheckoutPage() {
                     )}
                   </div>
                   
-                  {/* SHIPPING METHOD SELECTION - Hidden for subscription upgrades and digital-only carts */}
-                  {!isSubscriptionUpgrade && !isOnlyDigitalProducts && shippingCalculated && availableShippingOptions.length > 0 && !zipCodeError && (
+                  {/* SHIPPING METHOD SELECTION - Hidden when checkout skips shipping */}
+                  {!checkoutSkipsShipping && shippingCalculated && availableShippingOptions.length > 0 && !zipCodeError && (
                     <div style={{ marginTop: '26px', marginBottom: '5px' }}>
                       <h2 
                         style={{ 
@@ -4620,7 +4682,7 @@ function CheckoutPage() {
                 )}
 
                 {/* DELIVERY METHOD SECTION */}
-                {!isSubscriptionUpgrade && !isOnlyDigitalProducts && (
+                {!checkoutSkipsShipping && (
                 <div style={{ marginBottom: '24px' }}>
                   <h2 
                     style={{ 
@@ -4985,7 +5047,7 @@ function CheckoutPage() {
                         Some items (e.g. BCF bundle deals or custom builds) are not fully priced on the server yet. This page total still uses your cart. Currency selector remains display-only for settlement.
                       </p>
                     )}
-                    {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
+                    {!checkoutSkipsShipping && (
                       <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
@@ -5302,7 +5364,7 @@ function CheckoutPage() {
                       SUBSCRIBE TO EMAIL NEWSLETTER
                     </label>
                   </div>
-                  {!isOnlyDigitalProducts && !isSubscriptionUpgrade && (
+                  {!checkoutSkipsShipping && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div
                       onClick={() => setAddressConfirmed(!addressConfirmed)}
@@ -5463,8 +5525,8 @@ function CheckoutPage() {
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                   <button
                     onClick={() => {
-                  // Validate required fields (shipping fields only for non-digital orders)
-                  if (!isOnlyDigitalProducts && !isSubscriptionUpgrade) {
+                  // Validate required fields (shipping fields only when checkout collects shipping)
+                  if (!checkoutSkipsShipping) {
                     if (!firstName.trim()) {
                       setValidationMessage('FIRST NAME IS REQUIRED.');
                       setFieldToFocus('firstName');
@@ -5574,8 +5636,8 @@ function CheckoutPage() {
                   }
                   const usedFounderDummyPan = cardCheck.usedFounderDummyPan;
 
-                  // Billing required when not same-as-shipping, or when digital-only (no shipping collected)
-                  const requireBilling = !sameAsBilling || isOnlyDigitalProducts || isSubscriptionUpgrade;
+                  // Billing required when not same-as-shipping, or when checkout skips shipping
+                  const requireBilling = !sameAsBilling || checkoutSkipsShipping;
                   if (requireBilling) {
                     if (!billingFirstName?.trim()) {
                       setValidationMessage('BILLING FIRST NAME IS REQUIRED.');
@@ -5621,15 +5683,15 @@ function CheckoutPage() {
                     }
                   }
                   
-                  // Check if shipping method is selected (skip for subscription upgrades and digital-only carts)
-                  if (!isSubscriptionUpgrade && !isOnlyDigitalProducts && !selectedShippingMethod) {
+                  // Check if shipping method is selected (skip when checkout skips shipping)
+                  if (!checkoutSkipsShipping && !selectedShippingMethod) {
                     setValidationMessage('SHIPPING METHOD IS REQUIRED.');
                     setShowValidationModal(true);
                     return;
                   }
                   
-                  // Check if address is confirmed (required before checkout; skip for digital-only)
-                  if (!isOnlyDigitalProducts && !isSubscriptionUpgrade && !addressConfirmed) {
+                  // Check if address is confirmed (required before checkout; skip when no shipping address flow)
+                  if (!checkoutSkipsShipping && !addressConfirmed) {
                     setValidationMessage('PLEASE CONFIRM THAT YOUR ADDRESS IS ACCURATE.');
                     setShowValidationModal(true);
                     return;
@@ -5641,8 +5703,8 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
-                  const basePoints = isSignedIn ? Math.round(pointsEligibleAmount) : 0;
+                  // Calculate points earned (if signed in) — use net eligible USD (matches strip + consult code / stack rules; booking lines not double-counted)
+                  const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
                   const multiplier = getPointsMultiplierForUser();
                   const pointsEarned = Math.round(basePoints * multiplier);
                   
@@ -6062,13 +6124,13 @@ function CheckoutPage() {
                   }
 
                   if (appliedConsultQuote && consultDiscountAmount > 0 && !isSubscriptionUpgrade) {
-                    void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err) =>
+                    void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
                       console.error('Error redeeming consult quote code:', err)
                     );
                   }
                   
                   // Create Route protection if package protection is selected (non-blocking)
-                  if (packageProtection && !isSubscriptionUpgrade && !isOnlyDigitalProducts) {
+                  if (packageProtection && !checkoutSkipsShipping) {
                     try {
                       const orderId = `order-${nextOrderNumber}`;
                       const routeProtectionData = prepareRouteProtectionData(
@@ -6669,7 +6731,7 @@ function CheckoutPage() {
           }
         }, 100);
       }}
-      title="MISSING INPUT FIELD"
+      title="FORGETTING SOMETHING?"
       message={validationMessage}
       confirmText="OK"
       cancelText="CLOSE"

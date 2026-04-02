@@ -12,6 +12,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 interface HairlineOption {
   id: string;
@@ -152,7 +153,7 @@ function HairlineSelection() {
     if (isSignedIn) {
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -644,7 +645,7 @@ function HairlineSelection() {
             {showMobileMenu ? (
               <>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : '/sign-in')}
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/account' : signInHrefWithReturnTo(location))}
                   className="cursor-pointer" 
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                 >
@@ -656,7 +657,7 @@ function HairlineSelection() {
                   />
                 </button>
                 <button 
-                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : '/sign-in')} 
+                  onClick={() => navigate(localStorage.getItem('isSignedIn') === 'true' ? '/wishlist' : signInHrefWithReturnTo(location))} 
                   className="cursor-pointer"
                   style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                 >

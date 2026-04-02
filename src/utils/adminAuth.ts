@@ -350,6 +350,9 @@ export function isAyoteenzAdminAccount(user: { email?: string } | null): boolean
   return (user.email || '').trim().toLowerCase() === FOUNDER_PRIVILEGED_ADMIN_EMAIL;
 }
 
+/** Alias for `isAyoteenzAdminAccount`. In copy and agent context, **admin founder** = `kateenaarmstrong@gmail.com`. */
+export const isAdminFounderAccount = isAyoteenzAdminAccount;
+
 /**
  * Only this email is blocked from self-service account deletion (Settings + DELETE /api/delete-account).
  * Same value as founder Gmail by default; kept explicit so delete protection is not tied to other founder UI flags.

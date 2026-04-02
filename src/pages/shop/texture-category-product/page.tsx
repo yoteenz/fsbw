@@ -35,6 +35,7 @@ import {
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
   marbleStripCellBand,
   marbleStripCellOuter,
@@ -510,7 +511,7 @@ export default function ShopTextureCategoryProductPage() {
   };
   const handleMobileMenuSignInToggle = () => {
     if (isSignedIn) setShowSignOutConfirm(true);
-    else navigate('/sign-in');
+    else navigate(signInHrefWithReturnTo(location));
   };
   const handleSignOut = () => {
     setIsSignedIn(false);
@@ -734,7 +735,7 @@ export default function ShopTextureCategoryProductPage() {
                 <>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '15px !important',
@@ -749,7 +750,7 @@ export default function ShopTextureCategoryProductPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer"
                     style={{
                       height: '21px !important',

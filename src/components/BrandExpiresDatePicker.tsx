@@ -6,6 +6,9 @@ const POPOVER_WIDTH = 300;
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
 const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
+const NAV_ARROW_BASE_LEFT_PX = 22;
+const NAV_ARROW_BASE_RIGHT_PX = 24;
+
 const MONTH_LABELS = [
   'JANUARY',
   'FEBRUARY',
@@ -65,13 +68,23 @@ type Props = {
   inline?: boolean;
   /** Optional date guard (return true to disable a day). */
   isDateDisabled?: (isoYmd: string) => boolean;
+  /** Month nav arrow scale (default 1). Booking A/C passes 0.75 for 25% smaller arrows. */
+  navArrowScale?: number;
 };
 
 /**
  * Branded expiry date picker (replaces native `type="date"` popup).
  * Value/onChange use `YYYY-MM-DD` to match prior admin form state.
  */
-export default function BrandExpiresDatePicker({ value, onChange, inline = false, isDateDisabled }: Props) {
+export default function BrandExpiresDatePicker({
+  value,
+  onChange,
+  inline = false,
+  isDateDisabled,
+  navArrowScale = 1
+}: Props) {
+  const navLeftPx = Math.max(1, Math.round(NAV_ARROW_BASE_LEFT_PX * navArrowScale));
+  const navRightPx = Math.max(1, Math.round(NAV_ARROW_BASE_RIGHT_PX * navArrowScale));
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -212,7 +225,13 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
             style={{ border: 'none' }}
             aria-label="Previous month"
           >
-            <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={22} height={22} draggable={false} />
+            <img
+              src={CALENDAR_LEFT_ARROW_SRC}
+              alt=""
+              width={navLeftPx}
+              height={navLeftPx}
+              draggable={false}
+            />
           </button>
           <p
             style={{
@@ -235,7 +254,13 @@ export default function BrandExpiresDatePicker({ value, onChange, inline = false
             style={{ border: 'none' }}
             aria-label="Next month"
           >
-            <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={24} height={24} draggable={false} />
+            <img
+              src={CALENDAR_RIGHT_ARROW_SRC}
+              alt=""
+              width={navRightPx}
+              height={navRightPx}
+              draggable={false}
+            />
           </button>
         </div>
 

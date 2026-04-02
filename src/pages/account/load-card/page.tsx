@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -15,6 +15,7 @@ import {
 import loadCardImage from './load-card.png';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 /** Uppercase A–Z / 0–9 only, max 12 chars, shown as XXXX-XXXX-XXXX */
 function formatGiftBarcodeInput(raw: string): string {
@@ -33,6 +34,7 @@ function toCanonicalBarcode(value: string): string {
 
 function LoadCardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -166,9 +168,9 @@ function LoadCardPage() {
       clearAppAuth();
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -205,9 +207,9 @@ function LoadCardPage() {
   const handleSubmit = () => {
     if (!isSignedIn || !userData?.email) {
       setLoadCardNotice({
-        title: 'SIGN IN REQUIRED',
+        title: 'FORGETTING SOMETHING?',
         message: 'PLEASE SIGN IN TO ADD FUNDS.',
-        afterClose: () => navigate('/sign-in'),
+        afterClose: () => navigate(signInHrefWithReturnTo(location)),
       });
       return;
     }
@@ -317,7 +319,7 @@ function LoadCardPage() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -329,7 +331,7 @@ function LoadCardPage() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >

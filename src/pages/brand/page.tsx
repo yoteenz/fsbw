@@ -7,6 +7,7 @@ import { BRAND_MENU_ITEMS } from '../../constants/brandMenu';
 import { clearAppAuth } from '../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
@@ -85,7 +86,7 @@ function BrandPage() {
       window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
       setShowMobileMenu(false);
     }
-    navigate('/sign-in');
+    navigate(signInHrefWithReturnTo(location));
   };
   const handleBack = () => navigate(-1);
 
@@ -115,10 +116,10 @@ function BrandPage() {
             <div className="flex gap-5 absolute left-4">
               {showMobileMenu ? (
                 <>
-                  <button onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}>
+                  <button onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}>
                     <img alt="Account" width="16" height="16" src="/assets/NOIR/account-icon.svg" />
                   </button>
-                  <button onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
+                  <button onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} className="cursor-pointer" style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}>
                     <img alt="Wishlist" width="18" height="18" src="/assets/wishlist-heart.svg" />
                   </button>
                 </>

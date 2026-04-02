@@ -12,6 +12,7 @@ import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../
 import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
   marbleStripScrollRowStyle,
   marbleStripCellOuter,
@@ -479,7 +480,7 @@ function OceanCurlSelection() {
       // Show confirmation modal when signing out
       setShowSignOutConfirm(true);
     } else {
-      navigate('/sign-in');
+      navigate(signInHrefWithReturnTo(location));
     }
   };
 
@@ -851,7 +852,7 @@ function OceanCurlSelection() {
               {showMobileMenu ? (
                 <>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/account' : '/sign-in')}
+                    onClick={() => navigate(isSignedIn ? '/account' : signInHrefWithReturnTo(location))}
                     className="cursor-pointer" 
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(4px)' }}
                   >
@@ -863,7 +864,7 @@ function OceanCurlSelection() {
                     />
                   </button>
                   <button 
-                    onClick={() => navigate(isSignedIn ? '/wishlist' : '/sign-in')} 
+                    onClick={() => navigate(isSignedIn ? '/wishlist' : signInHrefWithReturnTo(location))} 
                     className="cursor-pointer"
                     style={{ height: '21px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important', transform: 'translateX(2px)' }}
                   >
