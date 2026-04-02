@@ -675,3 +675,43 @@ export async function postBookingAppointmentMeeting(body: {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+/** Booking checkout: create consultation meeting row for admin hub. */
+export async function postBookingConsultMeeting(body: {
+  meetingDate?: string;
+  meetingTime?: string;
+  tier?: string;
+  hairOption?: string;
+  notes?: string;
+  orderNumber?: string;
+  idempotencyKey?: string;
+  inspoFileNames?: string[];
+}): Promise<unknown> {
+  const res = await apiFetch('/api/booking/consult-meeting', { method: 'POST', body });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+/** Admin: send consult quote + client alert. */
+export async function postAdminConsultQuote(body: {
+  clientEmail: string;
+  clientFirstName?: string;
+  clientLastName?: string;
+  unitKey?: string;
+  selections?: Record<string, unknown>;
+  priceBreakdown?: unknown[];
+  adminMessage?: string;
+  thumbnailSrc?: string;
+}): Promise<unknown> {
+  const res = await apiFetch('/api/admin/consult-quotes', { method: 'POST', body });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+/** Signed-in user: fetch one consult quote by id. */
+export async function getConsultQuote(id: string): Promise<{ quote: Record<string, unknown> } | null> {
+  const res = await apiFetch(`/api/consult-quote?id=${encodeURIComponent(id)}`);
+  if (res.status === 401 || res.status === 404) return null;
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ quote: Record<string, unknown> }>;
+}

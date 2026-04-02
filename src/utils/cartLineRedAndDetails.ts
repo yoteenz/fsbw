@@ -110,7 +110,6 @@ export function bookingCartViewDetailsHtml(item: {
 /** HTML for BCF shop line VIEW DETAILS. */
 export function bcfCartViewDetailsHtml(item: {
   texture?: string;
-  category?: string;
   hairOrigin?: string;
   length?: string;
   color?: string;

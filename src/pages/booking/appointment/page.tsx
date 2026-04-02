@@ -773,7 +773,10 @@ export default function BookingAppointmentPage() {
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
         window.dispatchEvent(new Event('cartUpdated'));
         setAddToBagState('added');
-        setTimeout(() => setAddToBagState('idle'), 2000);
+        setTimeout(() => {
+          setAddToBagState('idle');
+          navigate('/checkout/bookings');
+        }, 600);
       } catch (e) {
         console.error(e);
         setAddToBagState('idle');
@@ -796,6 +799,7 @@ export default function BookingAppointmentPage() {
       belowCard={
         <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '2px' }}>
           <NoirStyleAddToBagButton
+            idleLabel="PROCEED TO CHECKOUT"
             state={addToBagState}
             disabled={addToBagState === 'adding'}
             onClick={handleScheduleToBag}

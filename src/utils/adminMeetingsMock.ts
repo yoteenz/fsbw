@@ -11,12 +11,15 @@ export type AdminMeeting = {
   time: string;
   client: string;
   clientEmail?: string;
+  userId?: string;
   type: string;
   category: MeetingCategory;
   duration: string;
   status: 'Confirmed' | 'Pending' | 'Canceled';
   notes: string;
   services?: string[];
+  /** From Supabase `meetings.metadata` (checkout + admin). */
+  metadata?: Record<string, unknown>;
 };
 
 export const APPOINTMENT_SERVICE_OPTIONS = [
@@ -173,6 +176,12 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         duration: '60 MIN',
         status,
         notes: `Wig consult — style goals, cap size, timeline (${dateKey.slice(5)})`,
+        metadata: {
+          tier: rnd() > 0.55 ? 'premium' : 'standard',
+          hairOption: rnd() > 0.5 ? 'WIG ONLY' : 'WIG + INSTALL',
+          consultNotes: 'MOCK NOTES FOR ADMIN CARD.',
+          inspoFileNames: ['inspo-1.jpg', 'inspo-2.jpg'],
+        },
       });
     } else {
       const numServices = 1 + Math.floor(rnd() * 3);
@@ -286,24 +295,37 @@ export function normalizeApiMeeting(row: Record<string, unknown>): AdminMeeting 
   const type = String(row.type ?? 'MEETING').toUpperCase();
   const catRaw = String(row.category ?? '').toLowerCase();
   const category: MeetingCategory =
-    catRaw === 'consultation' || type.includes('CONSULT') ? 'consultation' : 'appointment';
+    catRaw === 'consultation' ||
+    catRaw === 'consult' ||
+    type.includes('CONSULT') ||
+    type.includes('WIG CONSULT')
+      ? 'consultation'
+      : 'appointment';
   const duration = row.duration != null ? String(row.duration) : row.durationMinutes != null ? `${row.durationMinutes} MIN` : '45 MIN';
   const statusRaw = String(row.status ?? 'Pending').toLowerCase();
   const status: AdminMeeting['status'] =
     statusRaw === 'confirmed' ? 'Confirmed' : statusRaw === 'canceled' || statusRaw === 'cancelled' ? 'Canceled' : 'Pending';
   const notes = String(row.notes ?? '');
   const services = Array.isArray(row.services) ? (row.services as string[]).map(String) : undefined;
+  const metaRaw = row.metadata;
+  const metadata =
+    metaRaw && typeof metaRaw === 'object' && !Array.isArray(metaRaw)
+      ? (metaRaw as Record<string, unknown>)
+      : undefined;
+  const userId = row.userId != null ? String(row.userId) : row.user_id != null ? String(row.user_id) : undefined;
   return {
     id: id || `api-${date}-${time}`,
     date,
     time,
     client,
     clientEmail,
+    userId,
     type,
     category,
     duration,
     status,
     notes,
     services,
+    metadata,
   };
 }

@@ -25,8 +25,7 @@ import {
 } from '../../utils/bcfProductOptions';
 import {
   CART_RED_LINE_BCF_BOOKING,
-  bookingCartViewDetailsHtml,
-  bcfCartViewDetailsHtml
+  bookingCartViewDetailsHtml
 } from '../../utils/cartLineRedAndDetails';
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';

@@ -97,6 +97,7 @@ const RewardsPage = lazyWithRetry(() => import('./pages/account/rewards/page'), 
 const ReferralsPage = lazyWithRetry(() => import('./pages/account/referrals/page'), 'ReferralsPage');
 const AffiliatePage = lazyWithRetry(() => import('./pages/account/affiliate/page'), 'AffiliatePage');
 const NotificationsPage = lazyWithRetry(() => import('./pages/account/notifications/page'), 'NotificationsPage');
+const ConsultOfferPage = lazyWithRetry(() => import('./pages/account/consult-offer/page'), 'ConsultOfferPage');
 const LoadCardPage = lazyWithRetry(() => import('./pages/account/load-card/page'), 'LoadCardPage');
 const ReviewsPage = lazyWithRetry(() => import('./pages/account/reviews/page'), 'ReviewsPage');
 const LeaveReviewOrderPage = lazyWithRetry(() => import('./pages/account/reviews/leave-review-order/page'), 'LeaveReviewOrderPage');
@@ -874,6 +875,13 @@ function App() {
             </Suspense>
           </AccountRouteGuard>
         } />
+        <Route path="/account/consult-offer" element={
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ConsultOfferPage />
+            </Suspense>
+          </AccountRouteGuard>
+        } />
         <Route path="/account/orders/:orderId/review" element={
           <AccountRouteGuard>
             <Suspense fallback={<LoadingScreen />}>
@@ -934,6 +942,11 @@ function App() {
           </Suspense>
         } />
         <Route path="/checkout/upgrade" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <CheckoutPage />
+          </Suspense>
+        } />
+        <Route path="/checkout/bookings" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutPage />
           </Suspense>

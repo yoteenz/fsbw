@@ -466,7 +466,14 @@ function NotificationsPage() {
               .maybeSingle();
             const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
             const adminNotifs: Notification[] = items.map((it: unknown) => {
-              const item = it as { id?: string; text?: string; read?: boolean; createdAt?: string };
+              const item = it as {
+                id?: string;
+                text?: string;
+                read?: boolean;
+                createdAt?: string;
+                actionText?: string;
+                actionRoute?: string;
+              };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
               const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
@@ -477,6 +484,8 @@ function NotificationsPage() {
                 date,
                 isRead: !!item.read,
                 icon: 'f',
+                actionText: item.actionText,
+                actionRoute: item.actionRoute,
               };
             });
             const byId = new Map(merged.map((n) => [n.id, n]));
@@ -525,7 +534,14 @@ function NotificationsPage() {
               .maybeSingle();
             const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
             const adminNotifs: Notification[] = items.map((it: unknown) => {
-              const item = it as { id?: string; text?: string; read?: boolean; createdAt?: string };
+              const item = it as {
+                id?: string;
+                text?: string;
+                read?: boolean;
+                createdAt?: string;
+                actionText?: string;
+                actionRoute?: string;
+              };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
               const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
@@ -536,6 +552,8 @@ function NotificationsPage() {
                 date,
                 isRead: !!item.read,
                 icon: 'f',
+                actionText: item.actionText,
+                actionRoute: item.actionRoute,
               };
             });
             const byId = new Map(merged.map((n) => [n.id, n]));

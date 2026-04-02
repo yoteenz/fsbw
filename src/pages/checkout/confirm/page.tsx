@@ -21,6 +21,7 @@ import {
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../../utils/checkoutOrderStripDisplay';
+import { isBookingCartLine } from '../../../utils/bookingCheckout';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -48,6 +49,10 @@ function CheckoutConfirmPage() {
   const location = useLocation();
   
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const isBookingsOnlyOrder = React.useMemo(
+    () => cartItems.length > 0 && cartItems.every(isBookingCartLine),
+    [cartItems]
+  );
   const [cartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -1672,6 +1677,7 @@ function CheckoutConfirmPage() {
                     HOME
                   </button>
                 </div>
+                {!isBookingsOnlyOrder && (
                 <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
                   <button
                     onClick={() => {
@@ -1694,6 +1700,7 @@ function CheckoutConfirmPage() {
                     TRACK YOUR ORDERS
                   </button>
                 </div>
+                )}
               </>
             )}
           </div>

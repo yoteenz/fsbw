@@ -112,7 +112,10 @@ export default function BookingConsultationPage() {
   const [inspoItems, setInspoItems] = useState<ConsultInspoItem[]>(loadInspoDraftFromSession);
   const [showMaxInspoModal, setShowMaxInspoModal] = useState(false);
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
-  const [formError, setFormError] = useState<string | null>(null);
+  const [consultFormNotice, setConsultFormNotice] = useState<{ title: string; message: string } | null>(
+    null
+  );
+  const [inspoRemoveTargetId, setInspoRemoveTargetId] = useState<string | null>(null);
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
@@ -191,12 +194,12 @@ export default function BookingConsultationPage() {
       setInspoItems((prev) => {
         const room = MAX_HAIR_INSPO_PHOTOS - prev.length;
         if (room <= 0) {
-          setShowMaxInspoModal(true);
+          queueMicrotask(() => setShowMaxInspoModal(true));
           return prev;
         }
         const toAdd = built.slice(0, room);
         if (picked.length > room || built.length > room) {
-          setShowMaxInspoModal(true);
+          queueMicrotask(() => setShowMaxInspoModal(true));
         }
         return [...prev, ...toAdd].slice(0, MAX_HAIR_INSPO_PHOTOS);
       });
@@ -281,7 +284,10 @@ export default function BookingConsultationPage() {
         }
         setInspoItems([]);
         setAddToBagState('added');
-        setTimeout(() => setAddToBagState('idle'), 2000);
+        setTimeout(() => {
+          setAddToBagState('idle');
+          navigate('/checkout/bookings');
+        }, 600);
       } catch (err) {
         console.error(err);
         setAddToBagState('idle');
@@ -307,6 +313,7 @@ export default function BookingConsultationPage() {
       belowCard={
         <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto', paddingTop: '2px' }}>
           <NoirStyleAddToBagButton
+            idleLabel="PROCEED TO CHECKOUT"
             state={addToBagState}
             disabled={addToBagState === 'adding'}
             onClick={handleAddToBag}

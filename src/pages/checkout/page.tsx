@@ -19,7 +19,9 @@ import {
   createStripeMembershipCheckoutSession,
   getAccessToken,
   postBookingAppointmentMeeting,
+  postBookingConsultMeeting,
 } from '../../utils/api';
+import { filterBookingCartLines, isBookingsCheckoutPath } from '../../utils/bookingCheckout';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import {
   discountPromoCheckoutBlockReason,
@@ -183,6 +185,7 @@ function buildAppliedVoucherQuantitiesFromModal(
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
@@ -379,6 +382,33 @@ function CheckoutPage() {
     },
     [cartItems]
   );
+
+  const syncBookingConsultsToAdminMeetings = useCallback(
+    async (orderNumberForNotes: string) => {
+      const consultItems = cartItems.filter((item: any) => item?.type === 'booking-consult');
+      if (consultItems.length === 0) return;
+
+      await Promise.allSettled(
+        consultItems.map(async (item: any, idx: number) => {
+          const idempotencyKey = `BOOKING_CONSULT:${orderNumberForNotes}:${idx}`;
+          const names = Array.isArray(item?.bookingInspoFileNames)
+            ? item.bookingInspoFileNames.filter((x: unknown): x is string => typeof x === 'string')
+            : [];
+          await postBookingConsultMeeting({
+            meetingDate: typeof item?.bookingPreferredDate === 'string' ? item.bookingPreferredDate : undefined,
+            meetingTime: typeof item?.bookingPreferredTime === 'string' ? item.bookingPreferredTime : undefined,
+            tier: item?.bookingTier,
+            hairOption: item?.bookingHairOption,
+            notes: item?.bookingNotes,
+            orderNumber: orderNumberForNotes,
+            idempotencyKey,
+            inspoFileNames: names,
+          });
+        })
+      );
+    },
+    [cartItems]
+  );
   
   // Validation modals
   const [showValidationModal, setShowValidationModal] = useState(false);
@@ -510,6 +540,21 @@ function CheckoutPage() {
       // Check the route pathname to determine checkout type
       const isUpgradeRoute = location.pathname === '/checkout/upgrade';
       
+      if (location.pathname.includes('/checkout/bookings')) {
+        const stored = localStorage.getItem('cartItems');
+        let regularCartItems: any[] = [];
+        if (stored) {
+          const items = JSON.parse(stored);
+          if (Array.isArray(items) && items.length > 0) {
+            regularCartItems = items;
+          }
+        }
+        const onlyBookings = filterBookingCartLines(regularCartItems);
+        setIsSubscriptionUpgrade(false);
+        setCartItems(onlyBookings);
+        return;
+      }
+
       if (isUpgradeRoute) {
         // This is a subscription upgrade checkout
         const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
@@ -2298,7 +2343,7 @@ function CheckoutPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE' : 'BAG'}
+                    {isSubscriptionUpgrade ? 'UPGRADE' : isBookingsCheckoutRoute ? 'BOOKINGS' : 'BAG'}
                   </span>
                 </>
               )}
@@ -5936,6 +5981,7 @@ function CheckoutPage() {
                   void (async () => {
                     try {
                       await syncBookingAppointmentsToAdminMeetings(orderNumber);
+                      await syncBookingConsultsToAdminMeetings(orderNumber);
                     } catch (e) {
                       console.error('Failed to sync booking appointments to admin meetings:', e);
                     }

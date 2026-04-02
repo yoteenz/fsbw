@@ -15,6 +15,8 @@ function toMeetingItem(r: Record<string, unknown>) {
     durationMinutes: r.duration_minutes,
     status: r.status,
     notes: r.notes,
+    category: r.category ?? 'appointment',
+    metadata: r.metadata ?? {},
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   };
@@ -59,21 +61,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const durationMinutes = Math.max(15, Math.min(480, Number(body.durationMinutes || body.duration_minutes) || 60));
     const status = (body.status as string) || 'scheduled';
     const notes = (body.notes as string) || '';
+    const categoryRaw = String(body.category || body.meetingCategory || 'appointment').toLowerCase();
+    const category =
+      categoryRaw === 'consultation' || categoryRaw === 'consult' ? 'consultation' : 'appointment';
+    const metadata =
+      body.metadata && typeof body.metadata === 'object' ? body.metadata : undefined;
     if (!meetingDate) return res.status(400).json({ error: 'meetingDate required' });
     try {
+      const insertRow: Record<string, unknown> = {
+        user_id: userId || null,
+        client_email: clientEmail || null,
+        client_name: clientName || null,
+        meeting_date: meetingDate,
+        meeting_time: meetingTime,
+        type,
+        duration_minutes: durationMinutes,
+        status: ['scheduled', 'confirmed', 'completed', 'cancelled', 'pending'].includes(status)
+          ? status
+          : 'scheduled',
+        notes: notes || null,
+        category,
+      };
+      if (metadata !== undefined) insertRow.metadata = metadata;
       const { data, error } = await supabase
         .from('meetings')
-        .insert({
-          user_id: userId || null,
-          client_email: clientEmail || null,
-          client_name: clientName || null,
-          meeting_date: meetingDate,
-          meeting_time: meetingTime,
-          type,
-          duration_minutes: durationMinutes,
-          status: ['scheduled', 'confirmed', 'completed', 'cancelled'].includes(status) ? status : 'scheduled',
-          notes: notes || null,
-        })
+        .insert(insertRow)
         .select()
         .single();
       if (error) return res.status(500).json({ error: error.message });
@@ -104,6 +116,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (body.notes !== undefined) updates.notes = body.notes;
     if (body.clientName !== undefined) updates.client_name = body.clientName;
     if (body.clientEmail !== undefined) updates.client_email = body.clientEmail;
+    if (body.category !== undefined) updates.category = body.category;
+    if (body.metadata !== undefined) updates.metadata = body.metadata;
     try {
       const { data, error } = await supabase.from('meetings').update(updates).eq('id', id).select().single();
       if (error) return res.status(500).json({ error: error.message });

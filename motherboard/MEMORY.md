@@ -6754,6 +6754,16 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-02 — BCF cart details: no category field; bag import cleanup
+
+**Context:** User asked to drop **category** (e.g. closures) from BCF **VIEW DETAILS** HTML, remove red **VIEW/CLOSE DETAILS** under **RAW HUMAN HAIR** for BCF on the **shopping bag** (keep toggle only in **CartDropdown** under **×**). Follow-up **“?”** clarified completing the prior task.
+
+**Decisions / outcomes:** **`bcfCartViewDetailsHtml`** did not emit a **CATEGORY:** line in repo; **`category`** removed from its item type so it cannot be added accidentally. Shopping bag **VIEW DETAILS** was already limited to **`booking-consult` / `booking-appointment`** only (`showBookingDetailsOnBag`); removed dead **`bcfCartViewDetailsHtml`** import from **`shopping-bag/page.tsx`**.
+
+**Changes:** **`src/utils/cartLineRedAndDetails.ts`**, **`src/pages/shopping-bag/page.tsx`**.
+
+---
+
 ## 2026-04-02 — Cart / bag: EDIT APPOINTMENT → hydrate booking PDP + replace line on save
 
 **Context:** User wanted red **EDIT APPOINTMENT** under the appointment thumbnail in **cart dropdown** and **bag** (same styling as **EDIT IN BUILD-A-WIG**), opening the appointment booking page with selections from that cart line.
@@ -6771,6 +6781,14 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Root cause:** **`handleFileChange`** async path used **`latestInspoRef.current`** but **`latestInspoRef` was never declared**, causing a **runtime `ReferenceError`** after **`FileReader`** finished so **`setInspoItems` never ran**. **`CONSULT_INSPO_HYDRATE_EVENT`** was dispatched with **no listener**.
 
 **Changes:** **`src/pages/booking/consultation/page.tsx`** — restore **`latestInspoRef`** synced each render; **`useEffect`** subscribes to **`bawConsultInspoHydrate`** → **`setInspoItems(loadInspoDraftFromSession())`**; **`isProbablyImageFile`** allows **empty name + empty type** when **`size > 0`**.
+
+---
+
+## 2026-04-02 — Consult hair inspo: affiliate-style picker, thumbs first, modals
+
+**Context:** User wanted behavior like **account affiliate** submit-content photo UX: image appears automatically on select (no extra step), **X** removes with **confirmation** (not instant), and **“please upload hair inspo”** / other validation as **popup** not inline text.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`FileReader`** via **`Promise.all`** + single **`setInspoItems`** (no **`latestInspoRef`** / hydrate event). File input **overlays** CHOOSE FILE row (**affiliate** pattern: full width/height, **`opacity: 0`**, **`zIndex: 3`**). **Thumbnails above** picker. **`ConfirmationModal`**: form notice (**OK** only) for missing inspo / date-time / invalid date; remove-inspo confirm (**REMOVE** / **CANCEL**). Removed inline **`formError`** paragraph.
 
 ---
 
