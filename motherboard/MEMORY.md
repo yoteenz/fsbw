@@ -6995,3 +6995,13 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Context (full chat):** Consult hair inspo remove control; user asked to move it **up 1px**.
 
 **Changes:** **`src/pages/booking/consultation/page.tsx`** — remove control **`top: '-6px'`** (was **`-5px`**); **`right: '-4px'`** unchanged.
+
+---
+
+## 2026-04-02 — Loyalty net for consult/booking lines, consult date + duration copy
+
+**Context (full chat):** User wanted **credited** booking lines (e.g. **consult** deposit) not **double-counted** in loyalty — earn **1:1 on the line (e.g. 40 pts)** while consult codes / stack apply to merchandise; **consult** scheduled date display **`MM/DD/YYYY`** (slashes); restore **FINAL DURATION CONFIRMED AFTER CHECKOUT.** under scheduled time on consult page.
+
+**Decisions / outcomes:** **`computePointsEligibleNetUsd`** allocates **referral / legacy / gift card / voucher** discounts using **merchandise subtotal only** in the proration numerator; **booking** lines add **full line USD** after **merch net** (same for mixed special-offer branch). **Confirm order** uses **`pointsEligibleNetAmount`** (was **`pointsEligibleAmount`**).
+
+**Changes:** **`src/utils/loyaltyPointsEligibleNet.ts`** — **`peMerch` / `consultSubMerch`**, **`allocatedToMerch`**, **`merchNet + peBooking`**; mixed-offer branch **`allocatedToMerchInPool`** + **`merchNetInPool + peBookingInPool`**. **`src/pages/checkout/page.tsx`** — **`basePoints`** from **`pointsEligibleNetAmount`**. **`src/pages/booking/consultation/page.tsx`** — **`formatConsultIsoForDisplay`** slashes; scheduled **`&lt;p&gt;`** adds **`FINAL DURATION…`** line via **`<br />`**.
