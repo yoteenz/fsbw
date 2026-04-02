@@ -1,9 +1,34 @@
 /**
  * Collapsed red subtitle for BCF (`shop-texture-category`) + booking (A/C) lines in cart dropdown,
  * bag, and checkout strip — full specs live under VIEW DETAILS (like unit wigs).
+ * BCF uses {@link CART_RED_LINE_BCF_BOOKING}; A/C uses {@link bookingCartRedSubtitle}.
  */
 
 export const CART_RED_LINE_BCF_BOOKING = 'RAW HUMAN HAIR';
+
+/** Red subtitle for `booking-appointment` / `booking-consult` (cart, bag, checkout strip) — not BCF shop lines. */
+export function bookingCartRedSubtitle(item: {
+  type?: string;
+  bookingInstallKind?: string;
+  bookingHairOption?: string;
+  /** Consult lines often mirror `bookingHairOption`; used if hair option key is missing (legacy). */
+  bookingBagSubtitle?: string;
+}): string {
+  if (item.type === 'booking-appointment') {
+    const k = String(item.bookingInstallKind || '')
+      .toUpperCase()
+      .replace(/-/g, '_');
+    if (k === 'RE_INSTALL') return 'RE-INSTALL';
+    return 'NEW INSTALL';
+  }
+  if (item.type === 'booking-consult') {
+    const raw = String(item.bookingHairOption || item.bookingBagSubtitle || '').trim();
+    const o = raw.toUpperCase();
+    if (o === 'WIG ONLY') return 'WIG ONLY';
+    return 'WIG + INSTALL';
+  }
+  return CART_RED_LINE_BCF_BOOKING;
+}
 
 function esc(s: string): string {
   return String(s || '')

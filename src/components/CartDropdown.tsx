@@ -20,6 +20,7 @@ import {
 } from '../utils/bcfProductOptions';
 import {
   CART_RED_LINE_BCF_BOOKING,
+  bookingCartRedSubtitle,
   bookingCartViewDetailsHtml,
   bcfCartViewDetailsHtml
 } from '../utils/cartLineRedAndDetails';
@@ -1239,11 +1240,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                             return 'DIGITAL ONLY';
                           }
-                          if (
-                            item.type === 'booking-consult' ||
-                            item.type === 'booking-appointment' ||
-                            item.type === 'shop-texture-category'
-                          ) {
+                          if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
+                            return bookingCartRedSubtitle(item as CartItem);
+                          }
+                          if (item.type === 'shop-texture-category') {
                             return CART_RED_LINE_BCF_BOOKING;
                           }
 

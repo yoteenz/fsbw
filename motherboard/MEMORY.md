@@ -6792,6 +6792,16 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-02 — Consult hair inspo: iOS Photo Library MIME + no `fontSize:0` + serial FileReader
+
+**Context:** User: **Choose file → Photo Library → Add** and **no preview** below CHOOSE FILE.
+
+**Causes addressed:** (1) **`isProbablyImageFile`** rejected WebKit UTIs (**`public.jpeg`**, **`public.heic`**, etc.) because they are not **`image/*`**. (2) **`fontSize: 0`** on the overlay **`input[type=file]`** can break iOS Safari behavior. (3) Parallel **`FileReader`** **`onload`** + **`setInspoItems`** could race (multiple updates from **`prev = []`**).
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — broader MIME/UTI + octet-stream/empty-type rules; removed **`fontSize: 0`** on file input; **sequential** **`readImageFileAsDataUrl`** then **one** state merge; **`files` snapshot before `input.value = ''`** (already present).
+
+---
+
 ## 2026-04-02 — BCF closures/frontals cart thumbs = shop marbles (not PDP photos)
 
 **Context:** User reported **closures** and **frontals** line thumbnails in **cart dropdown**, **shopping bag**, **checkout**, and **checkout summary** still showed **PDP hero** images instead of the **home/shop** marble PNGs (`closure-{texture}.png`, `frontal-{texture}.png`).
@@ -6799,3 +6809,53 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Decisions / outcomes:** Align with **bundles**: **`shopBcfCartLineThumbnailSrc`** always maps texture + category through **`shopTextureCategoryThumbSrc`** for closures/frontals; do **not** prefer cart line **`image`** (JPG heroes).
 
 **Changes:** **`src/utils/bcfProductOptions.ts`** — removed PDP JPG fallback maps; closures/frontals branch returns **`shopTextureCategoryThumbSrc(t, c)`** only.
+
+---
+
+## 2026-04-02 — Consult hair inspo: iOS photo pick — snapshot `FileList` before clearing input
+
+**Context:** User chose **Photo Library → select → Add** and **no thumbnail** appeared under **CHOOSE FILE**.
+
+**Root cause:** **`handleFileChange`** did **`e.target.value = ''`** immediately after reading **`e.target.files`**. On **iOS Safari / WebKit**, clearing the input can **empty or invalidate** the **`FileList`**, so **`Array.from(list)`** yields nothing and **`FileReader` / `setInspoItems`** never run with real files.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`Array.from(input.files)`** into a **`files` array first**, then **`input.value = ''`**, then filter / read.
+
+---
+
+## 2026-04-01 — Admin meetings: Bookings / Consults hub, consult quotes, `/checkout/bookings`, consult-offer alerts
+
+**Context:** User requested a large admin **Meetings** overhaul: replace **DAY/WEEK/MONTH/YEAR** with **BOOKINGS** (first) and **CONSULTS**; consult cards (premium first) with **Send quote** modal (unit + sub-selections, message, breakdown, internal **CONSULT-** code, **Send alert**); client **Alerts** with **VIEW ORDER** → **`/account/consult-offer`** module (countdown, **Add to bag**); bookings tab with month calendar (red/gray days), appointment lists, **Edit meeting** modal; panels navigate to **`/admin/clients/account?email=`**; **VIEW ALL** by client; Supabase wiring; A/C checkout isolated at **`/checkout/bookings`**, **PROCEED TO CHECKOUT** (no mixed product checkout), no order tracking for booking-only carts.
+
+**Implemented (prior work in this thread):** Migration **`20260402210000_meetings_category_consult_quotes.sql`** (`meetings.category` / `metadata`, `consult_quotes`, RLS). APIs: **`api/booking/consult-meeting.ts`**, **`api/admin/consult-quotes.ts`**, **`api/consult-quote.ts`**, updates to **`api/admin/meetings.ts`**, **`api/booking/appointment-meeting.ts`**. Client: **`AdminMeetingsHub.tsx`**, checkout split and confirm hide tracking for booking lines, **`src/pages/account/consult-offer/page.tsx`**, notifications **`actionText` / `actionRoute`**, **`src/utils/bookingCheckout.ts`** + **`src/utils/api.ts`** helpers, booking PDPs → **`/checkout/bookings`**, assets **`quote-icon.svg`**, **`edit-meeting-icon.svg`**, routes in **`App.tsx`**.
+
+**Remaining / caveats:** Apply DB migration in Supabase; hierarchical unit dropdowns vs full PDP option trees; **edit meeting** → client notification flow; checkout application of **CONSULT-** $40 / 72h codes; **Add to bag** from consult-offer as real cart prefill; calendar paid/balance from real payments. **`npx tsc --noEmit`** still fails on **pre-existing** errors in **`src/pages/admin/brand/page.tsx`** and a pending tab type in **`admin/pending/page.tsx`** — not introduced by meetings work. Lint on meetings/checkout/consult-offer touched files: clean.
+
+**This turn:** Conversation summarized for handoff; verified lints on key files; documented **tsc** baseline; this MEMORY entry.
+
+---
+
+## 2026-04-02 — Vercel build: TS2769 cart filter + TS2559 CartItem vs bookingTier
+
+**Context:** User pasted **Vercel** `npm run build` failure: **`tsc --noEmit`** errors in **`src/pages/booking/appointment/page.tsx`** (line ~717, **`.filter`** on **`unknown[]`**) and **`src/utils/bookingAppointmentFormDraft.ts`** (**`bookingAppointmentHrefForCartItem(item)`** — **`CartItem`** had no property overlap with **`{ bookingTier?: string }`** under TypeScript weak-type checking).
+
+**Changes:** **`appointment/page.tsx`** — filter callback takes **`unknown`** elements: guard **`typeof row === 'object' && row !== null`**, then read **`id`** via cast; avoids incompatible predicate typing on **`unknown[]`**. **`src/types/cart.ts`** — added optional **`bookingTier?: string`** on **`CartItem`** (matches runtime booking lines and satisfies **`bookingAppointmentHrefForCartItem`** / consult href helpers).
+
+**Conventions:** When parsing **`localStorage`** JSON as **`unknown[]`**, narrow each element in **`.filter`** / **`.map`** instead of annotating the parameter as a shaped type.
+
+---
+
+## 2026-04-01 — Consult hair inspo: thumbs below CHOOSE FILE, max 3 photos, modal copy
+
+**Context:** User confirmed hair inspo flow works; wanted **thumbnail row below the CHOOSE FILE row** (not directly under **HAIR INSPO:**), popup text **“MAX PHOTOS REACHED.”** only (no extra line), and **3** photos max instead of **4**.
+
+**Decisions / outcomes:** **`MAX_HAIR_INSPO_PHOTOS = 3`**; **`ConfirmationModal`** for limit uses **`title="MAX PHOTOS REACHED."`**, empty **`message`**, **`confirmText="CLOSE"`**, no cancel. **`src/types/cart.ts`** comment updated to max **3** inspo filenames on PDP where applicable.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — flex column: **HAIR INSPO** label → **CHOOSE FILE** block → **thumbnails** after that block; **`loadInspoDraftFromSession`** **`.slice(0, MAX_HAIR_INSPO_PHOTOS)`** so old session drafts with 4 items trim to 3 on load. (Prior thread work: iOS **`FileList`** snapshot before clearing input, **`isProbablyImageFile`** for WebKit UTIs, sequential **`FileReader`**, affiliate-style overlay input, remove confirm modal.)
+
+---
+
+## 2026-04-02 — Booking cart red line: NEW INSTALL / RE-INSTALL / WIG + INSTALL / WIG ONLY
+
+**Context:** User asked that the red subtitle for **booking** lines in **cart dropdown**, **shopping bag**, **checkout**, and **checkout summary** not show **RAW HUMAN HAIR** (that copy stays for **BCF** shop lines). Appointments should show **NEW INSTALL** or **RE-INSTALL**; consults **WIG + INSTALL** or **WIG ONLY**.
+
+**Changes:** **`src/utils/cartLineRedAndDetails.ts`** — new **`bookingCartRedSubtitle`**: **`booking-appointment`** from **`bookingInstallKind`** (**`RE_INSTALL`** → **RE-INSTALL**, else **NEW INSTALL**); **`booking-consult`** from **`bookingHairOption`** or fallback **`bookingBagSubtitle`**. **`CartDropdown`**, **`shopping-bag/page.tsx`** (**`bagProductRedSubtitle`**), **`checkoutOrderStripDisplay.ts`** (**`orderStripRedSubtitle`**) use it for A/C types only; **`shop-texture-category`** still uses **`CART_RED_LINE_BCF_BOOKING`**. **`src/types/cart.ts`** — **`bookingHairOption?: string`** on **`CartItem`**.

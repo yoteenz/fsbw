@@ -20,6 +20,8 @@ import {
   getAccessToken,
   postBookingAppointmentMeeting,
   postBookingConsultMeeting,
+  redeemConsultQuote,
+  validateConsultDiscountCode,
 } from '../../utils/api';
 import { filterBookingCartLines, isBookingsCheckoutPath } from '../../utils/bookingCheckout';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
@@ -294,6 +296,12 @@ function CheckoutPage() {
     id: string;
     code: string;
     percent: number;
+  } | null>(null);
+  /** Admin consult quote: flat $ off eligible custom-unit subtotal (excludes A/C booking lines); one-time redeem server-side. */
+  const [appliedConsultQuote, setAppliedConsultQuote] = useState<{
+    quoteId: string;
+    code: string;
+    amountUsd: number;
   } | null>(null);
   const [isDiscountCodeFocused, setIsDiscountCodeFocused] = useState(false);
   
@@ -1566,7 +1574,7 @@ function CheckoutPage() {
       userSelectedDigitalCashRef.current = null;
       return;
     }
-    if (appliedReferralCode || appliedDiscount > 0 || appliedBrandDiscountPromo) {
+    if (appliedReferralCode || appliedDiscount > 0 || appliedBrandDiscountPromo || appliedConsultQuote) {
       setAppliedGiftCardBalance(0);
       userSelectedDigitalCashRef.current = null;
       return;
@@ -1585,7 +1593,7 @@ function CheckoutPage() {
     } else {
       setAppliedGiftCardBalance(cappedBalance);
     }
-  }, [giftCardBalance, orderAmount, orderAmountExcludingSpecialOffer, hasSpecialOfferInCart, hasOnlySpecialOfferInCart, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount, appliedBrandDiscountPromo]);
+  }, [giftCardBalance, orderAmount, orderAmountExcludingSpecialOffer, hasSpecialOfferInCart, hasOnlySpecialOfferInCart, taxesProcessing, shippingHandling, selectedProcessing, packageProtection, isSubscriptionUpgrade, appliedReferralCode, appliedDiscount, appliedBrandDiscountPromo, appliedConsultQuote]);
   
   // Check if code is a referral code (matches referralCode or referralNumber so admin-created codes work)
   const isReferralCode = (code: string): boolean => {
@@ -1669,11 +1677,12 @@ function CheckoutPage() {
     return validCodes[upperCode] || 0;
   };
   
-  const handleApplyDiscountCode = () => {
+  const handleApplyDiscountCode = async () => {
     if (!discountCode.trim()) {
       setDiscountCodeError('');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
@@ -1690,12 +1699,73 @@ function CheckoutPage() {
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
     }
     
     const code = discountCode.trim();
+    const codeNorm = code.toUpperCase();
+
+    // Admin-sent consult quote codes ($40 / 72h / one-time) — server-validated
+    if (codeNorm.startsWith('CONSULT-')) {
+      if (isBookingsCheckoutRoute) {
+        setDiscountCodeError('CONSULT CODES APPLY TO CUSTOM UNIT ORDERS, NOT BOOKINGS-ONLY CHECKOUT.');
+        setAppliedConsultQuote(null);
+        return;
+      }
+      if (!isSignedIn) {
+        setDiscountCodeError('SIGN IN TO USE YOUR CONSULT CODE.');
+        return;
+      }
+      if (appliedReferralCode) {
+        setDiscountCodeError('CONSULT CODES CANNOT BE COMBINED WITH REFERRAL CODES.');
+        return;
+      }
+      if (appliedGiftCardBalance > 0) {
+        setDiscountCodeError('CONSULT CODES CANNOT BE COMBINED WITH GIFT CARDS.');
+        return;
+      }
+      const base =
+        hasSpecialOfferInCart && !hasOnlySpecialOfferInCart
+          ? orderAmountExcludingSpecialOffer
+          : orderAmount;
+      const bookingPortion = cartItems.reduce((sum, item: { price?: number; quantity?: number; type?: string }) => {
+        if (item?.type === 'booking-appointment' || item?.type === 'booking-consult') {
+          return sum + (item.price || 0) * (item.quantity || 1);
+        }
+        return sum;
+      }, 0);
+      const eligibleConsult = Math.round(Math.max(0, base - bookingPortion) * 100) / 100;
+      if (eligibleConsult <= 0) {
+        setDiscountCodeError('ADD ELIGIBLE CUSTOM UNIT ITEMS TO USE THIS CONSULT CODE. (BOOKINGS ARE EXCLUDED.)');
+        setAppliedConsultQuote(null);
+        return;
+      }
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          setDiscountCodeError('SIGN IN TO USE YOUR CONSULT CODE.');
+          return;
+        }
+        const v = await validateConsultDiscountCode(code);
+        setAppliedConsultQuote({
+          quoteId: v.quoteId,
+          code: (v.code || codeNorm).toUpperCase(),
+          amountUsd: typeof v.amountUsd === 'number' ? v.amountUsd : 40,
+        });
+        setAppliedDiscount(0);
+        setAppliedBrandDiscountPromo(null);
+        setAppliedReferralCode('');
+        setReferralDiscount(0);
+        setDiscountCodeError('');
+      } catch (e) {
+        setAppliedConsultQuote(null);
+        setDiscountCodeError(e instanceof Error ? e.message : 'CODE NOT VALID.');
+      }
+      return;
+    }
     
     // Check if it's a referral code
     if (isReferralCode(code)) {
@@ -1703,7 +1773,7 @@ function CheckoutPage() {
         setDiscountCodeError('SIGN IN OR CREATE AN ACCOUNT TO USE A REFERRAL CODE.');
         return;
       }
-      if (appliedDiscount > 0 || appliedBrandDiscountPromo) {
+      if (appliedDiscount > 0 || appliedBrandDiscountPromo || appliedConsultQuote) {
         setDiscountCodeError('REFERRAL CODES CANNOT BE COMBINED WITH DISCOUNT CODES.');
         setAppliedReferralCode('');
         setReferralDiscount(0);
@@ -1764,6 +1834,7 @@ function CheckoutPage() {
       setDiscountCodeError('');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       return;
     }
     
@@ -1774,7 +1845,7 @@ function CheckoutPage() {
         setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH REFERRAL CODES.');
         return;
       }
-      if (appliedDiscount > 0 || appliedBrandDiscountPromo) {
+      if (appliedDiscount > 0 || appliedBrandDiscountPromo || appliedConsultQuote) {
         setDiscountCodeError('GIFT CARDS CANNOT BE COMBINED WITH DISCOUNT CODES.');
         return;
       }
@@ -1782,6 +1853,7 @@ function CheckoutPage() {
       setDiscountCodeError('PLEASE USE YOUR GIFT CARD BALANCE FROM YOUR ACCOUNT.');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       setAppliedReferralCode('');
       setReferralDiscount(0);
       return;
@@ -1792,12 +1864,14 @@ function CheckoutPage() {
       setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH REFERRAL CODES.');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       return;
     }
     if (appliedGiftCardBalance > 0) {
       setDiscountCodeError('DISCOUNT CODES CANNOT BE COMBINED WITH GIFT CARDS.');
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       return;
     }
     
@@ -1817,6 +1891,7 @@ function CheckoutPage() {
         setDiscountCodeError(msg);
         setAppliedDiscount(0);
         setAppliedBrandDiscountPromo(null);
+        setAppliedConsultQuote(null);
         setAppliedReferralCode('');
         setReferralDiscount(0);
         return;
@@ -1826,6 +1901,7 @@ function CheckoutPage() {
         setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
         setAppliedDiscount(0);
         setAppliedBrandDiscountPromo(null);
+        setAppliedConsultQuote(null);
         setAppliedReferralCode('');
         setReferralDiscount(0);
         return;
@@ -1835,6 +1911,7 @@ function CheckoutPage() {
       }
       setAppliedBrandDiscountPromo({ id: brandPromo.id, code: brandPromo.code, percent: pct });
       setAppliedDiscount(0);
+      setAppliedConsultQuote(null);
       setDiscountCodeError('');
       setAppliedReferralCode('');
       setReferralDiscount(0);
@@ -1850,6 +1927,7 @@ function CheckoutPage() {
         setAppliedGiftCardBalance(0);
       }
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       setAppliedDiscount(discountAmount);
       setDiscountCodeError('');
       setAppliedReferralCode('');
@@ -1857,6 +1935,7 @@ function CheckoutPage() {
     } else {
       setAppliedDiscount(0);
       setAppliedBrandDiscountPromo(null);
+      setAppliedConsultQuote(null);
       setDiscountCodeError('SORRY, THIS CODE IS NOT VALID.');
       setAppliedReferralCode('');
       setReferralDiscount(0);
@@ -1912,19 +1991,62 @@ function CheckoutPage() {
     orderAmountExcludingSpecialOffer,
   ]);
 
-  const discount = appliedDiscount + brandDiscountAmount;
-  // When cart has special offer + other items, discount/referral/gift card apply only to the non–special-offer amount
+  const legacyAndBrandDiscount = appliedDiscount + brandDiscountAmount;
+
+  const consultCodeEligibleUsd = useMemo(() => {
+    if (hasOnlySpecialOfferInCart) return 0;
+    const base =
+      hasSpecialOfferInCart && !hasOnlySpecialOfferInCart
+        ? orderAmountExcludingSpecialOffer
+        : orderAmount;
+    const bookingPortion = cartItems.reduce((sum, item: { price?: number; quantity?: number; type?: string }) => {
+      if (item?.type === 'booking-appointment' || item?.type === 'booking-consult') {
+        return sum + (item.price || 0) * (item.quantity || 1);
+      }
+      return sum;
+    }, 0);
+    return Math.round(Math.max(0, base - bookingPortion) * 100) / 100;
+  }, [
+    cartItems,
+    orderAmount,
+    orderAmountExcludingSpecialOffer,
+    hasSpecialOfferInCart,
+    hasOnlySpecialOfferInCart,
+  ]);
+
+  const consultDiscountAmount = useMemo(() => {
+    if (!appliedConsultQuote) return 0;
+    return Math.min(appliedConsultQuote.amountUsd, consultCodeEligibleUsd);
+  }, [appliedConsultQuote, consultCodeEligibleUsd]);
+
+  // When cart has special offer + other items, discount/referral/gift card apply only to the non–special-offer amount (legacy + brand % only; consult $ is capped separately).
   const { effectiveDiscount, effectiveReferralDiscount, effectiveGiftCardDiscount } = useMemo(() => {
     if (!hasSpecialOfferInCart || hasOnlySpecialOfferInCart) {
-      return { effectiveDiscount: discount, effectiveReferralDiscount: referralDiscount, effectiveGiftCardDiscount: giftCardDiscount };
+      return {
+        effectiveDiscount: legacyAndBrandDiscount,
+        effectiveReferralDiscount: referralDiscount,
+        effectiveGiftCardDiscount: giftCardDiscount,
+      };
     }
     const eligible = orderAmountExcludingSpecialOffer;
-    const d = Math.min(discount, eligible);
+    const d = Math.min(legacyAndBrandDiscount, eligible);
     const r = Math.min(referralDiscount, Math.max(0, eligible - d));
     const g = Math.min(giftCardDiscount, Math.max(0, eligible - d - r));
     return { effectiveDiscount: d, effectiveReferralDiscount: r, effectiveGiftCardDiscount: g };
-  }, [hasSpecialOfferInCart, hasOnlySpecialOfferInCart, orderAmountExcludingSpecialOffer, discount, referralDiscount, giftCardDiscount]);
-  const totalDiscount = effectiveDiscount + effectiveReferralDiscount + effectiveGiftCardDiscount + voucherDiscount;
+  }, [
+    hasSpecialOfferInCart,
+    hasOnlySpecialOfferInCart,
+    orderAmountExcludingSpecialOffer,
+    legacyAndBrandDiscount,
+    referralDiscount,
+    giftCardDiscount,
+  ]);
+  const totalDiscount =
+    effectiveDiscount +
+    effectiveReferralDiscount +
+    effectiveGiftCardDiscount +
+    voucherDiscount +
+    consultDiscountAmount;
   const rushProcessing = selectedProcessing === 'rush' ? 120 : 0;
   // Always calculate the protection fee amount (for display), but only add to total if selected
   const protectionFeeAmount = calculateProtectionFee(orderAmount);
@@ -2891,7 +3013,7 @@ function CheckoutPage() {
                       }}
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                          handleApplyDiscountCode();
+                          void handleApplyDiscountCode();
                         }
                       }}
                           style={{
@@ -2908,7 +3030,8 @@ function CheckoutPage() {
                       }}
                     />
                     <button
-                      onClick={handleApplyDiscountCode}
+                      type="button"
+                      onClick={() => void handleApplyDiscountCode()}
                       style={{
                         width: '36px',
                         height: '36px',
@@ -5041,12 +5164,21 @@ function CheckoutPage() {
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(effectiveReferralDiscount)}></span>
                     </div>
                     )}
-                    {discount > 0 && (
+                    {legacyAndBrandDiscount > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
                         DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{discountCode.toUpperCase()}</span>
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(effectiveDiscount)}></span>
+                    </div>
+                    )}
+                    {consultDiscountAmount > 0 && appliedConsultQuote && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }}>
+                        DISCOUNT: <span style={{ fontFamily: '"Futura PT Demi"', color: '#808080' }}>{appliedConsultQuote.code}</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}> (CONSULT)</span>
+                      </span>
+                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(consultDiscountAmount)}></span>
                     </div>
                     )}
                     <div style={{ borderTop: '1.3px solid #000000', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}>

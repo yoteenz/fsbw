@@ -22,7 +22,7 @@ const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
-const MAX_HAIR_INSPO_PHOTOS = 4;
+const MAX_HAIR_INSPO_PHOTOS = 3;
 
 /** Persists across consult URL remounts (`/booking/consultation` → `/booking/premium/consultation` from MembershipRouteSync). */
 const CONSULT_INSPO_SESSION_KEY = 'bawBookingConsultHairInspoDraft';
@@ -36,15 +36,17 @@ function loadInspoDraftFromSession(): ConsultInspoItem[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (x): x is ConsultInspoItem =>
-        Boolean(x) &&
-        typeof x === 'object' &&
-        typeof (x as ConsultInspoItem).id === 'string' &&
-        typeof (x as ConsultInspoItem).name === 'string' &&
-        typeof (x as ConsultInspoItem).dataUrl === 'string' &&
-        (x as ConsultInspoItem).dataUrl.startsWith('data:')
-    );
+    return parsed
+      .filter(
+        (x): x is ConsultInspoItem =>
+          Boolean(x) &&
+          typeof x === 'object' &&
+          typeof (x as ConsultInspoItem).id === 'string' &&
+          typeof (x as ConsultInspoItem).name === 'string' &&
+          typeof (x as ConsultInspoItem).dataUrl === 'string' &&
+          (x as ConsultInspoItem).dataUrl.startsWith('data:')
+      )
+      .slice(0, MAX_HAIR_INSPO_PHOTOS);
   } catch {
     return [];
   }
@@ -62,16 +64,31 @@ function readImageFileAsDataUrl(file: File): Promise<string | null> {
   });
 }
 
-/** Some mobile cameras leave `type` empty; still treat common extensions as images. */
+/**
+ * iOS Photo Library often sends UTType strings (`public.jpeg`, `public.png`, `public.heic`) instead of `image/*`.
+ * Empty `type` is common; `application/octet-stream` appears for some HEIC paths.
+ */
 function isProbablyImageFile(f: File): boolean {
-  if (f.type.startsWith('image/')) return true;
-  if (!f.type || f.type === 'application/octet-stream') {
+  if (f.size <= 0) return false;
+  const t = (f.type || '').trim().toLowerCase();
+  if (t.startsWith('image/')) return true;
+  if (t === 'application/octet-stream') {
     if (/\.(jpe?g|png|gif|webp|heic|heif|bmp|tif?f)$/i.test(f.name)) return true;
-    // iOS/Android sometimes use a bare filename with no extension but a real image payload.
-    if (f.size > 0 && f.name && !f.name.includes('.')) return true;
-    // Camera/library pick can yield empty name + empty type but valid image bytes.
-    if (!f.type && f.size > 0 && !f.name) return true;
+    if (f.name && !f.name.includes('.')) return true;
+    if (!f.name) return true;
     return false;
+  }
+  if (!t) {
+    if (/\.(jpe?g|png|gif|webp|heic|heif|bmp|tif?f)$/i.test(f.name)) return true;
+    if (f.name && !f.name.includes('.')) return true;
+    if (!f.name) return true;
+    return false;
+  }
+  // WebKit/macOS/iOS UTIs and other non-standard MIME hints
+  if (
+    /jpe?g|png|gif|webp|heic|heif|tiff|bmp|bitmap|uti-image|public\.image|dyn\.a/.test(t)
+  ) {
+    return true;
   }
   return false;
 }
@@ -171,24 +188,31 @@ export default function BookingConsultationPage() {
   }, [hairOption, authRev]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const list = e.target.files;
-    e.target.value = '';
-    if (!list?.length) return;
+    const input = e.target;
+    // Snapshot files BEFORE clearing value. On iOS Safari/WebKit, resetting `value`
+    // immediately can empty or invalidate `FileList`, so previews never appear.
+    const files = input.files ? Array.from(input.files) : [];
+    input.value = '';
+    if (!files.length) return;
 
-    const picked = Array.from(list).filter(isProbablyImageFile);
+    const picked = files.filter(isProbablyImageFile);
     if (!picked.length) return;
 
-    void Promise.all(picked.map((f) => readImageFileAsDataUrl(f))).then((urls) => {
+    // Read sequentially so parallel FileReader onload handlers never race on `setInspoItems` (same base `prev`).
+    void (async () => {
       const built: ConsultInspoItem[] = [];
-      picked.forEach((f, i) => {
-        const dataUrl = urls[i];
-        if (!dataUrl) return;
-        built.push({
-          id: `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 11)}-${(f.name || 'img').slice(0, 24)}`,
-          name: f.name || 'IMAGE',
-          dataUrl
-        });
-      });
+      let i = 0;
+      for (const f of picked) {
+        const dataUrl = await readImageFileAsDataUrl(f);
+        if (dataUrl) {
+          built.push({
+            id: `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 11)}-${(f.name || 'img').slice(0, 24)}`,
+            name: f.name || 'IMAGE',
+            dataUrl
+          });
+        }
+        i += 1;
+      }
       if (built.length === 0) return;
 
       setInspoItems((prev) => {
@@ -203,7 +227,7 @@ export default function BookingConsultationPage() {
         }
         return [...prev, ...toAdd].slice(0, MAX_HAIR_INSPO_PHOTOS);
       });
-    });
+    })();
   };
 
   const confirmRemoveInspoItem = () => {
@@ -355,100 +379,6 @@ export default function BookingConsultationPage() {
               <span style={{ color: '#EB1C24' }}>*</span>
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-              {inspoItems.length > 0 ? (
-                <div
-                  className="consult-hair-inspo-thumbs"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    gap: '10px',
-                    width: '100%',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flex-start',
-                    minHeight: '88px'
-                  }}
-                >
-                  {inspoItems.map((item) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        position: 'relative',
-                        width: '88px',
-                        height: '88px',
-                        flexShrink: 0
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setInspoRemoveTargetId(item.id)}
-                        aria-label="Remove inspo photo"
-                        style={{
-                          position: 'absolute',
-                          top: '-10px',
-                          right: '-10px',
-                          width: '20px',
-                          height: '20px',
-                          backgroundColor: '#FFFFFF',
-                          border: '0.97px solid #000000',
-                          borderRadius: '50%',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          zIndex: 10,
-                          padding: 0,
-                          flexShrink: 0
-                        }}
-                      >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          style={{
-                            width: '12px',
-                            height: '12px',
-                            objectFit: 'contain',
-                            display: 'block',
-                            flexShrink: 0,
-                            filter:
-                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                          }}
-                        />
-                      </button>
-                      <div
-                        style={{
-                          position: 'relative',
-                          padding: '1px',
-                          border: '3px solid white',
-                          boxShadow: '0 0 0 1.1px black',
-                          boxSizing: 'border-box',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: '#f5f5f5',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <img
-                          src={item.dataUrl}
-                          alt=""
-                          loading="eager"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            display: 'block'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-
               <div style={{ position: 'relative', width: '100%' }}>
                 {inspoItems.length < MAX_HAIR_INSPO_PHOTOS ? (
                   <>
@@ -469,8 +399,7 @@ export default function BookingConsultationPage() {
                         zIndex: 3,
                         top: 0,
                         left: 0,
-                        margin: 0,
-                        fontSize: 0
+                        margin: 0
                       }}
                     />
                     <div
@@ -587,6 +516,100 @@ export default function BookingConsultationPage() {
                   </button>
                 )}
               </div>
+
+              {inspoItems.length > 0 ? (
+                <div
+                  className="consult-hair-inspo-thumbs"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    width: '100%',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    minHeight: '88px'
+                  }}
+                >
+                  {inspoItems.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        position: 'relative',
+                        width: '88px',
+                        height: '88px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setInspoRemoveTargetId(item.id)}
+                        aria-label="Remove inspo photo"
+                        style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          right: '-10px',
+                          width: '20px',
+                          height: '20px',
+                          backgroundColor: '#FFFFFF',
+                          border: '0.97px solid #000000',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          zIndex: 10,
+                          padding: 0,
+                          flexShrink: 0
+                        }}
+                      >
+                        <img
+                          src="/assets/close-icon.svg"
+                          alt=""
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            objectFit: 'contain',
+                            display: 'block',
+                            flexShrink: 0,
+                            filter:
+                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                          }}
+                        />
+                      </button>
+                      <div
+                        style={{
+                          position: 'relative',
+                          padding: '1px',
+                          border: '3px solid white',
+                          boxShadow: '0 0 0 1.1px black',
+                          boxSizing: 'border-box',
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor: '#f5f5f5',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <img
+                          src={item.dataUrl}
+                          alt=""
+                          loading="eager"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            display: 'block'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -884,8 +907,8 @@ export default function BookingConsultationPage() {
       isOpen={showMaxInspoModal}
       onClose={() => setShowMaxInspoModal(false)}
       onConfirm={() => setShowMaxInspoModal(false)}
-      title="MAX PHOTOS REACHED"
-      message="REMOVE OR REPLACE AN IMAGE."
+      title="MAX PHOTOS REACHED."
+      message=""
       confirmText="CLOSE"
       cancelText=""
       dataAttribute="consult-max-hair-inspo-photos-modal"

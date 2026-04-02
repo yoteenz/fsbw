@@ -21,6 +21,10 @@ export interface CartItem {
   bcfBundleDeal?: boolean;
   /** Pre-discount line subtotal (3× list unit price) for strikethrough at checkout/bag. */
   bcfBundleDealListSubtotal?: number;
+  /** Booking appointment/consult: premium vs standard PDP and gating. */
+  bookingTier?: string;
+  /** Consult: WIG + INSTALL | WIG ONLY (red line + VIEW DETAILS). */
+  bookingHairOption?: string;
   /** Booking appointment (server quote / PaymentIntent). */
   bookingInstallKind?: string;
   bookingStyle?: string;
@@ -40,7 +44,7 @@ export interface CartItem {
   bookingAttachedOrderId?: string;
   /** NEW INSTALL: display line for attached order (e.g. product + order #). */
   bookingAttachedOrderSummary?: string;
-  /** Consult: multiple inspo filenames (max 4 on PDP). */
+  /** Consult: multiple inspo filenames (max 3 on PDP). */
   bookingInspoFileNames?: string[];
 }
 

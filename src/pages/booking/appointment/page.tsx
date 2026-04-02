@@ -714,7 +714,10 @@ export default function BookingAppointmentPage() {
         try {
           const editingId = localStorage.getItem(EDITING_BOOKING_APPOINTMENT_CART_ITEM_ID_KEY);
           if (editingId && Array.isArray(cartItems)) {
-            cartItems = cartItems.filter((row: { id?: string }) => row?.id !== editingId);
+            cartItems = cartItems.filter((row) => {
+              if (typeof row !== 'object' || row === null) return true;
+              return (row as { id?: string }).id !== editingId;
+            });
             localStorage.removeItem(EDITING_BOOKING_APPOINTMENT_CART_ITEM_ID_KEY);
           }
         } catch {

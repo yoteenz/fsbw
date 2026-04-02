@@ -715,3 +715,63 @@ export async function getConsultQuote(id: string): Promise<{ quote: Record<strin
   if (!res.ok) throw new Error(await res.text());
   return res.json() as Promise<{ quote: Record<string, unknown> }>;
 }
+
+export type ValidateConsultCodeResult = {
+  ok: boolean;
+  quoteId: string;
+  code: string;
+  amountUsd: number;
+  expiresAt: string | null;
+};
+
+/** Signed-in user: validate CONSULT-* code from admin quote (72h, not redeemed). */
+export async function validateConsultDiscountCode(code: string): Promise<ValidateConsultCodeResult> {
+  const res = await apiFetch('/api/checkout/validate-consult-code', {
+    method: 'POST',
+    body: { code: (code || '').trim() },
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error((msg || 'INVALID CODE').toUpperCase());
+  }
+  return JSON.parse(text) as ValidateConsultCodeResult;
+}
+
+/** Mark consult quote redeemed after a completed order (one-time $40 code). */
+export async function redeemConsultQuote(quoteId: string): Promise<void> {
+  const res = await apiFetch('/api/checkout/redeem-consult-code', {
+    method: 'POST',
+    body: { quoteId },
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+/** Admin: notify client about reschedule/cancel request for an appointment. */
+export async function postAdminMeetingClientAlert(body: {
+  meetingId: string;
+  reason: string;
+  message?: string;
+  action: 'reschedule' | 'cancel';
+  clientEmail?: string;
+  userId?: string;
+}): Promise<void> {
+  const res = await apiFetch('/api/admin/meeting-client-alert', { method: 'POST', body });
+  if (!res.ok) {
+    const t = await res.text();
+    let msg = t;
+    try {
+      const j = JSON.parse(t) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Alert failed');
+  }
+}

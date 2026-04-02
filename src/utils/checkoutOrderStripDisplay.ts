@@ -13,7 +13,7 @@ import {
   isBookingCartBadgeItem
 } from './bookingBadges';
 import { shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
-import { CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
+import { bookingCartRedSubtitle, CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -81,7 +81,7 @@ export function orderStripRedSubtitle(item: any, itemLength: string): string {
     return 'DIGITAL ONLY';
   }
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
-    return CART_RED_LINE_BCF_BOOKING;
+    return bookingCartRedSubtitle(item);
   }
   if (item.type === 'shop-texture-category') {
     return CART_RED_LINE_BCF_BOOKING;

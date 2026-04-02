@@ -25,6 +25,7 @@ import {
 } from '../../utils/bcfProductOptions';
 import {
   CART_RED_LINE_BCF_BOOKING,
+  bookingCartRedSubtitle,
   bookingCartViewDetailsHtml
 } from '../../utils/cartLineRedAndDetails';
 import { getPointsMultiplier } from '../../constants/tiers';
@@ -76,7 +77,7 @@ function bagProductTitleLine(item: { name?: string; type?: string; category?: st
 function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName: (productName: string) => string): string {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return 'DIGITAL ONLY';
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
-    return CART_RED_LINE_BCF_BOOKING;
+    return bookingCartRedSubtitle(item);
   }
   if (item.type === 'shop-texture-category') {
     return CART_RED_LINE_BCF_BOOKING;
