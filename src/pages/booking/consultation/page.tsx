@@ -855,6 +855,8 @@ export default function BookingConsultationPage() {
                 >
                   SCHEDULED DATE & TIME: {formatConsultIsoForDisplay(consultPreferredDateIso)} @{' '}
                   {formatConsultTimeSlotForDisplay(consultPreferredTime)}.
+                  <br />
+                  FINAL DURATION CONFIRMED AFTER CHECKOUT.
                 </p>
               ) : null}
             </>
