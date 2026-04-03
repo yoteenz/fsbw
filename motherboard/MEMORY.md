@@ -7831,3 +7831,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “merge all branches” requests, verify with `git branch -r --no-merged origin/master` before and after merges, and resolve MEMORY conflicts by preserving both append-only histories.
+
+---
+
+## 2026-04-03 — Bookings tab UI adjustments (month label, typography, icon, add-on wrap)
+
+**Context:** User requested a focused bookings-tab polish pass on admin meetings cards/calendar: switch the black month label above calendar to Bohemy and remove year, reduce client panel name text by 1px, set booking red service line to Futura Medium, set booking date/time/duration line to Futura Medium, use `edit-meeting-icon-booking` on booking panels, and wrap the 3rd add-on onto the next line.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and located all requested UI targets in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed Bohemy font token usage in project (`"Bohemy", sans-serif`) to match existing style patterns.
+- Implemented bookings-tab adjustments:
+  - month label now renders month only (no year) and uses Bohemy in black
+  - client name/tier line reduced from 11px to 10px
+  - booking service line switched to Futura PT Medium
+  - booking time line switched to Futura PT Medium
+  - add-ons text now supports line break so add-on #3 moves to next line
+  - booking edit icon path switched to `/assets/edit-meeting-icon-booking.svg`
+- Discovered `edit-meeting-icon-booking.svg` did not exist in assets; added it (same artwork as existing edit meeting icon) so requested path resolves cleanly.
+- Ran verification build; initial failure due missing local `tsc`, installed dependencies (`npm install`), then `npm run build` passed.
+
+**Decisions / outcomes:**
+- Bookings calendar header now shows only month text with Bohemy styling.
+- Booking card typography aligns with request (name size reduced, service/time lines in Futura Medium).
+- Booking add-ons now wrap with 3rd+ add-ons on next line for readability.
+- Requested booking edit icon file path is now valid and used by booking cards.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label formatter changed to month-only output
+  - month label style changed to `"Bohemy", sans-serif` and black
+  - booking name line font size changed 11px → 10px
+  - booking service line font changed to `"Futura PT Medium"`
+  - booking time line font changed to `"Futura PT Medium"`
+  - added `formatBookingAddonsLineForCardDisplay()` with explicit wrap after second add-on
+  - add-ons paragraph uses `whiteSpace: 'pre-line'`
+  - booking edit icon src changed to `/assets/edit-meeting-icon-booking.svg`
+- `public/assets/edit-meeting-icon-booking.svg` (new)
+- environment step: `package-lock.json` updated by `npm install` during build verification.
+
+**Conventions:**
+- For bookings cards in Admin Meetings, keep month header as month-only and use Bohemy styling when matching this bookings-tab design.
+- Keep booking card service/time lines in Futura PT Medium and preserve add-on wrapping behavior (3rd add-on on next line) for readability in narrow mobile card widths.
