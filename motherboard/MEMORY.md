@@ -8705,3 +8705,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For bookings-tab spacing asks that target “client panels below calendar,” apply margin at the list container boundary (between calendar grid and first card) to avoid side effects inside individual cards.
+
+---
+
+## 2026-04-03 — Bookings typography/icon pass: current balance medium, time line book, lighter month, smaller/thinner edit icon, and 5th add-on wrap fix
+
+**Context:** User requested another bookings-tab adjustment set: switch CURRENT BALANCE to Futura PT Medium, switch appointment time line to Futura PT Book, keep/add 6px spacing above client panels below calendar, reduce Bohemy month text weight, reduce booking edit icon line weight by 1px and size by 50%, and fix wrapping so the 5th add-on stays on the same wrapped line as the 4th.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings/dashboard changes where payment due label was switched to Demi and cards were offset by +6px below calendar.
+- Updated bookings card typography in `AdminMeetingsHub`:
+  - `CURRENT BALANCE: ...` line changed from Futura PT Book to Futura PT Medium.
+  - appointment date/time/duration line (`SAT, APR 18, 2026 · 4:00 PM · 330 MIN`) changed from Futura PT Medium to Futura PT Book.
+- Preserved the existing +6px list spacing below the calendar (previously added container margin remains in place).
+- Reduced Bohemy month label visual weight by setting explicit lighter `fontWeight` on the month span.
+- Updated booking edit icon presentation:
+  - card icon render size reduced from `22x22` to `11x11` (50%),
+  - SVG stroke weight reduced by ~1px equivalent (`stroke-width` set to `0.85`) in `edit-meeting-icon-booking.svg`.
+- Fixed wrapped add-ons line behavior for long lists:
+  - kept first line at first 3 add-ons,
+  - wrapped line now starts at 4th and preserves 4th+5th on the same line by using non-breaking spaces in wrapped text joining.
+- Ran `npm run build` successfully, then committed/pushed to `preview/mobile` and updated PR pointer.
+
+**Decisions / outcomes:**
+- Current balance line now uses Futura PT Medium.
+- Appointment time line now uses Futura PT Book.
+- Calendar month label appears lighter weight.
+- Booking edit icon is visibly smaller and thinner.
+- 5th add-on no longer drops to an extra new line by itself in standard card width cases.
+- Build is green; updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - current balance font family updated to `"Futura PT Medium"`.
+  - appointment date/time line font family updated to `"Futura PT Book"`.
+  - month label span now includes lighter `fontWeight`.
+  - add-ons wrapped-line formatter adjusted to preserve 4th/5th on same wrapped line using NBSP handling.
+  - booking edit icon render size changed to `11x11`.
+- `public/assets/edit-meeting-icon-booking.svg`
+  - stroke weight reduced (`stroke-width="0.85"`).
+
+**Conventions:**
+- For booking-card add-on wrap issues caused by token breaks, preserve same-line grouping via non-breaking spaces on wrapped segments before introducing additional line breaks.
