@@ -8978,3 +8978,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For explicitly tab-scoped avatar tweaks, apply style deltas only in the named tab branch and verify the other tab branch remains unchanged.
+
+---
+
+## 2026-04-03 — Full conversation summary: consults/admin meetings iteration + A/C booking calendar month text parity
+
+**Context:** This chat started with a long sequence of admin meetings/consults UI and flow refinements (navigation return behavior, panel sizing/spacing, icon and typography swaps, mock inspo photos, and tab-scoped pixel nudges), then concluded with a new request to make the month text above A/C booking calendars match the Bohemy month text used on Admin Meetings.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same conversation, multiple consults/bookings/admin-page updates were applied and iterated: client-panel return flow back to meetings B/C tabs, summary panel height/position tuning, client row micro-adjustments, quote icon updates, mock inspo-photo variety (1–3), and selective bookings-vs-consults icon offset changes.
+- User’s latest request was specifically: “change the month text above the calendar on a/c booking pages to match the bohemy calendar month text on the admin meetings page.”
+- Located the month style source in `AdminMeetingsHub` (Bohemy, lowercase month-only treatment) and identified A/C pages use shared `BrandExpiresDatePicker`.
+- Implemented a scoped variant in the shared picker (`monthLabelVariant`) instead of globally replacing all calendar month labels, then enabled that variant only on booking appointment + consultation pages.
+- Verified build success after code changes.
+
+**Decisions / outcomes:**
+- A/C booking calendars now use Admin Meetings-style month text (Bohemy, lowercase, black, month-only visual treatment) above the calendar.
+- Change is intentionally scoped to appointment/consultation booking pages; other `BrandExpiresDatePicker` consumers keep the default Futura month+year style.
+
+**Changes:**
+- `src/components/BrandExpiresDatePicker.tsx`
+  - Added `monthLabelVariant?: 'default' | 'adminMeetings'`.
+  - Added variant-based month label text/style logic.
+- `src/pages/booking/appointment/page.tsx`
+  - Passed `monthLabelVariant="adminMeetings"` to inline `BrandExpiresDatePicker`.
+- `src/pages/booking/consultation/page.tsx`
+  - Passed `monthLabelVariant="adminMeetings"` to inline `BrandExpiresDatePicker`.
+
+**Conventions:**
+- For shared UI primitives used in multiple contexts, prefer adding an explicit style variant prop and opt-in at call sites rather than changing global default behavior.

@@ -741,6 +741,7 @@ export default function BookingConsultationPage() {
                 <BrandExpiresDatePicker
                   inline
                   navArrowScale={0.75}
+                  monthLabelVariant="adminMeetings"
                   value={consultPreferredDateIso}
                   onChange={(iso) => {
                     setConsultPreferredDateIso(iso);
