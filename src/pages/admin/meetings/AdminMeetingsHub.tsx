@@ -1260,7 +1260,7 @@ export default function AdminMeetingsHub() {
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(6px, 4px)' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(6px, 6px)' }}>
                                     {meetingClientDisplayNameWithState(m)}{' '}
                                     <span style={{ color: tierLabelColor(m) }}>
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
