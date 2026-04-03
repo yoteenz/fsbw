@@ -7916,6 +7916,43 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Consults tab follow-up: icon visibility question, panel-height confirmation, extra text offset, and richer mock inspo sets
+
+**Context:** User reported that consult icon still looked wrong and asked whether local assets could cause that, asked current panel height, requested moving the consult client line down another 2px, and requested mock consult clients to show varied inspo image counts (max 3) instead of mostly one image.
+
+**Topics covered (entire conversation so far):**
+- Verified current meetings consult icon wiring in code and asset presence:
+  - icon source remains `/assets/quote-icon-consult.svg` in `AdminMeetingsHub`.
+  - both `quote-icon-consult.svg` and `quote-icon.svg` exist under `public/assets`.
+- Confirmed current total-banner panel height values in meetings code are fixed at `height: 88px` for TOTAL BOOKED / TOTAL CONSULTED.
+- Applied requested visual tweak: consult client line (`NAME (STATE) · PREMIUM`) moved down by another 2px by changing `translateY(2px)` to `translateY(4px)`.
+- Updated mock consult meeting generator to produce varied inspo photo counts and sources:
+  - added `CONSULT_INSPO_MOCK_POOL` of multiple asset paths,
+  - per consultation row now chooses deterministic random count `1..3`,
+  - selects unique photos from pool for `inspoPhotoUrls` / `inspoFileNames` while preserving max 3.
+- Pulled latest remote `preview/mobile` (which included unrelated remote work) and re-pushed combined history after auto-merge.
+
+**Decisions / outcomes:**
+- Local asset location is not the root issue by itself if the deployed branch doesn’t include the same file/content or browser cache serves old assets; code still points at `/assets/quote-icon-consult.svg`.
+- Current meetings summary panel height is `88px`.
+- Consult client line now renders 2px lower than prior state (total 4px offset from original baseline).
+- Mock consult cards now display mixed inspo counts (1, 2, or 3) with varied images, capped at 3.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed consult name line transform from `translateY(2px)` to `translateY(4px)`.
+- `src/utils/adminMeetingsMock.ts`
+  - added `CONSULT_INSPO_MOCK_POOL`,
+  - generated unique per-row consult inspo arrays with deterministic random count `1..3`,
+  - persisted same array into `inspoPhotoUrls` + `inspoFileNames`.
+- Git:
+  - commit `8ce9f6a` then merged latest `origin/preview/mobile` and pushed final branch state (`55d4d79`).
+
+**Conventions:**
+- For mock consult cards, keep inspo thumbnails varied but capped at 3 per client row; use deterministic generation so month/day views remain stable.
+
+---
+
 ## 2026-04-03 — Booking card paid-balance logic + final-payment due countdown replaces placeholder paid-status line
 
 **Context:** User asked to replace the booking card placeholder line (`PAID STATUS: SEE ORDER IN CLIENT ACCOUNT`) with real per-booking payment math and due-state UX tied to appointment checkout data. They specified that appointment payments should subtract install/re-install service fee, show remaining/final due context, and include a countdown tracking bar with the same style pattern as order-tracking progress.
