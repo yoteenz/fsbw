@@ -884,10 +884,11 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '88px',
+                        height: '100px',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'center',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '10px',
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
@@ -902,10 +903,11 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '88px',
+                        height: '100px',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'center',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '10px',
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
