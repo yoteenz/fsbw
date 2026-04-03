@@ -572,7 +572,7 @@ export default function AdminMeetingsHub() {
                 </div>
               ) : (
                 <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                  <div className="grid grid-cols-2 gap-4 mb-3">
+                  <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
                     <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
                         {completedBookingsCount}

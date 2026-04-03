@@ -7302,6 +7302,40 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Meetings mock-client source aligned to client overview + meetings tab spacing matched to marketing
+
+**Context:** After prior fixes (build issues, admin meetings styling, preview/mobile workflow, bookings add-on wrap, consult mock image repair), user requested two consistency updates: (1) Admin Meetings mock clients should use the same mock client identities as Admin Client Overview, and (2) tab section spacing on Meetings should match the spacing above tabs on Admin Marketing.
+
+**Topics covered (entire conversation so far):**
+- Verified current mismatch: meetings mock generation used its own local first/last-name arrays while admin clients overview uses `getMockClientsForAyoteenz()` as the authoritative mock dataset.
+- Confirmed meetings already aligned by email pattern (`mock1@test.com`...`mock25@test.com`) but names/tier assignment could drift from client overview because of separate generation logic.
+- Updated meetings mock source to read from the same mock client overview provider (`getMockClientsForAyoteenz()`), with local fallback identities only if that source is unavailable.
+- Mapped each picked mock client’s membership type to meeting metadata tier (`premium`/`standard`) so card badges and client details remain consistent across admin surfaces.
+- Applied tab-area spacing parity request: adjusted meetings panel spacing above BOOKINGS/CONSULTS tabs to mirror marketing’s visual breathing room pattern (`marginTop: 12px`, `mb-4` for panel block).
+- Kept prior fixes intact (bookings third add-on wraps to second line and consult mock image paths/fallbacks).
+- Re-ran full production build validation.
+
+**Decisions / outcomes:**
+- Admin Meetings mock rows now use the same mock identity pool as Client Overview (name + email + premium/standard tier alignment), improving cross-page consistency when opening client details from meetings.
+- Meetings tab area now has matching top spacing feel with Marketing’s tab section.
+- Build remains passing after these updates.
+
+**Changes:**
+- `src/utils/adminMeetingsMock.ts`
+  - imported `getMockClientsForAyoteenz` from Admin Clients page
+  - replaced local name-picking arrays with `getMockClientIdentities()` + cached client-overview-derived identities
+  - added resilient fallback identity list for offline/source-failure scenarios
+  - switched mock meeting client selection to `pickMockClient(...)`
+  - set consultation `metadata.tier` from selected client membership type
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed meetings summary-panel block spacing to `mb-4` with `marginTop: '12px'` for marketing-aligned tab spacing
+
+**Conventions:**
+- For admin mock consistency, meetings should source mock client identities from the same overview provider (`getMockClientsForAyoteenz`) rather than maintaining a separate name list.
+- For meetings/marketing visual parity, keep comparable top spacing before tab selectors unless explicitly changed.
+
+---
+
 ## 2026-04-03 — Admin meetings scroll/padding aligned to marketing card spacing
 
 **Context:** Continuing the same admin meetings polish thread (after TypeScript build fixes, meetings card/style updates, preview/mobile workflow, totals panel text updates, and square calendar date cells), user requested that the admin meetings page scroll/card padding match the admin marketing card so text/cards are not too close to the main card edge.
