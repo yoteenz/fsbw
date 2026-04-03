@@ -7176,3 +7176,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - On admin meetings bookings calendar, appointment dates (red text) are the only dates with white background; all other dates stay gray.
+
+---
+
+## 2026-04-03 — Deploy target correction + consult updates ported to preview/mobile and master
+
+**Context:** After implementing consult-tab and booking-panel updates, user reported no visible changes. Build logs showed Vercel deployed `master` at commit `00e1400`, while the implemented work had been pushed to `cursor/client-booking-panel-details-a360` (PR #2 targeting `preview/mobile`). User asked whether both preview and main could be updated.
+
+**Topics covered (entire conversation so far):**
+- Confirmed mismatch between deployed branch/commit and the branch holding the consult updates.
+- Verified fix commits (`e00c21c`, `83bade9`) existed on `cursor/client-booking-panel-details-a360` and not on deployed `master`.
+- Ported consult-update commit to **preview/mobile** first:
+  - cherry-picked `e00c21c`
+  - pushed `preview/mobile` to `e0b892b`
+- Ported same update to **master**:
+  - created a local tracking branch from `origin/master`
+  - cherry-pick encountered conflicts in `AdminMeetingsHub`; resolved using the consult-update version
+  - completed cherry-pick and fast-forwarded/pushed `master` to `5d93d80`
+- Re-verified remote heads after pushes:
+  - `origin/preview/mobile`: `e0b892b`
+  - `origin/master`: `5d93d80`
+
+**Decisions / outcomes:**
+- Both requested targets now contain the consult update set:
+  - preview branch updated for preview deployments
+  - main/master updated for production deployments that track master
+- Root cause of “no changes visible” was confirmed as branch mismatch in deployment target, not missing local implementation.
+
+**Changes:**
+- Branch operations (no additional feature-file edits beyond conflict-resolved cherry-pick content):
+  - `preview/mobile` now includes commit `e0b892b`
+  - `master` now includes commit `5d93d80`
+- `motherboard/MEMORY.md` appended with this conversation state.
+
+**Conventions:**
+- When a user reports “changes not visible,” verify deployed branch/commit vs implementation branch before further UI debugging.
