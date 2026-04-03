@@ -8432,3 +8432,30 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For split payment-due rows in bookings cards, style left due-date label and right countdown independently when requested (left informational gray, right urgency red).
+
+---
+
+## 2026-04-03 — Admin meetings booking add-ons relabeled to INSTALL/RE-INSTALL with red styling
+
+**Context:** The user provided a full recap of prior bookings-tab iterations (font, payment, tracker, icon, and routing refinements on admin meetings cards) and then requested one new meetings-card formatting change: show booking add-ons as install-prefixed labels (colon format) instead of `INSTALL + ...`, and render the add-ons text in red instead of black.
+
+**Topics covered (entire conversation so far):**
+- Continued from the previously completed bookings-tab overhaul summarized by the user (calendar month typography, payment due rows/tracker, client name styling, icon-only client navigation, and metadata-backed payment status logic).
+- Implemented a focused update on the admin meetings booking card add-ons line so it now reads in the requested structure:
+  - `INSTALL: CLEAN LACE`
+  - `RE-INSTALL: BROW SCULPTING (2)` (first add-on shown with total count when multiple add-ons exist).
+- Changed add-ons line styling color from black to red so add-ons text is red-only on the card.
+- Validated changes with `npm run build` and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking add-ons no longer use plus-sign phrasing (`INSTALL + ...`) in the admin meetings card display line.
+- Add-ons line now uses install-kind label + colon format and displays in red.
+- Update is committed and pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - updated `formatBookingAddonsLineForCardDisplay()` to output `INSTALL:` / `RE-INSTALL:` format with compact count for multiple add-ons.
+  - updated booking add-ons line style color to `#EB1C24`.
+
+**Conventions:**
+- For admin meetings booking cards, add-ons display should use install-kind-prefixed labels (`INSTALL:` / `RE-INSTALL:`) rather than `INSTALL + ...` formatting when this presentation is requested.
