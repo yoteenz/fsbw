@@ -449,11 +449,33 @@ export default function AdminBrand() {
                   <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
                   <div className="grid grid-cols-2 gap-4 px-5 py-4 shrink-0">
-                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                        height: '80px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '10px',
+                      }}
+                    >
                       <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.active}</p>
-                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>ACTIVE CODES</p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ACTIVE CODES</p>
                     </div>
-                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                        height: '80px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '10px',
+                      }}
+                    >
                       <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>
                         $
                         {codesSummary.discountsUsd.toLocaleString('en-US', {
@@ -461,7 +483,7 @@ export default function AdminBrand() {
                           maximumFractionDigits: 2,
                         })}
                       </p>
-                      <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>DISCOUNTS</p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>DISCOUNTS</p>
                     </div>
                   </div>
 
@@ -699,13 +721,35 @@ export default function AdminBrand() {
                 </div>
               ) : activeTab === 'ALERTS' ? (
                 <div className="grid grid-cols-2 gap-4 px-5 py-4">
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
                     <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.clientsWithNotifs}</p>
-                    <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>CLIENTS (NOTIFS)</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CLIENTS (NOTIFS)</p>
                   </div>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
                     <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.totalSent}</p>
-                    <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>NOTIFICATIONS SENT</p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>NOTIFICATIONS SENT</p>
                   </div>
                 </div>
               ) : (

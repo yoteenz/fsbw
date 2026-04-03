@@ -1260,15 +1260,15 @@ export default function AdminMeetingsHub() {
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(4px, 4px)' }}>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(6px, 4px)' }}>
                                     {meetingClientDisplayNameWithState(m)}{' '}
                                     <span style={{ color: tierLabelColor(m) }}>
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0', marginLeft: '4px' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
                                   {imgs.length > 0 && (
-                                    <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '4px' }}>
+                                    <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '6px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
                                         <button
                                           type="button"
@@ -1304,7 +1304,7 @@ export default function AdminMeetingsHub() {
                                       ))}
                                     </div>
                                   )}
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '4px' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '6px' }}>
                                     {notes}
                                   </p>
                                     </div>
