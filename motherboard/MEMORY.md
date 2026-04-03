@@ -8403,28 +8403,59 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
-## 2026-04-03 — Consults micro-adjustment: client line back to medium + inspo row right/spacing tuned
+## 2026-04-03 — Bookings follow-up: payment due label gray medium, countdown red medium, and client name medium
 
-**Context:** User requested a precise consults-tab follow-up: switch the client identity line back to Futura PT Medium and adjust only the inspo image row to be 2px right with 2px more space between images.
+**Context:** User asked for another bookings-tab style correction pass: make the left payment-due label gray again while keeping medium weight, make the countdown time red medium, and switch only the client name line to Futura PT Medium.
 
 **Topics covered (entire conversation so far):**
-- Verified current consult row styles in `AdminMeetingsHub` before editing.
-- Changed client identity line (`NAME (STATE) · PREMIUM`) from Futura PT Book back to Futura PT Medium.
-- Adjusted inspo row positioning and spacing only:
-  - row x-offset changed to `marginLeft: '2px'`,
-  - row gap increased by 2px to `gap-[8px]`.
-- Preserved other consult-row offsets/styles to avoid unintended overrides.
-- Committed and pushed to `preview/mobile`, integrating latest remote changes first due branch divergence.
+- Continued on `preview/mobile` and pulled latest before editing.
+- Updated booking card client identity line font from Futura PT Book back to Futura PT Medium (name line only).
+- Updated payment-due row styling under the tracker:
+  - left label (`PAYMENT DUE: THU, APR 23, 2026`) changed to gray with Futura PT Medium,
+  - right countdown (`20D 9H LEFT`) changed to red with Futura PT Medium.
+- Left tracker height and recent spacing adjustments intact from prior request.
+- Ran `npm run build` successfully after edits.
+- Initial push rejected due remote advancement; rebased onto latest `origin/preview/mobile` and pushed successfully.
 
 **Decisions / outcomes:**
-- Client identity line now renders in **Futura PT Medium**.
-- Inspo photo row is now **2px right** with **+2px spacing** between photo tiles.
-- Requested adjustments are live on `preview/mobile`.
+- Payment due left label is now gray medium.
+- Countdown text is now red medium.
+- Client name line is now medium weight as requested.
+- Changes are live on `preview/mobile`.
 
 **Changes:**
 - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
-  - client line `fontFamily` updated to `"Futura PT Medium"`.
-  - inspo row `marginLeft` updated to `2px` and gap to `8px`.
+  - client name line font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due left label color: red -> gray (`#808080`)
+  - payment due right countdown font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due right countdown color: gray -> red (`#EB1C24`)
 
 **Conventions:**
-- For consults micro-alignment passes, touch only explicitly requested line/row styles and keep neighboring layout constants unchanged.
+- For split payment-due rows in bookings cards, style left due-date label and right countdown independently when requested (left informational gray, right urgency red).
+
+---
+
+## 2026-04-03 — Admin meetings booking add-ons relabeled to INSTALL/RE-INSTALL with red styling
+
+**Context:** The user provided a full recap of prior bookings-tab iterations (font, payment, tracker, icon, and routing refinements on admin meetings cards) and then requested one new meetings-card formatting change: show booking add-ons as install-prefixed labels (colon format) instead of `INSTALL + ...`, and render the add-ons text in red instead of black.
+
+**Topics covered (entire conversation so far):**
+- Continued from the previously completed bookings-tab overhaul summarized by the user (calendar month typography, payment due rows/tracker, client name styling, icon-only client navigation, and metadata-backed payment status logic).
+- Implemented a focused update on the admin meetings booking card add-ons line so it now reads in the requested structure:
+  - `INSTALL: CLEAN LACE`
+  - `RE-INSTALL: BROW SCULPTING (2)` (first add-on shown with total count when multiple add-ons exist).
+- Changed add-ons line styling color from black to red so add-ons text is red-only on the card.
+- Validated changes with `npm run build` and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking add-ons no longer use plus-sign phrasing (`INSTALL + ...`) in the admin meetings card display line.
+- Add-ons line now uses install-kind label + colon format and displays in red.
+- Update is committed and pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - updated `formatBookingAddonsLineForCardDisplay()` to output `INSTALL:` / `RE-INSTALL:` format with compact count for multiple add-ons.
+  - updated booking add-ons line style color to `#EB1C24`.
+
+**Conventions:**
+- For admin meetings booking cards, add-ons display should use install-kind-prefixed labels (`INSTALL:` / `RE-INSTALL:`) rather than `INSTALL + ...` formatting when this presentation is requested.
