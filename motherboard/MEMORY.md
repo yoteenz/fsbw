@@ -7039,6 +7039,43 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Admin Meetings bookings tab: service-type composition, tier colors, A/C red calendar arrows
+
+**Context:** After prior build-fix and meetings card-corner updates on `master`, user requested bookings-tab behavior and styling parity updates on `/admin/meetings`: service type should always lead with install kind then add-ons (never add-ons alone), tier tag colors should be premium black / standard gray, and calendar month arrows should match A/C booking calendar red arrow assets.
+
+**Topics covered (entire conversation so far):**
+- Confirmed the bookings card currently rendered raw `m.type` values, which can surface add-on-only strings without install-kind prefix depending on source data.
+- Implemented bookings service formatter that composes display as:
+  - `RE-INSTALL: CLEAN LACE, BRAIDS, ...` or
+  - `NEW INSTALL: BRAIDS, MAKEUP, TRAVEL FEE`
+  with install-kind precedence from metadata (`bookingInstallKind`/`installKind`) and fallback parsing from meeting `type`/`notes`.
+- Added add-on normalization and ordering consistent with appointment booking options (`CLEAN LACE`, `BRAIDS`, `BROW SCULPTING`, `BROW TINT`, `MAKEUP`, `MINK LASHES`, `TRAVEL FEE`), de-duplicated.
+- Updated bookings-tab and view-all bookings display to use formatted booking service string instead of raw `m.type`.
+- Updated premium/standard badge text color:
+  - premium = `#000000`
+  - standard = `#808080`
+  applied to both bookings and consult cards for consistency.
+- Replaced bookings calendar text chevrons (`‹` / `›`) with red A/C calendar arrow assets:
+  - `/assets/calendar-left-arrow.svg`
+  - `/assets/calendar-right-arrow.svg`
+
+**Decisions / outcomes:**
+- Booking service display must never show add-ons without an install-kind prefix; fallback defaults to `NEW INSTALL` when install-kind token is unavailable.
+- Tier label coloring now semantically reflects membership status in cards (black premium, gray standard).
+- Bookings tab calendar month navigation now visually matches A/C booking page arrow style.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - Added booking service normalization/composition helpers.
+  - Added tier color helper and applied it in card headers.
+  - Swapped month nav chevrons for red calendar arrow images.
+  - Updated bookings/view-all rows to render formatted booking service text.
+
+**Conventions:**
+- In admin meetings bookings UI, render service line as install-kind-first (`NEW INSTALL` / `RE-INSTALL`) plus add-ons list; do not display add-ons-only service labels.
+
+---
+
 ## 2026-04-03 — Admin meetings panels: square corners on both tabs
 
 **Context:** After the build-fix deployment flow, user requested a UI tweak: on Admin Meetings, the white panels with gray borders should have square corners in both tabs.

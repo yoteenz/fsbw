@@ -50,6 +50,39 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
+const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
+const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
+
+const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
+  braids: 'BRAIDS',
+  'brow-clean': 'BROW SCULPTING',
+  'brow-tint': 'BROW TINT',
+  makeup: 'MAKEUP',
+  'mink-lashes': 'MINK LASHES',
+  'clean-lace': 'CLEAN LACE',
+  travel: 'TRAVEL FEE',
+};
+
+const BOOKING_ADDON_LABELS = new Set<string>([
+  'BRAIDS',
+  'BROW SCULPTING',
+  'BROW TINT',
+  'MAKEUP',
+  'MINK LASHES',
+  'CLEAN LACE',
+  'TRAVEL FEE',
+]);
+
+const BOOKING_ADDON_ORDER = [
+  'CLEAN LACE',
+  'BRAIDS',
+  'BROW SCULPTING',
+  'BROW TINT',
+  'MAKEUP',
+  'MINK LASHES',
+  'TRAVEL FEE',
+] as const;
+
 function formatHeaderDate(dateStr: string): string {
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -90,6 +123,84 @@ function tierPremium(m: AdminMeeting): boolean {
   const meta = m.metadata || {};
   const t = String(meta.tier || '').toLowerCase();
   return t === 'premium' || m.notes.toUpperCase().includes('PREMIUM');
+}
+
+function tierLabelColor(m: AdminMeeting): string {
+  return tierPremium(m) ? '#000000' : '#808080';
+}
+
+function normalizeInstallKindLabel(raw: unknown): 'NEW INSTALL' | 'RE-INSTALL' | null {
+  const upper = String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ');
+  if (!upper) return null;
+  if (upper === 'NEW INSTALL' || upper === 'INSTALLS' || upper === 'INSTALL') return 'NEW INSTALL';
+  if (upper === 'RE INSTALL' || upper === 'RE-INSTALL' || upper === 'REINSTALL' || upper === 'RE-INSTALLS') {
+    return 'RE-INSTALL';
+  }
+  return null;
+}
+
+function normalizeBookingAddonLabel(raw: unknown): string | null {
+  const upper = String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ');
+  if (!upper) return null;
+  if (BOOKING_ADDON_LABELS.has(upper)) return upper;
+  if (upper === 'BROW CLEAN' || upper === 'BROW-CLEAN') return 'BROW SCULPTING';
+  if (upper === 'BROW TINTING' || upper === 'BROW-TINT') return 'BROW TINT';
+  if (upper === 'MINK LASH' || upper === 'MINK-LASHES' || upper === 'MINK LASHES') return 'MINK LASHES';
+  if (upper === 'TRAVEL' || upper === 'TRAVEL-FEE') return 'TRAVEL FEE';
+  if (upper === 'CLEAN LACE') return 'CLEAN LACE';
+  return null;
+}
+
+function orderedUniqueAddons(addons: string[]): string[] {
+  const set = new Set(addons);
+  const ordered = BOOKING_ADDON_ORDER.filter((label) => set.has(label));
+  const extras = [...set].filter((label) => !ordered.includes(label as (typeof BOOKING_ADDON_ORDER)[number]));
+  return [...ordered, ...extras];
+}
+
+function formatBookingServiceType(m: AdminMeeting): string {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+
+  const addonLabels: string[] = [];
+  const addonIds = Array.isArray(meta.bookingAddonIds)
+    ? meta.bookingAddonIds.filter((id): id is string => typeof id === 'string')
+    : [];
+  addonIds.forEach((id) => {
+    const label = BOOKING_ADDON_LABEL_BY_ID[id];
+    if (label) addonLabels.push(label);
+  });
+
+  const tokenSource = `${String(m.type || '')} · ${String(m.notes || '')}`;
+  const tokens = tokenSource
+    .split(/[·:+|,]/)
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+  let installKind = normalizeInstallKindLabel(meta.bookingInstallKind ?? meta.installKind ?? '');
+  tokens.forEach((tok) => {
+    if (!installKind) {
+      const parsedInstall = normalizeInstallKindLabel(tok);
+      if (parsedInstall) installKind = parsedInstall;
+    }
+    const addonLabel = normalizeBookingAddonLabel(tok);
+    if (addonLabel) addonLabels.push(addonLabel);
+  });
+
+  const uniqueAddons = orderedUniqueAddons(addonLabels);
+  if (installKind && uniqueAddons.length > 0) return `${installKind}: ${uniqueAddons.join(', ')}`;
+  if (installKind) return installKind;
+  if (uniqueAddons.length > 0) return `NEW INSTALL: ${uniqueAddons.join(', ')}`;
+
+  const fallback = String(m.type || '').trim().toUpperCase();
+  return fallback || 'NEW INSTALL';
 }
 
 function consultInspo(m: AdminMeeting): string[] {
@@ -469,7 +580,7 @@ export default function AdminMeetingsHub() {
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>{g.email}</p>
                           {g.rows.map((m) => (
                             <p key={m.id} style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                              {m.date} {m.time} — {m.type}
+                              {m.date} {m.time} — {m.category === 'appointment' ? formatBookingServiceType(m) : m.type}
                             </p>
                           ))}
                         </div>
@@ -488,9 +599,10 @@ export default function AdminMeetingsHub() {
                           const mo = String(s.getMonth() + 1).padStart(2, '0');
                           setCalendarAnchor(`${y}-${mo}-01`);
                         }}
-                        style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}
+                        style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                        aria-label="Previous month"
                       >
-                        ‹
+                        <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
                       </button>
                       <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px' }}>{monthLabel}</span>
                       <button
@@ -502,9 +614,10 @@ export default function AdminMeetingsHub() {
                           const mo = String(s.getMonth() + 1).padStart(2, '0');
                           setCalendarAnchor(`${y}-${mo}-01`);
                         }}
-                        style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}
+                        style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                        aria-label="Next month"
                       >
-                        ›
+                        <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={18} height={18} draggable={false} />
                       </button>
                     </div>
                     <div className="grid grid-cols-7 gap-1 text-center mb-1" style={{ fontSize: '8px', color: '#808080' }}>
@@ -574,12 +687,12 @@ export default function AdminMeetingsHub() {
                             <div className="min-w-0 flex-1">
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
                                 {m.client}{' '}
-                                <span style={{ color: '#808080' }}>
+                                <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                 </span>
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#555', margin: '4px 0 0' }}>
-                                {m.type}
+                                {formatBookingServiceType(m)}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
@@ -633,7 +746,7 @@ export default function AdminMeetingsHub() {
                               <div className="min-w-0 flex-1">
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
                                   {m.client}{' '}
-                                  <span style={{ color: '#808080' }}>
+                                  <span style={{ color: tierLabelColor(m) }}>
                                     · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                   </span>
                                 </p>
