@@ -8604,3 +8604,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When dashboard stat rows require colored service/add-on text, color must be applied to both label and value paths if label and value are rendered separately.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row moved from 6px to 4px right
+
+**Context:** User requested a single follow-up adjustment after the prior 6px shift: move only the consult hair inspo row to 4px right.
+
+**Topics covered (entire conversation so far):**
+- Confirmed current inspo row was at `marginLeft: '6px'`.
+- Applied a one-line update to set inspo row offset to `marginLeft: '4px'`.
+- Preserved all other consult row styles (including `gap: '8px'`) unchanged.
+- Committed and pushed to `preview/mobile`, handling remote divergence via pull-merge before push.
+
+**Decisions / outcomes:**
+- Hair inspo row now uses **4px** right offset.
+- No other consults-tab styling changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft` set to `4px`.
+
+**Conventions:**
+- For repeated micro-position requests, modify only the exact offset property and keep prior spacing values stable unless explicitly requested.
