@@ -7584,13 +7584,25 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 - Build passes after dependency install in this environment.
 
 **Changes:**
-- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
-  - removed tabs container gray bottom border style
-  - changed calendar day button border to conditional red when `selectedDay === cell.iso`
-  - removed selected-date text paragraph render block above booking cards
+`src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult-only divider removal logic on header block (`borderBottom` conditional by tab)
+  - `consultInspo(...)` normalized to prefer URLs, preserve data URLs, dedupe, and cap to 3
+  - consult thumbs capped to 3 and converted to interactive buttons
+  - added `consultPhotoPreviewSrc` state + fullscreen preview modal
+- `src/pages/booking/consultation/page.tsx`
+  - persisted `bookingInspoPhotoUrls` (capped to max 3) on booking-consult cart items
+- `src/pages/checkout/page.tsx`
+  - added consult photo URL extraction/validation (`data:image`, absolute, root-relative), capped to 3, then sent to API
+- `src/utils/api.ts`
+  - `postBookingConsultMeeting` body type now includes `inspoPhotoUrls?: string[]`
+- `api/booking/consult-meeting.ts`
+  - accepts `inspoPhotoUrls`, validates + caps to 3
+  - caps `inspoFileNames` to 3
+  - persists `inspoPhotoUrls` in meeting metadata
 
 **Conventions:**
-- For bookings tab calendar emphasis, selected day should be indicated by red cell border rather than a separate date text label above client rows.
+- For admin consult cards, show at most 3 submitted photos and use tap-to-enlarge for detailed viewing.
+- Prefer `metadata.inspoPhotoUrls` as authoritative submitted-image sources for consult meetings; use filename fallback only when URLs are absent.
 
 ---
 
