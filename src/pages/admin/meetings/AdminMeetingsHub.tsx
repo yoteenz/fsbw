@@ -418,18 +418,21 @@ function consultInspo(m: AdminMeeting): string[] {
   const meta = m.metadata || {};
   const photoUrls = Array.isArray(meta.inspoPhotoUrls) ? meta.inspoPhotoUrls.map(String).filter(Boolean) : [];
   const fileNames = Array.isArray(meta.inspoFileNames) ? meta.inspoFileNames.map(String).filter(Boolean) : [];
-
-  const normalized = [...photoUrls, ...fileNames]
+  const primarySources = photoUrls.length > 0 ? photoUrls : fileNames;
+  const normalized = primarySources
     .map((src) => src.trim())
     .filter(Boolean)
     .map((src) => {
       // Keep absolute URLs and root-relative asset paths intact.
       if (/^https?:\/\//i.test(src) || src.startsWith('/')) return src;
+      // Keep data URLs for real consult uploads synced from booking pages.
+      if (src.startsWith('data:image/')) return src;
       // If only a filename is stored, map to shared mock gallery image.
       return '/assets/gallery-mock.png';
     });
-
-  return normalized.length > 0 ? normalized : ['/assets/gallery-mock.png'];
+  const deduped = Array.from(new Set(normalized));
+  const capped = deduped.slice(0, 3);
+  return capped.length > 0 ? capped : ['/assets/gallery-mock.png'];
 }
 
 /** Match rewards / tier-benefits close control (brand red). */
@@ -472,6 +475,7 @@ export default function AdminMeetingsHub() {
   const [editMessage, setEditMessage] = useState('');
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
+  const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
 
@@ -751,7 +755,10 @@ export default function AdminMeetingsHub() {
                   </button>
                 </div>
               ) : (
-                <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }}>
+                <div
+                  className="flex-shrink-0 px-5 pb-2"
+                  style={{ borderBottom: mainTab === 'consults' ? 'none' : '1px solid #e5e7eb', marginTop: '10px' }}
+                >
                   <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
                     <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
@@ -1074,9 +1081,15 @@ export default function AdminMeetingsHub() {
                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
                                 {imgs.length > 0 && (
                                   <div className="flex gap-1.5 flex-wrap mt-2">
-                                    {imgs.slice(0, 4).map((src, i) => (
-                                      <div
+                                    {imgs.slice(0, 3).map((src, i) => (
+                                      <button
+                                        type="button"
                                         key={i}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setConsultPhotoPreviewSrc(src);
+                                        }}
+                                        aria-label="Enlarge submitted consult photo"
                                         style={{
                                           width: '40px',
                                           height: '40px',
@@ -1085,6 +1098,8 @@ export default function AdminMeetingsHub() {
                                           boxShadow: '0 0 0 1.1px #000000',
                                           boxSizing: 'border-box',
                                           overflow: 'hidden',
+                                          padding: 0,
+                                          cursor: 'zoom-in',
                                         }}
                                       >
                                         <img
@@ -1097,7 +1112,7 @@ export default function AdminMeetingsHub() {
                                             display: 'block',
                                           }}
                                         />
-                                      </div>
+                                      </button>
                                     ))}
                                   </div>
                                 )}
@@ -1325,6 +1340,41 @@ export default function AdminMeetingsHub() {
                 CLOSE
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {consultPhotoPreviewSrc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)' }}
+          onClick={() => setConsultPhotoPreviewSrc(null)}
+          role="presentation"
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              maxHeight: '90vh',
+              border: '1.3px solid #000',
+              background: '#fff',
+              padding: '10px',
+              boxSizing: 'border-box',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <img
+              src={consultPhotoPreviewSrc}
+              alt="Consult submitted photo preview"
+              style={{
+                width: '100%',
+                maxHeight: 'calc(90vh - 20px)',
+                objectFit: 'contain',
+                display: 'block',
+                background: '#f3f4f6',
+              }}
+            />
           </div>
         </div>
       )}
