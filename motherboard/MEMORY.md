@@ -7916,6 +7916,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Bookings-tab payment copy/layout follow-up and icon-only client navigation
+
+**Context:** User requested another bookings-tab refinement pass focused on copy/layout changes after the booking payment status feature: larger Bohemy month text, simplified payment copy, updated balance text format, removal of extra payment-policy lines, and safer tap behavior so only the client icon opens client details (not the whole panel).
+
+**Topics covered (entire conversation so far):**
+- In this ongoing chat, we had already implemented booking payment metadata + due countdown tracking in meetings cards. User then requested a tighter UI/copy format:
+  - increase Bohemy month label size by 10px,
+  - remove “FINAL PAYMENT DUE …” line and policy paragraph line,
+  - replace status line with direct “PAYMENT DUE: <date> · <countdown>” copy,
+  - replace “PAID LESS …” with black “CURRENT BALANCE: $X OF $Y USD” structure,
+  - prevent accidental panel taps by making only the client icon open client details (bookings/consults tabs).
+- Updated bookings calendar month label styling from 15px to 25px while keeping lowercase Bohemy.
+- Reworked booking payment block:
+  - removed separate final-payment label line and long policy note line,
+  - removed “STATUS: …” text,
+  - added black “CURRENT BALANCE: $remaining OF $total USD” line,
+  - retained countdown bar and changed its text to “PAYMENT DUE: <date> · <time left>”.
+- Updated card interaction behavior:
+  - removed `onClick` from whole booking/consult card containers,
+  - wrapped avatar image in its own button that calls `openClientAccount(m)`,
+  - keeps edit/quote icon actions unchanged.
+
+**Decisions / outcomes:**
+- Booking cards now use the user-requested compact payment copy format and no longer show the removed lines.
+- Payment due tracking remains visible via the bar + due text line.
+- Client-detail navigation is now icon-only on bookings + consults tab cards to avoid accidental panel taps.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label size 15px → 25px
+  - booking payment copy/line removals + replacements
+  - panel click behavior changed to avatar-only navigation for bookings/consult cards.
+
+**Conventions:**
+- On meetings bookings cards, prefer compact payment copy (“CURRENT BALANCE …” + “PAYMENT DUE …”) and avoid redundant policy/status lines unless explicitly requested.
+- For card navigation safety in this flow, use explicit icon/avatar tap targets instead of whole-card click targets when the user asks to reduce accidental taps.
+
+---
+
 ## 2026-04-03 — Consults tab follow-up: icon visibility question, panel-height confirmation, extra text offset, and richer mock inspo sets
 
 **Context:** User reported that consult icon still looked wrong and asked whether local assets could cause that, asked current panel height, requested moving the consult client line down another 2px, and requested mock consult clients to show varied inspo image counts (max 3) instead of mostly one image.
