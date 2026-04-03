@@ -7945,3 +7945,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For shared UI primitives used by multiple surfaces, prefer introducing explicit style variants and opt-in at call sites rather than changing global defaults.
+
+---
+
+## 2026-04-03 — Hardened A/C calendar month text to Bohemy with anti-override fallback
+
+**Context:** User reported the A/C booking calendar month text was still rendering in Futura and asked to ensure no overrides block the intended Bohemy style.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same chat’s prior updates across admin meetings/consults, clients/revenue summary cards, and initial A/C month-style parity implementation.
+- Re-verified booking appointment and consultation pages already pass `monthLabelVariant="adminMeetings"` to `BrandExpiresDatePicker`.
+- Inspected `BrandExpiresDatePicker` month-label render path and discovered global font overrides in `src/index.css` (including broad selectors and `!important` rules) can still force Futura.
+- Hardened month-label rendering by adding a dedicated class hook on the admin-meetings month label branch:
+  - component now applies `className="booking-calendar-month-admin"` when `monthLabelVariant === 'adminMeetings'`.
+- Added explicit CSS fallback in `src/index.css`:
+  - `.booking-calendar-month-admin { font-family: 'Bohemy', sans-serif !important; }`
+  - this ensures Bohemy wins even when strong global font rules exist.
+- Fixed an intermediate selector/class naming mismatch and revalidated after correction.
+- Ran `npm run build` successfully after the hardening pass.
+
+**Decisions / outcomes:**
+- A/C booking month heading now has both:
+  - inline admin-meetings Bohemy styling in the shared picker variant, and
+  - a class-level `!important` Bohemy fallback to prevent Futura overrides.
+- Result is robust against current global font override patterns in `src/index.css`.
+
+**Changes:**
+- `src/components/BrandExpiresDatePicker.tsx`
+  - added admin-variant month label class application (`booking-calendar-month-admin`).
+- `src/index.css`
+  - added `.booking-calendar-month-admin` Bohemy `!important` font-family rule.
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry.
+
+**Conventions:**
+- When a global stylesheet contains broad or `!important` font rules, pair component-level typography with a scoped class-level `!important` fallback for critical branded text elements.

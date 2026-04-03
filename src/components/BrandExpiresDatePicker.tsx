@@ -231,6 +231,9 @@ export default function BrandExpiresDatePicker({
           letterSpacing: '0.02em'
         };
 
+  const monthLabelClassName =
+    monthLabelVariant === 'adminMeetings' ? 'booking-calendar-month-admin' : undefined;
+
   const calendarInner = (
     <div
       ref={inline ? undefined : popoverRef}
@@ -264,9 +267,7 @@ export default function BrandExpiresDatePicker({
               draggable={false}
             />
           </button>
-          <p
-            style={monthLabelStyle}
-          >
+          <p className={monthLabelClassName} style={monthLabelStyle}>
             {monthLabelText}
           </p>
           <button
