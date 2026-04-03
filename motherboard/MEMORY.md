@@ -8838,3 +8838,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Keep B/C row-level spacing and avatar offsets mirrored unless a request explicitly scopes to one tab only.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: WIG ONLY / WIG + INSTALL text reduced by 1px
+
+**Context:** User requested a single typography tweak on consult cards: reduce the `WIG ONLY` / `WIG + INSTALL` line size by 1px.
+
+**Topics covered (entire conversation so far):**
+- Located consult hair/service line in `AdminMeetingsHub`.
+- Updated only that line’s `fontSize` from `10px` to `9px`.
+- Kept color, font family, margins, and all surrounding row spacing unchanged.
+- Committed and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair/service line now renders at **9px**.
+- No other consult-row properties were modified.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult hair line `fontSize`: `10px` -> `9px`.
+
+**Conventions:**
+- For micro typography requests, adjust only the requested text node’s font size and keep neighboring spacing constants stable.
