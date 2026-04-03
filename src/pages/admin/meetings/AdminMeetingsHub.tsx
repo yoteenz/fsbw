@@ -203,10 +203,37 @@ function formatBookingServiceType(m: AdminMeeting): string {
   return fallback || 'NEW INSTALL';
 }
 
+function formatBookingServiceTypeForCard(m: AdminMeeting): string {
+  const base = formatBookingServiceType(m);
+  const colonIdx = base.indexOf(':');
+  if (colonIdx === -1) return base;
+  const installKind = base.slice(0, colonIdx).trim();
+  const addonsRaw = base.slice(colonIdx + 1).trim();
+  if (!addonsRaw) return installKind;
+  const addons = addonsRaw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (addons.length <= 2) return `${installKind}: ${addons.join(', ')}`;
+  return `${installKind}: ${addons.slice(0, 2).join(', ')}\n${addons.slice(2).join(', ')}`;
+}
+
 function consultInspo(m: AdminMeeting): string[] {
   const meta = m.metadata || {};
-  const arr = meta.inspoFileNames;
-  return Array.isArray(arr) ? arr.map(String) : [];
+  const photoUrls = Array.isArray(meta.inspoPhotoUrls) ? meta.inspoPhotoUrls.map(String).filter(Boolean) : [];
+  const fileNames = Array.isArray(meta.inspoFileNames) ? meta.inspoFileNames.map(String).filter(Boolean) : [];
+
+  const normalized = [...photoUrls, ...fileNames]
+    .map((src) => src.trim())
+    .filter(Boolean)
+    .map((src) => {
+      // Keep absolute URLs and root-relative asset paths intact.
+      if (/^https?:\/\//i.test(src) || src.startsWith('/')) return src;
+      // If only a filename is stored, map to shared mock gallery image.
+      return '/assets/gallery-mock.png';
+    });
+
+  return normalized.length > 0 ? normalized : ['/assets/gallery-mock.png'];
 }
 
 /** Match rewards / tier-benefits close control (brand red). */
@@ -740,8 +767,16 @@ export default function AdminMeetingsHub() {
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                 </span>
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#555', margin: '4px 0 0' }}>
-                                {formatBookingServiceType(m)}
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '10px',
+                                  color: '#555',
+                                  margin: '4px 0 0',
+                                  whiteSpace: 'pre-line',
+                                }}
+                              >
+                                {formatBookingServiceTypeForCard(m)}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}

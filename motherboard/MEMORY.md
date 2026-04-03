@@ -7327,3 +7327,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin card pages that should feel visually consistent (Marketing + Meetings), prefer the same inner spacing/scroll shell pattern (20px side padding + separated vertical scroller) unless a page intentionally diverges.
+
+---
+
+## 2026-04-03 — Meetings bookings add-on wrap + consult mock image path repair
+
+**Context:** Continuing the same admin meetings polish conversation (after TS build fixes, multiple meetings UI adjustments, preview/mobile workflow setup, totals panels, square calendar cells, and meetings/marketing spacing alignment), user requested two targeted fixes: force the 3rd add-on onto a second line on bookings cards and repair broken consult-tab mock images.
+
+**Topics covered (entire conversation so far):**
+- Reviewed current Admin Meetings formatting helpers and consult image source mapping.
+- Confirmed bookings service text was rendered as a single line string in card rows.
+- Added a card-specific formatter that keeps install kind prefix and wraps add-ons after the second token:
+  - line 1: `INSTALL KIND: ADDON 1, ADDON 2`
+  - line 2: `ADDON 3, ...`
+- Applied `whiteSpace: 'pre-line'` to the bookings service line so explicit newline renders in the card.
+- Confirmed consult mock media still included filename-only entries (`inspo-1.jpg`, `inspo-2.jpg`) which do not resolve to live assets.
+- Hardened consult image normalization in meetings UI to:
+  - prioritize `metadata.inspoPhotoUrls` and `metadata.inspoFileNames`
+  - keep absolute/root-relative URLs
+  - map filename-only values to `/assets/gallery-mock.png`
+  - always return at least one fallback image.
+- Updated mock generator to store valid root-relative asset paths in `inspoFileNames` so newly generated mock consult rows no longer produce broken thumbnails.
+- Re-ran full production build validation.
+
+**Decisions / outcomes:**
+- Bookings-tab service text now wraps add-ons onto a second line starting at the 3rd add-on while preserving install-kind-first format.
+- Consult mock image tiles now consistently render using valid asset URLs/fallback mapping, including older metadata shapes.
+- Change is UI/data-normalization only; no API contract or meeting flow behavior changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatBookingServiceTypeForCard()` for controlled add-on wrapping
+  - bookings service `<p>` now uses `whiteSpace: 'pre-line'`
+  - strengthened `consultInspo()` path normalization + fallback to `/assets/gallery-mock.png`
+- `src/utils/adminMeetingsMock.ts`
+  - changed consultation mock `metadata.inspoFileNames` to valid `/assets/gallery-mock.png` paths
+
+**Conventions:**
+- In bookings cards, long add-on lists should wrap after two add-ons for readability while keeping install-kind prefix on line one.
+- In consult mock metadata/UI, prefer root-relative asset paths or full URLs; map filename-only legacy values to a known existing mock asset fallback.

@@ -192,7 +192,7 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
           consultNotes,
           // Same stock image used by account/affiliate mock content.
           inspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
-          inspoFileNames: ['inspo-1.jpg', 'inspo-2.jpg'],
+          inspoFileNames: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
         },
       });
     } else {
