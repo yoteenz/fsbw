@@ -7364,6 +7364,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Dashboard meetings card now uses the same meetings pipeline as Admin Meetings page
+
+**Context:** User asked whether the Admin Dashboard MEETINGS card is truly linked to meetings-page card data, then requested full alignment so everything is prepped for real clients. In this same thread, prior updates had already aligned meetings mock identities with clients overview and tab spacing with marketing.
+
+**Topics covered (entire conversation so far):**
+- Verified current behavior in `src/pages/admin/dashboard/page.tsx`:
+  - dashboard card preferred `/api/admin/meetings` rows, but still had dashboard-only fallback paths (`dashboardData.bookings` and `defaultDiverseBookings`) that could drift from `/admin/meetings`.
+- Confirmed `/admin/meetings` source-of-truth pipeline in `AdminMeetingsHub`:
+  - deterministic monthly mock meetings (`generateMockMeetingsForRange`)
+  - merged with API meetings (`getAdminMeetings` + `normalizeApiMeeting`)
+  - merged with locally scheduled meetings (`loadLocalMeetings`)
+  - local rows override by id.
+- Implemented full parity on dashboard by switching its meetings card to this same merge model and removing dashboard-only fallback list logic.
+
+**Decisions / outcomes:**
+- Dashboard MEETINGS card and Admin Meetings page now read from the same upstream meeting model in both API and mock/local contexts.
+- Removed dashboard-only fake fallback meeting rows to avoid drift.
+- This improves production readiness by making what admins see on dashboard consistent with what they see when drilling into `/admin/meetings`.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - imported meetings utilities from `utils/adminMeetingsMock` (`generateMockMeetingsForRange`, `loadLocalMeetings`, `normalizeApiMeeting`, `startOfMonth`, `endOfMonth`, `AdminMeeting`).
+  - replaced `meetingsData` state with normalized `apiMeetings: AdminMeeting[]`.
+  - normalized `getAdminMeetings()` API response through `normalizeApiMeeting`.
+  - removed dashboard-specific fallback meeting list (`defaultDiverseBookings`/`diverseBookings`/`upcomingMeetings`).
+  - added merged meetings computation (mock + api + local, by id) for current month window, matching meetings-page strategy.
+  - derived dashboard card rows from merged appointment meetings only (`category !== 'consultation'`, date >= today).
+  - added robust `toIsoMeetingDateTime` conversion so meeting times sort/highlight correctly.
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry.
+
+**Conventions:**
+- For meetings-related summary cards outside `/admin/meetings`, use the same merged meetings pipeline (mock + API + local with id override) to keep dashboard and meetings hub consistent.
+
+---
+
 ## 2026-04-03 — Meetings bookings add-on wrap + consult mock image path repair
 
 **Context:** Continuing the same admin meetings polish conversation (after TS build fixes, multiple meetings UI adjustments, preview/mobile workflow setup, totals panels, square calendar cells, and meetings/marketing spacing alignment), user requested two targeted fixes: force the 3rd add-on onto a second line on bookings cards and repair broken consult-tab mock images.
