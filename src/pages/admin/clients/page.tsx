@@ -574,6 +574,8 @@ export default function AdminClients() {
   const [searchParams] = useSearchParams();
   const globalSearchQuery = (searchParams.get('q') || '').trim();
   const emailFromUrl = searchParams.get('email') || '';
+  const returnTo = (searchParams.get('returnTo') || '').trim().toLowerCase();
+  const meetingsReturnTab = searchParams.get('meetingsTab') === 'consults' ? 'consults' : 'bookings';
   const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('ALL');
   const [sortOption, setSortOption] = useState<SortOption>('Most recent');
@@ -614,10 +616,14 @@ export default function AdminClients() {
   }, []);
 
   const closeClientDetails = useCallback(() => {
+    if (returnTo === 'meetings') {
+      navigate(`/admin/meetings?tab=${meetingsReturnTab}`);
+      return;
+    }
     setSelectedClientEmail(null);
     setDetailsTab('activity');
     setExpandedOrderId(null);
-  }, []);
+  }, [navigate, returnTo, meetingsReturnTab]);
 
   useLayoutEffect(() => {
     if (selectedClientEmail != null) return;
@@ -3543,7 +3549,7 @@ export default function AdminClients() {
             loadData();
             closeClientDetails();
             setShowBlockConfirm(false);
-            navigate('/admin/clients');
+            if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
         title="BLOCK CLIENT?"
