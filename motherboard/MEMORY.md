@@ -8653,3 +8653,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For mirrored B/C card layout tweaks, apply identical style values in both tab branches to maintain visual parity.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row shifted another +6px right (to 10px)
+
+**Context:** User requested one follow-up movement: shift only the consult hair inspo row another 6px to the right.
+
+**Topics covered (entire conversation so far):**
+- Verified current consult inspo row offset was `marginLeft: '4px'`.
+- Applied one-line update to increase row right shift by 6px, resulting in `marginLeft: '10px'`.
+- Preserved all other row settings (including `gap: '8px'`) unchanged.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair inspo row now sits at **10px right offset**.
+- Only this offset changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft`: `4px` -> `10px`.
+
+**Conventions:**
+- For incremental position requests (“another X px”), apply additive deltas from current state and keep non-target spacing constants unchanged.
