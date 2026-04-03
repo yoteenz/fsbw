@@ -1550,20 +1550,6 @@ function CheckoutPage() {
         return sum + (item.price || 0) * (item.quantity || 1);
       }, 0);
 
-  // Calculate points-eligible amount (exclude gift cards, digital items, and bookings-only checkout)
-  const pointsEligibleAmount = isBookingsOnlyCheckout
-    ? 0
-    : cartItems.reduce((sum, item) => {
-        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-        const isDigital = item.type === 'digital';
-
-        if (isGiftCard || isDigital) {
-          return sum;
-        }
-
-        return sum + (item.price || 0) * (item.quantity || 1);
-      }, 0);
-  
   const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
   // Calculate shipping based on selected method (applies premium discount)

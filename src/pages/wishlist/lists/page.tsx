@@ -9,6 +9,7 @@ import CreateNewListModal from '../../../components/CreateNewListModal';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {

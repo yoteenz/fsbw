@@ -5,6 +5,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { clearAppAuth } from '../../../utils/adminAuth';
+import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 

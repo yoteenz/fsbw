@@ -7005,3 +7005,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Decisions / outcomes:** **`computePointsEligibleNetUsd`** allocates **referral / legacy / gift card / voucher** discounts using **merchandise subtotal only** in the proration numerator; **booking** lines add **full line USD** after **merch net** (same for mixed special-offer branch). **Confirm order** uses **`pointsEligibleNetAmount`** (was **`pointsEligibleAmount`**).
 
 **Changes:** **`src/utils/loyaltyPointsEligibleNet.ts`** — **`peMerch` / `consultSubMerch`**, **`allocatedToMerch`**, **`merchNet + peBooking`**; mixed-offer branch **`allocatedToMerchInPool`** + **`merchNetInPool + peBookingInPool`**. **`src/pages/checkout/page.tsx`** — **`basePoints`** from **`pointsEligibleNetAmount`**. **`src/pages/booking/consultation/page.tsx`** — **`formatConsultIsoForDisplay`** slashes; scheduled **`&lt;p&gt;`** adds **`FINAL DURATION…`** line via **`<br />`**.
+
+---
+
+## 2026-04-03 — Vercel build TypeScript fixes (sign-in href imports, nullable parse, unused checkout var)
+
+**Context:** User shared a failed Vercel build log from `master` (commit `d464cc0`) and asked to resolve TypeScript errors blocking deployment.
+
+**Topics covered (entire conversation so far):**
+- Reproduced and addressed the exact reported errors:
+  - `Cannot find name 'signInHrefWithReturnTo'` in:
+    - `src/pages/account/shipping/page.tsx`
+    - `src/pages/wishlist/lists/page.tsx`
+  - `Argument of type 'string | null' is not assignable to parameter of type 'string'` in `src/pages/checkout/confirm/page.tsx` (snapshot parsing path).
+  - `TS6133: 'pointsEligibleAmount' is declared but its value is never read` in `src/pages/checkout/page.tsx`.
+- Installed dependencies locally to run the same build command (`npm run build`) and verify fixes.
+
+**Decisions / outcomes:**
+- Added missing imports for `signInHrefWithReturnTo` in the two affected pages.
+- Kept logic intact in checkout confirm while making parsing type-safe by converting snapshot input with `String(snap)` before `parseFloat`.
+- Removed the unused `pointsEligibleAmount` declaration in checkout to satisfy `noUnusedLocals`/TS6133 without changing checkout totals behavior.
+- Local build now passes (`tsc --noEmit && vite build`).
+
+**Changes:**
+- `src/pages/account/shipping/page.tsx` — add `signInHrefWithReturnTo` import.
+- `src/pages/wishlist/lists/page.tsx` — add `signInHrefWithReturnTo` import.
+- `src/pages/checkout/confirm/page.tsx` — type-safe `parseFloat(String(snap))` in both loyalty snapshot read paths.
+- `src/pages/checkout/page.tsx` — remove unused `pointsEligibleAmount` calculation.
+
+**Conventions:**
+- When build failures mention missing `signInHrefWithReturnTo`, ensure page modules importing `useLocation` and calling the helper also import `../../utils/signInReturnTo` (or relative equivalent).
+- For optional `sessionStorage` values in TS-strict builds, narrow to string (or coerce with `String(...)`) before numeric parsing.

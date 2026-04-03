@@ -452,8 +452,8 @@ function CheckoutConfirmPage() {
         let baseUsd = pointsEligibleAmount;
         try {
           const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
-          if (snap != null && snap !== '') {
-            const n = parseFloat(snap);
+          if (typeof snap === 'string' && snap !== '') {
+            const n = parseFloat(String(snap));
             if (Number.isFinite(n) && n >= 0) baseUsd = n;
           }
         } catch (_) {}
@@ -1623,7 +1623,7 @@ function CheckoutConfirmPage() {
                     try {
                       const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
                       if (snap != null && snap !== '') {
-                        const n = parseFloat(snap);
+                        const n = parseFloat(String(snap));
                         if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
                       }
                     } catch (_) {}
