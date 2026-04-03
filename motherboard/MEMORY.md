@@ -8628,3 +8628,28 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For repeated micro-position requests, modify only the exact offset property and keep prior spacing values stable unless explicitly requested.
+
+---
+
+## 2026-04-03 — Meetings B/C tabs: client profile icons moved down to 8px offset
+
+**Context:** User requested a focused meetings-card adjustment: move client profile icons down 8px on both bookings and consults tabs, with no other style side effects.
+
+**Topics covered (entire conversation so far):**
+- Located both client-avatar button wrappers in `AdminMeetingsHub` (bookings card list and consults card list).
+- Updated only avatar wrapper `marginTop` from `1px` to `8px` in both tab render paths.
+- Left all text/image spacing, icon sizes, and other card styles untouched.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Client profile icons are now offset downward by **8px** on both bookings and consults tabs.
+- No unrelated layout properties were modified in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'`
+  - consults avatar button style: `marginTop: '8px'`
+
+**Conventions:**
+- For mirrored B/C card layout tweaks, apply identical style values in both tab branches to maintain visual parity.
