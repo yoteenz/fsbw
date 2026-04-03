@@ -7591,3 +7591,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For bookings tab calendar emphasis, selected day should be indicated by red cell border rather than a separate date text label above client rows.
+
+---
+
+## 2026-04-03 — Merged bookings-tab refinements branch into master and pushed
+
+**Context:** After completing bookings-tab UI refinements on branch `cursor/bookings-tab-ui-refinements-380a` (remove gray tab divider, red selected-date cell border, remove selected-date text line), user requested: "merge & push all changes made to the branches to master."
+
+**Topics covered (entire conversation so far):**
+- Implemented requested bookings-tab visual updates in `AdminMeetingsHub.tsx` and validated with a production build.
+- Committed feature-branch changes and pushed `cursor/bookings-tab-ui-refinements-380a`.
+- Created PR #4 for the feature branch updates.
+- Switched to `master`, pulled latest remote `master`, and attempted merge from `cursor/bookings-tab-ui-refinements-380a`.
+- Resolved merge conflicts in:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx` (kept requested bookings-tab UI behavior)
+  - `motherboard/MEMORY.md` (preserved both histories and removed conflict markers)
+- Completed merge commit and pushed updated `master` to `origin`.
+
+**Decisions / outcomes:**
+- `master` now includes the bookings-tab refinements from `cursor/bookings-tab-ui-refinements-380a`.
+- Merge was non-fast-forward due upstream divergence and was completed successfully after conflict resolution.
+- Remote `origin/master` is updated to include the merge commit.
+
+**Changes:**
+- Git operations:
+  - `git checkout master`
+  - `git pull origin master`
+  - `git merge --no-ff cursor/bookings-tab-ui-refinements-380a`
+  - conflict resolution + merge commit `26ae490`
+  - `git push -u origin master`
+- Files touched during conflict resolution:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `motherboard/MEMORY.md`
+
+**Conventions:**
+- When merging UI refinement branches into `master`, preserve requested visual behavior during conflict resolution and keep motherboard memory append-only with all conflict markers removed.
