@@ -348,14 +348,6 @@ export default function AdminDashboard() {
     initializeData();
   }, []);
 
-  // Helper function to check if appointment is within 24 hours
-  const isWithin24Hours = (appointmentDate: string) => {
-    const appointment = new Date(appointmentDate);
-    const now = new Date();
-    const diffHours = (appointment.getTime() - now.getTime()) / (1000 * 60 * 60);
-    return diffHours >= 0 && diffHours <= 24;
-  };
-
   // Helper function to format currency
   const formatCurrency = (amount: number) => {
     return `$${amount.toLocaleString('en-US')}`;
@@ -525,7 +517,7 @@ export default function AdminDashboard() {
     return null;
   };
 
-  const formatDashboardMeetingServiceLabel = (meeting: AdminMeeting): { label: string; color: 'text-red-500' | 'text-gray-500' } => {
+  const formatDashboardMeetingServiceLabel = (meeting: AdminMeeting): { label: string; color: 'text-red-500' } => {
     const meta = (meeting.metadata && typeof meeting.metadata === 'object' ? meeting.metadata : {}) as Record<string, unknown>;
     const addonLabels: string[] = [];
 
@@ -760,7 +752,8 @@ export default function AdminDashboard() {
       items: upcomingBookingsForCard.map((booking) => ({
         label: (booking.service_name || '').toUpperCase(),
         value: `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`,
-        color: booking.service_color ?? (isWithin24Hours(booking.appointment_date || '') ? 'text-red-500' : 'text-gray-500')
+        color: booking.service_color ?? 'text-red-500',
+        labelColor: booking.service_color ?? 'text-red-500',
       })),
       highlight: meetingsCardTicker
     },
