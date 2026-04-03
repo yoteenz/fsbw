@@ -420,9 +420,9 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
 function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
   if (details.addons.length === 0) return 'ADD-ONS: NONE';
-  if (details.addons.length <= 2) return `ADD-ONS: ${details.addons.join(', ')}`;
-  const firstLine = details.addons.slice(0, 2).join(', ');
-  const wrappedRest = details.addons.slice(2).join(', ');
+  if (details.addons.length <= 3) return `ADD-ONS: ${details.addons.join(', ')}`;
+  const firstLine = details.addons.slice(0, 3).join(', ');
+  const wrappedRest = details.addons.slice(3).join(', ');
   return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
 }
 
@@ -1121,9 +1121,9 @@ export default function AdminMeetingsHub() {
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Medium"',
+                                  fontFamily: '"Futura PT Demi"',
                                   fontSize: '10px',
-                                  color: '#EB1C24',
+                                  color: '#808080',
                                   margin: '4px 0 0',
                                 }}
                               >

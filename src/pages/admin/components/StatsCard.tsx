@@ -6,6 +6,8 @@ interface StatsItem {
   value: string;
   /** Optional Tailwind colour class (e.g. "text-red-500") */
   color?: string;
+  /** Optional Tailwind colour class for the label portion only */
+  labelColor?: string;
 }
 
 interface StatsCardData {
@@ -254,7 +256,10 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
           >
             {items.map((item, idx) => (
               <div key={idx} className="text-[9px] text-left w-max pr-2">
-                <span className="text-black font-medium whitespace-nowrap font-futura uppercase" style={{ fontWeight: "500" }}>
+                <span
+                  className="text-black font-medium whitespace-nowrap font-futura uppercase"
+                  style={{ fontWeight: "500", color: getColorValue(item.labelColor) }}
+                >
                   {item.label}:{" "}
                   {item.label === 'INVENTORY' ? (
                     <>
