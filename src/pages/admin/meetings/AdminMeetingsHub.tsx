@@ -438,15 +438,12 @@ function toLocalDateEndOfDay(isoDate: string): Date | null {
 }
 
 type BookingPaymentStatus = {
-  installFeeUsd: number;
+  remainingDueUsd: number;
   paidTotalUsd: number;
-  paidLessServiceFeeUsd: number;
   finalPaymentDueDateText: string;
   finalPaymentDueText: string;
   dueProgressPct: number;
-  dueStateLabel: string;
   duePassed: boolean;
-  policyNote: string;
 };
 
 function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
@@ -465,7 +462,8 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
     .map((candidate) => normalizeUsdPrice(candidate))
     .find((candidate): candidate is number => candidate != null);
   const paidTotalUsd = paidDetected ?? details.unitPriceUsd;
-  const paidLessServiceFeeUsd = Math.max(0, paidTotalUsd - installFeeUsd);
+  const remainingDueDetected = normalizeUsdPrice(meta.bookingFinalDueUsd);
+  const remainingDueUsd = remainingDueDetected ?? installFeeUsd;
 
   const dueIsoRaw = String(meta.finalPaymentDueDate || '').trim();
   const dueDateObj = toLocalDateEndOfDay(dueIsoRaw) || toLocalDateEndOfDay(addDaysIso(m.date, -2));
@@ -491,31 +489,20 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
   const days = Math.floor(hoursTotal / 24);
   const hours = hoursTotal % 24;
   const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-  let dueStateLabel = 'FINAL PAYMENT WINDOW ACTIVE';
   let dueText = 'DUE NOW';
   if (!duePassed) {
     if (days > 0) dueText = `${days}D ${hours}H LEFT`;
     else if (hours > 0) dueText = `${hours}H ${minutes}M LEFT`;
     else dueText = `${minutes}M LEFT`;
-    dueStateLabel = remainingMs <= 24 * 60 * 60 * 1000 ? 'DUE WITHIN 24 HOURS' : 'FINAL PAYMENT WINDOW ACTIVE';
-  } else {
-    dueStateLabel = 'PAST DUE — CANCELLATION RISK';
   }
 
-  const policyNote =
-    String(meta.finalPaymentPolicy || '').trim() ||
-    'REMAINING PAYMENT IS DUE NO MORE THAN 48 HOURS BEFORE APPOINTMENT. USE THE SAME PAYMENT METHOD OR APPOINTMENT IS CANCELED IF PAYMENT FAILS.';
-
   return {
-    installFeeUsd,
+    remainingDueUsd,
     paidTotalUsd,
-    paidLessServiceFeeUsd,
     finalPaymentDueDateText: dueDateText,
     finalPaymentDueText: dueText,
     dueProgressPct: elapsedPct,
-    dueStateLabel,
     duePassed,
-    policyNote,
   };
 }
 
@@ -1025,7 +1012,7 @@ export default function AdminMeetingsHub() {
                       >
                         <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
                       </button>
-                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '15px', color: '#000', textTransform: 'lowercase' }}>{monthLabel}</span>
+                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '25px', color: '#000', textTransform: 'lowercase' }}>{monthLabel}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1100,26 +1087,31 @@ export default function AdminMeetingsHub() {
                       sortedAppointmentsList.map((m) => (
                         <div
                           key={m.id}
-                          className="mb-3 cursor-pointer"
+                          className="mb-3"
                           style={{
                             background: '#fff',
                             border: '1px solid #d1d5db',
                             borderRadius: '0',
                             padding: '10px',
                           }}
-                          onClick={() => openClientAccount(m)}
-                          role="presentation"
                         >
                           <div className="flex justify-between gap-2 items-start">
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start gap-2.5">
-                                <img
-                                  src={meetingClientProfilePhoto(m)}
-                                  alt=""
-                                  width={44}
-                                  height={44}
-                                  style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
-                                />
+                                <button
+                                  type="button"
+                                  onClick={() => openClientAccount(m)}
+                                  aria-label="Open client details"
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '1px' }}
+                                >
+                                  <img
+                                    src={meetingClientProfilePhoto(m)}
+                                    alt=""
+                                    width={44}
+                                    height={44}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                  />
+                                </button>
                                 <div className="min-w-0 flex-1">
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>
                                 {meetingClientDisplayNameWithState(m)}{' '}
@@ -1155,18 +1147,8 @@ export default function AdminMeetingsHub() {
                                 const payment = getBookingPaymentStatusForCard(m);
                                 return (
                                   <>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '6px 0 0' }}>
-                                      PAID LESS {formatUsd(payment.installFeeUsd)} SERVICE FEE: {formatUsd(payment.paidLessServiceFeeUsd)} USD
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        fontSize: '9px',
-                                        color: '#000',
-                                        margin: '4px 0 0',
-                                      }}
-                                    >
-                                      FINAL PAYMENT DUE: {payment.finalPaymentDueDateText} · {payment.finalPaymentDueText}
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>
+                                      CURRENT BALANCE: {formatUsd(payment.remainingDueUsd)} OF {formatUsd(payment.paidTotalUsd)} USD
                                     </p>
                                     <div style={{ marginTop: '4px' }}>
                                       <div
@@ -1198,20 +1180,9 @@ export default function AdminMeetingsHub() {
                                           margin: '4px 0 0',
                                         }}
                                       >
-                                        STATUS: {payment.dueStateLabel}
+                                        PAYMENT DUE: {payment.finalPaymentDueDateText} · {payment.finalPaymentDueText}
                                       </p>
                                     </div>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        fontSize: '8px',
-                                        color: '#808080',
-                                        margin: '4px 0 0',
-                                        lineHeight: 1.35,
-                                      }}
-                                    >
-                                      {payment.policyNote}
-                                    </p>
                                   </>
                                 );
                               })()}
@@ -1250,26 +1221,31 @@ export default function AdminMeetingsHub() {
                           return (
                             <div
                               key={m.id}
-                              className="mb-3 cursor-pointer"
+                              className="mb-3"
                               style={{
                                 background: '#fff',
                                 border: '1px solid #d1d5db',
                                 borderRadius: '0',
                                 padding: '10px',
                               }}
-                              onClick={() => openClientAccount(m)}
-                              role="presentation"
                             >
                               <div className="flex justify-between gap-2 items-start">
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-start gap-2.5">
-                                    <img
-                                      src={meetingClientProfilePhoto(m)}
-                                      alt=""
-                                      width={44}
-                                      height={44}
-                                      style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
-                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => openClientAccount(m)}
+                                      aria-label="Open client details"
+                                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '1px' }}
+                                    >
+                                      <img
+                                        src={meetingClientProfilePhoto(m)}
+                                        alt=""
+                                        width={44}
+                                        height={44}
+                                        style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                      />
+                                    </button>
                                     <div className="min-w-0 flex-1">
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translateY(4px)' }}>
                                     {meetingClientDisplayNameWithState(m)}{' '}
