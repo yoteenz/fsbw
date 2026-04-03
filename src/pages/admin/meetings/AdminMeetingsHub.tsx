@@ -1268,7 +1268,7 @@ export default function AdminMeetingsHub() {
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
                                   {imgs.length > 0 && (
-                                    <div className="flex flex-wrap mt-2" style={{ marginLeft: '4px', gap: '8px' }}>
+                                    <div className="flex flex-wrap mt-2" style={{ marginLeft: '10px', gap: '8px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
                                         <button
                                           type="button"
