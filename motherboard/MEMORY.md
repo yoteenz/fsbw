@@ -7299,3 +7299,31 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin meetings calendar date cells, use square corners unless future design direction changes.
+
+---
+
+## 2026-04-03 — Admin meetings scroll/padding aligned to marketing card spacing
+
+**Context:** Continuing the same admin meetings polish thread (after TypeScript build fixes, meetings card/style updates, preview/mobile workflow, totals panel text updates, and square calendar date cells), user requested that the admin meetings page scroll/card padding match the admin marketing card so text/cards are not too close to the main card edge.
+
+**Topics covered (entire conversation so far):**
+- Reviewed `src/pages/admin/marketing/page.tsx` and `src/pages/admin/meetings/AdminMeetingsHub.tsx` side-by-side to compare inner card spacing + scroll structure.
+- Confirmed Marketing uses a two-layer pattern:
+  - outer content wrapper with `paddingLeft/Right: 20px` and `paddingBottom: 24px`
+  - inner `overflow-y-auto` region with `paddingTop: 2px`
+- Found Meetings used a single scroll container (`overflow-y-auto px-5 py-3`) that made content visually tighter against the card edge relative to Marketing.
+- Updated Meetings to use the same two-layer wrapper/scroller spacing pattern as Marketing.
+- Re-ran full production build to verify no regressions.
+
+**Decisions / outcomes:**
+- Meetings content area now has matching horizontal/vertical breathing room to Marketing, improving readability and visual consistency.
+- Scroll behavior remains intact; this is a layout-spacing refactor only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - replaced single `overflow-y-auto px-5 py-3` content container with:
+    - outer wrapper: `paddingLeft: 20px`, `paddingRight: 20px`, `paddingBottom: 24px`
+    - inner scroller: `overflow-y-auto`, `maxHeight: calc(100dvh - 240px)`, `paddingTop: 2px`
+
+**Conventions:**
+- For admin card pages that should feel visually consistent (Marketing + Meetings), prefer the same inner spacing/scroll shell pattern (20px side padding + separated vertical scroller) unless a page intentionally diverges.

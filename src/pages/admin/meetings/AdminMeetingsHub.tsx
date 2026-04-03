@@ -609,7 +609,18 @@ export default function AdminMeetingsHub() {
                 </div>
               )}
 
-              <div className="flex-1 min-h-0 overflow-y-auto px-5 py-3" style={{ maxHeight: 'calc(100dvh - 240px)' }}>
+              <div
+                className="flex-1 min-h-0"
+                style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
+              >
+                <div
+                  className="overflow-y-auto"
+                  style={{
+                    maxHeight: 'calc(100dvh - 240px)',
+                    paddingTop: '2px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 {viewAllMode ? (
                   <>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '0 0 12px 0' }}>
@@ -840,6 +851,7 @@ export default function AdminMeetingsHub() {
                     )}
                   </>
                 )}
+                </div>
               </div>
             </div>
 
