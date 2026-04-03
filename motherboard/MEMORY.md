@@ -8459,3 +8459,26 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin meetings booking cards, add-ons display should use install-kind-prefixed labels (`INSTALL:` / `RE-INSTALL:`) rather than `INSTALL + ...` formatting when this presentation is requested.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: client identity line moved down by +2px only
+
+**Context:** User requested one isolated visual change on consults tab: move the client identity line (`ELENA GARCIA (FL) · PREMIUM`) down by 2px and ensure no other style overrides were introduced.
+
+**Topics covered (entire conversation so far):**
+- Located the consult client line style in `AdminMeetingsHub` and confirmed current transform offsets.
+- Applied a targeted Y-offset change on that line only (`translate(6px, 4px)` -> `translate(6px, 6px)`), preserving existing X-offset and all neighboring styles.
+- Committed and pushed to `preview/mobile`; reconciled remote divergence by pull-merge before push.
+
+**Decisions / outcomes:**
+- Client identity line is now moved down by an additional **2px**.
+- No other consult row elements were changed in this request.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult client line transform updated to `translate(6px, 6px)`.
+
+**Conventions:**
+- For single-line micro-adjustments, limit edits to the specific target style property to avoid regressions in adjacent consult-row layout.
