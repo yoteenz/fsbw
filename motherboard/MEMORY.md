@@ -8205,6 +8205,40 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Bookings tab micro-layout pass: month top spacing, current-balance typography, and right-aligned countdown under tracker
+
+**Context:** User requested a focused follow-up on bookings-tab card layout and typography: reduce space above the Bohemy month label by 4px, switch CURRENT BALANCE line to Futura PT Book and add 6px top spacing above it, and position only the countdown time on the right below the tracker bar.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier bookings-tab payment/status and card-interaction updates in this same chat thread.
+- Synced `preview/mobile` first, then adjusted bookings calendar header spacing:
+  - month row top margin reduced from `12px` to `8px` (4px less spacing).
+- Updated booking payment copy block styling:
+  - `CURRENT BALANCE: ...` line font changed to `"Futura PT Book"` (from Medium),
+  - top margin changed from `4px` to `10px` to add 6px extra spacing above that line.
+- Reworked due-line layout beneath tracker bar:
+  - split into two lines on the same row under the bar:
+    - left: `PAYMENT DUE: <date>`
+    - right: `<countdown>` only (e.g. `115D 9H LEFT`), right-aligned.
+- Verified with `npm run build` and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bohemy month text now sits 4px closer to the calendar.
+- Current balance line now matches requested Futura Book typography and spacing.
+- Countdown time is now isolated and right-positioned below the tracker bar, with due-date label on the left.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month row `marginTop: '12px'` -> `marginTop: '8px'`
+  - current balance line font `Futura PT Medium` -> `Futura PT Book`
+  - current balance line margin top `4px` -> `10px`
+  - due text refactored to two-part row below bar (left due-date label, right countdown only).
+
+**Conventions:**
+- For bookings payment tracker copy in meetings cards, keep due date label and countdown separated under the bar when right-aligned countdown readability is requested.
+
+---
+
 ## 2026-04-03 — Consults follow-up: summary panels reduced to 90px and hair option text switched to Futura Medium
 
 **Context:** User requested a small visual follow-up on consults tab: reduce summary panel height from 100px to 90px and change the `WIG ONLY` / `WIG + INSTALL` line to Futura PT Medium.
