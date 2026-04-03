@@ -7528,3 +7528,47 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - In admin meetings list rows (bookings/consults/view-all), include client context with left thumbnail + `NAME (STATE)` when available.
 - Travel add-on scheduling constraints should reserve previous day afternoon and full following day to avoid accepting conflicting appointment windows.
+
+---
+
+## 2026-04-03 — Dashboard meetings card counts/labels/ticker aligned to meetings-page semantics
+
+**Context:** In this chat thread, the user first posted a broad bookings-tab update list, then clarified most of those edits were accidentally already sent/implemented and asked to finish the remaining dashboard-specific meetings card behavior. They requested the dashboard meetings header number to represent completed consults + bookings from meetings-page logic, service label copy fixes (`INSTALL` singular), add-on compaction (`INSTALL + ADDON (N)` for extra add-ons), prevention of orphan add-on-only labels, and a scrolling ticker that reports upcoming booking counts for today/week/month and repeats.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected admin meetings + booking appointment files to verify which earlier bookings-tab requests were already in place (avatars/state, selected date styling, add-on text size, click-through to client details, travel-block visuals).
+- User clarified to stop reworking already-implemented bookings-tab edits and focus on the Admin Dashboard MEETINGS card.
+- Traced dashboard meetings-card data pipeline in `src/pages/admin/dashboard/page.tsx`:
+  - previous header count was using upcoming bookings length (hence values like `30`)
+  - card labels were using raw `service_name` text (e.g., `INSTALLS`, possible add-on-only tokens)
+  - highlight text was a generic upcoming-appointments message.
+- Implemented dashboard-card formatting and counting updates against the same merged meetings source used for admin meetings (mock + API + local merge):
+  - header count now equals completed/confirmed meetings total (appointments + consultations) for the month range
+  - booking row service label now always starts with `INSTALL`
+  - add-ons collapsed to one visible add-on, with remainder count in parentheses (`INSTALL + BRAIDS (3)`)
+  - add-on parsing now reads metadata `bookingAddonIds` first, then token fallback from `type`, preventing standalone add-on labels (e.g., `BROW SCULPTING` by itself)
+  - ticker/highlight now uses bookings-only upcoming counts for TODAY, THIS WEEK, THIS MONTH and repeats the sequence for continuous scroll.
+- Validated by running project build after installing dependencies in the cloud environment.
+
+**Decisions / outcomes:**
+- The dashboard MEETINGS card header number is now defined as completed + confirmed meetings (consults and bookings) from the meetings pipeline, instead of upcoming-bookings count.
+- Dashboard booking service labels are normalized to `INSTALL` singular and compact add-on display format.
+- Dashboard meetings ticker now follows bookings-only cadence and copy: TODAY → THIS WEEK → THIS MONTH (repeated).
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added dashboard booking add-on normalization helpers
+  - added `formatDashboardMeetingServiceLabel()` for `INSTALL + ADDON (N)` formatting
+  - changed meetings header count to completed/confirmed total across all meetings categories
+  - changed meetings card rows to bookings-only upcoming list with normalized service labels
+  - replaced generic highlight copy with repeated TODAY/WEEK/MONTH upcoming-bookings ticker.
+- Environment/runtime:
+  - ran `npm install` (cloud agent) so `tsc` became available
+  - ran `npm run build` successfully.
+
+**Conventions:**
+- On the admin dashboard MEETINGS card:
+  - header count should represent completed/confirmed meetings total (bookings + consults),
+  - list rows should show bookings only for upcoming entries,
+  - service labels should use `INSTALL` singular with compact add-on summary (`INSTALL + X (N)` when multiple add-ons),
+  - ticker should report upcoming bookings for today/week/month in repeating sequence.
