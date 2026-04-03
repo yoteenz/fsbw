@@ -7763,3 +7763,43 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 - Meetings mock appointment durations should be computed from install base + add-on durations (not randomized independent of services).
 - Meetings panel avatars should follow client-details profile-image precedence and remain rounded/larger for quick identity recognition.
 - Client-panel deep-links from meetings should target `/admin/clients/overview?email=...` so selected details open reliably.
+
+---
+
+## 2026-04-03 — Completed full branch-to-master merge sweep (remaining missing branches merged)
+
+**Context:** User reported that `master` still did not include all expected branch changes (specifically citing missing rounded client profile photos in client-details-adjacent flows) and clarified the expectation to merge all five related branches into `master`, not only the previously merged bookings-tab refinements branch.
+
+**Topics covered (entire conversation so far):**
+- Audited all local/remote branches and open PR heads, then compared against `origin/master` to identify what was actually still unmerged.
+- Verified branch merge status:
+  - already in `master`: `cursor/bookings-tab-ui-refinements-380a`, `cursor/sign-in-href-definition-d776`, `preview/mobile`
+  - missing from `master`: `cursor/client-booking-panel-details-a360`, `cursor/bookings-tab-display-logic-1f04`
+- Merged `origin/cursor/client-booking-panel-details-a360` into `master`:
+  - resolved conflicts in `src/pages/admin/meetings/AdminMeetingsHub.tsx` and `motherboard/MEMORY.md`
+  - preserved requested bookings-tab refinements while keeping consult/photo-routing updates from the merged branch.
+- Merged `origin/cursor/bookings-tab-display-logic-1f04` into `master`:
+  - resolved `motherboard/MEMORY.md` conflict by preserving entries from both histories
+  - retained dashboard meetings-card logic updates and meetings mock/profile-photo/deep-link refinements.
+- Ran full build validation on merged `master` and pushed successfully.
+- Confirmed with `git branch -r --no-merged origin/master` that no remote feature branches in this set remain unmerged.
+
+**Decisions / outcomes:**
+- `master` now includes all previously missing changes from the two unmerged feature branches.
+- The rounded/larger meetings panel avatars and related client-detail routing/photo-source changes from `cursor/bookings-tab-display-logic-1f04` are now on `master`.
+- All five referenced branch lines are now represented in `master` history either by prior inclusion or by new merge commits in this pass.
+
+**Changes:**
+- Git merges completed on `master`:
+  - `Merge branch 'cursor/client-booking-panel-details-a360' into master` (`b8123d8`)
+  - `Merge branch 'cursor/bookings-tab-display-logic-1f04' into master` (`c257ba6`)
+- Conflict-resolved files:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `motherboard/MEMORY.md`
+- Additional merged branch code now in master includes updates from:
+  - `src/pages/admin/dashboard/page.tsx`
+  - `src/utils/adminMeetingsMock.ts`
+  - consult booking/checkout/API pipeline files introduced by merged branch history.
+
+**Conventions:**
+- For “merge all branches” requests, verify with `git branch -r --no-merged origin/master` before and after merges, and resolve MEMORY conflicts by preserving both append-only histories.
