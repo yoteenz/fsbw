@@ -7916,6 +7916,56 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Booking card paid-balance logic + final-payment due countdown replaces placeholder paid-status line
+
+**Context:** User asked to replace the booking card placeholder line (`PAID STATUS: SEE ORDER IN CLIENT ACCOUNT`) with real per-booking payment math and due-state UX tied to appointment checkout data. They specified that appointment payments should subtract install/re-install service fee, show remaining/final due context, and include a countdown tracking bar with the same style pattern as order-tracking progress.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this chat we implemented bookings-tab styling updates (icon/font/case/add-ons) and clarified deployment behavior, then moved all pushes to `preview/mobile` per user rule and persisted that policy in CORE/MEMORY.
+- User then requested functional payment-status behavior on booking cards:
+  - derive paid status from what client paid at appointment checkout,
+  - subtract install/re-install fee from total paid (install 275 / re-install 225),
+  - show final payment due timing with countdown/progress and cancellation policy note.
+- Traced booking flow end-to-end:
+  - checkout appointment sync (`src/pages/checkout/page.tsx`) → API client (`src/utils/api.ts`) → booking meeting route (`api/booking/appointment-meeting.ts`) → admin bookings card renderer (`src/pages/admin/meetings/AdminMeetingsHub.tsx`).
+- Expanded payload + persisted meeting metadata from checkout:
+  - booking install kind, addon ids/style/part, unit name/price,
+  - order total paid + booking line paid totals,
+  - install fee, computed balance-paid-after-fee, final due amount,
+  - payment method label, booked timestamp, due-at timestamp/date, policy text.
+- Replaced placeholder paid-status line on booking cards with computed UI:
+  - red line: `PAID LESS $275/$225 SERVICE FEE: $X USD`,
+  - due line with due date + countdown text,
+  - progress bar and status label (`FINAL PAYMENT WINDOW ACTIVE`, `DUE WITHIN 24 HOURS`, `PAST DUE — CANCELLATION RISK`),
+  - policy note reflecting 48-hour same-method requirement/cancel rule.
+- Verified with `npm run build` (passes).
+
+**Decisions / outcomes:**
+- Booking cards now show actual payment context derived from appointment checkout sync metadata rather than static placeholder text.
+- Final payment due state is rendered directly in bookings cards using countdown + progress treatment that matches order-tracking bar style conventions.
+- Calculation baseline:
+  - install fee = 275 for new install, 225 for re-install,
+  - paid-less-service-fee = max(0, paidTotal - serviceFee),
+  - due date defaults to appointment date minus 2 days unless explicit metadata due date exists.
+
+**Changes:**
+- `src/pages/checkout/page.tsx`
+  - `syncBookingAppointmentsToAdminMeetings(...)` now sends paid totals, service fee, balance-after-fee, payment method label, and booked timestamp per appointment line.
+  - call site now passes checkout `subtotal` and `paymentMethodDisplay`.
+- `src/utils/api.ts`
+  - expanded `postBookingAppointmentMeeting` body typing to include booking payment/due metadata fields.
+- `api/booking/appointment-meeting.ts`
+  - accepts and normalizes new booking metadata fields.
+  - computes/persists final due date (48h before appointment), policy text, and payment fields in `meetings.metadata`.
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added booking payment status helpers and currency/date formatting helpers.
+  - replaced placeholder paid-status copy with computed paid-balance + due countdown/progress UI and policy note.
+
+**Conventions:**
+- In Admin Meetings booking cards, payment status should come from checkout-synced meeting metadata (not static text), and must display paid-less-service-fee plus final-due countdown/progress context for appointment collections.
+
+---
+
 ## 2026-04-03 — Bookings-tab follow-up: lowercase month, add-ons font-only change, and booking icon asset correction
 
 **Context:** In this continuation of the same bookings-tab thread, user reported the booking-panel SVG icon still looked unchanged, requested Bohemy month text above the calendar to be lowercase, requested only the add-ons line to use Futura PT Book, and asked what the "PAID STATUS: SEE ORDER IN CLIENT ACCOUNT" line means.

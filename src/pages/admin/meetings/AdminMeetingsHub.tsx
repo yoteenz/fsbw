@@ -426,6 +426,99 @@ function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
 }
 
+function formatUsd(amount: number): string {
+  return `$${Math.max(0, Math.round(amount)).toLocaleString('en-US')}`;
+}
+
+function toLocalDateEndOfDay(isoDate: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ''))) return null;
+  const [y, m, d] = String(isoDate).split('-').map(Number);
+  const dt = new Date(y, m - 1, d, 23, 59, 59, 999);
+  return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+type BookingPaymentStatus = {
+  installFeeUsd: number;
+  paidTotalUsd: number;
+  paidLessServiceFeeUsd: number;
+  finalPaymentDueDateText: string;
+  finalPaymentDueText: string;
+  dueProgressPct: number;
+  dueStateLabel: string;
+  duePassed: boolean;
+  policyNote: string;
+};
+
+function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
+  const details = getBookingCardDetails(m);
+  const installFeeUsd = details.installKind === 'RE-INSTALL' ? 225 : 275;
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+
+  const paidCandidates = [
+    meta.bookingPaidTotalUsd,
+    meta.bookingPaidTotalUSD,
+    meta.orderTotalUsd,
+    meta.orderTotalUSD,
+    meta.orderTotal,
+  ];
+  const paidDetected = paidCandidates
+    .map((candidate) => normalizeUsdPrice(candidate))
+    .find((candidate): candidate is number => candidate != null);
+  const paidTotalUsd = paidDetected ?? details.unitPriceUsd;
+  const paidLessServiceFeeUsd = Math.max(0, paidTotalUsd - installFeeUsd);
+
+  const dueIsoRaw = String(meta.finalPaymentDueDate || '').trim();
+  const dueDateObj = toLocalDateEndOfDay(dueIsoRaw) || toLocalDateEndOfDay(addDaysIso(m.date, -2));
+  const fallbackDateObj = toLocalDateEndOfDay(addDaysIso(m.date, -2));
+  const safeDueObj = dueDateObj || fallbackDateObj || new Date();
+  const dueIso = `${safeDueObj.getFullYear()}-${String(safeDueObj.getMonth() + 1).padStart(2, '0')}-${String(
+    safeDueObj.getDate()
+  ).padStart(2, '0')}`;
+
+  const dueDateText = formatHeaderDate(dueIso);
+  const nowMs = Date.now();
+  const dueMs = safeDueObj.getTime();
+  const sourceDateObj = toLocalDateEndOfDay(m.date) || safeDueObj;
+  const totalWindowMs = Math.max(1, sourceDateObj.getTime() - dueMs);
+  const remainingMs = Math.max(0, dueMs - nowMs);
+  const elapsedPct = Math.max(
+    0,
+    Math.min(100, ((totalWindowMs - Math.min(totalWindowMs, remainingMs)) / totalWindowMs) * 100)
+  );
+  const duePassed = remainingMs <= 0;
+
+  const hoursTotal = Math.floor(remainingMs / (1000 * 60 * 60));
+  const days = Math.floor(hoursTotal / 24);
+  const hours = hoursTotal % 24;
+  const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+  let dueStateLabel = 'FINAL PAYMENT WINDOW ACTIVE';
+  let dueText = 'DUE NOW';
+  if (!duePassed) {
+    if (days > 0) dueText = `${days}D ${hours}H LEFT`;
+    else if (hours > 0) dueText = `${hours}H ${minutes}M LEFT`;
+    else dueText = `${minutes}M LEFT`;
+    dueStateLabel = remainingMs <= 24 * 60 * 60 * 1000 ? 'DUE WITHIN 24 HOURS' : 'FINAL PAYMENT WINDOW ACTIVE';
+  } else {
+    dueStateLabel = 'PAST DUE — CANCELLATION RISK';
+  }
+
+  const policyNote =
+    String(meta.finalPaymentPolicy || '').trim() ||
+    'REMAINING PAYMENT IS DUE NO MORE THAN 48 HOURS BEFORE APPOINTMENT. USE THE SAME PAYMENT METHOD OR APPOINTMENT IS CANCELED IF PAYMENT FAILS.';
+
+  return {
+    installFeeUsd,
+    paidTotalUsd,
+    paidLessServiceFeeUsd,
+    finalPaymentDueDateText: dueDateText,
+    finalPaymentDueText: dueText,
+    dueProgressPct: elapsedPct,
+    dueStateLabel,
+    duePassed,
+    policyNote,
+  };
+}
+
 function consultInspo(m: AdminMeeting): string[] {
   const meta = m.metadata || {};
   const photoUrls = Array.isArray(meta.inspoPhotoUrls) ? meta.inspoPhotoUrls.map(String).filter(Boolean) : [];
@@ -1056,9 +1149,70 @@ export default function AdminMeetingsHub() {
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '6px 0 0' }}>
-                                PAID STATUS: SEE ORDER IN CLIENT ACCOUNT
-                              </p>
+                              {(() => {
+                                const payment = getBookingPaymentStatusForCard(m);
+                                return (
+                                  <>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '6px 0 0' }}>
+                                      PAID LESS {formatUsd(payment.installFeeUsd)} SERVICE FEE: {formatUsd(payment.paidLessServiceFeeUsd)} USD
+                                    </p>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        fontSize: '9px',
+                                        color: '#000',
+                                        margin: '4px 0 0',
+                                      }}
+                                    >
+                                      FINAL PAYMENT DUE: {payment.finalPaymentDueDateText} · {payment.finalPaymentDueText}
+                                    </p>
+                                    <div style={{ marginTop: '4px' }}>
+                                      <div
+                                        style={{
+                                          width: '100%',
+                                          height: '7px',
+                                          backgroundColor: '#E0E0E0',
+                                          borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                          overflow: 'hidden',
+                                          border: payment.dueProgressPct === 0 ? '1px solid #808080' : 'none',
+                                          boxSizing: 'border-box',
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            width: `${payment.dueProgressPct}%`,
+                                            height: '100%',
+                                            backgroundColor: payment.duePassed ? '#808080' : '#EB1C24',
+                                            transition: 'width 0.3s ease',
+                                            borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                          }}
+                                        />
+                                      </div>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Book"',
+                                          fontSize: '9px',
+                                          color: payment.duePassed ? '#808080' : '#EB1C24',
+                                          margin: '4px 0 0',
+                                        }}
+                                      >
+                                        STATUS: {payment.dueStateLabel}
+                                      </p>
+                                    </div>
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        fontSize: '8px',
+                                        color: '#808080',
+                                        margin: '4px 0 0',
+                                        lineHeight: 1.35,
+                                      }}
+                                    >
+                                      {payment.policyNote}
+                                    </p>
+                                  </>
+                                );
+                              })()}
                                 </div>
                               </div>
                             </div>

@@ -335,7 +335,7 @@ function CheckoutPage() {
   const [customTipDisplay, setCustomTipDisplay] = useState('');
 
   const syncBookingAppointmentsToAdminMeetings = useCallback(
-    async (orderNumberForNotes: string) => {
+    async (orderNumberForNotes: string, orderTotalPaidUsd: number, paymentMethodLabel: string) => {
       const appointmentItems = cartItems.filter(
         (item: any) =>
           item?.type === 'booking-appointment' &&
@@ -382,6 +382,7 @@ function CheckoutPage() {
           const meetingTime = String(item.bookingPreferredTime).trim();
           const idempotencyKey = `BOOKING_APPT:${orderNumberForNotes}:${meetingDate}:${meetingTime}:${idx}`;
 
+          const installFeeUsd = installKind === 'RE_INSTALL' ? 225 : 275;
           await postBookingAppointmentMeeting({
             meetingDate,
             meetingTime,
@@ -389,7 +390,15 @@ function CheckoutPage() {
             durationMinutes,
             notes,
             orderNumber: orderNumberForNotes,
-            idempotencyKey
+            idempotencyKey,
+            bookingInstallKind: installKind,
+            bookingInstallFeeUsd: installFeeUsd,
+            bookingOrderTotalPaidUsd: Math.max(0, Math.round(Number(orderTotalPaidUsd) || 0)),
+            bookingLineTotalPaidUsd: Math.max(0, Math.round(Number(item?.price || 0))),
+            bookingBalancePaidUsd: Math.max(0, Math.round((Number(orderTotalPaidUsd) || 0) - installFeeUsd)),
+            bookingFinalDueUsd: installFeeUsd,
+            bookingPaymentMethodLabel: paymentMethodLabel,
+            bookingBookedAtIso: new Date().toISOString(),
           });
         })
       );
@@ -6181,7 +6190,7 @@ function CheckoutPage() {
 
                   void (async () => {
                     try {
-                      await syncBookingAppointmentsToAdminMeetings(orderNumber);
+                      await syncBookingAppointmentsToAdminMeetings(orderNumber, subtotal, paymentMethodDisplay);
                       await syncBookingConsultsToAdminMeetings(orderNumber);
                     } catch (e) {
                       console.error('Failed to sync booking appointments to admin meetings:', e);
