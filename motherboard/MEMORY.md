@@ -8801,3 +8801,40 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When user requests styling for only one substring in a composite label (e.g., name vs membership status), split into separate spans and preserve existing color logic for the untouched segment.
+
+---
+
+## 2026-04-03 — Consult icon interaction clarification + consult card spacing/style refinements
+
+**Context:** User reported booking tab panel icons worked while consult tab icons did not, then requested four styling updates on consults plus two shared spacing updates: add 3px below additional notes, make `WIG ONLY`/`WIG + INSTALL` gray Futura Medium, increase spacing between client panel icons on both B/C tabs by 2px, and move client profile images 4px right.
+
+**Topics covered (entire conversation so far):**
+- Reviewed meetings card interactions:
+  - bookings card right-side action is edit icon,
+  - consult card right-side action is quote icon,
+  - both use `stopPropagation` and should remain independently clickable from row open-client action.
+- Hardened consult and booking right-side action icons with `flexShrink: 0` + `position: relative` + `zIndex: 2` to protect clickability in dense card layouts.
+- Applied requested style updates:
+  - additional notes line receives 3px space below (`marginBottom: '3px'` + spacer block),
+  - hair/service line set to gray (`#808080`) Futura PT Medium,
+  - client panel icon spacing increased by 2px on both bookings and consults card rows (`gap` 10 -> 12),
+  - client profile image buttons shifted 4px right (`marginLeft: '4px'`) on both tabs.
+- Build validation passed before push.
+- Resolved merge conflict in `AdminMeetingsHub` after remote preview advanced, preserving requested consult fixes and latest remote updates.
+
+**Decisions / outcomes:**
+- Consult action icon behavior is aligned with booking behavior and protected against overlap issues.
+- Requested consult notes/hair spacing and color updates are applied.
+- B/C card icon spacing and avatar-right shift updates are applied uniformly.
+- Final result pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - right action buttons hardened (`flexShrink`, `zIndex`),
+  - row gap on bookings + consults increased to 12px,
+  - avatar button left offset set to 4px (both tabs),
+  - hair line switched to gray Futura Medium,
+  - additional notes line bottom spacing added.
+
+**Conventions:**
+- Keep B/C row-level spacing and avatar offsets mirrored unless a request explicitly scopes to one tab only.
