@@ -7477,3 +7477,54 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - In bookings cards, long add-on lists should wrap after two add-ons for readability while keeping install-kind prefix on line one.
 - In consult mock metadata/UI, prefer root-relative asset paths or full URLs; map filename-only legacy values to a known existing mock asset fallback.
+
+---
+
+## 2026-04-03 — Admin meetings bookings/consults panel polish + travel-day scheduling blocks
+
+**Context:** Continuing the same long-running admin meetings thread (TS build fixes, meetings card styling passes, preview/mobile workflow, search wiring, mock consistency, dashboard-meetings source unification, and install/add-on line redesign), user requested a larger bookings-tab UX pass: add avatar + state labels on client panels (including view-all), reduce add-ons line text size by 1px, make selected date label red and nudged right, ensure panel taps open admin client detail, enforce travel add-on calendar/scheduling blocks (half-day previous + full next day), and remove extra view-all helper/header copy.
+
+**Topics covered (entire conversation so far):**
+- **Client identity visuals on bookings/consults + view-all**
+  - Added per-row client photo thumbnail on the left of text in bookings cards, consult cards, and view-all rows.
+  - Added state code next to client name using `NAME (ST)` format (e.g., `REESE SCOTT (NJ)`), with mapping/fallback from email and metadata/address parsing.
+  - Kept panel tap behavior routing to `navigate('/admin/clients?email=...')` and extended clickable behavior to view-all row cards too.
+- **Bookings line typography + selected date display**
+  - Reduced black add-ons line from `10px` to `9px`.
+  - Updated selected date text below calendar to red and nudged right by 2px (`translateX(2px)`).
+- **Travel add-on block behavior in admin meetings calendar**
+  - Added travel-block derivation from appointment meetings:
+    - previous day marked as **half-day blocked** (after 12 PM unavailable)
+    - next day marked as **full-day blocked** (date disabled/gray)
+  - Calendar now visually indicates these travel constraints and disables full blocked dates.
+- **Travel add-on block behavior in booking appointment time-slot selection**
+  - Implemented time-slot availability filter in `booking/appointment`:
+    - when travel add-on selected, on day `D-1` only slots **before 12:00 PM** remain selectable
+    - on day `D+1`, no slots available (full day blocked)
+  - Disabled blocked slots with explanatory title text and auto-cleared previously selected invalid slots.
+- **View-all/header cleanup**
+  - Removed "GROUPED BY CLIENT EMAIL (CURRENT MONTH RANGE)." helper line.
+  - Removed in-card red `MEETINGS` header and its gray divider line above the view-all area, per request.
+
+**Decisions / outcomes:**
+- Bookings/consults rows now present richer client context consistently (photo + state) across normal tabs and view-all mode.
+- Travel add-on constraints are now represented both in meetings-calendar visibility and booking time-slot selection logic to prep behavior for real scheduling constraints.
+- Selected date and add-ons text now match requested emphasis hierarchy.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added client photo/state helpers and applied to bookings, consults, and view-all rows
+  - switched view-all rendering from grouped-email text block to row cards
+  - removed in-card `MEETINGS` heading + divider
+  - removed grouped-by helper copy
+  - reduced add-ons line font size (`9px`)
+  - styled selected date label red + `translateX(2px)`
+  - added travel half-day/full-day block set derivation and calendar disabled styling
+- `src/pages/booking/appointment/page.tsx`
+  - added travel-aware time-slot filtering logic for day-before half-day and day-after full-day block
+  - disabled blocked slots in dropdown and added explanatory tooltip text
+  - auto-clear invalid selected slot when availability changes
+
+**Conventions:**
+- In admin meetings list rows (bookings/consults/view-all), include client context with left thumbnail + `NAME (STATE)` when available.
+- Travel add-on scheduling constraints should reserve previous day afternoon and full following day to avoid accepting conflicting appointment windows.

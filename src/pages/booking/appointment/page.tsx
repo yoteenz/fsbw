@@ -65,6 +65,29 @@ const WEEKDAY_TIME_SLOTS = [
   '6:00 PM'
 ] as const;
 
+function dateShiftIso(isoYmd: string, days: number): string {
+  const [y, m, d] = isoYmd.split('-').map(Number);
+  const dt = new Date(y, (m || 1) - 1, d || 1);
+  dt.setDate(dt.getDate() + days);
+  const yy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+function timeSlotHour24(slot: string): number | null {
+  const m = String(slot || '')
+    .trim()
+    .toUpperCase()
+    .match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if (!m) return null;
+  let h = Number(m[1]);
+  const ap = m[3];
+  if (ap === 'PM' && h !== 12) h += 12;
+  if (ap === 'AM' && h === 12) h = 0;
+  return h;
+}
+
 const INSTALL_BASE: Record<InstallKind, { label: string; sub: string; price: number }> = {
   NEW_INSTALL: { label: 'NEW INSTALL', sub: '+2.5 HOURS', price: 275 },
   RE_INSTALL: { label: 'RE-INSTALL', sub: '+2 HOURS', price: 225 }
@@ -574,6 +597,29 @@ export default function BookingAppointmentPage() {
     [installKind]
   );
 
+  const travelBlocksPrevDayAfternoon = useMemo(() => {
+    if (!addonIds.has('travel') || !preferredDateIso.trim()) return null;
+    return dateShiftIso(preferredDateIso.trim(), -1);
+  }, [addonIds, preferredDateIso]);
+
+  const travelBlocksWholeDay = useMemo(() => {
+    if (!addonIds.has('travel') || !preferredDateIso.trim()) return null;
+    return dateShiftIso(preferredDateIso.trim(), 1);
+  }, [addonIds, preferredDateIso]);
+
+  const availableTimeSlotsForDate = useMemo(() => {
+    if (!preferredDateIso.trim()) return WEEKDAY_TIME_SLOTS;
+    if (!addonIds.has('travel')) return WEEKDAY_TIME_SLOTS;
+    if (travelBlocksWholeDay && preferredDateIso.trim() === travelBlocksWholeDay) return [] as string[];
+    if (travelBlocksPrevDayAfternoon && preferredDateIso.trim() === travelBlocksPrevDayAfternoon) {
+      return WEEKDAY_TIME_SLOTS.filter((slot) => {
+        const h = timeSlotHour24(slot);
+        return h != null && h < 12;
+      });
+    }
+    return WEEKDAY_TIME_SLOTS;
+  }, [preferredDateIso, addonIds, travelBlocksWholeDay, travelBlocksPrevDayAfternoon]);
+
   /** If lead rules change (e.g. RE-INSTALL → NEW INSTALL), drop a date that is no longer selectable. */
   useEffect(() => {
     setPreferredDateIso((prev) => {
@@ -589,6 +635,13 @@ export default function BookingAppointmentPage() {
       setShowTimeSlotDropdown(false);
     }
   }, [preferredDateIso]);
+
+  useEffect(() => {
+    if (!preferredTimeSlot.trim()) return;
+    if (!availableTimeSlotsForDate.includes(preferredTimeSlot as (typeof WEEKDAY_TIME_SLOTS)[number])) {
+      setPreferredTimeSlot('');
+    }
+  }, [availableTimeSlotsForDate, preferredTimeSlot]);
 
   /** Cart / bag “EDIT APPOINTMENT” writes draft + dispatches; re-apply when PDP is already mounted. */
   useEffect(() => {
@@ -1451,20 +1504,36 @@ export default function BookingAppointmentPage() {
                       className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
                       style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
                     >
-                      {WEEKDAY_TIME_SLOTS.map((slot) => (
+                      {WEEKDAY_TIME_SLOTS.map((slot) => {
+                        const slotDisabled = !availableTimeSlotsForDate.includes(slot);
+                        return (
                         <button
                           key={slot}
                           type="button"
+                          disabled={slotDisabled}
                           onClick={() => {
+                            if (slotDisabled) return;
                             setPreferredTimeSlot(slot);
                             setShowTimeSlotDropdown(false);
                           }}
                           className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                          style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            color: slotDisabled ? '#9ca3af' : '#000',
+                            fontWeight: 400,
+                            cursor: slotDisabled ? 'not-allowed' : 'pointer',
+                            opacity: slotDisabled ? 0.7 : 1,
+                          }}
+                          title={
+                            slotDisabled
+                              ? 'UNAVAILABLE DUE TO TRAVEL BUFFER (NO APPOINTMENTS AFTER 12 PM THE DAY BEFORE A TRAVEL BOOKING).'
+                              : undefined
+                          }
                         >
                           {slot}
                         </button>
-                      ))}
+                      );
+                    })}
                     </div>
                   </>
                 ) : null}
