@@ -8327,3 +8327,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Apply consults-tab micro-alignment requests as direct style deltas on only the named elements to avoid unintended layout changes.
+
+---
+
+## 2026-04-03 — Consults typography/right-offset update + standardized admin summary panels to meetings design
+
+**Context:** User requested consults-tab refinements (client line font change, 6px right shift for four consult-row text/media elements) and asked to update summary panels on other admin pages to match meetings summary panel design (same height + bottom text position).
+
+**Topics covered (entire conversation so far):**
+- Verified meetings consult-row styles in `AdminMeetingsHub` and applied targeted typography/offset changes:
+  - client identity line (`NAME (STATE) · PREMIUM`) changed to Futura PT Book,
+  - client line, service line, inspo-photo row, and notes line each shifted right to 6px (from prior 4px).
+- Standardized admin summary card style to the same meetings panel design pattern (height + bottom-positioned text stack) across other admin pages with two-up summary cards:
+  - fixed `height: 80px`,
+  - `display: flex`, `flexDirection: 'column'`, `justifyContent: 'flex-end'`,
+  - `paddingBottom: '10px'`,
+  - label spacing normalized to `marginTop: '4px'` where applicable.
+- Applied this design to all matching summary-panel blocks in:
+  - Brand (codes cards + alerts cards),
+  - Marketing,
+  - Referrals,
+  - Pending,
+  - Reviews (top cards + tools sub-tab card),
+  - Revenue (main tab cards + pending-orders subcard).
+- Committed and pushed updates to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Consults client identity line now uses Futura PT Book.
+- The four requested consult-row elements are now consistently shifted 6px right.
+- Admin summary panels across the listed pages now match meetings design conventions for height/text position.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/pages/admin/brand/page.tsx`
+- `src/pages/admin/marketing/page.tsx`
+- `src/pages/admin/referrals/page.tsx`
+- `src/pages/admin/pending/page.tsx`
+- `src/pages/admin/reviews/page.tsx`
+- `src/pages/admin/revenue/page.tsx`
+
+**Conventions:**
+- For admin summary-panel parity with meetings, use fixed 80px panel height and bottom-aligned text stack (`justifyContent: flex-end` + `paddingBottom: 10px`) unless a page intentionally uses a different summary treatment (e.g., single metric hero blocks).
