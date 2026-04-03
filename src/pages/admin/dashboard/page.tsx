@@ -525,7 +525,7 @@ export default function AdminDashboard() {
     return null;
   };
 
-  const formatDashboardMeetingServiceLabel = (meeting: AdminMeeting): string => {
+  const formatDashboardMeetingServiceLabel = (meeting: AdminMeeting): { label: string; color: 'text-red-500' | 'text-gray-500' } => {
     const meta = (meeting.metadata && typeof meeting.metadata === 'object' ? meeting.metadata : {}) as Record<string, unknown>;
     const addonLabels: string[] = [];
 
@@ -555,9 +555,15 @@ export default function AdminDashboard() {
       dedupedAddons.push(addon);
     }
 
-    if (dedupedAddons.length === 0) return 'INSTALL';
-    if (dedupedAddons.length === 1) return `INSTALL + ${dedupedAddons[0]}`;
-    return `INSTALL + ${dedupedAddons[0]} (${dedupedAddons.length - 1})`;
+    const rawInstallKind = String(meta.bookingInstallKind ?? meta.installKind ?? '')
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, ' ');
+    const installLabel = rawInstallKind.includes('RE-INSTALL') || rawInstallKind.includes('REINSTALL') ? 'RE-INSTALL' : 'INSTALL';
+
+    if (dedupedAddons.length === 0) return { label: `${installLabel}: NONE`, color: 'text-red-500' };
+    if (dedupedAddons.length === 1) return { label: `${installLabel}: ${dedupedAddons[0]}`, color: 'text-red-500' };
+    return { label: `${installLabel}: ${dedupedAddons[0]} (${dedupedAddons.length})`, color: 'text-red-500' };
   };
 
   const toIsoMeetingDateTime = (date: string, time: string): string => {
@@ -664,12 +670,16 @@ export default function AdminDashboard() {
       if (status === 'canceled' || status === 'cancelled') return false;
       return true;
     })
-    .map((m) => ({
+    .map((m) => {
+      const service = formatDashboardMeetingServiceLabel(m);
+      return {
       date: m.date,
       appointment_date: toIsoMeetingDateTime(m.date, m.time),
-      service_name: formatDashboardMeetingServiceLabel(m),
+      service_name: service.label,
+      service_color: service.color,
       client_name: m.client || '',
-    }));
+      };
+    });
 
   const endOfThisWeekIso = (() => {
     const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -750,7 +760,7 @@ export default function AdminDashboard() {
       items: upcomingBookingsForCard.map((booking) => ({
         label: (booking.service_name || '').toUpperCase(),
         value: `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`,
-        color: isWithin24Hours(booking.appointment_date || '') ? 'text-red-500' : 'text-gray-500'
+        color: booking.service_color ?? (isWithin24Hours(booking.appointment_date || '') ? 'text-red-500' : 'text-gray-500')
       })),
       highlight: meetingsCardTicker
     },
