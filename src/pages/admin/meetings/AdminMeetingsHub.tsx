@@ -871,7 +871,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '100px',
+                        height: '90px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
@@ -890,7 +890,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '100px',
+                        height: '90px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
@@ -1253,7 +1253,7 @@ export default function AdminMeetingsHub() {
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
                                   {imgs.length > 0 && (
                                     <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '2px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
