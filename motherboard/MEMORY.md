@@ -7277,3 +7277,25 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For this meetings summary section, use label text `TOTAL BOOKED` and `TOTAL CONSULTED` unless explicitly changed later.
+
+---
+
+## 2026-04-03 — Admin meetings calendar date cells: square corners
+
+**Context:** User requested another visual adjustment on `preview/mobile`: make admin meetings calendar date cells square instead of rounded.
+
+**Topics covered (entire conversation so far):**
+- Located date-cell corner styling in `AdminMeetingsHub` calendar button styles.
+- Updated calendar day cell `borderRadius` from rounded (`'4px'`) to square (`'0'`).
+- Left summary metric panel corners unchanged because the request targeted the calendar.
+- Re-ran full build validation after the style tweak.
+
+**Decisions / outcomes:**
+- Admin meetings calendar date cells are now square-cornered.
+- No behavioral/calendar logic changes; styling only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx` — bookings calendar date-cell `borderRadius: '0'`.
+
+**Conventions:**
+- For admin meetings calendar date cells, use square corners unless future design direction changes.

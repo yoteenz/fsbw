@@ -679,7 +679,7 @@ export default function AdminMeetingsHub() {
                               fontSize: '10px',
                               padding: '6px 0',
                               border: '1px solid #e5e7eb',
-                              borderRadius: '4px',
+                              borderRadius: '0',
                               background: hasAppt ? '#fff' : '#f3f4f6',
                               color: hasAppt ? '#EB1C24' : '#9ca3af',
                               cursor: 'pointer',
