@@ -7876,6 +7876,46 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - For this project workflow, when the user indicates preview-first deployment flow, push ongoing implementation commits to `preview/mobile` unless the user explicitly overrides.
 
+---
+
+## 2026-04-03 — Bookings-tab follow-up: lowercase month, add-ons font-only change, and booking icon asset correction
+
+**Context:** In this continuation of the same bookings-tab thread, user reported the booking-panel SVG icon still looked unchanged, requested Bohemy month text above the calendar to be lowercase, requested only the add-ons line to use Futura PT Book, and asked what the "PAID STATUS: SEE ORDER IN CLIENT ACCOUNT" line means.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior completed bookings-tab adjustments and preview-first push policy setup.
+- Re-opened `AdminMeetingsHub` on `preview/mobile` and verified current state:
+  - month label still uppercased in logic/UI context,
+  - add-ons line still in Futura PT Medium,
+  - icon path already pointed to `/assets/edit-meeting-icon-booking.svg`.
+- Applied follow-up UI corrections:
+  - changed month label generation and rendering so it stays lowercase (`toLowerCase` + lowercase text transform),
+  - changed **only** the add-ons line font family to `"Futura PT Book"`,
+  - replaced `public/assets/edit-meeting-icon-booking.svg` artwork with a visibly different edit icon (using existing `edit-icon.svg` art) so the icon actually changes while keeping the same requested path.
+- Push handling:
+  - initial push to `preview/mobile` was rejected (remote advanced),
+  - rebased onto latest `origin/preview/mobile` and pushed successfully.
+
+**Decisions / outcomes:**
+- Month label above bookings calendar is now lowercase Bohemy.
+- Add-ons text line only uses Futura PT Book (service/time lines remain as previously requested).
+- Booking icon at `/assets/edit-meeting-icon-booking.svg` now renders different artwork so the change is visible.
+- Branch policy remains preview-first; updates landed on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label changed to lowercase output
+  - month label style enforces lowercase text rendering
+  - add-ons line font changed to `"Futura PT Book"` only
+- `public/assets/edit-meeting-icon-booking.svg`
+  - replaced glyph content with alternate edit icon art to reflect requested icon change
+- Git:
+  - commit rebased and pushed to `preview/mobile` (`9b1e257`)
+
+**Conventions:**
+- For bookings-tab micro-typography requests, isolate font-family changes to the exact requested line and avoid unintended updates to adjacent lines.
+- Keep preview-first deployment flow: push to `preview/mobile` unless user explicitly asks otherwise.
+
 ## 2026-04-03 — Consults tab client-panel return flow + meetings cards spacing/height/icon updates
 
 **Context:** User requested four UI/flow updates in admin meetings: (1) tapping a client panel and then closing client details should return to bookings/consults tabs (B/C) rather than staying on client overview, (2) increase TOTAL BOOKED / TOTAL CONSULTED banner card height by 35%, (3) add 12px spacing above consult client cards, and (4) switch consult-panel quote icon to `quote-icon-consult` from public assets.

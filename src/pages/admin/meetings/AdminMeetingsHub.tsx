@@ -692,7 +692,7 @@ export default function AdminMeetingsHub() {
 
   const monthLabel = useMemo(() => {
     const [y, m] = calendarAnchor.split('-').map(Number);
-    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long' }).toUpperCase();
+    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long' }).toLowerCase();
   }, [calendarAnchor]);
 
   const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
@@ -930,7 +930,7 @@ export default function AdminMeetingsHub() {
                       >
                         <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
                       </button>
-                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '15px', color: '#000' }}>{monthLabel}</span>
+                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '15px', color: '#000', textTransform: 'lowercase' }}>{monthLabel}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1044,7 +1044,7 @@ export default function AdminMeetingsHub() {
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Medium"',
+                                  fontFamily: '"Futura PT Book"',
                                   fontSize: '9px',
                                   color: '#000000',
                                   margin: '4px 0 0',
