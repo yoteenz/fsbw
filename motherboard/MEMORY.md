@@ -7937,3 +7937,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Treat `preview/mobile` as the default push branch for this project unless the user explicitly asks for another target.
+
+---
+
+## 2026-04-03 — Consults meetings updates merged and pushed to preview/mobile on request
+
+**Context:** In this chat, the user first requested consults/meetings UI and flow changes (B/C return flow, banner height increase, consult card top spacing, consult quote icon swap), then asked to commit and push those changes to the preview branch.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and implemented the requested meetings/client flow and UI updates:
+  - meetings → client details deep-link now carries return context so close/back can return to meetings with the originating tab,
+  - meetings page now hydrates/keeps tab state from `?tab=bookings|consults`,
+  - TOTAL BOOKED / TOTAL CONSULTED panels increased in height,
+  - consult cards list gained 12px top spacing,
+  - consult quote icon updated to `quote-icon-consult` with new public asset.
+- Committed and pushed those implementation changes on feature branch `cursor/consults-tab-client-panel-41c5`, created/updated PR #5, and validated build after installing dependencies.
+- On follow-up user request to push to preview:
+  - switched to `preview/mobile`,
+  - merged `origin/cursor/consults-tab-client-panel-41c5`,
+  - resolved conflicts in `src/pages/admin/meetings/AdminMeetingsHub.tsx` (kept requested consults updates) and `motherboard/MEMORY.md` (preserved append-only history),
+  - handled remote divergence by pulling/merging latest `origin/preview/mobile`, resolving an additional MEMORY conflict by keeping both entries, and pushing final preview branch successfully.
+
+**Decisions / outcomes:**
+- Requested consults/meetings behavior and UI changes are now on `preview/mobile`.
+- Preview branch push is complete and remote is updated.
+- Conflict resolution preserved both functional code updates and motherboard memory history.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/pages/admin/clients/page.tsx`
+- `public/assets/quote-icon-consult.svg`
+- `motherboard/MEMORY.md` (merge conflict resolutions + this entry)
+- `motherboard/CORE.md` (retained upstream update during pull-merge reconciliation)
+
+**Conventions:**
+- When moving feature-branch work onto `preview/mobile`, resolve conflicts by preserving requested UI behavior and keep motherboard entries append-only (do not drop either side’s memory entries).
