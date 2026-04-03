@@ -7794,6 +7794,44 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Consults tab visual polish follow-up (icon/height/text/photo/notes adjustments)
+
+**Context:** After prior consults-tab updates were pushed to `preview/mobile`, user reported remaining visual mismatches: consult SVG icon still looked unchanged, panel height still appeared unchanged, and requested specific consult-card positioning/style tweaks.
+
+**Topics covered (entire conversation so far):**
+- Previously completed and pushed consults flow/UI work (meetings↔clients return context, card spacing, icon switch) and merged onto `preview/mobile`.
+- User requested a follow-up pass with exact visual deltas:
+  - ensure consult icon change is visible from `public/assets`,
+  - increase panel height,
+  - move client identity line (`NAME (STATE) · PREMIUM`) down 2px,
+  - move inspo photo row right by 2px and increase photo size by 25%,
+  - change gray notes text to Futura Medium.
+- Verified `AdminMeetingsHub` was already targeting `/assets/quote-icon-consult.svg`, then updated the SVG content itself so the icon appearance is visibly different while keeping same path.
+- Updated consults card styles in `AdminMeetingsHub` for requested offsets/sizing/typography and made totals banner height explicit (`height`) to reduce perceived override risk.
+- Committed and pushed to `preview/mobile`; handled remote divergence with pull/merge and push retry.
+
+**Decisions / outcomes:**
+- Consult quote icon now points to the same file path but with refreshed SVG artwork, so the visual change is explicit.
+- TOTAL BOOKED / TOTAL CONSULTED panels now use explicit `height: 88px` sizing (instead of previous `minHeight`) to improve consistency when style inheritance/layout constraints occur.
+- Consult client identity line is shifted down 2px.
+- Inspo photo row is shifted right 2px and thumbnails are increased from 40px to 50px (+25%).
+- Additional notes text now uses `Futura PT Medium` while retaining gray color/size.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - totals cards: `minHeight` → `height: 88px`
+  - consult identity line: `transform: translateY(2px)`
+  - inspo strip: `marginLeft: 2px`
+  - inspo thumbs: `40x40` → `50x50`
+  - notes line: font family `Futura PT Medium`
+- `public/assets/quote-icon-consult.svg`
+  - updated path artwork to a visibly distinct consult quote icon while preserving file name/path.
+
+**Conventions:**
+- For visual-only feedback loops on admin meetings cards, prefer explicit dimensions/offsets in inline styles when the user reports that prior `minHeight`/asset-path swaps appear unchanged in preview.
+
+---
+
 ## 2026-04-03 — Completed full branch-to-master merge sweep (remaining missing branches merged)
 
 **Context:** User reported that `master` still did not include all expected branch changes (specifically citing missing rounded client profile photos in client-details-adjacent flows) and clarified the expectation to merge all five related branches into `master`, not only the previously merged bookings-tab refinements branch.
