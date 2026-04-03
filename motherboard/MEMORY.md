@@ -8403,28 +8403,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
-## 2026-04-03 — Consults micro-adjustment: client line back to medium + inspo row right/spacing tuned
+## 2026-04-03 — Bookings follow-up: payment due label gray medium, countdown red medium, and client name medium
 
-**Context:** User requested a precise consults-tab follow-up: switch the client identity line back to Futura PT Medium and adjust only the inspo image row to be 2px right with 2px more space between images.
+**Context:** User asked for another bookings-tab style correction pass: make the left payment-due label gray again while keeping medium weight, make the countdown time red medium, and switch only the client name line to Futura PT Medium.
 
 **Topics covered (entire conversation so far):**
-- Verified current consult row styles in `AdminMeetingsHub` before editing.
-- Changed client identity line (`NAME (STATE) · PREMIUM`) from Futura PT Book back to Futura PT Medium.
-- Adjusted inspo row positioning and spacing only:
-  - row x-offset changed to `marginLeft: '2px'`,
-  - row gap increased by 2px to `gap-[8px]`.
-- Preserved other consult-row offsets/styles to avoid unintended overrides.
-- Committed and pushed to `preview/mobile`, integrating latest remote changes first due branch divergence.
+- Continued on `preview/mobile` and pulled latest before editing.
+- Updated booking card client identity line font from Futura PT Book back to Futura PT Medium (name line only).
+- Updated payment-due row styling under the tracker:
+  - left label (`PAYMENT DUE: THU, APR 23, 2026`) changed to gray with Futura PT Medium,
+  - right countdown (`20D 9H LEFT`) changed to red with Futura PT Medium.
+- Left tracker height and recent spacing adjustments intact from prior request.
+- Ran `npm run build` successfully after edits.
+- Initial push rejected due remote advancement; rebased onto latest `origin/preview/mobile` and pushed successfully.
 
 **Decisions / outcomes:**
-- Client identity line now renders in **Futura PT Medium**.
-- Inspo photo row is now **2px right** with **+2px spacing** between photo tiles.
-- Requested adjustments are live on `preview/mobile`.
+- Payment due left label is now gray medium.
+- Countdown text is now red medium.
+- Client name line is now medium weight as requested.
+- Changes are live on `preview/mobile`.
 
 **Changes:**
 - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
-  - client line `fontFamily` updated to `"Futura PT Medium"`.
-  - inspo row `marginLeft` updated to `2px` and gap to `8px`.
+  - client name line font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due left label color: red -> gray (`#808080`)
+  - payment due right countdown font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due right countdown color: gray -> red (`#EB1C24`)
 
 **Conventions:**
-- For consults micro-alignment passes, touch only explicitly requested line/row styles and keep neighboring layout constants unchanged.
+- For split payment-due rows in bookings cards, style left due-date label and right countdown independently when requested (left informational gray, right urgency red).
