@@ -1113,7 +1113,7 @@ export default function AdminMeetingsHub() {
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1">
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0 }}>
                                 {meetingClientDisplayNameWithState(m)}{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
@@ -1147,7 +1147,7 @@ export default function AdminMeetingsHub() {
                                 const payment = getBookingPaymentStatusForCard(m);
                                 return (
                                   <>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '10px 0 0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000', margin: '8px 0 0' }}>
                                       CURRENT BALANCE: {formatUsd(payment.remainingDueUsd)} OF {formatUsd(payment.paidTotalUsd)} USD
                                     </p>
                                     <div style={{ marginTop: '4px' }}>
@@ -1166,7 +1166,7 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             width: `${payment.dueProgressPct}%`,
                                             height: '100%',
-                                            backgroundColor: payment.duePassed ? '#808080' : '#EB1C24',
+                                            backgroundColor: payment.duePassed ? '#EB1C24' : payment.dueProgressPct >= 98 ? '#EB1C24' : '#808080',
                                             transition: 'width 0.3s ease',
                                             borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
                                           }}
@@ -1175,7 +1175,7 @@ export default function AdminMeetingsHub() {
                                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Book"',
+                                            fontFamily: '"Futura PT Medium"',
                                             fontSize: '9px',
                                             color: '#808080',
                                             margin: 0,
@@ -1187,7 +1187,7 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             fontFamily: '"Futura PT Book"',
                                             fontSize: '9px',
-                                            color: payment.duePassed ? '#808080' : '#EB1C24',
+                                            color: '#808080',
                                             margin: 0,
                                             textAlign: 'right',
                                           }}
