@@ -1084,17 +1084,18 @@ export default function AdminMeetingsHub() {
                         YOU DON&apos;T HAVE ANY APPOINTMENTS.
                       </p>
                     ) : (
-                      sortedAppointmentsList.map((m) => (
-                        <div
-                          key={m.id}
-                          className="mb-3"
-                          style={{
-                            background: '#fff',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0',
-                            padding: '10px',
-                          }}
-                        >
+                      <div style={{ marginTop: '6px' }}>
+                        {sortedAppointmentsList.map((m) => (
+                          <div
+                            key={m.id}
+                            className="mb-3"
+                            style={{
+                              background: '#fff',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '0',
+                              padding: '10px',
+                            }}
+                          >
                           <div className="flex justify-between gap-2 items-start">
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start gap-2.5">
@@ -1175,7 +1176,7 @@ export default function AdminMeetingsHub() {
                                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Medium"',
+                                            fontFamily: '"Futura PT Demi"',
                                             fontSize: '9px',
                                             color: '#808080',
                                             margin: 0,
@@ -1214,8 +1215,9 @@ export default function AdminMeetingsHub() {
                               <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={22} height={22} />
                             </button>
                           </div>
-                        </div>
-                      ))
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </>
                 ) : (
