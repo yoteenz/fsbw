@@ -7874,6 +7874,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Admin clients overview summary cards + revenue overview gross-sales label/value update
+
+**Context:** User requested two admin analytics/UI adjustments: (1) add summary cards above tabs on Admin Clients overview for `TOTAL CLIENTS` (all accounts created, not purchase-completed-only) and `TOTAL MEMBERS` (membership subscriptions), and (2) change Admin Revenue overview summary card label from `TOTAL REVENUE` to `GROSS SALES` so it tracks all site sales while dashboard revenue card remains net-revenue-oriented.
+
+**Topics covered (entire conversation so far):**
+- Continued from this chat’s broader admin meetings/consults and booking-calendar styling updates, now focused on Admin Clients overview and Admin Revenue overview cards.
+- Implemented new summary cards above tabs on `src/pages/admin/clients/page.tsx` (overview-only/list view):
+  - `TOTAL CLIENTS` uses all loaded `registeredUsers` count (includes account-created users from admin clients source; independent of completed-purchase filtering used by dashboard clients card).
+  - `TOTAL MEMBERS` uses count of users with `membershipType === 'PREMIUM'`.
+  - Cards use the same 80px bottom-aligned summary-panel design used on other admin pages.
+- Updated revenue overview panel model in `src/pages/admin/revenue/page.tsx`:
+  - renamed left summary label from `TOTAL REVENUE` to `GROSS SALES`,
+  - changed overview left summary value to compute gross sales from all loaded order totals (`orders.reduce(total/amount)`), formatted in the same `+x.xk` card style.
+- Fixed post-edit TypeScript lint/build issue by removing now-unused `totalRevenueBannerValue` variable after moving overview card to gross-sales calculation.
+- Verified build passes successfully.
+
+**Decisions / outcomes:**
+- Admin Clients overview now shows two summary cards above tabs: `TOTAL CLIENTS` and `TOTAL MEMBERS`.
+- `TOTAL CLIENTS` reflects account-created client rows in admin clients data, distinct from dashboard’s delivered-purchase-based clients count.
+- Admin Revenue overview left summary card now reads `GROSS SALES` and tracks aggregate order sales across the site data loaded on that page.
+- Dashboard revenue card behavior was left unchanged as requested.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+  - added `totalClientsCount` and `totalMembersCount` derivations from `registeredUsers`,
+  - added two summary cards above overview tabs (`TOTAL CLIENTS`, `TOTAL MEMBERS`) with standardized 80px bottom-aligned styling.
+- `src/pages/admin/revenue/page.tsx`
+  - added `grossSales` memo from all order totals,
+  - updated `OVERVIEW` left panel to `{ label: 'GROSS SALES', value: ...grossSales... }`,
+  - removed unused `totalRevenueBannerValue`.
+
+**Conventions:**
+- For admin summary-card labeling requests that distinguish metric semantics (gross vs net, accounts vs purchasers), keep metric source intentionally scoped per page/card rather than forcing one global metric definition.
+
+---
+
 ## 2026-04-03 — Full conversation summary: consults/admin meetings iteration + A/C booking calendar month text parity
 
 **Context:** The conversation covered a long chain of admin meetings/consults UI refinements across many turns (routing return behavior, summary panel sizing, typography/icon tweaks, inspo-photo spacing/data, and tab-scoped pixel adjustments). The latest user request in this same chat was to change month text above A/C booking calendars so it matches the Bohemy month text used on Admin Meetings.

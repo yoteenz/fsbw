@@ -1552,6 +1552,10 @@ export default function AdminClients() {
     if (!q) return sortedClients;
     return sortedClients.filter((u: any) => getClientSearchableText(u).includes(q));
   })();
+  const totalClientsCount = registeredUsers.length;
+  const totalMembersCount = registeredUsers.filter(
+    (u: any) => ((u?.membershipType || 'STANDARD') + '').toUpperCase() === 'PREMIUM'
+  ).length;
   return (
     <>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -3205,6 +3209,47 @@ export default function AdminClients() {
                   </div>
                 ) : (
                   <>
+                {/* Summary cards above tabs */}
+                <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                      {totalClientsCount}
+                    </p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                      TOTAL CLIENTS
+                    </p>
+                  </div>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                      {totalMembersCount}
+                    </p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                      TOTAL MEMBERS
+                    </p>
+                  </div>
+                </div>
                 {/* Tabs: ALL, REVIEWS, REWARDS, INVITES – same spacing as marketing page */}
                 <div className="flex flex-wrap justify-center gap-[14px] px-5">
                   {TABS.map((tab) => (
