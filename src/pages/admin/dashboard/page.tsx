@@ -490,6 +490,76 @@ export default function AdminDashboard() {
     return `${month}/${day}`;
   };
 
+  const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
+    braids: 'BRAIDS',
+    'brow-clean': 'BROW SCULPTING',
+    'brow-tint': 'BROW TINT',
+    makeup: 'MAKEUP',
+    'mink-lashes': 'MINK LASHES',
+    'clean-lace': 'CLEAN LACE',
+    travel: 'TRAVEL FEE',
+  };
+
+  const normalizeBookingAddonLabel = (raw: unknown): string | null => {
+    const upper = String(raw || '')
+      .trim()
+      .toUpperCase()
+      .replace(/_/g, ' ')
+      .replace(/\s+/g, ' ');
+    if (!upper) return null;
+    if (upper === 'BROW CLEAN' || upper === 'BROW-CLEAN') return 'BROW SCULPTING';
+    if (upper === 'BROW TINTING' || upper === 'BROW-TINT') return 'BROW TINT';
+    if (upper === 'MINK LASH' || upper === 'MINK-LASHES') return 'MINK LASHES';
+    if (upper === 'TRAVEL' || upper === 'TRAVEL-FEE') return 'TRAVEL FEE';
+    if (upper === 'CLEAN LACE') return 'CLEAN LACE';
+    if (
+      upper === 'BRAIDS' ||
+      upper === 'BROW SCULPTING' ||
+      upper === 'BROW TINT' ||
+      upper === 'MAKEUP' ||
+      upper === 'MINK LASHES' ||
+      upper === 'TRAVEL FEE'
+    ) {
+      return upper;
+    }
+    return null;
+  };
+
+  const formatDashboardMeetingServiceLabel = (meeting: AdminMeeting): string => {
+    const meta = (meeting.metadata && typeof meeting.metadata === 'object' ? meeting.metadata : {}) as Record<string, unknown>;
+    const addonLabels: string[] = [];
+
+    const addonIds = Array.isArray(meta.bookingAddonIds)
+      ? meta.bookingAddonIds.filter((id): id is string => typeof id === 'string')
+      : [];
+    for (const id of addonIds) {
+      const label = BOOKING_ADDON_LABEL_BY_ID[id];
+      if (label) addonLabels.push(label);
+    }
+
+    // Fallback token parse for older rows that only store text in `type`.
+    const tokens = String(meeting.type || '')
+      .split(/[+,|]/)
+      .map((token) => token.trim())
+      .filter(Boolean);
+    for (const token of tokens) {
+      const label = normalizeBookingAddonLabel(token);
+      if (label) addonLabels.push(label);
+    }
+
+    const dedupedAddons: string[] = [];
+    const seen = new Set<string>();
+    for (const addon of addonLabels) {
+      if (seen.has(addon)) continue;
+      seen.add(addon);
+      dedupedAddons.push(addon);
+    }
+
+    if (dedupedAddons.length === 0) return 'INSTALL';
+    if (dedupedAddons.length === 1) return `INSTALL + ${dedupedAddons[0]}`;
+    return `INSTALL + ${dedupedAddons[0]} (${dedupedAddons.length - 1})`;
+  };
+
   const toIsoMeetingDateTime = (date: string, time: string): string => {
     const raw = String(time || '').trim();
     const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -533,6 +603,11 @@ export default function AdminDashboard() {
       return a.time.localeCompare(b.time);
     });
   })();
+
+  const completedMeetingsTotal = mergedMeetingsForDashboard.filter((m) => {
+    const status = String(m.status || '').toLowerCase();
+    return status === 'completed' || status === 'confirmed';
+  }).length;
 
   // Client header count = total clients who have at least one delivered order (same list as card; when list has ordersCount/newCount use it, else API stats)
   const clientsWithDeliveredCount = canComputeDeliveredFromList ? clientsWithDeliveredFromList : (stats.clientsWithDeliveredOrder ?? 0);
@@ -581,14 +656,45 @@ export default function AdminDashboard() {
   })();
 
   // Dashboard meetings card now uses same upstream data model as Admin Meetings page.
-  const meetingsForCard = mergedMeetingsForDashboard
-    .filter((m) => m.category !== 'consultation' && m.date >= todayIso)
+  const upcomingBookingsForCard = mergedMeetingsForDashboard
+    .filter((m) => {
+      if (m.category === 'consultation') return false;
+      if (m.date < todayIso) return false;
+      const status = String(m.status || '').toLowerCase();
+      if (status === 'canceled' || status === 'cancelled') return false;
+      return true;
+    })
     .map((m) => ({
+      date: m.date,
       appointment_date: toIsoMeetingDateTime(m.date, m.time),
-      service_name: m.type || 'Meeting',
+      service_name: formatDashboardMeetingServiceLabel(m),
       client_name: m.client || '',
     }));
-  const upcomingMeetingsFromData = meetingsForCard;
+
+  const endOfThisWeekIso = (() => {
+    const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
+    const daysUntilSunday = (7 - dayOfWeek) % 7;
+    end.setDate(end.getDate() + daysUntilSunday);
+    const y = end.getFullYear();
+    const m = String(end.getMonth() + 1).padStart(2, '0');
+    const d = String(end.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  })();
+
+  const todayUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date === todayIso).length;
+  const weekUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= endOfThisWeekIso).length;
+  const monthUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= meetingsRangeEnd).length;
+
+  const meetingsCardTicker = [
+    `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY.`,
+    `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK.`,
+    `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`,
+  ]
+    .join(' ')
+    .concat(
+      ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`
+    );
 
   const statsData = [
     {
@@ -640,13 +746,13 @@ export default function AdminDashboard() {
 
     {
       title: 'MEETINGS',
-      count: upcomingMeetingsFromData.length,
-      items: meetingsForCard.map((booking) => ({
+      count: completedMeetingsTotal,
+      items: upcomingBookingsForCard.map((booking) => ({
         label: (booking.service_name || '').toUpperCase(),
         value: `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`,
         color: isWithin24Hours(booking.appointment_date || '') ? 'text-red-500' : 'text-gray-500'
       })),
-      highlight: upcomingMeetingsFromData.length > 0 ? `${upcomingMeetingsFromData.length} UPCOMING APPOINTMENTS SCHEDULED` : 'NO UPCOMING APPPOINTMENTS'
+      highlight: meetingsCardTicker
     },
 
     {
