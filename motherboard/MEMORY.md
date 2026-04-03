@@ -7831,3 +7831,47 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “merge all branches” requests, verify with `git branch -r --no-merged origin/master` before and after merges, and resolve MEMORY conflicts by preserving both append-only histories.
+
+---
+
+## 2026-04-03 — Bookings-tab updates delivered; deployment visibility clarified; preview-branch push policy set
+
+**Context:** User requested a bookings-tab update pass in Admin Meetings (month label font/text, card typography, icon swap, add-on wrapping), then reported they were not seeing deployments, and finally clarified that all pushes should go to the `preview/mobile` branch and asked to record that in motherboard memory.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and implemented the bookings-tab UI changes in `AdminMeetingsHub`:
+  - calendar month label now uses Bohemy and shows month only (year removed),
+  - client name/tier line reduced by 1px,
+  - red service line changed to Futura PT Medium,
+  - date/time/duration line changed to Futura PT Medium,
+  - booking edit icon changed to `/assets/edit-meeting-icon-booking.svg`,
+  - add-ons rendering updated so add-on #3 wraps to next line.
+- Added missing public asset `public/assets/edit-meeting-icon-booking.svg` so the requested icon path resolves.
+- Committed and pushed the implementation branch (`cursor/bookings-tab-ui-adjustments-95ca`), created/updated PR #6, and confirmed local build success after installing dependencies in cloud (`npm run build` passed).
+- Investigated deployment visibility concern:
+  - verified branch commit existed on remote,
+  - confirmed no GitHub Actions workflows are configured (so `gh run list` is empty),
+  - verified deployments were created by Vercel GitHub integration and surfaced as commit/PR status contexts,
+  - captured successful deployment targets for both Vercel projects (`fsbw`, `fsbaw`).
+- User then set a new branch policy: all pushes should go to preview branch.
+- Switched to `preview/mobile`, pulled latest remote, and cherry-picked the bookings UI commit onto preview so deployment-triggering updates now live on preview.
+
+**Decisions / outcomes:**
+- The requested bookings-tab UI changes were completed and are present on both the feature branch and `preview/mobile`.
+- Deployment confusion was resolved: deployments are happening via Vercel checks/deployments, not GitHub Actions workflows.
+- New explicit user policy established: pushes should target `preview/mobile`.
+
+**Changes:**
+- Code/assets:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `public/assets/edit-meeting-icon-booking.svg`
+- Motherboard:
+  - `motherboard/MEMORY.md` (this entry and prior same-chat task summary on feature branch)
+- Git operations in this chat:
+  - feature branch commits + push (`2ffe59e`, `615bc60`)
+  - `git checkout preview/mobile`
+  - `git pull origin preview/mobile`
+  - `git cherry-pick 2ffe59e`
+
+**Conventions:**
+- For this project workflow, when the user indicates preview-first deployment flow, push ongoing implementation commits to `preview/mobile` unless the user explicitly overrides.
