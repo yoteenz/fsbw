@@ -8920,3 +8920,36 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For single-tab offset nudges, preserve the non-target tab value exactly and apply only the requested delta to the target tab.
+
+---
+
+## 2026-04-03 — Bookings micro-pass: +1px client/payment spacing, bookings icon +2px down, and Stripe remaining-balance auto-draft assessment
+
+**Context:** User requested another bookings-tab micro-adjustment pass: add 1px to spacing above the client text line and 1px below the payment-due row, move bookings client panel icons down 2px (bookings-only), and asked whether Stripe setup is needed so remaining install/re-install balances auto-charge from the same card used at booking checkout.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings-only spacing/icon refinements and repeated tab-scoped offset requests.
+- Applied requested bookings-only spacing/offset deltas in `AdminMeetingsHub`:
+  - client identity line margin increased by +1px (`'6px 0 0'` -> `'7px 0 0'`),
+  - payment-due row bottom spacing increased by +1px (`marginBottom: '6px'` -> `'7px'`),
+  - bookings avatar button moved down +2px (`marginTop: '6px'` -> `'8px'`).
+- Consults-tab avatar offset was intentionally left unchanged.
+- Reviewed current Stripe booking/payment code paths:
+  - checkout creates product `PaymentIntent` with automatic payment methods but does not persist a reusable mandate for off-session future charges,
+  - booking meeting metadata stores payment method label + due metadata only (`bookingPaymentMethodLabel`, `bookingFinalDueUsd`, due dates/policy),
+  - no scheduled/future charge job or off-session final-payment capture route exists for booking balances today.
+- Pushed UI commit to `preview/mobile` and updated PR pointer.
+
+**Decisions / outcomes:**
+- Requested +1px spacing tweaks and +2px bookings-icon movement are implemented.
+- Consults icons remain untouched.
+- Stripe currently does **not** auto-draft remaining install/re-install balances from the initial booking card in this implementation; additional Stripe + backend setup is required.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar `marginTop`: `6px` -> `8px`
+  - bookings client line margin: `'6px 0 0'` -> `'7px 0 0'`
+  - payment-due row wrapper `marginBottom`: `'6px'` -> `'7px'`
+
+**Conventions:**
+- Keep bookings/consults avatar offsets independently adjustable; for user-scoped “bookings only” deltas, change only bookings branch values.
