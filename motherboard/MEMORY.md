@@ -8400,3 +8400,31 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For bookings-tab micro-style requests, prefer direct per-line style deltas (font/color/spacing) and preserve surrounding interaction behavior unless explicitly requested to change.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: client line back to medium + inspo row right/spacing tuned
+
+**Context:** User requested a precise consults-tab follow-up: switch the client identity line back to Futura PT Medium and adjust only the inspo image row to be 2px right with 2px more space between images.
+
+**Topics covered (entire conversation so far):**
+- Verified current consult row styles in `AdminMeetingsHub` before editing.
+- Changed client identity line (`NAME (STATE) · PREMIUM`) from Futura PT Book back to Futura PT Medium.
+- Adjusted inspo row positioning and spacing only:
+  - row x-offset changed to `marginLeft: '2px'`,
+  - row gap increased by 2px to `gap-[8px]`.
+- Preserved other consult-row offsets/styles to avoid unintended overrides.
+- Committed and pushed to `preview/mobile`, integrating latest remote changes first due branch divergence.
+
+**Decisions / outcomes:**
+- Client identity line now renders in **Futura PT Medium**.
+- Inspo photo row is now **2px right** with **+2px spacing** between photo tiles.
+- Requested adjustments are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - client line `fontFamily` updated to `"Futura PT Medium"`.
+  - inspo row `marginLeft` updated to `2px` and gap to `8px`.
+
+**Conventions:**
+- For consults micro-alignment passes, touch only explicitly requested line/row styles and keep neighboring layout constants unchanged.
