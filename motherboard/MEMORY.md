@@ -8677,3 +8677,31 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For incremental position requests (“another X px”), apply additive deltas from current state and keep non-target spacing constants unchanged.
+
+---
+
+## 2026-04-03 — Bookings payment due label switched to Demi and bookings cards offset +6px below calendar
+
+**Context:** User requested a focused bookings-tab adjustment pass: change the left payment-due text line typography to Futura PT Demi and add 6px vertical spacing above the bookings client panels under the calendar.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier same-chat bookings/dashboard styling refinements (add-ons wrapping threshold, service line typography, and dashboard meetings red label fix).
+- Updated bookings payment block typography in `AdminMeetingsHub`:
+  - changed `PAYMENT DUE: <date>` line font from `"Futura PT Medium"` to `"Futura PT Demi"` while keeping gray color and size unchanged.
+- Added vertical spacing between bookings calendar section and bookings client panel list:
+  - wrapped `sortedAppointmentsList.map(...)` render branch in a container with `marginTop: '6px'` so client panels start 6px lower below the calendar grid.
+- Ran `npm run build` successfully.
+- Committed and pushed to `preview/mobile` after rebasing on the latest remote.
+
+**Decisions / outcomes:**
+- Payment due label line now uses Futura PT Demi as requested.
+- Bookings client panel stack now has an extra 6px top gap below the calendar.
+- Build passes and change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - payment due label font family updated to `"Futura PT Demi"`.
+  - bookings appointment cards list wrapped with `marginTop: '6px'` spacing container.
+
+**Conventions:**
+- For bookings-tab spacing asks that target “client panels below calendar,” apply margin at the list container boundary (between calendar grid and first card) to avoid side effects inside individual cards.
