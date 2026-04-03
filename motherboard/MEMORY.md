@@ -8298,3 +8298,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Keep consults-tab visual follow-ups narrowly scoped to requested style deltas unless user asks for broader refactors.
+
+---
+
+## 2026-04-03 — Consults follow-up: summary panels 80px and consult row elements shifted 4px right
+
+**Context:** User requested another consults-tab style follow-up: reduce summary panel height from 90px to 80px and move four consult-row elements 4px right (client line, service line, inspo photos row, additional notes line).
+
+**Topics covered (entire conversation so far):**
+- Confirmed active styles in `AdminMeetingsHub` before editing (`height: 90px` on summary cards).
+- Updated both summary cards (`TOTAL BOOKED` and `TOTAL CONSULTED`) to `height: 80px`.
+- Shifted consult row elements by 4px to the right:
+  - client identity line: x-offset added while preserving existing y-offset,
+  - service/hair line: `marginLeft: 4px`,
+  - inspo photo container: `marginLeft: 4px`,
+  - additional notes line: `marginLeft: 4px`.
+- Committed and pushed to `preview/mobile`; resolved remote divergence by pulling latest preview and re-pushing.
+
+**Decisions / outcomes:**
+- Summary panels now render at exactly **80px**.
+- The four requested consult-row elements are shifted **4px right**.
+- Update is present on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '90px'` -> `height: '80px'` on both top summary cards.
+  - consult row client/service/inspo/notes elements shifted right by 4px.
+
+**Conventions:**
+- Apply consults-tab micro-alignment requests as direct style deltas on only the named elements to avoid unintended layout changes.
