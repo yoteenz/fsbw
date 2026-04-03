@@ -8369,3 +8369,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin summary-panel parity with meetings, use fixed 80px panel height and bottom-aligned text stack (`justifyContent: flex-end` + `paddingBottom: 10px`) unless a page intentionally uses a different summary treatment (e.g., single metric hero blocks).
+
+---
+
+## 2026-04-03 — Bookings follow-up: tracker +2px, month row -4px, and red Futura medium appointment/payment lines
+
+**Context:** User requested another bookings-tab micro-adjustment pass: increase booking payment tracker bar height by 2px, reduce spacing above the calendar month text by 4px, and make the appointment time/payment-due text lines red in Futura PT Medium.
+
+**Topics covered (entire conversation so far):**
+- Continued on `preview/mobile` as required by the established preview-first push policy.
+- Updated bookings calendar header spacing by reducing the month row top margin from `8px` to `4px` (4px less space above Bohemy month text).
+- Increased booking payment tracking bar height from `7px` to `9px` (+2px).
+- Changed booking appointment date/time/duration line (`SAT, MAY 30, 2026 · 4:30 PM · 340 MIN`) to red `#EB1C24` while retaining Futura PT Medium.
+- Changed payment-due label line (`PAYMENT DUE: THU, MAY 28, 2026`) to red and Futura PT Medium.
+- Kept countdown/right-side time text styling as existing (gray right-aligned) since request targeted the payment-due label line specifically.
+- Ran `npm run build` successfully after edits.
+
+**Decisions / outcomes:**
+- Tracker bar is now visually thicker by 2px.
+- Calendar month header sits 4px closer to content above.
+- Requested appointment-time and payment-due label lines now use red Futura PT Medium styling.
+- Changes are pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month header row `marginTop`: `8px` -> `4px`
+  - due tracker bar `height`: `7px` -> `9px`
+  - appointment time line color: `#808080` -> `#EB1C24`
+  - payment due label line color: `#808080` -> `#EB1C24` (Futura PT Medium retained)
+
+**Conventions:**
+- For bookings-tab micro-style requests, prefer direct per-line style deltas (font/color/spacing) and preserve surrounding interaction behavior unless explicitly requested to change.
