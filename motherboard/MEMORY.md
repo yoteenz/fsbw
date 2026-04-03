@@ -7036,3 +7036,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - When build failures mention missing `signInHrefWithReturnTo`, ensure page modules importing `useLocation` and calling the helper also import `../../utils/signInReturnTo` (or relative equivalent).
 - For optional `sessionStorage` values in TS-strict builds, narrow to string (or coerce with `String(...)`) before numeric parsing.
+
+---
+
+## 2026-04-03 — Admin meetings panels: square corners on both tabs
+
+**Context:** After the build-fix deployment flow, user requested a UI tweak: on Admin Meetings, the white panels with gray borders should have square corners in both tabs.
+
+**Topics covered (entire conversation so far):**
+- Confirmed prior local pushed changes were still present on `master` and not overwritten.
+- Fast-forwarded `master` to include the build-fix commit so deployable code included both prior user changes and TS fixes.
+- Attempted to trigger Vercel deployment from cloud runner; blocked by invalid Vercel token in this environment.
+- Implemented this follow-up UI request: removed rounded corners from meetings list panels in both Bookings and Consults tabs.
+
+**Decisions / outcomes:**
+- Only the card corner radius was changed; border color, spacing, and other card styles remain unchanged.
+- Build remains green after the style update.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - Bookings panel row cards: removed `borderRadius: '6px'`.
+  - Consults panel row cards: removed `borderRadius: '6px'`.
+
+**Conventions:**
+- For Admin Meetings list cards (bookings + consults), keep white/gray bordered panels square-cornered unless a future design request says otherwise.

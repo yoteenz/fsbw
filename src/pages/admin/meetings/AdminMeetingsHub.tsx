@@ -564,7 +564,7 @@ export default function AdminMeetingsHub() {
                           style={{
                             background: '#fff',
                             border: '1px solid #d1d5db',
-                            borderRadius: '6px',
+                            borderRadius: '0',
                             padding: '10px',
                           }}
                           onClick={() => openClientAccount(m)}
@@ -623,7 +623,7 @@ export default function AdminMeetingsHub() {
                             style={{
                               background: '#fff',
                               border: '1px solid #d1d5db',
-                              borderRadius: '6px',
+                              borderRadius: '0',
                               padding: '10px',
                             }}
                             onClick={() => openClientAccount(m)}
