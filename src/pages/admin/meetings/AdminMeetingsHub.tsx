@@ -1102,7 +1102,7 @@ export default function AdminMeetingsHub() {
                                   type="button"
                                   onClick={() => openClientAccount(m)}
                                   aria-label="Open client details"
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '1px' }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px' }}
                                 >
                                   <img
                                     src={meetingClientProfilePhoto(m)}
@@ -1249,7 +1249,7 @@ export default function AdminMeetingsHub() {
                                       type="button"
                                       onClick={() => openClientAccount(m)}
                                       aria-label="Open client details"
-                                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '1px' }}
+                                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px' }}
                                     >
                                       <img
                                         src={meetingClientProfilePhoto(m)}
