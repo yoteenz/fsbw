@@ -419,11 +419,12 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
 
 function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
-  if (details.addons.length === 0) return 'ADD-ONS: NONE';
-  if (details.addons.length <= 2) return `ADD-ONS: ${details.addons.join(', ')}`;
-  const firstLine = details.addons.slice(0, 2).join(', ');
-  const wrappedRest = details.addons.slice(2).join(', ');
-  return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
+  const installLabel = details.installKind === 'RE-INSTALL' ? 'RE-INSTALL' : 'INSTALL';
+  if (details.addons.length === 0) return `${installLabel}: NONE`;
+  const first = details.addons[0];
+  const remainingCount = details.addons.length - 1;
+  if (remainingCount > 0) return `${installLabel}: ${first} (${remainingCount + 1})`;
+  return `${installLabel}: ${first}`;
 }
 
 function formatUsd(amount: number): string {
@@ -1133,7 +1134,7 @@ export default function AdminMeetingsHub() {
                                 style={{
                                   fontFamily: '"Futura PT Book"',
                                   fontSize: '9px',
-                                  color: '#000000',
+                                  color: '#EB1C24',
                                   margin: '4px 0 0',
                                   whiteSpace: 'pre-line',
                                 }}
