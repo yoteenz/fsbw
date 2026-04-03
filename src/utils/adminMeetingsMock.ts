@@ -272,6 +272,15 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         status,
         notes: `Appointment: ${services.join(', ').toLowerCase()}`,
         services,
+        metadata: {
+          tier: membershipType === 'PREMIUM' ? 'premium' : 'standard',
+          bookingInstallKind: rnd() > 0.5 ? 'NEW_INSTALL' : 'RE_INSTALL',
+          bookingUnitName: ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE', 'OCEAN CURL'][Math.floor(rnd() * 6)],
+          bookingUnitPriceUsd: [740, 820, 760, 780, 760, 780][Math.floor(rnd() * 6)],
+          bookingAddonIds: ['braids', 'brow-clean', 'brow-tint', 'makeup', 'mink-lashes', 'travel']
+            .filter(() => rnd() > 0.62)
+            .slice(0, 4),
+        },
       });
     }
   }

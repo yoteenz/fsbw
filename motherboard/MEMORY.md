@@ -7364,6 +7364,47 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Bookings tab install/add-on line redesign + calendar top spacing
+
+**Context:** Continuing this chat’s admin polish stream (TypeScript build fixes, meetings UI refinements, preview/mobile workflow, mock-data consistency, and dashboard meetings source unification), user requested a specific bookings-tab content/layout change: add `12px` spacing above the bookings calendar, stop wrapping add-ons by count, and instead show a red install line that declares install type + unit + USD price while moving add-ons to a separate black line below.
+
+**Topics covered (entire conversation so far):**
+- Verified current bookings cards were still rendering install + add-ons as a combined service line with line wrapping behavior from the prior request.
+- Added top spacing above the bookings calendar header row (`marginTop: '12px'`) to match requested breathing room.
+- Reworked bookings card text rendering into two explicit lines:
+  - **line 1 (red):** `NEW INSTALL: BLANCO $960 USD` (or `RE-INSTALL: ...`)
+  - **line 2 (black):** add-ons only (comma-separated), independent from install line.
+- Implemented richer booking-detail extraction in meetings hub:
+  - install kind from metadata/token parsing (existing behavior retained)
+  - unit label detection from meeting metadata (`bookingUnitName`, `unitName`, `unitKey`, `unitId`, attached order summary, notes/type fallback)
+  - unit price detection from metadata (`bookingUnitPriceUsd`/`unitPrice`) with fallback price map by unit label.
+- Updated meetings mock appointment generation metadata so mock rows now include booking unit + price + add-on ids; this keeps the new install/add-on display realistic in the bookings cards.
+
+**Decisions / outcomes:**
+- Install details and add-ons are now visually separated by purpose: install declaration line in red, add-ons line in black.
+- “Third add-on wrapping” behavior is superseded by the new two-line design (install/unit/price on first line; all add-ons on second line).
+- Bookings calendar top spacing is now explicitly `12px`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added unit/price normalization + fallback helpers for booking card display
+  - introduced install-line formatter and add-ons-line formatter for bookings cards
+  - updated bookings card rendering colors:
+    - install line red (`#EB1C24`)
+    - add-ons line black (`#000000`)
+  - added `marginTop: '12px'` above bookings calendar row
+- `src/utils/adminMeetingsMock.ts`
+  - appointment mock metadata now includes:
+    - `bookingInstallKind`
+    - `bookingUnitName`
+    - `bookingUnitPriceUsd`
+    - `bookingAddonIds`
+
+**Conventions:**
+- On admin meetings bookings cards, render install declaration (install kind + unit + USD price) separately from add-ons; keep install line red and add-ons line black unless design direction changes.
+
+---
+
 ## 2026-04-03 — Dashboard meetings card now uses the same meetings pipeline as Admin Meetings page
 
 **Context:** User asked whether the Admin Dashboard MEETINGS card is truly linked to meetings-page card data, then requested full alignment so everything is prepped for real clients. In this same thread, prior updates had already aligned meetings mock identities with clients overview and tab spacing with marketing.

@@ -83,6 +83,17 @@ const BOOKING_ADDON_ORDER = [
   'TRAVEL FEE',
 ] as const;
 
+const BOOKING_UNIT_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
+
+const BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL: Record<(typeof BOOKING_UNIT_LABELS)[number], number> = {
+  NOIR: 740,
+  BLANCO: 820,
+  'SOFT WAVE': 760,
+  'BEACH WAVE': 760,
+  'SOFT CURL': 780,
+  'OCEAN CURL': 780,
+};
+
 function formatHeaderDate(dateStr: string): string {
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -166,7 +177,44 @@ function orderedUniqueAddons(addons: string[]): string[] {
   return [...ordered, ...extras];
 }
 
-function formatBookingServiceType(m: AdminMeeting): string {
+function normalizeBookingUnitLabel(raw: unknown): (typeof BOOKING_UNIT_LABELS)[number] | null {
+  const upper = String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ');
+  if (!upper) return null;
+  if (upper.includes('SOFT WAVE')) return 'SOFT WAVE';
+  if (upper.includes('BEACH WAVE')) return 'BEACH WAVE';
+  if (upper.includes('SOFT CURL')) return 'SOFT CURL';
+  if (upper.includes('OCEAN CURL')) return 'OCEAN CURL';
+  if (upper.includes('BLANCO')) return 'BLANCO';
+  if (upper.includes('NOIR')) return 'NOIR';
+  return null;
+}
+
+function normalizeUsdPrice(raw: unknown): number | null {
+  if (raw == null) return null;
+  const n =
+    typeof raw === 'number'
+      ? raw
+      : Number(
+          String(raw)
+            .replace(/,/g, '')
+            .replace(/[^\d.]/g, '')
+        );
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.round(n);
+}
+
+type BookingCardDetails = {
+  installKind: 'NEW INSTALL' | 'RE-INSTALL';
+  addons: string[];
+  unitLabel: string;
+  unitPriceUsd: number;
+};
+
+function getBookingCardDetails(m: AdminMeeting): BookingCardDetails {
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
 
   const addonLabels: string[] = [];
@@ -195,27 +243,61 @@ function formatBookingServiceType(m: AdminMeeting): string {
   });
 
   const uniqueAddons = orderedUniqueAddons(addonLabels);
-  if (installKind && uniqueAddons.length > 0) return `${installKind}: ${uniqueAddons.join(', ')}`;
-  if (installKind) return installKind;
-  if (uniqueAddons.length > 0) return `NEW INSTALL: ${uniqueAddons.join(', ')}`;
+  const finalInstallKind: 'NEW INSTALL' | 'RE-INSTALL' = installKind || 'NEW INSTALL';
 
-  const fallback = String(m.type || '').trim().toUpperCase();
-  return fallback || 'NEW INSTALL';
+  const unitCandidates = [
+    meta.bookingUnitName,
+    meta.unitName,
+    meta.bookingUnitLabel,
+    meta.unitLabel,
+    meta.bookingUnitKey,
+    meta.unitKey,
+    meta.bookingUnitId,
+    meta.unitId,
+    meta.bookingAttachedOrderSummary,
+    m.notes,
+    m.type,
+  ];
+  let unitLabel = unitCandidates
+    .map((candidate) => normalizeBookingUnitLabel(candidate))
+    .find((candidate): candidate is (typeof BOOKING_UNIT_LABELS)[number] => Boolean(candidate));
+  if (!unitLabel) unitLabel = 'NOIR';
+
+  const priceCandidates = [
+    meta.bookingUnitPriceUsd,
+    meta.bookingUnitPriceUSD,
+    meta.unitPriceUsd,
+    meta.unitPriceUSD,
+    meta.unitPrice,
+    meta.bookingUnitPrice,
+  ];
+  const detectedPrice = priceCandidates
+    .map((candidate) => normalizeUsdPrice(candidate))
+    .find((candidate): candidate is number => candidate != null);
+  const unitPriceUsd = detectedPrice ?? BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL[unitLabel];
+
+  return {
+    installKind: finalInstallKind,
+    addons: uniqueAddons,
+    unitLabel,
+    unitPriceUsd,
+  };
 }
 
-function formatBookingServiceTypeForCard(m: AdminMeeting): string {
-  const base = formatBookingServiceType(m);
-  const colonIdx = base.indexOf(':');
-  if (colonIdx === -1) return base;
-  const installKind = base.slice(0, colonIdx).trim();
-  const addonsRaw = base.slice(colonIdx + 1).trim();
-  if (!addonsRaw) return installKind;
-  const addons = addonsRaw
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean);
-  if (addons.length <= 2) return `${installKind}: ${addons.join(', ')}`;
-  return `${installKind}: ${addons.slice(0, 2).join(', ')}\n${addons.slice(2).join(', ')}`;
+function formatBookingServiceType(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  if (details.addons.length === 0) return details.installKind;
+  return `${details.installKind}: ${details.addons.join(', ')}`;
+}
+
+function formatBookingInstallLineForCard(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return `${details.installKind}: ${details.unitLabel} $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
+}
+
+function formatBookingAddonsLineForCard(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';
 }
 
 function consultInspo(m: AdminMeeting): string[] {
@@ -668,7 +750,7 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2" style={{ marginTop: '12px' }}>
                       <button
                         type="button"
                         onClick={() => {
@@ -771,12 +853,21 @@ export default function AdminMeetingsHub() {
                                 style={{
                                   fontFamily: '"Futura PT Book"',
                                   fontSize: '10px',
-                                  color: '#555',
+                                  color: '#EB1C24',
                                   margin: '4px 0 0',
-                                  whiteSpace: 'pre-line',
                                 }}
                               >
-                                {formatBookingServiceTypeForCard(m)}
+                                {formatBookingInstallLineForCard(m)}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '10px',
+                                  color: '#000000',
+                                  margin: '4px 0 0',
+                                }}
+                              >
+                                {formatBookingAddonsLineForCard(m)}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
