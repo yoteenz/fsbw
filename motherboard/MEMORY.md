@@ -7211,3 +7211,383 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When a user reports “changes not visible,” verify deployed branch/commit vs implementation branch before further UI debugging.
+
+## 2026-04-03 — Preview branch workflow setup (`preview/mobile`)
+
+**Context:** User asked for a stable mobile-review workflow using Vercel previews without repeated production deploys. They confirmed preview links were stale and requested a dedicated branch to keep previews current.
+
+**Topics covered (entire conversation so far):**
+- Clarified that branch-specific Vercel preview URLs are snapshot-based and can become stale if not updated by new commits on that branch.
+- Recommended workflow: keep production on `master`, do iterative changes on a persistent preview branch, and review the latest Vercel preview generated per commit on that branch.
+- User requested creation of a dedicated branch now.
+
+**Decisions / outcomes:**
+- Created and switched to local branch `preview/mobile` from current repository state.
+- Pushed branch to `origin` and set upstream tracking so future commits on this branch will generate/update preview deployments.
+
+**Changes:**
+- Git branch operations only (no code file changes):
+  - created `preview/mobile`
+  - pushed `preview/mobile` to remote
+  - set upstream tracking to `origin/preview/mobile`
+
+**Conventions:**
+- Going forward for this chat/workflow, use `preview/mobile` for iterative changes and mobile Vercel preview validation; only push/merge to `master` when explicitly asked to ship production.
+
+---
+
+## 2026-04-03 — Preview check: bookings helper text already removed + current preview links
+
+**Context:** User asked to "test it & create a PR" and specifically remove bookings helper copy on Admin Meetings: `RED = DAY WITH AT LEAST ONE APPOINTMENT...`.
+
+**Topics covered (entire conversation so far):**
+- Verified branch/workflow state on `preview/mobile`.
+- Searched `src/pages/admin/meetings/AdminMeetingsHub.tsx` for the exact helper sentence and related fragments; no matches found because the line was already removed in current branch history.
+- Ran full build to confirm branch is healthy before preview testing.
+- Attempted PR creation, but there are no net code differences from `master` at this moment, so no PR can be created for this exact request alone.
+- Retrieved current Vercel deployment status URLs for the latest `preview/mobile` commit so user can open a fresh preview directly.
+
+**Decisions / outcomes:**
+- No code edit was needed for this request because the targeted line was already absent.
+- `preview/mobile` is build-green and has successful Vercel deploy status for latest commit.
+- For next requested UI/code tweak, committing on `preview/mobile` will allow creating/updating PR and yield a fresh mobile preview URL.
+
+**Changes:**
+- No source-code change required for this specific request.
+- Validation run: `npm run build` (pass).
+
+**Conventions:**
+- If a requested removal already exists in branch state, confirm with search + build and provide latest preview URLs/check locations instead of forcing no-op commits.
+
+---
+
+## 2026-04-03 — Meetings header restored + completed bookings/consults summary panels
+
+**Context:** On `preview/mobile`, user clarified the "MEETINGS" removal was too broad: they wanted only the text above the card toggles removed earlier, not the main meetings header itself. They also requested data panels above meetings tabs showing totals for completed bookings and completed consults.
+
+**Topics covered (entire conversation so far):**
+- Re-read current `AdminMeetingsHub` structure and confirmed the top in-card `MEETINGS` heading had been removed in prior pass.
+- Restored that in-card heading row while keeping tab/toggle structure intact.
+- Added two summary panels directly above the BOOKINGS/CONSULTS tabs in non-view-all mode:
+  - **COMPLETED BOOKINGS** (count)
+  - **COMPLETED CONSULTS** (count)
+- Counts are computed from merged meetings lists and include statuses normalized as `completed` plus fallback handling for `delivered`/`fulfilled` strings.
+- Kept panel styling aligned with existing admin card metrics (soft dark background, red numeric accent, gray labels).
+
+**Decisions / outcomes:**
+- Main meetings header is visible again on the page card.
+- Completed-bookings and completed-consults metrics are now immediately visible above tabs for quick admin scanning.
+- Build remains passing after the update.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored in-card `MEETINGS` heading row
+  - added completed totals computations
+  - added two metric panels above tabs in standard (non-view-all) mode
+
+**Conventions:**
+- On Admin Meetings, keep the main card heading (`MEETINGS`) and place aggregate metrics above tab selectors when requested; only remove duplicated helper copy if explicitly targeted.
+
+---
+
+## 2026-04-03 — Meetings summary labels renamed to TOTAL BOOKED / TOTAL CONSULTED
+
+**Context:** After adding completed-bookings/consults metric panels above meetings tabs on `preview/mobile`, user requested exact label text changes: "total booked" and "total consulted".
+
+**Topics covered (entire conversation so far):**
+- Located the two newly added panel labels in `AdminMeetingsHub`.
+- Renamed labels from:
+  - `COMPLETED BOOKINGS` → `TOTAL BOOKED`
+  - `COMPLETED CONSULTS` → `TOTAL CONSULTED`
+- Re-ran full build validation after label update.
+
+**Decisions / outcomes:**
+- Summary panel labels now match user wording exactly.
+- No logic/counting changes were made; only label text changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx` — panel label text update.
+
+**Conventions:**
+- For this meetings summary section, use label text `TOTAL BOOKED` and `TOTAL CONSULTED` unless explicitly changed later.
+
+---
+
+## 2026-04-03 — Admin meetings calendar date cells: square corners
+
+**Context:** User requested another visual adjustment on `preview/mobile`: make admin meetings calendar date cells square instead of rounded.
+
+**Topics covered (entire conversation so far):**
+- Located date-cell corner styling in `AdminMeetingsHub` calendar button styles.
+- Updated calendar day cell `borderRadius` from rounded (`'4px'`) to square (`'0'`).
+- Left summary metric panel corners unchanged because the request targeted the calendar.
+- Re-ran full build validation after the style tweak.
+
+**Decisions / outcomes:**
+- Admin meetings calendar date cells are now square-cornered.
+- No behavioral/calendar logic changes; styling only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx` — bookings calendar date-cell `borderRadius: '0'`.
+
+**Conventions:**
+- For admin meetings calendar date cells, use square corners unless future design direction changes.
+
+---
+
+## 2026-04-03 — Meetings mock-client source aligned to client overview + meetings tab spacing matched to marketing
+
+**Context:** After prior fixes (build issues, admin meetings styling, preview/mobile workflow, bookings add-on wrap, consult mock image repair), user requested two consistency updates: (1) Admin Meetings mock clients should use the same mock client identities as Admin Client Overview, and (2) tab section spacing on Meetings should match the spacing above tabs on Admin Marketing.
+
+**Topics covered (entire conversation so far):**
+- Verified current mismatch: meetings mock generation used its own local first/last-name arrays while admin clients overview uses `getMockClientsForAyoteenz()` as the authoritative mock dataset.
+- Confirmed meetings already aligned by email pattern (`mock1@test.com`...`mock25@test.com`) but names/tier assignment could drift from client overview because of separate generation logic.
+- Updated meetings mock source to read from the same mock client overview provider (`getMockClientsForAyoteenz()`), with local fallback identities only if that source is unavailable.
+- Mapped each picked mock client’s membership type to meeting metadata tier (`premium`/`standard`) so card badges and client details remain consistent across admin surfaces.
+- Applied tab-area spacing parity request: adjusted meetings panel spacing above BOOKINGS/CONSULTS tabs to mirror marketing’s visual breathing room pattern (`marginTop: 12px`, `mb-4` for panel block).
+- Kept prior fixes intact (bookings third add-on wraps to second line and consult mock image paths/fallbacks).
+- Re-ran full production build validation.
+
+**Decisions / outcomes:**
+- Admin Meetings mock rows now use the same mock identity pool as Client Overview (name + email + premium/standard tier alignment), improving cross-page consistency when opening client details from meetings.
+- Meetings tab area now has matching top spacing feel with Marketing’s tab section.
+- Build remains passing after these updates.
+
+**Changes:**
+- `src/utils/adminMeetingsMock.ts`
+  - imported `getMockClientsForAyoteenz` from Admin Clients page
+  - replaced local name-picking arrays with `getMockClientIdentities()` + cached client-overview-derived identities
+  - added resilient fallback identity list for offline/source-failure scenarios
+  - switched mock meeting client selection to `pickMockClient(...)`
+  - set consultation `metadata.tier` from selected client membership type
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed meetings summary-panel block spacing to `mb-4` with `marginTop: '12px'` for marketing-aligned tab spacing
+
+**Conventions:**
+- For admin mock consistency, meetings should source mock client identities from the same overview provider (`getMockClientsForAyoteenz`) rather than maintaining a separate name list.
+- For meetings/marketing visual parity, keep comparable top spacing before tab selectors unless explicitly changed.
+
+---
+
+## 2026-04-03 — Admin meetings scroll/padding aligned to marketing card spacing
+
+**Context:** Continuing the same admin meetings polish thread (after TypeScript build fixes, meetings card/style updates, preview/mobile workflow, totals panel text updates, and square calendar date cells), user requested that the admin meetings page scroll/card padding match the admin marketing card so text/cards are not too close to the main card edge.
+
+**Topics covered (entire conversation so far):**
+- Reviewed `src/pages/admin/marketing/page.tsx` and `src/pages/admin/meetings/AdminMeetingsHub.tsx` side-by-side to compare inner card spacing + scroll structure.
+- Confirmed Marketing uses a two-layer pattern:
+  - outer content wrapper with `paddingLeft/Right: 20px` and `paddingBottom: 24px`
+  - inner `overflow-y-auto` region with `paddingTop: 2px`
+- Found Meetings used a single scroll container (`overflow-y-auto px-5 py-3`) that made content visually tighter against the card edge relative to Marketing.
+- Updated Meetings to use the same two-layer wrapper/scroller spacing pattern as Marketing.
+- Re-ran full production build to verify no regressions.
+
+**Decisions / outcomes:**
+- Meetings content area now has matching horizontal/vertical breathing room to Marketing, improving readability and visual consistency.
+- Scroll behavior remains intact; this is a layout-spacing refactor only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - replaced single `overflow-y-auto px-5 py-3` content container with:
+    - outer wrapper: `paddingLeft: 20px`, `paddingRight: 20px`, `paddingBottom: 24px`
+    - inner scroller: `overflow-y-auto`, `maxHeight: calc(100dvh - 240px)`, `paddingTop: 2px`
+
+**Conventions:**
+- For admin card pages that should feel visually consistent (Marketing + Meetings), prefer the same inner spacing/scroll shell pattern (20px side padding + separated vertical scroller) unless a page intentionally diverges.
+
+---
+
+## 2026-04-03 — Bookings tab install/add-on line redesign + calendar top spacing
+
+**Context:** Continuing this chat’s admin polish stream (TypeScript build fixes, meetings UI refinements, preview/mobile workflow, mock-data consistency, and dashboard meetings source unification), user requested a specific bookings-tab content/layout change: add `12px` spacing above the bookings calendar, stop wrapping add-ons by count, and instead show a red install line that declares install type + unit + USD price while moving add-ons to a separate black line below.
+
+**Topics covered (entire conversation so far):**
+- Verified current bookings cards were still rendering install + add-ons as a combined service line with line wrapping behavior from the prior request.
+- Added top spacing above the bookings calendar header row (`marginTop: '12px'`) to match requested breathing room.
+- Reworked bookings card text rendering into two explicit lines:
+  - **line 1 (red):** `NEW INSTALL: BLANCO $960 USD` (or `RE-INSTALL: ...`)
+  - **line 2 (black):** add-ons only (comma-separated), independent from install line.
+- Implemented richer booking-detail extraction in meetings hub:
+  - install kind from metadata/token parsing (existing behavior retained)
+  - unit label detection from meeting metadata (`bookingUnitName`, `unitName`, `unitKey`, `unitId`, attached order summary, notes/type fallback)
+  - unit price detection from metadata (`bookingUnitPriceUsd`/`unitPrice`) with fallback price map by unit label.
+- Updated meetings mock appointment generation metadata so mock rows now include booking unit + price + add-on ids; this keeps the new install/add-on display realistic in the bookings cards.
+
+**Decisions / outcomes:**
+- Install details and add-ons are now visually separated by purpose: install declaration line in red, add-ons line in black.
+- “Third add-on wrapping” behavior is superseded by the new two-line design (install/unit/price on first line; all add-ons on second line).
+- Bookings calendar top spacing is now explicitly `12px`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added unit/price normalization + fallback helpers for booking card display
+  - introduced install-line formatter and add-ons-line formatter for bookings cards
+  - updated bookings card rendering colors:
+    - install line red (`#EB1C24`)
+    - add-ons line black (`#000000`)
+  - added `marginTop: '12px'` above bookings calendar row
+- `src/utils/adminMeetingsMock.ts`
+  - appointment mock metadata now includes:
+    - `bookingInstallKind`
+    - `bookingUnitName`
+    - `bookingUnitPriceUsd`
+    - `bookingAddonIds`
+
+**Conventions:**
+- On admin meetings bookings cards, render install declaration (install kind + unit + USD price) separately from add-ons; keep install line red and add-ons line black unless design direction changes.
+
+---
+
+## 2026-04-03 — Dashboard meetings card now uses the same meetings pipeline as Admin Meetings page
+
+**Context:** User asked whether the Admin Dashboard MEETINGS card is truly linked to meetings-page card data, then requested full alignment so everything is prepped for real clients. In this same thread, prior updates had already aligned meetings mock identities with clients overview and tab spacing with marketing.
+
+**Topics covered (entire conversation so far):**
+- Verified current behavior in `src/pages/admin/dashboard/page.tsx`:
+  - dashboard card preferred `/api/admin/meetings` rows, but still had dashboard-only fallback paths (`dashboardData.bookings` and `defaultDiverseBookings`) that could drift from `/admin/meetings`.
+- Confirmed `/admin/meetings` source-of-truth pipeline in `AdminMeetingsHub`:
+  - deterministic monthly mock meetings (`generateMockMeetingsForRange`)
+  - merged with API meetings (`getAdminMeetings` + `normalizeApiMeeting`)
+  - merged with locally scheduled meetings (`loadLocalMeetings`)
+  - local rows override by id.
+- Implemented full parity on dashboard by switching its meetings card to this same merge model and removing dashboard-only fallback list logic.
+
+**Decisions / outcomes:**
+- Dashboard MEETINGS card and Admin Meetings page now read from the same upstream meeting model in both API and mock/local contexts.
+- Removed dashboard-only fake fallback meeting rows to avoid drift.
+- This improves production readiness by making what admins see on dashboard consistent with what they see when drilling into `/admin/meetings`.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - imported meetings utilities from `utils/adminMeetingsMock` (`generateMockMeetingsForRange`, `loadLocalMeetings`, `normalizeApiMeeting`, `startOfMonth`, `endOfMonth`, `AdminMeeting`).
+  - replaced `meetingsData` state with normalized `apiMeetings: AdminMeeting[]`.
+  - normalized `getAdminMeetings()` API response through `normalizeApiMeeting`.
+  - removed dashboard-specific fallback meeting list (`defaultDiverseBookings`/`diverseBookings`/`upcomingMeetings`).
+  - added merged meetings computation (mock + api + local, by id) for current month window, matching meetings-page strategy.
+  - derived dashboard card rows from merged appointment meetings only (`category !== 'consultation'`, date >= today).
+  - added robust `toIsoMeetingDateTime` conversion so meeting times sort/highlight correctly.
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry.
+
+**Conventions:**
+- For meetings-related summary cards outside `/admin/meetings`, use the same merged meetings pipeline (mock + API + local with id override) to keep dashboard and meetings hub consistent.
+
+---
+
+## 2026-04-03 — Meetings bookings add-on wrap + consult mock image path repair
+
+**Context:** Continuing the same admin meetings polish conversation (after TS build fixes, multiple meetings UI adjustments, preview/mobile workflow setup, totals panels, square calendar cells, and meetings/marketing spacing alignment), user requested two targeted fixes: force the 3rd add-on onto a second line on bookings cards and repair broken consult-tab mock images.
+
+**Topics covered (entire conversation so far):**
+- Reviewed current Admin Meetings formatting helpers and consult image source mapping.
+- Confirmed bookings service text was rendered as a single line string in card rows.
+- Added a card-specific formatter that keeps install kind prefix and wraps add-ons after the second token:
+  - line 1: `INSTALL KIND: ADDON 1, ADDON 2`
+  - line 2: `ADDON 3, ...`
+- Applied `whiteSpace: 'pre-line'` to the bookings service line so explicit newline renders in the card.
+- Confirmed consult mock media still included filename-only entries (`inspo-1.jpg`, `inspo-2.jpg`) which do not resolve to live assets.
+- Hardened consult image normalization in meetings UI to:
+  - prioritize `metadata.inspoPhotoUrls` and `metadata.inspoFileNames`
+  - keep absolute/root-relative URLs
+  - map filename-only values to `/assets/gallery-mock.png`
+  - always return at least one fallback image.
+- Updated mock generator to store valid root-relative asset paths in `inspoFileNames` so newly generated mock consult rows no longer produce broken thumbnails.
+- Re-ran full production build validation.
+
+**Decisions / outcomes:**
+- Bookings-tab service text now wraps add-ons onto a second line starting at the 3rd add-on while preserving install-kind-first format.
+- Consult mock image tiles now consistently render using valid asset URLs/fallback mapping, including older metadata shapes.
+- Change is UI/data-normalization only; no API contract or meeting flow behavior changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatBookingServiceTypeForCard()` for controlled add-on wrapping
+  - bookings service `<p>` now uses `whiteSpace: 'pre-line'`
+  - strengthened `consultInspo()` path normalization + fallback to `/assets/gallery-mock.png`
+- `src/utils/adminMeetingsMock.ts`
+  - changed consultation mock `metadata.inspoFileNames` to valid `/assets/gallery-mock.png` paths
+
+**Conventions:**
+- In bookings cards, long add-on lists should wrap after two add-ons for readability while keeping install-kind prefix on line one.
+- In consult mock metadata/UI, prefer root-relative asset paths or full URLs; map filename-only legacy values to a known existing mock asset fallback.
+
+---
+
+## 2026-04-03 — Admin meetings bookings/consults panel polish + travel-day scheduling blocks
+
+**Context:** Continuing the same long-running admin meetings thread (TS build fixes, meetings card styling passes, preview/mobile workflow, search wiring, mock consistency, dashboard-meetings source unification, and install/add-on line redesign), user requested a larger bookings-tab UX pass: add avatar + state labels on client panels (including view-all), reduce add-ons line text size by 1px, make selected date label red and nudged right, ensure panel taps open admin client detail, enforce travel add-on calendar/scheduling blocks (half-day previous + full next day), and remove extra view-all helper/header copy.
+
+**Topics covered (entire conversation so far):**
+- **Client identity visuals on bookings/consults + view-all**
+  - Added per-row client photo thumbnail on the left of text in bookings cards, consult cards, and view-all rows.
+  - Added state code next to client name using `NAME (ST)` format (e.g., `REESE SCOTT (NJ)`), with mapping/fallback from email and metadata/address parsing.
+  - Kept panel tap behavior routing to `navigate('/admin/clients?email=...')` and extended clickable behavior to view-all row cards too.
+- **Bookings line typography + selected date display**
+  - Reduced black add-ons line from `10px` to `9px`.
+  - Updated selected date text below calendar to red and nudged right by 2px (`translateX(2px)`).
+- **Travel add-on block behavior in admin meetings calendar**
+  - Added travel-block derivation from appointment meetings:
+    - previous day marked as **half-day blocked** (after 12 PM unavailable)
+    - next day marked as **full-day blocked** (date disabled/gray)
+  - Calendar now visually indicates these travel constraints and disables full blocked dates.
+- **Travel add-on block behavior in booking appointment time-slot selection**
+  - Implemented time-slot availability filter in `booking/appointment`:
+    - when travel add-on selected, on day `D-1` only slots **before 12:00 PM** remain selectable
+    - on day `D+1`, no slots available (full day blocked)
+  - Disabled blocked slots with explanatory title text and auto-cleared previously selected invalid slots.
+- **View-all/header cleanup**
+  - Removed "GROUPED BY CLIENT EMAIL (CURRENT MONTH RANGE)." helper line.
+  - Removed in-card red `MEETINGS` header and its gray divider line above the view-all area, per request.
+
+**Decisions / outcomes:**
+- Bookings/consults rows now present richer client context consistently (photo + state) across normal tabs and view-all mode.
+- Travel add-on constraints are now represented both in meetings-calendar visibility and booking time-slot selection logic to prep behavior for real scheduling constraints.
+- Selected date and add-ons text now match requested emphasis hierarchy.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added client photo/state helpers and applied to bookings, consults, and view-all rows
+  - switched view-all rendering from grouped-email text block to row cards
+  - removed in-card `MEETINGS` heading + divider
+  - removed grouped-by helper copy
+  - reduced add-ons line font size (`9px`)
+  - styled selected date label red + `translateX(2px)`
+  - added travel half-day/full-day block set derivation and calendar disabled styling
+- `src/pages/booking/appointment/page.tsx`
+  - added travel-aware time-slot filtering logic for day-before half-day and day-after full-day block
+  - disabled blocked slots in dropdown and added explanatory tooltip text
+  - auto-clear invalid selected slot when availability changes
+
+**Conventions:**
+- In admin meetings list rows (bookings/consults/view-all), include client context with left thumbnail + `NAME (STATE)` when available.
+- Travel add-on scheduling constraints should reserve previous day afternoon and full following day to avoid accepting conflicting appointment windows.
+
+---
+
+## 2026-04-03 — Bookings tab UI refinements: remove tab divider, red selected-date box border, hide selected-date text label
+
+**Context:** User requested three targeted visual updates on the bookings tab UI: remove the gray divider line below the BOOKINGS/CONSULTS tabs, change the selected calendar date cell border from gray to red, and remove the red selected-date text line (`THU, APR 30, 2026`) above the client panels.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context files first (`README.md`, `CORE.md`, `CODEBASE.md`, `MEMORY.md`) per project rules.
+- Located the exact bookings-tab UI styles in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Removed the header-level gray divider under the tabs container.
+- Updated calendar date-cell border styling so the currently selected day renders with a red border (`#EB1C24`) while non-selected cells keep the gray border.
+- Removed the selected-day text label block that previously rendered above the bookings client panels.
+- Ran production build validation; initial run failed due missing local deps (`tsc: not found`), then installed deps and reran build successfully.
+- Reverted incidental `package-lock.json` modifications to keep the commit scoped to requested UI behavior.
+
+**Decisions / outcomes:**
+- Tabs area no longer shows the gray underline divider.
+- Selected date box now uses a red border, matching requested emphasis.
+- The red date text label above client panels is removed.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed tabs container gray bottom border style
+  - changed calendar day button border to conditional red when `selectedDay === cell.iso`
+  - removed selected-date text paragraph render block above booking cards
+
+**Conventions:**
+- For bookings tab calendar emphasis, selected day should be indicated by red cell border rather than a separate date text label above client rows.

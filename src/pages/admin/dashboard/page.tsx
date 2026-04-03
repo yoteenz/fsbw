@@ -13,6 +13,14 @@ import { isClientBlocked } from '../../../utils/blockedClients';
 import { getClientUnreadPriorityMessage } from '../../../utils/priorityMessages';
 import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getTopProductBySales, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
 import { ADMIN_DASHBOARD_WORKERS } from '../../../utils/adminWorkersDashboard';
+import {
+  endOfMonth,
+  generateMockMeetingsForRange,
+  loadLocalMeetings,
+  normalizeApiMeeting,
+  startOfMonth,
+  type AdminMeeting,
+} from '../../../utils/adminMeetingsMock';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -229,7 +237,7 @@ export default function AdminDashboard() {
   const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number; pendingItems: { label: string; value: string }[] } | null>(null);
   const [reviewsData, setReviewsData] = useState<{ totalReviews: number; averageRating: number } | null>(null);
   const [_referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
-  const [meetingsData, setMeetingsData] = useState<{ meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }> } | null>(null);
+  const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -299,9 +307,11 @@ export default function AdminDashboard() {
             });
             setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
             setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
-            setMeetingsData({
-              meetings: (Array.isArray(meetings.meetings) ? meetings.meetings : []) as Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>,
-            });
+            const meetingRows = Array.isArray(meetings.meetings) ? meetings.meetings : [];
+            const normalizedMeetings = meetingRows
+              .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
+              .filter(Boolean) as AdminMeeting[];
+            setApiMeetings(normalizedMeetings);
             return;
           } catch {
             /* fall through to mock */
@@ -324,9 +334,9 @@ export default function AdminDashboard() {
         });
         setReviewsData({ totalReviews: data.totalReviews ?? 0, averageRating: data.averageRating ?? 0 });
         setReferralsData({ inviteeCount: data.inviteeCount ?? 0 });
-        setMeetingsData({
-          meetings: (data.meetings ?? []) as Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>,
-        });
+        // Keep meetings source aligned with Admin Meetings page (mock+api+local merge),
+        // so dashboard card does not drift to a dashboard-only fallback list.
+        setApiMeetings([]);
       } catch (err) {
         console.error('Failed to initialize dashboard:', err);
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
@@ -409,26 +419,6 @@ export default function AdminDashboard() {
 
   const { stats, clients, revenue } = dashboardData;
 
-  // Use dashboard bookings when available (mock or API); else fallback list with names consistent with mock clients
-  const defaultDiverseBookings = [
-    { service_name: 'INSTALL', appointment_date: '2025-02-07T10:00:00', client_name: 'ZARA ADAMS' },
-    { service_name: 'WIG & INSTALL', appointment_date: '2025-02-07T14:30:00', client_name: 'ELENA GARCIA' },
-    { service_name: 'VIRTUAL CLASS', appointment_date: '2025-02-08T09:15:00', client_name: 'GRACE INGRAM' },
-    { service_name: 'CONSULTATION', appointment_date: '2025-02-08T16:45:00', client_name: 'MAYA OWEN' },
-    { service_name: 'REINSTALL', appointment_date: '2025-02-09T11:30:00', client_name: 'TESSA UPTON' },
-  ];
-  const diverseBookings =
-    (dashboardData.bookings?.length ?? 0) > 0
-      ? dashboardData.bookings
-      : defaultDiverseBookings;
-
-  // Filter only upcoming meetings (future dates)
-  const upcomingMeetings = diverseBookings.filter(booking => {
-    const appointmentDate = new Date(booking.appointment_date);
-    const now = new Date();
-    return appointmentDate > now;
-  });
-
   // Same logic as clients overview page: exclude blocked clients so tier counts match the overview (overview filters with !isClientBlocked)
   const visibleClients = clients.filter((c: any) => !isClientBlocked(c));
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime();
@@ -500,6 +490,50 @@ export default function AdminDashboard() {
     return `${month}/${day}`;
   };
 
+  const toIsoMeetingDateTime = (date: string, time: string): string => {
+    const raw = String(time || '').trim();
+    const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (ampm) {
+      let h = parseInt(ampm[1], 10);
+      const mm = ampm[2];
+      const ap = ampm[3].toUpperCase();
+      if (ap === 'PM' && h !== 12) h += 12;
+      if (ap === 'AM' && h === 12) h = 0;
+      return `${date}T${String(h).padStart(2, '0')}:${mm}:00`;
+    }
+    const twentyFour = raw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (twentyFour) {
+      const hh = String(Math.min(23, Math.max(0, parseInt(twentyFour[1], 10)))).padStart(2, '0');
+      const mm = twentyFour[2];
+      const ss = twentyFour[3] || '00';
+      return `${date}T${hh}:${mm}:${ss}`;
+    }
+    return `${date}T00:00:00`;
+  };
+
+  // Keep dashboard MEETINGS card sourced from the exact same meeting pipeline as Admin Meetings:
+  // deterministic monthly mocks + API rows + local scheduled rows (local overrides).
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const meetingsRangeStart = startOfMonth(todayIso);
+  const meetingsRangeEnd = endOfMonth(todayIso);
+
+  const mergedMeetingsForDashboard = (() => {
+    const mock = generateMockMeetingsForRange(meetingsRangeStart, meetingsRangeEnd);
+    const local = loadLocalMeetings().filter((m) => m.date >= meetingsRangeStart && m.date <= meetingsRangeEnd);
+    const byId = new Map<string, AdminMeeting>();
+    for (const m of mock) byId.set(m.id, m);
+    for (const m of apiMeetings) {
+      if (m.date >= meetingsRangeStart && m.date <= meetingsRangeEnd) byId.set(m.id, m);
+    }
+    for (const m of local) byId.set(m.id, m);
+    return [...byId.values()].sort((a, b) => {
+      const dc = a.date.localeCompare(b.date);
+      if (dc !== 0) return dc;
+      return a.time.localeCompare(b.time);
+    });
+  })();
+
   // Client header count = total clients who have at least one delivered order (same list as card; when list has ordersCount/newCount use it, else API stats)
   const clientsWithDeliveredCount = canComputeDeliveredFromList ? clientsWithDeliveredFromList : (stats.clientsWithDeliveredOrder ?? 0);
   const referralCountDisplay = referralsFromList;
@@ -546,24 +580,15 @@ export default function AdminDashboard() {
     ];
   })();
 
-  // MEETINGS: use getAdminMeetings() (same API as admin Meetings page); fallback to dashboard bookings or diverseBookings
-  const meetingsFromMeetingsApi = (meetingsData?.meetings ?? [])
-    .filter((m) => {
-      const d = m.meetingDate ? new Date(m.meetingDate) : null;
-      return d && d >= new Date(new Date().toDateString());
-    })
+  // Dashboard meetings card now uses same upstream data model as Admin Meetings page.
+  const meetingsForCard = mergedMeetingsForDashboard
+    .filter((m) => m.category !== 'consultation' && m.date >= todayIso)
     .map((m) => ({
-      appointment_date: [m.meetingDate, m.meetingTime].filter(Boolean).join('T') || '',
+      appointment_date: toIsoMeetingDateTime(m.date, m.time),
       service_name: m.type || 'Meeting',
-      client_name: m.clientName || '',
+      client_name: m.client || '',
     }));
-  const meetingsFromDashboard = (dashboardData?.bookings ?? []).filter((b) => {
-    const d = b.appointment_date ? new Date(b.appointment_date) : null;
-    return d && d > new Date();
-  });
-  const meetingsFromApi = meetingsFromMeetingsApi.length > 0 ? meetingsFromMeetingsApi : meetingsFromDashboard;
-  const meetingsForCard = meetingsFromApi.length > 0 ? meetingsFromApi : diverseBookings;
-  const upcomingMeetingsFromData = meetingsFromApi.length > 0 ? meetingsFromApi : upcomingMeetings;
+  const upcomingMeetingsFromData = meetingsForCard;
 
   const statsData = [
     {

@@ -757,7 +757,7 @@ export default function AdminMeetingsHub() {
               ) : (
                 <div
                   className="flex-shrink-0 px-5 pb-2"
-                  style={{ borderBottom: mainTab === 'consults' ? 'none' : '1px solid #e5e7eb', marginTop: '10px' }}
+                  style={{ marginTop: '10px' }}
                 >
                   <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
                     <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
@@ -930,7 +930,7 @@ export default function AdminMeetingsHub() {
                               fontFamily: '"Futura PT Medium"',
                               fontSize: '10px',
                               padding: '6px 0',
-                              border: '1px solid #e5e7eb',
+                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : '1px solid #e5e7eb',
                               borderRadius: '0',
                               background: hasTravelBlock ? '#f3f4f6' : hasAppt ? '#fff' : '#f3f4f6',
                               color: hasTravelBlock ? '#9ca3af' : hasAppt ? '#EB1C24' : '#9ca3af',
@@ -943,11 +943,6 @@ export default function AdminMeetingsHub() {
                         );
                       })}
                     </div>
-                    {selectedDay && (
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginBottom: '8px', color: '#EB1C24', transform: 'translateX(2px)' }}>
-                        {formatHeaderDate(selectedDay)}
-                      </p>
-                    )}
                     {sortedAppointmentsList.length === 0 ? (
                       <p
                         style={{

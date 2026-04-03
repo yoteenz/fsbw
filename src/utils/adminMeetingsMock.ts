@@ -2,6 +2,7 @@
  * Deterministic mock meetings + local admin-scheduled meetings for /admin/meetings.
  * Mock rows vary by calendar day (seeded); merged with localStorage drafts.
  */
+import { getMockClientsForAyoteenz } from '../pages/admin/clients/page';
 
 export type MeetingCategory = 'consultation' | 'appointment';
 
@@ -55,14 +56,42 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-const MOCK_FIRST = [
-  'Zara', 'Amy', 'Quinn', 'Diana', 'Elena', 'Fiona', 'Grace', 'Hannah', 'Ivy', 'Julia',
-  'Keira', 'Luna', 'Maya', 'Nina', 'Olivia', 'Paula', 'Reese', 'Sara', 'Tessa', 'Uma',
+type MockClientIdentity = {
+  first: string;
+  last: string;
+  email: string;
+  membershipType: 'PREMIUM' | 'STANDARD';
+};
+
+const FALLBACK_MOCK_CLIENT_IDENTITIES: MockClientIdentity[] = [
+  { first: 'Zara', last: 'Adams', email: 'mock1@test.com', membershipType: 'PREMIUM' },
+  { first: 'Amy', last: 'Brooks', email: 'mock2@test.com', membershipType: 'STANDARD' },
+  { first: 'Quinn', last: 'Chen', email: 'mock3@test.com', membershipType: 'PREMIUM' },
+  { first: 'Diana', last: 'Foster', email: 'mock4@test.com', membershipType: 'STANDARD' },
+  { first: 'Elena', last: 'Garcia', email: 'mock5@test.com', membershipType: 'PREMIUM' },
+  { first: 'Fiona', last: 'Hayes', email: 'mock6@test.com', membershipType: 'STANDARD' },
+  { first: 'Grace', last: 'Ingram', email: 'mock7@test.com', membershipType: 'PREMIUM' },
+  { first: 'Hannah', last: 'Jones', email: 'mock8@test.com', membershipType: 'STANDARD' },
+  { first: 'Ivy', last: 'Kim', email: 'mock9@test.com', membershipType: 'PREMIUM' },
+  { first: 'Julia', last: 'Lee', email: 'mock10@test.com', membershipType: 'STANDARD' },
+  { first: 'Keira', last: 'Martinez', email: 'mock11@test.com', membershipType: 'PREMIUM' },
+  { first: 'Luna', last: 'Nguyen', email: 'mock12@test.com', membershipType: 'STANDARD' },
+  { first: 'Maya', last: 'Owen', email: 'mock13@test.com', membershipType: 'PREMIUM' },
+  { first: 'Nina', last: 'Patel', email: 'mock14@test.com', membershipType: 'STANDARD' },
+  { first: 'Olivia', last: 'Quinn', email: 'mock15@test.com', membershipType: 'PREMIUM' },
+  { first: 'Paula', last: 'Rivera', email: 'mock16@test.com', membershipType: 'STANDARD' },
+  { first: 'Reese', last: 'Scott', email: 'mock17@test.com', membershipType: 'PREMIUM' },
+  { first: 'Sara', last: 'Torres', email: 'mock18@test.com', membershipType: 'STANDARD' },
+  { first: 'Tessa', last: 'Upton', email: 'mock19@test.com', membershipType: 'PREMIUM' },
+  { first: 'Uma', last: 'Vance', email: 'mock20@test.com', membershipType: 'STANDARD' },
+  { first: 'Invites', last: 'Demo', email: 'mock21@test.com', membershipType: 'PREMIUM' },
+  { first: 'Yuki', last: 'Tanaka', email: 'mock22@test.com', membershipType: 'STANDARD' },
+  { first: 'Sienna', last: 'Okonkwo', email: 'mock23@test.com', membershipType: 'PREMIUM' },
+  { first: 'Liam', last: "O'Brien", email: 'mock24@test.com', membershipType: 'STANDARD' },
+  { first: 'Camila', last: 'Silva', email: 'mock25@test.com', membershipType: 'PREMIUM' },
 ];
-const MOCK_LAST = [
-  'Adams', 'Brooks', 'Chen', 'Foster', 'Garcia', 'Hayes', 'Ingram', 'Jones', 'Kim', 'Lee',
-  'Martinez', 'Nguyen', 'Owen', 'Patel', 'Quinn', 'Rivera', 'Scott', 'Torres', 'Upton', 'Vance',
-];
+
+let cachedMockClientIdentities: MockClientIdentity[] | null = null;
 
 export const SCHEDULE_TIME_OPTIONS = [
   '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
@@ -128,15 +157,38 @@ export function eachDayInclusive(start: string, end: string): string[] {
   return out;
 }
 
-function pickName(rnd: () => number, salt: number): { first: string; last: string; email: string } {
-  const fi = Math.floor(rnd() * MOCK_FIRST.length);
-  const li = Math.floor(rnd() * MOCK_LAST.length);
-  const first = MOCK_FIRST[(fi + salt) % MOCK_FIRST.length];
-  const last = MOCK_LAST[(li + salt * 3) % MOCK_LAST.length];
-  // Align mock meetings with mock admin-clients records (mock1@test.com ... mock25@test.com)
-  // so tapping a meeting can open the client details tabs.
-  const email = `mock${(Math.abs(salt) % 25) + 1}@test.com`;
-  return { first, last, email };
+function getMockClientIdentities(): MockClientIdentity[] {
+  if (cachedMockClientIdentities) return cachedMockClientIdentities;
+  try {
+    const raw = getMockClientsForAyoteenz();
+    const fromOverview = Array.isArray(raw)
+      ? raw
+          .map((u: any) => {
+            const email = String(u?.email || '').trim().toLowerCase();
+            const first = String(u?.firstName || '').trim();
+            const last = String(u?.lastName || '').trim();
+            const membershipType = String(u?.membershipType || 'STANDARD').toUpperCase() === 'PREMIUM' ? 'PREMIUM' : 'STANDARD';
+            if (!email || !first || !last) return null;
+            return { first, last, email, membershipType } as MockClientIdentity;
+          })
+          .filter((v): v is MockClientIdentity => Boolean(v))
+      : [];
+    if (fromOverview.length > 0) {
+      cachedMockClientIdentities = fromOverview;
+      return cachedMockClientIdentities;
+    }
+  } catch {
+    // Fall back to local static identities when overview mock source is unavailable.
+  }
+  cachedMockClientIdentities = FALLBACK_MOCK_CLIENT_IDENTITIES;
+  return cachedMockClientIdentities;
+}
+
+function pickMockClient(rnd: () => number, salt: number): MockClientIdentity {
+  const pool = getMockClientIdentities();
+  const seededOffset = Math.floor(rnd() * pool.length);
+  const idx = (seededOffset + Math.abs(salt)) % pool.length;
+  return pool[idx];
 }
 
 export type MockDayOptions = { cap?: number; skipProbability?: number };
@@ -168,7 +220,8 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
     usedSlots.add(slotIdx);
 
     const isConsultation = rnd() > 0.42;
-    const { first, last, email } = pickName(rnd, i + hash32(dateKey + String(i)));
+    const pickedClient = pickMockClient(rnd, i + hash32(dateKey + String(i)));
+    const { first, last, email, membershipType } = pickedClient;
 
     if (isConsultation) {
       const statusRoll = rnd();
@@ -187,12 +240,12 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         status,
         notes: consultNotes,
         metadata: {
-          tier: rnd() > 0.55 ? 'premium' : 'standard',
+          tier: membershipType === 'PREMIUM' ? 'premium' : 'standard',
           hairOption: rnd() > 0.5 ? 'WIG ONLY' : 'WIG + INSTALL',
           consultNotes,
           // Same stock image used by account/affiliate mock content.
           inspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
-          inspoFileNames: ['inspo-1.jpg', 'inspo-2.jpg'],
+          inspoFileNames: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
         },
       });
     } else {
@@ -219,6 +272,15 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         status,
         notes: `Appointment: ${services.join(', ').toLowerCase()}`,
         services,
+        metadata: {
+          tier: membershipType === 'PREMIUM' ? 'premium' : 'standard',
+          bookingInstallKind: rnd() > 0.5 ? 'NEW_INSTALL' : 'RE_INSTALL',
+          bookingUnitName: ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE', 'OCEAN CURL'][Math.floor(rnd() * 6)],
+          bookingUnitPriceUsd: [740, 820, 760, 780, 760, 780][Math.floor(rnd() * 6)],
+          bookingAddonIds: ['braids', 'brow-clean', 'brow-tint', 'makeup', 'mink-lashes', 'travel']
+            .filter(() => rnd() > 0.62)
+            .slice(0, 4),
+        },
       });
     }
   }
