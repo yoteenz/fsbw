@@ -417,6 +417,15 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
   return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';
 }
 
+function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  if (details.addons.length === 0) return 'ADD-ONS: NONE';
+  if (details.addons.length <= 2) return `ADD-ONS: ${details.addons.join(', ')}`;
+  const firstLine = details.addons.slice(0, 2).join(', ');
+  const wrappedRest = details.addons.slice(2).join(', ');
+  return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
+}
+
 function consultInspo(m: AdminMeeting): string[] {
   const meta = m.metadata || {};
   const photoUrls = Array.isArray(meta.inspoPhotoUrls) ? meta.inspoPhotoUrls.map(String).filter(Boolean) : [];
@@ -669,7 +678,7 @@ export default function AdminMeetingsHub() {
 
   const monthLabel = useMemo(() => {
     const [y, m] = calendarAnchor.split('-').map(Number);
-    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }).toUpperCase();
+    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long' }).toUpperCase();
   }, [calendarAnchor]);
 
   const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
@@ -887,7 +896,7 @@ export default function AdminMeetingsHub() {
                       >
                         <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
                       </button>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px' }}>{monthLabel}</span>
+                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '15px', color: '#000' }}>{monthLabel}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -983,7 +992,7 @@ export default function AdminMeetingsHub() {
                                   style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
                                 />
                                 <div className="min-w-0 flex-1">
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>
                                 {meetingClientDisplayNameWithState(m)}{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
@@ -991,7 +1000,7 @@ export default function AdminMeetingsHub() {
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Book"',
+                                  fontFamily: '"Futura PT Medium"',
                                   fontSize: '10px',
                                   color: '#EB1C24',
                                   margin: '4px 0 0',
@@ -1001,15 +1010,16 @@ export default function AdminMeetingsHub() {
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Book"',
+                                  fontFamily: '"Futura PT Medium"',
                                   fontSize: '9px',
                                   color: '#000000',
                                   margin: '4px 0 0',
+                                  whiteSpace: 'pre-line',
                                 }}
                               >
-                                {formatBookingAddonsLineForCard(m)}
+                                {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '6px 0 0' }}>
@@ -1027,7 +1037,7 @@ export default function AdminMeetingsHub() {
                               style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
                               aria-label="Edit meeting"
                             >
-                              <img src="/assets/edit-meeting-icon.svg" alt="" width={22} height={22} />
+                              <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={22} height={22} />
                             </button>
                           </div>
                         </div>
@@ -1070,7 +1080,7 @@ export default function AdminMeetingsHub() {
                                     style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
                                   />
                                   <div className="min-w-0 flex-1">
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0, color: '#EB1C24' }}>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24' }}>
                                   {meetingClientDisplayNameWithState(m)}{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
                                     · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
