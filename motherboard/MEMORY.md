@@ -7528,3 +7528,33 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - In admin meetings list rows (bookings/consults/view-all), include client context with left thumbnail + `NAME (STATE)` when available.
 - Travel add-on scheduling constraints should reserve previous day afternoon and full following day to avoid accepting conflicting appointment windows.
+
+---
+
+## 2026-04-03 — Bookings tab UI refinements: remove tab divider, red selected-date box border, hide selected-date text label
+
+**Context:** User requested three targeted visual updates on the bookings tab UI: remove the gray divider line below the BOOKINGS/CONSULTS tabs, change the selected calendar date cell border from gray to red, and remove the red selected-date text line (`THU, APR 30, 2026`) above the client panels.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context files first (`README.md`, `CORE.md`, `CODEBASE.md`, `MEMORY.md`) per project rules.
+- Located the exact bookings-tab UI styles in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Removed the header-level gray divider under the tabs container.
+- Updated calendar date-cell border styling so the currently selected day renders with a red border (`#EB1C24`) while non-selected cells keep the gray border.
+- Removed the selected-day text label block that previously rendered above the bookings client panels.
+- Ran production build validation; initial run failed due missing local deps (`tsc: not found`), then installed deps and reran build successfully.
+- Reverted incidental `package-lock.json` modifications to keep the commit scoped to requested UI behavior.
+
+**Decisions / outcomes:**
+- Tabs area no longer shows the gray underline divider.
+- Selected date box now uses a red border, matching requested emphasis.
+- The red date text label above client panels is removed.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed tabs container gray bottom border style
+  - changed calendar day button border to conditional red when `selectedDay === cell.iso`
+  - removed selected-date text paragraph render block above booking cards
+
+**Conventions:**
+- For bookings tab calendar emphasis, selected day should be indicated by red cell border rather than a separate date text label above client rows.
