@@ -8482,3 +8482,29 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For single-line micro-adjustments, limit edits to the specific target style property to avoid regressions in adjacent consult-row layout.
+
+---
+
+## 2026-04-03 — Consults inspo row restore/lock: right 2px + 8px spacing
+
+**Context:** User reported the inspo row had been moved in the wrong direction and asked to restore/correct exactly: row shifted right by 2px and spacing between images set to 8px (+2 from prior baseline).
+
+**Topics covered (entire conversation so far):**
+- Re-verified live consult inspo row styles in `AdminMeetingsHub` (`marginLeft: '2px'`, 8px gap) and confirmed intended values.
+- To reduce risk of class utility overrides, changed gap from Tailwind utility class to explicit inline style so final rendered spacing is controlled in one place.
+- Preserved the row’s right offset at `marginLeft: '2px'`.
+- Committed and pushed to `preview/mobile` after resolving remote divergence via pull-merge.
+
+**Decisions / outcomes:**
+- Inspo photo row now has explicit inline styles:
+  - `marginLeft: '2px'` (right shift)
+  - `gap: '8px'` (2px more space between images)
+- No other inspo row behavior changes were introduced.
+- Update is on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - row class changed from `gap-[8px]` utility to inline `gap: '8px'` with `marginLeft: '2px'` preserved.
+
+**Conventions:**
+- For precision spacing tasks likely to be affected by utility precedence, prefer explicit inline style on the exact row container.
