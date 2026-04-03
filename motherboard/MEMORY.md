@@ -8482,3 +8482,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For single-line micro-adjustments, limit edits to the specific target style property to avoid regressions in adjacent consult-row layout.
+
+---
+
+## 2026-04-03 — Corrected target scope: restore Admin Meetings tab add-ons and apply INSTALL/RE-INSTALL format on Admin Dashboard meetings card
+
+**Context:** In this chat, the user asked for add-on service labels to be structured as `INSTALL: ...` / `RE-INSTALL: ...` with red add-ons text. The initial implementation was applied to the wrong surface (Admin Meetings tab card). The user then explicitly requested a restore and correction so the change applies to the **Admin Dashboard MEETINGS card** only.
+
+**Topics covered (entire conversation so far):**
+- Started from a long recap of prior bookings-tab iterations and implemented the new add-on label format (`INSTALL:` / `RE-INSTALL:` with count) plus red add-ons text on `AdminMeetingsHub` booking cards.
+- User reported this targeted the wrong card and requested restoring those meetings-tab changes.
+- Restored `AdminMeetingsHub` booking add-ons display back to prior behavior:
+  - add-ons line format restored to `ADD-ONS: ...` wrapping logic,
+  - add-ons text color restored from red back to black.
+- Applied requested label formatting to the **Admin Dashboard MEETINGS card** logic in `src/pages/admin/dashboard/page.tsx`:
+  - replaced `INSTALL + ...` formatting with `INSTALL: ...` / `RE-INSTALL: ...`,
+  - for multiple add-ons: first add-on plus total count in parentheses (e.g. `RE-INSTALL: BROW SCULPTING (2)`),
+  - wired dashboard meeting item color so this label line is red.
+- Ran `npm run build` successfully after the restore/correct pass.
+- Rebased and pushed to `preview/mobile` after remote advanced.
+
+**Decisions / outcomes:**
+- The mistaken meetings-tab change was reverted.
+- Requested formatting/color now applies to the Admin Dashboard meetings card list.
+- Build is green and changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored booking add-ons formatter/content and black add-ons color.
+- `src/pages/admin/dashboard/page.tsx`
+  - updated dashboard meetings service label formatting to `INSTALL:` / `RE-INSTALL:` pattern,
+  - added install-kind detection from meeting metadata (`bookingInstallKind` / `installKind`),
+  - set service label color path to red for this dashboard card display.
+
+**Conventions:**
+- For “meetings card” requests, confirm whether the user means Admin Meetings page cards or Admin Dashboard `MEETINGS` stat card before applying formatter/style changes.
