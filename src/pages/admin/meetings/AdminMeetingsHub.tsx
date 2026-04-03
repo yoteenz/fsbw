@@ -791,7 +791,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        minHeight: '76px',
+                        height: '88px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
@@ -809,7 +809,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        minHeight: '76px',
+                        height: '88px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
@@ -1115,7 +1115,7 @@ export default function AdminMeetingsHub() {
                                       style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
                                     />
                                     <div className="min-w-0 flex-1">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translateY(2px)' }}>
                                     {meetingClientDisplayNameWithState(m)}{' '}
                                     <span style={{ color: tierLabelColor(m) }}>
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
@@ -1123,7 +1123,7 @@ export default function AdminMeetingsHub() {
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
                                   {imgs.length > 0 && (
-                                    <div className="flex gap-1.5 flex-wrap mt-2">
+                                    <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '2px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
                                         <button
                                           type="button"
@@ -1134,8 +1134,8 @@ export default function AdminMeetingsHub() {
                                           }}
                                           aria-label="Enlarge submitted consult photo"
                                           style={{
-                                            width: '40px',
-                                            height: '40px',
+                                            width: '50px',
+                                            height: '50px',
                                             background: '#f3f4f6',
                                             border: '3px solid #FFFFFF',
                                             boxShadow: '0 0 0 1.1px #000000',
@@ -1159,7 +1159,7 @@ export default function AdminMeetingsHub() {
                                       ))}
                                     </div>
                                   )}
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
                                     {notes}
                                   </p>
                                     </div>
