@@ -8772,3 +8772,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “bookings only” UI nudges in shared meetings components, patch only the bookings render branch and keep consult branch values untouched unless explicitly requested.
+
+---
+
+## 2026-04-03 — Bohemy month weight reduced further and bookings client name turned red (membership status unchanged)
+
+**Context:** User requested two additional bookings-tab style refinements: lower the Bohemy month text weight further (“20 instead of 30”) and make only the client name text red Futura PT Medium while keeping membership status styling separate.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings micro-adjustments (wrapping, icon size/stroke, payment/current-balance typography, card spacing, avatar offset).
+- Updated the bookings calendar month label in `AdminMeetingsHub` to a lighter explicit weight:
+  - changed `fontWeight` from `300` to `200` on the Bohemy month span.
+- Updated the bookings client identity line styling so only the name is red:
+  - wrapped `meetingClientDisplayNameWithState(m)` in a red span (`#EB1C24`),
+  - preserved membership status (`· PREMIUM` / `· STANDARD`) in its existing independent color logic via `tierLabelColor(m)`.
+- Kept font family on the client line as Futura PT Medium per request and did not alter unrelated row typography.
+- Ran `npm run build` successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bohemy month text now renders with a lighter weight than before (explicit `fontWeight: 200`).
+- Client name text only is red on bookings cards; membership status coloring remains unchanged.
+- Build is green and updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label `fontWeight`: `300` -> `200`
+  - bookings client text line split into name span (red) + status span (existing tier color logic).
+
+**Conventions:**
+- When user requests styling for only one substring in a composite label (e.g., name vs membership status), split into separate spans and preserve existing color logic for the untouched segment.
