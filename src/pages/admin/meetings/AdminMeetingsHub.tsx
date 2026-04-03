@@ -316,6 +316,24 @@ export default function AdminMeetingsHub() {
     });
   }, [mergedMeetings]);
 
+  const completedBookingsCount = useMemo(
+    () =>
+      appointmentMeetings.filter((m) => {
+        const s = String(m.status || '').toLowerCase();
+        return s === 'completed' || s === 'confirmed';
+      }).length,
+    [appointmentMeetings]
+  );
+
+  const completedConsultsCount = useMemo(
+    () =>
+      consultMeetings.filter((m) => {
+        const s = String(m.status || '').toLowerCase();
+        return s === 'completed' || s === 'confirmed';
+      }).length,
+    [consultMeetings]
+  );
+
   const apptDates = useMemo(() => {
     const s = new Set<string>();
     for (const m of appointmentMeetings) s.add(m.date);
@@ -470,6 +488,24 @@ export default function AdminMeetingsHub() {
                 minHeight: 'calc(100dvh - 160px)',
               }}
             >
+              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
+                <h2
+                  className="flex-1"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    color: '#EB1C24',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    margin: 0,
+                    marginLeft: '6px',
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                  }}
+                >
+                  MEETINGS
+                </h2>
+              </div>
+              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
               {viewAllMode ? (
                 <div
                   className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
@@ -509,6 +545,24 @@ export default function AdminMeetingsHub() {
                 </div>
               ) : (
                 <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                  <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                        {completedBookingsCount}
+                      </p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                        COMPLETED BOOKINGS
+                      </p>
+                    </div>
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                        {completedConsultsCount}
+                      </p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                        COMPLETED CONSULTS
+                      </p>
+                    </div>
+                  </div>
                   <div className="flex justify-center gap-8">
                     <button
                       type="button"

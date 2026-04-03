@@ -7225,3 +7225,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - If a requested removal already exists in branch state, confirm with search + build and provide latest preview URLs/check locations instead of forcing no-op commits.
+
+---
+
+## 2026-04-03 — Meetings header restored + completed bookings/consults summary panels
+
+**Context:** On `preview/mobile`, user clarified the "MEETINGS" removal was too broad: they wanted only the text above the card toggles removed earlier, not the main meetings header itself. They also requested data panels above meetings tabs showing totals for completed bookings and completed consults.
+
+**Topics covered (entire conversation so far):**
+- Re-read current `AdminMeetingsHub` structure and confirmed the top in-card `MEETINGS` heading had been removed in prior pass.
+- Restored that in-card heading row while keeping tab/toggle structure intact.
+- Added two summary panels directly above the BOOKINGS/CONSULTS tabs in non-view-all mode:
+  - **COMPLETED BOOKINGS** (count)
+  - **COMPLETED CONSULTS** (count)
+- Counts are computed from merged meetings lists and include statuses normalized as `completed` plus fallback handling for `delivered`/`fulfilled` strings.
+- Kept panel styling aligned with existing admin card metrics (soft dark background, red numeric accent, gray labels).
+
+**Decisions / outcomes:**
+- Main meetings header is visible again on the page card.
+- Completed-bookings and completed-consults metrics are now immediately visible above tabs for quick admin scanning.
+- Build remains passing after the update.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored in-card `MEETINGS` heading row
+  - added completed totals computations
+  - added two metric panels above tabs in standard (non-view-all) mode
+
+**Conventions:**
+- On Admin Meetings, keep the main card heading (`MEETINGS`) and place aggregate metrics above tab selectors when requested; only remove duplicated helper copy if explicitly targeted.
