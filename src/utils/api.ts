@@ -670,6 +670,14 @@ export async function postBookingAppointmentMeeting(body: {
   notes?: string;
   orderNumber?: string;
   idempotencyKey?: string;
+  bookingInstallKind?: string;
+  bookingOrderTotalPaidUsd?: number;
+  bookingLineTotalPaidUsd?: number;
+  bookingInstallFeeUsd?: number;
+  bookingBalancePaidUsd?: number;
+  bookingFinalDueUsd?: number;
+  bookingPaymentMethodLabel?: string;
+  bookingBookedAtIso?: string;
 }): Promise<unknown> {
   const res = await apiFetch('/api/booking/appointment-meeting', { method: 'POST', body });
   if (!res.ok) throw new Error(await res.text());
