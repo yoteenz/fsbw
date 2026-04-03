@@ -404,6 +404,13 @@ function CheckoutPage() {
 
       await Promise.allSettled(
         consultItems.map(async (item: any, idx: number) => {
+          const photoUrls = Array.isArray(item?.bookingInspoPhotoUrls)
+            ? item.bookingInspoPhotoUrls
+                .filter((x: unknown): x is string => typeof x === 'string')
+                .map((x: string) => x.trim())
+                .filter((x: string) => x.startsWith('data:image/') || /^https?:\/\//i.test(x) || x.startsWith('/'))
+                .slice(0, 3)
+            : [];
           const idempotencyKey = `BOOKING_CONSULT:${orderNumberForNotes}:${idx}`;
           const names = Array.isArray(item?.bookingInspoFileNames)
             ? item.bookingInspoFileNames.filter((x: unknown): x is string => typeof x === 'string')
@@ -416,6 +423,7 @@ function CheckoutPage() {
             notes: item?.bookingNotes,
             orderNumber: orderNumberForNotes,
             idempotencyKey,
+            inspoPhotoUrls: photoUrls,
             inspoFileNames: names,
           });
         })

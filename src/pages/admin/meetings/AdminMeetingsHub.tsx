@@ -83,6 +83,73 @@ const BOOKING_ADDON_ORDER = [
   'TRAVEL FEE',
 ] as const;
 
+const BOOKING_UNIT_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
+
+const BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL: Record<(typeof BOOKING_UNIT_LABELS)[number], number> = {
+  NOIR: 740,
+  BLANCO: 820,
+  'SOFT WAVE': 760,
+  'BEACH WAVE': 760,
+  'SOFT CURL': 780,
+  'OCEAN CURL': 780,
+};
+
+const CLIENT_STATE_BY_EMAIL: Record<string, string> = {
+  'mock1@test.com': 'CA',
+  'mock2@test.com': 'NY',
+  'mock3@test.com': 'TX',
+  'mock4@test.com': 'IL',
+  'mock5@test.com': 'FL',
+  'mock6@test.com': 'WA',
+  'mock7@test.com': 'GA',
+  'mock8@test.com': 'MA',
+  'mock9@test.com': 'CO',
+  'mock10@test.com': 'AZ',
+  'mock11@test.com': 'MI',
+  'mock12@test.com': 'TX',
+  'mock13@test.com': 'CA',
+  'mock14@test.com': 'PA',
+  'mock15@test.com': 'CA',
+  'mock16@test.com': 'TX',
+  'mock17@test.com': 'NJ',
+  'mock18@test.com': 'TN',
+  'mock19@test.com': 'NC',
+  'mock20@test.com': 'MN',
+  'mock21@test.com': 'TC',
+  'mock22@test.com': 'JP',
+  'mock23@test.com': 'NG',
+  'mock24@test.com': 'IE',
+  'mock25@test.com': 'BR',
+};
+
+const CLIENT_AVATAR_BY_EMAIL: Record<string, string> = {
+  'mock1@test.com': '/assets/gallery-mock.png',
+  'mock2@test.com': '/assets/gallery-mock.png',
+  'mock3@test.com': '/assets/gallery-mock.png',
+  'mock4@test.com': '/assets/gallery-mock.png',
+  'mock5@test.com': '/assets/gallery-mock.png',
+  'mock6@test.com': '/assets/gallery-mock.png',
+  'mock7@test.com': '/assets/gallery-mock.png',
+  'mock8@test.com': '/assets/gallery-mock.png',
+  'mock9@test.com': '/assets/gallery-mock.png',
+  'mock10@test.com': '/assets/gallery-mock.png',
+  'mock11@test.com': '/assets/gallery-mock.png',
+  'mock12@test.com': '/assets/gallery-mock.png',
+  'mock13@test.com': '/assets/gallery-mock.png',
+  'mock14@test.com': '/assets/gallery-mock.png',
+  'mock15@test.com': '/assets/gallery-mock.png',
+  'mock16@test.com': '/assets/gallery-mock.png',
+  'mock17@test.com': '/assets/gallery-mock.png',
+  'mock18@test.com': '/assets/gallery-mock.png',
+  'mock19@test.com': '/assets/gallery-mock.png',
+  'mock20@test.com': '/assets/gallery-mock.png',
+  'mock21@test.com': '/assets/gallery-mock.png',
+  'mock22@test.com': '/assets/gallery-mock.png',
+  'mock23@test.com': '/assets/gallery-mock.png',
+  'mock24@test.com': '/assets/gallery-mock.png',
+  'mock25@test.com': '/assets/gallery-mock.png',
+};
+
 function formatHeaderDate(dateStr: string): string {
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -166,7 +233,108 @@ function orderedUniqueAddons(addons: string[]): string[] {
   return [...ordered, ...extras];
 }
 
-function formatBookingServiceType(m: AdminMeeting): string {
+function normalizeBookingUnitLabel(raw: unknown): (typeof BOOKING_UNIT_LABELS)[number] | null {
+  const upper = String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/_/g, ' ')
+    .replace(/\s+/g, ' ');
+  if (!upper) return null;
+  if (upper.includes('SOFT WAVE')) return 'SOFT WAVE';
+  if (upper.includes('BEACH WAVE')) return 'BEACH WAVE';
+  if (upper.includes('SOFT CURL')) return 'SOFT CURL';
+  if (upper.includes('OCEAN CURL')) return 'OCEAN CURL';
+  if (upper.includes('BLANCO')) return 'BLANCO';
+  if (upper.includes('NOIR')) return 'NOIR';
+  return null;
+}
+
+function normalizeUsdPrice(raw: unknown): number | null {
+  if (raw == null) return null;
+  const n =
+    typeof raw === 'number'
+      ? raw
+      : Number(
+          String(raw)
+            .replace(/,/g, '')
+            .replace(/[^\d.]/g, '')
+        );
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.round(n);
+}
+
+function parseUsStateFromAddress(raw: unknown): string | null {
+  const value = String(raw || '').trim().toUpperCase();
+  if (!value) return null;
+  const parts = value.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length >= 3) {
+    const maybeState = parts[2]?.match(/\b[A-Z]{2}\b/);
+    if (maybeState?.[0]) return maybeState[0];
+  }
+  return null;
+}
+
+function meetingClientEmailKey(m: AdminMeeting): string {
+  return String(m.clientEmail || '').trim().toLowerCase();
+}
+
+function meetingClientProfilePhoto(m: AdminMeeting): string {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const fromMeta = String(meta.clientProfilePhoto || meta.profileImage || '').trim();
+  if (fromMeta.startsWith('/assets/') || /^https?:\/\//i.test(fromMeta)) return fromMeta;
+  const byEmail = CLIENT_AVATAR_BY_EMAIL[meetingClientEmailKey(m)];
+  if (byEmail) return byEmail;
+  return '/assets/profile-thumb.png';
+}
+
+function meetingClientStateCode(m: AdminMeeting): string | null {
+  const email = meetingClientEmailKey(m);
+  if (email && CLIENT_STATE_BY_EMAIL[email]) return CLIENT_STATE_BY_EMAIL[email];
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const explicit = String(meta.clientState || meta.state || '').trim().toUpperCase();
+  if (/^[A-Z]{2}$/.test(explicit)) return explicit;
+  const fromAddress =
+    parseUsStateFromAddress(meta.clientAddress) ||
+    parseUsStateFromAddress(meta.address) ||
+    parseUsStateFromAddress(meta.defaultAddress);
+  return fromAddress;
+}
+
+function meetingClientDisplayNameWithState(m: AdminMeeting): string {
+  const state = meetingClientStateCode(m);
+  return state ? `${m.client} (${state})` : m.client;
+}
+
+function toIsoDateOnly(dateIso: string): string {
+  return String(dateIso || '').slice(0, 10);
+}
+
+function addDaysIso(isoDate: string, days: number): string {
+  const base = parseISODateLocal(toIsoDateOnly(isoDate));
+  base.setDate(base.getDate() + days);
+  const y = base.getFullYear();
+  const m = String(base.getMonth() + 1).padStart(2, '0');
+  const d = String(base.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function meetingHasTravelAddon(m: AdminMeeting): boolean {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const ids = Array.isArray(meta.bookingAddonIds)
+    ? meta.bookingAddonIds.filter((id): id is string => typeof id === 'string')
+    : [];
+  if (ids.some((id) => id.toLowerCase() === 'travel')) return true;
+  return formatBookingAddonsLineForCard(m).toUpperCase().includes('TRAVEL FEE');
+}
+
+type BookingCardDetails = {
+  installKind: 'NEW INSTALL' | 'RE-INSTALL';
+  addons: string[];
+  unitLabel: string;
+  unitPriceUsd: number;
+};
+
+function getBookingCardDetails(m: AdminMeeting): BookingCardDetails {
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
 
   const addonLabels: string[] = [];
@@ -195,35 +363,87 @@ function formatBookingServiceType(m: AdminMeeting): string {
   });
 
   const uniqueAddons = orderedUniqueAddons(addonLabels);
-  if (installKind && uniqueAddons.length > 0) return `${installKind}: ${uniqueAddons.join(', ')}`;
-  if (installKind) return installKind;
-  if (uniqueAddons.length > 0) return `NEW INSTALL: ${uniqueAddons.join(', ')}`;
+  const finalInstallKind: 'NEW INSTALL' | 'RE-INSTALL' = installKind || 'NEW INSTALL';
 
-  const fallback = String(m.type || '').trim().toUpperCase();
-  return fallback || 'NEW INSTALL';
+  const unitCandidates = [
+    meta.bookingUnitName,
+    meta.unitName,
+    meta.bookingUnitLabel,
+    meta.unitLabel,
+    meta.bookingUnitKey,
+    meta.unitKey,
+    meta.bookingUnitId,
+    meta.unitId,
+    meta.bookingAttachedOrderSummary,
+    m.notes,
+    m.type,
+  ];
+  let unitLabel = unitCandidates
+    .map((candidate) => normalizeBookingUnitLabel(candidate))
+    .find((candidate): candidate is (typeof BOOKING_UNIT_LABELS)[number] => Boolean(candidate));
+  if (!unitLabel) unitLabel = 'NOIR';
+
+  const priceCandidates = [
+    meta.bookingUnitPriceUsd,
+    meta.bookingUnitPriceUSD,
+    meta.unitPriceUsd,
+    meta.unitPriceUSD,
+    meta.unitPrice,
+    meta.bookingUnitPrice,
+  ];
+  const detectedPrice = priceCandidates
+    .map((candidate) => normalizeUsdPrice(candidate))
+    .find((candidate): candidate is number => candidate != null);
+  const unitPriceUsd = detectedPrice ?? BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL[unitLabel];
+
+  return {
+    installKind: finalInstallKind,
+    addons: uniqueAddons,
+    unitLabel,
+    unitPriceUsd,
+  };
+}
+
+function formatBookingInstallLineForCard(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return `${details.installKind}: ${details.unitLabel} $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
+}
+
+function formatBookingAddonsLineForCard(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';
 }
 
 function consultInspo(m: AdminMeeting): string[] {
   const meta = m.metadata || {};
-  const arr = meta.inspoFileNames;
-  return Array.isArray(arr) ? arr.map(String) : [];
+  const photoUrls = Array.isArray(meta.inspoPhotoUrls) ? meta.inspoPhotoUrls.map(String).filter(Boolean) : [];
+  const fileNames = Array.isArray(meta.inspoFileNames) ? meta.inspoFileNames.map(String).filter(Boolean) : [];
+  const primarySources = photoUrls.length > 0 ? photoUrls : fileNames;
+  const normalized = primarySources
+    .map((src) => src.trim())
+    .filter(Boolean)
+    .map((src) => {
+      // Keep absolute URLs and root-relative asset paths intact.
+      if (/^https?:\/\//i.test(src) || src.startsWith('/')) return src;
+      // Keep data URLs for real consult uploads synced from booking pages.
+      if (src.startsWith('data:image/')) return src;
+      // If only a filename is stored, map to shared mock gallery image.
+      return '/assets/gallery-mock.png';
+    });
+  const deduped = Array.from(new Set(normalized));
+  const capped = deduped.slice(0, 3);
+  return capped.length > 0 ? capped : ['/assets/gallery-mock.png'];
 }
 
 /** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
 
-function groupMeetingsByClientEmail(rows: AdminMeeting[]): { email: string; rows: AdminMeeting[] }[] {
-  return rows.reduce<{ email: string; rows: AdminMeeting[] }[]>((acc, m) => {
-    const em = (m.clientEmail || 'UNKNOWN').toLowerCase();
-    let g = acc.find((x) => x.email === em);
-    if (!g) {
-      g = { email: em, rows: [] };
-      acc.push(g);
-    }
-    g.rows.push(m);
-    return acc;
-  }, []);
+function viewAllRowLabel(m: AdminMeeting): string {
+  if (m.category === 'appointment') {
+    return `${formatBookingInstallLineForCard(m)} · ${formatBookingAddonsLineForCard(m)}`;
+  }
+  return m.type;
 }
 
 export default function AdminMeetingsHub() {
@@ -255,6 +475,7 @@ export default function AdminMeetingsHub() {
   const [editMessage, setEditMessage] = useState('');
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
+  const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
 
@@ -315,6 +536,24 @@ export default function AdminMeetingsHub() {
       return b.date.localeCompare(a.date);
     });
   }, [mergedMeetings]);
+
+  const completedBookingsCount = useMemo(
+    () =>
+      appointmentMeetings.filter((m) => {
+        const s = String(m.status || '').toLowerCase();
+        return s === 'completed' || s === 'confirmed';
+      }).length,
+    [appointmentMeetings]
+  );
+
+  const completedConsultsCount = useMemo(
+    () =>
+      consultMeetings.filter((m) => {
+        const s = String(m.status || '').toLowerCase();
+        return s === 'completed' || s === 'confirmed';
+      }).length,
+    [consultMeetings]
+  );
 
   const apptDates = useMemo(() => {
     const s = new Set<string>();
@@ -432,13 +671,29 @@ export default function AdminMeetingsHub() {
 
   const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
 
-  const viewAllGroups = useMemo(
-    () =>
-      viewAllMode
-        ? groupMeetingsByClientEmail(viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings)
-        : [],
-    [viewAllMode, appointmentMeetings, consultMeetings]
-  );
+  const viewAllRows = useMemo(() => {
+    if (!viewAllMode) return [] as AdminMeeting[];
+    const base = viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings;
+    return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+  }, [viewAllMode, appointmentMeetings, consultMeetings]);
+
+  const travelBlackoutDates = useMemo(() => {
+    const blocked = new Set<string>();
+    for (const appt of appointmentMeetings) {
+      if (!meetingHasTravelAddon(appt)) continue;
+      blocked.add(addDaysIso(appt.date, 1));
+    }
+    return blocked;
+  }, [appointmentMeetings]);
+
+  const travelHalfDayDates = useMemo(() => {
+    const blocked = new Set<string>();
+    for (const appt of appointmentMeetings) {
+      if (!meetingHasTravelAddon(appt)) continue;
+      blocked.add(addDaysIso(appt.date, -1));
+    }
+    return blocked;
+  }, [appointmentMeetings]);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -473,17 +728,9 @@ export default function AdminMeetingsHub() {
               {viewAllMode ? (
                 <div
                   className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
-                  style={{ borderBottom: '1px solid #e5e7eb', marginBottom: 0 }}
+                  style={{ marginTop: '10px' }}
                 >
-                  <h2
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      margin: 0,
-                    }}
-                  >
+                  <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
                     {viewAllMode === 'bookings' ? 'VIEW ALL BOOKINGS' : 'VIEW ALL CONSULTS'}
                   </h2>
                   <button
@@ -508,7 +755,28 @@ export default function AdminMeetingsHub() {
                   </button>
                 </div>
               ) : (
-                <div className="flex-shrink-0 px-5 pb-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                <div
+                  className="flex-shrink-0 px-5 pb-2"
+                  style={{ borderBottom: mainTab === 'consults' ? 'none' : '1px solid #e5e7eb', marginTop: '10px' }}
+                >
+                  <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                        {completedBookingsCount}
+                      </p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                        TOTAL BOOKED
+                      </p>
+                    </div>
+                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                        {completedConsultsCount}
+                      </p>
+                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                        TOTAL CONSULTED
+                      </p>
+                    </div>
+                  </div>
                   <div className="flex justify-center gap-8">
                     <button
                       type="button"
@@ -555,28 +823,53 @@ export default function AdminMeetingsHub() {
                 </div>
               )}
 
-              <div className="flex-1 min-h-0 overflow-y-auto px-5 py-3" style={{ maxHeight: 'calc(100dvh - 240px)' }}>
+              <div
+                className="flex-1 min-h-0"
+                style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
+              >
+                <div
+                  className="overflow-y-auto"
+                  style={{
+                    maxHeight: 'calc(100dvh - 240px)',
+                    paddingTop: '2px',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 {viewAllMode ? (
                   <>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '0 0 12px 0' }}>
-                      GROUPED BY CLIENT EMAIL (CURRENT MONTH RANGE).
-                    </p>
                     <div className="space-y-3">
-                      {viewAllGroups.map((g) => (
-                        <div key={g.email} style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
-                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>{g.email}</p>
-                          {g.rows.map((m) => (
-                            <p key={m.id} style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                              {m.date} {m.time} — {m.category === 'appointment' ? formatBookingServiceType(m) : m.type}
-                            </p>
-                          ))}
+                      {viewAllRows.map((m) => (
+                        <div
+                          key={m.id}
+                          className="cursor-pointer"
+                          style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
+                          onClick={() => openClientAccount(m)}
+                          role="presentation"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            <img
+                              src={meetingClientProfilePhoto(m)}
+                              alt=""
+                              width={34}
+                              height={34}
+                              style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0 }}
+                            />
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
+                                {meetingClientDisplayNameWithState(m)}
+                              </p>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
+                                {m.date} {m.time} — {viewAllRowLabel(m)}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2" style={{ marginTop: '12px' }}>
                       <button
                         type="button"
                         onClick={() => {
@@ -615,20 +908,34 @@ export default function AdminMeetingsHub() {
                     <div className="grid grid-cols-7 gap-1 mb-4">
                       {calWeeks.flat().map((cell) => {
                         const hasAppt = apptDates.has(cell.iso);
+                        const hasTravelBlock = travelBlackoutDates.has(cell.iso);
+                        const hasTravelHalfDay = travelHalfDayDates.has(cell.iso);
+                        const disabled = hasTravelBlock;
+                        const title = hasTravelBlock
+                          ? 'TRAVEL BLOCK: UNAVAILABLE (FULL DAY)'
+                          : hasTravelHalfDay
+                          ? 'TRAVEL BLOCK: AFTER 12PM UNAVAILABLE'
+                          : undefined;
                         return (
                           <button
                             key={cell.iso}
                             type="button"
-                            onClick={() => setSelectedDay(cell.iso)}
+                            onClick={() => {
+                              if (disabled) return;
+                              setSelectedDay(cell.iso);
+                            }}
+                            disabled={disabled}
+                            title={title}
                             style={{
                               fontFamily: '"Futura PT Medium"',
                               fontSize: '10px',
                               padding: '6px 0',
                               border: '1px solid #e5e7eb',
-                              borderRadius: '4px',
-                              background: hasAppt ? '#fff' : '#f3f4f6',
-                              color: hasAppt ? '#EB1C24' : '#9ca3af',
-                              cursor: 'pointer',
+                              borderRadius: '0',
+                              background: hasTravelBlock ? '#f3f4f6' : hasAppt ? '#fff' : '#f3f4f6',
+                              color: hasTravelBlock ? '#9ca3af' : hasAppt ? '#EB1C24' : '#9ca3af',
+                              cursor: disabled ? 'not-allowed' : 'pointer',
+                              opacity: disabled ? 0.65 : 1,
                             }}
                           >
                             {cell.label}
@@ -637,7 +944,7 @@ export default function AdminMeetingsHub() {
                       })}
                     </div>
                     {selectedDay && (
-                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginBottom: '8px' }}>
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginBottom: '8px', color: '#EB1C24', transform: 'translateX(2px)' }}>
                         {formatHeaderDate(selectedDay)}
                       </p>
                     )}
@@ -669,14 +976,40 @@ export default function AdminMeetingsHub() {
                         >
                           <div className="flex justify-between gap-2 items-start">
                             <div className="min-w-0 flex-1">
+                              <div className="flex items-start gap-2.5">
+                                <img
+                                  src={meetingClientProfilePhoto(m)}
+                                  alt=""
+                                  width={34}
+                                  height={34}
+                                  style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
+                                />
+                                <div className="min-w-0 flex-1">
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
-                                {m.client}{' '}
+                                {meetingClientDisplayNameWithState(m)}{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                 </span>
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#555', margin: '4px 0 0' }}>
-                                {formatBookingServiceType(m)}
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '10px',
+                                  color: '#EB1C24',
+                                  margin: '4px 0 0',
+                                }}
+                              >
+                                {formatBookingInstallLineForCard(m)}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '9px',
+                                  color: '#000000',
+                                  margin: '4px 0 0',
+                                }}
+                              >
+                                {formatBookingAddonsLineForCard(m)}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
@@ -684,6 +1017,8 @@ export default function AdminMeetingsHub() {
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '6px 0 0' }}>
                                 PAID STATUS: SEE ORDER IN CLIENT ACCOUNT
                               </p>
+                                </div>
+                              </div>
                             </div>
                             <button
                               type="button"
@@ -728,8 +1063,17 @@ export default function AdminMeetingsHub() {
                           >
                             <div className="flex justify-between gap-2 items-start">
                               <div className="min-w-0 flex-1">
+                                <div className="flex items-start gap-2.5">
+                                  <img
+                                    src={meetingClientProfilePhoto(m)}
+                                    alt=""
+                                    width={34}
+                                    height={34}
+                                    style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
+                                  />
+                                  <div className="min-w-0 flex-1">
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0, color: '#EB1C24' }}>
-                                  {m.client}{' '}
+                                  {meetingClientDisplayNameWithState(m)}{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
                                     · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                   </span>
@@ -737,9 +1081,15 @@ export default function AdminMeetingsHub() {
                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
                                 {imgs.length > 0 && (
                                   <div className="flex gap-1.5 flex-wrap mt-2">
-                                    {imgs.slice(0, 4).map((src, i) => (
-                                      <div
+                                    {imgs.slice(0, 3).map((src, i) => (
+                                      <button
+                                        type="button"
                                         key={i}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setConsultPhotoPreviewSrc(src);
+                                        }}
+                                        aria-label="Enlarge submitted consult photo"
                                         style={{
                                           width: '40px',
                                           height: '40px',
@@ -748,6 +1098,8 @@ export default function AdminMeetingsHub() {
                                           boxShadow: '0 0 0 1.1px #000000',
                                           boxSizing: 'border-box',
                                           overflow: 'hidden',
+                                          padding: 0,
+                                          cursor: 'zoom-in',
                                         }}
                                       >
                                         <img
@@ -760,13 +1112,15 @@ export default function AdminMeetingsHub() {
                                             display: 'block',
                                           }}
                                         />
-                                      </div>
+                                      </button>
                                     ))}
                                   </div>
                                 )}
                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
                                   {notes}
                                 </p>
+                                  </div>
+                                </div>
                               </div>
                               <button
                                 type="button"
@@ -786,6 +1140,7 @@ export default function AdminMeetingsHub() {
                     )}
                   </>
                 )}
+                </div>
               </div>
             </div>
 
@@ -985,6 +1340,41 @@ export default function AdminMeetingsHub() {
                 CLOSE
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {consultPhotoPreviewSrc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)' }}
+          onClick={() => setConsultPhotoPreviewSrc(null)}
+          role="presentation"
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              maxHeight: '90vh',
+              border: '1.3px solid #000',
+              background: '#fff',
+              padding: '10px',
+              boxSizing: 'border-box',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <img
+              src={consultPhotoPreviewSrc}
+              alt="Consult submitted photo preview"
+              style={{
+                width: '100%',
+                maxHeight: 'calc(90vh - 20px)',
+                objectFit: 'contain',
+                display: 'block',
+                background: '#f3f4f6',
+              }}
+            />
           </div>
         </div>
       )}

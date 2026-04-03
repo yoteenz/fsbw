@@ -685,6 +685,7 @@ export async function postBookingConsultMeeting(body: {
   notes?: string;
   orderNumber?: string;
   idempotencyKey?: string;
+  inspoPhotoUrls?: string[];
   inspoFileNames?: string[];
 }): Promise<unknown> {
   const res = await apiFetch('/api/booking/consult-meeting', { method: 'POST', body });
