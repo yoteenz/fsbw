@@ -8564,3 +8564,43 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For one-line style nudges, keep the change scoped to the exact requested property and preserve neighboring spacing settings.
+
+---
+
+## 2026-04-03 — Bookings wrap/service typography update and dashboard meetings add-ons forced red
+
+**Context:** User requested a new bookings-tab/UI pass with three specific corrections: wrap add-ons after the 4th add-on (not after the 3rd), change the bookings service line (`NEW INSTALL: SOFT WAVE $760 USD`) to gray Futura PT Demi, and fix admin dashboard MEETINGS card so add-ons/service labels (e.g. `CLEAN LACE`, `BROW SCULPTING (3)`) display red instead of black.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat scope-correction work where meetings-tab changes were restored and dashboard meetings-card formatting was targeted.
+- Updated bookings add-ons wrapping logic in `AdminMeetingsHub`:
+  - now keeps first three add-ons on line one and wraps starting at the 4th add-on.
+- Updated bookings service line typography/style in `AdminMeetingsHub`:
+  - font family changed to `"Futura PT Demi"`,
+  - color changed to gray (`#808080`).
+- Diagnosed dashboard red-label issue root cause:
+  - dashboard meetings text is rendered in `StatsCard` label slot, which was hardcoded black.
+- Added label color support to `StatsCard` via optional `labelColor` and applied it for dashboard meetings items so service/add-on label text renders red.
+- Kept dashboard meetings formatter output in `INSTALL:` / `RE-INSTALL:` shape with red label path.
+- Removed an unused helper (`isWithin24Hours`) exposed by the new color wiring and re-ran `npm run build` successfully.
+- Rebased/pushed to `preview/mobile` after remote advanced and updated PR pointer.
+
+**Decisions / outcomes:**
+- Bookings add-ons now wrap at the requested threshold (4th add-on starts next line).
+- Bookings service line now matches gray Futura PT Demi.
+- Admin dashboard MEETINGS service/add-on label text now renders red rather than black.
+- Build passed and updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - add-ons wrap threshold adjusted to wrap from 4th add-on onward.
+  - booking service line style changed to gray Futura PT Demi.
+- `src/pages/admin/dashboard/page.tsx`
+  - meetings items continue using red service color path and pass label color metadata.
+  - removed now-unused `isWithin24Hours` helper.
+- `src/pages/admin/components/StatsCard.tsx`
+  - added optional `labelColor` in `StatsItem`.
+  - label text color now supports per-item override, enabling red meetings labels.
+
+**Conventions:**
+- When dashboard stat rows require colored service/add-on text, color must be applied to both label and value paths if label and value are rendered separately.
