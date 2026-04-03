@@ -7153,3 +7153,26 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - Admin meeting cards should navigate to `/admin/clients?email=...` for detail context in current app flow.
 - Admin header search should produce a concrete page-level filter via query param when external search handler is not supplied.
+
+---
+
+## 2026-04-03 — Meetings consult names red + strict non-appointment calendar gray background
+
+**Context:** User reported two remaining UI mismatches after the prior meetings/search pass: consult-tab client names should be red, and bookings calendar still showed some white background dates that did not have appointments.
+
+**Topics covered (entire conversation so far):**
+- Verified consult card name row still rendered in default black while the user wanted red.
+- Verified bookings calendar cell style needed a stricter white/gray rule to avoid any non-appointment dates rendering white.
+- Applied targeted styling adjustments in `AdminMeetingsHub` only (no flow or data-model changes).
+
+**Decisions / outcomes:**
+- Consult-tab client names now render in brand red (`#EB1C24`), while premium/standard badge color behavior remains as previously set.
+- Bookings calendar date cells now use white background **only when `hasAppt` is true**; all non-appointment dates (in-month or out-of-month) are gray.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings calendar cell background condition changed to `hasAppt ? '#fff' : '#f3f4f6'`
+  - consult card client name line updated to red text
+
+**Conventions:**
+- On admin meetings bookings calendar, appointment dates (red text) are the only dates with white background; all other dates stay gray.

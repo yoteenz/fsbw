@@ -626,7 +626,7 @@ export default function AdminMeetingsHub() {
                               padding: '6px 0',
                               border: '1px solid #e5e7eb',
                               borderRadius: '4px',
-                              background: !cell.inMonth || !hasAppt ? '#f3f4f6' : '#fff',
+                              background: hasAppt ? '#fff' : '#f3f4f6',
                               color: hasAppt ? '#EB1C24' : '#9ca3af',
                               cursor: 'pointer',
                             }}
@@ -728,7 +728,7 @@ export default function AdminMeetingsHub() {
                           >
                             <div className="flex justify-between gap-2 items-start">
                               <div className="min-w-0 flex-1">
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0, color: '#EB1C24' }}>
                                   {m.client}{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
                                     · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
