@@ -997,7 +997,7 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
-                    <div className="flex items-center justify-between mb-2" style={{ marginTop: '8px' }}>
+                    <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
                       <button
                         type="button"
                         onClick={() => {
@@ -1140,7 +1140,7 @@ export default function AdminMeetingsHub() {
                               >
                                 {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
                               </p>
                               {(() => {
@@ -1154,7 +1154,7 @@ export default function AdminMeetingsHub() {
                                       <div
                                         style={{
                                           width: '100%',
-                                          height: '7px',
+                                          height: '9px',
                                           backgroundColor: '#E0E0E0',
                                           borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
                                           overflow: 'hidden',
@@ -1177,7 +1177,7 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             fontFamily: '"Futura PT Medium"',
                                             fontSize: '9px',
-                                            color: '#808080',
+                                            color: '#EB1C24',
                                             margin: 0,
                                           }}
                                         >
