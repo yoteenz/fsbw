@@ -8202,3 +8202,28 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For the meetings top summary cards, use fixed explicit height and bottom-aligned content when user requests exact visual positioning.
+
+---
+
+## 2026-04-03 — Consults follow-up: summary panels reduced to 90px and hair option text switched to Futura Medium
+
+**Context:** User requested a small visual follow-up on consults tab: reduce summary panel height from 100px to 90px and change the `WIG ONLY` / `WIG + INSTALL` line to Futura PT Medium.
+
+**Topics covered (entire conversation so far):**
+- Confirmed the active implementation in `AdminMeetingsHub` was using `height: 100px` with bottom-weighted panel text from the prior request.
+- Updated both summary cards (`TOTAL BOOKED`, `TOTAL CONSULTED`) from `100px` to `90px`.
+- Updated consult hair option line typography from `Futura PT Book` to `Futura PT Medium`.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Summary panel height is now **90px** on both totals cards.
+- `WIG ONLY` / `WIG + INSTALL` now render in **Futura PT Medium**.
+- Changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '100px'` -> `height: '90px'` on both summary cards.
+  - consult hair line `fontFamily: "Futura PT Book"` -> `"Futura PT Medium"`.
+
+**Conventions:**
+- Keep consults-tab visual follow-ups narrowly scoped to requested style deltas unless user asks for broader refactors.
