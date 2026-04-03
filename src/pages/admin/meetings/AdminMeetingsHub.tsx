@@ -1113,7 +1113,7 @@ export default function AdminMeetingsHub() {
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1">
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0 }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>
                                 {meetingClientDisplayNameWithState(m)}{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
@@ -1177,7 +1177,7 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             fontFamily: '"Futura PT Medium"',
                                             fontSize: '9px',
-                                            color: '#EB1C24',
+                                            color: '#808080',
                                             margin: 0,
                                           }}
                                         >
@@ -1185,9 +1185,9 @@ export default function AdminMeetingsHub() {
                                         </p>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Book"',
+                                            fontFamily: '"Futura PT Medium"',
                                             fontSize: '9px',
-                                            color: '#808080',
+                                            color: '#EB1C24',
                                             margin: 0,
                                             textAlign: 'right',
                                           }}
