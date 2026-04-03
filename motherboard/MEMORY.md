@@ -7176,3 +7176,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - On admin meetings bookings calendar, appointment dates (red text) are the only dates with white background; all other dates stay gray.
+
+---
+
+## 2026-04-03 — Preview branch workflow setup (`preview/mobile`)
+
+**Context:** User asked for a stable mobile-review workflow using Vercel previews without repeated production deploys. They confirmed preview links were stale and requested a dedicated branch to keep previews current.
+
+**Topics covered (entire conversation so far):**
+- Clarified that branch-specific Vercel preview URLs are snapshot-based and can become stale if not updated by new commits on that branch.
+- Recommended workflow: keep production on `master`, do iterative changes on a persistent preview branch, and review the latest Vercel preview generated per commit on that branch.
+- User requested creation of a dedicated branch now.
+
+**Decisions / outcomes:**
+- Created and switched to local branch `preview/mobile` from current repository state.
+- Pushed branch to `origin` and set upstream tracking so future commits on this branch will generate/update preview deployments.
+
+**Changes:**
+- Git branch operations only (no code file changes):
+  - created `preview/mobile`
+  - pushed `preview/mobile` to remote
+  - set upstream tracking to `origin/preview/mobile`
+
+**Conventions:**
+- Going forward for this chat/workflow, use `preview/mobile` for iterative changes and mobile Vercel preview validation; only push/merge to `master` when explicitly asked to ship production.
