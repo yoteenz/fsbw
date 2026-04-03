@@ -8137,3 +8137,29 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When moving feature-branch work onto `preview/mobile`, resolve conflicts by preserving requested UI behavior and keep motherboard entries append-only (do not drop either side’s memory entries).
+
+---
+
+## 2026-04-03 — Meetings totals panels set to 100px with bottom-positioned labels
+
+**Context:** User requested a specific follow-up adjustment to the consults/meetings summary panels: change current panel height from 88px to 100px and move panel text toward the bottom instead of vertically centered.
+
+**Topics covered (entire conversation so far):**
+- Confirmed existing panel configuration in `AdminMeetingsHub` before editing (both summary cards at `height: 88px`, text vertically centered via `justifyContent: center`).
+- Updated both top summary cards (`TOTAL BOOKED`, `TOTAL CONSULTED`) to fixed `height: 100px`.
+- Changed vertical alignment from centered to bottom-weighted by switching to `justifyContent: 'flex-end'` and adding bottom spacing with `paddingBottom: '10px'`.
+- Committed and pushed the change directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Meetings summary panel height is now exactly **100px**.
+- Summary panel text stacks are now visually positioned toward the bottom of each card instead of center.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '88px'` -> `height: '100px'` on both summary cards.
+  - `justifyContent: 'center'` -> `justifyContent: 'flex-end'`.
+  - added `paddingBottom: '10px'` for bottom positioning.
+
+**Conventions:**
+- For the meetings top summary cards, use fixed explicit height and bottom-aligned content when user requests exact visual positioning.
