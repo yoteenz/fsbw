@@ -309,6 +309,7 @@ export default function BookingConsultationPage() {
           bookingTier: tier,
           bookingHairOption: hairOption,
           bookingNotes: notes.trim(),
+          bookingInspoPhotoUrls: inspoItems.map((it) => it.dataUrl).slice(0, MAX_HAIR_INSPO_PHOTOS),
           bookingInspoFileNames: inspoItems.map((it) => it.name),
           bookingInspoFileName: inspoItems.map((it) => it.name).join(' · '),
           bookingBagSubtitle: hairOption,

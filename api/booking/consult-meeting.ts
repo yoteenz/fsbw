@@ -10,6 +10,7 @@ type Body = {
   notes?: string;
   orderNumber?: string;
   idempotencyKey?: string;
+  inspoPhotoUrls?: string[];
   inspoFileNames?: string[];
 };
 
@@ -52,8 +53,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const tier = String(body.tier || '').toLowerCase();
   const hairOption = String(body.hairOption || '').trim();
   const notes = String(body.notes || '').trim();
+  const inspoPhotoUrls = Array.isArray(body.inspoPhotoUrls)
+    ? body.inspoPhotoUrls
+        .map((s) => String(s).trim())
+        .filter((s) => s.startsWith('data:image/') || /^https?:\/\//i.test(s) || s.startsWith('/'))
+        .slice(0, 3)
+    : [];
   const inspoFileNames = Array.isArray(body.inspoFileNames)
-    ? body.inspoFileNames.map((s) => String(s)).filter(Boolean)
+    ? body.inspoFileNames.map((s) => String(s).trim()).filter(Boolean).slice(0, 3)
     : [];
 
   const type = 'WIG CONSULT';
@@ -72,6 +79,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     tier: tier || 'standard',
     hairOption: hairOption || null,
     consultNotes: notes || null,
+    inspoPhotoUrls,
     inspoFileNames,
     orderNumber: orderNumber || null,
     idempotencyKey: idempotencyKey || null,
