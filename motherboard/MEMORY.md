@@ -7572,3 +7572,48 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
   - list rows should show bookings only for upcoming entries,
   - service labels should use `INSTALL` singular with compact add-on summary (`INSTALL + X (N)` when multiple add-ons),
   - ticker should report upcoming bookings for today/week/month in repeating sequence.
+
+---
+
+## 2026-04-03 — Meetings mock duration realism + client-photo sourcing + direct client-details routing
+
+**Context:** Continuing the same conversation (bookings-tab/admin meetings + dashboard meetings polish), user reported three remaining issues: mock appointment durations were unrealistic and detached from service/add-on logic, panel avatars should be rounded/larger and use the same client-image source as client details, and tapping client panels still opened clients overview instead of that client’s details state.
+
+**Topics covered (entire conversation so far):**
+- Previously in this chat, bookings/consults panel UI and dashboard meetings card semantics were adjusted (counts, labels, ticker wording, add-on compaction), then user requested this follow-up pass for realism and navigation correctness.
+- **Mock duration realism**
+  - Reworked appointment mock generation in `adminMeetingsMock` to derive durations from booking logic instead of random 30–75 min values.
+  - Added explicit install base durations (`NEW_INSTALL` 150 min, `RE_INSTALL` 120 min) and add-on duration map (braids, brow services, makeup, mink lashes, clean lace; travel excluded from in-chair duration).
+  - Mock appointment type/services now derive from install kind + selected add-on ids, and `duration` now equals computed total minutes to keep displayed card durations coherent with selected add-ons.
+- **Client photos on meetings panels**
+  - Replaced meetings-panel avatar fallback map with sourcing that mirrors client-details profile-image precedence:
+    - metadata image fields (`clientProfilePhoto`, `profileImage`, `photo`, `profilePhoto`, `avatar`) when valid
+    - then `registeredUsers` lookup by client email using same key set as client details
+    - fallback to `/assets/profile-thumb.png`.
+  - Updated panel avatar presentation across bookings/consults/view-all rows to rounded circles and increased dimensions from 34px to 44px (~30% larger).
+- **Client panel navigation to details**
+  - Updated panel click routing target from `/admin/clients?email=...` to `/admin/clients/overview?email=...`, which is the active route that reads the email query and opens selected client details on load.
+  - This preserves direct “open that client detail state” behavior from meetings rows.
+- Re-ran full build validation after code changes and fixed one TypeScript narrowing issue in mock add-on label mapping by widening id typing for comparison-safe normalization.
+
+**Decisions / outcomes:**
+- Appointment mock durations now reflect install/add-on logic and no longer show mismatched short durations for long service combinations.
+- Meetings-panel avatars now follow client-details image sourcing priority, are rounded, and are visually larger.
+- Tapping any meetings client panel now routes to the client-details state for that specific email via the correct clients overview route.
+
+**Changes:**
+- `src/utils/adminMeetingsMock.ts`
+  - narrowed appointment service options to install types used by booking cards
+  - added install/add-on duration constants and computed appointment duration generation
+  - aligned generated appointment `type`/`services` with install + add-on composition
+  - resolved TS type narrowing issue in add-on label conversion.
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed static avatar-by-email map
+  - added normalized profile-image candidate helpers + `registeredUsers` lookup by email
+  - updated avatar rendering style/size (rounded 44px) in bookings, consults, and view-all rows
+  - changed `openClientAccount` navigate target to `/admin/clients/overview?email=...`.
+
+**Conventions:**
+- Meetings mock appointment durations should be computed from install base + add-on durations (not randomized independent of services).
+- Meetings panel avatars should follow client-details profile-image precedence and remain rounded/larger for quick identity recognition.
+- Client-panel deep-links from meetings should target `/admin/clients/overview?email=...` so selected details open reliably.
