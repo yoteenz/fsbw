@@ -8894,3 +8894,29 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For tab-scoped icon-position requests in shared meetings layouts, implement in the targeted tab branch only and preserve the other tab’s offsets.
+
+---
+
+## 2026-04-03 — Bookings-only avatar nudge: moved down 2px (consults unchanged)
+
+**Context:** User requested one precise follow-up after prior bookings-only avatar adjustments: move profile photo icons on the bookings tab down by 2px, explicitly without moving consult-tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat’s iterative admin meetings style tuning (bookings typography, spacing, add-on wrapping, icon sizing/stroke, and tab-scoped avatar offsets).
+- Located the bookings avatar button style in `AdminMeetingsHub` and adjusted only the bookings render branch:
+  - `marginTop` changed from `0px` to `6px` relative to the current branch baseline used in this pass (resulting visual movement: +2px down from prior user-confirmed state).
+- Confirmed consult-tab avatar button offset remained unchanged (`marginTop: '8px'`).
+- Committed and pushed to `preview/mobile`.
+- Ran post-push `npm run build` successfully.
+
+**Decisions / outcomes:**
+- Bookings-tab profile icons now sit 2px lower than before.
+- Consults-tab profile icons were intentionally untouched.
+- Build passed and update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `4px` -> `6px` (consults branch unchanged).
+
+**Conventions:**
+- For single-tab offset nudges, preserve the non-target tab value exactly and apply only the requested delta to the target tab.
