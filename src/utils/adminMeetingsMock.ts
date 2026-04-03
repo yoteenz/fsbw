@@ -24,14 +24,8 @@ export type AdminMeeting = {
 };
 
 export const APPOINTMENT_SERVICE_OPTIONS = [
-  'INSTALLS',
-  'RE-INSTALLS',
-  'BROW TINT',
-  'BROW SCULPTING',
-  'MINK LASHES',
-  'TRAVEL FEE',
-  'BRAIDS',
-  'MAKEUP',
+  'INSTALL',
+  'RE-INSTALL',
 ] as const;
 
 export const CONSULTATION_TYPE_LABEL = 'WIG CONSULT';
@@ -98,6 +92,23 @@ export const SCHEDULE_TIME_OPTIONS = [
   '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
   '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM',
 ];
+
+const INSTALL_BASE_MINUTES_BY_KIND: Record<'NEW_INSTALL' | 'RE_INSTALL', number> = {
+  NEW_INSTALL: 150,
+  RE_INSTALL: 120,
+};
+
+// Matches booking/appointment page add-on duration model so meetings mock durations stay realistic.
+const BOOKING_ADDON_DURATION_MINUTES_BY_ID: Record<string, number> = {
+  braids: 60,
+  'brow-clean': 40,
+  'brow-tint': 60,
+  makeup: 150,
+  'mink-lashes': 20,
+  'clean-lace': 40,
+};
+
+const BOOKING_ADDON_IDS_FOR_MOCK = ['braids', 'brow-clean', 'brow-tint', 'makeup', 'mink-lashes', 'clean-lace', 'travel'] as const;
 
 function formatISODate(d: Date): string {
   const y = d.getFullYear();
@@ -249,17 +260,28 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         },
       });
     } else {
-      const numServices = 1 + Math.floor(rnd() * 3);
-      const services: string[] = [];
-      const pool = [...APPOINTMENT_SERVICE_OPTIONS];
-      for (let s = 0; s < numServices; s++) {
-        const idx = Math.floor(rnd() * pool.length);
-        services.push(pool.splice(idx, 1)[0]);
-      }
+      const bookingInstallKind: 'NEW_INSTALL' | 'RE_INSTALL' = rnd() > 0.5 ? 'NEW_INSTALL' : 'RE_INSTALL';
+      const bookingAddonIds = BOOKING_ADDON_IDS_FOR_MOCK.filter(() => rnd() > 0.62).slice(0, 4);
+      const services = [
+        bookingInstallKind === 'RE_INSTALL' ? 'RE-INSTALL' : 'INSTALL',
+        ...bookingAddonIds
+          .map((id) => {
+            if (id === 'brow-clean') return 'BROW SCULPTING';
+            if (id === 'brow-tint') return 'BROW TINT';
+            if (id === 'mink-lashes') return 'MINK LASHES';
+            if (id === 'clean-lace') return 'CLEAN LACE';
+            if (id === 'travel') return 'TRAVEL FEE';
+            return id.toUpperCase();
+          }),
+      ];
       const statusRoll = rnd();
       const status: AdminMeeting['status'] =
         statusRoll > 0.72 ? 'Pending' : statusRoll > 0.04 ? 'Confirmed' : 'Canceled';
-      const durationM = 30 + Math.floor(rnd() * 4) * 15;
+      let durationM = INSTALL_BASE_MINUTES_BY_KIND[bookingInstallKind];
+      for (const addonId of bookingAddonIds) {
+        const extra = BOOKING_ADDON_DURATION_MINUTES_BY_ID[addonId];
+        if (extra != null) durationM += extra;
+      }
       meetings.push({
         id: `mock-${dateKey}-a-${i}`,
         date: dateKey,
@@ -274,12 +296,10 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         services,
         metadata: {
           tier: membershipType === 'PREMIUM' ? 'premium' : 'standard',
-          bookingInstallKind: rnd() > 0.5 ? 'NEW_INSTALL' : 'RE_INSTALL',
+          bookingInstallKind,
           bookingUnitName: ['NOIR', 'BLANCO', 'SOFT WAVE', 'SOFT CURL', 'BEACH WAVE', 'OCEAN CURL'][Math.floor(rnd() * 6)],
           bookingUnitPriceUsd: [740, 820, 760, 780, 760, 780][Math.floor(rnd() * 6)],
-          bookingAddonIds: ['braids', 'brow-clean', 'brow-tint', 'makeup', 'mink-lashes', 'travel']
-            .filter(() => rnd() > 0.62)
-            .slice(0, 4),
+          bookingAddonIds,
         },
       });
     }

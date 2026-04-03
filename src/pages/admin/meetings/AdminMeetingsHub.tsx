@@ -122,34 +122,6 @@ const CLIENT_STATE_BY_EMAIL: Record<string, string> = {
   'mock25@test.com': 'BR',
 };
 
-const CLIENT_AVATAR_BY_EMAIL: Record<string, string> = {
-  'mock1@test.com': '/assets/gallery-mock.png',
-  'mock2@test.com': '/assets/gallery-mock.png',
-  'mock3@test.com': '/assets/gallery-mock.png',
-  'mock4@test.com': '/assets/gallery-mock.png',
-  'mock5@test.com': '/assets/gallery-mock.png',
-  'mock6@test.com': '/assets/gallery-mock.png',
-  'mock7@test.com': '/assets/gallery-mock.png',
-  'mock8@test.com': '/assets/gallery-mock.png',
-  'mock9@test.com': '/assets/gallery-mock.png',
-  'mock10@test.com': '/assets/gallery-mock.png',
-  'mock11@test.com': '/assets/gallery-mock.png',
-  'mock12@test.com': '/assets/gallery-mock.png',
-  'mock13@test.com': '/assets/gallery-mock.png',
-  'mock14@test.com': '/assets/gallery-mock.png',
-  'mock15@test.com': '/assets/gallery-mock.png',
-  'mock16@test.com': '/assets/gallery-mock.png',
-  'mock17@test.com': '/assets/gallery-mock.png',
-  'mock18@test.com': '/assets/gallery-mock.png',
-  'mock19@test.com': '/assets/gallery-mock.png',
-  'mock20@test.com': '/assets/gallery-mock.png',
-  'mock21@test.com': '/assets/gallery-mock.png',
-  'mock22@test.com': '/assets/gallery-mock.png',
-  'mock23@test.com': '/assets/gallery-mock.png',
-  'mock24@test.com': '/assets/gallery-mock.png',
-  'mock25@test.com': '/assets/gallery-mock.png',
-};
-
 function formatHeaderDate(dateStr: string): string {
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -278,11 +250,42 @@ function meetingClientEmailKey(m: AdminMeeting): string {
   return String(m.clientEmail || '').trim().toLowerCase();
 }
 
+function normalizeProfileImageCandidate(raw: unknown): string | null {
+  const value = String(raw || '').trim();
+  if (!value) return null;
+  if (value.startsWith('/assets/') || /^https?:\/\//i.test(value) || value.startsWith('data:image/')) return value;
+  return null;
+}
+
+function profileImageFromRegisteredUsersByEmail(email: string): string | null {
+  if (!email || typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem('registeredUsers');
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return null;
+    const found = parsed.find((u: any) => String(u?.email || '').trim().toLowerCase() === email);
+    if (!found || typeof found !== 'object') return null;
+    return (
+      normalizeProfileImageCandidate((found as Record<string, unknown>).profileImage) ||
+      normalizeProfileImageCandidate((found as Record<string, unknown>).photo) ||
+      normalizeProfileImageCandidate((found as Record<string, unknown>).profilePhoto) ||
+      normalizeProfileImageCandidate((found as Record<string, unknown>).avatar)
+    );
+  } catch {
+    return null;
+  }
+}
+
 function meetingClientProfilePhoto(m: AdminMeeting): string {
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
-  const fromMeta = String(meta.clientProfilePhoto || meta.profileImage || '').trim();
-  if (fromMeta.startsWith('/assets/') || /^https?:\/\//i.test(fromMeta)) return fromMeta;
-  const byEmail = CLIENT_AVATAR_BY_EMAIL[meetingClientEmailKey(m)];
+  const fromMeta =
+    normalizeProfileImageCandidate(meta.clientProfilePhoto) ||
+    normalizeProfileImageCandidate(meta.profileImage) ||
+    normalizeProfileImageCandidate(meta.photo) ||
+    normalizeProfileImageCandidate(meta.profilePhoto) ||
+    normalizeProfileImageCandidate(meta.avatar);
+  if (fromMeta) return fromMeta;
+  const byEmail = profileImageFromRegisteredUsersByEmail(meetingClientEmailKey(m));
   if (byEmail) return byEmail;
   return '/assets/profile-thumb.png';
 }
@@ -577,7 +580,7 @@ export default function AdminMeetingsHub() {
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
-    if (em) navigate(`/admin/clients?email=${encodeURIComponent(em.toLowerCase())}`);
+    if (em) navigate(`/admin/clients/overview?email=${encodeURIComponent(em.toLowerCase())}`);
     else setHubNotice('NO CLIENT EMAIL ON FILE FOR THIS ROW.');
   };
 
@@ -850,9 +853,9 @@ export default function AdminMeetingsHub() {
                             <img
                               src={meetingClientProfilePhoto(m)}
                               alt=""
-                              width={34}
-                              height={34}
-                              style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0 }}
+                              width={44}
+                              height={44}
+                              style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
                             />
                             <div style={{ minWidth: 0, flex: 1 }}>
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
@@ -975,9 +978,9 @@ export default function AdminMeetingsHub() {
                                 <img
                                   src={meetingClientProfilePhoto(m)}
                                   alt=""
-                                  width={34}
-                                  height={34}
-                                  style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
+                                  width={44}
+                                  height={44}
+                                  style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
                                 />
                                 <div className="min-w-0 flex-1">
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0 }}>
@@ -1062,9 +1065,9 @@ export default function AdminMeetingsHub() {
                                   <img
                                     src={meetingClientProfilePhoto(m)}
                                     alt=""
-                                    width={34}
-                                    height={34}
-                                    style={{ width: '34px', height: '34px', objectFit: 'cover', borderRadius: 0, border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
+                                    width={44}
+                                    height={44}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
                                   />
                                   <div className="min-w-0 flex-1">
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', margin: 0, color: '#EB1C24' }}>

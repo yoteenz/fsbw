@@ -7584,25 +7584,13 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 - Build passes after dependency install in this environment.
 
 **Changes:**
-`src/pages/admin/meetings/AdminMeetingsHub.tsx`
-  - consult-only divider removal logic on header block (`borderBottom` conditional by tab)
-  - `consultInspo(...)` normalized to prefer URLs, preserve data URLs, dedupe, and cap to 3
-  - consult thumbs capped to 3 and converted to interactive buttons
-  - added `consultPhotoPreviewSrc` state + fullscreen preview modal
-- `src/pages/booking/consultation/page.tsx`
-  - persisted `bookingInspoPhotoUrls` (capped to max 3) on booking-consult cart items
-- `src/pages/checkout/page.tsx`
-  - added consult photo URL extraction/validation (`data:image`, absolute, root-relative), capped to 3, then sent to API
-- `src/utils/api.ts`
-  - `postBookingConsultMeeting` body type now includes `inspoPhotoUrls?: string[]`
-- `api/booking/consult-meeting.ts`
-  - accepts `inspoPhotoUrls`, validates + caps to 3
-  - caps `inspoFileNames` to 3
-  - persists `inspoPhotoUrls` in meeting metadata
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed tabs container gray bottom border style
+  - changed calendar day button border to conditional red when `selectedDay === cell.iso`
+  - removed selected-date text paragraph render block above booking cards
 
 **Conventions:**
-- For admin consult cards, show at most 3 submitted photos and use tap-to-enlarge for detailed viewing.
-- Prefer `metadata.inspoPhotoUrls` as authoritative submitted-image sources for consult meetings; use filename fallback only when URLs are absent.
+- For bookings tab calendar emphasis, selected day should be indicated by red cell border rather than a separate date text label above client rows.
 
 ---
 
@@ -7638,3 +7626,140 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When merging UI refinement branches into `master`, preserve requested visual behavior during conflict resolution and keep motherboard memory append-only with all conflict markers removed.
+
+---
+
+## 2026-04-03 — Consult tab update pass: divider, panel identity, 3-photo cap, enlarge, and client-detail routing
+
+**Context:** User requested consult-tab-focused updates: remove the gray line below tabs on consult tab only, show client profile photos + state on booking panels (`NAME (ST)` like `REESE SCOTT (NJ)`), enforce max 3 submitted photos in sync with A/C pages, allow tapping submitted photos to enlarge, and ensure tapping a client panel opens that client’s admin detail page.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and validated this work should be applied in `AdminMeetingsHub` + consult booking/checkout/API pipeline.
+- Verified that photo + state + panel click-to-client-detail were largely already present on booking/consult cards and view-all rows; preserved those behaviors while implementing missing requirements.
+- Updated consult-tab header wrapper so the gray divider line is removed only when `mainTab === 'consults'` (bookings tab keeps current divider styling).
+- Synced consult submitted-photo data flow with booking/checkout/admin:
+  - booking consult cart line now stores capped `bookingInspoPhotoUrls` (data URLs) alongside file names.
+  - checkout’s consult-meeting sync now forwards `inspoPhotoUrls` (validated + sliced to 3) and existing names.
+  - booking consult API route now accepts/stores `inspoPhotoUrls` and caps both URLs + names to max 3 in metadata.
+  - shared API client type updated for new `inspoPhotoUrls` field.
+- Updated admin consult image rendering logic to prefer `inspoPhotoUrls` (falls back to `inspoFileNames`), keep data URLs/root-relative/http(s), dedupe, and cap display at 3.
+- Added consult submitted-photo tap-to-enlarge behavior in Admin Meetings with an overlay preview modal; thumbnail taps stop propagation so they open preview instead of immediately navigating away.
+- Kept client panel navigation behavior intact (`/admin/clients?email=...`) across bookings/consults/view-all rows.
+- Ran build verification; initial failure due to missing local `tsc` before install, then installed dependencies and re-ran successfully.
+
+**Decisions / outcomes:**
+- Consult tab now removes the gray line below tabs only in the consult state.
+- Booking/consult panels continue to show profile photo + `NAME (STATE)` and open admin client detail on row tap.
+- Consult submitted-photo handling is now capped and consistent across booking input, checkout sync, API persistence, and admin display.
+- Consult submitted photos in admin can now be enlarged via tap without breaking row navigation flow.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult-only divider removal logic on header block (`borderBottom` conditional by tab)
+  - `consultInspo(...)` normalized to prefer URLs, preserve data URLs, dedupe, and cap to 3
+  - consult thumbs capped to 3 and converted to interactive buttons
+  - added `consultPhotoPreviewSrc` state + fullscreen preview modal
+- `src/pages/booking/consultation/page.tsx`
+  - persisted `bookingInspoPhotoUrls` (capped to max 3) on booking-consult cart items
+- `src/pages/checkout/page.tsx`
+  - added consult photo URL extraction/validation (`data:image`, absolute, root-relative), capped to 3, then sent to API
+- `src/utils/api.ts`
+  - `postBookingConsultMeeting` body type now includes `inspoPhotoUrls?: string[]`
+- `api/booking/consult-meeting.ts`
+  - accepts `inspoPhotoUrls`, validates + caps to 3
+  - caps `inspoFileNames` to 3
+  - persists `inspoPhotoUrls` in meeting metadata
+
+**Conventions:**
+- For admin consult cards, show at most 3 submitted photos and use tap-to-enlarge for detailed viewing.
+- Prefer `metadata.inspoPhotoUrls` as authoritative submitted-image sources for consult meetings; use filename fallback only when URLs are absent.
+
+---
+
+## 2026-04-03 — Dashboard meetings card counts/labels/ticker aligned to meetings-page semantics
+
+**Context:** In this chat thread, the user first posted a broad bookings-tab update list, then clarified most of those edits were accidentally already sent/implemented and asked to finish the remaining dashboard-specific meetings card behavior. They requested the dashboard meetings header number to represent completed consults + bookings from meetings-page logic, service label copy fixes (`INSTALL` singular), add-on compaction (`INSTALL + ADDON (N)` for extra add-ons), prevention of orphan add-on-only labels, and a scrolling ticker that reports upcoming booking counts for today/week/month and repeats.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected admin meetings + booking appointment files to verify which earlier bookings-tab requests were already in place (avatars/state, selected date styling, add-on text size, click-through to client details, travel-block visuals).
+- User clarified to stop reworking already-implemented bookings-tab edits and focus on the Admin Dashboard MEETINGS card.
+- Traced dashboard meetings-card data pipeline in `src/pages/admin/dashboard/page.tsx`:
+  - previous header count was using upcoming bookings length (hence values like `30`)
+  - card labels were using raw `service_name` text (e.g., `INSTALLS`, possible add-on-only tokens)
+  - highlight text was a generic upcoming-appointments message.
+- Implemented dashboard-card formatting and counting updates against the same merged meetings source used for admin meetings (mock + API + local merge):
+  - header count now equals completed/confirmed meetings total (appointments + consultations) for the month range
+  - booking row service label now always starts with `INSTALL`
+  - add-ons collapsed to one visible add-on, with remainder count in parentheses (`INSTALL + BRAIDS (3)`)
+  - add-on parsing now reads metadata `bookingAddonIds` first, then token fallback from `type`, preventing standalone add-on labels (e.g., `BROW SCULPTING` by itself)
+  - ticker/highlight now uses bookings-only upcoming counts for TODAY, THIS WEEK, THIS MONTH and repeats the sequence for continuous scroll.
+- Validated by running project build after installing dependencies in the cloud environment.
+
+**Decisions / outcomes:**
+- The dashboard MEETINGS card header number is now defined as completed + confirmed meetings (consults and bookings) from the meetings pipeline, instead of upcoming-bookings count.
+- Dashboard booking service labels are normalized to `INSTALL` singular and compact add-on display format.
+- Dashboard meetings ticker now follows bookings-only cadence and copy: TODAY → THIS WEEK → THIS MONTH (repeated).
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added dashboard booking add-on normalization helpers
+  - added `formatDashboardMeetingServiceLabel()` for `INSTALL + ADDON (N)` formatting
+  - changed meetings header count to completed/confirmed total across all meetings categories
+  - changed meetings card rows to bookings-only upcoming list with normalized service labels
+  - replaced generic highlight copy with repeated TODAY/WEEK/MONTH upcoming-bookings ticker.
+- Environment/runtime:
+  - ran `npm install` (cloud agent) so `tsc` became available
+  - ran `npm run build` successfully.
+
+**Conventions:**
+- On the admin dashboard MEETINGS card:
+  - header count should represent completed/confirmed meetings total (bookings + consults),
+  - list rows should show bookings only for upcoming entries,
+  - service labels should use `INSTALL` singular with compact add-on summary (`INSTALL + X (N)` when multiple add-ons),
+  - ticker should report upcoming bookings for today/week/month in repeating sequence.
+
+---
+
+## 2026-04-03 — Meetings mock duration realism + client-photo sourcing + direct client-details routing
+
+**Context:** Continuing the same conversation (bookings-tab/admin meetings + dashboard meetings polish), user reported three remaining issues: mock appointment durations were unrealistic and detached from service/add-on logic, panel avatars should be rounded/larger and use the same client-image source as client details, and tapping client panels still opened clients overview instead of that client’s details state.
+
+**Topics covered (entire conversation so far):**
+- Previously in this chat, bookings/consults panel UI and dashboard meetings card semantics were adjusted (counts, labels, ticker wording, add-on compaction), then user requested this follow-up pass for realism and navigation correctness.
+- **Mock duration realism**
+  - Reworked appointment mock generation in `adminMeetingsMock` to derive durations from booking logic instead of random 30–75 min values.
+  - Added explicit install base durations (`NEW_INSTALL` 150 min, `RE_INSTALL` 120 min) and add-on duration map (braids, brow services, makeup, mink lashes, clean lace; travel excluded from in-chair duration).
+  - Mock appointment type/services now derive from install kind + selected add-on ids, and `duration` now equals computed total minutes to keep displayed card durations coherent with selected add-ons.
+- **Client photos on meetings panels**
+  - Replaced meetings-panel avatar fallback map with sourcing that mirrors client-details profile-image precedence:
+    - metadata image fields (`clientProfilePhoto`, `profileImage`, `photo`, `profilePhoto`, `avatar`) when valid
+    - then `registeredUsers` lookup by client email using same key set as client details
+    - fallback to `/assets/profile-thumb.png`.
+  - Updated panel avatar presentation across bookings/consults/view-all rows to rounded circles and increased dimensions from 34px to 44px (~30% larger).
+- **Client panel navigation to details**
+  - Updated panel click routing target from `/admin/clients?email=...` to `/admin/clients/overview?email=...`, which is the active route that reads the email query and opens selected client details on load.
+  - This preserves direct “open that client detail state” behavior from meetings rows.
+- Re-ran full build validation after code changes and fixed one TypeScript narrowing issue in mock add-on label mapping by widening id typing for comparison-safe normalization.
+
+**Decisions / outcomes:**
+- Appointment mock durations now reflect install/add-on logic and no longer show mismatched short durations for long service combinations.
+- Meetings-panel avatars now follow client-details image sourcing priority, are rounded, and are visually larger.
+- Tapping any meetings client panel now routes to the client-details state for that specific email via the correct clients overview route.
+
+**Changes:**
+- `src/utils/adminMeetingsMock.ts`
+  - narrowed appointment service options to install types used by booking cards
+  - added install/add-on duration constants and computed appointment duration generation
+  - aligned generated appointment `type`/`services` with install + add-on composition
+  - resolved TS type narrowing issue in add-on label conversion.
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed static avatar-by-email map
+  - added normalized profile-image candidate helpers + `registeredUsers` lookup by email
+  - updated avatar rendering style/size (rounded 44px) in bookings, consults, and view-all rows
+  - changed `openClientAccount` navigate target to `/admin/clients/overview?email=...`.
+
+**Conventions:**
+- Meetings mock appointment durations should be computed from install base + add-on durations (not randomized independent of services).
+- Meetings panel avatars should follow client-details profile-image precedence and remain rounded/larger for quick identity recognition.
+- Client-panel deep-links from meetings should target `/admin/clients/overview?email=...` so selected details open reliably.
