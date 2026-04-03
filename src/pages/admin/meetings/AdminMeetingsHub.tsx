@@ -1095,14 +1095,14 @@ export default function AdminMeetingsHub() {
                             padding: '10px',
                           }}
                         >
-                          <div className="flex justify-between gap-2 items-start">
+                          <div className="flex justify-between items-start" style={{ gap: '12px' }}>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start gap-2.5">
                                 <button
                                   type="button"
                                   onClick={() => openClientAccount(m)}
                                   aria-label="Open client details"
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px' }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px', marginLeft: '4px' }}
                                 >
                                   <img
                                     src={meetingClientProfilePhoto(m)}
@@ -1208,7 +1208,7 @@ export default function AdminMeetingsHub() {
                                 e.stopPropagation();
                                 setEditMeeting(m);
                               }}
-                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
+                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2 }}
                               aria-label="Edit meeting"
                             >
                               <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={22} height={22} />
@@ -1242,14 +1242,14 @@ export default function AdminMeetingsHub() {
                                 padding: '10px',
                               }}
                             >
-                              <div className="flex justify-between gap-2 items-start">
+                              <div className="flex justify-between items-start" style={{ gap: '12px' }}>
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-start gap-2.5">
                                     <button
                                       type="button"
                                       onClick={() => openClientAccount(m)}
                                       aria-label="Open client details"
-                                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px' }}
+                                      style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px', marginLeft: '4px' }}
                                     >
                                       <img
                                         src={meetingClientProfilePhoto(m)}
@@ -1266,7 +1266,7 @@ export default function AdminMeetingsHub() {
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
                                   {imgs.length > 0 && (
                                     <div className="flex flex-wrap mt-2" style={{ marginLeft: '10px', gap: '8px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
@@ -1304,9 +1304,10 @@ export default function AdminMeetingsHub() {
                                       ))}
                                     </div>
                                   )}
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '6px' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '6px', marginBottom: '3px' }}>
                                     {notes}
                                   </p>
+                                  <div style={{ height: '3px' }} />
                                     </div>
                                   </div>
                                 </div>
@@ -1316,7 +1317,7 @@ export default function AdminMeetingsHub() {
                                     e.stopPropagation();
                                     setQuoteMeeting(m);
                                   }}
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2 }}
                                   aria-label="Send quote"
                                 >
                                   <img src="/assets/quote-icon-consult.svg" alt="" width={26} height={26} />
