@@ -422,7 +422,10 @@ function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   if (details.addons.length === 0) return 'ADD-ONS: NONE';
   if (details.addons.length <= 3) return `ADD-ONS: ${details.addons.join(', ')}`;
   const firstLine = details.addons.slice(0, 3).join(', ');
-  const wrappedRest = details.addons.slice(3).join(', ');
+  const wrappedRest = details.addons
+    .slice(3)
+    .map((addon) => addon.replace(/\s+/g, '\u00A0'))
+    .join(',\u00A0');
   return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
 }
 
@@ -1012,7 +1015,17 @@ export default function AdminMeetingsHub() {
                       >
                         <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
                       </button>
-                      <span style={{ fontFamily: '"Bohemy", sans-serif', fontSize: '25px', color: '#000', textTransform: 'lowercase' }}>{monthLabel}</span>
+                      <span
+                        style={{
+                          fontFamily: '"Bohemy", sans-serif',
+                          fontSize: '25px',
+                          color: '#000',
+                          textTransform: 'lowercase',
+                          fontWeight: 200,
+                        }}
+                      >
+                        {monthLabel}
+                      </span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1084,17 +1097,18 @@ export default function AdminMeetingsHub() {
                         YOU DON&apos;T HAVE ANY APPOINTMENTS.
                       </p>
                     ) : (
-                      sortedAppointmentsList.map((m) => (
-                        <div
-                          key={m.id}
-                          className="mb-3"
-                          style={{
-                            background: '#fff',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '0',
-                            padding: '10px',
-                          }}
-                        >
+                      <div style={{ marginTop: '6px' }}>
+                        {sortedAppointmentsList.map((m) => (
+                          <div
+                            key={m.id}
+                            className="mb-3"
+                            style={{
+                              background: '#fff',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '0',
+                              padding: '10px',
+                            }}
+                          >
                           <div className="flex justify-between items-start" style={{ gap: '12px' }}>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start gap-2.5">
@@ -1114,7 +1128,7 @@ export default function AdminMeetingsHub() {
                                 </button>
                                 <div className="min-w-0 flex-1">
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0 }}>
-                                {meetingClientDisplayNameWithState(m)}{' '}
+                                <span style={{ color: '#EB1C24' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
                                   · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                 </span>
@@ -1140,14 +1154,14 @@ export default function AdminMeetingsHub() {
                               >
                                 {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {m.duration}
                               </p>
                               {(() => {
                                 const payment = getBookingPaymentStatusForCard(m);
                                 return (
                                   <>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#000', margin: '8px 0 0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0' }}>
                                       CURRENT BALANCE: {formatUsd(payment.remainingDueUsd)} OF {formatUsd(payment.paidTotalUsd)} USD
                                     </p>
                                     <div style={{ marginTop: '4px' }}>
@@ -1175,7 +1189,7 @@ export default function AdminMeetingsHub() {
                                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
                                         <p
                                           style={{
-                                            fontFamily: '"Futura PT Medium"',
+                                            fontFamily: '"Futura PT Demi"',
                                             fontSize: '9px',
                                             color: '#808080',
                                             margin: 0,
@@ -1211,11 +1225,12 @@ export default function AdminMeetingsHub() {
                               style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2 }}
                               aria-label="Edit meeting"
                             >
-                              <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={22} height={22} />
+                              <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
                             </button>
                           </div>
-                        </div>
-                      ))
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </>
                 ) : (
