@@ -7875,3 +7875,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For this project workflow, when the user indicates preview-first deployment flow, push ongoing implementation commits to `preview/mobile` unless the user explicitly overrides.
+
+---
+
+## 2026-04-03 — CORE updated with permanent preview/mobile push convention
+
+**Context:** User asked to make the new push-target rule permanent in motherboard core context after setting the policy that all pushes should go to the preview branch.
+
+**Topics covered (entire conversation so far):**
+- Completed bookings-tab UI updates in Admin Meetings and deployment verification in prior turns of this same chat.
+- User clarified deployment expectation and then explicitly required preview-first pushing.
+- Added a MEMORY entry documenting the policy and moved code updates onto `preview/mobile`.
+- User then requested the same policy be added to `CORE.md` as a lasting convention.
+- Updated `motherboard/CORE.md` under Conventions with an explicit, permanent note that implementation pushes should target `preview/mobile` by default unless the user says otherwise.
+
+**Decisions / outcomes:**
+- Preview branch policy is now encoded in both MEMORY history and CORE permanent conventions.
+- Future agents loading motherboard context will see the preview/mobile push rule without requiring chat-history lookup.
+
+**Changes:**
+- `motherboard/CORE.md` (new Conventions bullet for preview/mobile as default push target).
+- `motherboard/MEMORY.md` (this full-conversation summary entry).
+
+**Conventions:**
+- Treat `preview/mobile` as the default push branch for this project unless the user explicitly asks for another target.
