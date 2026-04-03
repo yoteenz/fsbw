@@ -7766,6 +7766,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Synced preview/mobile to master with all merged updates
+
+**Context:** After prior merges of all outstanding feature branches into `master`, user requested: "push everything to the preview branch so it has the same updates as master branch."
+
+**Topics covered (entire conversation so far):**
+- Verified branch divergence between `origin/preview/mobile` and `origin/master` and confirmed preview was behind master by multiple commits.
+- Checked out `preview/mobile`, updated it from remote, and merged `origin/master` into `preview/mobile` using a non-fast-forward merge commit to preserve branch history.
+- Pushed updated `preview/mobile` to origin.
+- Verified post-push parity by comparing refs and content:
+  - commit graph difference now only reflects preview’s merge commit topology
+  - file/content diff between `origin/master` and `origin/preview/mobile` is empty.
+
+**Decisions / outcomes:**
+- `preview/mobile` now contains all code updates present in `master`.
+- Preview and master are content-equivalent after sync.
+
+**Changes:**
+- Git operations:
+  - `git checkout preview/mobile`
+  - `git merge --no-ff origin/master`
+  - `git push -u origin preview/mobile`
+  - verification via `git diff --name-only origin/master..origin/preview/mobile` (no output)
+
+**Conventions:**
+- To keep preview current with production-ready changes, periodically merge `master` into `preview/mobile` and verify parity with a direct branch diff.
+
+---
+
 ## 2026-04-03 — Completed full branch-to-master merge sweep (remaining missing branches merged)
 
 **Context:** User reported that `master` still did not include all expected branch changes (specifically citing missing rounded client profile photos in client-details-adjacent flows) and clarified the expectation to merge all five related branches into `master`, not only the previously merged bookings-tab refinements branch.
