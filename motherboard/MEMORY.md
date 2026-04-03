@@ -7875,3 +7875,41 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For this project workflow, when the user indicates preview-first deployment flow, push ongoing implementation commits to `preview/mobile` unless the user explicitly overrides.
+
+## 2026-04-03 — Consults tab client-panel return flow + meetings cards spacing/height/icon updates
+
+**Context:** User requested four UI/flow updates in admin meetings: (1) tapping a client panel and then closing client details should return to bookings/consults tabs (B/C) rather than staying on client overview, (2) increase TOTAL BOOKED / TOTAL CONSULTED banner card height by 35%, (3) add 12px spacing above consult client cards, and (4) switch consult-panel quote icon to `quote-icon-consult` from public assets.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected `AdminMeetingsHub` and admin clients routing/state handling.
+- Identified root cause of incorrect flow: meetings deep-linked into `/admin/clients/overview?email=...` but close behavior on details remained local to client overview state.
+- Added meetings return context in deep-link params and wired client details close/back behavior to route back to meetings with originating tab preserved.
+- Added query-based tab hydration in meetings page so `/admin/meetings?tab=consults` and `/admin/meetings?tab=bookings` restore expected tab state.
+- Applied requested meetings card UI updates: larger total banners, consult list top spacing, and consult quote icon replacement.
+- Added missing `quote-icon-consult.svg` asset under `public/assets` so the updated icon path resolves.
+- Committed and pushed branch changes, created PR, then ran build validation. Initial build failed due missing local `tsc`; installed dependencies and re-ran build successfully; reverted incidental `package-lock.json` change to keep repo clean.
+
+**Decisions / outcomes:**
+- Meetings client-panel navigation now carries context (`returnTo=meetings&meetingsTab=...`) and closing client details returns users to the correct meetings B/C tab instead of client overview.
+- Meetings page now honors `?tab=` query for tab state restore.
+- TOTAL BOOKED and TOTAL CONSULTED cards are visually taller (~35% increase via min-height sizing).
+- Consults tab has 12px top spacing before client cards.
+- Consult quote action icon now uses `/assets/quote-icon-consult.svg`.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `useLocation` + `?tab=` state initialization/sync
+  - updated `openClientAccount` deep-link with `returnTo` + `meetingsTab`
+  - increased totals banner card height (`minHeight: 76px`)
+  - added `marginTop: '12px'` wrapper above consult cards
+  - changed consult quote icon source to `/assets/quote-icon-consult.svg`
+- `src/pages/admin/clients/page.tsx`
+  - read `returnTo` + `meetingsTab` query params
+  - updated `closeClientDetails` to navigate back to `/admin/meetings?tab=...` when opened from meetings
+  - guarded block-client confirm navigation so meetings return context is preserved
+- `public/assets/quote-icon-consult.svg`
+  - added consult quote SVG asset.
+
+**Conventions:**
+- When opening admin client details from meetings panels, pass return context so close/back returns to `/admin/meetings` with the same tab (`bookings` or `consults`) rather than defaulting to client overview list state.

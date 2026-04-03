@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
   getAdminMeetings,
@@ -461,7 +461,12 @@ function viewAllRowLabel(m: AdminMeeting): string {
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [mainTab, setMainTab] = useState<'bookings' | 'consults'>('bookings');
+  const location = useLocation();
+  const [mainTab, setMainTab] = useState<'bookings' | 'consults'>(() => {
+    if (typeof window === 'undefined') return 'bookings';
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    return tab === 'consults' ? 'consults' : 'bookings';
+  });
   const [calendarAnchor, setCalendarAnchor] = useState(() => {
     const d = new Date();
     const y = d.getFullYear();
@@ -511,6 +516,11 @@ export default function AdminMeetingsHub() {
         .catch(() => {});
     }
   }, []);
+
+  useEffect(() => {
+    const tab = new URLSearchParams(location.search).get('tab');
+    if (tab === 'bookings' || tab === 'consults') setMainTab(tab);
+  }, [location.search]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -589,7 +599,11 @@ export default function AdminMeetingsHub() {
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
-    if (em) navigate(`/admin/clients/overview?email=${encodeURIComponent(em.toLowerCase())}`);
+    if (em) {
+      navigate(
+        `/admin/clients/overview?email=${encodeURIComponent(em.toLowerCase())}&returnTo=meetings&meetingsTab=${mainTab}`
+      );
+    }
     else setHubNotice('NO CLIENT EMAIL ON FILE FOR THIS ROW.');
   };
 
@@ -772,7 +786,17 @@ export default function AdminMeetingsHub() {
                   style={{ marginTop: '10px' }}
                 >
                   <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
-                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                        minHeight: '76px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
                         {completedBookingsCount}
                       </p>
@@ -780,7 +804,17 @@ export default function AdminMeetingsHub() {
                         TOTAL BOOKED
                       </p>
                     </div>
-                    <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                        minHeight: '76px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
                         {completedConsultsCount}
                       </p>
@@ -1051,100 +1085,102 @@ export default function AdminMeetingsHub() {
                         NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.
                       </p>
                     ) : (
-                      consultMeetings.map((m) => {
-                        const meta = m.metadata || {};
-                        const hair = String(meta.hairOption || m.notes || '—');
-                        const notes = String(meta.consultNotes || '').trim() || m.notes;
-                        const imgs = consultInspo(m);
-                        return (
-                          <div
-                            key={m.id}
-                            className="mb-3 cursor-pointer"
-                            style={{
-                              background: '#fff',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '0',
-                              padding: '10px',
-                            }}
-                            onClick={() => openClientAccount(m)}
-                            role="presentation"
-                          >
-                            <div className="flex justify-between gap-2 items-start">
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-start gap-2.5">
-                                  <img
-                                    src={meetingClientProfilePhoto(m)}
-                                    alt=""
-                                    width={44}
-                                    height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
-                                  />
-                                  <div className="min-w-0 flex-1">
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24' }}>
-                                  {meetingClientDisplayNameWithState(m)}{' '}
-                                  <span style={{ color: tierLabelColor(m) }}>
-                                    · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
-                                  </span>
-                                </p>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
-                                {imgs.length > 0 && (
-                                  <div className="flex gap-1.5 flex-wrap mt-2">
-                                    {imgs.slice(0, 3).map((src, i) => (
-                                      <button
-                                        type="button"
-                                        key={i}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setConsultPhotoPreviewSrc(src);
-                                        }}
-                                        aria-label="Enlarge submitted consult photo"
-                                        style={{
-                                          width: '40px',
-                                          height: '40px',
-                                          background: '#f3f4f6',
-                                          border: '3px solid #FFFFFF',
-                                          boxShadow: '0 0 0 1.1px #000000',
-                                          boxSizing: 'border-box',
-                                          overflow: 'hidden',
-                                          padding: 0,
-                                          cursor: 'zoom-in',
-                                        }}
-                                      >
-                                        <img
-                                          src={src}
-                                          alt=""
-                                          style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            display: 'block',
+                      <div style={{ marginTop: '12px' }}>
+                        {consultMeetings.map((m) => {
+                          const meta = m.metadata || {};
+                          const hair = String(meta.hairOption || m.notes || '—');
+                          const notes = String(meta.consultNotes || '').trim() || m.notes;
+                          const imgs = consultInspo(m);
+                          return (
+                            <div
+                              key={m.id}
+                              className="mb-3 cursor-pointer"
+                              style={{
+                                background: '#fff',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '0',
+                                padding: '10px',
+                              }}
+                              onClick={() => openClientAccount(m)}
+                              role="presentation"
+                            >
+                              <div className="flex justify-between gap-2 items-start">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-start gap-2.5">
+                                    <img
+                                      src={meetingClientProfilePhoto(m)}
+                                      alt=""
+                                      width={44}
+                                      height={44}
+                                      style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0, marginTop: '1px' }}
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24' }}>
+                                    {meetingClientDisplayNameWithState(m)}{' '}
+                                    <span style={{ color: tierLabelColor(m) }}>
+                                      · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
+                                    </span>
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
+                                  {imgs.length > 0 && (
+                                    <div className="flex gap-1.5 flex-wrap mt-2">
+                                      {imgs.slice(0, 3).map((src, i) => (
+                                        <button
+                                          type="button"
+                                          key={i}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setConsultPhotoPreviewSrc(src);
                                           }}
-                                        />
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
-                                  {notes}
-                                </p>
+                                          aria-label="Enlarge submitted consult photo"
+                                          style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            background: '#f3f4f6',
+                                            border: '3px solid #FFFFFF',
+                                            boxShadow: '0 0 0 1.1px #000000',
+                                            boxSizing: 'border-box',
+                                            overflow: 'hidden',
+                                            padding: 0,
+                                            cursor: 'zoom-in',
+                                          }}
+                                        >
+                                          <img
+                                            src={src}
+                                            alt=""
+                                            style={{
+                                              width: '100%',
+                                              height: '100%',
+                                              objectFit: 'cover',
+                                              display: 'block',
+                                            }}
+                                          />
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
+                                    {notes}
+                                  </p>
+                                    </div>
                                   </div>
                                 </div>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setQuoteMeeting(m);
+                                  }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
+                                  aria-label="Send quote"
+                                >
+                                  <img src="/assets/quote-icon-consult.svg" alt="" width={26} height={26} />
+                                </button>
                               </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setQuoteMeeting(m);
-                                }}
-                                style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
-                                aria-label="Send quote"
-                              >
-                                <img src="/assets/quote-icon.svg" alt="" width={26} height={26} />
-                              </button>
                             </div>
-                          </div>
-                        );
-                      })
+                          );
+                        })}
+                      </div>
                     )}
                   </>
                 )}
