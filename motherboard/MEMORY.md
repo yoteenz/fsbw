@@ -8953,3 +8953,28 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Keep bookings/consults avatar offsets independently adjustable; for user-scoped “bookings only” deltas, change only bookings branch values.
+
+---
+
+## 2026-04-03 — Bookings-only avatar nudge: moved up 1px, consult avatars unchanged
+
+**Context:** User requested a bookings-only profile-icon movement: move bookings tab profile photos up by 1px and do not move consult tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Confirmed both bookings and consult avatar button styles in `AdminMeetingsHub`.
+- Updated only bookings avatar wrapper vertical offset from `marginTop: '8px'` to `marginTop: '7px'`.
+- Kept consult avatar wrapper at `marginTop: '8px'` unchanged.
+- Resolved repeated preview-branch divergence conflicts while preserving this bookings-only scope.
+
+**Decisions / outcomes:**
+- Bookings tab profile icons moved up by exactly 1px.
+- Consults tab profile icons were not changed.
+- Update is pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `8px` -> `7px`
+  - consult avatar button remains `8px`.
+
+**Conventions:**
+- For explicitly tab-scoped avatar tweaks, apply style deltas only in the named tab branch and verify the other tab branch remains unchanged.
