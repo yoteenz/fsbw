@@ -871,7 +871,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '90px',
+                        height: '80px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
@@ -890,7 +890,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         backgroundColor: 'rgba(0,0,0,0.04)',
                         borderRadius: '4px',
-                        height: '90px',
+                        height: '80px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'flex-end',
@@ -1247,15 +1247,15 @@ export default function AdminMeetingsHub() {
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translateY(4px)' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(4px, 4px)' }}>
                                     {meetingClientDisplayNameWithState(m)}{' '}
                                     <span style={{ color: tierLabelColor(m) }}>
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '6px 0 0', marginLeft: '4px' }}>{hair}</p>
                                   {imgs.length > 0 && (
-                                    <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '2px' }}>
+                                    <div className="flex gap-1.5 flex-wrap mt-2" style={{ marginLeft: '4px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
                                         <button
                                           type="button"
@@ -1291,7 +1291,7 @@ export default function AdminMeetingsHub() {
                                       ))}
                                     </div>
                                   )}
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px' }}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '4px' }}>
                                     {notes}
                                   </p>
                                     </div>
