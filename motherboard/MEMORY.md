@@ -8205,6 +8205,77 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Bookings tab micro-pass: name font, balance spacing/size, and due tracker color/timing behavior
+
+**Context:** User requested another bookings-tab UI micro-pass on admin meetings cards: change client name line font to Futura Book, adjust current balance line spacing/size, change payment-due label font, and update countdown tracker behavior so the bar stays gray until two days remain and turns red only within that final 48-hour window.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings work where month spacing, payment copy structure, and icon-only card navigation were already implemented on `preview/mobile`.
+- Updated booking card name typography:
+  - client name line (e.g. `QUINN CHEN (TX)`) now uses `"Futura PT Book"` only.
+- Updated current balance line formatting:
+  - reduced text size by 1px (`10px` -> `9px`),
+  - added 4px above-line spacing by changing top margin to `14px`.
+- Updated payment due label typography:
+  - gray due-date text (`PAYMENT DUE: THU, APR 23, 2026`) changed to `"Futura PT Medium"`.
+- Updated countdown bar + time behavior:
+  - tracker fill remains gray by default,
+  - fill changes to red only when `<= 2 days` remain (`remainingHours <= 48`),
+  - countdown time text on right below bar remains right-aligned and now turns red only in the final 48-hour window (or gray otherwise / past due).
+- Ran build verification after edits; build passes.
+
+**Decisions / outcomes:**
+- Booking name text now matches requested Futura Book styling.
+- Current balance line now has reduced size and updated spacing.
+- Payment-due date label is now Futura Medium.
+- Countdown tracker no longer fills red across long horizons; red is reserved for the final two-day due window.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - client name line font family set to `"Futura PT Book"`.
+  - current balance line font size `10px -> 9px`; margin top adjusted to `14px`.
+  - payment due label font family set to `"Futura PT Medium"`.
+  - due tracker/time color logic changed to red only when `remainingHours <= 48`, else gray.
+
+**Conventions:**
+- For bookings due trackers in meetings cards, reserve red urgency styling for the final 48-hour payment window; keep earlier countdown states gray for lower visual alarm.
+
+---
+
+## 2026-04-03 — Bookings tab micro-layout pass: month top spacing, current-balance typography, and right-aligned countdown under tracker
+
+**Context:** User requested a focused follow-up on bookings-tab card layout and typography: reduce space above the Bohemy month label by 4px, switch CURRENT BALANCE line to Futura PT Book and add 6px top spacing above it, and position only the countdown time on the right below the tracker bar.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier bookings-tab payment/status and card-interaction updates in this same chat thread.
+- Synced `preview/mobile` first, then adjusted bookings calendar header spacing:
+  - month row top margin reduced from `12px` to `8px` (4px less spacing).
+- Updated booking payment copy block styling:
+  - `CURRENT BALANCE: ...` line font changed to `"Futura PT Book"` (from Medium),
+  - top margin changed from `4px` to `10px` to add 6px extra spacing above that line.
+- Reworked due-line layout beneath tracker bar:
+  - split into two lines on the same row under the bar:
+    - left: `PAYMENT DUE: <date>`
+    - right: `<countdown>` only (e.g. `115D 9H LEFT`), right-aligned.
+- Verified with `npm run build` and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bohemy month text now sits 4px closer to the calendar.
+- Current balance line now matches requested Futura Book typography and spacing.
+- Countdown time is now isolated and right-positioned below the tracker bar, with due-date label on the left.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month row `marginTop: '12px'` -> `marginTop: '8px'`
+  - current balance line font `Futura PT Medium` -> `Futura PT Book`
+  - current balance line margin top `4px` -> `10px`
+  - due text refactored to two-part row below bar (left due-date label, right countdown only).
+
+**Conventions:**
+- For bookings payment tracker copy in meetings cards, keep due date label and countdown separated under the bar when right-aligned countdown readability is requested.
+
+---
+
 ## 2026-04-03 — Consults follow-up: summary panels reduced to 90px and hair option text switched to Futura Medium
 
 **Context:** User requested a small visual follow-up on consults tab: reduce summary panel height from 100px to 90px and change the `WIG ONLY` / `WIG + INSTALL` line to Futura PT Medium.
