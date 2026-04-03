@@ -8541,3 +8541,26 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “meetings card” requests, confirm whether the user means Admin Meetings page cards or Admin Dashboard `MEETINGS` stat card before applying formatter/style changes.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row moved to 6px right
+
+**Context:** User requested a single consults-tab adjustment: move only the hair inspo images row 6px to the right.
+
+**Topics covered (entire conversation so far):**
+- Verified the current inspo row offset in `AdminMeetingsHub` (`marginLeft: '2px'`).
+- Updated the inspo row container offset to `marginLeft: '6px'` while preserving the existing 8px gap and all other consult-row styles.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair inspo row is now shifted right by **6px**.
+- Only the inspo row offset changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft` updated from `2px` to `6px`.
+
+**Conventions:**
+- For one-line style nudges, keep the change scoped to the exact requested property and preserve neighboring spacing settings.
