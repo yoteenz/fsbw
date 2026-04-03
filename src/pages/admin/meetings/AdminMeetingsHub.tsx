@@ -551,7 +551,7 @@ export default function AdminMeetingsHub() {
                         {completedBookingsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        COMPLETED BOOKINGS
+                        TOTAL BOOKED
                       </p>
                     </div>
                     <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
@@ -559,7 +559,7 @@ export default function AdminMeetingsHub() {
                         {completedConsultsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        COMPLETED CONSULTS
+                        TOTAL CONSULTED
                       </p>
                     </div>
                   </div>

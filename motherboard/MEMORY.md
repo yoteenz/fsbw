@@ -7254,3 +7254,26 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - On Admin Meetings, keep the main card heading (`MEETINGS`) and place aggregate metrics above tab selectors when requested; only remove duplicated helper copy if explicitly targeted.
+
+---
+
+## 2026-04-03 — Meetings summary labels renamed to TOTAL BOOKED / TOTAL CONSULTED
+
+**Context:** After adding completed-bookings/consults metric panels above meetings tabs on `preview/mobile`, user requested exact label text changes: "total booked" and "total consulted".
+
+**Topics covered (entire conversation so far):**
+- Located the two newly added panel labels in `AdminMeetingsHub`.
+- Renamed labels from:
+  - `COMPLETED BOOKINGS` → `TOTAL BOOKED`
+  - `COMPLETED CONSULTS` → `TOTAL CONSULTED`
+- Re-ran full build validation after label update.
+
+**Decisions / outcomes:**
+- Summary panel labels now match user wording exactly.
+- No logic/counting changes were made; only label text changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx` — panel label text update.
+
+**Conventions:**
+- For this meetings summary section, use label text `TOTAL BOOKED` and `TOTAL CONSULTED` unless explicitly changed later.
