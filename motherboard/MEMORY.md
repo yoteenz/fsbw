@@ -8747,3 +8747,28 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For booking-card add-on wrap issues caused by token breaks, preserve same-line grouping via non-breaking spaces on wrapped segments before introducing additional line breaks.
+
+---
+
+## 2026-04-03 — Bookings-only avatar micro-adjustment: profile photos moved up 4px
+
+**Context:** User requested one very targeted change on the bookings tab only: move profile photos upward by 4px.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat’s sequence of bookings-tab typography, spacing, icon, and wrapping micro-tweaks.
+- Located both avatar button offsets in `AdminMeetingsHub` and adjusted only the bookings-tab branch.
+- Updated bookings avatar button `marginTop` from `8px` to `4px` (4px upward movement).
+- Left consults avatar offset unchanged (`8px`) per “bookings tab only” instruction.
+- Ran `npm run build` successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bookings-tab profile photos are now 4px higher.
+- Consults-tab profile photos were intentionally not changed.
+- Build passed and change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'` -> `marginTop: '4px'`.
+
+**Conventions:**
+- For “bookings only” UI nudges in shared meetings components, patch only the bookings render branch and keep consult branch values untouched unless explicitly requested.
