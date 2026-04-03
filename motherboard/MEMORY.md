@@ -7528,3 +7528,51 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - In admin meetings list rows (bookings/consults/view-all), include client context with left thumbnail + `NAME (STATE)` when available.
 - Travel add-on scheduling constraints should reserve previous day afternoon and full following day to avoid accepting conflicting appointment windows.
+
+---
+
+## 2026-04-03 — Consult tab update pass: divider, panel identity, 3-photo cap, enlarge, and client-detail routing
+
+**Context:** User requested consult-tab-focused updates: remove the gray line below tabs on consult tab only, show client profile photos + state on booking panels (`NAME (ST)` like `REESE SCOTT (NJ)`), enforce max 3 submitted photos in sync with A/C pages, allow tapping submitted photos to enlarge, and ensure tapping a client panel opens that client’s admin detail page.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and validated this work should be applied in `AdminMeetingsHub` + consult booking/checkout/API pipeline.
+- Verified that photo + state + panel click-to-client-detail were largely already present on booking/consult cards and view-all rows; preserved those behaviors while implementing missing requirements.
+- Updated consult-tab header wrapper so the gray divider line is removed only when `mainTab === 'consults'` (bookings tab keeps current divider styling).
+- Synced consult submitted-photo data flow with booking/checkout/admin:
+  - booking consult cart line now stores capped `bookingInspoPhotoUrls` (data URLs) alongside file names.
+  - checkout’s consult-meeting sync now forwards `inspoPhotoUrls` (validated + sliced to 3) and existing names.
+  - booking consult API route now accepts/stores `inspoPhotoUrls` and caps both URLs + names to max 3 in metadata.
+  - shared API client type updated for new `inspoPhotoUrls` field.
+- Updated admin consult image rendering logic to prefer `inspoPhotoUrls` (falls back to `inspoFileNames`), keep data URLs/root-relative/http(s), dedupe, and cap display at 3.
+- Added consult submitted-photo tap-to-enlarge behavior in Admin Meetings with an overlay preview modal; thumbnail taps stop propagation so they open preview instead of immediately navigating away.
+- Kept client panel navigation behavior intact (`/admin/clients?email=...`) across bookings/consults/view-all rows.
+- Ran build verification; initial failure due to missing local `tsc` before install, then installed dependencies and re-ran successfully.
+
+**Decisions / outcomes:**
+- Consult tab now removes the gray line below tabs only in the consult state.
+- Booking/consult panels continue to show profile photo + `NAME (STATE)` and open admin client detail on row tap.
+- Consult submitted-photo handling is now capped and consistent across booking input, checkout sync, API persistence, and admin display.
+- Consult submitted photos in admin can now be enlarged via tap without breaking row navigation flow.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult-only divider removal logic on header block (`borderBottom` conditional by tab)
+  - `consultInspo(...)` normalized to prefer URLs, preserve data URLs, dedupe, and cap to 3
+  - consult thumbs capped to 3 and converted to interactive buttons
+  - added `consultPhotoPreviewSrc` state + fullscreen preview modal
+- `src/pages/booking/consultation/page.tsx`
+  - persisted `bookingInspoPhotoUrls` (capped to max 3) on booking-consult cart items
+- `src/pages/checkout/page.tsx`
+  - added consult photo URL extraction/validation (`data:image`, absolute, root-relative), capped to 3, then sent to API
+- `src/utils/api.ts`
+  - `postBookingConsultMeeting` body type now includes `inspoPhotoUrls?: string[]`
+- `api/booking/consult-meeting.ts`
+  - accepts `inspoPhotoUrls`, validates + caps to 3
+  - caps `inspoFileNames` to 3
+  - persists `inspoPhotoUrls` in meeting metadata
+
+**Conventions:**
+- For admin consult cards, show at most 3 submitted photos and use tap-to-enlarge for detailed viewing.
+- Prefer `metadata.inspoPhotoUrls` as authoritative submitted-image sources for consult meetings; use filename fallback only when URLs are absent.
