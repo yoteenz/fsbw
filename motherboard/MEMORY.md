@@ -7200,3 +7200,28 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Going forward for this chat/workflow, use `preview/mobile` for iterative changes and mobile Vercel preview validation; only push/merge to `master` when explicitly asked to ship production.
+
+---
+
+## 2026-04-03 — Preview check: bookings helper text already removed + current preview links
+
+**Context:** User asked to "test it & create a PR" and specifically remove bookings helper copy on Admin Meetings: `RED = DAY WITH AT LEAST ONE APPOINTMENT...`.
+
+**Topics covered (entire conversation so far):**
+- Verified branch/workflow state on `preview/mobile`.
+- Searched `src/pages/admin/meetings/AdminMeetingsHub.tsx` for the exact helper sentence and related fragments; no matches found because the line was already removed in current branch history.
+- Ran full build to confirm branch is healthy before preview testing.
+- Attempted PR creation, but there are no net code differences from `master` at this moment, so no PR can be created for this exact request alone.
+- Retrieved current Vercel deployment status URLs for the latest `preview/mobile` commit so user can open a fresh preview directly.
+
+**Decisions / outcomes:**
+- No code edit was needed for this request because the targeted line was already absent.
+- `preview/mobile` is build-green and has successful Vercel deploy status for latest commit.
+- For next requested UI/code tweak, committing on `preview/mobile` will allow creating/updating PR and yield a fresh mobile preview URL.
+
+**Changes:**
+- No source-code change required for this specific request.
+- Validation run: `npm run build` (pass).
+
+**Conventions:**
+- If a requested removal already exists in branch state, confirm with search + build and provide latest preview URLs/check locations instead of forcing no-op commits.
