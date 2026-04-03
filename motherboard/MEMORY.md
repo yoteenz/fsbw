@@ -7097,3 +7097,59 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings list cards (bookings + consults), keep white/gray bordered panels square-cornered unless a future design request says otherwise.
+
+---
+
+## 2026-04-03 — Admin meetings UX polish + global admin search wiring
+
+**Context:** User requested additional admin updates in one pass: remove bookings calendar helper copy, fix no-appointment date cell background behavior, enrich consult-tab mock notes/images and ensure tap opens client details (instead of not found), remove in-card "MEETINGS" heading above view-all toggles, and make admin header search truly functional across admin pages for clients/products.
+
+**Topics covered (entire conversation so far):**
+- **Admin meetings bookings calendar copy + no-appointment cell background**
+  - Removed the text line: `RED = DAY WITH AT LEAST ONE APPOINTMENT...`.
+  - Updated day-cell style so **all no-appointment dates** render with gray background (same treatment as other no-appointment cells), not white.
+- **Consults tab realism + open client details**
+  - Added realistic mock consult content in meetings mock generator:
+    - richer consult notes
+    - `inspoFileNames` set to real stock image asset paths (affiliate-style): `/assets/gallery-mock.png`
+  - Changed card click navigation from `/admin/clients/account?email=...` to `/admin/clients?email=...` so tapping consult panels opens the integrated clients details flow used in current admin clients page.
+  - Updated API/mock bridge in `normalizeApiMeeting` to map `row.client_email`/`row.client_name` correctly; this fixes missing email/name on API-backed rows that previously led to "client not found" behavior.
+- **Remove "MEETINGS" text above view-all toggles**
+  - Removed the in-card `MEETINGS` heading row so the section starts directly with tab/view-all controls as requested.
+- **Admin header search should actually function across admin pages**
+  - Extended `AdminHeader` with global search navigation behavior (`q` query param submit on Enter and optional target path).
+  - Added contextual placeholders:
+    - Clients/details pages: `SEARCH CLIENTS...`
+    - Revenue page: `SEARCH PRODUCTS...`
+  - Wired clients page to consume global `q` and prefill/filter overview list.
+  - Wired revenue page header search to target `/admin/revenue` and made PRODUCTS tab list filter by `q`, with explicit empty-result copy (`NO PRODUCTS MATCH YOUR SEARCH.`).
+
+**Decisions / outcomes:**
+- Meetings mock consult cards now load with realistic stock-media placeholders and richer notes while keeping existing layout.
+- Meeting card taps now route into the active clients details surface (`/admin/clients?email=...`) instead of the legacy account subpage, preventing false "client not found" for mock rows.
+- Global admin search is now submit-driven and page-consumable, not just a visual input.
+
+**Changes:**
+- `src/utils/adminMeetingsMock.ts`
+  - richer mock consultation notes/inspo
+  - map API `client_email`/`client_name` in `normalizeApiMeeting`
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - remove in-card `MEETINGS` heading
+  - remove red/gray helper text line
+  - gray background for no-appointment date cells
+  - tap-to-open route: `/admin/clients?email=...`
+  - consult image tiles now show actual stock image previews from `inspoFileNames`
+- `src/pages/admin/components/AdminHeader.tsx`
+  - global search submit behavior (query-param routing)
+  - context-aware search placeholders
+- `src/pages/admin/clients/page.tsx`
+  - consume global `q` into `clientSearchQuery`
+  - pass global search target path to header
+- `src/pages/admin/revenue/page.tsx`
+  - consume `q` query
+  - pass global search target path to header
+  - filter PRODUCTS list by query + no-match message
+
+**Conventions:**
+- Admin meeting cards should navigate to `/admin/clients?email=...` for detail context in current app flow.
+- Admin header search should produce a concrete page-level filter via query param when external search handler is not supplied.

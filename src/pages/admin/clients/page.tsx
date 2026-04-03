@@ -572,6 +572,7 @@ export default function AdminClients() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const globalSearchQuery = (searchParams.get('q') || '').trim();
   const emailFromUrl = searchParams.get('email') || '';
   const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('ALL');
@@ -629,6 +630,14 @@ export default function AdminClients() {
   useEffect(() => {
     if (emailFromUrl) setSelectedClientEmail(emailFromUrl);
   }, [emailFromUrl]);
+  useEffect(() => {
+    if (!selectedClientEmail || registeredUsers.length === 0) return;
+    const selectedNorm = selectedClientEmail.trim().toLowerCase();
+    const exists = registeredUsers.some((u: any) => ((u?.email || '').toString().trim().toLowerCase() === selectedNorm));
+    if (!exists) {
+      setSelectedClientEmail(null);
+    }
+  }, [selectedClientEmail, registeredUsers]);
 
   // Reset expanded order when switching away from orders tab
   useEffect(() => {
@@ -800,6 +809,10 @@ export default function AdminClients() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (globalSearchQuery) setClientSearchQuery(globalSearchQuery);
+  }, [globalSearchQuery]);
 
   useEffect(() => {
     const onStorage = () => loadData();
@@ -1557,6 +1570,7 @@ export default function AdminClients() {
             externalSearchValue={clientSearchQuery}
             onExternalSearchChange={setClientSearchQuery}
             hideSearchIcon={!!selectedClientEmail}
+            globalSearchTargetPath="/admin/clients"
           />
 
           <div className="pb-6 px-4">

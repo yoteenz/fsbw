@@ -338,7 +338,7 @@ export default function AdminMeetingsHub() {
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
-    if (em) navigate(`/admin/clients/account?email=${encodeURIComponent(em.toLowerCase())}`);
+    if (em) navigate(`/admin/clients?email=${encodeURIComponent(em.toLowerCase())}`);
     else setHubNotice('NO CLIENT EMAIL ON FILE FOR THIS ROW.');
   };
 
@@ -470,19 +470,6 @@ export default function AdminMeetingsHub() {
                 minHeight: 'calc(100dvh - 160px)',
               }}
             >
-              <div className="flex items-center justify-between px-5 pt-4 pb-2 flex-shrink-0">
-                <h2
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                  }}
-                >
-                  MEETINGS
-                </h2>
-              </div>
               {viewAllMode ? (
                 <div
                   className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
@@ -639,8 +626,8 @@ export default function AdminMeetingsHub() {
                               padding: '6px 0',
                               border: '1px solid #e5e7eb',
                               borderRadius: '4px',
-                              background: !cell.inMonth ? '#f3f4f6' : '#fff',
-                              color: hasAppt ? '#EB1C24' : cell.inMonth ? '#9ca3af' : '#d1d5db',
+                              background: !cell.inMonth || !hasAppt ? '#f3f4f6' : '#fff',
+                              color: hasAppt ? '#EB1C24' : '#9ca3af',
                               cursor: 'pointer',
                             }}
                           >
@@ -649,9 +636,6 @@ export default function AdminMeetingsHub() {
                         );
                       })}
                     </div>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginBottom: '8px' }}>
-                      RED = DAY WITH AT LEAST ONE APPOINTMENT. GRAY = NO APPOINTMENT. TAP A DATE TO FILTER THE LIST.
-                    </p>
                     {selectedDay && (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginBottom: '8px' }}>
                         {formatHeaderDate(selectedDay)}
@@ -752,25 +736,30 @@ export default function AdminMeetingsHub() {
                                 </p>
                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: '6px 0 0' }}>{hair}</p>
                                 {imgs.length > 0 && (
-                                  <div className="flex gap-1 flex-wrap mt-2">
-                                    {imgs.slice(0, 4).map((name, i) => (
+                                  <div className="flex gap-1.5 flex-wrap mt-2">
+                                    {imgs.slice(0, 4).map((src, i) => (
                                       <div
                                         key={i}
                                         style={{
                                           width: '40px',
                                           height: '40px',
                                           background: '#f3f4f6',
-                                          border: '1px solid #e5e7eb',
-                                          fontSize: '7px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          textAlign: 'center',
-                                          padding: '2px',
-                                          wordBreak: 'break-all',
+                                          border: '3px solid #FFFFFF',
+                                          boxShadow: '0 0 0 1.1px #000000',
+                                          boxSizing: 'border-box',
+                                          overflow: 'hidden',
                                         }}
                                       >
-                                        {name.slice(0, 8)}
+                                        <img
+                                          src={src}
+                                          alt=""
+                                          style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            display: 'block',
+                                          }}
+                                        />
                                       </div>
                                     ))}
                                   </div>

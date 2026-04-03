@@ -409,6 +409,7 @@ export default function AdminRevenue() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const searchQuery = (searchParams.get('q') || '').trim().toUpperCase();
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>(() => {
     if (tabParam === 'PRODUCTS') return 'PRODUCTS';
@@ -771,6 +772,7 @@ export default function AdminRevenue() {
           onBack={() => window.history.back()}
           breadcrumbParentLabel="ADMIN"
           breadcrumbParentPath="/admin/dashboard"
+          globalSearchTargetPath="/admin/revenue"
         />
 
         <div className="pb-6 px-4">
@@ -947,13 +949,20 @@ export default function AdminRevenue() {
                 {activeTab === 'PRODUCTS' && (
                   <>
                     <div className="space-y-2 mb-4">
-                      {['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'].map((label) => (
+                      {['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL']
+                        .filter((label) => !searchQuery || label.includes(searchQuery))
+                        .map((label) => (
                         <div key={label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{label}</span>
                           <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{depletedInventory.products[label] ?? 0}</span>
                         </div>
                       ))}
                     </div>
+                    {searchQuery && ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'].every((label) => !label.includes(searchQuery)) && (
+                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: '0 0 12px 0' }}>
+                        NO PRODUCTS MATCH YOUR SEARCH.
+                      </p>
+                    )}
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px' }}>Tools</p>
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>

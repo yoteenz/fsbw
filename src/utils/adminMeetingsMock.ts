@@ -133,11 +133,20 @@ function pickName(rnd: () => number, salt: number): { first: string; last: strin
   const li = Math.floor(rnd() * MOCK_LAST.length);
   const first = MOCK_FIRST[(fi + salt) % MOCK_FIRST.length];
   const last = MOCK_LAST[(li + salt * 3) % MOCK_LAST.length];
-  const email = `mock.client.${salt}.${first.toLowerCase()}@test.com`;
+  // Align mock meetings with mock admin-clients records (mock1@test.com ... mock25@test.com)
+  // so tapping a meeting can open the client details tabs.
+  const email = `mock${(Math.abs(salt) % 25) + 1}@test.com`;
   return { first, last, email };
 }
 
 export type MockDayOptions = { cap?: number; skipProbability?: number };
+
+const CONSULT_MOCK_NOTES = [
+  'CLIENT WANTS A GLUELESS FINISH WITH A SOFT HAIRLINE, LIGHT BABY HAIR, AND A NATURAL PART FOR DAILY WEAR.',
+  'CLIENT REQUESTED A FULLER DENSITY LOOK FOR CONTENT DAY, PREFERS FACE-FRAMING LAYERS, AND NEEDS LONG-WEAR HOLD.',
+  'CLIENT IS MATCHING A REFERENCE STYLE FOR A WEEKEND EVENT; FOCUS ON CLEAN KNOT BLEACH, PRECISE PARTING, AND SHINE FINISH.',
+  'CLIENT ASKED FOR A LOW-MAINTENANCE ROUTINE, LIGHT HEAT STYLING, AND A SHAPE THAT HOLDS AFTER WRAP + BRUSH-OUT.',
+] as const;
 
 /** Deterministic mock meetings for one calendar day */
 export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOptions): AdminMeeting[] {
@@ -165,6 +174,7 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
       const statusRoll = rnd();
       const status: AdminMeeting['status'] =
         statusRoll > 0.78 ? 'Pending' : statusRoll > 0.05 ? 'Confirmed' : 'Canceled';
+      const consultNotes = CONSULT_MOCK_NOTES[Math.floor(rnd() * CONSULT_MOCK_NOTES.length)];
       meetings.push({
         id: `mock-${dateKey}-c-${i}`,
         date: dateKey,
@@ -175,11 +185,13 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         category: 'consultation',
         duration: '60 MIN',
         status,
-        notes: `Wig consult — style goals, cap size, timeline (${dateKey.slice(5)})`,
+        notes: consultNotes,
         metadata: {
           tier: rnd() > 0.55 ? 'premium' : 'standard',
           hairOption: rnd() > 0.5 ? 'WIG ONLY' : 'WIG + INSTALL',
-          consultNotes: 'MOCK NOTES FOR ADMIN CARD.',
+          consultNotes,
+          // Same stock image used by account/affiliate mock content.
+          inspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
           inspoFileNames: ['inspo-1.jpg', 'inspo-2.jpg'],
         },
       });

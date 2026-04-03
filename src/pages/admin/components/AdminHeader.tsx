@@ -162,6 +162,10 @@ interface AdminHeaderProps {
   hideSearchIcon?: boolean;
   /** When true, show account icon to the right of search (e.g. on dashboard only) */
   showAccountIcon?: boolean;
+  /** Optional query key used by admin pages to consume global header search (defaults to `q`) */
+  globalSearchQueryKey?: string;
+  /** Optional route for submit search navigation (defaults to current page) */
+  globalSearchTargetPath?: string;
 }
 
 /**
@@ -181,6 +185,8 @@ export default function AdminHeader({
   externalSearchPlaceholder,
   hideSearchIcon = false,
   showAccountIcon = false,
+  globalSearchQueryKey = 'q',
+  globalSearchTargetPath,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -212,7 +218,15 @@ export default function AdminHeader({
 
   const [isBackPressed, setIsBackPressed] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      return (sp.get(globalSearchQueryKey) || '').trim();
+    } catch {
+      return '';
+    }
+  });
   const [_isMessagesPressed, _setIsMessagesPressed] = useState(false);
   const [_isNotificationsPressed, _setIsNotificationsPressed] = useState(false);
   const [_hasNotifications, _setHasNotifications] = useState(true);
@@ -298,10 +312,23 @@ export default function AdminHeader({
   };
 
   // Handle search input key press
+  const submitSearch = () => {
+    const raw = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
+    const value = raw.trim();
+    const targetPath = globalSearchTargetPath || (typeof window !== 'undefined' ? window.location.pathname : '/admin/dashboard');
+    if (!value) {
+      navigate(targetPath);
+      return;
+    }
+    const next = new URLSearchParams();
+    next.set(globalSearchQueryKey, value);
+    navigate(`${targetPath}?${next.toString()}`);
+  };
+
   const handleSearchKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      const value = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
-      console.log('Searching for:', value);
+      submitSearch();
+      return;
     }
     if (e.key === 'Escape') {
       if (onExternalSearchChange) {
@@ -317,7 +344,13 @@ export default function AdminHeader({
   const searchInputOnChange = onExternalSearchChange != null
     ? (e: React.ChangeEvent<HTMLInputElement>) => onExternalSearchChange(e.target.value)
     : (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value);
-  const searchPlaceholder = externalSearchPlaceholder ?? 'SEARCH ADMIN...';
+  const inferredDefaultPlaceholder =
+    title === 'OVERVIEW' || title === 'DETAILS'
+      ? 'SEARCH CLIENTS...'
+      : title === 'REVENUE'
+      ? 'SEARCH PRODUCTS...'
+      : 'SEARCH ADMIN...';
+  const searchPlaceholder = externalSearchPlaceholder ?? inferredDefaultPlaceholder;
 
   // Handle messages: long-press toggles active/inactive (debug: test "no new messages" state)
   const handleMessagesPointerDown = () => {
@@ -634,6 +667,21 @@ export default function AdminHeader({
                     </svg>
                   </button>
                 )}
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={submitSearch}
+                  className="flex-shrink-0 p-0.5 border-none bg-transparent cursor-pointer flex items-center justify-center"
+                  aria-label="Submit search"
+                  style={{ color: '#EB1C24' }}
+                >
+                  <img
+                    src="/assets/search-icon.svg"
+                    alt=""
+                    width="13"
+                    height="12"
+                  />
+                </button>
               </div>
             ) : (
               <div className="overflow-hidden text-ellipsis">
