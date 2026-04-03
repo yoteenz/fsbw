@@ -8862,3 +8862,35 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For micro typography requests, adjust only the requested text node’s font size and keep neighboring spacing constants stable.
+
+---
+
+## 2026-04-03 — Bookings-only spacing pass: client line top gap + payment due bottom gap + avatar raised 4px (consults untouched)
+
+**Context:** The user requested another tightly scoped bookings-tab update on admin meetings cards: increase spacing above the client text line by 6px, increase spacing below the `PAYMENT DUE` row by 6px, and move profile photo icons on the bookings tab up by 4px while explicitly not moving consult-tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat thread of iterative bookings/consults/dashboard micro-adjustments (typography, icon sizing, wrapping behavior, payment rows, and tab-scoped spacing tweaks), always shipping to `preview/mobile`.
+- Located the bookings card branch in `AdminMeetingsHub` and applied only the requested spacing/offset updates:
+  - client identity line top margin increased by 6px (`margin: 0` -> `margin: '6px 0 0'`),
+  - payment-due row container received +6px spacing below (`marginBottom: '6px'`),
+  - bookings avatar button moved up 4px (`marginTop: '4px'` -> `marginTop: '0px'`).
+- Left consult-tab avatar offset unchanged as explicitly requested.
+- Build validated successfully.
+- During push, remote advanced and caused a rebase conflict in `AdminMeetingsHub`; resolved conflict by preserving the new bookings-only offset/spacing values while keeping latest upstream edits, then continued rebase and pushed.
+
+**Decisions / outcomes:**
+- Bookings client text line now starts 6px lower from the top of its text block.
+- Payment due row now has 6px extra space below it.
+- Bookings profile photos are 4px higher than the immediately prior state.
+- Consult profile icons were not modified in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `4px` -> `0px`
+  - bookings client name line margin: `0` -> `'6px 0 0'`
+  - payment due row wrapper added `marginBottom: '6px'`
+
+**Conventions:**
+- For tab-scoped icon-position requests in shared meetings layouts, implement in the targeted tab branch only and preserve the other tab’s offsets.
