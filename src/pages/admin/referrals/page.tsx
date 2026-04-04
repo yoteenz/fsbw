@@ -5,6 +5,7 @@ import { getAdminReferrals } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const REFERRAL_TABS = ['OVERVIEW', 'BY REFERRER', 'ACTIVITY'] as const;
 
@@ -22,7 +23,12 @@ export default function AdminReferralsPage() {
   useRequireAdminPageAccess();
   const [log, setLog] = useState<ReferralEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<typeof REFERRAL_TABS[number]>('OVERVIEW');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof REFERRAL_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminReferralsActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: REFERRAL_TABS,
+  });
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;

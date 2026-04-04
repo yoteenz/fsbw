@@ -13,6 +13,7 @@ import { getAdminRevenue, getAdminMembershipPayments } from '../../../utils/api'
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getProductSalesCounts, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
 import {
   buildMembershipPaymentsList,
@@ -410,17 +411,12 @@ export default function AdminRevenue() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchQuery = (searchParams.get('q') || '').trim().toUpperCase();
-  const tabParam = searchParams.get('tab');
-  const [activeTab, setActiveTab] = useState<typeof REVENUE_TABS[number]>(() => {
-    if (tabParam === 'PRODUCTS') return 'PRODUCTS';
-    if (tabParam === 'ORDERS') return 'ORDERS';
-    return 'OVERVIEW';
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof REVENUE_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminRevenueActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: REVENUE_TABS,
   });
-  useEffect(() => {
-    if (tabParam === 'PRODUCTS') setActiveTab('PRODUCTS');
-    else if (tabParam === 'ORDERS') setActiveTab('ORDERS');
-    else if (tabParam === 'OVERVIEW' || tabParam === null) setActiveTab('OVERVIEW');
-  }, [tabParam]);
   const [totalRevenue, setTotalRevenue] = useState(45700);
   const [totalOrders, setTotalOrders] = useState(53);
   const [breakdown, setBreakdown] = useState<{ month: string; value: number }[]>([]);

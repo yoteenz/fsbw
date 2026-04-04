@@ -587,7 +587,7 @@ function CheckoutPage() {
 
       return hasNonDefaultColor || hasNonDefaultStyling || hasAddOns;
     });
-  }, [cartItems]);
+  }, [cartItems, navigate]);
 
   // Voucher applicability: service vouchers only (COLOR/HAIRLINE/STYLING); add-on price > 0. Excludes special-offer lines (no service voucher discount there). Free gifts are separate loyalty redemptions and remain combinable.
   const cartVoucherApplicability = useMemo(() => {
@@ -914,8 +914,33 @@ function CheckoutPage() {
         return;
       }
       trackActivity('membership_checkout_start', { tier: tierRaw });
-      const url = await createStripeMembershipCheckoutSession(tierRaw, '/checkout/upgrade');
-      window.location.assign(url);
+      const result = await createStripeMembershipCheckoutSession(tierRaw, '/checkout/upgrade');
+      if (result.mode === 'checkout') {
+        window.location.assign(result.url);
+        return;
+      }
+      await syncProfileFromApi();
+      const defaultMessage =
+        result.changeType === 'upgrade'
+          ? 'UPGRADE COMPLETE. WE CHARGED THE FULL NEW MEMBERSHIP CYCLE AND REFUNDED THE UNUSED TIME FROM YOUR PREVIOUS TIER.'
+          : result.changeType === 'downgrade'
+            ? 'DOWNGRADE SCHEDULED. YOUR CURRENT MEMBERSHIP STAYS ACTIVE UNTIL RENEWAL, THEN THE LOWER TIER PRICE WILL BE CHARGED.'
+            : 'YOU ARE ALREADY ON THIS MEMBERSHIP TIER.';
+      setCheckoutNotice({
+        title: 'SUBSCRIPTION',
+        message: (result.message || defaultMessage).toUpperCase(),
+      });
+      try {
+        localStorage.removeItem('subscriptionUpgrade');
+        localStorage.removeItem('isSubscriptionUpgrade');
+        localStorage.removeItem('isSubscriptionChange');
+        localStorage.removeItem('membershipShowPremiumView');
+        sessionStorage.removeItem('returningFromCheckout');
+        localStorage.removeItem('membershipSelectedTier');
+      } catch {
+        /* ignore */
+      }
+      navigate('/account/rewards');
     } catch (e) {
       setCheckoutNotice({
         title: 'CHECKOUT',

@@ -5,6 +5,7 @@ import { getAdminAuditLog, getAdminUsers, postAdminUserAction } from '../../../u
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const BACKEND_TABS = ['AUDIT LOG', 'USERS'] as const;
 
@@ -14,7 +15,12 @@ type AuthUser = { id: string; email: string; created_at?: string; last_sign_in_a
 export default function AdminBackend() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<typeof BACKEND_TABS[number]>('AUDIT LOG');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof BACKEND_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminBackendActiveTab',
+    defaultValue: 'AUDIT LOG',
+    allowedValues: BACKEND_TABS,
+  });
 
   // Audit state
   const [entries, setEntries] = useState<AuditEntry[]>([]);

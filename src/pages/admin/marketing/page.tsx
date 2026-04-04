@@ -5,6 +5,7 @@ import AdminSpecialOffer, { type SpecialOfferActionsRef } from '../special-offer
 import NewsletterPanel, { type NewsletterPanelHandle } from './NewsletterPanel';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const MARKETING_TABS = ['AFFILIATE', 'CHALLENGES', 'SPECIAL OFFERS', 'NEWSLETTER'] as const;
 
@@ -20,7 +21,12 @@ export default function AdminMarketing() {
   const navigate = useNavigate();
   const specialOfferRef = useRef<SpecialOfferActionsRef>(null);
   const newsletterRef = useRef<NewsletterPanelHandle>(null);
-  const [activeTab, setActiveTab] = useState<(typeof MARKETING_TABS)[number]>('AFFILIATE');
+  const [activeTab, setActiveTab] = usePersistentQueryState<(typeof MARKETING_TABS)[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminMarketingTab',
+    defaultValue: 'AFFILIATE',
+    allowedValues: MARKETING_TABS,
+  });
   const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
   const [newsletterSelected, setNewsletterSelected] = useState(0);
   const [newsletterCanSend, setNewsletterCanSend] = useState(false);

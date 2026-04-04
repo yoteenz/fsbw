@@ -53,13 +53,16 @@ const EDIT_REASONS = [
 
 const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
-const CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE = {
-  'WIG ONLY': 680,
-  'WIG + INSTALL': 960,
-} as const;
-
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
+}
+
+function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCount: number): string | null {
+  if (!mode) return null;
+  if (mode === 'bookings') {
+    return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`;
+  }
+  return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`;
 }
 
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
@@ -412,6 +415,26 @@ function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOptio
   return sorted;
 }
 
+function formatViewAllListMeetingDate(dateStr: string): string {
+  try {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const dt = new Date(year, month - 1, day);
+    const weekday = dt.toLocaleDateString(undefined, { weekday: 'short' }).toUpperCase();
+    return `${weekday}, ${month}/${day},${year}`;
+  } catch {
+    return dateStr;
+  }
+}
+
+function viewAllListMeetingLabel(m: AdminMeeting): string {
+  if (m.category === 'appointment') return `${getBookingCardDetails(m).installKind}:`;
+  return `${consultTypeLabelForMeeting(m)}:`;
+}
+
+function formatViewAllListMeetingSchedule(m: AdminMeeting): string {
+  return `${formatViewAllListMeetingDate(m.date)} · ${m.time} · ${formatMinutesAsHoursAndMinutes(m.duration)}`;
+}
+
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
   if (searchTokens.length === 0) return true;
   const haystack = meetingSearchBlob(m);
@@ -627,58 +650,6 @@ function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTAL
     .toUpperCase()
     .replace(/\s+/g, ' ');
   return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
-}
-
-function consultPriceFromBreakdownRows(raw: unknown): number | null {
-  if (!Array.isArray(raw)) return null;
-  const rows = raw.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === 'object' && !Array.isArray(row));
-  const priorityLabels = ['TOTAL', 'GRAND TOTAL', 'ESTIMATED TOTAL', 'QUOTE TOTAL', 'FINAL TOTAL', 'BALANCE'];
-  for (const labelText of priorityLabels) {
-    const row = rows.find((item) => String(item.label || item.name || '').trim().toUpperCase() === labelText);
-    if (!row) continue;
-    const exact = normalizeMoneyValue(row.value ?? row.amount ?? row.total ?? row.usd);
-    if (exact != null && exact > 0) return exact;
-  }
-  for (const row of rows) {
-    const parsed = normalizeMoneyValue(row.value ?? row.amount ?? row.total ?? row.usd);
-    if (parsed != null && parsed > 0) return parsed;
-  }
-  return null;
-}
-
-function consultDisplayPriceUsd(m: AdminMeeting): number {
-  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
-  const explicit = normalizeMoneyValue(
-    meta.consultServicePriceUsd ??
-    meta.consultServicePriceUSD ??
-    meta.consultQuoteTotalUsd ??
-    meta.consultQuoteTotalUSD ??
-    meta.quoteTotalUsd ??
-    meta.quoteTotalUSD ??
-    meta.recommendedTotalUsd ??
-    meta.recommendedTotalUSD ??
-    meta.servicePriceUsd ??
-    meta.servicePriceUSD ??
-    meta.consultPriceUsd ??
-    meta.consultPriceUSD ??
-    meta.bookingPriceUsd ??
-    meta.bookingPriceUSD ??
-    meta.priceUsd ??
-    meta.priceUSD ??
-    meta.price ??
-    meta.depositUsd ??
-    meta.depositUSD ??
-    meta.deposit
-  );
-  if (explicit != null && explicit > 0) return explicit;
-  const breakdownPrice = consultPriceFromBreakdownRows(
-    meta.priceBreakdown ??
-    meta.quoteBreakdown ??
-    meta.consultPriceBreakdown ??
-    meta.price_breakdown
-  );
-  if (breakdownPrice != null && breakdownPrice > 0) return breakdownPrice;
-  return CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE[consultTypeLabelForMeeting(m)];
 }
 
 function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
@@ -1200,6 +1171,63 @@ export default function AdminMeetingsHub() {
     return cards;
   }, [viewAllMode, viewAllBaseRows, meetingSortOption]);
 
+  const viewAllListClientPanels = useMemo(() => {
+    if (!viewAllMode) return [] as Array<{
+      key: string;
+      displayName: string;
+      profilePhoto: string;
+      latestMeeting: AdminMeeting;
+      tierIsPremium: boolean;
+      meetings: AdminMeeting[];
+    }>;
+
+    const byClient = new Map<
+      string,
+      {
+        key: string;
+        displayName: string;
+        profilePhoto: string;
+        latestMeeting: AdminMeeting;
+        tierIsPremium: boolean;
+        meetings: AdminMeeting[];
+      }
+    >();
+
+    for (const row of viewAllRows) {
+      const key = meetingClientUniqKey(row);
+      const existing = byClient.get(key);
+      if (!existing) {
+        byClient.set(key, {
+          key,
+          displayName: meetingClientDisplayNameWithState(row),
+          profilePhoto: meetingClientProfilePhoto(row),
+          latestMeeting: row,
+          tierIsPremium: tierPremium(row),
+          meetings: [row],
+        });
+        continue;
+      }
+      existing.meetings.push(row);
+      if (meetingSortTimeMs(row) > meetingSortTimeMs(existing.latestMeeting)) {
+        existing.latestMeeting = row;
+        existing.profilePhoto = meetingClientProfilePhoto(row);
+        existing.tierIsPremium = tierPremium(row);
+      }
+    }
+
+    return [...byClient.values()].map((group) => {
+      const meetings = [...group.meetings].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+      const latestMeeting = meetings[0] ?? group.latestMeeting;
+      return {
+        ...group,
+        meetings,
+        latestMeeting,
+        profilePhoto: meetingClientProfilePhoto(latestMeeting),
+        tierIsPremium: tierPremium(latestMeeting),
+      };
+    });
+  }, [viewAllMode, viewAllRows]);
+
   const viewAllUniqueClientCount = useMemo(() => {
     if (!viewAllMode) return 0;
     return viewAllClientCards.length;
@@ -1258,15 +1286,12 @@ export default function AdminMeetingsHub() {
     };
   }, [consultMeetings, localTick]);
 
-  const activeMainCardTitle = viewAllMode
-    ? viewAllMode === 'bookings'
-      ? `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`
-      : `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`
-    : editMeeting
+  const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
+    ?? (editMeeting
     ? 'EDIT MEETING'
     : quoteMeeting
     ? 'SEND CONSULT QUOTE'
-    : null;
+    : null);
 
   const closeMainCardPanel = () => {
     setViewAllMode(null);
@@ -1704,7 +1729,7 @@ export default function AdminMeetingsHub() {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    {consultTypeLabelForMeeting(latest)}: {formatUsd(consultDisplayPriceUsd(latest))} USD
+                                    {consultTypeLabelForMeeting(latest)}
                                   </p>
                                   <p
                                     style={{
@@ -1728,64 +1753,92 @@ export default function AdminMeetingsHub() {
                       </div>
                     ) : (
                       <div className="space-y-3" style={{ marginTop: '10px' }}>
-                        {viewAllRows.map((m) => (
+                        {viewAllListClientPanels.map((clientGroup) => (
                           <div
-                            key={m.id}
-                            className="cursor-pointer"
+                            key={clientGroup.key}
                             style={{
                               background: '#fff',
                               border: '1px solid #d1d5db',
                               borderRadius: '0',
                               padding: '10px',
                             }}
-                            onClick={() => openClientAccount(m)}
-                            role="presentation"
                           >
-                            <div className="flex items-center gap-2.5">
-                              <img
-                                src={meetingClientProfilePhoto(m)}
-                                alt=""
-                                width={62}
-                                height={62}
-                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
-                              />
+                            <div className="flex items-start gap-2.5">
+                              <button
+                                type="button"
+                                onClick={() => openClientAccount(clientGroup.latestMeeting)}
+                                aria-label="Open client details"
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0 }}
+                              >
+                                <img
+                                  src={clientGroup.profilePhoto}
+                                  alt=""
+                                  width={62}
+                                  height={62}
+                                  style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
+                                />
+                              </button>
                               <div style={{ minWidth: 0, flex: 1, transform: 'translateX(6px)' }}>
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
-                                  <span style={{ color: '#000' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
-                                  <span style={{ color: tierLabelColor(m) }}>
-                                    · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
-                                  </span>
-                                </p>
-                                {m.category === 'appointment' ? (
-                                  <>
-                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
-                                      {formatBookingInstallLineForCard(m)}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Book"',
-                                        fontSize: '9px',
-                                        color: '#000000',
-                                        margin: '4px 0 0',
-                                        whiteSpace: 'pre-line',
-                                      }}
-                                    >
-                                      {formatBookingAddonsLineForCardDisplay(m)}
-                                    </p>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
-                                      {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
-                                    </p>
-                                  </>
-                                ) : (
-                                  <>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
-                                      {consultTypeLabelForMeeting(m)}
-                                    </p>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
-                                      {formatHeaderDate(m.date)} · {m.time}
-                                    </p>
-                                  </>
-                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => openClientAccount(clientGroup.latestMeeting)}
+                                  style={{
+                                    border: 'none',
+                                    background: 'none',
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    margin: 0,
+                                    width: '100%',
+                                    textAlign: 'left',
+                                  }}
+                                >
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0', color: '#000' }}>
+                                    <span style={{ color: '#000' }}>{clientGroup.displayName}</span>{' '}
+                                    <span style={{ color: clientGroup.tierIsPremium ? '#000' : '#808080' }}>
+                                      · {clientGroup.tierIsPremium ? 'PREMIUM' : 'STANDARD'}
+                                    </span>
+                                  </p>
+                                </button>
+                                <div
+                                  style={{
+                                    marginTop: '8px',
+                                    maxHeight: '44px',
+                                    overflowY: clientGroup.meetings.length > 3 ? 'auto' : 'hidden',
+                                    paddingRight: clientGroup.meetings.length > 3 ? '4px' : 0,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '4px',
+                                  }}
+                                >
+                                  {clientGroup.meetings.map((meeting) => (
+                                    <div key={meeting.id} style={{ display: 'flex', alignItems: 'baseline', gap: '3px', minWidth: 0, lineHeight: '12px' }}>
+                                      <span
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '9px',
+                                          color: '#808080',
+                                          flexShrink: 0,
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        {viewAllListMeetingLabel(meeting)}
+                                      </span>
+                                      <span
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '9px',
+                                          color: '#EB1C24',
+                                          minWidth: 0,
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
+                                        {formatViewAllListMeetingSchedule(meeting)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -2088,7 +2141,7 @@ export default function AdminMeetingsHub() {
                                     alt=""
                                     width={44}
                                     height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', display: 'block' }}
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
@@ -2265,7 +2318,7 @@ export default function AdminMeetingsHub() {
                                         alt=""
                                         width={44}
                                         height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', display: 'block' }}
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">

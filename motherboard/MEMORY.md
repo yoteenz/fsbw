@@ -10187,3 +10187,191 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings consult grid cards, prefer explicit quote/service totals from metadata when available; if meetings rows do not carry an explicit amount, use a stable service-style fallback by consult type rather than the consult deposit amount when the UI is meant to resemble a service card.
+
+---
+
+## 2026-04-04 — Stripe membership billing policy implemented, then corrected to push directly on preview/mobile and remove wrong branch
+
+**Context:** User requested concrete membership billing behavior: upgrades to a higher-cost membership must charge a full new cycle immediately and set a new renewal date, then refund the prorated unused amount from the current subscription period; downgrades must keep current membership active until renewal, then charge the newly selected lower-cost plan on renewal. After implementation, user explicitly corrected delivery branch requirements and requested the work be pushed to `preview/mobile`, with the mistakenly created feature branch deleted.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected current Stripe membership flow (`create-checkout-session`, webhook sync, profile mapping, checkout client behavior).
+- Identified that prior flow only started hosted Stripe Checkout and did not enforce explicit upgrade/downgrade billing semantics server-side.
+- Implemented server-side tier-change handling in `POST /api/stripe/create-checkout-session` for existing subscribers:
+  - **Upgrade (higher cost):** update existing subscription to new price with `billing_cycle_anchor: 'now'` and no proration invoice line item, then calculate remaining-time ratio on current cycle and create a refund against the most recent paid subscription charge for unused old-tier value.
+  - **Downgrade (lower cost):** keep current tier benefits through current period and schedule lower tier at period end via subscription pending update; no immediate downgrade charge.
+  - **Same tier:** return a no-op `subscription_updated` response.
+- Updated frontend API + checkout page to handle both outcomes:
+  - Redirect flow for first-time/no-existing-subscription checkout sessions,
+  - Immediate `subscription_updated` responses for server-applied upgrade/downgrade/no-op with profile sync and user notice.
+- Hardened webhook tier synchronization so profile tier/renewal metadata follows Stripe subscription item price mapping during invoice/subscription updates.
+- Ran `npm install` (for missing local toolchain) and verified successful `npm run build`.
+- Initially committed/pushed on `cursor/membership-tier-billing-af98` and opened draft PR, then user rejected branch target.
+- Corrected by fetching latest `origin/preview/mobile`, cherry-picking the billing commit onto local `preview/mobile`, rebuilding successfully, pushing to `origin/preview/mobile`, then deleting the incorrect branch both remote and local (`cursor/membership-tier-billing-af98`).
+
+**Decisions / outcomes:**
+- Billing behavior now matches requested policy:
+  - upgrades rebill full new cycle immediately and refund unused prior-cycle value,
+  - downgrades defer to renewal and preserve current entitlement until then.
+- Final branch location corrected to `preview/mobile` per user instruction.
+- Incorrect branch was removed from both local and origin remotes as requested.
+
+**Changes:**
+- `api/_lib/stripeMembership.ts`
+- `api/stripe/create-checkout-session.ts`
+- `api/stripe/webhook.ts`
+- `src/utils/api.ts`
+- `src/pages/checkout/page.tsx`
+- `motherboard/MEMORY.md`
+- Git/branch operations in this chat:
+  - created then removed `cursor/membership-tier-billing-af98` (local + remote),
+  - delivered code on `preview/mobile`.
+
+**Conventions:**
+- For membership tier changes, apply billing policy server-side by change direction:
+  - higher-cost change = immediate full-cycle rebill + unused-time refund,
+  - lower-cost change = schedule for renewal with no immediate downgrade charge.
+- When user specifies final delivery branch after implementation, re-home commits onto requested target branch and clean up any mistaken branch artifacts.
+
+---
+
+## 2026-04-04 — Admin Meetings view-all updates moved to preview/mobile and incorrect feature branch removed
+
+**Context:** In this conversation thread, the user requested additional Admin Meetings “View All” UI refinements (icon-border thickness, list/grid spacing/offsets, booking/consult line formatting), then asked for a follow-up legacy-header sweep to prevent transient “TS” artifact recurrence. After those updates were delivered on a feature branch, the user explicitly required delivery on `preview/mobile` and asked to undo branch targeting mistakes and delete the incorrectly created branch.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior meetings view-all work (TS artifact fixes, header consolidation, and control-position refinements).
+- Applied requested view-all updates in `AdminMeetingsHub`:
+  - profile icon border increased by 0.1px across view-all + B/C tab cards,
+  - grid booking-count spacing tightened,
+  - booking grid service line simplified to install kind + price only,
+  - list-text block shifted 6px right of icons,
+  - consult grid lines updated to match booking-style structure with red price line + date line.
+- Performed explicit legacy-header sweep and consolidated title generation to reduce alternate-branch/header-path risk in meetings view-all.
+- User then required push target correction to `preview/mobile` and branch cleanup.
+- Switched to `preview/mobile`, rebased to remote, transferred finalized meetings/header file state, rebuilt successfully, pushed to `origin/preview/mobile`.
+- Deleted wrong branch both remote and local (`cursor/bookings-tab-ui-adjustments-95ca`) per user instruction.
+
+**Decisions / outcomes:**
+- Final delivery branch is now correctly `preview/mobile`.
+- The mistakenly used feature branch was deleted from both origin and local.
+- Admin Meetings view-all refinements and header-path cleanup are now on `preview/mobile`.
+
+**Changes:**
+- Code moved/applied on `preview/mobile`:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Branch operations:
+  - pushed `preview/mobile`
+  - deleted remote `cursor/bookings-tab-ui-adjustments-95ca`
+  - deleted local `cursor/bookings-tab-ui-adjustments-95ca`
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- If user clarifies branch target after implementation, immediately re-home final code to the specified branch and remove incorrect branch artifacts (remote + local) when requested.
+
+---
+
+## 2026-04-04 — Admin meetings UI refinement thread plus preview/mobile merge-conflict classification
+
+**Context:** Across this chat, the user requested a long sequence of Admin UI tweaks centered on Admin Meetings plus top admin summary panels, then later asked for the current branch to be merged against the latest `origin/preview/mobile`, with the conflicts reviewed, classified, the simple ones fixed, and the complicated ones reported.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context at chat start and implemented an initial pass of admin UI updates:
+  - increased red metric text on admin summary panels by 4px across the affected admin pages,
+  - added the meetings sort dropdown above the regular Bookings/Consults client panels to mirror the View All control,
+  - changed white-background booking calendar cells to use black borders.
+- Continued through multiple Admin Meetings refinement passes in `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - tightened View All grid count-line spacing,
+  - shifted View All list/grid mode icons,
+  - nudged list-view text to the right of profile icons,
+  - reworked View All consult grid cards into red service-line + black date-line structure,
+  - suppressed stray `TS`/`TSTS` wrap artifacts with stronger clipping/ellipsis rules,
+  - matched grid/list profile icon ring treatment,
+  - increased spacing above the black date row,
+  - moved the regular bookings-tab dropdown higher for visibility,
+  - changed consult service-line pricing to service-style fallback values when no explicit amount exists.
+- Verified each completed UI pass with successful `npm run build`, committed, pushed, and updated the branch PR during those earlier turns.
+- In this turn, fetched latest `origin/preview/mobile` and ran a non-committing merge to inspect real conflicts.
+- Actual merge conflicts surfaced in two files only:
+  - `motherboard/MEMORY.md`
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Resolved the simple append-only `motherboard/MEMORY.md` conflict by keeping both branches’ history entries.
+- Reviewed the `AdminMeetingsHub` conflict hunks and identified a mix of simple mechanical overlaps and true intent conflicts:
+  - current branch favors thinner `0.7px` icon borders matching list view, stronger no-wrap/ellipsis handling, bookings-tab dropdown visibility changes, service-style consult fallback pricing (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`), and full booking install line formatting,
+  - `preview/mobile` favors `0.8px` icon borders, a simpler explicit-price-only consult helper, simplified booking price-only grid line formatting, and a different implementation of list text offset / price-line helpers.
+- Cleaned up obvious mechanical issues in the working tree (including duplicate wrapper cleanup while inspecting the conflicted meetings file), but intentionally left `src/pages/admin/meetings/AdminMeetingsHub.tsx` unresolved at the git merge level because several hunks reflect competing UI intent rather than safe text-only merges.
+
+**Decisions / outcomes:**
+- The `motherboard/MEMORY.md` conflict is **simple** and has been fixed.
+- The remaining `src/pages/admin/meetings/AdminMeetingsHub.tsx` conflict is **complicated / mixed-intent** overall:
+  - some sub-hunks are mechanically mergeable,
+  - but several key hunks encode different product/UI decisions, so they should be resolved intentionally rather than auto-merged.
+- Merge is intentionally left incomplete after fixing the simple conflict so those meetings intent differences can be reviewed explicitly.
+
+**Changes:**
+- `motherboard/MEMORY.md`
+  - resolved append-only merge conflict by preserving entries from both branches
+  - appended this full-conversation summary entry
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - reviewed and classified conflict hunks
+  - cleaned obvious duplicate wrapper artifact in the working tree while leaving the file unresolved for intent review
+- Git operations:
+  - fetched latest `origin/preview/mobile`
+  - ran `git merge --no-commit --no-ff origin/preview/mobile`
+  - inspected and classified the resulting conflict set
+
+**Conventions:**
+- Treat append-only motherboard history conflicts as simple merges that keep entries from both branches.
+- Treat Admin Meetings View All card conflicts as intent-sensitive when branches disagree on pricing strategy, border thickness, or service-line copy/formatting; these should be reviewed as product decisions, not blindly auto-merged.
+
+---
+
+## 2026-04-04 — View All meetings list now groups by client with inner scroll panels
+
+**Context:** Continuing this same chat after the admin summary-panel updates, multiple Admin Meetings refinements, and the later `preview/mobile` merge-conflict review, the user requested one more targeted Meetings change: update the **View All Bookings/Consults list view only** so it groups meetings by client instead of one panel per booking row, with an inner vertical scroll inside each client panel and the first 3 recent appointments visible before scrolling. The user also provided the desired text structure: header line like `DIANA FOSTER (IL) · STANDARD`, then per-meeting lines like `RE-INSTALL: MON, 6/27,2026 · 3:00 PM · 2 HRS` with the service label in gray Futura Medium and the date/time/duration portion in red Futura Medium.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and verified:
+  - +4px red summary-panel metric text across the relevant admin pages,
+  - black borders for white booking-calendar cells on Admin Meetings,
+  - several View All grid/list/icon/spacing/consult-line refinements in `AdminMeetingsHub`.
+- Later in the same chat, fetched latest `origin/preview/mobile`, reviewed the merge conflicts, classified `motherboard/MEMORY.md` as simple append-only and `AdminMeetingsHub` as mixed-intent/complicated, and left the meetings file intentionally unresolved at the git index level while preserving a clean working copy direction.
+- In this follow-up turn, focused only on the **View All list view** path inside `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Replaced the one-card-per-meeting list renderer with grouped client panels:
+  - meetings are now grouped by unique client key,
+  - group ordering still follows the active shared sort option,
+  - meetings within each client group are sorted most recent first.
+- Added compact list-only formatting helpers:
+  - numeric weekday/date helper (`MON, 6/27,2026` pattern),
+  - gray service-label helper (`RE-INSTALL:` / consult type with trailing colon),
+  - red schedule helper (`DATE · TIME · DURATION`).
+- Updated the View All list renderer to:
+  - keep the client photo on the left,
+  - show one client header line with name + tier,
+  - render the grouped meeting lines inside an inner scroll area,
+  - cap the inner area so roughly the first 3 recent rows show before vertical scrolling.
+- Kept the change scoped to **View All list view only**; grid view and the regular Bookings/Consults tab card layouts were not changed in this turn.
+- The first verification build failed only because an old upstream helper (`formatBookingInstallLinePriceOnlyForCard`) had become unused after the list renderer change; removed that dead helper and reran a successful `npm run build`.
+
+**Decisions / outcomes:**
+- View All list mode now groups rows by client instead of rendering one panel per appointment/consult row.
+- Each client panel now has an internal vertical scroll region sized to show the first ~3 recent meetings before scrolling.
+- The grouped meeting rows follow the requested one-line structure with:
+  - service label in gray Futura Medium,
+  - date/time/duration in red Futura Medium.
+- The merge working tree remains active, but the meetings file is now in a buildable state with the new grouped-list behavior applied in the working copy.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatViewAllListMeetingDate(...)`
+  - added `viewAllListMeetingLabel(...)`
+  - added `formatViewAllListMeetingSchedule(...)`
+  - added grouped memo `viewAllListClientPanels`
+  - replaced View All list branch from one-row-per-card to grouped client panels with inner scroll
+  - removed now-unused helper `formatBookingInstallLinePriceOnlyForCard(...)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All Meetings list mode when the user wants grouped client panels, group rows by unique client key, sort meetings within each group by recency, and use an inner scroll region rather than creating a separate outer card per meeting row.

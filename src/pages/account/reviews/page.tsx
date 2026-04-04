@@ -8,6 +8,7 @@ import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 interface Review {
   id: string;
@@ -235,7 +236,12 @@ function ReviewsPage() {
     }
     return false;
   });
-  const [activeTab, setActiveTab] = useState<'SHOP' | 'TOOLS'>('SHOP');
+  const [activeTab, setActiveTab] = usePersistentQueryState<'SHOP' | 'TOOLS'>({
+    queryKey: 'tab',
+    storageKey: 'accountReviewsActiveTab',
+    defaultValue: 'SHOP',
+    allowedValues: ['SHOP', 'TOOLS'] as const,
+  });
   const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_INITIAL);
   const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_INITIAL);
   const [userSubmittedReviews, setUserSubmittedReviews] = useState<Review[]>([]);

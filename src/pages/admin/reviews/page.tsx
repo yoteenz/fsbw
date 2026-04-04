@@ -6,6 +6,7 @@ import { getAdminReviews } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
@@ -165,7 +166,12 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
 export default function AdminReviews() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<(typeof REVIEW_TABS)[number]>('ALL');
+  const [activeTab, setActiveTab] = usePersistentQueryState<(typeof REVIEW_TABS)[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminReviewsActiveTab',
+    defaultValue: 'ALL',
+    allowedValues: REVIEW_TABS,
+  });
   const [reviews, setReviews] = useState<AdminReviewRow[]>(DEFAULT_REVIEWS);
   const [averageRating, setAverageRating] = useState(4.8);
   const [totalReviews, setTotalReviews] = useState(247);
