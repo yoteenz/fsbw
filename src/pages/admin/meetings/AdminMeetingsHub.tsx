@@ -1504,6 +1504,8 @@ export default function AdminMeetingsHub() {
                       WebkitOverflowScrolling: 'touch',
                       scrollbarWidth: 'none',
                       msOverflowStyle: 'none',
+                      paddingLeft: '8px',
+                      paddingRight: '8px',
                     }}
                   >
                     <div
@@ -1511,7 +1513,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         width: 'max-content',
                         minWidth: '100%',
-                        justifyContent: 'center',
+                        justifyContent: 'flex-start',
                         whiteSpace: 'nowrap',
                       }}
                     >
@@ -1528,6 +1530,7 @@ export default function AdminMeetingsHub() {
                         borderBottom: mainTab === 'overview' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
                         whiteSpace: 'nowrap',
+                        flexShrink: 0,
                       }}
                     >
                       OVERVIEW
@@ -1545,6 +1548,7 @@ export default function AdminMeetingsHub() {
                         borderBottom: mainTab === 'bookings' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
                         whiteSpace: 'nowrap',
+                        flexShrink: 0,
                       }}
                     >
                       BOOKINGS
@@ -2367,7 +2371,7 @@ export default function AdminMeetingsHub() {
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
                                   {imgs.length > 0 && (
                                     <div className="flex flex-wrap mt-2" style={{ marginLeft: '10px', gap: '8px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
@@ -2460,8 +2464,6 @@ export default function AdminMeetingsHub() {
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
                     whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
                   }}
                 >
                   VIEW ALL BOOKINGS
@@ -2479,8 +2481,6 @@ export default function AdminMeetingsHub() {
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
                     whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
                   }}
                 >
                   VIEW ALL CONSULTS

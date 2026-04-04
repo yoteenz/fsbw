@@ -10630,3 +10630,48 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When a recurring phantom `TS` / `TSTS` fragment persists in Admin Meetings after literal-string searches fail, investigate the **specific compact label container layout** (tab rows, toggle bars, clipped headers) and fix the parent container geometry first rather than only adding more no-wrap rules to child text nodes.
+
+---
+
+## 2026-04-04 — Meetings consult tab text switched to black; compact CONSULTS containers loosened to avoid TS clipping
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread after multiple anti-wrap passes, the user reported that the `TS/TSTS` artifact still persisted and also requested one concrete style change: on the **Meetings consults tab only**, the `WIG ONLY` / `WIG + INSTALL` line should be black instead of gray.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed multiple preview/mobile Meetings refinements:
+  - summary metric text +4px across admin panels,
+  - bookings-calendar border updates and later A/C calendar parity work,
+  - View All grouped client panels,
+  - bookings-tab dropdown placement changes,
+  - grouped list time color split,
+  - repeated anti-wrap hardening targeted at recurring `TS/TSTS` fragments.
+- In this latest pass, re-inspected the exact active containers for:
+  - the top Meetings tab row (`OVERVIEW / BOOKINGS / CONSULTS`),
+  - the bottom `VIEW ALL BOOKINGS / VIEW ALL CONSULTS` buttons,
+  - the regular consult-tab hair-option line in the consult rows.
+- Based on that inspection, concluded the consult-tab/top-row artifact risk was still likely coming from compact `CONSULTS` containers being clipped too aggressively rather than from a literal placeholder token.
+- Adjusted the top Meetings tab row again so it has more forgiving horizontal layout:
+  - added horizontal padding on the scroll wrapper,
+  - changed inner justification from `center` to `flex-start`,
+  - forced all three top buttons to `flexShrink: 0`.
+- Simplified the bottom View All button label handling by removing overflow/ellipsis clipping from the full-width stacked buttons while keeping `whiteSpace: 'nowrap'`, since those buttons have enough width and clipping was more likely to produce the visible tail fragment than to help.
+- Changed the regular Meetings **consults-tab** `hair` line (`WIG ONLY` / `WIG + INSTALL`) from gray to black only in the consult rows.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The consult-tab wig-option text is now black instead of gray, scoped only to the regular Meetings consult tab rows.
+- The top `CONSULTS` tab and bottom `VIEW ALL CONSULTS` button now use less clipping-prone container behavior.
+- This pass continues to treat the visible `TS/TSTS` artifact as a compact-label container/layout problem, not as a literal placeholder token sitting in source.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed consult-row hair-option text from `#808080` to `#000`
+  - added left/right padding to the top Meetings tab scroller
+  - changed top tab-row inner justification from `center` to `flex-start`
+  - added `flexShrink: 0` to the top `OVERVIEW` / `BOOKINGS` / `CONSULTS` buttons
+  - removed overflow/ellipsis clipping from the full-width stacked `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When the suspect compact label already has one-line text rules, broaden the fix to the immediate parent layout (padding, justification, shrink behavior, unnecessary clipping) before assuming the text node itself is still the problem.
