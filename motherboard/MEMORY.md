@@ -10011,3 +10011,37 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For View All visual state cues in Admin Meetings, use explicit booking/consult status semantics (active vs past) for red/black signaling instead of tier/membership styling when the user asks for activity-state meaning.
+
+---
+
+## 2026-04-03 — View-all toggle updates: icon border thinning, grid row typography/structure, and list date line update
+
+**Context:** User requested targeted “view all toggle” visual/typography updates on Admin Meetings for both the view-all panel and B/C tabs, including icon border thickness, grid-row line styles/order, icon vertical spacing, and list-view appointment date typography.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long thread of Admin Meetings UI refinements (overview tab analytics, view-all grid/list additions, ticker updates, icon parity, and repeated spacing/typography micro-adjustments).
+- During implementation, remote `preview/mobile` advanced and introduced conflicts in `AdminMeetingsHub`; merged latest upstream and resolved conflicts while preserving requested updates.
+- Applied updates that map to the **current branch implementation**:
+  - reduced black ring around relevant profile icons from `1px` to `0.7px` in view-all panel and B/C list rows,
+  - grid-view bookings count row (`1 BOOKING`) switched to gray Futura Medium and tightened to `margin: '3px 0'` (1px less above/below than prior),
+  - grid-view bookings card rows restructured to:
+    - gray booking-count row,
+    - red install line (`RE-INSTALL: OCEAN CURL $780 USD` pattern from formatter),
+    - black date row below install line (`THU, APR 30, 2026`),
+  - grid-view profile icon top spacing increased by 4px (`margin: '4px auto 0'`),
+  - list-view date line updated to red Futura Medium (`TUE, APR 28, 2026 · 9:00 AM` pattern).
+- Verified full build success after conflict resolution and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Requested style/layout changes were implemented on the existing view-all/grid-list codepath now present on `preview/mobile`.
+- Merge conflict resolution retained new upstream view-all controls (sort + list/grid toggle) and applied requested micro-adjustments on top.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - icon border thickness and spacing adjustments
+  - grid booking-count/install/date line style + ordering updates
+  - list date line typography update
+  - merge-conflict resolution with latest upstream `preview/mobile`
+
+**Conventions:**
+- For Admin Meetings view-all micro-style requests, apply changes directly to the active grid/list branch after syncing latest `preview/mobile`, since this file is frequently updated and prone to conflict churn.
