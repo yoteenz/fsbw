@@ -365,6 +365,12 @@ function meetingClientUniqKey(m: AdminMeeting): string {
   return `name:${meetingClientDisplayNameWithState(m).trim().toUpperCase()}`;
 }
 
+function meetingIsCurrentOrActive(m: AdminMeeting): boolean {
+  const status = String(m.status || '').trim().toLowerCase();
+  if (!status) return false;
+  return status === 'scheduled' || status === 'confirmed' || status === 'active' || status === 'in_progress';
+}
+
 function meetingSortTimeMs(m: AdminMeeting): number {
   const base = parseISODateLocal(m.date);
   const timeText = String(m.time || '').trim().toUpperCase();
@@ -1092,13 +1098,13 @@ export default function AdminMeetingsHub() {
       key: string;
       displayName: string;
       profilePhoto: string;
-      tierIsPremium: boolean;
+      hasActiveMeeting: boolean;
       totalCount: number;
       latestMeeting: AdminMeeting;
     }>;
     const byClient = new Map<
       string,
-      { key: string; displayName: string; profilePhoto: string; tierIsPremium: boolean; totalCount: number; latestMeeting: AdminMeeting }
+      { key: string; displayName: string; profilePhoto: string; hasActiveMeeting: boolean; totalCount: number; latestMeeting: AdminMeeting }
     >();
     for (const row of viewAllBaseRows) {
       const key = meetingClientUniqKey(row);
@@ -1108,17 +1114,17 @@ export default function AdminMeetingsHub() {
           key,
           displayName: meetingClientDisplayNameWithState(row),
           profilePhoto: meetingClientProfilePhoto(row),
-          tierIsPremium: tierPremium(row),
+          hasActiveMeeting: meetingIsCurrentOrActive(row),
           totalCount: 1,
           latestMeeting: row,
         });
         continue;
       }
       existing.totalCount += 1;
+      if (meetingIsCurrentOrActive(row)) existing.hasActiveMeeting = true;
       if (meetingSortTimeMs(row) > meetingSortTimeMs(existing.latestMeeting)) {
         existing.latestMeeting = row;
         existing.profilePhoto = meetingClientProfilePhoto(row);
-        existing.tierIsPremium = tierPremium(row);
       }
     }
     const cards = [...byClient.values()];
@@ -1554,7 +1560,7 @@ export default function AdminMeetingsHub() {
                                   display: 'block',
                                 }}
                               />
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.tierIsPremium ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
                                 {clientCard.displayName}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', margin: '4px 0 0' }}>
@@ -1592,9 +1598,7 @@ export default function AdminMeetingsHub() {
                               />
                               <div style={{ minWidth: 0, flex: 1 }}>
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
-                                  <span style={{ color: m.category === 'consultation' ? '#EB1C24' : '#000' }}>
-                                    {meetingClientDisplayNameWithState(m)}
-                                  </span>{' '}
+                                  <span style={{ color: '#000' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
                                     · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                   </span>
