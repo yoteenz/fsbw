@@ -751,6 +751,8 @@ export default function AdminDashboard() {
   const todayUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date === todayIso).length;
   const weekUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= endOfThisWeekIso).length;
   const monthUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= meetingsRangeEnd).length;
+  const upcomingLine = (count: number, window: 'TODAY' | 'THIS WEEK' | 'THIS MONTH') =>
+    `${count} UPCOMING ${count === 1 ? 'BOOKING' : 'BOOKINGS'} SCHEDULED ${window}.`;
 
   const mostBookedClientLine = (() => {
     const counts = new Map<string, number>();
@@ -829,24 +831,24 @@ export default function AdminDashboard() {
   })();
 
   const meetingsCardTickerWithInsights = [
-    `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY.`,
+    upcomingLine(todayUpcomingBookingsCount, 'TODAY'),
     mostBookedClientLine,
-    `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK.`,
+    upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK'),
     mostRedeemedOffersLine,
-    `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`,
+    upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH'),
     mostTraveledCityLine,
   ]
     .join(' ')
     .concat(
-      ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${mostBookedClientLine} ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${mostRedeemedOffersLine} ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH. ${mostTraveledCityLine}`
+      ` ${upcomingLine(todayUpcomingBookingsCount, 'TODAY')} ${mostBookedClientLine} ${upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK')} ${mostRedeemedOffersLine} ${upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH')} ${mostTraveledCityLine}`
     );
 
   const meetingsCardTickerHighlightParts = [
-    { text: `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. `, color: 'text-red-500' as const },
+    { text: `${upcomingLine(todayUpcomingBookingsCount, 'TODAY')} `, color: 'text-red-500' as const },
     { text: `${mostBookedClientLine} `, color: 'text-gray-500' as const },
-    { text: `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. `, color: 'text-red-500' as const },
+    { text: `${upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK')} `, color: 'text-red-500' as const },
     { text: `${mostRedeemedOffersLine} `, color: 'text-gray-500' as const },
-    { text: `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH. `, color: 'text-red-500' as const },
+    { text: `${upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH')} `, color: 'text-red-500' as const },
     { text: mostTraveledCityLine, color: 'text-gray-500' as const },
   ];
 
