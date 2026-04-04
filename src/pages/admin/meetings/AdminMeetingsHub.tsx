@@ -1542,6 +1542,7 @@ export default function AdminMeetingsHub() {
                         borderBottom: mainTab === 'consults' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
                         whiteSpace: 'nowrap',
+                        flexShrink: 0,
                       }}
                     >
                       CONSULTS
@@ -2454,6 +2455,8 @@ export default function AdminMeetingsHub() {
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
                     whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   VIEW ALL CONSULTS

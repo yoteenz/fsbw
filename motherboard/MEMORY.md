@@ -10506,3 +10506,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When a stray `TS` / `TSTS` artifact appears in Admin Meetings View All UI and no literal placeholder token exists in source, treat it as an overflow/wrapping issue first: harden compact labels/buttons with no-wrap + ellipsis and constrain panel overflow before assuming there is a hidden placeholder string.
+
+---
+
+## 2026-04-04 — Meetings consult-tab / View All anti-wrap hardening follow-up; list client panels kept uniform
+
+**Context:** Continuing the same `preview/mobile` Admin Meetings thread immediately after the bookings/consult calendars were aligned, the user reported that the stray `TS` text was still visible specifically on the Meetings **Consults** tab and around the **View All** toggle area, and also reiterated that all **View All list-view** client panels should remain the same height regardless of how many appointment lines they contain.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, on the same preview-mobile delivery path:
+  - increased red admin summary metric text by 4px,
+  - adjusted multiple Admin Meetings View All grid/list/icon/spacing states,
+  - moved final code directly onto `preview/mobile` and deleted the mistaken feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - moved the bookings-tab dropdown below the calendar,
+  - aligned A/C booking calendars to the Admin Meetings visual style,
+  - previously searched for literal `TSTS` / `TS` source and found none in the active meetings code path.
+- In this latest pass, re-inspected the specific Meetings consult-tab and View All toggle/button renderers in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed likely remaining orphan-text risk areas were:
+  - compact top-tab labels (`CONSULTS` in the Meetings tab row),
+  - bottom View All toggle buttons (`VIEW ALL CONSULTS` / `VIEW ALL BOOKINGS`),
+  - grouped list client cards if header or row content could affect outer panel height.
+- Hardened those likely wrap/orphan points by keeping the compact tab/toggle labels on one line and preserving clipped overflow in the View All region.
+- Confirmed the grouped client-panel renderer already had fixed card height and inner scroll; retained that fixed-height treatment so all list-view client panels stay uniform.
+- Rebuilt successfully again on `preview/mobile` after the final meetings-only anti-wrap hardening pass.
+
+**Decisions / outcomes:**
+- The recurring visible `TS` / `TSTS` artifact is still being treated as a wrapping/orphaned-label problem rather than a literal placeholder string in source.
+- The Meetings consult-tab / View All compact labels now have stronger no-wrap protection.
+- View All list-view client panels remain fixed-height with scrolling constrained internally.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added additional no-wrap protection to compact consult-tab / View All label paths
+  - retained fixed-height View All list client panels with internal overflow only
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For recurring phantom `TS` / `TSTS` fragments in Admin Meetings where no literal placeholder token exists in source, continue treating the issue as a compact-label wrapping problem and harden each specific consult/view-all label container with no-wrap + clipped overflow until the offending visual path is eliminated.
