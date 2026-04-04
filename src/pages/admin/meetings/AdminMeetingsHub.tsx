@@ -795,6 +795,23 @@ export default function AdminMeetingsHub() {
     return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
   }, [viewAllMode, appointmentMeetings, consultMeetings]);
 
+  const activeMainCardTitle = viewAllMode
+    ? viewAllMode === 'bookings'
+      ? 'VIEW ALL BOOKINGS'
+      : 'VIEW ALL CONSULTS'
+    : editMeeting
+    ? 'EDIT MEETING'
+    : quoteMeeting
+    ? 'SEND CONSULT QUOTE'
+    : null;
+
+  const closeMainCardPanel = () => {
+    setViewAllMode(null);
+    setQuoteMeeting(null);
+    setEditMeeting(null);
+    setEditMessage('');
+  };
+
   const travelBlackoutDates = useMemo(() => {
     const blocked = new Set<string>();
     for (const appt of appointmentMeetings) {
@@ -843,17 +860,17 @@ export default function AdminMeetingsHub() {
                 minHeight: 'calc(100dvh - 160px)',
               }}
             >
-              {viewAllMode ? (
+              {activeMainCardTitle ? (
                 <div
                   className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
                   style={{ marginTop: '10px' }}
                 >
                   <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
-                    {viewAllMode === 'bookings' ? 'VIEW ALL BOOKINGS' : 'VIEW ALL CONSULTS'}
+                    {activeMainCardTitle}
                   </h2>
                   <button
                     type="button"
-                    onClick={() => setViewAllMode(null)}
+                    onClick={closeMainCardPanel}
                     aria-label="Close view all"
                     style={{
                       padding: 0,
@@ -1007,6 +1024,118 @@ export default function AdminMeetingsHub() {
                       ))}
                     </div>
                   </>
+                ) : editMeeting ? (
+                  <div style={{ marginTop: '12px' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0 }}>
+                      ORDER / ROW: {editMeeting.id}
+                    </p>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      REASON
+                      <select
+                        className="w-full mt-1 p-2 border text-[10px]"
+                        value={editReason}
+                        onChange={(e) => setEditReason(e.target.value)}
+                      >
+                        {EDIT_REASONS.map((r) => (
+                          <option key={r} value={r}>
+                            {r}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      MESSAGE TO CLIENT
+                      <textarea
+                        className="w-full mt-1 p-2 border text-[10px]"
+                        rows={3}
+                        value={editMessage}
+                        onChange={(e) => setEditMessage(e.target.value)}
+                      />
+                    </label>
+                    <div className="flex flex-col gap-2 mt-3">
+                      <button
+                        type="button"
+                        className="py-2 border border-black text-[10px]"
+                        disabled={editSubmitting}
+                        onClick={() => void submitEditMeeting('reschedule')}
+                      >
+                        RESCHEDULE APPOINTMENT (NOTIFY CLIENT)
+                      </button>
+                      <button
+                        type="button"
+                        className="py-2 border border-black text-[10px]"
+                        disabled={editSubmitting}
+                        onClick={() => void submitEditMeeting('cancel')}
+                      >
+                        CANCEL APPOINTMENT (NOTIFY CLIENT)
+                      </button>
+                    </div>
+                  </div>
+                ) : quoteMeeting ? (
+                  <div style={{ marginTop: '12px' }}>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0 }}>{quoteMeeting.client}</p>
+                    <label className="block mt-3" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      UNIT
+                      <select
+                        className="w-full mt-1 p-2 border text-[10px]"
+                        value={quoteUnit}
+                        onChange={(e) => setQuoteUnit(e.target.value)}
+                      >
+                        {UNIT_OPTIONS.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      SUB-PAGE SELECTIONS (FIRST PASS)
+                      <select
+                        className="w-full mt-1 p-2 border text-[10px]"
+                        value={quoteSub}
+                        onChange={(e) => setQuoteSub(e.target.value)}
+                      >
+                        {SUB_PAGE_OPTIONS.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      MESSAGE
+                      <textarea
+                        className="w-full mt-1 p-2 border text-[10px]"
+                        rows={3}
+                        value={quoteMessage}
+                        onChange={(e) => setQuoteMessage(e.target.value)}
+                      />
+                    </label>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                      PRICE BREAKDOWN (ONE LINE PER ROW, USE … BETWEEN LABEL AND VALUE)
+                      <textarea
+                        className="w-full mt-1 p-2 border text-[10px] font-mono"
+                        rows={5}
+                        value={quoteBreakdown}
+                        onChange={(e) => setQuoteBreakdown(e.target.value)}
+                      />
+                    </label>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
+                      CONSULT CODE (INITIALS + 3 DIGITS) IS GENERATED SERVER-SIDE; $40 OFF; EXPIRES 72H AFTER SEND. APPLY AT
+                      CHECKOUT (PIPELINE TBD).
+                    </p>
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        className="w-full py-2 border border-black text-[10px]"
+                        style={{ color: '#EB1C24' }}
+                        disabled={quoteSending}
+                        onClick={() => setShowSendQuoteConfirm(true)}
+                      >
+                        {quoteSending ? '…' : 'SEND ALERT'}
+                      </button>
+                    </div>
+                  </div>
                 ) : mainTab === 'bookings' ? (
                   <>
                     <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
@@ -1421,92 +1550,6 @@ export default function AdminMeetingsHub() {
         </div>
       </div>
 
-      {quoteMeeting && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.45)' }}
-          onClick={() => setQuoteMeeting(null)}
-          role="presentation"
-        >
-          <div
-            className="bg-white w-full max-w-md max-h-[90vh] overflow-y-auto p-4 border border-black"
-            style={{ borderWidth: '1.3px' }}
-            onClick={(e) => e.stopPropagation()}
-            role="presentation"
-          >
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24' }}>SEND CONSULT QUOTE</p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px' }}>{quoteMeeting.client}</p>
-            <label className="block mt-3" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              UNIT
-              <select
-                className="w-full mt-1 p-2 border text-[10px]"
-                value={quoteUnit}
-                onChange={(e) => setQuoteUnit(e.target.value)}
-              >
-                {UNIT_OPTIONS.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              SUB-PAGE SELECTIONS (FIRST PASS)
-              <select
-                className="w-full mt-1 p-2 border text-[10px]"
-                value={quoteSub}
-                onChange={(e) => setQuoteSub(e.target.value)}
-              >
-                {SUB_PAGE_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              MESSAGE
-              <textarea
-                className="w-full mt-1 p-2 border text-[10px]"
-                rows={3}
-                value={quoteMessage}
-                onChange={(e) => setQuoteMessage(e.target.value)}
-              />
-            </label>
-            <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              PRICE BREAKDOWN (ONE LINE PER ROW, USE … BETWEEN LABEL AND VALUE)
-              <textarea
-                className="w-full mt-1 p-2 border text-[10px] font-mono"
-                rows={5}
-                value={quoteBreakdown}
-                onChange={(e) => setQuoteBreakdown(e.target.value)}
-              />
-            </label>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
-              CONSULT CODE (INITIALS + 3 DIGITS) IS GENERATED SERVER-SIDE; $40 OFF; EXPIRES 72H AFTER SEND. APPLY AT CHECKOUT (PIPELINE TBD).
-            </p>
-            <div className="flex gap-2 mt-3">
-              <button
-                type="button"
-                className="flex-1 py-2 border border-black text-[10px]"
-                onClick={() => setQuoteMeeting(null)}
-              >
-                CANCEL
-              </button>
-              <button
-                type="button"
-                className="flex-1 py-2 border border-black text-[10px]"
-                style={{ color: '#EB1C24' }}
-                disabled={quoteSending}
-                onClick={() => setShowSendQuoteConfirm(true)}
-              >
-                {quoteSending ? '…' : 'SEND ALERT'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <ConfirmationModal
         isOpen={showSendQuoteConfirm}
         onClose={() => setShowSendQuoteConfirm(false)}
@@ -1517,69 +1560,6 @@ export default function AdminMeetingsHub() {
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"
       />
-
-      {editMeeting && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.45)' }}
-          onClick={() => setEditMeeting(null)}
-          role="presentation"
-        >
-          <div
-            className="bg-white w-full max-w-md p-4 border border-black"
-            style={{ borderWidth: '1.3px' }}
-            onClick={(e) => e.stopPropagation()}
-            role="presentation"
-          >
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px' }}>EDIT MEETING</p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080' }}>ORDER / ROW: {editMeeting.id}</p>
-            <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              REASON
-              <select
-                className="w-full mt-1 p-2 border text-[10px]"
-                value={editReason}
-                onChange={(e) => setEditReason(e.target.value)}
-              >
-                {EDIT_REASONS.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-              MESSAGE TO CLIENT
-              <textarea
-                className="w-full mt-1 p-2 border text-[10px]"
-                rows={3}
-                value={editMessage}
-                onChange={(e) => setEditMessage(e.target.value)}
-              />
-            </label>
-            <div className="flex flex-col gap-2 mt-3">
-              <button
-                type="button"
-                className="py-2 border border-black text-[10px]"
-                disabled={editSubmitting}
-                onClick={() => void submitEditMeeting('reschedule')}
-              >
-                RESCHEDULE APPOINTMENT (NOTIFY CLIENT)
-              </button>
-              <button
-                type="button"
-                className="py-2 border border-black text-[10px]"
-                disabled={editSubmitting}
-                onClick={() => void submitEditMeeting('cancel')}
-              >
-                CANCEL APPOINTMENT (NOTIFY CLIENT)
-              </button>
-              <button type="button" className="py-2 border border-gray-300 text-[10px]" onClick={() => setEditMeeting(null)}>
-                CLOSE
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {consultPhotoPreviewSrc && (
         <div
