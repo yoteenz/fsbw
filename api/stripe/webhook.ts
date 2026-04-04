@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent';
+import { membershipTierForStripePriceId } from '../_lib/stripeMembership';
 
 export const config = { runtime: 'edge' };
 
@@ -58,6 +59,20 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session, 
   if (error) console.error('[stripe webhook] checkout.session.completed profile update', error);
 }
 
+function priceIdFromSubscriptionItem(item: Stripe.SubscriptionItem): string | null {
+  const priceObj = item.price as Stripe.Price | null | undefined;
+  return (priceObj?.id || '').trim() || null;
+}
+
+function membershipTierFromSubscription(sub: Stripe.Subscription): string | null {
+  const items = sub.items?.data || [];
+  for (const item of items) {
+    const tier = membershipTierForStripePriceId(priceIdFromSubscriptionItem(item));
+    if (tier) return tier;
+  }
+  return null;
+}
+
 function subscriptionIdFromInvoice(invoice: Stripe.Invoice): string | null {
   const sub = invoice.subscription;
   if (typeof sub === 'string') return sub;
@@ -72,7 +87,7 @@ function customerIdFromInvoice(invoice: Stripe.Invoice): string | null {
   return null;
 }
 
-async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
+async function handleInvoicePaid(invoice: Stripe.Invoice, stripe: Stripe): Promise<void> {
   const invId = invoice.id;
   if (!invId) return;
   const subId = subscriptionIdFromInvoice(invoice);
@@ -86,14 +101,30 @@ async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
   const periodEndSec = line?.period?.end;
   const billingPeriodEnd = periodEndSec ? new Date(periodEndSec * 1000).toISOString() : null;
 
+  let subscriptionTierFromStripe: string | null = null;
+  let subscriptionPeriodEndFromStripe: string | null = billingPeriodEnd;
+  let autoRenewMembershipFromStripe: boolean | null = null;
+  let subscriptionStatusFromStripe: string | null = null;
+  try {
+    const sub = await stripe.subscriptions.retrieve(subId, { expand: ['items.data.price'] });
+    subscriptionTierFromStripe = membershipTierFromSubscription(sub);
+    subscriptionPeriodEndFromStripe = new Date(sub.current_period_end * 1000).toISOString();
+    autoRenewMembershipFromStripe = sub.cancel_at_period_end !== true;
+    subscriptionStatusFromStripe = sub.status || null;
+  } catch (e) {
+    console.error('[stripe webhook] invoice.paid subscription retrieve', e);
+  }
+
   const supabase = getServiceSupabase();
-  await supabase
-    .from('profiles')
-    .update({
-      last_payment_failure_at: null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('stripe_subscription_id', subId);
+  const profileUpdate: Record<string, unknown> = {
+    last_payment_failure_at: null,
+    updated_at: new Date().toISOString(),
+  };
+  if (subscriptionTierFromStripe) profileUpdate.subscription_tier = subscriptionTierFromStripe;
+  if (subscriptionPeriodEndFromStripe) profileUpdate.subscription_period_end = subscriptionPeriodEndFromStripe;
+  if (autoRenewMembershipFromStripe != null) profileUpdate.auto_renew_membership = autoRenewMembershipFromStripe;
+  if (subscriptionStatusFromStripe) profileUpdate.stripe_subscription_status = subscriptionStatusFromStripe;
+  await supabase.from('profiles').update(profileUpdate).eq('stripe_subscription_id', subId);
 
   const { data: prof, error: profErr } = await supabase
     .from('profiles')
@@ -116,11 +147,11 @@ async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
     stripe_invoice_id: invId,
     stripe_subscription_id: subId,
     stripe_customer_id: custId,
-    subscription_tier: row.subscription_tier ?? null,
+    subscription_tier: subscriptionTierFromStripe ?? row.subscription_tier ?? null,
     amount_usd: amountUsd,
     currency: invoice.currency || 'usd',
     kind,
-    billing_period_end: billingPeriodEnd,
+    billing_period_end: subscriptionPeriodEndFromStripe ?? billingPeriodEnd,
   });
 
   if (error) {
@@ -291,7 +322,7 @@ export default async function handler(request: Request): Promise<Response> {
         await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session, stripe);
         break;
       case 'invoice.paid':
-        await handleInvoicePaid(event.data.object as Stripe.Invoice);
+        await handleInvoicePaid(event.data.object as Stripe.Invoice, stripe);
         break;
       case 'invoice.payment_failed':
         await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
