@@ -1469,11 +1469,11 @@ export default function AdminMeetingsHub() {
                               <img
                                 src={clientCard.profilePhoto}
                                 alt=""
-                                width={38}
-                                height={38}
+                                width={53}
+                                height={53}
                                 style={{
-                                  width: '38px',
-                                  height: '38px',
+                                  width: '53px',
+                                  height: '53px',
                                   objectFit: 'cover',
                                   borderRadius: '9999px',
                                   border: '1px solid #d1d5db',
@@ -1509,13 +1509,13 @@ export default function AdminMeetingsHub() {
                             onClick={() => openClientAccount(m)}
                             role="presentation"
                           >
-                            <div className="flex items-start gap-2.5">
+                            <div className="flex items-center gap-2.5">
                               <img
                                 src={meetingClientProfilePhoto(m)}
                                 alt=""
-                                width={44}
-                                height={44}
-                                style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
+                                width={62}
+                                height={62}
+                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
                               />
                               <div style={{ minWidth: 0, flex: 1 }}>
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
