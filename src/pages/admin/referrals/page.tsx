@@ -128,7 +128,7 @@ export default function AdminReferralsPage() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{inviteeCount}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{inviteeCount}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL INVITEES</p>
                 </div>
                 <div
@@ -143,7 +143,7 @@ export default function AdminReferralsPage() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>${totalEarned}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>${totalEarned}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL PAID OUT</p>
                 </div>
               </div>

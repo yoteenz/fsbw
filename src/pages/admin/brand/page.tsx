@@ -452,7 +452,7 @@ export default function AdminBrand() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.active}</p>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{codesSummary.active}</p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ACTIVE CODES</p>
                     </div>
                     <div
@@ -467,7 +467,7 @@ export default function AdminBrand() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>
                         $
                         {codesSummary.discountsUsd.toLocaleString('en-US', {
                           minimumFractionDigits: 0,
@@ -685,7 +685,7 @@ export default function AdminBrand() {
               {/* Summary above tabs: analytics clicks, alerts usage, or brand score */}
               {activeTab === 'ANALYTICS' ? (
                 <div className="text-center py-4 px-5">
-                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24' }}>{analyticsSummary.total}</p>
+                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{analyticsSummary.total}</p>
                   <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
                 </div>
               ) : activeTab === 'ALERTS' ? (
@@ -702,7 +702,7 @@ export default function AdminBrand() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.clientsWithNotifs}</p>
+                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{alertsStats.clientsWithNotifs}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CLIENTS (NOTIFS)</p>
                   </div>
                   <div
@@ -717,13 +717,13 @@ export default function AdminBrand() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.totalSent}</p>
+                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{alertsStats.totalSent}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>NOTIFICATIONS SENT</p>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-4 px-5">
-                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24' }}>{brandMetrics.brandScore}%</p>
+                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{brandMetrics.brandScore}%</p>
                   <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>OVERALL BRAND SCORE</p>
                 </div>
               )}

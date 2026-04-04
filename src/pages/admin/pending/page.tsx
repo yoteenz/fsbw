@@ -110,7 +110,7 @@ export default function AdminPending() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingReviews}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{pendingReviews}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING REVIEWS</p>
                 </div>
                 <div
@@ -125,7 +125,7 @@ export default function AdminPending() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{orderForms}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{orderForms}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ORDER FORMS</p>
                 </div>
               </div>

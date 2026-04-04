@@ -158,7 +158,7 @@ export default function AdminAnalytics() {
 
               {/* Total clicks above tabs */}
               <div className="text-center py-4 px-5">
-                <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
+                <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24', fontSize: '34px' }}>{summary.total}</p>
                 <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
               </div>
 
