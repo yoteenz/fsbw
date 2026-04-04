@@ -9648,3 +9648,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For count-driven dashboard copy, use explicit singular/plural branching to avoid `1 ...s` grammar regressions in marquee/ticker content.
+
+---
+
+## 2026-04-03 — Bookings payment due tracker red-filled state now uses square corners with black border
+
+**Context:** Continuing the same conversation’s Admin Meetings bookings-card refinement stream (payment status redesign, due tracker/countdown adjustments, tab-relative search behavior, and Overview summary placement fixes), the user requested a visual change to the payment due tracking bar: when in the filled red state it should have square corners and a black border with red fill, rather than rounded corners and gray-styled container behavior.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, bookings payment tracker styling used rounded corners in filled states and gray-container defaults.
+- Updated the bookings payment tracker style branch in `AdminMeetingsHub` to derive an explicit red-state flag (`isRedDueBar`) from existing due logic (`duePassed` or near/full progress threshold).
+- Applied red-state visual rules:
+  - outer bar now square corners (`borderRadius: 0`)
+  - outer border now black in red state
+  - outer/background fill now red in red state
+  - inner progress segment also square corners and red fill in red state.
+- Kept non-red/unfilled behavior on gray style with gray border so only red-filled state adopts the requested black-border/red-fill look.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Red-filled payment due bars now render with square-corner geometry and black-outline/red-fill styling.
+- Unfilled/non-red bars retain gray styling for contrast and state distinction.
+- Change is scoped to bookings card due-tracker visuals only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `isRedDueBar` style gate in payment tracker rendering
+  - changed red-state bar container to black border + red fill + square corners
+  - changed progress fill to square corners and red fill in red state
+
+**Conventions:**
+- For bookings payment tracker visuals, use explicit state-based style gates so red urgency/completed-style bars can differ structurally (border/fill/corners) from default gray progress bars.
