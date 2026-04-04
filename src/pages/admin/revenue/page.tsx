@@ -628,16 +628,23 @@ export default function AdminRevenue() {
   }, []);
 
   const formatWithCommas = (n: number) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  const grossSales = useMemo(
+    () => orders.reduce((sum, o) => sum + (Number(o.total ?? o.amount) || 0), 0),
+    [orders]
+  );
   const revenueFormatted = totalRevenue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).replace('$', '$');
-  const absRevenue = Math.abs(totalRevenue);
-  const totalRevenueBannerValue =
-    totalRevenue < 0
-      ? (absRevenue >= 1000 ? `-${(absRevenue / 1000).toFixed(1)}k` : `-${Math.round(absRevenue)}`)
-      : (absRevenue >= 1000 ? `+${(absRevenue / 1000).toFixed(1)}k` : `+${Math.round(absRevenue)}`);
-
   const avgOrderDisplay = orders.length && ordersStats.avgOrder > 0 ? `$${formatWithCommas(Math.round(ordersStats.avgOrder))}` : '—';
   const panelLabelsAndValues: Record<typeof REVENUE_TABS[number], { left: { label: string; value: string }; right: { label: string; value: string } }> = {
-    OVERVIEW: { left: { label: 'TOTAL REVENUE', value: totalRevenueBannerValue }, right: { label: 'ORDERS', value: formatWithCommas(totalOrders) } },
+    OVERVIEW: {
+      left: {
+        label: 'GROSS SALES',
+        value:
+          grossSales >= 1000
+            ? `+${(grossSales / 1000).toFixed(1)}k`
+            : `+${Math.round(grossSales)}`
+      },
+      right: { label: 'ORDERS', value: formatWithCommas(totalOrders) }
+    },
     ORDERS: { left: { label: 'THIS MONTH', value: formatWithCommas(ordersStats.thisMonth) }, right: { label: 'AVG ORDER', value: avgOrderDisplay } },
     PRODUCTS: { left: { label: 'PROFIT MARGIN', value: '—' }, right: { label: 'INVENTORY', value: `${inventoryPercent}%` } },
     PAYMENTS: { left: { label: 'DISCOUNTS', value: '—' }, right: { label: 'FEES', value: '—' } },
