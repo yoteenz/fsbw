@@ -729,6 +729,7 @@ export default function AdminMeetingsHub() {
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [localTick, setLocalTick] = useState(0);
   const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(null);
+  const [viewAllBookingsLayout, setViewAllBookingsLayout] = useState<'grid' | 'list'>('grid');
   const [quoteMeeting, setQuoteMeeting] = useState<AdminMeeting | null>(null);
   const [editMeeting, setEditMeeting] = useState<AdminMeeting | null>(null);
   const [quoteUnit, setQuoteUnit] = useState<string>(UNIT_OPTIONS[0].id);
@@ -1250,35 +1251,147 @@ export default function AdminMeetingsHub() {
                 >
                 {viewAllMode ? (
                   <>
-                    <div className="space-y-3">
-                      {viewAllRows.map((m) => (
-                        <div
-                          key={m.id}
-                          className="cursor-pointer"
-                          style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
-                          onClick={() => openClientAccount(m)}
-                          role="presentation"
+                    {viewAllMode === 'bookings' && (
+                      <div className="flex justify-center gap-6" style={{ marginBottom: '10px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setViewAllBookingsLayout('grid')}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            color: viewAllBookingsLayout === 'grid' ? '#EB1C24' : '#808080',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            borderBottom: viewAllBookingsLayout === 'grid' ? '1px solid #EB1C24' : '1px solid transparent',
+                            paddingBottom: '3px',
+                          }}
                         >
-                          <div className="flex items-start gap-2.5">
-                            <img
-                              src={meetingClientProfilePhoto(m)}
-                              alt=""
-                              width={44}
-                              height={44}
-                              style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
-                            />
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
-                                {meetingClientDisplayNameWithState(m)}
+                          GRID
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setViewAllBookingsLayout('list')}
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '10px',
+                            color: viewAllBookingsLayout === 'list' ? '#EB1C24' : '#808080',
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            borderBottom: viewAllBookingsLayout === 'list' ? '1px solid #EB1C24' : '1px solid transparent',
+                            paddingBottom: '3px',
+                          }}
+                        >
+                          LIST
+                        </button>
+                      </div>
+                    )}
+                    {viewAllMode === 'bookings' && viewAllBookingsLayout === 'grid' ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        {viewAllRows.map((m) => (
+                          <div
+                            key={m.id}
+                            className="cursor-pointer"
+                            style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: 0, padding: '10px' }}
+                            onClick={() => openClientAccount(m)}
+                            role="presentation"
+                          >
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <img
+                                src={meetingClientProfilePhoto(m)}
+                                alt=""
+                                width={44}
+                                height={44}
+                                style={{
+                                  width: '44px',
+                                  height: '44px',
+                                  objectFit: 'cover',
+                                  borderRadius: '9999px',
+                                  border: '1px solid #000000',
+                                  flexShrink: 0,
+                                  marginTop: '4px',
+                                }}
+                              />
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '9px',
+                                  color: '#808080',
+                                  margin: '3px 0',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                1 BOOKING
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                                {m.date} {m.time} — {viewAllRowLabel(m)}
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '9px',
+                                  color: '#EB1C24',
+                                  margin: '3px 0 0',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {formatBookingInstallLineForCard(m)}
+                              </p>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  fontSize: '9px',
+                                  color: '#000000',
+                                  margin: '3px 0 0',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {formatHeaderDate(m.date)}
                               </p>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {viewAllRows.map((m) => (
+                          <div
+                            key={m.id}
+                            className="cursor-pointer"
+                            style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
+                            onClick={() => openClientAccount(m)}
+                            role="presentation"
+                          >
+                            <div className="flex items-start gap-2.5">
+                              <img
+                                src={meetingClientProfilePhoto(m)}
+                                alt=""
+                                width={44}
+                                height={44}
+                                style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #000000', flexShrink: 0 }}
+                              />
+                              <div style={{ minWidth: 0, flex: 1 }}>
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
+                                  {meetingClientDisplayNameWithState(m)}
+                                </p>
+                                {viewAllMode === 'bookings' ? (
+                                  <>
+                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
+                                      {viewAllRowLabel(m)}
+                                    </p>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0 0' }}>
+                                      {formatHeaderDate(m.date)} · {m.time}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
+                                    {m.date} {m.time} — {viewAllRowLabel(m)}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </>
                 ) : editMeeting ? (
                   <div style={{ marginTop: '12px' }}>
