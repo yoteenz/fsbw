@@ -9361,3 +9361,37 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For dashboard meetings consult rows, prefer canonical template `CONSULT: {WIG TYPE} {DATE CLIENT}` with per-segment color control through `label` + `valueParts`, rather than displaying raw upstream type strings.
+
+---
+
+## 2026-04-03 — Admin Meetings adds OVERVIEW tab (before BOOKINGS) with booking/consult sales analytics
+
+**Context:** User requested a new **OVERVIEW** tab before **BOOKINGS** on the Admin Meetings page, with summary panels for **BOOKING SALES** (completed appointments with orders paid in full) and **CONSULT SALES** (total sales from redeemed consult-offer `$40` codes), and asked that this tab contain appointment/consult analytics.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long chat history where meetings/dashboard/admin pages were repeatedly refined (B/C card behavior, dashboard meetings formatting/colors, 5-row dashboard cap, preview/mobile-only push workflow).
+- Updated `AdminMeetingsHub` tab state to support `overview | bookings | consults`, with URL param handling and tab button order changed to `OVERVIEW`, `BOOKINGS`, `CONSULTS`.
+- Added meetings-overview sales calculations:
+  - **Booking sales** derived from completed appointment meetings that are effectively paid in full, using metadata signals (`bookingAutopayStatus === paid`, final due amounts, and paid totals).
+  - **Consult sales** derived from orders carrying redeemed consult-offer style `CONSULT-*` discount codes from shared revenue order source.
+- Added helper normalization utilities to keep money/code parsing resilient for mixed historical order/meeting shapes.
+- Rendered new Overview content under the meetings main card:
+  - top summary panels: **BOOKING SALES** and **CONSULT SALES**
+  - appointment analytics block: completed count, paid-in-full count, remaining-balance count, average paid-in-full sale
+  - consult analytics block: total/complete consult counts, wig-only vs wig+install mix, redeemed consult-offer orders count, average redeemed sale
+- Preserved existing Bookings and Consults tab behavior (calendar, cards, quote/edit in-card panels, view-all flows).
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Admin Meetings now has a dedicated **OVERVIEW** tab before **BOOKINGS**.
+- Overview summary panels use requested labels and sales semantics.
+- Overview includes analytics for both appointment and consult streams in one place.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - expanded main tab model + URL parsing
+  - added booking/consult sales helper functions and overview memoized analytics
+  - added Overview tab UI and analytics sections
+
+**Conventions:**
+- For Meetings Overview sales metrics, compute from existing persisted meeting metadata and shared order ledger (`buildRevenueOrdersList`) instead of duplicating a separate analytics store.
