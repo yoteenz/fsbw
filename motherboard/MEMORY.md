@@ -9179,3 +9179,27 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For icon-position requests, confirm target explicitly as profile avatar (left) vs panel/action icon (right) and only adjust the named control.
+
+---
+
+## 2026-04-03 — Bookings right-side panel icon nudged 3px left
+
+**Context:** User requested a single micro-adjustment after the icon-target correction: move the right-side panel icon on bookings cards 3px to the left.
+
+**Topics covered (entire conversation so far):**
+- Continued from same chat thread where bookings icon targeting was corrected (left avatar restored, right edit icon moved down).
+- Applied a horizontal nudge on the bookings right-side edit icon button only by adding right margin spacing so the icon shifts left visually.
+- Kept all other recently tuned values intact (bookings text column +6px, profile icon offsets, consults branch unchanged).
+- Verified with `npm run build`.
+
+**Decisions / outcomes:**
+- Right-side bookings panel icon now sits 3px further left.
+- No additional layout elements were moved in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings right edit icon button style: added `marginRight: '3px'`.
+
+**Conventions:**
+- For tiny right-edge icon shifts, prefer adjusting button margin on the target control to avoid ripple effects in text/layout columns.
