@@ -9455,3 +9455,33 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When user requests “same icon + same positioning” parity across B/C tabs, mirror both the asset path and all positioning styles (size, margins, z-index/padding) from the source tab’s control.
+
+---
+
+## 2026-04-03 — Bookings card follow-up: +4px balance spacing, duration shown as HRS/MINS, and Quinn due-bar forced filled for UI test
+
+**Context:** User requested three bookings-tab card changes: add 4px above the CURRENT BALANCE line, display appointment duration in hour/minute format after 60 minutes (e.g., `250 MIN` -> `4 HRS 10 MINS`), and force-fill the payment-due tracker bar on Quinn Chen’s booking to test UI states.
+
+**Topics covered (entire conversation so far):**
+- Continued from same-thread bookings/admin meetings UI iterations, including right-side icon targeting and autopay-related card metadata/status work.
+- Added a duration formatter helper in `AdminMeetingsHub` that converts `N MIN` values >= 60 to `X HRS` / `X HRS Y MINS`, and wired bookings appointment line to use it.
+- Increased CURRENT BALANCE line top spacing by 4px (margin top `8px` -> `12px`).
+- Added a targeted test hook inside booking payment status calculation to force `dueProgressPct` to `100` when client name includes `QUINN CHEN`, so the due tracker renders fully filled for UI testing.
+- During push, remote preview advanced and caused a rebase conflict in `AdminMeetingsHub`; resolved by preserving these three requested updates alongside latest upstream edits.
+- Build validated successfully after edits.
+
+**Decisions / outcomes:**
+- Bookings CURRENT BALANCE line now renders with +4px extra top spacing.
+- Bookings duration text now switches to HRS/MINS formatting when minutes exceed 60.
+- Quinn Chen bookings card due tracker is intentionally forced filled for visual QA/testing.
+- Changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatMinutesAsHoursAndMinutes(...)`
+  - bookings appointment line now uses formatted duration text
+  - CURRENT BALANCE top margin increased to `12px`
+  - `getBookingPaymentStatusForCard(...)` now forces `dueProgressPct: 100` for client names containing `QUINN CHEN`
+
+**Conventions:**
+- For temporary UI test states on specific demo/mock clients, gate overrides by explicit client-name checks and keep them localized to display-status calculation helpers.
