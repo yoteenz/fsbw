@@ -1148,10 +1148,10 @@ export default function AdminMeetingsHub() {
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                        {completedBookingsCount}
+                        {mainTab === 'overview' ? formatUsd(overviewBookingSales.salesUsd) : completedBookingsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        TOTAL BOOKED
+                        {mainTab === 'overview' ? 'BOOKING SALES' : 'TOTAL BOOKED'}
                       </p>
                     </div>
                     <div
@@ -1167,10 +1167,10 @@ export default function AdminMeetingsHub() {
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                        {completedConsultsCount}
+                        {mainTab === 'overview' ? formatUsd(overviewConsultSales.salesUsd) : completedConsultsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        TOTAL CONSULTED
+                        {mainTab === 'overview' ? 'CONSULT SALES' : 'TOTAL CONSULTED'}
                       </p>
                     </div>
                   </div>
@@ -1395,47 +1395,6 @@ export default function AdminMeetingsHub() {
                 ) : mainTab === 'overview' ? (
                   <>
                     <div style={{ marginTop: '12px' }}>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div
-                          className="text-center py-3"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.04)',
-                            borderRadius: '4px',
-                            height: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end',
-                            paddingBottom: '10px',
-                          }}
-                        >
-                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                            {formatUsd(overviewBookingSales.salesUsd)}
-                          </p>
-                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                            BOOKING SALES
-                          </p>
-                        </div>
-                        <div
-                          className="text-center py-3"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.04)',
-                            borderRadius: '4px',
-                            height: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end',
-                            paddingBottom: '10px',
-                          }}
-                        >
-                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                            {formatUsd(overviewConsultSales.salesUsd)}
-                          </p>
-                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                            CONSULT SALES
-                          </p>
-                        </div>
-                      </div>
-
                       <div className="space-y-3">
                         <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
