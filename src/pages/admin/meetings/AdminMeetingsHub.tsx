@@ -520,6 +520,18 @@ function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTAL
   return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
 }
 
+function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
+  const text = String(rawDuration || '').trim().toUpperCase();
+  const minsMatch = text.match(/(\d+)\s*MIN/);
+  if (!minsMatch) return text;
+  const totalMinutes = Number(minsMatch[1]);
+  if (!Number.isFinite(totalMinutes) || totalMinutes < 60) return `${totalMinutes} MIN`;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (minutes <= 0) return `${hours} HRS`;
+  return `${hours} HRS ${minutes} MINS`;
+}
+
 function toLocalDateEndOfDay(isoDate: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ''))) return null;
   const [y, m, d] = String(isoDate).split('-').map(Number);
@@ -595,12 +607,16 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
       : 'not_enabled';
   const autopayLastError = String(meta.bookingAutopayLastError || '').trim().toUpperCase();
 
+  // UI test hook: fill tracker for Quinn booking cards so due-bar states can be validated quickly.
+  const clientNameUpper = String(m.client || '').trim().toUpperCase();
+  const forceFilledForQuinn = clientNameUpper.includes('QUINN CHEN');
+
   return {
     remainingDueUsd,
     paidTotalUsd,
     finalPaymentDueDateText: dueDateText,
     finalPaymentDueText: dueText,
-    dueProgressPct: elapsedPct,
+    dueProgressPct: forceFilledForQuinn ? 100 : elapsedPct,
     duePassed,
     autopayStatus,
     autopayLastError,
@@ -1545,13 +1561,13 @@ export default function AdminMeetingsHub() {
                                 {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
                               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
-                                {formatHeaderDate(m.date)} · {m.time} · {m.duration}
+                                {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
                               </p>
                               {(() => {
                                 const payment = getBookingPaymentStatusForCard(m);
                                 return (
                                   <>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '12px 0 0' }}>
                                       CURRENT BALANCE: {formatUsd(payment.remainingDueUsd)} OF {formatUsd(payment.paidTotalUsd)} USD
                                     </p>
                                     <div style={{ marginTop: '4px' }}>
