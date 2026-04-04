@@ -8340,3 +8340,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For incremental meetings UI requests, keep View All grid/list parity by using shared structural patterns (label + red price + date line) and isolate pixel-level spacing shifts in local style props so behavior remains unchanged while visual tuning is precise.
+
+---
+
+## 2026-04-04 — Swept Admin Meetings for legacy duplicate header paths; consolidated view-all header title source
+
+**Context:** After completing the view-all formatting pass, the user approved a follow-up hardening sweep to ensure no duplicate/legacy header branches in Admin Meetings could reintroduce the transient `TS` artifact through alternate render paths.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same conversation thread covering bookings/consult card typography, payment/summary UI, view-all list/grid controls, sort positioning offsets, profile icon border tweaks, consult-grid line formatting, and prior `TS` artifact fixes.
+- Ran a targeted scan of `AdminMeetingsHub.tsx` for legacy header text usage and duplicate header branches (`VIEW ALL BOOKINGS/CONSULTS`, dynamic client-count title blocks, and view-all conditional branches).
+- Confirmed the active structure already uses one main header render block, then tightened that path by extracting title resolution into a dedicated helper to prevent future divergence:
+  - added `viewAllHeaderTitle(mode, uniqueClientCount)` helper.
+  - switched `activeMainCardTitle` to source its view-all label from this helper.
+- This reduces accidental drift between inline ternary header labels and alternate string literals in future edits.
+- Verified full build success after cleanup.
+- Committed and pushed to `cursor/bookings-tab-ui-adjustments-95ca`.
+
+**Decisions / outcomes:**
+- Admin Meetings now has a single, centralized title-generation path for view-all header labels.
+- Risk of reintroducing orphan header fragments via duplicate/legacy header string branches is reduced.
+- No behavior/layout regressions introduced; this was a low-scope structural hardening pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `viewAllHeaderTitle(...)`
+  - routed `activeMainCardTitle` view-all branch through helper
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- For UI areas prone to repeated copy/conditional duplication, centralize label generation in tiny pure helpers so future style/content changes touch one source and cannot drift across branches.
