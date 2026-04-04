@@ -10094,3 +10094,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings sort controls requested to match View All behavior, use a shared sort option/helper so Bookings, Consults, and View All stay aligned on labels and sorting semantics instead of duplicating slightly different logic.
+
+---
+
+## 2026-04-04 — View All meetings follow-up: tighter grid count spacing, icon shift, list text nudge, and consult grid line parity
+
+**Context:** Continuing the same chat immediately after the admin-summary/sort/calendar pass, the user requested a second, View All-only refinement round in Admin Meetings: reduce the vertical spacing around the grid bookings-count line, move the grid/list icon toggle 2px further left, shift list-view text 6px to the right of the profile icons, and make grid-view consult cards match bookings by using a red consult-type + price line with the date on the line below.
+
+**Topics covered (entire conversation so far):**
+- This chat first handled three broader admin UI updates:
+  - increased red summary metric text across admin summary panels by 4px,
+  - added the shared meetings sort dropdown above the regular Bookings/Consults client panels,
+  - changed white-background booking calendar cells to use black borders on Admin Meetings.
+- In this follow-up turn, inspection stayed scoped to the View All branch of `AdminMeetingsHub`.
+- Reduced the grid-view bookings/consults count-line vertical margin from `3px 0` to `1px 0`, trimming 2px above and 2px below that row.
+- Moved the View All list/grid icon toggle group an extra 2px left by changing its wrapper offset from `translateX(-2px)` to `translateX(-4px)`.
+- Nudged list-view text content (all text to the right of the profile icon) 6px to the right in tandem via a wrapper transform, without moving the icon itself.
+- Updated grid-view consult cards to mirror bookings’ two-line structure:
+  - red line: `WIG ONLY/WIG + INSTALL $40 USD` (or existing explicit consult/deposit metadata price when present),
+  - black line below: formatted date (`THU, APR 30, 2026` pattern).
+- Added a small consult price helper in `AdminMeetingsHub` that prefers explicit consult/deposit/price metadata values and falls back to the existing consult booking deposit amount (`$40`) when none is present.
+- Re-verified with a successful `npm run build`.
+
+**Decisions / outcomes:**
+- All requested changes remain isolated to the View All meetings toggle UI; the regular Bookings/Consults tab cards were not otherwise restyled.
+- Consult grid cards now visually match bookings cards in structure, with the amount sourced from existing data when available and otherwise using the established consult deposit fallback.
+- The icon shift and list-text shift were applied with wrapper-level transforms to preserve hit targets and internal icon geometry.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `consultDisplayPriceUsd(...)`
+  - tightened grid count-row spacing to `margin: '1px 0'`
+  - moved the View All display-mode icon group to `translateX(-4px)`
+  - shifted list-view text wrapper right by `translateX(6px)`
+  - changed grid consult cards from single-line black text to red consult-type + price line and black date line
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All-only Admin Meetings micro-adjustments, prefer wrapper-level offsets and branch-specific render tweaks inside the `viewAllMode` path so the main B/C tab layouts and non-View-All card geometry stay unchanged.

@@ -53,6 +53,7 @@ const EDIT_REASONS = [
 
 const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
+const CONSULT_DEPOSIT_FALLBACK_USD = 40;
 
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
@@ -623,6 +624,24 @@ function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTAL
     .toUpperCase()
     .replace(/\s+/g, ' ');
   return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
+}
+
+function consultDisplayPriceUsd(m: AdminMeeting): number {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const explicit = normalizeMoneyValue(
+    meta.consultPriceUsd ??
+    meta.consultPriceUSD ??
+    meta.bookingPriceUsd ??
+    meta.bookingPriceUSD ??
+    meta.priceUsd ??
+    meta.priceUSD ??
+    meta.price ??
+    meta.depositUsd ??
+    meta.depositUSD ??
+    meta.deposit
+  );
+  if (explicit != null && explicit > 0) return explicit;
+  return CONSULT_DEPOSIT_FALLBACK_USD;
 }
 
 function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
@@ -1492,7 +1511,7 @@ export default function AdminMeetingsHub() {
                       style={{ marginTop: '10px', marginBottom: '8px', position: 'relative', zIndex: 3 }}
                     >
                       {renderMeetingsSortDropdown()}
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-2px)' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-4px)' }}>
                         <button
                           type="button"
                           onClick={() => setViewAllDisplayMode('list')}
@@ -1536,10 +1555,6 @@ export default function AdminMeetingsHub() {
                       <div className="grid grid-cols-3 gap-2" style={{ marginTop: '10px' }}>
                         {viewAllClientCards.map((clientCard) => {
                           const latest = clientCard.latestMeeting;
-                          const recentLine =
-                            viewAllMode === 'bookings'
-                              ? `${formatBookingInstallLineForCard(latest)} · ${formatHeaderDate(latest.date)}`
-                              : `${consultTypeLabelForMeeting(latest)} · ${formatHeaderDate(latest.date)}`;
                           return (
                             <button
                               key={clientCard.key}
@@ -1573,7 +1588,7 @@ export default function AdminMeetingsHub() {
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
                                 {clientCard.displayName}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '3px 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '1px 0' }}>
                                 {clientCard.totalCount}{' '}
                                 {viewAllMode === 'bookings'
                                   ? clientCard.totalCount === 1
@@ -1593,9 +1608,14 @@ export default function AdminMeetingsHub() {
                                   </p>
                                 </>
                               ) : (
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', color: '#000', margin: '4px 0 0', lineHeight: 1.2 }}>
-                                  {recentLine}
-                                </p>
+                                <>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {consultTypeLabelForMeeting(latest)} {formatUsd(consultDisplayPriceUsd(latest))} USD
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {formatHeaderDate(latest.date)}
+                                  </p>
+                                </>
                               )}
                             </button>
                           );
@@ -1624,7 +1644,7 @@ export default function AdminMeetingsHub() {
                                 height={62}
                                 style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
                               />
-                              <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{ minWidth: 0, flex: 1, transform: 'translateX(6px)' }}>
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
                                   <span style={{ color: '#000' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
