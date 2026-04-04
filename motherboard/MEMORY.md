@@ -9126,3 +9126,30 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Booking autopay execution uses secure server-side scheduling (`BOOKING_AUTOPAY_CRON_SECRET`) and writes every outcome to an append-style attempts table for auditability and retry control.
+
+---
+
+## 2026-04-03 — Bookings cards micro-layout: icon down 4px and text column shifted right 6px (bookings tab only)
+
+**Context:** User requested a bookings-tab-only layout tweak on admin meetings cards: move bookings client panel profile icons down by 4px and shift all text to the right of those icons in tandem by 6px.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat thread after full booking final-payment autopay feature implementation and prior bookings micro-spacing/icon adjustments.
+- Scoped edits to the bookings card render branch inside `AdminMeetingsHub` only (left consults branch unchanged):
+  - bookings avatar button top offset increased by 4px (`marginTop: '8px'` -> `'12px'`),
+  - bookings text column container (the div immediately right of avatar) shifted right by 6px via `marginLeft: '6px'`.
+- Verified build success with `npm run build`.
+- Rebased onto latest `origin/preview/mobile` after remote advanced, then pushed successfully.
+
+**Decisions / outcomes:**
+- Bookings-tab icons now sit 4px lower.
+- All bookings text content to the right of profile icons moves 6px right in tandem.
+- Consults-tab icon/text alignment remains unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'` -> `marginTop: '12px'`
+  - bookings right text column wrapper: added `style={{ marginLeft: '6px' }}`
+
+**Conventions:**
+- For “bookings-only” layout requests in shared meetings card code, apply offsets in bookings branch containers so text and icon alignment move together while preserving consults branch values.
