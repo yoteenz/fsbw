@@ -309,6 +309,18 @@ function meetingClientDisplayNameWithState(m: AdminMeeting): string {
   return state ? `${m.client} (${state})` : m.client;
 }
 
+function meetingMatchesClientSearch(m: AdminMeeting, clientSearchUpper: string): boolean {
+  if (!clientSearchUpper) return true;
+  const clientName = String(m.client || '').trim().toUpperCase();
+  const clientNameWithState = meetingClientDisplayNameWithState(m).toUpperCase();
+  const clientEmail = String(m.clientEmail || '').trim().toUpperCase();
+  return (
+    clientName.includes(clientSearchUpper) ||
+    clientNameWithState.includes(clientSearchUpper) ||
+    clientEmail.includes(clientSearchUpper)
+  );
+}
+
 function toIsoDateOnly(dateIso: string): string {
   return String(dateIso || '').slice(0, 10);
 }
@@ -659,6 +671,11 @@ export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const location = useLocation();
+  const [clientSearchQuery, setClientSearchQuery] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    const q = new URLSearchParams(window.location.search).get('q');
+    return (q || '').trim();
+  });
   const [mainTab, setMainTab] = useState<'overview' | 'bookings' | 'consults'>(() => {
     if (typeof window === 'undefined') return 'overview';
     const tab = new URLSearchParams(window.location.search).get('tab');
@@ -719,6 +736,11 @@ export default function AdminMeetingsHub() {
     if (tab === 'overview' || tab === 'bookings' || tab === 'consults') setMainTab(tab);
   }, [location.search]);
 
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('q');
+    setClientSearchQuery((q || '').trim());
+  }, [location.search]);
+
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
     const end = endOfMonth(calendarAnchor);
@@ -756,6 +778,21 @@ export default function AdminMeetingsHub() {
     });
   }, [mergedMeetings]);
 
+  const normalizedClientSearchQuery = useMemo(
+    () => clientSearchQuery.trim().toUpperCase(),
+    [clientSearchQuery]
+  );
+
+  const filteredAppointmentMeetings = useMemo(
+    () => appointmentMeetings.filter((m) => meetingMatchesClientSearch(m, normalizedClientSearchQuery)),
+    [appointmentMeetings, normalizedClientSearchQuery]
+  );
+
+  const filteredConsultMeetings = useMemo(
+    () => consultMeetings.filter((m) => meetingMatchesClientSearch(m, normalizedClientSearchQuery)),
+    [consultMeetings, normalizedClientSearchQuery]
+  );
+
   const completedBookingsCount = useMemo(
     () =>
       appointmentMeetings.filter((m) => {
@@ -776,14 +813,14 @@ export default function AdminMeetingsHub() {
 
   const apptDates = useMemo(() => {
     const s = new Set<string>();
-    for (const m of appointmentMeetings) s.add(m.date);
+    for (const m of filteredAppointmentMeetings) s.add(m.date);
     return s;
-  }, [appointmentMeetings]);
+  }, [filteredAppointmentMeetings]);
 
   const appointmentsForSelectedDay = useMemo(() => {
-    if (!selectedDay) return appointmentMeetings;
-    return appointmentMeetings.filter((m) => m.date === selectedDay);
-  }, [appointmentMeetings, selectedDay]);
+    if (!selectedDay) return filteredAppointmentMeetings;
+    return filteredAppointmentMeetings.filter((m) => m.date === selectedDay);
+  }, [filteredAppointmentMeetings, selectedDay]);
 
   const sortedAppointmentsList = useMemo(() => {
     return [...appointmentsForSelectedDay].sort((a, b) => {
@@ -897,9 +934,9 @@ export default function AdminMeetingsHub() {
 
   const viewAllRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
-    const base = viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings;
+    const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
     return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
-  }, [viewAllMode, appointmentMeetings, consultMeetings]);
+  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
 
   const overviewBookingSales = useMemo(() => {
     let completedAppointments = 0;
@@ -1008,6 +1045,9 @@ export default function AdminMeetingsHub() {
           onBack={() => window.history.back()}
           breadcrumbParentLabel="ADMIN"
           breadcrumbParentPath="/admin/dashboard"
+          externalSearchValue={clientSearchQuery}
+          onExternalSearchChange={setClientSearchQuery}
+          globalSearchTargetPath="/admin/meetings"
         />
 
         <div className="pb-6 px-4">
@@ -1500,7 +1540,9 @@ export default function AdminMeetingsHub() {
                           padding: '16px',
                         }}
                       >
-                        YOU DON&apos;T HAVE ANY APPOINTMENTS.
+                        {normalizedClientSearchQuery
+                          ? 'NO BOOKINGS MATCH YOUR SEARCH.'
+                          : 'YOU DON\'T HAVE ANY APPOINTMENTS.'}
                       </p>
                     ) : (
                       <div style={{ marginTop: '6px' }}>
@@ -1664,13 +1706,15 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : (
                   <>
-                    {consultMeetings.length === 0 ? (
+                    {filteredConsultMeetings.length === 0 ? (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textAlign: 'center' }}>
-                        NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.
+                        {normalizedClientSearchQuery
+                          ? 'NO CONSULTS MATCH YOUR SEARCH.'
+                          : 'NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.'}
                       </p>
                     ) : (
                       <div style={{ marginTop: '12px' }}>
-                        {consultMeetings.map((m) => {
+                        {filteredConsultMeetings.map((m) => {
                           const meta = m.metadata || {};
                           const hair = String(meta.hairOption || m.notes || '—');
                           const notes = String(meta.consultNotes || '').trim() || m.notes;
