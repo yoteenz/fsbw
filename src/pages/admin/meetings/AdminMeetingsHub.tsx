@@ -309,16 +309,53 @@ function meetingClientDisplayNameWithState(m: AdminMeeting): string {
   return state ? `${m.client} (${state})` : m.client;
 }
 
-function meetingMatchesClientSearch(m: AdminMeeting, clientSearchUpper: string): boolean {
-  if (!clientSearchUpper) return true;
-  const clientName = String(m.client || '').trim().toUpperCase();
-  const clientNameWithState = meetingClientDisplayNameWithState(m).toUpperCase();
-  const clientEmail = String(m.clientEmail || '').trim().toUpperCase();
-  return (
-    clientName.includes(clientSearchUpper) ||
-    clientNameWithState.includes(clientSearchUpper) ||
-    clientEmail.includes(clientSearchUpper)
-  );
+function normalizeSearchText(raw: unknown): string {
+  return String(raw || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, ' ')
+    .trim();
+}
+
+function meetingSearchBlob(m: AdminMeeting): string {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const baseParts = [
+    m.client,
+    meetingClientDisplayNameWithState(m),
+    m.clientEmail,
+    m.date,
+    formatHeaderDate(m.date),
+    m.time,
+    m.type,
+    m.notes,
+    m.duration,
+    formatMinutesAsHoursAndMinutes(m.duration),
+    String(m.status || ''),
+  ];
+  if (m.category === 'consultation') {
+    baseParts.push(
+      consultTypeLabelForMeeting(m),
+      String(meta.hairOption || ''),
+      String(meta.consultType || ''),
+      String(meta.consultNotes || ''),
+      String(meta.bookingHairOption || '')
+    );
+  } else {
+    baseParts.push(
+      formatBookingInstallLineForCard(m),
+      formatBookingAddonsLineForCard(m),
+      formatBookingAddonsLineForCardDisplay(m),
+      String(meta.bookingInstallKind || ''),
+      String(meta.installKind || ''),
+      String(meta.bookingAttachedOrderSummary || '')
+    );
+  }
+  return normalizeSearchText(baseParts.filter(Boolean).join(' · '));
+}
+
+function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
+  if (searchTokens.length === 0) return true;
+  const haystack = meetingSearchBlob(m);
+  return searchTokens.every((token) => haystack.includes(token));
 }
 
 function toIsoDateOnly(dateIso: string): string {
@@ -778,19 +815,23 @@ export default function AdminMeetingsHub() {
     });
   }, [mergedMeetings]);
 
-  const normalizedClientSearchQuery = useMemo(
-    () => clientSearchQuery.trim().toUpperCase(),
+  const normalizedClientSearchTokens = useMemo(
+    () =>
+      normalizeSearchText(clientSearchQuery)
+        .split(' ')
+        .map((token) => token.trim())
+        .filter(Boolean),
     [clientSearchQuery]
   );
 
   const filteredAppointmentMeetings = useMemo(
-    () => appointmentMeetings.filter((m) => meetingMatchesClientSearch(m, normalizedClientSearchQuery)),
-    [appointmentMeetings, normalizedClientSearchQuery]
+    () => appointmentMeetings.filter((m) => meetingMatchesPageSearch(m, normalizedClientSearchTokens)),
+    [appointmentMeetings, normalizedClientSearchTokens]
   );
 
   const filteredConsultMeetings = useMemo(
-    () => consultMeetings.filter((m) => meetingMatchesClientSearch(m, normalizedClientSearchQuery)),
-    [consultMeetings, normalizedClientSearchQuery]
+    () => consultMeetings.filter((m) => meetingMatchesPageSearch(m, normalizedClientSearchTokens)),
+    [consultMeetings, normalizedClientSearchTokens]
   );
 
   const completedBookingsCount = useMemo(
@@ -1540,7 +1581,7 @@ export default function AdminMeetingsHub() {
                           padding: '16px',
                         }}
                       >
-                        {normalizedClientSearchQuery
+                        {normalizedClientSearchTokens.length > 0
                           ? 'NO BOOKINGS MATCH YOUR SEARCH.'
                           : 'YOU DON\'T HAVE ANY APPOINTMENTS.'}
                       </p>
@@ -1708,7 +1749,7 @@ export default function AdminMeetingsHub() {
                   <>
                     {filteredConsultMeetings.length === 0 ? (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textAlign: 'center' }}>
-                        {normalizedClientSearchQuery
+                        {normalizedClientSearchTokens.length > 0
                           ? 'NO CONSULTS MATCH YOUR SEARCH.'
                           : 'NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.'}
                       </p>
