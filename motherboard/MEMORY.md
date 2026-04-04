@@ -9428,3 +9428,30 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For dashboard ticker expansions, derive insight text from the same merged meetings + orders sources already used by dashboard cards so counts stay internally consistent.
+
+---
+
+## 2026-04-03 — Consults-tab right-side panel icon now matches bookings icon + exact positioning
+
+**Context:** User requested that the consults tab right-side panel icon use the same icon as bookings tab and match the same icon positioning.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat’s ongoing meetings/dashboard/admin UI refinements already completed in this thread (overview tab, ticker insight lines, consult row formatting, in-card panel toggles, and prior icon/spacing passes).
+- Located the bookings right-side icon button styles in `AdminMeetingsHub` (asset `/assets/edit-meeting-icon-booking.svg`, size 11x11, button offsets including `marginTop: '4px'` and `marginRight: '3px'`).
+- Updated consults-tab right-side action button to mirror bookings styling:
+  - swapped consult icon asset from `/assets/quote-icon-consult.svg` to `/assets/edit-meeting-icon-booking.svg`,
+  - matched button style offsets and sizing to bookings right-side icon positioning values.
+- Kept consult action behavior unchanged (still opens the in-card send-quote panel), only visual icon and positioning parity were adjusted.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Consults right-side panel icon now uses the same icon and same placement as bookings right-side panel icon.
+- Interaction flow remains unchanged; only icon visual/positioning parity was changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult right-side action button style updated to bookings-equivalent offsets
+  - consult right-side icon source/size matched to bookings icon (`edit-meeting-icon-booking.svg`, `11x11`)
+
+**Conventions:**
+- When user requests “same icon + same positioning” parity across B/C tabs, mirror both the asset path and all positioning styles (size, margins, z-index/padding) from the source tab’s control.
