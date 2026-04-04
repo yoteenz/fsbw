@@ -9913,3 +9913,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For compact admin card headers with dynamic labels, enforce single-line title constraints (nowrap + ellipsis) to avoid visual orphan fragments when text length approaches available space.
+
+---
+
+## 2026-04-03 — View-all controls nudged: sort dropdown +2px right, list/grid toggle group -2px left
+
+**Context:** Continuing this same Admin Meetings view-all refinement sequence (header cleanup, unique-client count titles, sort + list/grid controls, and card/icon layout tweaks), the user requested a precise micro-position adjustment for the controls row above view-all client panels.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All controls were already present with:
+  - left sort dropdown (`Most recent` and alternatives),
+  - right list/grid icon toggle group.
+- Applied requested offset changes in `AdminMeetingsHub` view-all controls row:
+  - moved the left **Most recent** dropdown container **2px to the right**,
+  - moved the right list/grid icon group **2px to the left** in tandem.
+- Kept all control behavior unchanged (sorting, mode switching, dropdown open/close).
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Control row now reflects exact requested spacing adjustment (+2px right on sort; -2px left on view-mode icons).
+- Functional behavior is unchanged; only horizontal alignment was tuned.
+- Scope remains limited to View All controls row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `marginLeft: '2px'` to left sort-dropdown wrapper
+  - added `transform: 'translateX(-2px)'` to right view-mode toggle wrapper
+
+**Conventions:**
+- For UI micro-position requests on existing admin controls, apply minimal wrapper-level offsets (margin/translate) rather than altering inner icon geometry, so behavior and hit targets remain stable.
