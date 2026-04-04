@@ -9590,3 +9590,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin global search on list pages, match against the page’s visible row semantics (labels/metadata users can read on that tab), not identity fields alone; preserve page-state query params (like active tab) when submitting or clearing search.
+
+---
+
+## 2026-04-03 — Meetings Overview top cards now show BOOKING/CONSULT SALES; duplicate lower sales cards removed
+
+**Context:** Continuing this same conversation’s Admin Meetings iteration stream (bookings/consults UI refinements, payment status/autopay display logic, meetings overview analytics, and recent tab-relative search updates), the user reported the sales summary card placement was incorrect in the Overview tab. They requested that **Booking Sales / Consult Sales** should replace the top **Total Booked / Total Consulted** cards on **Overview only**, instead of appearing again lower in the Overview content.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, Admin Meetings had:
+  - top header cards showing `TOTAL BOOKED` / `TOTAL CONSULTED`,
+  - and separate lower cards inside Overview body showing `BOOKING SALES` / `CONSULT SALES`.
+- Updated top summary-card rendering to be tab-conditional:
+  - when `mainTab === 'overview'`, top cards now show `BOOKING SALES` and `CONSULT SALES` with sales dollar values.
+  - when on Bookings/Consults tabs, top cards remain `TOTAL BOOKED` / `TOTAL CONSULTED` counts.
+- Removed the duplicate lower Overview sales-card grid so the sales summary appears in only one place (top of Overview), while preserving the analytics sections below it.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Overview now uses the top card slot for sales summary as requested.
+- Duplicate lower sales cards were removed to prevent repeated information and incorrect placement.
+- Non-Overview tabs retain existing top totals behavior.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - made top summary cards conditional by `mainTab` (sales labels/values on Overview, totals on other tabs)
+  - removed lower Overview sales summary grid from the Overview content block
+
+**Conventions:**
+- In Admin Meetings, Summary card metrics at the top should be tab-contextual and non-duplicative: Overview owns sales summary at the top, while Bookings/Consults keep operational totals.
