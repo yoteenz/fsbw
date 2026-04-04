@@ -803,7 +803,7 @@ export default function AdminRevenue() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'OVERVIEW' ? (totalRevenue < 0 ? '#EB1C24' : '#16a34a') : '#EB1C24' }}>{panel.left.value}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'OVERVIEW' ? (totalRevenue < 0 ? '#EB1C24' : '#16a34a') : '#EB1C24', fontSize: '24px' }}>{panel.left.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.left.label}</p>
                 </div>
                 <div
@@ -818,7 +818,7 @@ export default function AdminRevenue() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'PRODUCTS' ? inventoryBannerColor : '#EB1C24' }}>{panel.right.value}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'PRODUCTS' ? inventoryBannerColor : '#EB1C24', fontSize: '24px' }}>{panel.right.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.right.label}</p>
                 </div>
               </div>
@@ -1098,7 +1098,7 @@ export default function AdminRevenue() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingOrders.length}</p>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{pendingOrders.length}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL</p>
                   </div>
                   <div
@@ -1113,7 +1113,7 @@ export default function AdminRevenue() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{awaitingTrackingCount}</p>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{awaitingTrackingCount}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AWAITING TRACKING</p>
                   </div>
                 </div>

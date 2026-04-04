@@ -10045,3 +10045,52 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings view-all micro-style requests, apply changes directly to the active grid/list branch after syncing latest `preview/mobile`, since this file is frequently updated and prone to conflict churn.
+
+---
+
+## 2026-04-04 — Admin summary metrics enlarged; B/C tabs get meetings sort dropdown; booking calendar white cells use black borders
+
+**Context:** User requested three admin UI updates in one pass: increase the red value text on admin summary panels by 4px, add the same "Most recent" dropdown used by View All to the left above client panels on the Meetings Bookings/Consults tabs, and switch gray borders to black on white-background booking calendar cells in Admin Meetings.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context first, then traced the repeated admin summary-panel metric pattern across admin pages.
+- Located the existing View All meetings sort dropdown in `AdminMeetingsHub` and refactored it into a shared meetings sort control.
+- Added the sort dropdown above the regular Bookings and Consults client lists so B/C tabs now expose the same `Most recent` / `A to Z` / `Z to A` options as View All.
+- Applied the shared sort option to bookings and consult list rendering (including selected-day bookings) while keeping the existing View All controls on the same state/label system.
+- Updated the bookings calendar cell border logic so white appointment cells use black borders while selected cells continue using the red selected-state border.
+- Increased summary-panel metric value text by 4px across the affected admin pages (Analytics, Brand, Clients, Marketing, Meetings, Pending, Referrals, Revenue, Reviews).
+- Installed local repo dependencies only for verification after `npm run build` initially failed because the local `tsc` binary was unavailable in the workspace, then ran a successful production build and reverted the lockfile-only diff so the branch stayed scoped to the requested UI work.
+
+**Decisions / outcomes:**
+- Meetings B/C tabs now share the same client-sort affordance and sort semantics as the View All toggle.
+- Summary metric values were adjusted via inline font-size overrides so the existing colors and layouts stay intact while the visible metric text increases by exactly 4px.
+- Booking calendar white cells now use black borders without removing the red selected-day highlight.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - renamed the View All-only sort config into a shared meetings sort option/helper
+  - added the Most recent dropdown above bookings/consults client panels
+  - sorted bookings, consults, and View All from the same sort-option helper
+  - changed white appointment-cell borders from gray to black
+  - increased the top summary-panel value font size to `24px`
+- `src/pages/admin/analytics/page.tsx`
+  - increased the summary total value font size to `34px`
+- `src/pages/admin/brand/page.tsx`
+  - increased summary-panel values to `28px` / `40px` depending on card size
+- `src/pages/admin/clients/page.tsx`
+  - increased top summary-card values to `24px`
+- `src/pages/admin/marketing/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/pending/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/referrals/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/revenue/page.tsx`
+  - increased summary-card values to `24px`, preserving conditional color logic
+- `src/pages/admin/reviews/page.tsx`
+  - increased summary-card values to `24px`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sort controls requested to match View All behavior, use a shared sort option/helper so Bookings, Consults, and View All stay aligned on labels and sorting semantics instead of duplicating slightly different logic.

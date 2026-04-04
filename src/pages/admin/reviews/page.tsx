@@ -275,7 +275,7 @@ export default function AdminReviews() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                     {averageRating}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -294,7 +294,7 @@ export default function AdminReviews() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                     {totalReviews}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -450,7 +450,7 @@ export default function AdminReviews() {
                           paddingBottom: '10px',
                         }}
                       >
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                           {toolsPublishedCount}
                         </p>
                         <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>

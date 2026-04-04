@@ -51,10 +51,10 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
-const VIEW_ALL_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
-type ViewAllSortOption = (typeof VIEW_ALL_SORT_OPTIONS)[number];
+const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
+type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 
-function viewAllSortOptionToLabel(opt: ViewAllSortOption): string {
+function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
 }
 
@@ -384,6 +384,28 @@ function meetingSortTimeMs(m: AdminMeeting): number {
     base.setHours(hours, mins, 0, 0);
   }
   return base.getTime();
+}
+
+function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
+  const sorted = [...rows];
+  if (sortOption === 'A to Z') {
+    sorted.sort((a, b) =>
+      meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
+        sensitivity: 'base',
+      })
+    );
+    return sorted;
+  }
+  if (sortOption === 'Z to A') {
+    sorted.sort((a, b) =>
+      meetingClientDisplayNameWithState(b).localeCompare(meetingClientDisplayNameWithState(a), undefined, {
+        sensitivity: 'base',
+      })
+    );
+    return sorted;
+  }
+  sorted.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+  return sorted;
 }
 
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
@@ -785,8 +807,8 @@ export default function AdminMeetingsHub() {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
   const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
-  const [viewAllSortOption, setViewAllSortOption] = useState<ViewAllSortOption>('Most recent');
-  const [showViewAllSortDropdown, setShowViewAllSortDropdown] = useState(false);
+  const [meetingSortOption, setMeetingSortOption] = useState<MeetingSortOption>('Most recent');
+  const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
@@ -867,8 +889,8 @@ export default function AdminMeetingsHub() {
   }, [viewAllMode]);
 
   useEffect(() => {
-    if (!viewAllMode) setShowViewAllSortDropdown(false);
-  }, [viewAllMode]);
+    setShowMeetingSortDropdown(false);
+  }, [mainTab, viewAllMode]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -955,14 +977,15 @@ export default function AdminMeetingsHub() {
     return filteredAppointmentMeetings.filter((m) => m.date === selectedDay);
   }, [filteredAppointmentMeetings, selectedDay]);
 
-  const sortedAppointmentsList = useMemo(() => {
-    return [...appointmentsForSelectedDay].sort((a, b) => {
-      const pa = tierPremium(a) ? 0 : 1;
-      const pb = tierPremium(b) ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return b.date.localeCompare(a.date) || b.time.localeCompare(a.time);
-    });
-  }, [appointmentsForSelectedDay]);
+  const sortedAppointmentsList = useMemo(
+    () => sortMeetingsByOption(appointmentsForSelectedDay, meetingSortOption),
+    [appointmentsForSelectedDay, meetingSortOption]
+  );
+
+  const sortedConsultsList = useMemo(
+    () => sortMeetingsByOption(filteredConsultMeetings, meetingSortOption),
+    [filteredConsultMeetings, meetingSortOption]
+  );
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
@@ -1071,27 +1094,10 @@ export default function AdminMeetingsHub() {
     return [...base].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
   }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
 
-  const viewAllRows = useMemo(() => {
-    const rows = [...viewAllBaseRows];
-    if (viewAllSortOption === 'A to Z') {
-      rows.sort((a, b) =>
-        meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
-          sensitivity: 'base',
-        })
-      );
-      return rows;
-    }
-    if (viewAllSortOption === 'Z to A') {
-      rows.sort((a, b) =>
-        meetingClientDisplayNameWithState(b).localeCompare(meetingClientDisplayNameWithState(a), undefined, {
-          sensitivity: 'base',
-        })
-      );
-      return rows;
-    }
-    rows.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
-    return rows;
-  }, [viewAllBaseRows, viewAllSortOption]);
+  const viewAllRows = useMemo(
+    () => sortMeetingsByOption(viewAllBaseRows, meetingSortOption),
+    [viewAllBaseRows, meetingSortOption]
+  );
 
   const viewAllClientCards = useMemo(() => {
     if (!viewAllMode) return [] as Array<{
@@ -1128,15 +1134,15 @@ export default function AdminMeetingsHub() {
       }
     }
     const cards = [...byClient.values()];
-    if (viewAllSortOption === 'A to Z') {
+    if (meetingSortOption === 'A to Z') {
       cards.sort((a, b) => a.displayName.localeCompare(b.displayName, undefined, { sensitivity: 'base' }));
-    } else if (viewAllSortOption === 'Z to A') {
+    } else if (meetingSortOption === 'Z to A') {
       cards.sort((a, b) => b.displayName.localeCompare(a.displayName, undefined, { sensitivity: 'base' }));
     } else {
       cards.sort((a, b) => meetingSortTimeMs(b.latestMeeting) - meetingSortTimeMs(a.latestMeeting));
     }
     return cards;
-  }, [viewAllMode, viewAllBaseRows, viewAllSortOption]);
+  }, [viewAllMode, viewAllBaseRows, meetingSortOption]);
 
   const viewAllUniqueClientCount = useMemo(() => {
     if (!viewAllMode) return 0;
@@ -1212,6 +1218,54 @@ export default function AdminMeetingsHub() {
     setEditMeeting(null);
     setEditMessage('');
   };
+
+  const renderMeetingsSortDropdown = () => (
+    <div className="relative" style={{ marginLeft: '2px' }}>
+      <button
+        type="button"
+        onClick={() => setShowMeetingSortDropdown((open) => !open)}
+        className="flex items-center gap-1.5"
+        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+        aria-label="Sort clients"
+      >
+        <span>{meetingSortOptionToLabel(meetingSortOption)}</span>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          style={{ transform: showMeetingSortDropdown ? 'rotate(180deg)' : 'none', color: '#EB1C24' }}
+          aria-hidden
+        >
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {showMeetingSortDropdown && (
+        <>
+          <div className="fixed inset-0 z-10" aria-hidden onClick={() => setShowMeetingSortDropdown(false)} />
+          <div
+            className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
+            style={{ borderWidth: '1.3px', marginTop: '7px' }}
+          >
+            {MEETING_SORT_OPTIONS.filter((opt) => opt !== meetingSortOption).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  setMeetingSortOption(opt);
+                  setShowMeetingSortDropdown(false);
+                }}
+                className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+              >
+                {meetingSortOptionToLabel(opt)}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 
   const travelBlackoutDates = useMemo(() => {
     const blocked = new Set<string>();
@@ -1330,7 +1384,7 @@ export default function AdminMeetingsHub() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
                         {mainTab === 'overview' ? formatUsd(overviewBookingSales.salesUsd) : completedBookingsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -1349,7 +1403,7 @@ export default function AdminMeetingsHub() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
                         {mainTab === 'overview' ? formatUsd(overviewConsultSales.salesUsd) : completedConsultsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -1437,51 +1491,7 @@ export default function AdminMeetingsHub() {
                       className="flex items-center justify-between"
                       style={{ marginTop: '10px', marginBottom: '8px', position: 'relative', zIndex: 3 }}
                     >
-                      <div className="relative" style={{ marginLeft: '2px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setShowViewAllSortDropdown((open) => !open)}
-                          className="flex items-center gap-1.5"
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
-                          aria-label="Sort clients"
-                        >
-                          <span>{viewAllSortOptionToLabel(viewAllSortOption)}</span>
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 12 12"
-                            fill="none"
-                            style={{ transform: showViewAllSortDropdown ? 'rotate(180deg)' : 'none', color: '#EB1C24' }}
-                            aria-hidden
-                          >
-                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                        {showViewAllSortDropdown && (
-                          <>
-                            <div className="fixed inset-0 z-10" aria-hidden onClick={() => setShowViewAllSortDropdown(false)} />
-                            <div
-                              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
-                              style={{ borderWidth: '1.3px', marginTop: '7px' }}
-                            >
-                              {VIEW_ALL_SORT_OPTIONS.filter((opt) => opt !== viewAllSortOption).map((opt) => (
-                                <button
-                                  key={opt}
-                                  type="button"
-                                  onClick={() => {
-                                    setViewAllSortOption(opt);
-                                    setShowViewAllSortDropdown(false);
-                                  }}
-                                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                                  style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
-                                >
-                                  {viewAllSortOptionToLabel(opt)}
-                                </button>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                      </div>
+                      {renderMeetingsSortDropdown()}
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-2px)' }}>
                         <button
                           type="button"
@@ -1875,6 +1885,7 @@ export default function AdminMeetingsHub() {
                         const hasAppt = apptDates.has(cell.iso);
                         const hasTravelBlock = travelBlackoutDates.has(cell.iso);
                         const hasTravelHalfDay = travelHalfDayDates.has(cell.iso);
+                        const hasWhiteCalendarCell = !hasTravelBlock && hasAppt;
                         const disabled = hasTravelBlock;
                         const title = hasTravelBlock
                           ? 'TRAVEL BLOCK: UNAVAILABLE (FULL DAY)'
@@ -1895,7 +1906,7 @@ export default function AdminMeetingsHub() {
                               fontFamily: '"Futura PT Medium"',
                               fontSize: '10px',
                               padding: '6px 0',
-                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : '1px solid #e5e7eb',
+                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : hasWhiteCalendarCell ? '1px solid #000' : '1px solid #e5e7eb',
                               borderRadius: '0',
                               background: hasTravelBlock ? '#f3f4f6' : hasAppt ? '#fff' : '#f3f4f6',
                               color: hasTravelBlock ? '#9ca3af' : hasAppt ? '#EB1C24' : '#9ca3af',
@@ -1907,6 +1918,9 @@ export default function AdminMeetingsHub() {
                           </button>
                         );
                       })}
+                    </div>
+                    <div className="flex items-center justify-start" style={{ marginTop: '2px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+                      {renderMeetingsSortDropdown()}
                     </div>
                     {sortedAppointmentsList.length === 0 ? (
                       <p
@@ -2085,15 +2099,18 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : (
                   <>
-                    {filteredConsultMeetings.length === 0 ? (
+                    <div className="flex items-center justify-start" style={{ marginTop: '2px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+                      {renderMeetingsSortDropdown()}
+                    </div>
+                    {sortedConsultsList.length === 0 ? (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textAlign: 'center' }}>
                         {normalizedClientSearchTokens.length > 0
                           ? 'NO CONSULTS MATCH YOUR SEARCH.'
                           : 'NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.'}
                       </p>
                     ) : (
-                      <div style={{ marginTop: '12px' }}>
-                        {filteredConsultMeetings.map((m) => {
+                      <div style={{ marginTop: '6px' }}>
+                        {sortedConsultsList.map((m) => {
                           const meta = m.metadata || {};
                           const hair = String(meta.hairOption || m.notes || '—');
                           const notes = String(meta.consultNotes || '').trim() || m.notes;

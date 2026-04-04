@@ -3143,7 +3143,7 @@ export default function AdminClients() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                       {totalClientsCount}
                     </p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -3162,7 +3162,7 @@ export default function AdminClients() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                       {totalMembersCount}
                     </p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
