@@ -8260,3 +8260,36 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
   - page-scoped `storageKey`,
   - compact query keys (`tab`, `subTab`, or page-specific view key),
   so behavior is consistent and refresh-safe by default.
+
+---
+
+## 2026-04-04 — Fixed remaining transient “TS” header artifact in Admin Meetings view-all
+
+**Context:** After the broad persistence rollout, the user reported a lingering “TS” text fragment still appearing somewhere in the meetings UI, but disappearing after a refresh. They asked for the remaining artifact source to be removed.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior long-running Admin Meetings UI refinements and state-persistence work (view-all behavior, header/title wrapping fixes, sort/list-grid controls, and URL/session toggle persistence).
+- Searched code for literal `TSTS` / `TS` fragments and narrowed focus to `AdminMeetingsHub` view-all header rendering.
+- Identified likely transient render mismatch caused by header text width/overflow behavior that could briefly expose an orphaned trailing fragment before layout settled.
+- Hardened the active view-all header `<h2>` styles to force single-line clipping behavior and prevent any tail-text bleed:
+  - `whiteSpace: 'nowrap'`
+  - `overflow: 'hidden'`
+  - `textOverflow: 'ellipsis'`
+  - `paddingRight: '8px'`
+  - `minWidth: 0`
+- Kept header copy unchanged (`VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS`) and retained existing close-button layout.
+- Rebuilt successfully, committed, and pushed the fix on `cursor/bookings-tab-ui-adjustments-95ca`.
+
+**Decisions / outcomes:**
+- Remaining transient “TS” artifact in meetings view-all header is now eliminated by stricter overflow constraints.
+- Behavior is stable without requiring page refresh.
+- Scope remained limited to header rendering safeguards in Admin Meetings view-all.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - strengthened active view-all header title overflow/no-wrap styles
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- For compact dynamic/admin headers with adjacent controls, enforce explicit no-wrap + ellipsis + constrained width at initial render to avoid transient orphan-text artifacts.
