@@ -20,6 +20,7 @@ import {
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
+import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 
 const UNIT_OPTIONS = [
   { id: 'NOIR', label: 'NOIR' },
@@ -431,6 +432,94 @@ function formatUsd(amount: number): string {
   return `$${Math.max(0, Math.round(amount)).toLocaleString('en-US')}`;
 }
 
+function normalizeMoneyValue(raw: unknown): number | null {
+  if (raw == null || raw === '') return null;
+  const n =
+    typeof raw === 'number'
+      ? raw
+      : Number(
+          String(raw)
+            .replace(/,/g, '')
+            .replace(/[^\d.-]/g, '')
+        );
+  if (!Number.isFinite(n)) return null;
+  return Math.round(n);
+}
+
+function bookingInstallFeeUsdFromMeeting(m: AdminMeeting): number {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const explicit = normalizeMoneyValue(meta.bookingInstallFeeUsd);
+  if (explicit != null && explicit > 0) return explicit;
+  const kind = String(meta.bookingInstallKind || meta.installKind || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, '_');
+  return kind.includes('RE_INSTALL') || kind.includes('RE-INSTALL') || kind.includes('REINSTALL') ? 225 : 275;
+}
+
+/**
+ * "Booking sales" = completed appointments whose booking balance is fully paid.
+ * Uses strongest available indicators from meeting metadata (autopay paid, explicit
+ * final due=0, or explicit final payment amount meeting/exceeding final due).
+ */
+function bookingPaidInFullSalesUsd(m: AdminMeeting): number | null {
+  if (String(m.status || '').trim().toLowerCase() !== 'completed') return null;
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const autopayStatus = String(meta.bookingAutopayStatus || meta.autopayStatus || '')
+    .trim()
+    .toLowerCase();
+  const finalDue = normalizeMoneyValue(meta.bookingFinalDueUsd);
+  const finalPaid = normalizeMoneyValue(
+    meta.bookingFinalPaymentPaidUsd ?? meta.finalPaymentPaidUsd ?? meta.bookingRemainingPaidUsd
+  );
+  const basePaid =
+    normalizeMoneyValue(meta.bookingPaidTotalUsd ?? meta.orderTotalUsd ?? meta.orderTotalUSD ?? meta.orderTotal) ??
+    normalizeMoneyValue(meta.bookingUnitPriceUsd) ??
+    getBookingCardDetails(m).unitPriceUsd;
+
+  if (autopayStatus === 'paid') {
+    const remaining = finalDue != null ? Math.max(0, finalDue) : bookingInstallFeeUsdFromMeeting(m);
+    return Math.max(0, basePaid) + remaining;
+  }
+  if (finalDue != null && finalDue <= 0) return Math.max(0, basePaid);
+  if (finalDue != null && finalPaid != null && finalPaid >= finalDue) {
+    return Math.max(0, basePaid) + Math.max(0, finalDue);
+  }
+  return null;
+}
+
+function consultCodeFromOrder(order: Record<string, unknown>): string | null {
+  const directCandidates = [order.discountCode, order.discount_code, order.discount, order.code];
+  for (const candidate of directCandidates) {
+    const value = String(candidate || '').trim().toUpperCase();
+    if (value.startsWith('CONSULT-')) return value;
+  }
+  const discounts = Array.isArray(order.discounts) ? order.discounts : [];
+  for (const discountRow of discounts) {
+    if (!discountRow || typeof discountRow !== 'object') continue;
+    const row = discountRow as Record<string, unknown>;
+    const label = String(row.label || row.code || row.name || '')
+      .trim()
+      .toUpperCase();
+    if (label.startsWith('CONSULT-')) return label;
+  }
+  return null;
+}
+
+function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTALL' {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const explicit = String(meta.hairOption || meta.consultType || meta.bookingHairOption || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+  if (explicit.includes('WIG + INSTALL') || explicit.includes('WIG+INSTALL')) return 'WIG + INSTALL';
+  if (explicit.includes('WIG ONLY')) return 'WIG ONLY';
+  const fallback = `${String(m.type || '')} ${String(m.notes || '')}`
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+  return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
+}
+
 function toLocalDateEndOfDay(isoDate: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ''))) return null;
   const [y, m, d] = String(isoDate).split('-').map(Number);
@@ -554,10 +643,10 @@ export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mainTab, setMainTab] = useState<'bookings' | 'consults'>(() => {
-    if (typeof window === 'undefined') return 'bookings';
+  const [mainTab, setMainTab] = useState<'overview' | 'bookings' | 'consults'>(() => {
+    if (typeof window === 'undefined') return 'overview';
     const tab = new URLSearchParams(window.location.search).get('tab');
-    return tab === 'consults' ? 'consults' : 'bookings';
+    return tab === 'overview' || tab === 'consults' ? tab : 'bookings';
   });
   const [calendarAnchor, setCalendarAnchor] = useState(() => {
     const d = new Date();
@@ -611,7 +700,7 @@ export default function AdminMeetingsHub() {
 
   useEffect(() => {
     const tab = new URLSearchParams(location.search).get('tab');
-    if (tab === 'bookings' || tab === 'consults') setMainTab(tab);
+    if (tab === 'overview' || tab === 'bookings' || tab === 'consults') setMainTab(tab);
   }, [location.search]);
 
   const range = useMemo(() => {
@@ -691,9 +780,10 @@ export default function AdminMeetingsHub() {
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
+    const meetingsTabForReturn = mainTab === 'consults' ? 'consults' : 'bookings';
     if (em) {
       navigate(
-        `/admin/clients/overview?email=${encodeURIComponent(em.toLowerCase())}&returnTo=meetings&meetingsTab=${mainTab}`
+        `/admin/clients/overview?email=${encodeURIComponent(em.toLowerCase())}&returnTo=meetings&meetingsTab=${meetingsTabForReturn}`
       );
     }
     else setHubNotice('NO CLIENT EMAIL ON FILE FOR THIS ROW.');
@@ -794,6 +884,59 @@ export default function AdminMeetingsHub() {
     const base = viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings;
     return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
   }, [viewAllMode, appointmentMeetings, consultMeetings]);
+
+  const overviewBookingSales = useMemo(() => {
+    let completedAppointments = 0;
+    let paidInFullAppointments = 0;
+    let salesUsd = 0;
+    for (const appt of appointmentMeetings) {
+      if (String(appt.status || '').trim().toLowerCase() !== 'completed') continue;
+      completedAppointments += 1;
+      const paidSale = bookingPaidInFullSalesUsd(appt);
+      if (paidSale == null) continue;
+      paidInFullAppointments += 1;
+      salesUsd += paidSale;
+    }
+    return {
+      completedAppointments,
+      paidInFullAppointments,
+      pendingBalanceAppointments: Math.max(0, completedAppointments - paidInFullAppointments),
+      salesUsd,
+      avgPaidInFullUsd: paidInFullAppointments > 0 ? Math.round(salesUsd / paidInFullAppointments) : 0,
+    };
+  }, [appointmentMeetings]);
+
+  const overviewConsultSales = useMemo(() => {
+    const allOrders = buildRevenueOrdersList() as Array<Record<string, unknown>>;
+    const seenOrderKey = new Set<string>();
+    let redeemedOrderCount = 0;
+    let salesUsd = 0;
+    for (const order of allOrders) {
+      const consultCode = consultCodeFromOrder(order);
+      if (!consultCode) continue;
+      const orderKey = String(order.id || order.orderNumber || '').trim() || `${consultCode}-${String(order.date || '')}`;
+      if (seenOrderKey.has(orderKey)) continue;
+      seenOrderKey.add(orderKey);
+      const total = normalizeMoneyValue(order.total ?? order.amount ?? order.subtotal);
+      if (total == null || total <= 0) continue;
+      redeemedOrderCount += 1;
+      salesUsd += total;
+    }
+    const completedConsults = consultMeetings.filter(
+      (m) => String(m.status || '').trim().toLowerCase() === 'completed'
+    ).length;
+    const wigOnlyConsults = consultMeetings.filter((m) => consultTypeLabelForMeeting(m) === 'WIG ONLY').length;
+    const wigInstallConsults = consultMeetings.filter((m) => consultTypeLabelForMeeting(m) === 'WIG + INSTALL').length;
+    return {
+      salesUsd,
+      redeemedOrderCount,
+      completedConsults,
+      totalConsults: consultMeetings.length,
+      wigOnlyConsults,
+      wigInstallConsults,
+      avgRedeemedOrderUsd: redeemedOrderCount > 0 ? Math.round(salesUsd / redeemedOrderCount) : 0,
+    };
+  }, [consultMeetings, localTick]);
 
   const activeMainCardTitle = viewAllMode
     ? viewAllMode === 'bookings'
@@ -934,7 +1077,23 @@ export default function AdminMeetingsHub() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-center gap-8">
+                  <div className="flex justify-center gap-6">
+                    <button
+                      type="button"
+                      onClick={() => setMainTab('overview')}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        color: mainTab === 'overview' ? '#EB1C24' : '#808080',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        borderBottom: mainTab === 'overview' ? '1px solid #EB1C24' : '1px solid transparent',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      OVERVIEW
+                    </button>
                     <button
                       type="button"
                       onClick={() => setMainTab('bookings')}
@@ -1136,6 +1295,99 @@ export default function AdminMeetingsHub() {
                       </button>
                     </div>
                   </div>
+                ) : mainTab === 'overview' ? (
+                  <>
+                    <div style={{ marginTop: '12px' }}>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                            {formatUsd(overviewBookingSales.salesUsd)}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            BOOKING SALES
+                          </p>
+                        </div>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
+                            {formatUsd(overviewConsultSales.salesUsd)}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            CONSULT SALES
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
+                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
+                            APPOINTMENT ANALYTICS
+                          </p>
+                          <div style={{ marginTop: '8px', display: 'grid', rowGap: '5px' }}>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              COMPLETED APPOINTMENTS: {overviewBookingSales.completedAppointments}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              PAID IN FULL APPOINTMENTS: {overviewBookingSales.paidInFullAppointments}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              APPOINTMENTS WITH REMAINING BALANCE: {overviewBookingSales.pendingBalanceAppointments}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', margin: 0, color: '#EB1C24' }}>
+                              AVG BOOKING SALE (PAID IN FULL): {formatUsd(overviewBookingSales.avgPaidInFullUsd)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
+                          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
+                            CONSULT ANALYTICS
+                          </p>
+                          <div style={{ marginTop: '8px', display: 'grid', rowGap: '5px' }}>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              TOTAL CONSULT MEETINGS: {overviewConsultSales.totalConsults}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              COMPLETED CONSULTS: {overviewConsultSales.completedConsults}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              WIG ONLY CONSULTS: {overviewConsultSales.wigOnlyConsults}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              WIG + INSTALL CONSULTS: {overviewConsultSales.wigInstallConsults}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
+                              REDEEMED CONSULT-OFFER ORDERS: {overviewConsultSales.redeemedOrderCount}
+                            </p>
+                            <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', margin: 0, color: '#EB1C24' }}>
+                              AVG CONSULT SALE (REDEEMED OFFERS): {formatUsd(overviewConsultSales.avgRedeemedOrderUsd)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 ) : mainTab === 'bookings' ? (
                   <>
                     <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
