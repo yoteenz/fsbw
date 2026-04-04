@@ -352,6 +352,12 @@ function meetingSearchBlob(m: AdminMeeting): string {
   return normalizeSearchText(baseParts.filter(Boolean).join(' · '));
 }
 
+function meetingClientUniqKey(m: AdminMeeting): string {
+  const email = String(m.clientEmail || '').trim().toLowerCase();
+  if (email) return `email:${email}`;
+  return `name:${meetingClientDisplayNameWithState(m).trim().toUpperCase()}`;
+}
+
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
   if (searchTokens.length === 0) return true;
   const haystack = meetingSearchBlob(m);
@@ -972,6 +978,12 @@ export default function AdminMeetingsHub() {
     return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
   }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
 
+  const viewAllUniqueClientCount = useMemo(() => {
+    if (!viewAllMode) return 0;
+    const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
+    return new Set(base.map((m) => meetingClientUniqKey(m))).size;
+  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
+
   const overviewBookingSales = useMemo(() => {
     let completedAppointments = 0;
     let paidInFullAppointments = 0;
@@ -1027,8 +1039,8 @@ export default function AdminMeetingsHub() {
 
   const activeMainCardTitle = viewAllMode
     ? viewAllMode === 'bookings'
-      ? 'VIEW ALL BOOKINGS'
-      : 'VIEW ALL CONSULTS'
+      ? `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`
+      : `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`
     : editMeeting
     ? 'EDIT MEETING'
     : quoteMeeting
