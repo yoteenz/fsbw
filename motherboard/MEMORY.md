@@ -9326,3 +9326,38 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For dashboard cards with intentionally short fixed row counts, avoid forcing capped scroll containers; reserve `itemsMaxHeightPx` for high-density cards that should scroll.
+
+---
+
+## 2026-04-03 — Dashboard consult meeting rows now read `CONSULT: WIG ONLY/WIG + INSTALL` with black/gray/red segment colors
+
+**Context:** User requested replacing dashboard meetings-card consult text like `WIG CONSULT: 4/28 FIONA HAYES` with explicit consult format lines: `CONSULT: WIG ONLY 4/28 FIONA HAYES` or `CONSULT: WIG + INSTALL 4/28 FIONA HAYES`, and specified color segmentation: service prefix black, consult type gray, date/client red.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long chat’s admin meetings/dashboard iterations (in-card toggle behavior, meetings row-limit/no-scroll update, prior segment color swaps, and preview/mobile-first delivery).
+- Located dashboard meetings row formatter/mapping in `src/pages/admin/dashboard/page.tsx`.
+- Added consult-aware parsing from meetings metadata and type text:
+  - detects `WIG + INSTALL` vs `WIG ONLY` from `meeting.metadata.hairOption` and fallback text.
+  - normalizes legacy strings so consult rows render in a consistent template.
+- Updated MEETINGS card row assembly to emit:
+  - `label: CONSULT` (rendered as `CONSULT:` black),
+  - gray consult-type segment (`WIG ONLY` or `WIG + INSTALL`),
+  - red trailing date/client segment.
+- Kept non-consult rows on existing booking formatter path and preserved service-prefix black behavior.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Dashboard consult entries now render in requested format and colors:
+  - **black** `CONSULT:`
+  - **gray** `WIG ONLY` / `WIG + INSTALL`
+  - **red** date + client.
+- Booking rows remain unaffected except prior color/format rules already established in this chat.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added consult type normalization helper and consult metadata fallback parsing
+  - changed consult row mapping from raw `m.type` passthrough to canonical `CONSULT: {TYPE}`
+  - retained segmented `valueParts` rendering for exact color control
+
+**Conventions:**
+- For dashboard meetings consult rows, prefer canonical template `CONSULT: {WIG TYPE} {DATE CLIENT}` with per-segment color control through `label` + `valueParts`, rather than displaying raw upstream type strings.
