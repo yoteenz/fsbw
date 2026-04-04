@@ -9007,3 +9007,31 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For shared UI primitives used in multiple contexts, prefer adding an explicit style variant prop and opt-in at call sites rather than changing global default behavior.
+
+---
+
+## 2026-04-03 — Bookings add-on wrap fix: keep multi-word labels together (BROW TINT)
+
+**Context:** User reported a bookings-tab wrapping bug where the `BROW TINT` add-on split across lines (`BROW` on one line and `TINT` on the next), and requested it stay on the same line.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long thread of bookings micro-adjustments (spacing, icon offsets, typography, add-on wrapping behavior) all shipping to `preview/mobile`.
+- Located `formatBookingAddonsLineForCardDisplay()` in `AdminMeetingsHub`, which previously only protected wrapped (4th+) add-ons with non-breaking spaces, allowing earlier multi-word add-ons to split at regular spaces.
+- Updated formatter to normalize **all** add-on labels to non-breaking word separators before joining and wrapping:
+  - convert each add-on token with `addon.replace(/\s+/g, '\u00A0')`,
+  - use normalized list for both first line and wrapped line output.
+- This keeps labels like `BROW TINT`, `BROW SCULPTING`, `TRAVEL FEE`, etc. intact as single visual phrases across line wraps.
+- Ran `npm run build` successfully.
+- Rebased on latest `origin/preview/mobile` after remote advanced, then pushed and updated PR pointer.
+
+**Decisions / outcomes:**
+- Multi-word booking add-on labels now stay together on the same line.
+- `BROW TINT` no longer splits into separate lines at the space boundary.
+- Change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `formatBookingAddonsLineForCardDisplay()` now applies NBSP normalization to every add-on token before formatting.
+
+**Conventions:**
+- For booking-card add-on rendering, treat each add-on label as an atomic phrase (use NBSP between words) so wrapping happens between add-ons, not inside an add-on name.

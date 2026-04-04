@@ -419,13 +419,11 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
 
 function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
+  const addonsNoBreak = details.addons.map((addon) => addon.replace(/\s+/g, '\u00A0'));
   if (details.addons.length === 0) return 'ADD-ONS: NONE';
-  if (details.addons.length <= 3) return `ADD-ONS: ${details.addons.join(', ')}`;
-  const firstLine = details.addons.slice(0, 3).join(', ');
-  const wrappedRest = details.addons
-    .slice(3)
-    .map((addon) => addon.replace(/\s+/g, '\u00A0'))
-    .join(',\u00A0');
+  if (details.addons.length <= 3) return `ADD-ONS: ${addonsNoBreak.join(', ')}`;
+  const firstLine = addonsNoBreak.slice(0, 3).join(', ');
+  const wrappedRest = addonsNoBreak.slice(3).join(', ');
   return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
 }
 
