@@ -58,6 +58,14 @@ function viewAllSortOptionToLabel(opt: ViewAllSortOption): string {
   return opt.toUpperCase();
 }
 
+function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCount: number): string | null {
+  if (!mode) return null;
+  if (mode === 'bookings') {
+    return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`;
+  }
+  return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`;
+}
+
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
 const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
@@ -496,6 +504,11 @@ function formatBookingInstallLineForCard(m: AdminMeeting): string {
   return `${details.installKind}: ${details.unitLabel} $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
 }
 
+function formatBookingInstallLinePriceOnlyForCard(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return `${details.installKind}: $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
+}
+
 function formatBookingAddonsLineForCard(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
   return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';
@@ -601,6 +614,36 @@ function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTAL
     .toUpperCase()
     .replace(/\s+/g, ' ');
   return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
+}
+
+function consultPriceUsdFromMeeting(m: AdminMeeting): number | null {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const explicit = [
+    meta.consultPriceUsd,
+    meta.consultPriceUSD,
+    meta.quoteTotalUsd,
+    meta.quoteTotalUSD,
+    meta.quotedPriceUsd,
+    meta.estimatedPriceUsd,
+    meta.bookingUnitPriceUsd,
+    meta.unitPriceUsd,
+    meta.priceUsd,
+    meta.price,
+  ]
+    .map((v) => normalizeUsdPrice(v))
+    .find((v): v is number => v != null);
+  if (explicit != null) return explicit;
+  const tokenSource = `${String(m.type || '')} ${String(m.notes || '')}`;
+  const amountMatch = tokenSource.match(/\$\s*([\d,]+)/);
+  if (!amountMatch) return null;
+  return normalizeUsdPrice(amountMatch[1]);
+}
+
+function formatConsultServiceLineForCard(m: AdminMeeting): string {
+  const label = consultTypeLabelForMeeting(m);
+  const price = consultPriceUsdFromMeeting(m);
+  if (price == null) return label;
+  return `${label}: $${price.toLocaleString('en-US')} USD`;
 }
 
 function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
@@ -1196,15 +1239,12 @@ export default function AdminMeetingsHub() {
     };
   }, [consultMeetings, localTick]);
 
-  const activeMainCardTitle = viewAllMode
-    ? viewAllMode === 'bookings'
-      ? `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`
-      : `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`
-    : editMeeting
+  const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
+    ?? (editMeeting
     ? 'EDIT MEETING'
     : quoteMeeting
     ? 'SEND CONSULT QUOTE'
-    : null;
+    : null);
 
   const closeMainCardPanel = () => {
     setViewAllMode(null);
@@ -1526,10 +1566,6 @@ export default function AdminMeetingsHub() {
                       <div className="grid grid-cols-3 gap-2" style={{ marginTop: '10px' }}>
                         {viewAllClientCards.map((clientCard) => {
                           const latest = clientCard.latestMeeting;
-                          const recentLine =
-                            viewAllMode === 'bookings'
-                              ? `${formatBookingInstallLineForCard(latest)} · ${formatHeaderDate(latest.date)}`
-                              : `${consultTypeLabelForMeeting(latest)} · ${formatHeaderDate(latest.date)}`;
                           return (
                             <button
                               key={clientCard.key}
@@ -1555,7 +1591,7 @@ export default function AdminMeetingsHub() {
                                   height: '53px',
                                   objectFit: 'cover',
                                   borderRadius: '9999px',
-                                  border: '0.7px solid #000',
+                                  border: '0.8px solid #000',
                                   margin: '4px auto 0',
                                   display: 'block',
                                 }}
@@ -1563,7 +1599,7 @@ export default function AdminMeetingsHub() {
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
                                 {clientCard.displayName}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '3px 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '1px 0' }}>
                                 {clientCard.totalCount}{' '}
                                 {viewAllMode === 'bookings'
                                   ? clientCard.totalCount === 1
@@ -1576,16 +1612,21 @@ export default function AdminMeetingsHub() {
                               {viewAllMode === 'bookings' ? (
                                 <>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
-                                    {formatBookingInstallLineForCard(latest)}
+                                    {formatBookingInstallLinePriceOnlyForCard(latest)}
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
                                     {formatHeaderDate(latest.date)}
                                   </p>
                                 </>
                               ) : (
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', color: '#000', margin: '4px 0 0', lineHeight: 1.2 }}>
-                                  {recentLine}
-                                </p>
+                                <>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {formatConsultServiceLineForCard(latest)}
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {formatHeaderDate(latest.date)}
+                                  </p>
+                                </>
                               )}
                             </button>
                           );
@@ -1612,9 +1653,9 @@ export default function AdminMeetingsHub() {
                                 alt=""
                                 width={62}
                                 height={62}
-                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
+                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', flexShrink: 0 }}
                               />
-                              <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{ minWidth: 0, flex: 1, marginLeft: '6px' }}>
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
                                   <span style={{ color: '#000' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                                   <span style={{ color: tierLabelColor(m) }}>
@@ -1949,7 +1990,7 @@ export default function AdminMeetingsHub() {
                                     alt=""
                                     width={44}
                                     height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', display: 'block' }}
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
@@ -2123,7 +2164,7 @@ export default function AdminMeetingsHub() {
                                         alt=""
                                         width={44}
                                         height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', display: 'block' }}
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
