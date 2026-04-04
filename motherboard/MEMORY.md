@@ -9035,3 +9035,67 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For booking-card add-on rendering, treat each add-on label as an atomic phrase (use NBSP between words) so wrapping happens between add-ons, not inside an add-on name.
+
+---
+
+## 2026-04-03 — Booking final-payment autopay implementation (API + metadata + scheduler + failures + admin visibility)
+
+**Context:** User approved implementing the full five-part Stripe booking autopay scope end-to-end: backend API wiring, metadata persistence, scheduled charging, failure/retry handling, and admin visibility for remaining install/re-install balance drafts.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long bookings-thread context where final-payment due metadata already existed in meetings cards, but there was no off-session charge execution path.
+- Implemented checkout/API metadata expansion so appointment meetings now persist autopay fields when available:
+  - `bookingStripeCustomerId`, `bookingStripePaymentMethodId`, `bookingAutopayConsent`, `bookingAutopayConsentAt`.
+- Extended Stripe product PaymentIntent API to support future off-session charging enrollment:
+  - `savePaymentMethodForFuture` request flag,
+  - customer create/reuse + profile `stripe_customer_id` persistence,
+  - `setup_future_usage: 'off_session'` on PI creation.
+- Extended Stripe webhook processing to capture reusable payment method after successful enrollment payment intents:
+  - saves `profiles.stripe_default_payment_method_id` (+ customer id if present).
+- Added secure scheduler endpoint for autopay execution:
+  - `POST /api/booking/autopay-final-payment` (Bearer `BOOKING_AUTOPAY_CRON_SECRET`),
+  - scans due appointment meetings, attempts off-session Stripe charge,
+  - supports dry-run (`?dry_run=true`), retries with exponential backoff, and idempotent skip behavior after success.
+- Added failure/retry + status tracking model:
+  - new `booking_autopay_attempts` table migration,
+  - writes success/failed/skipped rows with error and retry timing,
+  - updates `meetings.metadata.bookingAutopayStatus` and related timestamps/error fields,
+  - appends user-facing notifications on success/failure outcomes.
+- Added admin visibility API:
+  - `GET /api/admin/booking-autopay-attempts` with filter params (`meeting_id`, `user_id`, `status`, `limit`).
+- Added profile schema + mapping support for default Stripe payment method:
+  - migration for `profiles.stripe_default_payment_method_id`,
+  - mapping + profile PATCH preserve/strip rules updated.
+- Added checkout UI consent + readiness gates for bookings:
+  - explicit booking autopay consent checkbox text,
+  - readiness message requiring Supabase session + saved Stripe card profile data,
+  - validation blocks confirm when booking autopay consent is missing or Stripe card-on-file readiness is absent.
+- Added docs + cron config:
+  - `docs/BOOKING_AUTOPAY_SETUP.md` with setup + env + limitation notes,
+  - `vercel.json` cron entry for hourly autopay endpoint trigger.
+- Ran `npm run build` successfully and pushed to `preview/mobile` after rebase.
+
+**Decisions / outcomes:**
+- Full backend autopay pipeline is now implemented for booking final payments, including retries, logging, and admin retrieval endpoints.
+- Checkout now captures/validates booking autopay consent and stores autopay metadata on appointment meetings.
+- Admin meetings booking cards now show autopay status (`scheduled`, `failed`, `paid`) from metadata.
+- Stripe operational setup still required in environment + migrations before production execution.
+
+**Changes:**
+- `api/stripe/create-product-payment-intent.ts`
+- `api/stripe/webhook.ts`
+- `api/booking/appointment-meeting.ts`
+- `api/booking/autopay-final-payment.ts` (new)
+- `api/admin/booking-autopay-attempts.ts` (new)
+- `api/profile.ts`
+- `api/_lib/profileMapping.ts`
+- `src/pages/checkout/page.tsx`
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/utils/api.ts`
+- `vercel.json`
+- `docs/BOOKING_AUTOPAY_SETUP.md` (new)
+- `supabase/migrations/20260403200000_booking_autopay_attempts.sql` (new)
+- `supabase/migrations/20260403203000_profiles_stripe_default_payment_method.sql` (new)
+
+**Conventions:**
+- Booking autopay execution uses secure server-side scheduling (`BOOKING_AUTOPAY_CRON_SECRET`) and writes every outcome to an append-style attempts table for auditability and retry control.
