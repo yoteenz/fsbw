@@ -9300,3 +9300,29 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For dashboard meeting-line color requests, keep service prefix styling independent (`label`) and adjust segment colors via `valueParts` so each text region remains individually controllable.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings card now shows only 5 most-recent rows (no vertical scroll)
+
+**Context:** In this same ongoing chat of admin dashboard + meetings refinements, the user requested that the Admin Dashboard MEETINGS card show only the 5 most recent appointment/consult rows and not use vertical scrolling.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier conversation work in this chat: broad consults/meetings UI updates, in-card toggle behavior for booking edit + consult quote icons, admin-page header-strip parity updates, and dashboard meetings segment color swaps.
+- Located dashboard meetings-card source list and card rendering behavior in `src/pages/admin/dashboard/page.tsx`.
+- Updated meetings-card feed construction to include both appointments and consults, sorted by appointment datetime descending (most recent first), then trimmed to exactly 5 rows.
+- Updated StatsCard usage so only non-MEETINGS cards keep capped item height (`itemsMaxHeightPx`), preventing vertical scroll behavior on the MEETINGS card now that it only renders 5 rows.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- MEETINGS card now renders a fixed 5-row recent list (appointments + consults) and does not need vertical scrolling.
+- Existing mixed-color segment rendering for each meetings row remains intact.
+- Change is scoped to Admin Dashboard card feed + per-card cap behavior.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - merged meetings source for dashboard row list, sorted descending by datetime, sliced to 5 rows
+  - conditional `itemsMaxHeightPx` passed to `StatsCard` (undefined for MEETINGS, capped for other cards)
+
+**Conventions:**
+- For dashboard cards with intentionally short fixed row counts, avoid forcing capped scroll containers; reserve `itemsMaxHeightPx` for high-density cards that should scroll.
