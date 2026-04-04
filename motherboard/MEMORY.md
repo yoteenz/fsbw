@@ -10045,3 +10045,49 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings view-all micro-style requests, apply changes directly to the active grid/list branch after syncing latest `preview/mobile`, since this file is frequently updated and prone to conflict churn.
+
+
+---
+
+## 2026-04-04 — Stripe membership billing policy implemented, then corrected to push directly on preview/mobile and remove wrong branch
+
+**Context:** User requested concrete membership billing behavior: upgrades to a higher-cost membership must charge a full new cycle immediately and set a new renewal date, then refund the prorated unused amount from the current subscription period; downgrades must keep current membership active until renewal, then charge the newly selected lower-cost plan on renewal. After implementation, user explicitly corrected delivery branch requirements and requested the work be pushed to `preview/mobile`, with the mistakenly created feature branch deleted.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected current Stripe membership flow (`create-checkout-session`, webhook sync, profile mapping, checkout client behavior).
+- Identified that prior flow only started hosted Stripe Checkout and did not enforce explicit upgrade/downgrade billing semantics server-side.
+- Implemented server-side tier-change handling in `POST /api/stripe/create-checkout-session` for existing subscribers:
+  - **Upgrade (higher cost):** update existing subscription to new price with `billing_cycle_anchor: 'now'` and no proration invoice line item, then calculate remaining-time ratio on current cycle and create a refund against the most recent paid subscription charge for unused old-tier value.
+  - **Downgrade (lower cost):** keep current tier benefits through current period and schedule lower tier at period end via subscription pending update; no immediate downgrade charge.
+  - **Same tier:** return a no-op `subscription_updated` response.
+- Updated frontend API + checkout page to handle both outcomes:
+  - Redirect flow for first-time/no-existing-subscription checkout sessions,
+  - Immediate `subscription_updated` responses for server-applied upgrade/downgrade/no-op with profile sync and user notice.
+- Hardened webhook tier synchronization so profile tier/renewal metadata follows Stripe subscription item price mapping during invoice/subscription updates.
+- Ran `npm install` (for missing local toolchain) and verified successful `npm run build`.
+- Initially committed/pushed on `cursor/membership-tier-billing-af98` and opened draft PR, then user rejected branch target.
+- Corrected by fetching latest `origin/preview/mobile`, cherry-picking the billing commit onto local `preview/mobile`, rebuilding successfully, pushing to `origin/preview/mobile`, then deleting the incorrect branch both remote and local (`cursor/membership-tier-billing-af98`).
+
+**Decisions / outcomes:**
+- Billing behavior now matches requested policy:
+  - upgrades rebill full new cycle immediately and refund unused prior-cycle value,
+  - downgrades defer to renewal and preserve current entitlement until then.
+- Final branch location corrected to `preview/mobile` per user instruction.
+- Incorrect branch was removed from both local and origin remotes as requested.
+
+**Changes:**
+- `api/_lib/stripeMembership.ts`
+- `api/stripe/create-checkout-session.ts`
+- `api/stripe/webhook.ts`
+- `src/utils/api.ts`
+- `src/pages/checkout/page.tsx`
+- `motherboard/MEMORY.md`
+- Git/branch operations in this chat:
+  - created then removed `cursor/membership-tier-billing-af98` (local + remote),
+  - delivered code on `preview/mobile`.
+
+**Conventions:**
+- For membership tier changes, apply billing policy server-side by change direction:
+  - higher-cost change = immediate full-cycle rebill + unused-time refund,
+  - lower-cost change = schedule for renewal with no immediate downgrade charge.
+- When user specifies final delivery branch after implementation, re-home commits onto requested target branch and clean up any mistaken branch artifacts.
