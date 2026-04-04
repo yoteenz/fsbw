@@ -166,6 +166,8 @@ interface AdminHeaderProps {
   globalSearchQueryKey?: string;
   /** Optional route for submit search navigation (defaults to current page) */
   globalSearchTargetPath?: string;
+  /** Optional query params to preserve when submitting/clearing global search (e.g. active tab) */
+  globalSearchPreserveKeys?: string[];
 }
 
 /**
@@ -187,6 +189,7 @@ export default function AdminHeader({
   showAccountIcon = false,
   globalSearchQueryKey = 'q',
   globalSearchTargetPath,
+  globalSearchPreserveKeys,
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
@@ -316,11 +319,17 @@ export default function AdminHeader({
     const raw = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
     const value = raw.trim();
     const targetPath = globalSearchTargetPath || (typeof window !== 'undefined' ? window.location.pathname : '/admin/dashboard');
+    const currentSearch = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+    const next = new URLSearchParams();
+    (globalSearchPreserveKeys || []).forEach((key) => {
+      const preserved = currentSearch.get(key);
+      if (preserved != null && preserved !== '') next.set(key, preserved);
+    });
     if (!value) {
-      navigate(targetPath);
+      const qs = next.toString();
+      navigate(qs ? `${targetPath}?${qs}` : targetPath);
       return;
     }
-    const next = new URLSearchParams();
     next.set(globalSearchQueryKey, value);
     navigate(`${targetPath}?${next.toString()}`);
   };
