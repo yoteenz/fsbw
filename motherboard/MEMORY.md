@@ -9679,3 +9679,30 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For bookings payment tracker visuals, use explicit state-based style gates so red urgency/completed-style bars can differ structurally (border/fill/corners) from default gray progress bars.
+
+---
+
+## 2026-04-03 — Bookings appointment time line reduced by 1px (red duration/date row)
+
+**Context:** Continuing the same long Admin Meetings conversation (bookings/consults card styling and behavior tweaks, payment due tracker visual/state updates, tab-relative search behavior, and Overview summary-card placement corrections), the user requested a micro typography adjustment: decrease the red appointment-time line text size (e.g., `SAT, APR 25, 2026 · 4:00 PM · 4 HRS 10 MINS`) by 1px.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the bookings appointment-time line in `AdminMeetingsHub` rendered as red `Futura PT Book` at `10px`.
+- Updated only that bookings appointment-time row to `9px` while preserving:
+  - red color (`#EB1C24`),
+  - same font family (`"Futura PT Book"`),
+  - same content format (`date · time · duration`) and HRS/MINS conversion behavior.
+- No other typography rows were changed.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking card appointment-time line is now exactly 1px smaller as requested.
+- Styling and formatting logic otherwise remain unchanged.
+- Scope limited to the bookings appointment-time text row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed bookings appointment-time line `fontSize` from `10px` to `9px`
+
+**Conventions:**
+- For booking-card micro typography requests, prefer single-property adjustments (font size only) on the targeted line to avoid unintended spacing or hierarchy shifts.
