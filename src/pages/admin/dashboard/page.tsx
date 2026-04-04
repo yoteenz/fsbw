@@ -577,6 +577,38 @@ export default function AdminDashboard() {
     return 'CONSULT: WIG ONLY';
   };
 
+  const meetingClientDisplayName = (meeting: AdminMeeting): string => {
+    const cleaned = String(meeting.client || '')
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, ' ');
+    return cleaned || 'CLIENT';
+  };
+
+  const travelCityFromMeeting = (meeting: AdminMeeting): string | null => {
+    const meta = (meeting.metadata && typeof meeting.metadata === 'object'
+      ? meeting.metadata
+      : {}) as Record<string, unknown>;
+    const rawAddress = String(
+      meta.clientAddress ||
+      meta.address ||
+      meta.defaultAddress ||
+      ''
+    ).trim();
+    if (!rawAddress) return null;
+    const parts = rawAddress
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (parts.length < 2) return null;
+    const city = parts[1]
+      .toUpperCase()
+      .replace(/[^A-Z\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return city || null;
+  };
+
   const toIsoMeetingDateTime = (date: string, time: string): string => {
     const raw = String(time || '').trim();
     const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -720,14 +752,93 @@ export default function AdminDashboard() {
   const weekUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= endOfThisWeekIso).length;
   const monthUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= meetingsRangeEnd).length;
 
-  const meetingsCardTicker = [
+  const mostBookedClientLine = (() => {
+    const counts = new Map<string, number>();
+    for (const meeting of mergedMeetingsForDashboard) {
+      if (meeting.category === 'consultation') continue;
+      const status = String(meeting.status || '').toLowerCase();
+      if (status === 'canceled' || status === 'cancelled') continue;
+      const name = meetingClientDisplayName(meeting);
+      counts.set(name, (counts.get(name) || 0) + 1);
+    }
+    let topName = '';
+    let topCount = 0;
+    for (const [name, count] of counts) {
+      if (count > topCount) {
+        topName = name;
+        topCount = count;
+      }
+    }
+    if (!topName || topCount <= 0) return 'NO APPOINTMENT LEADER YET.';
+    return `${topName} HAS BOOKED ${topCount} ${topCount === 1 ? 'APPOINTMENT' : 'APPOINTMENTS'}.`;
+  })();
+
+  const mostRedeemedOffersLine = (() => {
+    const orders = buildRevenueOrdersList() as Array<Record<string, unknown>>;
+    const counts = new Map<string, number>();
+    for (const order of orders) {
+      const code = String(order.discountCode || order.discount_code || order.discount || '')
+        .trim()
+        .toUpperCase();
+      if (!code.startsWith('CONSULT-')) continue;
+      const nameRaw = String(order.clientName || order.client_name || '')
+        .trim()
+        .toUpperCase();
+      const emailRaw = String(order.userEmail || order.clientEmail || order.client_email || '')
+        .trim()
+        .toUpperCase();
+      const key = nameRaw || emailRaw;
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    let topName = '';
+    let topCount = 0;
+    for (const [name, count] of counts) {
+      if (count > topCount) {
+        topName = name;
+        topCount = count;
+      }
+    }
+    if (!topName || topCount <= 0) return 'NO CONSULT OFFERS REDEEMED YET.';
+    return `${topName} HAS REDEEMED ${topCount} ${topCount === 1 ? 'OFFER' : 'OFFERS'}.`;
+  })();
+
+  const mostTraveledCityLine = (() => {
+    const currentYear = new Date().getFullYear();
+    const cityCounts = new Map<string, number>();
+    for (const meeting of mergedMeetingsForDashboard) {
+      if (meeting.category === 'consultation') continue;
+      const status = String(meeting.status || '').toLowerCase();
+      if (status === 'canceled' || status === 'cancelled') continue;
+      const year = Number(String(meeting.date || '').slice(0, 4));
+      if (year !== currentYear) continue;
+      const city = travelCityFromMeeting(meeting);
+      if (!city) continue;
+      cityCounts.set(city, (cityCounts.get(city) || 0) + 1);
+    }
+    let topCity = '';
+    let topCount = 0;
+    for (const [city, count] of cityCounts) {
+      if (count > topCount) {
+        topCity = city;
+        topCount = count;
+      }
+    }
+    if (!topCity || topCount <= 0) return `NO TRAVEL CITIES TRACKED FOR ${currentYear}.`;
+    return `YOU'VE TRAVELED TO ${topCity} ${topCount} ${topCount === 1 ? 'TIME' : 'TIMES'} THIS YEAR.`;
+  })();
+
+  const meetingsCardTickerWithInsights = [
     `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY.`,
+    mostBookedClientLine,
     `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK.`,
+    mostRedeemedOffersLine,
     `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`,
+    mostTraveledCityLine,
   ]
     .join(' ')
     .concat(
-      ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`
+      ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${mostBookedClientLine} ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${mostRedeemedOffersLine} ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH. ${mostTraveledCityLine}`
     );
 
   const statsData = [
@@ -801,7 +912,7 @@ export default function AdminDashboard() {
             : [{ text: dateAndClient, color: 'text-red-500' as const }],
         };
       }),
-      highlight: meetingsCardTicker
+      highlight: meetingsCardTickerWithInsights
     },
 
     {
