@@ -8202,3 +8202,61 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For the meetings top summary cards, use fixed explicit height and bottom-aligned content when user requests exact visual positioning.
+
+---
+
+## 2026-04-03 — Implemented consistent URL+session toggle persistence pattern across admin/account/product tabs
+
+**Context:** In this chat, the user asked to implement the previously proposed “consistent persistence pattern” for page toggles using URL query params with optional `sessionStorage` fallback so toggle/tab state survives refresh and deep-linking behaves consistently.
+
+**Topics covered (entire conversation so far):**
+- Started from the running thread of bookings/admin UI refinements and persistence concerns, with the explicit request to proceed on a unified persistence architecture.
+- Added a reusable hook that normalizes and validates allowed values, reads from URL first, falls back to session storage, keeps URL/query in sync, and writes/removes session state depending on default vs non-default selection.
+- Rolled the shared hook through major surfaces where tab/view-state persistence matters:
+  - Admin pages: Marketing, Referrals, Reviews, Brand (main tab + analytics sub-tab), Analytics, Backend, Pending, Revenue, Dashboard notifications view mode, and Admin Client Account tabs.
+  - Account pages: Notifications tab and Reviews tab.
+  - Product/detail pages: Noir, Blanco, Soft Wave, Beach Wave, Soft Curl, Ocean Curl, Gift Card, and Shop texture-category product tabs.
+- Fixed TypeScript strictness issues caused by string-based tab click handlers by typing handlers to each page’s tab union.
+- Verified full project compile/build success after rollout.
+- Committed and pushed on branch `cursor/bookings-tab-ui-adjustments-95ca`.
+
+**Decisions / outcomes:**
+- Persistence is now standardized using one hook pattern:
+  - URL query param is the source of truth when present.
+  - `sessionStorage` restores the last non-default state when query is absent.
+  - invalid query/session values are ignored and coerced to allowed defaults.
+- Dashboard notifications view mode now safely maps generic callback strings to `'list' | 'grouped'`.
+- Existing page behavior remains intact while refresh/deep-link continuity is improved across admin/account/product tabbed UIs.
+
+**Changes:**
+- Added:
+  - `src/hooks/usePersistentQueryState.ts`
+- Updated:
+  - `src/pages/admin/marketing/page.tsx`
+  - `src/pages/admin/referrals/page.tsx`
+  - `src/pages/admin/reviews/page.tsx`
+  - `src/pages/admin/brand/page.tsx`
+  - `src/pages/admin/analytics/page.tsx`
+  - `src/pages/admin/backend/page.tsx`
+  - `src/pages/admin/pending/page.tsx`
+  - `src/pages/admin/revenue/page.tsx`
+  - `src/pages/admin/dashboard/page.tsx`
+  - `src/pages/admin/clients/account/page.tsx`
+  - `src/pages/account/notifications/page.tsx`
+  - `src/pages/account/reviews/page.tsx`
+  - `src/pages/shop/texture-category-product/page.tsx`
+  - `src/pages/tools/gift-card/page.tsx`
+  - `src/pages/straight/noir/page.tsx`
+  - `src/pages/straight/blanco/page.tsx`
+  - `src/pages/wavy/soft-wave/page.tsx`
+  - `src/pages/wavy/beach-wave/page.tsx`
+  - `src/pages/curly/soft-curl/page.tsx`
+  - `src/pages/curly/ocean-curl/page.tsx`
+  - `motherboard/MEMORY.md`
+
+**Conventions:**
+- For new toggle/tab/view states, prefer `usePersistentQueryState` with:
+  - explicit `allowedValues`,
+  - page-scoped `storageKey`,
+  - compact query keys (`tab`, `subTab`, or page-specific view key),
+  so behavior is consistent and refresh-safe by default.
