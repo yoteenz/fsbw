@@ -10463,3 +10463,46 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When appointment/consultation booking pages use `BrandExpiresDatePicker` with `monthLabelVariant="adminMeetings"`, keep that variant visually aligned with the inline Admin Meetings calendar (Monday-first, single-letter weekdays, gray-bordered white active cells, gray disabled cells, red selected state) so calendar styling stays consistent across booking/admin flows.
+
+---
+
+## 2026-04-04 — View All list panels fixed to uniform height; Meetings wrap points hardened to prevent stray TS/TSTS artifact
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings thread immediately after the calendar parity pass, the user reported two remaining issues: the stray `TS/TSTS` placeholder text kept coming back, and the client panels in the **View All list view only** did not all have the same height when different clients had different amounts of meeting text content.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red admin summary metric text by 4px,
+  - changed booking-calendar white cells to black borders and later reverted them to gray,
+  - moved the work directly onto `preview/mobile` and deleted the mistaken feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - adjusted bookings-tab dropdown placement and grouped list-row formatting,
+  - updated the shared booking/consultation calendar variant to mirror Admin Meetings styling.
+- In this latest pass, searched the repo for any literal `TSTS` / standalone `TS` placeholder token in source files and did **not** find a literal hardcoded string in the meetings code path.
+- Based on that inspection, treated the recurring artifact as a wrap/overflow problem around compact meetings labels rather than a literal placeholder token.
+- Hardened likely orphan-text sources in `AdminMeetingsHub`:
+  - added `whiteSpace: 'nowrap'` to the top Meetings tab buttons (`OVERVIEW`, `BOOKINGS`, `CONSULTS`),
+  - added `whiteSpace: 'nowrap'` to the bottom `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons,
+  - preserved existing ellipsis/overflow handling around the View All title/card labels.
+- Updated **View All list mode only** so every client panel stays the same height regardless of line content:
+  - set a fixed card height,
+  - forced the client header line to no-wrap with ellipsis,
+  - kept overflow contained inside the inner scroll region rather than letting panel height expand.
+- Rebuilt successfully on `preview/mobile` after these meetings-only wrap/height changes.
+
+**Decisions / outcomes:**
+- No literal `TSTS` placeholder token was found in the active source path; the visible artifact is being treated as a layout/wrapping issue from compact meetings labels.
+- View All list client panels now have a uniform fixed height, with scrolling constrained to the inner rows region.
+- Client header lines are now clipped with ellipsis instead of expanding panel height or creating orphan wrap fragments.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `whiteSpace: 'nowrap'` to Meetings top-tab buttons
+  - added `whiteSpace: 'nowrap'` to `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons
+  - set fixed height / overflow rules on View All list client panels
+  - added no-wrap + ellipsis handling to the grouped list client-name line
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a stray `TS` / `TSTS` artifact appears in Admin Meetings View All UI and no literal placeholder token exists in source, treat it as an overflow/wrapping issue first: harden compact labels/buttons with no-wrap + ellipsis and constrain panel overflow before assuming there is a hidden placeholder string.

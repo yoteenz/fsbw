@@ -1507,6 +1507,7 @@ export default function AdminMeetingsHub() {
                         cursor: 'pointer',
                         borderBottom: mainTab === 'overview' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       OVERVIEW
@@ -1523,6 +1524,7 @@ export default function AdminMeetingsHub() {
                         cursor: 'pointer',
                         borderBottom: mainTab === 'bookings' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       BOOKINGS
@@ -1539,6 +1541,7 @@ export default function AdminMeetingsHub() {
                         cursor: 'pointer',
                         borderBottom: mainTab === 'consults' ? '1px solid #EB1C24' : '1px solid transparent',
                         paddingBottom: '4px',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       CONSULTS
@@ -1761,6 +1764,9 @@ export default function AdminMeetingsHub() {
                               border: '1px solid #d1d5db',
                               borderRadius: '0',
                               padding: '10px',
+                              height: '82px',
+                              boxSizing: 'border-box',
+                              overflow: 'hidden',
                             }}
                           >
                             <div className="flex items-start gap-2.5">
@@ -1792,7 +1798,17 @@ export default function AdminMeetingsHub() {
                                     textAlign: 'left',
                                   }}
                                 >
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '0', color: '#000' }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '10px',
+                                      margin: '0',
+                                      color: '#000',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
                                     <span style={{ color: '#000' }}>{clientGroup.displayName}</span>{' '}
                                     <span style={{ color: clientGroup.tierIsPremium ? '#000' : '#808080' }}>
                                       · {clientGroup.tierIsPremium ? 'PREMIUM' : 'STANDARD'}
@@ -2420,6 +2436,7 @@ export default function AdminMeetingsHub() {
                     color: '#EB1C24',
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   VIEW ALL BOOKINGS
@@ -2436,6 +2453,7 @@ export default function AdminMeetingsHub() {
                     color: '#EB1C24',
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   VIEW ALL CONSULTS
