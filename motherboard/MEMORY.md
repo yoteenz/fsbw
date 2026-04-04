@@ -9884,3 +9884,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For View All-only visual tweaks in Admin Meetings, apply sizing/alignment changes strictly within `viewAllMode` render branches so primary B/C tab card geometry stays stable.
+
+---
+
+## 2026-04-03 — Removed stray “TSTS/TS” artifact above view-all client panels by preventing header wrap
+
+**Context:** Continuing this same conversation’s Admin Meetings View All refinement sequence (new sort dropdown + list/grid controls, unique-client header counts, card styling parity, and icon scaling), the user reported a stray text artifact above the client panels in the toggle area (`TSTS`, then remaining `TS`) that should not be visible.
+
+**Topics covered (entire conversation so far):**
+- Verified no literal `TSTS`/`TS` debug token remained in the meetings source where view-all controls render.
+- Identified the likely visual source as header text wrapping/truncating in the active panel title (`... CLIENT CONSULTS`) where only the tail (`TS`) could appear on its own line.
+- Updated active panel header title styling to prevent line wrap and tail fragments:
+  - `whiteSpace: 'nowrap'`
+  - `overflow: 'hidden'`
+  - `textOverflow: 'ellipsis'`
+  - `minWidth: 0` and right padding to coexist with the close button.
+- Kept the dynamic count-driven title intact (`N CLIENT BOOKINGS/CONSULTS`) and preserved sort/toggle controls layout below.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TS` fragment above view-all panels is removed via no-wrap/ellipsis title behavior.
+- Header still displays the same count-driven wording, now constrained to a single line.
+- Scope is limited to active view-all panel header text rendering.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added no-wrap/ellipsis styles to active panel `<h2>` title to prevent wrap artifacts.
+
+**Conventions:**
+- For compact admin card headers with dynamic labels, enforce single-line title constraints (nowrap + ellipsis) to avoid visual orphan fragments when text length approaches available space.
