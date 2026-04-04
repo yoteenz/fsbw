@@ -10097,6 +10097,99 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-04 — View All meetings follow-up: tighter grid count spacing, icon shift, list text nudge, and consult grid line parity
+
+**Context:** Continuing the same chat immediately after the admin-summary/sort/calendar pass, the user requested a second, View All-only refinement round in Admin Meetings: reduce the vertical spacing around the grid bookings-count line, move the grid/list icon toggle 2px further left, shift list-view text 6px to the right of the profile icons, and make grid-view consult cards match bookings by using a red consult-type + price line with the date on the line below.
+
+**Topics covered (entire conversation so far):**
+- This chat first handled three broader admin UI updates:
+  - increased red summary metric text across admin summary panels by 4px,
+  - added the shared meetings sort dropdown above the regular Bookings/Consults client panels,
+  - changed white-background booking calendar cells to use black borders on Admin Meetings.
+- In this follow-up turn, inspection stayed scoped to the View All branch of `AdminMeetingsHub`.
+- Reduced the grid-view bookings/consults count-line vertical margin from `3px 0` to `1px 0`, trimming 2px above and 2px below that row.
+- Moved the View All list/grid icon toggle group an extra 2px left by changing its wrapper offset from `translateX(-2px)` to `translateX(-4px)`.
+- Nudged list-view text content (all text to the right of the profile icon) 6px to the right in tandem via a wrapper transform, without moving the icon itself.
+- Updated grid-view consult cards to mirror bookings’ two-line structure:
+  - red line: `WIG ONLY/WIG + INSTALL $40 USD` (or existing explicit consult/deposit metadata price when present),
+  - black line below: formatted date (`THU, APR 30, 2026` pattern).
+- Added a small consult price helper in `AdminMeetingsHub` that prefers explicit consult/deposit/price metadata values and falls back to the existing consult booking deposit amount (`$40`) when none is present.
+- Re-verified with a successful `npm run build`.
+
+**Decisions / outcomes:**
+- All requested changes remain isolated to the View All meetings toggle UI; the regular Bookings/Consults tab cards were not otherwise restyled.
+- Consult grid cards now visually match bookings cards in structure, with the amount sourced from existing data when available and otherwise using the established consult deposit fallback.
+- The icon shift and list-text shift were applied with wrapper-level transforms to preserve hit targets and internal icon geometry.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `consultDisplayPriceUsd(...)`
+  - tightened grid count-row spacing to `margin: '1px 0'`
+  - moved the View All display-mode icon group to `translateX(-4px)`
+  - shifted list-view text wrapper right by `translateX(6px)`
+  - changed grid consult cards from single-line black text to red consult-type + price line and black date line
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All-only Admin Meetings micro-adjustments, prefer wrapper-level offsets and branch-specific render tweaks inside the `viewAllMode` path so the main B/C tab layouts and non-View-All card geometry stay unchanged.
+
+---
+
+## 2026-04-04 — Admin Meetings follow-up: stray text cleanup, B/C dropdown visibility, view-all icon/border refinements, and consult service-price line
+
+**Context:** Continuing the same chat after the admin summary-panel pass and two rounds of Admin Meetings refinements, the user reported several remaining issues: the stray `TSTS` placeholder artifact still appeared, grid-view profile icon borders still did not visually match list view, the View All list/grid toggle had been moved too far left, the consult grid service line needed a service-style price example (`WIG + INSTALL: $960 USD`), the grid date line needed 2px more spacing above it, and the `Most recent` dropdown was still not visible enough on the regular Bookings/Consults tabs above client panels.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red admin summary metric text by 4px across the affected admin pages,
+  - added a shared meetings sort dropdown to the regular Bookings/Consults tabs,
+  - changed white appointment calendar cells to use black borders,
+  - tightened View All grid count spacing,
+  - nudged the View All grid/list toggle,
+  - shifted View All list text 6px to the right,
+  - changed View All consult grid cards from single-line text into red service + black date lines.
+- In this third follow-up pass, all work stayed scoped to `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Strengthened overflow handling intended to suppress the lingering stray `TSTS`/`TS` artifact:
+  - tightened active View All header title flex/ellipsis constraints,
+  - added `overflow: hidden` on grid cards,
+  - added no-wrap + ellipsis behavior to grid card name/count/service/date lines.
+- Adjusted the View All list/grid icon toggle wrapper back to a net **2px left** offset (`translateX(-2px)`), matching the user’s clarified request.
+- Kept the grid profile icon border black and added `boxSizing: 'border-box'` so the grid icon ring renders with the same thin border treatment as list view.
+- Increased the top margin above the black grid date line from `2px` to `4px` for both bookings and consult grid cards.
+- Reworked consult grid pricing away from the deposit-style fallback:
+  - added richer metadata lookups for consult service/quote totals,
+  - added breakdown parsing for metadata arrays such as `priceBreakdown`,
+  - when no explicit amount exists, fallback now uses service-style defaults by consult type (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`) instead of the `$40` deposit.
+- Updated the consult grid red line format to include a colon before price (`WIG + INSTALL: $960 USD` pattern).
+- Moved the regular **Bookings** sort dropdown higher in the tab flow so it is visible before the month/calendar block instead of only below the calendar; kept the **Consults** dropdown in a clearer top-of-list position.
+- First rebuild failed because the earlier deposit fallback constant became unused after the service-price refactor; removed the dead constant and reran a successful production build.
+
+**Decisions / outcomes:**
+- The regular B/C sort dropdown should be visually obvious, not merely technically rendered; moving the bookings control higher in the content stack improves discoverability.
+- View All consult grid cards now use service-style pricing presentation instead of consult-deposit pricing when no explicit quote/metadata amount is available.
+- Stray orphan text risk in compact View All cards/header is now mitigated with stricter no-wrap/ellipsis + overflow clipping rules.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed the unused consult deposit fallback constant from the View All card path
+  - added `CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE`
+  - added `consultPriceFromBreakdownRows(...)`
+  - expanded `consultDisplayPriceUsd(...)` metadata support to service/quote totals and breakdown parsing
+  - restored View All display-mode toggle offset to `translateX(-2px)`
+  - added stronger ellipsis/overflow constraints to View All header and grid card rows
+  - added `boxSizing: 'border-box'` to grid profile icons
+  - changed consult grid line format to `TYPE: $X USD`
+  - increased grid date-line spacing above the date row
+  - moved the bookings-tab sort dropdown to the top of the bookings content block
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings consult grid cards, prefer explicit quote/service totals from metadata when available; if meetings rows do not carry an explicit amount, use a stable service-style fallback by consult type rather than the consult deposit amount when the UI is meant to resemble a service card.
+
+---
+
 ## 2026-04-04 — Stripe membership billing policy implemented, then corrected to push directly on preview/mobile and remove wrong branch
 
 **Context:** User requested concrete membership billing behavior: upgrades to a higher-cost membership must charge a full new cycle immediately and set a new renewal date, then refund the prorated unused amount from the current subscription period; downgrades must keep current membership active until renewal, then charge the newly selected lower-cost plan on renewal. After implementation, user explicitly corrected delivery branch requirements and requested the work be pushed to `preview/mobile`, with the mistakenly created feature branch deleted.
@@ -10176,3 +10269,109 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - If user clarifies branch target after implementation, immediately re-home final code to the specified branch and remove incorrect branch artifacts (remote + local) when requested.
+
+---
+
+## 2026-04-04 — Admin meetings UI refinement thread plus preview/mobile merge-conflict classification
+
+**Context:** Across this chat, the user requested a long sequence of Admin UI tweaks centered on Admin Meetings plus top admin summary panels, then later asked for the current branch to be merged against the latest `origin/preview/mobile`, with the conflicts reviewed, classified, the simple ones fixed, and the complicated ones reported.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context at chat start and implemented an initial pass of admin UI updates:
+  - increased red metric text on admin summary panels by 4px across the affected admin pages,
+  - added the meetings sort dropdown above the regular Bookings/Consults client panels to mirror the View All control,
+  - changed white-background booking calendar cells to use black borders.
+- Continued through multiple Admin Meetings refinement passes in `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - tightened View All grid count-line spacing,
+  - shifted View All list/grid mode icons,
+  - nudged list-view text to the right of profile icons,
+  - reworked View All consult grid cards into red service-line + black date-line structure,
+  - suppressed stray `TS`/`TSTS` wrap artifacts with stronger clipping/ellipsis rules,
+  - matched grid/list profile icon ring treatment,
+  - increased spacing above the black date row,
+  - moved the regular bookings-tab dropdown higher for visibility,
+  - changed consult service-line pricing to service-style fallback values when no explicit amount exists.
+- Verified each completed UI pass with successful `npm run build`, committed, pushed, and updated the branch PR during those earlier turns.
+- In this turn, fetched latest `origin/preview/mobile` and ran a non-committing merge to inspect real conflicts.
+- Actual merge conflicts surfaced in two files only:
+  - `motherboard/MEMORY.md`
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Resolved the simple append-only `motherboard/MEMORY.md` conflict by keeping both branches’ history entries.
+- Reviewed the `AdminMeetingsHub` conflict hunks and identified a mix of simple mechanical overlaps and true intent conflicts:
+  - current branch favors thinner `0.7px` icon borders matching list view, stronger no-wrap/ellipsis handling, bookings-tab dropdown visibility changes, service-style consult fallback pricing (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`), and full booking install line formatting,
+  - `preview/mobile` favors `0.8px` icon borders, a simpler explicit-price-only consult helper, simplified booking price-only grid line formatting, and a different implementation of list text offset / price-line helpers.
+- Cleaned up obvious mechanical issues in the working tree (including duplicate wrapper cleanup while inspecting the conflicted meetings file), but intentionally left `src/pages/admin/meetings/AdminMeetingsHub.tsx` unresolved at the git merge level because several hunks reflect competing UI intent rather than safe text-only merges.
+
+**Decisions / outcomes:**
+- The `motherboard/MEMORY.md` conflict is **simple** and has been fixed.
+- The remaining `src/pages/admin/meetings/AdminMeetingsHub.tsx` conflict is **complicated / mixed-intent** overall:
+  - some sub-hunks are mechanically mergeable,
+  - but several key hunks encode different product/UI decisions, so they should be resolved intentionally rather than auto-merged.
+- Merge is intentionally left incomplete after fixing the simple conflict so those meetings intent differences can be reviewed explicitly.
+
+**Changes:**
+- `motherboard/MEMORY.md`
+  - resolved append-only merge conflict by preserving entries from both branches
+  - appended this full-conversation summary entry
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - reviewed and classified conflict hunks
+  - cleaned obvious duplicate wrapper artifact in the working tree while leaving the file unresolved for intent review
+- Git operations:
+  - fetched latest `origin/preview/mobile`
+  - ran `git merge --no-commit --no-ff origin/preview/mobile`
+  - inspected and classified the resulting conflict set
+
+**Conventions:**
+- Treat append-only motherboard history conflicts as simple merges that keep entries from both branches.
+- Treat Admin Meetings View All card conflicts as intent-sensitive when branches disagree on pricing strategy, border thickness, or service-line copy/formatting; these should be reviewed as product decisions, not blindly auto-merged.
+
+---
+
+## 2026-04-04 — View All meetings list now groups by client with inner scroll panels
+
+**Context:** Continuing this same chat after the admin summary-panel updates, multiple Admin Meetings refinements, and the later `preview/mobile` merge-conflict review, the user requested one more targeted Meetings change: update the **View All Bookings/Consults list view only** so it groups meetings by client instead of one panel per booking row, with an inner vertical scroll inside each client panel and the first 3 recent appointments visible before scrolling. The user also provided the desired text structure: header line like `DIANA FOSTER (IL) · STANDARD`, then per-meeting lines like `RE-INSTALL: MON, 6/27,2026 · 3:00 PM · 2 HRS` with the service label in gray Futura Medium and the date/time/duration portion in red Futura Medium.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and verified:
+  - +4px red summary-panel metric text across the relevant admin pages,
+  - black borders for white booking-calendar cells on Admin Meetings,
+  - several View All grid/list/icon/spacing/consult-line refinements in `AdminMeetingsHub`.
+- Later in the same chat, fetched latest `origin/preview/mobile`, reviewed the merge conflicts, classified `motherboard/MEMORY.md` as simple append-only and `AdminMeetingsHub` as mixed-intent/complicated, and left the meetings file intentionally unresolved at the git index level while preserving a clean working copy direction.
+- In this follow-up turn, focused only on the **View All list view** path inside `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Replaced the one-card-per-meeting list renderer with grouped client panels:
+  - meetings are now grouped by unique client key,
+  - group ordering still follows the active shared sort option,
+  - meetings within each client group are sorted most recent first.
+- Added compact list-only formatting helpers:
+  - numeric weekday/date helper (`MON, 6/27,2026` pattern),
+  - gray service-label helper (`RE-INSTALL:` / consult type with trailing colon),
+  - red schedule helper (`DATE · TIME · DURATION`).
+- Updated the View All list renderer to:
+  - keep the client photo on the left,
+  - show one client header line with name + tier,
+  - render the grouped meeting lines inside an inner scroll area,
+  - cap the inner area so roughly the first 3 recent rows show before vertical scrolling.
+- Kept the change scoped to **View All list view only**; grid view and the regular Bookings/Consults tab card layouts were not changed in this turn.
+- The first verification build failed only because an old upstream helper (`formatBookingInstallLinePriceOnlyForCard`) had become unused after the list renderer change; removed that dead helper and reran a successful `npm run build`.
+
+**Decisions / outcomes:**
+- View All list mode now groups rows by client instead of rendering one panel per appointment/consult row.
+- Each client panel now has an internal vertical scroll region sized to show the first ~3 recent meetings before scrolling.
+- The grouped meeting rows follow the requested one-line structure with:
+  - service label in gray Futura Medium,
+  - date/time/duration in red Futura Medium.
+- The merge working tree remains active, but the meetings file is now in a buildable state with the new grouped-list behavior applied in the working copy.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatViewAllListMeetingDate(...)`
+  - added `viewAllListMeetingLabel(...)`
+  - added `formatViewAllListMeetingSchedule(...)`
+  - added grouped memo `viewAllListClientPanels`
+  - replaced View All list branch from one-row-per-card to grouped client panels with inner scroll
+  - removed now-unused helper `formatBookingInstallLinePriceOnlyForCard(...)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All Meetings list mode when the user wants grouped client panels, group rows by unique client key, sort meetings within each group by recency, and use an inner scroll region rather than creating a separate outer card per meeting row.
