@@ -9517,3 +9517,39 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For marquee/ticker copy that requires mixed emphasis, use segmented highlight parts instead of forcing a single color for the whole string.
+
+---
+
+## 2026-04-03 — Admin meetings global search now filters bookings/consults by client on current tab
+
+**Context:** Continuing from the long-running admin meetings/dashboard refinement stream in this chat (bookings-tab typography/spacing/icon tuning, payment status redesign and countdown logic, dashboard meetings card formatting/color changes, and full Stripe final-payment autopay implementation), the user requested that typing a client name in the admin search bar should populate that client and their appointment/consult depending on the tab currently viewed.
+
+**Topics covered (entire conversation so far):**
+- Prior work across this conversation already established extensive meetings behavior and styling in `AdminMeetingsHub`, including bookings/consults tab cards, right-side action icons, payment due tracker states, and admin dashboard meetings-card formatting.
+- In this exchange, traced the shared admin search behavior through `AdminHeader` (`?q=` global query support) and confirmed `AdminMeetingsHub` had no list-level filtering wired to that query.
+- Implemented meetings-page controlled search state tied to URL query `q`, then added client-match filtering for both bookings and consult datasets.
+- Ensured filtering respects the currently viewed tab content:
+  - **Bookings tab** now filters appointment cards and calendar-highlighted appointment dates by client name.
+  - **Consults tab** now filters consult cards by client name.
+  - Search empty states now show tab-specific “NO ... MATCH YOUR SEARCH” copy.
+- Kept existing card visuals/interaction logic unchanged (edit/quote flows, profile click behavior, payment UI blocks), and validated with a successful build.
+
+**Decisions / outcomes:**
+- Meetings page now uses the existing admin header search input as a functional client filter instead of a no-op on this route.
+- Matching supports:
+  - raw client name,
+  - client name with state suffix (e.g. `NAME (TX)`),
+  - client email.
+- Search filtering is scoped to meetings content and tab context so admins see only relevant booking or consult rows while searching.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `clientSearchQuery` state sourced from and synced with URL query param `q`
+  - connected `AdminHeader` via `externalSearchValue` / `onExternalSearchChange`
+  - added `meetingMatchesClientSearch(...)` helper
+  - added `filteredAppointmentMeetings` and `filteredConsultMeetings` memoized lists
+  - wired filtered lists into bookings calendar date markers, bookings card rows, consult card rows, and view-all rows
+  - added search-specific empty-state copy for bookings/consults
+
+**Conventions:**
+- For admin pages using shared `AdminHeader` global search, wire `externalSearchValue` and `onExternalSearchChange` on-page and filter the page’s primary data lists by the same `q` value so search behavior is consistent across tabs/routes.
