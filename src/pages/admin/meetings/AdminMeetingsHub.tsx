@@ -1607,6 +1607,7 @@ export default function AdminMeetingsHub() {
                               </p>
                               {(() => {
                                 const payment = getBookingPaymentStatusForCard(m);
+                                const isRedDueBar = payment.duePassed || payment.dueProgressPct >= 98;
                                 return (
                                   <>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '12px 0 0' }}>
@@ -1617,10 +1618,10 @@ export default function AdminMeetingsHub() {
                                         style={{
                                           width: '100%',
                                           height: '9px',
-                                          backgroundColor: '#E0E0E0',
-                                          borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                          backgroundColor: isRedDueBar ? '#EB1C24' : '#E0E0E0',
+                                          borderRadius: '0',
                                           overflow: 'hidden',
-                                          border: payment.dueProgressPct === 0 ? '1px solid #808080' : 'none',
+                                          border: isRedDueBar ? '1px solid #000000' : '1px solid #808080',
                                           boxSizing: 'border-box',
                                         }}
                                       >
@@ -1628,9 +1629,9 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             width: `${payment.dueProgressPct}%`,
                                             height: '100%',
-                                            backgroundColor: payment.duePassed ? '#EB1C24' : payment.dueProgressPct >= 98 ? '#EB1C24' : '#808080',
+                                            backgroundColor: isRedDueBar ? '#EB1C24' : '#808080',
                                             transition: 'width 0.3s ease',
-                                            borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                            borderRadius: '0',
                                           }}
                                         />
                                       </div>
