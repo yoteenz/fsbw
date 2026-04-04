@@ -309,6 +309,55 @@ function meetingClientDisplayNameWithState(m: AdminMeeting): string {
   return state ? `${m.client} (${state})` : m.client;
 }
 
+function normalizeSearchText(raw: unknown): string {
+  return String(raw || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, ' ')
+    .trim();
+}
+
+function meetingSearchBlob(m: AdminMeeting): string {
+  const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
+  const baseParts = [
+    m.client,
+    meetingClientDisplayNameWithState(m),
+    m.clientEmail,
+    m.date,
+    formatHeaderDate(m.date),
+    m.time,
+    m.type,
+    m.notes,
+    m.duration,
+    formatMinutesAsHoursAndMinutes(m.duration),
+    String(m.status || ''),
+  ];
+  if (m.category === 'consultation') {
+    baseParts.push(
+      consultTypeLabelForMeeting(m),
+      String(meta.hairOption || ''),
+      String(meta.consultType || ''),
+      String(meta.consultNotes || ''),
+      String(meta.bookingHairOption || '')
+    );
+  } else {
+    baseParts.push(
+      formatBookingInstallLineForCard(m),
+      formatBookingAddonsLineForCard(m),
+      formatBookingAddonsLineForCardDisplay(m),
+      String(meta.bookingInstallKind || ''),
+      String(meta.installKind || ''),
+      String(meta.bookingAttachedOrderSummary || '')
+    );
+  }
+  return normalizeSearchText(baseParts.filter(Boolean).join(' · '));
+}
+
+function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
+  if (searchTokens.length === 0) return true;
+  const haystack = meetingSearchBlob(m);
+  return searchTokens.every((token) => haystack.includes(token));
+}
+
 function toIsoDateOnly(dateIso: string): string {
   return String(dateIso || '').slice(0, 10);
 }
@@ -659,6 +708,11 @@ export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const location = useLocation();
+  const [clientSearchQuery, setClientSearchQuery] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    const q = new URLSearchParams(window.location.search).get('q');
+    return (q || '').trim();
+  });
   const [mainTab, setMainTab] = useState<'overview' | 'bookings' | 'consults'>(() => {
     if (typeof window === 'undefined') return 'overview';
     const tab = new URLSearchParams(window.location.search).get('tab');
@@ -719,6 +773,11 @@ export default function AdminMeetingsHub() {
     if (tab === 'overview' || tab === 'bookings' || tab === 'consults') setMainTab(tab);
   }, [location.search]);
 
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('q');
+    setClientSearchQuery((q || '').trim());
+  }, [location.search]);
+
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
     const end = endOfMonth(calendarAnchor);
@@ -756,6 +815,25 @@ export default function AdminMeetingsHub() {
     });
   }, [mergedMeetings]);
 
+  const normalizedClientSearchTokens = useMemo(
+    () =>
+      normalizeSearchText(clientSearchQuery)
+        .split(' ')
+        .map((token) => token.trim())
+        .filter(Boolean),
+    [clientSearchQuery]
+  );
+
+  const filteredAppointmentMeetings = useMemo(
+    () => appointmentMeetings.filter((m) => meetingMatchesPageSearch(m, normalizedClientSearchTokens)),
+    [appointmentMeetings, normalizedClientSearchTokens]
+  );
+
+  const filteredConsultMeetings = useMemo(
+    () => consultMeetings.filter((m) => meetingMatchesPageSearch(m, normalizedClientSearchTokens)),
+    [consultMeetings, normalizedClientSearchTokens]
+  );
+
   const completedBookingsCount = useMemo(
     () =>
       appointmentMeetings.filter((m) => {
@@ -776,14 +854,14 @@ export default function AdminMeetingsHub() {
 
   const apptDates = useMemo(() => {
     const s = new Set<string>();
-    for (const m of appointmentMeetings) s.add(m.date);
+    for (const m of filteredAppointmentMeetings) s.add(m.date);
     return s;
-  }, [appointmentMeetings]);
+  }, [filteredAppointmentMeetings]);
 
   const appointmentsForSelectedDay = useMemo(() => {
-    if (!selectedDay) return appointmentMeetings;
-    return appointmentMeetings.filter((m) => m.date === selectedDay);
-  }, [appointmentMeetings, selectedDay]);
+    if (!selectedDay) return filteredAppointmentMeetings;
+    return filteredAppointmentMeetings.filter((m) => m.date === selectedDay);
+  }, [filteredAppointmentMeetings, selectedDay]);
 
   const sortedAppointmentsList = useMemo(() => {
     return [...appointmentsForSelectedDay].sort((a, b) => {
@@ -897,9 +975,9 @@ export default function AdminMeetingsHub() {
 
   const viewAllRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
-    const base = viewAllMode === 'bookings' ? appointmentMeetings : consultMeetings;
+    const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
     return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
-  }, [viewAllMode, appointmentMeetings, consultMeetings]);
+  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
 
   const overviewBookingSales = useMemo(() => {
     let completedAppointments = 0;
@@ -1008,6 +1086,9 @@ export default function AdminMeetingsHub() {
           onBack={() => window.history.back()}
           breadcrumbParentLabel="ADMIN"
           breadcrumbParentPath="/admin/dashboard"
+          externalSearchValue={clientSearchQuery}
+          onExternalSearchChange={setClientSearchQuery}
+          globalSearchTargetPath="/admin/meetings"
         />
 
         <div className="pb-6 px-4">
@@ -1067,10 +1148,10 @@ export default function AdminMeetingsHub() {
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                        {completedBookingsCount}
+                        {mainTab === 'overview' ? formatUsd(overviewBookingSales.salesUsd) : completedBookingsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        TOTAL BOOKED
+                        {mainTab === 'overview' ? 'BOOKING SALES' : 'TOTAL BOOKED'}
                       </p>
                     </div>
                     <div
@@ -1086,10 +1167,10 @@ export default function AdminMeetingsHub() {
                       }}
                     >
                       <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                        {completedConsultsCount}
+                        {mainTab === 'overview' ? formatUsd(overviewConsultSales.salesUsd) : completedConsultsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        TOTAL CONSULTED
+                        {mainTab === 'overview' ? 'CONSULT SALES' : 'TOTAL CONSULTED'}
                       </p>
                     </div>
                   </div>
@@ -1314,47 +1395,6 @@ export default function AdminMeetingsHub() {
                 ) : mainTab === 'overview' ? (
                   <>
                     <div style={{ marginTop: '12px' }}>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div
-                          className="text-center py-3"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.04)',
-                            borderRadius: '4px',
-                            height: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end',
-                            paddingBottom: '10px',
-                          }}
-                        >
-                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                            {formatUsd(overviewBookingSales.salesUsd)}
-                          </p>
-                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                            BOOKING SALES
-                          </p>
-                        </div>
-                        <div
-                          className="text-center py-3"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.04)',
-                            borderRadius: '4px',
-                            height: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'flex-end',
-                            paddingBottom: '10px',
-                          }}
-                        >
-                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1 }}>
-                            {formatUsd(overviewConsultSales.salesUsd)}
-                          </p>
-                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                            CONSULT SALES
-                          </p>
-                        </div>
-                      </div>
-
                       <div className="space-y-3">
                         <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
@@ -1500,7 +1540,9 @@ export default function AdminMeetingsHub() {
                           padding: '16px',
                         }}
                       >
-                        YOU DON&apos;T HAVE ANY APPOINTMENTS.
+                        {normalizedClientSearchTokens.length > 0
+                          ? 'NO BOOKINGS MATCH YOUR SEARCH.'
+                          : 'YOU DON\'T HAVE ANY APPOINTMENTS.'}
                       </p>
                     ) : (
                       <div style={{ marginTop: '6px' }}>
@@ -1664,13 +1706,15 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : (
                   <>
-                    {consultMeetings.length === 0 ? (
+                    {filteredConsultMeetings.length === 0 ? (
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', textAlign: 'center' }}>
-                        NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.
+                        {normalizedClientSearchTokens.length > 0
+                          ? 'NO CONSULTS MATCH YOUR SEARCH.'
+                          : 'NO CONSULT ROWS IN THIS MONTH RANGE. SYNC FROM CHECKOUT OR EXPAND MOCK DATA.'}
                       </p>
                     ) : (
                       <div style={{ marginTop: '12px' }}>
-                        {consultMeetings.map((m) => {
+                        {filteredConsultMeetings.map((m) => {
                           const meta = m.metadata || {};
                           const hair = String(meta.hairOption || m.notes || '—');
                           const notes = String(meta.consultNotes || '').trim() || m.notes;

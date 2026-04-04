@@ -9517,3 +9517,105 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For marquee/ticker copy that requires mixed emphasis, use segmented highlight parts instead of forcing a single color for the whole string.
+
+---
+
+## 2026-04-03 — Admin meetings global search now filters bookings/consults by client on current tab
+
+**Context:** Continuing from the long-running admin meetings/dashboard refinement stream in this chat (bookings-tab typography/spacing/icon tuning, payment status redesign and countdown logic, dashboard meetings card formatting/color changes, and full Stripe final-payment autopay implementation), the user requested that typing a client name in the admin search bar should populate that client and their appointment/consult depending on the tab currently viewed.
+
+**Topics covered (entire conversation so far):**
+- Prior work across this conversation already established extensive meetings behavior and styling in `AdminMeetingsHub`, including bookings/consults tab cards, right-side action icons, payment due tracker states, and admin dashboard meetings-card formatting.
+- In this exchange, traced the shared admin search behavior through `AdminHeader` (`?q=` global query support) and confirmed `AdminMeetingsHub` had no list-level filtering wired to that query.
+- Implemented meetings-page controlled search state tied to URL query `q`, then added client-match filtering for both bookings and consult datasets.
+- Ensured filtering respects the currently viewed tab content:
+  - **Bookings tab** now filters appointment cards and calendar-highlighted appointment dates by client name.
+  - **Consults tab** now filters consult cards by client name.
+  - Search empty states now show tab-specific “NO ... MATCH YOUR SEARCH” copy.
+- Kept existing card visuals/interaction logic unchanged (edit/quote flows, profile click behavior, payment UI blocks), and validated with a successful build.
+
+**Decisions / outcomes:**
+- Meetings page now uses the existing admin header search input as a functional client filter instead of a no-op on this route.
+- Matching supports:
+  - raw client name,
+  - client name with state suffix (e.g. `NAME (TX)`),
+  - client email.
+- Search filtering is scoped to meetings content and tab context so admins see only relevant booking or consult rows while searching.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `clientSearchQuery` state sourced from and synced with URL query param `q`
+  - connected `AdminHeader` via `externalSearchValue` / `onExternalSearchChange`
+  - added `meetingMatchesClientSearch(...)` helper
+  - added `filteredAppointmentMeetings` and `filteredConsultMeetings` memoized lists
+  - wired filtered lists into bookings calendar date markers, bookings card rows, consult card rows, and view-all rows
+  - added search-specific empty-state copy for bookings/consults
+
+**Conventions:**
+- For admin pages using shared `AdminHeader` global search, wire `externalSearchValue` and `onExternalSearchChange` on-page and filter the page’s primary data lists by the same `q` value so search behavior is consistent across tabs/routes.
+
+---
+
+## 2026-04-03 — Meetings search now matches tab-relevant row content (e.g., “BROW TINT” add-ons) and preserves tab on submit
+
+**Context:** Building on this same long chat’s admin meetings/dashboard workstream (bookings/consults card styling and behavior, payment due tracker logic and autopay support, meetings overview analytics, ticker/card formatting, icon/spacing refinements), the user asked that global admin search be relative to what’s on the current admin page. They gave a concrete meetings example: typing **“brow tint”** in Admin Meetings → Bookings should return appointments with a Brow Tint add-on.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, meetings search was wired only to client identity matching (name/state/email) from header `q`, which did not satisfy content terms like add-on names.
+- Updated Admin Meetings search matching to be **page-content aware** by indexing each meeting row into a normalized search blob:
+  - shared fields: client name/state/email, date/text date, time, type, notes, duration (including formatted HRS/MINS), status
+  - bookings fields: install line, add-ons line/display line, install kind, attached order summary metadata
+  - consult fields: consult type (`WIG ONLY` / `WIG + INSTALL`), hair option, consult notes metadata
+- Switched filtering from single-string client includes to tokenized query matching (`every` token must match), so multi-word terms like `brow tint` resolve as expected.
+- Kept filtering tab-relative in Meetings:
+  - Bookings tab filters appointment rows (and calendar date highlights) using booking-relevant content.
+  - Consults tab filters consult rows using consult-relevant content.
+- Improved `AdminHeader` submit behavior with optional query-param preservation so page state params can survive search submit/clear (used for meetings tab preservation via `globalSearchPreserveKeys` path support).
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Meetings global search now behaves relative to page content, not just client names.
+- Query example `brow tint` in Meetings Bookings now surfaces bookings containing that add-on text.
+- Search logic remains scoped to current tab dataset, so results align with what the user is viewing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - replaced client-only matcher with normalized, token-based page-content matcher
+  - added `normalizeSearchText`, `meetingSearchBlob`, and `meetingMatchesPageSearch`
+  - updated filtered bookings/consults memo lists to use token matcher
+  - kept tab-specific empty states and filtered calendar markers in sync
+- `src/pages/admin/components/AdminHeader.tsx`
+  - added optional `globalSearchPreserveKeys?: string[]`
+  - updated search submit/clear navigation to preserve specified query params
+
+**Conventions:**
+- For admin global search on list pages, match against the page’s visible row semantics (labels/metadata users can read on that tab), not identity fields alone; preserve page-state query params (like active tab) when submitting or clearing search.
+
+---
+
+## 2026-04-03 — Meetings Overview top cards now show BOOKING/CONSULT SALES; duplicate lower sales cards removed
+
+**Context:** Continuing this same conversation’s Admin Meetings iteration stream (bookings/consults UI refinements, payment status/autopay display logic, meetings overview analytics, and recent tab-relative search updates), the user reported the sales summary card placement was incorrect in the Overview tab. They requested that **Booking Sales / Consult Sales** should replace the top **Total Booked / Total Consulted** cards on **Overview only**, instead of appearing again lower in the Overview content.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, Admin Meetings had:
+  - top header cards showing `TOTAL BOOKED` / `TOTAL CONSULTED`,
+  - and separate lower cards inside Overview body showing `BOOKING SALES` / `CONSULT SALES`.
+- Updated top summary-card rendering to be tab-conditional:
+  - when `mainTab === 'overview'`, top cards now show `BOOKING SALES` and `CONSULT SALES` with sales dollar values.
+  - when on Bookings/Consults tabs, top cards remain `TOTAL BOOKED` / `TOTAL CONSULTED` counts.
+- Removed the duplicate lower Overview sales-card grid so the sales summary appears in only one place (top of Overview), while preserving the analytics sections below it.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Overview now uses the top card slot for sales summary as requested.
+- Duplicate lower sales cards were removed to prevent repeated information and incorrect placement.
+- Non-Overview tabs retain existing top totals behavior.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - made top summary cards conditional by `mainTab` (sales labels/values on Overview, totals on other tabs)
+  - removed lower Overview sales summary grid from the Overview content block
+
+**Conventions:**
+- In Admin Meetings, Summary card metrics at the top should be tab-contextual and non-duplicative: Overview owns sales summary at the top, while Bookings/Consults keep operational totals.
