@@ -9980,3 +9980,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For UI micro-position requests on existing admin controls, apply minimal wrapper-level offsets (margin/translate) rather than altering inner icon geometry, so behavior and hit targets remain stable.
+
+---
+
+## 2026-04-03 — Grid view names now map red/black by active vs past status; list view names forced black
+
+**Context:** Continuing the same Admin Meetings “View All” refinement stream (controls row, client grouping, unique-client headers, icon/border updates, refresh persistence), the user asked why some grid names were red and others black. They clarified desired behavior: on **grid view only**, red names should represent **current/active** bookings/consults and black names should represent **past/non-active**; on **list view**, all client names should remain black.
+
+**Topics covered (entire conversation so far):**
+- Root cause identified in `AdminMeetingsHub`: grid name color was previously tied to premium-tier status (`tierIsPremium`), not active/past booking/consult state.
+- Added explicit status helper (`meetingIsCurrentOrActive`) that treats rows as active/current when status is scheduled/confirmed/active/in-progress.
+- Updated grouped View All client-card derivation to track whether each client has any active/current meeting (`hasActiveMeeting`) while preserving existing total-count and latest-meeting grouping behavior.
+- Switched grid client-name color binding from tier-based to status-based:
+  - red when `hasActiveMeeting` is true (current/active),
+  - black otherwise (past/non-active).
+- Updated list-view name styling to always black (removed consult-specific red name color in list branch), while keeping tier suffix and remaining list detail structure intact.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Grid-view name color now communicates activity state rather than membership tier.
+- List-view names now consistently stay black as requested.
+- Scope limited to View All grid/list name color logic; no unrelated typography/layout behavior changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingIsCurrentOrActive(...)`
+  - replaced `tierIsPremium` grouping flag with `hasActiveMeeting` on view-all client cards
+  - grid name color now uses active/past state (`hasActiveMeeting`)
+  - list name text forced to black for both bookings and consult rows
+
+**Conventions:**
+- For View All visual state cues in Admin Meetings, use explicit booking/consult status semantics (active vs past) for red/black signaling instead of tier/membership styling when the user asks for activity-state meaning.
