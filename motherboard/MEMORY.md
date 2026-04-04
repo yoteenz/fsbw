@@ -9793,6 +9793,33 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Removed stray “TSTS” text from Admin Meetings view-all controls row
+
+**Context:** Continuing this same long Admin Meetings UI conversation (view-all header/client panel parity, unique-client header counts, sort dropdown + list/grid toggle controls, and icon sizing/alignment tweaks), the user reported unexpected `TSTS` text appearing above client panels in the View All toggle area and requested removal.
+
+**Topics covered (entire conversation so far):**
+- Verified current View All controls in `AdminMeetingsHub` and searched repo for `TSTS`.
+- Located the issue in the View All control-row sort button label area.
+- Removed the stray placeholder text and preserved the intended sort-label behavior.
+- Added an explicit `aria-label` on the sort button for clarity/accessibility while keeping visible control copy unchanged.
+- Re-ran build successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TSTS` text is removed from the View All controls row.
+- Sort control now shows only the proper selected sort option label and arrow icon.
+- No other UI rows or panel content were changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed stray `TSTS` control text in View All section
+  - retained proper sort option label rendering
+  - added sort button `aria-label`
+
+**Conventions:**
+- For incremental UI iterations, avoid shipping placeholder/debug text in production control labels; if temporary placeholders are used during edits, remove them before final push and verify on the active surface.
+
+---
+
 ## 2026-04-03 — View-all meetings header now shows unique client counts (e.g., “9 CLIENT BOOKINGS”)
 
 **Context:** Continuing this same long Admin Meetings UI refinement conversation (bookings/consults typography and spacing tweaks, payment due tracker style states, tab-relative search behavior, Overview summary placement updates, and view-all panel structure parity), the user requested replacing the view-all header text with count-based labels like `9 CLIENT BOOKINGS` / `8 CLIENT CONSULTS`, where the count tracks unique clients who booked/consulted (not total booking/consult row count).
