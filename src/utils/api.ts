@@ -678,10 +678,36 @@ export async function postBookingAppointmentMeeting(body: {
   bookingFinalDueUsd?: number;
   bookingPaymentMethodLabel?: string;
   bookingBookedAtIso?: string;
+  bookingStripeCustomerId?: string;
+  bookingStripePaymentMethodId?: string;
+  bookingAutopayConsent?: boolean;
+  bookingAutopayConsentAt?: string;
 }): Promise<unknown> {
   const res = await apiFetch('/api/booking/appointment-meeting', { method: 'POST', body });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
+}
+
+/** Admin: list booking final-payment autopay attempts. */
+export async function getAdminBookingAutopayAttempts(params?: {
+  meetingId?: string;
+  userId?: string;
+  status?: 'succeeded' | 'failed' | 'cancelled' | 'skipped';
+  limit?: number;
+}): Promise<Array<Record<string, unknown>>> {
+  const qs = new URLSearchParams();
+  if (params?.meetingId) qs.set('meeting_id', params.meetingId);
+  if (params?.userId) qs.set('user_id', params.userId);
+  if (params?.status) qs.set('status', params.status);
+  if (typeof params?.limit === 'number' && Number.isFinite(params.limit)) {
+    qs.set('limit', String(Math.max(1, Math.min(200, Math.round(params.limit)))));
+  }
+  const path = qs.toString() ? `/api/admin/booking-autopay-attempts?${qs.toString()}` : '/api/admin/booking-autopay-attempts';
+  const res = await apiFetch(path);
+  if (res.status === 401 || res.status === 403) return [];
+  if (!res.ok) throw new Error(await res.text());
+  const data = (await res.json()) as { attempts?: Array<Record<string, unknown>> };
+  return Array.isArray(data.attempts) ? data.attempts : [];
 }
 
 /** Booking checkout: create consultation meeting row for admin hub. */

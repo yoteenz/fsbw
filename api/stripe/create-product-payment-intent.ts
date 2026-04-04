@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 import { getAuthUser } from '../_lib/auth';
+import { getSupabaseAdmin } from '../_lib/supabase';
 import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -21,6 +22,13 @@ function parseBody(req: VercelRequest): Record<string, unknown> {
   }
   if (b && typeof b === 'object' && !Array.isArray(b)) return b as Record<string, unknown>;
   return {};
+}
+
+function sanitizeStripeId(raw: unknown, maxLen = 120): string {
+  return String(raw || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9_]/g, '')
+    .slice(0, maxLen);
 }
 
 function getStripe(): Stripe {
@@ -103,22 +111,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   try {
     const stripe = getStripe();
+    const savePaymentMethodForFuture = body.savePaymentMethodForFuture === true;
+    const stripeCustomerIdFromBody = sanitizeStripeId(body.stripeCustomerId, 120);
+    let stripeCustomerId = stripeCustomerIdFromBody || '';
+    if (savePaymentMethodForFuture) {
+      const supabase = getSupabaseAdmin();
+      if (!stripeCustomerId) {
+        const { data: prof, error: profErr } = await supabase
+          .from('profiles')
+          .select('stripe_customer_id,email')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (profErr) {
+          sendJson(res, 500, { error: profErr.message });
+          return;
+        }
+        stripeCustomerId = String((prof as { stripe_customer_id?: string | null } | null)?.stripe_customer_id || '').trim();
+      }
+      if (!stripeCustomerId) {
+        const customer = await stripe.customers.create({
+          email: user.email || undefined,
+          metadata: { supabase_user_id: user.id },
+        });
+        stripeCustomerId = customer.id;
+      }
+      if (stripeCustomerId) {
+        await supabase
+          .from('profiles')
+          .update({
+            stripe_customer_id: stripeCustomerId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user.id);
+      }
+    }
     const pi = await stripe.paymentIntents.create({
       amount: quote.totalCents,
       currency: 'usd',
       automatic_payment_methods: { enabled: true },
+      ...(savePaymentMethodForFuture ? { setup_future_usage: 'off_session' as const } : {}),
+      ...(stripeCustomerId ? { customer: stripeCustomerId } : {}),
       metadata: {
         purpose: 'product_order',
         supabase_user_id: user.id,
         user_email: user.email || '',
         computed_total_cents: String(quote.totalCents),
-        line_count: String(lines.length)
+        line_count: String(lines.length),
+        booking_autopay_enroll: savePaymentMethodForFuture ? 'true' : 'false',
       }
     });
 
     sendJson(res, 200, {
       clientSecret: pi.client_secret,
       paymentIntentId: pi.id,
+      stripeCustomerId: stripeCustomerId || null,
       quote
     });
   } catch (e) {

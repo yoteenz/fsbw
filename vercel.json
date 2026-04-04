@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/booking/autopay-final-payment",
+      "schedule": "0 * * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!api/|assets/).*)",

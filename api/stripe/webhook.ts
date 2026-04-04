@@ -191,6 +191,28 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription): Promise<void
 }
 
 async function handlePaymentIntentSucceeded(pi: Stripe.PaymentIntent): Promise<void> {
+  const nowIso = new Date().toISOString();
+  const customerId = typeof pi.customer === 'string' ? pi.customer : pi.customer?.id || null;
+  const paymentMethodId =
+    typeof pi.payment_method === 'string' ? pi.payment_method : pi.payment_method?.id || null;
+  if (
+    pi.metadata?.booking_autopay_enroll === 'true' &&
+    pi.metadata?.supabase_user_id &&
+    (customerId || paymentMethodId)
+  ) {
+    try {
+      const supabase = getServiceSupabase();
+      const updates: Record<string, unknown> = { updated_at: nowIso };
+      if (customerId) updates.stripe_customer_id = customerId;
+      if (paymentMethodId) updates.stripe_default_payment_method_id = paymentMethodId;
+      await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', String(pi.metadata.supabase_user_id));
+    } catch (e) {
+      console.error('[stripe webhook] payment_intent.succeeded profile payment method update', e);
+    }
+  }
   if (pi.metadata?.purpose !== 'product_order') return;
   const userId = pi.metadata?.supabase_user_id;
   if (!userId || typeof userId !== 'string') return;

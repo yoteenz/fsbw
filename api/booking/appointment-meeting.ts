@@ -23,6 +23,10 @@ type Body = {
   bookingFinalDueUsd?: number;
   bookingPaymentMethodLabel?: string;
   bookingBookedAtIso?: string;
+  bookingStripeCustomerId?: string;
+  bookingStripePaymentMethodId?: string;
+  bookingAutopayConsent?: boolean;
+  bookingAutopayConsentAt?: string;
 };
 
 function sanitizeType(raw: unknown): string {
@@ -47,6 +51,13 @@ function sanitizeIdempotencyKey(raw: unknown): string {
     .replace(/[^A-Z0-9._:@-]/g, '-')
     .slice(0, 140);
   return key;
+}
+
+function sanitizeStripeId(raw: unknown, maxLen = 120): string {
+  return String(raw || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9_]/g, '')
+    .slice(0, maxLen);
 }
 
 /** POST /api/booking/appointment-meeting — create pending meeting row from customer checkout. */
@@ -122,6 +133,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const bookingPaymentMethodLabel = String(body.bookingPaymentMethodLabel || '')
     .trim()
     .toUpperCase();
+  const bookingStripeCustomerId = sanitizeStripeId(body.bookingStripeCustomerId, 120);
+  const bookingStripePaymentMethodId = sanitizeStripeId(body.bookingStripePaymentMethodId, 120);
+  const bookingAutopayConsent = body.bookingAutopayConsent === true;
+  const bookingAutopayConsentAtRaw = String(body.bookingAutopayConsentAt || '').trim();
+  const bookingAutopayConsentAtParsed = new Date(bookingAutopayConsentAtRaw);
+  const bookingAutopayConsentAt =
+    bookingAutopayConsent && Number.isFinite(bookingAutopayConsentAtParsed.getTime())
+      ? bookingAutopayConsentAtParsed.toISOString()
+      : bookingAutopayConsent
+      ? new Date().toISOString()
+      : null;
   const bookingBookedAtRaw = String(body.bookingBookedAtIso || '').trim();
   const bookingBookedAtParsed = new Date(bookingBookedAtRaw);
   const bookingBookedAtIso = Number.isFinite(bookingBookedAtParsed.getTime())
@@ -179,6 +201,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       bookingFinalDueUsd,
       bookingPaidTotalUsd: bookingOrderTotalPaidUsd || bookingLineTotalPaidUsd || bookingUnitPriceUsd,
       ...(bookingPaymentMethodLabel ? { bookingPaymentMethodLabel } : {}),
+      ...(bookingStripeCustomerId ? { bookingStripeCustomerId } : {}),
+      ...(bookingStripePaymentMethodId ? { bookingStripePaymentMethodId } : {}),
+      bookingAutopayConsent,
+      ...(bookingAutopayConsentAt ? { bookingAutopayConsentAt } : {}),
+      bookingAutopayStatus: bookingAutopayConsent ? 'scheduled' : 'not_enabled',
       bookingBookedAtIso,
       finalPaymentDueAt,
       finalPaymentDueDate,
