@@ -8293,3 +8293,50 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For compact dynamic/admin headers with adjacent controls, enforce explicit no-wrap + ellipsis + constrained width at initial render to avoid transient orphan-text artifacts.
+
+---
+
+## 2026-04-04 — View-all toggle refinements: icon border weight, list/grid spacing, and consult grid line parity
+
+**Context:** Continuing this same long Admin Meetings refinement thread (bookings/consult cards, view-all controls/layout, header artifact cleanup, and persistence behavior), the user requested a focused set of style/format updates specifically for the View All toggle surfaces plus B/C tab icon border consistency.
+
+**Topics covered (entire conversation so far):**
+- Validated that the current branch’s meetings file had diverged from the latest `preview/mobile` implementation and was missing the active grid/list + sort controls baseline used for recent requests.
+- Synced `src/pages/admin/meetings/AdminMeetingsHub.tsx` (and `AdminHeader` companion behavior) from `origin/preview/mobile` to ensure requested controls/structures existed, then applied this user’s exact tweaks on top.
+- Implemented requested UI adjustments:
+  - **Profile icon border weight:** increased black circular icon border around profile photos by **+0.1px** (`0.7px` -> `0.8px`) for:
+    - View All list
+    - View All grid
+    - B/C tab client cards (bookings + consults)
+  - **Grid view booking count spacing:** reduced spacing above/below count row by 2px (`margin: '3px 0'` -> `margin: '1px 0'`).
+  - **Grid view booking service line:** removed product name from service line so it now renders as install label + price only (e.g., `RE-INSTALL: $780 USD`).
+  - **View-all controls positioning:** preserved requested offsets:
+    - Most recent dropdown moved right (`marginLeft: '2px'`)
+    - grid/list icons moved left (`transform: 'translateX(-2px)'`)
+  - **List view text block shift:** moved all text to the right of profile icons in tandem by 6px (`marginLeft: '6px'` on the text column).
+  - **Grid view consult line parity:** changed consult grid lower lines to match bookings pattern:
+    - first line: `WIG + INSTALL` in black with price in red on same line
+    - second line: date on line below in black
+- Added helper logic for consult grid pricing/date presentation:
+  - consult line now always shows `WIG + INSTALL` label for requested parity,
+  - attempts to derive consult price from metadata/order totals with fallback amount for consistent UI rendering.
+- Fixed two compile issues introduced during edit (`recentLine` unused and duplicate JSX `style` attr).
+- Rebuilt successfully, committed, and pushed to `cursor/bookings-tab-ui-adjustments-95ca`.
+
+**Decisions / outcomes:**
+- View All grid/list + B/C card icon borders are now visually thicker by requested amount.
+- Grid booking count spacing and booking service line content now match requested compact format.
+- View-all control offsets and list-text horizontal shift now match the specified micro-positioning.
+- Consult grid cards now follow the requested two-line booking-like structure with red price emphasis.
+- All changes compile and are pushed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - applied all requested view-all toggle and card-format adjustments
+- `src/pages/admin/components/AdminHeader.tsx`
+  - synced alongside meetings file baseline from preview to keep query-preserve behavior aligned
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- For incremental meetings UI requests, keep View All grid/list parity by using shared structural patterns (label + red price + date line) and isolate pixel-level spacing shifts in local style props so behavior remains unchanged while visual tuning is precise.
