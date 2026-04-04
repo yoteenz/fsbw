@@ -1365,6 +1365,7 @@ export default function AdminMeetingsHub() {
                           onClick={() => setShowViewAllSortDropdown((open) => !open)}
                           className="flex items-center gap-1.5"
                           style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+                          aria-label="Sort clients"
                         >
                           <span>{viewAllSortOptionToLabel(viewAllSortOption)}</span>
                           <svg
