@@ -10133,3 +10133,57 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For View All-only Admin Meetings micro-adjustments, prefer wrapper-level offsets and branch-specific render tweaks inside the `viewAllMode` path so the main B/C tab layouts and non-View-All card geometry stay unchanged.
+
+---
+
+## 2026-04-04 — Admin Meetings follow-up: stray text cleanup, B/C dropdown visibility, view-all icon/border refinements, and consult service-price line
+
+**Context:** Continuing the same chat after the admin summary-panel pass and two rounds of Admin Meetings refinements, the user reported several remaining issues: the stray `TSTS` placeholder artifact still appeared, grid-view profile icon borders still did not visually match list view, the View All list/grid toggle had been moved too far left, the consult grid service line needed a service-style price example (`WIG + INSTALL: $960 USD`), the grid date line needed 2px more spacing above it, and the `Most recent` dropdown was still not visible enough on the regular Bookings/Consults tabs above client panels.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red admin summary metric text by 4px across the affected admin pages,
+  - added a shared meetings sort dropdown to the regular Bookings/Consults tabs,
+  - changed white appointment calendar cells to use black borders,
+  - tightened View All grid count spacing,
+  - nudged the View All grid/list toggle,
+  - shifted View All list text 6px to the right,
+  - changed View All consult grid cards from single-line text into red service + black date lines.
+- In this third follow-up pass, all work stayed scoped to `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Strengthened overflow handling intended to suppress the lingering stray `TSTS`/`TS` artifact:
+  - tightened active View All header title flex/ellipsis constraints,
+  - added `overflow: hidden` on grid cards,
+  - added no-wrap + ellipsis behavior to grid card name/count/service/date lines.
+- Adjusted the View All list/grid icon toggle wrapper back to a net **2px left** offset (`translateX(-2px)`), matching the user’s clarified request.
+- Kept the grid profile icon border black and added `boxSizing: 'border-box'` so the grid icon ring renders with the same thin border treatment as list view.
+- Increased the top margin above the black grid date line from `2px` to `4px` for both bookings and consult grid cards.
+- Reworked consult grid pricing away from the deposit-style fallback:
+  - added richer metadata lookups for consult service/quote totals,
+  - added breakdown parsing for metadata arrays such as `priceBreakdown`,
+  - when no explicit amount exists, fallback now uses service-style defaults by consult type (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`) instead of the `$40` deposit.
+- Updated the consult grid red line format to include a colon before price (`WIG + INSTALL: $960 USD` pattern).
+- Moved the regular **Bookings** sort dropdown higher in the tab flow so it is visible before the month/calendar block instead of only below the calendar; kept the **Consults** dropdown in a clearer top-of-list position.
+- First rebuild failed because the earlier deposit fallback constant became unused after the service-price refactor; removed the dead constant and reran a successful production build.
+
+**Decisions / outcomes:**
+- The regular B/C sort dropdown should be visually obvious, not merely technically rendered; moving the bookings control higher in the content stack improves discoverability.
+- View All consult grid cards now use service-style pricing presentation instead of consult-deposit pricing when no explicit quote/metadata amount is available.
+- Stray orphan text risk in compact View All cards/header is now mitigated with stricter no-wrap/ellipsis + overflow clipping rules.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed the unused consult deposit fallback constant from the View All card path
+  - added `CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE`
+  - added `consultPriceFromBreakdownRows(...)`
+  - expanded `consultDisplayPriceUsd(...)` metadata support to service/quote totals and breakdown parsing
+  - restored View All display-mode toggle offset to `translateX(-2px)`
+  - added stronger ellipsis/overflow constraints to View All header and grid card rows
+  - added `boxSizing: 'border-box'` to grid profile icons
+  - changed consult grid line format to `TYPE: $X USD`
+  - increased grid date-line spacing above the date row
+  - moved the bookings-tab sort dropdown to the top of the bookings content block
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings consult grid cards, prefer explicit quote/service totals from metadata when available; if meetings rows do not carry an explicit amount, use a stable service-style fallback by consult type rather than the consult deposit amount when the UI is meant to resemble a service card.

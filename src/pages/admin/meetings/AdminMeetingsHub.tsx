@@ -53,7 +53,10 @@ const EDIT_REASONS = [
 
 const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
-const CONSULT_DEPOSIT_FALLBACK_USD = 40;
+const CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE = {
+  'WIG ONLY': 680,
+  'WIG + INSTALL': 960,
+} as const;
 
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
@@ -626,9 +629,36 @@ function consultTypeLabelForMeeting(m: AdminMeeting): 'WIG ONLY' | 'WIG + INSTAL
   return fallback.includes('INSTALL') ? 'WIG + INSTALL' : 'WIG ONLY';
 }
 
+function consultPriceFromBreakdownRows(raw: unknown): number | null {
+  if (!Array.isArray(raw)) return null;
+  const rows = raw.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === 'object' && !Array.isArray(row));
+  const priorityLabels = ['TOTAL', 'GRAND TOTAL', 'ESTIMATED TOTAL', 'QUOTE TOTAL', 'FINAL TOTAL', 'BALANCE'];
+  for (const labelText of priorityLabels) {
+    const row = rows.find((item) => String(item.label || item.name || '').trim().toUpperCase() === labelText);
+    if (!row) continue;
+    const exact = normalizeMoneyValue(row.value ?? row.amount ?? row.total ?? row.usd);
+    if (exact != null && exact > 0) return exact;
+  }
+  for (const row of rows) {
+    const parsed = normalizeMoneyValue(row.value ?? row.amount ?? row.total ?? row.usd);
+    if (parsed != null && parsed > 0) return parsed;
+  }
+  return null;
+}
+
 function consultDisplayPriceUsd(m: AdminMeeting): number {
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
   const explicit = normalizeMoneyValue(
+    meta.consultServicePriceUsd ??
+    meta.consultServicePriceUSD ??
+    meta.consultQuoteTotalUsd ??
+    meta.consultQuoteTotalUSD ??
+    meta.quoteTotalUsd ??
+    meta.quoteTotalUSD ??
+    meta.recommendedTotalUsd ??
+    meta.recommendedTotalUSD ??
+    meta.servicePriceUsd ??
+    meta.servicePriceUSD ??
     meta.consultPriceUsd ??
     meta.consultPriceUSD ??
     meta.bookingPriceUsd ??
@@ -641,7 +671,14 @@ function consultDisplayPriceUsd(m: AdminMeeting): number {
     meta.deposit
   );
   if (explicit != null && explicit > 0) return explicit;
-  return CONSULT_DEPOSIT_FALLBACK_USD;
+  const breakdownPrice = consultPriceFromBreakdownRows(
+    meta.priceBreakdown ??
+    meta.quoteBreakdown ??
+    meta.consultPriceBreakdown ??
+    meta.price_breakdown
+  );
+  if (breakdownPrice != null && breakdownPrice > 0) return breakdownPrice;
+  return CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE[consultTypeLabelForMeeting(m)];
 }
 
 function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
@@ -1340,7 +1377,7 @@ export default function AdminMeetingsHub() {
             >
               {activeMainCardTitle ? (
                 <div className="flex-shrink-0 px-5 pb-2 -mt-1" style={{ marginTop: '10px' }}>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
                     <h2
                       style={{
                         fontFamily: '"Futura PT Medium"',
@@ -1352,6 +1389,8 @@ export default function AdminMeetingsHub() {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         minWidth: 0,
+                        flex: '1 1 auto',
+                        maxWidth: 'calc(100% - 24px)',
                         paddingRight: '8px',
                       }}
                     >
@@ -1511,7 +1550,7 @@ export default function AdminMeetingsHub() {
                       style={{ marginTop: '10px', marginBottom: '8px', position: 'relative', zIndex: 3 }}
                     >
                       {renderMeetingsSortDropdown()}
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-4px)' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-2px)' }}>
                         <button
                           type="button"
                           onClick={() => setViewAllDisplayMode('list')}
@@ -1568,6 +1607,7 @@ export default function AdminMeetingsHub() {
                                 padding: '8px 6px',
                                 textAlign: 'center',
                                 cursor: 'pointer',
+                                overflow: 'hidden',
                               }}
                             >
                               <img
@@ -1581,14 +1621,35 @@ export default function AdminMeetingsHub() {
                                   objectFit: 'cover',
                                   borderRadius: '9999px',
                                   border: '0.7px solid #000',
+                                  boxSizing: 'border-box',
                                   margin: '4px auto 0',
                                   display: 'block',
                                 }}
                               />
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '8px',
+                                  color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000',
+                                  margin: '6px 0 0',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                }}
+                              >
                                 {clientCard.displayName}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '1px 0' }}>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '8px',
+                                  color: '#808080',
+                                  margin: '1px 0',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                }}
+                              >
                                 {clientCard.totalCount}{' '}
                                 {viewAllMode === 'bookings'
                                   ? clientCard.totalCount === 1
@@ -1600,19 +1661,63 @@ export default function AdminMeetingsHub() {
                               </p>
                               {viewAllMode === 'bookings' ? (
                                 <>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '8px',
+                                      color: '#EB1C24',
+                                      margin: '2px 0 0',
+                                      lineHeight: 1.2,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
                                     {formatBookingInstallLineForCard(latest)}
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      fontSize: '8px',
+                                      color: '#000',
+                                      margin: '4px 0 0',
+                                      lineHeight: 1.2,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
                                     {formatHeaderDate(latest.date)}
                                   </p>
                                 </>
                               ) : (
                                 <>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
-                                    {consultTypeLabelForMeeting(latest)} {formatUsd(consultDisplayPriceUsd(latest))} USD
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '8px',
+                                      color: '#EB1C24',
+                                      margin: '2px 0 0',
+                                      lineHeight: 1.2,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
+                                    {consultTypeLabelForMeeting(latest)}: {formatUsd(consultDisplayPriceUsd(latest))} USD
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      fontSize: '8px',
+                                      color: '#000',
+                                      margin: '4px 0 0',
+                                      lineHeight: 1.2,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                    }}
+                                  >
                                     {formatHeaderDate(latest.date)}
                                   </p>
                                 </>
@@ -1854,6 +1959,9 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
+                    <div className="flex items-center justify-start" style={{ marginTop: '8px', marginBottom: '8px', position: 'relative', zIndex: 3 }}>
+                      {renderMeetingsSortDropdown()}
+                    </div>
                     <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
                       <button
                         type="button"
@@ -1938,9 +2046,6 @@ export default function AdminMeetingsHub() {
                           </button>
                         );
                       })}
-                    </div>
-                    <div className="flex items-center justify-start" style={{ marginTop: '2px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
-                      {renderMeetingsSortDropdown()}
                     </div>
                     {sortedAppointmentsList.length === 0 ? (
                       <p
@@ -2119,7 +2224,7 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-start" style={{ marginTop: '2px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+                    <div className="flex items-center justify-start" style={{ marginTop: '8px', marginBottom: '8px', position: 'relative', zIndex: 3 }}>
                       {renderMeetingsSortDropdown()}
                     </div>
                     {sortedConsultsList.length === 0 ? (
