@@ -9619,3 +9619,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - In Admin Meetings, Summary card metrics at the top should be tab-contextual and non-duplicative: Overview owns sales summary at the top, while Bookings/Consults keep operational totals.
+
+---
+
+## 2026-04-03 — Dashboard meetings ticker grammar fix for singular/plural upcoming booking text
+
+**Context:** Continuing this same long chat’s admin meetings/dashboard refinement thread, the user requested grammar correction for ticker text so `1` uses singular wording (`upcoming booking`) instead of plural (`upcoming bookings`) on today/week/month lines.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, dashboard meetings ticker already included interleaved insight lines (most booked client, most redeemed offers, most traveled city) with insight lines gray and upcoming booking lines red.
+- Located upcoming day/week/month sentence builders in `src/pages/admin/dashboard/page.tsx`.
+- Added a small helper (`upcomingBookingLine`) that returns singular/plural wording based on count:
+  - `1 UPCOMING BOOKING ...`
+  - `N UPCOMING BOOKINGS ...` for all other counts.
+- Replaced both the displayed highlight parts and fallback concatenated ticker string to use the helper consistently for TODAY / THIS WEEK / THIS MONTH lines.
+- Ran full build successfully.
+- During push, `preview/mobile` had advanced remotely; pulled with merge (`--no-rebase`) and pushed merged branch with grammar fix.
+
+**Decisions / outcomes:**
+- Upcoming ticker grammar now matches count correctly across day/week/month lines.
+- Existing color behavior remains unchanged (upcoming lines red, insight lines gray).
+- Change is scoped to meetings ticker text formatting only.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added `upcomingBookingLine(count, rangeLabel)` helper
+  - updated meetings ticker string + highlight parts to use singular/plural aware text
+
+**Conventions:**
+- For count-driven dashboard copy, use explicit singular/plural branching to avoid `1 ...s` grammar regressions in marquee/ticker content.
