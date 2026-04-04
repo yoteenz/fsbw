@@ -9035,3 +9035,30 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For booking-card add-on rendering, treat each add-on label as an atomic phrase (use NBSP between words) so wrapping happens between add-ons, not inside an add-on name.
+
+---
+
+## 2026-04-03 — Branch governance locked: preview-first only, no agent-created branches
+
+**Context:** User asked to stop changes getting lost/unseen by enforcing strict branch policy: commit all non-master/non-preview work, remove extra branches, and record that changes must go to preview first and only. User explicitly stated new branches must never be created by the agent unless the user manually creates them.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat where multiple feature changes were implemented and eventually merged onto `preview/mobile`.
+- User reported visibility issues and requested hard process enforcement to prevent future branch drift.
+- Audited local and remote branch state against `preview/mobile`, confirmed feature changes were already present on preview, and prepared branch cleanup.
+- Captured explicit user branch policy for future agent sessions in motherboard memory.
+
+**Decisions / outcomes:**
+- Working policy is now explicit:
+  - all implementation changes should be committed directly to `preview/mobile` first and only,
+  - do not create new branches automatically,
+  - only work on a new branch if the user manually created it and explicitly instructs its use.
+- Non-master/non-preview branches should be treated as temporary and removed after their work is merged to preview.
+
+**Changes:**
+- `motherboard/MEMORY.md`
+  - appended branch-governance policy entry documenting preview-only workflow and no auto branch creation.
+
+**Conventions:**
+- Default and required workflow: commit/push to `preview/mobile` only.
+- Agent must never create new branches unless user explicitly requests and manually provisions branch workflow.
