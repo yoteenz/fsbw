@@ -1125,7 +1125,7 @@ export default function AdminMeetingsHub() {
                                   type="button"
                                   onClick={() => openClientAccount(m)}
                                   aria-label="Open client details"
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '12px', marginLeft: '4px' }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px', marginLeft: '4px' }}
                                 >
                                   <img
                                     src={meetingClientProfilePhoto(m)}
@@ -1244,7 +1244,7 @@ export default function AdminMeetingsHub() {
                                 e.stopPropagation();
                                 setEditMeeting(m);
                               }}
-                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2 }}
+                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2, marginTop: '4px' }}
                               aria-label="Edit meeting"
                             >
                               <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
