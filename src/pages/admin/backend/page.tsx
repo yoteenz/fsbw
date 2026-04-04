@@ -144,27 +144,7 @@ export default function AdminBackend() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  BACKEND
-                </h2>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateY(-1.5px) translateX(-6px)' }}>
-                  <path d="M22.5 7.5H0.5V14.5M22.5 7.5V14.5H0.5M22.5 7.5L15.5 14.5M0.5 14.5L7.5 7.5M4.5 14.5V23.5M2.5 23.5H6.5M18.5 14.5V23.5M20.5 23.5H16.5M5.5 14.5L12.5 7.5M10.5 14.5L17.5 7.5M6.5 5L4.5 6.5L2.5 5V3L4.5 1.5L6.5 3V5ZM20.5 5L18.5 6.5L16.5 5V3L18.5 1.5L20.5 3V5Z" stroke="#EB1C24" strokeWidth="1" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
 
               <div className="flex flex-wrap justify-center gap-[14px] px-5">
                 {BACKEND_TABS.map((tab) => (

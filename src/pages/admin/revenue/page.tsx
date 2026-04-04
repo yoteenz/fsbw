@@ -789,29 +789,6 @@ export default function AdminRevenue() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  REVENUE
-                </h2>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                  <path d="M12 21.75C17.3848 21.75 21.75 17.3848 21.75 12C21.75 6.61522 17.3848 2.25 12 2.25C6.61522 2.25 2.25 6.61522 2.25 12C2.25 17.3848 6.61522 21.75 12 21.75Z" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M9.06715 15.68C9.3396 16.0241 9.69072 16.2978 10.091 16.4779C10.4912 16.658 10.9289 16.7393 11.3671 16.715H12.7471C13.3571 16.715 13.9422 16.4727 14.3735 16.0413C14.8048 15.61 15.0471 15.025 15.0471 14.415C15.0471 13.805 14.8048 13.22 14.3735 12.7887C13.9422 12.3573 13.3571 12.115 12.7471 12.115H11.2521C10.6421 12.115 10.0571 11.8727 9.6258 11.4413C9.19447 11.01 8.95215 10.425 8.95215 9.815C8.95215 9.205 9.19447 8.61999 9.6258 8.18865C10.0571 7.75732 10.6421 7.515 11.2521 7.515H12.6321C13.6671 7.515 14.3571 7.745 14.9321 8.55M11.9421 6.25V17.75" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
-
               {/* Tab-specific panels – above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div
@@ -1107,25 +1084,7 @@ export default function AdminRevenue() {
                 className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mt-4"
                 style={{ borderWidth: '1.3px', borderRadius: 0 }}
               >
-                <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                  <h2
-                    className="flex-1"
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      color: '#EB1C24',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      margin: 0,
-                      marginLeft: '6px',
-                      textTransform: 'uppercase',
-                      textAlign: 'left',
-                    }}
-                  >
-PENDING
-                </h2>
-                  <img src="/assets/pending-icon.svg" alt="" style={{ width: 14, height: 14, flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }} />
-                </div>
-                <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+                <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
                 <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                   <div
                     className="text-center py-3"

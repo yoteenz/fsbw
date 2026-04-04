@@ -9203,3 +9203,41 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For tiny right-edge icon shifts, prefer adjusting button margin on the target control to avoid ripple effects in text/layout columns.
+
+---
+
+## 2026-04-03 — Full conversation summary: consults/admin UI overhaul, branch-governance cleanup, and final header-strip parity
+
+**Context:** This chat covered a long sequence of admin/consults/bookings UI corrections and visibility/process issues, with the user prioritizing exact pixel/typography parity and ensuring deploy-visible work lands on `preview/mobile`.
+
+**Topics covered (entire conversation so far):**
+- Implemented repeated consults-tab and meetings-card adjustments: client-panel return flow back to B/C tabs, quote icon swap to `quote-icon-consult.svg`, summary-panel height/vertical alignment updates, text/font/spacing micro-tuning, and bookings-vs-consults icon offset scoping.
+- Expanded consult mock realism by allowing 1–3 inspiration photos and corrected inspo-row directional spacing/gap behavior after user feedback.
+- Matched A/C booking calendar month label styling to Admin Meetings Bohemy styling and hardened against overrides with explicit class + `!important` font enforcement.
+- Added Admin Clients overview summary panels (`TOTAL CLIENTS` for account-created users and `TOTAL MEMBERS` for memberships), and changed Admin Revenue summary semantics from `TOTAL REVENUE` to `GROSS SALES` using gross order totals.
+- Corrected Admin Dashboard meetings-card text coloring by introducing segmented value rendering (`valueParts`) so `INSTALL:` is black, add-ons red, and trailing client/date gray.
+- Addressed branch visibility concerns by merging feature-branch work to `preview/mobile`, documenting preview-first governance, and following the user preference that agent-created branches should be avoided unless explicitly requested.
+- Confirmed spacing alignment between admin pages (tabs and summary-panel spacing), then completed the remaining request to remove top header text/icons so targeted admin pages mirror meetings-page style.
+
+**Decisions / outcomes:**
+- Top header text/icon strips were removed from the requested admin pages and related admin surfaces still using that block, preserving summary cards/tabs/content while eliminating the in-card title row.
+- Fixed a JSX regression in `admin/pending` introduced during header-strip removal (self-closing spacer div).
+- Removed an unused variable in `admin/clients` to satisfy strict TypeScript build checks.
+- Final build passes after all edits.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+- `src/pages/admin/revenue/page.tsx`
+- `src/pages/admin/pending/page.tsx`
+- `src/pages/admin/reviews/page.tsx`
+- `src/pages/admin/marketing/page.tsx`
+- `src/pages/admin/referrals/page.tsx`
+- `src/pages/admin/brand/page.tsx`
+- `src/pages/admin/analytics/page.tsx`
+- `src/pages/admin/backend/page.tsx`
+- `src/pages/admin/revenue/accounting-report/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For “mirror meetings page” admin-card requests, remove the in-card header/title-icon row (`flex items-center justify-between -mt-1 pb-1 px-5 pt-4`) and divider while preserving card body spacing and summary/tabs structure.
+- Keep deploy-visible work on `preview/mobile` by default per user branch policy.

@@ -298,15 +298,7 @@ export default function AdminAccountingReport() {
 
           {/* Receipts – upload quarterly; scan/photo like order-form; storage like affiliate tabs */}
           <div className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden mb-4" style={{ borderWidth: '1.3px' }}>
-            <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-              <h3 style={{ ...sectionTitleStyle, marginBottom: 0 }}>RECEIPTS</h3>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15" stroke="#EB1C24" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5C15 6.10457 14.1046 7 13 7H11C9.89543 7 9 6.10457 9 5Z" stroke="#EB1C24" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M9 12H15M9 16H15" stroke="#EB1C24" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+            <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
             <div className="px-5 pb-4">
               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', marginBottom: '12px', textTransform: 'uppercase' }}>UPLOAD QUARTERLY FOR TRACKING, ANALYSIS & DATA FACTORING.</p>
               <div className="flex flex-wrap gap-2 mb-3">
