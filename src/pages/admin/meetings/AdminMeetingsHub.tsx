@@ -1125,7 +1125,7 @@ export default function AdminMeetingsHub() {
                                   type="button"
                                   onClick={() => openClientAccount(m)}
                                   aria-label="Open client details"
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '8px', marginLeft: '4px' }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, lineHeight: 0, flexShrink: 0, marginTop: '12px', marginLeft: '4px' }}
                                 >
                                   <img
                                     src={meetingClientProfilePhoto(m)}
@@ -1135,7 +1135,7 @@ export default function AdminMeetingsHub() {
                                     style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
                                   />
                                 </button>
-                                <div className="min-w-0 flex-1">
+                                <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
                               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0' }}>
                                 <span style={{ color: '#EB1C24' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                                 <span style={{ color: tierLabelColor(m) }}>
