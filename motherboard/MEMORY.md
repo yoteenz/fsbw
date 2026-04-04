@@ -9395,3 +9395,36 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Meetings Overview sales metrics, compute from existing persisted meeting metadata and shared order ledger (`buildRevenueOrdersList`) instead of duplicating a separate analytics store.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings ticker now interleaves top client/offer/travel insight lines
+
+**Context:** User requested three additional insight sentences inserted between the existing day/week/month upcoming-bookings ticker sentences on the Admin Dashboard MEETINGS card:
+- most-booked client (`X HAS BOOKED N APPOINTMENTS.`),
+- most-redeemed consult-offer client (`X HAS REDEEMED N OFFERS.`),
+- most-traveled-to city this year (`YOU'VE TRAVELED TO CITY N TIMES THIS YEAR.`).
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long conversation that already implemented meetings/dashboard formatting changes, overview tab analytics, card behavior refinements, and preview/mobile-first delivery.
+- Located ticker assembly in `src/pages/admin/dashboard/page.tsx` (`meetingsCardTicker` feeding `MEETINGS` card `highlight`).
+- Added helper derivations for the three requested insight lines:
+  - **Most booked appointments client** from non-cancelled non-consult meeting counts.
+  - **Most redeemed offers client** from order rows with `CONSULT-*` code usage.
+  - **Most traveled city this year** from appointment meetings tagged with travel add-ons and city extracted from meeting metadata/address fields.
+- Rebuilt ticker string to interleave lines exactly between today/week/month booking-scheduled sentences and preserve looping marquee behavior.
+- Removed an obsolete intermediate ticker constant that became unused after replacement.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- MEETINGS card scrolling sentence stream now includes all three insight lines in the requested sequence between day/week/month booking lines.
+- Insight lines gracefully fall back to “NO … YET” variants when data is unavailable instead of crashing or rendering blank.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added meeting/client/travel insight helper functions and computed lines
+  - updated `meetingsCardTicker` assembly to interleaved `meetingsCardTickerWithInsights`
+  - removed stale unused ticker variable
+
+**Conventions:**
+- For dashboard ticker expansions, derive insight text from the same merged meetings + orders sources already used by dashboard cards so counts stay internally consistent.
