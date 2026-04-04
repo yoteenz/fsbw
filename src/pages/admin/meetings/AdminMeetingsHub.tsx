@@ -1372,7 +1372,7 @@ export default function AdminMeetingsHub() {
                       className="flex items-center justify-between"
                       style={{ marginTop: '10px', marginBottom: '8px', position: 'relative', zIndex: 3 }}
                     >
-                      <div className="relative">
+                      <div className="relative" style={{ marginLeft: '2px' }}>
                         <button
                           type="button"
                           onClick={() => setShowViewAllSortDropdown((open) => !open)}
@@ -1417,7 +1417,7 @@ export default function AdminMeetingsHub() {
                           </>
                         )}
                       </div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-2px)' }}>
                         <button
                           type="button"
                           onClick={() => setViewAllDisplayMode('list')}
