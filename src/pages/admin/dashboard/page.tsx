@@ -753,10 +753,10 @@ export default function AdminDashboard() {
           valueColor: 'text-gray-500' as const,
           valueParts: addonsText
             ? [
-                { text: addonsText, color: 'text-red-500' as const },
-                { text: dateAndClient ? ` ${dateAndClient}` : '', color: 'text-gray-500' as const }
+                { text: addonsText, color: 'text-gray-500' as const },
+                { text: dateAndClient ? ` ${dateAndClient}` : '', color: 'text-red-500' as const }
               ]
-            : [{ text: dateAndClient, color: 'text-gray-500' as const }],
+            : [{ text: dateAndClient, color: 'text-red-500' as const }],
         };
       }),
       highlight: meetingsCardTicker
