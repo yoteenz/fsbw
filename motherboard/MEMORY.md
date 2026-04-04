@@ -9485,3 +9485,35 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For temporary UI test states on specific demo/mock clients, gate overrides by explicit client-name checks and keep them localized to display-status calculation helpers.
+
+---
+
+## 2026-04-03 — Dashboard meetings ticker: keep upcoming-booking lines red and insight lines gray
+
+**Context:** User requested a targeted color tweak to the admin dashboard meetings ticker: change only the three added insight lines to gray while keeping the existing upcoming bookings scheduled lines red.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat’s sequence of meetings/dashboard/admin changes (overview tab, consult row text format, ticker insight insertion, consult icon parity, and preview/mobile-only push workflow).
+- Located meetings ticker construction in `src/pages/admin/dashboard/page.tsx` and highlight rendering in `src/pages/admin/components/StatsCard.tsx`.
+- Added segment-based highlight rendering support to `StatsCard` via optional `highlightParts` so a single ticker line can mix colors.
+- Updated dashboard meetings ticker assembly to build `highlightParts` where:
+  - upcoming booking schedule lines remain `text-red-500`,
+  - inserted insight lines (most booked client, most redeemed offers, most traveled city) render `text-gray-500`.
+- Kept existing ticker text content/order unchanged; only per-line color assignment changed.
+- During push, remote `preview/mobile` had advanced; pulled with merge (`--no-rebase`), integrated upstream changes, then pushed successfully.
+- Build validated successfully after edits and merge.
+
+**Decisions / outcomes:**
+- Upcoming day/week/month booking-scheduled ticker sentences stay red.
+- The three interleaved insight lines now render gray only.
+- Mixed-color ticker rendering is now supported through a reusable highlight segmentation path.
+
+**Changes:**
+- `src/pages/admin/components/StatsCard.tsx`
+  - added `highlightParts?: Array<{ text: string; color?: string }>` support and rendering path.
+- `src/pages/admin/dashboard/page.tsx`
+  - replaced plain ticker string usage with segmented `meetingsCardTickerParts` / `meetingsCardTickerLoopParts`.
+  - wired `MEETINGS` card to use `highlightParts` while preserving marquee loop behavior.
+
+**Conventions:**
+- For marquee/ticker copy that requires mixed emphasis, use segmented highlight parts instead of forcing a single color for the whole string.
