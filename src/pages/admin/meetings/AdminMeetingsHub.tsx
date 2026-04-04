@@ -735,9 +735,12 @@ export default function AdminMeetingsHub() {
     return (q || '').trim();
   });
   const [mainTab, setMainTab] = useState<'overview' | 'bookings' | 'consults'>(() => {
-    if (typeof window === 'undefined') return 'overview';
-    const tab = new URLSearchParams(window.location.search).get('tab');
-    return tab === 'overview' || tab === 'consults' ? tab : 'bookings';
+    if (typeof window === 'undefined') return 'bookings';
+    const sp = new URLSearchParams(window.location.search);
+    const viewAll = sp.get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') return viewAll;
+    const tab = sp.get('tab');
+    return tab === 'overview' || tab === 'bookings' || tab === 'consults' ? tab : 'bookings';
   });
   const [calendarAnchor, setCalendarAnchor] = useState(() => {
     const d = new Date();
@@ -749,7 +752,18 @@ export default function AdminMeetingsHub() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [localTick, setLocalTick] = useState(0);
-  const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(null);
+  const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const viewAll = new URLSearchParams(window.location.search).get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') return viewAll;
+    try {
+      const saved = window.sessionStorage.getItem('adminMeetingsViewAllMode');
+      if (saved === 'bookings' || saved === 'consults') return saved;
+    } catch {
+      /* ignore */
+    }
+    return null;
+  });
   const [quoteMeeting, setQuoteMeeting] = useState<AdminMeeting | null>(null);
   const [editMeeting, setEditMeeting] = useState<AdminMeeting | null>(null);
   const [quoteUnit, setQuoteUnit] = useState<string>(UNIT_OPTIONS[0].id);
@@ -793,7 +807,13 @@ export default function AdminMeetingsHub() {
   }, []);
 
   useEffect(() => {
-    const tab = new URLSearchParams(location.search).get('tab');
+    const sp = new URLSearchParams(location.search);
+    const viewAll = sp.get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') {
+      setMainTab(viewAll);
+      return;
+    }
+    const tab = sp.get('tab');
     if (tab === 'overview' || tab === 'bookings' || tab === 'consults') setMainTab(tab);
   }, [location.search]);
 
@@ -801,6 +821,44 @@ export default function AdminMeetingsHub() {
     const q = new URLSearchParams(location.search).get('q');
     setClientSearchQuery((q || '').trim());
   }, [location.search]);
+
+  useEffect(() => {
+    const viewAll = new URLSearchParams(location.search).get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') {
+      setViewAllMode(viewAll);
+      return;
+    }
+    try {
+      const saved = window.sessionStorage.getItem('adminMeetingsViewAllMode');
+      if (saved === 'bookings' || saved === 'consults') {
+        setViewAllMode(saved);
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    setViewAllMode(null);
+  }, [location.search]);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    if (viewAllMode) sp.set('viewAll', viewAllMode);
+    else sp.delete('viewAll');
+    const nextSearch = sp.toString();
+    const currentSearch = location.search.startsWith('?') ? location.search.slice(1) : location.search;
+    if (nextSearch === currentSearch) return;
+    navigate(`${location.pathname}${nextSearch ? `?${nextSearch}` : ''}`, { replace: true });
+  }, [viewAllMode, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (viewAllMode) window.sessionStorage.setItem('adminMeetingsViewAllMode', viewAllMode);
+      else window.sessionStorage.removeItem('adminMeetingsViewAllMode');
+    } catch {
+      /* ignore */
+    }
+  }, [viewAllMode]);
 
   useEffect(() => {
     if (!viewAllMode) setShowViewAllSortDropdown(false);
@@ -1189,6 +1247,7 @@ export default function AdminMeetingsHub() {
           externalSearchValue={clientSearchQuery}
           onExternalSearchChange={setClientSearchQuery}
           globalSearchTargetPath="/admin/meetings"
+          globalSearchPreserveKeys={['tab', 'viewAll']}
         />
 
         <div className="pb-6 px-4">
@@ -1490,7 +1549,7 @@ export default function AdminMeetingsHub() {
                                   height: '53px',
                                   objectFit: 'cover',
                                   borderRadius: '9999px',
-                                  border: '1px solid #d1d5db',
+                                  border: '1px solid #000',
                                   margin: '0 auto',
                                   display: 'block',
                                 }}
@@ -1529,7 +1588,7 @@ export default function AdminMeetingsHub() {
                                 alt=""
                                 width={62}
                                 height={62}
-                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
+                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #000', flexShrink: 0 }}
                               />
                               <div style={{ minWidth: 0, flex: 1 }}>
                                 <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
@@ -1868,7 +1927,7 @@ export default function AdminMeetingsHub() {
                                     alt=""
                                     width={44}
                                     height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #000', display: 'block' }}
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
@@ -2042,7 +2101,7 @@ export default function AdminMeetingsHub() {
                                         alt=""
                                         width={44}
                                         height={44}
-                                        style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                        style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #000', display: 'block' }}
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
