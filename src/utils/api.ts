@@ -143,7 +143,16 @@ export async function createStripeMembershipCheckoutSession(
   tier: '3months' | '6months' | '12months',
   /** Subscription upgrade checkout (`/checkout/upgrade`) — Stripe return + success handling live there. */
   returnPath = '/checkout/upgrade'
-): Promise<string> {
+): Promise<
+  | { mode: 'checkout'; url: string; sessionId?: string }
+  | {
+      mode: 'subscription_updated';
+      changeType: 'upgrade' | 'downgrade' | 'none';
+      message?: string;
+      nextBillingAt?: string;
+      refundAmountUsd?: number;
+    }
+> {
   const res = await apiFetch('/api/stripe/create-checkout-session', {
     method: 'POST',
     body: { tier, returnPath },
@@ -159,9 +168,29 @@ export async function createStripeMembershipCheckoutSession(
     }
     throw new Error(msg || 'Checkout failed');
   }
-  const data = JSON.parse(text) as { url?: string };
+  const data = JSON.parse(text) as {
+    mode?: string;
+    url?: string;
+    sessionId?: string;
+    changeType?: 'upgrade' | 'downgrade' | 'none';
+    message?: string;
+    nextBillingAt?: string;
+    refundAmountUsd?: number;
+  };
+  if (data.mode === 'subscription_updated') {
+    return {
+      mode: 'subscription_updated',
+      changeType: data.changeType === 'upgrade' || data.changeType === 'downgrade' ? data.changeType : 'none',
+      message: data.message,
+      nextBillingAt: data.nextBillingAt,
+      refundAmountUsd:
+        typeof data.refundAmountUsd === 'number' && Number.isFinite(data.refundAmountUsd)
+          ? data.refundAmountUsd
+          : undefined,
+    };
+  }
   if (!data?.url) throw new Error('No checkout URL returned');
-  return data.url;
+  return { mode: 'checkout', url: data.url, sessionId: data.sessionId };
 }
 
 /**
