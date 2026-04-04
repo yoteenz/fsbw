@@ -431,8 +431,12 @@ function viewAllListMeetingLabel(m: AdminMeeting): string {
   return `${consultTypeLabelForMeeting(m)}:`;
 }
 
-function formatViewAllListMeetingSchedule(m: AdminMeeting): string {
-  return `${formatViewAllListMeetingDate(m.date)} · ${m.time}`;
+function formatViewAllListMeetingDateOnly(m: AdminMeeting): string {
+  return formatViewAllListMeetingDate(m.date);
+}
+
+function formatViewAllListMeetingTimeOnly(m: AdminMeeting): string {
+  return String(m.time || '').trim().toUpperCase();
 }
 
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
@@ -1851,7 +1855,8 @@ export default function AdminMeetingsHub() {
                                           whiteSpace: 'nowrap',
                                         }}
                                       >
-                                        {formatViewAllListMeetingSchedule(meeting)}
+                                        {formatViewAllListMeetingDateOnly(meeting)} ·{' '}
+                                        <span style={{ color: '#000' }}>{formatViewAllListMeetingTimeOnly(meeting)}</span>
                                       </span>
                                     </div>
                                   ))}

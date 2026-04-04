@@ -10545,3 +10545,46 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For recurring phantom `TS` / `TSTS` fragments in Admin Meetings where no literal placeholder token exists in source, continue treating the issue as a compact-label wrapping problem and harden each specific consult/view-all label container with no-wrap + clipped overflow until the offending visual path is eliminated.
+
+---
+
+## 2026-04-04 — View All list rows: time text changed to black while date remains red
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings conversation after the compact-label anti-wrap hardening pass, the user requested one more very targeted list-view typography tweak: in the grouped **View All** list rows, change the **time text only** to black while keeping the date text red (example target: `THU, 4/30,2026 · 12:30 PM` with `12:30 PM` black on list view only).
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long sequence of admin/meetings work:
+  - +4px admin summary metrics,
+  - bookings calendar border changes and later revert,
+  - multiple View All grid/list spacing/layout refinements,
+  - grouped View All list-by-client panels with inner scroll,
+  - direct correction of delivery onto `preview/mobile`,
+  - A/C calendar parity with the Admin Meetings calendar,
+  - additional no-wrap hardening around compact Meetings labels to suppress phantom `TS/TSTS` fragments.
+- In this latest pass, focused only on the grouped **View All list mode** row renderer in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the grouped row was still rendering the entire schedule (`DATE · TIME`) as a single red string.
+- Split the list-view row formatter into separate helpers:
+  - `formatViewAllListMeetingDateOnly(...)`
+  - `formatViewAllListMeetingTimeOnly(...)`
+- Updated the grouped list row render so:
+  - gray service label remains unchanged,
+  - red segment renders only the date and trailing separator (`THU, 4/30,2026 · `),
+  - black segment renders only the time (`12:30 PM`).
+- First rebuild failed because the previous combined schedule helper became unused after the formatter split; removed the dead helper and reran a successful production build.
+
+**Decisions / outcomes:**
+- On **View All list view only**, time text is now black while the date portion remains red.
+- The grouped list row keeps the same one-line structure and spacing; only the color split changed.
+- Scope stayed limited to the grouped View All list-view rows.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed `formatViewAllListMeetingSchedule(...)`
+  - added `formatViewAllListMeetingDateOnly(...)`
+  - added `formatViewAllListMeetingTimeOnly(...)`
+  - split grouped list schedule row into red date segment + black time segment
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For grouped View All Meetings list rows, keep date/time color treatment independently controllable by rendering date and time as separate text segments rather than as one combined string.
