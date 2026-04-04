@@ -9706,3 +9706,43 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For booking-card micro typography requests, prefer single-property adjustments (font size only) on the targeted line to avoid unintended spacing or hierarchy shifts.
+
+---
+
+## 2026-04-03 — View-all bookings/consults panels now mirror B/C tab card structure + header divider
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults typography/icon/spacing passes, payment due tracker state styling, meetings search behavior, and Overview summary placement updates), the user requested two specific view-all panel layout corrections:
+- Add the gray border line under the black **VIEW ALL BOOKINGS / VIEW ALL CONSULTS** header text.
+- Structure client listings as white-background, gray-border client panels like the B/C tab cards.
+
+**Topics covered (entire conversation so far):**
+- Located the view-all rendering branch in `AdminMeetingsHub`:
+  - header row shown when `activeMainCardTitle` is present,
+  - list rows under `viewAllMode` previously rendered as simple border-bottom rows.
+- Updated the active view-all header block to include a dedicated gray divider (`1px` gray line) directly under the black title/close row.
+- Reworked each view-all list row into card panels matching B/C card treatment:
+  - white background,
+  - gray border,
+  - square corners,
+  - card-like inner spacing.
+- Updated row contents to align with B/C visual structure:
+  - client name + tier label treatment,
+  - bookings rows show install line, add-ons line, and red date/time/duration line,
+  - consult rows show consult type and red date/time line.
+- Removed now-unused `viewAllRowLabel` helper after row-content restructure to resolve TypeScript unused-symbol build error.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all panel headers now clearly separate title from content with the requested gray divider line.
+- View-all client listings now use panel cards instead of plain divider rows, visually consistent with B/C tabs.
+- Styling changes are scoped to view-all mode; default bookings/consults tab card flows remain unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added gray divider under active panel header text row
+  - restyled `viewAllMode` rows to white-card + gray-border panels
+  - aligned view-all row typography/content hierarchy with B/C tab card style
+  - removed unused `viewAllRowLabel` helper
+
+**Conventions:**
+- For Admin Meetings “view all” panel requests, keep header/content separation explicit with a divider and reuse the same card-shell visual language as Bookings/Consults rows (white panel, gray border, square corners) for consistency.
