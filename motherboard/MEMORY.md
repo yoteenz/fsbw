@@ -9648,3 +9648,366 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For count-driven dashboard copy, use explicit singular/plural branching to avoid `1 ...s` grammar regressions in marquee/ticker content.
+
+---
+
+## 2026-04-03 — Bookings payment due tracker red-filled state now uses square corners with black border
+
+**Context:** Continuing the same conversation’s Admin Meetings bookings-card refinement stream (payment status redesign, due tracker/countdown adjustments, tab-relative search behavior, and Overview summary placement fixes), the user requested a visual change to the payment due tracking bar: when in the filled red state it should have square corners and a black border with red fill, rather than rounded corners and gray-styled container behavior.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, bookings payment tracker styling used rounded corners in filled states and gray-container defaults.
+- Updated the bookings payment tracker style branch in `AdminMeetingsHub` to derive an explicit red-state flag (`isRedDueBar`) from existing due logic (`duePassed` or near/full progress threshold).
+- Applied red-state visual rules:
+  - outer bar now square corners (`borderRadius: 0`)
+  - outer border now black in red state
+  - outer/background fill now red in red state
+  - inner progress segment also square corners and red fill in red state.
+- Kept non-red/unfilled behavior on gray style with gray border so only red-filled state adopts the requested black-border/red-fill look.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Red-filled payment due bars now render with square-corner geometry and black-outline/red-fill styling.
+- Unfilled/non-red bars retain gray styling for contrast and state distinction.
+- Change is scoped to bookings card due-tracker visuals only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `isRedDueBar` style gate in payment tracker rendering
+  - changed red-state bar container to black border + red fill + square corners
+  - changed progress fill to square corners and red fill in red state
+
+**Conventions:**
+- For bookings payment tracker visuals, use explicit state-based style gates so red urgency/completed-style bars can differ structurally (border/fill/corners) from default gray progress bars.
+
+---
+
+## 2026-04-03 — Bookings appointment time line reduced by 1px (red duration/date row)
+
+**Context:** Continuing the same long Admin Meetings conversation (bookings/consults card styling and behavior tweaks, payment due tracker visual/state updates, tab-relative search behavior, and Overview summary-card placement corrections), the user requested a micro typography adjustment: decrease the red appointment-time line text size (e.g., `SAT, APR 25, 2026 · 4:00 PM · 4 HRS 10 MINS`) by 1px.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the bookings appointment-time line in `AdminMeetingsHub` rendered as red `Futura PT Book` at `10px`.
+- Updated only that bookings appointment-time row to `9px` while preserving:
+  - red color (`#EB1C24`),
+  - same font family (`"Futura PT Book"`),
+  - same content format (`date · time · duration`) and HRS/MINS conversion behavior.
+- No other typography rows were changed.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking card appointment-time line is now exactly 1px smaller as requested.
+- Styling and formatting logic otherwise remain unchanged.
+- Scope limited to the bookings appointment-time text row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed bookings appointment-time line `fontSize` from `10px` to `9px`
+
+**Conventions:**
+- For booking-card micro typography requests, prefer single-property adjustments (font size only) on the targeted line to avoid unintended spacing or hierarchy shifts.
+
+---
+
+## 2026-04-03 — View-all bookings/consults panels now mirror B/C tab card structure + header divider
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults typography/icon/spacing passes, payment due tracker state styling, meetings search behavior, and Overview summary placement updates), the user requested two specific view-all panel layout corrections:
+- Add the gray border line under the black **VIEW ALL BOOKINGS / VIEW ALL CONSULTS** header text.
+- Structure client listings as white-background, gray-border client panels like the B/C tab cards.
+
+**Topics covered (entire conversation so far):**
+- Located the view-all rendering branch in `AdminMeetingsHub`:
+  - header row shown when `activeMainCardTitle` is present,
+  - list rows under `viewAllMode` previously rendered as simple border-bottom rows.
+- Updated the active view-all header block to include a dedicated gray divider (`1px` gray line) directly under the black title/close row.
+- Reworked each view-all list row into card panels matching B/C card treatment:
+  - white background,
+  - gray border,
+  - square corners,
+  - card-like inner spacing.
+- Updated row contents to align with B/C visual structure:
+  - client name + tier label treatment,
+  - bookings rows show install line, add-ons line, and red date/time/duration line,
+  - consult rows show consult type and red date/time line.
+- Removed now-unused `viewAllRowLabel` helper after row-content restructure to resolve TypeScript unused-symbol build error.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all panel headers now clearly separate title from content with the requested gray divider line.
+- View-all client listings now use panel cards instead of plain divider rows, visually consistent with B/C tabs.
+- Styling changes are scoped to view-all mode; default bookings/consults tab card flows remain unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added gray divider under active panel header text row
+  - restyled `viewAllMode` rows to white-card + gray-border panels
+  - aligned view-all row typography/content hierarchy with B/C tab card style
+  - removed unused `viewAllRowLabel` helper
+
+**Conventions:**
+- For Admin Meetings “view all” panel requests, keep header/content separation explicit with a divider and reuse the same card-shell visual language as Bookings/Consults rows (white panel, gray border, square corners) for consistency.
+
+---
+
+## 2026-04-03 — View-all bookings/consults adds left sort dropdown + right list/grid toggle; grid now shows grouped 3-up client summaries
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults card refinements, payment-due tracker styling, overview summary placement, view-all header/list panel alignment, and unique-client header counts), the user requested richer controls above View All lists: a client-overview style sort dropdown on the left and an admin-dashboard style list/grid toggle on the right, scoped to **View All Bookings** and **View All Consults** only. They also defined grid layout requirements: 3 clients per row with profile image first, name beneath, total bookings/consults count beneath that, and most-recent booking/consult line at the bottom; list view should keep current appearance.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All panels already had:
+  - dynamic header text (`X CLIENT BOOKINGS/CONSULTS`) based on unique client counts,
+  - list rows restyled to match B/C card shells (white background + gray border).
+- Added view-all-only UI state and controls:
+  - **Sort dropdown** (left) using the same interaction pattern as Client Overview (`Most recent`, `A to Z`, `Z to A`).
+  - **List/Grid toggle** (right) using the same icon language as admin dashboard/RecentActivity style.
+- Implemented client-grouped data model for View All:
+  - grouped meetings by unique client key (email-first fallback to normalized name/state),
+  - tracked each client’s total count in the active mode,
+  - identified each client’s most recent meeting for latest-line display and profile/open action.
+- Implemented grid mode output (3 per row):
+  - top: profile icon,
+  - second line: client name,
+  - third line: total `BOOKINGS`/`CONSULTS` count,
+  - fourth line: most recent booking/consult summary.
+- Preserved list mode behavior and appearance as requested, while applying selected sort order to both list rows and grid cards.
+- Added state-reset behavior when opening/closing/changing View All mode to avoid stale sort dropdown or view mode.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All panels now support both sorting and list/grid display controls in the exact left/right positions requested.
+- Grid view is client-grouped and 3-column, with the required line order/content hierarchy.
+- List view continues to render in the current card-list style, unchanged in structure.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added view-all sort options + label helper (`Most recent`, `A to Z`, `Z to A`)
+  - added view-all control state (`showViewAllSortDropdown`, `viewAllSortOption`, `viewAllDisplayMode`)
+  - added grouped client summary derivation for grid mode
+  - added sort application for both row-level list and grouped grid data
+  - added controls row (left sort dropdown, right list/grid icon toggles)
+  - added grid-mode renderer (`grid-cols-3`) with profile/name/count/most-recent lines
+  - preserved existing list renderer for view-all list mode
+
+**Conventions:**
+- For View All client panels in Admin Meetings, treat list mode as the stable “detailed card” baseline and layer grid mode as a grouped client summary view (3-up) with explicit line hierarchy: identity → total count → most recent activity.
+
+---
+
+## 2026-04-03 — Removed stray “TSTS” text from Admin Meetings view-all controls row
+
+**Context:** Continuing this same long Admin Meetings UI conversation (view-all header/client panel parity, unique-client header counts, sort dropdown + list/grid toggle controls, and icon sizing/alignment tweaks), the user reported unexpected `TSTS` text appearing above client panels in the View All toggle area and requested removal.
+
+**Topics covered (entire conversation so far):**
+- Verified current View All controls in `AdminMeetingsHub` and searched repo for `TSTS`.
+- Located the issue in the View All control-row sort button label area.
+- Removed the stray placeholder text and preserved the intended sort-label behavior.
+- Added an explicit `aria-label` on the sort button for clarity/accessibility while keeping visible control copy unchanged.
+- Re-ran build successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TSTS` text is removed from the View All controls row.
+- Sort control now shows only the proper selected sort option label and arrow icon.
+- No other UI rows or panel content were changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed stray `TSTS` control text in View All section
+  - retained proper sort option label rendering
+  - added sort button `aria-label`
+
+**Conventions:**
+- For incremental UI iterations, avoid shipping placeholder/debug text in production control labels; if temporary placeholders are used during edits, remove them before final push and verify on the active surface.
+
+---
+
+## 2026-04-03 — View-all meetings header now shows unique client counts (e.g., “9 CLIENT BOOKINGS”)
+
+**Context:** Continuing this same long Admin Meetings UI refinement conversation (bookings/consults typography and spacing tweaks, payment due tracker style states, tab-relative search behavior, Overview summary placement updates, and view-all panel structure parity), the user requested replacing the view-all header text with count-based labels like `9 CLIENT BOOKINGS` / `8 CLIENT CONSULTS`, where the count tracks unique clients who booked/consulted (not total booking/consult row count).
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the active view-all headers displayed static labels:
+  - `VIEW ALL BOOKINGS`
+  - `VIEW ALL CONSULTS`
+- Added a unique-client key helper for meetings rows:
+  - prefers normalized client email when available,
+  - falls back to normalized client display name (with state suffix) when email is missing.
+- Computed a `viewAllUniqueClientCount` memo based on the active mode dataset:
+  - bookings mode uses filtered appointment rows,
+  - consults mode uses filtered consult rows,
+  - count is derived via `Set` of unique client keys.
+- Replaced static view-all title text with dynamic singular/plural labels:
+  - `{N} CLIENT BOOKING(S)`
+  - `{N} CLIENT CONSULT(S)`
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all header now reports unique client participation counts, not total row volume.
+- Labels remain mode-specific and grammatically singular/plural based on count.
+- Counts stay in sync with active filters because they use the same filtered datasets as the rendered view-all rows.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingClientUniqKey(...)`
+  - added `viewAllUniqueClientCount` memo
+  - replaced static `activeMainCardTitle` labels with count-driven `CLIENT BOOKINGS/CONSULTS` text
+
+**Conventions:**
+- For “client-count” summary labels in meetings UI, compute counts from unique client identity keys (email first, normalized display-name fallback), not from raw row totals, so repeated bookings/consults by the same client do not inflate the headline count.
+
+---
+
+## 2026-04-03 — View-all list/grid profile icons increased by 40%; list icons vertically centered in client cards
+
+**Context:** Continuing this same long Admin Meetings conversation (bookings/consults card micro-adjustments, payment due tracker styling updates, overview summary placement, view-all header/list parity, unique-client view-all headers, and new sort + list/grid controls), the user requested icon sizing/alignment refinements scoped only to View All Bookings/Consults panels: increase profile icons in both list and grid views by 40%, and vertically center list-view icons within each client panel card.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All had:
+  - list mode with 44px profile icons and top-aligned content row (`items-start`),
+  - grid mode with 38px profile icons in 3-up client summary cards.
+- Applied a 40% size increase only inside View All renderers:
+  - **List mode:** `44px -> 62px` profile icons.
+  - **Grid mode:** `38px -> 53px` profile icons.
+- Updated list row layout alignment from `items-start` to `items-center` so enlarged icons are vertically centered inside each white/gray bordered client panel.
+- Kept changes scoped to View All list/grid panels only; regular Bookings/Consults tab card icon sizing/positioning remains unchanged.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All profile icons now render noticeably larger in both display modes (+40%).
+- List-mode icon alignment is now vertically centered within its client panel card.
+- No changes were made to non-View-All icon sizing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - grid mode icon dimensions updated from `38x38` to `53x53`
+  - list mode icon dimensions updated from `44x44` to `62x62`
+  - list row wrapper alignment changed from `items-start` to `items-center`
+
+**Conventions:**
+- For View All-only visual tweaks in Admin Meetings, apply sizing/alignment changes strictly within `viewAllMode` render branches so primary B/C tab card geometry stays stable.
+
+---
+
+## 2026-04-03 — Removed stray “TSTS/TS” artifact above view-all client panels by preventing header wrap
+
+**Context:** Continuing this same conversation’s Admin Meetings View All refinement sequence (new sort dropdown + list/grid controls, unique-client header counts, card styling parity, and icon scaling), the user reported a stray text artifact above the client panels in the toggle area (`TSTS`, then remaining `TS`) that should not be visible.
+
+**Topics covered (entire conversation so far):**
+- Verified no literal `TSTS`/`TS` debug token remained in the meetings source where view-all controls render.
+- Identified the likely visual source as header text wrapping/truncating in the active panel title (`... CLIENT CONSULTS`) where only the tail (`TS`) could appear on its own line.
+- Updated active panel header title styling to prevent line wrap and tail fragments:
+  - `whiteSpace: 'nowrap'`
+  - `overflow: 'hidden'`
+  - `textOverflow: 'ellipsis'`
+  - `minWidth: 0` and right padding to coexist with the close button.
+- Kept the dynamic count-driven title intact (`N CLIENT BOOKINGS/CONSULTS`) and preserved sort/toggle controls layout below.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TS` fragment above view-all panels is removed via no-wrap/ellipsis title behavior.
+- Header still displays the same count-driven wording, now constrained to a single line.
+- Scope is limited to active view-all panel header text rendering.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added no-wrap/ellipsis styles to active panel `<h2>` title to prevent wrap artifacts.
+
+**Conventions:**
+- For compact admin card headers with dynamic labels, enforce single-line title constraints (nowrap + ellipsis) to avoid visual orphan fragments when text length approaches available space.
+
+---
+
+## 2026-04-03 — Meetings profile icon borders switched to black (View All + B/C tabs) and View All toggle now persists after refresh
+
+**Context:** Continuing this same Admin Meetings UI thread (view-all controls, client-count headers, icon sizing/alignment, stray text cleanup, and micro-positioning passes), the user requested two fixes:
+- change profile-icon ring borders from gray to black on both View All toggle panels and the regular Bookings/Consults tab cards, and
+- keep the View All toggle open after page refresh (it was incorrectly collapsing back to the meetings page).
+
+**Topics covered (entire conversation so far):**
+- Located all meetings profile image render points in `AdminMeetingsHub`:
+  - View All grid cards,
+  - View All list cards,
+  - Bookings tab client cards,
+  - Consults tab client cards.
+- Updated profile-photo border color in those image style blocks from gray (`#d1d5db`) to black (`#000`) to match requested ring treatment.
+- Implemented refresh-safe View All persistence in meetings route state handling:
+  - initialize `mainTab` and `viewAllMode` from `viewAll` query param when present,
+  - fallback to `sessionStorage` (`adminMeetingsViewAllMode`) when URL lacks `viewAll`,
+  - sync `viewAllMode` back into URL (`?viewAll=bookings|consults`) with `replace` navigation,
+  - persist/clear `sessionStorage` as toggle opens/closes.
+- Updated `AdminHeader` usage on meetings page to preserve both `tab` and `viewAll` params during search submits (`globalSearchPreserveKeys={['tab','viewAll']}`), preventing accidental loss of open toggle state when interacting with search.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Profile-icon ring borders now render black in the requested meetings contexts (View All + B/C tab cards).
+- Refreshing while View All is open now restores the same open toggle mode instead of collapsing to base meetings state.
+- Toggle state persistence is resilient across search interactions due to query-param preservation and session fallback.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - switched relevant profile image border colors to `#000`
+  - added URL + sessionStorage synchronization for `viewAllMode`
+  - updated initial tab resolution to honor `viewAll` state on load
+  - passed `globalSearchPreserveKeys={['tab', 'viewAll']}` to `AdminHeader`
+
+**Conventions:**
+- For meetings subview toggles expected to survive refresh, keep UI state mirrored in URL query params and optionally mirrored to sessionStorage as a fallback so the same open context is restored on reload.
+
+---
+
+## 2026-04-03 — View-all controls nudged: sort dropdown +2px right, list/grid toggle group -2px left
+
+**Context:** Continuing this same Admin Meetings view-all refinement sequence (header cleanup, unique-client count titles, sort + list/grid controls, and card/icon layout tweaks), the user requested a precise micro-position adjustment for the controls row above view-all client panels.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All controls were already present with:
+  - left sort dropdown (`Most recent` and alternatives),
+  - right list/grid icon toggle group.
+- Applied requested offset changes in `AdminMeetingsHub` view-all controls row:
+  - moved the left **Most recent** dropdown container **2px to the right**,
+  - moved the right list/grid icon group **2px to the left** in tandem.
+- Kept all control behavior unchanged (sorting, mode switching, dropdown open/close).
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Control row now reflects exact requested spacing adjustment (+2px right on sort; -2px left on view-mode icons).
+- Functional behavior is unchanged; only horizontal alignment was tuned.
+- Scope remains limited to View All controls row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `marginLeft: '2px'` to left sort-dropdown wrapper
+  - added `transform: 'translateX(-2px)'` to right view-mode toggle wrapper
+
+**Conventions:**
+- For UI micro-position requests on existing admin controls, apply minimal wrapper-level offsets (margin/translate) rather than altering inner icon geometry, so behavior and hit targets remain stable.
+
+---
+
+## 2026-04-03 — Grid view names now map red/black by active vs past status; list view names forced black
+
+**Context:** Continuing the same Admin Meetings “View All” refinement stream (controls row, client grouping, unique-client headers, icon/border updates, refresh persistence), the user asked why some grid names were red and others black. They clarified desired behavior: on **grid view only**, red names should represent **current/active** bookings/consults and black names should represent **past/non-active**; on **list view**, all client names should remain black.
+
+**Topics covered (entire conversation so far):**
+- Root cause identified in `AdminMeetingsHub`: grid name color was previously tied to premium-tier status (`tierIsPremium`), not active/past booking/consult state.
+- Added explicit status helper (`meetingIsCurrentOrActive`) that treats rows as active/current when status is scheduled/confirmed/active/in-progress.
+- Updated grouped View All client-card derivation to track whether each client has any active/current meeting (`hasActiveMeeting`) while preserving existing total-count and latest-meeting grouping behavior.
+- Switched grid client-name color binding from tier-based to status-based:
+  - red when `hasActiveMeeting` is true (current/active),
+  - black otherwise (past/non-active).
+- Updated list-view name styling to always black (removed consult-specific red name color in list branch), while keeping tier suffix and remaining list detail structure intact.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Grid-view name color now communicates activity state rather than membership tier.
+- List-view names now consistently stay black as requested.
+- Scope limited to View All grid/list name color logic; no unrelated typography/layout behavior changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingIsCurrentOrActive(...)`
+  - replaced `tierIsPremium` grouping flag with `hasActiveMeeting` on view-all client cards
+  - grid name color now uses active/past state (`hasActiveMeeting`)
+  - list name text forced to black for both bookings and consult rows
+
+**Conventions:**
+- For View All visual state cues in Admin Meetings, use explicit booking/consult status semantics (active vs past) for red/black signaling instead of tier/membership styling when the user asks for activity-state meaning.

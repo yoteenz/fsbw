@@ -51,6 +51,13 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
+const VIEW_ALL_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
+type ViewAllSortOption = (typeof VIEW_ALL_SORT_OPTIONS)[number];
+
+function viewAllSortOptionToLabel(opt: ViewAllSortOption): string {
+  return opt.toUpperCase();
+}
+
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
 const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
@@ -350,6 +357,33 @@ function meetingSearchBlob(m: AdminMeeting): string {
     );
   }
   return normalizeSearchText(baseParts.filter(Boolean).join(' · '));
+}
+
+function meetingClientUniqKey(m: AdminMeeting): string {
+  const email = String(m.clientEmail || '').trim().toLowerCase();
+  if (email) return `email:${email}`;
+  return `name:${meetingClientDisplayNameWithState(m).trim().toUpperCase()}`;
+}
+
+function meetingIsCurrentOrActive(m: AdminMeeting): boolean {
+  const status = String(m.status || '').trim().toLowerCase();
+  if (!status) return false;
+  return status === 'scheduled' || status === 'confirmed' || status === 'active' || status === 'in_progress';
+}
+
+function meetingSortTimeMs(m: AdminMeeting): number {
+  const base = parseISODateLocal(m.date);
+  const timeText = String(m.time || '').trim().toUpperCase();
+  const parsed = timeText.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
+  if (parsed) {
+    let hours = Number(parsed[1]);
+    const mins = Number(parsed[2] || '0');
+    const ampm = parsed[3];
+    if (ampm === 'PM' && hours < 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0;
+    base.setHours(hours, mins, 0, 0);
+  }
+  return base.getTime();
 }
 
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
@@ -697,13 +731,6 @@ function consultInspo(m: AdminMeeting): string[] {
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
 
-function viewAllRowLabel(m: AdminMeeting): string {
-  if (m.category === 'appointment') {
-    return `${formatBookingInstallLineForCard(m)} · ${formatBookingAddonsLineForCard(m)}`;
-  }
-  return m.type;
-}
-
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -714,9 +741,12 @@ export default function AdminMeetingsHub() {
     return (q || '').trim();
   });
   const [mainTab, setMainTab] = useState<'overview' | 'bookings' | 'consults'>(() => {
-    if (typeof window === 'undefined') return 'overview';
-    const tab = new URLSearchParams(window.location.search).get('tab');
-    return tab === 'overview' || tab === 'consults' ? tab : 'bookings';
+    if (typeof window === 'undefined') return 'bookings';
+    const sp = new URLSearchParams(window.location.search);
+    const viewAll = sp.get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') return viewAll;
+    const tab = sp.get('tab');
+    return tab === 'overview' || tab === 'bookings' || tab === 'consults' ? tab : 'bookings';
   });
   const [calendarAnchor, setCalendarAnchor] = useState(() => {
     const d = new Date();
@@ -728,8 +758,18 @@ export default function AdminMeetingsHub() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [localTick, setLocalTick] = useState(0);
-  const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(null);
-  const [viewAllBookingsLayout, setViewAllBookingsLayout] = useState<'grid' | 'list'>('grid');
+  const [viewAllMode, setViewAllMode] = useState<'bookings' | 'consults' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const viewAll = new URLSearchParams(window.location.search).get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') return viewAll;
+    try {
+      const saved = window.sessionStorage.getItem('adminMeetingsViewAllMode');
+      if (saved === 'bookings' || saved === 'consults') return saved;
+    } catch {
+      /* ignore */
+    }
+    return null;
+  });
   const [quoteMeeting, setQuoteMeeting] = useState<AdminMeeting | null>(null);
   const [editMeeting, setEditMeeting] = useState<AdminMeeting | null>(null);
   const [quoteUnit, setQuoteUnit] = useState<string>(UNIT_OPTIONS[0].id);
@@ -745,6 +785,9 @@ export default function AdminMeetingsHub() {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
   const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
+  const [viewAllSortOption, setViewAllSortOption] = useState<ViewAllSortOption>('Most recent');
+  const [showViewAllSortDropdown, setShowViewAllSortDropdown] = useState(false);
+  const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
 
@@ -770,7 +813,13 @@ export default function AdminMeetingsHub() {
   }, []);
 
   useEffect(() => {
-    const tab = new URLSearchParams(location.search).get('tab');
+    const sp = new URLSearchParams(location.search);
+    const viewAll = sp.get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') {
+      setMainTab(viewAll);
+      return;
+    }
+    const tab = sp.get('tab');
     if (tab === 'overview' || tab === 'bookings' || tab === 'consults') setMainTab(tab);
   }, [location.search]);
 
@@ -778,6 +827,48 @@ export default function AdminMeetingsHub() {
     const q = new URLSearchParams(location.search).get('q');
     setClientSearchQuery((q || '').trim());
   }, [location.search]);
+
+  useEffect(() => {
+    const viewAll = new URLSearchParams(location.search).get('viewAll');
+    if (viewAll === 'bookings' || viewAll === 'consults') {
+      setViewAllMode(viewAll);
+      return;
+    }
+    try {
+      const saved = window.sessionStorage.getItem('adminMeetingsViewAllMode');
+      if (saved === 'bookings' || saved === 'consults') {
+        setViewAllMode(saved);
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    setViewAllMode(null);
+  }, [location.search]);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    if (viewAllMode) sp.set('viewAll', viewAllMode);
+    else sp.delete('viewAll');
+    const nextSearch = sp.toString();
+    const currentSearch = location.search.startsWith('?') ? location.search.slice(1) : location.search;
+    if (nextSearch === currentSearch) return;
+    navigate(`${location.pathname}${nextSearch ? `?${nextSearch}` : ''}`, { replace: true });
+  }, [viewAllMode, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (viewAllMode) window.sessionStorage.setItem('adminMeetingsViewAllMode', viewAllMode);
+      else window.sessionStorage.removeItem('adminMeetingsViewAllMode');
+    } catch {
+      /* ignore */
+    }
+  }, [viewAllMode]);
+
+  useEffect(() => {
+    if (!viewAllMode) setShowViewAllSortDropdown(false);
+  }, [viewAllMode]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -974,11 +1065,83 @@ export default function AdminMeetingsHub() {
 
   const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
 
-  const viewAllRows = useMemo(() => {
+  const viewAllBaseRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
     const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
-    return [...base].sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+    return [...base].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
   }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
+
+  const viewAllRows = useMemo(() => {
+    const rows = [...viewAllBaseRows];
+    if (viewAllSortOption === 'A to Z') {
+      rows.sort((a, b) =>
+        meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
+          sensitivity: 'base',
+        })
+      );
+      return rows;
+    }
+    if (viewAllSortOption === 'Z to A') {
+      rows.sort((a, b) =>
+        meetingClientDisplayNameWithState(b).localeCompare(meetingClientDisplayNameWithState(a), undefined, {
+          sensitivity: 'base',
+        })
+      );
+      return rows;
+    }
+    rows.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+    return rows;
+  }, [viewAllBaseRows, viewAllSortOption]);
+
+  const viewAllClientCards = useMemo(() => {
+    if (!viewAllMode) return [] as Array<{
+      key: string;
+      displayName: string;
+      profilePhoto: string;
+      hasActiveMeeting: boolean;
+      totalCount: number;
+      latestMeeting: AdminMeeting;
+    }>;
+    const byClient = new Map<
+      string,
+      { key: string; displayName: string; profilePhoto: string; hasActiveMeeting: boolean; totalCount: number; latestMeeting: AdminMeeting }
+    >();
+    for (const row of viewAllBaseRows) {
+      const key = meetingClientUniqKey(row);
+      const existing = byClient.get(key);
+      if (!existing) {
+        byClient.set(key, {
+          key,
+          displayName: meetingClientDisplayNameWithState(row),
+          profilePhoto: meetingClientProfilePhoto(row),
+          hasActiveMeeting: meetingIsCurrentOrActive(row),
+          totalCount: 1,
+          latestMeeting: row,
+        });
+        continue;
+      }
+      existing.totalCount += 1;
+      if (meetingIsCurrentOrActive(row)) existing.hasActiveMeeting = true;
+      if (meetingSortTimeMs(row) > meetingSortTimeMs(existing.latestMeeting)) {
+        existing.latestMeeting = row;
+        existing.profilePhoto = meetingClientProfilePhoto(row);
+      }
+    }
+    const cards = [...byClient.values()];
+    if (viewAllSortOption === 'A to Z') {
+      cards.sort((a, b) => a.displayName.localeCompare(b.displayName, undefined, { sensitivity: 'base' }));
+    } else if (viewAllSortOption === 'Z to A') {
+      cards.sort((a, b) => b.displayName.localeCompare(a.displayName, undefined, { sensitivity: 'base' }));
+    } else {
+      cards.sort((a, b) => meetingSortTimeMs(b.latestMeeting) - meetingSortTimeMs(a.latestMeeting));
+    }
+    return cards;
+  }, [viewAllMode, viewAllBaseRows, viewAllSortOption]);
+
+  const viewAllUniqueClientCount = useMemo(() => {
+    if (!viewAllMode) return 0;
+    return viewAllClientCards.length;
+  }, [viewAllMode, viewAllClientCards]);
 
   const overviewBookingSales = useMemo(() => {
     let completedAppointments = 0;
@@ -1035,8 +1198,8 @@ export default function AdminMeetingsHub() {
 
   const activeMainCardTitle = viewAllMode
     ? viewAllMode === 'bookings'
-      ? 'VIEW ALL BOOKINGS'
-      : 'VIEW ALL CONSULTS'
+      ? `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`
+      : `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`
     : editMeeting
     ? 'EDIT MEETING'
     : quoteMeeting
@@ -1090,6 +1253,7 @@ export default function AdminMeetingsHub() {
           externalSearchValue={clientSearchQuery}
           onExternalSearchChange={setClientSearchQuery}
           globalSearchTargetPath="/admin/meetings"
+          globalSearchPreserveKeys={['tab', 'viewAll']}
         />
 
         <div className="pb-6 px-4">
@@ -1102,33 +1266,51 @@ export default function AdminMeetingsHub() {
               }}
             >
               {activeMainCardTitle ? (
-                <div
-                  className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
-                  style={{ marginTop: '10px' }}
-                >
-                  <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
-                    {activeMainCardTitle}
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={closeMainCardPanel}
-                    aria-label="Close view all"
+                <div className="flex-shrink-0 px-5 pb-2 -mt-1" style={{ marginTop: '10px' }}>
+                  <div className="flex items-center justify-between">
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#000',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        minWidth: 0,
+                        paddingRight: '8px',
+                      }}
+                    >
+                      {activeMainCardTitle}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={closeMainCardPanel}
+                      aria-label="Close view all"
+                      style={{
+                        padding: 0,
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        lineHeight: 0,
+                      }}
+                    >
+                      <img
+                        src="/assets/close-icon.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
+                      />
+                    </button>
+                  </div>
+                  <div
                     style={{
-                      padding: 0,
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      lineHeight: 0,
+                      borderBottom: '1px solid #d1d5db',
+                      marginTop: '8px',
                     }}
-                  >
-                    <img
-                      src="/assets/close-icon.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                      style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
-                    />
-                  </button>
+                  />
                 </div>
               ) : (
                 <div
@@ -1251,140 +1433,223 @@ export default function AdminMeetingsHub() {
                 >
                 {viewAllMode ? (
                   <>
-                    {viewAllMode === 'bookings' && (
-                      <div className="flex justify-center gap-6" style={{ marginBottom: '10px' }}>
+                    <div
+                      className="flex items-center justify-between"
+                      style={{ marginTop: '10px', marginBottom: '8px', position: 'relative', zIndex: 3 }}
+                    >
+                      <div className="relative" style={{ marginLeft: '2px' }}>
                         <button
                           type="button"
-                          onClick={() => setViewAllBookingsLayout('grid')}
+                          onClick={() => setShowViewAllSortDropdown((open) => !open)}
+                          className="flex items-center gap-1.5"
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+                          aria-label="Sort clients"
+                        >
+                          <span>{viewAllSortOptionToLabel(viewAllSortOption)}</span>
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            style={{ transform: showViewAllSortDropdown ? 'rotate(180deg)' : 'none', color: '#EB1C24' }}
+                            aria-hidden
+                          >
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        {showViewAllSortDropdown && (
+                          <>
+                            <div className="fixed inset-0 z-10" aria-hidden onClick={() => setShowViewAllSortDropdown(false)} />
+                            <div
+                              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
+                              style={{ borderWidth: '1.3px', marginTop: '7px' }}
+                            >
+                              {VIEW_ALL_SORT_OPTIONS.filter((opt) => opt !== viewAllSortOption).map((opt) => (
+                                <button
+                                  key={opt}
+                                  type="button"
+                                  onClick={() => {
+                                    setViewAllSortOption(opt);
+                                    setShowViewAllSortDropdown(false);
+                                  }}
+                                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                                  style={{ fontFamily: '"Futura PT Book"', color: '#000', fontWeight: 400 }}
+                                >
+                                  {viewAllSortOptionToLabel(opt)}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', transform: 'translateX(-2px)' }}>
+                        <button
+                          type="button"
+                          onClick={() => setViewAllDisplayMode('list')}
                           style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            color: viewAllBookingsLayout === 'grid' ? '#EB1C24' : '#808080',
-                            border: 'none',
+                            padding: '4px',
+                            border: viewAllDisplayMode === 'list' ? '1px solid #EB1C24' : '1px solid #ccc',
                             background: 'none',
                             cursor: 'pointer',
-                            borderBottom: viewAllBookingsLayout === 'grid' ? '1px solid #EB1C24' : '1px solid transparent',
-                            paddingBottom: '3px',
+                            borderRadius: 0,
+                            color: viewAllDisplayMode === 'list' ? '#EB1C24' : '#000',
                           }}
+                          aria-label="List view"
                         >
-                          GRID
+                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
+                            <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                            <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                            <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+                          </div>
                         </button>
                         <button
                           type="button"
-                          onClick={() => setViewAllBookingsLayout('list')}
+                          onClick={() => setViewAllDisplayMode('grid')}
                           style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            color: viewAllBookingsLayout === 'list' ? '#EB1C24' : '#808080',
-                            border: 'none',
+                            padding: '4px',
+                            border: viewAllDisplayMode === 'grid' ? '1px solid #EB1C24' : '1px solid #ccc',
                             background: 'none',
                             cursor: 'pointer',
-                            borderBottom: viewAllBookingsLayout === 'list' ? '1px solid #EB1C24' : '1px solid transparent',
-                            paddingBottom: '3px',
+                            borderRadius: 0,
+                            color: viewAllDisplayMode === 'grid' ? '#EB1C24' : '#000',
                           }}
+                          aria-label="Grid view"
                         >
-                          LIST
+                          <div style={{ width: '12px', height: '12px', border: '1px solid currentColor', backgroundColor: 'white', position: 'relative' }}>
+                            <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', transform: 'translateY(-50%)', backgroundColor: 'currentColor' }} />
+                            <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', transform: 'translateX(-50%)', backgroundColor: 'currentColor' }} />
+                          </div>
                         </button>
                       </div>
-                    )}
-                    {viewAllMode === 'bookings' && viewAllBookingsLayout === 'grid' ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {viewAllRows.map((m) => (
-                          <div
-                            key={m.id}
-                            className="cursor-pointer"
-                            style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: 0, padding: '10px' }}
-                            onClick={() => openClientAccount(m)}
-                            role="presentation"
-                          >
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    </div>
+                    {viewAllDisplayMode === 'grid' ? (
+                      <div className="grid grid-cols-3 gap-2" style={{ marginTop: '10px' }}>
+                        {viewAllClientCards.map((clientCard) => {
+                          const latest = clientCard.latestMeeting;
+                          const recentLine =
+                            viewAllMode === 'bookings'
+                              ? `${formatBookingInstallLineForCard(latest)} · ${formatHeaderDate(latest.date)}`
+                              : `${consultTypeLabelForMeeting(latest)} · ${formatHeaderDate(latest.date)}`;
+                          return (
+                            <button
+                              key={clientCard.key}
+                              type="button"
+                              onClick={() => openClientAccount(latest)}
+                              className="w-full"
+                              style={{
+                                background: '#fff',
+                                border: '1px solid #d1d5db',
+                                borderRadius: '0',
+                                padding: '8px 6px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                              }}
+                            >
                               <img
-                                src={meetingClientProfilePhoto(m)}
+                                src={clientCard.profilePhoto}
                                 alt=""
-                                width={44}
-                                height={44}
+                                width={53}
+                                height={53}
                                 style={{
-                                  width: '44px',
-                                  height: '44px',
+                                  width: '53px',
+                                  height: '53px',
                                   objectFit: 'cover',
                                   borderRadius: '9999px',
-                                  border: '1px solid #000000',
-                                  flexShrink: 0,
-                                  marginTop: '4px',
+                                  border: '0.7px solid #000',
+                                  margin: '4px auto 0',
+                                  display: 'block',
                                 }}
                               />
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '9px',
-                                  color: '#808080',
-                                  margin: '3px 0',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                1 BOOKING
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: clientCard.hasActiveMeeting ? '#EB1C24' : '#000', margin: '6px 0 0' }}>
+                                {clientCard.displayName}
                               </p>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '9px',
-                                  color: '#EB1C24',
-                                  margin: '3px 0 0',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                {formatBookingInstallLineForCard(m)}
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '3px 0' }}>
+                                {clientCard.totalCount}{' '}
+                                {viewAllMode === 'bookings'
+                                  ? clientCard.totalCount === 1
+                                    ? 'BOOKING'
+                                    : 'BOOKINGS'
+                                  : clientCard.totalCount === 1
+                                  ? 'CONSULT'
+                                  : 'CONSULTS'}
                               </p>
-                              <p
-                                style={{
-                                  fontFamily: '"Futura PT Book"',
-                                  fontSize: '9px',
-                                  color: '#000000',
-                                  margin: '3px 0 0',
-                                  textAlign: 'center',
-                                }}
-                              >
-                                {formatHeaderDate(m.date)}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
+                              {viewAllMode === 'bookings' ? (
+                                <>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {formatBookingInstallLineForCard(latest)}
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000', margin: '2px 0 0', lineHeight: 1.2 }}>
+                                    {formatHeaderDate(latest.date)}
+                                  </p>
+                                </>
+                              ) : (
+                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', color: '#000', margin: '4px 0 0', lineHeight: 1.2 }}>
+                                  {recentLine}
+                                </p>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-3" style={{ marginTop: '10px' }}>
                         {viewAllRows.map((m) => (
                           <div
                             key={m.id}
                             className="cursor-pointer"
-                            style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
+                            style={{
+                              background: '#fff',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '0',
+                              padding: '10px',
+                            }}
                             onClick={() => openClientAccount(m)}
                             role="presentation"
                           >
-                            <div className="flex items-start gap-2.5">
+                            <div className="flex items-center gap-2.5">
                               <img
                                 src={meetingClientProfilePhoto(m)}
                                 alt=""
-                                width={44}
-                                height={44}
-                                style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #000000', flexShrink: 0 }}
+                                width={62}
+                                height={62}
+                                style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
                               />
                               <div style={{ minWidth: 0, flex: 1 }}>
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
-                                  {meetingClientDisplayNameWithState(m)}
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
+                                  <span style={{ color: '#000' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
+                                  <span style={{ color: tierLabelColor(m) }}>
+                                    · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
+                                  </span>
                                 </p>
-                                {viewAllMode === 'bookings' ? (
+                                {m.category === 'appointment' ? (
                                   <>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                                      {viewAllRowLabel(m)}
+                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
+                                      {formatBookingInstallLineForCard(m)}
                                     </p>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0 0' }}>
-                                      {formatHeaderDate(m.date)} · {m.time}
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        fontSize: '9px',
+                                        color: '#000000',
+                                        margin: '4px 0 0',
+                                        whiteSpace: 'pre-line',
+                                      }}
+                                    >
+                                      {formatBookingAddonsLineForCardDisplay(m)}
+                                    </p>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
+                                      {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
                                     </p>
                                   </>
                                 ) : (
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                                    {m.date} {m.time} — {viewAllRowLabel(m)}
-                                  </p>
+                                  <>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
+                                      {consultTypeLabelForMeeting(m)}
+                                    </p>
+                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
+                                      {formatHeaderDate(m.date)} · {m.time}
+                                    </p>
+                                  </>
                                 )}
                               </div>
                             </div>
@@ -1684,7 +1949,7 @@ export default function AdminMeetingsHub() {
                                     alt=""
                                     width={44}
                                     height={44}
-                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
                                   />
                                 </button>
                                 <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
@@ -1715,11 +1980,12 @@ export default function AdminMeetingsHub() {
                               >
                                 {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
                               </p>
                               {(() => {
                                 const payment = getBookingPaymentStatusForCard(m);
+                                const isRedDueBar = payment.duePassed || payment.dueProgressPct >= 98;
                                 return (
                                   <>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '12px 0 0' }}>
@@ -1730,10 +1996,10 @@ export default function AdminMeetingsHub() {
                                         style={{
                                           width: '100%',
                                           height: '9px',
-                                          backgroundColor: '#E0E0E0',
-                                          borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                          backgroundColor: isRedDueBar ? '#EB1C24' : '#E0E0E0',
+                                          borderRadius: '0',
                                           overflow: 'hidden',
-                                          border: payment.dueProgressPct === 0 ? '1px solid #808080' : 'none',
+                                          border: isRedDueBar ? '1px solid #000000' : '1px solid #808080',
                                           boxSizing: 'border-box',
                                         }}
                                       >
@@ -1741,9 +2007,9 @@ export default function AdminMeetingsHub() {
                                           style={{
                                             width: `${payment.dueProgressPct}%`,
                                             height: '100%',
-                                            backgroundColor: payment.duePassed ? '#EB1C24' : payment.dueProgressPct >= 98 ? '#EB1C24' : '#808080',
+                                            backgroundColor: isRedDueBar ? '#EB1C24' : '#808080',
                                             transition: 'width 0.3s ease',
-                                            borderRadius: payment.dueProgressPct > 0 ? '4px' : '0',
+                                            borderRadius: '0',
                                           }}
                                         />
                                       </div>
@@ -1857,7 +2123,7 @@ export default function AdminMeetingsHub() {
                                         alt=""
                                         width={44}
                                         height={44}
-                                        style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', display: 'block' }}
+                                    style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', display: 'block' }}
                                       />
                                     </button>
                                     <div className="min-w-0 flex-1">
