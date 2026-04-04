@@ -9271,3 +9271,32 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For meetings hub actions that conceptually belong to the B/C card context, prefer in-card panel toggles with shared close-X header over separate overlay popups.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings card color mapping swap (service black, add-ons gray, client red)
+
+**Context:** Continuing this same long chat of admin/meetings UI refinements, the user requested a color swap on the Admin Dashboard MEETINGS card line segments: keep service type black, change add-ons from red to gray, and change client/date text from gray to red.
+
+**Topics covered (entire conversation so far):**
+- Maintained prior chat outcomes already completed in this thread: consults/meetings micro-layout tuning, in-card toggles for B/C action icons, header-strip removals on admin pages, calendar text parity, and branch policy alignment to `preview/mobile`.
+- Located dashboard meetings segmented text rendering in `src/pages/admin/dashboard/page.tsx` where `valueParts` currently controlled mixed colors for service/add-on/client segments.
+- Updated only the MEETINGS card segment colors:
+  - service label (`INSTALL:` via `label`) remains black,
+  - add-ons segment now uses gray,
+  - trailing date/client segment now uses red.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Dashboard meetings line now displays the requested color hierarchy:
+  - **black** service type,
+  - **gray** add-ons text,
+  - **red** client/date text.
+- Change is scoped to Admin Dashboard meetings card rendering only.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - swapped `valueParts` colors for add-ons and trailing client/date segment.
+
+**Conventions:**
+- For dashboard meeting-line color requests, keep service prefix styling independent (`label`) and adjust segment colors via `valueParts` so each text region remains individually controllable.
