@@ -9826,3 +9826,34 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “client-count” summary labels in meetings UI, compute counts from unique client identity keys (email first, normalized display-name fallback), not from raw row totals, so repeated bookings/consults by the same client do not inflate the headline count.
+
+---
+
+## 2026-04-03 — View-all list/grid profile icons increased by 40%; list icons vertically centered in client cards
+
+**Context:** Continuing this same long Admin Meetings conversation (bookings/consults card micro-adjustments, payment due tracker styling updates, overview summary placement, view-all header/list parity, unique-client view-all headers, and new sort + list/grid controls), the user requested icon sizing/alignment refinements scoped only to View All Bookings/Consults panels: increase profile icons in both list and grid views by 40%, and vertically center list-view icons within each client panel card.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All had:
+  - list mode with 44px profile icons and top-aligned content row (`items-start`),
+  - grid mode with 38px profile icons in 3-up client summary cards.
+- Applied a 40% size increase only inside View All renderers:
+  - **List mode:** `44px -> 62px` profile icons.
+  - **Grid mode:** `38px -> 53px` profile icons.
+- Updated list row layout alignment from `items-start` to `items-center` so enlarged icons are vertically centered inside each white/gray bordered client panel.
+- Kept changes scoped to View All list/grid panels only; regular Bookings/Consults tab card icon sizing/positioning remains unchanged.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All profile icons now render noticeably larger in both display modes (+40%).
+- List-mode icon alignment is now vertically centered within its client panel card.
+- No changes were made to non-View-All icon sizing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - grid mode icon dimensions updated from `38x38` to `53x53`
+  - list mode icon dimensions updated from `44x44` to `62x62`
+  - list row wrapper alignment changed from `items-start` to `items-center`
+
+**Conventions:**
+- For View All-only visual tweaks in Admin Meetings, apply sizing/alignment changes strictly within `viewAllMode` render branches so primary B/C tab card geometry stays stable.
