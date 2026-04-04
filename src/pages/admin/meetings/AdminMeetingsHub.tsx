@@ -1244,7 +1244,17 @@ export default function AdminMeetingsHub() {
                                 e.stopPropagation();
                                 setEditMeeting(m);
                               }}
-                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2, marginTop: '4px' }}
+                              style={{
+                                border: 'none',
+                                background: 'none',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                flexShrink: 0,
+                                position: 'relative',
+                                zIndex: 2,
+                                marginTop: '4px',
+                                marginRight: '3px',
+                              }}
                               aria-label="Edit meeting"
                             >
                               <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
