@@ -9553,3 +9553,40 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For admin pages using shared `AdminHeader` global search, wire `externalSearchValue` and `onExternalSearchChange` on-page and filter the page’s primary data lists by the same `q` value so search behavior is consistent across tabs/routes.
+
+---
+
+## 2026-04-03 — Meetings search now matches tab-relevant row content (e.g., “BROW TINT” add-ons) and preserves tab on submit
+
+**Context:** Building on this same long chat’s admin meetings/dashboard workstream (bookings/consults card styling and behavior, payment due tracker logic and autopay support, meetings overview analytics, ticker/card formatting, icon/spacing refinements), the user asked that global admin search be relative to what’s on the current admin page. They gave a concrete meetings example: typing **“brow tint”** in Admin Meetings → Bookings should return appointments with a Brow Tint add-on.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, meetings search was wired only to client identity matching (name/state/email) from header `q`, which did not satisfy content terms like add-on names.
+- Updated Admin Meetings search matching to be **page-content aware** by indexing each meeting row into a normalized search blob:
+  - shared fields: client name/state/email, date/text date, time, type, notes, duration (including formatted HRS/MINS), status
+  - bookings fields: install line, add-ons line/display line, install kind, attached order summary metadata
+  - consult fields: consult type (`WIG ONLY` / `WIG + INSTALL`), hair option, consult notes metadata
+- Switched filtering from single-string client includes to tokenized query matching (`every` token must match), so multi-word terms like `brow tint` resolve as expected.
+- Kept filtering tab-relative in Meetings:
+  - Bookings tab filters appointment rows (and calendar date highlights) using booking-relevant content.
+  - Consults tab filters consult rows using consult-relevant content.
+- Improved `AdminHeader` submit behavior with optional query-param preservation so page state params can survive search submit/clear (used for meetings tab preservation via `globalSearchPreserveKeys` path support).
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Meetings global search now behaves relative to page content, not just client names.
+- Query example `brow tint` in Meetings Bookings now surfaces bookings containing that add-on text.
+- Search logic remains scoped to current tab dataset, so results align with what the user is viewing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - replaced client-only matcher with normalized, token-based page-content matcher
+  - added `normalizeSearchText`, `meetingSearchBlob`, and `meetingMatchesPageSearch`
+  - updated filtered bookings/consults memo lists to use token matcher
+  - kept tab-specific empty states and filtered calendar markers in sync
+- `src/pages/admin/components/AdminHeader.tsx`
+  - added optional `globalSearchPreserveKeys?: string[]`
+  - updated search submit/clear navigation to preserve specified query params
+
+**Conventions:**
+- For admin global search on list pages, match against the page’s visible row semantics (labels/metadata users can read on that tab), not identity fields alone; preserve page-state query params (like active tab) when submitting or clearing search.
