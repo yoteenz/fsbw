@@ -9746,3 +9746,39 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings “view all” panel requests, keep header/content separation explicit with a divider and reuse the same card-shell visual language as Bookings/Consults rows (white panel, gray border, square corners) for consistency.
+
+---
+
+## 2026-04-03 — View-all meetings header now shows unique client counts (e.g., “9 CLIENT BOOKINGS”)
+
+**Context:** Continuing this same long Admin Meetings UI refinement conversation (bookings/consults typography and spacing tweaks, payment due tracker style states, tab-relative search behavior, Overview summary placement updates, and view-all panel structure parity), the user requested replacing the view-all header text with count-based labels like `9 CLIENT BOOKINGS` / `8 CLIENT CONSULTS`, where the count tracks unique clients who booked/consulted (not total booking/consult row count).
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the active view-all headers displayed static labels:
+  - `VIEW ALL BOOKINGS`
+  - `VIEW ALL CONSULTS`
+- Added a unique-client key helper for meetings rows:
+  - prefers normalized client email when available,
+  - falls back to normalized client display name (with state suffix) when email is missing.
+- Computed a `viewAllUniqueClientCount` memo based on the active mode dataset:
+  - bookings mode uses filtered appointment rows,
+  - consults mode uses filtered consult rows,
+  - count is derived via `Set` of unique client keys.
+- Replaced static view-all title text with dynamic singular/plural labels:
+  - `{N} CLIENT BOOKING(S)`
+  - `{N} CLIENT CONSULT(S)`
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all header now reports unique client participation counts, not total row volume.
+- Labels remain mode-specific and grammatically singular/plural based on count.
+- Counts stay in sync with active filters because they use the same filtered datasets as the rendered view-all rows.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingClientUniqKey(...)`
+  - added `viewAllUniqueClientCount` memo
+  - replaced static `activeMainCardTitle` labels with count-driven `CLIENT BOOKINGS/CONSULTS` text
+
+**Conventions:**
+- For “client-count” summary labels in meetings UI, compute counts from unique client identity keys (email first, normalized display-name fallback), not from raw row totals, so repeated bookings/consults by the same client do not inflate the headline count.
