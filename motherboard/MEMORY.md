@@ -7948,6 +7948,44 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Dashboard meetings card segmented color fix (INSTALL black, add-ons red, client/date gray)
+
+**Context:** User reported the admin dashboard `MEETINGS` card coloring was incorrect: everything had been rendered red. Required behavior: `INSTALL:` text black, add-ons text such as `CLEAN LACE (2)` red, and the right-side date/client value (e.g. `5/3 yuki tanaka`) gray.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat that already included consults/meetings flow updates, A/C booking calendar Bohemy month styling hardening, admin clients overview summary cards, and revenue gross-sales relabeling.
+- Located the dashboard meetings row rendering path in `src/pages/admin/dashboard/page.tsx` and shared card renderer in `src/pages/admin/components/StatsCard.tsx`.
+- Replaced prior single-color row behavior with segmented value rendering support:
+  - added `valueColor` support for default value color override,
+  - added `valueParts` support for mixed-color value segments in a single row.
+- Updated `MEETINGS` card row mapping to:
+  - keep `INSTALL:` prefix in black,
+  - render add-on portion red,
+  - keep date/client value on the right in gray.
+- Removed no-longer-needed 24-hour urgency color path for this row and cleaned unused helper to satisfy TS build checks.
+- Verified build success.
+
+**Decisions / outcomes:**
+- Dashboard meetings rows now match requested color segmentation exactly:
+  - `INSTALL:` = black,
+  - add-ons (`CLEAN LACE (2)`) = red,
+  - date + client (`5/3 yuki tanaka`) = gray.
+- No blanket red row styling remains for meetings card service/value lines.
+
+**Changes:**
+- `src/pages/admin/components/StatsCard.tsx`
+  - `StatsItem` extended with `valueColor?` and `valueParts?`,
+  - renderer now supports mixed-color value segments and separate value color override.
+- `src/pages/admin/dashboard/page.tsx`
+  - meetings service label formatting kept in `INSTALL: ...` structure,
+  - added segmented formatter for meetings service value parts (black prefix + red add-ons),
+  - meetings item mapping uses empty label + `valueParts` for left line and gray `valueColor` for right line.
+
+**Conventions:**
+- For admin dashboard rows that require mixed emphasis in one line, use `valueParts` (segmented rendering) rather than forcing one color on the whole row.
+
+---
+
 ## 2026-04-03 — Hardened A/C calendar month text to Bohemy with anti-override fallback
 
 **Context:** User reported the A/C booking calendar month text was still rendering in Futura and asked to ensure no overrides block the intended Bohemy style.

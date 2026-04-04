@@ -6,6 +6,10 @@ interface StatsItem {
   value: string;
   /** Optional Tailwind colour class (e.g. "text-red-500") */
   color?: string;
+  /** Optional Tailwind color class for value text when distinct from label color. */
+  valueColor?: string;
+  /** Optional inline value segments so one row can mix colors (e.g. add-on red + client gray). */
+  valueParts?: Array<{ text: string; color?: string }>;
 }
 
 interface StatsCardData {
@@ -296,10 +300,24 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
                         </>
                       );
                     })()
+                  ) : item.valueParts && item.valueParts.length > 0 ? (
+                    item.valueParts.map((part, partIdx) => (
+                      <span
+                        key={`${idx}-part-${partIdx}`}
+                        className="font-medium font-futura uppercase"
+                        style={{
+                          fontWeight: "515",
+                          color: getColorValue(part.color || item.color),
+                          whiteSpace: 'pre-wrap',
+                        }}
+                      >
+                        {part.text}
+                      </span>
+                    ))
                   ) : (
                     <span
                       className="font-medium font-futura uppercase"
-                      style={{ fontWeight: "515", color: getColorValue(item.color) }}
+                      style={{ fontWeight: "515", color: getColorValue(item.valueColor || item.color) }}
                     >
                       {item.value}
                     </span>
