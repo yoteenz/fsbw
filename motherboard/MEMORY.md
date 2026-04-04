@@ -9153,3 +9153,29 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “bookings-only” layout requests in shared meetings card code, apply offsets in bookings branch containers so text and icon alignment move together while preserving consults branch values.
+
+---
+
+## 2026-04-03 — Corrected icon target on bookings cards: restored profile avatar position and moved right-side panel icon down
+
+**Context:** User reported the previous update moved the wrong icon. They clarified the desired movement was for the right-side bookings panel icon (edit/panel icon), not the left profile avatar.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same conversation’s bookings-tab layout adjustments and autopay implementation work.
+- Re-opened the bookings card branch in `AdminMeetingsHub` and restored the left profile avatar offset to its prior value.
+- Moved only the right-side bookings panel icon (edit icon button) down by adding top offset on that button.
+- Kept the bookings text-column right shift (`marginLeft: '6px'`) intact from the prior request and left consults icon branch unchanged.
+- Verified with `npm run build` and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Left profile avatar no longer carries the unintended downshift.
+- Right-side bookings panel icon is now the element moved down.
+- Consults-tab icon offsets remain unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings profile avatar button: `marginTop: '12px'` -> `marginTop: '8px'` (restored)
+  - bookings right edit icon button: added `marginTop: '4px'` (targeted downshift)
+
+**Conventions:**
+- For icon-position requests, confirm target explicitly as profile avatar (left) vs panel/action icon (right) and only adjust the named control.
