@@ -10,6 +10,7 @@ import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytic
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   appendBrandPromoCode,
   computeExpiresSpanCalendarDays,
@@ -51,8 +52,18 @@ export default function AdminBrand() {
   useRequireAdminPageAccess();
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<typeof BRAND_TABS[number]>('OVERVIEW');
-  const [analyticsSubTab, setAnalyticsSubTab] = useState<typeof ANALYTICS_SUB_TABS[number]>('SUMMARY');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof BRAND_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminBrandActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: BRAND_TABS,
+  });
+  const [analyticsSubTab, setAnalyticsSubTab] = usePersistentQueryState<typeof ANALYTICS_SUB_TABS[number]>({
+    queryKey: 'subTab',
+    storageKey: 'adminBrandAnalyticsSubTab',
+    defaultValue: 'SUMMARY',
+    allowedValues: ANALYTICS_SUB_TABS,
+  });
   const [brandMetrics, setBrandMetrics] = useState(defaultBrandMetrics);
   const localSummary = getSocialAnalyticsSummary();
   const [analyticsSummary, setAnalyticsSummary] = useState(localSummary);

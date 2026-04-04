@@ -4,11 +4,17 @@ import AdminHeader from '../../components/AdminHeader';
 import { isAyoteenzAdminAccount } from '../../../../utils/adminAuth';
 import { formatBirthday } from '../../../../utils/formatBirthday';
 import { getMockClientsForAyoteenz } from '../page';
+import { usePersistentQueryState } from '../../../../hooks/usePersistentQueryState';
 
 export default function AdminClientsAccount() {
   const [searchParams] = useSearchParams();
   const emailParam = searchParams.get('email') || '';
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = usePersistentQueryState<'profile' | 'orders' | 'appointments'>({
+    queryKey: 'tab',
+    storageKey: 'adminClientAccountActiveTab',
+    defaultValue: 'profile',
+    allowedValues: ['profile', 'orders', 'appointments'] as const,
+  });
   const [client, setClient] = useState<any>(null);
   const [orderHistory, setOrderHistory] = useState<any[]>([]);
 

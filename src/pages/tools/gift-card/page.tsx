@@ -12,13 +12,19 @@ import { formatPriceUsd } from '../../../utils/currencyFormat';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 function GiftCardPage() {
   const navigate = useNavigate();
   const location = useLocation();
   
   const [selectedBalance, setSelectedBalance] = useState(10);
-  const [activeTab, setActiveTab] = useState('DETAILS');
+  const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'POLICY' | 'REVIEWS'>({
+    queryKey: 'tab',
+    storageKey: 'giftCardActiveTab',
+    defaultValue: 'DETAILS',
+    allowedValues: ['DETAILS', 'POLICY', 'REVIEWS'] as const,
+  });
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
@@ -277,7 +283,7 @@ function GiftCardPage() {
     setSelectedBalance(balance);
   };
 
-  const handleTabClick = (tab: string) => {
+  const handleTabClick = (tab: 'DETAILS' | 'POLICY' | 'REVIEWS') => {
     setActiveTab(tab);
   };
 

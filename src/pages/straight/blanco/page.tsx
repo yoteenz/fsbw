@@ -13,6 +13,7 @@ import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   marbleStripScrollRowStyle,
   marbleStripCellOuter,
@@ -346,7 +347,12 @@ function BlancoSelection() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScrollPosition, setStartScrollPosition] = useState(0);
-  const [activeTab, setActiveTab] = useState('DETAILS');
+  const [activeTab, setActiveTab] = usePersistentQueryState<'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE/STORAGE' | 'REVIEWS'>({
+    queryKey: 'tab',
+    storageKey: 'productBlancoActiveTab',
+    defaultValue: 'DETAILS',
+    allowedValues: ['DETAILS', 'SHIPPING', 'POLICY', 'CARE/STORAGE', 'REVIEWS'] as const,
+  });
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
@@ -636,7 +642,7 @@ function BlancoSelection() {
     setIsDragging(false);
   };
 
-  const handleTabClick = (tabName: string) => {
+  const handleTabClick = (tabName: 'DETAILS' | 'SHIPPING' | 'POLICY' | 'CARE/STORAGE' | 'REVIEWS') => {
     setActiveTab(tabName);
   };
 
