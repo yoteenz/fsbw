@@ -1602,7 +1602,7 @@ export default function AdminMeetingsHub() {
                               >
                                 {formatBookingAddonsLineForCardDisplay(m)}
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '4px 0 0' }}>
+                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
                                 {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
                               </p>
                               {(() => {
