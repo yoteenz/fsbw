@@ -10414,3 +10414,52 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For regular Bookings-tab sort controls on Admin Meetings, place the dropdown immediately above the client panels when the user asks for it to align with list content rather than the calendar header area.
+
+---
+
+## 2026-04-04 — Bookings calendar white-cell border reverted to gray; A/C shared calendar updated to match Admin Meetings styling
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread immediately after the bookings-tab dropdown move and grouped list-row text refinements, the user requested two more calendar-focused updates: change the black border around white-background cells on the Admin Meetings **Bookings** calendar back to gray, and update the calendars on the appointment/consultation booking pages (“A/C pages”) so they match the Admin Meetings calendar.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary metric text by 4px across the relevant admin pages,
+  - changed white booking-calendar cells to black borders,
+  - refined multiple Admin Meetings View All grid/list/icon/spacing states,
+  - moved the accumulated work onto `preview/mobile` directly and deleted the wrong feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - moved the bookings-tab dropdown below the calendar and tightened grouped list text spacing.
+- In this latest pass, traced the booking/consultation calendars and confirmed they both use the shared inline `BrandExpiresDatePicker` with `monthLabelVariant="adminMeetings"`, while the Admin Meetings page still renders its own inline bookings calendar.
+- Reverted the Admin Meetings bookings-calendar white-cell border from black back to gray by changing the white-cell border branch to `#e5e7eb`.
+- Updated the shared `BrandExpiresDatePicker` so the **adminMeetings** variant used by the booking appointment and consultation pages visually matches the Admin Meetings calendar more closely:
+  - Monday-first calendar layout instead of the old Sunday-first layout,
+  - weekday row changed to single-letter labels (`M T W T F S S`),
+  - admin-meetings-style grid gaps and cell spacing,
+  - enabled dates render with white background and gray border,
+  - disabled dates render with gray background and gray text,
+  - selected dates keep the red border/text treatment,
+  - no extra “today outline” on the admin-meetings variant.
+- Adjusted the shared picker’s inline adminMeetings variant to emit real padded adjacent-month dates (matching the Admin Meetings calendar behavior) and fixed day selection so clicking an adjacent-month cell selects the exact ISO date rather than mis-mapping to the current month.
+- Added indexed weekday keys in the shared picker to avoid duplicate-key warnings with repeated `T` / `S` labels.
+- Rebuilt successfully on `preview/mobile` after both the Admin Meetings inline calendar change and the shared appointment/consultation calendar variant refactor.
+
+**Decisions / outcomes:**
+- Admin Meetings white appointment cells are back to gray borders.
+- Appointment and consultation booking pages now share a calendar presentation that more closely matches the Admin Meetings bookings calendar without changing their booking date-disabling logic.
+- The shared adminMeetings date-picker variant now behaves correctly when adjacent-month dates are shown and selected.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed bookings-calendar white-cell border from black back to gray (`#e5e7eb`)
+- `src/components/BrandExpiresDatePicker.tsx`
+  - added Monday-first adminMeetings grid generation
+  - added single-letter weekday labels for the adminMeetings variant
+  - updated adminMeetings cell styles to match the Admin Meetings calendar more closely
+  - disabled today-outline behavior for the adminMeetings variant
+  - changed day selection to use exact ISO dates for padded adjacent-month cells
+  - changed weekday map keys to indexed keys to avoid duplicate-key warnings
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When appointment/consultation booking pages use `BrandExpiresDatePicker` with `monthLabelVariant="adminMeetings"`, keep that variant visually aligned with the inline Admin Meetings calendar (Monday-first, single-letter weekdays, gray-bordered white active cells, gray disabled cells, red selected state) so calendar styling stays consistent across booking/admin flows.

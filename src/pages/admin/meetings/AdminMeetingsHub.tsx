@@ -2084,7 +2084,7 @@ export default function AdminMeetingsHub() {
                               fontFamily: '"Futura PT Medium"',
                               fontSize: '10px',
                               padding: '6px 0',
-                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : hasWhiteCalendarCell ? '1px solid #000' : '1px solid #e5e7eb',
+                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : hasWhiteCalendarCell ? '1px solid #e5e7eb' : '1px solid #e5e7eb',
                               borderRadius: '0',
                               background: hasTravelBlock ? '#f3f4f6' : hasAppt ? '#fff' : '#f3f4f6',
                               color: hasTravelBlock ? '#9ca3af' : hasAppt ? '#EB1C24' : '#9ca3af',

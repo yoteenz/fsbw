@@ -25,6 +25,13 @@ const MONTH_LABELS = [
 ] as const;
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+const ADMIN_MEETINGS_WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
+
+type CalendarGridCell = {
+  day: number | null;
+  iso?: string;
+  inMonth?: boolean;
+};
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0');
@@ -53,6 +60,11 @@ function daysInMonth(year: number, monthIndex: number): number {
 
 function startWeekdaySun0(year: number, monthIndex: number): number {
   return new Date(year, monthIndex, 1).getDay();
+}
+
+function startWeekdayMonday0(year: number, monthIndex: number): number {
+  const sun0 = new Date(year, monthIndex, 1).getDay();
+  return sun0 === 0 ? 6 : sun0 - 1;
 }
 
 function formatTriggerLabel(iso: string): string {
@@ -123,20 +135,39 @@ export default function BrandExpiresDatePicker({
     };
   }, [open]);
 
-  const grid = useMemo(() => {
+  const grid = useMemo<CalendarGridCell[]>(() => {
+    if (monthLabelVariant === 'adminMeetings') {
+      const first = startWeekdayMonday0(viewYear, viewMonth);
+      const cur = new Date(viewYear, viewMonth, 1);
+      cur.setDate(cur.getDate() - first);
+      const cells: CalendarGridCell[] = [];
+      for (let i = 0; i < 42; i++) {
+        const y = cur.getFullYear();
+        const m = cur.getMonth();
+        const d = cur.getDate();
+        cells.push({
+          day: d,
+          iso: toIsoDateLocal(y, m, d),
+          inMonth: y === viewYear && m === viewMonth,
+        });
+        cur.setDate(cur.getDate() + 1);
+      }
+      return cells;
+    }
+
     const first = startWeekdaySun0(viewYear, viewMonth);
     const dim = daysInMonth(viewYear, viewMonth);
-    const cells: Array<{ day: number | null }> = [];
+    const cells: CalendarGridCell[] = [];
     for (let i = 0; i < first; i++) cells.push({ day: null });
-    for (let d = 1; d <= dim; d++) cells.push({ day: d });
+    for (let d = 1; d <= dim; d++) cells.push({ day: d, iso: toIsoDateLocal(viewYear, viewMonth, d), inMonth: true });
     while (cells.length % 7 !== 0) cells.push({ day: null });
     while (cells.length < 42) cells.push({ day: null });
     return cells;
-  }, [viewYear, viewMonth]);
+  }, [monthLabelVariant, viewYear, viewMonth]);
 
   const selectDay = useCallback(
-    (day: number) => {
-      onChange(toIsoDateLocal(viewYear, viewMonth, day));
+    (dayOrIso: number | string) => {
+      onChange(typeof dayOrIso === 'string' ? dayOrIso : toIsoDateLocal(viewYear, viewMonth, dayOrIso));
       setOpen(false);
     },
     [onChange, viewYear, viewMonth]
@@ -167,6 +198,9 @@ export default function BrandExpiresDatePicker({
   const todayD = now.getDate();
 
   const selectedParsed = parseIsoLocal(value.trim());
+  const selectedIso = value.trim();
+  const isAdminMeetingsVariant = monthLabelVariant === 'adminMeetings';
+  const weekdayLabels = isAdminMeetingsVariant ? ADMIN_MEETINGS_WEEKDAYS : WEEKDAYS;
 
   const label = formatTriggerLabel(value);
 
@@ -288,17 +322,16 @@ export default function BrandExpiresDatePicker({
         </div>
 
         <div
-          className="grid grid-cols-7 gap-y-1 gap-x-0 mb-2"
+          className={isAdminMeetingsVariant ? 'grid grid-cols-7 gap-1 text-center mb-1' : 'grid grid-cols-7 gap-y-1 gap-x-0 mb-2'}
           style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif' }}
         >
-          {WEEKDAYS.map((d) => (
+          {weekdayLabels.map((d, idx) => (
             <div
-              key={d}
-              className="text-center"
+              key={`${d}-${idx}`}
               style={{
-                fontSize: '9px',
+                fontSize: isAdminMeetingsVariant ? '8px' : '9px',
                 color: '#808080',
-                padding: '4px 0',
+                padding: isAdminMeetingsVariant ? '0' : '4px 0',
                 textTransform: 'uppercase',
               }}
             >
@@ -307,44 +340,43 @@ export default function BrandExpiresDatePicker({
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-y-1 gap-x-0">
+        <div className={isAdminMeetingsVariant ? 'grid grid-cols-7 gap-1' : 'grid grid-cols-7 gap-y-1 gap-x-0'}>
           {grid.map((cell, idx) => {
             const d = cell.day;
             if (d == null) {
-              return <div key={idx} className="aspect-square" />;
+              return <div key={idx} className={isAdminMeetingsVariant ? '' : 'aspect-square'} />;
             }
-            const iso = toIsoDateLocal(viewYear, viewMonth, d);
+            const iso = cell.iso ?? toIsoDateLocal(viewYear, viewMonth, d);
             const isDisabled = isDateDisabled?.(iso) ?? false;
-            const isSelected =
-              !isDisabled &&
-              selectedParsed != null &&
-              selectedParsed.y === viewYear &&
-              selectedParsed.m === viewMonth &&
-              selectedParsed.d === d;
+            const isSelected = !isDisabled && selectedIso === iso;
             const isToday = viewYear === todayY && viewMonth === todayM && d === todayD;
             const showTodayOutline =
-              !isDisabled && isToday && (selectedParsed == null || isSelected);
+              !isAdminMeetingsVariant && !isDisabled && isToday && (selectedParsed == null || isSelected);
             return (
               <button
                 key={iso}
                 type="button"
-                onClick={isDisabled ? undefined : () => selectDay(d)}
+                onClick={isDisabled ? undefined : () => selectDay(iso)}
                 disabled={isDisabled}
-                className="aspect-square flex items-center justify-center cursor-pointer"
+                className={isAdminMeetingsVariant ? '' : 'aspect-square flex items-center justify-center cursor-pointer'}
                 style={{
                   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                  fontSize: '11px',
-                  fontWeight: isSelected ? 500 : 400,
+                  fontSize: isAdminMeetingsVariant ? '10px' : '11px',
+                  fontWeight: isAdminMeetingsVariant ? 500 : isSelected ? 500 : 400,
                   boxSizing: 'border-box',
                   borderStyle: 'solid',
-                  borderWidth: isSelected || showTodayOutline ? '1.3px' : '1px',
-                  borderColor: isSelected || showTodayOutline ? '#EB1C24' : 'transparent',
-                  color: isDisabled ? '#B8B8B8' : isSelected ? '#EB1C24' : '#000000',
-                  backgroundColor: isSelected ? '#FFFFFF' : 'transparent',
-                  minHeight: inline ? '32px' : '36px',
-                  padding: 0,
+                  borderWidth: isAdminMeetingsVariant ? '1px' : isSelected || showTodayOutline ? '1.3px' : '1px',
+                  borderColor: isSelected ? '#EB1C24' : isAdminMeetingsVariant ? '#e5e7eb' : showTodayOutline ? '#EB1C24' : 'transparent',
+                  color: isDisabled ? '#9ca3af' : isSelected ? '#EB1C24' : '#000000',
+                  backgroundColor: isAdminMeetingsVariant ? (isDisabled ? '#f3f4f6' : '#fff') : isSelected ? '#FFFFFF' : 'transparent',
+                  minHeight: isAdminMeetingsVariant ? undefined : inline ? '32px' : '36px',
+                  padding: isAdminMeetingsVariant ? '6px 0' : 0,
+                  borderRadius: 0,
                   cursor: isDisabled ? 'not-allowed' : 'pointer',
                   opacity: isDisabled ? 0.65 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 {d}
