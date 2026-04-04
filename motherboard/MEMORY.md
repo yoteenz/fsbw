@@ -9749,6 +9749,50 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — View-all bookings/consults adds left sort dropdown + right list/grid toggle; grid now shows grouped 3-up client summaries
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults card refinements, payment-due tracker styling, overview summary placement, view-all header/list panel alignment, and unique-client header counts), the user requested richer controls above View All lists: a client-overview style sort dropdown on the left and an admin-dashboard style list/grid toggle on the right, scoped to **View All Bookings** and **View All Consults** only. They also defined grid layout requirements: 3 clients per row with profile image first, name beneath, total bookings/consults count beneath that, and most-recent booking/consult line at the bottom; list view should keep current appearance.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All panels already had:
+  - dynamic header text (`X CLIENT BOOKINGS/CONSULTS`) based on unique client counts,
+  - list rows restyled to match B/C card shells (white background + gray border).
+- Added view-all-only UI state and controls:
+  - **Sort dropdown** (left) using the same interaction pattern as Client Overview (`Most recent`, `A to Z`, `Z to A`).
+  - **List/Grid toggle** (right) using the same icon language as admin dashboard/RecentActivity style.
+- Implemented client-grouped data model for View All:
+  - grouped meetings by unique client key (email-first fallback to normalized name/state),
+  - tracked each client’s total count in the active mode,
+  - identified each client’s most recent meeting for latest-line display and profile/open action.
+- Implemented grid mode output (3 per row):
+  - top: profile icon,
+  - second line: client name,
+  - third line: total `BOOKINGS`/`CONSULTS` count,
+  - fourth line: most recent booking/consult summary.
+- Preserved list mode behavior and appearance as requested, while applying selected sort order to both list rows and grid cards.
+- Added state-reset behavior when opening/closing/changing View All mode to avoid stale sort dropdown or view mode.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All panels now support both sorting and list/grid display controls in the exact left/right positions requested.
+- Grid view is client-grouped and 3-column, with the required line order/content hierarchy.
+- List view continues to render in the current card-list style, unchanged in structure.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added view-all sort options + label helper (`Most recent`, `A to Z`, `Z to A`)
+  - added view-all control state (`showViewAllSortDropdown`, `viewAllSortOption`, `viewAllDisplayMode`)
+  - added grouped client summary derivation for grid mode
+  - added sort application for both row-level list and grouped grid data
+  - added controls row (left sort dropdown, right list/grid icon toggles)
+  - added grid-mode renderer (`grid-cols-3`) with profile/name/count/most-recent lines
+  - preserved existing list renderer for view-all list mode
+
+**Conventions:**
+- For View All client panels in Admin Meetings, treat list mode as the stable “detailed card” baseline and layer grid mode as a grouped client summary view (3-up) with explicit line hierarchy: identity → total count → most recent activity.
+
+---
+
 ## 2026-04-03 — View-all meetings header now shows unique client counts (e.g., “9 CLIENT BOOKINGS”)
 
 **Context:** Continuing this same long Admin Meetings UI refinement conversation (bookings/consults typography and spacing tweaks, payment due tracker style states, tab-relative search behavior, Overview summary placement updates, and view-all panel structure parity), the user requested replacing the view-all header text with count-based labels like `9 CLIENT BOOKINGS` / `8 CLIENT CONSULTS`, where the count tracks unique clients who booked/consulted (not total booking/consult row count).
