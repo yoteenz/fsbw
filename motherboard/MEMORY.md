@@ -9916,6 +9916,44 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Meetings profile icon borders switched to black (View All + B/C tabs) and View All toggle now persists after refresh
+
+**Context:** Continuing this same Admin Meetings UI thread (view-all controls, client-count headers, icon sizing/alignment, stray text cleanup, and micro-positioning passes), the user requested two fixes:
+- change profile-icon ring borders from gray to black on both View All toggle panels and the regular Bookings/Consults tab cards, and
+- keep the View All toggle open after page refresh (it was incorrectly collapsing back to the meetings page).
+
+**Topics covered (entire conversation so far):**
+- Located all meetings profile image render points in `AdminMeetingsHub`:
+  - View All grid cards,
+  - View All list cards,
+  - Bookings tab client cards,
+  - Consults tab client cards.
+- Updated profile-photo border color in those image style blocks from gray (`#d1d5db`) to black (`#000`) to match requested ring treatment.
+- Implemented refresh-safe View All persistence in meetings route state handling:
+  - initialize `mainTab` and `viewAllMode` from `viewAll` query param when present,
+  - fallback to `sessionStorage` (`adminMeetingsViewAllMode`) when URL lacks `viewAll`,
+  - sync `viewAllMode` back into URL (`?viewAll=bookings|consults`) with `replace` navigation,
+  - persist/clear `sessionStorage` as toggle opens/closes.
+- Updated `AdminHeader` usage on meetings page to preserve both `tab` and `viewAll` params during search submits (`globalSearchPreserveKeys={['tab','viewAll']}`), preventing accidental loss of open toggle state when interacting with search.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Profile-icon ring borders now render black in the requested meetings contexts (View All + B/C tab cards).
+- Refreshing while View All is open now restores the same open toggle mode instead of collapsing to base meetings state.
+- Toggle state persistence is resilient across search interactions due to query-param preservation and session fallback.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - switched relevant profile image border colors to `#000`
+  - added URL + sessionStorage synchronization for `viewAllMode`
+  - updated initial tab resolution to honor `viewAll` state on load
+  - passed `globalSearchPreserveKeys={['tab', 'viewAll']}` to `AdminHeader`
+
+**Conventions:**
+- For meetings subview toggles expected to survive refresh, keep UI state mirrored in URL query params and optionally mirrored to sessionStorage as a fallback so the same open context is restored on reload.
+
+---
+
 ## 2026-04-03 — View-all controls nudged: sort dropdown +2px right, list/grid toggle group -2px left
 
 **Context:** Continuing this same Admin Meetings view-all refinement sequence (header cleanup, unique-client count titles, sort + list/grid controls, and card/icon layout tweaks), the user requested a precise micro-position adjustment for the controls row above view-all client panels.
