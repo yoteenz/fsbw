@@ -663,6 +663,23 @@ export default function AdminDashboard() {
       client_name: m.client || '',
     }));
 
+  const recentMeetingsForCard = mergedMeetingsForDashboard
+    .filter((m) => {
+      const status = String(m.status || '').toLowerCase();
+      return status !== 'canceled' && status !== 'cancelled';
+    })
+    .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time))
+    .slice(0, 5)
+    .map((m) => ({
+      date: m.date,
+      appointment_date: toIsoMeetingDateTime(m.date, m.time),
+      service_name:
+        m.category === 'consultation'
+          ? String(m.type || 'CONSULT').trim() || 'CONSULT'
+          : formatDashboardMeetingServiceLabel(m),
+      client_name: m.client || '',
+    }));
+
   const endOfThisWeekIso = (() => {
     const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
@@ -739,10 +756,10 @@ export default function AdminDashboard() {
     {
       title: 'MEETINGS',
       count: completedMeetingsTotal,
-      items: upcomingBookingsForCard.map((booking) => {
+      items: recentMeetingsForCard.map((booking) => {
         const rawService = String(booking.service_name || '').toUpperCase().trim();
         const colonIdx = rawService.indexOf(':');
-        const installLabel = colonIdx >= 0 ? rawService.slice(0, colonIdx).trim() : 'INSTALL';
+        const installLabel = colonIdx >= 0 ? rawService.slice(0, colonIdx).trim() : (rawService || 'INSTALL');
         const addonsText = colonIdx >= 0 ? rawService.slice(colonIdx + 1).trim() : '';
         const dateAndClient = `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`.trim();
         return {
@@ -951,7 +968,7 @@ export default function AdminDashboard() {
                   key={index}
                   data={stat}
                   onCardClick={handleCardClick}
-                  itemsMaxHeightPx={DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}
+                  itemsMaxHeightPx={stat.title === 'MEETINGS' ? undefined : DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}
                 />
               ))}
             </div>
