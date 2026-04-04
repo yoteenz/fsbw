@@ -1498,7 +1498,23 @@ export default function AdminMeetingsHub() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-center gap-6">
+                  <div
+                    style={{
+                      overflowX: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none',
+                    }}
+                  >
+                    <div
+                      className="flex items-center gap-6"
+                      style={{
+                        width: 'max-content',
+                        minWidth: '100%',
+                        justifyContent: 'center',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                     <button
                       type="button"
                       onClick={() => setMainTab('overview')}
@@ -1551,6 +1567,7 @@ export default function AdminMeetingsHub() {
                     >
                       CONSULTS
                     </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -2443,6 +2460,8 @@ export default function AdminMeetingsHub() {
                     fontFamily: '"Futura PT Medium"',
                     backgroundColor: '#FFFFFF',
                     whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   VIEW ALL BOOKINGS

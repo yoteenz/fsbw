@@ -10588,3 +10588,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For grouped View All Meetings list rows, keep date/time color treatment independently controllable by rendering date and time as separate text segments rather than as one combined string.
+
+---
+
+## 2026-04-04 — Meetings consult-tab / View All `TS` artifact traced to compact label containers; top tab row converted to horizontal scroll
+
+**Context:** Continuing the same `preview/mobile` Admin Meetings thread after multiple passes on the recurring visible `TS` / `TSTS` artifact, the user explicitly pointed out that the issue was still visible on the Meetings **Consults** tab and the **View All** toggle and asked for the root cause to be triangulated rather than treated as a generic string search problem.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - moved all intended work directly onto `preview/mobile`,
+  - increased admin summary metric text by 4px,
+  - changed booking-calendar white-cell borders to black and later back to gray,
+  - grouped View All list mode by client with inner scroll,
+  - moved bookings dropdown below the calendar,
+  - aligned A/C booking calendars to the Admin Meetings visual style,
+  - repeatedly searched for literal `TSTS` / `TS` tokens in source and did **not** find a hardcoded placeholder string in the active meetings code path,
+  - added multiple no-wrap/ellipsis rules and fixed list-view panel heights.
+- In this latest pass, re-inspected the exact compact labels still likely to render the visible orphan tail:
+  - the top Meetings tab row including `CONSULTS`,
+  - the bottom `VIEW ALL CONSULTS` / `VIEW ALL BOOKINGS` toggle buttons,
+  - the active View All header title.
+- Based on that inspection, treated the recurring artifact as a **container-level clipping problem** rather than a literal placeholder token:
+  - compact labels were previously rendered in tight, center-aligned containers where clipping/ellipsis could leave the tail of `CONSULTS` visible as `TS`,
+  - simply adding `whiteSpace: 'nowrap'` to individual buttons was not strong enough when the parent row itself could still constrain content badly.
+- Reworked the top Meetings tab controls so the tab row becomes a small horizontal scroller with `width: max-content` and `minWidth: 100%`, preventing the `CONSULTS` tab label from being crushed into a clipped tail inside a fixed-width center layout.
+- Preserved one-line overflow protection on the bottom View All toggle buttons and active header title so the same compact-label failure mode is less likely there as well.
+- Rebuilt successfully on `preview/mobile` after this more direct container-level fix.
+
+**Decisions / outcomes:**
+- The recurring visible `TS` / `TSTS` artifact is being treated as a **compact label container/layout issue**, not as a missing literal token removal.
+- The top Meetings tab row now uses a safer layout that allows the full `CONSULTS` label to remain intact instead of being clipped into its tail.
+- This pass targeted the most likely remaining root-cause container rather than only layering more text-level no-wrap rules.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - converted the top Meetings tab row to a width-safe horizontal scroller / `max-content` container
+  - retained one-line protection on compact consult/view-all label paths
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a recurring phantom `TS` / `TSTS` fragment persists in Admin Meetings after literal-string searches fail, investigate the **specific compact label container layout** (tab rows, toggle bars, clipped headers) and fix the parent container geometry first rather than only adding more no-wrap rules to child text nodes.
