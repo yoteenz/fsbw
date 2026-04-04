@@ -6,6 +6,7 @@ import { getAdminPending } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -13,7 +14,12 @@ export default function AdminPending() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('OVERVIEW');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof PENDING_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminPendingActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: PENDING_TABS,
+  });
   const [pendingReviews, setPendingReviews] = useState(12);
   const [orderForms, setOrderForms] = useState(8);
   const [pendingItems, setPendingItems] = useState<{ label: string; value: string }[]>([]);

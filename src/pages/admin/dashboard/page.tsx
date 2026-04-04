@@ -21,6 +21,7 @@ import {
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -226,7 +227,12 @@ const mockAPI = {
 export default function AdminDashboard() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [notificationViewMode, setNotificationViewMode] = useState('list');
+  const [notificationViewMode, setNotificationViewMode] = usePersistentQueryState({
+    queryKey: 'notificationsView',
+    storageKey: 'adminDashboardNotificationsView',
+    defaultValue: 'list' as const,
+    allowedValues: ['list', 'grouped'] as const,
+  });
   const [dashboardData, setDashboardData] = useState<{
     stats: DashboardStats;
     clients: Client[];
@@ -1122,7 +1128,11 @@ export default function AdminDashboard() {
             </div>
             
             <div className="mt-6">
-              <RecentActivity onViewModeChange={setNotificationViewMode} />
+              <RecentActivity
+                onViewModeChange={(mode) => {
+                  setNotificationViewMode(mode === 'grouped' ? 'grouped' : 'list');
+                }}
+              />
             </div>
             
             {notificationViewMode === 'list' && (

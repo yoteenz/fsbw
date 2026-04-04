@@ -7,6 +7,7 @@ import { getAdminAnalytics } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const ANALYTICS_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
@@ -40,7 +41,12 @@ export default function AdminAnalytics() {
   useRequireAdminPageAccess();
   const localSummary = getSocialAnalyticsSummary();
   const [summary, setSummary] = useState(localSummary);
-  const [activeTab, setActiveTab] = useState<typeof ANALYTICS_TABS[number]>('SUMMARY');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof ANALYTICS_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminAnalyticsActiveTab',
+    defaultValue: 'SUMMARY',
+    allowedValues: ANALYTICS_TABS,
+  });
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
