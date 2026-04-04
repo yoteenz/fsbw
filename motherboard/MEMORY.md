@@ -10375,3 +10375,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For View All Meetings list mode when the user wants grouped client panels, group rows by unique client key, sort meetings within each group by recency, and use an inner scroll region rather than creating a separate outer card per meeting row.
+
+---
+
+## 2026-04-04 — Preview/mobile bookings dropdown moved below calendar; grouped list rows drop duration and tighten name spacing
+
+**Context:** Continuing the same long Admin Meetings / preview-mobile correction chat immediately after moving the accumulated work onto `preview/mobile`, the user requested three more Meetings tweaks on the live preview branch: move the **Most recent** dropdown on the regular **Bookings** tab so it sits above the client panels instead of above the calendar, remove the duration from the grouped **View All** list-view meeting rows, and reduce the spacing below the grouped client-name line by 3px.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary-panel metric text by 4px across the affected admin pages,
+  - changed white booking-calendar cells to black borders,
+  - refined multiple View All Meetings grid/list/icon/spacing states,
+  - converted View All list mode to grouped-by-client panels with inner scroll,
+  - corrected mistaken branch targeting by moving the final work onto `preview/mobile` and deleting the wrong feature branch.
+- In this latest pass, stayed on **`preview/mobile`** and adjusted only `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Moved the regular **Bookings** tab sort dropdown from above the month calendar block to directly above the bookings client panels, leaving the calendar uninterrupted.
+- Updated grouped View All list row copy to remove duration from the red schedule text:
+  - bookings now read like `RE-INSTALL:MON, 6/29,2026 · 5:00 PM`
+  - consults now read like `WIG + INSTALL:TUE, 6/30,2026 · 12:00 PM`
+- Reduced the spacing below the grouped client-name header line (`GRACE INGRAM (GA) · PREMIUM`) by changing the inner list block top margin from `8px` to `5px`.
+- Removed the inter-span gap in grouped list rows so the service label and schedule text visually run together after the colon, matching the user’s exact examples.
+- Rebuilt successfully on `preview/mobile`, preserving all prior fixes while applying this latest placement/spacing/text-format pass.
+
+**Decisions / outcomes:**
+- The **Bookings** tab dropdown is now positioned relative to the bookings client list, not the calendar.
+- Grouped View All list rows now show only service label + date/time (no duration) as requested.
+- The grouped client header-to-rows spacing is 3px tighter than before.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed `formatViewAllListMeetingSchedule(...)` to remove duration
+  - moved bookings-tab `renderMeetingsSortDropdown()` to just above bookings client panels
+  - reduced grouped list inner block top margin from `8px` to `5px`
+  - reduced grouped row span gap from `3px` to `0px`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For regular Bookings-tab sort controls on Admin Meetings, place the dropdown immediately above the client panels when the user asks for it to align with list content rather than the calendar header area.

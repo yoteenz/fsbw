@@ -432,7 +432,7 @@ function viewAllListMeetingLabel(m: AdminMeeting): string {
 }
 
 function formatViewAllListMeetingSchedule(m: AdminMeeting): string {
-  return `${formatViewAllListMeetingDate(m.date)} · ${m.time} · ${formatMinutesAsHoursAndMinutes(m.duration)}`;
+  return `${formatViewAllListMeetingDate(m.date)} · ${m.time}`;
 }
 
 function meetingMatchesPageSearch(m: AdminMeeting, searchTokens: string[]): boolean {
@@ -1801,7 +1801,7 @@ export default function AdminMeetingsHub() {
                                 </button>
                                 <div
                                   style={{
-                                    marginTop: '8px',
+                                    marginTop: '5px',
                                     maxHeight: '44px',
                                     overflowY: clientGroup.meetings.length > 3 ? 'auto' : 'hidden',
                                     paddingRight: clientGroup.meetings.length > 3 ? '4px' : 0,
@@ -1811,7 +1811,7 @@ export default function AdminMeetingsHub() {
                                   }}
                                 >
                                   {clientGroup.meetings.map((meeting) => (
-                                    <div key={meeting.id} style={{ display: 'flex', alignItems: 'baseline', gap: '3px', minWidth: 0, lineHeight: '12px' }}>
+                                    <div key={meeting.id} style={{ display: 'flex', alignItems: 'baseline', gap: '0px', minWidth: 0, lineHeight: '12px' }}>
                                       <span
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
@@ -2012,9 +2012,6 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
-                    <div className="flex items-center justify-start" style={{ marginTop: '8px', marginBottom: '8px', position: 'relative', zIndex: 3 }}>
-                      {renderMeetingsSortDropdown()}
-                    </div>
                     <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
                       <button
                         type="button"
@@ -2116,6 +2113,9 @@ export default function AdminMeetingsHub() {
                       </p>
                     ) : (
                       <div style={{ marginTop: '6px' }}>
+                        <div className="flex items-center justify-start" style={{ marginTop: '0', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+                          {renderMeetingsSortDropdown()}
+                        </div>
                         {sortedAppointmentsList.map((m) => (
                           <div
                             key={m.id}
