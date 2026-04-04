@@ -1745,10 +1745,20 @@ export default function AdminMeetingsHub() {
                                     e.stopPropagation();
                                     setQuoteMeeting(m);
                                   }}
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px', flexShrink: 0, position: 'relative', zIndex: 2 }}
+                                  style={{
+                                    border: 'none',
+                                    background: 'none',
+                                    cursor: 'pointer',
+                                    padding: '4px',
+                                    flexShrink: 0,
+                                    position: 'relative',
+                                    zIndex: 2,
+                                    marginTop: '4px',
+                                    marginRight: '3px',
+                                  }}
                                   aria-label="Send quote"
                                 >
-                                  <img src="/assets/quote-icon-consult.svg" alt="" width={26} height={26} />
+                                  <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
                                 </button>
                               </div>
                             </div>
