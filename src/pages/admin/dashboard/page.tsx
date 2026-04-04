@@ -552,6 +552,31 @@ export default function AdminDashboard() {
     return `INSTALL: ${dedupedAddons[0]} (${dedupedAddons.length - 1})`;
   };
 
+  const formatDashboardConsultServiceLabel = (meeting: AdminMeeting): string => {
+    const meta = (meeting.metadata && typeof meeting.metadata === 'object'
+      ? meeting.metadata
+      : {}) as Record<string, unknown>;
+    const candidates = [
+      meta.hairOption,
+      meta.bookingHairOption,
+      meta.consultHairOption,
+      meeting.type,
+      meeting.notes,
+    ];
+    for (const candidate of candidates) {
+      const upper = String(candidate || '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, ' ');
+      if (!upper) continue;
+      if (upper.includes('WIG + INSTALL') || upper.includes('WIG+INSTALL') || upper.includes('INSTALL')) {
+        return 'CONSULT: WIG + INSTALL';
+      }
+      if (upper.includes('WIG ONLY')) return 'CONSULT: WIG ONLY';
+    }
+    return 'CONSULT: WIG ONLY';
+  };
+
   const toIsoMeetingDateTime = (date: string, time: string): string => {
     const raw = String(time || '').trim();
     const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -675,7 +700,7 @@ export default function AdminDashboard() {
       appointment_date: toIsoMeetingDateTime(m.date, m.time),
       service_name:
         m.category === 'consultation'
-          ? String(m.type || 'CONSULT').trim() || 'CONSULT'
+          ? formatDashboardConsultServiceLabel(m)
           : formatDashboardMeetingServiceLabel(m),
       client_name: m.client || '',
     }));
