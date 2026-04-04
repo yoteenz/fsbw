@@ -7766,6 +7766,72 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-03 — Synced preview/mobile to master with all merged updates
+
+**Context:** After prior merges of all outstanding feature branches into `master`, user requested: "push everything to the preview branch so it has the same updates as master branch."
+
+**Topics covered (entire conversation so far):**
+- Verified branch divergence between `origin/preview/mobile` and `origin/master` and confirmed preview was behind master by multiple commits.
+- Checked out `preview/mobile`, updated it from remote, and merged `origin/master` into `preview/mobile` using a non-fast-forward merge commit to preserve branch history.
+- Pushed updated `preview/mobile` to origin.
+- Verified post-push parity by comparing refs and content:
+  - commit graph difference now only reflects preview’s merge commit topology
+  - file/content diff between `origin/master` and `origin/preview/mobile` is empty.
+
+**Decisions / outcomes:**
+- `preview/mobile` now contains all code updates present in `master`.
+- Preview and master are content-equivalent after sync.
+
+**Changes:**
+- Git operations:
+  - `git checkout preview/mobile`
+  - `git merge --no-ff origin/master`
+  - `git push -u origin preview/mobile`
+  - verification via `git diff --name-only origin/master..origin/preview/mobile` (no output)
+
+**Conventions:**
+- To keep preview current with production-ready changes, periodically merge `master` into `preview/mobile` and verify parity with a direct branch diff.
+
+---
+
+## 2026-04-03 — Consults tab visual polish follow-up (icon/height/text/photo/notes adjustments)
+
+**Context:** After prior consults-tab updates were pushed to `preview/mobile`, user reported remaining visual mismatches: consult SVG icon still looked unchanged, panel height still appeared unchanged, and requested specific consult-card positioning/style tweaks.
+
+**Topics covered (entire conversation so far):**
+- Previously completed and pushed consults flow/UI work (meetings↔clients return context, card spacing, icon switch) and merged onto `preview/mobile`.
+- User requested a follow-up pass with exact visual deltas:
+  - ensure consult icon change is visible from `public/assets`,
+  - increase panel height,
+  - move client identity line (`NAME (STATE) · PREMIUM`) down 2px,
+  - move inspo photo row right by 2px and increase photo size by 25%,
+  - change gray notes text to Futura Medium.
+- Verified `AdminMeetingsHub` was already targeting `/assets/quote-icon-consult.svg`, then updated the SVG content itself so the icon appearance is visibly different while keeping same path.
+- Updated consults card styles in `AdminMeetingsHub` for requested offsets/sizing/typography and made totals banner height explicit (`height`) to reduce perceived override risk.
+- Committed and pushed to `preview/mobile`; handled remote divergence with pull/merge and push retry.
+
+**Decisions / outcomes:**
+- Consult quote icon now points to the same file path but with refreshed SVG artwork, so the visual change is explicit.
+- TOTAL BOOKED / TOTAL CONSULTED panels now use explicit `height: 88px` sizing (instead of previous `minHeight`) to improve consistency when style inheritance/layout constraints occur.
+- Consult client identity line is shifted down 2px.
+- Inspo photo row is shifted right 2px and thumbnails are increased from 40px to 50px (+25%).
+- Additional notes text now uses `Futura PT Medium` while retaining gray color/size.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - totals cards: `minHeight` → `height: 88px`
+  - consult identity line: `transform: translateY(2px)`
+  - inspo strip: `marginLeft: 2px`
+  - inspo thumbs: `40x40` → `50x50`
+  - notes line: font family `Futura PT Medium`
+- `public/assets/quote-icon-consult.svg`
+  - updated path artwork to a visibly distinct consult quote icon while preserving file name/path.
+
+**Conventions:**
+- For visual-only feedback loops on admin meetings cards, prefer explicit dimensions/offsets in inline styles when the user reports that prior `minHeight`/asset-path swaps appear unchanged in preview.
+
+---
+
 ## 2026-04-03 — Completed full branch-to-master merge sweep (remaining missing branches merged)
 
 **Context:** User reported that `master` still did not include all expected branch changes (specifically citing missing rounded client profile photos in client-details-adjacent flows) and clarified the expectation to merge all five related branches into `master`, not only the previously merged bookings-tab refinements branch.
@@ -7803,3 +7869,1337 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For “merge all branches” requests, verify with `git branch -r --no-merged origin/master` before and after merges, and resolve MEMORY conflicts by preserving both append-only histories.
+
+---
+
+## 2026-04-03 — Bookings-tab updates delivered; deployment visibility clarified; preview-branch push policy set
+
+**Context:** User requested a bookings-tab update pass in Admin Meetings (month label font/text, card typography, icon swap, add-on wrapping), then reported they were not seeing deployments, and finally clarified that all pushes should go to the `preview/mobile` branch and asked to record that in motherboard memory.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and implemented the bookings-tab UI changes in `AdminMeetingsHub`:
+  - calendar month label now uses Bohemy and shows month only (year removed),
+  - client name/tier line reduced by 1px,
+  - red service line changed to Futura PT Medium,
+  - date/time/duration line changed to Futura PT Medium,
+  - booking edit icon changed to `/assets/edit-meeting-icon-booking.svg`,
+  - add-ons rendering updated so add-on #3 wraps to next line.
+- Added missing public asset `public/assets/edit-meeting-icon-booking.svg` so the requested icon path resolves.
+- Committed and pushed the implementation branch (`cursor/bookings-tab-ui-adjustments-95ca`), created/updated PR #6, and confirmed local build success after installing dependencies in cloud (`npm run build` passed).
+- Investigated deployment visibility concern:
+  - verified branch commit existed on remote,
+  - confirmed no GitHub Actions workflows are configured (so `gh run list` is empty),
+  - verified deployments were created by Vercel GitHub integration and surfaced as commit/PR status contexts,
+  - captured successful deployment targets for both Vercel projects (`fsbw`, `fsbaw`).
+- User then set a new branch policy: all pushes should go to preview branch.
+- Switched to `preview/mobile`, pulled latest remote, and cherry-picked the bookings UI commit onto preview so deployment-triggering updates now live on preview.
+
+**Decisions / outcomes:**
+- The requested bookings-tab UI changes were completed and are present on both the feature branch and `preview/mobile`.
+- Deployment confusion was resolved: deployments are happening via Vercel checks/deployments, not GitHub Actions workflows.
+- New explicit user policy established: pushes should target `preview/mobile`.
+
+**Changes:**
+- Code/assets:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `public/assets/edit-meeting-icon-booking.svg`
+- Motherboard:
+  - `motherboard/MEMORY.md` (this entry and prior same-chat task summary on feature branch)
+- Git operations in this chat:
+  - feature branch commits + push (`2ffe59e`, `615bc60`)
+  - `git checkout preview/mobile`
+  - `git pull origin preview/mobile`
+  - `git cherry-pick 2ffe59e`
+
+**Conventions:**
+- For this project workflow, when the user indicates preview-first deployment flow, push ongoing implementation commits to `preview/mobile` unless the user explicitly overrides.
+
+---
+
+## 2026-04-03 — Bookings-tab payment copy/layout follow-up and icon-only client navigation
+
+**Context:** User requested another bookings-tab refinement pass focused on copy/layout changes after the booking payment status feature: larger Bohemy month text, simplified payment copy, updated balance text format, removal of extra payment-policy lines, and safer tap behavior so only the client icon opens client details (not the whole panel).
+
+**Topics covered (entire conversation so far):**
+- In this ongoing chat, we had already implemented booking payment metadata + due countdown tracking in meetings cards. User then requested a tighter UI/copy format:
+  - increase Bohemy month label size by 10px,
+  - remove “FINAL PAYMENT DUE …” line and policy paragraph line,
+  - replace status line with direct “PAYMENT DUE: <date> · <countdown>” copy,
+  - replace “PAID LESS …” with black “CURRENT BALANCE: $X OF $Y USD” structure,
+  - prevent accidental panel taps by making only the client icon open client details (bookings/consults tabs).
+- Updated bookings calendar month label styling from 15px to 25px while keeping lowercase Bohemy.
+- Reworked booking payment block:
+  - removed separate final-payment label line and long policy note line,
+  - removed “STATUS: …” text,
+  - added black “CURRENT BALANCE: $remaining OF $total USD” line,
+  - retained countdown bar and changed its text to “PAYMENT DUE: <date> · <time left>”.
+- Updated card interaction behavior:
+  - removed `onClick` from whole booking/consult card containers,
+  - wrapped avatar image in its own button that calls `openClientAccount(m)`,
+  - keeps edit/quote icon actions unchanged.
+
+**Decisions / outcomes:**
+- Booking cards now use the user-requested compact payment copy format and no longer show the removed lines.
+- Payment due tracking remains visible via the bar + due text line.
+- Client-detail navigation is now icon-only on bookings + consults tab cards to avoid accidental panel taps.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label size 15px → 25px
+  - booking payment copy/line removals + replacements
+  - panel click behavior changed to avatar-only navigation for bookings/consult cards.
+
+**Conventions:**
+- On meetings bookings cards, prefer compact payment copy (“CURRENT BALANCE …” + “PAYMENT DUE …”) and avoid redundant policy/status lines unless explicitly requested.
+- For card navigation safety in this flow, use explicit icon/avatar tap targets instead of whole-card click targets when the user asks to reduce accidental taps.
+
+---
+
+## 2026-04-03 — Consults tab follow-up: icon visibility question, panel-height confirmation, extra text offset, and richer mock inspo sets
+
+**Context:** User reported that consult icon still looked wrong and asked whether local assets could cause that, asked current panel height, requested moving the consult client line down another 2px, and requested mock consult clients to show varied inspo image counts (max 3) instead of mostly one image.
+
+**Topics covered (entire conversation so far):**
+- Verified current meetings consult icon wiring in code and asset presence:
+  - icon source remains `/assets/quote-icon-consult.svg` in `AdminMeetingsHub`.
+  - both `quote-icon-consult.svg` and `quote-icon.svg` exist under `public/assets`.
+- Confirmed current total-banner panel height values in meetings code are fixed at `height: 88px` for TOTAL BOOKED / TOTAL CONSULTED.
+- Applied requested visual tweak: consult client line (`NAME (STATE) · PREMIUM`) moved down by another 2px by changing `translateY(2px)` to `translateY(4px)`.
+- Updated mock consult meeting generator to produce varied inspo photo counts and sources:
+  - added `CONSULT_INSPO_MOCK_POOL` of multiple asset paths,
+  - per consultation row now chooses deterministic random count `1..3`,
+  - selects unique photos from pool for `inspoPhotoUrls` / `inspoFileNames` while preserving max 3.
+- Pulled latest remote `preview/mobile` (which included unrelated remote work) and re-pushed combined history after auto-merge.
+
+**Decisions / outcomes:**
+- Local asset location is not the root issue by itself if the deployed branch doesn’t include the same file/content or browser cache serves old assets; code still points at `/assets/quote-icon-consult.svg`.
+- Current meetings summary panel height is `88px`.
+- Consult client line now renders 2px lower than prior state (total 4px offset from original baseline).
+- Mock consult cards now display mixed inspo counts (1, 2, or 3) with varied images, capped at 3.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed consult name line transform from `translateY(2px)` to `translateY(4px)`.
+- `src/utils/adminMeetingsMock.ts`
+  - added `CONSULT_INSPO_MOCK_POOL`,
+  - generated unique per-row consult inspo arrays with deterministic random count `1..3`,
+  - persisted same array into `inspoPhotoUrls` + `inspoFileNames`.
+- Git:
+  - commit `8ce9f6a` then merged latest `origin/preview/mobile` and pushed final branch state (`55d4d79`).
+
+**Conventions:**
+- For mock consult cards, keep inspo thumbnails varied but capped at 3 per client row; use deterministic generation so month/day views remain stable.
+
+---
+
+## 2026-04-03 — Booking card paid-balance logic + final-payment due countdown replaces placeholder paid-status line
+
+**Context:** User asked to replace the booking card placeholder line (`PAID STATUS: SEE ORDER IN CLIENT ACCOUNT`) with real per-booking payment math and due-state UX tied to appointment checkout data. They specified that appointment payments should subtract install/re-install service fee, show remaining/final due context, and include a countdown tracking bar with the same style pattern as order-tracking progress.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this chat we implemented bookings-tab styling updates (icon/font/case/add-ons) and clarified deployment behavior, then moved all pushes to `preview/mobile` per user rule and persisted that policy in CORE/MEMORY.
+- User then requested functional payment-status behavior on booking cards:
+  - derive paid status from what client paid at appointment checkout,
+  - subtract install/re-install fee from total paid (install 275 / re-install 225),
+  - show final payment due timing with countdown/progress and cancellation policy note.
+- Traced booking flow end-to-end:
+  - checkout appointment sync (`src/pages/checkout/page.tsx`) → API client (`src/utils/api.ts`) → booking meeting route (`api/booking/appointment-meeting.ts`) → admin bookings card renderer (`src/pages/admin/meetings/AdminMeetingsHub.tsx`).
+- Expanded payload + persisted meeting metadata from checkout:
+  - booking install kind, addon ids/style/part, unit name/price,
+  - order total paid + booking line paid totals,
+  - install fee, computed balance-paid-after-fee, final due amount,
+  - payment method label, booked timestamp, due-at timestamp/date, policy text.
+- Replaced placeholder paid-status line on booking cards with computed UI:
+  - red line: `PAID LESS $275/$225 SERVICE FEE: $X USD`,
+  - due line with due date + countdown text,
+  - progress bar and status label (`FINAL PAYMENT WINDOW ACTIVE`, `DUE WITHIN 24 HOURS`, `PAST DUE — CANCELLATION RISK`),
+  - policy note reflecting 48-hour same-method requirement/cancel rule.
+- Verified with `npm run build` (passes).
+
+**Decisions / outcomes:**
+- Booking cards now show actual payment context derived from appointment checkout sync metadata rather than static placeholder text.
+- Final payment due state is rendered directly in bookings cards using countdown + progress treatment that matches order-tracking bar style conventions.
+- Calculation baseline:
+  - install fee = 275 for new install, 225 for re-install,
+  - paid-less-service-fee = max(0, paidTotal - serviceFee),
+  - due date defaults to appointment date minus 2 days unless explicit metadata due date exists.
+
+**Changes:**
+- `src/pages/checkout/page.tsx`
+  - `syncBookingAppointmentsToAdminMeetings(...)` now sends paid totals, service fee, balance-after-fee, payment method label, and booked timestamp per appointment line.
+  - call site now passes checkout `subtotal` and `paymentMethodDisplay`.
+- `src/utils/api.ts`
+  - expanded `postBookingAppointmentMeeting` body typing to include booking payment/due metadata fields.
+- `api/booking/appointment-meeting.ts`
+  - accepts and normalizes new booking metadata fields.
+  - computes/persists final due date (48h before appointment), policy text, and payment fields in `meetings.metadata`.
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added booking payment status helpers and currency/date formatting helpers.
+  - replaced placeholder paid-status copy with computed paid-balance + due countdown/progress UI and policy note.
+
+**Conventions:**
+- In Admin Meetings booking cards, payment status should come from checkout-synced meeting metadata (not static text), and must display paid-less-service-fee plus final-due countdown/progress context for appointment collections.
+
+---
+
+## 2026-04-03 — Bookings-tab follow-up: lowercase month, add-ons font-only change, and booking icon asset correction
+
+**Context:** In this continuation of the same bookings-tab thread, user reported the booking-panel SVG icon still looked unchanged, requested Bohemy month text above the calendar to be lowercase, requested only the add-ons line to use Futura PT Book, and asked what the "PAID STATUS: SEE ORDER IN CLIENT ACCOUNT" line means.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior completed bookings-tab adjustments and preview-first push policy setup.
+- Re-opened `AdminMeetingsHub` on `preview/mobile` and verified current state:
+  - month label still uppercased in logic/UI context,
+  - add-ons line still in Futura PT Medium,
+  - icon path already pointed to `/assets/edit-meeting-icon-booking.svg`.
+- Applied follow-up UI corrections:
+  - changed month label generation and rendering so it stays lowercase (`toLowerCase` + lowercase text transform),
+  - changed **only** the add-ons line font family to `"Futura PT Book"`,
+  - replaced `public/assets/edit-meeting-icon-booking.svg` artwork with a visibly different edit icon (using existing `edit-icon.svg` art) so the icon actually changes while keeping the same requested path.
+- Push handling:
+  - initial push to `preview/mobile` was rejected (remote advanced),
+  - rebased onto latest `origin/preview/mobile` and pushed successfully.
+
+**Decisions / outcomes:**
+- Month label above bookings calendar is now lowercase Bohemy.
+- Add-ons text line only uses Futura PT Book (service/time lines remain as previously requested).
+- Booking icon at `/assets/edit-meeting-icon-booking.svg` now renders different artwork so the change is visible.
+- Branch policy remains preview-first; updates landed on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label changed to lowercase output
+  - month label style enforces lowercase text rendering
+  - add-ons line font changed to `"Futura PT Book"` only
+- `public/assets/edit-meeting-icon-booking.svg`
+  - replaced glyph content with alternate edit icon art to reflect requested icon change
+- Git:
+  - commit rebased and pushed to `preview/mobile` (`9b1e257`)
+
+**Conventions:**
+- For bookings-tab micro-typography requests, isolate font-family changes to the exact requested line and avoid unintended updates to adjacent lines.
+- Keep preview-first deployment flow: push to `preview/mobile` unless user explicitly asks otherwise.
+
+## 2026-04-03 — Consults tab client-panel return flow + meetings cards spacing/height/icon updates
+
+**Context:** User requested four UI/flow updates in admin meetings: (1) tapping a client panel and then closing client details should return to bookings/consults tabs (B/C) rather than staying on client overview, (2) increase TOTAL BOOKED / TOTAL CONSULTED banner card height by 35%, (3) add 12px spacing above consult client cards, and (4) switch consult-panel quote icon to `quote-icon-consult` from public assets.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected `AdminMeetingsHub` and admin clients routing/state handling.
+- Identified root cause of incorrect flow: meetings deep-linked into `/admin/clients/overview?email=...` but close behavior on details remained local to client overview state.
+- Added meetings return context in deep-link params and wired client details close/back behavior to route back to meetings with originating tab preserved.
+- Added query-based tab hydration in meetings page so `/admin/meetings?tab=consults` and `/admin/meetings?tab=bookings` restore expected tab state.
+- Applied requested meetings card UI updates: larger total banners, consult list top spacing, and consult quote icon replacement.
+- Added missing `quote-icon-consult.svg` asset under `public/assets` so the updated icon path resolves.
+- Committed and pushed branch changes, created PR, then ran build validation. Initial build failed due missing local `tsc`; installed dependencies and re-ran build successfully; reverted incidental `package-lock.json` change to keep repo clean.
+
+**Decisions / outcomes:**
+- Meetings client-panel navigation now carries context (`returnTo=meetings&meetingsTab=...`) and closing client details returns users to the correct meetings B/C tab instead of client overview.
+- Meetings page now honors `?tab=` query for tab state restore.
+- TOTAL BOOKED and TOTAL CONSULTED cards are visually taller (~35% increase via min-height sizing).
+- Consults tab has 12px top spacing before client cards.
+- Consult quote action icon now uses `/assets/quote-icon-consult.svg`.
+- Build passes after dependency install in this environment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `useLocation` + `?tab=` state initialization/sync
+  - updated `openClientAccount` deep-link with `returnTo` + `meetingsTab`
+  - increased totals banner card height (`minHeight: 76px`)
+  - added `marginTop: '12px'` wrapper above consult cards
+  - changed consult quote icon source to `/assets/quote-icon-consult.svg`
+- `src/pages/admin/clients/page.tsx`
+  - read `returnTo` + `meetingsTab` query params
+  - updated `closeClientDetails` to navigate back to `/admin/meetings?tab=...` when opened from meetings
+  - guarded block-client confirm navigation so meetings return context is preserved
+- `public/assets/quote-icon-consult.svg`
+  - added consult quote SVG asset.
+
+**Conventions:**
+- When opening admin client details from meetings panels, pass return context so close/back returns to `/admin/meetings` with the same tab (`bookings` or `consults`) rather than defaulting to client overview list state.
+
+---
+
+## 2026-04-03 — CORE updated with permanent preview/mobile push convention
+
+**Context:** User asked to make the new push-target rule permanent in motherboard core context after setting the policy that all pushes should go to the preview branch.
+
+**Topics covered (entire conversation so far):**
+- Completed bookings-tab UI updates in Admin Meetings and deployment verification in prior turns of this same chat.
+- User clarified deployment expectation and then explicitly required preview-first pushing.
+- Added a MEMORY entry documenting the policy and moved code updates onto `preview/mobile`.
+- User then requested the same policy be added to `CORE.md` as a lasting convention.
+- Updated `motherboard/CORE.md` under Conventions with an explicit, permanent note that implementation pushes should target `preview/mobile` by default unless the user says otherwise.
+
+**Decisions / outcomes:**
+- Preview branch policy is now encoded in both MEMORY history and CORE permanent conventions.
+- Future agents loading motherboard context will see the preview/mobile push rule without requiring chat-history lookup.
+
+**Changes:**
+- `motherboard/CORE.md` (new Conventions bullet for preview/mobile as default push target).
+- `motherboard/MEMORY.md` (this full-conversation summary entry).
+
+**Conventions:**
+- Treat `preview/mobile` as the default push branch for this project unless the user explicitly asks for another target.
+
+---
+
+## 2026-04-03 — Consults meetings updates merged and pushed to preview/mobile on request
+
+**Context:** In this chat, the user first requested consults/meetings UI and flow changes (B/C return flow, banner height increase, consult card top spacing, consult quote icon swap), then asked to commit and push those changes to the preview branch.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and implemented the requested meetings/client flow and UI updates:
+  - meetings → client details deep-link now carries return context so close/back can return to meetings with the originating tab,
+  - meetings page now hydrates/keeps tab state from `?tab=bookings|consults`,
+  - TOTAL BOOKED / TOTAL CONSULTED panels increased in height,
+  - consult cards list gained 12px top spacing,
+  - consult quote icon updated to `quote-icon-consult` with new public asset.
+- Committed and pushed those implementation changes on feature branch `cursor/consults-tab-client-panel-41c5`, created/updated PR #5, and validated build after installing dependencies.
+- On follow-up user request to push to preview:
+  - switched to `preview/mobile`,
+  - merged `origin/cursor/consults-tab-client-panel-41c5`,
+  - resolved conflicts in `src/pages/admin/meetings/AdminMeetingsHub.tsx` (kept requested consults updates) and `motherboard/MEMORY.md` (preserved append-only history),
+  - handled remote divergence by pulling/merging latest `origin/preview/mobile`, resolving an additional MEMORY conflict by keeping both entries, and pushing final preview branch successfully.
+
+**Decisions / outcomes:**
+- Requested consults/meetings behavior and UI changes are now on `preview/mobile`.
+- Preview branch push is complete and remote is updated.
+- Conflict resolution preserved both functional code updates and motherboard memory history.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/pages/admin/clients/page.tsx`
+- `public/assets/quote-icon-consult.svg`
+- `motherboard/MEMORY.md` (merge conflict resolutions + this entry)
+- `motherboard/CORE.md` (retained upstream update during pull-merge reconciliation)
+
+**Conventions:**
+- When moving feature-branch work onto `preview/mobile`, resolve conflicts by preserving requested UI behavior and keep motherboard entries append-only (do not drop either side’s memory entries).
+
+---
+
+## 2026-04-03 — Meetings totals panels set to 100px with bottom-positioned labels
+
+**Context:** User requested a specific follow-up adjustment to the consults/meetings summary panels: change current panel height from 88px to 100px and move panel text toward the bottom instead of vertically centered.
+
+**Topics covered (entire conversation so far):**
+- Confirmed existing panel configuration in `AdminMeetingsHub` before editing (both summary cards at `height: 88px`, text vertically centered via `justifyContent: center`).
+- Updated both top summary cards (`TOTAL BOOKED`, `TOTAL CONSULTED`) to fixed `height: 100px`.
+- Changed vertical alignment from centered to bottom-weighted by switching to `justifyContent: 'flex-end'` and adding bottom spacing with `paddingBottom: '10px'`.
+- Committed and pushed the change directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Meetings summary panel height is now exactly **100px**.
+- Summary panel text stacks are now visually positioned toward the bottom of each card instead of center.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '88px'` -> `height: '100px'` on both summary cards.
+  - `justifyContent: 'center'` -> `justifyContent: 'flex-end'`.
+  - added `paddingBottom: '10px'` for bottom positioning.
+
+**Conventions:**
+- For the meetings top summary cards, use fixed explicit height and bottom-aligned content when user requests exact visual positioning.
+
+---
+
+## 2026-04-03 — Bookings tab micro-pass: name font, balance spacing/size, and due tracker color/timing behavior
+
+**Context:** User requested another bookings-tab UI micro-pass on admin meetings cards: change client name line font to Futura Book, adjust current balance line spacing/size, change payment-due label font, and update countdown tracker behavior so the bar stays gray until two days remain and turns red only within that final 48-hour window.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings work where month spacing, payment copy structure, and icon-only card navigation were already implemented on `preview/mobile`.
+- Updated booking card name typography:
+  - client name line (e.g. `QUINN CHEN (TX)`) now uses `"Futura PT Book"` only.
+- Updated current balance line formatting:
+  - reduced text size by 1px (`10px` -> `9px`),
+  - added 4px above-line spacing by changing top margin to `14px`.
+- Updated payment due label typography:
+  - gray due-date text (`PAYMENT DUE: THU, APR 23, 2026`) changed to `"Futura PT Medium"`.
+- Updated countdown bar + time behavior:
+  - tracker fill remains gray by default,
+  - fill changes to red only when `<= 2 days` remain (`remainingHours <= 48`),
+  - countdown time text on right below bar remains right-aligned and now turns red only in the final 48-hour window (or gray otherwise / past due).
+- Ran build verification after edits; build passes.
+
+**Decisions / outcomes:**
+- Booking name text now matches requested Futura Book styling.
+- Current balance line now has reduced size and updated spacing.
+- Payment-due date label is now Futura Medium.
+- Countdown tracker no longer fills red across long horizons; red is reserved for the final two-day due window.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - client name line font family set to `"Futura PT Book"`.
+  - current balance line font size `10px -> 9px`; margin top adjusted to `14px`.
+  - payment due label font family set to `"Futura PT Medium"`.
+  - due tracker/time color logic changed to red only when `remainingHours <= 48`, else gray.
+
+**Conventions:**
+- For bookings due trackers in meetings cards, reserve red urgency styling for the final 48-hour payment window; keep earlier countdown states gray for lower visual alarm.
+
+---
+
+## 2026-04-03 — Bookings tab micro-layout pass: month top spacing, current-balance typography, and right-aligned countdown under tracker
+
+**Context:** User requested a focused follow-up on bookings-tab card layout and typography: reduce space above the Bohemy month label by 4px, switch CURRENT BALANCE line to Futura PT Book and add 6px top spacing above it, and position only the countdown time on the right below the tracker bar.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier bookings-tab payment/status and card-interaction updates in this same chat thread.
+- Synced `preview/mobile` first, then adjusted bookings calendar header spacing:
+  - month row top margin reduced from `12px` to `8px` (4px less spacing).
+- Updated booking payment copy block styling:
+  - `CURRENT BALANCE: ...` line font changed to `"Futura PT Book"` (from Medium),
+  - top margin changed from `4px` to `10px` to add 6px extra spacing above that line.
+- Reworked due-line layout beneath tracker bar:
+  - split into two lines on the same row under the bar:
+    - left: `PAYMENT DUE: <date>`
+    - right: `<countdown>` only (e.g. `115D 9H LEFT`), right-aligned.
+- Verified with `npm run build` and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bohemy month text now sits 4px closer to the calendar.
+- Current balance line now matches requested Futura Book typography and spacing.
+- Countdown time is now isolated and right-positioned below the tracker bar, with due-date label on the left.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month row `marginTop: '12px'` -> `marginTop: '8px'`
+  - current balance line font `Futura PT Medium` -> `Futura PT Book`
+  - current balance line margin top `4px` -> `10px`
+  - due text refactored to two-part row below bar (left due-date label, right countdown only).
+
+**Conventions:**
+- For bookings payment tracker copy in meetings cards, keep due date label and countdown separated under the bar when right-aligned countdown readability is requested.
+
+---
+
+## 2026-04-03 — Consults follow-up: summary panels reduced to 90px and hair option text switched to Futura Medium
+
+**Context:** User requested a small visual follow-up on consults tab: reduce summary panel height from 100px to 90px and change the `WIG ONLY` / `WIG + INSTALL` line to Futura PT Medium.
+
+**Topics covered (entire conversation so far):**
+- Confirmed the active implementation in `AdminMeetingsHub` was using `height: 100px` with bottom-weighted panel text from the prior request.
+- Updated both summary cards (`TOTAL BOOKED`, `TOTAL CONSULTED`) from `100px` to `90px`.
+- Updated consult hair option line typography from `Futura PT Book` to `Futura PT Medium`.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Summary panel height is now **90px** on both totals cards.
+- `WIG ONLY` / `WIG + INSTALL` now render in **Futura PT Medium**.
+- Changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '100px'` -> `height: '90px'` on both summary cards.
+  - consult hair line `fontFamily: "Futura PT Book"` -> `"Futura PT Medium"`.
+
+**Conventions:**
+- Keep consults-tab visual follow-ups narrowly scoped to requested style deltas unless user asks for broader refactors.
+
+---
+
+## 2026-04-03 — Consults follow-up: summary panels 80px and consult row elements shifted 4px right
+
+**Context:** User requested another consults-tab style follow-up: reduce summary panel height from 90px to 80px and move four consult-row elements 4px right (client line, service line, inspo photos row, additional notes line).
+
+**Topics covered (entire conversation so far):**
+- Confirmed active styles in `AdminMeetingsHub` before editing (`height: 90px` on summary cards).
+- Updated both summary cards (`TOTAL BOOKED` and `TOTAL CONSULTED`) to `height: 80px`.
+- Shifted consult row elements by 4px to the right:
+  - client identity line: x-offset added while preserving existing y-offset,
+  - service/hair line: `marginLeft: 4px`,
+  - inspo photo container: `marginLeft: 4px`,
+  - additional notes line: `marginLeft: 4px`.
+- Committed and pushed to `preview/mobile`; resolved remote divergence by pulling latest preview and re-pushing.
+
+**Decisions / outcomes:**
+- Summary panels now render at exactly **80px**.
+- The four requested consult-row elements are shifted **4px right**.
+- Update is present on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `height: '90px'` -> `height: '80px'` on both top summary cards.
+  - consult row client/service/inspo/notes elements shifted right by 4px.
+
+**Conventions:**
+- Apply consults-tab micro-alignment requests as direct style deltas on only the named elements to avoid unintended layout changes.
+
+---
+
+## 2026-04-03 — Consults typography/right-offset update + standardized admin summary panels to meetings design
+
+**Context:** User requested consults-tab refinements (client line font change, 6px right shift for four consult-row text/media elements) and asked to update summary panels on other admin pages to match meetings summary panel design (same height + bottom text position).
+
+**Topics covered (entire conversation so far):**
+- Verified meetings consult-row styles in `AdminMeetingsHub` and applied targeted typography/offset changes:
+  - client identity line (`NAME (STATE) · PREMIUM`) changed to Futura PT Book,
+  - client line, service line, inspo-photo row, and notes line each shifted right to 6px (from prior 4px).
+- Standardized admin summary card style to the same meetings panel design pattern (height + bottom-positioned text stack) across other admin pages with two-up summary cards:
+  - fixed `height: 80px`,
+  - `display: flex`, `flexDirection: 'column'`, `justifyContent: 'flex-end'`,
+  - `paddingBottom: '10px'`,
+  - label spacing normalized to `marginTop: '4px'` where applicable.
+- Applied this design to all matching summary-panel blocks in:
+  - Brand (codes cards + alerts cards),
+  - Marketing,
+  - Referrals,
+  - Pending,
+  - Reviews (top cards + tools sub-tab card),
+  - Revenue (main tab cards + pending-orders subcard).
+- Committed and pushed updates to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Consults client identity line now uses Futura PT Book.
+- The four requested consult-row elements are now consistently shifted 6px right.
+- Admin summary panels across the listed pages now match meetings design conventions for height/text position.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/pages/admin/brand/page.tsx`
+- `src/pages/admin/marketing/page.tsx`
+- `src/pages/admin/referrals/page.tsx`
+- `src/pages/admin/pending/page.tsx`
+- `src/pages/admin/reviews/page.tsx`
+- `src/pages/admin/revenue/page.tsx`
+
+**Conventions:**
+- For admin summary-panel parity with meetings, use fixed 80px panel height and bottom-aligned text stack (`justifyContent: flex-end` + `paddingBottom: 10px`) unless a page intentionally uses a different summary treatment (e.g., single metric hero blocks).
+
+---
+
+## 2026-04-03 — Bookings follow-up: tracker +2px, month row -4px, and red Futura medium appointment/payment lines
+
+**Context:** User requested another bookings-tab micro-adjustment pass: increase booking payment tracker bar height by 2px, reduce spacing above the calendar month text by 4px, and make the appointment time/payment-due text lines red in Futura PT Medium.
+
+**Topics covered (entire conversation so far):**
+- Continued on `preview/mobile` as required by the established preview-first push policy.
+- Updated bookings calendar header spacing by reducing the month row top margin from `8px` to `4px` (4px less space above Bohemy month text).
+- Increased booking payment tracking bar height from `7px` to `9px` (+2px).
+- Changed booking appointment date/time/duration line (`SAT, MAY 30, 2026 · 4:30 PM · 340 MIN`) to red `#EB1C24` while retaining Futura PT Medium.
+- Changed payment-due label line (`PAYMENT DUE: THU, MAY 28, 2026`) to red and Futura PT Medium.
+- Kept countdown/right-side time text styling as existing (gray right-aligned) since request targeted the payment-due label line specifically.
+- Ran `npm run build` successfully after edits.
+
+**Decisions / outcomes:**
+- Tracker bar is now visually thicker by 2px.
+- Calendar month header sits 4px closer to content above.
+- Requested appointment-time and payment-due label lines now use red Futura PT Medium styling.
+- Changes are pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month header row `marginTop`: `8px` -> `4px`
+  - due tracker bar `height`: `7px` -> `9px`
+  - appointment time line color: `#808080` -> `#EB1C24`
+  - payment due label line color: `#808080` -> `#EB1C24` (Futura PT Medium retained)
+
+**Conventions:**
+- For bookings-tab micro-style requests, prefer direct per-line style deltas (font/color/spacing) and preserve surrounding interaction behavior unless explicitly requested to change.
+
+---
+
+## 2026-04-03 — Bookings follow-up: payment due label gray medium, countdown red medium, and client name medium
+
+**Context:** User asked for another bookings-tab style correction pass: make the left payment-due label gray again while keeping medium weight, make the countdown time red medium, and switch only the client name line to Futura PT Medium.
+
+**Topics covered (entire conversation so far):**
+- Continued on `preview/mobile` and pulled latest before editing.
+- Updated booking card client identity line font from Futura PT Book back to Futura PT Medium (name line only).
+- Updated payment-due row styling under the tracker:
+  - left label (`PAYMENT DUE: THU, APR 23, 2026`) changed to gray with Futura PT Medium,
+  - right countdown (`20D 9H LEFT`) changed to red with Futura PT Medium.
+- Left tracker height and recent spacing adjustments intact from prior request.
+- Ran `npm run build` successfully after edits.
+- Initial push rejected due remote advancement; rebased onto latest `origin/preview/mobile` and pushed successfully.
+
+**Decisions / outcomes:**
+- Payment due left label is now gray medium.
+- Countdown text is now red medium.
+- Client name line is now medium weight as requested.
+- Changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - client name line font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due left label color: red -> gray (`#808080`)
+  - payment due right countdown font family: `"Futura PT Book"` -> `"Futura PT Medium"`
+  - payment due right countdown color: gray -> red (`#EB1C24`)
+
+**Conventions:**
+- For split payment-due rows in bookings cards, style left due-date label and right countdown independently when requested (left informational gray, right urgency red).
+
+---
+
+## 2026-04-03 — Admin meetings booking add-ons relabeled to INSTALL/RE-INSTALL with red styling
+
+**Context:** The user provided a full recap of prior bookings-tab iterations (font, payment, tracker, icon, and routing refinements on admin meetings cards) and then requested one new meetings-card formatting change: show booking add-ons as install-prefixed labels (colon format) instead of `INSTALL + ...`, and render the add-ons text in red instead of black.
+
+**Topics covered (entire conversation so far):**
+- Continued from the previously completed bookings-tab overhaul summarized by the user (calendar month typography, payment due rows/tracker, client name styling, icon-only client navigation, and metadata-backed payment status logic).
+- Implemented a focused update on the admin meetings booking card add-ons line so it now reads in the requested structure:
+  - `INSTALL: CLEAN LACE`
+  - `RE-INSTALL: BROW SCULPTING (2)` (first add-on shown with total count when multiple add-ons exist).
+- Changed add-ons line styling color from black to red so add-ons text is red-only on the card.
+- Validated changes with `npm run build` and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking add-ons no longer use plus-sign phrasing (`INSTALL + ...`) in the admin meetings card display line.
+- Add-ons line now uses install-kind label + colon format and displays in red.
+- Update is committed and pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - updated `formatBookingAddonsLineForCardDisplay()` to output `INSTALL:` / `RE-INSTALL:` format with compact count for multiple add-ons.
+  - updated booking add-ons line style color to `#EB1C24`.
+
+**Conventions:**
+- For admin meetings booking cards, add-ons display should use install-kind-prefixed labels (`INSTALL:` / `RE-INSTALL:`) rather than `INSTALL + ...` formatting when this presentation is requested.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: client identity line moved down by +2px only
+
+**Context:** User requested one isolated visual change on consults tab: move the client identity line (`ELENA GARCIA (FL) · PREMIUM`) down by 2px and ensure no other style overrides were introduced.
+
+**Topics covered (entire conversation so far):**
+- Located the consult client line style in `AdminMeetingsHub` and confirmed current transform offsets.
+- Applied a targeted Y-offset change on that line only (`translate(6px, 4px)` -> `translate(6px, 6px)`), preserving existing X-offset and all neighboring styles.
+- Committed and pushed to `preview/mobile`; reconciled remote divergence by pull-merge before push.
+
+**Decisions / outcomes:**
+- Client identity line is now moved down by an additional **2px**.
+- No other consult row elements were changed in this request.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult client line transform updated to `translate(6px, 6px)`.
+
+**Conventions:**
+- For single-line micro-adjustments, limit edits to the specific target style property to avoid regressions in adjacent consult-row layout.
+
+---
+
+## 2026-04-03 — Consults inspo row restore/lock: right 2px + 8px spacing
+
+**Context:** User reported the inspo row had been moved in the wrong direction and asked to restore/correct exactly: row shifted right by 2px and spacing between images set to 8px (+2 from prior baseline).
+
+**Topics covered (entire conversation so far):**
+- Re-verified live consult inspo row styles in `AdminMeetingsHub` (`marginLeft: '2px'`, 8px gap) and confirmed intended values.
+- To reduce risk of class utility overrides, changed gap from Tailwind utility class to explicit inline style so final rendered spacing is controlled in one place.
+- Preserved the row’s right offset at `marginLeft: '2px'`.
+- Committed and pushed to `preview/mobile` after resolving remote divergence via pull-merge.
+
+**Decisions / outcomes:**
+- Inspo photo row now has explicit inline styles:
+  - `marginLeft: '2px'` (right shift)
+  - `gap: '8px'` (2px more space between images)
+- No other inspo row behavior changes were introduced.
+- Update is on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - row class changed from `gap-[8px]` utility to inline `gap: '8px'` with `marginLeft: '2px'` preserved.
+
+**Conventions:**
+- For precision spacing tasks likely to be affected by utility precedence, prefer explicit inline style on the exact row container.
+
+## 2026-04-03 — Corrected target scope: restore Admin Meetings tab add-ons and apply INSTALL/RE-INSTALL format on Admin Dashboard meetings card
+
+**Context:** In this chat, the user asked for add-on service labels to be structured as `INSTALL: ...` / `RE-INSTALL: ...` with red add-ons text. The initial implementation was applied to the wrong surface (Admin Meetings tab card). The user then explicitly requested a restore and correction so the change applies to the **Admin Dashboard MEETINGS card** only.
+
+**Topics covered (entire conversation so far):**
+- Started from a long recap of prior bookings-tab iterations and implemented the new add-on label format (`INSTALL:` / `RE-INSTALL:` with count) plus red add-ons text on `AdminMeetingsHub` booking cards.
+- User reported this targeted the wrong card and requested restoring those meetings-tab changes.
+- Restored `AdminMeetingsHub` booking add-ons display back to prior behavior:
+  - add-ons line format restored to `ADD-ONS: ...` wrapping logic,
+  - add-ons text color restored from red back to black.
+- Applied requested label formatting to the **Admin Dashboard MEETINGS card** logic in `src/pages/admin/dashboard/page.tsx`:
+  - replaced `INSTALL + ...` formatting with `INSTALL: ...` / `RE-INSTALL: ...`,
+  - for multiple add-ons: first add-on plus total count in parentheses (e.g. `RE-INSTALL: BROW SCULPTING (2)`),
+  - wired dashboard meeting item color so this label line is red.
+- Ran `npm run build` successfully after the restore/correct pass.
+- Rebased and pushed to `preview/mobile` after remote advanced.
+
+**Decisions / outcomes:**
+- The mistaken meetings-tab change was reverted.
+- Requested formatting/color now applies to the Admin Dashboard meetings card list.
+- Build is green and changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored booking add-ons formatter/content and black add-ons color.
+- `src/pages/admin/dashboard/page.tsx`
+  - updated dashboard meetings service label formatting to `INSTALL:` / `RE-INSTALL:` pattern,
+  - added install-kind detection from meeting metadata (`bookingInstallKind` / `installKind`),
+  - set service label color path to red for this dashboard card display.
+
+**Conventions:**
+- For “meetings card” requests, confirm whether the user means Admin Meetings page cards or Admin Dashboard `MEETINGS` stat card before applying formatter/style changes.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row moved to 6px right
+
+**Context:** User requested a single consults-tab adjustment: move only the hair inspo images row 6px to the right.
+
+**Topics covered (entire conversation so far):**
+- Verified the current inspo row offset in `AdminMeetingsHub` (`marginLeft: '2px'`).
+- Updated the inspo row container offset to `marginLeft: '6px'` while preserving the existing 8px gap and all other consult-row styles.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair inspo row is now shifted right by **6px**.
+- Only the inspo row offset changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft` updated from `2px` to `6px`.
+
+**Conventions:**
+- For one-line style nudges, keep the change scoped to the exact requested property and preserve neighboring spacing settings.
+
+---
+
+## 2026-04-03 — Bookings wrap/service typography update and dashboard meetings add-ons forced red
+
+**Context:** User requested a new bookings-tab/UI pass with three specific corrections: wrap add-ons after the 4th add-on (not after the 3rd), change the bookings service line (`NEW INSTALL: SOFT WAVE $760 USD`) to gray Futura PT Demi, and fix admin dashboard MEETINGS card so add-ons/service labels (e.g. `CLEAN LACE`, `BROW SCULPTING (3)`) display red instead of black.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat scope-correction work where meetings-tab changes were restored and dashboard meetings-card formatting was targeted.
+- Updated bookings add-ons wrapping logic in `AdminMeetingsHub`:
+  - now keeps first three add-ons on line one and wraps starting at the 4th add-on.
+- Updated bookings service line typography/style in `AdminMeetingsHub`:
+  - font family changed to `"Futura PT Demi"`,
+  - color changed to gray (`#808080`).
+- Diagnosed dashboard red-label issue root cause:
+  - dashboard meetings text is rendered in `StatsCard` label slot, which was hardcoded black.
+- Added label color support to `StatsCard` via optional `labelColor` and applied it for dashboard meetings items so service/add-on label text renders red.
+- Kept dashboard meetings formatter output in `INSTALL:` / `RE-INSTALL:` shape with red label path.
+- Removed an unused helper (`isWithin24Hours`) exposed by the new color wiring and re-ran `npm run build` successfully.
+- Rebased/pushed to `preview/mobile` after remote advanced and updated PR pointer.
+
+**Decisions / outcomes:**
+- Bookings add-ons now wrap at the requested threshold (4th add-on starts next line).
+- Bookings service line now matches gray Futura PT Demi.
+- Admin dashboard MEETINGS service/add-on label text now renders red rather than black.
+- Build passed and updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - add-ons wrap threshold adjusted to wrap from 4th add-on onward.
+  - booking service line style changed to gray Futura PT Demi.
+- `src/pages/admin/dashboard/page.tsx`
+  - meetings items continue using red service color path and pass label color metadata.
+  - removed now-unused `isWithin24Hours` helper.
+- `src/pages/admin/components/StatsCard.tsx`
+  - added optional `labelColor` in `StatsItem`.
+  - label text color now supports per-item override, enabling red meetings labels.
+
+**Conventions:**
+- When dashboard stat rows require colored service/add-on text, color must be applied to both label and value paths if label and value are rendered separately.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row moved from 6px to 4px right
+
+**Context:** User requested a single follow-up adjustment after the prior 6px shift: move only the consult hair inspo row to 4px right.
+
+**Topics covered (entire conversation so far):**
+- Confirmed current inspo row was at `marginLeft: '6px'`.
+- Applied a one-line update to set inspo row offset to `marginLeft: '4px'`.
+- Preserved all other consult row styles (including `gap: '8px'`) unchanged.
+- Committed and pushed to `preview/mobile`, handling remote divergence via pull-merge before push.
+
+**Decisions / outcomes:**
+- Hair inspo row now uses **4px** right offset.
+- No other consults-tab styling changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft` set to `4px`.
+
+**Conventions:**
+- For repeated micro-position requests, modify only the exact offset property and keep prior spacing values stable unless explicitly requested.
+
+---
+
+## 2026-04-03 — Meetings B/C tabs: client profile icons moved down to 8px offset
+
+**Context:** User requested a focused meetings-card adjustment: move client profile icons down 8px on both bookings and consults tabs, with no other style side effects.
+
+**Topics covered (entire conversation so far):**
+- Located both client-avatar button wrappers in `AdminMeetingsHub` (bookings card list and consults card list).
+- Updated only avatar wrapper `marginTop` from `1px` to `8px` in both tab render paths.
+- Left all text/image spacing, icon sizes, and other card styles untouched.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Client profile icons are now offset downward by **8px** on both bookings and consults tabs.
+- No unrelated layout properties were modified in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'`
+  - consults avatar button style: `marginTop: '8px'`
+
+**Conventions:**
+- For mirrored B/C card layout tweaks, apply identical style values in both tab branches to maintain visual parity.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: hair inspo row shifted another +6px right (to 10px)
+
+**Context:** User requested one follow-up movement: shift only the consult hair inspo row another 6px to the right.
+
+**Topics covered (entire conversation so far):**
+- Verified current consult inspo row offset was `marginLeft: '4px'`.
+- Applied one-line update to increase row right shift by 6px, resulting in `marginLeft: '10px'`.
+- Preserved all other row settings (including `gap: '8px'`) unchanged.
+- Committed and pushed directly to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair inspo row now sits at **10px right offset**.
+- Only this offset changed in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - inspo row `marginLeft`: `4px` -> `10px`.
+
+**Conventions:**
+- For incremental position requests (“another X px”), apply additive deltas from current state and keep non-target spacing constants unchanged.
+
+---
+
+## 2026-04-03 — Bookings payment due label switched to Demi and bookings cards offset +6px below calendar
+
+**Context:** User requested a focused bookings-tab adjustment pass: change the left payment-due text line typography to Futura PT Demi and add 6px vertical spacing above the bookings client panels under the calendar.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier same-chat bookings/dashboard styling refinements (add-ons wrapping threshold, service line typography, and dashboard meetings red label fix).
+- Updated bookings payment block typography in `AdminMeetingsHub`:
+  - changed `PAYMENT DUE: <date>` line font from `"Futura PT Medium"` to `"Futura PT Demi"` while keeping gray color and size unchanged.
+- Added vertical spacing between bookings calendar section and bookings client panel list:
+  - wrapped `sortedAppointmentsList.map(...)` render branch in a container with `marginTop: '6px'` so client panels start 6px lower below the calendar grid.
+- Ran `npm run build` successfully.
+- Committed and pushed to `preview/mobile` after rebasing on the latest remote.
+
+**Decisions / outcomes:**
+- Payment due label line now uses Futura PT Demi as requested.
+- Bookings client panel stack now has an extra 6px top gap below the calendar.
+- Build passes and change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - payment due label font family updated to `"Futura PT Demi"`.
+  - bookings appointment cards list wrapped with `marginTop: '6px'` spacing container.
+
+**Conventions:**
+- For bookings-tab spacing asks that target “client panels below calendar,” apply margin at the list container boundary (between calendar grid and first card) to avoid side effects inside individual cards.
+
+---
+
+## 2026-04-03 — Bookings typography/icon pass: current balance medium, time line book, lighter month, smaller/thinner edit icon, and 5th add-on wrap fix
+
+**Context:** User requested another bookings-tab adjustment set: switch CURRENT BALANCE to Futura PT Medium, switch appointment time line to Futura PT Book, keep/add 6px spacing above client panels below calendar, reduce Bohemy month text weight, reduce booking edit icon line weight by 1px and size by 50%, and fix wrapping so the 5th add-on stays on the same wrapped line as the 4th.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings/dashboard changes where payment due label was switched to Demi and cards were offset by +6px below calendar.
+- Updated bookings card typography in `AdminMeetingsHub`:
+  - `CURRENT BALANCE: ...` line changed from Futura PT Book to Futura PT Medium.
+  - appointment date/time/duration line (`SAT, APR 18, 2026 · 4:00 PM · 330 MIN`) changed from Futura PT Medium to Futura PT Book.
+- Preserved the existing +6px list spacing below the calendar (previously added container margin remains in place).
+- Reduced Bohemy month label visual weight by setting explicit lighter `fontWeight` on the month span.
+- Updated booking edit icon presentation:
+  - card icon render size reduced from `22x22` to `11x11` (50%),
+  - SVG stroke weight reduced by ~1px equivalent (`stroke-width` set to `0.85`) in `edit-meeting-icon-booking.svg`.
+- Fixed wrapped add-ons line behavior for long lists:
+  - kept first line at first 3 add-ons,
+  - wrapped line now starts at 4th and preserves 4th+5th on the same line by using non-breaking spaces in wrapped text joining.
+- Ran `npm run build` successfully, then committed/pushed to `preview/mobile` and updated PR pointer.
+
+**Decisions / outcomes:**
+- Current balance line now uses Futura PT Medium.
+- Appointment time line now uses Futura PT Book.
+- Calendar month label appears lighter weight.
+- Booking edit icon is visibly smaller and thinner.
+- 5th add-on no longer drops to an extra new line by itself in standard card width cases.
+- Build is green; updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - current balance font family updated to `"Futura PT Medium"`.
+  - appointment date/time line font family updated to `"Futura PT Book"`.
+  - month label span now includes lighter `fontWeight`.
+  - add-ons wrapped-line formatter adjusted to preserve 4th/5th on same wrapped line using NBSP handling.
+  - booking edit icon render size changed to `11x11`.
+- `public/assets/edit-meeting-icon-booking.svg`
+  - stroke weight reduced (`stroke-width="0.85"`).
+
+**Conventions:**
+- For booking-card add-on wrap issues caused by token breaks, preserve same-line grouping via non-breaking spaces on wrapped segments before introducing additional line breaks.
+
+---
+
+## 2026-04-03 — Bookings-only avatar micro-adjustment: profile photos moved up 4px
+
+**Context:** User requested one very targeted change on the bookings tab only: move profile photos upward by 4px.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat’s sequence of bookings-tab typography, spacing, icon, and wrapping micro-tweaks.
+- Located both avatar button offsets in `AdminMeetingsHub` and adjusted only the bookings-tab branch.
+- Updated bookings avatar button `marginTop` from `8px` to `4px` (4px upward movement).
+- Left consults avatar offset unchanged (`8px`) per “bookings tab only” instruction.
+- Ran `npm run build` successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bookings-tab profile photos are now 4px higher.
+- Consults-tab profile photos were intentionally not changed.
+- Build passed and change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'` -> `marginTop: '4px'`.
+
+**Conventions:**
+- For “bookings only” UI nudges in shared meetings components, patch only the bookings render branch and keep consult branch values untouched unless explicitly requested.
+
+---
+
+## 2026-04-03 — Bohemy month weight reduced further and bookings client name turned red (membership status unchanged)
+
+**Context:** User requested two additional bookings-tab style refinements: lower the Bohemy month text weight further (“20 instead of 30”) and make only the client name text red Futura PT Medium while keeping membership status styling separate.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings micro-adjustments (wrapping, icon size/stroke, payment/current-balance typography, card spacing, avatar offset).
+- Updated the bookings calendar month label in `AdminMeetingsHub` to a lighter explicit weight:
+  - changed `fontWeight` from `300` to `200` on the Bohemy month span.
+- Updated the bookings client identity line styling so only the name is red:
+  - wrapped `meetingClientDisplayNameWithState(m)` in a red span (`#EB1C24`),
+  - preserved membership status (`· PREMIUM` / `· STANDARD`) in its existing independent color logic via `tierLabelColor(m)`.
+- Kept font family on the client line as Futura PT Medium per request and did not alter unrelated row typography.
+- Ran `npm run build` successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Bohemy month text now renders with a lighter weight than before (explicit `fontWeight: 200`).
+- Client name text only is red on bookings cards; membership status coloring remains unchanged.
+- Build is green and updates are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - month label `fontWeight`: `300` -> `200`
+  - bookings client text line split into name span (red) + status span (existing tier color logic).
+
+**Conventions:**
+- When user requests styling for only one substring in a composite label (e.g., name vs membership status), split into separate spans and preserve existing color logic for the untouched segment.
+
+---
+
+## 2026-04-03 — Consult icon interaction clarification + consult card spacing/style refinements
+
+**Context:** User reported booking tab panel icons worked while consult tab icons did not, then requested four styling updates on consults plus two shared spacing updates: add 3px below additional notes, make `WIG ONLY`/`WIG + INSTALL` gray Futura Medium, increase spacing between client panel icons on both B/C tabs by 2px, and move client profile images 4px right.
+
+**Topics covered (entire conversation so far):**
+- Reviewed meetings card interactions:
+  - bookings card right-side action is edit icon,
+  - consult card right-side action is quote icon,
+  - both use `stopPropagation` and should remain independently clickable from row open-client action.
+- Hardened consult and booking right-side action icons with `flexShrink: 0` + `position: relative` + `zIndex: 2` to protect clickability in dense card layouts.
+- Applied requested style updates:
+  - additional notes line receives 3px space below (`marginBottom: '3px'` + spacer block),
+  - hair/service line set to gray (`#808080`) Futura PT Medium,
+  - client panel icon spacing increased by 2px on both bookings and consults card rows (`gap` 10 -> 12),
+  - client profile image buttons shifted 4px right (`marginLeft: '4px'`) on both tabs.
+- Build validation passed before push.
+- Resolved merge conflict in `AdminMeetingsHub` after remote preview advanced, preserving requested consult fixes and latest remote updates.
+
+**Decisions / outcomes:**
+- Consult action icon behavior is aligned with booking behavior and protected against overlap issues.
+- Requested consult notes/hair spacing and color updates are applied.
+- B/C card icon spacing and avatar-right shift updates are applied uniformly.
+- Final result pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - right action buttons hardened (`flexShrink`, `zIndex`),
+  - row gap on bookings + consults increased to 12px,
+  - avatar button left offset set to 4px (both tabs),
+  - hair line switched to gray Futura Medium,
+  - additional notes line bottom spacing added.
+
+**Conventions:**
+- Keep B/C row-level spacing and avatar offsets mirrored unless a request explicitly scopes to one tab only.
+
+---
+
+## 2026-04-03 — Consults micro-adjustment: WIG ONLY / WIG + INSTALL text reduced by 1px
+
+**Context:** User requested a single typography tweak on consult cards: reduce the `WIG ONLY` / `WIG + INSTALL` line size by 1px.
+
+**Topics covered (entire conversation so far):**
+- Located consult hair/service line in `AdminMeetingsHub`.
+- Updated only that line’s `fontSize` from `10px` to `9px`.
+- Kept color, font family, margins, and all surrounding row spacing unchanged.
+- Committed and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Hair/service line now renders at **9px**.
+- No other consult-row properties were modified.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult hair line `fontSize`: `10px` -> `9px`.
+
+**Conventions:**
+- For micro typography requests, adjust only the requested text node’s font size and keep neighboring spacing constants stable.
+
+---
+
+## 2026-04-03 — Bookings-only spacing pass: client line top gap + payment due bottom gap + avatar raised 4px (consults untouched)
+
+**Context:** The user requested another tightly scoped bookings-tab update on admin meetings cards: increase spacing above the client text line by 6px, increase spacing below the `PAYMENT DUE` row by 6px, and move profile photo icons on the bookings tab up by 4px while explicitly not moving consult-tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat thread of iterative bookings/consults/dashboard micro-adjustments (typography, icon sizing, wrapping behavior, payment rows, and tab-scoped spacing tweaks), always shipping to `preview/mobile`.
+- Located the bookings card branch in `AdminMeetingsHub` and applied only the requested spacing/offset updates:
+  - client identity line top margin increased by 6px (`margin: 0` -> `margin: '6px 0 0'`),
+  - payment-due row container received +6px spacing below (`marginBottom: '6px'`),
+  - bookings avatar button moved up 4px (`marginTop: '4px'` -> `marginTop: '0px'`).
+- Left consult-tab avatar offset unchanged as explicitly requested.
+- Build validated successfully.
+- During push, remote advanced and caused a rebase conflict in `AdminMeetingsHub`; resolved conflict by preserving the new bookings-only offset/spacing values while keeping latest upstream edits, then continued rebase and pushed.
+
+**Decisions / outcomes:**
+- Bookings client text line now starts 6px lower from the top of its text block.
+- Payment due row now has 6px extra space below it.
+- Bookings profile photos are 4px higher than the immediately prior state.
+- Consult profile icons were not modified in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `4px` -> `0px`
+  - bookings client name line margin: `0` -> `'6px 0 0'`
+  - payment due row wrapper added `marginBottom: '6px'`
+
+**Conventions:**
+- For tab-scoped icon-position requests in shared meetings layouts, implement in the targeted tab branch only and preserve the other tab’s offsets.
+
+---
+
+## 2026-04-03 — Bookings-only avatar nudge: moved down 2px (consults unchanged)
+
+**Context:** User requested one precise follow-up after prior bookings-only avatar adjustments: move profile photo icons on the bookings tab down by 2px, explicitly without moving consult-tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat’s iterative admin meetings style tuning (bookings typography, spacing, add-on wrapping, icon sizing/stroke, and tab-scoped avatar offsets).
+- Located the bookings avatar button style in `AdminMeetingsHub` and adjusted only the bookings render branch:
+  - `marginTop` changed from `0px` to `6px` relative to the current branch baseline used in this pass (resulting visual movement: +2px down from prior user-confirmed state).
+- Confirmed consult-tab avatar button offset remained unchanged (`marginTop: '8px'`).
+- Committed and pushed to `preview/mobile`.
+- Ran post-push `npm run build` successfully.
+
+**Decisions / outcomes:**
+- Bookings-tab profile icons now sit 2px lower than before.
+- Consults-tab profile icons were intentionally untouched.
+- Build passed and update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `4px` -> `6px` (consults branch unchanged).
+
+**Conventions:**
+- For single-tab offset nudges, preserve the non-target tab value exactly and apply only the requested delta to the target tab.
+
+---
+
+## 2026-04-03 — Bookings micro-pass: +1px client/payment spacing, bookings icon +2px down, and Stripe remaining-balance auto-draft assessment
+
+**Context:** User requested another bookings-tab micro-adjustment pass: add 1px to spacing above the client text line and 1px below the payment-due row, move bookings client panel icons down 2px (bookings-only), and asked whether Stripe setup is needed so remaining install/re-install balances auto-charge from the same card used at booking checkout.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior same-chat bookings-only spacing/icon refinements and repeated tab-scoped offset requests.
+- Applied requested bookings-only spacing/offset deltas in `AdminMeetingsHub`:
+  - client identity line margin increased by +1px (`'6px 0 0'` -> `'7px 0 0'`),
+  - payment-due row bottom spacing increased by +1px (`marginBottom: '6px'` -> `'7px'`),
+  - bookings avatar button moved down +2px (`marginTop: '6px'` -> `'8px'`).
+- Consults-tab avatar offset was intentionally left unchanged.
+- Reviewed current Stripe booking/payment code paths:
+  - checkout creates product `PaymentIntent` with automatic payment methods but does not persist a reusable mandate for off-session future charges,
+  - booking meeting metadata stores payment method label + due metadata only (`bookingPaymentMethodLabel`, `bookingFinalDueUsd`, due dates/policy),
+  - no scheduled/future charge job or off-session final-payment capture route exists for booking balances today.
+- Pushed UI commit to `preview/mobile` and updated PR pointer.
+
+**Decisions / outcomes:**
+- Requested +1px spacing tweaks and +2px bookings-icon movement are implemented.
+- Consults icons remain untouched.
+- Stripe currently does **not** auto-draft remaining install/re-install balances from the initial booking card in this implementation; additional Stripe + backend setup is required.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar `marginTop`: `6px` -> `8px`
+  - bookings client line margin: `'6px 0 0'` -> `'7px 0 0'`
+  - payment-due row wrapper `marginBottom`: `'6px'` -> `'7px'`
+
+**Conventions:**
+- Keep bookings/consults avatar offsets independently adjustable; for user-scoped “bookings only” deltas, change only bookings branch values.
+
+---
+
+## 2026-04-03 — Bookings-only avatar nudge: moved up 1px, consult avatars unchanged
+
+**Context:** User requested a bookings-only profile-icon movement: move bookings tab profile photos up by 1px and do not move consult tab profile icons.
+
+**Topics covered (entire conversation so far):**
+- Confirmed both bookings and consult avatar button styles in `AdminMeetingsHub`.
+- Updated only bookings avatar wrapper vertical offset from `marginTop: '8px'` to `marginTop: '7px'`.
+- Kept consult avatar wrapper at `marginTop: '8px'` unchanged.
+- Resolved repeated preview-branch divergence conflicts while preserving this bookings-only scope.
+
+**Decisions / outcomes:**
+- Bookings tab profile icons moved up by exactly 1px.
+- Consults tab profile icons were not changed.
+- Update is pushed to `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button `marginTop`: `8px` -> `7px`
+  - consult avatar button remains `8px`.
+
+**Conventions:**
+- For explicitly tab-scoped avatar tweaks, apply style deltas only in the named tab branch and verify the other tab branch remains unchanged.
+
+---
+
+## 2026-04-03 — Full conversation summary: consults/admin meetings iteration + A/C booking calendar month text parity
+
+**Context:** This chat started with a long sequence of admin meetings/consults UI and flow refinements (navigation return behavior, panel sizing/spacing, icon and typography swaps, mock inspo photos, and tab-scoped pixel nudges), then concluded with a new request to make the month text above A/C booking calendars match the Bohemy month text used on Admin Meetings.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same conversation, multiple consults/bookings/admin-page updates were applied and iterated: client-panel return flow back to meetings B/C tabs, summary panel height/position tuning, client row micro-adjustments, quote icon updates, mock inspo-photo variety (1–3), and selective bookings-vs-consults icon offset changes.
+- User’s latest request was specifically: “change the month text above the calendar on a/c booking pages to match the bohemy calendar month text on the admin meetings page.”
+- Located the month style source in `AdminMeetingsHub` (Bohemy, lowercase month-only treatment) and identified A/C pages use shared `BrandExpiresDatePicker`.
+- Implemented a scoped variant in the shared picker (`monthLabelVariant`) instead of globally replacing all calendar month labels, then enabled that variant only on booking appointment + consultation pages.
+- Verified build success after code changes.
+
+**Decisions / outcomes:**
+- A/C booking calendars now use Admin Meetings-style month text (Bohemy, lowercase, black, month-only visual treatment) above the calendar.
+- Change is intentionally scoped to appointment/consultation booking pages; other `BrandExpiresDatePicker` consumers keep the default Futura month+year style.
+
+**Changes:**
+- `src/components/BrandExpiresDatePicker.tsx`
+  - Added `monthLabelVariant?: 'default' | 'adminMeetings'`.
+  - Added variant-based month label text/style logic.
+- `src/pages/booking/appointment/page.tsx`
+  - Passed `monthLabelVariant="adminMeetings"` to inline `BrandExpiresDatePicker`.
+- `src/pages/booking/consultation/page.tsx`
+  - Passed `monthLabelVariant="adminMeetings"` to inline `BrandExpiresDatePicker`.
+
+**Conventions:**
+- For shared UI primitives used in multiple contexts, prefer adding an explicit style variant prop and opt-in at call sites rather than changing global default behavior.
+
+---
+
+## 2026-04-03 — Bookings add-on wrap fix: keep multi-word labels together (BROW TINT)
+
+**Context:** User reported a bookings-tab wrapping bug where the `BROW TINT` add-on split across lines (`BROW` on one line and `TINT` on the next), and requested it stay on the same line.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long thread of bookings micro-adjustments (spacing, icon offsets, typography, add-on wrapping behavior) all shipping to `preview/mobile`.
+- Located `formatBookingAddonsLineForCardDisplay()` in `AdminMeetingsHub`, which previously only protected wrapped (4th+) add-ons with non-breaking spaces, allowing earlier multi-word add-ons to split at regular spaces.
+- Updated formatter to normalize **all** add-on labels to non-breaking word separators before joining and wrapping:
+  - convert each add-on token with `addon.replace(/\s+/g, '\u00A0')`,
+  - use normalized list for both first line and wrapped line output.
+- This keeps labels like `BROW TINT`, `BROW SCULPTING`, `TRAVEL FEE`, etc. intact as single visual phrases across line wraps.
+- Ran `npm run build` successfully.
+- Rebased on latest `origin/preview/mobile` after remote advanced, then pushed and updated PR pointer.
+
+**Decisions / outcomes:**
+- Multi-word booking add-on labels now stay together on the same line.
+- `BROW TINT` no longer splits into separate lines at the space boundary.
+- Change is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - `formatBookingAddonsLineForCardDisplay()` now applies NBSP normalization to every add-on token before formatting.
+
+**Conventions:**
+- For booking-card add-on rendering, treat each add-on label as an atomic phrase (use NBSP between words) so wrapping happens between add-ons, not inside an add-on name.
+
+---
+
+## 2026-04-03 — Branch governance locked: preview-first only, no agent-created branches
+
+**Context:** User asked to stop changes getting lost/unseen by enforcing strict branch policy: commit all non-master/non-preview work, remove extra branches, and record that changes must go to preview first and only. User explicitly stated new branches must never be created by the agent unless the user manually creates them.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat where multiple feature changes were implemented and eventually merged onto `preview/mobile`.
+- User reported visibility issues and requested hard process enforcement to prevent future branch drift.
+- Audited local and remote branch state against `preview/mobile`, confirmed feature changes were already present on preview, and prepared branch cleanup.
+- Captured explicit user branch policy for future agent sessions in motherboard memory.
+
+**Decisions / outcomes:**
+- Working policy is now explicit:
+  - all implementation changes should be committed directly to `preview/mobile` first and only,
+  - do not create new branches automatically,
+  - only work on a new branch if the user manually created it and explicitly instructs its use.
+- Non-master/non-preview branches should be treated as temporary and removed after their work is merged to preview.
+
+**Changes:**
+- `motherboard/MEMORY.md`
+  - appended branch-governance policy entry documenting preview-only workflow and no auto branch creation.
+
+**Conventions:**
+- Default and required workflow: commit/push to `preview/mobile` only.
+- Agent must never create new branches unless user explicitly requests and manually provisions branch workflow.
+
+---
+
+## 2026-04-03 — Booking final-payment autopay implementation (API + metadata + scheduler + failures + admin visibility)
+
+**Context:** User approved implementing the full five-part Stripe booking autopay scope end-to-end: backend API wiring, metadata persistence, scheduled charging, failure/retry handling, and admin visibility for remaining install/re-install balance drafts.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long bookings-thread context where final-payment due metadata already existed in meetings cards, but there was no off-session charge execution path.
+- Implemented checkout/API metadata expansion so appointment meetings now persist autopay fields when available:
+  - `bookingStripeCustomerId`, `bookingStripePaymentMethodId`, `bookingAutopayConsent`, `bookingAutopayConsentAt`.
+- Extended Stripe product PaymentIntent API to support future off-session charging enrollment:
+  - `savePaymentMethodForFuture` request flag,
+  - customer create/reuse + profile `stripe_customer_id` persistence,
+  - `setup_future_usage: 'off_session'` on PI creation.
+- Extended Stripe webhook processing to capture reusable payment method after successful enrollment payment intents:
+  - saves `profiles.stripe_default_payment_method_id` (+ customer id if present).
+- Added secure scheduler endpoint for autopay execution:
+  - `POST /api/booking/autopay-final-payment` (Bearer `BOOKING_AUTOPAY_CRON_SECRET`),
+  - scans due appointment meetings, attempts off-session Stripe charge,
+  - supports dry-run (`?dry_run=true`), retries with exponential backoff, and idempotent skip behavior after success.
+- Added failure/retry + status tracking model:
+  - new `booking_autopay_attempts` table migration,
+  - writes success/failed/skipped rows with error and retry timing,
+  - updates `meetings.metadata.bookingAutopayStatus` and related timestamps/error fields,
+  - appends user-facing notifications on success/failure outcomes.
+- Added admin visibility API:
+  - `GET /api/admin/booking-autopay-attempts` with filter params (`meeting_id`, `user_id`, `status`, `limit`).
+- Added profile schema + mapping support for default Stripe payment method:
+  - migration for `profiles.stripe_default_payment_method_id`,
+  - mapping + profile PATCH preserve/strip rules updated.
+- Added checkout UI consent + readiness gates for bookings:
+  - explicit booking autopay consent checkbox text,
+  - readiness message requiring Supabase session + saved Stripe card profile data,
+  - validation blocks confirm when booking autopay consent is missing or Stripe card-on-file readiness is absent.
+- Added docs + cron config:
+  - `docs/BOOKING_AUTOPAY_SETUP.md` with setup + env + limitation notes,
+  - `vercel.json` cron entry for hourly autopay endpoint trigger.
+- Ran `npm run build` successfully and pushed to `preview/mobile` after rebase.
+
+**Decisions / outcomes:**
+- Full backend autopay pipeline is now implemented for booking final payments, including retries, logging, and admin retrieval endpoints.
+- Checkout now captures/validates booking autopay consent and stores autopay metadata on appointment meetings.
+- Admin meetings booking cards now show autopay status (`scheduled`, `failed`, `paid`) from metadata.
+- Stripe operational setup still required in environment + migrations before production execution.
+
+**Changes:**
+- `api/stripe/create-product-payment-intent.ts`
+- `api/stripe/webhook.ts`
+- `api/booking/appointment-meeting.ts`
+- `api/booking/autopay-final-payment.ts` (new)
+- `api/admin/booking-autopay-attempts.ts` (new)
+- `api/profile.ts`
+- `api/_lib/profileMapping.ts`
+- `src/pages/checkout/page.tsx`
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- `src/utils/api.ts`
+- `vercel.json`
+- `docs/BOOKING_AUTOPAY_SETUP.md` (new)
+- `supabase/migrations/20260403200000_booking_autopay_attempts.sql` (new)
+- `supabase/migrations/20260403203000_profiles_stripe_default_payment_method.sql` (new)
+
+**Conventions:**
+- Booking autopay execution uses secure server-side scheduling (`BOOKING_AUTOPAY_CRON_SECRET`) and writes every outcome to an append-style attempts table for auditability and retry control.
+
+---
+
+## 2026-04-03 — Bookings cards micro-layout: icon down 4px and text column shifted right 6px (bookings tab only)
+
+**Context:** User requested a bookings-tab-only layout tweak on admin meetings cards: move bookings client panel profile icons down by 4px and shift all text to the right of those icons in tandem by 6px.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat thread after full booking final-payment autopay feature implementation and prior bookings micro-spacing/icon adjustments.
+- Scoped edits to the bookings card render branch inside `AdminMeetingsHub` only (left consults branch unchanged):
+  - bookings avatar button top offset increased by 4px (`marginTop: '8px'` -> `'12px'`),
+  - bookings text column container (the div immediately right of avatar) shifted right by 6px via `marginLeft: '6px'`.
+- Verified build success with `npm run build`.
+- Rebased onto latest `origin/preview/mobile` after remote advanced, then pushed successfully.
+
+**Decisions / outcomes:**
+- Bookings-tab icons now sit 4px lower.
+- All bookings text content to the right of profile icons moves 6px right in tandem.
+- Consults-tab icon/text alignment remains unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings avatar button style: `marginTop: '8px'` -> `marginTop: '12px'`
+  - bookings right text column wrapper: added `style={{ marginLeft: '6px' }}`
+
+**Conventions:**
+- For “bookings-only” layout requests in shared meetings card code, apply offsets in bookings branch containers so text and icon alignment move together while preserving consults branch values.
+
+---
+
+## 2026-04-03 — Corrected icon target on bookings cards: restored profile avatar position and moved right-side panel icon down
+
+**Context:** User reported the previous update moved the wrong icon. They clarified the desired movement was for the right-side bookings panel icon (edit/panel icon), not the left profile avatar.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same conversation’s bookings-tab layout adjustments and autopay implementation work.
+- Re-opened the bookings card branch in `AdminMeetingsHub` and restored the left profile avatar offset to its prior value.
+- Moved only the right-side bookings panel icon (edit icon button) down by adding top offset on that button.
+- Kept the bookings text-column right shift (`marginLeft: '6px'`) intact from the prior request and left consults icon branch unchanged.
+- Verified with `npm run build` and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Left profile avatar no longer carries the unintended downshift.
+- Right-side bookings panel icon is now the element moved down.
+- Consults-tab icon offsets remain unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings profile avatar button: `marginTop: '12px'` -> `marginTop: '8px'` (restored)
+  - bookings right edit icon button: added `marginTop: '4px'` (targeted downshift)
+
+**Conventions:**
+- For icon-position requests, confirm target explicitly as profile avatar (left) vs panel/action icon (right) and only adjust the named control.
+
+---
+
+## 2026-04-03 — Bookings right-side panel icon nudged 3px left
+
+**Context:** User requested a single micro-adjustment after the icon-target correction: move the right-side panel icon on bookings cards 3px to the left.
+
+**Topics covered (entire conversation so far):**
+- Continued from same chat thread where bookings icon targeting was corrected (left avatar restored, right edit icon moved down).
+- Applied a horizontal nudge on the bookings right-side edit icon button only by adding right margin spacing so the icon shifts left visually.
+- Kept all other recently tuned values intact (bookings text column +6px, profile icon offsets, consults branch unchanged).
+- Verified with `npm run build`.
+
+**Decisions / outcomes:**
+- Right-side bookings panel icon now sits 3px further left.
+- No additional layout elements were moved in this pass.
+- Update is live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - bookings right edit icon button style: added `marginRight: '3px'`.
+
+**Conventions:**
+- For tiny right-edge icon shifts, prefer adjusting button margin on the target control to avoid ripple effects in text/layout columns.

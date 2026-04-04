@@ -233,10 +233,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       // Never let clients set Stripe-managed billing ids (webhook / create-checkout only).
       const strip = [
         'stripeCustomerId',
+        'stripeDefaultPaymentMethodId',
         'stripeSubscriptionId',
         'stripeSubscriptionStatus',
         'lastPaymentFailureAt',
         'stripe_customer_id',
+        'stripe_default_payment_method_id',
         'stripe_subscription_id',
         'stripe_subscription_status',
         'subscription_period_end',
@@ -274,6 +276,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const existingRow = existing as Record<string, unknown> | null;
       const preserveKeys = [
         'stripe_customer_id',
+        'stripe_default_payment_method_id',
         'stripe_subscription_id',
         'stripe_subscription_status',
         'subscription_period_end',

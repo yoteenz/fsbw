@@ -1430,6 +1430,7 @@ export default function BookingAppointmentPage() {
             <BrandExpiresDatePicker
               inline
               navArrowScale={0.75}
+              monthLabelVariant="adminMeetings"
               value={preferredDateIso}
               onChange={(iso) => {
                 setPreferredDateIso(iso);

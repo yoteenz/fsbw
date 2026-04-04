@@ -110,6 +110,15 @@ const BOOKING_ADDON_DURATION_MINUTES_BY_ID: Record<string, number> = {
 
 const BOOKING_ADDON_IDS_FOR_MOCK = ['braids', 'brow-clean', 'brow-tint', 'makeup', 'mink-lashes', 'clean-lace', 'travel'] as const;
 
+const CONSULT_INSPO_MOCK_POOL = [
+  '/assets/gallery-mock.png',
+  '/assets/mock-image.png',
+  '/assets/NOIR/noir-thumb.png',
+  '/assets/blanco front.png',
+  '/assets/soft curl thumbnail.png',
+  '/assets/ocean curl thumbnail.png',
+] as const;
+
 function formatISODate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -239,6 +248,15 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
       const status: AdminMeeting['status'] =
         statusRoll > 0.78 ? 'Pending' : statusRoll > 0.05 ? 'Confirmed' : 'Canceled';
       const consultNotes = CONSULT_MOCK_NOTES[Math.floor(rnd() * CONSULT_MOCK_NOTES.length)];
+      const inspoCount = 1 + Math.floor(rnd() * 3); // 1..3, keep max at 3
+      const inspoPool = [...CONSULT_INSPO_MOCK_POOL];
+      const inspoPhotoUrls: string[] = [];
+      for (let p = 0; p < inspoCount; p++) {
+        if (inspoPool.length === 0) break;
+        const idx = Math.floor(rnd() * inspoPool.length);
+        const [picked] = inspoPool.splice(idx, 1);
+        if (picked) inspoPhotoUrls.push(picked);
+      }
       meetings.push({
         id: `mock-${dateKey}-c-${i}`,
         date: dateKey,
@@ -254,9 +272,9 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
           tier: membershipType === 'PREMIUM' ? 'premium' : 'standard',
           hairOption: rnd() > 0.5 ? 'WIG ONLY' : 'WIG + INSTALL',
           consultNotes,
-          // Same stock image used by account/affiliate mock content.
-          inspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
-          inspoFileNames: ['/assets/gallery-mock.png', '/assets/gallery-mock.png'],
+          // Mixed 1..3 inspo photos so consult cards don't all look identical.
+          inspoPhotoUrls,
+          inspoFileNames: inspoPhotoUrls,
         },
       });
     } else {

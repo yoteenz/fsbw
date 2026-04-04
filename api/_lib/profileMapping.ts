@@ -17,6 +17,8 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
     membershipType: row.membership_type ?? row.membershipType,
     subscriptionTier: row.subscription_tier ?? row.subscriptionTier,
     stripeCustomerId: row.stripe_customer_id ?? row.stripeCustomerId,
+    stripeDefaultPaymentMethodId:
+      row.stripe_default_payment_method_id ?? row.stripeDefaultPaymentMethodId,
     stripeSubscriptionId: row.stripe_subscription_id ?? row.stripeSubscriptionId,
     autoRenewMembership: row.auto_renew_membership ?? row.autoRenewMembership,
     subscriptionEndDate: row.subscription_period_end ?? row.subscriptionEndDate,

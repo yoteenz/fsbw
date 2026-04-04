@@ -10,6 +10,23 @@ type Body = {
   notes?: string;
   orderNumber?: string;
   idempotencyKey?: string;
+  bookingInstallKind?: string;
+  bookingAddonIds?: string[];
+  bookingStyle?: string;
+  bookingPartDirection?: string;
+  bookingUnitName?: string;
+  bookingUnitPriceUsd?: number;
+  bookingInstallFeeUsd?: number;
+  bookingOrderTotalPaidUsd?: number;
+  bookingLineTotalPaidUsd?: number;
+  bookingBalancePaidUsd?: number;
+  bookingFinalDueUsd?: number;
+  bookingPaymentMethodLabel?: string;
+  bookingBookedAtIso?: string;
+  bookingStripeCustomerId?: string;
+  bookingStripePaymentMethodId?: string;
+  bookingAutopayConsent?: boolean;
+  bookingAutopayConsentAt?: string;
 };
 
 function sanitizeType(raw: unknown): string {
@@ -36,6 +53,13 @@ function sanitizeIdempotencyKey(raw: unknown): string {
   return key;
 }
 
+function sanitizeStripeId(raw: unknown, maxLen = 120): string {
+  return String(raw || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9_]/g, '')
+    .slice(0, maxLen);
+}
+
 /** POST /api/booking/appointment-meeting — create pending meeting row from customer checkout. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -58,6 +82,80 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const durationMinutes = Math.max(15, Math.min(480, Number(body.durationMinutes) || 120));
   const orderNumber = String(body.orderNumber || '').trim().toUpperCase();
   const idempotencyKey = sanitizeIdempotencyKey(body.idempotencyKey);
+  const installKindRaw = String(body.bookingInstallKind || '')
+    .trim()
+    .toUpperCase();
+  const bookingInstallKind =
+    installKindRaw === 'RE_INSTALL' || installKindRaw === 'RE-INSTALL' ? 'RE_INSTALL' : 'NEW_INSTALL';
+  const bookingStyle = String(body.bookingStyle || '')
+    .trim()
+    .toUpperCase();
+  const bookingPartDirection = String(body.bookingPartDirection || '')
+    .trim()
+    .toUpperCase();
+  const bookingUnitName = String(body.bookingUnitName || '')
+    .trim()
+    .toUpperCase();
+  const bookingAddonIds = Array.isArray(body.bookingAddonIds)
+    ? body.bookingAddonIds
+        .filter((x): x is string => typeof x === 'string')
+        .map((x) => x.trim().toLowerCase())
+        .filter(Boolean)
+        .slice(0, 12)
+    : [];
+  const bookingUnitPriceUsd = Math.max(0, Math.round(Number(body.bookingUnitPriceUsd) || 0));
+  const defaultInstallFeeUsd = bookingInstallKind === 'RE_INSTALL' ? 225 : 275;
+  const bookingInstallFeeUsd = Math.max(
+    0,
+    Math.round(Number(body.bookingInstallFeeUsd) || defaultInstallFeeUsd)
+  );
+  const bookingOrderTotalPaidUsd = Math.max(
+    0,
+    Math.round(Number(body.bookingOrderTotalPaidUsd) || 0)
+  );
+  const bookingLineTotalPaidUsd = Math.max(
+    0,
+    Math.round(Number(body.bookingLineTotalPaidUsd) || 0)
+  );
+  const bookingBalancePaidUsd = Math.max(
+    0,
+    Math.round(
+      Number(body.bookingBalancePaidUsd) ||
+        (bookingOrderTotalPaidUsd > 0
+          ? bookingOrderTotalPaidUsd - bookingInstallFeeUsd
+          : bookingLineTotalPaidUsd - bookingInstallFeeUsd)
+    )
+  );
+  const bookingFinalDueUsd = Math.max(
+    0,
+    Math.round(Number(body.bookingFinalDueUsd) || bookingInstallFeeUsd)
+  );
+  const bookingPaymentMethodLabel = String(body.bookingPaymentMethodLabel || '')
+    .trim()
+    .toUpperCase();
+  const bookingStripeCustomerId = sanitizeStripeId(body.bookingStripeCustomerId, 120);
+  const bookingStripePaymentMethodId = sanitizeStripeId(body.bookingStripePaymentMethodId, 120);
+  const bookingAutopayConsent = body.bookingAutopayConsent === true;
+  const bookingAutopayConsentAtRaw = String(body.bookingAutopayConsentAt || '').trim();
+  const bookingAutopayConsentAtParsed = new Date(bookingAutopayConsentAtRaw);
+  const bookingAutopayConsentAt =
+    bookingAutopayConsent && Number.isFinite(bookingAutopayConsentAtParsed.getTime())
+      ? bookingAutopayConsentAtParsed.toISOString()
+      : bookingAutopayConsent
+      ? new Date().toISOString()
+      : null;
+  const bookingBookedAtRaw = String(body.bookingBookedAtIso || '').trim();
+  const bookingBookedAtParsed = new Date(bookingBookedAtRaw);
+  const bookingBookedAtIso = Number.isFinite(bookingBookedAtParsed.getTime())
+    ? bookingBookedAtParsed.toISOString()
+    : new Date().toISOString();
+  const dueDate = new Date(`${meetingDate}T23:59:59.999`);
+  dueDate.setDate(dueDate.getDate() - 2);
+  const finalPaymentDueAt = dueDate.toISOString();
+  const finalPaymentDueDate = finalPaymentDueAt.slice(0, 10);
+  const finalPaymentPolicy = `REMAINING ${bookingFinalDueUsd.toLocaleString(
+    'en-US'
+  )} USD PAYMENT IS DUE NO MORE THAN 48 HOURS BEFORE APPOINTMENT DATE & IT MUST BE PAID USING THE SAME PAYMENT METHOD OR THE APPOINTMENT WILL BE CANCELLED IF PAYMENT IS UNSUCCESSFUL.`;
   const rawNotes = String(body.notes || '').trim();
   const notes = [
     idempotencyKey ? `IDEMPOTENCY:${idempotencyKey}` : '',
@@ -90,6 +188,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       orderNumber: orderNumber || null,
       idempotencyKey: idempotencyKey || null,
       source: 'checkout_appointment',
+      bookingInstallKind,
+      bookingAddonIds,
+      ...(bookingStyle ? { bookingStyle } : {}),
+      ...(bookingPartDirection ? { bookingPartDirection } : {}),
+      ...(bookingUnitName ? { bookingUnitName } : {}),
+      ...(bookingUnitPriceUsd > 0 ? { bookingUnitPriceUsd } : {}),
+      bookingInstallFeeUsd,
+      bookingOrderTotalPaidUsd,
+      bookingLineTotalPaidUsd,
+      bookingBalancePaidUsd,
+      bookingFinalDueUsd,
+      bookingPaidTotalUsd: bookingOrderTotalPaidUsd || bookingLineTotalPaidUsd || bookingUnitPriceUsd,
+      ...(bookingPaymentMethodLabel ? { bookingPaymentMethodLabel } : {}),
+      ...(bookingStripeCustomerId ? { bookingStripeCustomerId } : {}),
+      ...(bookingStripePaymentMethodId ? { bookingStripePaymentMethodId } : {}),
+      bookingAutopayConsent,
+      ...(bookingAutopayConsentAt ? { bookingAutopayConsentAt } : {}),
+      bookingAutopayStatus: bookingAutopayConsent ? 'scheduled' : 'not_enabled',
+      bookingBookedAtIso,
+      finalPaymentDueAt,
+      finalPaymentDueDate,
+      finalPaymentPolicy,
     };
 
     const { data, error } = await supabase

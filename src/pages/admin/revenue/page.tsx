@@ -628,16 +628,23 @@ export default function AdminRevenue() {
   }, []);
 
   const formatWithCommas = (n: number) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  const grossSales = useMemo(
+    () => orders.reduce((sum, o) => sum + (Number(o.total ?? o.amount) || 0), 0),
+    [orders]
+  );
   const revenueFormatted = totalRevenue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).replace('$', '$');
-  const absRevenue = Math.abs(totalRevenue);
-  const totalRevenueBannerValue =
-    totalRevenue < 0
-      ? (absRevenue >= 1000 ? `-${(absRevenue / 1000).toFixed(1)}k` : `-${Math.round(absRevenue)}`)
-      : (absRevenue >= 1000 ? `+${(absRevenue / 1000).toFixed(1)}k` : `+${Math.round(absRevenue)}`);
-
   const avgOrderDisplay = orders.length && ordersStats.avgOrder > 0 ? `$${formatWithCommas(Math.round(ordersStats.avgOrder))}` : '—';
   const panelLabelsAndValues: Record<typeof REVENUE_TABS[number], { left: { label: string; value: string }; right: { label: string; value: string } }> = {
-    OVERVIEW: { left: { label: 'TOTAL REVENUE', value: totalRevenueBannerValue }, right: { label: 'ORDERS', value: formatWithCommas(totalOrders) } },
+    OVERVIEW: {
+      left: {
+        label: 'GROSS SALES',
+        value:
+          grossSales >= 1000
+            ? `+${(grossSales / 1000).toFixed(1)}k`
+            : `+${Math.round(grossSales)}`
+      },
+      right: { label: 'ORDERS', value: formatWithCommas(totalOrders) }
+    },
     ORDERS: { left: { label: 'THIS MONTH', value: formatWithCommas(ordersStats.thisMonth) }, right: { label: 'AVG ORDER', value: avgOrderDisplay } },
     PRODUCTS: { left: { label: 'PROFIT MARGIN', value: '—' }, right: { label: 'INVENTORY', value: `${inventoryPercent}%` } },
     PAYMENTS: { left: { label: 'DISCOUNTS', value: '—' }, right: { label: 'FEES', value: '—' } },
@@ -807,11 +814,33 @@ export default function AdminRevenue() {
 
               {/* Tab-specific panels – above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'OVERVIEW' ? (totalRevenue < 0 ? '#EB1C24' : '#16a34a') : '#EB1C24' }}>{panel.left.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.left.label}</p>
                 </div>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: activeTab === 'PRODUCTS' ? inventoryBannerColor : '#EB1C24' }}>{panel.right.value}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panel.right.label}</p>
                 </div>
@@ -1098,11 +1127,33 @@ PENDING
                 </div>
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
                 <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
                     <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingOrders.length}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL</p>
                   </div>
-                  <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
                     <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{awaitingTrackingCount}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>AWAITING TRACKING</p>
                   </div>

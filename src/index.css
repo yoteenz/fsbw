@@ -127,6 +127,11 @@ img.natural-front-mobile {
   font-display: block;
 }
 
+/* Force Bohemy on A/C booking calendar month labels despite global font overrides. */
+.booking-calendar-month-admin {
+  font-family: 'Bohemy', sans-serif !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

@@ -574,6 +574,8 @@ export default function AdminClients() {
   const [searchParams] = useSearchParams();
   const globalSearchQuery = (searchParams.get('q') || '').trim();
   const emailFromUrl = searchParams.get('email') || '';
+  const returnTo = (searchParams.get('returnTo') || '').trim().toLowerCase();
+  const meetingsReturnTab = searchParams.get('meetingsTab') === 'consults' ? 'consults' : 'bookings';
   const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('ALL');
   const [sortOption, setSortOption] = useState<SortOption>('Most recent');
@@ -614,10 +616,14 @@ export default function AdminClients() {
   }, []);
 
   const closeClientDetails = useCallback(() => {
+    if (returnTo === 'meetings') {
+      navigate(`/admin/meetings?tab=${meetingsReturnTab}`);
+      return;
+    }
     setSelectedClientEmail(null);
     setDetailsTab('activity');
     setExpandedOrderId(null);
-  }, []);
+  }, [navigate, returnTo, meetingsReturnTab]);
 
   useLayoutEffect(() => {
     if (selectedClientEmail != null) return;
@@ -1546,6 +1552,10 @@ export default function AdminClients() {
     if (!q) return sortedClients;
     return sortedClients.filter((u: any) => getClientSearchableText(u).includes(q));
   })();
+  const totalClientsCount = registeredUsers.length;
+  const totalMembersCount = registeredUsers.filter(
+    (u: any) => ((u?.membershipType || 'STANDARD') + '').toUpperCase() === 'PREMIUM'
+  ).length;
   return (
     <>
       <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -3199,6 +3209,47 @@ export default function AdminClients() {
                   </div>
                 ) : (
                   <>
+                {/* Summary cards above tabs */}
+                <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                      {totalClientsCount}
+                    </p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                      TOTAL CLIENTS
+                    </p>
+                  </div>
+                  <div
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                    }}
+                  >
+                    <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                      {totalMembersCount}
+                    </p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                      TOTAL MEMBERS
+                    </p>
+                  </div>
+                </div>
                 {/* Tabs: ALL, REVIEWS, REWARDS, INVITES – same spacing as marketing page */}
                 <div className="flex flex-wrap justify-center gap-[14px] px-5">
                   {TABS.map((tab) => (
@@ -3543,7 +3594,7 @@ export default function AdminClients() {
             loadData();
             closeClientDetails();
             setShowBlockConfirm(false);
-            navigate('/admin/clients');
+            if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
         title="BLOCK CLIENT?"

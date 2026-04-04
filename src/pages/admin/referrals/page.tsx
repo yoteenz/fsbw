@@ -138,13 +138,35 @@ export default function AdminReferralsPage() {
 
               {/* Cards above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{inviteeCount}</p>
-                  <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>TOTAL INVITEES</p>
+                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL INVITEES</p>
                 </div>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>${totalEarned}</p>
-                  <p className="text-xs font-futura mt-1" style={{ color: '#808080' }}>TOTAL PAID OUT</p>
+                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>TOTAL PAID OUT</p>
                 </div>
               </div>
 

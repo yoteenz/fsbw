@@ -70,6 +70,8 @@ type Props = {
   isDateDisabled?: (isoYmd: string) => boolean;
   /** Month nav arrow scale (default 1). Booking A/C passes 0.75 for 25% smaller arrows. */
   navArrowScale?: number;
+  /** Calendar month label visual treatment. */
+  monthLabelVariant?: 'default' | 'adminMeetings';
 };
 
 /**
@@ -81,7 +83,8 @@ export default function BrandExpiresDatePicker({
   onChange,
   inline = false,
   isDateDisabled,
-  navArrowScale = 1
+  navArrowScale = 1,
+  monthLabelVariant = 'default'
 }: Props) {
   const navLeftPx = Math.max(1, Math.round(NAV_ARROW_BASE_LEFT_PX * navArrowScale));
   const navRightPx = Math.max(1, Math.round(NAV_ARROW_BASE_RIGHT_PX * navArrowScale));
@@ -200,6 +203,37 @@ export default function BrandExpiresDatePicker({
         backgroundRepeat: 'repeat',
       };
 
+  const monthLabelText =
+    monthLabelVariant === 'adminMeetings'
+      ? MONTH_LABELS[viewMonth].toLowerCase()
+      : `${MONTH_LABELS[viewMonth]} ${viewYear}`;
+
+  const monthLabelStyle: CSSProperties =
+    monthLabelVariant === 'adminMeetings'
+      ? {
+          fontFamily: '"Bohemy", sans-serif',
+          fontSize: '25px',
+          color: '#000',
+          margin: 0,
+          textAlign: 'center',
+          flex: 1,
+          textTransform: 'lowercase',
+          fontWeight: 200
+        }
+      : {
+          fontFamily: '"Futura PT Medium", Futura, sans-serif',
+          fontSize: '11px',
+          color: '#EB1C24',
+          margin: 0,
+          textAlign: 'center',
+          flex: 1,
+          textTransform: 'uppercase',
+          letterSpacing: '0.02em'
+        };
+
+  const monthLabelClassName =
+    monthLabelVariant === 'adminMeetings' ? 'booking-calendar-month-admin' : undefined;
+
   const calendarInner = (
     <div
       ref={inline ? undefined : popoverRef}
@@ -233,19 +267,8 @@ export default function BrandExpiresDatePicker({
               draggable={false}
             />
           </button>
-          <p
-            style={{
-              fontFamily: '"Futura PT Medium", Futura, sans-serif',
-              fontSize: '11px',
-              color: '#EB1C24',
-              margin: 0,
-              textAlign: 'center',
-              flex: 1,
-              textTransform: 'uppercase',
-              letterSpacing: '0.02em',
-            }}
-          >
-            {MONTH_LABELS[viewMonth]} {viewYear}
+          <p className={monthLabelClassName} style={monthLabelStyle}>
+            {monthLabelText}
           </p>
           <button
             type="button"

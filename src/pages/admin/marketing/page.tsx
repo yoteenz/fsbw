@@ -88,11 +88,33 @@ export default function AdminMarketing() {
               <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
 
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panelValues.left.toLocaleString()}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panelLabels.left}</p>
                 </div>
-                <div className="text-center py-3" style={{ backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: '4px' }}>
+                <div
+                  className="text-center py-3"
+                  style={{
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    borderRadius: '4px',
+                    height: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    paddingBottom: '10px',
+                  }}
+                >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panelValues.right.toLocaleString()}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panelLabels.right}</p>
                 </div>
