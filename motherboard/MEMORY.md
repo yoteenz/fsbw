@@ -9942,3 +9942,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For UI micro-position requests on existing admin controls, apply minimal wrapper-level offsets (margin/translate) rather than altering inner icon geometry, so behavior and hit targets remain stable.
+
+---
+
+## 2026-04-04 — Stripe membership tier changes: immediate paid upgrade + prorated refund, deferred downgrade at renewal
+
+**Context:** User requested concrete membership billing behavior: when a client upgrades to a higher-cost membership, charge the full new membership cycle immediately and create a new renewal date, then refund the unused prorated value from the current subscription period (example given: 3-month plan with only 1 month used should refund remaining 2 months). For downgrades, user requested current membership remain active until renewal and only charge the lower-cost plan on that renewal.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected Stripe membership checkout/webhook/profile code paths to identify where tier-change behavior was missing.
+- Found prior flow only created Checkout sessions and did not enforce explicit upgrade-vs-downgrade semantics server-side.
+- Implemented server-side tier-change handling in `POST /api/stripe/create-checkout-session` for users with an existing Stripe subscription:
+  - **Upgrade (higher cost):** updates the existing subscription with `billing_cycle_anchor: 'now'`, full new-tier billing immediately, computes remaining-time ratio in current period, and creates a refund on the most recent paid subscription charge for the unused old-tier value.
+  - **Downgrade (lower cost):** schedules lower-tier pricing via `pending_update` at current period end so current membership remains active through renewal with no immediate downgrade charge.
+  - **Same tier:** returns a no-op `subscription_updated` response.
+- Updated frontend API/client behavior so checkout handles both redirect and non-redirect outcomes:
+  - keeps Stripe Checkout redirect when needed,
+  - handles immediate `subscription_updated` responses (upgrade/downgrade/no-op), syncs profile, shows notice, and returns user to rewards flow.
+- Updated webhook sync logic to keep profile tier/renewal/status fields aligned from Stripe subscription item prices on invoice events and subscription updates.
+- Verified with successful production build after edits.
+- Committed and pushed on branch `cursor/membership-tier-billing-af98`, then created draft PR targeting `preview/mobile`.
+
+**Decisions / outcomes:**
+- Upgrade flow now follows user requirement: full new-cycle charge now + prorated unused-time refund from current cycle + new renewal date.
+- Downgrade flow now follows user requirement: no immediate downgrade effect; lower-cost plan takes effect at renewal.
+- Existing subscribers are processed server-side without forcing a new hosted checkout redirect for tier changes.
+
+**Changes:**
+- `api/_lib/stripeMembership.ts`
+- `api/stripe/create-checkout-session.ts`
+- `api/stripe/webhook.ts`
+- `src/utils/api.ts`
+- `src/pages/checkout/page.tsx`
+- Git: committed (`Implement upgrade proration refunds and deferred downgrade renewals`), pushed to `origin/cursor/membership-tier-billing-af98`.
+- PR: `https://github.com/yoteenz/fsbw/pull/7` (draft).
+
+**Conventions:**
+- Treat membership tier changes as explicit server-side billing operations:
+  - higher-cost changes apply immediately with full-cycle rebill and prorated refund for unused prior-cycle value,
+  - lower-cost changes are scheduled for period-end renewal so current entitlement remains intact until then.
