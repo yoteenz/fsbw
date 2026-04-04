@@ -9241,3 +9241,33 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - For “mirror meetings page” admin-card requests, remove the in-card header/title-icon row (`flex items-center justify-between -mt-1 pb-1 px-5 pt-4`) and divider while preserving card body spacing and summary/tabs structure.
 - Keep deploy-visible work on `preview/mobile` by default per user branch policy.
+
+---
+
+## 2026-04-03 — Meetings B/C action icons now toggle main-card panels (no popup overlays)
+
+**Context:** After previous meetings/admin UI updates in this same chat, the user requested that the bookings/consults action icons (edit booking + send quote) stop opening popup modals and instead toggle inside the same main card area, matching the existing “VIEW ALL BOOKINGS/CONSULTS” interaction with the red close X.
+
+**Topics covered (entire conversation so far):**
+- Continued from the full consults/admin UI overhaul already completed in this chat (client flow corrections, calendar styling parity, summary-card parity, admin header-strip removals, preview/mobile branch policy).
+- Reworked `AdminMeetingsHub` panel-state behavior so `viewAllMode`, `editMeeting`, and `quoteMeeting` all drive a single in-card “active panel” surface with shared top title + red close icon behavior.
+- Kept the existing “view all” behavior intact while adding the same card-level toggle flow for:
+  - booking edit icon (`edit-meeting-icon-booking.svg`) and
+  - consult quote icon (`quote-icon-consult.svg`).
+- Moved the edit/quote form contents from fixed overlay popups into the main card content area when those states are active.
+- Removed the old fixed overlay wrappers for `editMeeting` and `quoteMeeting`; left the send confirmation modal and consult photo preview modal behavior unchanged.
+- Verified with a full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Edit booking and send quote now open as in-card panels (same interaction model as view-all) instead of popups.
+- Red close-X at the panel header exits these panels and returns to the default B/C list state.
+- No regressions in compile/build after the interaction model change.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - unified active-panel title/close handling across view-all, edit, and quote states
+  - rendered edit and quote forms inside main card content branch
+  - removed obsolete fixed popup containers for `quoteMeeting` and `editMeeting`
+
+**Conventions:**
+- For meetings hub actions that conceptually belong to the B/C card context, prefer in-card panel toggles with shared close-X header over separate overlay popups.
