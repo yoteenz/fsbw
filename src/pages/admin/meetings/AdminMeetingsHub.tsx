@@ -445,6 +445,8 @@ type BookingPaymentStatus = {
   finalPaymentDueText: string;
   dueProgressPct: number;
   duePassed: boolean;
+  autopayStatus: 'paid' | 'failed' | 'scheduled' | 'not_enabled';
+  autopayLastError: string;
 };
 
 function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
@@ -497,6 +499,13 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
     else dueText = `${minutes}M LEFT`;
   }
 
+  const autopayStatusRaw = String(meta.bookingAutopayStatus || meta.autopayStatus || '').trim().toLowerCase();
+  const autopayStatus: 'paid' | 'failed' | 'scheduled' | 'not_enabled' =
+    autopayStatusRaw === 'paid' || autopayStatusRaw === 'failed' || autopayStatusRaw === 'scheduled'
+      ? (autopayStatusRaw as 'paid' | 'failed' | 'scheduled')
+      : 'not_enabled';
+  const autopayLastError = String(meta.bookingAutopayLastError || '').trim().toUpperCase();
+
   return {
     remainingDueUsd,
     paidTotalUsd,
@@ -504,6 +513,8 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
     finalPaymentDueText: dueText,
     dueProgressPct: elapsedPct,
     duePassed,
+    autopayStatus,
+    autopayLastError,
   };
 }
 
@@ -1207,6 +1218,19 @@ export default function AdminMeetingsHub() {
                                           {payment.finalPaymentDueText}
                                         </p>
                                       </div>
+                                      {payment.autopayStatus === 'paid' ? (
+                                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '0 0 2px' }}>
+                                          AUTOPAY STATUS: FINAL PAYMENT PROCESSED SUCCESSFULLY
+                                        </p>
+                                      ) : payment.autopayStatus === 'failed' ? (
+                                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '0 0 2px' }}>
+                                          AUTOPAY STATUS: FAILED{payment.autopayLastError ? ` · ${payment.autopayLastError}` : ''}
+                                        </p>
+                                      ) : payment.autopayStatus === 'scheduled' ? (
+                                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '0 0 2px' }}>
+                                          AUTOPAY STATUS: SCHEDULED ON CARD ON FILE
+                                        </p>
+                                      ) : null}
                                     </div>
                                   </>
                                 );

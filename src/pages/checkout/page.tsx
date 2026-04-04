@@ -232,6 +232,7 @@ function CheckoutPage() {
   const [savePaymentMethod, setSavePaymentMethod] = useState(false);
   const [useDefaultPaymentMethod, setUseDefaultPaymentMethod] = useState(false);
   const [savePaymentMethodCard, setSavePaymentMethodCard] = useState(false);
+  const [bookingAutopayConsent, setBookingAutopayConsent] = useState(false);
   const [autoRenewMembership, setAutoRenewMembership] = useState(false);
   // Initialize newsletter subscription based on mailing list status
   // Auto-select if NOT on mailing list, auto-deselect if ON mailing list
@@ -333,9 +334,73 @@ function CheckoutPage() {
   const [customTipAmount, setCustomTipAmount] = useState(0);
   const [customTipApplied, setCustomTipApplied] = useState(false);
   const [customTipDisplay, setCustomTipDisplay] = useState('');
+  const [hasSupabaseCheckoutSession, setHasSupabaseCheckoutSession] = useState(false);
+  const [bookingStripeProfile, setBookingStripeProfile] = useState<{
+    stripeCustomerId: string;
+    stripePaymentMethodId: string;
+  }>({ stripeCustomerId: '', stripePaymentMethodId: '' });
+  const hasBookingAppointmentItems = useMemo(
+    () => cartItems.some((item: any) => item?.type === 'booking-appointment'),
+    [cartItems]
+  );
+  const bookingAutopayStripeReady =
+    hasBookingAppointmentItems &&
+    hasSupabaseCheckoutSession &&
+    Boolean(bookingStripeProfile.stripeCustomerId) &&
+    Boolean(bookingStripeProfile.stripePaymentMethodId);
+
+  useEffect(() => {
+    let cancelled = false;
+    const hydrate = () => {
+      void getAccessToken().then((token) => {
+        if (!cancelled) setHasSupabaseCheckoutSession(Boolean(token));
+      });
+      try {
+        const raw = localStorage.getItem('currentUser');
+        const user = raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+        const stripeCustomerId = String(
+          user?.stripeCustomerId ?? user?.stripe_customer_id ?? ''
+        ).trim();
+        const stripePaymentMethodId = String(
+          user?.stripeDefaultPaymentMethodId ?? user?.stripe_default_payment_method_id ?? ''
+        ).trim();
+        if (!cancelled) {
+          setBookingStripeProfile({
+            stripeCustomerId,
+            stripePaymentMethodId,
+          });
+        }
+      } catch {
+        if (!cancelled) {
+          setBookingStripeProfile({ stripeCustomerId: '', stripePaymentMethodId: '' });
+        }
+      }
+    };
+    hydrate();
+    window.addEventListener('signInStateChanged', hydrate);
+    window.addEventListener('focus', hydrate);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('signInStateChanged', hydrate);
+      window.removeEventListener('focus', hydrate);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasBookingAppointmentItems && bookingAutopayConsent) setBookingAutopayConsent(false);
+  }, [hasBookingAppointmentItems, bookingAutopayConsent]);
 
   const syncBookingAppointmentsToAdminMeetings = useCallback(
-    async (orderNumberForNotes: string, orderTotalPaidUsd: number, paymentMethodLabel: string) => {
+    async (
+      orderNumberForNotes: string,
+      orderTotalPaidUsd: number,
+      paymentMethodLabel: string,
+      autopay?: {
+        consent: boolean;
+        stripeCustomerId?: string;
+        stripePaymentMethodId?: string;
+      }
+    ) => {
       const appointmentItems = cartItems.filter(
         (item: any) =>
           item?.type === 'booking-appointment' &&
@@ -399,6 +464,10 @@ function CheckoutPage() {
             bookingFinalDueUsd: installFeeUsd,
             bookingPaymentMethodLabel: paymentMethodLabel,
             bookingBookedAtIso: new Date().toISOString(),
+            bookingStripeCustomerId: autopay?.stripeCustomerId,
+            bookingStripePaymentMethodId: autopay?.stripePaymentMethodId,
+            bookingAutopayConsent: autopay?.consent === true,
+            bookingAutopayConsentAt: autopay?.consent === true ? new Date().toISOString() : undefined,
           });
         })
       );
@@ -675,6 +744,68 @@ function CheckoutPage() {
       cancelled = true;
     };
   }, [isSubscriptionUpgrade]);
+
+  useEffect(() => {
+    if (isSubscriptionUpgrade) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const token = await getAccessToken();
+        if (!cancelled) setHasSupabaseCheckoutSession(Boolean(token));
+      } catch {
+        if (!cancelled) setHasSupabaseCheckoutSession(false);
+      }
+    })();
+    const refreshSession = () => {
+      void getAccessToken()
+        .then((t) => setHasSupabaseCheckoutSession(Boolean(t)))
+        .catch(() => setHasSupabaseCheckoutSession(false));
+    };
+    window.addEventListener('signInStateChanged', refreshSession);
+    window.addEventListener('focus', refreshSession);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('signInStateChanged', refreshSession);
+      window.removeEventListener('focus', refreshSession);
+    };
+  }, [isSubscriptionUpgrade]);
+
+  useEffect(() => {
+    if (isSubscriptionUpgrade || !hasBookingAppointmentItems || !hasSupabaseCheckoutSession || !isSignedIn) {
+      setBookingStripeProfile({ stripeCustomerId: '', stripePaymentMethodId: '' });
+      if (!hasBookingAppointmentItems) setBookingAutopayConsent(false);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const token = await getAccessToken();
+        if (!token || cancelled) {
+          if (!cancelled) setBookingStripeProfile({ stripeCustomerId: '', stripePaymentMethodId: '' });
+          return;
+        }
+        const base = ((import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE || '').replace(/\/$/, '');
+        const url = base ? `${base}/api/profile` : '/api/profile';
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok || cancelled) {
+          if (!cancelled) setBookingStripeProfile({ stripeCustomerId: '', stripePaymentMethodId: '' });
+          return;
+        }
+        const profile = (await res.json()) as { stripeCustomerId?: string; stripeDefaultPaymentMethodId?: string };
+        if (!cancelled) {
+          setBookingStripeProfile({
+            stripeCustomerId: String(profile?.stripeCustomerId || '').trim(),
+            stripePaymentMethodId: String(profile?.stripeDefaultPaymentMethodId || '').trim(),
+          });
+        }
+      } catch {
+        if (!cancelled) setBookingStripeProfile({ stripeCustomerId: '', stripePaymentMethodId: '' });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubscriptionUpgrade, hasBookingAppointmentItems, hasSupabaseCheckoutSession, isSignedIn]);
 
   useEffect(() => {
     if (!isSubscriptionUpgrade) return;
@@ -4396,6 +4527,60 @@ function CheckoutPage() {
                         SAVE PAYMENT METHOD
                       </label>
                     </div>
+                    {hasBookingAppointmentItems && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          onClick={() => setBookingAutopayConsent(!bookingAutopayConsent)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1.3px solid #000000',
+                            backgroundColor: 'transparent',
+                            position: 'relative'
+                          }}
+                        >
+                          {bookingAutopayConsent && (
+                            <img
+                              src="/assets/checkbox.svg"
+                              alt="checked"
+                              style={{ width: '16px', height: '16px', position: 'absolute' }}
+                            />
+                          )}
+                        </div>
+                        <label
+                          onClick={() => setBookingAutopayConsent(!bookingAutopayConsent)}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          I AUTHORIZE THE REMAINING BOOKING BALANCE TO AUTO-DRAFT 48 HOURS BEFORE APPOINTMENT.<span style={{ color: '#EB1C24' }}>*</span>
+                        </label>
+                      </div>
+                    )}
+                    {hasBookingAppointmentItems && (
+                      <p
+                        style={{
+                          margin: '-4px 0 0 24px',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '8px',
+                          color: bookingAutopayStripeReady ? '#808080' : '#EB1C24',
+                          textTransform: 'uppercase',
+                          lineHeight: 1.35,
+                        }}
+                      >
+                        {bookingAutopayStripeReady
+                          ? 'AUTO-DRAFT READY USING YOUR SAVED STRIPE CARD ON FILE.'
+                          : 'AUTO-DRAFT REQUIRES A SUPABASE SIGN-IN WITH A SAVED STRIPE CARD ON FILE.'}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -5705,6 +5890,16 @@ function CheckoutPage() {
                     setShowTermsRequiredModal(true);
                     return;
                   }
+                  if (hasBookingAppointmentItems && !bookingAutopayConsent) {
+                    setValidationMessage('BOOKING AUTO-DRAFT AUTHORIZATION IS REQUIRED.');
+                    setShowValidationModal(true);
+                    return;
+                  }
+                  if (hasBookingAppointmentItems && bookingAutopayConsent && !bookingAutopayStripeReady) {
+                    setValidationMessage('BOOKING AUTO-DRAFT NEEDS A SAVED STRIPE CARD ON FILE. SIGN IN WITH SUPABASE AND ADD A STRIPE CARD FIRST.');
+                    setShowValidationModal(true);
+                    return;
+                  }
                   
                   // Calculate points earned (if signed in) — use net eligible USD (matches strip + consult code / stack rules; booking lines not double-counted)
                   const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
@@ -6190,7 +6385,11 @@ function CheckoutPage() {
 
                   void (async () => {
                     try {
-                      await syncBookingAppointmentsToAdminMeetings(orderNumber, subtotal, paymentMethodDisplay);
+                      await syncBookingAppointmentsToAdminMeetings(orderNumber, subtotal, paymentMethodDisplay, {
+                        consent: hasBookingAppointmentItems && bookingAutopayConsent && bookingAutopayStripeReady,
+                        stripeCustomerId: bookingStripeProfile.stripeCustomerId,
+                        stripePaymentMethodId: bookingStripeProfile.stripePaymentMethodId,
+                      });
                       await syncBookingConsultsToAdminMeetings(orderNumber);
                     } catch (e) {
                       console.error('Failed to sync booking appointments to admin meetings:', e);
