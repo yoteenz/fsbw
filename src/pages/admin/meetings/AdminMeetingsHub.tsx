@@ -58,6 +58,14 @@ function viewAllSortOptionToLabel(opt: ViewAllSortOption): string {
   return opt.toUpperCase();
 }
 
+function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCount: number): string | null {
+  if (!mode) return null;
+  if (mode === 'bookings') {
+    return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`;
+  }
+  return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`;
+}
+
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
 const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
@@ -1231,15 +1239,12 @@ export default function AdminMeetingsHub() {
     };
   }, [consultMeetings, localTick]);
 
-  const activeMainCardTitle = viewAllMode
-    ? viewAllMode === 'bookings'
-      ? `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'BOOKING' : 'BOOKINGS'}`
-      : `${viewAllUniqueClientCount} CLIENT ${viewAllUniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`
-    : editMeeting
+  const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
+    ?? (editMeeting
     ? 'EDIT MEETING'
     : quoteMeeting
     ? 'SEND CONSULT QUOTE'
-    : null;
+    : null);
 
   const closeMainCardPanel = () => {
     setViewAllMode(null);
