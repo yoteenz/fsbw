@@ -834,9 +834,22 @@ export default function AdminMeetingsHub() {
               {viewAllMode ? (
                 <div
                   className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: '10px', gap: '8px' }}
                 >
-                  <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
+                  <h2
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#000',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      margin: 0,
+                      flex: 1,
+                      minWidth: 0,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
                     {viewAllMode === 'bookings' ? 'VIEW ALL BOOKINGS' : 'VIEW ALL CONSULTS'}
                   </h2>
                   <button
