@@ -21,6 +21,8 @@ interface StatsCardData {
   tiers?: StatsItem[];
   /** Optional highlighted text shown under the items */
   highlight?: string;
+  /** Optional segmented highlight text with per-part colors. */
+  highlightParts?: Array<{ text: string; color?: string }>;
   /** Optional activity text shown under the items */
   activity?: string;
   /** Optional actions displayed as buttons – label is displayed, action is an identifier */
@@ -344,17 +346,25 @@ export default function StatsCard({ data, onCardClick, itemsMaxHeightPx }: Stats
         {/* Bottom section – highlight, activity, actions */}
         <div className="mt-2 overflow-hidden">
           {/* Highlight */}
-          {data.highlight && (
+          {(data.highlightParts && data.highlightParts.length > 0) || data.highlight ? (
             <div className="pt-1 border-t border-gray-200">
               <p
                 ref={highlightRef}
                 className="text-red-500 text-[8px] whitespace-nowrap text-left font-futura overflow-x-auto scrollbar-hide uppercase"
-                style={{ fontWeight: "515", scrollBehavior: "auto", color: '#EB1C24' }}
+                style={{ fontWeight: "515", scrollBehavior: "auto" }}
               >
-                {data.highlight}
+                {data.highlightParts && data.highlightParts.length > 0
+                  ? data.highlightParts.map((part, idx) => (
+                      <span key={`highlight-part-${idx}`} style={{ color: getColorValue(part.color || 'text-red-500') }}>
+                        {part.text}
+                      </span>
+                    ))
+                  : (
+                    <span style={{ color: '#EB1C24' }}>{data.highlight}</span>
+                  )}
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* Activity */}
           {data.activity && (

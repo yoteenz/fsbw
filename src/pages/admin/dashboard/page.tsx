@@ -841,6 +841,15 @@ export default function AdminDashboard() {
       ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${mostBookedClientLine} ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${mostRedeemedOffersLine} ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH. ${mostTraveledCityLine}`
     );
 
+  const meetingsCardTickerHighlightParts = [
+    { text: `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. `, color: 'text-red-500' as const },
+    { text: `${mostBookedClientLine} `, color: 'text-gray-500' as const },
+    { text: `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. `, color: 'text-red-500' as const },
+    { text: `${mostRedeemedOffersLine} `, color: 'text-gray-500' as const },
+    { text: `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH. `, color: 'text-red-500' as const },
+    { text: mostTraveledCityLine, color: 'text-gray-500' as const },
+  ];
+
   const statsData = [
     {
       title: 'CLIENTS',
@@ -912,7 +921,8 @@ export default function AdminDashboard() {
             : [{ text: dateAndClient, color: 'text-red-500' as const }],
         };
       }),
-      highlight: meetingsCardTickerWithInsights
+      highlight: meetingsCardTickerWithInsights,
+      highlightParts: meetingsCardTickerHighlightParts,
     },
 
     {
