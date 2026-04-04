@@ -10091,3 +10091,40 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
   - higher-cost change = immediate full-cycle rebill + unused-time refund,
   - lower-cost change = schedule for renewal with no immediate downgrade charge.
 - When user specifies final delivery branch after implementation, re-home commits onto requested target branch and clean up any mistaken branch artifacts.
+
+---
+
+## 2026-04-04 — Admin Meetings view-all updates moved to preview/mobile and incorrect feature branch removed
+
+**Context:** In this conversation thread, the user requested additional Admin Meetings “View All” UI refinements (icon-border thickness, list/grid spacing/offsets, booking/consult line formatting), then asked for a follow-up legacy-header sweep to prevent transient “TS” artifact recurrence. After those updates were delivered on a feature branch, the user explicitly required delivery on `preview/mobile` and asked to undo branch targeting mistakes and delete the incorrectly created branch.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior meetings view-all work (TS artifact fixes, header consolidation, and control-position refinements).
+- Applied requested view-all updates in `AdminMeetingsHub`:
+  - profile icon border increased by 0.1px across view-all + B/C tab cards,
+  - grid booking-count spacing tightened,
+  - booking grid service line simplified to install kind + price only,
+  - list-text block shifted 6px right of icons,
+  - consult grid lines updated to match booking-style structure with red price line + date line.
+- Performed explicit legacy-header sweep and consolidated title generation to reduce alternate-branch/header-path risk in meetings view-all.
+- User then required push target correction to `preview/mobile` and branch cleanup.
+- Switched to `preview/mobile`, rebased to remote, transferred finalized meetings/header file state, rebuilt successfully, pushed to `origin/preview/mobile`.
+- Deleted wrong branch both remote and local (`cursor/bookings-tab-ui-adjustments-95ca`) per user instruction.
+
+**Decisions / outcomes:**
+- Final delivery branch is now correctly `preview/mobile`.
+- The mistakenly used feature branch was deleted from both origin and local.
+- Admin Meetings view-all refinements and header-path cleanup are now on `preview/mobile`.
+
+**Changes:**
+- Code moved/applied on `preview/mobile`:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Branch operations:
+  - pushed `preview/mobile`
+  - deleted remote `cursor/bookings-tab-ui-adjustments-95ca`
+  - deleted local `cursor/bookings-tab-ui-adjustments-95ca`
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- If user clarifies branch target after implementation, immediately re-home final code to the specified branch and remove incorrect branch artifacts (remote + local) when requested.
