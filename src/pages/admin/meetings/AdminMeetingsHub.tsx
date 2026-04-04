@@ -697,13 +697,6 @@ function consultInspo(m: AdminMeeting): string[] {
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
 
-function viewAllRowLabel(m: AdminMeeting): string {
-  if (m.category === 'appointment') {
-    return `${formatBookingInstallLineForCard(m)} · ${formatBookingAddonsLineForCard(m)}`;
-  }
-  return m.type;
-}
-
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -1101,33 +1094,38 @@ export default function AdminMeetingsHub() {
               }}
             >
               {activeMainCardTitle ? (
-                <div
-                  className="flex-shrink-0 px-5 pb-2 flex items-center justify-between -mt-1"
-                  style={{ marginTop: '10px' }}
-                >
-                  <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
-                    {activeMainCardTitle}
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={closeMainCardPanel}
-                    aria-label="Close view all"
+                <div className="flex-shrink-0 px-5 pb-2 -mt-1" style={{ marginTop: '10px' }}>
+                  <div className="flex items-center justify-between">
+                    <h2 style={{ fontFamily: '"Futura PT Medium"', color: '#000', fontSize: '12px', fontWeight: 500, margin: 0 }}>
+                      {activeMainCardTitle}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={closeMainCardPanel}
+                      aria-label="Close view all"
+                      style={{
+                        padding: 0,
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        lineHeight: 0,
+                      }}
+                    >
+                      <img
+                        src="/assets/close-icon.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
+                      />
+                    </button>
+                  </div>
+                  <div
                     style={{
-                      padding: 0,
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      lineHeight: 0,
+                      borderBottom: '1px solid #d1d5db',
+                      marginTop: '8px',
                     }}
-                  >
-                    <img
-                      src="/assets/close-icon.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                      style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
-                    />
-                  </button>
+                  />
                 </div>
               ) : (
                 <div
@@ -1250,12 +1248,17 @@ export default function AdminMeetingsHub() {
                 >
                 {viewAllMode ? (
                   <>
-                    <div className="space-y-3">
+                    <div className="space-y-3" style={{ marginTop: '10px' }}>
                       {viewAllRows.map((m) => (
                         <div
                           key={m.id}
                           className="cursor-pointer"
-                          style={{ borderBottom: '1px solid #eee', paddingBottom: '8px' }}
+                          style={{
+                            background: '#fff',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0',
+                            padding: '10px',
+                          }}
                           onClick={() => openClientAccount(m)}
                           role="presentation"
                         >
@@ -1268,12 +1271,44 @@ export default function AdminMeetingsHub() {
                               style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '1px solid #d1d5db', flexShrink: 0 }}
                             />
                             <div style={{ minWidth: 0, flex: 1 }}>
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#000' }}>
-                                {meetingClientDisplayNameWithState(m)}
+                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0', color: '#000' }}>
+                                <span style={{ color: m.category === 'consultation' ? '#EB1C24' : '#000' }}>
+                                  {meetingClientDisplayNameWithState(m)}
+                                </span>{' '}
+                                <span style={{ color: tierLabelColor(m) }}>
+                                  · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
+                                </span>
                               </p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#555', margin: '4px 0 0 0' }}>
-                                {m.date} {m.time} — {viewAllRowLabel(m)}
-                              </p>
+                              {m.category === 'appointment' ? (
+                                <>
+                                  <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
+                                    {formatBookingInstallLineForCard(m)}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Book"',
+                                      fontSize: '9px',
+                                      color: '#000000',
+                                      margin: '4px 0 0',
+                                      whiteSpace: 'pre-line',
+                                    }}
+                                  >
+                                    {formatBookingAddonsLineForCardDisplay(m)}
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
+                                    {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
+                                  </p>
+                                </>
+                              ) : (
+                                <>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
+                                    {consultTypeLabelForMeeting(m)}
+                                  </p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
+                                    {formatHeaderDate(m.date)} · {m.time}
+                                  </p>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
