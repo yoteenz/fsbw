@@ -11024,6 +11024,53 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 ---
 
+## 2026-04-04 — Meetings sort options scoped correctly by tab and consult labels renamed
+
+**Context:** Immediately after adding extra sort options to both Admin Meetings tabs, the user clarified the service-type sorts should not leak across tabs: `Re-install` and `New install` belong only on Bookings, while the consult-specific options belong only on Consults, with the consult labels renamed from generic `Wig` / `Install` to `Wig only` / `Wig + install`.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long sequence of Admin Meetings and admin-preview fixes, including:
+  - moving work directly onto `preview/mobile`,
+  - multiple View All list/grid refinements,
+  - grouped-by-client View All list mode,
+  - bookings calendar toggle deselection,
+  - booking tracker gray-fill/red-warning behavior,
+  - and create-offer / edit-booking panel control changes.
+- The previous pass added broader sort categories to the Meetings tabs, but the initial wiring still exposed cross-tab options from a shared global list.
+- In this follow-up turn, focused only on `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the live file already contained the expanded union of sort options, but the dropdown renderer still used the full global list instead of a tab-aware subset.
+- Added tab-aware sort option helpers:
+  - Bookings: `Most recent`, `A to Z`, `Z to A`, `Premium`, `Standard`, `Re-install`, `New install`
+  - Consults: `Most recent`, `A to Z`, `Z to A`, `Premium`, `Standard`, `Wig only`, `Wig + install`
+- Updated the label helper so the consult-only sort choices render exactly as requested in the dropdown.
+- Extended the sort engine so it now performs:
+  - tier-first sorting for `Premium` / `Standard`
+  - install-kind-first sorting for `Re-install` / `New install`
+  - consult-type-first sorting for `Wig only` / `Wig + install`
+- Added an effect to reset the current meetings sort back to `Most recent` whenever the user switches tabs or view-all mode into a context where the current sort option is no longer valid.
+- Rebuilt successfully on `preview/mobile` after the scope fix; during cleanup removed temporary unused helper functions so TypeScript stayed clean.
+
+**Decisions / outcomes:**
+- Booking install-kind sorts are now available only on the Bookings tab.
+- Consult hair-option sorts are now available only on the Consults tab.
+- The consult-specific labels now read `Wig only` and `Wig + install` instead of the shorter generic terms.
+- Switching between Bookings and Consults will no longer leave an invalid previous sort selected.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - scoped meetings sort dropdown options by active tab / view context
+  - renamed consult-specific sort labels to `Wig only` / `Wig + install`
+  - added tier and service-type ordering logic to `sortMeetingsByOption(...)`
+  - added validity reset effect for `meetingSortOption`
+  - removed temporary unused sort helper functions after final wiring
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sort menus, expose only the service-type sorts that semantically belong to the active tab: booking install sorts on Bookings, and consult hair-option sorts on Consults.
+
+---
+
 ## 2026-04-04 — Meetings tab sort options re-scoped so bookings/consult service filters stay on the correct tab
 
 **Context:** Immediately after adding the expanded Bookings/Consults sort modes on Admin Meetings, the user clarified that the service-type filters had leaked across tabs: `Re-install` / `New install` should appear only on the **Bookings** tab, while consult-specific sorts should appear only on the **Consults** tab. They also asked to rename consult sort labels from generic `Wig` / `Install` to `Wig only` / `Wig + install`.
