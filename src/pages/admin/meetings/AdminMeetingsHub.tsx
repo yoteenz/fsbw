@@ -1380,9 +1380,9 @@ export default function AdminMeetingsHub() {
 
   const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
     ?? (editMeeting
-    ? 'EDIT BOOKING'
+    ? meetingClientDisplayNameWithState(editMeeting)
     : quoteMeeting
-    ? 'CREATE OFFER'
+    ? meetingClientDisplayNameWithState(quoteMeeting)
     : null);
 
   const closeMainCardPanel = () => {
@@ -2095,7 +2095,6 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0 }}>{quoteMeeting.client}</p>
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
                       label: 'UNIT',

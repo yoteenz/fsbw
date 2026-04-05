@@ -11433,3 +11433,40 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For Admin Meetings custom panel dropdowns that visually expand over following fields, leave generous vertical clearance below the dropdown trigger/overlay area when the next field is a textarea, so the menu is not visually clipped by nearby content even if the open/close logic itself is working.
+
+---
+
+## 2026-04-04 — Meetings edit/create panel headers now use tapped client name; redundant create-offer body name removed
+
+**Context:** Continuing this same master/preview-mobile synchronized Admin Meetings thread after the edit-booking auto-message and dropdown-clearance pass, the user requested one more meetings panel refinement: the **EDIT BOOKING** and **CREATE OFFER** header text should show the name of the client whose edit button was tapped, and the gray client-name line inside the Create Offer panel body should be removed because it becomes redundant once the header carries that name.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same long thread:
+  - many Admin Meetings bookings/consults/View All card refinements were implemented,
+  - create-offer/edit-booking panels were renamed and refactored,
+  - custom dropdowns were converted to Special Offers–style UI,
+  - message areas were pushed down for dropdown clearance,
+  - edit-booking reasons now auto-fill preset message copy.
+- In this latest pass, stayed focused only on `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Updated the active main-card title logic so panel mode titles become:
+  - `editMeeting.client` for Edit Booking mode
+  - `quoteMeeting.client` for Create Offer mode
+  instead of the generic labels `EDIT BOOKING` / `CREATE OFFER`.
+- Removed the extra gray client-name line at the top of the Create Offer panel body because the client identity is now already present in the red header/title area.
+- Left the rest of the edit/create panel structure intact, including the red close X, custom dropdowns, lower action buttons, and auto-filled edit-message behavior.
+- Rebuilt successfully before branch sync.
+
+**Decisions / outcomes:**
+- The tapped client’s name now serves as the active header text for both Edit Booking and Create Offer panel modes.
+- The Create Offer panel no longer repeats that same client name inside the body.
+- Scope remained limited to panel-title/body redundancy cleanup in Admin Meetings.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed `activeMainCardTitle` to use `editMeeting.client` / `quoteMeeting.client` in those modes
+  - removed the gray client-name `<p>` from the Create Offer panel body
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings action panels tied to a specific tapped client row, prefer using the client’s name as the active panel header and avoid repeating the same identity line in the panel body unless the user explicitly wants duplicate labeling.
