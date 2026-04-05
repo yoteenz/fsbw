@@ -51,6 +51,8 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
+type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub';
+
 const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
@@ -841,6 +843,7 @@ export default function AdminMeetingsHub() {
   const [meetingSortOption, setMeetingSortOption] = useState<MeetingSortOption>('Most recent');
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
+  const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
 
@@ -922,6 +925,10 @@ export default function AdminMeetingsHub() {
   useEffect(() => {
     setShowMeetingSortDropdown(false);
   }, [mainTab, viewAllMode]);
+
+  useEffect(() => {
+    if (!editMeeting && !quoteMeeting) setActivePanelDropdown(null);
+  }, [editMeeting, quoteMeeting]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -1292,9 +1299,9 @@ export default function AdminMeetingsHub() {
 
   const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
     ?? (editMeeting
-    ? 'EDIT MEETING'
+    ? 'EDIT BOOKING'
     : quoteMeeting
-    ? 'SEND CONSULT QUOTE'
+    ? 'CREATE OFFER'
     : null);
 
   const closeMainCardPanel = () => {
@@ -1350,6 +1357,102 @@ export default function AdminMeetingsHub() {
         </>
       )}
     </div>
+  );
+
+  const renderPanelSelectDropdown = ({
+    dropdownKey,
+    label,
+    value,
+    options,
+    onChange,
+  }: {
+    dropdownKey: PanelDropdownKey;
+    label: string;
+    value: string;
+    options: readonly string[];
+    onChange: (next: string) => void;
+  }) => (
+    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+      {label}
+      <div className="relative mt-1">
+        <button
+          type="button"
+          onClick={() => setActivePanelDropdown((open) => (open === dropdownKey ? null : dropdownKey))}
+          className="w-full"
+          style={{
+            width: '100%',
+            padding: '8px 10px',
+            minHeight: '36px',
+            border: '1.3px solid #000',
+            borderRadius: 0,
+            fontFamily: '"Futura PT Book"',
+            fontSize: '11px',
+            background: '#fff',
+            textTransform: 'uppercase',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer',
+                        color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
+            letterSpacing: '0.02em',
+          }}
+        >
+          <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
+            {value}
+          </span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            className="flex-shrink-0"
+            style={{
+              transform: activePanelDropdown === dropdownKey ? 'rotate(180deg)' : 'none',
+              color: '#EB1C24',
+              marginLeft: '8px',
+            }}
+          >
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        {activePanelDropdown === dropdownKey ? (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              aria-hidden="true"
+              onClick={() => setActivePanelDropdown(null)}
+            />
+            <div
+              className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
+              style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+            >
+              {options.map((opt) => {
+                const isSelected = opt === value;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      onChange(opt);
+                      setActivePanelDropdown(null);
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      color: isSelected ? '#EB1C24' : '#000',
+                      fontWeight: 400,
+                      backgroundColor: isSelected ? 'rgba(235,28,36,0.06)' : '#fff',
+                    }}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
+      </div>
+    </label>
   );
 
   const travelBlackoutDates = useMemo(() => {
@@ -1410,7 +1513,7 @@ export default function AdminMeetingsHub() {
                     <h2
                       style={{
                         fontFamily: '"Futura PT Medium"',
-                        color: '#000',
+                        color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
                         fontSize: '12px',
                         fontWeight: 500,
                         display: 'block',
@@ -1790,7 +1893,7 @@ export default function AdminMeetingsHub() {
                               border: '1px solid #d1d5db',
                               borderRadius: '0',
                               padding: '10px',
-                              height: '82px',
+                              height: '92px',
                               boxSizing: 'border-box',
                               overflow: 'hidden',
                             }}
@@ -1891,23 +1994,13 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : editMeeting ? (
                   <div style={{ marginTop: '12px' }}>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0 }}>
-                      ORDER / ROW: {editMeeting.id}
-                    </p>
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                      REASON
-                      <select
-                        className="w-full mt-1 p-2 border text-[10px]"
-                        value={editReason}
-                        onChange={(e) => setEditReason(e.target.value)}
-                      >
-                        {EDIT_REASONS.map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    {renderPanelSelectDropdown({
+                      dropdownKey: 'editReason',
+                      label: 'REASON',
+                      value: editReason,
+                      options: EDIT_REASONS,
+                      onChange: setEditReason,
+                    })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
                       MESSAGE TO CLIENT
                       <textarea
@@ -1917,56 +2010,27 @@ export default function AdminMeetingsHub() {
                         onChange={(e) => setEditMessage(e.target.value)}
                       />
                     </label>
-                    <div className="flex flex-col gap-2 mt-3">
-                      <button
-                        type="button"
-                        className="py-2 border border-black text-[10px]"
-                        disabled={editSubmitting}
-                        onClick={() => void submitEditMeeting('reschedule')}
-                      >
-                        RESCHEDULE APPOINTMENT (NOTIFY CLIENT)
-                      </button>
-                      <button
-                        type="button"
-                        className="py-2 border border-black text-[10px]"
-                        disabled={editSubmitting}
-                        onClick={() => void submitEditMeeting('cancel')}
-                      >
-                        CANCEL APPOINTMENT (NOTIFY CLIENT)
-                      </button>
-                    </div>
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', margin: 0 }}>{quoteMeeting.client}</p>
-                    <label className="block mt-3" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                      UNIT
-                      <select
-                        className="w-full mt-1 p-2 border text-[10px]"
-                        value={quoteUnit}
-                        onChange={(e) => setQuoteUnit(e.target.value)}
-                      >
-                        {UNIT_OPTIONS.map((u) => (
-                          <option key={u.id} value={u.id}>
-                            {u.label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                      SUB-PAGE SELECTIONS (FIRST PASS)
-                      <select
-                        className="w-full mt-1 p-2 border text-[10px]"
-                        value={quoteSub}
-                        onChange={(e) => setQuoteSub(e.target.value)}
-                      >
-                        {SUB_PAGE_OPTIONS.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    {renderPanelSelectDropdown({
+                      dropdownKey: 'quoteUnit',
+                      label: 'UNIT',
+                      value: UNIT_OPTIONS.find((u) => u.id === quoteUnit)?.label ?? quoteUnit,
+                      options: UNIT_OPTIONS.map((u) => u.label),
+                      onChange: (next) => {
+                        const picked = UNIT_OPTIONS.find((u) => u.label === next);
+                        setQuoteUnit(picked?.id ?? next);
+                      },
+                    })}
+                    {renderPanelSelectDropdown({
+                      dropdownKey: 'quoteSub',
+                      label: 'SUB-PAGE SELECTIONS (FIRST PASS)',
+                      value: quoteSub,
+                      options: SUB_PAGE_OPTIONS,
+                      onChange: setQuoteSub,
+                    })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
                       MESSAGE
                       <textarea
@@ -1989,17 +2053,6 @@ export default function AdminMeetingsHub() {
                       CONSULT CODE (INITIALS + 3 DIGITS) IS GENERATED SERVER-SIDE; $40 OFF; EXPIRES 72H AFTER SEND. APPLY AT
                       CHECKOUT (PIPELINE TBD).
                     </p>
-                    <div className="mt-3">
-                      <button
-                        type="button"
-                        className="w-full py-2 border border-black text-[10px]"
-                        style={{ color: '#EB1C24' }}
-                        disabled={quoteSending}
-                        onClick={() => setShowSendQuoteConfirm(true)}
-                      >
-                        {quoteSending ? '…' : 'SEND ALERT'}
-                      </button>
-                    </div>
                   </div>
                 ) : mainTab === 'overview' ? (
                   <>
@@ -2371,7 +2424,7 @@ export default function AdminMeetingsHub() {
                                       · {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}
                                     </span>
                                   </p>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '6px 0 0', marginLeft: '6px' }}>{hair}</p>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0', marginLeft: '6px' }}>{hair}</p>
                                   {imgs.length > 0 && (
                                     <div className="flex flex-wrap mt-2" style={{ marginLeft: '10px', gap: '8px' }}>
                                       {imgs.slice(0, 3).map((src, i) => (
@@ -2451,40 +2504,93 @@ export default function AdminMeetingsHub() {
 
             <div className="w-full px-0 md:px-0" style={{ marginTop: '10px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMainTab('bookings');
-                    setViewAllMode((m) => (m === 'bookings' ? null : 'bookings'));
-                  }}
-                  className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                  style={{
-                    borderWidth: '1.3px',
-                    color: '#EB1C24',
-                    fontFamily: '"Futura PT Medium"',
-                    backgroundColor: '#FFFFFF',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  VIEW ALL BOOKINGS
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMainTab('consults');
-                    setViewAllMode((m) => (m === 'consults' ? null : 'consults'));
-                  }}
-                  className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                  style={{
-                    borderWidth: '1.3px',
-                    color: '#EB1C24',
-                    fontFamily: '"Futura PT Medium"',
-                    backgroundColor: '#FFFFFF',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  VIEW ALL CONSULTS
-                </button>
+                {editMeeting ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => void submitEditMeeting('reschedule')}
+                      className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                      disabled={editSubmitting}
+                    >
+                      {editSubmitting ? '…' : 'RESCHEDULE'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void submitEditMeeting('cancel')}
+                      className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                      disabled={editSubmitting}
+                    >
+                      CANCEL BOOKING
+                    </button>
+                  </>
+                ) : quoteMeeting ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowSendQuoteConfirm(true)}
+                    className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={{
+                      borderWidth: '1.3px',
+                      color: '#EB1C24',
+                      fontFamily: '"Futura PT Medium"',
+                      backgroundColor: '#FFFFFF',
+                      whiteSpace: 'nowrap',
+                    }}
+                    disabled={quoteSending}
+                  >
+                    {quoteSending ? '…' : 'SEND OFFER'}
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMainTab('bookings');
+                        setViewAllMode((m) => (m === 'bookings' ? null : 'bookings'));
+                      }}
+                      className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      VIEW ALL BOOKINGS
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMainTab('consults');
+                        setViewAllMode((m) => (m === 'consults' ? null : 'consults'));
+                      }}
+                      className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      VIEW ALL CONSULTS
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -2495,8 +2601,8 @@ export default function AdminMeetingsHub() {
         isOpen={showSendQuoteConfirm}
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
-        title="SEND ALERT?"
-        message="CLIENT WILL SEE AN ALERT WITH VIEW QUOTE (CONSULT OFFER)."
+        title="SEND OFFER?"
+        message="CLIENT WILL SEE AN ALERT WITH VIEW OFFER (CONSULT OFFER)."
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"

@@ -10837,3 +10837,56 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For the meetings-opened Admin Clients details view (`returnTo=meetings`), the in-card close affordance should appear as a paired red header row: selected client name on the left and red close X on the right, matching the visual language of other closeable admin subpanels.
+
+---
+
+## 2026-04-04 — Meetings create-offer/edit-booking panel refactor completed with lower action buttons and custom dropdowns
+
+**Context:** Continuing the same long preview/mobile Admin Meetings UI thread, the user noted that the previous create-offer/edit-booking task had not been fully completed. They wanted the create-offer/edit panel headers/buttons/dropdowns finished to match the requested spec: rename the headers, remove the gray order/row text, move the primary actions out of the main card and into the lower button strip, remove obsolete inner buttons, and make the create-offer/edit selection dropdowns use the same style/UI pattern as the special-offers dropdowns in admin marketing. In the same follow-up they also asked for two small visual adjustments: add 2px spacing above the `WIG ONLY / WIG + INSTALL` text on the Meetings consults tab only, and increase the height of the View All bookings/consults list-view client panels by 10px.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` already covered:
+  - admin summary-panel metric text increased by 4px,
+  - Admin Meetings calendar / View All / grouped-list refinements,
+  - branch correction from an incorrect feature branch back onto `preview/mobile`,
+  - client-details red name header restoration,
+  - shared `usePersistentQueryState` fix for the `history.replaceState()` red-screen loop.
+- In this pass, inspected the current `AdminMeetingsHub` working state and confirmed part of the requested refactor was already partially present:
+  - active panel titles had been switched to `EDIT BOOKING` / `CREATE OFFER`,
+  - bottom action strip had partly switched to `RESCHEDULE`, `CANCEL BOOKING`, and `SEND OFFER`,
+  - a custom panel dropdown helper had already been introduced, but some visual/header leftovers were still inconsistent.
+- Completed the remaining panel refactor in `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - ensured active panel headers render in red,
+  - removed the gray `ORDER / ROW: …` line from the edit-booking panel,
+  - kept the panel body free of the old inner action buttons,
+  - kept the create-offer body free of the old inner `SEND ALERT` button,
+  - finished using the custom panel dropdown UI for the edit reason and create-offer unit/sub-page selections.
+- Updated the lower action buttons so they now reflect panel mode:
+  - **Edit booking:** `RESCHEDULE`, `CANCEL BOOKING`
+  - **Create offer:** `SEND OFFER` only
+  - base mode still shows `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS`
+- Applied the follow-up visual tweaks in the same file:
+  - increased the Meetings consult-tab `WIG ONLY / WIG + INSTALL` row spacing above by 2px,
+  - increased View All list-view client panel height from `82px` to `92px`.
+- Rebuilt successfully on `preview/mobile` after the completed panel/header/button/dropdown update set.
+
+**Decisions / outcomes:**
+- The create-offer/edit-booking panels now use the same custom dropdown interaction model as the admin selection dropdowns instead of native selects.
+- Primary actions for create-offer/edit-booking now live in the lower action-button strip, not inside the main card content.
+- The create-offer and edit-booking headers now use the requested wording and red header treatment.
+- The consult-tab wig-option row spacing and View All list client-panel height adjustments are both included in the same preview/mobile pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - ensured active panel header text renders red for `EDIT BOOKING` / `CREATE OFFER`
+  - removed the gray `ORDER / ROW: …` line
+  - completed use of `renderPanelSelectDropdown(...)` for edit/create-offer selections
+  - removed obsolete inner panel action buttons
+  - completed lower button-strip actions for edit/create-offer modes
+  - increased consult-tab wig-option row top spacing by 2px
+  - increased View All list client panel height by 10px (`82px` → `92px`)
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings create-offer/edit-booking panels, keep selection controls on the shared custom dropdown UI rather than native `<select>`s, and place primary workflow actions in the lower page button strip instead of duplicating action buttons inside the main card body.
