@@ -23,6 +23,38 @@ const CONSULT_DEPOSIT_USD = 40;
 
 type HairOption = 'WIG + INSTALL' | 'WIG ONLY';
 
+type HeadMeasurementField =
+  | 'circumference'
+  | 'frontToNape'
+  | 'verticalTempleToTemple'
+  | 'horizontalTempleToTemple'
+  | 'earToEar'
+  | 'napeOfNeck';
+
+type HeadMeasurements = Record<HeadMeasurementField, string>;
+
+const HEAD_MEASUREMENT_FIELDS: Array<{
+  key: HeadMeasurementField;
+  label: string;
+  required?: boolean;
+}> = [
+  { key: 'circumference', label: 'CIRCUMFERENCE', required: true },
+  { key: 'frontToNape', label: 'FRONT TO NAPE', required: true },
+  { key: 'verticalTempleToTemple', label: 'VERTICAL TEMPLE TO TEMPLE' },
+  { key: 'horizontalTempleToTemple', label: 'HORIZONTAL TEMPLE TO TEMPLE' },
+  { key: 'earToEar', label: 'EAR TO EAR' },
+  { key: 'napeOfNeck', label: 'NAPE OF NECK' },
+] as const;
+
+const EMPTY_HEAD_MEASUREMENTS: HeadMeasurements = {
+  circumference: '',
+  frontToNape: '',
+  verticalTempleToTemple: '',
+  horizontalTempleToTemple: '',
+  earToEar: '',
+  napeOfNeck: '',
+};
+
 const MAX_HAIR_INSPO_PHOTOS = 3;
 
 function hairInspoSubmittedLabel(count: number): string {
@@ -144,6 +176,7 @@ export default function BookingConsultationPage() {
   const [inspoRemoveTargetId, setInspoRemoveTargetId] = useState<string | null>(null);
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
+  const [headMeasurements, setHeadMeasurements] = useState<HeadMeasurements>(EMPTY_HEAD_MEASUREMENTS);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
@@ -260,12 +293,24 @@ export default function BookingConsultationPage() {
     setInspoRemoveTargetId(null);
   };
 
+  const updateHeadMeasurement = (field: HeadMeasurementField, next: string) => {
+    const sanitized = next.replace(/[^\d.]/g, '');
+    setHeadMeasurements((prev) => ({ ...prev, [field]: sanitized }));
+  };
+
   const handleAddToBag = () => {
     setConsultFormNotice(null);
     if (inspoItems.length === 0) {
       setConsultFormNotice({
         title: 'FORGETTING SOMETHING?',
         message: 'PLEASE UPLOAD A HAIR INSPO PHOTO.'
+      });
+      return;
+    }
+    if (!headMeasurements.circumference.trim() || !headMeasurements.frontToNape.trim()) {
+      setConsultFormNotice({
+        title: 'FORGETTING SOMETHING?',
+        message: 'PLEASE ENTER THE REQUIRED HEAD MEASUREMENTS.'
       });
       return;
     }
@@ -299,6 +344,14 @@ export default function BookingConsultationPage() {
         const badgeImage =
           bookingCartItemThumbnailSrc({ type: 'booking-consult', bookingTier: tier }) ||
           '/assets/consultation-standard.png';
+        const trimmedHeadMeasurements = {
+          circumference: headMeasurements.circumference.trim(),
+          frontToNape: headMeasurements.frontToNape.trim(),
+          verticalTempleToTemple: headMeasurements.verticalTempleToTemple.trim(),
+          horizontalTempleToTemple: headMeasurements.horizontalTempleToTemple.trim(),
+          earToEar: headMeasurements.earToEar.trim(),
+          napeOfNeck: headMeasurements.napeOfNeck.trim(),
+        };
         const newItem = {
           id: `booking-consult-${Date.now()}`,
           name: 'WIG CONSULT',
@@ -308,6 +361,7 @@ export default function BookingConsultationPage() {
           type: 'booking-consult',
           bookingTier: tier,
           bookingHairOption: hairOption,
+          bookingHeadMeasurements: trimmedHeadMeasurements,
           bookingNotes: notes.trim(),
           bookingInspoPhotoUrls: inspoItems.map((it) => it.dataUrl).slice(0, MAX_HAIR_INSPO_PHOTOS),
           bookingInspoFileNames: inspoItems.map((it) => it.name),
@@ -386,7 +440,7 @@ export default function BookingConsultationPage() {
             BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. SELECT WIG + INSTALL OR WIG ONLY.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            ADD NOTES ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
+            ADD YOUR HEAD MEASUREMENTS ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -696,6 +750,54 @@ export default function BookingConsultationPage() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          <div style={{ width: '100%', minWidth: 0 }}>
+            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>
+              HEAD MEASUREMENTS (IN INCHES):
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px 8px',
+              }}
+            >
+              {HEAD_MEASUREMENT_FIELDS.map((field) => (
+                <label
+                  key={field.key}
+                  style={{
+                    display: 'block',
+                    fontFamily: bookingFontMedium,
+                    fontSize: '9px',
+                    color: '#000',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  {field.label}
+                  {field.required ? <span style={{ color: '#EB1C24' }}>*</span> : null}
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={headMeasurements[field.key]}
+                    onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
+                    className="bg-white/80 backdrop-blur-sm"
+                    style={{
+                      width: '100%',
+                      marginTop: '6px',
+                      boxSizing: 'border-box',
+                      border: '1.3px solid #000',
+                      fontFamily: bookingFontMedium,
+                      fontSize: '11px',
+                      color: '#EB1C24',
+                      padding: '10px 12px',
+                      textTransform: 'uppercase',
+                    }}
+                  />
+                </label>
+              ))}
             </div>
           </div>
 

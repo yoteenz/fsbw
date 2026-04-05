@@ -11657,3 +11657,68 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For account alert copy tied to newly created orders, keep the order-received message generated from a single helper and route by order context: standard orders go to Orders details, while premium/A-C orders go to Concierge tracking.
+
+---
+
+## 2026-04-04 — Consult booking page now captures head measurements and persists them through cart/details/admin meeting sync
+
+**Context:** Continuing this same long branch-sync and admin-booking thread, the user requested a new **head measurements** section on the consult booking page positioned **below HAIR OPTION** and **above ADDITIONAL NOTES**. The section needed six numeric inch inputs: **CIRCUMFERENCE** and **FRONT TO NAPE** as required fields, plus **VERTICAL TEMPLE TO TEMPLE**, **HORIZONTAL TEMPLE TO TEMPLE**, **EAR TO EAR**, and **NAPE OF NECK**. They then refined the supporting copy to: **ADD YOUR HEAD MEASUREMENTS ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.**
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, the work already included:
+  - direct delivery of Meetings/admin changes onto `preview/mobile`,
+  - repeated syncs so `master` and `preview/mobile` match,
+  - Admin Meetings panel/header/dropdown/tracker/list-grid refinements,
+  - order-received account alerts and mock consult-order support.
+- For this pass, traced the consult booking flow end to end:
+  - consult booking page form UI,
+  - cart item payload,
+  - checkout consult meeting sync,
+  - booking consult view-details HTML,
+  - consult meeting server metadata.
+- Added a single clean **HEAD MEASUREMENTS (IN INCHES)** section to the consult booking page with a 2-column grid of six inputs and required red asterisks on:
+  - **CIRCUMFERENCE**
+  - **FRONT TO NAPE**
+- Added validation so consult add-to-bag is blocked until those two required measurements are filled.
+- Persisted the measurements on the consult cart item as **`bookingHeadMeasurements`**.
+- Extended consult cart/details rendering so the measurements show up in **VIEW DETAILS** with `IN` suffixes.
+- Extended checkout consult sync so **`postBookingConsultMeeting`** now sends `headMeasurements`.
+- Extended **`api/booking/consult-meeting.ts`** to accept and store those measurements into consult meeting metadata for admin-side use later.
+- During implementation, cleaned up several partial duplicate insertions from an earlier unfinished attempt:
+  - duplicate head-measurement type/constant declarations,
+  - duplicate `headMeasurements` state hook,
+  - duplicate UI blocks,
+  - duplicate `bookingHeadMeasurements` payload assignment.
+- Replaced the old consult body copy line with the new wording that explicitly mentions head measurements.
+- Verified the finished feature with a successful production build.
+
+**Decisions / outcomes:**
+- The consult booking page now has one single head-measurement section in the requested position.
+- Required measurement validation is limited to **CIRCUMFERENCE** and **FRONT TO NAPE**.
+- Measurements now persist through the full consult booking flow:
+  - page form -> cart item -> checkout sync -> admin meeting metadata -> view details.
+- The new consult copy explicitly calls for head measurements plus inspo photos for better accuracy.
+
+**Changes:**
+- `src/pages/booking/consultation/page.tsx`
+  - added the six head-measurement inputs
+  - added required-field validation for circumference/front-to-nape
+  - added `bookingHeadMeasurements` to the consult cart item
+  - updated consult copy to mention head measurements
+  - removed duplicate/partial head-measurement implementation fragments so only one clean version remains
+- `src/types/cart.ts`
+  - added `bookingHeadMeasurements?: Record<string, string>`
+- `src/utils/cartLineRedAndDetails.ts`
+  - added consult `VIEW DETAILS` lines for the six measurements with `IN`
+- `src/pages/checkout/page.tsx`
+  - passed `headMeasurements` into `postBookingConsultMeeting(...)`
+- `src/utils/api.ts`
+  - extended `postBookingConsultMeeting(...)` body type with `headMeasurements`
+- `api/booking/consult-meeting.ts`
+  - accepted `headMeasurements`
+  - persisted them into consultation meeting metadata
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For consult booking flows that need physical fit data, keep measurements as a structured object (`bookingHeadMeasurements`) and pass that structure through cart, checkout sync, and admin metadata rather than flattening them into one free-text notes field.

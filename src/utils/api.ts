@@ -746,6 +746,7 @@ export async function postBookingConsultMeeting(body: {
   tier?: string;
   hairOption?: string;
   notes?: string;
+  headMeasurements?: Record<string, string>;
   orderNumber?: string;
   idempotencyKey?: string;
   inspoPhotoUrls?: string[];

@@ -25,6 +25,7 @@ export interface CartItem {
   bookingTier?: string;
   /** Consult: WIG + INSTALL | WIG ONLY (red line + VIEW DETAILS). */
   bookingHairOption?: string;
+  bookingHeadMeasurements?: Record<string, string>;
   /** Booking appointment (server quote / PaymentIntent). */
   bookingInstallKind?: string;
   bookingStyle?: string;

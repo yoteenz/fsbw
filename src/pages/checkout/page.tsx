@@ -500,6 +500,10 @@ function CheckoutPage() {
             tier: item?.bookingTier,
             hairOption: item?.bookingHairOption,
             notes: item?.bookingNotes,
+            headMeasurements:
+              item?.bookingHeadMeasurements && typeof item.bookingHeadMeasurements === 'object'
+                ? item.bookingHeadMeasurements
+                : undefined,
             orderNumber: orderNumberForNotes,
             idempotencyKey,
             inspoPhotoUrls: photoUrls,

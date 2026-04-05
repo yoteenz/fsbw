@@ -53,6 +53,7 @@ export function bookingCartViewDetailsHtml(item: {
   type?: string;
   bookingBagSubtitle?: string;
   bookingHairOption?: string;
+  bookingHeadMeasurements?: Record<string, string>;
   bookingNotes?: string;
   bookingInspoFileName?: string;
   bookingInspoFileNames?: string[];
@@ -73,6 +74,19 @@ export function bookingCartViewDetailsHtml(item: {
   if (item.bookingBagSubtitle) lines.push(esc(item.bookingBagSubtitle));
   if (item.type === 'booking-consult') {
     if (item.bookingHairOption) lines.push(`OPTION: ${esc(item.bookingHairOption)}`);
+    if (item.bookingHeadMeasurements && typeof item.bookingHeadMeasurements === 'object') {
+      const measurementLines: Array<[string, string]> = [
+        ['CIRCUMFERENCE', String(item.bookingHeadMeasurements.circumference || '').trim()],
+        ['FRONT TO NAPE', String(item.bookingHeadMeasurements.frontToNape || '').trim()],
+        ['VERTICAL TEMPLE TO TEMPLE', String(item.bookingHeadMeasurements.verticalTempleToTemple || '').trim()],
+        ['HORIZONTAL TEMPLE TO TEMPLE', String(item.bookingHeadMeasurements.horizontalTempleToTemple || '').trim()],
+        ['EAR TO EAR', String(item.bookingHeadMeasurements.earToEar || '').trim()],
+        ['NAPE OF NECK', String(item.bookingHeadMeasurements.napeOfNeck || '').trim()],
+      ];
+      measurementLines.forEach(([label, value]) => {
+        if (value) lines.push(`${label}: ${esc(value)} IN`);
+      });
+    }
     if (item.bookingNotes) lines.push(`NOTES: ${esc(item.bookingNotes)}`);
     if (Array.isArray(item.bookingInspoFileNames) && item.bookingInspoFileNames.length > 0) {
       for (const n of item.bookingInspoFileNames) {

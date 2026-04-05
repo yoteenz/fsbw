@@ -7,6 +7,7 @@ type Body = {
   meetingTime?: string;
   tier?: string;
   hairOption?: string;
+  headMeasurements?: Record<string, unknown>;
   notes?: string;
   orderNumber?: string;
   idempotencyKey?: string;
@@ -52,6 +53,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const idempotencyKey = sanitizeIdempotencyKey(body.idempotencyKey);
   const tier = String(body.tier || '').toLowerCase();
   const hairOption = String(body.hairOption || '').trim();
+  const headMeasurements =
+    body.headMeasurements && typeof body.headMeasurements === 'object' && !Array.isArray(body.headMeasurements)
+      ? Object.fromEntries(
+          Object.entries(body.headMeasurements).map(([key, value]) => [key, String(value || '').trim()]).filter(([, value]) => Boolean(value))
+        )
+      : undefined;
   const notes = String(body.notes || '').trim();
   const inspoPhotoUrls = Array.isArray(body.inspoPhotoUrls)
     ? body.inspoPhotoUrls
@@ -78,6 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const metadata = {
     tier: tier || 'standard',
     hairOption: hairOption || null,
+    ...(headMeasurements && Object.keys(headMeasurements).length > 0 ? { headMeasurements } : {}),
     consultNotes: notes || null,
     inspoPhotoUrls,
     inspoFileNames,
