@@ -12,6 +12,14 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
+  ADDON_COMBO_OPTIONS,
+  getDefaultColorForUnit,
+  getDefaultDensityForUnit,
+  getOptionsForUnit,
+  type UnitId,
+} from '../../../utils/productOptions';
+import { calculateSpecialOfferPriceBreakdown } from '../../../utils/specialOfferPrice';
+import {
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
@@ -51,7 +59,22 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
-type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub';
+type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub' | 'quoteSubSelection';
+type QuoteSubPage = (typeof SUB_PAGE_OPTIONS)[number];
+
+type CreateOfferSelections = {
+  capSize: string;
+  length: string;
+  density: string;
+  texture: string;
+  lace: string;
+  hairline: string;
+  color: string;
+  styling: string;
+  addOns: string[];
+};
+
+const CREATE_OFFER_CAP_SIZE_OPTIONS = ['M', 'XXS/XS/S', 'S/M/L'] as const;
 
 const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
 const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
@@ -59,6 +82,144 @@ const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETIN
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
+}
+
+function quoteUnitIdFromValue(value: string): UnitId {
+  const normalized = String(value || '').trim().toUpperCase();
+  if (normalized === 'BLANCO') return 'blanco';
+  if (normalized === 'SOFT WAVE') return 'soft-wave';
+  if (normalized === 'BEACH WAVE') return 'beach-wave';
+  if (normalized === 'SOFT CURL') return 'soft-curl';
+  if (normalized === 'OCEAN CURL') return 'ocean-curl';
+  return 'noir';
+}
+
+function hairlineDisplayValue(value: string): string {
+  return value === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : value;
+}
+
+function createOfferSelectionsDefaults(unitId: UnitId): CreateOfferSelections {
+  return {
+    capSize: 'M',
+    length: '24"',
+    density: getDefaultDensityForUnit(unitId),
+    texture: 'SILKY',
+    lace: '13X6',
+    hairline: 'NATURAL',
+    color: getDefaultColorForUnit(unitId),
+    styling: 'NONE',
+    addOns: [],
+  };
+}
+
+function createOfferSelectionOptionsForSubPage(unitId: UnitId, subPage: QuoteSubPage): readonly string[] {
+  const options = getOptionsForUnit(unitId);
+  switch (subPage) {
+    case 'LENGTH':
+      return options.length;
+    case 'COLOR':
+      return options.color;
+    case 'DENSITY':
+      return options.density;
+    case 'CAP SIZE':
+      return CREATE_OFFER_CAP_SIZE_OPTIONS;
+    case 'HAIRLINE':
+      return options.hairline;
+    case 'LACE':
+      return options.lace;
+    case 'TEXTURE':
+      return options.texture;
+    case 'STYLING':
+      return options.styling;
+    case 'ADD-ONS':
+      return ADDON_COMBO_OPTIONS.map((opt) => opt.label);
+    default:
+      return [];
+  }
+}
+
+function createOfferSelectionRawValue(subPage: QuoteSubPage, selections: CreateOfferSelections): string {
+  switch (subPage) {
+    case 'LENGTH':
+      return selections.length;
+    case 'COLOR':
+      return selections.color;
+    case 'DENSITY':
+      return selections.density;
+    case 'CAP SIZE':
+      return selections.capSize;
+    case 'HAIRLINE':
+      return selections.hairline;
+    case 'LACE':
+      return selections.lace;
+    case 'TEXTURE':
+      return selections.texture;
+    case 'STYLING':
+      return selections.styling;
+    case 'ADD-ONS': {
+      const match = ADDON_COMBO_OPTIONS.find(
+        (opt) => opt.value.length === selections.addOns.length && opt.value.every((addOn) => selections.addOns.includes(addOn))
+      );
+      return match?.label ?? (selections.addOns.length === 0 ? 'NONE' : selections.addOns.join(' + '));
+    }
+    default:
+      return '';
+  }
+}
+
+function createOfferSelectionDisplayValue(subPage: QuoteSubPage, selections: CreateOfferSelections): string {
+  const raw = createOfferSelectionRawValue(subPage, selections);
+  return subPage === 'HAIRLINE' ? hairlineDisplayValue(raw) : raw;
+}
+
+function updateCreateOfferSelectionsForSubPage(
+  previous: CreateOfferSelections,
+  subPage: QuoteSubPage,
+  next: string
+): CreateOfferSelections {
+  switch (subPage) {
+    case 'LENGTH':
+      return { ...previous, length: next };
+    case 'COLOR':
+      return { ...previous, color: next };
+    case 'DENSITY':
+      return { ...previous, density: next };
+    case 'CAP SIZE':
+      return { ...previous, capSize: next };
+    case 'HAIRLINE':
+      return { ...previous, hairline: next };
+    case 'LACE':
+      return { ...previous, lace: next };
+    case 'TEXTURE':
+      return { ...previous, texture: next };
+    case 'STYLING':
+      return { ...previous, styling: next };
+    case 'ADD-ONS': {
+      const match = ADDON_COMBO_OPTIONS.find((opt) => opt.label === next);
+      return { ...previous, addOns: match ? [...match.value] : [] };
+    }
+    default:
+      return previous;
+  }
+}
+
+function formatCreateOfferBreakdownAmount(amountUsd: number, includeSign: boolean): string {
+  if (amountUsd === 0) return 'INCLUDED';
+  const usd = `$${Math.abs(Math.round(amountUsd)).toLocaleString('en-US')} USD`;
+  if (!includeSign) return usd;
+  return amountUsd > 0 ? `+${usd}` : `-${usd}`;
+}
+
+function createOfferBreakdownText(unitId: UnitId, selections: CreateOfferSelections, subPage: QuoteSubPage): string {
+  const breakdown = calculateSpecialOfferPriceBreakdown(unitId, selections);
+  const lines = breakdown.lines.map((line, index) => {
+    const selection = line.label === 'HAIRLINE' ? hairlineDisplayValue(line.selection) : line.selection;
+    const amount = formatCreateOfferBreakdownAmount(line.amountUsd, index !== 0);
+    return `${line.label}: ${selection} … ${amount}`;
+  });
+  lines.push(`SUB-PAGE FOCUS: ${subPage} … ${createOfferSelectionDisplayValue(subPage, selections)}`);
+  lines.push(`ESTIMATED TOTAL … $${Math.round(breakdown.totalUsd).toLocaleString('en-US')} USD`);
+  return lines.join('\n');
 }
 
 const EDIT_MESSAGE_BY_REASON: Record<(typeof EDIT_REASONS)[number], { action: 'reschedule' | 'cancel'; message: string }> = {
@@ -898,11 +1059,14 @@ export default function AdminMeetingsHub() {
   const [quoteMeeting, setQuoteMeeting] = useState<AdminMeeting | null>(null);
   const [editMeeting, setEditMeeting] = useState<AdminMeeting | null>(null);
   const [quoteUnit, setQuoteUnit] = useState<string>(UNIT_OPTIONS[0].id);
-  const [quoteSub, setQuoteSub] = useState<string>(SUB_PAGE_OPTIONS[0]);
+  const [quoteSub, setQuoteSub] = useState<QuoteSubPage>(SUB_PAGE_OPTIONS[0]);
+  const [quoteSelections, setQuoteSelections] = useState<CreateOfferSelections>(() =>
+    createOfferSelectionsDefaults(quoteUnitIdFromValue(UNIT_OPTIONS[0].id))
+  );
   const [quoteMessage, setQuoteMessage] = useState(
     'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.'
   );
-  const [quoteBreakdown, setQuoteBreakdown] = useState('BASE UNIT … $580\nLENGTH 24" … INCLUDED\n');
+  const [quoteBreakdown, setQuoteBreakdown] = useState('');
   const [quoteSending, setQuoteSending] = useState(false);
   const [showSendQuoteConfirm, setShowSendQuoteConfirm] = useState(false);
   const [editReason, setEditReason] = useState<string>(EDIT_REASONS[0]);
@@ -921,6 +1085,19 @@ export default function AdminMeetingsHub() {
     if (effectiveTab === 'consults') return CONSULT_MEETING_SORT_OPTIONS;
     return BOOKING_MEETING_SORT_OPTIONS;
   }, [mainTab, viewAllMode]);
+  const quoteUnitId = useMemo(() => quoteUnitIdFromValue(quoteUnit), [quoteUnit]);
+  const currentQuoteSubSelectionOptions = useMemo(
+    () => createOfferSelectionOptionsForSubPage(quoteUnitId, quoteSub),
+    [quoteUnitId, quoteSub]
+  );
+  const currentQuoteSubSelectionDisplayValue = useMemo(
+    () => createOfferSelectionDisplayValue(quoteSub, quoteSelections),
+    [quoteSelections, quoteSub]
+  );
+  const generatedQuoteBreakdown = useMemo(
+    () => createOfferBreakdownText(quoteUnitId, quoteSelections, quoteSub),
+    [quoteUnitId, quoteSelections, quoteSub]
+  );
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -1010,6 +1187,31 @@ export default function AdminMeetingsHub() {
   useEffect(() => {
     if (!editMeeting && !quoteMeeting) setActivePanelDropdown(null);
   }, [editMeeting, quoteMeeting]);
+
+  useEffect(() => {
+    const options = getOptionsForUnit(quoteUnitId);
+    const defaults = createOfferSelectionsDefaults(quoteUnitId);
+    setQuoteSelections((previous) => {
+      const next: CreateOfferSelections = {
+        capSize: CREATE_OFFER_CAP_SIZE_OPTIONS.includes(previous.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number])
+          ? previous.capSize
+          : defaults.capSize,
+        length: options.length.includes(previous.length) ? previous.length : defaults.length,
+        density: options.density.includes(previous.density) ? previous.density : defaults.density,
+        texture: options.texture.includes(previous.texture) ? previous.texture : defaults.texture,
+        lace: options.lace.includes(previous.lace) ? previous.lace : defaults.lace,
+        hairline: options.hairline.includes(previous.hairline) ? previous.hairline : defaults.hairline,
+        color: options.color.includes(previous.color) ? previous.color : defaults.color,
+        styling: options.styling.includes(previous.styling) ? previous.styling : defaults.styling,
+        addOns: previous.addOns.every((addOn) => options.addOns.includes(addOn)) ? previous.addOns : defaults.addOns,
+      };
+      return JSON.stringify(next) === JSON.stringify(previous) ? previous : next;
+    });
+  }, [quoteUnitId]);
+
+  useEffect(() => {
+    setQuoteBreakdown(generatedQuoteBreakdown);
+  }, [generatedQuoteBreakdown]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -1444,14 +1646,18 @@ export default function AdminMeetingsHub() {
     dropdownKey,
     label,
     value,
+    displayValue,
     options,
     onChange,
+    formatOptionLabel,
   }: {
     dropdownKey: PanelDropdownKey;
     label: string;
     value: string;
+    displayValue?: string;
     options: readonly string[];
     onChange: (next: string) => void;
+    formatOptionLabel?: (option: string) => string;
   }) => (
     <div className="mt-2">
       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
@@ -1479,7 +1685,7 @@ export default function AdminMeetingsHub() {
           }}
         >
           <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
-            {value}
+            {displayValue ?? value}
           </span>
           <svg
             width="12"
@@ -1523,7 +1729,7 @@ export default function AdminMeetingsHub() {
                     backgroundColor: '#fff',
                   }}
                 >
-                  {opt}
+                  {formatOptionLabel ? formatOptionLabel(opt) : opt}
                 </button>
               ))}
             </div>
@@ -2107,10 +2313,22 @@ export default function AdminMeetingsHub() {
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSub',
-                      label: 'SUB-PAGE SELECTIONS (FIRST PASS)',
+                      label: 'SUB-PAGE',
                       value: quoteSub,
                       options: SUB_PAGE_OPTIONS,
-                      onChange: setQuoteSub,
+                      onChange: (next) => setQuoteSub(next as QuoteSubPage),
+                    })}
+                    {renderPanelSelectDropdown({
+                      dropdownKey: 'quoteSubSelection',
+                      label: 'SELECTION',
+                      value: currentQuoteSubSelectionDisplayValue,
+                      options: currentQuoteSubSelectionOptions.map((option) =>
+                        quoteSub === 'HAIRLINE' ? hairlineDisplayValue(option) : option
+                      ),
+                      onChange: (nextDisplay) => {
+                        const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
+                        setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
+                      },
                     })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
                       MESSAGE
@@ -2122,17 +2340,16 @@ export default function AdminMeetingsHub() {
                       />
                     </label>
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                      PRICE BREAKDOWN (ONE LINE PER ROW, USE … BETWEEN LABEL AND VALUE)
+                      PRICE BREAKDOWN
                       <textarea
                         className="w-full mt-1 p-2 border text-[10px] font-mono"
-                        rows={5}
+                        rows={7}
                         value={quoteBreakdown}
                         onChange={(e) => setQuoteBreakdown(e.target.value)}
                       />
                     </label>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
-                      CONSULT CODE (INITIALS + 3 DIGITS) IS GENERATED SERVER-SIDE; $40 OFF; EXPIRES 72H AFTER SEND. APPLY AT
-                      CHECKOUT (PIPELINE TBD).
+                      OFFER DETAILS REFLECT THE CURRENT UNIT + SUB-PAGE SELECTION YOU CHOOSE HERE.
                     </p>
                   </div>
                 ) : mainTab === 'overview' ? (

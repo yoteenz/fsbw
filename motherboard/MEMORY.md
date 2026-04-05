@@ -11503,3 +11503,68 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For Admin Meetings panel layouts where the user wants the message textarea visually separated from top selection controls, use container-level flex spacing / block grouping rather than only increasing the label’s top margin, so the field truly sits lower in the card.
+
+---
+
+## 2026-04-05 — Create Offer now uses real sub-page option sets and generated detailed pricing breakdown
+
+**Context:** Continuing this same long Admin Meetings panel-refinement thread, the user clarified that the **Create Offer** flow should not use a generic sub-page label only. They wanted the selected sub-page to populate the actual selection options for that sub-page (e.g. all density choices, all lace choices, etc.), and they wanted the **PRICE BREAKDOWN** to be generated from the prices of the exact selection options chosen, with the option names/text shown next to each price and the breakdown being extremely detailed and specific.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, the work already moved across multiple connected Admin Meetings concerns:
+  - View All bookings/consults list grouped by client,
+  - bookings-tab dropdown placement,
+  - meetings booking tracker timing/color fixes,
+  - bookings current-balance full-order totals,
+  - natural add-on wrapping,
+  - tab-specific filtering options,
+  - client-details header/close affordance restoration,
+  - create-offer/edit-booking custom dropdown behavior and lower action-strip cleanup.
+- In this pass, focused specifically on the **Create Offer** panel in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Added structured Create Offer selection state keyed to the same categories used by Build-a-Wig / Special Offer:
+  - cap size
+  - length
+  - density
+  - texture
+  - lace
+  - hairline
+  - color
+  - styling
+  - add-ons
+- Reused shared source option lists from `src/utils/productOptions.ts` so the Create Offer sub-page selection dropdown now shows the real options for the currently selected unit and chosen sub-page, instead of a single static label-only dropdown.
+- Extended the shared pricing utility in `src/utils/specialOfferPrice.ts` so it can return a line-item price breakdown, not just a total:
+  - base unit
+  - cap size
+  - length
+  - density
+  - texture
+  - lace
+  - hairline
+  - color
+  - styling
+  - add-ons
+- Wired the Create Offer panel so the selected sub-page “SELECTION” dropdown writes back into the appropriate field in the Create Offer selections state.
+- Added generated Create Offer price-breakdown text that lists each category’s chosen text next to its corresponding price adjustment and ends with an estimated total.
+- Preserved the ability to manually edit the message textarea while auto-generating the breakdown textarea from the live chosen options.
+- Verified the feature with a successful `npm run build` before committing.
+
+**Decisions / outcomes:**
+- The Create Offer sub-page dropdown now drives a real second-level selection dropdown populated from the chosen unit’s actual option list for that sub-page.
+- The price breakdown is now derived from actual pricing logic shared with the special-offer/build-a-wig pricing model instead of static placeholder text.
+- Breakdown lines are intentionally verbose and category-specific so admins can send a more explicit offer with each selected option and its amount.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added Create Offer selection state model and sub-page option selection flow
+  - added helper functions to map selected unit/sub-page to actual option lists and selected values
+  - wired dynamic breakdown generation into the Create Offer panel
+  - updated panel dropdown handling to support the new `quoteSubSelection` key
+- `src/utils/specialOfferPrice.ts`
+  - added breakdown line types
+  - refactored pricing internals to expose detailed line-item pricing alongside total
+  - exported `calculateSpecialOfferPriceBreakdown(...)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings Create Offer flows that mirror Build-a-Wig / Special Offer logic, source both the available selection options and the pricing breakdown from shared option/pricing utilities instead of maintaining a second hardcoded option/price map inside the Meetings panel.
