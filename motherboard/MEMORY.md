@@ -10928,3 +10928,51 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings date-filter calendars that drive below-list filtering, day taps should be idempotent toggles: tapping an already-selected day should clear the filter so the full list reappears rather than trapping the user in a selected state.
+
+---
+
+## 2026-04-04 — Added Premium/Standard and service-type sorting to Meetings bookings/consult tabs
+
+**Context:** After the Admin Meetings calendar, list-view, client-details, and panel-control refinements in this same preview/mobile thread, the user requested expanded sorting options on the regular **Bookings** and **Consults** tabs: add **Premium** and **Standard** sorting to both tabs, add **Re-install** and **New install** to the Bookings sort dropdown, and add **Wig** (for WIG ONLY) and **Install** (for WIG + INSTALL) to the Consults sort dropdown.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` included:
+  - moving the accumulated Admin Meetings/admin UI work onto `preview/mobile` and deleting the mistaken feature branch,
+  - grouped View All list panels by client with inner scroll,
+  - multiple View All/list/grid spacing and typography refinements,
+  - meetings client-details header/close affordance fixes,
+  - shared A/C calendar parity with Admin Meetings,
+  - a shared query-state hook fix to stop the excessive `history.replaceState()` loop,
+  - bookings calendar day deselection behavior.
+- In this latest pass, focused only on the Meetings sorting system in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Expanded `MeetingSortOption` to include the additional requested values:
+  - shared across tabs: `Premium`, `Standard`
+  - bookings-only: `Re-install`, `New install`
+  - consults-only: `Wig`, `Install`
+- Updated the sort label/dropdown rendering so the Bookings tab dropdown shows:
+  - Most recent, A to Z, Z to A, Premium, Standard, Re-install, New install
+- Updated the Consults tab dropdown to show:
+  - Most recent, A to Z, Z to A, Premium, Standard, Wig, Install
+- Extended the sorting logic to handle the new semantic sorts:
+  - `Premium` / `Standard` prioritize tier grouping before falling back to recency,
+  - bookings `Re-install` / `New install` prioritize install kind using `getBookingCardDetails(...)`,
+  - consults `Wig` / `Install` prioritize consult type using `consultTypeLabelForMeeting(...)`.
+- Cleaned up a few now-unused sort-option helper functions while iterating so the file still passed TypeScript.
+- Rebuilt successfully on `preview/mobile` after wiring the new sort options and removing the dead helper code.
+
+**Decisions / outcomes:**
+- The Bookings and Consults tabs now expose category-specific sorting options in addition to the generic recency/name sorts.
+- Tier sorts (`Premium` / `Standard`) are now available on both tabs and are applied consistently using the existing membership-tier helpers.
+- Service-type sorts are tab-specific and only appear where they make semantic sense (install kinds on Bookings, wig/install consult types on Consults).
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - expanded `MeetingSortOption`
+  - updated meetings sort dropdown option lists by active tab
+  - extended `sortMeetingsByOption(...)` to support tier and service-type sorting
+  - removed temporary unused sort helper functions after final wiring
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sorting, keep tab-specific service-type sort options scoped to the relevant tab rather than exposing one global mixed list everywhere: booking install-kind sorts belong on Bookings, and consult wig/install sorts belong on Consults.

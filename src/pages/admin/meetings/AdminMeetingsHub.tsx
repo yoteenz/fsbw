@@ -53,7 +53,7 @@ const EDIT_REASONS = [
 
 type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub';
 
-const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A'] as const;
+const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install', 'Wig', 'Install'] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
