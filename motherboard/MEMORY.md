@@ -10890,3 +10890,41 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings create-offer/edit-booking panels, keep selection controls on the shared custom dropdown UI rather than native `<select>`s, and place primary workflow actions in the lower page button strip instead of duplicating action buttons inside the main card body.
+
+---
+
+## 2026-04-04 — Bookings calendar date selection now toggles off to restore full appointments list
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings refinement thread after the create-offer/edit-booking panel refactor, the user reported that the **Bookings** tab calendar on Admin Meetings would select a date but would not deselect when tapping the same date again. They wanted deselecting the active date to restore the full list of currently available appointments below the calendar.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same conversation, completed and pushed multiple `preview/mobile` Admin Meetings/UI fixes:
+  - admin summary metric text increased by 4px,
+  - bookings calendar white-cell border changed to black and later reverted to gray,
+  - appointment/consultation booking calendars restyled to match the Admin Meetings calendar,
+  - View All list grouping by client with inner scroll,
+  - grouped list row/date/time color and spacing updates,
+  - repeated compact-label / `TS` artifact investigations and meetings/client-details close/header refinements,
+  - create-offer/edit-booking panel header/button/dropdown refactor.
+- In this latest pass, inspected the Bookings calendar date cell click handler in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Identified the root cause of the “cannot deselect” behavior: the calendar day button click always called `setSelectedDay(cell.iso)`, even when that same date was already selected.
+- Updated the click handler so tapping the currently selected day toggles it off:
+  - if no day is selected, tap selects the date,
+  - if a different day is selected, tap switches to that date,
+  - if the same selected date is tapped again, it clears back to `null`.
+- Because the bookings list memo already falls back to the full filtered appointments list when `selectedDay` is null, clearing the selected date automatically restores all currently available appointment panels below the calendar.
+- Rebuilt successfully on `preview/mobile` after the toggle change.
+
+**Decisions / outcomes:**
+- Bookings-calendar selection now behaves as a true toggle instead of a one-way filter.
+- Clearing the selected day returns the bookings tab to the full available appointments list without any additional UI changes.
+- Scope stayed limited to the Admin Meetings bookings calendar date button behavior.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed the bookings calendar day `onClick` handler to toggle `selectedDay` off when the selected date is tapped again
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings date-filter calendars that drive below-list filtering, day taps should be idempotent toggles: tapping an already-selected day should clear the filter so the full list reappears rather than trapping the user in a selected state.

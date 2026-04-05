@@ -2172,7 +2172,7 @@ export default function AdminMeetingsHub() {
                             type="button"
                             onClick={() => {
                               if (disabled) return;
-                              setSelectedDay(cell.iso);
+                              setSelectedDay((current) => (current === cell.iso ? null : cell.iso));
                             }}
                             disabled={disabled}
                             title={title}
