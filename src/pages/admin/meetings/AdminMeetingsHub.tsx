@@ -788,16 +788,12 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
       : 'not_enabled';
   const autopayLastError = String(meta.bookingAutopayLastError || '').trim().toUpperCase();
 
-  // UI test hook: fill tracker for Quinn booking cards so due-bar states can be validated quickly.
-  const clientNameUpper = String(m.client || '').trim().toUpperCase();
-  const forceFilledForQuinn = clientNameUpper.includes('QUINN CHEN');
-
   return {
     remainingDueUsd,
     paidTotalUsd,
     finalPaymentDueDateText: dueDateText,
     finalPaymentDueText: dueText,
-    dueProgressPct: forceFilledForQuinn ? 100 : elapsedPct,
+    dueProgressPct: elapsedPct,
     duePassed,
     dueWithinFinal48Hours,
     autopayStatus,

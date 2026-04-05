@@ -11157,3 +11157,36 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings booking payment displays, prefer full booking order/line totals from meeting metadata for the “OF $Y USD” amount before falling back to unit-only pricing, so add-ons and travel fee stay reflected in the visible total.
+
+---
+
+## 2026-04-04 — Removed stale Quinn-only booking tracker fill override so progress reflects actual elapsed time
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread after the booking tracker was changed to fill gray over the full booked-at → due-at window and turn red only in the final 48 hours, the user reported Quinn Chen’s tracker was still showing a fully filled gray bar even though `18D 15H LEFT` remained.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this chat, the Admin Meetings bookings tracker logic was updated so:
+  - gray fill should progress over the full tracker timeline,
+  - red fill should appear only in the final 48 hours,
+  - full booking totals (including add-ons/travel) should be used in the `CURRENT BALANCE ... OF ... USD` line when available.
+- In this follow-up pass, traced the remaining incorrect full-gray fill to an old Quinn-specific UI test hook still present in `getBookingPaymentStatusForCard(...)`.
+- Found the stale override:
+  - `const forceFilledForQuinn = clientNameUpper.includes('QUINN CHEN')`
+  - `dueProgressPct: forceFilledForQuinn ? 100 : elapsedPct`
+- Removed that special-case logic so `dueProgressPct` now always uses the actual elapsed percentage from the booked-at → due-at window.
+- Rebuilt successfully on `preview/mobile` after removing the override.
+
+**Decisions / outcomes:**
+- Quinn Chen’s tracker is no longer force-filled to 100%.
+- The tracker now reflects real elapsed time consistently for all bookings.
+- This fix stays aligned with the prior behavior change where only the final 48 hours should turn the bar red.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed the Quinn-specific forced-fill test hook
+  - changed `dueProgressPct` to always use `elapsedPct`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- Remove one-off UI test hooks (like hardcoded client-name fill overrides) once the intended production tracker logic is in place, or they will silently invalidate otherwise-correct timing behavior.
