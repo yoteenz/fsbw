@@ -11470,3 +11470,36 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For Admin Meetings action panels tied to a specific tapped client row, prefer using the client’s name as the active panel header and avoid repeating the same identity line in the panel body unless the user explicitly wants duplicate labeling.
+
+---
+
+## 2026-04-04 — Edit Booking message field moved toward bottom of main card
+
+**Context:** Continuing this same Admin Meetings panel-refinement thread immediately after switching Edit Booking / Create Offer headers to use the tapped client name, the user clarified that the **Edit Booking** message input still sat too close to the selection control and needed to be positioned lower in the main card, toward the bottom rather than directly under the dropdown.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat sequence, completed several Admin Meetings panel refinements:
+  - moved workflow actions out of the main card and into the lower button strip,
+  - replaced native selects with custom dropdowns,
+  - made the edit-reason dropdown auto-populate the message,
+  - changed active headers to use the tapped client name,
+  - removed the redundant gray client-name line from Create Offer.
+- In this follow-up pass, stayed on the same `AdminMeetingsHub` panel branch and focused only on **Edit Booking** vertical layout.
+- Confirmed the previous approach only added extra top margin to the label, which still left the field participating in the normal flow immediately below the dropdown.
+- Reworked the **Edit Booking** card body to use a small flex column with explicit vertical separation so the message block sits lower in the panel instead of hugging the selection box.
+- Kept the dropdown selection behavior and auto-filled edit message logic intact while moving only the message block placement.
+- Rebuilt successfully after the layout adjustment.
+
+**Decisions / outcomes:**
+- The Edit Booking message input now sits materially lower in the main card, closer to the bottom section of that panel rather than directly under the selection boxes.
+- Scope stayed limited to Edit Booking panel layout; Create Offer spacing and the lower action-strip behavior were not changed in this pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - wrapped the Edit Booking panel body in a column layout with explicit spacing
+  - replaced the simple adjacent label flow with a lower-positioned message block container
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings panel layouts where the user wants the message textarea visually separated from top selection controls, use container-level flex spacing / block grouping rather than only increasing the label’s top margin, so the field truly sits lower in the card.

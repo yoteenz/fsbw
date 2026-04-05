@@ -2071,7 +2071,7 @@ export default function AdminMeetingsHub() {
                     )}
                   </>
                 ) : editMeeting ? (
-                  <div style={{ marginTop: '12px' }}>
+                  <div style={{ marginTop: '12px', minHeight: '240px', display: 'flex', flexDirection: 'column' }}>
                     {renderPanelSelectDropdown({
                       dropdownKey: 'editReason',
                       label: 'REASON',
@@ -2083,7 +2083,7 @@ export default function AdminMeetingsHub() {
                         if (preset) setEditMessage(preset.message);
                       },
                     })}
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 'auto', paddingTop: '24px' }}>
                       MESSAGE TO CLIENT
                       <textarea
                         className="w-full mt-1 p-2 border text-[10px]"
