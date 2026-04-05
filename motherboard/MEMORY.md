@@ -10976,3 +10976,48 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings sorting, keep tab-specific service-type sort options scoped to the relevant tab rather than exposing one global mixed list everywhere: booking install-kind sorts belong on Bookings, and consult wig/install sorts belong on Consults.
+
+---
+
+## 2026-04-04 — Bookings tracker now fills gray over the full timeline and turns red only in the final 48 hours
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings thread after the sort-option expansion, the user reported that the bookings payment tracker fill colors were wrong: the fill was not visibly progressing and should fill in gray based on the total tracker duration, only switching to red when 48 hours remain on the tracker.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed multiple Admin Meetings / Admin Clients / preview-mobile fixes including:
+  - admin summary panel text-size increases,
+  - bookings calendar date deselect behavior,
+  - grouped View All list view by client with fixed-height panels,
+  - create-offer / edit-booking panel UI refactor,
+  - meetings sort-option expansion,
+  - client-details red name + close-X header restoration,
+  - shared `usePersistentQueryState` replaceState loop fix.
+- In this pass, focused on the bookings payment tracker in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Inspected `getBookingPaymentStatusForCard(...)` and found the tracker progress was being computed from appointment date vs due date, with the UI turning red based on near-100% fill (`dueProgressPct >= 98`) or already-passed due date.
+- Traced the booking appointment API payload and confirmed appointment meeting metadata already stores `bookingBookedAtIso`, which provides a better start point for the tracker timeline.
+- Updated the tracker timeline math so progress now runs from:
+  - **start:** `bookingBookedAtIso` when present (fallback: current time or due time safety fallback),
+  - **end:** final payment due datetime (`finalPaymentDueAt` / `finalPaymentDueDate` path).
+- Added an explicit `dueWithinFinal48Hours` flag so the UI can switch colors based on real remaining time rather than a near-100% percentage threshold.
+- Updated the bookings-card tracker rendering so:
+  - fill/track colors stay gray during the normal countdown window,
+  - the bar changes to red only when the tracker is within the final 48 hours or already past due.
+- First rebuild failed because the render referenced a mismatched property name (`dueWithinFortyEightHours` vs `dueWithinFinal48Hours`); corrected the reference and reran a successful production build.
+
+**Decisions / outcomes:**
+- The bookings tracker now reflects timeline progress in gray over the full due window instead of staying visually static.
+- Red is now reserved for the final 48 hours (and overdue state), matching the user’s requested warning threshold.
+- The change is scoped to the bookings payment tracker behavior on Admin Meetings; no unrelated card layout or copy was altered in this pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed tracker progress start point to prefer `metadata.bookingBookedAtIso`
+  - added `dueWithinFinal48Hours` to `BookingPaymentStatus`
+  - updated due-window percentage calculation to span booked-at → due-at
+  - changed tracker red-state condition from near-full percentage to true remaining-time threshold (48 hours)
+  - fixed the render to reference `dueWithinFinal48Hours`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings booking trackers, derive fill progress from the full real timeline (booked-at → due-at) and reserve red-state styling for explicit warning windows like the final 48 hours, rather than using an arbitrary near-100%-filled threshold as the warning trigger.

@@ -684,6 +684,7 @@ type BookingPaymentStatus = {
   finalPaymentDueText: string;
   dueProgressPct: number;
   duePassed: boolean;
+  dueWithinFinal48Hours: boolean;
   autopayStatus: 'paid' | 'failed' | 'scheduled' | 'not_enabled';
   autopayLastError: string;
 };
@@ -718,14 +719,17 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
   const dueDateText = formatHeaderDate(dueIso);
   const nowMs = Date.now();
   const dueMs = safeDueObj.getTime();
-  const sourceDateObj = toLocalDateEndOfDay(m.date) || safeDueObj;
-  const totalWindowMs = Math.max(1, sourceDateObj.getTime() - dueMs);
+  const bookedAtRaw = String(meta.bookingBookedAtIso || meta.bookingAutopayConsentAt || '').trim();
+  const bookedAtParsed = bookedAtRaw ? new Date(bookedAtRaw) : null;
+  const bookedAtMs = bookedAtParsed && Number.isFinite(bookedAtParsed.getTime()) ? bookedAtParsed.getTime() : nowMs;
+  const totalWindowMs = Math.max(1, dueMs - bookedAtMs);
   const remainingMs = Math.max(0, dueMs - nowMs);
   const elapsedPct = Math.max(
     0,
     Math.min(100, ((totalWindowMs - Math.min(totalWindowMs, remainingMs)) / totalWindowMs) * 100)
   );
   const duePassed = remainingMs <= 0;
+  const dueWithinFinal48Hours = remainingMs <= 48 * 60 * 60 * 1000;
 
   const hoursTotal = Math.floor(remainingMs / (1000 * 60 * 60));
   const days = Math.floor(hoursTotal / 24);
@@ -756,6 +760,7 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
     finalPaymentDueText: dueText,
     dueProgressPct: forceFilledForQuinn ? 100 : elapsedPct,
     duePassed,
+    dueWithinFinal48Hours,
     autopayStatus,
     autopayLastError,
   };
@@ -2273,7 +2278,7 @@ export default function AdminMeetingsHub() {
                               </p>
                               {(() => {
                                 const payment = getBookingPaymentStatusForCard(m);
-                                const isRedDueBar = payment.duePassed || payment.dueProgressPct >= 98;
+                                const isRedDueBar = payment.dueWithinFinal48Hours || payment.duePassed;
                                 return (
                                   <>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '12px 0 0' }}>
