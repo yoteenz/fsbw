@@ -1413,12 +1413,14 @@ export default function AdminMeetingsHub() {
                         color: '#000',
                         fontSize: '12px',
                         fontWeight: 500,
+                        display: 'block',
                         margin: 0,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         minWidth: 0,
                         flex: '1 1 auto',
+                        width: '100%',
                         maxWidth: 'calc(100% - 24px)',
                         paddingRight: '8px',
                       }}
@@ -1504,8 +1506,6 @@ export default function AdminMeetingsHub() {
                       WebkitOverflowScrolling: 'touch',
                       scrollbarWidth: 'none',
                       msOverflowStyle: 'none',
-                      paddingLeft: '8px',
-                      paddingRight: '8px',
                     }}
                   >
                     <div
@@ -1513,7 +1513,7 @@ export default function AdminMeetingsHub() {
                       style={{
                         width: 'max-content',
                         minWidth: '100%',
-                        justifyContent: 'flex-start',
+                        justifyContent: 'center',
                         whiteSpace: 'nowrap',
                       }}
                     >

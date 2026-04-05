@@ -10675,3 +10675,41 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When the suspect compact label already has one-line text rules, broaden the fix to the immediate parent layout (padding, justification, shrink behavior, unnecessary clipping) before assuming the text node itself is still the problem.
+
+---
+
+## 2026-04-04 — Re-centered Meetings tabs after regression; consult-row wig-option text confirmed black
+
+**Context:** Continuing the same preview/mobile Admin Meetings thread immediately after the compact consult-label container pass, the user reported two regressions/remaining issues: the `TS` fragment still persisted above the client panels, and the latest change had incorrectly left-aligned the top Meetings tabs even though they should stay centered. The user also reiterated that the consult-tab `WIG ONLY / WIG + INSTALL` text should be black.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary metric text by 4px across admin summary panels,
+  - iterated repeatedly on Admin Meetings View All grid/list behavior, list grouping, card heights, and anti-wrap hardening,
+  - moved all final work directly onto `preview/mobile`,
+  - aligned appointment/consultation booking calendars to the Admin Meetings style,
+  - changed View All list time text to black,
+  - searched repeatedly for a literal `TS/TSTS` token and instead traced the issue to compact `CONSULTS` label containers.
+- In the immediately previous pass, the top Meetings tab row was changed to a horizontally scrollable strip with `justifyContent: 'flex-start'` to reduce clipping risk, and the consult-tab wig-option row was switched from gray to black.
+- In this follow-up correction pass, re-inspected the live `AdminMeetingsHub` code and confirmed:
+  - the close icon above the active client/view-all panel was already still using the red filter (`CLOSE_ICON_RED_FILTER`), so no code change was needed there,
+  - the consult-tab `hair` row (`WIG ONLY` / `WIG + INSTALL`) was already black in the current working copy.
+- Reverted the top Meetings tab-row alignment regression by restoring the scroll strip’s inner alignment back to centered while leaving the non-shrinking, no-wrap protections intact.
+- Added a small additional hardening improvement to the active View All panel title by making the title block explicitly `display: block` and `width: 100%` within the constrained flex area, keeping the title eligible for clean ellipsis rather than odd partial clipping.
+- Rebuilt successfully on `preview/mobile` after this narrower regression-revert pass.
+
+**Decisions / outcomes:**
+- The top Meetings tabs are centered again as requested.
+- The consult-tab wig-option row is black in the current code path.
+- The active panel title has slightly stronger width semantics for clipping/ellipsis without changing its wording.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored top Meetings tab-row inner justification to `center`
+  - removed the extra left/right padding that had accompanied the left-aligned tab strip
+  - set the active View All/client panel `<h2>` title block to `display: 'block'` and `width: '100%'`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When backing out a layout experiment meant to fix a clipping artifact, preserve the safe no-wrap / non-shrinking protections that were valid, but restore any broader alignment changes (like left-aligning a previously centered control row) if they visibly regress the intended design.
