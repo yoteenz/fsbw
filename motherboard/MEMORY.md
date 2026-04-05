@@ -11289,3 +11289,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 **Conventions:**
 - For Admin Meetings dropdown options that name a subset/category (`Premium`, `Standard`, install kind, consult type), treat them as **filters** unless the user explicitly asks for prioritization-only sorting.
 - For fallback booking balance displays on Admin Meetings, derive a synthetic full-order total from the unit + install fee + add-on prices when explicit order totals are missing so the UI still reflects likely full booking cost.
+
+---
+
+## 2026-04-04 — Meetings create-offer/edit-booking custom dropdowns now close immediately on selection
+
+**Context:** Continuing the same preview/mobile Admin Meetings refinement thread, the user reported that the custom selection dropdowns inside the **Create Offer** and **Edit Booking** panels were not functioning like the Special Offers dropdowns: after choosing an option, the selection should apply and the dropdown should collapse immediately, but it visually remained open.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, on `preview/mobile`, completed and pushed multiple Admin Meetings changes including:
+  - full-order booking totals in `CURRENT BALANCE`,
+  - tracker fill/color fixes,
+  - grouped View All list behavior,
+  - tab-specific sort/filter options,
+  - create-offer/edit-booking panel refactors and custom dropdown styling.
+- In this pass, focused on the custom panel dropdown helper in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Inspected the current handler and confirmed it already called `setActivePanelDropdown(null)` on option click, which implied the issue was more structural than a missing close call.
+- Compared the helper structure to the working Special Offers dropdown pattern and found the Meetings version still wrapped the whole control in a `<label>` and rendered the selected option inside the menu list.
+- Refactored the helper to match the working pattern more closely:
+  - changed the outer wrapper from a `<label>` container to a normal `<div>` with a separate label line,
+  - kept the trigger button and dropdown menu in a sibling `relative` wrapper,
+  - filtered the menu options to exclude the currently selected option,
+  - preserved the existing immediate `onChange(opt); setActivePanelDropdown(null);` close behavior.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The create-offer/edit-booking selection dropdowns now follow the same structural interaction pattern as the working Special Offers dropdowns.
+- Selecting an option should now both apply the value and collapse the dropdown immediately.
+- Scope stayed limited to the shared panel dropdown helper used by those Meetings panels.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - refactored `renderPanelSelectDropdown(...)` to use a Special Offers–style wrapper structure
+  - removed the current selected option from the rendered option list
+  - retained immediate close on selection via `setActivePanelDropdown(null)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings custom select controls intended to behave like the Admin Special Offers dropdowns, mirror the same structural pattern (separate label + relative wrapper + option list excluding current selection) rather than only copying the visual styles, because wrapper semantics can affect whether the menu actually collapses after selection.

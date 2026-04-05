@@ -1430,8 +1430,8 @@ export default function AdminMeetingsHub() {
     options: readonly string[];
     onChange: (next: string) => void;
   }) => (
-    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-      {label}
+    <div className="mt-2">
+      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
       <div className="relative mt-1">
         <button
           type="button"
@@ -1451,7 +1451,7 @@ export default function AdminMeetingsHub() {
             alignItems: 'center',
             justifyContent: 'space-between',
             cursor: 'pointer',
-                        color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
+            color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
             letterSpacing: '0.02em',
           }}
         >
@@ -1484,33 +1484,30 @@ export default function AdminMeetingsHub() {
               className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
               style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
             >
-              {options.map((opt) => {
-                const isSelected = opt === value;
-                return (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => {
-                      onChange(opt);
-                      setActivePanelDropdown(null);
-                    }}
-                    className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: isSelected ? '#EB1C24' : '#000',
-                      fontWeight: 400,
-                      backgroundColor: isSelected ? 'rgba(235,28,36,0.06)' : '#fff',
-                    }}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
+              {options.filter((opt) => opt !== value).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    onChange(opt);
+                    setActivePanelDropdown(null);
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    color: '#000',
+                    fontWeight: 400,
+                    backgroundColor: '#fff',
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
             </div>
           </>
         ) : null}
       </div>
-    </label>
+    </div>
   );
 
   const travelBlackoutDates = useMemo(() => {
