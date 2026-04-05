@@ -1422,7 +1422,7 @@ export default function BookingAppointmentPage() {
           <div
             style={{
               borderTop: '1px solid #e5e7eb',
-              paddingTop: '20px',
+              paddingTop: '0',
               marginTop: 0,
               marginBottom: '16px'
             }}

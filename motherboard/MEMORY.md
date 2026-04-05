@@ -11750,3 +11750,34 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - When the appointment and consult booking pages share the same form section label/content role (like **Additional Notes**), keep their spacing treatment aligned unless the user explicitly asks for them to differ.
+
+---
+
+## 2026-04-04 — Appointment notes-to-calendar gap tightened to actually match consult page spacing
+
+**Context:** After the earlier appointment Additional Notes spacing pass was reported as not visibly changed, the user clarified that the change still was not showing. A closer comparison of the live appointment and consult layouts showed the remaining visual gap was coming from the appointment calendar section directly below the notes block rather than from the notes wrapper itself.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same long booking/admin branch-sync chat, completed and synced:
+  - Admin Meetings and account-alert/order UI refinements,
+  - consult head-measurement section + data flow,
+  - Create Offer dynamic pricing/breakdown work,
+  - previous attempt to match the appointment Additional Notes spacing to the consult page.
+- Re-read the exact live Additional Notes and following calendar section on both pages.
+- Confirmed the consult page transitions straight from notes into the scheduling section, while the appointment page still had extra top padding on the calendar section immediately below notes (`paddingTop: '20px'`).
+- Reduced that appointment scheduling-section top padding to remove the visible extra gap below the notes field.
+- Rebuilt successfully after the adjustment.
+
+**Decisions / outcomes:**
+- The visible spacing mismatch was caused by the next section’s top padding, not the notes field wrapper itself.
+- The appointment page now more closely matches the consult page’s notes-to-scheduling transition.
+- Scope stayed limited to the appointment page section immediately following Additional Notes.
+
+**Changes:**
+- `src/pages/booking/appointment/page.tsx`
+  - changed the top padding on the section directly below Additional Notes from `20px` to `0`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When matching vertical spacing between similar form sections across booking pages, compare both the target field wrapper **and** the immediately following section; visible extra space can come from the next section’s top padding rather than from the field block itself.
