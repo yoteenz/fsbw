@@ -9203,3 +9203,2128 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For tiny right-edge icon shifts, prefer adjusting button margin on the target control to avoid ripple effects in text/layout columns.
+
+---
+
+## 2026-04-03 — Full conversation summary: consults/admin UI overhaul, branch-governance cleanup, and final header-strip parity
+
+**Context:** This chat covered a long sequence of admin/consults/bookings UI corrections and visibility/process issues, with the user prioritizing exact pixel/typography parity and ensuring deploy-visible work lands on `preview/mobile`.
+
+**Topics covered (entire conversation so far):**
+- Implemented repeated consults-tab and meetings-card adjustments: client-panel return flow back to B/C tabs, quote icon swap to `quote-icon-consult.svg`, summary-panel height/vertical alignment updates, text/font/spacing micro-tuning, and bookings-vs-consults icon offset scoping.
+- Expanded consult mock realism by allowing 1–3 inspiration photos and corrected inspo-row directional spacing/gap behavior after user feedback.
+- Matched A/C booking calendar month label styling to Admin Meetings Bohemy styling and hardened against overrides with explicit class + `!important` font enforcement.
+- Added Admin Clients overview summary panels (`TOTAL CLIENTS` for account-created users and `TOTAL MEMBERS` for memberships), and changed Admin Revenue summary semantics from `TOTAL REVENUE` to `GROSS SALES` using gross order totals.
+- Corrected Admin Dashboard meetings-card text coloring by introducing segmented value rendering (`valueParts`) so `INSTALL:` is black, add-ons red, and trailing client/date gray.
+- Addressed branch visibility concerns by merging feature-branch work to `preview/mobile`, documenting preview-first governance, and following the user preference that agent-created branches should be avoided unless explicitly requested.
+- Confirmed spacing alignment between admin pages (tabs and summary-panel spacing), then completed the remaining request to remove top header text/icons so targeted admin pages mirror meetings-page style.
+
+**Decisions / outcomes:**
+- Top header text/icon strips were removed from the requested admin pages and related admin surfaces still using that block, preserving summary cards/tabs/content while eliminating the in-card title row.
+- Fixed a JSX regression in `admin/pending` introduced during header-strip removal (self-closing spacer div).
+- Removed an unused variable in `admin/clients` to satisfy strict TypeScript build checks.
+- Final build passes after all edits.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+- `src/pages/admin/revenue/page.tsx`
+- `src/pages/admin/pending/page.tsx`
+- `src/pages/admin/reviews/page.tsx`
+- `src/pages/admin/marketing/page.tsx`
+- `src/pages/admin/referrals/page.tsx`
+- `src/pages/admin/brand/page.tsx`
+- `src/pages/admin/analytics/page.tsx`
+- `src/pages/admin/backend/page.tsx`
+- `src/pages/admin/revenue/accounting-report/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For “mirror meetings page” admin-card requests, remove the in-card header/title-icon row (`flex items-center justify-between -mt-1 pb-1 px-5 pt-4`) and divider while preserving card body spacing and summary/tabs structure.
+- Keep deploy-visible work on `preview/mobile` by default per user branch policy.
+
+---
+
+## 2026-04-03 — Meetings B/C action icons now toggle main-card panels (no popup overlays)
+
+**Context:** After previous meetings/admin UI updates in this same chat, the user requested that the bookings/consults action icons (edit booking + send quote) stop opening popup modals and instead toggle inside the same main card area, matching the existing “VIEW ALL BOOKINGS/CONSULTS” interaction with the red close X.
+
+**Topics covered (entire conversation so far):**
+- Continued from the full consults/admin UI overhaul already completed in this chat (client flow corrections, calendar styling parity, summary-card parity, admin header-strip removals, preview/mobile branch policy).
+- Reworked `AdminMeetingsHub` panel-state behavior so `viewAllMode`, `editMeeting`, and `quoteMeeting` all drive a single in-card “active panel” surface with shared top title + red close icon behavior.
+- Kept the existing “view all” behavior intact while adding the same card-level toggle flow for:
+  - booking edit icon (`edit-meeting-icon-booking.svg`) and
+  - consult quote icon (`quote-icon-consult.svg`).
+- Moved the edit/quote form contents from fixed overlay popups into the main card content area when those states are active.
+- Removed the old fixed overlay wrappers for `editMeeting` and `quoteMeeting`; left the send confirmation modal and consult photo preview modal behavior unchanged.
+- Verified with a full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Edit booking and send quote now open as in-card panels (same interaction model as view-all) instead of popups.
+- Red close-X at the panel header exits these panels and returns to the default B/C list state.
+- No regressions in compile/build after the interaction model change.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - unified active-panel title/close handling across view-all, edit, and quote states
+  - rendered edit and quote forms inside main card content branch
+  - removed obsolete fixed popup containers for `quoteMeeting` and `editMeeting`
+
+**Conventions:**
+- For meetings hub actions that conceptually belong to the B/C card context, prefer in-card panel toggles with shared close-X header over separate overlay popups.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings card color mapping swap (service black, add-ons gray, client red)
+
+**Context:** Continuing this same long chat of admin/meetings UI refinements, the user requested a color swap on the Admin Dashboard MEETINGS card line segments: keep service type black, change add-ons from red to gray, and change client/date text from gray to red.
+
+**Topics covered (entire conversation so far):**
+- Maintained prior chat outcomes already completed in this thread: consults/meetings micro-layout tuning, in-card toggles for B/C action icons, header-strip removals on admin pages, calendar text parity, and branch policy alignment to `preview/mobile`.
+- Located dashboard meetings segmented text rendering in `src/pages/admin/dashboard/page.tsx` where `valueParts` currently controlled mixed colors for service/add-on/client segments.
+- Updated only the MEETINGS card segment colors:
+  - service label (`INSTALL:` via `label`) remains black,
+  - add-ons segment now uses gray,
+  - trailing date/client segment now uses red.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Dashboard meetings line now displays the requested color hierarchy:
+  - **black** service type,
+  - **gray** add-ons text,
+  - **red** client/date text.
+- Change is scoped to Admin Dashboard meetings card rendering only.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - swapped `valueParts` colors for add-ons and trailing client/date segment.
+
+**Conventions:**
+- For dashboard meeting-line color requests, keep service prefix styling independent (`label`) and adjust segment colors via `valueParts` so each text region remains individually controllable.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings card now shows only 5 most-recent rows (no vertical scroll)
+
+**Context:** In this same ongoing chat of admin dashboard + meetings refinements, the user requested that the Admin Dashboard MEETINGS card show only the 5 most recent appointment/consult rows and not use vertical scrolling.
+
+**Topics covered (entire conversation so far):**
+- Continued from earlier conversation work in this chat: broad consults/meetings UI updates, in-card toggle behavior for booking edit + consult quote icons, admin-page header-strip parity updates, and dashboard meetings segment color swaps.
+- Located dashboard meetings-card source list and card rendering behavior in `src/pages/admin/dashboard/page.tsx`.
+- Updated meetings-card feed construction to include both appointments and consults, sorted by appointment datetime descending (most recent first), then trimmed to exactly 5 rows.
+- Updated StatsCard usage so only non-MEETINGS cards keep capped item height (`itemsMaxHeightPx`), preventing vertical scroll behavior on the MEETINGS card now that it only renders 5 rows.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- MEETINGS card now renders a fixed 5-row recent list (appointments + consults) and does not need vertical scrolling.
+- Existing mixed-color segment rendering for each meetings row remains intact.
+- Change is scoped to Admin Dashboard card feed + per-card cap behavior.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - merged meetings source for dashboard row list, sorted descending by datetime, sliced to 5 rows
+  - conditional `itemsMaxHeightPx` passed to `StatsCard` (undefined for MEETINGS, capped for other cards)
+
+**Conventions:**
+- For dashboard cards with intentionally short fixed row counts, avoid forcing capped scroll containers; reserve `itemsMaxHeightPx` for high-density cards that should scroll.
+
+---
+
+## 2026-04-03 — Dashboard consult meeting rows now read `CONSULT: WIG ONLY/WIG + INSTALL` with black/gray/red segment colors
+
+**Context:** User requested replacing dashboard meetings-card consult text like `WIG CONSULT: 4/28 FIONA HAYES` with explicit consult format lines: `CONSULT: WIG ONLY 4/28 FIONA HAYES` or `CONSULT: WIG + INSTALL 4/28 FIONA HAYES`, and specified color segmentation: service prefix black, consult type gray, date/client red.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long chat’s admin meetings/dashboard iterations (in-card toggle behavior, meetings row-limit/no-scroll update, prior segment color swaps, and preview/mobile-first delivery).
+- Located dashboard meetings row formatter/mapping in `src/pages/admin/dashboard/page.tsx`.
+- Added consult-aware parsing from meetings metadata and type text:
+  - detects `WIG + INSTALL` vs `WIG ONLY` from `meeting.metadata.hairOption` and fallback text.
+  - normalizes legacy strings so consult rows render in a consistent template.
+- Updated MEETINGS card row assembly to emit:
+  - `label: CONSULT` (rendered as `CONSULT:` black),
+  - gray consult-type segment (`WIG ONLY` or `WIG + INSTALL`),
+  - red trailing date/client segment.
+- Kept non-consult rows on existing booking formatter path and preserved service-prefix black behavior.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Dashboard consult entries now render in requested format and colors:
+  - **black** `CONSULT:`
+  - **gray** `WIG ONLY` / `WIG + INSTALL`
+  - **red** date + client.
+- Booking rows remain unaffected except prior color/format rules already established in this chat.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added consult type normalization helper and consult metadata fallback parsing
+  - changed consult row mapping from raw `m.type` passthrough to canonical `CONSULT: {TYPE}`
+  - retained segmented `valueParts` rendering for exact color control
+
+**Conventions:**
+- For dashboard meetings consult rows, prefer canonical template `CONSULT: {WIG TYPE} {DATE CLIENT}` with per-segment color control through `label` + `valueParts`, rather than displaying raw upstream type strings.
+
+---
+
+## 2026-04-03 — Admin Meetings adds OVERVIEW tab (before BOOKINGS) with booking/consult sales analytics
+
+**Context:** User requested a new **OVERVIEW** tab before **BOOKINGS** on the Admin Meetings page, with summary panels for **BOOKING SALES** (completed appointments with orders paid in full) and **CONSULT SALES** (total sales from redeemed consult-offer `$40` codes), and asked that this tab contain appointment/consult analytics.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long chat history where meetings/dashboard/admin pages were repeatedly refined (B/C card behavior, dashboard meetings formatting/colors, 5-row dashboard cap, preview/mobile-only push workflow).
+- Updated `AdminMeetingsHub` tab state to support `overview | bookings | consults`, with URL param handling and tab button order changed to `OVERVIEW`, `BOOKINGS`, `CONSULTS`.
+- Added meetings-overview sales calculations:
+  - **Booking sales** derived from completed appointment meetings that are effectively paid in full, using metadata signals (`bookingAutopayStatus === paid`, final due amounts, and paid totals).
+  - **Consult sales** derived from orders carrying redeemed consult-offer style `CONSULT-*` discount codes from shared revenue order source.
+- Added helper normalization utilities to keep money/code parsing resilient for mixed historical order/meeting shapes.
+- Rendered new Overview content under the meetings main card:
+  - top summary panels: **BOOKING SALES** and **CONSULT SALES**
+  - appointment analytics block: completed count, paid-in-full count, remaining-balance count, average paid-in-full sale
+  - consult analytics block: total/complete consult counts, wig-only vs wig+install mix, redeemed consult-offer orders count, average redeemed sale
+- Preserved existing Bookings and Consults tab behavior (calendar, cards, quote/edit in-card panels, view-all flows).
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Admin Meetings now has a dedicated **OVERVIEW** tab before **BOOKINGS**.
+- Overview summary panels use requested labels and sales semantics.
+- Overview includes analytics for both appointment and consult streams in one place.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - expanded main tab model + URL parsing
+  - added booking/consult sales helper functions and overview memoized analytics
+  - added Overview tab UI and analytics sections
+
+**Conventions:**
+- For Meetings Overview sales metrics, compute from existing persisted meeting metadata and shared order ledger (`buildRevenueOrdersList`) instead of duplicating a separate analytics store.
+
+---
+
+## 2026-04-03 — Admin dashboard meetings ticker now interleaves top client/offer/travel insight lines
+
+**Context:** User requested three additional insight sentences inserted between the existing day/week/month upcoming-bookings ticker sentences on the Admin Dashboard MEETINGS card:
+- most-booked client (`X HAS BOOKED N APPOINTMENTS.`),
+- most-redeemed consult-offer client (`X HAS REDEEMED N OFFERS.`),
+- most-traveled-to city this year (`YOU'VE TRAVELED TO CITY N TIMES THIS YEAR.`).
+
+**Topics covered (entire conversation so far):**
+- Continued from the same long conversation that already implemented meetings/dashboard formatting changes, overview tab analytics, card behavior refinements, and preview/mobile-first delivery.
+- Located ticker assembly in `src/pages/admin/dashboard/page.tsx` (`meetingsCardTicker` feeding `MEETINGS` card `highlight`).
+- Added helper derivations for the three requested insight lines:
+  - **Most booked appointments client** from non-cancelled non-consult meeting counts.
+  - **Most redeemed offers client** from order rows with `CONSULT-*` code usage.
+  - **Most traveled city this year** from appointment meetings tagged with travel add-ons and city extracted from meeting metadata/address fields.
+- Rebuilt ticker string to interleave lines exactly between today/week/month booking-scheduled sentences and preserve looping marquee behavior.
+- Removed an obsolete intermediate ticker constant that became unused after replacement.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- MEETINGS card scrolling sentence stream now includes all three insight lines in the requested sequence between day/week/month booking lines.
+- Insight lines gracefully fall back to “NO … YET” variants when data is unavailable instead of crashing or rendering blank.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added meeting/client/travel insight helper functions and computed lines
+  - updated `meetingsCardTicker` assembly to interleaved `meetingsCardTickerWithInsights`
+  - removed stale unused ticker variable
+
+**Conventions:**
+- For dashboard ticker expansions, derive insight text from the same merged meetings + orders sources already used by dashboard cards so counts stay internally consistent.
+
+---
+
+## 2026-04-03 — Consults-tab right-side panel icon now matches bookings icon + exact positioning
+
+**Context:** User requested that the consults tab right-side panel icon use the same icon as bookings tab and match the same icon positioning.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat’s ongoing meetings/dashboard/admin UI refinements already completed in this thread (overview tab, ticker insight lines, consult row formatting, in-card panel toggles, and prior icon/spacing passes).
+- Located the bookings right-side icon button styles in `AdminMeetingsHub` (asset `/assets/edit-meeting-icon-booking.svg`, size 11x11, button offsets including `marginTop: '4px'` and `marginRight: '3px'`).
+- Updated consults-tab right-side action button to mirror bookings styling:
+  - swapped consult icon asset from `/assets/quote-icon-consult.svg` to `/assets/edit-meeting-icon-booking.svg`,
+  - matched button style offsets and sizing to bookings right-side icon positioning values.
+- Kept consult action behavior unchanged (still opens the in-card send-quote panel), only visual icon and positioning parity were adjusted.
+- Ran full build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Consults right-side panel icon now uses the same icon and same placement as bookings right-side panel icon.
+- Interaction flow remains unchanged; only icon visual/positioning parity was changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - consult right-side action button style updated to bookings-equivalent offsets
+  - consult right-side icon source/size matched to bookings icon (`edit-meeting-icon-booking.svg`, `11x11`)
+
+**Conventions:**
+- When user requests “same icon + same positioning” parity across B/C tabs, mirror both the asset path and all positioning styles (size, margins, z-index/padding) from the source tab’s control.
+
+---
+
+## 2026-04-03 — Bookings card follow-up: +4px balance spacing, duration shown as HRS/MINS, and Quinn due-bar forced filled for UI test
+
+**Context:** User requested three bookings-tab card changes: add 4px above the CURRENT BALANCE line, display appointment duration in hour/minute format after 60 minutes (e.g., `250 MIN` -> `4 HRS 10 MINS`), and force-fill the payment-due tracker bar on Quinn Chen’s booking to test UI states.
+
+**Topics covered (entire conversation so far):**
+- Continued from same-thread bookings/admin meetings UI iterations, including right-side icon targeting and autopay-related card metadata/status work.
+- Added a duration formatter helper in `AdminMeetingsHub` that converts `N MIN` values >= 60 to `X HRS` / `X HRS Y MINS`, and wired bookings appointment line to use it.
+- Increased CURRENT BALANCE line top spacing by 4px (margin top `8px` -> `12px`).
+- Added a targeted test hook inside booking payment status calculation to force `dueProgressPct` to `100` when client name includes `QUINN CHEN`, so the due tracker renders fully filled for UI testing.
+- During push, remote preview advanced and caused a rebase conflict in `AdminMeetingsHub`; resolved by preserving these three requested updates alongside latest upstream edits.
+- Build validated successfully after edits.
+
+**Decisions / outcomes:**
+- Bookings CURRENT BALANCE line now renders with +4px extra top spacing.
+- Bookings duration text now switches to HRS/MINS formatting when minutes exceed 60.
+- Quinn Chen bookings card due tracker is intentionally forced filled for visual QA/testing.
+- Changes are live on `preview/mobile`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatMinutesAsHoursAndMinutes(...)`
+  - bookings appointment line now uses formatted duration text
+  - CURRENT BALANCE top margin increased to `12px`
+  - `getBookingPaymentStatusForCard(...)` now forces `dueProgressPct: 100` for client names containing `QUINN CHEN`
+
+**Conventions:**
+- For temporary UI test states on specific demo/mock clients, gate overrides by explicit client-name checks and keep them localized to display-status calculation helpers.
+
+---
+
+## 2026-04-03 — Dashboard meetings ticker: keep upcoming-booking lines red and insight lines gray
+
+**Context:** User requested a targeted color tweak to the admin dashboard meetings ticker: change only the three added insight lines to gray while keeping the existing upcoming bookings scheduled lines red.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long chat’s sequence of meetings/dashboard/admin changes (overview tab, consult row text format, ticker insight insertion, consult icon parity, and preview/mobile-only push workflow).
+- Located meetings ticker construction in `src/pages/admin/dashboard/page.tsx` and highlight rendering in `src/pages/admin/components/StatsCard.tsx`.
+- Added segment-based highlight rendering support to `StatsCard` via optional `highlightParts` so a single ticker line can mix colors.
+- Updated dashboard meetings ticker assembly to build `highlightParts` where:
+  - upcoming booking schedule lines remain `text-red-500`,
+  - inserted insight lines (most booked client, most redeemed offers, most traveled city) render `text-gray-500`.
+- Kept existing ticker text content/order unchanged; only per-line color assignment changed.
+- During push, remote `preview/mobile` had advanced; pulled with merge (`--no-rebase`), integrated upstream changes, then pushed successfully.
+- Build validated successfully after edits and merge.
+
+**Decisions / outcomes:**
+- Upcoming day/week/month booking-scheduled ticker sentences stay red.
+- The three interleaved insight lines now render gray only.
+- Mixed-color ticker rendering is now supported through a reusable highlight segmentation path.
+
+**Changes:**
+- `src/pages/admin/components/StatsCard.tsx`
+  - added `highlightParts?: Array<{ text: string; color?: string }>` support and rendering path.
+- `src/pages/admin/dashboard/page.tsx`
+  - replaced plain ticker string usage with segmented `meetingsCardTickerParts` / `meetingsCardTickerLoopParts`.
+  - wired `MEETINGS` card to use `highlightParts` while preserving marquee loop behavior.
+
+**Conventions:**
+- For marquee/ticker copy that requires mixed emphasis, use segmented highlight parts instead of forcing a single color for the whole string.
+
+---
+
+## 2026-04-03 — Admin meetings global search now filters bookings/consults by client on current tab
+
+**Context:** Continuing from the long-running admin meetings/dashboard refinement stream in this chat (bookings-tab typography/spacing/icon tuning, payment status redesign and countdown logic, dashboard meetings card formatting/color changes, and full Stripe final-payment autopay implementation), the user requested that typing a client name in the admin search bar should populate that client and their appointment/consult depending on the tab currently viewed.
+
+**Topics covered (entire conversation so far):**
+- Prior work across this conversation already established extensive meetings behavior and styling in `AdminMeetingsHub`, including bookings/consults tab cards, right-side action icons, payment due tracker states, and admin dashboard meetings-card formatting.
+- In this exchange, traced the shared admin search behavior through `AdminHeader` (`?q=` global query support) and confirmed `AdminMeetingsHub` had no list-level filtering wired to that query.
+- Implemented meetings-page controlled search state tied to URL query `q`, then added client-match filtering for both bookings and consult datasets.
+- Ensured filtering respects the currently viewed tab content:
+  - **Bookings tab** now filters appointment cards and calendar-highlighted appointment dates by client name.
+  - **Consults tab** now filters consult cards by client name.
+  - Search empty states now show tab-specific “NO ... MATCH YOUR SEARCH” copy.
+- Kept existing card visuals/interaction logic unchanged (edit/quote flows, profile click behavior, payment UI blocks), and validated with a successful build.
+
+**Decisions / outcomes:**
+- Meetings page now uses the existing admin header search input as a functional client filter instead of a no-op on this route.
+- Matching supports:
+  - raw client name,
+  - client name with state suffix (e.g. `NAME (TX)`),
+  - client email.
+- Search filtering is scoped to meetings content and tab context so admins see only relevant booking or consult rows while searching.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `clientSearchQuery` state sourced from and synced with URL query param `q`
+  - connected `AdminHeader` via `externalSearchValue` / `onExternalSearchChange`
+  - added `meetingMatchesClientSearch(...)` helper
+  - added `filteredAppointmentMeetings` and `filteredConsultMeetings` memoized lists
+  - wired filtered lists into bookings calendar date markers, bookings card rows, consult card rows, and view-all rows
+  - added search-specific empty-state copy for bookings/consults
+
+**Conventions:**
+- For admin pages using shared `AdminHeader` global search, wire `externalSearchValue` and `onExternalSearchChange` on-page and filter the page’s primary data lists by the same `q` value so search behavior is consistent across tabs/routes.
+
+---
+
+## 2026-04-03 — Meetings search now matches tab-relevant row content (e.g., “BROW TINT” add-ons) and preserves tab on submit
+
+**Context:** Building on this same long chat’s admin meetings/dashboard workstream (bookings/consults card styling and behavior, payment due tracker logic and autopay support, meetings overview analytics, ticker/card formatting, icon/spacing refinements), the user asked that global admin search be relative to what’s on the current admin page. They gave a concrete meetings example: typing **“brow tint”** in Admin Meetings → Bookings should return appointments with a Brow Tint add-on.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, meetings search was wired only to client identity matching (name/state/email) from header `q`, which did not satisfy content terms like add-on names.
+- Updated Admin Meetings search matching to be **page-content aware** by indexing each meeting row into a normalized search blob:
+  - shared fields: client name/state/email, date/text date, time, type, notes, duration (including formatted HRS/MINS), status
+  - bookings fields: install line, add-ons line/display line, install kind, attached order summary metadata
+  - consult fields: consult type (`WIG ONLY` / `WIG + INSTALL`), hair option, consult notes metadata
+- Switched filtering from single-string client includes to tokenized query matching (`every` token must match), so multi-word terms like `brow tint` resolve as expected.
+- Kept filtering tab-relative in Meetings:
+  - Bookings tab filters appointment rows (and calendar date highlights) using booking-relevant content.
+  - Consults tab filters consult rows using consult-relevant content.
+- Improved `AdminHeader` submit behavior with optional query-param preservation so page state params can survive search submit/clear (used for meetings tab preservation via `globalSearchPreserveKeys` path support).
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Meetings global search now behaves relative to page content, not just client names.
+- Query example `brow tint` in Meetings Bookings now surfaces bookings containing that add-on text.
+- Search logic remains scoped to current tab dataset, so results align with what the user is viewing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - replaced client-only matcher with normalized, token-based page-content matcher
+  - added `normalizeSearchText`, `meetingSearchBlob`, and `meetingMatchesPageSearch`
+  - updated filtered bookings/consults memo lists to use token matcher
+  - kept tab-specific empty states and filtered calendar markers in sync
+- `src/pages/admin/components/AdminHeader.tsx`
+  - added optional `globalSearchPreserveKeys?: string[]`
+  - updated search submit/clear navigation to preserve specified query params
+
+**Conventions:**
+- For admin global search on list pages, match against the page’s visible row semantics (labels/metadata users can read on that tab), not identity fields alone; preserve page-state query params (like active tab) when submitting or clearing search.
+
+---
+
+## 2026-04-03 — Meetings Overview top cards now show BOOKING/CONSULT SALES; duplicate lower sales cards removed
+
+**Context:** Continuing this same conversation’s Admin Meetings iteration stream (bookings/consults UI refinements, payment status/autopay display logic, meetings overview analytics, and recent tab-relative search updates), the user reported the sales summary card placement was incorrect in the Overview tab. They requested that **Booking Sales / Consult Sales** should replace the top **Total Booked / Total Consulted** cards on **Overview only**, instead of appearing again lower in the Overview content.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, Admin Meetings had:
+  - top header cards showing `TOTAL BOOKED` / `TOTAL CONSULTED`,
+  - and separate lower cards inside Overview body showing `BOOKING SALES` / `CONSULT SALES`.
+- Updated top summary-card rendering to be tab-conditional:
+  - when `mainTab === 'overview'`, top cards now show `BOOKING SALES` and `CONSULT SALES` with sales dollar values.
+  - when on Bookings/Consults tabs, top cards remain `TOTAL BOOKED` / `TOTAL CONSULTED` counts.
+- Removed the duplicate lower Overview sales-card grid so the sales summary appears in only one place (top of Overview), while preserving the analytics sections below it.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Overview now uses the top card slot for sales summary as requested.
+- Duplicate lower sales cards were removed to prevent repeated information and incorrect placement.
+- Non-Overview tabs retain existing top totals behavior.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - made top summary cards conditional by `mainTab` (sales labels/values on Overview, totals on other tabs)
+  - removed lower Overview sales summary grid from the Overview content block
+
+**Conventions:**
+- In Admin Meetings, Summary card metrics at the top should be tab-contextual and non-duplicative: Overview owns sales summary at the top, while Bookings/Consults keep operational totals.
+
+---
+
+## 2026-04-03 — Dashboard meetings ticker grammar fix for singular/plural upcoming booking text
+
+**Context:** Continuing this same long chat’s admin meetings/dashboard refinement thread, the user requested grammar correction for ticker text so `1` uses singular wording (`upcoming booking`) instead of plural (`upcoming bookings`) on today/week/month lines.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, dashboard meetings ticker already included interleaved insight lines (most booked client, most redeemed offers, most traveled city) with insight lines gray and upcoming booking lines red.
+- Located upcoming day/week/month sentence builders in `src/pages/admin/dashboard/page.tsx`.
+- Added a small helper (`upcomingBookingLine`) that returns singular/plural wording based on count:
+  - `1 UPCOMING BOOKING ...`
+  - `N UPCOMING BOOKINGS ...` for all other counts.
+- Replaced both the displayed highlight parts and fallback concatenated ticker string to use the helper consistently for TODAY / THIS WEEK / THIS MONTH lines.
+- Ran full build successfully.
+- During push, `preview/mobile` had advanced remotely; pulled with merge (`--no-rebase`) and pushed merged branch with grammar fix.
+
+**Decisions / outcomes:**
+- Upcoming ticker grammar now matches count correctly across day/week/month lines.
+- Existing color behavior remains unchanged (upcoming lines red, insight lines gray).
+- Change is scoped to meetings ticker text formatting only.
+
+**Changes:**
+- `src/pages/admin/dashboard/page.tsx`
+  - added `upcomingBookingLine(count, rangeLabel)` helper
+  - updated meetings ticker string + highlight parts to use singular/plural aware text
+
+**Conventions:**
+- For count-driven dashboard copy, use explicit singular/plural branching to avoid `1 ...s` grammar regressions in marquee/ticker content.
+
+---
+
+## 2026-04-03 — Bookings payment due tracker red-filled state now uses square corners with black border
+
+**Context:** Continuing the same conversation’s Admin Meetings bookings-card refinement stream (payment status redesign, due tracker/countdown adjustments, tab-relative search behavior, and Overview summary placement fixes), the user requested a visual change to the payment due tracking bar: when in the filled red state it should have square corners and a black border with red fill, rather than rounded corners and gray-styled container behavior.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, bookings payment tracker styling used rounded corners in filled states and gray-container defaults.
+- Updated the bookings payment tracker style branch in `AdminMeetingsHub` to derive an explicit red-state flag (`isRedDueBar`) from existing due logic (`duePassed` or near/full progress threshold).
+- Applied red-state visual rules:
+  - outer bar now square corners (`borderRadius: 0`)
+  - outer border now black in red state
+  - outer/background fill now red in red state
+  - inner progress segment also square corners and red fill in red state.
+- Kept non-red/unfilled behavior on gray style with gray border so only red-filled state adopts the requested black-border/red-fill look.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Red-filled payment due bars now render with square-corner geometry and black-outline/red-fill styling.
+- Unfilled/non-red bars retain gray styling for contrast and state distinction.
+- Change is scoped to bookings card due-tracker visuals only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `isRedDueBar` style gate in payment tracker rendering
+  - changed red-state bar container to black border + red fill + square corners
+  - changed progress fill to square corners and red fill in red state
+
+**Conventions:**
+- For bookings payment tracker visuals, use explicit state-based style gates so red urgency/completed-style bars can differ structurally (border/fill/corners) from default gray progress bars.
+
+---
+
+## 2026-04-03 — Bookings appointment time line reduced by 1px (red duration/date row)
+
+**Context:** Continuing the same long Admin Meetings conversation (bookings/consults card styling and behavior tweaks, payment due tracker visual/state updates, tab-relative search behavior, and Overview summary-card placement corrections), the user requested a micro typography adjustment: decrease the red appointment-time line text size (e.g., `SAT, APR 25, 2026 · 4:00 PM · 4 HRS 10 MINS`) by 1px.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the bookings appointment-time line in `AdminMeetingsHub` rendered as red `Futura PT Book` at `10px`.
+- Updated only that bookings appointment-time row to `9px` while preserving:
+  - red color (`#EB1C24`),
+  - same font family (`"Futura PT Book"`),
+  - same content format (`date · time · duration`) and HRS/MINS conversion behavior.
+- No other typography rows were changed.
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Booking card appointment-time line is now exactly 1px smaller as requested.
+- Styling and formatting logic otherwise remain unchanged.
+- Scope limited to the bookings appointment-time text row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed bookings appointment-time line `fontSize` from `10px` to `9px`
+
+**Conventions:**
+- For booking-card micro typography requests, prefer single-property adjustments (font size only) on the targeted line to avoid unintended spacing or hierarchy shifts.
+
+---
+
+## 2026-04-03 — View-all bookings/consults panels now mirror B/C tab card structure + header divider
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults typography/icon/spacing passes, payment due tracker state styling, meetings search behavior, and Overview summary placement updates), the user requested two specific view-all panel layout corrections:
+- Add the gray border line under the black **VIEW ALL BOOKINGS / VIEW ALL CONSULTS** header text.
+- Structure client listings as white-background, gray-border client panels like the B/C tab cards.
+
+**Topics covered (entire conversation so far):**
+- Located the view-all rendering branch in `AdminMeetingsHub`:
+  - header row shown when `activeMainCardTitle` is present,
+  - list rows under `viewAllMode` previously rendered as simple border-bottom rows.
+- Updated the active view-all header block to include a dedicated gray divider (`1px` gray line) directly under the black title/close row.
+- Reworked each view-all list row into card panels matching B/C card treatment:
+  - white background,
+  - gray border,
+  - square corners,
+  - card-like inner spacing.
+- Updated row contents to align with B/C visual structure:
+  - client name + tier label treatment,
+  - bookings rows show install line, add-ons line, and red date/time/duration line,
+  - consult rows show consult type and red date/time line.
+- Removed now-unused `viewAllRowLabel` helper after row-content restructure to resolve TypeScript unused-symbol build error.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all panel headers now clearly separate title from content with the requested gray divider line.
+- View-all client listings now use panel cards instead of plain divider rows, visually consistent with B/C tabs.
+- Styling changes are scoped to view-all mode; default bookings/consults tab card flows remain unchanged.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added gray divider under active panel header text row
+  - restyled `viewAllMode` rows to white-card + gray-border panels
+  - aligned view-all row typography/content hierarchy with B/C tab card style
+  - removed unused `viewAllRowLabel` helper
+
+**Conventions:**
+- For Admin Meetings “view all” panel requests, keep header/content separation explicit with a divider and reuse the same card-shell visual language as Bookings/Consults rows (white panel, gray border, square corners) for consistency.
+
+---
+
+## 2026-04-03 — View-all bookings/consults adds left sort dropdown + right list/grid toggle; grid now shows grouped 3-up client summaries
+
+**Context:** Continuing this same Admin Meetings conversation (bookings/consults card refinements, payment-due tracker styling, overview summary placement, view-all header/list panel alignment, and unique-client header counts), the user requested richer controls above View All lists: a client-overview style sort dropdown on the left and an admin-dashboard style list/grid toggle on the right, scoped to **View All Bookings** and **View All Consults** only. They also defined grid layout requirements: 3 clients per row with profile image first, name beneath, total bookings/consults count beneath that, and most-recent booking/consult line at the bottom; list view should keep current appearance.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All panels already had:
+  - dynamic header text (`X CLIENT BOOKINGS/CONSULTS`) based on unique client counts,
+  - list rows restyled to match B/C card shells (white background + gray border).
+- Added view-all-only UI state and controls:
+  - **Sort dropdown** (left) using the same interaction pattern as Client Overview (`Most recent`, `A to Z`, `Z to A`).
+  - **List/Grid toggle** (right) using the same icon language as admin dashboard/RecentActivity style.
+- Implemented client-grouped data model for View All:
+  - grouped meetings by unique client key (email-first fallback to normalized name/state),
+  - tracked each client’s total count in the active mode,
+  - identified each client’s most recent meeting for latest-line display and profile/open action.
+- Implemented grid mode output (3 per row):
+  - top: profile icon,
+  - second line: client name,
+  - third line: total `BOOKINGS`/`CONSULTS` count,
+  - fourth line: most recent booking/consult summary.
+- Preserved list mode behavior and appearance as requested, while applying selected sort order to both list rows and grid cards.
+- Added state-reset behavior when opening/closing/changing View All mode to avoid stale sort dropdown or view mode.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All panels now support both sorting and list/grid display controls in the exact left/right positions requested.
+- Grid view is client-grouped and 3-column, with the required line order/content hierarchy.
+- List view continues to render in the current card-list style, unchanged in structure.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added view-all sort options + label helper (`Most recent`, `A to Z`, `Z to A`)
+  - added view-all control state (`showViewAllSortDropdown`, `viewAllSortOption`, `viewAllDisplayMode`)
+  - added grouped client summary derivation for grid mode
+  - added sort application for both row-level list and grouped grid data
+  - added controls row (left sort dropdown, right list/grid icon toggles)
+  - added grid-mode renderer (`grid-cols-3`) with profile/name/count/most-recent lines
+  - preserved existing list renderer for view-all list mode
+
+**Conventions:**
+- For View All client panels in Admin Meetings, treat list mode as the stable “detailed card” baseline and layer grid mode as a grouped client summary view (3-up) with explicit line hierarchy: identity → total count → most recent activity.
+
+---
+
+## 2026-04-03 — Removed stray “TSTS” text from Admin Meetings view-all controls row
+
+**Context:** Continuing this same long Admin Meetings UI conversation (view-all header/client panel parity, unique-client header counts, sort dropdown + list/grid toggle controls, and icon sizing/alignment tweaks), the user reported unexpected `TSTS` text appearing above client panels in the View All toggle area and requested removal.
+
+**Topics covered (entire conversation so far):**
+- Verified current View All controls in `AdminMeetingsHub` and searched repo for `TSTS`.
+- Located the issue in the View All control-row sort button label area.
+- Removed the stray placeholder text and preserved the intended sort-label behavior.
+- Added an explicit `aria-label` on the sort button for clarity/accessibility while keeping visible control copy unchanged.
+- Re-ran build successfully and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TSTS` text is removed from the View All controls row.
+- Sort control now shows only the proper selected sort option label and arrow icon.
+- No other UI rows or panel content were changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed stray `TSTS` control text in View All section
+  - retained proper sort option label rendering
+  - added sort button `aria-label`
+
+**Conventions:**
+- For incremental UI iterations, avoid shipping placeholder/debug text in production control labels; if temporary placeholders are used during edits, remove them before final push and verify on the active surface.
+
+---
+
+## 2026-04-03 — View-all meetings header now shows unique client counts (e.g., “9 CLIENT BOOKINGS”)
+
+**Context:** Continuing this same long Admin Meetings UI refinement conversation (bookings/consults typography and spacing tweaks, payment due tracker style states, tab-relative search behavior, Overview summary placement updates, and view-all panel structure parity), the user requested replacing the view-all header text with count-based labels like `9 CLIENT BOOKINGS` / `8 CLIENT CONSULTS`, where the count tracks unique clients who booked/consulted (not total booking/consult row count).
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, the active view-all headers displayed static labels:
+  - `VIEW ALL BOOKINGS`
+  - `VIEW ALL CONSULTS`
+- Added a unique-client key helper for meetings rows:
+  - prefers normalized client email when available,
+  - falls back to normalized client display name (with state suffix) when email is missing.
+- Computed a `viewAllUniqueClientCount` memo based on the active mode dataset:
+  - bookings mode uses filtered appointment rows,
+  - consults mode uses filtered consult rows,
+  - count is derived via `Set` of unique client keys.
+- Replaced static view-all title text with dynamic singular/plural labels:
+  - `{N} CLIENT BOOKING(S)`
+  - `{N} CLIENT CONSULT(S)`
+- Verified with successful build and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View-all header now reports unique client participation counts, not total row volume.
+- Labels remain mode-specific and grammatically singular/plural based on count.
+- Counts stay in sync with active filters because they use the same filtered datasets as the rendered view-all rows.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingClientUniqKey(...)`
+  - added `viewAllUniqueClientCount` memo
+  - replaced static `activeMainCardTitle` labels with count-driven `CLIENT BOOKINGS/CONSULTS` text
+
+**Conventions:**
+- For “client-count” summary labels in meetings UI, compute counts from unique client identity keys (email first, normalized display-name fallback), not from raw row totals, so repeated bookings/consults by the same client do not inflate the headline count.
+
+---
+
+## 2026-04-03 — View-all list/grid profile icons increased by 40%; list icons vertically centered in client cards
+
+**Context:** Continuing this same long Admin Meetings conversation (bookings/consults card micro-adjustments, payment due tracker styling updates, overview summary placement, view-all header/list parity, unique-client view-all headers, and new sort + list/grid controls), the user requested icon sizing/alignment refinements scoped only to View All Bookings/Consults panels: increase profile icons in both list and grid views by 40%, and vertically center list-view icons within each client panel card.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All had:
+  - list mode with 44px profile icons and top-aligned content row (`items-start`),
+  - grid mode with 38px profile icons in 3-up client summary cards.
+- Applied a 40% size increase only inside View All renderers:
+  - **List mode:** `44px -> 62px` profile icons.
+  - **Grid mode:** `38px -> 53px` profile icons.
+- Updated list row layout alignment from `items-start` to `items-center` so enlarged icons are vertically centered inside each white/gray bordered client panel.
+- Kept changes scoped to View All list/grid panels only; regular Bookings/Consults tab card icon sizing/positioning remains unchanged.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- View All profile icons now render noticeably larger in both display modes (+40%).
+- List-mode icon alignment is now vertically centered within its client panel card.
+- No changes were made to non-View-All icon sizing.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - grid mode icon dimensions updated from `38x38` to `53x53`
+  - list mode icon dimensions updated from `44x44` to `62x62`
+  - list row wrapper alignment changed from `items-start` to `items-center`
+
+**Conventions:**
+- For View All-only visual tweaks in Admin Meetings, apply sizing/alignment changes strictly within `viewAllMode` render branches so primary B/C tab card geometry stays stable.
+
+---
+
+## 2026-04-03 — Removed stray “TSTS/TS” artifact above view-all client panels by preventing header wrap
+
+**Context:** Continuing this same conversation’s Admin Meetings View All refinement sequence (new sort dropdown + list/grid controls, unique-client header counts, card styling parity, and icon scaling), the user reported a stray text artifact above the client panels in the toggle area (`TSTS`, then remaining `TS`) that should not be visible.
+
+**Topics covered (entire conversation so far):**
+- Verified no literal `TSTS`/`TS` debug token remained in the meetings source where view-all controls render.
+- Identified the likely visual source as header text wrapping/truncating in the active panel title (`... CLIENT CONSULTS`) where only the tail (`TS`) could appear on its own line.
+- Updated active panel header title styling to prevent line wrap and tail fragments:
+  - `whiteSpace: 'nowrap'`
+  - `overflow: 'hidden'`
+  - `textOverflow: 'ellipsis'`
+  - `minWidth: 0` and right padding to coexist with the close button.
+- Kept the dynamic count-driven title intact (`N CLIENT BOOKINGS/CONSULTS`) and preserved sort/toggle controls layout below.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Stray `TS` fragment above view-all panels is removed via no-wrap/ellipsis title behavior.
+- Header still displays the same count-driven wording, now constrained to a single line.
+- Scope is limited to active view-all panel header text rendering.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added no-wrap/ellipsis styles to active panel `<h2>` title to prevent wrap artifacts.
+
+**Conventions:**
+- For compact admin card headers with dynamic labels, enforce single-line title constraints (nowrap + ellipsis) to avoid visual orphan fragments when text length approaches available space.
+
+---
+
+## 2026-04-03 — Meetings profile icon borders switched to black (View All + B/C tabs) and View All toggle now persists after refresh
+
+**Context:** Continuing this same Admin Meetings UI thread (view-all controls, client-count headers, icon sizing/alignment, stray text cleanup, and micro-positioning passes), the user requested two fixes:
+- change profile-icon ring borders from gray to black on both View All toggle panels and the regular Bookings/Consults tab cards, and
+- keep the View All toggle open after page refresh (it was incorrectly collapsing back to the meetings page).
+
+**Topics covered (entire conversation so far):**
+- Located all meetings profile image render points in `AdminMeetingsHub`:
+  - View All grid cards,
+  - View All list cards,
+  - Bookings tab client cards,
+  - Consults tab client cards.
+- Updated profile-photo border color in those image style blocks from gray (`#d1d5db`) to black (`#000`) to match requested ring treatment.
+- Implemented refresh-safe View All persistence in meetings route state handling:
+  - initialize `mainTab` and `viewAllMode` from `viewAll` query param when present,
+  - fallback to `sessionStorage` (`adminMeetingsViewAllMode`) when URL lacks `viewAll`,
+  - sync `viewAllMode` back into URL (`?viewAll=bookings|consults`) with `replace` navigation,
+  - persist/clear `sessionStorage` as toggle opens/closes.
+- Updated `AdminHeader` usage on meetings page to preserve both `tab` and `viewAll` params during search submits (`globalSearchPreserveKeys={['tab','viewAll']}`), preventing accidental loss of open toggle state when interacting with search.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Profile-icon ring borders now render black in the requested meetings contexts (View All + B/C tab cards).
+- Refreshing while View All is open now restores the same open toggle mode instead of collapsing to base meetings state.
+- Toggle state persistence is resilient across search interactions due to query-param preservation and session fallback.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - switched relevant profile image border colors to `#000`
+  - added URL + sessionStorage synchronization for `viewAllMode`
+  - updated initial tab resolution to honor `viewAll` state on load
+  - passed `globalSearchPreserveKeys={['tab', 'viewAll']}` to `AdminHeader`
+
+**Conventions:**
+- For meetings subview toggles expected to survive refresh, keep UI state mirrored in URL query params and optionally mirrored to sessionStorage as a fallback so the same open context is restored on reload.
+
+---
+
+## 2026-04-03 — View-all controls nudged: sort dropdown +2px right, list/grid toggle group -2px left
+
+**Context:** Continuing this same Admin Meetings view-all refinement sequence (header cleanup, unique-client count titles, sort + list/grid controls, and card/icon layout tweaks), the user requested a precise micro-position adjustment for the controls row above view-all client panels.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat, View All controls were already present with:
+  - left sort dropdown (`Most recent` and alternatives),
+  - right list/grid icon toggle group.
+- Applied requested offset changes in `AdminMeetingsHub` view-all controls row:
+  - moved the left **Most recent** dropdown container **2px to the right**,
+  - moved the right list/grid icon group **2px to the left** in tandem.
+- Kept all control behavior unchanged (sorting, mode switching, dropdown open/close).
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Control row now reflects exact requested spacing adjustment (+2px right on sort; -2px left on view-mode icons).
+- Functional behavior is unchanged; only horizontal alignment was tuned.
+- Scope remains limited to View All controls row.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `marginLeft: '2px'` to left sort-dropdown wrapper
+  - added `transform: 'translateX(-2px)'` to right view-mode toggle wrapper
+
+**Conventions:**
+- For UI micro-position requests on existing admin controls, apply minimal wrapper-level offsets (margin/translate) rather than altering inner icon geometry, so behavior and hit targets remain stable.
+
+---
+
+## 2026-04-03 — Grid view names now map red/black by active vs past status; list view names forced black
+
+**Context:** Continuing the same Admin Meetings “View All” refinement stream (controls row, client grouping, unique-client headers, icon/border updates, refresh persistence), the user asked why some grid names were red and others black. They clarified desired behavior: on **grid view only**, red names should represent **current/active** bookings/consults and black names should represent **past/non-active**; on **list view**, all client names should remain black.
+
+**Topics covered (entire conversation so far):**
+- Root cause identified in `AdminMeetingsHub`: grid name color was previously tied to premium-tier status (`tierIsPremium`), not active/past booking/consult state.
+- Added explicit status helper (`meetingIsCurrentOrActive`) that treats rows as active/current when status is scheduled/confirmed/active/in-progress.
+- Updated grouped View All client-card derivation to track whether each client has any active/current meeting (`hasActiveMeeting`) while preserving existing total-count and latest-meeting grouping behavior.
+- Switched grid client-name color binding from tier-based to status-based:
+  - red when `hasActiveMeeting` is true (current/active),
+  - black otherwise (past/non-active).
+- Updated list-view name styling to always black (removed consult-specific red name color in list branch), while keeping tier suffix and remaining list detail structure intact.
+- Verified full build success and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Grid-view name color now communicates activity state rather than membership tier.
+- List-view names now consistently stay black as requested.
+- Scope limited to View All grid/list name color logic; no unrelated typography/layout behavior changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `meetingIsCurrentOrActive(...)`
+  - replaced `tierIsPremium` grouping flag with `hasActiveMeeting` on view-all client cards
+  - grid name color now uses active/past state (`hasActiveMeeting`)
+  - list name text forced to black for both bookings and consult rows
+
+**Conventions:**
+- For View All visual state cues in Admin Meetings, use explicit booking/consult status semantics (active vs past) for red/black signaling instead of tier/membership styling when the user asks for activity-state meaning.
+
+---
+
+## 2026-04-03 — View-all toggle updates: icon border thinning, grid row typography/structure, and list date line update
+
+**Context:** User requested targeted “view all toggle” visual/typography updates on Admin Meetings for both the view-all panel and B/C tabs, including icon border thickness, grid-row line styles/order, icon vertical spacing, and list-view appointment date typography.
+
+**Topics covered (entire conversation so far):**
+- Continued from this same long thread of Admin Meetings UI refinements (overview tab analytics, view-all grid/list additions, ticker updates, icon parity, and repeated spacing/typography micro-adjustments).
+- During implementation, remote `preview/mobile` advanced and introduced conflicts in `AdminMeetingsHub`; merged latest upstream and resolved conflicts while preserving requested updates.
+- Applied updates that map to the **current branch implementation**:
+  - reduced black ring around relevant profile icons from `1px` to `0.7px` in view-all panel and B/C list rows,
+  - grid-view bookings count row (`1 BOOKING`) switched to gray Futura Medium and tightened to `margin: '3px 0'` (1px less above/below than prior),
+  - grid-view bookings card rows restructured to:
+    - gray booking-count row,
+    - red install line (`RE-INSTALL: OCEAN CURL $780 USD` pattern from formatter),
+    - black date row below install line (`THU, APR 30, 2026`),
+  - grid-view profile icon top spacing increased by 4px (`margin: '4px auto 0'`),
+  - list-view date line updated to red Futura Medium (`TUE, APR 28, 2026 · 9:00 AM` pattern).
+- Verified full build success after conflict resolution and pushed to `preview/mobile`.
+
+**Decisions / outcomes:**
+- Requested style/layout changes were implemented on the existing view-all/grid-list codepath now present on `preview/mobile`.
+- Merge conflict resolution retained new upstream view-all controls (sort + list/grid toggle) and applied requested micro-adjustments on top.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - icon border thickness and spacing adjustments
+  - grid booking-count/install/date line style + ordering updates
+  - list date line typography update
+  - merge-conflict resolution with latest upstream `preview/mobile`
+
+**Conventions:**
+- For Admin Meetings view-all micro-style requests, apply changes directly to the active grid/list branch after syncing latest `preview/mobile`, since this file is frequently updated and prone to conflict churn.
+
+---
+
+## 2026-04-04 — Admin summary metrics enlarged; B/C tabs get meetings sort dropdown; booking calendar white cells use black borders
+
+**Context:** User requested three admin UI updates in one pass: increase the red value text on admin summary panels by 4px, add the same "Most recent" dropdown used by View All to the left above client panels on the Meetings Bookings/Consults tabs, and switch gray borders to black on white-background booking calendar cells in Admin Meetings.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context first, then traced the repeated admin summary-panel metric pattern across admin pages.
+- Located the existing View All meetings sort dropdown in `AdminMeetingsHub` and refactored it into a shared meetings sort control.
+- Added the sort dropdown above the regular Bookings and Consults client lists so B/C tabs now expose the same `Most recent` / `A to Z` / `Z to A` options as View All.
+- Applied the shared sort option to bookings and consult list rendering (including selected-day bookings) while keeping the existing View All controls on the same state/label system.
+- Updated the bookings calendar cell border logic so white appointment cells use black borders while selected cells continue using the red selected-state border.
+- Increased summary-panel metric value text by 4px across the affected admin pages (Analytics, Brand, Clients, Marketing, Meetings, Pending, Referrals, Revenue, Reviews).
+- Installed local repo dependencies only for verification after `npm run build` initially failed because the local `tsc` binary was unavailable in the workspace, then ran a successful production build and reverted the lockfile-only diff so the branch stayed scoped to the requested UI work.
+
+**Decisions / outcomes:**
+- Meetings B/C tabs now share the same client-sort affordance and sort semantics as the View All toggle.
+- Summary metric values were adjusted via inline font-size overrides so the existing colors and layouts stay intact while the visible metric text increases by exactly 4px.
+- Booking calendar white cells now use black borders without removing the red selected-day highlight.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - renamed the View All-only sort config into a shared meetings sort option/helper
+  - added the Most recent dropdown above bookings/consults client panels
+  - sorted bookings, consults, and View All from the same sort-option helper
+  - changed white appointment-cell borders from gray to black
+  - increased the top summary-panel value font size to `24px`
+- `src/pages/admin/analytics/page.tsx`
+  - increased the summary total value font size to `34px`
+- `src/pages/admin/brand/page.tsx`
+  - increased summary-panel values to `28px` / `40px` depending on card size
+- `src/pages/admin/clients/page.tsx`
+  - increased top summary-card values to `24px`
+- `src/pages/admin/marketing/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/pending/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/referrals/page.tsx`
+  - increased summary-card values to `24px`
+- `src/pages/admin/revenue/page.tsx`
+  - increased summary-card values to `24px`, preserving conditional color logic
+- `src/pages/admin/reviews/page.tsx`
+  - increased summary-card values to `24px`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sort controls requested to match View All behavior, use a shared sort option/helper so Bookings, Consults, and View All stay aligned on labels and sorting semantics instead of duplicating slightly different logic.
+
+---
+
+## 2026-04-04 — View All meetings follow-up: tighter grid count spacing, icon shift, list text nudge, and consult grid line parity
+
+**Context:** Continuing the same chat immediately after the admin-summary/sort/calendar pass, the user requested a second, View All-only refinement round in Admin Meetings: reduce the vertical spacing around the grid bookings-count line, move the grid/list icon toggle 2px further left, shift list-view text 6px to the right of the profile icons, and make grid-view consult cards match bookings by using a red consult-type + price line with the date on the line below.
+
+**Topics covered (entire conversation so far):**
+- This chat first handled three broader admin UI updates:
+  - increased red summary metric text across admin summary panels by 4px,
+  - added the shared meetings sort dropdown above the regular Bookings/Consults client panels,
+  - changed white-background booking calendar cells to use black borders on Admin Meetings.
+- In this follow-up turn, inspection stayed scoped to the View All branch of `AdminMeetingsHub`.
+- Reduced the grid-view bookings/consults count-line vertical margin from `3px 0` to `1px 0`, trimming 2px above and 2px below that row.
+- Moved the View All list/grid icon toggle group an extra 2px left by changing its wrapper offset from `translateX(-2px)` to `translateX(-4px)`.
+- Nudged list-view text content (all text to the right of the profile icon) 6px to the right in tandem via a wrapper transform, without moving the icon itself.
+- Updated grid-view consult cards to mirror bookings’ two-line structure:
+  - red line: `WIG ONLY/WIG + INSTALL $40 USD` (or existing explicit consult/deposit metadata price when present),
+  - black line below: formatted date (`THU, APR 30, 2026` pattern).
+- Added a small consult price helper in `AdminMeetingsHub` that prefers explicit consult/deposit/price metadata values and falls back to the existing consult booking deposit amount (`$40`) when none is present.
+- Re-verified with a successful `npm run build`.
+
+**Decisions / outcomes:**
+- All requested changes remain isolated to the View All meetings toggle UI; the regular Bookings/Consults tab cards were not otherwise restyled.
+- Consult grid cards now visually match bookings cards in structure, with the amount sourced from existing data when available and otherwise using the established consult deposit fallback.
+- The icon shift and list-text shift were applied with wrapper-level transforms to preserve hit targets and internal icon geometry.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `consultDisplayPriceUsd(...)`
+  - tightened grid count-row spacing to `margin: '1px 0'`
+  - moved the View All display-mode icon group to `translateX(-4px)`
+  - shifted list-view text wrapper right by `translateX(6px)`
+  - changed grid consult cards from single-line black text to red consult-type + price line and black date line
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All-only Admin Meetings micro-adjustments, prefer wrapper-level offsets and branch-specific render tweaks inside the `viewAllMode` path so the main B/C tab layouts and non-View-All card geometry stay unchanged.
+
+---
+
+## 2026-04-04 — Admin Meetings follow-up: stray text cleanup, B/C dropdown visibility, view-all icon/border refinements, and consult service-price line
+
+**Context:** Continuing the same chat after the admin summary-panel pass and two rounds of Admin Meetings refinements, the user reported several remaining issues: the stray `TSTS` placeholder artifact still appeared, grid-view profile icon borders still did not visually match list view, the View All list/grid toggle had been moved too far left, the consult grid service line needed a service-style price example (`WIG + INSTALL: $960 USD`), the grid date line needed 2px more spacing above it, and the `Most recent` dropdown was still not visible enough on the regular Bookings/Consults tabs above client panels.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red admin summary metric text by 4px across the affected admin pages,
+  - added a shared meetings sort dropdown to the regular Bookings/Consults tabs,
+  - changed white appointment calendar cells to use black borders,
+  - tightened View All grid count spacing,
+  - nudged the View All grid/list toggle,
+  - shifted View All list text 6px to the right,
+  - changed View All consult grid cards from single-line text into red service + black date lines.
+- In this third follow-up pass, all work stayed scoped to `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Strengthened overflow handling intended to suppress the lingering stray `TSTS`/`TS` artifact:
+  - tightened active View All header title flex/ellipsis constraints,
+  - added `overflow: hidden` on grid cards,
+  - added no-wrap + ellipsis behavior to grid card name/count/service/date lines.
+- Adjusted the View All list/grid icon toggle wrapper back to a net **2px left** offset (`translateX(-2px)`), matching the user’s clarified request.
+- Kept the grid profile icon border black and added `boxSizing: 'border-box'` so the grid icon ring renders with the same thin border treatment as list view.
+- Increased the top margin above the black grid date line from `2px` to `4px` for both bookings and consult grid cards.
+- Reworked consult grid pricing away from the deposit-style fallback:
+  - added richer metadata lookups for consult service/quote totals,
+  - added breakdown parsing for metadata arrays such as `priceBreakdown`,
+  - when no explicit amount exists, fallback now uses service-style defaults by consult type (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`) instead of the `$40` deposit.
+- Updated the consult grid red line format to include a colon before price (`WIG + INSTALL: $960 USD` pattern).
+- Moved the regular **Bookings** sort dropdown higher in the tab flow so it is visible before the month/calendar block instead of only below the calendar; kept the **Consults** dropdown in a clearer top-of-list position.
+- First rebuild failed because the earlier deposit fallback constant became unused after the service-price refactor; removed the dead constant and reran a successful production build.
+
+**Decisions / outcomes:**
+- The regular B/C sort dropdown should be visually obvious, not merely technically rendered; moving the bookings control higher in the content stack improves discoverability.
+- View All consult grid cards now use service-style pricing presentation instead of consult-deposit pricing when no explicit quote/metadata amount is available.
+- Stray orphan text risk in compact View All cards/header is now mitigated with stricter no-wrap/ellipsis + overflow clipping rules.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed the unused consult deposit fallback constant from the View All card path
+  - added `CONSULT_SERVICE_FALLBACK_PRICE_BY_TYPE`
+  - added `consultPriceFromBreakdownRows(...)`
+  - expanded `consultDisplayPriceUsd(...)` metadata support to service/quote totals and breakdown parsing
+  - restored View All display-mode toggle offset to `translateX(-2px)`
+  - added stronger ellipsis/overflow constraints to View All header and grid card rows
+  - added `boxSizing: 'border-box'` to grid profile icons
+  - changed consult grid line format to `TYPE: $X USD`
+  - increased grid date-line spacing above the date row
+  - moved the bookings-tab sort dropdown to the top of the bookings content block
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings consult grid cards, prefer explicit quote/service totals from metadata when available; if meetings rows do not carry an explicit amount, use a stable service-style fallback by consult type rather than the consult deposit amount when the UI is meant to resemble a service card.
+
+---
+
+## 2026-04-04 — Stripe membership billing policy implemented, then corrected to push directly on preview/mobile and remove wrong branch
+
+**Context:** User requested concrete membership billing behavior: upgrades to a higher-cost membership must charge a full new cycle immediately and set a new renewal date, then refund the prorated unused amount from the current subscription period; downgrades must keep current membership active until renewal, then charge the newly selected lower-cost plan on renewal. After implementation, user explicitly corrected delivery branch requirements and requested the work be pushed to `preview/mobile`, with the mistakenly created feature branch deleted.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and inspected current Stripe membership flow (`create-checkout-session`, webhook sync, profile mapping, checkout client behavior).
+- Identified that prior flow only started hosted Stripe Checkout and did not enforce explicit upgrade/downgrade billing semantics server-side.
+- Implemented server-side tier-change handling in `POST /api/stripe/create-checkout-session` for existing subscribers:
+  - **Upgrade (higher cost):** update existing subscription to new price with `billing_cycle_anchor: 'now'` and no proration invoice line item, then calculate remaining-time ratio on current cycle and create a refund against the most recent paid subscription charge for unused old-tier value.
+  - **Downgrade (lower cost):** keep current tier benefits through current period and schedule lower tier at period end via subscription pending update; no immediate downgrade charge.
+  - **Same tier:** return a no-op `subscription_updated` response.
+- Updated frontend API + checkout page to handle both outcomes:
+  - Redirect flow for first-time/no-existing-subscription checkout sessions,
+  - Immediate `subscription_updated` responses for server-applied upgrade/downgrade/no-op with profile sync and user notice.
+- Hardened webhook tier synchronization so profile tier/renewal metadata follows Stripe subscription item price mapping during invoice/subscription updates.
+- Ran `npm install` (for missing local toolchain) and verified successful `npm run build`.
+- Initially committed/pushed on `cursor/membership-tier-billing-af98` and opened draft PR, then user rejected branch target.
+- Corrected by fetching latest `origin/preview/mobile`, cherry-picking the billing commit onto local `preview/mobile`, rebuilding successfully, pushing to `origin/preview/mobile`, then deleting the incorrect branch both remote and local (`cursor/membership-tier-billing-af98`).
+
+**Decisions / outcomes:**
+- Billing behavior now matches requested policy:
+  - upgrades rebill full new cycle immediately and refund unused prior-cycle value,
+  - downgrades defer to renewal and preserve current entitlement until then.
+- Final branch location corrected to `preview/mobile` per user instruction.
+- Incorrect branch was removed from both local and origin remotes as requested.
+
+**Changes:**
+- `api/_lib/stripeMembership.ts`
+- `api/stripe/create-checkout-session.ts`
+- `api/stripe/webhook.ts`
+- `src/utils/api.ts`
+- `src/pages/checkout/page.tsx`
+- `motherboard/MEMORY.md`
+- Git/branch operations in this chat:
+  - created then removed `cursor/membership-tier-billing-af98` (local + remote),
+  - delivered code on `preview/mobile`.
+
+**Conventions:**
+- For membership tier changes, apply billing policy server-side by change direction:
+  - higher-cost change = immediate full-cycle rebill + unused-time refund,
+  - lower-cost change = schedule for renewal with no immediate downgrade charge.
+- When user specifies final delivery branch after implementation, re-home commits onto requested target branch and clean up any mistaken branch artifacts.
+
+---
+
+## 2026-04-04 — Admin Meetings view-all updates moved to preview/mobile and incorrect feature branch removed
+
+**Context:** In this conversation thread, the user requested additional Admin Meetings “View All” UI refinements (icon-border thickness, list/grid spacing/offsets, booking/consult line formatting), then asked for a follow-up legacy-header sweep to prevent transient “TS” artifact recurrence. After those updates were delivered on a feature branch, the user explicitly required delivery on `preview/mobile` and asked to undo branch targeting mistakes and delete the incorrectly created branch.
+
+**Topics covered (entire conversation so far):**
+- Continued from prior meetings view-all work (TS artifact fixes, header consolidation, and control-position refinements).
+- Applied requested view-all updates in `AdminMeetingsHub`:
+  - profile icon border increased by 0.1px across view-all + B/C tab cards,
+  - grid booking-count spacing tightened,
+  - booking grid service line simplified to install kind + price only,
+  - list-text block shifted 6px right of icons,
+  - consult grid lines updated to match booking-style structure with red price line + date line.
+- Performed explicit legacy-header sweep and consolidated title generation to reduce alternate-branch/header-path risk in meetings view-all.
+- User then required push target correction to `preview/mobile` and branch cleanup.
+- Switched to `preview/mobile`, rebased to remote, transferred finalized meetings/header file state, rebuilt successfully, pushed to `origin/preview/mobile`.
+- Deleted wrong branch both remote and local (`cursor/bookings-tab-ui-adjustments-95ca`) per user instruction.
+
+**Decisions / outcomes:**
+- Final delivery branch is now correctly `preview/mobile`.
+- The mistakenly used feature branch was deleted from both origin and local.
+- Admin Meetings view-all refinements and header-path cleanup are now on `preview/mobile`.
+
+**Changes:**
+- Code moved/applied on `preview/mobile`:
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Branch operations:
+  - pushed `preview/mobile`
+  - deleted remote `cursor/bookings-tab-ui-adjustments-95ca`
+  - deleted local `cursor/bookings-tab-ui-adjustments-95ca`
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- If user clarifies branch target after implementation, immediately re-home final code to the specified branch and remove incorrect branch artifacts (remote + local) when requested.
+
+---
+
+## 2026-04-04 — Admin meetings UI refinement thread plus preview/mobile merge-conflict classification
+
+**Context:** Across this chat, the user requested a long sequence of Admin UI tweaks centered on Admin Meetings plus top admin summary panels, then later asked for the current branch to be merged against the latest `origin/preview/mobile`, with the conflicts reviewed, classified, the simple ones fixed, and the complicated ones reported.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context at chat start and implemented an initial pass of admin UI updates:
+  - increased red metric text on admin summary panels by 4px across the affected admin pages,
+  - added the meetings sort dropdown above the regular Bookings/Consults client panels to mirror the View All control,
+  - changed white-background booking calendar cells to use black borders.
+- Continued through multiple Admin Meetings refinement passes in `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - tightened View All grid count-line spacing,
+  - shifted View All list/grid mode icons,
+  - nudged list-view text to the right of profile icons,
+  - reworked View All consult grid cards into red service-line + black date-line structure,
+  - suppressed stray `TS`/`TSTS` wrap artifacts with stronger clipping/ellipsis rules,
+  - matched grid/list profile icon ring treatment,
+  - increased spacing above the black date row,
+  - moved the regular bookings-tab dropdown higher for visibility,
+  - changed consult service-line pricing to service-style fallback values when no explicit amount exists.
+- Verified each completed UI pass with successful `npm run build`, committed, pushed, and updated the branch PR during those earlier turns.
+- In this turn, fetched latest `origin/preview/mobile` and ran a non-committing merge to inspect real conflicts.
+- Actual merge conflicts surfaced in two files only:
+  - `motherboard/MEMORY.md`
+  - `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+- Resolved the simple append-only `motherboard/MEMORY.md` conflict by keeping both branches’ history entries.
+- Reviewed the `AdminMeetingsHub` conflict hunks and identified a mix of simple mechanical overlaps and true intent conflicts:
+  - current branch favors thinner `0.7px` icon borders matching list view, stronger no-wrap/ellipsis handling, bookings-tab dropdown visibility changes, service-style consult fallback pricing (`WIG ONLY` → `680`, `WIG + INSTALL` → `960`), and full booking install line formatting,
+  - `preview/mobile` favors `0.8px` icon borders, a simpler explicit-price-only consult helper, simplified booking price-only grid line formatting, and a different implementation of list text offset / price-line helpers.
+- Cleaned up obvious mechanical issues in the working tree (including duplicate wrapper cleanup while inspecting the conflicted meetings file), but intentionally left `src/pages/admin/meetings/AdminMeetingsHub.tsx` unresolved at the git merge level because several hunks reflect competing UI intent rather than safe text-only merges.
+
+**Decisions / outcomes:**
+- The `motherboard/MEMORY.md` conflict is **simple** and has been fixed.
+- The remaining `src/pages/admin/meetings/AdminMeetingsHub.tsx` conflict is **complicated / mixed-intent** overall:
+  - some sub-hunks are mechanically mergeable,
+  - but several key hunks encode different product/UI decisions, so they should be resolved intentionally rather than auto-merged.
+- Merge is intentionally left incomplete after fixing the simple conflict so those meetings intent differences can be reviewed explicitly.
+
+**Changes:**
+- `motherboard/MEMORY.md`
+  - resolved append-only merge conflict by preserving entries from both branches
+  - appended this full-conversation summary entry
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - reviewed and classified conflict hunks
+  - cleaned obvious duplicate wrapper artifact in the working tree while leaving the file unresolved for intent review
+- Git operations:
+  - fetched latest `origin/preview/mobile`
+  - ran `git merge --no-commit --no-ff origin/preview/mobile`
+  - inspected and classified the resulting conflict set
+
+**Conventions:**
+- Treat append-only motherboard history conflicts as simple merges that keep entries from both branches.
+- Treat Admin Meetings View All card conflicts as intent-sensitive when branches disagree on pricing strategy, border thickness, or service-line copy/formatting; these should be reviewed as product decisions, not blindly auto-merged.
+
+---
+
+## 2026-04-04 — View All meetings list now groups by client with inner scroll panels
+
+**Context:** Continuing this same chat after the admin summary-panel updates, multiple Admin Meetings refinements, and the later `preview/mobile` merge-conflict review, the user requested one more targeted Meetings change: update the **View All Bookings/Consults list view only** so it groups meetings by client instead of one panel per booking row, with an inner vertical scroll inside each client panel and the first 3 recent appointments visible before scrolling. The user also provided the desired text structure: header line like `DIANA FOSTER (IL) · STANDARD`, then per-meeting lines like `RE-INSTALL: MON, 6/27,2026 · 3:00 PM · 2 HRS` with the service label in gray Futura Medium and the date/time/duration portion in red Futura Medium.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and verified:
+  - +4px red summary-panel metric text across the relevant admin pages,
+  - black borders for white booking-calendar cells on Admin Meetings,
+  - several View All grid/list/icon/spacing/consult-line refinements in `AdminMeetingsHub`.
+- Later in the same chat, fetched latest `origin/preview/mobile`, reviewed the merge conflicts, classified `motherboard/MEMORY.md` as simple append-only and `AdminMeetingsHub` as mixed-intent/complicated, and left the meetings file intentionally unresolved at the git index level while preserving a clean working copy direction.
+- In this follow-up turn, focused only on the **View All list view** path inside `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Replaced the one-card-per-meeting list renderer with grouped client panels:
+  - meetings are now grouped by unique client key,
+  - group ordering still follows the active shared sort option,
+  - meetings within each client group are sorted most recent first.
+- Added compact list-only formatting helpers:
+  - numeric weekday/date helper (`MON, 6/27,2026` pattern),
+  - gray service-label helper (`RE-INSTALL:` / consult type with trailing colon),
+  - red schedule helper (`DATE · TIME · DURATION`).
+- Updated the View All list renderer to:
+  - keep the client photo on the left,
+  - show one client header line with name + tier,
+  - render the grouped meeting lines inside an inner scroll area,
+  - cap the inner area so roughly the first 3 recent rows show before vertical scrolling.
+- Kept the change scoped to **View All list view only**; grid view and the regular Bookings/Consults tab card layouts were not changed in this turn.
+- The first verification build failed only because an old upstream helper (`formatBookingInstallLinePriceOnlyForCard`) had become unused after the list renderer change; removed that dead helper and reran a successful `npm run build`.
+
+**Decisions / outcomes:**
+- View All list mode now groups rows by client instead of rendering one panel per appointment/consult row.
+- Each client panel now has an internal vertical scroll region sized to show the first ~3 recent meetings before scrolling.
+- The grouped meeting rows follow the requested one-line structure with:
+  - service label in gray Futura Medium,
+  - date/time/duration in red Futura Medium.
+- The merge working tree remains active, but the meetings file is now in a buildable state with the new grouped-list behavior applied in the working copy.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `formatViewAllListMeetingDate(...)`
+  - added `viewAllListMeetingLabel(...)`
+  - added `formatViewAllListMeetingSchedule(...)`
+  - added grouped memo `viewAllListClientPanels`
+  - replaced View All list branch from one-row-per-card to grouped client panels with inner scroll
+  - removed now-unused helper `formatBookingInstallLinePriceOnlyForCard(...)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For View All Meetings list mode when the user wants grouped client panels, group rows by unique client key, sort meetings within each group by recency, and use an inner scroll region rather than creating a separate outer card per meeting row.
+
+---
+
+## 2026-04-04 — Preview/mobile bookings dropdown moved below calendar; grouped list rows drop duration and tighten name spacing
+
+**Context:** Continuing the same long Admin Meetings / preview-mobile correction chat immediately after moving the accumulated work onto `preview/mobile`, the user requested three more Meetings tweaks on the live preview branch: move the **Most recent** dropdown on the regular **Bookings** tab so it sits above the client panels instead of above the calendar, remove the duration from the grouped **View All** list-view meeting rows, and reduce the spacing below the grouped client-name line by 3px.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary-panel metric text by 4px across the affected admin pages,
+  - changed white booking-calendar cells to black borders,
+  - refined multiple View All Meetings grid/list/icon/spacing states,
+  - converted View All list mode to grouped-by-client panels with inner scroll,
+  - corrected mistaken branch targeting by moving the final work onto `preview/mobile` and deleting the wrong feature branch.
+- In this latest pass, stayed on **`preview/mobile`** and adjusted only `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Moved the regular **Bookings** tab sort dropdown from above the month calendar block to directly above the bookings client panels, leaving the calendar uninterrupted.
+- Updated grouped View All list row copy to remove duration from the red schedule text:
+  - bookings now read like `RE-INSTALL:MON, 6/29,2026 · 5:00 PM`
+  - consults now read like `WIG + INSTALL:TUE, 6/30,2026 · 12:00 PM`
+- Reduced the spacing below the grouped client-name header line (`GRACE INGRAM (GA) · PREMIUM`) by changing the inner list block top margin from `8px` to `5px`.
+- Removed the inter-span gap in grouped list rows so the service label and schedule text visually run together after the colon, matching the user’s exact examples.
+- Rebuilt successfully on `preview/mobile`, preserving all prior fixes while applying this latest placement/spacing/text-format pass.
+
+**Decisions / outcomes:**
+- The **Bookings** tab dropdown is now positioned relative to the bookings client list, not the calendar.
+- Grouped View All list rows now show only service label + date/time (no duration) as requested.
+- The grouped client header-to-rows spacing is 3px tighter than before.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed `formatViewAllListMeetingSchedule(...)` to remove duration
+  - moved bookings-tab `renderMeetingsSortDropdown()` to just above bookings client panels
+  - reduced grouped list inner block top margin from `8px` to `5px`
+  - reduced grouped row span gap from `3px` to `0px`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For regular Bookings-tab sort controls on Admin Meetings, place the dropdown immediately above the client panels when the user asks for it to align with list content rather than the calendar header area.
+
+---
+
+## 2026-04-04 — Bookings calendar white-cell border reverted to gray; A/C shared calendar updated to match Admin Meetings styling
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread immediately after the bookings-tab dropdown move and grouped list-row text refinements, the user requested two more calendar-focused updates: change the black border around white-background cells on the Admin Meetings **Bookings** calendar back to gray, and update the calendars on the appointment/consultation booking pages (“A/C pages”) so they match the Admin Meetings calendar.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary metric text by 4px across the relevant admin pages,
+  - changed white booking-calendar cells to black borders,
+  - refined multiple Admin Meetings View All grid/list/icon/spacing states,
+  - moved the accumulated work onto `preview/mobile` directly and deleted the wrong feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - moved the bookings-tab dropdown below the calendar and tightened grouped list text spacing.
+- In this latest pass, traced the booking/consultation calendars and confirmed they both use the shared inline `BrandExpiresDatePicker` with `monthLabelVariant="adminMeetings"`, while the Admin Meetings page still renders its own inline bookings calendar.
+- Reverted the Admin Meetings bookings-calendar white-cell border from black back to gray by changing the white-cell border branch to `#e5e7eb`.
+- Updated the shared `BrandExpiresDatePicker` so the **adminMeetings** variant used by the booking appointment and consultation pages visually matches the Admin Meetings calendar more closely:
+  - Monday-first calendar layout instead of the old Sunday-first layout,
+  - weekday row changed to single-letter labels (`M T W T F S S`),
+  - admin-meetings-style grid gaps and cell spacing,
+  - enabled dates render with white background and gray border,
+  - disabled dates render with gray background and gray text,
+  - selected dates keep the red border/text treatment,
+  - no extra “today outline” on the admin-meetings variant.
+- Adjusted the shared picker’s inline adminMeetings variant to emit real padded adjacent-month dates (matching the Admin Meetings calendar behavior) and fixed day selection so clicking an adjacent-month cell selects the exact ISO date rather than mis-mapping to the current month.
+- Added indexed weekday keys in the shared picker to avoid duplicate-key warnings with repeated `T` / `S` labels.
+- Rebuilt successfully on `preview/mobile` after both the Admin Meetings inline calendar change and the shared appointment/consultation calendar variant refactor.
+
+**Decisions / outcomes:**
+- Admin Meetings white appointment cells are back to gray borders.
+- Appointment and consultation booking pages now share a calendar presentation that more closely matches the Admin Meetings bookings calendar without changing their booking date-disabling logic.
+- The shared adminMeetings date-picker variant now behaves correctly when adjacent-month dates are shown and selected.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed bookings-calendar white-cell border from black back to gray (`#e5e7eb`)
+- `src/components/BrandExpiresDatePicker.tsx`
+  - added Monday-first adminMeetings grid generation
+  - added single-letter weekday labels for the adminMeetings variant
+  - updated adminMeetings cell styles to match the Admin Meetings calendar more closely
+  - disabled today-outline behavior for the adminMeetings variant
+  - changed day selection to use exact ISO dates for padded adjacent-month cells
+  - changed weekday map keys to indexed keys to avoid duplicate-key warnings
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When appointment/consultation booking pages use `BrandExpiresDatePicker` with `monthLabelVariant="adminMeetings"`, keep that variant visually aligned with the inline Admin Meetings calendar (Monday-first, single-letter weekdays, gray-bordered white active cells, gray disabled cells, red selected state) so calendar styling stays consistent across booking/admin flows.
+
+---
+
+## 2026-04-04 — View All list panels fixed to uniform height; Meetings wrap points hardened to prevent stray TS/TSTS artifact
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings thread immediately after the calendar parity pass, the user reported two remaining issues: the stray `TS/TSTS` placeholder text kept coming back, and the client panels in the **View All list view only** did not all have the same height when different clients had different amounts of meeting text content.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red admin summary metric text by 4px,
+  - changed booking-calendar white cells to black borders and later reverted them to gray,
+  - moved the work directly onto `preview/mobile` and deleted the mistaken feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - adjusted bookings-tab dropdown placement and grouped list-row formatting,
+  - updated the shared booking/consultation calendar variant to mirror Admin Meetings styling.
+- In this latest pass, searched the repo for any literal `TSTS` / standalone `TS` placeholder token in source files and did **not** find a literal hardcoded string in the meetings code path.
+- Based on that inspection, treated the recurring artifact as a wrap/overflow problem around compact meetings labels rather than a literal placeholder token.
+- Hardened likely orphan-text sources in `AdminMeetingsHub`:
+  - added `whiteSpace: 'nowrap'` to the top Meetings tab buttons (`OVERVIEW`, `BOOKINGS`, `CONSULTS`),
+  - added `whiteSpace: 'nowrap'` to the bottom `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons,
+  - preserved existing ellipsis/overflow handling around the View All title/card labels.
+- Updated **View All list mode only** so every client panel stays the same height regardless of line content:
+  - set a fixed card height,
+  - forced the client header line to no-wrap with ellipsis,
+  - kept overflow contained inside the inner scroll region rather than letting panel height expand.
+- Rebuilt successfully on `preview/mobile` after these meetings-only wrap/height changes.
+
+**Decisions / outcomes:**
+- No literal `TSTS` placeholder token was found in the active source path; the visible artifact is being treated as a layout/wrapping issue from compact meetings labels.
+- View All list client panels now have a uniform fixed height, with scrolling constrained to the inner rows region.
+- Client header lines are now clipped with ellipsis instead of expanding panel height or creating orphan wrap fragments.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `whiteSpace: 'nowrap'` to Meetings top-tab buttons
+  - added `whiteSpace: 'nowrap'` to `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons
+  - set fixed height / overflow rules on View All list client panels
+  - added no-wrap + ellipsis handling to the grouped list client-name line
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a stray `TS` / `TSTS` artifact appears in Admin Meetings View All UI and no literal placeholder token exists in source, treat it as an overflow/wrapping issue first: harden compact labels/buttons with no-wrap + ellipsis and constrain panel overflow before assuming there is a hidden placeholder string.
+
+---
+
+## 2026-04-04 — Meetings consult-tab / View All anti-wrap hardening follow-up; list client panels kept uniform
+
+**Context:** Continuing the same `preview/mobile` Admin Meetings thread immediately after the bookings/consult calendars were aligned, the user reported that the stray `TS` text was still visible specifically on the Meetings **Consults** tab and around the **View All** toggle area, and also reiterated that all **View All list-view** client panels should remain the same height regardless of how many appointment lines they contain.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, on the same preview-mobile delivery path:
+  - increased red admin summary metric text by 4px,
+  - adjusted multiple Admin Meetings View All grid/list/icon/spacing states,
+  - moved final code directly onto `preview/mobile` and deleted the mistaken feature branch,
+  - grouped View All list mode by client with inner scroll,
+  - moved the bookings-tab dropdown below the calendar,
+  - aligned A/C booking calendars to the Admin Meetings visual style,
+  - previously searched for literal `TSTS` / `TS` source and found none in the active meetings code path.
+- In this latest pass, re-inspected the specific Meetings consult-tab and View All toggle/button renderers in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed likely remaining orphan-text risk areas were:
+  - compact top-tab labels (`CONSULTS` in the Meetings tab row),
+  - bottom View All toggle buttons (`VIEW ALL CONSULTS` / `VIEW ALL BOOKINGS`),
+  - grouped list client cards if header or row content could affect outer panel height.
+- Hardened those likely wrap/orphan points by keeping the compact tab/toggle labels on one line and preserving clipped overflow in the View All region.
+- Confirmed the grouped client-panel renderer already had fixed card height and inner scroll; retained that fixed-height treatment so all list-view client panels stay uniform.
+- Rebuilt successfully again on `preview/mobile` after the final meetings-only anti-wrap hardening pass.
+
+**Decisions / outcomes:**
+- The recurring visible `TS` / `TSTS` artifact is still being treated as a wrapping/orphaned-label problem rather than a literal placeholder string in source.
+- The Meetings consult-tab / View All compact labels now have stronger no-wrap protection.
+- View All list-view client panels remain fixed-height with scrolling constrained internally.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added additional no-wrap protection to compact consult-tab / View All label paths
+  - retained fixed-height View All list client panels with internal overflow only
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For recurring phantom `TS` / `TSTS` fragments in Admin Meetings where no literal placeholder token exists in source, continue treating the issue as a compact-label wrapping problem and harden each specific consult/view-all label container with no-wrap + clipped overflow until the offending visual path is eliminated.
+
+---
+
+## 2026-04-04 — View All list rows: time text changed to black while date remains red
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings conversation after the compact-label anti-wrap hardening pass, the user requested one more very targeted list-view typography tweak: in the grouped **View All** list rows, change the **time text only** to black while keeping the date text red (example target: `THU, 4/30,2026 · 12:30 PM` with `12:30 PM` black on list view only).
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long sequence of admin/meetings work:
+  - +4px admin summary metrics,
+  - bookings calendar border changes and later revert,
+  - multiple View All grid/list spacing/layout refinements,
+  - grouped View All list-by-client panels with inner scroll,
+  - direct correction of delivery onto `preview/mobile`,
+  - A/C calendar parity with the Admin Meetings calendar,
+  - additional no-wrap hardening around compact Meetings labels to suppress phantom `TS/TSTS` fragments.
+- In this latest pass, focused only on the grouped **View All list mode** row renderer in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the grouped row was still rendering the entire schedule (`DATE · TIME`) as a single red string.
+- Split the list-view row formatter into separate helpers:
+  - `formatViewAllListMeetingDateOnly(...)`
+  - `formatViewAllListMeetingTimeOnly(...)`
+- Updated the grouped list row render so:
+  - gray service label remains unchanged,
+  - red segment renders only the date and trailing separator (`THU, 4/30,2026 · `),
+  - black segment renders only the time (`12:30 PM`).
+- First rebuild failed because the previous combined schedule helper became unused after the formatter split; removed the dead helper and reran a successful production build.
+
+**Decisions / outcomes:**
+- On **View All list view only**, time text is now black while the date portion remains red.
+- The grouped list row keeps the same one-line structure and spacing; only the color split changed.
+- Scope stayed limited to the grouped View All list-view rows.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed `formatViewAllListMeetingSchedule(...)`
+  - added `formatViewAllListMeetingDateOnly(...)`
+  - added `formatViewAllListMeetingTimeOnly(...)`
+  - split grouped list schedule row into red date segment + black time segment
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For grouped View All Meetings list rows, keep date/time color treatment independently controllable by rendering date and time as separate text segments rather than as one combined string.
+
+---
+
+## 2026-04-04 — Meetings consult-tab / View All `TS` artifact traced to compact label containers; top tab row converted to horizontal scroll
+
+**Context:** Continuing the same `preview/mobile` Admin Meetings thread after multiple passes on the recurring visible `TS` / `TSTS` artifact, the user explicitly pointed out that the issue was still visible on the Meetings **Consults** tab and the **View All** toggle and asked for the root cause to be triangulated rather than treated as a generic string search problem.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - moved all intended work directly onto `preview/mobile`,
+  - increased admin summary metric text by 4px,
+  - changed booking-calendar white-cell borders to black and later back to gray,
+  - grouped View All list mode by client with inner scroll,
+  - moved bookings dropdown below the calendar,
+  - aligned A/C booking calendars to the Admin Meetings visual style,
+  - repeatedly searched for literal `TSTS` / `TS` tokens in source and did **not** find a hardcoded placeholder string in the active meetings code path,
+  - added multiple no-wrap/ellipsis rules and fixed list-view panel heights.
+- In this latest pass, re-inspected the exact compact labels still likely to render the visible orphan tail:
+  - the top Meetings tab row including `CONSULTS`,
+  - the bottom `VIEW ALL CONSULTS` / `VIEW ALL BOOKINGS` toggle buttons,
+  - the active View All header title.
+- Based on that inspection, treated the recurring artifact as a **container-level clipping problem** rather than a literal placeholder token:
+  - compact labels were previously rendered in tight, center-aligned containers where clipping/ellipsis could leave the tail of `CONSULTS` visible as `TS`,
+  - simply adding `whiteSpace: 'nowrap'` to individual buttons was not strong enough when the parent row itself could still constrain content badly.
+- Reworked the top Meetings tab controls so the tab row becomes a small horizontal scroller with `width: max-content` and `minWidth: 100%`, preventing the `CONSULTS` tab label from being crushed into a clipped tail inside a fixed-width center layout.
+- Preserved one-line overflow protection on the bottom View All toggle buttons and active header title so the same compact-label failure mode is less likely there as well.
+- Rebuilt successfully on `preview/mobile` after this more direct container-level fix.
+
+**Decisions / outcomes:**
+- The recurring visible `TS` / `TSTS` artifact is being treated as a **compact label container/layout issue**, not as a missing literal token removal.
+- The top Meetings tab row now uses a safer layout that allows the full `CONSULTS` label to remain intact instead of being clipped into its tail.
+- This pass targeted the most likely remaining root-cause container rather than only layering more text-level no-wrap rules.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - converted the top Meetings tab row to a width-safe horizontal scroller / `max-content` container
+  - retained one-line protection on compact consult/view-all label paths
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a recurring phantom `TS` / `TSTS` fragment persists in Admin Meetings after literal-string searches fail, investigate the **specific compact label container layout** (tab rows, toggle bars, clipped headers) and fix the parent container geometry first rather than only adding more no-wrap rules to child text nodes.
+
+---
+
+## 2026-04-04 — Meetings consult tab text switched to black; compact CONSULTS containers loosened to avoid TS clipping
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread after multiple anti-wrap passes, the user reported that the `TS/TSTS` artifact still persisted and also requested one concrete style change: on the **Meetings consults tab only**, the `WIG ONLY` / `WIG + INSTALL` line should be black instead of gray.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed multiple preview/mobile Meetings refinements:
+  - summary metric text +4px across admin panels,
+  - bookings-calendar border updates and later A/C calendar parity work,
+  - View All grouped client panels,
+  - bookings-tab dropdown placement changes,
+  - grouped list time color split,
+  - repeated anti-wrap hardening targeted at recurring `TS/TSTS` fragments.
+- In this latest pass, re-inspected the exact active containers for:
+  - the top Meetings tab row (`OVERVIEW / BOOKINGS / CONSULTS`),
+  - the bottom `VIEW ALL BOOKINGS / VIEW ALL CONSULTS` buttons,
+  - the regular consult-tab hair-option line in the consult rows.
+- Based on that inspection, concluded the consult-tab/top-row artifact risk was still likely coming from compact `CONSULTS` containers being clipped too aggressively rather than from a literal placeholder token.
+- Adjusted the top Meetings tab row again so it has more forgiving horizontal layout:
+  - added horizontal padding on the scroll wrapper,
+  - changed inner justification from `center` to `flex-start`,
+  - forced all three top buttons to `flexShrink: 0`.
+- Simplified the bottom View All button label handling by removing overflow/ellipsis clipping from the full-width stacked buttons while keeping `whiteSpace: 'nowrap'`, since those buttons have enough width and clipping was more likely to produce the visible tail fragment than to help.
+- Changed the regular Meetings **consults-tab** `hair` line (`WIG ONLY` / `WIG + INSTALL`) from gray to black only in the consult rows.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The consult-tab wig-option text is now black instead of gray, scoped only to the regular Meetings consult tab rows.
+- The top `CONSULTS` tab and bottom `VIEW ALL CONSULTS` button now use less clipping-prone container behavior.
+- This pass continues to treat the visible `TS/TSTS` artifact as a compact-label container/layout problem, not as a literal placeholder token sitting in source.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed consult-row hair-option text from `#808080` to `#000`
+  - added left/right padding to the top Meetings tab scroller
+  - changed top tab-row inner justification from `center` to `flex-start`
+  - added `flexShrink: 0` to the top `OVERVIEW` / `BOOKINGS` / `CONSULTS` buttons
+  - removed overflow/ellipsis clipping from the full-width stacked `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS` buttons
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When the suspect compact label already has one-line text rules, broaden the fix to the immediate parent layout (padding, justification, shrink behavior, unnecessary clipping) before assuming the text node itself is still the problem.
+
+---
+
+## 2026-04-04 — Re-centered Meetings tabs after regression; consult-row wig-option text confirmed black
+
+**Context:** Continuing the same preview/mobile Admin Meetings thread immediately after the compact consult-label container pass, the user reported two regressions/remaining issues: the `TS` fragment still persisted above the client panels, and the latest change had incorrectly left-aligned the top Meetings tabs even though they should stay centered. The user also reiterated that the consult-tab `WIG ONLY / WIG + INSTALL` text should be black.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat:
+  - increased red summary metric text by 4px across admin summary panels,
+  - iterated repeatedly on Admin Meetings View All grid/list behavior, list grouping, card heights, and anti-wrap hardening,
+  - moved all final work directly onto `preview/mobile`,
+  - aligned appointment/consultation booking calendars to the Admin Meetings style,
+  - changed View All list time text to black,
+  - searched repeatedly for a literal `TS/TSTS` token and instead traced the issue to compact `CONSULTS` label containers.
+- In the immediately previous pass, the top Meetings tab row was changed to a horizontally scrollable strip with `justifyContent: 'flex-start'` to reduce clipping risk, and the consult-tab wig-option row was switched from gray to black.
+- In this follow-up correction pass, re-inspected the live `AdminMeetingsHub` code and confirmed:
+  - the close icon above the active client/view-all panel was already still using the red filter (`CLOSE_ICON_RED_FILTER`), so no code change was needed there,
+  - the consult-tab `hair` row (`WIG ONLY` / `WIG + INSTALL`) was already black in the current working copy.
+- Reverted the top Meetings tab-row alignment regression by restoring the scroll strip’s inner alignment back to centered while leaving the non-shrinking, no-wrap protections intact.
+- Added a small additional hardening improvement to the active View All panel title by making the title block explicitly `display: block` and `width: 100%` within the constrained flex area, keeping the title eligible for clean ellipsis rather than odd partial clipping.
+- Rebuilt successfully on `preview/mobile` after this narrower regression-revert pass.
+
+**Decisions / outcomes:**
+- The top Meetings tabs are centered again as requested.
+- The consult-tab wig-option row is black in the current code path.
+- The active panel title has slightly stronger width semantics for clipping/ellipsis without changing its wording.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - restored top Meetings tab-row inner justification to `center`
+  - removed the extra left/right padding that had accompanied the left-aligned tab strip
+  - set the active View All/client panel `<h2>` title block to `display: 'block'` and `width: '100%'`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When backing out a layout experiment meant to fix a clipping artifact, preserve the safe no-wrap / non-shrinking protections that were valid, but restore any broader alignment changes (like left-aligning a previously centered control row) if they visibly regress the intended design.
+
+---
+
+## 2026-04-04 — Meetings client-details close X restored in admin clients view; sort-trigger wrapper hardened for lingering TS artifact
+
+**Context:** Continuing this same preview/mobile Admin Meetings debugging thread after re-centering the Meetings tabs, the user clarified two things: the actual “client details toggle” opened by tapping a Meetings profile icon still lacked the red close X in its upper right corner, and the recurring `TS` text still appeared specifically above the client panels and below the **Most recent** dropdown, so the sort dropdown area needed deeper inspection rather than more generic label guessing.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same long chat:
+  - moved all intended work onto `preview/mobile`,
+  - deleted the mistaken feature branch,
+  - updated Admin Meetings list/grid/toggle/calendar states across multiple passes,
+  - repeatedly traced the recurring `TS` / `TSTS` artifact without finding a literal placeholder token in the active meetings source,
+  - restored centered Meetings tabs after a prior alignment regression.
+- In this latest pass, traced the real “client details” flow opened from Meetings profile icons:
+  - `openClientAccount(...)` routes to `src/pages/admin/clients/page.tsx` with `returnTo=meetings`,
+  - the selected-client details view lives inside `AdminClients`, not inside `AdminMeetingsHub`,
+  - that details view did not have its own in-card red close icon even though the expanded order card inside the same page already used the project’s red close-icon treatment.
+- Added a dedicated top-right red close X button to the selected-client details card in `src/pages/admin/clients/page.tsx`:
+  - uses `/assets/close-icon.svg`,
+  - uses the same red filter treatment already used elsewhere on the page,
+  - calls `closeClientDetails()` so meetings-origin navigation returns correctly to the Meetings page.
+- Re-inspected the `Most recent` dropdown wrapper in `AdminMeetingsHub` because the user specifically located the stray `TS` underneath that control.
+- Hardened the sort-trigger area itself rather than only downstream labels:
+  - wrapped the visible dropdown label text in a span with `display: inline-block`,
+  - added `whiteSpace: 'nowrap'`, `lineHeight: 1`, `overflow: 'hidden'`, and `textOverflow: 'ellipsis'`,
+  - added `whiteSpace: 'nowrap'`, `lineHeight: 1`, and `flexShrink: 0` to the trigger button container.
+- Rebuilt successfully on `preview/mobile` after both the client-details close-icon restoration and the sort-trigger wrapper hardening.
+
+**Decisions / outcomes:**
+- The actual meetings-origin client-details view now has its own red close X in the upper-right area of the details card instead of relying only on the page header back control.
+- The lingering `TS` artifact is still being treated as a compact rendered label/clipping issue, and this pass narrowed the suspected source further to the dropdown trigger region itself rather than generic meetings labels.
+- Scope stayed limited to the two concrete user-reported problem paths: meetings-origin client details and the `Most recent` dropdown area above client panels.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+  - added a top-right red close-icon button to the selected-client details card
+  - wired the close icon to `closeClientDetails()` so meetings return flow is preserved
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - hardened `renderMeetingsSortDropdown()` trigger wrapper/label with stronger no-wrap and clipping semantics
+  - kept focus on the text area directly under/around the visible `Most recent` control
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a Meetings profile icon opens Admin Clients details via `returnTo=meetings`, treat that details card as the effective “client details toggle” for this flow and keep its close affordance visually aligned with other in-card close controls (red close X), not just the page-header back arrow.
+
+---
+
+## 2026-04-04 — Fixed replaceState loop in shared persistent query hook
+
+**Context:** User reported a red-screen crash: **"ERROR: Component Failed to Load — Attempt to use history.replaceState() more than 100 times per 10 seconds"**. They wanted the root cause traced and fixed on `preview/mobile`.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long series of Admin Meetings and admin-page UI tweaks directly on `preview/mobile`, including summary-panel typography updates, meetings View All/list/grid refinements, client-grouped list panels, calendar parity changes, and repeated attempts to eliminate a stray `TS/TSTS` artifact.
+- For this error-specific turn, searched for `replaceState`, `navigate(..., { replace: true })`, and query-param synchronization logic across the codebase.
+- Identified two likely hot paths:
+  - the shared `usePersistentQueryState` hook used by many admin/product pages,
+  - `AdminMeetingsHub`’s own `viewAll` URL synchronization.
+- Inspected the shared hook and found a real oscillation bug:
+  - the "read from query/session/default" effect depended on `value`,
+  - on local state changes it could re-read stale query/session values before the URL/session sync effects settled,
+  - that could bounce the state back and forth and repeatedly call `navigate(..., { replace: true })`,
+  - which matches the reported browser protection error about excessive `history.replaceState()`.
+- Fixed the hook by making the read/sync effect respond only to URL changes instead of every local state update:
+  - removed `value` from the effect dependency list,
+  - switched to functional `setValue(...)` updates so identical values are ignored cleanly,
+  - left the URL/session persistence effects intact.
+- Rebuilt successfully after the hook fix on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The red-screen `replaceState()` storm was traced to the shared persistent-query hook logic, not to a one-off Admin Meetings visual issue.
+- The fix was applied at the shared hook level so all pages using `usePersistentQueryState` benefit, instead of papering over individual pages.
+- `AdminMeetingsHub`’s URL sync remains in place, but the shared oscillation source was removed.
+
+**Changes:**
+- `src/hooks/usePersistentQueryState.ts`
+  - removed `value` from the URL/session rehydration effect dependencies
+  - changed that effect to use functional `setValue(...)`
+  - added a short comment explaining the stale query/session oscillation and replaceState spam risk
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For shared query-param persistence hooks, do not let the "rehydrate from URL/session" effect depend on the current local state value when a separate effect also writes that state back to the URL/session; that pattern can oscillate and spam `history.replaceState()`.
+
+---
+
+## 2026-04-04 — Restored red client-name header beside red close X in meetings-opened client details
+
+**Context:** Continuing the same preview/mobile meetings thread after the shared `replaceState()` loop fix, the user clarified that the “restored red close X” in the meetings-opened client details flow was still incomplete: the selected-client details card needed the **red client name header** across from the red close X, not just the close button by itself.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long chain of admin/meetings work on `preview/mobile`:
+  - admin summary panel red text +4px,
+  - meetings bookings calendar border changes,
+  - A/C calendar styling alignment,
+  - multiple Admin Meetings View All refinements,
+  - grouped client panels in View All list mode,
+  - dropdown placement and text-color tweaks,
+  - repeated compact-label/`TS` artifact investigations,
+  - correction of mistaken feature-branch delivery by moving work onto `preview/mobile`,
+  - shared `usePersistentQueryState` fix for the red-screen `history.replaceState()` error.
+- In this latest pass, traced the “client details toggle” path opened from Admin Meetings profile icons and confirmed it lands in `src/pages/admin/clients/page.tsx` with `returnTo=meetings`.
+- Verified that the selected-client details card already had a red close X button, but it lacked the matching red client-name header row opposite the icon.
+- Added a dedicated top row inside the selected-client details card:
+  - left side: selected client full name in red Futura Medium,
+  - right side: existing red close X wired to `closeClientDetails()`,
+  - preserved the meetings return flow.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The meetings-opened client details card now has the expected red header pairing: client name on the left and red close X on the right.
+- This change stays inside the selected-client details card and does not alter the page header/back behavior.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+  - added a red client-name header row above the profile image in the selected-client details card
+  - retained the existing red close-icon button on the right side of that row
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For the meetings-opened Admin Clients details view (`returnTo=meetings`), the in-card close affordance should appear as a paired red header row: selected client name on the left and red close X on the right, matching the visual language of other closeable admin subpanels.
+
+---
+
+## 2026-04-04 — Meetings create-offer/edit-booking panel refactor completed with lower action buttons and custom dropdowns
+
+**Context:** Continuing the same long preview/mobile Admin Meetings UI thread, the user noted that the previous create-offer/edit-booking task had not been fully completed. They wanted the create-offer/edit panel headers/buttons/dropdowns finished to match the requested spec: rename the headers, remove the gray order/row text, move the primary actions out of the main card and into the lower button strip, remove obsolete inner buttons, and make the create-offer/edit selection dropdowns use the same style/UI pattern as the special-offers dropdowns in admin marketing. In the same follow-up they also asked for two small visual adjustments: add 2px spacing above the `WIG ONLY / WIG + INSTALL` text on the Meetings consults tab only, and increase the height of the View All bookings/consults list-view client panels by 10px.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` already covered:
+  - admin summary-panel metric text increased by 4px,
+  - Admin Meetings calendar / View All / grouped-list refinements,
+  - branch correction from an incorrect feature branch back onto `preview/mobile`,
+  - client-details red name header restoration,
+  - shared `usePersistentQueryState` fix for the `history.replaceState()` red-screen loop.
+- In this pass, inspected the current `AdminMeetingsHub` working state and confirmed part of the requested refactor was already partially present:
+  - active panel titles had been switched to `EDIT BOOKING` / `CREATE OFFER`,
+  - bottom action strip had partly switched to `RESCHEDULE`, `CANCEL BOOKING`, and `SEND OFFER`,
+  - a custom panel dropdown helper had already been introduced, but some visual/header leftovers were still inconsistent.
+- Completed the remaining panel refactor in `src/pages/admin/meetings/AdminMeetingsHub.tsx`:
+  - ensured active panel headers render in red,
+  - removed the gray `ORDER / ROW: …` line from the edit-booking panel,
+  - kept the panel body free of the old inner action buttons,
+  - kept the create-offer body free of the old inner `SEND ALERT` button,
+  - finished using the custom panel dropdown UI for the edit reason and create-offer unit/sub-page selections.
+- Updated the lower action buttons so they now reflect panel mode:
+  - **Edit booking:** `RESCHEDULE`, `CANCEL BOOKING`
+  - **Create offer:** `SEND OFFER` only
+  - base mode still shows `VIEW ALL BOOKINGS` / `VIEW ALL CONSULTS`
+- Applied the follow-up visual tweaks in the same file:
+  - increased the Meetings consult-tab `WIG ONLY / WIG + INSTALL` row spacing above by 2px,
+  - increased View All list-view client panel height from `82px` to `92px`.
+- Rebuilt successfully on `preview/mobile` after the completed panel/header/button/dropdown update set.
+
+**Decisions / outcomes:**
+- The create-offer/edit-booking panels now use the same custom dropdown interaction model as the admin selection dropdowns instead of native selects.
+- Primary actions for create-offer/edit-booking now live in the lower action-button strip, not inside the main card content.
+- The create-offer and edit-booking headers now use the requested wording and red header treatment.
+- The consult-tab wig-option row spacing and View All list client-panel height adjustments are both included in the same preview/mobile pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - ensured active panel header text renders red for `EDIT BOOKING` / `CREATE OFFER`
+  - removed the gray `ORDER / ROW: …` line
+  - completed use of `renderPanelSelectDropdown(...)` for edit/create-offer selections
+  - removed obsolete inner panel action buttons
+  - completed lower button-strip actions for edit/create-offer modes
+  - increased consult-tab wig-option row top spacing by 2px
+  - increased View All list client panel height by 10px (`82px` → `92px`)
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings create-offer/edit-booking panels, keep selection controls on the shared custom dropdown UI rather than native `<select>`s, and place primary workflow actions in the lower page button strip instead of duplicating action buttons inside the main card body.
+
+---
+
+## 2026-04-04 — Bookings calendar date selection now toggles off to restore full appointments list
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings refinement thread after the create-offer/edit-booking panel refactor, the user reported that the **Bookings** tab calendar on Admin Meetings would select a date but would not deselect when tapping the same date again. They wanted deselecting the active date to restore the full list of currently available appointments below the calendar.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same conversation, completed and pushed multiple `preview/mobile` Admin Meetings/UI fixes:
+  - admin summary metric text increased by 4px,
+  - bookings calendar white-cell border changed to black and later reverted to gray,
+  - appointment/consultation booking calendars restyled to match the Admin Meetings calendar,
+  - View All list grouping by client with inner scroll,
+  - grouped list row/date/time color and spacing updates,
+  - repeated compact-label / `TS` artifact investigations and meetings/client-details close/header refinements,
+  - create-offer/edit-booking panel header/button/dropdown refactor.
+- In this latest pass, inspected the Bookings calendar date cell click handler in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Identified the root cause of the “cannot deselect” behavior: the calendar day button click always called `setSelectedDay(cell.iso)`, even when that same date was already selected.
+- Updated the click handler so tapping the currently selected day toggles it off:
+  - if no day is selected, tap selects the date,
+  - if a different day is selected, tap switches to that date,
+  - if the same selected date is tapped again, it clears back to `null`.
+- Because the bookings list memo already falls back to the full filtered appointments list when `selectedDay` is null, clearing the selected date automatically restores all currently available appointment panels below the calendar.
+- Rebuilt successfully on `preview/mobile` after the toggle change.
+
+**Decisions / outcomes:**
+- Bookings-calendar selection now behaves as a true toggle instead of a one-way filter.
+- Clearing the selected day returns the bookings tab to the full available appointments list without any additional UI changes.
+- Scope stayed limited to the Admin Meetings bookings calendar date button behavior.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed the bookings calendar day `onClick` handler to toggle `selectedDay` off when the selected date is tapped again
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings date-filter calendars that drive below-list filtering, day taps should be idempotent toggles: tapping an already-selected day should clear the filter so the full list reappears rather than trapping the user in a selected state.
+
+---
+
+## 2026-04-04 — Added Premium/Standard and service-type sorting to Meetings bookings/consult tabs
+
+**Context:** After the Admin Meetings calendar, list-view, client-details, and panel-control refinements in this same preview/mobile thread, the user requested expanded sorting options on the regular **Bookings** and **Consults** tabs: add **Premium** and **Standard** sorting to both tabs, add **Re-install** and **New install** to the Bookings sort dropdown, and add **Wig** (for WIG ONLY) and **Install** (for WIG + INSTALL) to the Consults sort dropdown.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` included:
+  - moving the accumulated Admin Meetings/admin UI work onto `preview/mobile` and deleting the mistaken feature branch,
+  - grouped View All list panels by client with inner scroll,
+  - multiple View All/list/grid spacing and typography refinements,
+  - meetings client-details header/close affordance fixes,
+  - shared A/C calendar parity with Admin Meetings,
+  - a shared query-state hook fix to stop the excessive `history.replaceState()` loop,
+  - bookings calendar day deselection behavior.
+- In this latest pass, focused only on the Meetings sorting system in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Expanded `MeetingSortOption` to include the additional requested values:
+  - shared across tabs: `Premium`, `Standard`
+  - bookings-only: `Re-install`, `New install`
+  - consults-only: `Wig`, `Install`
+- Updated the sort label/dropdown rendering so the Bookings tab dropdown shows:
+  - Most recent, A to Z, Z to A, Premium, Standard, Re-install, New install
+- Updated the Consults tab dropdown to show:
+  - Most recent, A to Z, Z to A, Premium, Standard, Wig, Install
+- Extended the sorting logic to handle the new semantic sorts:
+  - `Premium` / `Standard` prioritize tier grouping before falling back to recency,
+  - bookings `Re-install` / `New install` prioritize install kind using `getBookingCardDetails(...)`,
+  - consults `Wig` / `Install` prioritize consult type using `consultTypeLabelForMeeting(...)`.
+- Cleaned up a few now-unused sort-option helper functions while iterating so the file still passed TypeScript.
+- Rebuilt successfully on `preview/mobile` after wiring the new sort options and removing the dead helper code.
+
+**Decisions / outcomes:**
+- The Bookings and Consults tabs now expose category-specific sorting options in addition to the generic recency/name sorts.
+- Tier sorts (`Premium` / `Standard`) are now available on both tabs and are applied consistently using the existing membership-tier helpers.
+- Service-type sorts are tab-specific and only appear where they make semantic sense (install kinds on Bookings, wig/install consult types on Consults).
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - expanded `MeetingSortOption`
+  - updated meetings sort dropdown option lists by active tab
+  - extended `sortMeetingsByOption(...)` to support tier and service-type sorting
+  - removed temporary unused sort helper functions after final wiring
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sorting, keep tab-specific service-type sort options scoped to the relevant tab rather than exposing one global mixed list everywhere: booking install-kind sorts belong on Bookings, and consult wig/install sorts belong on Consults.
+
+---
+
+## 2026-04-04 — Bookings tracker now fills gray over the full timeline and turns red only in the final 48 hours
+
+**Context:** Continuing this same `preview/mobile` Admin Meetings thread after the sort-option expansion, the user reported that the bookings payment tracker fill colors were wrong: the fill was not visibly progressing and should fill in gray based on the total tracker duration, only switching to red when 48 hours remain on the tracker.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed multiple Admin Meetings / Admin Clients / preview-mobile fixes including:
+  - admin summary panel text-size increases,
+  - bookings calendar date deselect behavior,
+  - grouped View All list view by client with fixed-height panels,
+  - create-offer / edit-booking panel UI refactor,
+  - meetings sort-option expansion,
+  - client-details red name + close-X header restoration,
+  - shared `usePersistentQueryState` replaceState loop fix.
+- In this pass, focused on the bookings payment tracker in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Inspected `getBookingPaymentStatusForCard(...)` and found the tracker progress was being computed from appointment date vs due date, with the UI turning red based on near-100% fill (`dueProgressPct >= 98`) or already-passed due date.
+- Traced the booking appointment API payload and confirmed appointment meeting metadata already stores `bookingBookedAtIso`, which provides a better start point for the tracker timeline.
+- Updated the tracker timeline math so progress now runs from:
+  - **start:** `bookingBookedAtIso` when present (fallback: current time or due time safety fallback),
+  - **end:** final payment due datetime (`finalPaymentDueAt` / `finalPaymentDueDate` path).
+- Added an explicit `dueWithinFinal48Hours` flag so the UI can switch colors based on real remaining time rather than a near-100% percentage threshold.
+- Updated the bookings-card tracker rendering so:
+  - fill/track colors stay gray during the normal countdown window,
+  - the bar changes to red only when the tracker is within the final 48 hours or already past due.
+- First rebuild failed because the render referenced a mismatched property name (`dueWithinFortyEightHours` vs `dueWithinFinal48Hours`); corrected the reference and reran a successful production build.
+
+**Decisions / outcomes:**
+- The bookings tracker now reflects timeline progress in gray over the full due window instead of staying visually static.
+- Red is now reserved for the final 48 hours (and overdue state), matching the user’s requested warning threshold.
+- The change is scoped to the bookings payment tracker behavior on Admin Meetings; no unrelated card layout or copy was altered in this pass.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed tracker progress start point to prefer `metadata.bookingBookedAtIso`
+  - added `dueWithinFinal48Hours` to `BookingPaymentStatus`
+  - updated due-window percentage calculation to span booked-at → due-at
+  - changed tracker red-state condition from near-full percentage to true remaining-time threshold (48 hours)
+  - fixed the render to reference `dueWithinFinal48Hours`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings booking trackers, derive fill progress from the full real timeline (booked-at → due-at) and reserve red-state styling for explicit warning windows like the final 48 hours, rather than using an arbitrary near-100%-filled threshold as the warning trigger.
+
+---
+
+## 2026-04-04 — Meetings sort options scoped correctly by tab and consult labels renamed
+
+**Context:** Immediately after adding extra sort options to both Admin Meetings tabs, the user clarified the service-type sorts should not leak across tabs: `Re-install` and `New install` belong only on Bookings, while the consult-specific options belong only on Consults, with the consult labels renamed from generic `Wig` / `Install` to `Wig only` / `Wig + install`.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long sequence of Admin Meetings and admin-preview fixes, including:
+  - moving work directly onto `preview/mobile`,
+  - multiple View All list/grid refinements,
+  - grouped-by-client View All list mode,
+  - bookings calendar toggle deselection,
+  - booking tracker gray-fill/red-warning behavior,
+  - and create-offer / edit-booking panel control changes.
+- The previous pass added broader sort categories to the Meetings tabs, but the initial wiring still exposed cross-tab options from a shared global list.
+- In this follow-up turn, focused only on `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the live file already contained the expanded union of sort options, but the dropdown renderer still used the full global list instead of a tab-aware subset.
+- Added tab-aware sort option helpers:
+  - Bookings: `Most recent`, `A to Z`, `Z to A`, `Premium`, `Standard`, `Re-install`, `New install`
+  - Consults: `Most recent`, `A to Z`, `Z to A`, `Premium`, `Standard`, `Wig only`, `Wig + install`
+- Updated the label helper so the consult-only sort choices render exactly as requested in the dropdown.
+- Extended the sort engine so it now performs:
+  - tier-first sorting for `Premium` / `Standard`
+  - install-kind-first sorting for `Re-install` / `New install`
+  - consult-type-first sorting for `Wig only` / `Wig + install`
+- Added an effect to reset the current meetings sort back to `Most recent` whenever the user switches tabs or view-all mode into a context where the current sort option is no longer valid.
+- Rebuilt successfully on `preview/mobile` after the scope fix; during cleanup removed temporary unused helper functions so TypeScript stayed clean.
+
+**Decisions / outcomes:**
+- Booking install-kind sorts are now available only on the Bookings tab.
+- Consult hair-option sorts are now available only on the Consults tab.
+- The consult-specific labels now read `Wig only` and `Wig + install` instead of the shorter generic terms.
+- Switching between Bookings and Consults will no longer leave an invalid previous sort selected.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - scoped meetings sort dropdown options by active tab / view context
+  - renamed consult-specific sort labels to `Wig only` / `Wig + install`
+  - added tier and service-type ordering logic to `sortMeetingsByOption(...)`
+  - added validity reset effect for `meetingSortOption`
+  - removed temporary unused sort helper functions after final wiring
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sort menus, expose only the service-type sorts that semantically belong to the active tab: booking install sorts on Bookings, and consult hair-option sorts on Consults.
+
+---
+
+## 2026-04-04 — Meetings tab sort options re-scoped so bookings/consult service filters stay on the correct tab
+
+**Context:** Immediately after adding the expanded Bookings/Consults sort modes on Admin Meetings, the user clarified that the service-type filters had leaked across tabs: `Re-install` / `New install` should appear only on the **Bookings** tab, while consult-specific sorts should appear only on the **Consults** tab. They also asked to rename consult sort labels from generic `Wig` / `Install` to `Wig only` / `Wig + install`.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, updated the Admin Meetings sort system to add:
+  - `Premium` / `Standard` on both tabs,
+  - service-type sorts on Bookings and Consults.
+- The user then clarified the scope and naming:
+  - Bookings-only service sorts: `Re-install`, `New install`
+  - Consults-only service sorts: `Wig only`, `Wig + install`
+- Inspected the current Meetings sort wiring and found:
+  - the expanded union for sort modes already existed,
+  - the generic sort dropdown renderer was still using the full global option list rather than a tab-aware filtered list,
+  - the sorter itself still only handled recency/name cases in the currently staged code path.
+- Added a tab/view-all aware sort-option resolver so:
+  - Bookings contexts expose only booking-relevant service sorts,
+  - Consults contexts expose only consult-relevant service sorts,
+  - `Premium` / `Standard` remain available on both.
+- Extended the actual sort logic to support:
+  - tier-first ordering for `Premium` / `Standard`,
+  - install-kind-first ordering for `Re-install` / `New install`,
+  - consult-type-first ordering for `Wig only` / `Wig + install`,
+  - then recency as the tie-breaker.
+- Added a guard effect so when the user switches between Bookings/Consults/View All, any now-invalid sort option is automatically reset back to `Most recent` instead of leaving a hidden stale mode selected.
+- Rebuilt successfully after the sort-scope correction.
+
+**Decisions / outcomes:**
+- Service-type sort options are now properly scoped to their own tab instead of being shared across both Bookings and Consults.
+- Consult sort labels now use the more explicit wording the user asked for: `Wig only` and `Wig + install`.
+- Invalid cross-tab carryover of sort state is prevented by automatically resetting to `Most recent`.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - expanded sort labels to include `Wig only` and `Wig + install`
+  - added `getMeetingSortOptionsForContext(...)`
+  - added tab/view-all specific option filtering in `renderMeetingsSortDropdown()`
+  - extended `sortMeetingsByOption(...)` to support tier/install/consult-type sorting
+  - added effect to reset invalid sort selections when context changes
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings sort dropdowns, keep service-type filters scoped to the relevant tab context rather than presenting one shared mixed list: booking install-kind sorts belong only on Bookings, and consult wig/install sorts belong only on Consults.
+
+---
+
+## 2026-04-05 — Bookings-tab current balance now uses full booking order total instead of unit-only fallback
+
+**Context:** Continuing this same long Admin Meetings preview/mobile refinement thread immediately after fixing the Bookings/Consults tab-specific sort menus, the user reported that the **CURRENT BALANCE** line on the Admin Meetings bookings tab was wrong because it only reflected the unit price and ignored add-ons, including travel fee. They wanted the balance display to account for the full booking order total instead of only the unit.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` had already covered:
+  - repeated Admin Meetings consult/view-all label hardening,
+  - grouped View All list mode,
+  - bookings calendar deselection,
+  - create-offer / edit-booking panel control refactors,
+  - tab-specific sort menus for Bookings and Consults.
+- In this latest pass, traced the Admin Meetings payment display back to `getBookingPaymentStatusForCard(...)` in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the backend booking meeting payload from checkout already stores richer totals in metadata:
+  - `bookingOrderTotalPaidUsd`
+  - `bookingLineTotalPaidUsd`
+  - `bookingPaidTotalUsd`
+  - `bookingFinalDueUsd`
+  - `bookingInstallFeeUsd`
+- Identified the display bug: the bookings-tab **CURRENT BALANCE: $X OF $Y USD** line was using `paidTotalUsd` that could fall back to `details.unitPriceUsd`, which ignores add-ons/travel when richer totals are unavailable or not prioritized.
+- Updated the payment-status helper so the “OF $Y” amount now prefers the full booking order/line totals from meeting metadata before any unit-only fallback:
+  - `bookingOrderTotalPaidUsd`
+  - `bookingLineTotalPaidUsd`
+  - then the older broader total fields
+  - and only lastly the unit-price fallback.
+- Removed the now-unused intermediate `paidDetected` variable that the first refactor left behind, then reran a successful `npm run build`.
+
+**Decisions / outcomes:**
+- The bookings-tab **CURRENT BALANCE** display now uses the full booking order amount when available, so add-ons and travel fee are included in the `OF $Y USD` total instead of showing a unit-only value.
+- Scope stayed limited to the Admin Meetings bookings payment-display math; no unrelated booking UI or checkout logic was changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed `getBookingPaymentStatusForCard(...)` so `paidTotalUsd` prefers full-order/full-line booking totals from metadata instead of falling back too early to unit price
+  - removed the obsolete `paidDetected` variable left over after the refactor
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings booking payment displays, prefer full booking order/line totals from meeting metadata for the “OF $Y USD” amount before falling back to unit-only pricing, so add-ons and travel fee stay reflected in the visible total.
+
+---
+
+## 2026-04-04 — Removed stale Quinn-only booking tracker fill override so progress reflects actual elapsed time
+
+**Context:** Continuing this same preview/mobile Admin Meetings thread after the booking tracker was changed to fill gray over the full booked-at → due-at window and turn red only in the final 48 hours, the user reported Quinn Chen’s tracker was still showing a fully filled gray bar even though `18D 15H LEFT` remained.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this chat, the Admin Meetings bookings tracker logic was updated so:
+  - gray fill should progress over the full tracker timeline,
+  - red fill should appear only in the final 48 hours,
+  - full booking totals (including add-ons/travel) should be used in the `CURRENT BALANCE ... OF ... USD` line when available.
+- In this follow-up pass, traced the remaining incorrect full-gray fill to an old Quinn-specific UI test hook still present in `getBookingPaymentStatusForCard(...)`.
+- Found the stale override:
+  - `const forceFilledForQuinn = clientNameUpper.includes('QUINN CHEN')`
+  - `dueProgressPct: forceFilledForQuinn ? 100 : elapsedPct`
+- Removed that special-case logic so `dueProgressPct` now always uses the actual elapsed percentage from the booked-at → due-at window.
+- Rebuilt successfully on `preview/mobile` after removing the override.
+
+**Decisions / outcomes:**
+- Quinn Chen’s tracker is no longer force-filled to 100%.
+- The tracker now reflects real elapsed time consistently for all bookings.
+- This fix stays aligned with the prior behavior change where only the final 48 hours should turn the bar red.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - removed the Quinn-specific forced-fill test hook
+  - changed `dueProgressPct` to always use `elapsedPct`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- Remove one-off UI test hooks (like hardcoded client-name fill overrides) once the intended production tracker logic is in place, or they will silently invalidate otherwise-correct timing behavior.
+
+---
+
+## 2026-04-04 — Bookings add-on lines now wrap naturally within the tracker-width content column
+
+**Context:** Continuing the same Admin Meetings `preview/mobile` UI thread after the tracker fixes, the user asked to remove the manual forced wrapping on bookings-tab add-on text and instead let the line wrap naturally near the right edge of the payment tracker area, without extending past where the tracker stops.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, the work already covered:
+  - admin summary metric sizing,
+  - multiple View All Meetings grid/list/toggle refinements,
+  - moving the work directly to `preview/mobile`,
+  - bookings calendar toggle behavior,
+  - tab-specific sort modes,
+  - booking tracker color/progress fixes,
+  - full-order booking balance display,
+  - client-details header restoration,
+  - create-offer/edit-booking panel control refactors.
+- In this pass, focused only on the bookings-tab add-on line inside `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Identified that the current wrapping was being forced in two places:
+  - `formatBookingAddonsLineForCardDisplay(...)` was explicitly inserting a newline after the first three add-ons,
+  - the rendered `<p>` used `whiteSpace: 'pre-line'`, which honored that manual break.
+- Removed the manual line splitting so the helper now returns one continuous `ADD-ONS: ...` string.
+- Updated the bookings-card add-on text block to allow natural wrapping inside the available content width by using:
+  - `whiteSpace: 'normal'`
+  - `overflowWrap: 'anywhere'`
+  - `wordBreak: 'break-word'`
+  - `maxWidth: '100%'`
+- Kept the text inside the same content column as the payment tracker so it wraps before overflowing beyond the tracker’s right-side boundary.
+- Rebuilt successfully on `preview/mobile` after the change.
+
+**Decisions / outcomes:**
+- Bookings add-on text is no longer manually broken after a fixed number of items.
+- Wrapping now happens naturally based on the real available width of the card content column.
+- The line remains constrained to the same width zone as the payment tracker instead of extending past it.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - simplified `formatBookingAddonsLineForCardDisplay(...)` to return a single continuous line
+  - changed the bookings add-on text block from `pre-line` to normal wrapping with width-safe word wrapping
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings bookings-tab add-on text, prefer natural width-based wrapping inside the content column over manual newline insertion so the text respects the tracker-width boundary and adapts to the actual card layout.
+
+---
+
+## 2026-04-04 — Meetings sort options now filter correctly; booking totals and tracker fallbacks corrected; add-on labels keep words together
+
+**Context:** Continuing the same Admin Meetings preview/mobile thread, the user reported four remaining problems in one pass: the new Bookings/Consults dropdown options were behaving like sorts instead of true filters, the bookings-tab **CURRENT BALANCE** still sometimes showed only the unit price instead of the full order total, all payment trackers were unfilled for testing, and naturally wrapped add-on text could split a multi-word add-on like `BROW TINT` across lines.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed a long chain of Admin Meetings / Admin Clients / booking-calendar / tracker / dropdown / panel / list-view / preview-branch fixes directly onto `preview/mobile`.
+- In this pass, focused again on `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the current behavior problem in `sortMeetingsByOption(...)`: the new category options (`Premium`, `Standard`, `Re-install`, `New install`, `Wig only`, `Wig + install`) were only **reordering** rows by priority, not filtering the list down to matching rows.
+- Changed those category options to act as true filters:
+  - `Premium` / `Standard` now return only rows for that membership tier.
+  - `Re-install` / `New install` now return only matching booking rows.
+  - consult-only options now return only matching consult rows.
+- Standardized consult-only sort labels to the exact wording already shown in the dropdown:
+  - `Wig only`
+  - `Wig + install`
+- Confirmed the bookings-tab balance display still needed stronger fallbacks for legacy/mock rows where full booking metadata might be sparse.
+- Strengthened total fallback order so the `OF $Y USD` side prefers full booking totals from metadata and, if absent, derives a synthetic full-order total from the unit price + install fee + add-on prices.
+- Added explicit add-on price mapping for bookings-tab payment fallback math:
+  - braids `60`
+  - brow sculpting `40`
+  - brow tint `60`
+  - makeup `250`
+  - mink lashes `20`
+  - clean lace `40`
+  - travel fee `1200`
+- Fixed tracker fill for mock/legacy rows with missing `bookingBookedAtIso` by falling back to a synthetic booked-at timestamp based on a two-week window before due date, so the gray fill can show meaningful progress instead of staying empty everywhere.
+- Tightened add-on wrapping so multi-word labels stay intact while still wrapping naturally:
+  - replaced spaces inside each add-on label with non-breaking spaces before joining,
+  - preserved natural line wrapping at separator boundaries so `BROW TINT` no longer splits into `BROW` / `TINT`.
+- Rebuilt successfully on `preview/mobile` after the combined filtering / total / tracker / wrap adjustments.
+
+**Decisions / outcomes:**
+- The new category entries in the meetings sort dropdowns now behave as filters rather than merely sorting matches to the top.
+- Bookings current-balance totals now have a better path to full-order values even when richer checkout metadata is absent.
+- Mock/legacy payment trackers can now show gray fill progression for UI testing instead of staying empty due to missing booked-at timestamps.
+- Add-on text continues to wrap naturally, but multi-word add-on names stay on the same line segment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed category “sort” options to true filtering in `sortMeetingsByOption(...)`
+  - renamed consult-only filter options to `Wig only` / `Wig + install`
+  - added booking add-on USD mapping for fallback full-order total calculation
+  - added synthetic full-order total fallback when metadata lacks explicit order totals
+  - added synthetic booked-at fallback window for tracker fill progress
+  - changed add-on display to use non-breaking spaces inside each add-on label while preserving normal wrapping
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings dropdown options that name a subset/category (`Premium`, `Standard`, install kind, consult type), treat them as **filters** unless the user explicitly asks for prioritization-only sorting.
+- For fallback booking balance displays on Admin Meetings, derive a synthetic full-order total from the unit + install fee + add-on prices when explicit order totals are missing so the UI still reflects likely full booking cost.
+
+---
+
+## 2026-04-04 — Meetings create-offer/edit-booking custom dropdowns now close immediately on selection
+
+**Context:** Continuing the same preview/mobile Admin Meetings refinement thread, the user reported that the custom selection dropdowns inside the **Create Offer** and **Edit Booking** panels were not functioning like the Special Offers dropdowns: after choosing an option, the selection should apply and the dropdown should collapse immediately, but it visually remained open.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, on `preview/mobile`, completed and pushed multiple Admin Meetings changes including:
+  - full-order booking totals in `CURRENT BALANCE`,
+  - tracker fill/color fixes,
+  - grouped View All list behavior,
+  - tab-specific sort/filter options,
+  - create-offer/edit-booking panel refactors and custom dropdown styling.
+- In this pass, focused on the custom panel dropdown helper in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Inspected the current handler and confirmed it already called `setActivePanelDropdown(null)` on option click, which implied the issue was more structural than a missing close call.
+- Compared the helper structure to the working Special Offers dropdown pattern and found the Meetings version still wrapped the whole control in a `<label>` and rendered the selected option inside the menu list.
+- Refactored the helper to match the working pattern more closely:
+  - changed the outer wrapper from a `<label>` container to a normal `<div>` with a separate label line,
+  - kept the trigger button and dropdown menu in a sibling `relative` wrapper,
+  - filtered the menu options to exclude the currently selected option,
+  - preserved the existing immediate `onChange(opt); setActivePanelDropdown(null);` close behavior.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The create-offer/edit-booking selection dropdowns now follow the same structural interaction pattern as the working Special Offers dropdowns.
+- Selecting an option should now both apply the value and collapse the dropdown immediately.
+- Scope stayed limited to the shared panel dropdown helper used by those Meetings panels.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - refactored `renderPanelSelectDropdown(...)` to use a Special Offers–style wrapper structure
+  - removed the current selected option from the rendered option list
+  - retained immediate close on selection via `setActivePanelDropdown(null)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings custom select controls intended to behave like the Admin Special Offers dropdowns, mirror the same structural pattern (separate label + relative wrapper + option list excluding current selection) rather than only copying the visual styles, because wrapper semantics can affect whether the menu actually collapses after selection.

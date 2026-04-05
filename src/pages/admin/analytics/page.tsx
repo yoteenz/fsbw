@@ -7,6 +7,7 @@ import { getAdminAnalytics } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const ANALYTICS_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
@@ -40,7 +41,12 @@ export default function AdminAnalytics() {
   useRequireAdminPageAccess();
   const localSummary = getSocialAnalyticsSummary();
   const [summary, setSummary] = useState(localSummary);
-  const [activeTab, setActiveTab] = useState<typeof ANALYTICS_TABS[number]>('SUMMARY');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof ANALYTICS_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminAnalyticsActiveTab',
+    defaultValue: 'SUMMARY',
+    allowedValues: ANALYTICS_TABS,
+  });
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -148,31 +154,11 @@ export default function AdminAnalytics() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  ANALYTICS
-                </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="#EB1C24" />
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+              <div style={{ height: '10px' }} />
 
               {/* Total clicks above tabs */}
               <div className="text-center py-4 px-5">
-                <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24' }}>{summary.total}</p>
+                <p className="font-covered-by-your-grace text-3xl" style={{ color: '#EB1C24', fontSize: '34px' }}>{summary.total}</p>
                 <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
               </div>
 

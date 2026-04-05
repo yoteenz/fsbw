@@ -6,6 +6,7 @@ import { getAdminReviews } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
@@ -165,7 +166,12 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
 export default function AdminReviews() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<(typeof REVIEW_TABS)[number]>('ALL');
+  const [activeTab, setActiveTab] = usePersistentQueryState<(typeof REVIEW_TABS)[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminReviewsActiveTab',
+    defaultValue: 'ALL',
+    allowedValues: REVIEW_TABS,
+  });
   const [reviews, setReviews] = useState<AdminReviewRow[]>(DEFAULT_REVIEWS);
   const [averageRating, setAverageRating] = useState(4.8);
   const [totalReviews, setTotalReviews] = useState(247);
@@ -259,37 +265,7 @@ export default function AdminReviews() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  REVIEWS
-                </h2>
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}
-                >
-                  <path
-                    d="M9.517 13.673L12 12.167L14.483 13.673L13.823 10.848L16.019 8.964L13.133 8.708L12 6.058L10.867 8.708L7.981 8.964L10.177 10.848L9.517 13.673ZM3 20.077V3H21V17H6.077L3 20.077ZM5.65 16H20V4H4V17.644L5.65 16Z"
-                    fill="#EB1C24"
-                  />
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
 
               {/* Cards above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
@@ -305,7 +281,7 @@ export default function AdminReviews() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                     {averageRating}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -324,7 +300,7 @@ export default function AdminReviews() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                     {totalReviews}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
@@ -480,7 +456,7 @@ export default function AdminReviews() {
                           paddingBottom: '10px',
                         }}
                       >
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>
+                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
                           {toolsPublishedCount}
                         </p>
                         <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>

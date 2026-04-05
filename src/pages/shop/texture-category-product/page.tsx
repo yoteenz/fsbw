@@ -36,6 +36,7 @@ import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } f
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   marbleStripCellBand,
   marbleStripCellOuter,
@@ -248,7 +249,12 @@ export default function ShopTextureCategoryProductPage() {
   }
   const texture: Texture = parseTextureSearch(location.search) ?? 'straight';
 
-  const [activeTab, setActiveTab] = useState<BcfProductTab>('DETAILS');
+  const [activeTab, setActiveTab] = usePersistentQueryState<BcfProductTab>({
+    queryKey: 'tab',
+    storageKey: 'shopTextureCategoryProductActiveTab',
+    defaultValue: 'DETAILS',
+    allowedValues: ['DETAILS', 'SHIPPING', 'POLICY', 'CARE/STORAGE', 'REVIEWS'] as const,
+  });
   const [similarProductsScroll, setSimilarProductsScroll] = useState(0);
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();

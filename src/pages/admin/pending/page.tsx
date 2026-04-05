@@ -6,6 +6,7 @@ import { getAdminPending } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -13,7 +14,12 @@ export default function AdminPending() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<typeof PENDING_TABS[number]>('OVERVIEW');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof PENDING_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminPendingActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: PENDING_TABS,
+  });
   const [pendingReviews, setPendingReviews] = useState(12);
   const [orderForms, setOrderForms] = useState(8);
   const [pendingItems, setPendingItems] = useState<{ label: string; value: string }[]>([]);
@@ -88,28 +94,7 @@ export default function AdminPending() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  PENDING
-                </h2>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                  <path d="M2.25 5.75C2.25 5.35218 2.40804 4.97064 2.68934 4.68934C2.97064 4.40804 3.35218 4.25 3.75 4.25H8.109C8.52585 4.24999 8.93229 4.38022 9.2715 4.6225L11.7285 6.3775C12.0677 6.61978 12.4741 6.75001 12.891 6.75H20.25C20.6478 6.75 21.0294 6.90804 21.3107 7.18934C21.592 7.47064 21.75 7.85218 21.75 8.25V18.25C21.75 18.6478 21.592 19.0294 21.3107 19.3107C21.0294 19.592 20.6478 19.75 20.25 19.75H3.75C3.35218 19.75 2.97064 19.592 2.68934 19.3107C2.40804 19.0294 2.25 18.6478 2.25 18.25V5.75Z" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M8 12.9936L10.835 15.8291L16 10.6641" stroke="#EB1C24" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
 
               {/* Cards above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
@@ -125,7 +110,7 @@ export default function AdminPending() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{pendingReviews}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{pendingReviews}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>PENDING REVIEWS</p>
                 </div>
                 <div
@@ -140,7 +125,7 @@ export default function AdminPending() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{orderForms}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{orderForms}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ORDER FORMS</p>
                 </div>
               </div>

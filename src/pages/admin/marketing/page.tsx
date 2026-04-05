@@ -5,6 +5,7 @@ import AdminSpecialOffer, { type SpecialOfferActionsRef } from '../special-offer
 import NewsletterPanel, { type NewsletterPanelHandle } from './NewsletterPanel';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 const MARKETING_TABS = ['AFFILIATE', 'CHALLENGES', 'SPECIAL OFFERS', 'NEWSLETTER'] as const;
 
@@ -20,7 +21,12 @@ export default function AdminMarketing() {
   const navigate = useNavigate();
   const specialOfferRef = useRef<SpecialOfferActionsRef>(null);
   const newsletterRef = useRef<NewsletterPanelHandle>(null);
-  const [activeTab, setActiveTab] = useState<(typeof MARKETING_TABS)[number]>('AFFILIATE');
+  const [activeTab, setActiveTab] = usePersistentQueryState<(typeof MARKETING_TABS)[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminMarketingTab',
+    defaultValue: 'AFFILIATE',
+    allowedValues: MARKETING_TABS,
+  });
   const [newsletterSubscribers, setNewsletterSubscribers] = useState(0);
   const [newsletterSelected, setNewsletterSelected] = useState(0);
   const [newsletterCanSend, setNewsletterCanSend] = useState(false);
@@ -63,30 +69,6 @@ export default function AdminMarketing() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  MARKETING
-                </h2>
-                <svg width="14.5" height="14.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                  <path d="M3.6845 14.4179L19.062 11.6599L21.75 7.08838L17.6275 4.10938L2.25 6.86687L3.6845 14.4179Z" stroke="#EB1C24" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M5.24707 14.1354L9.24557 19.8919L21.0066 12.0269L21.7501 7.08594" stroke="#EB1C24" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M19.6699 7.82812C19.877 7.82812 20.0449 7.66023 20.0449 7.45312C20.0449 7.24602 19.877 7.07812 19.6699 7.07812C19.4628 7.07812 19.2949 7.24602 19.2949 7.45312C19.2949 7.66023 19.4628 7.82812 19.6699 7.82812Z" fill="#EB1C24" />
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
-
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div
                   className="text-center py-3"
@@ -100,7 +82,7 @@ export default function AdminMarketing() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panelValues.left.toLocaleString()}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{panelValues.left.toLocaleString()}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panelLabels.left}</p>
                 </div>
                 <div
@@ -115,7 +97,7 @@ export default function AdminMarketing() {
                     paddingBottom: '10px',
                   }}
                 >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24' }}>{panelValues.right.toLocaleString()}</p>
+                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>{panelValues.right.toLocaleString()}</p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>{panelLabels.right}</p>
                 </div>
               </div>

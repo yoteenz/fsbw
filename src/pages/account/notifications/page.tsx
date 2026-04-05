@@ -9,6 +9,7 @@ import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 interface Notification {
   id: string;
@@ -398,7 +399,12 @@ function NotificationsPage() {
   const [notificationToArchive, setNotificationToArchive] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'NEW' | 'SEEN'>('NEW');
+  const [activeTab, setActiveTab] = usePersistentQueryState<'NEW' | 'SEEN'>({
+    queryKey: 'tab',
+    storageKey: 'accountNotificationsTab',
+    defaultValue: 'NEW',
+    allowedValues: ['NEW', 'SEEN'] as const,
+  });
   const [profileImage, setProfileImage] = useState(() => {
     // Load from localStorage on mount
     if (typeof window !== 'undefined') {

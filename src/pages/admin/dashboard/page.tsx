@@ -21,6 +21,7 @@ import {
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -226,7 +227,12 @@ const mockAPI = {
 export default function AdminDashboard() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [notificationViewMode, setNotificationViewMode] = useState('list');
+  const [notificationViewMode, setNotificationViewMode] = usePersistentQueryState({
+    queryKey: 'notificationsView',
+    storageKey: 'adminDashboardNotificationsView',
+    defaultValue: 'list' as const,
+    allowedValues: ['list', 'grouped'] as const,
+  });
   const [dashboardData, setDashboardData] = useState<{
     stats: DashboardStats;
     clients: Client[];
@@ -552,6 +558,63 @@ export default function AdminDashboard() {
     return `INSTALL: ${dedupedAddons[0]} (${dedupedAddons.length - 1})`;
   };
 
+  const formatDashboardConsultServiceLabel = (meeting: AdminMeeting): string => {
+    const meta = (meeting.metadata && typeof meeting.metadata === 'object'
+      ? meeting.metadata
+      : {}) as Record<string, unknown>;
+    const candidates = [
+      meta.hairOption,
+      meta.bookingHairOption,
+      meta.consultHairOption,
+      meeting.type,
+      meeting.notes,
+    ];
+    for (const candidate of candidates) {
+      const upper = String(candidate || '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, ' ');
+      if (!upper) continue;
+      if (upper.includes('WIG + INSTALL') || upper.includes('WIG+INSTALL') || upper.includes('INSTALL')) {
+        return 'CONSULT: WIG + INSTALL';
+      }
+      if (upper.includes('WIG ONLY')) return 'CONSULT: WIG ONLY';
+    }
+    return 'CONSULT: WIG ONLY';
+  };
+
+  const meetingClientDisplayName = (meeting: AdminMeeting): string => {
+    const cleaned = String(meeting.client || '')
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, ' ');
+    return cleaned || 'CLIENT';
+  };
+
+  const travelCityFromMeeting = (meeting: AdminMeeting): string | null => {
+    const meta = (meeting.metadata && typeof meeting.metadata === 'object'
+      ? meeting.metadata
+      : {}) as Record<string, unknown>;
+    const rawAddress = String(
+      meta.clientAddress ||
+      meta.address ||
+      meta.defaultAddress ||
+      ''
+    ).trim();
+    if (!rawAddress) return null;
+    const parts = rawAddress
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (parts.length < 2) return null;
+    const city = parts[1]
+      .toUpperCase()
+      .replace(/[^A-Z\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return city || null;
+  };
+
   const toIsoMeetingDateTime = (date: string, time: string): string => {
     const raw = String(time || '').trim();
     const ampm = raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -663,6 +726,23 @@ export default function AdminDashboard() {
       client_name: m.client || '',
     }));
 
+  const recentMeetingsForCard = mergedMeetingsForDashboard
+    .filter((m) => {
+      const status = String(m.status || '').toLowerCase();
+      return status !== 'canceled' && status !== 'cancelled';
+    })
+    .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time))
+    .slice(0, 5)
+    .map((m) => ({
+      date: m.date,
+      appointment_date: toIsoMeetingDateTime(m.date, m.time),
+      service_name:
+        m.category === 'consultation'
+          ? formatDashboardConsultServiceLabel(m)
+          : formatDashboardMeetingServiceLabel(m),
+      client_name: m.client || '',
+    }));
+
   const endOfThisWeekIso = (() => {
     const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const dayOfWeek = end.getDay(); // 0 = Sunday, 6 = Saturday
@@ -677,16 +757,106 @@ export default function AdminDashboard() {
   const todayUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date === todayIso).length;
   const weekUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= endOfThisWeekIso).length;
   const monthUpcomingBookingsCount = upcomingBookingsForCard.filter((m) => m.date >= todayIso && m.date <= meetingsRangeEnd).length;
+  const upcomingLine = (count: number, window: 'TODAY' | 'THIS WEEK' | 'THIS MONTH') =>
+    `${count} UPCOMING ${count === 1 ? 'BOOKING' : 'BOOKINGS'} SCHEDULED ${window}.`;
 
-  const meetingsCardTicker = [
-    `${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY.`,
-    `${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK.`,
-    `${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`,
+  const mostBookedClientLine = (() => {
+    const counts = new Map<string, number>();
+    for (const meeting of mergedMeetingsForDashboard) {
+      if (meeting.category === 'consultation') continue;
+      const status = String(meeting.status || '').toLowerCase();
+      if (status === 'canceled' || status === 'cancelled') continue;
+      const name = meetingClientDisplayName(meeting);
+      counts.set(name, (counts.get(name) || 0) + 1);
+    }
+    let topName = '';
+    let topCount = 0;
+    for (const [name, count] of counts) {
+      if (count > topCount) {
+        topName = name;
+        topCount = count;
+      }
+    }
+    if (!topName || topCount <= 0) return 'NO APPOINTMENT LEADER YET.';
+    return `${topName} HAS BOOKED ${topCount} ${topCount === 1 ? 'APPOINTMENT' : 'APPOINTMENTS'}.`;
+  })();
+
+  const mostRedeemedOffersLine = (() => {
+    const orders = buildRevenueOrdersList() as Array<Record<string, unknown>>;
+    const counts = new Map<string, number>();
+    for (const order of orders) {
+      const code = String(order.discountCode || order.discount_code || order.discount || '')
+        .trim()
+        .toUpperCase();
+      if (!code.startsWith('CONSULT-')) continue;
+      const nameRaw = String(order.clientName || order.client_name || '')
+        .trim()
+        .toUpperCase();
+      const emailRaw = String(order.userEmail || order.clientEmail || order.client_email || '')
+        .trim()
+        .toUpperCase();
+      const key = nameRaw || emailRaw;
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    let topName = '';
+    let topCount = 0;
+    for (const [name, count] of counts) {
+      if (count > topCount) {
+        topName = name;
+        topCount = count;
+      }
+    }
+    if (!topName || topCount <= 0) return 'NO CONSULT OFFERS REDEEMED YET.';
+    return `${topName} HAS REDEEMED ${topCount} ${topCount === 1 ? 'OFFER' : 'OFFERS'}.`;
+  })();
+
+  const mostTraveledCityLine = (() => {
+    const currentYear = new Date().getFullYear();
+    const cityCounts = new Map<string, number>();
+    for (const meeting of mergedMeetingsForDashboard) {
+      if (meeting.category === 'consultation') continue;
+      const status = String(meeting.status || '').toLowerCase();
+      if (status === 'canceled' || status === 'cancelled') continue;
+      const year = Number(String(meeting.date || '').slice(0, 4));
+      if (year !== currentYear) continue;
+      const city = travelCityFromMeeting(meeting);
+      if (!city) continue;
+      cityCounts.set(city, (cityCounts.get(city) || 0) + 1);
+    }
+    let topCity = '';
+    let topCount = 0;
+    for (const [city, count] of cityCounts) {
+      if (count > topCount) {
+        topCity = city;
+        topCount = count;
+      }
+    }
+    if (!topCity || topCount <= 0) return `NO TRAVEL CITIES TRACKED FOR ${currentYear}.`;
+    return `YOU'VE TRAVELED TO ${topCity} ${topCount} ${topCount === 1 ? 'TIME' : 'TIMES'} THIS YEAR.`;
+  })();
+
+  const meetingsCardTickerWithInsights = [
+    upcomingLine(todayUpcomingBookingsCount, 'TODAY'),
+    mostBookedClientLine,
+    upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK'),
+    mostRedeemedOffersLine,
+    upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH'),
+    mostTraveledCityLine,
   ]
     .join(' ')
     .concat(
-      ` ${todayUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED TODAY. ${weekUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS WEEK. ${monthUpcomingBookingsCount} UPCOMING BOOKINGS SCHEDULED THIS MONTH.`
+      ` ${upcomingLine(todayUpcomingBookingsCount, 'TODAY')} ${mostBookedClientLine} ${upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK')} ${mostRedeemedOffersLine} ${upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH')} ${mostTraveledCityLine}`
     );
+
+  const meetingsCardTickerHighlightParts = [
+    { text: `${upcomingLine(todayUpcomingBookingsCount, 'TODAY')} `, color: 'text-red-500' as const },
+    { text: `${mostBookedClientLine} `, color: 'text-gray-500' as const },
+    { text: `${upcomingLine(weekUpcomingBookingsCount, 'THIS WEEK')} `, color: 'text-red-500' as const },
+    { text: `${mostRedeemedOffersLine} `, color: 'text-gray-500' as const },
+    { text: `${upcomingLine(monthUpcomingBookingsCount, 'THIS MONTH')} `, color: 'text-red-500' as const },
+    { text: mostTraveledCityLine, color: 'text-gray-500' as const },
+  ];
 
   const statsData = [
     {
@@ -739,10 +909,10 @@ export default function AdminDashboard() {
     {
       title: 'MEETINGS',
       count: completedMeetingsTotal,
-      items: upcomingBookingsForCard.map((booking) => {
+      items: recentMeetingsForCard.map((booking) => {
         const rawService = String(booking.service_name || '').toUpperCase().trim();
         const colonIdx = rawService.indexOf(':');
-        const installLabel = colonIdx >= 0 ? rawService.slice(0, colonIdx).trim() : 'INSTALL';
+        const installLabel = colonIdx >= 0 ? rawService.slice(0, colonIdx).trim() : (rawService || 'INSTALL');
         const addonsText = colonIdx >= 0 ? rawService.slice(colonIdx + 1).trim() : '';
         const dateAndClient = `${formatDateWithoutYear(booking.appointment_date || '')} ${booking.client_name || ''}`.trim();
         return {
@@ -753,13 +923,14 @@ export default function AdminDashboard() {
           valueColor: 'text-gray-500' as const,
           valueParts: addonsText
             ? [
-                { text: addonsText, color: 'text-red-500' as const },
-                { text: dateAndClient ? ` ${dateAndClient}` : '', color: 'text-gray-500' as const }
+                { text: addonsText, color: 'text-gray-500' as const },
+                { text: dateAndClient ? ` ${dateAndClient}` : '', color: 'text-red-500' as const }
               ]
-            : [{ text: dateAndClient, color: 'text-gray-500' as const }],
+            : [{ text: dateAndClient, color: 'text-red-500' as const }],
         };
       }),
-      highlight: meetingsCardTicker
+      highlight: meetingsCardTickerWithInsights,
+      highlightParts: meetingsCardTickerHighlightParts,
     },
 
     {
@@ -951,13 +1122,17 @@ export default function AdminDashboard() {
                   key={index}
                   data={stat}
                   onCardClick={handleCardClick}
-                  itemsMaxHeightPx={DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}
+                  itemsMaxHeightPx={stat.title === 'MEETINGS' ? undefined : DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX}
                 />
               ))}
             </div>
             
             <div className="mt-6">
-              <RecentActivity onViewModeChange={setNotificationViewMode} />
+              <RecentActivity
+                onViewModeChange={(mode) => {
+                  setNotificationViewMode(mode === 'grouped' ? 'grouped' : 'list');
+                }}
+              />
             </div>
             
             {notificationViewMode === 'list' && (

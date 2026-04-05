@@ -10,6 +10,7 @@ import type { SocialPlatform, SocialSource } from '../../../utils/socialAnalytic
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   appendBrandPromoCode,
   computeExpiresSpanCalendarDays,
@@ -51,8 +52,18 @@ export default function AdminBrand() {
   useRequireAdminPageAccess();
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<typeof BRAND_TABS[number]>('OVERVIEW');
-  const [analyticsSubTab, setAnalyticsSubTab] = useState<typeof ANALYTICS_SUB_TABS[number]>('SUMMARY');
+  const [activeTab, setActiveTab] = usePersistentQueryState<typeof BRAND_TABS[number]>({
+    queryKey: 'tab',
+    storageKey: 'adminBrandActiveTab',
+    defaultValue: 'OVERVIEW',
+    allowedValues: BRAND_TABS,
+  });
+  const [analyticsSubTab, setAnalyticsSubTab] = usePersistentQueryState<typeof ANALYTICS_SUB_TABS[number]>({
+    queryKey: 'subTab',
+    storageKey: 'adminBrandAnalyticsSubTab',
+    defaultValue: 'SUMMARY',
+    allowedValues: ANALYTICS_SUB_TABS,
+  });
   const [brandMetrics, setBrandMetrics] = useState(defaultBrandMetrics);
   const localSummary = getSocialAnalyticsSummary();
   const [analyticsSummary, setAnalyticsSummary] = useState(localSummary);
@@ -426,27 +437,7 @@ export default function AdminBrand() {
                   className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden flex flex-col"
                   style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4 shrink-0" style={{ marginBottom: 0 }}>
-                    <h2
-                      className="flex-1"
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        margin: 0,
-                        marginLeft: '6px',
-                        textTransform: 'uppercase',
-                        textAlign: 'left',
-                      }}
-                    >
-                      BRAND
-                    </h2>
-                    <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                      <path d="M3 4H4V18L9.58 8.33L15.59 11.8L19.21 5.54L20.07 6.04L15.96 13.17L9.95 9.7L4 20H20V21H3V4Z" fill="#EB1C24"/>
-                    </svg>
-                  </div>
-                  <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
+                  <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
 
                   <div className="grid grid-cols-2 gap-4 px-5 py-4 shrink-0">
                     <div
@@ -461,7 +452,7 @@ export default function AdminBrand() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{codesSummary.active}</p>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{codesSummary.active}</p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>ACTIVE CODES</p>
                     </div>
                     <div
@@ -476,7 +467,7 @@ export default function AdminBrand() {
                         paddingBottom: '10px',
                       }}
                     >
-                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>
+                      <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>
                         $
                         {codesSummary.discountsUsd.toLocaleString('en-US', {
                           minimumFractionDigits: 0,
@@ -691,32 +682,10 @@ export default function AdminBrand() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
-              <div className="flex items-center justify-between -mt-1 pb-1 px-5 pt-4" style={{ marginBottom: 0 }}>
-                <h2
-                  className="flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    margin: 0,
-                    marginLeft: '6px',
-                    textTransform: 'uppercase',
-                    textAlign: 'left',
-                  }}
-                >
-                  BRAND
-                </h2>
-                <svg width="15.5" height="15.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginLeft: '-5px', transform: 'translateX(-6px)' }}>
-                  <path d="M3 4H4V18L9.58 8.33L15.59 11.8L19.21 5.54L20.07 6.04L15.96 13.17L9.95 9.7L4 20H20V21H3V4Z" fill="#EB1C24"/>
-                </svg>
-              </div>
-              <div style={{ borderBottom: '1px solid #e5e7eb', marginLeft: '20px', marginRight: '20px', marginBottom: '10px' }} />
-
               {/* Summary above tabs: analytics clicks, alerts usage, or brand score */}
               {activeTab === 'ANALYTICS' ? (
                 <div className="text-center py-4 px-5">
-                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24' }}>{analyticsSummary.total}</p>
+                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{analyticsSummary.total}</p>
                   <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
                 </div>
               ) : activeTab === 'ALERTS' ? (
@@ -733,7 +702,7 @@ export default function AdminBrand() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.clientsWithNotifs}</p>
+                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{alertsStats.clientsWithNotifs}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>CLIENTS (NOTIFS)</p>
                   </div>
                   <div
@@ -748,13 +717,13 @@ export default function AdminBrand() {
                       paddingBottom: '10px',
                     }}
                   >
-                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24' }}>{alertsStats.totalSent}</p>
+                    <p className="font-covered-by-your-grace text-2xl" style={{ color: '#EB1C24', fontSize: '28px' }}>{alertsStats.totalSent}</p>
                     <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>NOTIFICATIONS SENT</p>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-4 px-5">
-                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24' }}>{brandMetrics.brandScore}%</p>
+                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{brandMetrics.brandScore}%</p>
                   <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>OVERALL BRAND SCORE</p>
                 </div>
               )}
