@@ -728,17 +728,22 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
   const installFeeUsd = details.installKind === 'RE-INSTALL' ? 225 : 275;
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
 
-  const paidCandidates = [
+  const orderTotalCandidates = [
+    meta.bookingOrderTotalPaidUsd,
+    meta.bookingOrderTotalPaidUSD,
+    meta.bookingLineTotalPaidUsd,
+    meta.bookingLineTotalPaidUSD,
     meta.bookingPaidTotalUsd,
     meta.bookingPaidTotalUSD,
     meta.orderTotalUsd,
     meta.orderTotalUSD,
     meta.orderTotal,
   ];
-  const paidDetected = paidCandidates
+  const orderTotalDetected = orderTotalCandidates
     .map((candidate) => normalizeUsdPrice(candidate))
     .find((candidate): candidate is number => candidate != null);
-  const paidTotalUsd = paidDetected ?? details.unitPriceUsd;
+
+  const paidTotalUsd = orderTotalDetected ?? details.unitPriceUsd;
   const remainingDueDetected = normalizeUsdPrice(meta.bookingFinalDueUsd);
   const remainingDueUsd = remainingDueDetected ?? installFeeUsd;
 

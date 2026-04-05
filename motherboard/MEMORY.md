@@ -11115,3 +11115,45 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings sort dropdowns, keep service-type filters scoped to the relevant tab context rather than presenting one shared mixed list: booking install-kind sorts belong only on Bookings, and consult wig/install sorts belong only on Consults.
+
+---
+
+## 2026-04-05 — Bookings-tab current balance now uses full booking order total instead of unit-only fallback
+
+**Context:** Continuing this same long Admin Meetings preview/mobile refinement thread immediately after fixing the Bookings/Consults tab-specific sort menus, the user reported that the **CURRENT BALANCE** line on the Admin Meetings bookings tab was wrong because it only reflected the unit price and ignored add-ons, including travel fee. They wanted the balance display to account for the full booking order total instead of only the unit.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work on `preview/mobile` had already covered:
+  - repeated Admin Meetings consult/view-all label hardening,
+  - grouped View All list mode,
+  - bookings calendar deselection,
+  - create-offer / edit-booking panel control refactors,
+  - tab-specific sort menus for Bookings and Consults.
+- In this latest pass, traced the Admin Meetings payment display back to `getBookingPaymentStatusForCard(...)` in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the backend booking meeting payload from checkout already stores richer totals in metadata:
+  - `bookingOrderTotalPaidUsd`
+  - `bookingLineTotalPaidUsd`
+  - `bookingPaidTotalUsd`
+  - `bookingFinalDueUsd`
+  - `bookingInstallFeeUsd`
+- Identified the display bug: the bookings-tab **CURRENT BALANCE: $X OF $Y USD** line was using `paidTotalUsd` that could fall back to `details.unitPriceUsd`, which ignores add-ons/travel when richer totals are unavailable or not prioritized.
+- Updated the payment-status helper so the “OF $Y” amount now prefers the full booking order/line totals from meeting metadata before any unit-only fallback:
+  - `bookingOrderTotalPaidUsd`
+  - `bookingLineTotalPaidUsd`
+  - then the older broader total fields
+  - and only lastly the unit-price fallback.
+- Removed the now-unused intermediate `paidDetected` variable that the first refactor left behind, then reran a successful `npm run build`.
+
+**Decisions / outcomes:**
+- The bookings-tab **CURRENT BALANCE** display now uses the full booking order amount when available, so add-ons and travel fee are included in the `OF $Y USD` total instead of showing a unit-only value.
+- Scope stayed limited to the Admin Meetings bookings payment-display math; no unrelated booking UI or checkout logic was changed.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed `getBookingPaymentStatusForCard(...)` so `paidTotalUsd` prefers full-order/full-line booking totals from metadata instead of falling back too early to unit price
+  - removed the obsolete `paidDetected` variable left over after the refactor
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings booking payment displays, prefer full booking order/line totals from meeting metadata for the “OF $Y USD” amount before falling back to unit-only pricing, so add-ons and travel fee stay reflected in the visible total.
