@@ -11328,3 +11328,59 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings custom select controls intended to behave like the Admin Special Offers dropdowns, mirror the same structural pattern (separate label + relative wrapper + option list excluding current selection) rather than only copying the visual styles, because wrapper semantics can affect whether the menu actually collapses after selection.
+
+---
+
+## 2026-04-04 — Preview/mobile delivered to master so both branches match after the full admin meetings refinement thread
+
+**Context:** Across this chat, the user drove a long series of Admin Meetings, admin summary-panel, calendar, dropdown, balance, tracker, and client-details refinements. After many of those changes had been delivered on `preview/mobile`, the user explicitly asked for all committed changes on the preview branch to be pushed to `master` so both branches would be identical.
+
+**Topics covered (entire conversation so far):**
+- Early in this chat, loaded motherboard context and implemented multiple admin UI changes:
+  - increased red metric text on admin summary panels by 4px,
+  - adjusted Admin Meetings View All grid/list styling, icon placement, and grouped list behavior,
+  - refined Bookings/Consults tab sort dropdown behavior and placement,
+  - updated Meetings calendar styling and date selection behavior,
+  - changed create-offer / edit-booking panel headers, actions, and custom dropdowns,
+  - added tab-specific sort/filter options,
+  - corrected bookings current-balance totals and tracker-fill timing/color behavior,
+  - adjusted bookings add-on wrapping,
+  - restored meetings-opened client-details header/close affordances.
+- Also investigated the recurring `TS` / `TSTS` artifact in Admin Meetings multiple times:
+  - searched for literal placeholder tokens in source,
+  - found no literal active-code token in the meetings path,
+  - repeatedly narrowed the problem to compact label/container clipping behavior around consult/view-all areas.
+- During the same chat, there was a mistaken feature-branch delivery path which was later corrected:
+  - moved the accumulated work directly onto `preview/mobile`,
+  - deleted the incorrect feature branch locally and on origin.
+- In this final branch-delivery pass, compared `origin/master` and `origin/preview/mobile`:
+  - determined `master` could not be fast-forwarded because the branches had diverged,
+  - merged `preview/mobile` into `master` cleanly with no conflicts,
+  - verified the merged `master` branch with a successful production build,
+  - pushed `master`,
+  - fast-forwarded `preview/mobile` to the exact same merge commit,
+  - pushed `preview/mobile` again so both branch tips matched exactly.
+
+**Decisions / outcomes:**
+- The full set of committed preview/mobile refinements from this chat was delivered onto `master`.
+- `master` and `preview/mobile` were intentionally aligned to the **same commit** after the merge-and-fast-forward sequence, not just to similar file contents.
+- No merge conflicts occurred during the final `preview/mobile -> master` merge; the merge completed cleanly via the `ort` strategy.
+
+**Changes:**
+- Git / branch operations:
+  - merged `preview/mobile` into `master`
+  - pushed `master`
+  - fast-forwarded `preview/mobile` to the same merge commit
+  - pushed `preview/mobile`
+- Verification:
+  - `npm run build` on the merged `master` branch
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+
+**Conventions:**
+- When the user explicitly asks for `preview/mobile` changes to be delivered onto `master` **and** wants both branches identical, prefer:
+  1. merge `preview/mobile` into `master`,
+  2. push `master`,
+  3. fast-forward `preview/mobile` to that same merge commit,
+  4. push `preview/mobile`,
+so the branch tips end on the same commit hash rather than merely containing equivalent file contents.
