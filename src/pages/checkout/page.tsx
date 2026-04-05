@@ -23,6 +23,7 @@ import {
   redeemConsultQuote,
   validateConsultDiscountCode,
 } from '../../utils/api';
+import { appendOrderReceivedAccountAlert } from '../../utils/orderAccountAlerts';
 import {
   filterBookingCartLines,
   isBookingsCheckoutPath,
@@ -6299,6 +6300,17 @@ function CheckoutPage() {
                       };
                       activeOrders.push(newOrder);
                       localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
+                      const currentUserRaw = localStorage.getItem('currentUser');
+                      const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
+                      appendOrderReceivedAccountAlert(currentUserForAlert, {
+                        id: newOrder.id,
+                        orderNumber: newOrder.orderNumber,
+                        bookingFlowType: cartItems.some((item: any) => item?.type === 'booking-appointment')
+                          ? 'appointment'
+                          : cartItems.some((item: any) => item?.type === 'booking-consult')
+                          ? 'consult'
+                          : undefined,
+                      });
                       if (wasFirstOrder) {
                         const currentUser = localStorage.getItem('currentUser');
                         if (currentUser) {

@@ -49,6 +49,8 @@ interface Order {
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
+  bookingFlowType?: 'appointment' | 'consult';
+  bookingHairOption?: string;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
 }
 
@@ -738,6 +740,24 @@ function OrdersPage() {
       trackingNumber: undefined,
       trackingCarrier: undefined,
       placedAt: getTimestampHoursAgo(24) // Placed 1 day ago
+    },
+    {
+      id: 'kateena-consult-1',
+      orderNumber: 'ORDER #332',
+      confirmationNumber: 'K3C3Q2',
+      date: getDateDaysAgo(0),
+      status: 'PLACED',
+      productName: 'WIG CONSULT',
+      productImage: '/assets/gallery-mock.png',
+      total: 40,
+      subtotal: 40,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (2 * 60 * 60 * 1000),
+      orderFormSigned: false,
+      bookingFlowType: 'consult',
+      bookingHairOption: 'WIG + INSTALL'
     }
   ];
 

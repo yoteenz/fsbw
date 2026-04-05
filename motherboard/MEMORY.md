@@ -11602,3 +11602,58 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For Admin Meetings action-panel headers tied to a single client row, use the raw client name in the red header unless the user explicitly asks for the state/location suffix there; keep the state-suffixed helper for list/card contexts where that extra context is still useful.
+
+---
+
+## 2026-04-05 — Kateena mock consult order plus unified “we’ve received your order!” account alerts
+
+**Context:** Continuing the same long `preview/mobile` / `master` branch-sync chat after the Admin Meetings create-offer work, the user asked for a mock consult order on the admin Kateena Armstrong account so they could test the Create Offer UI and alerts end-to-end, and asked that all new standard orders plus A/C orders populate a new client account alert with exact copy and routing semantics.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, work already landed across Admin Meetings, Admin Clients, booking trackers, calendar parity, sort/filter behavior, create-offer/edit-booking panel controls, and repeated branch syncs to keep `master` and `preview/mobile` identical.
+- In this pass, traced two separate areas:
+  - mock order data for Kateena/admin seeded on the Orders page,
+  - account alerts construction/merge behavior plus where checkout persists new orders into `userOrders_*`.
+- Confirmed a mock consult order already existed in Kateena’s active mock orders:
+  - `ORDER #332`
+  - `bookingFlowType: 'consult'`
+  - `bookingHairOption: 'WIG + INSTALL'`
+  - so the seeded test data goal is satisfied by existing mock data on the order model.
+- Added a dedicated order-alert helper module:
+  - builds the exact alert copy
+  - determines the correct route based on standard vs premium vs A/C order type
+  - appends the alert into `notifications_${email}` while preserving existing stored alerts.
+- Alert copy implemented to the requested shape:
+  - black header: `WE'VE RECEIVED YOUR ORDER!`
+  - gray text: `ORDER #332 IS BEING PROCESSED.`
+  - red link: `VIEW DETAILS`
+- Routing logic implemented as requested:
+  - standard orders -> `/account/orders?orderId=...`
+  - premium orders -> `/account/concierge?orderId=...`
+  - A/C orders (`booking-appointment` / `booking-consult`) -> `/account/concierge?orderId=...`
+- Wired checkout order persistence to append the new alert whenever a new order is created locally from checkout.
+- Extended account alerts generation so active orders in `userOrders_${email}` also synthesize the same order-received alerts, allowing Kateena’s existing seeded mock consult order to surface in the account alerts UI without waiting for a fresh checkout event.
+- Rebuilt successfully after helper cleanup, import fixes, and `Order` type updates to support consult-order metadata.
+- Synced the completed feature back onto both `preview/mobile` and `master`.
+
+**Decisions / outcomes:**
+- Kateena’s mock consult order exists and is usable for testing the Create Offer flow/UI.
+- New order alerts now use one consistent generator for both seeded/local active orders and newly created checkout orders.
+- “View details” routing is now split by order context instead of always sending users to the same destination.
+
+**Changes:**
+- `src/utils/orderAccountAlerts.ts`
+  - added reusable order-received alert builder/appender + route logic
+- `src/pages/account/notifications/page.tsx`
+  - added synthesis of order-received alerts from active orders in local storage
+- `src/pages/checkout/page.tsx`
+  - appended order-received alert when persisting a new order from checkout
+- `src/pages/orders/page.tsx`
+  - ensured Kateena’s mock consult order includes consult booking metadata fields required for routing/tests
+- `motherboard/MEMORY.md`
+  - appended this full-conversation summary entry
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For account alert copy tied to newly created orders, keep the order-received message generated from a single helper and route by order context: standard orders go to Orders details, while premium/A-C orders go to Concierge tracking.

@@ -5,6 +5,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
+import { getOrderReceivedAccountAlerts } from '../../../utils/orderAccountAlerts';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -296,6 +297,11 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
       isRead: false,
       icon: 'f'
     });
+  }
+
+  const orderReceivedAlerts = getOrderReceivedAccountAlerts(user);
+  if (orderReceivedAlerts.length > 0) {
+    notifs.push(...orderReceivedAlerts);
   }
 
   notifs.push({

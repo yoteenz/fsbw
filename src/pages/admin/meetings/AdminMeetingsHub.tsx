@@ -18,7 +18,7 @@ import {
   getOptionsForUnit,
   type UnitId,
 } from '../../../utils/productOptions';
-import { calculateSpecialOfferPriceBreakdown } from '../../../utils/specialOfferPrice';
+import { calculateSpecialOfferPriceBreakdown, type SpecialOfferBreakdownLine } from '../../../utils/specialOfferPrice';
 import {
   endOfMonth,
   generateMockMeetingsForRange,
@@ -204,22 +204,9 @@ function updateCreateOfferSelectionsForSubPage(
 }
 
 function formatCreateOfferBreakdownAmount(amountUsd: number, includeSign: boolean): string {
-  if (amountUsd === 0) return 'INCLUDED';
   const usd = `$${Math.abs(Math.round(amountUsd)).toLocaleString('en-US')} USD`;
   if (!includeSign) return usd;
   return amountUsd > 0 ? `+${usd}` : `-${usd}`;
-}
-
-function createOfferBreakdownText(unitId: UnitId, selections: CreateOfferSelections, subPage: QuoteSubPage): string {
-  const breakdown = calculateSpecialOfferPriceBreakdown(unitId, selections);
-  const lines = breakdown.lines.map((line, index) => {
-    const selection = line.label === 'HAIRLINE' ? hairlineDisplayValue(line.selection) : line.selection;
-    const amount = formatCreateOfferBreakdownAmount(line.amountUsd, index !== 0);
-    return `${line.label}: ${selection} … ${amount}`;
-  });
-  lines.push(`SUB-PAGE FOCUS: ${subPage} … ${createOfferSelectionDisplayValue(subPage, selections)}`);
-  lines.push(`ESTIMATED TOTAL … $${Math.round(breakdown.totalUsd).toLocaleString('en-US')} USD`);
-  return lines.join('\n');
 }
 
 const EDIT_MESSAGE_BY_REASON: Record<(typeof EDIT_REASONS)[number], { action: 'reschedule' | 'cancel'; message: string }> = {
@@ -1066,7 +1053,6 @@ export default function AdminMeetingsHub() {
   const [quoteMessage, setQuoteMessage] = useState(
     'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.'
   );
-  const [quoteBreakdown, setQuoteBreakdown] = useState('');
   const [quoteSending, setQuoteSending] = useState(false);
   const [showSendQuoteConfirm, setShowSendQuoteConfirm] = useState(false);
   const [editReason, setEditReason] = useState<string>(EDIT_REASONS[0]);
@@ -1095,8 +1081,8 @@ export default function AdminMeetingsHub() {
     [quoteSelections, quoteSub]
   );
   const generatedQuoteBreakdown = useMemo(
-    () => createOfferBreakdownText(quoteUnitId, quoteSelections, quoteSub),
-    [quoteUnitId, quoteSelections, quoteSub]
+    () => calculateSpecialOfferPriceBreakdown(quoteUnitId, quoteSelections),
+    [quoteUnitId, quoteSelections]
   );
 
   useEffect(() => {
@@ -1208,10 +1194,6 @@ export default function AdminMeetingsHub() {
       return JSON.stringify(next) === JSON.stringify(previous) ? previous : next;
     });
   }, [quoteUnitId]);
-
-  useEffect(() => {
-    setQuoteBreakdown(generatedQuoteBreakdown);
-  }, [generatedQuoteBreakdown]);
 
   const range = useMemo(() => {
     const start = startOfMonth(calendarAnchor);
@@ -1329,10 +1311,16 @@ export default function AdminMeetingsHub() {
     }
     setQuoteSending(true);
     try {
-      const parts = quoteBreakdown.split('\n').filter(Boolean);
-      const breakdown = parts.map((line) => {
-        const [label, rest] = line.includes('…') ? line.split('…').map((s) => s.trim()) : [line, ''];
-        return { label, value: rest };
+      const breakdown = generatedQuoteBreakdown.lines.map((line) => ({
+        label: line.label,
+        value:
+          line.amountUsd === 0
+            ? line.selection
+            : `${line.selection} ${formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT')}`,
+      }));
+      breakdown.push({
+        label: 'ESTIMATED TOTAL',
+        value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
       });
       await postAdminConsultQuote({
         clientEmail: email,
@@ -2339,15 +2327,102 @@ export default function AdminMeetingsHub() {
                         onChange={(e) => setQuoteMessage(e.target.value)}
                       />
                     </label>
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                      PRICE BREAKDOWN
-                      <textarea
-                        className="w-full mt-1 p-2 border text-[10px] font-mono"
-                        rows={7}
-                        value={quoteBreakdown}
-                        onChange={(e) => setQuoteBreakdown(e.target.value)}
-                      />
-                    </label>
+                    <div className="mt-2">
+                      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>
+                        PRICE BREAKDOWN
+                      </label>
+                      <div
+                        className="mt-1"
+                        style={{
+                          border: '1.3px solid #000',
+                          background: '#fff',
+                          padding: '10px',
+                        }}
+                      >
+                        <div style={{ display: 'grid', rowGap: '6px' }}>
+                          {generatedQuoteBreakdown.lines.map((line: SpecialOfferBreakdownLine) => {
+                            const selection = line.selection;
+                            const amountText = line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT');
+                            return (
+                              <div
+                                key={`${line.label}-${selection}`}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'flex-start',
+                                  justifyContent: 'space-between',
+                                  gap: '10px',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '10px',
+                                    color: '#000',
+                                    lineHeight: 1.35,
+                                    textTransform: 'uppercase',
+                                    minWidth: 0,
+                                  }}
+                                >
+                                  <span>{line.label}: </span>
+                                  <span>{selection}</span>
+                                </div>
+                                {amountText ? (
+                                  <span
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '10px',
+                                      color: '#EB1C24',
+                                      lineHeight: 1.35,
+                                      textTransform: 'uppercase',
+                                      flexShrink: 0,
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    {amountText}
+                                  </span>
+                                ) : null}
+                              </div>
+                            );
+                          })}
+                          <div
+                            style={{
+                              borderTop: '1px solid #e5e7eb',
+                              paddingTop: '8px',
+                              marginTop: '2px',
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              justifyContent: 'space-between',
+                              gap: '10px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                fontSize: '10px',
+                                color: '#000',
+                                lineHeight: 1.35,
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              ESTIMATED TOTAL:
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '10px',
+                                color: '#EB1C24',
+                                lineHeight: 1.35,
+                                textTransform: 'uppercase',
+                                flexShrink: 0,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              ${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
                       OFFER DETAILS REFLECT THE CURRENT UNIT + SUB-PAGE SELECTION YOU CHOOSE HERE.
                     </p>
