@@ -1604,7 +1604,31 @@ export default function AdminClients() {
 
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
-                  <div className="px-5 pb-6" style={{ paddingTop: '10px' }}>
+                  <div className="px-5 pb-6" style={{ paddingTop: '10px', position: 'relative' }}>
+                    <button
+                      type="button"
+                      onClick={closeClientDetails}
+                      aria-label="Close client details"
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '20px',
+                        padding: 0,
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        lineHeight: 0,
+                        zIndex: 2,
+                      }}
+                    >
+                      <img
+                        src="/assets/close-icon.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        style={{ display: 'block', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }}
+                      />
+                    </button>
                     {selectedClient ? (
                       <>
                         {/* Circular profile area centered above the tab bar */}

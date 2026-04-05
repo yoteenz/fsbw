@@ -10713,3 +10713,49 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When backing out a layout experiment meant to fix a clipping artifact, preserve the safe no-wrap / non-shrinking protections that were valid, but restore any broader alignment changes (like left-aligning a previously centered control row) if they visibly regress the intended design.
+
+---
+
+## 2026-04-04 — Meetings client-details close X restored in admin clients view; sort-trigger wrapper hardened for lingering TS artifact
+
+**Context:** Continuing this same preview/mobile Admin Meetings debugging thread after re-centering the Meetings tabs, the user clarified two things: the actual “client details toggle” opened by tapping a Meetings profile icon still lacked the red close X in its upper right corner, and the recurring `TS` text still appeared specifically above the client panels and below the **Most recent** dropdown, so the sort dropdown area needed deeper inspection rather than more generic label guessing.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same long chat:
+  - moved all intended work onto `preview/mobile`,
+  - deleted the mistaken feature branch,
+  - updated Admin Meetings list/grid/toggle/calendar states across multiple passes,
+  - repeatedly traced the recurring `TS` / `TSTS` artifact without finding a literal placeholder token in the active meetings source,
+  - restored centered Meetings tabs after a prior alignment regression.
+- In this latest pass, traced the real “client details” flow opened from Meetings profile icons:
+  - `openClientAccount(...)` routes to `src/pages/admin/clients/page.tsx` with `returnTo=meetings`,
+  - the selected-client details view lives inside `AdminClients`, not inside `AdminMeetingsHub`,
+  - that details view did not have its own in-card red close icon even though the expanded order card inside the same page already used the project’s red close-icon treatment.
+- Added a dedicated top-right red close X button to the selected-client details card in `src/pages/admin/clients/page.tsx`:
+  - uses `/assets/close-icon.svg`,
+  - uses the same red filter treatment already used elsewhere on the page,
+  - calls `closeClientDetails()` so meetings-origin navigation returns correctly to the Meetings page.
+- Re-inspected the `Most recent` dropdown wrapper in `AdminMeetingsHub` because the user specifically located the stray `TS` underneath that control.
+- Hardened the sort-trigger area itself rather than only downstream labels:
+  - wrapped the visible dropdown label text in a span with `display: inline-block`,
+  - added `whiteSpace: 'nowrap'`, `lineHeight: 1`, `overflow: 'hidden'`, and `textOverflow: 'ellipsis'`,
+  - added `whiteSpace: 'nowrap'`, `lineHeight: 1`, and `flexShrink: 0` to the trigger button container.
+- Rebuilt successfully on `preview/mobile` after both the client-details close-icon restoration and the sort-trigger wrapper hardening.
+
+**Decisions / outcomes:**
+- The actual meetings-origin client-details view now has its own red close X in the upper-right area of the details card instead of relying only on the page header back control.
+- The lingering `TS` artifact is still being treated as a compact rendered label/clipping issue, and this pass narrowed the suspected source further to the dropdown trigger region itself rather than generic meetings labels.
+- Scope stayed limited to the two concrete user-reported problem paths: meetings-origin client details and the `Most recent` dropdown area above client panels.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+  - added a top-right red close-icon button to the selected-client details card
+  - wired the close icon to `closeClientDetails()` so meetings return flow is preserved
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - hardened `renderMeetingsSortDropdown()` trigger wrapper/label with stronger no-wrap and clipping semantics
+  - kept focus on the text area directly under/around the visible `Most recent` control
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When a Meetings profile icon opens Admin Clients details via `returnTo=meetings`, treat that details card as the effective “client details toggle” for this flow and keep its close affordance visually aligned with other in-card close controls (red close X), not just the page-header back arrow.

@@ -1305,15 +1305,15 @@ export default function AdminMeetingsHub() {
   };
 
   const renderMeetingsSortDropdown = () => (
-    <div className="relative" style={{ marginLeft: '2px' }}>
+    <div className="relative" style={{ marginLeft: '2px', display: 'inline-flex', flexShrink: 0 }}>
       <button
         type="button"
         onClick={() => setShowMeetingSortDropdown((open) => !open)}
         className="flex items-center gap-1.5"
-        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}
+        style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', whiteSpace: 'nowrap', flexShrink: 0 }}
         aria-label="Sort clients"
       >
-        <span>{meetingSortOptionToLabel(meetingSortOption)}</span>
+        <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>{meetingSortOptionToLabel(meetingSortOption)}</span>
         <svg
           width="12"
           height="12"
