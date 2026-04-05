@@ -1390,7 +1390,7 @@ export default function BookingAppointmentPage() {
             ))}
           </div>
 
-          <div style={{ width: '100%', minWidth: 0, marginBottom: 0 }}>
+          <div style={{ width: '100%', minWidth: 0 }}>
             <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
             </label>

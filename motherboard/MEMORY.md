@@ -11722,3 +11722,31 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For consult booking flows that need physical fit data, keep measurements as a structured object (`bookingHeadMeasurements`) and pass that structure through cart, checkout sync, and admin metadata rather than flattening them into one free-text notes field.
+
+---
+
+## 2026-04-04 — Appointment additional notes spacing matched to consult page
+
+**Context:** After the consult head-measurement feature was completed, the user asked for a smaller layout tweak: the **Additional Notes** section on the booking appointment page should have the same spacing below it as the Additional Notes section on the booking consult page.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same long booking/admin branch-sync chat, completed and synced across branches:
+  - Admin Meetings and account-alert UI refinements,
+  - tracker logic fixes,
+  - sort/filter corrections,
+  - consult head-measurement section and data flow.
+- In this pass, compared the appointment page notes block against the consult page notes block and adjusted the appointment wrapper spacing to match the consult page’s spacing behavior relative to the following scheduling section.
+- Rebuilt successfully after the spacing alignment tweak.
+
+**Decisions / outcomes:**
+- The booking appointment page’s **Additional Notes** section now uses the same below-spacing treatment as the consult page.
+- Scope stayed limited to the appointment page layout wrapper around that notes block.
+
+**Changes:**
+- `src/pages/booking/appointment/page.tsx`
+  - removed the extra wrapper-level bottom spacing on the Additional Notes section so it matches the consult page spacing below the notes block
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- When the appointment and consult booking pages share the same form section label/content role (like **Additional Notes**), keep their spacing treatment aligned unless the user explicitly asks for them to differ.
