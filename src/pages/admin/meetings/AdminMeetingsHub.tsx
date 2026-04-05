@@ -54,12 +54,10 @@ const EDIT_REASONS = [
 type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub';
 
 const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
-const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig', 'Install'] as const;
+const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
 const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
-  if (opt === 'Wig') return 'WIG ONLY';
-  if (opt === 'Install') return 'WIG + INSTALL';
   return opt.toUpperCase();
 }
 
@@ -103,6 +101,16 @@ const BOOKING_ADDON_ORDER = [
   'MINK LASHES',
   'TRAVEL FEE',
 ] as const;
+
+const BOOKING_ADDON_PRICE_BY_LABEL: Record<(typeof BOOKING_ADDON_ORDER)[number], number> = {
+  'CLEAN LACE': 40,
+  BRAIDS: 60,
+  'BROW SCULPTING': 40,
+  'BROW TINT': 60,
+  MAKEUP: 250,
+  'MINK LASHES': 20,
+  'TRAVEL FEE': 1200,
+};
 
 const BOOKING_UNIT_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
 
@@ -400,7 +408,24 @@ function meetingSortTimeMs(m: AdminMeeting): number {
 }
 
 function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
-  const sorted = [...rows];
+  const filtered = (() => {
+    if (sortOption === 'Premium') return rows.filter((m) => tierPremium(m));
+    if (sortOption === 'Standard') return rows.filter((m) => !tierPremium(m));
+    if (sortOption === 'Re-install') {
+      return rows.filter((m) => m.category === 'appointment' && getBookingCardDetails(m).installKind === 'RE-INSTALL');
+    }
+    if (sortOption === 'New install') {
+      return rows.filter((m) => m.category === 'appointment' && getBookingCardDetails(m).installKind === 'NEW INSTALL');
+    }
+    if (sortOption === 'Wig only') {
+      return rows.filter((m) => m.category === 'consultation' && consultTypeLabelForMeeting(m) === 'WIG ONLY');
+    }
+    if (sortOption === 'Wig + install') {
+      return rows.filter((m) => m.category === 'consultation' && consultTypeLabelForMeeting(m) === 'WIG + INSTALL');
+    }
+    return [...rows];
+  })();
+  const sorted = [...filtered];
   if (sortOption === 'A to Z') {
     sorted.sort((a, b) =>
       meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
@@ -415,36 +440,6 @@ function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOptio
         sensitivity: 'base',
       })
     );
-    return sorted;
-  }
-  if (sortOption === 'Premium' || sortOption === 'Standard') {
-    const premiumFirst = sortOption === 'Premium';
-    sorted.sort((a, b) => {
-      const aPriority = tierPremium(a) === premiumFirst ? 0 : 1;
-      const bPriority = tierPremium(b) === premiumFirst ? 0 : 1;
-      if (aPriority !== bPriority) return aPriority - bPriority;
-      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
-    });
-    return sorted;
-  }
-  if (sortOption === 'Re-install' || sortOption === 'New install') {
-    const desiredInstallKind = sortOption === 'Re-install' ? 'RE-INSTALL' : 'NEW INSTALL';
-    sorted.sort((a, b) => {
-      const aPriority = a.category === 'appointment' && getBookingCardDetails(a).installKind === desiredInstallKind ? 0 : 1;
-      const bPriority = b.category === 'appointment' && getBookingCardDetails(b).installKind === desiredInstallKind ? 0 : 1;
-      if (aPriority !== bPriority) return aPriority - bPriority;
-      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
-    });
-    return sorted;
-  }
-  if (sortOption === 'Wig' || sortOption === 'Install') {
-    const desiredConsultType = sortOption === 'Wig' ? 'WIG ONLY' : 'WIG + INSTALL';
-    sorted.sort((a, b) => {
-      const aPriority = a.category === 'consultation' && consultTypeLabelForMeeting(a) === desiredConsultType ? 0 : 1;
-      const bPriority = b.category === 'consultation' && consultTypeLabelForMeeting(b) === desiredConsultType ? 0 : 1;
-      if (aPriority !== bPriority) return aPriority - bPriority;
-      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
-    });
     return sorted;
   }
   sorted.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
@@ -592,8 +587,17 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
 
 function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
-  if (details.addons.length === 0) return 'ADD-ONS: NONE';
-  return `ADD-ONS: ${details.addons.join(', ')}`;
+  const addonsNoBreak = details.addons.map((addon) => addon.replace(/\s+/g, '\u00A0'));
+  return details.addons.length > 0 ? `ADD-ONS: ${addonsNoBreak.join(', ')}` : 'ADD-ONS: NONE';
+}
+
+function bookingDisplayTotalUsdFallback(m: AdminMeeting): number {
+  const details = getBookingCardDetails(m);
+  const addonTotalUsd = details.addons.reduce(
+    (sum, addonLabel) => sum + (BOOKING_ADDON_PRICE_BY_LABEL[addonLabel as keyof typeof BOOKING_ADDON_PRICE_BY_LABEL] ?? 0),
+    0
+  );
+  return details.unitPriceUsd + addonTotalUsd + bookingInstallFeeUsdFromMeeting(m);
 }
 
 function formatUsd(amount: number): string {
@@ -641,9 +645,15 @@ function bookingPaidInFullSalesUsd(m: AdminMeeting): number | null {
     meta.bookingFinalPaymentPaidUsd ?? meta.finalPaymentPaidUsd ?? meta.bookingRemainingPaidUsd
   );
   const basePaid =
-    normalizeMoneyValue(meta.bookingPaidTotalUsd ?? meta.orderTotalUsd ?? meta.orderTotalUSD ?? meta.orderTotal) ??
-    normalizeMoneyValue(meta.bookingUnitPriceUsd) ??
-    getBookingCardDetails(m).unitPriceUsd;
+    normalizeMoneyValue(
+      meta.bookingOrderTotalPaidUsd ??
+      meta.bookingLineTotalPaidUsd ??
+      meta.bookingPaidTotalUsd ??
+      meta.orderTotalUsd ??
+      meta.orderTotalUSD ??
+      meta.orderTotal
+    ) ??
+    bookingDisplayTotalUsdFallback(m);
 
   if (autopayStatus === 'paid') {
     const remaining = finalDue != null ? Math.max(0, finalDue) : bookingInstallFeeUsdFromMeeting(m);
@@ -739,7 +749,7 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
     .map((candidate) => normalizeUsdPrice(candidate))
     .find((candidate): candidate is number => candidate != null);
 
-  const paidTotalUsd = orderTotalDetected ?? details.unitPriceUsd;
+  const paidTotalUsd = orderTotalDetected ?? bookingDisplayTotalUsdFallback(m);
   const remainingDueDetected = normalizeUsdPrice(meta.bookingFinalDueUsd);
   const remainingDueUsd = remainingDueDetected ?? installFeeUsd;
 
@@ -756,7 +766,8 @@ function getBookingPaymentStatusForCard(m: AdminMeeting): BookingPaymentStatus {
   const dueMs = safeDueObj.getTime();
   const bookedAtRaw = String(meta.bookingBookedAtIso || meta.bookingAutopayConsentAt || '').trim();
   const bookedAtParsed = bookedAtRaw ? new Date(bookedAtRaw) : null;
-  const bookedAtMs = bookedAtParsed && Number.isFinite(bookedAtParsed.getTime()) ? bookedAtParsed.getTime() : nowMs;
+  const syntheticBookedAtMs = Math.min(nowMs - 24 * 60 * 60 * 1000, dueMs - 21 * 24 * 60 * 60 * 1000);
+  const bookedAtMs = bookedAtParsed && Number.isFinite(bookedAtParsed.getTime()) ? bookedAtParsed.getTime() : syntheticBookedAtMs;
   const totalWindowMs = Math.max(1, dueMs - bookedAtMs);
   const remainingMs = Math.max(0, dueMs - nowMs);
   const elapsedPct = Math.max(

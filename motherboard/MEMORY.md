@@ -11235,3 +11235,57 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For Admin Meetings bookings-tab add-on text, prefer natural width-based wrapping inside the content column over manual newline insertion so the text respects the tracker-width boundary and adapts to the actual card layout.
+
+---
+
+## 2026-04-04 — Meetings sort options now filter correctly; booking totals and tracker fallbacks corrected; add-on labels keep words together
+
+**Context:** Continuing the same Admin Meetings preview/mobile thread, the user reported four remaining problems in one pass: the new Bookings/Consults dropdown options were behaving like sorts instead of true filters, the bookings-tab **CURRENT BALANCE** still sometimes showed only the unit price instead of the full order total, all payment trackers were unfilled for testing, and naturally wrapped add-on text could split a multi-word add-on like `BROW TINT` across lines.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed and pushed a long chain of Admin Meetings / Admin Clients / booking-calendar / tracker / dropdown / panel / list-view / preview-branch fixes directly onto `preview/mobile`.
+- In this pass, focused again on `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the current behavior problem in `sortMeetingsByOption(...)`: the new category options (`Premium`, `Standard`, `Re-install`, `New install`, `Wig only`, `Wig + install`) were only **reordering** rows by priority, not filtering the list down to matching rows.
+- Changed those category options to act as true filters:
+  - `Premium` / `Standard` now return only rows for that membership tier.
+  - `Re-install` / `New install` now return only matching booking rows.
+  - consult-only options now return only matching consult rows.
+- Standardized consult-only sort labels to the exact wording already shown in the dropdown:
+  - `Wig only`
+  - `Wig + install`
+- Confirmed the bookings-tab balance display still needed stronger fallbacks for legacy/mock rows where full booking metadata might be sparse.
+- Strengthened total fallback order so the `OF $Y USD` side prefers full booking totals from metadata and, if absent, derives a synthetic full-order total from the unit price + install fee + add-on prices.
+- Added explicit add-on price mapping for bookings-tab payment fallback math:
+  - braids `60`
+  - brow sculpting `40`
+  - brow tint `60`
+  - makeup `250`
+  - mink lashes `20`
+  - clean lace `40`
+  - travel fee `1200`
+- Fixed tracker fill for mock/legacy rows with missing `bookingBookedAtIso` by falling back to a synthetic booked-at timestamp based on a two-week window before due date, so the gray fill can show meaningful progress instead of staying empty everywhere.
+- Tightened add-on wrapping so multi-word labels stay intact while still wrapping naturally:
+  - replaced spaces inside each add-on label with non-breaking spaces before joining,
+  - preserved natural line wrapping at separator boundaries so `BROW TINT` no longer splits into `BROW` / `TINT`.
+- Rebuilt successfully on `preview/mobile` after the combined filtering / total / tracker / wrap adjustments.
+
+**Decisions / outcomes:**
+- The new category entries in the meetings sort dropdowns now behave as filters rather than merely sorting matches to the top.
+- Bookings current-balance totals now have a better path to full-order values even when richer checkout metadata is absent.
+- Mock/legacy payment trackers can now show gray fill progression for UI testing instead of staying empty due to missing booked-at timestamps.
+- Add-on text continues to wrap naturally, but multi-word add-on names stay on the same line segment.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed category “sort” options to true filtering in `sortMeetingsByOption(...)`
+  - renamed consult-only filter options to `Wig only` / `Wig + install`
+  - added booking add-on USD mapping for fallback full-order total calculation
+  - added synthetic full-order total fallback when metadata lacks explicit order totals
+  - added synthetic booked-at fallback window for tracker fill progress
+  - changed add-on display to use non-breaking spaces inside each add-on label while preserving normal wrapping
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings dropdown options that name a subset/category (`Premium`, `Standard`, install kind, consult type), treat them as **filters** unless the user explicitly asks for prioritization-only sorting.
+- For fallback booking balance displays on Admin Meetings, derive a synthetic full-order total from the unit + install fee + add-on prices when explicit order totals are missing so the UI still reflects likely full booking cost.
