@@ -53,9 +53,13 @@ const EDIT_REASONS = [
 
 type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub';
 
-const MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install', 'Wig', 'Install'] as const;
+const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
+const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig', 'Install'] as const;
+const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
+  if (opt === 'Wig') return 'WIG ONLY';
+  if (opt === 'Install') return 'WIG + INSTALL';
   return opt.toUpperCase();
 }
 
@@ -411,6 +415,36 @@ function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOptio
         sensitivity: 'base',
       })
     );
+    return sorted;
+  }
+  if (sortOption === 'Premium' || sortOption === 'Standard') {
+    const premiumFirst = sortOption === 'Premium';
+    sorted.sort((a, b) => {
+      const aPriority = tierPremium(a) === premiumFirst ? 0 : 1;
+      const bPriority = tierPremium(b) === premiumFirst ? 0 : 1;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
+    });
+    return sorted;
+  }
+  if (sortOption === 'Re-install' || sortOption === 'New install') {
+    const desiredInstallKind = sortOption === 'Re-install' ? 'RE-INSTALL' : 'NEW INSTALL';
+    sorted.sort((a, b) => {
+      const aPriority = a.category === 'appointment' && getBookingCardDetails(a).installKind === desiredInstallKind ? 0 : 1;
+      const bPriority = b.category === 'appointment' && getBookingCardDetails(b).installKind === desiredInstallKind ? 0 : 1;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
+    });
+    return sorted;
+  }
+  if (sortOption === 'Wig' || sortOption === 'Install') {
+    const desiredConsultType = sortOption === 'Wig' ? 'WIG ONLY' : 'WIG + INSTALL';
+    sorted.sort((a, b) => {
+      const aPriority = a.category === 'consultation' && consultTypeLabelForMeeting(a) === desiredConsultType ? 0 : 1;
+      const bPriority = b.category === 'consultation' && consultTypeLabelForMeeting(b) === desiredConsultType ? 0 : 1;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      return meetingSortTimeMs(b) - meetingSortTimeMs(a);
+    });
     return sorted;
   }
   sorted.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
@@ -851,6 +885,11 @@ export default function AdminMeetingsHub() {
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
+  const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
+    const effectiveTab = viewAllMode ?? mainTab;
+    if (effectiveTab === 'consults') return CONSULT_MEETING_SORT_OPTIONS;
+    return BOOKING_MEETING_SORT_OPTIONS;
+  }, [mainTab, viewAllMode]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -930,6 +969,12 @@ export default function AdminMeetingsHub() {
   useEffect(() => {
     setShowMeetingSortDropdown(false);
   }, [mainTab, viewAllMode]);
+
+  useEffect(() => {
+    if (!currentMeetingsSortOptions.includes(meetingSortOption)) {
+      setMeetingSortOption('Most recent');
+    }
+  }, [currentMeetingsSortOptions, meetingSortOption]);
 
   useEffect(() => {
     if (!editMeeting && !quoteMeeting) setActivePanelDropdown(null);
@@ -1344,7 +1389,7 @@ export default function AdminMeetingsHub() {
             className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px]"
             style={{ borderWidth: '1.3px', marginTop: '7px' }}
           >
-            {MEETING_SORT_OPTIONS.filter((opt) => opt !== meetingSortOption).map((opt) => (
+            {currentMeetingsSortOptions.filter((opt) => opt !== meetingSortOption).map((opt) => (
               <button
                 key={opt}
                 type="button"
