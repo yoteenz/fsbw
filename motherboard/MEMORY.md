@@ -11568,3 +11568,37 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - For Admin Meetings Create Offer flows that mirror Build-a-Wig / Special Offer logic, source both the available selection options and the pricing breakdown from shared option/pricing utilities instead of maintaining a second hardcoded option/price map inside the Meetings panel.
+
+---
+
+## 2026-04-04 — Edit/Create panel headers now use raw client name without state suffix
+
+**Context:** Continuing this same long Admin Meetings panel-refinement thread immediately after finishing the dynamic Create Offer selection + detailed pricing breakdown feature, the user asked for one more header-format cleanup: on the red header client name shown inside the **Edit Booking** and **Create Offer** toggles only, remove the location/state suffix and parentheses so the header uses just the tapped client’s raw name.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same broader thread, the Meetings page accumulated multiple admin-side refinements:
+  - dropdown/toggle behavior fixes,
+  - Create Offer / Edit Booking panel renaming and lower action-strip placement,
+  - grouped View All list view,
+  - tracker/balance logic fixes,
+  - dynamic Create Offer sub-page selections and pricing breakdown sourced from shared pricing utilities.
+- In this pass, inspected the current `activeMainCardTitle` logic in `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Confirmed the panel header was using `meetingClientDisplayNameWithState(...)`, which is the helper that appends the state code in parentheses (e.g. `DIANA FOSTER (IL)`).
+- Changed only the Edit Booking / Create Offer branch of the header-title expression to use the raw `client` string from the tapped meeting row instead of the state-suffixed display helper.
+- Left the rest of the meetings UI unchanged:
+  - View All list/grid cards can still use the state-suffixed display where already intended,
+  - only the red header name inside the two panel modes loses the `(ST)` suffix.
+- Rebuilt successfully after the header-title swap.
+
+**Decisions / outcomes:**
+- The Edit Booking and Create Offer panel headers now show just the tapped client’s name, without location or parentheses.
+- The change is scoped only to those red panel headers; other meetings/client-name render locations are untouched.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - changed the Edit Booking / Create Offer `activeMainCardTitle` branch to use raw `client` text instead of `meetingClientDisplayNameWithState(...)`
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings action-panel headers tied to a single client row, use the raw client name in the red header unless the user explicitly asks for the state/location suffix there; keep the state-suffixed helper for list/card contexts where that extra context is still useful.

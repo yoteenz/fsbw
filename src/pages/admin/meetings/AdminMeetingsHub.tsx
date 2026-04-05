@@ -1582,9 +1582,9 @@ export default function AdminMeetingsHub() {
 
   const activeMainCardTitle = viewAllHeaderTitle(viewAllMode, viewAllUniqueClientCount)
     ?? (editMeeting
-    ? meetingClientDisplayNameWithState(editMeeting)
+    ? String(editMeeting.client || '').trim().toUpperCase()
     : quoteMeeting
-    ? meetingClientDisplayNameWithState(quoteMeeting)
+    ? String(quoteMeeting.client || '').trim().toUpperCase()
     : null);
 
   const closeMainCardPanel = () => {
