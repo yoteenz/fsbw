@@ -10798,3 +10798,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - For shared query-param persistence hooks, do not let the "rehydrate from URL/session" effect depend on the current local state value when a separate effect also writes that state back to the URL/session; that pattern can oscillate and spam `history.replaceState()`.
+
+---
+
+## 2026-04-04 — Restored red client-name header beside red close X in meetings-opened client details
+
+**Context:** Continuing the same preview/mobile meetings thread after the shared `replaceState()` loop fix, the user clarified that the “restored red close X” in the meetings-opened client details flow was still incomplete: the selected-client details card needed the **red client name header** across from the red close X, not just the close button by itself.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long chain of admin/meetings work on `preview/mobile`:
+  - admin summary panel red text +4px,
+  - meetings bookings calendar border changes,
+  - A/C calendar styling alignment,
+  - multiple Admin Meetings View All refinements,
+  - grouped client panels in View All list mode,
+  - dropdown placement and text-color tweaks,
+  - repeated compact-label/`TS` artifact investigations,
+  - correction of mistaken feature-branch delivery by moving work onto `preview/mobile`,
+  - shared `usePersistentQueryState` fix for the red-screen `history.replaceState()` error.
+- In this latest pass, traced the “client details toggle” path opened from Admin Meetings profile icons and confirmed it lands in `src/pages/admin/clients/page.tsx` with `returnTo=meetings`.
+- Verified that the selected-client details card already had a red close X button, but it lacked the matching red client-name header row opposite the icon.
+- Added a dedicated top row inside the selected-client details card:
+  - left side: selected client full name in red Futura Medium,
+  - right side: existing red close X wired to `closeClientDetails()`,
+  - preserved the meetings return flow.
+- Rebuilt successfully on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The meetings-opened client details card now has the expected red header pairing: client name on the left and red close X on the right.
+- This change stays inside the selected-client details card and does not alter the page header/back behavior.
+
+**Changes:**
+- `src/pages/admin/clients/page.tsx`
+  - added a red client-name header row above the profile image in the selected-client details card
+  - retained the existing red close-icon button on the right side of that row
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For the meetings-opened Admin Clients details view (`returnTo=meetings`), the in-card close affordance should appear as a paired red header row: selected client name on the left and red close X on the right, matching the visual language of other closeable admin subpanels.
