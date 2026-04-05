@@ -10759,3 +10759,42 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - When a Meetings profile icon opens Admin Clients details via `returnTo=meetings`, treat that details card as the effective “client details toggle” for this flow and keep its close affordance visually aligned with other in-card close controls (red close X), not just the page-header back arrow.
+
+---
+
+## 2026-04-04 — Fixed replaceState loop in shared persistent query hook
+
+**Context:** User reported a red-screen crash: **"ERROR: Component Failed to Load — Attempt to use history.replaceState() more than 100 times per 10 seconds"**. They wanted the root cause traced and fixed on `preview/mobile`.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long series of Admin Meetings and admin-page UI tweaks directly on `preview/mobile`, including summary-panel typography updates, meetings View All/list/grid refinements, client-grouped list panels, calendar parity changes, and repeated attempts to eliminate a stray `TS/TSTS` artifact.
+- For this error-specific turn, searched for `replaceState`, `navigate(..., { replace: true })`, and query-param synchronization logic across the codebase.
+- Identified two likely hot paths:
+  - the shared `usePersistentQueryState` hook used by many admin/product pages,
+  - `AdminMeetingsHub`’s own `viewAll` URL synchronization.
+- Inspected the shared hook and found a real oscillation bug:
+  - the "read from query/session/default" effect depended on `value`,
+  - on local state changes it could re-read stale query/session values before the URL/session sync effects settled,
+  - that could bounce the state back and forth and repeatedly call `navigate(..., { replace: true })`,
+  - which matches the reported browser protection error about excessive `history.replaceState()`.
+- Fixed the hook by making the read/sync effect respond only to URL changes instead of every local state update:
+  - removed `value` from the effect dependency list,
+  - switched to functional `setValue(...)` updates so identical values are ignored cleanly,
+  - left the URL/session persistence effects intact.
+- Rebuilt successfully after the hook fix on `preview/mobile`.
+
+**Decisions / outcomes:**
+- The red-screen `replaceState()` storm was traced to the shared persistent-query hook logic, not to a one-off Admin Meetings visual issue.
+- The fix was applied at the shared hook level so all pages using `usePersistentQueryState` benefit, instead of papering over individual pages.
+- `AdminMeetingsHub`’s URL sync remains in place, but the shared oscillation source was removed.
+
+**Changes:**
+- `src/hooks/usePersistentQueryState.ts`
+  - removed `value` from the URL/session rehydration effect dependencies
+  - changed that effect to use functional `setValue(...)`
+  - added a short comment explaining the stale query/session oscillation and replaceState spam risk
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For shared query-param persistence hooks, do not let the "rehydrate from URL/session" effect depend on the current local state value when a separate effect also writes that state back to the URL/session; that pattern can oscillate and spam `history.replaceState()`.

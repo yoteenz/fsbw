@@ -53,16 +53,19 @@ export function usePersistentQueryState<T extends string>({
   useEffect(() => {
     const fromQuery = readFromSearch(location.search);
     if (fromQuery) {
-      if (fromQuery !== value) setValue(fromQuery);
+      setValue((prev) => (prev === fromQuery ? prev : fromQuery));
       return;
     }
     const fromSession = readFromSession();
     if (fromSession) {
-      if (fromSession !== value) setValue(fromSession);
+      setValue((prev) => (prev === fromSession ? prev : fromSession));
       return;
     }
-    if (value !== defaultValue) setValue(defaultValue);
-  }, [location.search, value, defaultValue]);
+    // Only react to URL/session changes here. If this effect also reacts to
+    // every local state update, it can briefly read stale session/query data
+    // and oscillate between values, spamming history.replaceState().
+    setValue((prev) => (prev === defaultValue ? prev : defaultValue));
+  }, [location.search, defaultValue]);
 
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
