@@ -61,6 +61,29 @@ function meetingSortOptionToLabel(opt: MeetingSortOption): string {
   return opt.toUpperCase();
 }
 
+const EDIT_MESSAGE_BY_REASON: Record<(typeof EDIT_REASONS)[number], { action: 'reschedule' | 'cancel'; message: string }> = {
+  'SCHEDULE CONFLICT': {
+    action: 'reschedule',
+    message: 'WE NEED TO RESCHEDULE YOUR BOOKING DUE TO A SCHEDULE CONFLICT. PLEASE REVIEW THE UPDATED APPOINTMENT DETAILS.'
+  },
+  'CLIENT REQUEST': {
+    action: 'reschedule',
+    message: 'YOUR BOOKING HAS BEEN UPDATED PER YOUR REQUEST. PLEASE REVIEW THE RESCHEDULED APPOINTMENT DETAILS.'
+  },
+  'STAFF AVAILABILITY': {
+    action: 'reschedule',
+    message: 'WE NEED TO RESCHEDULE YOUR BOOKING DUE TO STAFF AVAILABILITY. PLEASE REVIEW THE UPDATED APPOINTMENT DETAILS.'
+  },
+  'WEATHER / EMERGENCY': {
+    action: 'cancel',
+    message: 'YOUR BOOKING HAS BEEN CANCELED DUE TO WEATHER OR AN EMERGENCY. PLEASE CONTACT US TO REVIEW NEXT STEPS.'
+  },
+  OTHER: {
+    action: 'reschedule',
+    message: 'YOUR BOOKING HAS BEEN UPDATED. PLEASE REVIEW THE LATEST APPOINTMENT DETAILS.'
+  }
+};
+
 function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCount: number): string | null {
   if (!mode) return null;
   if (mode === 'bookings') {
@@ -2054,9 +2077,13 @@ export default function AdminMeetingsHub() {
                       label: 'REASON',
                       value: editReason,
                       options: EDIT_REASONS,
-                      onChange: setEditReason,
+                      onChange: (next) => {
+                        setEditReason(next);
+                        const preset = EDIT_MESSAGE_BY_REASON[next as (typeof EDIT_REASONS)[number]];
+                        if (preset) setEditMessage(preset.message);
+                      },
                     })}
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
                       MESSAGE TO CLIENT
                       <textarea
                         className="w-full mt-1 p-2 border text-[10px]"
@@ -2086,7 +2113,7 @@ export default function AdminMeetingsHub() {
                       options: SUB_PAGE_OPTIONS,
                       onChange: setQuoteSub,
                     })}
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
                       MESSAGE
                       <textarea
                         className="w-full mt-1 p-2 border text-[10px]"

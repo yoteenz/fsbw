@@ -11384,3 +11384,52 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
   3. fast-forward `preview/mobile` to that same merge commit,
   4. push `preview/mobile`,
 so the branch tips end on the same commit hash rather than merely containing equivalent file contents.
+
+---
+
+## 2026-04-04 — Edit booking reason now auto-populates response text; panel message sections pushed below dropdown overlays
+
+**Context:** Continuing this same long Admin Meetings panel-refinement thread after the custom create-offer/edit-booking dropdowns were restyled to match Special Offers, the user clarified why the dropdowns still felt broken: the dropdown list was being visually clipped by the message input section beneath it. They wanted the message section moved much farther down (about 100px) and also wanted the edit-booking reason selection to automatically populate a reschedule/cancellation response based on the chosen reason.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, completed a long sequence of Admin Meetings/preview-mobile work:
+  - summary-panel font increases,
+  - booking calendar border/state changes,
+  - View All grid/list refinements,
+  - sort dropdown additions and later tab-specific filter behavior,
+  - grouped View All list client panels,
+  - tracker math/color corrections,
+  - balance math fixes using full booking totals,
+  - branch correction work to move changes directly onto `preview/mobile` and later sync branches with `master`.
+- More recently in this thread, the Meetings create-offer/edit-booking panels were partially refactored so:
+  - headers changed to `CREATE OFFER` / `EDIT BOOKING`,
+  - native selects were replaced with custom dropdowns matching the Special Offers visual pattern,
+  - primary actions moved into the lower button strip.
+- In this latest pass, focused specifically on the panel UX issue the user described:
+  - confirmed the custom panel dropdown already updated value + closed itself logically, but the menu could still appear clipped because the message field sat too close beneath the dropdown trigger area,
+  - added substantial extra vertical clearance (`~100px`) before the message textareas in both **Edit Booking** and **Create Offer** panel modes so the open dropdown has room to render cleanly,
+  - added a reason-to-message mapping for the **Edit Booking** reason dropdown.
+- Updated the Edit Booking reason dropdown so selecting a reason now auto-populates an appropriate client-facing response:
+  - `SCHEDULE CONFLICT` → reschedule-style message,
+  - `CLIENT REQUEST` → reschedule-style message,
+  - `STAFF AVAILABILITY` → reschedule-style message,
+  - `WEATHER / EMERGENCY` → cancellation-style message,
+  - `OTHER` → generic update message.
+- Rebuilt successfully after the panel clearance + auto-message changes.
+
+**Decisions / outcomes:**
+- The panel message sections now sit far enough below the dropdown controls that the menu should no longer feel clipped by the textarea area.
+- Edit Booking reason selection now acts as a lightweight template picker for the client response instead of leaving the message box blank after selection.
+- The behavior change stays scoped to the Admin Meetings panel modes only.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - added `EDIT_MESSAGE_BY_REASON`
+  - updated Edit Booking reason dropdown `onChange` to set both `editReason` and a preset `editMessage`
+  - pushed Edit Booking message textarea down via ~100px extra top margin
+  - pushed Create Offer message textarea down via ~100px extra top margin
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings custom panel dropdowns that visually expand over following fields, leave generous vertical clearance below the dropdown trigger/overlay area when the next field is a textarea, so the menu is not visually clipped by nearby content even if the open/close logic itself is working.
