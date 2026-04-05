@@ -592,12 +592,8 @@ function formatBookingAddonsLineForCard(m: AdminMeeting): string {
 
 function formatBookingAddonsLineForCardDisplay(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
-  const addonsNoBreak = details.addons.map((addon) => addon.replace(/\s+/g, '\u00A0'));
   if (details.addons.length === 0) return 'ADD-ONS: NONE';
-  if (details.addons.length <= 3) return `ADD-ONS: ${addonsNoBreak.join(', ')}`;
-  const firstLine = addonsNoBreak.slice(0, 3).join(', ');
-  const wrappedRest = addonsNoBreak.slice(3).join(', ');
-  return `ADD-ONS: ${firstLine}\n${wrappedRest}`;
+  return `ADD-ONS: ${details.addons.join(', ')}`;
 }
 
 function formatUsd(amount: number): string {
@@ -2314,7 +2310,10 @@ export default function AdminMeetingsHub() {
                                   fontSize: '9px',
                                   color: '#000000',
                                   margin: '4px 0 0',
-                                  whiteSpace: 'pre-line',
+                                  whiteSpace: 'normal',
+                                  overflowWrap: 'anywhere',
+                                  wordBreak: 'break-word',
+                                  maxWidth: '100%',
                                 }}
                               >
                                 {formatBookingAddonsLineForCardDisplay(m)}

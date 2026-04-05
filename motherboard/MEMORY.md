@@ -11190,3 +11190,48 @@ Admin **Brand → CODES → TRACK USAGE** row button label changed from **RESET 
 
 **Conventions:**
 - Remove one-off UI test hooks (like hardcoded client-name fill overrides) once the intended production tracker logic is in place, or they will silently invalidate otherwise-correct timing behavior.
+
+---
+
+## 2026-04-04 — Bookings add-on lines now wrap naturally within the tracker-width content column
+
+**Context:** Continuing the same Admin Meetings `preview/mobile` UI thread after the tracker fixes, the user asked to remove the manual forced wrapping on bookings-tab add-on text and instead let the line wrap naturally near the right edge of the payment tracker area, without extending past where the tracker stops.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this same chat, the work already covered:
+  - admin summary metric sizing,
+  - multiple View All Meetings grid/list/toggle refinements,
+  - moving the work directly to `preview/mobile`,
+  - bookings calendar toggle behavior,
+  - tab-specific sort modes,
+  - booking tracker color/progress fixes,
+  - full-order booking balance display,
+  - client-details header restoration,
+  - create-offer/edit-booking panel control refactors.
+- In this pass, focused only on the bookings-tab add-on line inside `src/pages/admin/meetings/AdminMeetingsHub.tsx`.
+- Identified that the current wrapping was being forced in two places:
+  - `formatBookingAddonsLineForCardDisplay(...)` was explicitly inserting a newline after the first three add-ons,
+  - the rendered `<p>` used `whiteSpace: 'pre-line'`, which honored that manual break.
+- Removed the manual line splitting so the helper now returns one continuous `ADD-ONS: ...` string.
+- Updated the bookings-card add-on text block to allow natural wrapping inside the available content width by using:
+  - `whiteSpace: 'normal'`
+  - `overflowWrap: 'anywhere'`
+  - `wordBreak: 'break-word'`
+  - `maxWidth: '100%'`
+- Kept the text inside the same content column as the payment tracker so it wraps before overflowing beyond the tracker’s right-side boundary.
+- Rebuilt successfully on `preview/mobile` after the change.
+
+**Decisions / outcomes:**
+- Bookings add-on text is no longer manually broken after a fixed number of items.
+- Wrapping now happens naturally based on the real available width of the card content column.
+- The line remains constrained to the same width zone as the payment tracker instead of extending past it.
+
+**Changes:**
+- `src/pages/admin/meetings/AdminMeetingsHub.tsx`
+  - simplified `formatBookingAddonsLineForCardDisplay(...)` to return a single continuous line
+  - changed the bookings add-on text block from `pre-line` to normal wrapping with width-safe word wrapping
+- Verification:
+  - `npm run build`
+
+**Conventions:**
+- For Admin Meetings bookings-tab add-on text, prefer natural width-based wrapping inside the content column over manual newline insertion so the text respects the tracker-width boundary and adapts to the actual card layout.
