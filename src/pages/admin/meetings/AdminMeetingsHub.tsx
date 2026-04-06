@@ -1434,7 +1434,14 @@ export default function AdminMeetingsHub() {
                                   style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
                                 />
                               </button>
-                              <div style={{ minWidth: 0, flex: 1, transform: 'translateX(6px)' }}>
+                              <div
+                                style={{
+                                  minWidth: 0,
+                                  flex: 1,
+                                  /* Text only: nudge up 6px vs avatar; keep prior 6px horizontal inset */
+                                  transform: 'translate(6px, -6px)',
+                                }}
+                              >
                                 <button
                                   type="button"
                                   onClick={() => openClientAccount(clientGroup.latestMeeting)}

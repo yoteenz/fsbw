@@ -12155,3 +12155,11 @@ Verification: `tsc --noEmit`.
 - **`adminMeetingClientPanels.tsx`:** Consult black “hair” line no longer falls back to **`m.notes`** (long mock/API notes could wrap into confusing fragments). Uses **`hairOption` / `bookingHairOption` / `consultType`** or **`consultTypeLabelForMeeting(m)`**; line is **ellipsis + nowrap**.
 
 **Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — View all bookings/consults list: text block +6px up (avatars unchanged)
+
+**Context:** User wanted the **list view** copy (name/tier + meeting rows) shifted **up 6px** in **view all** mode only, **without** moving profile avatars.
+
+**Change:** **`AdminMeetingsHub.tsx`** — text column wrapper **`transform`** from **`translateX(6px)`** to **`translate(6px, -6px)`** for **`viewAllListClientPanels`** cards only.
