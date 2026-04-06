@@ -12294,3 +12294,19 @@ Verification: `tsc --noEmit`.
 - **`src/utils/usAddressStateDisplay.ts`:** US **abbr → full state** from trailing **`, ST ZIP`**, else last comma segment for non-US.
 
 **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin dashboard reviews card: content % + total count alignment
+
+**Context:** User wanted **CONTENT REVIEWS** row under **POSITIVE SENTIMENT** on the dashboard **REVIEWS** card — **% of reviews that include photo or video**; also asked why dashboard showed **71** total reviews while **Admin → Reviews → ALL** showed **5**.
+
+**Cause of disconnect:** Dashboard used **`getAdminReviews().totalReviews`**, which counted **all DB rows** (including rejected). Admin reviews page **ALL** tab only shows **published + pending** (and with no API, **5** default mock rows).
+
+**Changes:**
+- **`api/admin/reviews.ts`:** **`totalReviews`** = **published + pending** only; added **`reviewsWithMedia`**, **`contentReviewsPercent`**, **`positiveSentimentPercent`**; include **`videos`** on each review item.
+- **`src/utils/api.ts`:** **`getAdminReviews`** typings + new fields.
+- **`src/utils/adminReviewAggregates.ts`:** Helpers for visible counts, media %, visible average (dashboard recomputation fallback).
+- **`src/pages/admin/dashboard/page.tsx`:** **CONTENT REVIEWS: N%** line; dynamic **POSITIVE SENTIMENT** % and **PHOTOS/VIDEOS** count; mock dashboard uses **`reviewsWithPhotosVideos` / totalReviews** for content %.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.

@@ -5,6 +5,12 @@ import StatsCard from '../components/StatsCard';
 import RecentActivity from '../components/RecentActivity';
 import ActivityFeed from '../components/ActivityFeed';
 import { getAdminDashboard, getAdminClients, getAdminPending, getAdminReviews, getAdminReferrals } from '../../../utils/api';
+import {
+  averageRatingForVisibleReviews,
+  countVisibleAdminReviews,
+  countVisibleReviewsWithMedia,
+  percentVisibleReviewsPositive,
+} from '../../../utils/adminReviewAggregates';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -113,6 +119,9 @@ function buildMockDashboardData(): {
   orderForms: number;
   pendingItems: { label: string; value: string }[];
   totalReviews: number;
+  reviewsWithMedia: number;
+  contentReviewsPercent: number;
+  positiveSentimentPercent: number;
   averageRating: number;
   inviteeCount: number;
   meetings: Array<{ meetingDate?: string; meetingTime?: string; type?: string; clientName?: string }>;
@@ -164,7 +173,11 @@ function buildMockDashboardData(): {
   ];
 
   const totalReviews = mockClients.reduce((s: number, c: any) => s + (c.totalReviews ?? c.reviewsCount ?? 0), 0);
+  const reviewsWithMediaSum = mockClients.reduce((s: number, c: any) => s + (c.reviewsWithPhotosVideos ?? 0), 0);
+  const contentReviewsPercentMock = totalReviews > 0 ? Math.round((reviewsWithMediaSum / totalReviews) * 100) : 0;
   const avgRating = activeClients > 0 ? 4.2 + (totalReviews % 10) * 0.02 : 0;
+  const positiveSentimentPercentMock =
+    totalReviews > 0 ? Math.min(100, Math.round((avgRating / 5) * 100)) : 0;
   const inviteeCount = mockClients.reduce((s: number, c: any) => s + (c.invitesCount ?? 0), 0);
 
   const serviceTypes = ['INSTALL', 'CONSULTATION', 'WIG & INSTALL', 'REINSTALL', 'VIRTUAL CLASS'];
@@ -211,6 +224,9 @@ function buildMockDashboardData(): {
     orderForms: pendingForms,
     pendingItems,
     totalReviews,
+    reviewsWithMedia: reviewsWithMediaSum,
+    contentReviewsPercent: contentReviewsPercentMock,
+    positiveSentimentPercent: positiveSentimentPercentMock,
     averageRating: avgRating,
     inviteeCount,
     meetings,
@@ -241,7 +257,13 @@ export default function AdminDashboard() {
     notifications: Notification[];
   } | null>(null);
   const [pendingData, setPendingData] = useState<{ pendingReviews: number; orderForms: number; pendingItems: { label: string; value: string }[] } | null>(null);
-  const [reviewsData, setReviewsData] = useState<{ totalReviews: number; averageRating: number } | null>(null);
+  const [reviewsData, setReviewsData] = useState<{
+    totalReviews: number;
+    averageRating: number;
+    reviewsWithMedia: number;
+    contentReviewsPercent: number;
+    positiveSentimentPercent: number;
+  } | null>(null);
   const [_referralsData, setReferralsData] = useState<{ inviteeCount: number } | null>(null);
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [loading, setLoading] = useState(true);
@@ -272,7 +294,14 @@ export default function AdminDashboard() {
                 pendingItems: [],
                 pendingReviewBreakdown: { total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 },
               })),
-              getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
+              getAdminReviews().catch(() => ({
+                reviews: [],
+                averageRating: 0,
+                totalReviews: 0,
+                reviewsWithMedia: 0,
+                contentReviewsPercent: 0,
+                positiveSentimentPercent: 0,
+              })),
               getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),
               fetchAdminMeetingsApiNormalized(),
             ]);
@@ -318,7 +347,26 @@ export default function AdminDashboard() {
               orderForms: pending.orderForms ?? 0,
               pendingItems: pending.pendingItems ?? [],
             });
-            setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
+            const apiList = Array.isArray(reviews.reviews) ? reviews.reviews : [];
+            const totalVis = countVisibleAdminReviews(apiList);
+            const withMedia = countVisibleReviewsWithMedia(apiList);
+            const contentPct =
+              typeof reviews.contentReviewsPercent === 'number' && reviews.contentReviewsPercent >= 0
+                ? reviews.contentReviewsPercent
+                : totalVis > 0
+                  ? Math.round((withMedia / totalVis) * 100)
+                  : 0;
+            const posPct =
+              typeof reviews.positiveSentimentPercent === 'number' && reviews.positiveSentimentPercent >= 0
+                ? reviews.positiveSentimentPercent
+                : percentVisibleReviewsPositive(apiList, 4);
+            setReviewsData({
+              totalReviews: reviews.totalReviews ?? totalVis,
+              averageRating: reviews.averageRating ?? averageRatingForVisibleReviews(apiList),
+              reviewsWithMedia: reviews.reviewsWithMedia ?? withMedia,
+              contentReviewsPercent: contentPct,
+              positiveSentimentPercent: posPct,
+            });
             setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
             setApiMeetings(normalizedMeetings);
             return;
@@ -341,7 +389,13 @@ export default function AdminDashboard() {
           orderForms: data.orderForms ?? 0,
           pendingItems: data.pendingItems ?? [],
         });
-        setReviewsData({ totalReviews: data.totalReviews ?? 0, averageRating: data.averageRating ?? 0 });
+        setReviewsData({
+          totalReviews: data.totalReviews ?? 0,
+          averageRating: data.averageRating ?? 0,
+          reviewsWithMedia: data.reviewsWithMedia ?? 0,
+          contentReviewsPercent: data.contentReviewsPercent ?? 0,
+          positiveSentimentPercent: data.positiveSentimentPercent ?? 0,
+        });
         setReferralsData({ inviteeCount: data.inviteeCount ?? 0 });
         // Keep meetings source aligned with Admin Meetings page (mock+api+local merge),
         // so dashboard card does not drift to a dashboard-only fallback list.
@@ -674,6 +728,9 @@ export default function AdminDashboard() {
   const orderFormsCount = pendingData?.orderForms ?? 0;
   const totalReviewsCount = reviewsData?.totalReviews ?? 0;
   const averageRatingDisplay = reviewsData?.averageRating ?? 0;
+  const contentReviewsPercentDisplay = reviewsData?.contentReviewsPercent ?? 0;
+  const positiveSentimentPercentDisplay = reviewsData?.positiveSentimentPercent ?? 0;
+  const reviewsWithMediaCount = reviewsData?.reviewsWithMedia ?? 0;
 
   const unreadPriorityMessagesTotal = visibleClients.reduce((sum: number, c: any) => {
     const u = getClientUnreadPriorityMessage(c);
@@ -941,9 +998,18 @@ export default function AdminDashboard() {
       count: averageRatingDisplay > 0 ? averageRatingDisplay.toFixed(1) : '—',
       items: [
         { label: 'TOTAL REVIEWS', value: String(totalReviewsCount), color: 'text-gray-500' },
-        { label: 'PHOTOS/VIDEOS', value: '34', color: 'text-red-500' },
+        { label: 'PHOTOS/VIDEOS', value: String(reviewsWithMediaCount), color: 'text-red-500' },
         { label: 'REVIEWS PER MONTH', value: '18', color: 'text-gray-500' },
-        { label: 'POSITIVE SENTIMENT', value: '94%', color: 'text-gray-500' }
+        {
+          label: 'POSITIVE SENTIMENT',
+          value: `${positiveSentimentPercentDisplay}%`,
+          color: 'text-gray-500',
+        },
+        {
+          label: 'CONTENT REVIEWS',
+          value: `${contentReviewsPercentDisplay}%`,
+          color: 'text-gray-500',
+        },
       ],
       activity: totalReviewsCount > 0 ? 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS' : 'EXCELLENT CLIENT FEEDBACK - HIGH SATISFACTION RATINGS'
     },

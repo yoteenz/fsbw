@@ -509,8 +509,17 @@ export async function getAdminReferrals(): Promise<{ log: unknown[]; totalEarned
   };
 }
 
+export type AdminReviewsApiResponse = {
+  reviews: unknown[];
+  averageRating: number;
+  totalReviews: number;
+  reviewsWithMedia?: number;
+  contentReviewsPercent?: number;
+  positiveSentimentPercent?: number;
+};
+
 /** Admin: reviews list (empty until table exists). */
-export async function getAdminReviews(): Promise<{ reviews: unknown[]; averageRating: number; totalReviews: number }> {
+export async function getAdminReviews(): Promise<AdminReviewsApiResponse> {
   const res = await apiFetch('/api/admin/reviews');
   if (res.status === 403) throw new Error('Forbidden');
   if (!res.ok) throw new Error(await res.text());
@@ -519,6 +528,9 @@ export async function getAdminReviews(): Promise<{ reviews: unknown[]; averageRa
     reviews: Array.isArray(data.reviews) ? data.reviews : [],
     averageRating: Number(data.averageRating) || 0,
     totalReviews: Number(data.totalReviews) || 0,
+    reviewsWithMedia: Number(data.reviewsWithMedia) || 0,
+    contentReviewsPercent: Number(data.contentReviewsPercent) || 0,
+    positiveSentimentPercent: Number(data.positiveSentimentPercent) || 0,
   };
 }
 

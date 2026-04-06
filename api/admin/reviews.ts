@@ -39,10 +39,29 @@ function toReviewItem(r: Record<string, unknown>) {
     review: r.review,
     status: r.status,
     photos: Array.isArray(r.photos) ? r.photos : [],
+    videos: Number(r.videos) || 0,
     date: r.created_at,
     createdAt: r.created_at,
     clientProfilePhotoUrl: clientProfilePhotoFromReviewRow(r),
   };
+}
+
+function reviewPhotoCountRaw(r: Record<string, unknown>): number {
+  const p = r.photos;
+  if (Array.isArray(p)) return p.length;
+  const n = Number(p);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function reviewVideoCountRaw(r: Record<string, unknown>): number {
+  const v = r.videos;
+  const n = typeof v === 'number' ? v : Number(v);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function adminReviewStatusVisibleRaw(status: unknown): boolean {
+  const s = String(status ?? 'published').toLowerCase();
+  return s === 'published' || s === 'pending';
 }
 
 async function profilePhotoByEmailMap(
@@ -119,15 +138,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const rawRows = rows.map((r) => r as Record<string, unknown>);
       const photoByEmail = await profilePhotoByEmailMap(supabase, rawRows);
       const reviews = rawRows.map((r) => mergeReviewPhotoFromProfiles(toReviewItem(r), r, photoByEmail));
-      const total = reviews.length;
-      const published = reviews.filter((r) => r.status === 'published');
+      const visibleRaw = rawRows.filter((r) => adminReviewStatusVisibleRaw(r.status));
+      const totalVisible = visibleRaw.length;
+      const withMedia = visibleRaw.filter(
+        (r) => reviewPhotoCountRaw(r) > 0 || reviewVideoCountRaw(r) > 0
+      ).length;
+      const contentReviewsPercent = totalVisible > 0 ? Math.round((withMedia / totalVisible) * 100) : 0;
+      const positiveCount = visibleRaw.filter((r) => (Number(r.rating) || 0) >= 4).length;
+      const positiveSentimentPercent = totalVisible > 0 ? Math.round((positiveCount / totalVisible) * 100) : 0;
+      const published = reviews.filter((r) => String(r.status ?? '').toLowerCase() === 'published');
       const avg = published.length > 0
         ? published.reduce((s, r) => s + Number(r.rating || 0), 0) / published.length
         : 0;
       return res.status(200).json({
         reviews,
         averageRating: Math.round(avg * 10) / 10,
-        totalReviews: total,
+        /** Published + pending only (matches admin reviews page ALL tab). */
+        totalReviews: totalVisible,
+        reviewsWithMedia: withMedia,
+        contentReviewsPercent,
+        positiveSentimentPercent,
       });
     } catch (e) {
       return res.status(500).json({ error: e instanceof Error ? e.message : 'Internal error' });
