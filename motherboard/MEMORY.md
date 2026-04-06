@@ -11834,3 +11834,15 @@ so the branch tips end on the same commit hash rather than merely containing equ
 - Wrapped **Additional Notes** + **scheduling block** (calendar through estimated time copy) in a flex column with **`gap: '20px'`**; calendar wrapper now uses the **same inline styles as consult** for the gray line and padding; **`TOTAL DUE`** is the next flex child with `paddingTop: '6px'` like consult.
 
 **Changes:** `src/pages/booking/appointment/page.tsx`. Verification: `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Consult head measurement input labels renamed
+
+**Context:** User asked to rename three optional head measurement fields on the booking consult page: vertical temple to temple → **EAR TO EAR OVER CROWN**; horizontal temple to temple → **EAR TO EAR ACROSS FOREHEAD**; ear to ear → **TEMPLE TO TEMPLE AROUND CROWN**.
+
+**Changes:**
+- `src/pages/booking/consultation/page.tsx` — `HEAD_MEASUREMENT_FIELDS` labels (internal keys unchanged).
+- `src/utils/cartLineRedAndDetails.ts` — consult cart subtitle lines use the same wording for consistency.
+
+Verification: `tsc --noEmit`.
