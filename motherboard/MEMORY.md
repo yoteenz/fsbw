@@ -12009,3 +12009,17 @@ Verification: `tsc --noEmit`.
 - **`admin/meetings/schedule`**: after **`postAdminMeeting`** success → **`dispatchAdminMeetingsApiRefresh()`**; hub **`patchAdminMeeting`** success path → same dispatch.
 
 **Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Mobile menu toggle height: Noir parity + shared constants
+
+**Context:** User asked to confirm **Account → Rewards** (and **all** menu toggles) use the **same menu panel height** as **Noir** (`calc(100dvh - 80px)`). Account flows had been using **`calc(100dvh - 160px)`** for the flyout.
+
+**Implementation:**
+- **`src/layouts/menuToggleHeights.ts`**: **`MENU_TOGGLE_PANEL_HEIGHT`** = `calc(100dvh - 80px)`; **`ACCOUNT_MAIN_COLUMN_MIN_HEIGHT`** = `calc(100dvh - 160px)` for main column when menu closed.
+- Account pages with hamburger: flyout **`minHeight`/`height`** → **`MENU_TOGGLE_PANEL_HEIGHT`**; outer column **`minHeight`** → **`ACCOUNT_MAIN_COLUMN_MIN_HEIGHT`** where applicable.
+- **`BookingFlowLayout`**, **`straight/noir/page.tsx`**: use **`MENU_TOGGLE_PANEL_HEIGHT`**.
+- **`layouts/PAGE_LAYOUT.md`**: documents both.
+
+**Verify:** `tsc --noEmit`.
