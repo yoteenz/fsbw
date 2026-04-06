@@ -1390,202 +1390,214 @@ export default function BookingAppointmentPage() {
             ))}
           </div>
 
-          <div style={{ width: '100%', minWidth: 0 }}>
-            <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
-              ADDITIONAL NOTES:
-            </label>
-            <textarea
-              id="appointment-additional-notes"
-              value={appointmentNotes}
-              onChange={(e) => setAppointmentNotes(e.target.value)}
-              rows={5}
-              className="bg-white/80 backdrop-blur-sm"
-              style={{
-                width: '100%',
-                minWidth: 0,
-                maxWidth: '100%',
-                boxSizing: 'border-box',
-                border: '1.3px solid #000',
-                fontFamily: bookingFontMedium,
-                fontSize: '11px',
-                color: '#EB1C24',
-                fontWeight: 500,
-                padding: '12px',
-                textTransform: 'uppercase',
-                resize: 'vertical',
-                letterSpacing: '0.03em',
-                lineHeight: 1.45
-              }}
-            />
-          </div>
-
+          {/* Match consult: flex gap between notes and calendar; gray rule on calendar wrapper only (borderTop + paddingTop 20px, marginTop 0). */}
           <div
             style={{
-              borderTop: '1px solid #e5e7eb',
-              paddingTop: '20px',
-              marginTop: '20px',
-              marginBottom: '16px'
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              width: '100%'
             }}
           >
-            <BrandExpiresDatePicker
-              inline
-              navArrowScale={0.75}
-              monthLabelVariant="adminMeetings"
-              value={preferredDateIso}
-              onChange={(iso) => {
-                setPreferredDateIso(iso);
-                setPreferredTimeSlot('');
-                setShowTimeSlotDropdown(false);
-              }}
-              isDateDisabled={isAppointmentDateDisabled}
-            />
-          </div>
-          {preferredDateIso ? (
-            <div style={{ marginBottom: '12px' }}>
-              <label
+            <div style={{ width: '100%', minWidth: 0 }}>
+              <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
+                ADDITIONAL NOTES:
+              </label>
+              <textarea
+                id="appointment-additional-notes"
+                value={appointmentNotes}
+                onChange={(e) => setAppointmentNotes(e.target.value)}
+                rows={5}
+                className="bg-white/80 backdrop-blur-sm"
                 style={{
+                  width: '100%',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
+                  border: '1.3px solid #000',
                   fontFamily: bookingFontMedium,
-                  fontSize: '10px',
-                  color: '#000',
+                  fontSize: '11px',
+                  color: '#EB1C24',
+                  fontWeight: 500,
+                  padding: '12px',
                   textTransform: 'uppercase',
-                  margin: '0 0 6px',
-                  display: 'block',
-                  letterSpacing: '0.02em'
+                  resize: 'vertical',
+                  letterSpacing: '0.03em',
+                  lineHeight: 1.45
+                }}
+              />
+            </div>
+
+            <div style={{ width: '100%', minWidth: 0 }}>
+              <div
+                style={{
+                  borderTop: '1px solid #e5e7eb',
+                  paddingTop: '20px',
+                  marginTop: 0,
+                  marginBottom: appointmentScheduledSummaryVisible ? '16px' : '10px'
                 }}
               >
-                AVAILABLE TIME SLOTS:
-              </label>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowTimeSlotDropdown((v) => !v)}
-                  className="w-full"
+                <BrandExpiresDatePicker
+                  inline
+                  navArrowScale={0.75}
+                  monthLabelVariant="adminMeetings"
+                  value={preferredDateIso}
+                  onChange={(iso) => {
+                    setPreferredDateIso(iso);
+                    setPreferredTimeSlot('');
+                    setShowTimeSlotDropdown(false);
+                  }}
+                  isDateDisabled={isAppointmentDateDisabled}
+                />
+              </div>
+              {preferredDateIso ? (
+                <div style={{ marginBottom: '12px' }}>
+                  <label
+                    style={{
+                      fontFamily: bookingFontMedium,
+                      fontSize: '10px',
+                      color: '#000',
+                      textTransform: 'uppercase',
+                      margin: '0 0 6px',
+                      display: 'block',
+                      letterSpacing: '0.02em'
+                    }}
+                  >
+                    AVAILABLE TIME SLOTS:
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowTimeSlotDropdown((v) => !v)}
+                      className="w-full"
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        height: '36px',
+                        border: '1.3px solid #000',
+                        borderRadius: 0,
+                        fontFamily: bookingFontMedium,
+                        fontSize: '11px',
+                        background: '#fff',
+                        textTransform: 'uppercase',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        color: preferredTimeSlot ? '#000' : '#808080',
+                        letterSpacing: '0.02em'
+                      }}
+                    >
+                      <span>{preferredTimeSlot || 'SELECT A TIME'}</span>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                        className="flex-shrink-0"
+                        style={{
+                          transform: showTimeSlotDropdown ? 'rotate(180deg)' : 'none',
+                          color: '#EB1C24',
+                          marginLeft: '8px'
+                        }}
+                      >
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    {showTimeSlotDropdown ? (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          aria-hidden="true"
+                          onClick={() => setShowTimeSlotDropdown(false)}
+                        />
+                        <div
+                          className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
+                          style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+                        >
+                          {WEEKDAY_TIME_SLOTS.map((slot) => {
+                            const slotDisabled = !availableTimeSlotsForDate.includes(slot);
+                            return (
+                              <button
+                                key={slot}
+                                type="button"
+                                disabled={slotDisabled}
+                                onClick={() => {
+                                  if (slotDisabled) return;
+                                  setPreferredTimeSlot(slot);
+                                  setShowTimeSlotDropdown(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: slotDisabled ? '#9ca3af' : '#000',
+                                  fontWeight: 400,
+                                  cursor: slotDisabled ? 'not-allowed' : 'pointer',
+                                  opacity: slotDisabled ? 0.7 : 1
+                                }}
+                                title={
+                                  slotDisabled
+                                    ? 'UNAVAILABLE DUE TO TRAVEL BUFFER (NO APPOINTMENTS AFTER 12 PM THE DAY BEFORE A TRAVEL BOOKING).'
+                                    : undefined
+                                }
+                              >
+                                {slot}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+              <div style={{ marginBottom: appointmentScheduledSummaryVisible ? '20px' : '14px' }}>
+                {preferredDateIso && preferredTimeSlot ? (
+                  <p
+                    style={{
+                      fontFamily: bookingFontMedium,
+                      fontSize: '10px',
+                      color: '#EB1C24',
+                      textTransform: 'uppercase',
+                      textAlign: 'center',
+                      margin: '0 0 4px',
+                      lineHeight: 1.45,
+                      letterSpacing: '0.02em'
+                    }}
+                  >
+                    SCHEDULED DATE & TIME: {formatIsoForDisplay(preferredDateIso)} @ {formatTimeSlotForDisplay(preferredTimeSlot)}.
+                  </p>
+                ) : null}
+                <p
                   style={{
-                    width: '100%',
-                    padding: '8px 10px',
-                    height: '36px',
-                    border: '1.3px solid #000',
-                    borderRadius: 0,
                     fontFamily: bookingFontMedium,
-                    fontSize: '11px',
-                    background: '#fff',
+                    fontSize: '10px',
+                    color: '#EB1C24',
                     textTransform: 'uppercase',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    color: preferredTimeSlot ? '#000' : '#808080',
+                    textAlign: 'center',
+                    margin: 0,
+                    lineHeight: 1.45,
                     letterSpacing: '0.02em'
                   }}
                 >
-                  <span>{preferredTimeSlot || 'SELECT A TIME'}</span>
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    className="flex-shrink-0"
-                    style={{
-                      transform: showTimeSlotDropdown ? 'rotate(180deg)' : 'none',
-                      color: '#EB1C24',
-                      marginLeft: '8px'
-                    }}
-                  >
-                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                {showTimeSlotDropdown ? (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      aria-hidden="true"
-                      onClick={() => setShowTimeSlotDropdown(false)}
-                    />
-                    <div
-                      className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
-                      style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
-                    >
-                      {WEEKDAY_TIME_SLOTS.map((slot) => {
-                        const slotDisabled = !availableTimeSlotsForDate.includes(slot);
-                        return (
-                        <button
-                          key={slot}
-                          type="button"
-                          disabled={slotDisabled}
-                          onClick={() => {
-                            if (slotDisabled) return;
-                            setPreferredTimeSlot(slot);
-                            setShowTimeSlotDropdown(false);
-                          }}
-                          className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                          style={{
-                            fontFamily: '"Futura PT Book"',
-                            color: slotDisabled ? '#9ca3af' : '#000',
-                            fontWeight: 400,
-                            cursor: slotDisabled ? 'not-allowed' : 'pointer',
-                            opacity: slotDisabled ? 0.7 : 1,
-                          }}
-                          title={
-                            slotDisabled
-                              ? 'UNAVAILABLE DUE TO TRAVEL BUFFER (NO APPOINTMENTS AFTER 12 PM THE DAY BEFORE A TRAVEL BOOKING).'
-                              : undefined
-                          }
-                        >
-                          {slot}
-                        </button>
-                      );
-                    })}
-                    </div>
-                  </>
-                ) : null}
+                  ESTIMATED APPOINTMENT TIME: {formatEstimatedAppointmentTime(estimatedMinutes)}.
+                  <br />
+                  FINAL DURATION CONFIRMED AFTER CHECKOUT.
+                </p>
               </div>
             </div>
-          ) : null}
-          <div style={{ marginBottom: appointmentScheduledSummaryVisible ? '20px' : '14px' }}>
-            {preferredDateIso && preferredTimeSlot ? (
-              <p
-                style={{
-                  fontFamily: bookingFontMedium,
-                  fontSize: '10px',
-                  color: '#EB1C24',
-                  textTransform: 'uppercase',
-                  textAlign: 'center',
-                  margin: '0 0 4px',
-                  lineHeight: 1.45,
-                  letterSpacing: '0.02em'
-                }}
-              >
-                SCHEDULED DATE & TIME: {formatIsoForDisplay(preferredDateIso)} @ {formatTimeSlotForDisplay(preferredTimeSlot)}.
-              </p>
-            ) : null}
-            <p
-              style={{
-                fontFamily: bookingFontMedium,
-                fontSize: '10px',
-                color: '#EB1C24',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                margin: 0,
-                lineHeight: 1.45,
-                letterSpacing: '0.02em'
-              }}
-            >
-              ESTIMATED APPOINTMENT TIME: {formatEstimatedAppointmentTime(estimatedMinutes)}.
-              <br />
-              FINAL DURATION CONFIRMED AFTER CHECKOUT.
-            </p>
-          </div>
 
-          <div className="text-center" style={{ paddingTop: '6px' }}>
-            <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
-              TOTAL DUE
-            </p>
-            <p
-              className="text-black font-medium text-base md:text-xl lg:text-2xl"
-              style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
-            >
-              {formatUsd(totalUsd)}
-            </p>
+            <div className="text-center" style={{ paddingTop: '6px' }}>
+              <p className="font-futura text-[12px] md:text-sm lg:text-base font-medium" style={{ color: '#808080' }}>
+                TOTAL DUE
+              </p>
+              <p
+                className="text-black font-medium text-base md:text-xl lg:text-2xl"
+                style={{ fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif', fontWeight: '500' }}
+              >
+                {formatUsd(totalUsd)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
