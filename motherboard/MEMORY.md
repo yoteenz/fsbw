@@ -12207,3 +12207,11 @@ Verification: `tsc --noEmit`.
 - **`supabase/migrations/20260407120000_reviews_client_profile_photo_url.sql`:** optional **`reviews.client_profile_photo_url`** for explicit storage.
 
 **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: 5-star sort, strict star filter, profile thumb, layout
+
+**Context:** **5 STAR** sort option; dropdown **+2px** right; profile **icons** (default **`profile-thumb.png`**) **above** client name; star filters **exact** rating only; Noir stars use **`reviewStarCount`**.
+
+**File:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.

@@ -10,7 +10,7 @@ import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState'
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
-const REVIEW_SORT_OPTIONS = ['1 STAR', '2 STAR', '3 STAR', '4 STAR', 'PHOTOS', 'VIDEOS'] as const;
+const REVIEW_SORT_OPTIONS = ['1 STAR', '2 STAR', '3 STAR', '4 STAR', '5 STAR', 'PHOTOS', 'VIDEOS'] as const;
 type ReviewSortOption = (typeof REVIEW_SORT_OPTIONS)[number];
 
 function reviewSortOptionToLabel(opt: ReviewSortOption): string {
@@ -22,6 +22,7 @@ type ReviewScope = 'shop' | 'tools';
 type AdminReviewRow = {
   id: number;
   client: string;
+  /** 1–5 for display/sort; invalid values clamped when filtering */
   rating: number;
   product: string;
   review: string;
@@ -32,7 +33,17 @@ type AdminReviewRow = {
   scope: ReviewScope;
   /** From API: `profiles.profile_image` join or optional column on `reviews`. */
   clientProfilePhotoUrl?: string;
+  /** Reviewer email when API provides it (profile photo join). */
+  clientEmail?: string;
 };
+
+const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
+
+function reviewStarCount(r: AdminReviewRow): number {
+  const n = Math.round(Number(r.rating));
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(5, Math.max(0, n));
+}
 
 function reviewScopeFromUnknown(raw: { scope?: unknown }): ReviewScope {
   const s = String(raw.scope ?? '').toLowerCase();
@@ -120,16 +131,6 @@ function averageRatingForVisible(rows: AdminReviewRow[]): number {
   return Math.round((sum / vis.length) * 10) / 10;
 }
 
-function clientInitialsForAvatar(clientName: string): string {
-  const parts = String(clientName || '')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-  const a = (parts[0] || '?').charAt(0);
-  const b = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
-  return (a + b).toUpperCase() || '?';
-}
-
 function clientProfilePhotoUrlFromApi(x: Record<string, unknown>): string | undefined {
   const raw = x.clientProfilePhotoUrl ?? x.client_profile_photo_url ?? x.profilePhotoUrl ?? x.profile_photo_url;
   const s = typeof raw === 'string' ? raw.trim() : '';
@@ -140,78 +141,68 @@ function clientProfilePhotoUrlFromApi(x: Record<string, unknown>): string | unde
 
 function ReviewClientAvatar({ review }: { review: AdminReviewRow }) {
   const [imgError, setImgError] = useState(false);
-  const url = (review.clientProfilePhotoUrl || '').trim();
-  const showPhoto =
-    Boolean(url) &&
-    !imgError &&
-    (url.startsWith('http') || url.startsWith('/') || url.startsWith('data:'));
+  const custom = (review.clientProfilePhotoUrl || '').trim();
+  const primary =
+    custom && (custom.startsWith('http') || custom.startsWith('/') || custom.startsWith('data:'))
+      ? custom
+      : '';
+  const src = !imgError && primary ? primary : DEFAULT_CLIENT_PROFILE_THUMB;
 
   return (
     <div
-      className="rounded-full flex items-center justify-center shrink-0 overflow-hidden"
+      className="rounded-full shrink-0 overflow-hidden"
       style={{
-        width: '40px',
-        height: '40px',
-        backgroundColor: '#f3f4f6',
+        width: '44px',
+        height: '44px',
         border: '0.8px solid #000',
-        fontFamily: '"Futura PT Medium"',
-        fontSize: '11px',
-        color: '#000',
+        margin: '0 auto',
       }}
       aria-hidden
     >
-      {showPhoto ? (
-        <img
-          src={url}
-          alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        clientInitialsForAvatar(review.client)
-      )}
+      <img
+        src={src}
+        alt=""
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        onError={() => {
+          if (primary) setImgError(true);
+        }}
+      />
     </div>
   );
 }
 
 function sortReviewsByOption(list: AdminReviewRow[], option: ReviewSortOption): AdminReviewRow[] {
+  const starFilter = (n: number) => list.filter((r) => reviewStarCount(r) === n);
   const base =
     option === 'VIDEOS'
       ? list.filter((r) => r.videos > 0)
       : option === 'PHOTOS'
         ? list.filter((r) => r.photos > 0)
-        : [...list];
+        : option === '1 STAR'
+          ? starFilter(1)
+          : option === '2 STAR'
+            ? starFilter(2)
+            : option === '3 STAR'
+              ? starFilter(3)
+              : option === '4 STAR'
+                ? starFilter(4)
+                : option === '5 STAR'
+                  ? starFilter(5)
+                  : [...list];
   const out = [...base];
   const byDate = (a: AdminReviewRow, b: AdminReviewRow) => parseReviewDate(b.date) - parseReviewDate(a.date);
   if (option === 'PHOTOS') {
     out.sort((a, b) => (b.photos - a.photos) || byDate(a, b));
   } else if (option === 'VIDEOS') {
     out.sort((a, b) => (b.videos - a.videos) || byDate(a, b));
-  } else if (option === '1 STAR') {
-    out.sort((a, b) => (a.rating - b.rating) || byDate(a, b));
-  } else if (option === '2 STAR') {
-    out.sort((a, b) => {
-      const pa = a.rating === 2 ? 0 : 1;
-      const pb = b.rating === 2 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return byDate(a, b);
-    });
-  } else if (option === '3 STAR') {
-    out.sort((a, b) => {
-      const pa = a.rating === 3 ? 0 : 1;
-      const pb = b.rating === 3 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return byDate(a, b);
-    });
-  } else {
-    /* 4 STAR */
-    out.sort((a, b) => {
-      const pa = a.rating >= 4 ? 0 : 1;
-      const pb = b.rating >= 4 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      if (pa === 0) return (b.rating - a.rating) || byDate(a, b);
-      return byDate(a, b);
-    });
+  } else if (
+    option === '1 STAR' ||
+    option === '2 STAR' ||
+    option === '3 STAR' ||
+    option === '4 STAR' ||
+    option === '5 STAR'
+  ) {
+    out.sort(byDate);
   }
   return out;
 }
@@ -226,6 +217,7 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
     id: typeof x.id === 'number' ? x.id : Number(x.id) || index + 1,
     client: String(x.client ?? ''),
     rating: Number(x.rating) || 0,
+    clientEmail: String(x.email ?? x.clientEmail ?? '').trim() || undefined,
     product: String(x.product ?? ''),
     review: String(x.review ?? x.body ?? ''),
     date: String(x.date ?? ''),
@@ -310,10 +302,10 @@ export default function AdminReviews() {
         gridTemplateColumns: '1fr',
         marginTop: '0',
         marginBottom: '4px',
-        marginLeft: '-4px',
+        marginLeft: '-2px',
       }}
     >
-      <div className="relative" style={{ paddingLeft: '4px', marginLeft: '0' }}>
+      <div className="relative" style={{ paddingLeft: '6px', marginLeft: '0' }}>
         <button
           type="button"
           onClick={() => setShowReviewSortDropdown((v) => !v)}
@@ -377,39 +369,49 @@ export default function AdminReviews() {
     </div>
   );
 
-  const renderReviewCard = (review: AdminReviewRow) => (
+  const renderReviewCard = (review: AdminReviewRow) => {
+    const stars = reviewStarCount(review);
+    return (
     <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
       <div className="flex justify-between items-start gap-2">
-        <div className="flex items-start gap-2.5 min-w-0 flex-1">
-          <ReviewClientAvatar review={review} />
-          <div className="min-w-0 flex-1">
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>
+        <div className="min-w-0 flex-1 flex flex-col">
+          <div className="flex flex-col items-center w-full">
+            <ReviewClientAvatar review={review} />
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
+                color: '#EB1C24',
+                margin: '8px 0 0',
+                textAlign: 'center',
+              }}
+            >
               {review.client}
             </p>
-            <p
-              className="mt-1"
-              style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0 }}
-            >
-              {review.product}
-            </p>
-            <div className="flex items-center gap-1 mt-1">
-              {[...Array(5)].map((_, i) => (
-                <img
-                  key={i}
-                  src={NOIR_REVIEW_STAR_SRC}
-                  alt=""
-                  width={14}
-                  height={14}
-                  style={{
-                    width: '14px',
-                    height: '14px',
-                    objectFit: 'contain',
-                    opacity: i < review.rating ? 1 : 0.28,
-                    filter: 'drop-shadow(0 0 0 1px black)',
-                  }}
-                />
-              ))}
-            </div>
+          </div>
+          <p
+            className="mt-1 w-full"
+            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'left' }}
+          >
+            {review.product}
+          </p>
+          <div className="flex items-center gap-1 mt-1">
+            {[...Array(5)].map((_, i) => (
+              <img
+                key={i}
+                src={NOIR_REVIEW_STAR_SRC}
+                alt=""
+                width={14}
+                height={14}
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  objectFit: 'contain',
+                  opacity: i < stars ? 1 : 0.28,
+                  filter: 'drop-shadow(0 0 0 1px black)',
+                }}
+              />
+            ))}
           </div>
         </div>
         <span
@@ -432,7 +434,8 @@ export default function AdminReviews() {
         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{review.status.toUpperCase()}</span>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
