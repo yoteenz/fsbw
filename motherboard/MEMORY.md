@@ -12310,3 +12310,13 @@ Verification: `tsc --noEmit`.
 - **`src/pages/admin/dashboard/page.tsx`:** **CONTENT REVIEWS: N%** line; dynamic **POSITIVE SENTIMENT** % and **PHOTOS/VIDEOS** count; mock dashboard uses **`reviewsWithPhotosVideos` / totalReviews** for content %.
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin dashboard: list/grid toggle left-aligned
+
+**Context:** User wanted the **list vs grid** view toggle below the dashboard stat cards aligned to the **left** instead of the **right**.
+
+**Change:** **`src/pages/admin/components/RecentActivity.tsx`** — wrapper around the toggle buttons: **`justify-end` → `justify-start`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.

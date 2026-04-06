@@ -853,7 +853,7 @@ export default function RecentActivity({ onViewModeChange }: RecentActivityProps
   return (
     <div>
       {/* View mode icons - same as wishlist lists page (line & grid) */}
-      <div className="flex justify-end" style={{ marginBottom: '16px' }}>
+      <div className="flex justify-start" style={{ marginBottom: '16px' }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button
             type="button"
