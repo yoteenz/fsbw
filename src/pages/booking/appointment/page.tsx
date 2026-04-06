@@ -1390,66 +1390,60 @@ export default function BookingAppointmentPage() {
             ))}
           </div>
 
-          {/* Match consult: flex gap between notes and calendar; gray rule on calendar wrapper only (borderTop + paddingTop 20px, marginTop 0). */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              width: '100%'
-            }}
-          >
-            <div style={{ width: '100%', minWidth: 0 }}>
-              <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
-                ADDITIONAL NOTES:
-              </label>
-              <textarea
-                id="appointment-additional-notes"
-                value={appointmentNotes}
-                onChange={(e) => setAppointmentNotes(e.target.value)}
-                rows={5}
-                className="bg-white/80 backdrop-blur-sm"
-                style={{
-                  width: '100%',
-                  minWidth: 0,
-                  maxWidth: '100%',
-                  boxSizing: 'border-box',
-                  border: '1.3px solid #000',
-                  fontFamily: bookingFontMedium,
-                  fontSize: '11px',
-                  color: '#EB1C24',
-                  fontWeight: 500,
-                  padding: '12px',
-                  textTransform: 'uppercase',
-                  resize: 'vertical',
-                  letterSpacing: '0.03em',
-                  lineHeight: 1.45
+          {/* Notes then scheduling: same rhythm as consult (20px above rule, rule, 20px to calendar). Use #9ca3af @ 1.3px so the divider reads on marble — #e5e7eb was washing out. */}
+          <div style={{ width: '100%', minWidth: 0 }}>
+            <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
+              ADDITIONAL NOTES:
+            </label>
+            <textarea
+              id="appointment-additional-notes"
+              value={appointmentNotes}
+              onChange={(e) => setAppointmentNotes(e.target.value)}
+              rows={5}
+              className="bg-white/80 backdrop-blur-sm"
+              style={{
+                width: '100%',
+                minWidth: 0,
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                border: '1.3px solid #000',
+                fontFamily: bookingFontMedium,
+                fontSize: '11px',
+                color: '#EB1C24',
+                fontWeight: 500,
+                padding: '12px',
+                textTransform: 'uppercase',
+                resize: 'vertical',
+                letterSpacing: '0.03em',
+                lineHeight: 1.45
+              }}
+            />
+          </div>
+
+          <div style={{ width: '100%', minWidth: 0, position: 'relative', zIndex: 1 }}>
+            <div
+              style={{
+                marginTop: '20px',
+                borderTop: '1.3px solid #9ca3af',
+                paddingTop: '20px',
+                boxSizing: 'border-box',
+                width: '100%',
+                marginBottom: appointmentScheduledSummaryVisible ? '16px' : '10px'
+              }}
+            >
+              <BrandExpiresDatePicker
+                inline
+                navArrowScale={0.75}
+                monthLabelVariant="adminMeetings"
+                value={preferredDateIso}
+                onChange={(iso) => {
+                  setPreferredDateIso(iso);
+                  setPreferredTimeSlot('');
+                  setShowTimeSlotDropdown(false);
                 }}
+                isDateDisabled={isAppointmentDateDisabled}
               />
             </div>
-
-            <div style={{ width: '100%', minWidth: 0 }}>
-              <div
-                style={{
-                  borderTop: '1px solid #e5e7eb',
-                  paddingTop: '20px',
-                  marginTop: 0,
-                  marginBottom: appointmentScheduledSummaryVisible ? '16px' : '10px'
-                }}
-              >
-                <BrandExpiresDatePicker
-                  inline
-                  navArrowScale={0.75}
-                  monthLabelVariant="adminMeetings"
-                  value={preferredDateIso}
-                  onChange={(iso) => {
-                    setPreferredDateIso(iso);
-                    setPreferredTimeSlot('');
-                    setShowTimeSlotDropdown(false);
-                  }}
-                  isDateDisabled={isAppointmentDateDisabled}
-                />
-              </div>
               {preferredDateIso ? (
                 <div style={{ marginBottom: '12px' }}>
                   <label
@@ -1598,7 +1592,6 @@ export default function BookingAppointmentPage() {
                 {formatUsd(totalUsd)}
               </p>
             </div>
-          </div>
         </div>
       </div>
     </BookingFlowLayout>

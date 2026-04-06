@@ -834,10 +834,12 @@ export default function BookingConsultationPage() {
             <>
               <div
                 style={{
-                  borderTop: '1px solid #e5e7eb',
+                  borderTop: '1.3px solid #9ca3af',
                   paddingTop: '20px',
                   marginTop: 0,
-                  marginBottom: consultScheduledSummaryVisible ? '16px' : '10px'
+                  marginBottom: consultScheduledSummaryVisible ? '16px' : '10px',
+                  boxSizing: 'border-box',
+                  width: '100%'
                 }}
               >
                 <BrandExpiresDatePicker
