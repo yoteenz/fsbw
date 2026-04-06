@@ -11859,3 +11859,16 @@ Verification: `tsc --noEmit`.
 3. **`mergeAccountNotifications`:** ids starting with **`order_received_`** force `isRead: false` (like `acc_`) so a previously archived stored row reappears in NEW until the user archives again.
 
 **Files:** `src/utils/orderAccountAlerts.ts`, `src/pages/account/notifications/page.tsx`, `src/pages/account/page.tsx`, `src/utils/orderTracking.ts`.
+
+---
+
+## 2026-04-06 — Booking appointment notes→calendar gray line not visible (fix)
+
+**Context:** User reported the divider below **Additional Notes** and above the calendar on the booking **appointment** page still did not show, despite earlier flex-gap alignment with consult.
+
+**Causes / fixes:**
+- **`1px solid #e5e7eb`** on marble + frosted UI was effectively invisible; switched notes→calendar rule to **`1.3px solid #9ca3af`** (design-system gray) on both **appointment** and **consult** calendar wrappers for parity.
+- **Appointment:** removed the inner flex `gap: 20px` wrapper; use **`marginTop: 20px`** on the bordered block + **`paddingTop: 20px`** so spacing matches consult rhythm without collapsing the border visually; added **`position: relative; zIndex: 1`** on the scheduling column so nothing stacks over the rule.
+- **Bug:** an extra **`</div>`** from the prior refactor broke JSX (tsc failed); removed the stray closer.
+
+**Files:** `src/pages/booking/appointment/page.tsx`, `src/pages/booking/consultation/page.tsx`.
