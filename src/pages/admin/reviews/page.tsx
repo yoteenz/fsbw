@@ -157,7 +157,6 @@ function ReviewClientAvatar({ review }: { review: AdminReviewRow }) {
         width: '44px',
         height: '44px',
         border: '0.8px solid #000',
-        margin: '0 auto',
       }}
       aria-hidden
     >
@@ -297,23 +296,23 @@ export default function AdminReviews() {
 
   const renderSortDropdown = () => (
     <div
-      className="grid gap-2 py-2 font-medium text-black items-center min-w-0"
+      className="grid gap-2 px-5 py-2 font-medium text-black items-center min-w-0"
       style={{
         fontFamily: '"Futura PT Book"',
         fontSize: '11px',
         gridTemplateColumns: '1fr',
-        marginTop: '0',
+        marginTop: '7px',
+        marginLeft: '-4px',
         marginBottom: '4px',
-        marginLeft: '-2px',
       }}
     >
-      <div className="relative" style={{ paddingLeft: '6px', marginLeft: '0' }}>
+      <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
         <button
           type="button"
           onClick={() => setShowReviewSortDropdown((v) => !v)}
-          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors"
+          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors max-w-[120px]"
         >
-          <span>{reviewSortOptionToLabel(reviewSortOption)}</span>
+          <span className="truncate min-w-0">{reviewSortOptionToLabel(reviewSortOption)}</span>
           <svg
             width="12"
             height="12"
@@ -338,13 +337,19 @@ export default function AdminReviews() {
         {showReviewSortDropdown && (
           <>
             <div
-              className="fixed inset-0 z-10"
+              className="fixed inset-0 z-30"
               aria-hidden="true"
               onClick={() => setShowReviewSortDropdown(false)}
             />
             <div
-              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px] max-h-60 overflow-y-auto"
-              style={{ borderWidth: '1.3px', marginTop: '7px' }}
+              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-40 max-h-60 overflow-y-auto overflow-x-hidden"
+              style={{
+                borderWidth: '1.3px',
+                marginTop: '7px',
+                width: '120px',
+                maxWidth: '120px',
+                boxSizing: 'border-box',
+              }}
             >
               {REVIEW_SORT_OPTIONS.filter((opt) => opt !== reviewSortOption).map((opt) => (
                 <button
@@ -377,7 +382,7 @@ export default function AdminReviews() {
     <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0 flex-1 flex flex-col">
-          <div className="flex flex-col items-center w-full">
+          <div className="flex flex-col items-start w-full">
             <ReviewClientAvatar review={review} />
             <p
               style={{
@@ -385,7 +390,8 @@ export default function AdminReviews() {
                 fontSize: '11px',
                 color: '#EB1C24',
                 margin: '8px 0 0',
-                textAlign: 'center',
+                textAlign: 'left',
+                width: '100%',
               }}
             >
               {review.client}
@@ -544,6 +550,9 @@ export default function AdminReviews() {
                 ))}
               </div>
 
+              {/* Sort lives outside scroll so the menu is never clipped when the list is empty */}
+              {renderSortDropdown()}
+
               {/* Tab content – padding below scroll viewport (above card bottom) */}
               <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
                 <div
@@ -554,35 +563,24 @@ export default function AdminReviews() {
                     boxSizing: 'border-box',
                   }}
                 >
-                {activeTab === 'ALL' && (
-                  <>
-                    {renderSortDropdown()}
-                    <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>
-                  </>
-                )}
+                {activeTab === 'ALL' && <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>}
                 {activeTab === 'SHOP' && (
-                  <>
-                    {renderSortDropdown()}
-                    {shopReviews.length === 0 ? (
-                      <div className="py-6 text-center">
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No shop reviews at this time.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">{shopVisibleSorted.map(renderReviewCard)}</div>
-                    )}
-                  </>
+                  shopReviews.length === 0 ? (
+                    <div className="py-6 text-center">
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No shop reviews at this time.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-0">{shopVisibleSorted.map(renderReviewCard)}</div>
+                  )
                 )}
                 {activeTab === 'TOOLS' && (
-                  <>
-                    {renderSortDropdown()}
-                    {toolsReviews.length === 0 ? (
-                      <div className="py-6 text-center">
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No tools reviews at this time.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">{toolsVisibleSorted.map(renderReviewCard)}</div>
-                    )}
-                  </>
+                  toolsReviews.length === 0 ? (
+                    <div className="py-6 text-center">
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No tools reviews at this time.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-0">{toolsVisibleSorted.map(renderReviewCard)}</div>
+                  )
                 )}
                 </div>
               </div>

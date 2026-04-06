@@ -12239,3 +12239,11 @@ Verification: `tsc --noEmit`.
 - **`src/pages/admin/dashboard/page.tsx`:** Pending catch fallback includes **`pendingReviewBreakdown`**.
 
 **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews UI: sort popover + avatar alignment
+
+**Context:** Sort menu clipped when list empty; match clients overview sort width; avatar left above client name.
+
+**File:** **`src/pages/admin/reviews/page.tsx`** — sort row outside scroll; **120px** menu **`z-40`**; clients-matching margins; avatar **`items-start`** / no auto margin. **`tsc --noEmit`**.
