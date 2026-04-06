@@ -28,11 +28,11 @@ import { readLocalActivityForEmail, trackActivity } from '../../../utils/activit
 import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
 import {
   compareAdminMeetingsNewestFirst,
-  formatMeetingIsoDateForDisplay,
   listAggregatedAdminMeetingsForClientDetails,
   normalizeApiMeeting,
   type AdminMeeting
 } from '../../../utils/adminMeetingsMock';
+import { AdminMeetingClientPanel, AdminMeetingClientPanelShell } from '../../../utils/adminMeetingClientPanels';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -546,19 +546,6 @@ function isSupabaseUserId(id: unknown): id is string {
 
 const MAYA_OWEN_MOCK_EMAIL = 'mock13@test.com';
 
-function adminMeetingClientEmailNorm(m: AdminMeeting): string {
-  return String(m.clientEmail || '').trim().toLowerCase();
-}
-
-/** Align with admin meetings pills: Confirmed → SCHEDULED, Pending → PENDING, Canceled → CANCELED. */
-function meetingStatusForClientDetailsTab(m: AdminMeeting): string {
-  const s = String(m.status || '').trim().toLowerCase();
-  if (s === 'canceled' || s === 'cancelled') return 'CANCELED';
-  if (s === 'confirmed') return 'SCHEDULED';
-  if (s === 'pending') return 'PENDING';
-  return String(m.status || 'PENDING').toUpperCase();
-}
-
 /** Mock activity for Maya Owen (mock13@test.com) – all event types for demo. Newest first. */
 function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; payload?: Record<string, unknown>; createdAt: string }> {
   const now = Date.now();
@@ -633,6 +620,7 @@ export default function AdminClients() {
   const [adminMeetingsTick, setAdminMeetingsTick] = useState(0);
   /** Supabase/API meetings merged into client APPOINTMENTS tab (same source as meetings hub). */
   const [apiMeetingsForClientDetails, setApiMeetingsForClientDetails] = useState<AdminMeeting[]>([]);
+  const [clientDetailsConsultPhotoPreviewSrc, setClientDetailsConsultPhotoPreviewSrc] = useState<string | null>(null);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
@@ -1127,14 +1115,8 @@ export default function AdminClients() {
     const email = (selectedClientEmail || '').trim().toLowerCase();
     if (!email || !selectedClient) return [];
     return listAggregatedAdminMeetingsForClientDetails(apiMeetingsForClientDetails)
-      .filter((m) => adminMeetingClientEmailNorm(m) === email)
-      .sort(compareAdminMeetingsNewestFirst)
-      .map((m) => ({
-        date: formatMeetingIsoDateForDisplay(m.date),
-        time: m.time,
-        type: m.category === 'consultation' ? `CONSULT — ${m.type}` : m.type,
-        status: meetingStatusForClientDetailsTab(m),
-      }));
+      .filter((m) => String(m.clientEmail || '').trim().toLowerCase() === email)
+      .sort(compareAdminMeetingsNewestFirst);
   }, [selectedClient, selectedClientEmail, adminMeetingsTick, apiMeetingsForClientDetails]);
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
@@ -3136,67 +3118,33 @@ export default function AdminClients() {
                           </div>
                         )}
                         {detailsTab === 'appointments' && (
-                          <div className="space-y-3">
+                          <div style={{ marginTop: '6px' }}>
                             {appointments.length === 0 ? (
-                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS OR CONSULTS YET</div>
+                              <p
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '11px',
+                                  color: '#808080',
+                                  textAlign: 'center',
+                                  padding: '16px',
+                                }}
+                              >
+                                NO APPOINTMENTS OR CONSULTS YET
+                              </p>
                             ) : (
-                            appointments.map((appointment: any, index: number) => {
-                              const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
-                              const pillStyle: Record<string, string> = {
-                                height: '15px',
-                                padding: '0 6px',
-                                boxSizing: 'border-box',
-                                borderRadius: '2px',
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '8px',
-                                ...(s === 'SCHEDULED' ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
-                                  : s === 'COMPLETED' ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
-                                  : s === 'CANCELED' || s === 'CANCELLED' ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
-                                  : { backgroundColor: '#f3f4f6', color: '#808080' }),
-                              };
-                              return (
-                                <div
-                                  key={index}
-                                  className="bg-white border border-gray-200 p-4"
-                                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-                                >
-                                  <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '85px', minHeight: '85px', transform: 'translateX(-12px)' }}>
-                                    <div
-                                      style={{
-                                        width: '85px',
-                                        height: '85px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: '#f9fafb',
-                                        border: '1px solid #e5e7eb',
-                                        borderRadius: '2px'
-                                      }}
-                                    >
-                                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>APT</span>
-                                    </div>
-                                  </div>
-                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', transform: 'translate(-10px, -12px)' }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: '16px', color: '#000000', margin: 0, lineHeight: 1.25 }}>
-                                      {appointment.date}
-                                    </p>
-                                    <div style={{ marginTop: '2px' }}>
-                                      <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
-                                        {appointment.type || 'APPOINTMENT'}
-                                      </h4>
-                                    </div>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, marginTop: '2px', transform: 'translateY(-4px)', textTransform: 'uppercase' }}>
-                                      {appointment.time || '—'}
-                                    </p>
-                                  </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, transform: 'translateX(-6px)' }}>
-                                    <span className="admin-order-status-pill" style={pillStyle}>
-                                      <span style={{ lineHeight: 1 }}>{appointment.status}</span>
-                                    </span>
-                                  </div>
-                                </div>
-                              );
-                            })
+                              appointments.map((m) => (
+                                <AdminMeetingClientPanelShell key={m.id}>
+                                  <AdminMeetingClientPanel
+                                    m={m}
+                                    variant={m.category === 'consultation' ? 'consults' : 'bookings'}
+                                    disableProfileNavigation
+                                    onProfileClick={() => {}}
+                                    onActionClick={(e) => e.preventDefault()}
+                                    actionAriaLabel=""
+                                    onConsultPhotoClick={setClientDetailsConsultPhotoPreviewSrc}
+                                  />
+                                </AdminMeetingClientPanelShell>
+                              ))
                             )}
                           </div>
                         )}
@@ -3754,6 +3702,40 @@ export default function AdminClients() {
                 objectPosition: 'center',
                 borderRadius: '50%',
                 border: '1.3px solid #000',
+              }}
+            />
+          </div>
+        </div>
+      )}
+      {clientDetailsConsultPhotoPreviewSrc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)' }}
+          onClick={() => setClientDetailsConsultPhotoPreviewSrc(null)}
+          role="presentation"
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              maxHeight: '90vh',
+              border: '1.3px solid #000',
+              background: '#fff',
+              padding: '10px',
+              boxSizing: 'border-box',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <img
+              src={clientDetailsConsultPhotoPreviewSrc}
+              alt="Consult submitted photo preview"
+              style={{
+                width: '100%',
+                maxHeight: 'calc(90vh - 20px)',
+                objectFit: 'contain',
+                display: 'block',
+                background: '#f3f4f6',
               }}
             />
           </div>

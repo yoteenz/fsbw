@@ -11964,3 +11964,9 @@ Verification: `tsc --noEmit`.
 - **`ErrorBoundary`**: on chunk-like errors call **`hardReloadOnceForStaleChunks()`** immediately; removed broken timeout/retry that read stale **`retryCount`** and rarely reloaded.
 
 **Files:** `src/utils/chunkLoadRecovery.ts`, `src/App.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Account Rewards: +6px Bohemy excludes line + redeem
+
+**Change:** On **Account → Rewards** (`membership/page.tsx`), red **(excludes taxes + shipping fees)** **`fontSize` 11px → 17px**; red **redeem** button **`fontSize` 12px → 18px** (both standard + premium blocks). **`tsc --noEmit`**.
