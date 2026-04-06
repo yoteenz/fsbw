@@ -122,7 +122,9 @@ function parseReviewDate(d: string): number {
   return 0;
 }
 
-const NOIR_REVIEW_STAR_SRC = '/assets/NOIR/filled-star.png';
+const NOIR_REVIEW_STAR_FILLED_SRC = '/assets/NOIR/filled-star.png';
+/** Outline / empty stars — same asset as Noir marble strip product rows */
+const NOIR_REVIEW_STAR_OUTLINE_SRC = '/assets/NOIR/star-symbol.png';
 
 function averageRatingForVisible(rows: AdminReviewRow[]): number {
   const vis = rows.filter((r) => r.status === 'published' || r.status === 'pending');
@@ -396,22 +398,25 @@ export default function AdminReviews() {
             {review.product}
           </p>
           <div className="flex items-center gap-1 mt-1">
-            {[...Array(5)].map((_, i) => (
-              <img
-                key={i}
-                src={NOIR_REVIEW_STAR_SRC}
-                alt=""
-                width={14}
-                height={14}
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  objectFit: 'contain',
-                  opacity: i < stars ? 1 : 0.28,
-                  filter: 'drop-shadow(0 0 0 1px black)',
-                }}
-              />
-            ))}
+            {[...Array(5)].map((_, i) => {
+              const filled = i < stars;
+              return (
+                <img
+                  key={i}
+                  src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
+                  alt=""
+                  width={14}
+                  height={14}
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 0 0 1px black)',
+                    stroke: '1px black',
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
         <span

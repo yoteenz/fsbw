@@ -12215,3 +12215,11 @@ Verification: `tsc --noEmit`.
 **Context:** **5 STAR** sort option; dropdown **+2px** right; profile **icons** (default **`profile-thumb.png`**) **above** client name; star filters **exact** rating only; Noir stars use **`reviewStarCount`**.
 
 **File:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: empty stars = Noir outline (`star-symbol`)
+
+**Context:** User wanted unrated positions (e.g. 5th star on a 4★ review) to look like Noir **outline** stars (white/light fill + black border), not a faded filled star.
+
+**Change:** Filled slots use **`filled-star.png`**; empty slots use **`star-symbol.png`** with same **`drop-shadow`** / **`stroke`** as Noir product strip. **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.
