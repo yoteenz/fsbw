@@ -266,7 +266,12 @@ export default function AdminDashboard() {
             const [api, clientsFromClientsApi, pending, reviews, referrals, normalizedMeetings] = await Promise.all([
               getAdminDashboard(),
               getAdminClients().then((r) => r.clients).catch(() => []),
-              getAdminPending().catch(() => ({ pendingReviews: 0, orderForms: 0, pendingItems: [] })),
+              getAdminPending().catch(() => ({
+                pendingReviews: 0,
+                orderForms: 0,
+                pendingItems: [],
+                pendingReviewBreakdown: { total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 },
+              })),
               getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
               getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),
               fetchAdminMeetingsApiNormalized(),

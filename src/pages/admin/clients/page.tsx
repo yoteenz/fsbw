@@ -907,8 +907,9 @@ export default function AdminClients() {
           if (!email) continue;
           if (!next[email]) next[email] = { total: 0, media: 0, pending: 0 };
           next[email].total += 1;
-          const photos = Array.isArray(r.photos) ? r.photos.length : 0;
-          if (photos > 0) next[email].media += 1;
+          const photoN = Array.isArray(r.photos) ? r.photos.length : Number(r.photos) || 0;
+          const videoN = Number(r.videos) || 0;
+          if (photoN > 0 || videoN > 0) next[email].media += 1;
           const status = (r.status || '').toString().trim().toLowerCase();
           if (status === 'pending') next[email].pending += 1;
         }

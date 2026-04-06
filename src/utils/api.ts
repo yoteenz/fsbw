@@ -459,16 +459,39 @@ export async function getAdminRevenue(): Promise<{ totalRevenue: number; totalOr
   };
 }
 
-/** Admin: pending counts. */
-export async function getAdminPending(): Promise<{ pendingReviews: number; orderForms: number; pendingItems: { label: string; value: string }[] }> {
+export type AdminPendingReviewBreakdown = {
+  total: number;
+  withPhotos: number;
+  withVideos: number;
+  textOnly: number;
+};
+
+/** Admin: pending counts (reviews + orders). */
+export async function getAdminPending(): Promise<{
+  pendingReviews: number;
+  orderForms: number;
+  pendingItems: { label: string; value: string }[];
+  pendingReviewBreakdown: AdminPendingReviewBreakdown;
+}> {
   const res = await apiFetch('/api/admin/pending');
   if (res.status === 403) throw new Error('Forbidden');
   if (!res.ok) throw new Error(await res.text());
   const data = await res.json();
+  const br = data.pendingReviewBreakdown;
+  const breakdown: AdminPendingReviewBreakdown =
+    br && typeof br === 'object'
+      ? {
+          total: Number(br.total) || 0,
+          withPhotos: Number(br.withPhotos) || 0,
+          withVideos: Number(br.withVideos) || 0,
+          textOnly: Number(br.textOnly) || 0,
+        }
+      : { total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 };
   return {
     pendingReviews: Number(data.pendingReviews) || 0,
     orderForms: Number(data.orderForms) || 0,
     pendingItems: Array.isArray(data.pendingItems) ? data.pendingItems : [],
+    pendingReviewBreakdown: breakdown,
   };
 }
 

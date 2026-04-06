@@ -12223,3 +12223,19 @@ Verification: `tsc --noEmit`.
 **Context:** User wanted unrated positions (e.g. 5th star on a 4★ review) to look like Noir **outline** stars (white/light fill + black border), not a faded filled star.
 
 **Change:** Filled slots use **`filled-star.png`**; empty slots use **`star-symbol.png`** with same **`drop-shadow`** / **`stroke`** as Noir product strip. **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin pending ↔ reviews ↔ client REVIEWS tab sync
+
+**Context:** User asked to **confirm** admin **Reviews**, **Pending → REVIEWS**, and **client details REVIEWS** are connected. Prior: **`/api/admin/pending`** never counted **`reviews`** (always 0); Pending REVIEWS tab was **hardcoded**; client **`media`** count ignored **`videos`**.
+
+**Changes:**
+- **`api/admin/pending.ts`:** Count **`reviews`** with **`status = 'pending'`**; return **`pendingReviewBreakdown`** (total, withPhotos, withVideos, textOnly). Photo/video helpers match **`admin/reviews`** list semantics.
+- **`src/utils/api.ts`:** **`getAdminPending`** returns **`pendingReviewBreakdown`**.
+- **`src/pages/admin/pending/page.tsx`:** Loads **`getAdminPending` + `getAdminReviews`**; pending header uses **`max(api count, pending rows in full list)`**; REVIEWS tab shows **live breakdown** (replaces fake PRIORITY block); overview uses zeros when API empty; note ties UI to **Admin → Reviews** + **Client → REVIEWS**.
+- **`src/pages/admin/clients/page.tsx`:** **`adminReviewCountsByEmail`** **`media`** += 1 if **`photos` or `videos`** > 0.
+- **`supabase/migrations/20260407140000_reviews_videos_count.sql`:** **`reviews.videos`** column (default 0) for DB-backed video counts.
+- **`src/pages/admin/dashboard/page.tsx`:** Pending catch fallback includes **`pendingReviewBreakdown`**.
+
+**`tsc --noEmit`**.

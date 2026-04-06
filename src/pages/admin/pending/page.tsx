@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { getAdminPending } from '../../../utils/api';
+import { getAdminPending, getAdminReviews } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -20,9 +20,15 @@ export default function AdminPending() {
     defaultValue: 'OVERVIEW',
     allowedValues: PENDING_TABS,
   });
-  const [pendingReviews, setPendingReviews] = useState(12);
-  const [orderForms, setOrderForms] = useState(8);
+  const [pendingReviews, setPendingReviews] = useState(0);
+  const [orderForms, setOrderForms] = useState(0);
   const [pendingItems, setPendingItems] = useState<{ label: string; value: string }[]>([]);
+  const [reviewBreakdown, setReviewBreakdown] = useState<{
+    total: number;
+    withPhotos: number;
+    withVideos: number;
+    textOnly: number;
+  }>({ total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 });
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -33,18 +39,56 @@ export default function AdminPending() {
       /* ignore */
     }
     if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
-      getAdminPending()
-        .then((r) => {
-          setPendingReviews(r.pendingReviews);
-          setOrderForms(r.orderForms);
-          setPendingItems(r.pendingItems.length ? r.pendingItems : [
-            { label: 'PENDING REVIEWS', value: String(r.pendingReviews) },
-            { label: 'ORDER FORMS', value: String(r.orderForms) },
-            { label: 'TIER UPGRADES', value: '0' },
-            { label: 'AFFILIATE REQUESTS', value: '0' },
-            { label: 'REFUND REQUESTS', value: '0' },
-            { label: 'SYSTEM ALERTS', value: '0' },
-          ]);
+      Promise.all([getAdminPending(), getAdminReviews()])
+        .then(([pending, reviewsRes]) => {
+          const apiPending = pending.pendingReviews;
+          const fromList = (reviewsRes.reviews as Array<Record<string, unknown>>).filter(
+            (r) => String(r.status || '').toLowerCase() === 'pending'
+          ).length;
+          const pendingCount = fromList > 0 ? fromList : apiPending;
+
+          setPendingReviews(pendingCount);
+          setOrderForms(pending.orderForms);
+          setReviewBreakdown(
+            fromList > 0
+              ? (() => {
+                  const pendingRows = (reviewsRes.reviews as Array<Record<string, unknown>>).filter(
+                    (r) => String(r.status || '').toLowerCase() === 'pending'
+                  );
+                  let withPhotos = 0;
+                  let withVideos = 0;
+                  let textOnly = 0;
+                  for (const r of pendingRows) {
+                    const p = r.photos;
+                    const photoN = Array.isArray(p) ? p.length : Number(p) || 0;
+                    const vidN = Number(r.videos) || 0;
+                    if (photoN > 0) withPhotos += 1;
+                    if (vidN > 0) withVideos += 1;
+                    if (photoN === 0 && vidN === 0) textOnly += 1;
+                  }
+                  return {
+                    total: pendingRows.length,
+                    withPhotos,
+                    withVideos,
+                    textOnly,
+                  };
+                })()
+              : pending.pendingReviewBreakdown
+          );
+          setPendingItems(
+            pending.pendingItems.length
+              ? pending.pendingItems.map((row, i) =>
+                  i === 0 ? { ...row, value: String(pendingCount) } : row
+                )
+              : [
+                  { label: 'PENDING REVIEWS', value: String(pendingCount) },
+                  { label: 'ORDER FORMS', value: String(pending.orderForms) },
+                  { label: 'TIER UPGRADES', value: '0' },
+                  { label: 'AFFILIATE REQUESTS', value: '0' },
+                  { label: 'REFUND REQUESTS', value: '0' },
+                  { label: 'SYSTEM ALERTS', value: '0' },
+                ]
+          );
         })
         .catch(() => {});
     }
@@ -57,14 +101,17 @@ export default function AdminPending() {
     }
   }, [searchParams]);
 
-  const displayItems = pendingItems.length > 0 ? pendingItems : [
-    { label: 'PENDING REVIEWS', value: String(pendingReviews) },
-    { label: 'ORDER FORMS', value: String(orderForms) },
-    { label: 'TIER UPGRADES', value: '23' },
-    { label: 'AFFILIATE REQUESTS', value: '47' },
-    { label: 'REFUND REQUESTS', value: '3' },
-    { label: 'SYSTEM ALERTS', value: '5' },
-  ];
+  const displayItems =
+    pendingItems.length > 0
+      ? pendingItems
+      : [
+          { label: 'PENDING REVIEWS', value: String(pendingReviews) },
+          { label: 'ORDER FORMS', value: String(orderForms) },
+          { label: 'TIER UPGRADES', value: '0' },
+          { label: 'AFFILIATE REQUESTS', value: '0' },
+          { label: 'REFUND REQUESTS', value: '0' },
+          { label: 'SYSTEM ALERTS', value: '0' },
+        ];
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -185,26 +232,17 @@ export default function AdminPending() {
                 )}
                 {activeTab === 'REVIEWS' && (
                   <>
+                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px', lineHeight: 1.35 }}>
+                      COUNTS MATCH <span style={{ color: '#000' }}>ADMIN → REVIEWS</span> PENDING ROWS (BY EMAIL IN{' '}
+                      <span style={{ color: '#000' }}>CLIENT DETAILS → REVIEWS</span>).
+                    </p>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>BY TYPE</h3>
                     <div className="space-y-2 mb-4">
                       {[
-                        { label: 'NEW REVIEWS', value: '8' },
-                        { label: 'PHOTO REVIEWS', value: '4' },
-                        { label: 'VIDEO REVIEWS', value: '2' },
-                        { label: 'RATING REVIEWS', value: '6' },
-                      ].map((row) => (
-                        <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>PRIORITY</h3>
-                    <div className="space-y-2">
-                      {[
-                        { label: 'HIGH', value: '4' },
-                        { label: 'MEDIUM', value: '5' },
-                        { label: 'LOW', value: '3' },
+                        { label: 'PENDING (ALL)', value: String(reviewBreakdown.total) },
+                        { label: 'WITH PHOTOS', value: String(reviewBreakdown.withPhotos) },
+                        { label: 'WITH VIDEOS', value: String(reviewBreakdown.withVideos) },
+                        { label: 'TEXT ONLY', value: String(reviewBreakdown.textOnly) },
                       ].map((row) => (
                         <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                           <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
