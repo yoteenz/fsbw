@@ -12281,3 +12281,16 @@ Verification: `tsc --noEmit`.
 4. **4px above black body text** — review body **`p`** uses **`margin: calc(0.25rem + 4px) 0 0`** (replaces plain **`mt-1`**).
 
 **Files:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**. **Git:** committed and pushed **`preview/mobile`** (`b40931d`). PR tool could not attach (branch/head mismatch in cloud); user can open PR from **`preview/mobile`** if needed.
+
+---
+
+## 2026-04-06 — Admin reviews: return from client details, media row, stars, state
+
+**Context (this chat turn):** User wanted closing **client details** after opening from **Admin → Reviews** to return to **`/admin/reviews`** (not client overview). **Photo/video** line: **Futura PT Medium**, **uppercase**; **PUBLISHED/PENDING** stays on the **same row** when media is expanded; **+2px** above **stars** only; **full state (or region)** in parens after client name (e.g. **QUINN CHEN (TEXAS)**).
+
+**Changes:**
+- **`src/pages/admin/clients/page.tsx`:** **`returnTo=reviews`** query param — **`closeClientDetails`** **`navigate('/admin/reviews')`**; block-client confirm also routes to reviews when **`returnTo=reviews`**.
+- **`src/pages/admin/reviews/page.tsx`:** Navigate with **`&returnTo=reviews`**; footer restructured so status + media summary share one **flex row**, expanded thumbs/videos in a **sibling** below; media label **Futura PT Medium** + **`textTransform: 'uppercase'`** + **PHOTO(S)/VIDEO(S)** copy; stars row **`marginTop: calc(0.25rem + 2px)`**; **`clientRegionParen`** on rows + **`enrichReviewsWithMockClientRegion`** via **`getMockClientsForAyoteenz`** + **`regionParenLabelFromAddressLine`**; API **`normalizeApiReview`** reads optional region fields.
+- **`src/utils/usAddressStateDisplay.ts`:** US **abbr → full state** from trailing **`, ST ZIP`**, else last comma segment for non-US.
+
+**`tsc --noEmit`**.

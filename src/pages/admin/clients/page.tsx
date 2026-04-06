@@ -640,6 +640,10 @@ export default function AdminClients() {
       navigate(`/admin/meetings?tab=${meetingsReturnTab}`);
       return;
     }
+    if (returnTo === 'reviews') {
+      navigate('/admin/reviews');
+      return;
+    }
     setSelectedClientEmail(null);
     setDetailsTab('activity');
     setExpandedOrderId(null);
@@ -3595,7 +3599,8 @@ export default function AdminClients() {
             loadData();
             closeClientDetails();
             setShowBlockConfirm(false);
-            if (returnTo !== 'meetings') navigate('/admin/clients');
+            if (returnTo === 'reviews') navigate('/admin/reviews');
+            else if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
         title="BLOCK CLIENT?"

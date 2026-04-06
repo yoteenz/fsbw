@@ -7,6 +7,8 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { getMockClientsForAyoteenz } from '../clients/page';
+import { regionParenLabelFromAddressLine } from '../../../utils/usAddressStateDisplay';
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
@@ -38,6 +40,8 @@ type AdminReviewRow = {
   clientProfilePhotoUrl?: string;
   /** Reviewer email when API provides it (profile photo join). */
   clientEmail?: string;
+  /** Full region for display, e.g. US state full name — shown after client name. */
+  clientRegionParen?: string;
 };
 
 const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
@@ -58,6 +62,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     id: 1,
     client: 'ZARA ADAMS',
     clientEmail: 'mock1@test.com',
+    clientRegionParen: 'CALIFORNIA',
     rating: 5,
     product: 'SOFT WAVE 30"',
     review:
@@ -72,6 +77,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     id: 2,
     client: 'AMY BROOKS',
     clientEmail: 'mock2@test.com',
+    clientRegionParen: 'NEW YORK',
     rating: 5,
     product: 'NOIR 26"',
     review: 'Best wig experience ever! Professional service and the wig exceeded my expectations. Will definitely be coming back.',
@@ -85,6 +91,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     id: 3,
     client: 'QUINN CHEN',
     clientEmail: 'mock3@test.com',
+    clientRegionParen: 'TEXAS',
     rating: 4,
     product: 'CURLY 28"',
     review: 'Great quality wig and excellent customer service. The curl pattern is perfect and very natural looking.',
@@ -98,6 +105,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     id: 4,
     client: 'DIANA FOSTER',
     clientEmail: 'mock4@test.com',
+    clientRegionParen: 'ILLINOIS',
     rating: 5,
     product: 'SLAY STYLING TOOL',
     review: 'Game changer for at-home styling. Heat is even and the cord length is perfect. Worth every penny.',
@@ -111,6 +119,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     id: 5,
     client: 'ELENA GARCIA',
     clientEmail: 'mock5@test.com',
+    clientRegionParen: 'FLORIDA',
     rating: 4,
     product: 'WIG CARE KIT',
     review: 'Everything I needed in one kit. Instructions were clear and my units look fresher after every wash.',
@@ -129,6 +138,28 @@ function withDefaultReviewMedia(rows: AdminReviewRow[]): AdminReviewRow[] {
     if (hasPhotoUrls || hasVideoUrls) return r;
     const { photoUrls, videoUrls } = mockReviewMediaPlaceholders(r.id, r.photos, r.videos);
     return { ...r, photoUrls, videoUrls };
+  });
+}
+
+/** Fill `clientRegionParen` from admin mock client addresses when email matches (founder mock list). */
+function enrichReviewsWithMockClientRegion(rows: AdminReviewRow[]): AdminReviewRow[] {
+  let mockByEmail: Map<string, { address?: string }> | null = null;
+  return rows.map((r) => {
+    if ((r.clientRegionParen || '').trim()) return r;
+    const em = (r.clientEmail || '').trim().toLowerCase();
+    if (!em) return r;
+    if (!mockByEmail) {
+      mockByEmail = new Map(
+        getMockClientsForAyoteenz().map((c: { email?: string; address?: string }) => [
+          (c.email || '').trim().toLowerCase(),
+          c,
+        ])
+      );
+    }
+    const c = mockByEmail.get(em);
+    const region = regionParenLabelFromAddressLine(c?.address);
+    if (!region) return r;
+    return { ...r, clientRegionParen: region };
   });
 }
 
@@ -316,11 +347,15 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
   const photoUrls = photoUrlsFromRow.length > 0 ? photoUrlsFromRow : photoCount > 0 ? mockPhotos.slice(0, photoCount) : [];
   const videoUrls = videoUrlsFromRow.length > 0 ? videoUrlsFromRow : videoCount > 0 ? mockVideos.slice(0, videoCount) : [];
 
+  const regionRaw = x.clientRegionParen ?? x.client_region_paren ?? x.client_state_full ?? x.reviewer_state_full;
+  const regionStr = typeof regionRaw === 'string' ? regionRaw.trim().toUpperCase() : '';
+
   return {
     id: stableId,
     client: String(x.client ?? ''),
     rating: Number(x.rating) || 0,
     clientEmail: String(x.email ?? x.clientEmail ?? '').trim() || undefined,
+    clientRegionParen: regionStr || undefined,
     product: String(x.product ?? ''),
     review: String(x.review ?? x.body ?? ''),
     date: String(x.date ?? x.createdAt ?? x.created_at ?? ''),
@@ -343,7 +378,9 @@ export default function AdminReviews() {
     defaultValue: 'ALL',
     allowedValues: REVIEW_TABS,
   });
-  const [reviews, setReviews] = useState<AdminReviewRow[]>(() => withDefaultReviewMedia(DEFAULT_REVIEWS));
+  const [reviews, setReviews] = useState<AdminReviewRow[]>(() =>
+    withDefaultReviewMedia(enrichReviewsWithMockClientRegion(DEFAULT_REVIEWS))
+  );
   const [reviewSortOption, setReviewSortOption] = useState<ReviewSortOption>('4 STAR');
   const [showReviewSortDropdown, setShowReviewSortDropdown] = useState(false);
   const [expandedReviewMediaIds, setExpandedReviewMediaIds] = useState<Set<number>>(() => new Set());
@@ -360,7 +397,11 @@ export default function AdminReviews() {
       getAdminReviews()
         .then((r) => {
           if (r.reviews.length > 0) {
-            setReviews(withDefaultReviewMedia(r.reviews.map((item, i) => normalizeApiReview(item, i))));
+            setReviews(
+              withDefaultReviewMedia(
+                enrichReviewsWithMockClientRegion(r.reviews.map((item, i) => normalizeApiReview(item, i)))
+              )
+            );
           }
         })
         .catch(() => {});
@@ -403,7 +444,9 @@ export default function AdminReviews() {
     (email: string) => {
       const e = email.trim().toLowerCase();
       if (!e) return;
-      navigate(`/admin/clients/overview?email=${encodeURIComponent(e)}`);
+      navigate(
+        `/admin/clients/overview?email=${encodeURIComponent(e)}&returnTo=reviews`
+      );
     },
     [navigate]
   );
@@ -511,9 +554,13 @@ export default function AdminReviews() {
     const hasExpandableMedia = mediaCount > 0 && hasMediaUrls;
     const mediaOpen = expandedReviewMediaIds.has(review.id);
     const mediaSummaryParts: string[] = [];
-    if (review.photos > 0) mediaSummaryParts.push(`${review.photos} photo${review.photos === 1 ? '' : 's'}`);
-    if (review.videos > 0) mediaSummaryParts.push(`${review.videos} video${review.videos === 1 ? '' : 's'}`);
-    const mediaSummary = mediaSummaryParts.length > 0 ? mediaSummaryParts.join(' · ') : `${review.photos} photos`;
+    if (review.photos > 0) {
+      mediaSummaryParts.push(`${review.photos} ${review.photos === 1 ? 'PHOTO' : 'PHOTOS'}`);
+    }
+    if (review.videos > 0) {
+      mediaSummaryParts.push(`${review.videos} ${review.videos === 1 ? 'VIDEO' : 'VIDEOS'}`);
+    }
+    const mediaSummary = mediaSummaryParts.length > 0 ? mediaSummaryParts.join(' · ') : `${review.photos} PHOTOS`;
 
     return (
       <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
@@ -532,6 +579,7 @@ export default function AdminReviews() {
                 }}
               >
                 {review.client}
+                {review.clientRegionParen ? ` (${review.clientRegionParen})` : ''}
               </p>
             </div>
             <p
@@ -540,7 +588,7 @@ export default function AdminReviews() {
             >
               {review.product}
             </p>
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1" style={{ marginTop: 'calc(0.25rem + 2px)' }}>
               {[...Array(5)].map((_, i) => {
                 const filled = i < stars;
                 return (
@@ -584,58 +632,81 @@ export default function AdminReviews() {
         >
           {review.review}
         </p>
-        <div className="flex justify-between items-center mt-2">
-          <div className="min-w-0 flex-1 pr-2">
-            {hasExpandableMedia ? (
-              <button
-                type="button"
-                onClick={() => toggleReviewMediaExpanded(review.id)}
-                className="text-left p-0 border-0 bg-transparent cursor-pointer"
-                style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}
-              >
-                {mediaSummary}
-              </button>
-            ) : (
-              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{mediaSummary}</span>
-            )}
-            {mediaOpen && hasExpandableMedia ? (
-              <div className="mt-2 space-y-2 w-full">
-                {photoUrls.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {photoUrls.map((url, idx) => (
-                      <a
-                        key={`${review.id}-p-${idx}`}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block shrink-0"
-                        style={{ width: '72px', height: '72px', border: '0.8px solid #000' }}
-                      >
-                        <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-                {videoUrls.length > 0 ? (
-                  <div className="flex flex-col gap-2 w-full">
-                    {videoUrls.map((url, idx) => (
-                      <video
-                        key={`${review.id}-v-${idx}`}
-                        src={url}
-                        controls
-                        playsInline
-                        className="w-full max-w-full"
-                        style={{ maxHeight: '200px', border: '0.8px solid #000' }}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
+        <div className="mt-2">
+          <div className="flex justify-between items-center gap-2">
+            <div className="min-w-0 flex-1 pr-2">
+              {hasExpandableMedia ? (
+                <button
+                  type="button"
+                  onClick={() => toggleReviewMediaExpanded(review.id)}
+                  className="text-left p-0 border-0 bg-transparent cursor-pointer"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {mediaSummary}
+                </button>
+              ) : (
+                <span
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {mediaSummary}
+                </span>
+              )}
+            </div>
+            <span
+              style={{
+                fontFamily: '"Futura PT Book"',
+                fontSize: '11px',
+                color: '#EB1C24',
+                flexShrink: 0,
+              }}
+            >
+              {review.status.toUpperCase()}
+            </span>
           </div>
-          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24', flexShrink: 0 }}>
-            {review.status.toUpperCase()}
-          </span>
+          {mediaOpen && hasExpandableMedia ? (
+            <div className="mt-2 space-y-2 w-full">
+              {photoUrls.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {photoUrls.map((url, idx) => (
+                    <a
+                      key={`${review.id}-p-${idx}`}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block shrink-0"
+                      style={{ width: '72px', height: '72px', border: '0.8px solid #000' }}
+                    >
+                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+              {videoUrls.length > 0 ? (
+                <div className="flex flex-col gap-2 w-full">
+                  {videoUrls.map((url, idx) => (
+                    <video
+                      key={`${review.id}-v-${idx}`}
+                      src={url}
+                      controls
+                      playsInline
+                      className="w-full max-w-full"
+                      style={{ maxHeight: '200px', border: '0.8px solid #000' }}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     );
