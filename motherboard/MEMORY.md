@@ -11908,3 +11908,9 @@ Verification: `tsc --noEmit`.
 - `admin/clients/page.tsx`: **`useMemo`** filters merged meetings by **`clientEmail`**; maps **consultation** → type **`CONSULT — …`**, **appointment** → existing **`type`**; status **Confirmed → SCHEDULED**, **Pending → PENDING**, **Canceled → CANCELED** for pill styling. Empty copy: **NO APPOINTMENTS OR CONSULTS YET**. **`storage` + `focus`** bump state so local scheduled meetings refresh.
 
 **Files:** `src/utils/adminMeetingsMock.ts`, `src/pages/admin/clients/page.tsx`. Pushed **`preview/mobile`** (`531b947`).
+
+---
+
+## 2026-04-06 — Booking A/C calendar divider color matches SELECT A SERVICE
+
+**Change:** User asked for the gray line above the calendar on booking **appointment** and **consult** to match the line above **SELECT A SERVICE** on the appointment page. Both calendar wrappers now use **`borderTop: '1px solid #e5e7eb'`** (replacing **`1.3px solid #9ca3af`**). **`preview/mobile`** commit `88c3c5a`.
