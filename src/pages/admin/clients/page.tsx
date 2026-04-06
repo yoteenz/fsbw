@@ -4,7 +4,16 @@ import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, getAdminReviews, exportClientsCsv } from '../../../utils/api';
+import {
+  getAdminClients,
+  getAdminOrders,
+  getAdminCart,
+  getAdminWishlist,
+  getAdminActivity,
+  getAdminReviews,
+  exportClientsCsv,
+  getAdminMeetings
+} from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -21,6 +30,7 @@ import {
   compareAdminMeetingsNewestFirst,
   formatMeetingIsoDateForDisplay,
   listAggregatedAdminMeetingsForClientDetails,
+  normalizeApiMeeting,
   type AdminMeeting
 } from '../../../utils/adminMeetingsMock';
 
@@ -621,6 +631,8 @@ export default function AdminClients() {
   const [cartWishlistLoading] = useState(false);
   /** Bump when `adminMeetingsScheduled` may change (same browser as admin meetings). */
   const [adminMeetingsTick, setAdminMeetingsTick] = useState(0);
+  /** Supabase/API meetings merged into client APPOINTMENTS tab (same source as meetings hub). */
+  const [apiMeetingsForClientDetails, setApiMeetingsForClientDetails] = useState<AdminMeeting[]>([]);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
@@ -737,6 +749,27 @@ export default function AdminClients() {
       window.removeEventListener('storage', bump);
       window.removeEventListener('focus', bump);
     };
+  }, []);
+
+  /** Same `/api/admin/meetings` load as `AdminMeetingsHub` so client-details APPOINTMENTS includes Supabase rows. */
+  useEffect(() => {
+    let currentUser: { email?: string } | null = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      /* ignore */
+    }
+    if (!isSupabaseConfigured() || !currentUser?.email || !isAdminEmail(currentUser.email)) return;
+    getAdminMeetings()
+      .then((r) => {
+        const rows = Array.isArray(r.meetings) ? r.meetings : [];
+        const norm = rows
+          .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
+          .filter(Boolean) as AdminMeeting[];
+        setApiMeetingsForClientDetails(norm);
+      })
+      .catch(() => {});
   }, []);
 
   const loadData = useCallback(() => {
@@ -1087,13 +1120,13 @@ export default function AdminClients() {
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
   /**
-   * Bookings + consults for this client (same merged source as /admin/meetings: mock range + localStorage drafts).
+   * Bookings + consults for this client (same merged source as /admin/meetings: mock + API + localStorage drafts).
    * Consult rows appear here under APPOINTMENTS so client details match the meetings hub per client.
    */
   const appointments = useMemo(() => {
     const email = (selectedClientEmail || '').trim().toLowerCase();
     if (!email || !selectedClient) return [];
-    return listAggregatedAdminMeetingsForClientDetails()
+    return listAggregatedAdminMeetingsForClientDetails(apiMeetingsForClientDetails)
       .filter((m) => adminMeetingClientEmailNorm(m) === email)
       .sort(compareAdminMeetingsNewestFirst)
       .map((m) => ({
@@ -1102,7 +1135,7 @@ export default function AdminClients() {
         type: m.category === 'consultation' ? `CONSULT — ${m.type}` : m.type,
         status: meetingStatusForClientDetailsTab(m),
       }));
-  }, [selectedClient, selectedClientEmail, adminMeetingsTick]);
+  }, [selectedClient, selectedClientEmail, adminMeetingsTick, apiMeetingsForClientDetails]);
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {

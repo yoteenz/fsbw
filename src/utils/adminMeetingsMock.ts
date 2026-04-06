@@ -362,15 +362,18 @@ export function defaultAggregatedMeetingsDateRange(): { start: string; end: stri
 }
 
 /**
- * Deterministic mock meetings + `adminMeetingsScheduled` localStorage for the default range.
- * Matches merge order in `AdminMeetingsHub` (mock base, local overwrites by id).
+ * Deterministic mock meetings + optional Supabase/API rows + `adminMeetingsScheduled` localStorage for the default range.
+ * Matches merge order in `AdminMeetingsHub`: mock base, API overwrites by id, local overwrites by id.
  */
-export function listAggregatedAdminMeetingsForClientDetails(): AdminMeeting[] {
+export function listAggregatedAdminMeetingsForClientDetails(apiMeetings: AdminMeeting[] = []): AdminMeeting[] {
   const { start, end } = defaultAggregatedMeetingsDateRange();
   const mock = generateMockMeetingsForRange(start, end);
   const local = loadLocalMeetings().filter((m) => m.date >= start && m.date <= end);
   const byId = new Map<string, AdminMeeting>();
   for (const m of mock) byId.set(m.id, m);
+  for (const m of apiMeetings) {
+    if (m.date >= start && m.date <= end) byId.set(m.id, m);
+  }
   for (const m of local) byId.set(m.id, m);
   return [...byId.values()].sort((a, b) => {
     const dc = a.date.localeCompare(b.date);

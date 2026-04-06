@@ -11922,3 +11922,15 @@ Verification: `tsc --noEmit`.
 **Context:** User asked to show the red **(excludes taxes + shipping fees)** line and red **redeem** button labels in **lowercase Bohemy** instead of uppercase.
 
 **Change:** In `src/pages/account/membership/page.tsx` (standard + premium rewards blocks): **`textTransform: 'lowercase'`** on those elements; copy updated to **`(excludes taxes + shipping fees)`** and button children **`redeem`**. Verification: `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS: merge Supabase meetings like meetings hub
+
+**Context:** User confirmed wiring the client-details **APPOINTMENTS** tab the same way as **`AdminMeetingsHub`**: the hub merges **`apiMeetings`** from **`getAdminMeetings()`** (Supabase); the tab previously only had mock + **`adminMeetingsScheduled`** local rows.
+
+**Changes:**
+- **`listAggregatedAdminMeetingsForClientDetails(apiMeetings?: AdminMeeting[])`** — optional API list; merge order **mock → API (in range) → local** (same id overwrite rules as hub).
+- **`admin/clients/page.tsx`** — on mount (when Supabase configured + signed-in admin): **`getAdminMeetings()`** + **`normalizeApiMeeting`**, store in **`apiMeetingsForClientDetails`**; pass into aggregate for the tab **`useMemo`**.
+
+**Verification:** `tsc --noEmit`.
