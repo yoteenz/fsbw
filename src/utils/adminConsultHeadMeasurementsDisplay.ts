@@ -1,6 +1,6 @@
 /**
- * Abbreviated head measurement line for admin consult cards: (19" C · 22" FN · 12" EEF · …)
- * Abbrs: C, FN, EEF (ear-to-ear over crown), EEC (ear-to-ear across forehead), TT, NN.
+ * Abbreviated head measurement line for admin consult cards: (19" C · 22" FN · 12" EEC · …)
+ * Abbrs: C, FN, EEC (ear-to-ear over crown), EEF (ear-to-ear across forehead), TT, NN.
  * Keys match `bookingHeadMeasurements` / checkout consult payload.
  */
 
@@ -9,8 +9,8 @@ export type ConsultHeadMeasurementsRecord = Record<string, string | undefined>;
 const ORDER: ReadonlyArray<{ key: keyof ConsultHeadMeasurementsRecord | string; abbr: string }> = [
   { key: 'circumference', abbr: 'C' },
   { key: 'frontToNape', abbr: 'FN' },
-  { key: 'verticalTempleToTemple', abbr: 'EEF' },
-  { key: 'horizontalTempleToTemple', abbr: 'EEC' },
+  { key: 'verticalTempleToTemple', abbr: 'EEC' },
+  { key: 'horizontalTempleToTemple', abbr: 'EEF' },
   { key: 'earToEar', abbr: 'TT' },
   { key: 'napeOfNeck', abbr: 'NN' },
 ];

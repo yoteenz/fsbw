@@ -12067,3 +12067,11 @@ Verification: `tsc --noEmit`.
 - **`src/utils/adminMeetingsMock.ts`:** Mock **consultation** meetings now include deterministic **`metadata.headMeasurements`** so the new line renders for mock consults without real checkout data.
 
 **Shared UI:** Line still rendered only via **`AdminMeetingClientPanel`** consult branch (`formatConsultHeadMeasurementsParenLine`). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin consult head measurement abbrs corrected (EEF forehead, EEC crown)
+
+**Context:** User clarified **EEF** = ear-to-ear **across forehead** (`horizontalTempleToTemple`) and **EEC** = ear-to-ear **over crown** (`verticalTempleToTemple`). An earlier implementation had these two swapped.
+
+**Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — swap abbrs so **`verticalTempleToTemple` → EEC**, **`horizontalTempleToTemple` → EEF**; file header comment updated. **`tsc --noEmit`**.
