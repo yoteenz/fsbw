@@ -764,7 +764,14 @@ export default function BookingConsultationPage() {
                 gap: '10px 8px',
               }}
             >
-              {HEAD_MEASUREMENT_FIELDS.map((field) => (
+              {HEAD_MEASUREMENT_FIELDS.map((field, idx) => {
+                const isLeftColumn = idx % 2 === 0;
+                /** 4px narrower from the inner edge only (toward column gap); grid/row still full width like hair options. */
+                const inputInset =
+                  isLeftColumn
+                    ? { width: 'calc(100% - 4px)' as const, marginRight: '4px' as const, marginLeft: 0 as const }
+                    : { width: 'calc(100% - 4px)' as const, marginLeft: '4px' as const, marginRight: 0 as const };
+                return (
                 <label
                   key={field.key}
                   style={{
@@ -785,7 +792,7 @@ export default function BookingConsultationPage() {
                     onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
                     className="bg-white/80 backdrop-blur-sm"
                     style={{
-                      width: '100%',
+                      ...inputInset,
                       marginTop: '6px',
                       boxSizing: 'border-box',
                       border: '1.3px solid #000',
@@ -797,7 +804,8 @@ export default function BookingConsultationPage() {
                     }}
                   />
                 </label>
-              ))}
+                );
+              })}
             </div>
           </div>
 

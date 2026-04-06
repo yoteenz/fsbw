@@ -11970,3 +11970,16 @@ Verification: `tsc --noEmit`.
 ## 2026-04-06 — Account Rewards: +6px Bohemy excludes line + redeem
 
 **Change:** On **Account → Rewards** (`membership/page.tsx`), red **(excludes taxes + shipping fees)** **`fontSize` 11px → 17px**; red **redeem** button **`fontSize` 12px → 18px** (both standard + premium blocks). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS = meetings hub client panels (shared component)
+
+**Context:** User said **APPOINTMENTS** tab client panels still did not match **Bookings / Consults** panels on **`/admin/meetings`**; they must be **identical**.
+
+**Implementation:**
+- New **`src/utils/adminMeetingClientPanels.tsx`**: extracted meeting-card helpers (profile, tier, install line, add-ons, payment bar, consult hair/notes/inspo) + **`AdminMeetingClientPanel`** / **`AdminMeetingClientPanelShell`** (same markup as hub lists). **`onConsultPhotoClick`** for consult thumbnails; **`disableProfileNavigation`** + empty **`actionAriaLabel`** hides profile button + right edit icon on client-details (already on that client).
+- **`AdminMeetingsHub.tsx`**: imports shared helpers + renders **`AdminMeetingClientPanel`** for **`sortedAppointmentsList`** / **`sortedConsultsList`** (removed ~750 lines of duplicated helpers).
+- **`admin/clients/page.tsx`**: **`appointments`** is **`AdminMeeting[]`** filtered/sorted; tab renders same panels + consult photo lightbox (hub parity).
+
+**Verify:** `tsc --noEmit`.
