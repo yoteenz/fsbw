@@ -1286,11 +1286,11 @@ function MembershipPage() {
                               color: '#EB1C24',
                               fontSize: '11px',
                               margin: '0 0 8px 0',
-                              textTransform: 'uppercase',
+                              textTransform: 'lowercase',
                               fontWeight: 400
                             }}
                           >
-                            (EXCLUDES TAXES + SHIPPING FEES)
+                            (excludes taxes + shipping fees)
                           </p>
                           {(() => {
                               const totalPoints = getDisplayLoyaltyPoints();
@@ -1373,13 +1373,13 @@ function MembershipPage() {
                                     borderColor: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     padding: '6px 12px',
                                     cursor: canRedeem ? 'pointer' : 'not-allowed',
-                                    textTransform: 'uppercase',
+                                    textTransform: 'lowercase',
                                     opacity: canRedeem ? 1 : 0.5,
                                     fontWeight: 400
                                   }}
                                   type="button"
                                 >
-                                  REDEEM
+                                  redeem
                                 </button>
                               </div>
                             );
@@ -2087,11 +2087,11 @@ fontFamily: '"Futura PT Book"',
                                   color: '#EB1C24',
                                   fontSize: '11px',
                                   margin: '0 0 8px 0',
-                                  textTransform: 'uppercase',
+                                  textTransform: 'lowercase',
                                   fontWeight: 400
                                 }}
                               >
-                                (EXCLUDES TAXES + SHIPPING FEES)
+                                (excludes taxes + shipping fees)
                               </p>
                               {(() => {
                                   const totalPoints = getDisplayLoyaltyPoints();
@@ -2174,13 +2174,13 @@ fontFamily: '"Futura PT Book"',
                                         borderColor: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         padding: '6px 12px',
                                         cursor: canRedeem ? 'pointer' : 'not-allowed',
-                                        textTransform: 'uppercase',
+                                        textTransform: 'lowercase',
                                         opacity: canRedeem ? 1 : 0.5,
                                         fontWeight: 400
                                       }}
                                       type="button"
                                     >
-                                      REDEEM
+                                      redeem
                                     </button>
                                   </div>
                                 );

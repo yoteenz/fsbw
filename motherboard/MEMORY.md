@@ -11914,3 +11914,11 @@ Verification: `tsc --noEmit`.
 ## 2026-04-06 — Booking A/C calendar divider color matches SELECT A SERVICE
 
 **Change:** User asked for the gray line above the calendar on booking **appointment** and **consult** to match the line above **SELECT A SERVICE** on the appointment page. Both calendar wrappers now use **`borderTop: '1px solid #e5e7eb'`** (replacing **`1.3px solid #9ca3af`**). **`preview/mobile`** commit `88c3c5a`.
+
+---
+
+## 2026-04-06 — Account Rewards: Bohemy excludes line + redeem in lowercase
+
+**Context:** User asked to show the red **(excludes taxes + shipping fees)** line and red **redeem** button labels in **lowercase Bohemy** instead of uppercase.
+
+**Change:** In `src/pages/account/membership/page.tsx` (standard + premium rewards blocks): **`textTransform: 'lowercase'`** on those elements; copy updated to **`(excludes taxes + shipping fees)`** and button children **`redeem`**. Verification: `tsc --noEmit`.
