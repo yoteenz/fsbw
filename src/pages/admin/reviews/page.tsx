@@ -109,8 +109,33 @@ function parseReviewDate(d: string): number {
   return 0;
 }
 
+const NOIR_REVIEW_STAR_SRC = '/assets/NOIR/filled-star.png';
+
+function averageRatingForVisible(rows: AdminReviewRow[]): number {
+  const vis = rows.filter((r) => r.status === 'published' || r.status === 'pending');
+  if (vis.length === 0) return 0;
+  const sum = vis.reduce((s, r) => s + (Number(r.rating) || 0), 0);
+  return Math.round((sum / vis.length) * 10) / 10;
+}
+
+function clientInitialsForAvatar(clientName: string): string {
+  const parts = String(clientName || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const a = (parts[0] || '?').charAt(0);
+  const b = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+  return (a + b).toUpperCase() || '?';
+}
+
 function sortReviewsByOption(list: AdminReviewRow[], option: ReviewSortOption): AdminReviewRow[] {
-  const out = [...list];
+  const base =
+    option === 'VIDEOS'
+      ? list.filter((r) => r.videos > 0)
+      : option === 'PHOTOS'
+        ? list.filter((r) => r.photos > 0)
+        : [...list];
+  const out = [...base];
   const byDate = (a: AdminReviewRow, b: AdminReviewRow) => parseReviewDate(b.date) - parseReviewDate(a.date);
   if (option === 'PHOTOS') {
     out.sort((a, b) => (b.photos - a.photos) || byDate(a, b));
@@ -173,8 +198,6 @@ export default function AdminReviews() {
     allowedValues: REVIEW_TABS,
   });
   const [reviews, setReviews] = useState<AdminReviewRow[]>(DEFAULT_REVIEWS);
-  const [averageRating, setAverageRating] = useState(4.8);
-  const [totalReviews, setTotalReviews] = useState(247);
   const [reviewSortOption, setReviewSortOption] = useState<ReviewSortOption>('4 STAR');
   const [showReviewSortDropdown, setShowReviewSortDropdown] = useState(false);
 
@@ -191,8 +214,6 @@ export default function AdminReviews() {
         .then((r) => {
           if (r.reviews.length > 0) {
             setReviews(r.reviews.map((item, i) => normalizeApiReview(item, i)));
-            setAverageRating(r.averageRating || 0);
-            setTotalReviews(r.totalReviews || 0);
           }
         })
         .catch(() => {});
@@ -202,31 +223,172 @@ export default function AdminReviews() {
   const visible = (r: AdminReviewRow) => r.status === 'published' || r.status === 'pending';
   const shopReviews = reviews.filter((r) => visible(r) && r.scope === 'shop');
   const toolsReviews = reviews.filter((r) => visible(r) && r.scope === 'tools');
-  const toolsPublishedCount = reviews.filter((r) => r.status === 'published' && r.scope === 'tools').length;
+  const allVisible = useMemo(() => reviews.filter(visible), [reviews]);
+
+  const summaryAllAvg = useMemo(() => averageRatingForVisible(allVisible), [allVisible]);
+  const summaryAllTotal = allVisible.length;
+  const summaryShopAvg = useMemo(() => averageRatingForVisible(shopReviews), [shopReviews]);
+  const summaryShopTotal = shopReviews.length;
+  const summaryToolsAvg = useMemo(() => averageRatingForVisible(toolsReviews), [toolsReviews]);
+  const summaryToolsTotal = toolsReviews.length;
+
+  const displayAvg =
+    activeTab === 'SHOP' ? summaryShopAvg : activeTab === 'TOOLS' ? summaryToolsAvg : summaryAllAvg;
+  const displayTotal =
+    activeTab === 'SHOP' ? summaryShopTotal : activeTab === 'TOOLS' ? summaryToolsTotal : summaryAllTotal;
+  const totalReviewsLabel =
+    activeTab === 'SHOP' ? 'SHOP REVIEWS' : activeTab === 'TOOLS' ? 'TOOL REVIEWS' : 'TOTAL REVIEWS';
 
   const allVisibleSorted = useMemo(
-    () => sortReviewsByOption(reviews.filter(visible), reviewSortOption),
-    [reviews, reviewSortOption]
+    () => sortReviewsByOption(allVisible, reviewSortOption),
+    [allVisible, reviewSortOption]
+  );
+  const shopVisibleSorted = useMemo(
+    () => sortReviewsByOption(shopReviews, reviewSortOption),
+    [shopReviews, reviewSortOption]
+  );
+  const toolsVisibleSorted = useMemo(
+    () => sortReviewsByOption(toolsReviews, reviewSortOption),
+    [toolsReviews, reviewSortOption]
+  );
+
+  const renderSortDropdown = () => (
+    <div
+      className="grid gap-2 py-2 font-medium text-black items-center min-w-0"
+      style={{
+        fontFamily: '"Futura PT Book"',
+        fontSize: '11px',
+        gridTemplateColumns: '1fr',
+        marginTop: '0',
+        marginBottom: '4px',
+        marginLeft: '-4px',
+      }}
+    >
+      <div className="relative" style={{ paddingLeft: '4px', marginLeft: '0' }}>
+        <button
+          type="button"
+          onClick={() => setShowReviewSortDropdown((v) => !v)}
+          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors"
+        >
+          <span>{reviewSortOptionToLabel(reviewSortOption)}</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            className="flex-shrink-0"
+            style={{
+              transform: showReviewSortDropdown ? 'rotate(180deg)' : 'none',
+              color: '#EB1C24',
+              marginLeft: '-2px',
+            }}
+          >
+            <path
+              d="M3 4.5L6 7.5L9 4.5"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        {showReviewSortDropdown && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              aria-hidden="true"
+              onClick={() => setShowReviewSortDropdown(false)}
+            />
+            <div
+              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px] max-h-60 overflow-y-auto"
+              style={{ borderWidth: '1.3px', marginTop: '7px' }}
+            >
+              {REVIEW_SORT_OPTIONS.filter((opt) => opt !== reviewSortOption).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    setReviewSortOption(opt);
+                    setShowReviewSortDropdown(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    color: '#000',
+                    fontWeight: 400,
+                  }}
+                >
+                  {reviewSortOptionToLabel(opt)}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 
   const renderReviewCard = (review: AdminReviewRow) => (
     <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
-      <div className="flex justify-between items-start">
-        <div>
-          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24' }}>{review.client}</p>
-          <div className="flex items-center gap-1 mt-1">
-            {[...Array(5)].map((_, i) => (
-              <span key={i} style={{ color: i < review.rating ? '#EB1C24' : '#ccc', fontSize: '10px' }}>
-                ★
-              </span>
-            ))}
+      <div className="flex justify-between items-start gap-2">
+        <div className="flex items-start gap-2.5 min-w-0 flex-1">
+          <div
+            className="rounded-full flex items-center justify-center shrink-0"
+            style={{
+              width: '40px',
+              height: '40px',
+              backgroundColor: '#f3f4f6',
+              border: '0.8px solid #000',
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '11px',
+              color: '#000',
+            }}
+            aria-hidden
+          >
+            {clientInitialsForAvatar(review.client)}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>
+              {review.client}
+            </p>
+            <p
+              className="mt-1"
+              style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0 }}
+            >
+              {review.product}
+            </p>
+            <div className="flex items-center gap-1 mt-1">
+              {[...Array(5)].map((_, i) => (
+                <img
+                  key={i}
+                  src={NOIR_REVIEW_STAR_SRC}
+                  alt=""
+                  width={14}
+                  height={14}
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    objectFit: 'contain',
+                    opacity: i < review.rating ? 1 : 0.28,
+                    filter: 'drop-shadow(0 0 0 1px black)',
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{review.date}</span>
+        <span
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '11px',
+            color: '#000',
+            flexShrink: 0,
+            textAlign: 'right',
+          }}
+        >
+          {review.date}
+        </span>
       </div>
-      <p className="mt-1" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>
-        {review.product}
-      </p>
       <p className="mt-1" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}>
         {review.review}
       </p>
@@ -282,7 +444,7 @@ export default function AdminReviews() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {averageRating}
+                    {displayAvg % 1 === 0 ? displayAvg : displayAvg.toFixed(1)}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     AVERAGE RATING
@@ -301,10 +463,10 @@ export default function AdminReviews() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {totalReviews}
+                    {displayTotal}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                    TOTAL REVIEWS
+                    {totalReviewsLabel}
                   </p>
                 </div>
               </div>
@@ -351,128 +513,31 @@ export default function AdminReviews() {
                 >
                 {activeTab === 'ALL' && (
                   <>
-                    <div
-                      className="grid gap-2 py-2 font-medium text-black items-center min-w-0"
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        gridTemplateColumns: '1fr',
-                        marginTop: '0',
-                        marginBottom: '4px',
-                        marginLeft: '-4px',
-                      }}
-                    >
-                      <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setShowReviewSortDropdown((v) => !v)}
-                          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors"
-                        >
-                          <span>{reviewSortOptionToLabel(reviewSortOption)}</span>
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 12 12"
-                            fill="none"
-                            className="flex-shrink-0"
-                            style={{
-                              transform: showReviewSortDropdown ? 'rotate(180deg)' : 'none',
-                              color: '#EB1C24',
-                              marginLeft: '-2px',
-                            }}
-                          >
-                            <path
-                              d="M3 4.5L6 7.5L9 4.5"
-                              stroke="currentColor"
-                              strokeWidth="1.2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-                        {showReviewSortDropdown && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-10"
-                              aria-hidden="true"
-                              onClick={() => setShowReviewSortDropdown(false)}
-                            />
-                            <div
-                              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px] max-h-60 overflow-y-auto"
-                              style={{ borderWidth: '1.3px', marginTop: '7px' }}
-                            >
-                              {REVIEW_SORT_OPTIONS.filter((opt) => opt !== reviewSortOption).map((opt) => (
-                                <button
-                                  key={opt}
-                                  type="button"
-                                  onClick={() => {
-                                    setReviewSortOption(opt);
-                                    setShowReviewSortDropdown(false);
-                                  }}
-                                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                                  style={{
-                                    fontFamily: '"Futura PT Book"',
-                                    color: '#000',
-                                    fontWeight: 400,
-                                  }}
-                                >
-                                  {reviewSortOptionToLabel(opt)}
-                                </button>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                    {renderSortDropdown()}
                     <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>
                   </>
                 )}
                 {activeTab === 'SHOP' && (
                   <>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
-                      SHOP REVIEWS
-                    </h3>
+                    {renderSortDropdown()}
                     {shopReviews.length === 0 ? (
                       <div className="py-6 text-center">
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No shop reviews at this time.</p>
                       </div>
                     ) : (
-                      <div className="space-y-0">{shopReviews.map(renderReviewCard)}</div>
+                      <div className="space-y-0">{shopVisibleSorted.map(renderReviewCard)}</div>
                     )}
                   </>
                 )}
                 {activeTab === 'TOOLS' && (
                   <>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div
-                        className="text-center py-3"
-                        style={{
-                          backgroundColor: 'rgba(0,0,0,0.04)',
-                          borderRadius: '4px',
-                          height: '80px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'flex-end',
-                          paddingBottom: '10px',
-                        }}
-                      >
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                          {toolsPublishedCount}
-                        </p>
-                        <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                          TOOLS
-                        </p>
-                      </div>
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
-                      TOOLS REVIEWS
-                    </h3>
+                    {renderSortDropdown()}
                     {toolsReviews.length === 0 ? (
                       <div className="py-6 text-center">
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No tools reviews at this time.</p>
                       </div>
                     ) : (
-                      <div className="space-y-0">{toolsReviews.map(renderReviewCard)}</div>
+                      <div className="space-y-0">{toolsVisibleSorted.map(renderReviewCard)}</div>
                     )}
                   </>
                 )}

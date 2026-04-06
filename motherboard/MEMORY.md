@@ -12179,3 +12179,18 @@ Verification: `tsc --noEmit`.
 **Context:** User still saw **`WIG ONLY:MON,`** after adding a trailing space in **`viewAllListMeetingLabel`** — whitespace at the end of a flex item does not reliably separate from the next sibling.
 
 **Change:** Revert label strings to **`LABEL:`** only; **`AdminMeetingsHub.tsx`** view-all list row flex container uses **`gap: '1ch'`** between the gray label **`span`** and the red date **`span`**.
+
+---
+
+## 2026-04-06 — Admin reviews page: tab summaries, Noir stars, video filter, layout
+
+**Context:** User requested admin **`/admin/reviews`** updates: remove red SHOP/TOOLS headings; remove duplicate summary under tools; profile initials above client name; summary cards reflect **shop-only** / **tools-only** / **combined** by tab; Noir product-page stars; stars below gray product line; date **black**; **VIDEOS** sort shows **video count > 0** only; sort row **6px left**.
+
+**Changes (`src/pages/admin/reviews/page.tsx`):**
+- Summary grid uses **`displayAvg`** / **`displayTotal`** / **`totalReviewsLabel`** from tab (**ALL** = combined avg + count, **SHOP** / **TOOLS** = scope-only); right label **SHOP REVIEWS** / **TOOL REVIEWS** / **TOTAL REVIEWS**.
+- Removed inner tools summary + red **SHOP REVIEWS** / **TOOLS REVIEWS** **h3**s; shared **`renderSortDropdown()`** on all tabs (padding/margin **6px left** vs prior).
+- Cards: **40px** initials avatar, Noir **`filled-star.png`** (14px, outline, dim empty), stars **after** product line, date **`#000`**.
+- **`sortReviewsByOption`:** **PHOTOS** / **VIDEOS** pre-filter **`photos > 0`** / **`videos > 0`** then sort.
+- Dropped unused API **`averageRating`** / **`totalReviews`** state (client recomputes from rows).
+
+**`tsc --noEmit`**.
