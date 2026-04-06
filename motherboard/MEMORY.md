@@ -12163,3 +12163,11 @@ Verification: `tsc --noEmit`.
 **Context:** User wanted the **list view** copy (name/tier + meeting rows) shifted **up 6px** in **view all** mode only, **without** moving profile avatars.
 
 **Change:** **`AdminMeetingsHub.tsx`** — text column wrapper **`transform`** from **`translateX(6px)`** to **`translate(6px, -6px)`** for **`viewAllListClientPanels`** cards only.
+
+---
+
+## 2026-04-06 — View all list: space after label colon
+
+**Context:** List rows showed **`WIG ONLY:MON,`** with no space after the colon.
+
+**Change:** **`viewAllListMeetingLabel`** in **`adminMeetingClientPanels.tsx`** — return strings end with **`": "`** (trailing space) for both appointment and consult labels.
