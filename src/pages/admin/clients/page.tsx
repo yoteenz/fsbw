@@ -3119,6 +3119,7 @@ export default function AdminClients() {
                                     m={m}
                                     variant={m.category === 'consultation' ? 'consults' : 'bookings'}
                                     disableProfileNavigation
+                                    hideProfileAvatar
                                     onProfileClick={() => {}}
                                     onActionClick={(e) => e.preventDefault()}
                                     actionAriaLabel=""

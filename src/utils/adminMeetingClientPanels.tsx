@@ -777,6 +777,8 @@ export type AdminMeetingClientPanelProps = {
   onConsultPhotoClick?: (src: string) => void;
   /** When true, profile avatar is not a button (e.g. client-details tab for the same client). */
   disableProfileNavigation?: boolean;
+  /** Omit avatar column entirely (admin client-details APPOINTMENTS tab only). */
+  hideProfileAvatar?: boolean;
 };
 
 /** Same card body as AdminMeetingsHub bookings/consults lists (profile, lines, payment or consult content). */
@@ -788,6 +790,7 @@ export function AdminMeetingClientPanel({
   actionAriaLabel,
   onConsultPhotoClick,
   disableProfileNavigation,
+  hideProfileAvatar,
 }: AdminMeetingClientPanelProps) {
   const profileAvatar = (
     <img
@@ -808,13 +811,20 @@ export function AdminMeetingClientPanel({
     marginTop: '8px',
     marginLeft: '4px',
   } as const;
-  const profileBlock = disableProfileNavigation ? (
+  const profileBlock = hideProfileAvatar ? null : disableProfileNavigation ? (
     <div style={profileWrapStyle}>{profileAvatar}</div>
   ) : (
     <button type="button" onClick={onProfileClick} aria-label="Open client details" style={profileWrapStyle}>
       {profileAvatar}
     </button>
   );
+
+  const bodyMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const consultTitleTransform = hideProfileAvatar ? 'translate(0, 0)' : 'translate(6px, 6px)';
+  const consultHairMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const consultImgsMarginLeft = hideProfileAvatar ? 0 : '10px';
+  const consultNotesMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const bookingsFirstLineMargin = hideProfileAvatar ? '0' : '7px 0 0';
 
   if (variant === 'bookings') {
     const payment = getBookingPaymentStatusForCard(m);
@@ -824,8 +834,8 @@ export function AdminMeetingClientPanel({
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-2.5">
             {profileBlock}
-            <div className="min-w-0 flex-1" style={{ marginLeft: '6px' }}>
-              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: '7px 0 0' }}>
+            <div className="min-w-0 flex-1" style={{ marginLeft: bodyMarginLeft }}>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: bookingsFirstLineMargin }}>
                 <span style={{ color: '#EB1C24' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
                 <span style={{ color: tierLabelColor(m) }}>· {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}</span>
               </p>
@@ -928,14 +938,14 @@ export function AdminMeetingClientPanel({
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2.5">
           {profileBlock}
-          <div className="min-w-0 flex-1">
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: 'translate(6px, 6px)' }}>
+          <div className="min-w-0 flex-1" style={{ marginLeft: bodyMarginLeft }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: consultTitleTransform }}>
               {meetingClientDisplayNameWithState(m)}{' '}
               <span style={{ color: tierLabelColor(m) }}>· {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}</span>
             </p>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0', marginLeft: '6px' }}>{hair}</p>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0', marginLeft: consultHairMarginLeft }}>{hair}</p>
             {imgs.length > 0 && (
-              <div className="flex flex-wrap mt-2" style={{ marginLeft: '10px', gap: '8px' }}>
+              <div className="flex flex-wrap mt-2" style={{ marginLeft: consultImgsMarginLeft, gap: '8px' }}>
                 {imgs.slice(0, 3).map((src, i) => (
                   <button
                     type="button"
@@ -962,7 +972,7 @@ export function AdminMeetingClientPanel({
                 ))}
               </div>
             )}
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: '6px', marginBottom: '3px' }}>{notes}</p>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: consultNotesMarginLeft, marginBottom: '3px' }}>{notes}</p>
             <div style={{ height: '3px' }} />
           </div>
         </div>
