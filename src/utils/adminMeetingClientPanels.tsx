@@ -395,8 +395,8 @@ export function formatViewAllListMeetingDate(dateStr: string): string {
 }
 
 export function viewAllListMeetingLabel(m: AdminMeeting): string {
-  if (m.category === 'appointment') return `${getBookingCardDetails(m).installKind}: `;
-  return `${consultTypeLabelForMeeting(m)}: `;
+  if (m.category === 'appointment') return `${getBookingCardDetails(m).installKind}:`;
+  return `${consultTypeLabelForMeeting(m)}:`;
 }
 
 export function formatViewAllListMeetingDateOnly(m: AdminMeeting): string {

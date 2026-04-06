@@ -1484,7 +1484,17 @@ export default function AdminMeetingsHub() {
                                   }}
                                 >
                                   {clientGroup.meetings.map((meeting) => (
-                                    <div key={meeting.id} style={{ display: 'flex', alignItems: 'baseline', gap: '0px', minWidth: 0, lineHeight: '12px' }}>
+                                    <div
+                                      key={meeting.id}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'baseline',
+                                        /* Explicit gap — trailing space in label string collapsed between flex siblings */
+                                        gap: '1ch',
+                                        minWidth: 0,
+                                        lineHeight: '12px',
+                                      }}
+                                    >
                                       <span
                                         style={{
                                           fontFamily: '"Futura PT Medium"',

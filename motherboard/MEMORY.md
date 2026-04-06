@@ -12171,3 +12171,11 @@ Verification: `tsc --noEmit`.
 **Context:** List rows showed **`WIG ONLY:MON,`** with no space after the colon.
 
 **Change:** **`viewAllListMeetingLabel`** in **`adminMeetingClientPanels.tsx`** — return strings end with **`": "`** (trailing space) for both appointment and consult labels.
+
+---
+
+## 2026-04-06 — View all list colon spacing: flex gap (trailing space collapsed)
+
+**Context:** User still saw **`WIG ONLY:MON,`** after adding a trailing space in **`viewAllListMeetingLabel`** — whitespace at the end of a flex item does not reliably separate from the next sibling.
+
+**Change:** Revert label strings to **`LABEL:`** only; **`AdminMeetingsHub.tsx`** view-all list row flex container uses **`gap: '1ch'`** between the gray label **`span`** and the red date **`span`**.
