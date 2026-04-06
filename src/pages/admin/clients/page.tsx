@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -17,6 +17,12 @@ import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
 import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
+import {
+  compareAdminMeetingsNewestFirst,
+  formatMeetingIsoDateForDisplay,
+  listAggregatedAdminMeetingsForClientDetails,
+  type AdminMeeting
+} from '../../../utils/adminMeetingsMock';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -530,6 +536,19 @@ function isSupabaseUserId(id: unknown): id is string {
 
 const MAYA_OWEN_MOCK_EMAIL = 'mock13@test.com';
 
+function adminMeetingClientEmailNorm(m: AdminMeeting): string {
+  return String(m.clientEmail || '').trim().toLowerCase();
+}
+
+/** Align with admin meetings pills: Confirmed → SCHEDULED, Pending → PENDING, Canceled → CANCELED. */
+function meetingStatusForClientDetailsTab(m: AdminMeeting): string {
+  const s = String(m.status || '').trim().toLowerCase();
+  if (s === 'canceled' || s === 'cancelled') return 'CANCELED';
+  if (s === 'confirmed') return 'SCHEDULED';
+  if (s === 'pending') return 'PENDING';
+  return String(m.status || 'PENDING').toUpperCase();
+}
+
 /** Mock activity for Maya Owen (mock13@test.com) – all event types for demo. Newest first. */
 function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; payload?: Record<string, unknown>; createdAt: string }> {
   const now = Date.now();
@@ -600,6 +619,8 @@ export default function AdminClients() {
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
   const [adminReviewCountsByEmail, setAdminReviewCountsByEmail] = useState<Record<string, { total: number; media: number; pending: number }>>({});
   const [cartWishlistLoading] = useState(false);
+  /** Bump when `adminMeetingsScheduled` may change (same browser as admin meetings). */
+  const [adminMeetingsTick, setAdminMeetingsTick] = useState(0);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
@@ -707,6 +728,16 @@ export default function AdminClients() {
     }, 450);
     return () => window.clearTimeout(t);
   }, [selectedClientEmail]);
+
+  useEffect(() => {
+    const bump = () => setAdminMeetingsTick((n) => n + 1);
+    window.addEventListener('storage', bump);
+    window.addEventListener('focus', bump);
+    return () => {
+      window.removeEventListener('storage', bump);
+      window.removeEventListener('focus', bump);
+    };
+  }, []);
 
   const loadData = useCallback(() => {
     try {
@@ -1055,8 +1086,23 @@ export default function AdminClients() {
   const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
-  /** Real appointments per client are not loaded yet — avoid placeholder rows so new sign-ups are not shown fake data. */
-  const appointments: Array<{ date: string; time?: string; type: string; status: string }> = [];
+  /**
+   * Bookings + consults for this client (same merged source as /admin/meetings: mock range + localStorage drafts).
+   * Consult rows appear here under APPOINTMENTS so client details match the meetings hub per client.
+   */
+  const appointments = useMemo(() => {
+    const email = (selectedClientEmail || '').trim().toLowerCase();
+    if (!email || !selectedClient) return [];
+    return listAggregatedAdminMeetingsForClientDetails()
+      .filter((m) => adminMeetingClientEmailNorm(m) === email)
+      .sort(compareAdminMeetingsNewestFirst)
+      .map((m) => ({
+        date: formatMeetingIsoDateForDisplay(m.date),
+        time: m.time,
+        type: m.category === 'consultation' ? `CONSULT — ${m.type}` : m.type,
+        status: meetingStatusForClientDetailsTab(m),
+      }));
+  }, [selectedClient, selectedClientEmail, adminMeetingsTick]);
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
@@ -3059,7 +3105,7 @@ export default function AdminClients() {
                         {detailsTab === 'appointments' && (
                           <div className="space-y-3">
                             {appointments.length === 0 ? (
-                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
+                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS OR CONSULTS YET</div>
                             ) : (
                             appointments.map((appointment: any, index: number) => {
                               const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');

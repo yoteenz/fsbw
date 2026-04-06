@@ -350,6 +350,35 @@ export function generateMockMeetingsForRange(start: string, end: string): AdminM
   return all;
 }
 
+/** Same window as admin meetings hub uses for a month view, expanded so client details see consult + appointment history. */
+export const MOCK_MEETINGS_AGGREGATE_MONTHS_BACK = 12;
+export const MOCK_MEETINGS_AGGREGATE_MONTHS_FORWARD = 12;
+
+export function defaultAggregatedMeetingsDateRange(): { start: string; end: string } {
+  const today = new Date();
+  const startD = new Date(today.getFullYear(), today.getMonth() - MOCK_MEETINGS_AGGREGATE_MONTHS_BACK, 1);
+  const endD = new Date(today.getFullYear(), today.getMonth() + MOCK_MEETINGS_AGGREGATE_MONTHS_FORWARD + 1, 0);
+  return { start: formatISODate(startD), end: formatISODate(endD) };
+}
+
+/**
+ * Deterministic mock meetings + `adminMeetingsScheduled` localStorage for the default range.
+ * Matches merge order in `AdminMeetingsHub` (mock base, local overwrites by id).
+ */
+export function listAggregatedAdminMeetingsForClientDetails(): AdminMeeting[] {
+  const { start, end } = defaultAggregatedMeetingsDateRange();
+  const mock = generateMockMeetingsForRange(start, end);
+  const local = loadLocalMeetings().filter((m) => m.date >= start && m.date <= end);
+  const byId = new Map<string, AdminMeeting>();
+  for (const m of mock) byId.set(m.id, m);
+  for (const m of local) byId.set(m.id, m);
+  return [...byId.values()].sort((a, b) => {
+    const dc = a.date.localeCompare(b.date);
+    if (dc !== 0) return dc;
+    return timeToSortKey(a.time) - timeToSortKey(b.time);
+  });
+}
+
 function timeToSortKey(t: string): number {
   const m = t.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!m) return 0;
@@ -359,6 +388,21 @@ function timeToSortKey(t: string): number {
   if (ap === 'PM' && h !== 12) h += 12;
   if (ap === 'AM' && h === 12) h = 0;
   return h * 60 + min;
+}
+
+/** Newest meeting first (date desc, then time desc). */
+export function compareAdminMeetingsNewestFirst(a: AdminMeeting, b: AdminMeeting): number {
+  const dc = b.date.localeCompare(a.date);
+  if (dc !== 0) return dc;
+  return timeToSortKey(b.time) - timeToSortKey(a.time);
+}
+
+/** `YYYY-MM-DD` → `MM-DD-YYYY` for admin client cards (matches order date style). */
+export function formatMeetingIsoDateForDisplay(iso: string): string {
+  const t = (iso || '').trim();
+  const [y, m, d] = t.split('-');
+  if (!y || !m || !d) return t || '—';
+  return `${m}-${d}-${y}`;
 }
 
 export function loadLocalMeetings(): AdminMeeting[] {
