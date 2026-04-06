@@ -1489,8 +1489,9 @@ export default function AdminMeetingsHub() {
                                       style={{
                                         display: 'flex',
                                         alignItems: 'baseline',
-                                        /* Explicit gap — trailing space in label string collapsed between flex siblings */
-                                        gap: '1ch',
+                                        /* ~one word-space at 9px — 1ch was digit-width (too wide vs a real space) */
+                                        fontSize: '9px',
+                                        gap: '0.35em',
                                         minWidth: 0,
                                         lineHeight: '12px',
                                       }}

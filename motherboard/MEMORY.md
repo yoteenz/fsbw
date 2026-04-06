@@ -12178,7 +12178,7 @@ Verification: `tsc --noEmit`.
 
 **Context:** User still saw **`WIG ONLY:MON,`** after adding a trailing space in **`viewAllListMeetingLabel`** — whitespace at the end of a flex item does not reliably separate from the next sibling.
 
-**Change:** Revert label strings to **`LABEL:`** only; **`AdminMeetingsHub.tsx`** view-all list row flex container uses **`gap: '1ch'`** between the gray label **`span`** and the red date **`span`**.
+**Change:** Revert label strings to **`LABEL:`** only; **`AdminMeetingsHub.tsx`** view-all list row uses **`fontSize: '9px'`** + **`gap: '0.35em'`** between label and date (**`1ch`** was dropped — too wide vs one space).
 
 ---
 
