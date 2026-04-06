@@ -517,6 +517,12 @@ export function formatBookingInstallLineForCard(m: AdminMeeting): string {
   return `${details.installKind}: ${details.unitLabel} $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
 }
 
+/** View-all grid cards: install kind + price only (no wig unit name). */
+export function formatBookingInstallLineForViewAllGrid(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return `${details.installKind}: ${formatUsd(details.unitPriceUsd)}`;
+}
+
 export function formatBookingAddonsLineForCard(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
   return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';

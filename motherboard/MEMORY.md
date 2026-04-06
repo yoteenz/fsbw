@@ -12135,3 +12135,11 @@ Verification: `tsc --noEmit`.
 **Context:** User asked to drop the wrapping **`()`** around the abbreviated head-measurement string on admin consult client panels.
 
 **Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — **`formatConsultHeadMeasurementsParenLine`** now returns **`parts.join(' · ')`** (e.g. `19" C · 21" FN · …`) instead of parenthesized form. Function name kept for call sites. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin meetings view-all bookings grid: red line without product name
+
+**Context:** In **view all bookings** **grid** view, the red service line showed **`NEW INSTALL: SOFT WAVE $760`**; user wanted **`NEW INSTALL: $760`** (no unit/wig name).
+
+**Change:** **`formatBookingInstallLineForViewAllGrid`** in **`src/utils/adminMeetingClientPanels.tsx`** — **`installKind: `** + **`formatUsd(unitPrice)`** (no **`unitLabel`**, no trailing **` USD`**). **`AdminMeetingsHub.tsx`** grid cell uses this helper; list view and full client panels unchanged. **`tsc --noEmit`**.

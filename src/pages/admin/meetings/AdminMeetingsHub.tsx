@@ -34,7 +34,7 @@ import {
   bookingPaidInFullSalesUsd,
   consultCodeFromOrder,
   consultTypeLabelForMeeting,
-  formatBookingInstallLineForCard,
+  formatBookingInstallLineForViewAllGrid,
   formatHeaderDate,
   formatUsd,
   formatViewAllListMeetingDateOnly,
@@ -1351,7 +1351,7 @@ export default function AdminMeetingsHub() {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    {formatBookingInstallLineForCard(latest)}
+                                    {formatBookingInstallLineForViewAllGrid(latest)}
                                   </p>
                                   <p
                                     style={{
