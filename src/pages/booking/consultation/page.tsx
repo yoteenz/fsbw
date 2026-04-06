@@ -766,44 +766,45 @@ export default function BookingConsultationPage() {
             >
               {HEAD_MEASUREMENT_FIELDS.map((field, idx) => {
                 const isLeftColumn = idx % 2 === 0;
-                /** 4px narrower from the inner edge only (toward column gap); grid/row still full width like hair options. */
-                const inputInset =
+                /** Same inset for label + input so copy stays aligned when inputs are 4px narrower toward the column gap. */
+                const columnInset =
                   isLeftColumn
                     ? { width: 'calc(100% - 4px)' as const, marginRight: '4px' as const, marginLeft: 0 as const }
                     : { width: 'calc(100% - 4px)' as const, marginLeft: '4px' as const, marginRight: 0 as const };
                 return (
-                <label
-                  key={field.key}
-                  style={{
-                    display: 'block',
-                    fontFamily: bookingFontMedium,
-                    fontSize: '9px',
-                    color: '#000',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.02em',
-                  }}
-                >
-                  {field.label}
-                  {field.required ? <span style={{ color: '#EB1C24' }}>*</span> : null}
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={headMeasurements[field.key]}
-                    onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
-                    className="bg-white/80 backdrop-blur-sm"
-                    style={{
-                      ...inputInset,
-                      marginTop: '6px',
-                      boxSizing: 'border-box',
-                      border: '1.3px solid #000',
-                      fontFamily: bookingFontMedium,
-                      fontSize: '11px',
-                      color: '#EB1C24',
-                      padding: '10px 12px',
-                      textTransform: 'uppercase',
-                    }}
-                  />
-                </label>
+                  <div key={field.key} style={{ ...columnInset, minWidth: 0, boxSizing: 'border-box' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontFamily: bookingFontMedium,
+                        fontSize: '9px',
+                        color: '#000',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {field.label}
+                      {field.required ? <span style={{ color: '#EB1C24' }}>*</span> : null}
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={headMeasurements[field.key]}
+                        onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
+                        className="bg-white/80 backdrop-blur-sm"
+                        style={{
+                          width: '100%',
+                          marginTop: '6px',
+                          boxSizing: 'border-box',
+                          border: '1.3px solid #000',
+                          fontFamily: bookingFontMedium,
+                          fontSize: '11px',
+                          color: '#EB1C24',
+                          padding: '10px 12px',
+                          textTransform: 'uppercase',
+                        }}
+                      />
+                    </label>
+                  </div>
                 );
               })}
             </div>
