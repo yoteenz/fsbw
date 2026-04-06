@@ -1390,7 +1390,7 @@ export default function BookingAppointmentPage() {
             ))}
           </div>
 
-          {/* Notes then scheduling: same rhythm as consult (20px above rule, rule, 20px to calendar). Use #9ca3af @ 1.3px so the divider reads on marble — #e5e7eb was washing out. */}
+          {/* Notes then scheduling: same gray rule as SELECT A SERVICE block (`1px solid #e5e7eb`). */}
           <div style={{ width: '100%', minWidth: 0 }}>
             <label htmlFor="appointment-additional-notes" style={{ ...appointmentNotesLabelStyle, marginBottom: '7px' }}>
               ADDITIONAL NOTES:
@@ -1424,7 +1424,7 @@ export default function BookingAppointmentPage() {
             <div
               style={{
                 marginTop: '20px',
-                borderTop: '1.3px solid #9ca3af',
+                borderTop: '1px solid #e5e7eb',
                 paddingTop: '20px',
                 boxSizing: 'border-box',
                 width: '100%',
