@@ -937,7 +937,14 @@ export function AdminMeetingClientPanel({
   }
 
   const meta = m.metadata || {};
-  const hair = String(meta.hairOption || m.notes || '—');
+  /** Consult: wig line from explicit metadata or derived label — never `m.notes` (long text caused wrap/phantom fragments). */
+  const hair =
+    m.category === 'consultation'
+      ? (() => {
+          const explicit = String(meta.hairOption || meta.bookingHairOption || meta.consultType || '').trim();
+          return explicit || consultTypeLabelForMeeting(m);
+        })()
+      : String(meta.hairOption || m.notes || '—');
   const notes = String(meta.consultNotes || '').trim() || m.notes;
   const measurementParenLine = formatConsultHeadMeasurementsParenLine(meta as Record<string, unknown>);
   const imgs = consultInspo(m);
@@ -951,7 +958,20 @@ export function AdminMeetingClientPanel({
               {meetingClientDisplayNameWithState(m)}{' '}
               <span style={{ color: tierLabelColor(m) }}>· {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}</span>
             </p>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '8px 0 0', marginLeft: consultHairMarginLeft }}>{hair}</p>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '9px',
+                color: '#000',
+                margin: '8px 0 0',
+                marginLeft: consultHairMarginLeft,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {hair}
+            </p>
             {imgs.length > 0 && (
               <div className="flex flex-wrap mt-2" style={{ marginLeft: consultImgsMarginLeft, gap: '8px' }}>
                 {imgs.slice(0, 3).map((src, i) => (

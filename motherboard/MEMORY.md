@@ -12143,3 +12143,15 @@ Verification: `tsc --noEmit`.
 **Context:** In **view all bookings** **grid** view, the red service line showed **`NEW INSTALL: SOFT WAVE $760`**; user wanted **`NEW INSTALL: $760`** (no unit/wig name).
 
 **Change:** **`formatBookingInstallLineForViewAllGrid`** in **`src/utils/adminMeetingClientPanels.tsx`** — **`installKind: `** + **`formatUsd(unitPrice)`** (no **`unitLabel`**, no trailing **` USD`**). **`AdminMeetingsHub.tsx`** grid cell uses this helper; list view and full client panels unchanged. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin Meetings: “TSTS” phantom text — calendar keys + consult hair line
+
+**Context:** User asked what **`TSTS`** is on consult tab and view-all; repo has **no** literal `TSTS` in `src/`. Prior motherboard notes treated it as layout/wrap artifacts.
+
+**Fixes:**
+- **`AdminMeetingsHub.tsx`:** Calendar weekday row used **duplicate React keys** (`T`, `S` twice) → unique keys **`cal-dow-0`…`6`** + **`whiteSpace: 'nowrap'`** on the row.
+- **`adminMeetingClientPanels.tsx`:** Consult black “hair” line no longer falls back to **`m.notes`** (long mock/API notes could wrap into confusing fragments). Uses **`hairOption` / `bookingHairOption` / `consultType`** or **`consultTypeLabelForMeeting(m)`**; line is **ellipsis + nowrap**.
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.

@@ -1771,9 +1771,12 @@ export default function AdminMeetingsHub() {
                         <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={18} height={18} draggable={false} />
                       </button>
                     </div>
-                    <div className="grid grid-cols-7 gap-1 text-center mb-1" style={{ fontSize: '8px', color: '#808080' }}>
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) => (
-                        <span key={d}>{d}</span>
+                    <div
+                      className="grid grid-cols-7 gap-1 text-center mb-1"
+                      style={{ fontSize: '8px', color: '#808080', whiteSpace: 'nowrap' }}
+                    >
+                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                        <span key={`cal-dow-${i}`}>{d}</span>
                       ))}
                     </div>
                     <div className="grid grid-cols-7 gap-1 mb-4">
