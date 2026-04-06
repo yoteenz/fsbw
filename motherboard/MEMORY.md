@@ -12261,3 +12261,9 @@ Verification: `tsc --noEmit`.
 - **AFFILIATE:** thumbnail grid for photos/videos + social link rows; **`SectionTitle`**, **`DataRow`** helpers.
 
 **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews sort nudge: label −4px, menu −2px
+
+**File:** **`src/pages/admin/reviews/page.tsx`** — sort label **`relative; left: -4px`**; dropdown panel **`left: -2px`**. **`tsc --noEmit`**.

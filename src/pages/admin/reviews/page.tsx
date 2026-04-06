@@ -312,7 +312,9 @@ export default function AdminReviews() {
           onClick={() => setShowReviewSortDropdown((v) => !v)}
           className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors max-w-[120px]"
         >
-          <span className="truncate min-w-0">{reviewSortOptionToLabel(reviewSortOption)}</span>
+          <span className="truncate min-w-0" style={{ position: 'relative', left: '-4px' }}>
+            {reviewSortOptionToLabel(reviewSortOption)}
+          </span>
           <svg
             width="12"
             height="12"
@@ -342,8 +344,9 @@ export default function AdminReviews() {
               onClick={() => setShowReviewSortDropdown(false)}
             />
             <div
-              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-40 max-h-60 overflow-y-auto overflow-x-hidden"
+              className="absolute py-1 bg-white border border-black shadow-lg z-40 max-h-60 overflow-y-auto overflow-x-hidden"
               style={{
+                left: '-2px',
                 borderWidth: '1.3px',
                 marginTop: '7px',
                 width: '120px',
