@@ -12045,3 +12045,13 @@ Verification: `tsc --noEmit`.
 **Fix:** Wrap each field in a **`div`** that applies the same **`width: calc(100% - 4px)`** + **`marginLeft`/`marginRight`**; **`input`** is **`width: 100%`** inside that wrapper.
 
 **File:** `src/pages/booking/consultation/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS: no profile avatar, text shifted left
+
+**Context:** User asked to **remove profile icons** from the **APPOINTMENTS** tab of admin **client details** only and **shift panel text left** to remove leftover spacing.
+
+**Change:** **`AdminMeetingClientPanel`** **`hideProfileAvatar`** — skips avatar column; when set, **bookings** body **`marginLeft: 0`**, first line **`margin: 0`**, **consults** clears **`translate(6px,6px)`** and left indents on hair / inspo / notes. **`admin/clients/page.tsx`** passes **`hideProfileAvatar`** on that tab only (meetings hub unchanged).
+
+**Files:** `src/utils/adminMeetingClientPanels.tsx`, `src/pages/admin/clients/page.tsx`. **`tsc --noEmit`**.
