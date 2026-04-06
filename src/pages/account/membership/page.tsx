@@ -1282,11 +1282,12 @@ function MembershipPage() {
                           </p>
                           <p
                             style={{
-                              fontFamily: '"Futura PT Book"',
+                              fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '9.5px',
+                              fontSize: '11px',
                               margin: '0 0 8px 0',
-                              textTransform: 'uppercase'
+                              textTransform: 'uppercase',
+                              fontWeight: 400
                             }}
                           >
                             (EXCLUDES TAXES + SHIPPING FEES)
@@ -1364,8 +1365,8 @@ function MembershipPage() {
                                   }}
                                   disabled={!canRedeem}
                                   style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '10px',
+                                    fontFamily: '"Bohemy", cursive',
+                                    fontSize: '12px',
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -1373,7 +1374,8 @@ function MembershipPage() {
                                     padding: '6px 12px',
                                     cursor: canRedeem ? 'pointer' : 'not-allowed',
                                     textTransform: 'uppercase',
-                                    opacity: canRedeem ? 1 : 0.5
+                                    opacity: canRedeem ? 1 : 0.5,
+                                    fontWeight: 400
                                   }}
                                   type="button"
                                 >
@@ -2081,11 +2083,12 @@ fontFamily: '"Futura PT Book"',
                               </p>
                               <p
                                 style={{
-                                  fontFamily: '"Futura PT Book"',
+                                  fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '9.5px',
+                                  fontSize: '11px',
                                   margin: '0 0 8px 0',
-                                  textTransform: 'uppercase'
+                                  textTransform: 'uppercase',
+                                  fontWeight: 400
                                 }}
                               >
                                 (EXCLUDES TAXES + SHIPPING FEES)
@@ -2163,8 +2166,8 @@ fontFamily: '"Futura PT Book"',
                                       }}
                                       disabled={!canRedeem}
                                       style={{
-                                        fontFamily: '"Futura PT Medium"',
-                                        fontSize: '10px',
+                                        fontFamily: '"Bohemy", cursive',
+                                        fontSize: '12px',
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',
@@ -2172,7 +2175,8 @@ fontFamily: '"Futura PT Book"',
                                         padding: '6px 12px',
                                         cursor: canRedeem ? 'pointer' : 'not-allowed',
                                         textTransform: 'uppercase',
-                                        opacity: canRedeem ? 1 : 0.5
+                                        opacity: canRedeem ? 1 : 0.5,
+                                        fontWeight: 400
                                       }}
                                       type="button"
                                     >
