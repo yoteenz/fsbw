@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { AdminMeeting } from './adminMeetingsMock';
 import { endOfMonth, parseISODateLocal, startOfMonth } from './adminMeetingsMock';
+import { formatConsultHeadMeasurementsParenLine } from './adminConsultHeadMeasurementsDisplay';
 
 
 const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
@@ -932,6 +933,7 @@ export function AdminMeetingClientPanel({
   const meta = m.metadata || {};
   const hair = String(meta.hairOption || m.notes || '—');
   const notes = String(meta.consultNotes || '').trim() || m.notes;
+  const measurementParenLine = formatConsultHeadMeasurementsParenLine(meta as Record<string, unknown>);
   const imgs = consultInspo(m);
   return (
     <div className="flex justify-between items-start" style={{ gap: '12px' }}>
@@ -972,7 +974,22 @@ export function AdminMeetingClientPanel({
                 ))}
               </div>
             )}
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: '8px', marginLeft: consultNotesMarginLeft, marginBottom: '3px' }}>{notes}</p>
+            {measurementParenLine ? (
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '9px',
+                  color: '#EB1C24',
+                  marginTop: '8px',
+                  marginLeft: consultNotesMarginLeft,
+                  marginBottom: '4px',
+                  lineHeight: 1.35,
+                }}
+              >
+                {measurementParenLine}
+              </p>
+            ) : null}
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: measurementParenLine ? '0' : '8px', marginLeft: consultNotesMarginLeft, marginBottom: '3px' }}>{notes}</p>
             <div style={{ height: '3px' }} />
           </div>
         </div>

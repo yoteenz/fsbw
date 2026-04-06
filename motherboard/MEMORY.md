@@ -12055,3 +12055,15 @@ Verification: `tsc --noEmit`.
 **Change:** **`AdminMeetingClientPanel`** **`hideProfileAvatar`** — skips avatar column; when set, **bookings** body **`marginLeft: 0`**, first line **`margin: 0`**, **consults** clears **`translate(6px,6px)`** and left indents on hair / inspo / notes. **`admin/clients/page.tsx`** passes **`hideProfileAvatar`** on that tab only (meetings hub unchanged).
 
 **Files:** `src/utils/adminMeetingClientPanels.tsx`, `src/pages/admin/clients/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin consult cards: head measurement abbr EEC + EEF, mock data
+
+**Context:** User specified abbreviated labels **EEC** (ear-to-ear across forehead) and **EEF** (ear-to-ear over crown) for the red parenthesized measurement line on admin consult client panels (meetings hub consult tab + client details appointments for consult rows).
+
+**Changes:**
+- **`src/utils/adminConsultHeadMeasurementsDisplay.ts`:** `horizontalTempleToTemple` → **EEC**; `verticalTempleToTemple` → **EEF** (was EOC). File comment documents abbr map.
+- **`src/utils/adminMeetingsMock.ts`:** Mock **consultation** meetings now include deterministic **`metadata.headMeasurements`** so the new line renders for mock consults without real checkout data.
+
+**Shared UI:** Line still rendered only via **`AdminMeetingClientPanel`** consult branch (`formatConsultHeadMeasurementsParenLine`). **`tsc --noEmit`**.

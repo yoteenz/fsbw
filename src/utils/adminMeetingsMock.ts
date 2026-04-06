@@ -257,6 +257,7 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
         const [picked] = inspoPool.splice(idx, 1);
         if (picked) inspoPhotoUrls.push(picked);
       }
+      const inch = (base: number, spread: number) => `${base + Math.floor(rnd() * spread)}"`;
       meetings.push({
         id: `mock-${dateKey}-c-${i}`,
         date: dateKey,
@@ -275,6 +276,14 @@ export function generateMockMeetingsForDay(dateKey: string, opts?: MockDayOption
           // Mixed 1..3 inspo photos so consult cards don't all look identical.
           inspoPhotoUrls,
           inspoFileNames: inspoPhotoUrls,
+          headMeasurements: {
+            circumference: inch(19, 4),
+            frontToNape: inch(21, 5),
+            verticalTempleToTemple: inch(11, 4),
+            horizontalTempleToTemple: inch(11, 4),
+            earToEar: inch(10, 4),
+            napeOfNeck: inch(5, 3),
+          },
         },
       });
     } else {
