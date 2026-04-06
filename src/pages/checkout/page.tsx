@@ -6289,18 +6289,34 @@ function CheckoutPage() {
                       const wasFirstOrder = activeOrders.length === 0 && (ordersData.pastOrders || []).length === 0;
                       const firstItem = cartItems[0];
                       const productName = firstItem?.name || 'Order';
+                      const onlyGiftOrDigital =
+                        cartItems.length > 0 &&
+                        cartItems.every(
+                          (i: any) =>
+                            i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
+                        );
+                      const digitalFulfillmentOnly = Boolean(isSubscriptionUpgrade || onlyGiftOrDigital);
+                      const bookingsOnlyAc = isBookingsOnlyCheckout;
+                      const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
+                      const bookingFlowTypePersist = bookingsOnlyAc
+                        ? cartItems.some((item: any) => item?.type === 'booking-appointment')
+                          ? 'appointment'
+                          : 'consult'
+                        : undefined;
                       const newOrder = {
                         id: `order-${nextOrderNumber}`,
                         orderNumber: `ORDER ${orderNumber}`,
                         date: orderDate,
-                        status: 'PREPARING',
+                        status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
                         productName,
                         productImage: '/assets/natural front.png',
                         total: subtotal,
                         subtotal: orderAmount,
                         items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
                         placedAt: Date.now(),
-                        pointsEarned
+                        pointsEarned,
+                        ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
+                        ...(bookingFlowTypePersist ? { bookingFlowType: bookingFlowTypePersist } : {})
                       };
                       activeOrders.push(newOrder);
                       localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));

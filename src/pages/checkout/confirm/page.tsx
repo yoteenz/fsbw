@@ -192,6 +192,20 @@ function CheckoutConfirmPage() {
     [cartItems, orderData]
   );
 
+  const isOnlyDigitalProductsSummary = React.useMemo(
+    () =>
+      cartItems.length > 0 &&
+      cartItems.every(
+        (item: any) =>
+          item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital'
+      ),
+    [cartItems]
+  );
+
+  /** No order form or shipping-style tracking on summary: membership, A/C bookings, gift cards, other digital lines. */
+  const isDigitalFulfillmentSummary =
+    isPremiumMembershipSummary || isBookingsOnlyOrder || isOnlyDigitalProductsSummary;
+
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
   const getOrdinalSuffix = (day: number): string => {
     if (day >= 11 && day <= 13) {
@@ -1322,6 +1336,8 @@ function CheckoutConfirmPage() {
               >
                 {isPremiumMembershipSummary ? (
                   <>THANK YOU! YOUR <span style={{ color: '#EB1C24' }}>PREMIUM MEMBERSHIP</span> PURCHASE IS COMPLETE.<br />ACCESS AND BENEFITS WILL REFLECT ON YOUR ACCOUNT SHORTLY.</>
+                ) : isDigitalFulfillmentSummary ? (
+                  <>THANK YOU! YOUR ORDER IS <span style={{ color: '#EB1C24' }}>PLACED</span>. STATUS MOVES <span style={{ color: '#EB1C24' }}>PLACED → PROCESSING → COMPLETE</span> ON YOUR ORDERS PAGE — NO SHIPPING OR ORDER FORM FOR THIS PURCHASE.</>
                 ) : (
                   <>YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER FORM WITHIN 24 HOURS OR YOUR ORDER WILL BE <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.</>
                 )}
@@ -1331,8 +1347,8 @@ function CheckoutConfirmPage() {
             )}
             </div>
 
-            {/* Sign Order Form Button - Outside main card (physical orders only) */}
-            {!showMobileMenu && !isPremiumMembershipSummary && (
+            {/* Sign Order Form Button - physical wig orders only */}
+            {!showMobileMenu && !isDigitalFulfillmentSummary && (
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {
@@ -1418,8 +1434,8 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* SHIPPING — hidden for premium membership (digital-only) */}
-              {!isPremiumMembershipSummary && (
+              {/* SHIPPING — hidden for digital / A&C / membership (no ship tracking on summary) */}
+              {!isDigitalFulfillmentSummary && (
               <div style={{ marginBottom: '55px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2

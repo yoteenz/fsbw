@@ -114,7 +114,12 @@ export function getOrderReceivedAccountAlerts(
     return activeOrders
       .filter((order) => {
         const status = String(order?.status || '').trim().toUpperCase();
-        return status !== 'DELIVERED' && status !== 'CANCELED' && status !== 'CANCELLED';
+        return (
+          status !== 'DELIVERED' &&
+          status !== 'COMPLETE' &&
+          status !== 'CANCELED' &&
+          status !== 'CANCELLED'
+        );
       })
       .map((order) => buildOrderReceivedAccountAlert(user, order))
       .filter((notification): notification is StoredNotification => Boolean(notification));

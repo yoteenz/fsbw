@@ -165,6 +165,20 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     icon: 'f'
   });
 
+  /** Founder seed mock: ORDER #332 consult — matches `order_received_kateena-consult-1` from checkout-style alerts. */
+  if (isAyoteenzAdminAccount(user)) {
+    notifs.push({
+      id: 'order_received_kateena-consult-1',
+      title: "WE'VE RECEIVED YOUR ORDER!",
+      message: 'ORDER #332 IS BEING PROCESSED.',
+      actionText: 'VIEW DETAILS',
+      actionRoute: '/account/concierge?orderId=kateena-consult-1',
+      date: today,
+      isRead: false,
+      icon: 'f'
+    });
+  }
+
   if (newAccount) {
     return notifs;
   }
