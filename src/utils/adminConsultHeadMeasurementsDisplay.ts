@@ -1,5 +1,5 @@
 /**
- * Abbreviated head measurement line for admin consult cards: (19" C · 22" FN · 12" EEC · …)
+ * Abbreviated head measurement line for admin consult cards: 19" C · 22" FN · 12" EEC · …
  * Abbrs: C, FN, EEC (ear-to-ear over crown), EEF (ear-to-ear across forehead), TT, NN.
  * Keys match `bookingHeadMeasurements` / checkout consult payload.
  */
@@ -37,7 +37,7 @@ export function consultHeadMeasurementsFromMetadata(meta: Record<string, unknown
 }
 
 /**
- * Returns parenthesized red line body e.g. `(19" C · 22" FN)` or null if nothing to show.
+ * Returns red line body e.g. `19" C · 22" FN` or null if nothing to show.
  */
 export function formatConsultHeadMeasurementsParenLine(meta: Record<string, unknown> | null | undefined): string | null {
   const hm = consultHeadMeasurementsFromMetadata(meta);
@@ -49,5 +49,5 @@ export function formatConsultHeadMeasurementsParenLine(meta: Record<string, unkn
     parts.push(`${withQuote(v)} ${abbr}`);
   }
   if (parts.length === 0) return null;
-  return `(${parts.join(' · ')})`;
+  return parts.join(' · ');
 }

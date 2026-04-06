@@ -12119,3 +12119,11 @@ Verification: `tsc --noEmit`.
 **Context:** Content under the client-details toggle tabs (DETAILS / CART / WISHLIST row and ACTIVITY / ORDERS / … row) sat too tight under the tab labels compared to the admin meetings page tab strip.
 
 **Change:** **`src/pages/admin/clients/page.tsx`** — add **`marginBottom: '10px'`** on both tab row wrappers (matches meetings hub header **`pb-2`** + content **`paddingTop: 2px`**). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin consult measurement line: no parentheses
+
+**Context:** User asked to drop the wrapping **`()`** around the abbreviated head-measurement string on admin consult client panels.
+
+**Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — **`formatConsultHeadMeasurementsParenLine`** now returns **`parts.join(' · ')`** (e.g. `19" C · 21" FN · …`) instead of parenthesized form. Function name kept for call sites. **`tsc --noEmit`**.
