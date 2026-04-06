@@ -11872,3 +11872,13 @@ Verification: `tsc --noEmit`.
 - **Bug:** an extra **`</div>`** from the prior refactor broke JSX (tsc failed); removed the stray closer.
 
 **Files:** `src/pages/booking/appointment/page.tsx`, `src/pages/booking/consultation/page.tsx`.
+
+---
+
+## 2026-04-06 — Push policy: all agent work on `preview/mobile` only
+
+**Context:** User said changes were pushed to the wrong / new branches (`cursor/appointment-notes-border-spacing-8444` etc.) and work was getting lost; **all** changes from this thread must go to **`preview/mobile`** only — **do not create new branches**.
+
+**Outcome:** Fast-forwarded `preview/mobile` to include the full commit chain from the feature branch (appointment/consult booking UI, account alerts + notification key migration, digital/A&C orders UX, consult head measurement labels, motherboard entries), then **`git push -u origin preview/mobile`**. Local checkout left on `preview/mobile` tracking origin.
+
+**Convention for future turns in this repo:** Implement and push **only** on **`preview/mobile`** unless the user explicitly names another branch.
