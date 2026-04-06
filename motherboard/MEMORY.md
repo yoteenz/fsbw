@@ -11846,3 +11846,16 @@ so the branch tips end on the same commit hash rather than merely containing equ
 - `src/utils/cartLineRedAndDetails.ts` — consult cart subtitle lines use the same wording for consistency.
 
 Verification: `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account alerts: order-received for new accounts + notifications localStorage key
+
+**Context:** User still did not see **WE'VE RECEIVED YOUR ORDER** on Account → Alerts for mock consult #332; noted COMPLETE exclusion (that only hides alerts for completed orders, not PLACED).
+
+**Fixes:**
+1. **`getOrderReceivedAccountAlerts`** now runs **before** the `newAccount` early return in `getAccountNotifications`, so `userOrders_*` drives the same alert as post-checkout for all signed-in users including `hasMadeFirstPurchase !== true`.
+2. **Canonical `notifications_${email.toLowerCase()}`** for alerts page persist + account badge merge; **migrate** legacy `notifications_${rawEmail}` into canonical on load.
+3. **`mergeAccountNotifications`:** ids starting with **`order_received_`** force `isRead: false` (like `acc_`) so a previously archived stored row reappears in NEW until the user archives again.
+
+**Files:** `src/utils/orderAccountAlerts.ts`, `src/pages/account/notifications/page.tsx`, `src/pages/account/page.tsx`, `src/utils/orderTracking.ts`.
