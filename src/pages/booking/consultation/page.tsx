@@ -182,6 +182,8 @@ export default function BookingConsultationPage() {
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
   const [headMeasurements, setHeadMeasurements] = useState<HeadMeasurements>(EMPTY_HEAD_MEASUREMENTS);
+  /** Shown after we hydrate from last checkout so clients know fields stay editable. */
+  const [showSavedMeasurementsEditHint, setShowSavedMeasurementsEditHint] = useState(false);
   /** Bumped when order history updates (e.g. consult checkout) so we can pre-fill newly saved measurements. */
   const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
@@ -226,22 +228,38 @@ export default function BookingConsultationPage() {
     return () => window.removeEventListener('ordersUpdated', bump);
   }, []);
 
-  /** Repeat wig consults: pre-fill head measurements from last completed checkout (per user). */
+  /** Repeat wig consults: pre-fill head measurements from last completed checkout (per user). Inputs stay fully editable. */
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (localStorage.getItem('isSignedIn') !== 'true') return;
+    if (localStorage.getItem('isSignedIn') !== 'true') {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
     const email = getCurrentUserEmailFromStorage();
-    if (!email) return;
+    if (!email) {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
     const saved = loadLastSubmittedBookingConsultHeadMeasurements(email);
-    if (!saved) return;
+    if (!saved) {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
     setHeadMeasurements((prev) => {
       const allEmpty = HEAD_MEASUREMENT_FIELDS.every((f) => !String(prev[f.key]).trim());
       if (!allEmpty) return prev;
       const merged: HeadMeasurements = { ...EMPTY_HEAD_MEASUREMENTS };
-      (Object.keys(saved) as (keyof BookingConsultHeadMeasurementsSaved)[]).forEach((k) => {
-        const v = saved[k];
-        if (v) merged[k] = v;
-      });
+      let anyFromSaved = false;
+      for (const f of HEAD_MEASUREMENT_FIELDS) {
+        const v = saved[f.key as keyof BookingConsultHeadMeasurementsSaved];
+        if (v) {
+          merged[f.key] = v;
+          anyFromSaved = true;
+        }
+      }
+      if (anyFromSaved) {
+        queueMicrotask(() => setShowSavedMeasurementsEditHint(true));
+      }
       return merged;
     });
   }, [authRev, consultMeasurementsHydrateKey]);
@@ -787,9 +805,25 @@ export default function BookingConsultationPage() {
           </div>
 
           <div style={{ width: '100%', minWidth: 0 }}>
-            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>
+            <p style={{ ...labelStyle, marginBottom: showSavedMeasurementsEditHint ? '6px' : '10px', textAlign: 'left' }}>
               HEAD MEASUREMENTS (IN INCHES):
             </p>
+            {showSavedMeasurementsEditHint ? (
+              <p
+                style={{
+                  fontFamily: bookingFontBook,
+                  fontSize: '8px',
+                  color: '#808080',
+                  margin: '0 0 10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em',
+                  lineHeight: 1.45,
+                  textAlign: 'left',
+                }}
+              >
+                YOUR LAST SUBMITTED MEASUREMENTS ARE FILLED IN BELOW — EDIT ANY FIELD IF THEY HAVE CHANGED.
+              </p>
+            ) : null}
             <div
               style={{
                 display: 'grid',

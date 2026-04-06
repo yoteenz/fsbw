@@ -12091,6 +12091,16 @@ Verification: `tsc --noEmit`.
 
 ---
 
+## 2026-04-06 — Wig consult pre-fill: explicit “you can edit” copy
+
+**Context:** User wanted to confirm that **pre-filled head measurements remain editable** (not read-only) when values come from the last checkout.
+
+**Reality:** Fields were already controlled **`input`**s with **`onChange`**; no `readOnly` / `disabled`.
+
+**Change:** **`src/pages/booking/consultation/page.tsx`** — after hydrating from saved measurements, show a short gray line: *“YOUR LAST SUBMITTED MEASUREMENTS ARE FILLED IN BELOW — EDIT ANY FIELD IF THEY HAVE CHANGED.”* Clear hint on sign-out or when no saved payload. **`tsc --noEmit`**.
+
+---
+
 ## 2026-04-06 — Admin client details toggle: tab bottom spacing matches meetings hub
 
 **Context:** Content under the client-details toggle tabs (DETAILS / CART / WISHLIST row and ACTIVITY / ORDERS / … row) sat too tight under the tab labels compared to the admin meetings page tab strip.
