@@ -11896,3 +11896,15 @@ Verification: `tsc --noEmit`.
 ## 2026-04-06 — Account Rewards: Bohemy on excludes-taxes line + REDEEM
 
 **Change:** On **Account → Rewards** (`/account/rewards`, implemented in `membership/page.tsx`), set **`(EXCLUDES TAXES + SHIPPING FEES)`** and each loyalty **`REDEEM`** button label to **`fontFamily: "Bohemy", cursive`** (slightly larger sizes: 11px / 12px) in both standard and premium rewards layouts. Pushed to **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS tab = meetings + consults (mock sync)
+
+**Context:** User wanted **consult** rows from admin **Bookings/Consults** (incl. mock clients) to appear under the client-details **APPOINTMENTS** tab, aligned with meetings hub + account flows; tab was always empty (`appointments = []`).
+
+**Implementation:**
+- `adminMeetingsMock.ts`: **`listAggregatedAdminMeetingsForClientDetails()`** merges **`generateMockMeetingsForRange`** (~12 mo back / forward) + **`loadLocalMeetings`** (same id merge as `AdminMeetingsHub`); **`compareAdminMeetingsNewestFirst`**, **`formatMeetingIsoDateForDisplay`**.
+- `admin/clients/page.tsx`: **`useMemo`** filters merged meetings by **`clientEmail`**; maps **consultation** → type **`CONSULT — …`**, **appointment** → existing **`type`**; status **Confirmed → SCHEDULED**, **Pending → PENDING**, **Canceled → CANCELED** for pill styling. Empty copy: **NO APPOINTMENTS OR CONSULTS YET**. **`storage` + `focus`** bump state so local scheduled meetings refresh.
+
+**Files:** `src/utils/adminMeetingsMock.ts`, `src/pages/admin/clients/page.tsx`. Pushed **`preview/mobile`** (`531b947`).
