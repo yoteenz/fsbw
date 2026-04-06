@@ -11781,3 +11781,24 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - When matching vertical spacing between similar form sections across booking pages, compare both the target field wrapper **and** the immediately following section; visible extra space can come from the next section’s top padding rather than from the field block itself.
+
+---
+
+## 2026-04-06 — Undo appointment calendar paddingTop 0; match consult spacing above gray rule
+
+**Context:** The user reported that a prior fix incorrectly removed the visible gray border separation below **Additional Notes** on the booking appointment page. The mistaken change had set the section immediately after notes (`BrandExpiresDatePicker` wrapper) to `paddingTop: '0'`, which collapsed space between the textarea and the `borderTop` line. The user wanted to **add spacing above** the gray line to match the booking consult page, not eliminate padding.
+
+**Topics covered:**
+- Compared appointment vs consult layout: consult places notes inside a flex column with `gap: '20px'` before the calendar wrapper that has `borderTop` + `paddingTop: '20px'`.
+- Appointment stacks notes and calendar in one parent without that gap, so matching consult requires explicit margin above the bordered calendar block.
+
+**Decisions / outcomes:**
+- Reverted the zero top padding on the appointment calendar wrapper.
+- Restored `paddingTop: '20px'` and added `marginTop: '20px'` on that wrapper so the gray rule is visible with balanced spacing aligned to the consult page pattern.
+
+**Changes:**
+- `src/pages/booking/appointment/page.tsx` — calendar section below Additional Notes: `paddingTop: '20px'`, `marginTop: '20px'` (was `paddingTop: '0'`, `marginTop: 0`).
+- Verification: `npm run build` after installing deps in the agent environment.
+
+**Conventions:**
+- When a `borderTop` sits on a padded wrapper, avoid setting `paddingTop: 0` if the border should read as a separator with air above it; compare sibling gaps on the reference page (consult uses flex `gap` + inner padding).
