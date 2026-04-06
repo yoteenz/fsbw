@@ -12194,3 +12194,16 @@ Verification: `tsc --noEmit`.
 - Dropped unused API **`averageRating`** / **`totalReviews`** state (client recomputes from rows).
 
 **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: profile photos from API / profiles
+
+**Context:** User asked to wire **real profile photos** when the API provides URLs.
+
+**Implementation:**
+- **`api/admin/reviews`:** Each review JSON includes **`clientProfilePhotoUrl`** — from review-row fields (snake/camel aliases) or **`profiles.profile_image`** by **`reviews.email`** (batch on GET). PATCH/POST enrich the same way.
+- **`admin/reviews/page.tsx`:** **`ReviewClientAvatar`** — shows photo or initials on load error; **`normalizeApiReview`** maps URL + fixes **`photos`** when API sends an array.
+- **`supabase/migrations/20260407120000_reviews_client_profile_photo_url.sql`:** optional **`reviews.client_profile_photo_url`** for explicit storage.
+
+**`tsc --noEmit`**.

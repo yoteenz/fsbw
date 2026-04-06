@@ -30,6 +30,8 @@ type AdminReviewRow = {
   photos: number;
   videos: number;
   scope: ReviewScope;
+  /** From API: `profiles.profile_image` join or optional column on `reviews`. */
+  clientProfilePhotoUrl?: string;
 };
 
 function reviewScopeFromUnknown(raw: { scope?: unknown }): ReviewScope {
@@ -128,6 +130,50 @@ function clientInitialsForAvatar(clientName: string): string {
   return (a + b).toUpperCase() || '?';
 }
 
+function clientProfilePhotoUrlFromApi(x: Record<string, unknown>): string | undefined {
+  const raw = x.clientProfilePhotoUrl ?? x.client_profile_photo_url ?? x.profilePhotoUrl ?? x.profile_photo_url;
+  const s = typeof raw === 'string' ? raw.trim() : '';
+  if (!s) return undefined;
+  if (s.startsWith('http') || s.startsWith('/') || s.startsWith('data:')) return s;
+  return undefined;
+}
+
+function ReviewClientAvatar({ review }: { review: AdminReviewRow }) {
+  const [imgError, setImgError] = useState(false);
+  const url = (review.clientProfilePhotoUrl || '').trim();
+  const showPhoto =
+    Boolean(url) &&
+    !imgError &&
+    (url.startsWith('http') || url.startsWith('/') || url.startsWith('data:'));
+
+  return (
+    <div
+      className="rounded-full flex items-center justify-center shrink-0 overflow-hidden"
+      style={{
+        width: '40px',
+        height: '40px',
+        backgroundColor: '#f3f4f6',
+        border: '0.8px solid #000',
+        fontFamily: '"Futura PT Medium"',
+        fontSize: '11px',
+        color: '#000',
+      }}
+      aria-hidden
+    >
+      {showPhoto ? (
+        <img
+          src={url}
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        clientInitialsForAvatar(review.client)
+      )}
+    </div>
+  );
+}
+
 function sortReviewsByOption(list: AdminReviewRow[], option: ReviewSortOption): AdminReviewRow[] {
   const base =
     option === 'VIDEOS'
@@ -174,6 +220,8 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
   const x = item as Record<string, unknown>;
   const statusRaw = String(x.status ?? 'published').toLowerCase();
   const status: 'published' | 'pending' = statusRaw === 'pending' ? 'pending' : 'published';
+  const photosField = x.photos;
+  const photoCount = Array.isArray(photosField) ? photosField.length : Number(photosField) || 0;
   return {
     id: typeof x.id === 'number' ? x.id : Number(x.id) || index + 1,
     client: String(x.client ?? ''),
@@ -182,9 +230,10 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
     review: String(x.review ?? x.body ?? ''),
     date: String(x.date ?? ''),
     status,
-    photos: Number(x.photos) || 0,
+    photos: photoCount,
     videos: Number(x.videos) || 0,
     scope: reviewScopeFromUnknown(x as { scope?: unknown }),
+    clientProfilePhotoUrl: clientProfilePhotoUrlFromApi(x),
   };
 }
 
@@ -332,21 +381,7 @@ export default function AdminReviews() {
     <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
       <div className="flex justify-between items-start gap-2">
         <div className="flex items-start gap-2.5 min-w-0 flex-1">
-          <div
-            className="rounded-full flex items-center justify-center shrink-0"
-            style={{
-              width: '40px',
-              height: '40px',
-              backgroundColor: '#f3f4f6',
-              border: '0.8px solid #000',
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '11px',
-              color: '#000',
-            }}
-            aria-hidden
-          >
-            {clientInitialsForAvatar(review.client)}
-          </div>
+          <ReviewClientAvatar review={review} />
           <div className="min-w-0 flex-1">
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>
               {review.client}
