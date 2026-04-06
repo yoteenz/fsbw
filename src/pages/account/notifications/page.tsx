@@ -5,7 +5,11 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
-import { getOrderReceivedAccountAlerts } from '../../../utils/orderAccountAlerts';
+import {
+  getNotificationsStorageKeyForUserEmail,
+  getOrderReceivedAccountAlerts,
+  migrateNotificationsLocalStorageKeys
+} from '../../../utils/orderAccountAlerts';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -165,18 +169,10 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     icon: 'f'
   });
 
-  /** Founder seed mock: ORDER #332 consult — matches `order_received_kateena-consult-1` from checkout-style alerts. */
-  if (isAyoteenzAdminAccount(user)) {
-    notifs.push({
-      id: 'order_received_kateena-consult-1',
-      title: "WE'VE RECEIVED YOUR ORDER!",
-      message: 'ORDER #332 IS BEING PROCESSED.',
-      actionText: 'VIEW DETAILS',
-      actionRoute: '/account/concierge?orderId=kateena-consult-1',
-      date: today,
-      isRead: false,
-      icon: 'f'
-    });
+  /** Same “order received” rows as post-checkout (`appendOrderReceivedAccountAlert`), including for new accounts. */
+  const orderReceivedAlertsEarly = getOrderReceivedAccountAlerts(user);
+  if (orderReceivedAlertsEarly.length > 0) {
+    notifs.push(...orderReceivedAlertsEarly);
   }
 
   if (newAccount) {
@@ -313,11 +309,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     });
   }
 
-  const orderReceivedAlerts = getOrderReceivedAccountAlerts(user);
-  if (orderReceivedAlerts.length > 0) {
-    notifs.push(...orderReceivedAlerts);
-  }
-
   notifs.push({
     id: `${ACCOUNT_NOTIFICATION_PREFIX}rewards`,
     title: 'REWARDS PROGRAM OVERVIEW PAGE',
@@ -371,14 +362,15 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   return notifs;
 }
 
-/** Merge stored notifications with account notifications (account ones upserted by id). Account alerts (tier, membership, etc.) stay in NEW until user archives via eye — do not use stored isRead for them so they are always shown in the new tab. Exported for account page badge logic. */
+/** Merge stored notifications with account notifications (account ones upserted by id). Account + order-received alerts stay in NEW until user archives — do not use stored isRead for them. Exported for account page badge logic. */
 export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
   stored.forEach(n => byId.set(n.id, n));
   account.forEach(n => {
     const existing = byId.get(n.id);
-    const isAccount = n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX);
-    byId.set(n.id, { ...n, isRead: isAccount ? false : (existing?.isRead ?? n.isRead) });
+    const isManaged =
+      n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || n.id.startsWith('order_received_');
+    byId.set(n.id, { ...n, isRead: isManaged ? false : (existing?.isRead ?? n.isRead) });
   });
   return Array.from(byId.values());
 }
@@ -442,7 +434,8 @@ function NotificationsPage() {
     try {
       const raw = localStorage.getItem('currentUser');
       const user = raw ? JSON.parse(raw) : null;
-      const key = user?.email ? `notifications_${user.email}` : 'notifications';
+      migrateNotificationsLocalStorageKeys(user?.email);
+      const key = getNotificationsStorageKeyForUserEmail(user?.email);
       const stored = localStorage.getItem(key);
       const list: Notification[] = stored && Array.isArray(JSON.parse(stored)) ? JSON.parse(stored) : [];
       const account = getAccountNotifications(user);
@@ -459,7 +452,7 @@ function NotificationsPage() {
     try {
       const rawUser = localStorage.getItem('currentUser');
       const user = rawUser ? JSON.parse(rawUser) : null;
-      const key = user?.email ? `notifications_${user.email}` : 'notifications';
+      const key = getNotificationsStorageKeyForUserEmail(user?.email);
       localStorage.setItem(key, JSON.stringify(list));
     } catch (_) {}
   };
@@ -476,7 +469,8 @@ function NotificationsPage() {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
-        const key = user?.email ? `notifications_${user.email}` : 'notifications';
+        migrateNotificationsLocalStorageKeys(user?.email);
+        const key = getNotificationsStorageKeyForUserEmail(user?.email);
         const raw = localStorage.getItem(key);
         const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
         const account = getAccountNotifications(user);
@@ -544,7 +538,8 @@ function NotificationsPage() {
       try {
         const rawUser = localStorage.getItem('currentUser');
         const user = rawUser ? JSON.parse(rawUser) : null;
-        const key = user?.email ? `notifications_${user.email}` : 'notifications';
+        migrateNotificationsLocalStorageKeys(user?.email);
+        const key = getNotificationsStorageKeyForUserEmail(user?.email);
         const raw = localStorage.getItem(key);
         const stored: Notification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
         const account = getAccountNotifications(user);

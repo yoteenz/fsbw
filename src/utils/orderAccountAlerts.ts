@@ -28,6 +28,48 @@ function notificationsKey(email: string): string {
   return `notifications_${email.trim().toLowerCase()}`;
 }
 
+/** Single source for `localStorage` key — must match alerts page + account badge merge (always lowercase email). */
+export function getNotificationsStorageKeyForUserEmail(email: string | undefined | null): string {
+  const e = String(email || '').trim().toLowerCase();
+  return e ? `notifications_${e}` : 'notifications';
+}
+
+/**
+ * Merge legacy `notifications_${rawEmail}` into canonical lowercase key (checkout uses lowercase).
+ * Run before reading notifications for the signed-in user.
+ */
+export function migrateNotificationsLocalStorageKeys(userEmail: string | undefined | null): void {
+  if (typeof window === 'undefined') return;
+  const raw = String(userEmail || '').trim();
+  if (!raw) return;
+  const canon = getNotificationsStorageKeyForUserEmail(raw);
+  const legacy = `notifications_${raw}`;
+  if (legacy === canon) return;
+  try {
+    const legacyData = localStorage.getItem(legacy);
+    if (!legacyData) return;
+    const existingRaw = localStorage.getItem(canon);
+    const a = JSON.parse(legacyData) as unknown;
+    const b = existingRaw ? (JSON.parse(existingRaw) as unknown) : [];
+    if (!Array.isArray(a) || !Array.isArray(b)) return;
+    const byId = new Map<string, Record<string, unknown>>();
+    for (const n of b) {
+      if (n && typeof n === 'object' && typeof (n as { id?: string }).id === 'string') {
+        byId.set((n as { id: string }).id, n as Record<string, unknown>);
+      }
+    }
+    for (const n of a) {
+      if (n && typeof n === 'object' && typeof (n as { id?: string }).id === 'string') {
+        byId.set((n as { id: string }).id, n as Record<string, unknown>);
+      }
+    }
+    localStorage.setItem(canon, JSON.stringify(Array.from(byId.values())));
+    localStorage.removeItem(legacy);
+  } catch {
+    /* ignore */
+  }
+}
+
 function todayMdy(): string {
   const d = new Date();
   return `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`;

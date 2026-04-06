@@ -3,6 +3,7 @@
  */
 
 import { getAccountNotifications, mergeAccountNotifications } from '../pages/account/notifications/page';
+import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
 
 /** Nine pipeline stages (indices 0–8); labels match Concierge ORDER TRACKING UI. */
 export const ORDER_TRACKING_STAGE_LABELS = [
@@ -96,7 +97,7 @@ export function appendOrderTrackingClientNotification(
   try {
     const rawUser = localStorage.getItem('currentUser');
     const user = rawUser ? JSON.parse(rawUser) : { email: clientEmail };
-    const key = `notifications_${email}`;
+    const key = getNotificationsStorageKeyForUserEmail(clientEmail);
     const raw = localStorage.getItem(key);
     const stored: Array<{
       id: string;

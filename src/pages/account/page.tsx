@@ -21,6 +21,10 @@ import { uploadProfileImage } from '../../utils/api';
 import { trackActivity } from '../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { getAccountNotifications, mergeAccountNotifications, isNewAccount } from './notifications/page';
+import {
+  getNotificationsStorageKeyForUserEmail,
+  migrateNotificationsLocalStorageKeys
+} from '../../utils/orderAccountAlerts';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { flushQueuedProfilePatch } from '../../utils/profileSyncQueue';
@@ -1029,7 +1033,8 @@ function AccountPage() {
       if (email && localStorage.getItem(`alertsPageViewed_${email}`) === 'true') {
         return false;
       }
-      const key = userData?.email ? `notifications_${userData.email}` : 'notifications';
+      migrateNotificationsLocalStorageKeys(userData.email);
+      const key = getNotificationsStorageKeyForUserEmail(userData.email);
       const storedStr = localStorage.getItem(key);
       const stored: any[] = storedStr && Array.isArray(JSON.parse(storedStr)) ? JSON.parse(storedStr) : [];
       const userForNotifs =
