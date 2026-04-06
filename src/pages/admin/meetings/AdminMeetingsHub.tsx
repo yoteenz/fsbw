@@ -2,14 +2,13 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
-  getAdminMeetings,
   patchAdminMeeting,
   postAdminConsultQuote,
   postAdminMeetingClientAlert,
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   ADDON_COMBO_OPTIONS,
@@ -23,7 +22,6 @@ import {
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
-  normalizeApiMeeting,
   parseISODateLocal,
   startOfMonth,
   type AdminMeeting,
@@ -354,26 +352,7 @@ export default function AdminMeetingsHub() {
     [quoteUnitId, quoteSelections]
   );
 
-  useEffect(() => {
-    let currentUser: { email?: string } | null = null;
-    try {
-      const raw = localStorage.getItem('currentUser');
-      currentUser = raw ? JSON.parse(raw) : null;
-    } catch {
-      /* ignore */
-    }
-    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
-      getAdminMeetings()
-        .then((r) => {
-          const rows = Array.isArray(r.meetings) ? r.meetings : [];
-          const norm = rows
-            .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
-            .filter(Boolean) as AdminMeeting[];
-          setApiMeetings(norm);
-        })
-        .catch(() => {});
-    }
-  }, []);
+  useAdminMeetingsApiRefresh(setApiMeetings);
 
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
@@ -652,6 +631,7 @@ export default function AdminMeetingsHub() {
       setEditMessage('');
       setHubNotice(doneNotice);
       refreshLocal();
+      if (uuid) dispatchAdminMeetingsApiRefresh();
     } catch (e) {
       setHubNotice(e instanceof Error ? e.message.toUpperCase() : 'UPDATE FAILED');
     } finally {

@@ -4,7 +4,7 @@ import AdminHeader from '../components/AdminHeader';
 import StatsCard from '../components/StatsCard';
 import RecentActivity from '../components/RecentActivity';
 import ActivityFeed from '../components/ActivityFeed';
-import { getAdminDashboard, getAdminClients, getAdminPending, getAdminReviews, getAdminReferrals, getAdminMeetings } from '../../../utils/api';
+import { getAdminDashboard, getAdminClients, getAdminPending, getAdminReviews, getAdminReferrals } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -17,11 +17,11 @@ import {
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
-  normalizeApiMeeting,
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -247,6 +247,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useAdminMeetingsApiRefresh(setApiMeetings, true);
+
   // Load data: from Supabase admin API when configured and admin, else mock
   useEffect(() => {
     const initializeData = async () => {
@@ -261,13 +263,13 @@ export default function AdminDashboard() {
         }
         if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
           try {
-            const [api, clientsFromClientsApi, pending, reviews, referrals, meetings] = await Promise.all([
+            const [api, clientsFromClientsApi, pending, reviews, referrals, normalizedMeetings] = await Promise.all([
               getAdminDashboard(),
               getAdminClients().then((r) => r.clients).catch(() => []),
               getAdminPending().catch(() => ({ pendingReviews: 0, orderForms: 0, pendingItems: [] })),
               getAdminReviews().catch(() => ({ reviews: [], averageRating: 0, totalReviews: 0 })),
               getAdminReferrals().catch(() => ({ log: [], totalEarned: 0, inviteeCount: 0, byReferrer: {} })),
-              getAdminMeetings().catch(() => ({ meetings: [] })),
+              fetchAdminMeetingsApiNormalized(),
             ]);
             // Use same client list as admin clients page: only getAdminClients() (never api.clients) so tier counts always match overview
             let clientsList: Client[] = Array.isArray(clientsFromClientsApi) ? (clientsFromClientsApi as Client[]) : [];
@@ -313,10 +315,6 @@ export default function AdminDashboard() {
             });
             setReviewsData({ totalReviews: reviews.totalReviews ?? 0, averageRating: reviews.averageRating ?? 0 });
             setReferralsData({ inviteeCount: referrals.inviteeCount ?? 0 });
-            const meetingRows = Array.isArray(meetings.meetings) ? meetings.meetings : [];
-            const normalizedMeetings = meetingRows
-              .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
-              .filter(Boolean) as AdminMeeting[];
             setApiMeetings(normalizedMeetings);
             return;
           } catch {

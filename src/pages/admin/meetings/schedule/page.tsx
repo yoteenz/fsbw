@@ -12,6 +12,7 @@ import {
   type AdminMeeting,
 } from '../../../../utils/adminMeetingsMock';
 import { postAdminMeeting } from '../../../../utils/api';
+import { dispatchAdminMeetingsApiRefresh } from '../../../../hooks/useAdminMeetingsApiRefresh';
 
 type ClientOption = {
   email: string;
@@ -160,6 +161,7 @@ export default function AdminMeetingsSchedule() {
         status: 'pending',
         notes: meeting.notes,
       });
+      dispatchAdminMeetingsApiRefresh();
     } catch {
       /* API optional */
     }

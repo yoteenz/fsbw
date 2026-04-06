@@ -4,6 +4,7 @@ import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import {
   getAdminClients,
   getAdminOrders,
@@ -12,7 +13,6 @@ import {
   getAdminActivity,
   getAdminReviews,
   exportClientsCsv,
-  getAdminMeetings
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -29,7 +29,6 @@ import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/soc
 import {
   compareAdminMeetingsNewestFirst,
   listAggregatedAdminMeetingsForClientDetails,
-  normalizeApiMeeting,
   type AdminMeeting
 } from '../../../utils/adminMeetingsMock';
 import { AdminMeetingClientPanel, AdminMeetingClientPanelShell } from '../../../utils/adminMeetingClientPanels';
@@ -739,26 +738,8 @@ export default function AdminClients() {
     };
   }, []);
 
-  /** Same `/api/admin/meetings` load as `AdminMeetingsHub` so client-details APPOINTMENTS includes Supabase rows. */
-  useEffect(() => {
-    let currentUser: { email?: string } | null = null;
-    try {
-      const raw = localStorage.getItem('currentUser');
-      currentUser = raw ? JSON.parse(raw) : null;
-    } catch {
-      /* ignore */
-    }
-    if (!isSupabaseConfigured() || !currentUser?.email || !isAdminEmail(currentUser.email)) return;
-    getAdminMeetings()
-      .then((r) => {
-        const rows = Array.isArray(r.meetings) ? r.meetings : [];
-        const norm = rows
-          .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
-          .filter(Boolean) as AdminMeeting[];
-        setApiMeetingsForClientDetails(norm);
-      })
-      .catch(() => {});
-  }, []);
+  /** `/api/admin/meetings` — refetch on focus/storage/sign-in like meetings hub (cohesive with backend). */
+  useAdminMeetingsApiRefresh(setApiMeetingsForClientDetails);
 
   const loadData = useCallback(() => {
     try {
