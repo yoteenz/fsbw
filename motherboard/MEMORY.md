@@ -12101,6 +12101,19 @@ Verification: `tsc --noEmit`.
 
 ---
 
+## 2026-04-06 — Consult head measurements: max 4 digits, decimal after 2nd digit
+
+**Context:** User asked for inch inputs capped at **four numeric digits**; if a decimal is used it must sit **after the second digit** (e.g. `14.22`, `14.2`).
+
+**Implementation:**
+- **`src/utils/bookingConsultHeadMeasurementInput.ts`:** **`sanitizeConsultHeadMeasurementInput`** (live typing) and **`finalizeConsultHeadMeasurementValue`** (strip trailing `.` for cart/save).
+- **`src/pages/booking/consultation/page.tsx`:** `updateHeadMeasurement` uses sanitizer; add-to-bag uses finalize; prefill sanitizes loaded values; **`maxLength={6}`** on inputs (`XX.XX`).
+- **`src/utils/bookingConsultHeadMeasurementsPersist.ts`:** Save/load normalizes through the same rules.
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
 ## 2026-04-06 — Admin client details toggle: tab bottom spacing matches meetings hub
 
 **Context:** Content under the client-details toggle tabs (DETAILS / CART / WISHLIST row and ACTIVITY / ORDERS / … row) sat too tight under the tab labels compared to the admin meetings page tab strip.

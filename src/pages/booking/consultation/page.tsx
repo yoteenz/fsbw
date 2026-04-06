@@ -22,6 +22,10 @@ import {
   loadLastSubmittedBookingConsultHeadMeasurements,
   type BookingConsultHeadMeasurementsSaved,
 } from '../../../utils/bookingConsultHeadMeasurementsPersist';
+import {
+  finalizeConsultHeadMeasurementValue,
+  sanitizeConsultHeadMeasurementInput,
+} from '../../../utils/bookingConsultHeadMeasurementInput';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 
 const CONSULT_DEPOSIT_USD = 40;
@@ -253,7 +257,7 @@ export default function BookingConsultationPage() {
       for (const f of HEAD_MEASUREMENT_FIELDS) {
         const v = saved[f.key as keyof BookingConsultHeadMeasurementsSaved];
         if (v) {
-          merged[f.key] = v;
+          merged[f.key] = sanitizeConsultHeadMeasurementInput(v);
           anyFromSaved = true;
         }
       }
@@ -345,8 +349,10 @@ export default function BookingConsultationPage() {
   };
 
   const updateHeadMeasurement = (field: HeadMeasurementField, next: string) => {
-    const sanitized = next.replace(/[^\d.]/g, '');
-    setHeadMeasurements((prev) => ({ ...prev, [field]: sanitized }));
+    setHeadMeasurements((prev) => ({
+      ...prev,
+      [field]: sanitizeConsultHeadMeasurementInput(next),
+    }));
   };
 
   const handleAddToBag = () => {
@@ -396,12 +402,12 @@ export default function BookingConsultationPage() {
           bookingCartItemThumbnailSrc({ type: 'booking-consult', bookingTier: tier }) ||
           '/assets/consultation-standard.png';
         const trimmedHeadMeasurements = {
-          circumference: headMeasurements.circumference.trim(),
-          frontToNape: headMeasurements.frontToNape.trim(),
-          verticalTempleToTemple: headMeasurements.verticalTempleToTemple.trim(),
-          horizontalTempleToTemple: headMeasurements.horizontalTempleToTemple.trim(),
-          earToEar: headMeasurements.earToEar.trim(),
-          napeOfNeck: headMeasurements.napeOfNeck.trim(),
+          circumference: finalizeConsultHeadMeasurementValue(headMeasurements.circumference),
+          frontToNape: finalizeConsultHeadMeasurementValue(headMeasurements.frontToNape),
+          verticalTempleToTemple: finalizeConsultHeadMeasurementValue(headMeasurements.verticalTempleToTemple),
+          horizontalTempleToTemple: finalizeConsultHeadMeasurementValue(headMeasurements.horizontalTempleToTemple),
+          earToEar: finalizeConsultHeadMeasurementValue(headMeasurements.earToEar),
+          napeOfNeck: finalizeConsultHeadMeasurementValue(headMeasurements.napeOfNeck),
         };
         const newItem = {
           id: `booking-consult-${Date.now()}`,
@@ -855,6 +861,7 @@ export default function BookingConsultationPage() {
                       <input
                         type="text"
                         inputMode="decimal"
+                        maxLength={6}
                         value={headMeasurements[field.key]}
                         onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
                         className="bg-white/80 backdrop-blur-sm"

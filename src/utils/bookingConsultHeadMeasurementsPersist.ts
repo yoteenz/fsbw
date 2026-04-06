@@ -4,6 +4,7 @@
  */
 
 import { getPerUserKey } from './perUserStorage';
+import { finalizeConsultHeadMeasurementValue, sanitizeConsultHeadMeasurementInput } from './bookingConsultHeadMeasurementInput';
 
 const STORAGE_PREFIX = 'lastBookingConsultHeadMeasurements';
 
@@ -33,9 +34,9 @@ function storageKeyForEmail(email: string): string {
   return getPerUserKey(STORAGE_PREFIX, email);
 }
 
-function sanitizeInchesInput(raw: unknown): string {
+function normalizeStoredInches(raw: unknown): string {
   if (typeof raw !== 'string') return '';
-  return raw.trim().replace(/[^\d.]/g, '');
+  return finalizeConsultHeadMeasurementValue(raw.trim());
 }
 
 /**
@@ -49,7 +50,7 @@ export function saveLastSubmittedBookingConsultHeadMeasurements(
   if (!e || typeof window === 'undefined') return;
   const next: BookingConsultHeadMeasurementsSaved = { ...EMPTY };
   for (const k of BOOKING_CONSULT_HEAD_MEASUREMENT_KEYS) {
-    const v = sanitizeInchesInput(raw?.[k]);
+    const v = normalizeStoredInches(raw?.[k]);
     if (v) next[k] = v;
   }
   if (!next.circumference && !next.frontToNape) return;
@@ -74,7 +75,7 @@ export function loadLastSubmittedBookingConsultHeadMeasurements(
     const o = parsed as Record<string, unknown>;
     const out: BookingConsultHeadMeasurementsSaved = { ...EMPTY };
     for (const k of BOOKING_CONSULT_HEAD_MEASUREMENT_KEYS) {
-      out[k] = sanitizeInchesInput(o[k]);
+      out[k] = sanitizeConsultHeadMeasurementInput(String(o[k] ?? ''));
     }
     if (!out.circumference && !out.frontToNape) return null;
     return out;
