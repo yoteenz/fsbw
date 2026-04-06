@@ -12075,3 +12075,16 @@ Verification: `tsc --noEmit`.
 **Context:** User clarified **EEF** = ear-to-ear **across forehead** (`horizontalTempleToTemple`) and **EEC** = ear-to-ear **over crown** (`verticalTempleToTemple`). An earlier implementation had these two swapped.
 
 **Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — swap abbrs so **`verticalTempleToTemple` → EEC**, **`horizontalTempleToTemple` → EEF**; file header comment updated. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Wig consult: pre-fill head measurements from last checkout
+
+**Context:** Signed-in clients who already completed a wig consult should not re-type the same head measurements on every new consult booking.
+
+**Implementation:**
+- **`src/utils/bookingConsultHeadMeasurementsPersist.ts`:** Per-user localStorage key `lastBookingConsultHeadMeasurements_${email}`; **`saveLastSubmittedBookingConsultHeadMeasurements`** / **`loadLastSubmittedBookingConsultHeadMeasurements`** (requires at least circumference + front-to-nape to save).
+- **`src/pages/checkout/page.tsx`:** After a successful signed-in order save, if the cart includes **`booking-consult`** with **`bookingHeadMeasurements`**, persist them and dispatch **`ordersUpdated`** so an open consult page can hydrate.
+- **`src/pages/booking/consultation/page.tsx`:** On mount / sign-in / **`ordersUpdated`**, if all six fields are still empty, merge saved values into state (user can edit before add-to-bag).
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.

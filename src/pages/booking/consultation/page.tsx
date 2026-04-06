@@ -18,6 +18,11 @@ import { createBookingDateDisabledFn } from '../../../utils/bookingDateRules';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { BOOKING_PATHS } from '../../../utils/membershipRoutePolicy';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  loadLastSubmittedBookingConsultHeadMeasurements,
+  type BookingConsultHeadMeasurementsSaved,
+} from '../../../utils/bookingConsultHeadMeasurementsPersist';
+import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 
 const CONSULT_DEPOSIT_USD = 40;
 
@@ -177,6 +182,8 @@ export default function BookingConsultationPage() {
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
   const [headMeasurements, setHeadMeasurements] = useState<HeadMeasurements>(EMPTY_HEAD_MEASUREMENTS);
+  /** Bumped when order history updates (e.g. consult checkout) so we can pre-fill newly saved measurements. */
+  const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
@@ -212,6 +219,32 @@ export default function BookingConsultationPage() {
     window.addEventListener('signInStateChanged', bump);
     return () => window.removeEventListener('signInStateChanged', bump);
   }, []);
+
+  useEffect(() => {
+    const bump = () => setConsultMeasurementsHydrateKey((k) => k + 1);
+    window.addEventListener('ordersUpdated', bump);
+    return () => window.removeEventListener('ordersUpdated', bump);
+  }, []);
+
+  /** Repeat wig consults: pre-fill head measurements from last completed checkout (per user). */
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('isSignedIn') !== 'true') return;
+    const email = getCurrentUserEmailFromStorage();
+    if (!email) return;
+    const saved = loadLastSubmittedBookingConsultHeadMeasurements(email);
+    if (!saved) return;
+    setHeadMeasurements((prev) => {
+      const allEmpty = HEAD_MEASUREMENT_FIELDS.every((f) => !String(prev[f.key]).trim());
+      if (!allEmpty) return prev;
+      const merged: HeadMeasurements = { ...EMPTY_HEAD_MEASUREMENTS };
+      (Object.keys(saved) as (keyof BookingConsultHeadMeasurementsSaved)[]).forEach((k) => {
+        const v = saved[k];
+        if (v) merged[k] = v;
+      });
+      return merged;
+    });
+  }, [authRev, consultMeasurementsHydrateKey]);
 
   useEffect(() => {
     const premium = isPremiumMemberForGatedFeatures();

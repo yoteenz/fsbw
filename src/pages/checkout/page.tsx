@@ -53,6 +53,7 @@ import {
 } from '../../utils/checkoutOrderStripDisplay';
 import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -6320,6 +6321,19 @@ function CheckoutPage() {
                       };
                       activeOrders.push(newOrder);
                       localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
+                      const consultWithMeasurements = (cartItems as any[]).find(
+                        (item: any) =>
+                          item?.type === 'booking-consult' &&
+                          item?.bookingHeadMeasurements &&
+                          typeof item.bookingHeadMeasurements === 'object'
+                      );
+                      if (consultWithMeasurements?.bookingHeadMeasurements) {
+                        saveLastSubmittedBookingConsultHeadMeasurements(
+                          email,
+                          consultWithMeasurements.bookingHeadMeasurements as Record<string, unknown>
+                        );
+                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                      }
                       const currentUserRaw = localStorage.getItem('currentUser');
                       const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
                       appendOrderReceivedAccountAlert(currentUserForAlert, {
