@@ -1284,13 +1284,13 @@ function MembershipPage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '17px',
+                              fontSize: '16px',
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400
                             }}
                           >
-                            (excludes taxes + shipping fees)
+                            excludes taxes + shipping fees
                           </p>
                           {(() => {
                               const totalPoints = getDisplayLoyaltyPoints();
@@ -1366,7 +1366,7 @@ function MembershipPage() {
                                   disabled={!canRedeem}
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
-                                    fontSize: '18px',
+                                    fontSize: '16px',
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -2085,13 +2085,13 @@ fontFamily: '"Futura PT Book"',
                                 style={{
                                   fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '17px',
+                                  fontSize: '16px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'lowercase',
                                   fontWeight: 400
                                 }}
                               >
-                                (excludes taxes + shipping fees)
+                                excludes taxes + shipping fees
                               </p>
                               {(() => {
                                   const totalPoints = getDisplayLoyaltyPoints();
@@ -2167,7 +2167,7 @@ fontFamily: '"Futura PT Book"',
                                       disabled={!canRedeem}
                                       style={{
                                         fontFamily: '"Bohemy", cursive',
-                                        fontSize: '18px',
+                                        fontSize: '16px',
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',

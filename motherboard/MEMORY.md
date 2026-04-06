@@ -11983,3 +11983,15 @@ Verification: `tsc --noEmit`.
 - **`admin/clients/page.tsx`**: **`appointments`** is **`AdminMeeting[]`** filtered/sorted; tab renders same panels + consult photo lightbox (hub parity).
 
 **Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account Rewards: excludes line 16px, no parens; redeem 16px
+
+**Change:** **`membership/page.tsx`** (standard + premium rewards): red **excludes taxes + shipping fees** line **`fontSize` 16px** (was 17px), **no parentheses** around the text; **redeem** buttons **`fontSize` 16px** (was 18px). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult booking: head measurement inputs inset 4px from inner gap
+
+**Change:** On **`booking/consultation`**, 2-column head measurement grid unchanged in outer width; each **`input`** is **`calc(100% - 4px)`** wide with **`marginRight: 4px`** (left column) or **`marginLeft: 4px`** (right column) so boxes are **4px narrower from the inner side only** and sit farther apart. **`tsc --noEmit`**.
