@@ -110,6 +110,12 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   const notifs: Notification[] = [];
   const newAccount = isNewAccount(user);
 
+  /** Checkout / orders happen after signup — surface above onboarding acc_* when dates tie. */
+  const orderReceivedAlertsEarly = getOrderReceivedAccountAlerts(user);
+  if (orderReceivedAlertsEarly.length > 0) {
+    notifs.push(...orderReceivedAlertsEarly);
+  }
+
   // New accounts: only these four alerts (no spend tier, standard member, add shipping+payment, update profile)
   const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
   const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
@@ -171,12 +177,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     isRead: false,
     icon: 'f'
   });
-
-  /** Same “order received” rows as post-checkout (`appendOrderReceivedAccountAlert`), including for new accounts. */
-  const orderReceivedAlertsEarly = getOrderReceivedAccountAlerts(user);
-  if (orderReceivedAlertsEarly.length > 0) {
-    notifs.push(...orderReceivedAlertsEarly);
-  }
 
   if (newAccount) {
     return notifs;
@@ -383,19 +383,27 @@ const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
   `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
 ];
 
-/** Newest first: `sortAt` when set, else `date` string; stable tie-breakers for account rows. */
+/**
+ * When timestamps tie (same calendar day etc.), lower = closer to top of NEW list.
+ * Order-received alerts sort above onboarding acc_* (tier, membership, …) so checkout feels "after" signup.
+ */
+function newestFirstTieBreakRank(id: string): number {
+  if (id.startsWith('order_received_')) return 0;
+  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
+  if (stableIdx >= 0) return 1 + stableIdx;
+  if (id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
+  return 50;
+}
+
+/** Newest first: `sortAt` when set, else `date` string; tie-breakers for same-day rows. */
 export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
-  const tierRank = (id: string): number => {
-    const i = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
-    return i >= 0 ? i : ACCOUNT_ALERT_STABLE_ORDER.length;
-  };
   return [...list].sort((a, b) => {
     const sa = typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : parseNotificationDisplayDateMs(a.date);
     const sb = typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : parseNotificationDisplayDateMs(b.date);
     if (sb !== sa) return sb - sa;
-    const oa = tierRank(a.id);
-    const ob = tierRank(b.id);
-    if (oa !== ob) return oa - ob;
+    const ra = newestFirstTieBreakRank(a.id);
+    const rb = newestFirstTieBreakRank(b.id);
+    if (ra !== rb) return ra - rb;
     return String(b.id).localeCompare(String(a.id));
   });
 }
