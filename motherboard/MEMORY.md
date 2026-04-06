@@ -12122,6 +12122,14 @@ Verification: `tsc --noEmit`.
 
 ---
 
+## 2026-04-06 — Consult head measurements: auto-insert "." after 2nd digit when 3rd digit typed
+
+**Context:** User wanted the inch fields to **automatically add a decimal** when a **third digit** is entered (e.g. `142` → `14.2`, `1422` → `14.22`).
+
+**Change:** **`src/utils/bookingConsultHeadMeasurementInput.ts`** — when there is **no** `.` in the raw input, if digit count is **3 or 4**, format as **`firstTwo + "." + rest`** (still max 4 digits total). One- and two-digit entries stay unchanged.
+
+---
+
 ## 2026-04-06 — Admin consult measurement line: no parentheses
 
 **Context:** User asked to drop the wrapping **`()`** around the abbreviated head-measurement string on admin consult client panels.

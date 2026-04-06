@@ -1,7 +1,7 @@
 /**
  * Consult head measurement inch fields: at most 4 digit characters.
- * If a decimal is used, it must come after the first two digits (e.g. 14.2, 14.22).
- * Integer-only entries allow 1–4 digits (e.g. 1422).
+ * Decimal (if any) must come after the first two digits (e.g. 14.2, 14.22).
+ * Typing a third digit without "." inserts it automatically: `142` → `14.2`, `1422` → `14.22`.
  */
 
 export function sanitizeConsultHeadMeasurementInput(raw: string): string {
@@ -10,7 +10,9 @@ export function sanitizeConsultHeadMeasurementInput(raw: string): string {
 
   const dotIdx = t.indexOf('.');
   if (dotIdx === -1) {
-    return t.replace(/\D/g, '').slice(0, 4);
+    const digitsOnly = t.replace(/\D/g, '').slice(0, 4);
+    if (digitsOnly.length <= 2) return digitsOnly;
+    return `${digitsOnly.slice(0, 2)}.${digitsOnly.slice(2)}`;
   }
 
   const intRaw = t.slice(0, dotIdx).replace(/\D/g, '');
