@@ -21,37 +21,39 @@ import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './u
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
 import { registerGlobalClientActivityListeners } from './utils/clientActivityBootstrap';
+import { hardReloadOnceForStaleChunks, isDynamicImportChunkFailure } from './utils/chunkLoadRecovery';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
   return lazy(() => {
-    const retryImport = async (retries = 3, delay = 1000): Promise<any> => {
+    const retryImport = async (retries = 4, delay = 1000): Promise<any> => {
       for (let i = 0; i < retries; i++) {
         try {
           return await importFn();
-        } catch (error: any) {
-          const isChunkError =
-            error.message?.includes('Failed to fetch') ||
-            error.message?.includes('Loading chunk') ||
-            error.message?.includes('MIME type') ||
-            error.message?.includes('text/html') ||
-            error.name === 'ChunkLoadError';
+        } catch (error: unknown) {
+          const chunkFail = isDynamicImportChunkFailure(error);
 
-          if (isChunkError && i < retries - 1) {
+          if (chunkFail && i < retries - 1) {
             await new Promise((resolve) => setTimeout(resolve, delay * (i + 1)));
-            if (error.message?.includes('Failed to fetch') || error.message?.includes('Loading chunk')) {
-              if (typeof window !== 'undefined' && 'caches' in window) {
-                try {
-                  const cacheNames = await caches.keys();
-                  await Promise.all(cacheNames.map((name) => caches.delete(name)));
-                } catch {
-                  // ignore
-                }
+            if (typeof window !== 'undefined' && 'caches' in window) {
+              try {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map((name) => caches.delete(name)));
+              } catch {
+                // ignore
               }
             }
             continue;
           }
-          throw error;
+          if (chunkFail) {
+            if (!hardReloadOnceForStaleChunks()) {
+              throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
+            }
+            return new Promise(() => {
+              /* page reload in progress */
+            });
+          }
+          throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
         }
       }
       throw new Error(`Failed to load ${componentName} after ${retries} attempts`);
@@ -127,52 +129,20 @@ const BrandPage = lazyWithRetry(() => import('./pages/brand/page'), 'BrandPage')
 const BrandCareersPage = lazyWithRetry(() => import('./pages/brand/careers/page'), 'BrandCareersPage');
 
 // Error Boundary to catch component errors with auto-recovery
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; retryCount: number }> {
-  private retryTimeout: NodeJS.Timeout | null = null;
-
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: ReactNode }) {
     super(props);
-    this.state = { hasError: false, error: null, retryCount: 0 };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error, retryCount: 0 };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
-
-    // Auto-retry for chunk loading errors (common on Vercel)
-    const isChunkError = error.message?.includes('Failed to fetch') || 
-                         error.message?.includes('Loading chunk') ||
-                         error.message?.includes('MIME type') ||
-                         error.message?.includes('text/html') ||
-                         error.name === 'ChunkLoadError';
-    
-    if (isChunkError && this.state.retryCount < 2) {
-      // Clear any cached chunks and retry after a delay
-      this.retryTimeout = setTimeout(() => {
-        if (typeof window !== 'undefined' && 'caches' in window) {
-          caches.keys().then(cacheNames => {
-            return Promise.all(cacheNames.map(name => caches.delete(name)));
-          }).catch(() => {});
-        }
-        this.setState(prev => ({ 
-          hasError: false, 
-          error: null, 
-          retryCount: prev.retryCount + 1 
-        }));
-        // Force a page reload if retry count is maxed
-        if (this.state.retryCount >= 1) {
-          window.location.reload();
-        }
-      }, 1000);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.retryTimeout) {
-      clearTimeout(this.retryTimeout);
+    if (isDynamicImportChunkFailure(error)) {
+      hardReloadOnceForStaleChunks();
     }
   }
 
@@ -183,16 +153,12 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
         return Promise.all(cacheNames.map(name => caches.delete(name)));
       }).catch(() => {});
     }
-    this.setState({ hasError: false, error: null, retryCount: 0 });
+    this.setState({ hasError: false, error: null });
   };
 
   render() {
     if (this.state.hasError) {
-      const isChunkError = this.state.error?.message?.includes('Failed to fetch') || 
-                          this.state.error?.message?.includes('Loading chunk') ||
-                          this.state.error?.message?.includes('MIME type') ||
-                          this.state.error?.message?.includes('text/html') ||
-                          this.state.error?.name === 'ChunkLoadError';
+      const isChunkError = this.state.error ? isDynamicImportChunkFailure(this.state.error) : false;
       
       return (
         <div style={{

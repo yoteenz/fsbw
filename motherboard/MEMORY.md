@@ -11951,3 +11951,16 @@ Verification: `tsc --noEmit`.
 - **`appendOrderTrackingClientNotification`**: sets **`sortAt: Date.now()`** on tracking rows.
 
 **Files:** `src/pages/account/notifications/page.tsx`, `src/utils/orderAccountAlerts.ts`, `src/utils/orderTracking.ts`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Vercel / Safari: stale chunk “Importing a module script failed” auto-recovery
+
+**Context:** User saw red **ERROR: Component Failed to Load** with **Importing a module script failed** on Vercel; **manual refresh fixed it** — classic **old tab + new deploy**: hashed **`/assets/*.js`** URLs 404 while **`index.html`** is cached or the shell still references removed chunks.
+
+**Fix:**
+- **`src/utils/chunkLoadRecovery.ts`**: **`isDynamicImportChunkFailure`** (includes Safari strings: *importing a module script failed*, *failed to load module script*, *dynamically imported module*); **`hardReloadOnceForStaleChunks`** — **`sessionStorage`**-guarded full reload (90s cooldown) to avoid loops offline.
+- **`lazyWithRetry`** in **`App.tsx`**: treat those as chunk errors, **4 retries** + cache clear between attempts; on final failure call **`hardReloadOnceForStaleChunks()`**.
+- **`ErrorBoundary`**: on chunk-like errors call **`hardReloadOnceForStaleChunks()`** immediately; removed broken timeout/retry that read stale **`retryCount`** and rarely reloaded.
+
+**Files:** `src/utils/chunkLoadRecovery.ts`, `src/App.tsx`. **`tsc --noEmit`**.
