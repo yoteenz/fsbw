@@ -11882,3 +11882,11 @@ Verification: `tsc --noEmit`.
 **Outcome:** Fast-forwarded `preview/mobile` to include the full commit chain from the feature branch (appointment/consult booking UI, account alerts + notification key migration, digital/A&C orders UX, consult head measurement labels, motherboard entries), then **`git push -u origin preview/mobile`**. Local checkout left on `preview/mobile` tracking origin.
 
 **Convention for future turns in this repo:** Implement and push **only** on **`preview/mobile`** unless the user explicitly names another branch.
+
+---
+
+## 2026-04-06 — Consult booking intro paragraph copy
+
+**Change:** On the booking consult page body copy under the hero, removed **“WITHIN 72 HOURS”** from the follow-up sentence so it reads: *YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.*
+
+**File:** `src/pages/booking/consultation/page.tsx`. Pushed to **`preview/mobile`**.
