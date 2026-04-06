@@ -12247,3 +12247,17 @@ Verification: `tsc --noEmit`.
 **Context:** Sort menu clipped when list empty; match clients overview sort width; avatar left above client name.
 
 **File:** **`src/pages/admin/reviews/page.tsx`** — sort row outside scroll; **120px** menu **`z-40`**; clients-matching margins; avatar **`items-start`** / no auto margin. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin pending: overview aggregates all sections; tab mock UIs
+
+**Context:** User wanted **REVIEWS / FORMS / AFFILIATE** former summary tables moved under **OVERVIEW**; each tab should show **submitted**-style content (account reviews, order auth forms, affiliate photos/videos/socials) with **mock data** for UI design.
+
+**File:** **`src/pages/admin/pending/page.tsx`**
+- **OVERVIEW:** PENDING ITEMS + reviews-by-type (API when loaded) + ORDER FORMS rows + TIER UPGRADES + AFFILIATE REQUESTS + REFUND REQUESTS + AFFILIATE QUEUE (all former tab copy).
+- **REVIEWS:** **`MOCK_PENDING_CLIENT_REVIEWS`** cards (client, email, product, excerpt, stars, status, date).
+- **FORMS:** **`MOCK_ORDER_AUTH_FORMS`** (order #, client, status, date).
+- **AFFILIATE:** thumbnail grid for photos/videos + social link rows; **`SectionTitle`**, **`DataRow`** helpers.
+
+**`tsc --noEmit`**.
