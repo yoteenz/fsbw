@@ -11960,7 +11960,7 @@ Verification: `tsc --noEmit`.
 
 **Fix:**
 - **`src/utils/chunkLoadRecovery.ts`**: **`isDynamicImportChunkFailure`** (includes Safari strings: *importing a module script failed*, *failed to load module script*, *dynamically imported module*); **`hardReloadOnceForStaleChunks`** — **`sessionStorage`**-guarded full reload (90s cooldown) to avoid loops offline.
-- **`lazyWithRetry`** in **`App.tsx`**: treat those as chunk errors, **4 retries** + cache clear between attempts; on final failure call **`hardReloadOnceForStaleChunks()`**.
+- **`lazyWithRetry`** in **`App.tsx`**: treat those as chunk errors, **4 retries** + cache clear between attempts; on final failure call **`hardReloadOnceForStaleChunks()`** (if cooldown blocks reload, rethrow so the error boundary UI can still show **Reload**).
 - **`ErrorBoundary`**: on chunk-like errors call **`hardReloadOnceForStaleChunks()`** immediately; removed broken timeout/retry that read stale **`retryCount`** and rarely reloaded.
 
 **Files:** `src/utils/chunkLoadRecovery.ts`, `src/App.tsx`. **`tsc --noEmit`**.

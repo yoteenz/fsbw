@@ -1284,7 +1284,7 @@ function MembershipPage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '11px',
+                              fontSize: '17px',
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400
@@ -1366,7 +1366,7 @@ function MembershipPage() {
                                   disabled={!canRedeem}
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
-                                    fontSize: '12px',
+                                    fontSize: '18px',
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -2085,7 +2085,7 @@ fontFamily: '"Futura PT Book"',
                                 style={{
                                   fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '11px',
+                                  fontSize: '17px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'lowercase',
                                   fontWeight: 400
@@ -2167,7 +2167,7 @@ fontFamily: '"Futura PT Book"',
                                       disabled={!canRedeem}
                                       style={{
                                         fontFamily: '"Bohemy", cursive',
-                                        fontSize: '12px',
+                                        fontSize: '18px',
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',
