@@ -11890,3 +11890,9 @@ Verification: `tsc --noEmit`.
 **Change:** On the booking consult page body copy under the hero, removed **“WITHIN 72 HOURS”** from the follow-up sentence so it reads: *YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.*
 
 **File:** `src/pages/booking/consultation/page.tsx`. Pushed to **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account Rewards: Bohemy on excludes-taxes line + REDEEM
+
+**Change:** On **Account → Rewards** (`/account/rewards`, implemented in `membership/page.tsx`), set **`(EXCLUDES TAXES + SHIPPING FEES)`** and each loyalty **`REDEEM`** button label to **`fontFamily: "Bohemy", cursive`** (slightly larger sizes: 11px / 12px) in both standard and premium rewards layouts. Pushed to **`preview/mobile`**.
