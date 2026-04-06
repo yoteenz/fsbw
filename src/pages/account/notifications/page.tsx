@@ -23,6 +23,8 @@ interface Notification {
   actionText?: string;
   actionRoute?: string;
   date: string;
+  /** Epoch ms when known — newest alerts sort first. */
+  sortAt?: number;
   isRead: boolean;
   icon: string; // 'f' or 'fc'
 }
@@ -362,6 +364,41 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   return notifs;
 }
 
+/** Parse M-D-YYYY or MM-D-YYYY to local midnight; invalid → 0. */
+function parseNotificationDisplayDateMs(dateStr: string): number {
+  const parts = (dateStr || '').trim().split('-').map(Number);
+  if (parts.length !== 3) return 0;
+  const [month, day, year] = parts;
+  if (!month || !day || !year) return 0;
+  const d = new Date(year, month - 1, day);
+  const t = d.getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
+const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
+  `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
+];
+
+/** Newest first: `sortAt` when set, else `date` string; stable tie-breakers for account rows. */
+export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
+  const tierRank = (id: string): number => {
+    const i = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
+    return i >= 0 ? i : ACCOUNT_ALERT_STABLE_ORDER.length;
+  };
+  return [...list].sort((a, b) => {
+    const sa = typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : parseNotificationDisplayDateMs(a.date);
+    const sb = typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : parseNotificationDisplayDateMs(b.date);
+    if (sb !== sa) return sb - sa;
+    const oa = tierRank(a.id);
+    const ob = tierRank(b.id);
+    if (oa !== ob) return oa - ob;
+    return String(b.id).localeCompare(String(a.id));
+  });
+}
+
 /** Merge stored notifications with account notifications (account ones upserted by id). Account + order-received alerts stay in NEW until user archives — do not use stored isRead for them. Exported for account page badge logic. */
 export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
@@ -372,7 +409,7 @@ export function mergeAccountNotifications(stored: Notification[], account: Notif
       n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || n.id.startsWith('order_received_');
     byId.set(n.id, { ...n, isRead: isManaged ? false : (existing?.isRead ?? n.isRead) });
   });
-  return Array.from(byId.values());
+  return sortNotificationsNewestFirst(Array.from(byId.values()));
 }
 
 function NotificationsPage() {
@@ -498,12 +535,16 @@ function NotificationsPage() {
               };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
-              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              const createdMs = created ? new Date(created).getTime() : NaN;
+              const date = created && !Number.isNaN(createdMs)
+                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
+                : today;
               return {
                 id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
+                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
                 isRead: !!item.read,
                 icon: 'f',
                 actionText: item.actionText,
@@ -514,7 +555,7 @@ function NotificationsPage() {
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
             });
-            merged = Array.from(byId.values());
+            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
           }
         }
 
@@ -567,12 +608,16 @@ function NotificationsPage() {
               };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
-              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              const createdMs = created ? new Date(created).getTime() : NaN;
+              const date = created && !Number.isNaN(createdMs)
+                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
+                : today;
               return {
                 id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
+                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
                 isRead: !!item.read,
                 icon: 'f',
                 actionText: item.actionText,
@@ -583,7 +628,7 @@ function NotificationsPage() {
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
             });
-            merged = Array.from(byId.values());
+            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
           }
         }
 

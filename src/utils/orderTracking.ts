@@ -115,11 +115,13 @@ export function appendOrderTrackingClientNotification(
     })();
     const title = 'ORDER TRACKING UPDATE';
     const message = `${opts.stageLabel}: ${(opts.note || '').trim()}`.trim().toUpperCase();
+    const ts = Date.now();
     const n = {
-      id: `order_track_${opts.orderId}_${Date.now()}`,
+      id: `order_track_${opts.orderId}_${ts}`,
       title,
       message: message || 'VIEW YOUR ORDER FOR DETAILS.',
       date: today,
+      sortAt: ts,
       isRead: false,
       icon: 'f',
       actionText: 'VIEW TRACKING',

@@ -11934,3 +11934,20 @@ Verification: `tsc --noEmit`.
 - **`admin/clients/page.tsx`** — on mount (when Supabase configured + signed-in admin): **`getAdminMeetings()`** + **`normalizeApiMeeting`**, store in **`apiMeetingsForClientDetails`**; pass into aggregate for the tab **`useMemo`**.
 
 **Verification:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account Alerts: newest notifications first
+
+**Context:** User reported **NEW** tab showed **new alerts at the bottom**; they should be **at the top** with older below.
+
+**Cause:** **`mergeAccountNotifications`** built a **`Map`** and returned **`Array.from(byId.values())`**, which does not preserve a useful order when account-synthesized rows (e.g. **`order_received_*`**) merge with older **`localStorage`** entries — newer logical alerts could sort after stale rows.
+
+**Fix:**
+- **`sortNotificationsNewestFirst`** in **`notifications/page.tsx`**: sort by **`sortAt`** (epoch ms) when present, else by parsed **`date`** (M-D-YYYY); stable tie-break for the four fixed account rows.
+- **`mergeAccountNotifications`** returns **`sortNotificationsNewestFirst(...)`**.
+- After merging **admin** Supabase **`notifications.items`**, re-sort the full list the same way; admin rows get **`sortAt`** from **`createdAt`** when parseable.
+- **`buildOrderReceivedAccountAlert`**: optional **`sortAt`** from order **`placedAt` / `updatedAt` / `createdAt`**.
+- **`appendOrderTrackingClientNotification`**: sets **`sortAt: Date.now()`** on tracking rows.
+
+**Files:** `src/pages/account/notifications/page.tsx`, `src/utils/orderAccountAlerts.ts`, `src/utils/orderTracking.ts`. **`tsc --noEmit`**.

@@ -9,6 +9,9 @@ export type AlertOrder = {
   orderNumber?: string;
   bookingFlowType?: string;
   status?: string;
+  placedAt?: number;
+  createdAt?: string | number;
+  updatedAt?: string | number;
 };
 
 export type StoredNotification = {
@@ -18,6 +21,8 @@ export type StoredNotification = {
   actionText?: string;
   actionRoute?: string;
   date: string;
+  /** Epoch ms when known (e.g. order placed); used to sort newest-first on Alerts. */
+  sortAt?: number;
   isRead: boolean;
   icon: string;
 };
@@ -101,6 +106,21 @@ function displayOrderNumber(order: AlertOrder): string {
   return stripped || '—';
 }
 
+function orderTimestampMs(order: AlertOrder): number | undefined {
+  if (typeof order.placedAt === 'number' && !Number.isNaN(order.placedAt)) return order.placedAt;
+  const u = order.updatedAt;
+  if (u != null && u !== '') {
+    const n = typeof u === 'number' ? u : Date.parse(String(u));
+    if (!Number.isNaN(n)) return n;
+  }
+  const c = order.createdAt;
+  if (c != null && c !== '') {
+    const n = typeof c === 'number' ? c : Date.parse(String(c));
+    if (!Number.isNaN(n)) return n;
+  }
+  return undefined;
+}
+
 export function buildOrderReceivedAccountAlert(
   user: AlertUser | null | undefined,
   order: AlertOrder
@@ -110,6 +130,7 @@ export function buildOrderReceivedAccountAlert(
   if (!email || !orderId) return null;
 
   const orderNum = displayOrderNumber(order);
+  const sortAt = orderTimestampMs(order);
   return {
     id: `order_received_${orderId}`,
     title: "WE'VE RECEIVED YOUR ORDER!",
@@ -117,6 +138,7 @@ export function buildOrderReceivedAccountAlert(
     actionText: 'VIEW DETAILS',
     actionRoute: alertRouteForOrder(user, order),
     date: todayMdy(),
+    ...(sortAt != null ? { sortAt } : {}),
     isRead: false,
     icon: STANDARD_NOTIFICATION_ICON,
   };
