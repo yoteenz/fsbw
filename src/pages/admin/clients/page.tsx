@@ -2197,8 +2197,11 @@ export default function AdminClients() {
                         })()}
                         {/* Client details section: DETAILS | Cart | Wishlist tabs – same spacing as marketing */}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="flex flex-wrap justify-center gap-[14px]">
-                            {PERSONAL_SECTION_TABS.map((tab) => (
+                        <div
+                          className="flex flex-wrap justify-center gap-[14px]"
+                          style={{ marginBottom: '10px' }}
+                        >
+                          {PERSONAL_SECTION_TABS.map((tab) => (
                               <button
                                 key={tab}
                                 type="button"
@@ -2385,7 +2388,10 @@ export default function AdminClients() {
                             );
                           })()}
                         </div>
-                        <div className="flex flex-wrap justify-center gap-[14px]">
+                        <div
+                          className="flex flex-wrap justify-center gap-[14px]"
+                          style={{ marginBottom: '10px' }}
+                        >
                           {DETAILS_TABS.map((tab) => (
                             <button
                               key={tab}

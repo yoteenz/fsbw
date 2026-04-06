@@ -12088,3 +12088,11 @@ Verification: `tsc --noEmit`.
 - **`src/pages/booking/consultation/page.tsx`:** On mount / sign-in / **`ordersUpdated`**, if all six fields are still empty, merge saved values into state (user can edit before add-to-bag).
 
 **Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details toggle: tab bottom spacing matches meetings hub
+
+**Context:** Content under the client-details toggle tabs (DETAILS / CART / WISHLIST row and ACTIVITY / ORDERS / … row) sat too tight under the tab labels compared to the admin meetings page tab strip.
+
+**Change:** **`src/pages/admin/clients/page.tsx`** — add **`marginBottom: '10px'`** on both tab row wrappers (matches meetings hub header **`pb-2`** + content **`paddingTop: 2px`**). **`tsc --noEmit`**.
