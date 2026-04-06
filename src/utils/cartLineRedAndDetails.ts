@@ -78,9 +78,9 @@ export function bookingCartViewDetailsHtml(item: {
       const measurementLines: Array<[string, string]> = [
         ['CIRCUMFERENCE', String(item.bookingHeadMeasurements.circumference || '').trim()],
         ['FRONT TO NAPE', String(item.bookingHeadMeasurements.frontToNape || '').trim()],
-        ['VERTICAL TEMPLE TO TEMPLE', String(item.bookingHeadMeasurements.verticalTempleToTemple || '').trim()],
-        ['HORIZONTAL TEMPLE TO TEMPLE', String(item.bookingHeadMeasurements.horizontalTempleToTemple || '').trim()],
-        ['EAR TO EAR', String(item.bookingHeadMeasurements.earToEar || '').trim()],
+        ['EAR TO EAR OVER CROWN', String(item.bookingHeadMeasurements.verticalTempleToTemple || '').trim()],
+        ['EAR TO EAR ACROSS FOREHEAD', String(item.bookingHeadMeasurements.horizontalTempleToTemple || '').trim()],
+        ['TEMPLE TO TEMPLE AROUND CROWN', String(item.bookingHeadMeasurements.earToEar || '').trim()],
         ['NAPE OF NECK', String(item.bookingHeadMeasurements.napeOfNeck || '').trim()],
       ];
       measurementLines.forEach(([label, value]) => {

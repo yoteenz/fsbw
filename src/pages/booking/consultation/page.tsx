@@ -40,9 +40,9 @@ const HEAD_MEASUREMENT_FIELDS: Array<{
 }> = [
   { key: 'circumference', label: 'CIRCUMFERENCE', required: true },
   { key: 'frontToNape', label: 'FRONT TO NAPE', required: true },
-  { key: 'verticalTempleToTemple', label: 'VERTICAL TEMPLE TO TEMPLE' },
-  { key: 'horizontalTempleToTemple', label: 'HORIZONTAL TEMPLE TO TEMPLE' },
-  { key: 'earToEar', label: 'EAR TO EAR' },
+  { key: 'verticalTempleToTemple', label: 'EAR TO EAR OVER CROWN' },
+  { key: 'horizontalTempleToTemple', label: 'EAR TO EAR ACROSS FOREHEAD' },
+  { key: 'earToEar', label: 'TEMPLE TO TEMPLE AROUND CROWN' },
   { key: 'napeOfNeck', label: 'NAPE OF NECK' },
 ] as const;
 
