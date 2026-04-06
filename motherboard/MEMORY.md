@@ -11819,3 +11819,18 @@ so the branch tips end on the same commit hash rather than merely containing equ
 **Changes:** `src/pages/account/notifications/page.tsx`, `src/pages/orders/page.tsx`, `src/pages/checkout/page.tsx`, `src/pages/checkout/confirm/page.tsx`, `src/utils/orderAccountAlerts.ts`, `src/utils/digitalOrderFulfillment.ts` (new). Verification: `npm run build`.
 
 **Conventions:** For founder QA alerts that must show under **new-account** notification gating, inject an explicit notification in `getAccountNotifications` with a stable id that matches any checkout-appended alert id pattern if deduping matters.
+
+---
+
+## 2026-04-06 — Booking appointment notes–calendar divider matched to consult page
+
+**Context:** User asked to confirm the gray border between **Additional Notes** and the calendar on the booking **appointment** page matches the booking **consult** page; if not, match it exactly.
+
+**Topics covered:**
+- Consult uses a **flex column with `gap: '20px'`** between the notes block and the scheduling section; the calendar’s top border sits on a wrapper with `borderTop: '1px solid #e5e7eb'`, `paddingTop: '20px'`, `marginTop: 0`, and conditional `marginBottom` (16px vs 10px when scheduled summary visible).
+- Appointment previously had notes and calendar as siblings with only the bordered wrapper and extra `marginTop: '20px'`, which did not mirror the consult structure.
+
+**Decisions / outcomes:**
+- Wrapped **Additional Notes** + **scheduling block** (calendar through estimated time copy) in a flex column with **`gap: '20px'`**; calendar wrapper now uses the **same inline styles as consult** for the gray line and padding; **`TOTAL DUE`** is the next flex child with `paddingTop: '6px'` like consult.
+
+**Changes:** `src/pages/booking/appointment/page.tsx`. Verification: `tsc --noEmit`.
