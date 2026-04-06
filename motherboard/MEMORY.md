@@ -12023,3 +12023,15 @@ Verification: `tsc --noEmit`.
 - **`layouts/PAGE_LAYOUT.md`**: documents both.
 
 **Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account alerts: order-received above tier when dates tie
+
+**Context:** User wanted **WE'VE RECEIVED YOUR ORDER** above **YOU'RE NOW … TIER** (orders after account creation); they still appeared at the bottom.
+
+**Cause:** **`sortNotificationsNewestFirst`** tie-break favored **`acc_tier`** over **`order_received_*`** when **`sortAt`** and parsed **`date`** matched (same calendar day).
+
+**Fix:** **`newestFirstTieBreakRank`**: **`order_received_*`** first; then stable **`acc_tier` … `acc_settings`**; then other **`acc_*`**. **`getAccountNotifications`** prepends order-received rows.
+
+**Files:** `src/pages/account/notifications/page.tsx`. **`tsc --noEmit`**.
