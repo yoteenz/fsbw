@@ -12035,3 +12035,13 @@ Verification: `tsc --noEmit`.
 **Fix:** **`newestFirstTieBreakRank`**: **`order_received_*`** first; then stable **`acc_tier` … `acc_settings`**; then other **`acc_*`**. **`getAccountNotifications`** prepends order-received rows.
 
 **Files:** `src/pages/account/notifications/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult head measurements: labels aligned with inset inputs
+
+**Context:** After narrowing inputs 4px from the inner column edge, **FRONT TO NAPE**, **EAR TO EAR ACROSS FOREHEAD**, **NAPE OF NECK** (and all head measurement labels) stayed full column width while inputs were inset.
+
+**Fix:** Wrap each field in a **`div`** that applies the same **`width: calc(100% - 4px)`** + **`marginLeft`/`marginRight`**; **`input`** is **`width: 100%`** inside that wrapper.
+
+**File:** `src/pages/booking/consultation/page.tsx`. **`tsc --noEmit`**.
