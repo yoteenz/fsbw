@@ -11995,3 +11995,17 @@ Verification: `tsc --noEmit`.
 ## 2026-04-06 — Consult booking: head measurement inputs inset 4px from inner gap
 
 **Change:** On **`booking/consultation`**, 2-column head measurement grid unchanged in outer width; each **`input`** is **`calc(100% - 4px)`** wide with **`marginRight: 4px`** (left column) or **`marginLeft: 4px`** (right column) so boxes are **4px narrower from the inner side only** and sit farther apart. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin: `getAdminMeetings` refresh on focus + after writes (cohesive FE/BE)
+
+**Context:** User wanted frontend/backend cohesive; mirror **local** meetings bump pattern for **`getAdminMeetings()`**.
+
+**Implementation:**
+- **`src/hooks/useAdminMeetingsApiRefresh.ts`**: **`useAdminMeetingsApiRefresh(setRows, skipInitial?)`** — refetch normalized API meetings on **focus**, **storage**, **`signInStateChanged`**, **`adminMeetingsUpdated`**, and custom **`adminMeetingsApiRefresh`**. **`fetchAdminMeetingsApiNormalized()`** for dashboard bootstrap (no double fetch with **`skipInitial: true`**). **`dispatchAdminMeetingsApiRefresh()`** after successful server writes.
+- **`AdminMeetingsHub`**, **`admin/clients`**: use hook (replaces mount-only fetch).
+- **`admin/dashboard`**: init uses **`fetchAdminMeetingsApiNormalized()`** in **`Promise.all`**; hook with **`skipInitial`** for ongoing sync.
+- **`admin/meetings/schedule`**: after **`postAdminMeeting`** success → **`dispatchAdminMeetingsApiRefresh()`**; hub **`patchAdminMeeting`** success path → same dispatch.
+
+**Verify:** `tsc --noEmit`.

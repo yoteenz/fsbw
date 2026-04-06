@@ -9,6 +9,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
 interface Review {
   id: string;
@@ -536,7 +537,7 @@ function ReviewsPage() {
           {showMobileMenu ? (
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 160px)', height: 'calc(100dvh - 160px)' }}
+              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: MENU_TOGGLE_PANEL_HEIGHT, height: MENU_TOGGLE_PANEL_HEIGHT }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>

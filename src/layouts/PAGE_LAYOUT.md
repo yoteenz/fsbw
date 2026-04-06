@@ -45,5 +45,5 @@ Wrong (button inside card):
 ## Shared pieces
 
 - **Nav bar**: Back (or Account/Wishlist when menu open), center text (e.g. "WISHLIST > LISTS"), cart icon, hamburger. Border, `bg-white/60 backdrop-blur-sm`.
-- **Main card**: `borderWidth: '1.3px'`, `backgroundColor: 'rgba(255, 255, 255, 0.6)'`, `minWidth: '100%'`. When menu open, use `menu-toggle-card` and min-height for full menu.
+- **Main card**: `borderWidth: '1.3px'`, `backgroundColor: 'rgba(255, 255, 255, 0.6)'`, `minWidth: '100%'`. When menu open, use `menu-toggle-card` and **`MENU_TOGGLE_PANEL_HEIGHT`** from `layouts/menuToggleHeights.ts` (`calc(100dvh - 80px)`) for the flyout — same as Noir / shop product pages. Account main content columns (menu closed) may use **`ACCOUNT_MAIN_COLUMN_MIN_HEIGHT`** (`calc(100dvh - 160px)`).
 - **Page actions**: Use `PageActionsBelowCard` from `@/layouts/PageActionsBelowCard` for consistent spacing and styling, or match its styles (marginTop 2px for first, 10px for rest; button styles above).

@@ -8,6 +8,7 @@ import { clearAppAuth } from '../utils/adminAuth';
 import { ShopMobileMenuShopTab } from './ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from './ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../layouts/menuToggleHeights';
 
 type BookingCrumb = 'CONSULT' | 'APPOINTMENT';
 
@@ -279,8 +280,8 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
                 maxWidth: 'none',
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: 'calc(100dvh - 80px)',
-                height: 'calc(100dvh - 80px)'
+                minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                height: MENU_TOGGLE_PANEL_HEIGHT
               }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>

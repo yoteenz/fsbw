@@ -15,6 +15,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
 interface Notification {
   id: string;
@@ -855,8 +856,8 @@ function NotificationsPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)',
-                  height: 'calc(100dvh - 160px)'
+                  minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                  height: MENU_TOGGLE_PANEL_HEIGHT
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
