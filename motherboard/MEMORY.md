@@ -12267,3 +12267,17 @@ Verification: `tsc --noEmit`.
 ## 2026-04-07 — Admin reviews sort nudge: label −4px, menu −2px
 
 **File:** **`src/pages/admin/reviews/page.tsx`** — sort label **`relative; left: -4px`**; dropdown panel **`left: -2px`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin reviews: avatar → client details, expandable media, spacing
+
+**Full conversation (this chat):** Prior summary covered booking/consult borders, digital orders, alerts, head measurements, admin meetings grid/list, pending/reviews work, etc. **This turn:** user asked for four updates on **`/admin/reviews`**.
+
+**Requests and outcomes:**
+1. **Sort text only 2px left** — changed sort button label from **`left: -4px`** to **`left: -2px`** (menu position unchanged at **`left: -2px`**).
+2. **Profile icons open client details** — when **`clientEmail`** is set, avatar is a **button** that **`navigate`s** to **`/admin/clients/overview?email=...`** (same pattern as meetings hub). No-op (non-interactive avatar) if email missing.
+3. **“3 photos” / videos line toggles content** — footer shows **`N photo(s) · M video(s)`**; if there are resolvable URLs, the line is a **toggle** that shows **photo grid** (links open new tab) and **`<video controls>`** rows below; tap again to collapse. **`normalizeApiReview`** extracts URLs from **`photos`** jsonb (strings or `{url}` objects) and optional **`video_urls` / `videoUrls`**. If DB has counts but no URLs, **placeholder** images (picsum seeded by review id) and a **sample mp4** fill slots so UI is testable. **`withDefaultReviewMedia`** applies placeholders to default mock rows. Default mock **client names + emails** aligned to admin mock clients (**mock1@test.com** … **mock5@test.com**).
+4. **4px above black body text** — review body **`p`** uses **`margin: calc(0.25rem + 4px) 0 0`** (replaces plain **`mt-1`**).
+
+**Files:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**. **Git:** committed and pushed **`preview/mobile`** (`b40931d`). PR tool could not attach (branch/head mismatch in cloud); user can open PR from **`preview/mobile`** if needed.
