@@ -11802,3 +11802,20 @@ so the branch tips end on the same commit hash rather than merely containing equ
 
 **Conventions:**
 - When a `borderTop` sits on a padded wrapper, avoid setting `paddingTop: 0` if the border should read as a separator with air above it; compare sibling gaps on the reference page (consult uses flex `gap` + inner padding).
+
+---
+
+## 2026-04-06 — Founder mock ORDER #332 account alert + digital / A&C order UX on Orders + checkout
+
+**Context:** User wanted the mock consult order **#332** on the founder account to also surface as a **new-order style alert** on Account → Alerts (for flow/design QA). They also asked that **digital items including A/C bookings** not use the live 9-stage shipping-style tracking or order-form CTAs; instead **PLACED → PROCESSING → COMPLETE**, and **CLICK HERE TO VIEW OFFER** should appear **only when complete** (replacing the sign-order-form line for those orders).
+
+**Topics covered:**
+- `getAccountNotifications` runs before the “new account” early return, so dynamic `getOrderReceivedAccountAlerts` never ran for users without `hasMadeFirstPurchase`; added a **founder-only** synthetic alert with id `order_received_kateena-consult-1` matching checkout alert shape, pointing to concierge with the mock order id.
+- Introduced `src/utils/digitalOrderFulfillment.ts` for **digital timeline** detection: `digitalFulfillmentOnly` **or** `bookingFlowType` appointment/consult.
+- **Orders page:** hide shipping + 9-stage tracking for digital timeline orders; show **ORDER STATUS** with three stages; skip order-form line and tracking/loading row extras; **VIEW OFFER** only at `COMPLETE` (mock #332 includes `consultOfferRoute` for testing). Auto-cancel skips digital timeline; archive treats **COMPLETE** like terminal (with `completedAt` when used).
+- **Checkout:** new persisted orders from **bookings-only** or **gift/digital-only** / **subscription** paths get `PLACED` + flags; **Checkout confirm:** hide sign-order-form + shipping summary block for the same fulfillment class; thank-you copy explains 3-stage status.
+- `getOrderReceivedAccountAlerts` excludes **COMPLETE** so completed digital orders do not keep a “received” alert.
+
+**Changes:** `src/pages/account/notifications/page.tsx`, `src/pages/orders/page.tsx`, `src/pages/checkout/page.tsx`, `src/pages/checkout/confirm/page.tsx`, `src/utils/orderAccountAlerts.ts`, `src/utils/digitalOrderFulfillment.ts` (new). Verification: `npm run build`.
+
+**Conventions:** For founder QA alerts that must show under **new-account** notification gating, inject an explicit notification in `getAccountNotifications` with a stable id that matches any checkout-appended alert id pattern if deduping matters.
