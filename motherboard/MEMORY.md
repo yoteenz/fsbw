@@ -12397,3 +12397,5 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 **Follow-up:** Expanded **ORDER TRACKING** (orders + checkout summary): extra **`DELIVERED`** row under **PACKAGE SHIPPED** when **`status === 'DELIVERED'`**; red current styling on **DELIVERED** (not **PACKAGE SHIPPED**). Helpers in **`orderTracking.ts`**: **`orderShowsDeliveredTrackingLine`**, **`orderTrackingStageRowIsCurrent`**, **`orderTrackingDeliveredRowIsCurrent`**. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Current tracking step **bubble + label** use Concierge-style **`orderTrackingPulsate`** (1s ease-in-out infinite opacity). **`ORDER_TRACKING_PULSATE_KEYFRAMES_CSS`** / **`ORDER_TRACKING_PULSATE_ANIMATION`** exported from **`orderTracking.ts`**; injected on **orders** and **checkout confirm** pages. **`tsc --noEmit`**. Pushed **`preview/mobile`**.

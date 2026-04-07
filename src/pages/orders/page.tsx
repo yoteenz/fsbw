@@ -17,6 +17,8 @@ import { formatCountryDisplay } from '../../utils/formatCountry';
 import {
   getCarrierTrackingUrl,
   getOrderTrackingStageFromOrder,
+  ORDER_TRACKING_PULSATE_ANIMATION,
+  ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
   ORDER_TRACKING_STAGE_LABELS,
   orderTrackingDeliveredRowIsCurrent,
   orderTrackingStageRowIsCurrent,
@@ -1361,14 +1363,24 @@ function OrdersPage() {
   };
 
   const ORDER_TRACK_BUBBLE_PX = 6;
-  const orderTrackBubbleStyle = (filled: boolean): React.CSSProperties => ({
+  const orderTrackBubbleStyle = (filled: boolean, pulsate = false): React.CSSProperties => ({
     width: ORDER_TRACK_BUBBLE_PX,
     height: ORDER_TRACK_BUBBLE_PX,
     borderRadius: '50%',
     border: '1px solid #000',
     background: filled ? '#EB1C24' : '#fff',
     flexShrink: 0,
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    ...(pulsate && filled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+  });
+
+  const orderTrackStepLabelStyle = (isCurrent: boolean): React.CSSProperties => ({
+    fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+    fontSize: '9px',
+    color: isCurrent ? '#EB1C24' : '#000',
+    margin: 0,
+    textTransform: 'uppercase',
+    ...(isCurrent ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   });
 
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
@@ -1469,6 +1481,7 @@ function OrdersPage() {
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      <style>{ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}</style>
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -2075,18 +2088,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                                margin: 0
                                              }}
                                            >
-                                             <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
-                                             <p
-                                               style={{
-                                                 fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                                 fontSize: '9px',
-                                                 color: isCurrent ? '#EB1C24' : '#000',
-                                                 margin: 0,
-                                                 textTransform: 'uppercase'
-                                               }}
-                                             >
-                                               {label}
-                                             </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                             <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
                                            </div>
                                          );
                                        })}
@@ -2231,10 +2234,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                            return (
                                              <div key={`${expandedOrder.id}-st-${i}`}>
                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                 <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
-                                                 <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                   {label}
-                                                 </p>
+                                                 <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                                 <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
                                                </div>
                                                {note ? (
                                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
@@ -2247,18 +2248,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          {orderShowsDeliveredTrackingLine(ordRec) ? (
                                            <div key={`${expandedOrder.id}-st-delivered`}>
                                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent)} aria-hidden />
-                                               <p
-                                                 style={{
-                                                   fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                                   fontSize: '9px',
-                                                   color: deliveredRowCurrent ? '#EB1C24' : '#000',
-                                                   margin: 0,
-                                                   textTransform: 'uppercase',
-                                                 }}
-                                               >
-                                                 DELIVERED
-                                               </p>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
+                                               <p style={orderTrackStepLabelStyle(deliveredRowCurrent)}>DELIVERED</p>
                                              </div>
                                            </div>
                                          ) : null}
@@ -2945,18 +2936,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                                margin: 0
                                              }}
                                            >
-                                             <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
-                                             <p
-                                               style={{
-                                                 fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                                 fontSize: '9px',
-                                                 color: isCurrent ? '#EB1C24' : '#000',
-                                                 margin: 0,
-                                                 textTransform: 'uppercase'
-                                               }}
-                                             >
-                                               {label}
-                                             </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                             <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
                                            </div>
                                          );
                                        })}
@@ -3101,10 +3082,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                            return (
                                              <div key={`${expandedOrder.id}-st-arch-${i}`}>
                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                 <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
-                                                 <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                   {label}
-                                                 </p>
+                                                 <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                                 <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
                                                </div>
                                                {note ? (
                                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
@@ -3117,18 +3096,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          {orderShowsDeliveredTrackingLine(ordRec) ? (
                                            <div key={`${expandedOrder.id}-st-arch-delivered`}>
                                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent)} aria-hidden />
-                                               <p
-                                                 style={{
-                                                   fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                                   fontSize: '9px',
-                                                   color: deliveredRowCurrent ? '#EB1C24' : '#000',
-                                                   margin: 0,
-                                                   textTransform: 'uppercase',
-                                                 }}
-                                               >
-                                                 DELIVERED
-                                               </p>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
+                                               <p style={orderTrackStepLabelStyle(deliveredRowCurrent)}>DELIVERED</p>
                                              </div>
                                            </div>
                                          ) : null}

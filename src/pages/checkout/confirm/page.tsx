@@ -30,6 +30,8 @@ import {
 } from '../../../utils/digitalOrderFulfillment';
 import {
   getOrderTrackingStageFromOrder,
+  ORDER_TRACKING_PULSATE_ANIMATION,
+  ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
   ORDER_TRACKING_STAGE_LABELS,
   orderTrackingDeliveredRowIsCurrent,
   orderTrackingStageRowIsCurrent,
@@ -54,7 +56,7 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
 }
 
 const ORDER_TRACK_BUBBLE_PX = 6;
-function orderTrackBubbleStyleConfirm(filled: boolean): React.CSSProperties {
+function orderTrackBubbleStyleConfirm(filled: boolean, pulsate = false): React.CSSProperties {
   return {
     width: ORDER_TRACK_BUBBLE_PX,
     height: ORDER_TRACK_BUBBLE_PX,
@@ -63,6 +65,18 @@ function orderTrackBubbleStyleConfirm(filled: boolean): React.CSSProperties {
     background: filled ? '#EB1C24' : '#fff',
     flexShrink: 0,
     boxSizing: 'border-box',
+    ...(pulsate && filled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+  };
+}
+
+function orderTrackStepLabelStyleConfirm(isCurrent: boolean): React.CSSProperties {
+  return {
+    fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+    fontSize: '9px',
+    color: isCurrent ? '#EB1C24' : '#000',
+    margin: 0,
+    textTransform: 'uppercase',
+    ...(isCurrent ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   };
 }
 
@@ -843,6 +857,7 @@ function CheckoutConfirmPage() {
   return (
     <>
       <style>{`
+${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
         input::placeholder,
         textarea::placeholder {
           font-family: "Futura PT Demi", "Futura PT Medium", "Futura PT Book", "Covered By Your Grace", "Covered By Your Grace Preload" !important;
@@ -1603,18 +1618,8 @@ function CheckoutConfirmPage() {
                               key={`confirm-dig-${i}`}
                               style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}
                             >
-                              <span style={orderTrackBubbleStyleConfirm(isCurrent)} aria-hidden />
-                              <p
-                                style={{
-                                  fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                  fontSize: '9px',
-                                  color: isCurrent ? '#EB1C24' : '#000',
-                                  margin: 0,
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                {label}
-                              </p>
+                              <span style={orderTrackBubbleStyleConfirm(isCurrent, isCurrent)} aria-hidden />
+                              <p style={orderTrackStepLabelStyleConfirm(isCurrent)}>{label}</p>
                             </div>
                           );
                         })}
@@ -1771,18 +1776,8 @@ function CheckoutConfirmPage() {
                               return (
                                 <div key={`confirm-st-${i}`}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <span style={orderTrackBubbleStyleConfirm(isCurrent)} aria-hidden />
-                                    <p
-                                      style={{
-                                        fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                        fontSize: '9px',
-                                        color: isCurrent ? '#EB1C24' : '#000',
-                                        margin: 0,
-                                        textTransform: 'uppercase',
-                                      }}
-                                    >
-                                      {label}
-                                    </p>
+                                    <span style={orderTrackBubbleStyleConfirm(isCurrent, isCurrent)} aria-hidden />
+                                    <p style={orderTrackStepLabelStyleConfirm(isCurrent)}>{label}</p>
                                   </div>
                                   {note ? (
                                     <p
@@ -1805,18 +1800,8 @@ function CheckoutConfirmPage() {
                             {orderShowsDeliveredTrackingLine(ord) ? (
                               <div key="confirm-st-delivered">
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                  <span style={orderTrackBubbleStyleConfirm(deliveredRowCurrent)} aria-hidden />
-                                  <p
-                                    style={{
-                                      fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                      fontSize: '9px',
-                                      color: deliveredRowCurrent ? '#EB1C24' : '#000',
-                                      margin: 0,
-                                      textTransform: 'uppercase',
-                                    }}
-                                  >
-                                    DELIVERED
-                                  </p>
+                                  <span style={orderTrackBubbleStyleConfirm(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
+                                  <p style={orderTrackStepLabelStyleConfirm(deliveredRowCurrent)}>DELIVERED</p>
                                 </div>
                               </div>
                             ) : null}

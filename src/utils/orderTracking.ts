@@ -2,6 +2,16 @@
  * Shared order tracking fields (localStorage userOrders_${email}) for admin, Orders, and Concierge.
  */
 
+/** Inject once per page (e.g. `<style>{ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}</style>`). Matches Concierge `pulsate`. */
+export const ORDER_TRACKING_PULSATE_KEYFRAMES_CSS = `
+@keyframes orderTrackingPulsate {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+`;
+
+export const ORDER_TRACKING_PULSATE_ANIMATION = 'orderTrackingPulsate 1s ease-in-out infinite';
+
 import { getAccountNotifications, mergeAccountNotifications } from '../pages/account/notifications/page';
 import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
 
