@@ -39,16 +39,14 @@ import {
   orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
+import {
+  cartHasAnyLoyaltyEarningLine,
+  isMembershipSubscriptionCartLine,
+} from '../../../utils/loyaltyPointsEligibleNet';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
-  if (!item || item.name === 'GIFT CARD' || item.type === 'gift-card') return false;
-  const st = item.subscriptionTier;
-  if (st === '3months' || st === '6months' || st === '12months') return true;
-  return (
-    item.type === 'digital' &&
-    /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || ''))
-  );
+  return isMembershipSubscriptionCartLine(item);
 }
 
 function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): boolean {
@@ -568,7 +566,7 @@ function CheckoutConfirmPage() {
               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
               const isDigital = item.type === 'digital';
               const isConsultBooking = item.type === 'booking-consult';
-              if (isGiftCard || isDigital || isConsultBooking) return sum;
+              if (isGiftCard || isDigital || isConsultBooking || isMembershipSubscriptionCartLine(item)) return sum;
               return sum + (item.price || 0) * (item.quantity || 1);
             }, 0)
           : 0;
@@ -595,7 +593,8 @@ function CheckoutConfirmPage() {
             if (Number.isFinite(n) && n >= 0) baseUsd = n;
           }
         } catch (_) {}
-        const basePoints = signedIn ? Math.round(baseUsd) : 0;
+        const basePoints =
+          signedIn && cartHasAnyLoyaltyEarningLine(cartItems) ? Math.round(baseUsd) : 0;
         pointsEarned = Math.round(basePoints * multiplier);
       }
 
@@ -1905,7 +1904,8 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         item?.name === 'GIFT CARD' ||
                         item?.type === 'gift-card' ||
                         item?.type === 'digital' ||
-                        item?.type === 'booking-consult'
+                        item?.type === 'booking-consult' ||
+                        isMembershipSubscriptionCartLine(item)
                       )
                         return sum;
                       return sum + (item?.price || 0) * (item?.quantity || 1);
@@ -1917,7 +1917,10 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
                       }
                     } catch (_) {}
-                    const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+                    const basePoints =
+                      signedIn && cartHasAnyLoyaltyEarningLine(cartItems)
+                        ? Math.round(pointsEligibleAmount)
+                        : 0;
                     if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
                     if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
                   } catch (_) {}
@@ -1930,6 +1933,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     orderData.orderTotal ??
                     0;
                 }
+                if (!cartHasAnyLoyaltyEarningLine(cartItems)) displayPoints = 0;
                 if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
                 const tierUpper = String(displayTier).toUpperCase();
                 return (

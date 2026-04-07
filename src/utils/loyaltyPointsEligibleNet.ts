@@ -3,8 +3,11 @@
  * minus discounts that apply to that pool (codes, referral, digital cash, vouchers, consult codes).
  * Matches intent: $100 cart − $20 discount → 80 base points (before tier multiplier).
  *
- * Consult booking deposits (`booking-consult`) do not earn loyalty points; appointment deposits do.
+ * No points from: gift cards, `digital` lines, premium membership subscription/upgrade lines,
+ * or `booking-consult`. Appointment deposits (`booking-appointment`) earn points.
  */
+
+import { isSubscriptionTierId } from '../constants/subscriptionPricing';
 
 type CartItemLike = {
   name?: string;
@@ -12,6 +15,7 @@ type CartItemLike = {
   isSpecialOffer?: boolean;
   price?: number;
   quantity?: number;
+  subscriptionTier?: string;
 };
 
 export type PointsEligibleNetParams = {
@@ -33,6 +37,27 @@ function isGiftCard(item: CartItemLike): boolean {
 
 function isDigital(item: CartItemLike): boolean {
   return item.type === 'digital';
+}
+
+/** Premium membership cart line (upgrade / new subscription) — same shape as checkout confirm. */
+export function isMembershipSubscriptionCartLine(item: CartItemLike | null | undefined): boolean {
+  if (!item || isGiftCard(item)) return false;
+  const st = item.subscriptionTier;
+  if (typeof st === 'string' && isSubscriptionTierId(st)) return true;
+  return (
+    item.type === 'digital' && /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || ''))
+  );
+}
+
+/** True if the cart contains at least one line that can earn loyalty points at checkout. */
+export function cartHasAnyLoyaltyEarningLine(cartItems: CartItemLike[] | null | undefined): boolean {
+  if (!cartItems || cartItems.length === 0) return false;
+  for (const item of cartItems) {
+    if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
+    if (item.type === 'booking-consult') continue;
+    return true;
+  }
+  return false;
 }
 
 function lineTotal(item: CartItemLike): number {
@@ -57,7 +82,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peBookingForMerchSplit = 0;
   let peAppointmentBooking = 0;
   for (const item of cartItems) {
-    if (isGiftCard(item) || isDigital(item)) continue;
+    if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     const lt = lineTotal(item);
     peGross += lt;
     if (isAnyBookingLine(item)) {
@@ -88,7 +113,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peSpecialPhysical = 0;
   let pePool = 0;
   for (const item of cartItems) {
-    if (isGiftCard(item) || isDigital(item)) continue;
+    if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     const lt = lineTotal(item);
     if (item.isSpecialOffer) peSpecialPhysical += lt;
     else pePool += lt;
@@ -97,7 +122,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peAppointmentBookingInPool = 0;
   let peConsultInPool = 0;
   for (const item of cartItems) {
-    if (isGiftCard(item) || isDigital(item)) continue;
+    if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     if (item.isSpecialOffer) continue;
     if (isAppointmentBookingLine(item)) peAppointmentBookingInPool += lineTotal(item);
     else if (item.type === 'booking-consult') peConsultInPool += lineTotal(item);

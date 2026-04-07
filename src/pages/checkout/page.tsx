@@ -51,7 +51,10 @@ import {
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../utils/checkoutOrderStripDisplay';
-import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
+import {
+  cartHasAnyLoyaltyEarningLine,
+  computePointsEligibleNetUsd,
+} from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
@@ -2234,18 +2237,20 @@ function CheckoutPage() {
 
   const pointsEligibleNetAmount = useMemo(
     () =>
-      computePointsEligibleNetUsd({
-        cartItems,
-        hasSpecialOfferInCart,
-        hasOnlySpecialOfferInCart,
-        orderAmount,
-        orderAmountExcludingSpecialOffer,
-        effectiveDiscount,
-        effectiveReferralDiscount,
-        effectiveGiftCardDiscount,
-        voucherDiscount,
-        consultDiscountAmount,
-      }),
+      !cartHasAnyLoyaltyEarningLine(cartItems)
+        ? 0
+        : computePointsEligibleNetUsd({
+            cartItems,
+            hasSpecialOfferInCart,
+            hasOnlySpecialOfferInCart,
+            orderAmount,
+            orderAmountExcludingSpecialOffer,
+            effectiveDiscount,
+            effectiveReferralDiscount,
+            effectiveGiftCardDiscount,
+            voucherDiscount,
+            consultDiscountAmount,
+          }),
     [
       cartItems,
       hasSpecialOfferInCart,
@@ -2353,7 +2358,10 @@ function CheckoutPage() {
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
           // Calculate points earned (tier + 12mo premium multiplier)
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2418,8 +2426,11 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
-          // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          // Calculate points earned (if signed in) - exclude gift cards, digital, membership, consult; tier + 12mo premium multiplier
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2468,7 +2479,8 @@ function CheckoutPage() {
           sessionStorage.setItem(
             'checkoutSummaryRewards',
             JSON.stringify({
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier
             })
           );
@@ -2482,7 +2494,8 @@ function CheckoutPage() {
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier,
               isSubscriptionUpgrade,
               requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
@@ -3152,7 +3165,9 @@ function CheckoutPage() {
                             <>
                               {(() => {
                                 const basePoints =
-                                  isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleNetAmount);
+                                  isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems)
+                                    ? 0
+                                    : Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -5931,8 +5946,11 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in) — use net eligible USD (matches strip + consult code / stack rules; booking lines not double-counted)
-                  const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+                  // Calculate points earned (if signed in) — net eligible USD; zero when no earning lines (gift/digital/membership/consult-only)
+                  const basePoints =
+                    isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+                      ? Math.round(pointsEligibleNetAmount)
+                      : 0;
                   const multiplier = getPointsMultiplierForUser();
                   const pointsEarned = Math.round(basePoints * multiplier);
                   
@@ -6487,7 +6505,8 @@ function CheckoutPage() {
                   sessionStorage.setItem(
                     'checkoutSummaryRewards',
                     JSON.stringify({
-                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                      pointsEarned:
+                        isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                       tier: effectiveTierSummary
                     })
                   );
@@ -6524,7 +6543,8 @@ function CheckoutPage() {
                         country: selectedCountry || 'US',
                         paymentMethod: paymentMethodDisplay,
                         email,
-                        pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                        pointsEarned:
+                          isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                         tier: effectiveTierSummary,
                         cartItems: cartItems,
                         isSubscriptionUpgrade,
