@@ -72,7 +72,7 @@ const EMPTY_HEAD_MEASUREMENTS: HeadMeasurements = {
 const MAX_HAIR_INSPO_PHOTOS = 3;
 
 function hairInspoSubmittedLabel(count: number): string {
-  return `${count} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS SUBMITTED.`;
+  return `${count} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS SUBMITTED`;
 }
 
 /** Persists across consult URL remounts (`/booking/consultation` → `/booking/premium/consultation` from MembershipRouteSync). */
