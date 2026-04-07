@@ -12677,3 +12677,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to move the **X** delete control on hair inspo thumbnails **down 2px** (consult booking page only).
 
 **Changes:** **`consultation/page.tsx`** — remove button **`top`** **`-6px` → `-4px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details: gray rule under red header name
+
+**Context (this chat):** User said the client details toggle was missing the **gray border** under the **red header client name**.
+
+**Changes:** **`admin/clients/page.tsx`** — header row (name + close) **`borderBottom: '1px solid #e5e7eb'`**, **`paddingBottom: '10px'`**, **`marginBottom: '16px'`** (replaces **`mb-4`** on that row). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
