@@ -12576,11 +12576,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
-## 2026-04-08 — Consult order status bar: ⅓ / ⅔ / 100% by status
+## 2026-04-08 — Consult order status bar: 30% / 60% / 100% by status
 
-**Context (this chat):** User wanted the **consult** booking **order tracking bar** to show **⅓** fill when **PLACED**, **⅔** when **PROCESSING**, **100%** when **COMPLETE**.
+**Context (this chat):** User wanted the **consult** booking **order tracking bar** to show staged fill when **PLACED** / **PROCESSING** / **COMPLETE** (updated to **30% / 60% / 100%**).
 
-**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **100/3**, **PROCESSING** → **200/3**, **COMPLETE**/**DELIVERED** → **100**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **30%**, **PROCESSING** → **60%**, **COMPLETE**/**DELIVERED** → **100%**; was **⅓ / ⅔**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 ---
 
