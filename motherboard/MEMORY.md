@@ -12733,3 +12733,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to increase **line thickness** of the red **X** delete control on hair inspo thumbs by **0.3px** (consult booking).
 
 **Changes:** **`consultation/page.tsx`** — circular remove button border **1.07px → 1.37px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: X stroke +0.3px (not circle border)
+
+**Context (this chat):** User said the prior change thickened the **black circle** border, not the **red X**; asked to **undo** and fix.
+
+**Changes:** **`consultation/page.tsx`** — circle border back **1.07px**; replace **`close-icon` `<img>`** with inline SVG matching asset path, **`fill`/`stroke` `#EB1C24`**, **`strokeWidth` 0.4** (asset was **0.1**, **+0.3**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
