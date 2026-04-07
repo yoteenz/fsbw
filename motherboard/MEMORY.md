@@ -12462,3 +12462,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Topics in this chat (cumulative):** A/C thumbs, size, premium badge from viewer, this turn: **horizontal alignment**.
 
 **Changes:** **`src/pages/orders/page.tsx`** — fixed **102px** thumbnail slot (**`ORDER_LIST_THUMB_SLOT_STYLE`**); **102×102** flex-centered hit area for the image (**`ORDER_LIST_THUMB_BUTTON_STYLE`**); A/C image stays smaller inside; **ITEM** line **`width: 100%`**, **`textAlign: center`**. Applied to **active** and **archived** lists. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C badges = subscription only + admin override refresh
+
+**Context (this chat):** After switching **admin** to **standard** (Rewards tier toggles), **Account → Orders** still showed **premium** A/C thumbnails. User wants badges tied to **current membership** always.
+
+**Root causes:** (1) **`isPremiumMemberForGatedFeatures()`** treats **BLACK** spend tier as premium, so standard + BLACK still got premium badges. (2) **`adminSubscriptionOverride`** is written in the **same tab** as Orders — **`storage`** does not fire there, so the page did not re-render.
+
+**Changes:**
+- **`src/utils/adminAuth.ts`:** **`MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT`** constant for same-tab broadcast.
+- **`src/pages/orders/page.tsx`:** **`ordersPageBookingBadgeTierForViewer`** uses **`getEffectiveSubscriptionTier(currentUser) != null`** (subscription / PREMIUM membership + founder override only, not BLACK-only). Listener bumps re-render on that event + cross-tab **`storage`** for **`adminSubscriptionOverride`**; **`ordersPageOrderThumbnailSrc`** reads **`bookingBadgeMembershipBump`** so img **`src`** updates.
+- **`src/pages/account/membership/page.tsx`:** Dispatch **`MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT`** when saving **`ADMIN_SUBSCRIPTION_OVERRIDE_KEY`**.
+
+**`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
