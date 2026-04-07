@@ -605,7 +605,7 @@ export default function BookingConsultationPage() {
                     gap: '13px',
                     width: '100%',
                     marginTop: '14px',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     alignItems: 'flex-start',
                     minHeight: '88px'
                   }}
