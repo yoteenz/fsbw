@@ -11872,3 +11872,20 @@ Verification: `tsc --noEmit`.
 - **Bug:** an extra **`</div>`** from the prior refactor broke JSX (tsc failed); removed the stray closer.
 
 **Files:** `src/pages/booking/appointment/page.tsx`, `src/pages/booking/consultation/page.tsx`.
+
+---
+
+## 2026-04-06 — Admin client details Appointments: same booking edit icon as meetings hub
+
+**Context (this chat):** User wanted the **Appointments** tab on admin client details to use the **same panel edit icon as the bookings (A) tab** on **Admin → Meetings** — specifically **`/assets/edit-meeting-icon-booking.svg`** for all rows (not the consult-only **`edit-meeting-icon.svg`**).
+
+**Topics covered:**
+- **`preview/mobile`** had already been updated to set **`actionIconSrc="/assets/edit-meeting-icon-booking.svg"`** on **`AdminMeetingClientPanel`** for both booking and consult rows.
+- Work was required on branch **`cursor/appointment-notes-border-spacing-8444`**, whose **`admin/clients/page.tsx`** is an older variant: **`appointments`** is still an **empty typed array** with **inline APT cards** (no **`AdminMeetingClientPanel`** / focus handoff yet). Stash + checkout caused a merge conflict; keeping the inline layout was necessary for **`tsc`** to pass.
+
+**Decisions / outcomes:**
+- On **`cursor/appointment-notes-border-spacing-8444`**: extend each inline appointment row with a right-side control using **`edit-meeting-icon-booking.svg`** (11×11, transparent button), **`navigate('/admin/meetings?tab=bookings')`** by default, **`?tab=consults`** if **`appointment.category`** is **`consultation`** / **`consult`** for forward-compatible data.
+
+**Changes:** `src/pages/admin/clients/page.tsx`. Verification: **`npx tsc --noEmit`**. Pushed branch; draft PR **#11**.
+
+**Conventions:** When **`preview/mobile`** and the Cursor task branch diverge on large pages, port the **minimal** UI delta onto the branch’s actual structure rather than dropping in blocks that depend on missing imports/types.
