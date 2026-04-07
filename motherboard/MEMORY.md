@@ -12417,3 +12417,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/checkout/page.tsx`:** When persisting a **bookings-only** order to **`userOrders_*`**, set **`productImage`** from the same helper, and store **`bookingTier`** (**`standard`** / **`premium`**) from the matching cart line so premium vs standard matches the cart.
 
 **`npx tsc --noEmit`**. Commit **`fix(orders): use cart booking badge thumbnails for A/C orders`** (**`14d50e9`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Premium membership upgrades not on Account Orders
+
+**Context (this chat):** User asked that **premium membership upgrades only** should **not** be treated as **orders** and should **not** appear on **Account → Orders**.
+
+**Topics in this chat (cumulative):** Earlier: A/C order thumbnails aligned with cart booking badges (**`14d50e9`**). This turn: membership upgrade exclusion.
+
+**Changes:**
+- **`src/utils/userOrdersBuckets.ts`:** **`orderIsPremiumMembershipUpgradeOnly`** (explicit **`isSubscriptionUpgrade`** flag or legacy **`digitalFulfillmentOnly`** + subscription tier **`productName`**, excluding A/C **`bookingFlowType`**); **`filterOutPremiumMembershipUpgradeOrders`**.
+- **`src/pages/checkout/page.tsx`:** On successful checkout, **do not** append to **`userOrders_*`** when **`isSubscriptionUpgrade`**; still run **`hasMadeFirstPurchase`** when that checkout is the user’s first bucket entry (membership-only first “purchase” still activates referral behavior).
+- **`src/pages/orders/page.tsx`:** After normalize/sort, **filter** membership-upgrade rows; **persist** cleaned **`userOrders_*`** when legacy rows are removed.
+
+**`npx tsc --noEmit`**. Commit **`fix(orders): exclude premium membership upgrades from account orders`** (**`2d11010`**). Pushed **`preview/mobile`**.
