@@ -11904,3 +11904,11 @@ Verification: `tsc --noEmit`.
 - **`adminClientMeetingsFocusSession.ts`** — **`sessionStorage`** handoff **`id` / `date` / `tab`**.
 
 Verification: **`npx tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult booking: hair inspo thumbs left-aligned
+
+**Context (this chat):** User asked for hair inspo photo attachments on the **consult booking** page to align **left** instead of **centered**.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — inspo thumbnails flex row **`justifyContent: 'flex-start'`** (was **`center`**). **`npx tsc --noEmit`**.
