@@ -12477,3 +12477,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/account/membership/page.tsx`:** Dispatch **`MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT`** when saving **`ADMIN_SUBSCRIPTION_OVERRIDE_KEY`**.
 
 **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: tighter spacing above A/C “N ITEM(S)”
+
+**Context (this chat):** User asked to **reduce spacing above** the **items count** line for **appointment/consult** orders **only** by **6px**.
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageListItemsLabelMarginTopPx`**: **2px** for wig orders, **-4px** for A/C (**6px** less gap above the label). Active + archived lists. **`npx tsc --noEmit`**. Commit **`fix(orders): reduce gap above A/C items label by 6px`** (**`71da809`**). Pushed **`preview/mobile`**.
