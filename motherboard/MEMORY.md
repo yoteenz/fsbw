@@ -12589,3 +12589,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked that **consult** bookings **not** earn loyalty points at checkout (**appointment** deposits still earn).
 
 **Changes:** **`loyaltyPointsEligibleNet.ts`** — only **`booking-appointment`** adds to points net; **`booking-consult`** stays in cart **pool** for discount allocation but **excluded** from earned base (both simple + mixed-special branches). **`checkout/page.tsx`** — removed **`isBookingsOnlyCheckout → 0`** shortcut and consult-only strip zeroing so **appointment-only** bookings still earn; **`pointsEligibleNetAmount`** drives the loyalty line. **`checkout/confirm/page.tsx`** — fallback **`pointsEligibleAmount`** reducers skip **`booking-consult`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout loyalty: no points on gift cards, digital, membership lines
+
+**Context (this chat):** User asked that **membership subscriptions/upgrades**, **gift cards**, and **other digital** checkout lines **not** earn loyalty points (with consult already excluded).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — **`isMembershipSubscriptionCartLine`** (**`subscriptionTier`** **3/6/12** months or legacy **`digital`** + name pattern), **`cartHasAnyLoyaltyEarningLine`**; membership lines skipped in gross loops like gift/digital. **`computePointsEligibleNetUsd`** returns **0** when no earning lines. **`checkout/page.tsx`** — **`pointsEligibleNetAmount`** + **`pointsEarned`** / **`checkoutSummaryRewards`** gated by **`!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine`**. **`checkout/confirm/page.tsx`** — **`isMembershipTierCartItem`** delegates to shared helper; reduces + rewards block skip membership + force **0** when no earning lines. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
