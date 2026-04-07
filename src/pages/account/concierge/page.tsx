@@ -11,6 +11,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
 import { orderRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
+import { consultBookingInspoPhotoUrlsFromOrder } from '../../../utils/consultOrderInspoPhotos';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
@@ -4073,6 +4074,51 @@ function ConciergePage() {
                                                 selectedOrder as unknown as Record<string, unknown>
                                               );
                                               if (!needsAuthFormRow) {
+                                                const consultInspoUrls = consultBookingInspoPhotoUrlsFromOrder(
+                                                  selectedOrder as unknown as Record<string, unknown>
+                                                );
+                                                if (
+                                                  selectedOrder.bookingFlowType === 'consult' &&
+                                                  consultInspoUrls.length > 0
+                                                ) {
+                                                  return (
+                                                    <div
+                                                      style={{
+                                                        display: 'flex',
+                                                        gap: '8px',
+                                                        marginBottom: '12px',
+                                                        flexWrap: 'wrap',
+                                                        justifyContent: 'flex-start',
+                                                        marginLeft: '2px',
+                                                        alignItems: 'flex-start',
+                                                      }}
+                                                    >
+                                                      {consultInspoUrls.map((src, idx) => (
+                                                        <div
+                                                          key={`consult-inspo-${idx}-${src.slice(0, 24)}`}
+                                                          className="border border-black bg-white overflow-hidden"
+                                                          style={{
+                                                            width: '50px',
+                                                            height: '80px',
+                                                            flexShrink: 0,
+                                                            boxSizing: 'border-box',
+                                                          }}
+                                                        >
+                                                          <img
+                                                            src={src}
+                                                            alt={`Hair inspo ${idx + 1}`}
+                                                            style={{
+                                                              width: '100%',
+                                                              height: '100%',
+                                                              objectFit: 'cover',
+                                                              display: 'block',
+                                                            }}
+                                                          />
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  );
+                                                }
                                                 const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
                                                 const textureIconTop =
                                                   productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
@@ -4270,7 +4316,52 @@ function ConciergePage() {
                                                 </div>
                                               );
                                             }
-                                            // Other stages use silky texture icon
+                                            // Other stages: consult shows submitted hair inspo; else silky texture icon
+                                            const consultInspoUrlsOther = consultBookingInspoPhotoUrlsFromOrder(
+                                              selectedOrder as unknown as Record<string, unknown>
+                                            );
+                                            if (
+                                              selectedOrder.bookingFlowType === 'consult' &&
+                                              consultInspoUrlsOther.length > 0
+                                            ) {
+                                              return (
+                                                <div
+                                                  style={{
+                                                    display: 'flex',
+                                                    gap: '8px',
+                                                    marginBottom: '12px',
+                                                    flexWrap: 'wrap',
+                                                    justifyContent: 'flex-start',
+                                                    marginLeft: '2px',
+                                                    alignItems: 'flex-start',
+                                                  }}
+                                                >
+                                                  {consultInspoUrlsOther.map((src, idx) => (
+                                                    <div
+                                                      key={`consult-inspo-other-${idx}-${src.slice(0, 24)}`}
+                                                      className="border border-black bg-white overflow-hidden"
+                                                      style={{
+                                                        width: '50px',
+                                                        height: '80px',
+                                                        flexShrink: 0,
+                                                        boxSizing: 'border-box',
+                                                      }}
+                                                    >
+                                                      <img
+                                                        src={src}
+                                                        alt={`Hair inspo ${idx + 1}`}
+                                                        style={{
+                                                          width: '100%',
+                                                          height: '100%',
+                                                          objectFit: 'cover',
+                                                          display: 'block',
+                                                        }}
+                                                      />
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              );
+                                            }
                                             const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
                                             const textureIconTop = productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
                                             return (

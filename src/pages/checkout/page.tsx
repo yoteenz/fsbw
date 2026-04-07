@@ -6333,6 +6333,13 @@ function CheckoutPage() {
                             bookingTier: bookingTierPersist,
                           });
                         const requiresOrderAuthorizationForm = cartRequiresOrderAuthorizationForm(cartItems as any[]);
+                        const consultInspoPersist =
+                          bookingFlowTypePersist === 'consult' &&
+                          Array.isArray(bookingCartLineForPersist?.bookingInspoPhotoUrls)
+                            ? (bookingCartLineForPersist.bookingInspoPhotoUrls as unknown[]).filter(
+                                (u): u is string => typeof u === 'string' && u.trim().length > 0
+                              )
+                            : undefined;
                         const newOrder = {
                           id: `order-${nextOrderNumber}`,
                           orderNumber: `ORDER ${orderNumber}`,
@@ -6352,6 +6359,9 @@ function CheckoutPage() {
                                 bookingFlowType: bookingFlowTypePersist,
                                 bookingTier: bookingTierPersist,
                               }
+                            : {}),
+                          ...(consultInspoPersist && consultInspoPersist.length > 0
+                            ? { bookingInspoPhotoUrls: consultInspoPersist }
                             : {})
                         };
                         activeOrders.push(newOrder);

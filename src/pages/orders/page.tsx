@@ -89,6 +89,8 @@ interface Order {
   consultProcessingStartedAt?: number;
   /** Consult: linked admin quote id after offer sent. */
   consultQuoteId?: string;
+  /** Consult: client-submitted hair inspo (data URLs or remote), max 3 at checkout. */
+  bookingInspoPhotoUrls?: string[];
   completedAt?: number;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
   /** Loyalty points earned on this order (set at checkout); avoids falling back to account lifetime balance. */
@@ -899,6 +901,7 @@ function OrdersPage() {
       bookingFlowType: 'consult',
       bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
+      bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
     },
     {
@@ -920,6 +923,7 @@ function OrdersPage() {
       bookingFlowType: 'consult',
       bookingTier: 'standard',
       bookingHairOption: 'WIG ONLY',
+      bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
     }
   ];
