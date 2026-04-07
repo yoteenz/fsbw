@@ -12649,3 +12649,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **Simple:** **`motherboard/MEMORY.md`** — keep **`preview/mobile`** timeline; drop duplicate HEAD-only entries. **`AdminMeetingsHub`** list UI — keep **`AdminMeetingHubStyleCard`**. Remove unused import after merge.
 
 **Resolution:** Deleted **`adminMeetingHubModel.ts`** and **`adminClientMeetingsFocusSession.ts`**. **`AdminMeetingHubStyleCard`** now imports card helpers from **`adminMeetingClientPanels`**. Extended **`adminMeetingsFocusSession`** payload with optional **`tab?: 'bookings' | 'consults'`**; **`storeAdminMeetingsFocusFromClientDetails`** accepts **`tab`**; hub focus effect uses stored tab when present. **`admin/clients/page.tsx`**: **`appointments`** from **`listAggregatedAdminMeetingsForClientDetails`**, **`AdminMeetingHubStyleCard`** + **`contentInsetLeftPx={6}`**, focus via extended session; removed per-tab **`getAdminMeetings`** + duplicate state. **`npx tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — All work on `preview/mobile` only; remove `cursor/*` branch
+
+**Context (this chat):** User said changes were pushed to the wrong branch (**`cursor/appointment-notes-border-spacing-8444`**); they want **everything on `preview/mobile`** only, the cursor branch **deleted**, and asked why agents keep creating branches after they asked for a memory **not** to.
+
+**Why it happened:** Cloud / task instructions still designated a **`cursor/…`** branch; that overrode the repo’s stated preference until the user repeated it.
+
+**Actions:** Checked out **`preview/mobile`**, fast-forward merged through **`bc8d145`** (same tip as the cursor branch), **`git push -u origin preview/mobile`**, **`git push origin --delete cursor/appointment-notes-border-spacing-8444`**, deleted local cursor branch. **`motherboard/CORE.md`** — branch policy updated: **only `preview/mobile`**, no new **`cursor/*`** unless user explicitly asks.
+
+**Convention:** Agents must **ignore** default task-branch naming when it conflicts; use **`preview/mobile`** for all pushes here.
