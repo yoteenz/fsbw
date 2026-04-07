@@ -710,10 +710,10 @@ export default function BookingConsultationPage() {
                           position: 'absolute',
                           top: '-4px',
                           right: '-4px',
-                          width: '14px',
-                          height: '14px',
+                          width: '15.4px',
+                          height: '15.4px',
                           backgroundColor: '#FFFFFF',
-                          border: '0.97px solid #000000',
+                          border: '1.07px solid #000000',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
@@ -728,8 +728,8 @@ export default function BookingConsultationPage() {
                           src="/assets/close-icon.svg"
                           alt=""
                           style={{
-                            width: '8.4px',
-                            height: '8.4px',
+                            width: '9.24px',
+                            height: '9.24px',
                             objectFit: 'contain',
                             display: 'block',
                             flexShrink: 0,
