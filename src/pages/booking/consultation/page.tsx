@@ -713,7 +713,7 @@ export default function BookingConsultationPage() {
                           width: '15.4px',
                           height: '15.4px',
                           backgroundColor: '#FFFFFF',
-                          border: '1.07px solid #000000',
+                          border: '1.37px solid #000000',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
