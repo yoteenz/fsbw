@@ -11912,3 +11912,11 @@ Verification: **`npx tsc --noEmit`**.
 **Context (this chat):** User asked for hair inspo photo attachments on the **consult booking** page to align **left** instead of **centered**.
 
 **Changes:** **`src/pages/booking/consultation/page.tsx`** — inspo thumbnails flex row **`justifyContent: 'flex-start'`** (was **`center`**). **`npx tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client Appointments cards: content +6px right
+
+**Context (this chat):** User asked to move **all text and images only inside** the client panel cards on **Admin → Clients → Appointments** **6px to the right** together (not the meetings hub).
+
+**Changes:** **`AdminMeetingHubStyleCard.tsx`** — optional **`contentInsetLeftPx`** applies **`paddingLeft`** to the main content column (avatar + body). **`admin/clients/page.tsx`** — **`contentInsetLeftPx={6}`** on those cards only. **`npx tsc --noEmit`**.
