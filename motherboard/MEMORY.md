@@ -12549,3 +12549,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to push all work from **`preview/mobile`** to **`master`**.
 
 **Changes:** Checked out **`master`**, pulled **`origin/master`**, fast-forward merged **`preview/mobile`** (no merge commit; **`master`** advanced **`e68c284` → `e07924a`**), pushed **`origin/master`**. **`preview/mobile`** and **`master`** now share tip **`e07924a`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo photos above duration line
+
+**Context (this chat):** User wanted **consult-only** order tracking (Concierge) to show **client-submitted hair inspo photos** above the gray line above **ESTIMATED DURATION**, instead of the **SILKY** texture thumbnail.
+
+**Changes:** **`consultOrderInspoPhotos.ts`** — **`consultBookingInspoPhotoUrlsFromOrder`**. **`checkout/page.tsx`** — persist **`bookingInspoPhotoUrls`** on **`newOrder`** from consult cart line. **`orders/page.tsx`** — **`Order.bookingInspoPhotoUrls`**; mock consult orders sample URLs. **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`** and URLs exist, render **50×80** bordered photo strip in expanded tracking (replaces texture for stage 0 no-form path and “other stages” fallback). **`npx tsc --noEmit`**. Commit **`a784ad4`**. Pushed **`preview/mobile`**.
