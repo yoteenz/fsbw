@@ -11889,3 +11889,18 @@ Verification: `tsc --noEmit`.
 **Changes:** `src/pages/admin/clients/page.tsx`. Verification: **`npx tsc --noEmit`**. Pushed branch; draft PR **#11**.
 
 **Conventions:** When **`preview/mobile`** and the Cursor task branch diverge on large pages, port the **minimal** UI delta onto the branch’s actual structure rather than dropping in blocks that depend on missing imports/types.
+
+---
+
+## 2026-04-06 — Admin client Appointments tab: same meeting cards + icons as Meetings hub
+
+**Context (this chat):** User said icons on client details **Appointments** were still wrong; screenshot showed **Admin → Meetings → BOOKINGS** cards (profile left, red pencil top-right on white bordered cards).
+
+**Changes:**
+- **`adminMeetingHubModel.ts`** — extracted shared meeting-card helpers from **`AdminMeetingsHub.tsx`** (formatting, tier, booking payment bar, consult inspo, sort, etc.).
+- **`AdminMeetingHubStyleCard.tsx`** — single component renders **booking** vs **consult** card body + **`edit-meeting-icon-booking.svg`** with same button offsets as hub.
+- **`AdminMeetingsHub.tsx`** — uses **`AdminMeetingHubStyleCard`** for list rows; **`adminClientMeetingsFocusSession`** on load: jump calendar month, **`selectedDay`**, open **edit** / **quote** panel for row from client details.
+- **`admin/clients/page.tsx`** — **Appointments** loads **`getAdminMeetings`** when tab opens; merges **mock + local + API** for current year filtered by client **email** / **user id**; lists **`AdminMeetingHubStyleCard`** (newest first); pencil stores focus + navigates to hub; consult thumbs use **`ImageViewerModal`**.
+- **`adminClientMeetingsFocusSession.ts`** — **`sessionStorage`** handoff **`id` / `date` / `tab`**.
+
+Verification: **`npx tsc --noEmit`**.

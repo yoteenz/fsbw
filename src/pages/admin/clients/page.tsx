@@ -1,10 +1,19 @@
-import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { getAdminClients, getAdminOrders, getAdminCart, getAdminWishlist, getAdminActivity, getAdminReviews, exportClientsCsv } from '../../../utils/api';
+import {
+  getAdminClients,
+  getAdminOrders,
+  getAdminCart,
+  getAdminWishlist,
+  getAdminActivity,
+  getAdminReviews,
+  exportClientsCsv,
+  getAdminMeetings,
+} from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -17,6 +26,17 @@ import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
 import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
+import {
+  endOfYear,
+  generateMockMeetingsForRange,
+  loadLocalMeetings,
+  normalizeApiMeeting,
+  startOfYear,
+  type AdminMeeting,
+} from '../../../utils/adminMeetingsMock';
+import { meetingClientEmailKey, meetingSortTimeMs } from '../../../utils/adminMeetingHubModel';
+import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
+import { storeAdminClientMeetingsFocus } from '../../../utils/adminClientMeetingsFocusSession';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -603,6 +623,9 @@ export default function AdminClients() {
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
+  /** Merged API meetings for admin client-details Appointments tab (same source as /admin/meetings). */
+  const [clientDetailsApiMeetings, setClientDetailsApiMeetings] = useState<AdminMeeting[] | null>(null);
+  const [clientDetailsConsultPhotoPreviewSrc, setClientDetailsConsultPhotoPreviewSrc] = useState<string | null>(null);
 
   /** Overview list is a max-height scroll region; preserve its scrollTop when opening/closing details. */
   const clientsListScrollElRef = useRef<HTMLDivElement | null>(null);
@@ -665,6 +688,39 @@ export default function AdminClients() {
   useEffect(() => {
     setPersonalSectionTab('details');
   }, [selectedClientEmail]);
+
+  useEffect(() => {
+    setClientDetailsConsultPhotoPreviewSrc(null);
+  }, [selectedClientEmail, detailsTab]);
+
+  useEffect(() => {
+    if (detailsTab !== 'appointments' || !selectedClientEmail) {
+      setClientDetailsApiMeetings(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        const cu = raw ? JSON.parse(raw) : null;
+        if (!isSupabaseConfigured() || !cu?.email || !isAdminEmail(String(cu.email))) {
+          if (!cancelled) setClientDetailsApiMeetings([]);
+          return;
+        }
+        const r = await getAdminMeetings();
+        const rows = Array.isArray(r.meetings) ? r.meetings : [];
+        const norm = rows
+          .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
+          .filter(Boolean) as AdminMeeting[];
+        if (!cancelled) setClientDetailsApiMeetings(norm);
+      } catch {
+        if (!cancelled) setClientDetailsApiMeetings([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [detailsTab, selectedClientEmail]);
 
   /** Viewing your own client row: debounced push local cart/wishlist to Supabase so admin GET tabs match this browser. */
   useEffect(() => {
@@ -1055,8 +1111,37 @@ export default function AdminClients() {
   const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
-  /** Real appointments per client are not loaded yet — avoid placeholder rows so new sign-ups are not shown fake data. */
-  const appointments: Array<{ date: string; time?: string; type: string; status: string }> = [];
+  const clientDetailsMeetingsForSelected = useMemo(() => {
+    if (!selectedClient) return [];
+    const emailNorm = String(selectedClient.email || '')
+      .trim()
+      .toLowerCase();
+    const userId = String((selectedClient as { id?: string }).id || '').trim();
+    const yearStart = startOfYear(new Date().toISOString().slice(0, 10));
+    const yearEnd = endOfYear(new Date().toISOString().slice(0, 10));
+    const mock = generateMockMeetingsForRange(yearStart, yearEnd);
+    const local = loadLocalMeetings().filter((m) => m.date >= yearStart && m.date <= yearEnd);
+    const byId = new Map<string, AdminMeeting>();
+    for (const m of mock) byId.set(m.id, m);
+    if (clientDetailsApiMeetings) {
+      for (const m of clientDetailsApiMeetings) {
+        if (m.date >= yearStart && m.date <= yearEnd) byId.set(m.id, m);
+      }
+    }
+    for (const m of local) {
+      if (m.date >= yearStart && m.date <= yearEnd) byId.set(m.id, m);
+    }
+    const all = [...byId.values()];
+    return all.filter((m) => {
+      if (emailNorm && meetingClientEmailKey(m) === emailNorm) return true;
+      if (userId && String(m.userId || '').trim() === userId) return true;
+      return false;
+    });
+  }, [selectedClient, clientDetailsApiMeetings]);
+
+  const clientDetailsMeetingsSorted = useMemo(() => {
+    return [...clientDetailsMeetingsForSelected].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+  }, [clientDetailsMeetingsForSelected]);
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
@@ -3058,154 +3143,51 @@ export default function AdminClients() {
                         )}
                         {detailsTab === 'appointments' && (
                           <div className="space-y-3">
-                            {appointments.length === 0 ? (
-                              <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
+                            {clientDetailsApiMeetings === null ? (
+                              <div
+                                className="bg-white border border-gray-200 p-4 text-center"
+                                style={{
+                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  color: '#808080',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                LOADING APPOINTMENTS…
+                              </div>
+                            ) : clientDetailsMeetingsSorted.length === 0 ? (
+                              <div
+                                className="bg-white border border-gray-200 p-4 text-center"
+                                style={{
+                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontSize: '11px',
+                                  color: '#808080',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                NO APPOINTMENTS OR CONSULTS YET
+                              </div>
                             ) : (
-                              appointments.map((appointment: any, index: number) => {
-                                const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
-                                const pillStyle: Record<string, string> = {
-                                  height: '15px',
-                                  padding: '0 6px',
-                                  boxSizing: 'border-box',
-                                  borderRadius: '2px',
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '8px',
-                                  ...(s === 'SCHEDULED'
-                                    ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
-                                    : s === 'COMPLETED'
-                                      ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
-                                      : s === 'CANCELED' || s === 'CANCELLED'
-                                        ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
-                                        : { backgroundColor: '#f3f4f6', color: '#808080' }),
-                                };
+                              clientDetailsMeetingsSorted.map((m) => {
+                                const isConsult = m.category === 'consultation';
                                 return (
-                                  <div
-                                    key={index}
-                                    className="bg-white border border-gray-200 p-4"
-                                    style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-                                  >
-                                    <div
-                                      className="flex flex-col items-center justify-center"
-                                      style={{
-                                        flexShrink: 0,
-                                        width: '85px',
-                                        minHeight: '85px',
-                                        transform: 'translateX(-12px)',
-                                      }}
-                                    >
-                                      <div
-                                        style={{
-                                          width: '85px',
-                                          height: '85px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          backgroundColor: '#f9fafb',
-                                          border: '1px solid #e5e7eb',
-                                          borderRadius: '2px',
-                                        }}
-                                      >
-                                        <span
-                                          style={{
-                                            fontFamily: '"Futura PT Medium"',
-                                            fontSize: '10px',
-                                            color: '#808080',
-                                            textTransform: 'uppercase',
-                                          }}
-                                        >
-                                          APT
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div
-                                      style={{
-                                        flex: 1,
-                                        minWidth: 0,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        transform: 'translate(-10px, -12px)',
-                                      }}
-                                    >
-                                      <p
-                                        style={{
-                                          fontFamily: '"Covered By Your Grace", cursive',
-                                          fontSize: '16px',
-                                          color: '#000000',
-                                          margin: 0,
-                                          lineHeight: 1.25,
-                                        }}
-                                      >
-                                        {appointment.date}
-                                      </p>
-                                      <div style={{ marginTop: '2px' }}>
-                                        <h4
-                                          style={{
-                                            fontFamily: '"Futura PT Medium"',
-                                            fontSize: '10px',
-                                            color: '#EB1C24',
-                                            margin: 0,
-                                            textTransform: 'uppercase',
-                                          }}
-                                        >
-                                          {appointment.type || 'APPOINTMENT'}
-                                        </h4>
-                                      </div>
-                                      <p
-                                        style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          fontSize: '12px',
-                                          color: '#808080',
-                                          margin: 0,
-                                          marginTop: '2px',
-                                          transform: 'translateY(-4px)',
-                                          textTransform: 'uppercase',
-                                        }}
-                                      >
-                                        {appointment.time || '—'}
-                                      </p>
-                                    </div>
-                                    <div
-                                      style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        flexShrink: 0,
-                                        transform: 'translateX(-6px)',
-                                      }}
-                                    >
-                                      <span className="admin-order-status-pill" style={pillStyle}>
-                                        <span style={{ lineHeight: 1 }}>{appointment.status}</span>
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          const cat = String(appointment.category || '').toLowerCase();
-                                          const tab =
-                                            cat === 'consultation' || cat === 'consult' ? 'consults' : 'bookings';
-                                          navigate(`/admin/meetings?tab=${tab}`);
-                                        }}
-                                        aria-label="Open in meetings"
-                                        style={{
-                                          border: 'none',
-                                          background: 'transparent',
-                                          padding: '4px',
-                                          cursor: 'pointer',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                        }}
-                                      >
-                                        <img
-                                          src="/assets/edit-meeting-icon-booking.svg"
-                                          alt=""
-                                          width={11}
-                                          height={11}
-                                        />
-                                      </button>
-                                    </div>
-                                  </div>
+                                  <AdminMeetingHubStyleCard
+                                    key={m.id}
+                                    m={m}
+                                    variant={isConsult ? 'consult' : 'booking'}
+                                    onProfileClick={() => setShowEnlargedProfileImage(true)}
+                                    onActionClick={(e) => {
+                                      e.stopPropagation();
+                                      storeAdminClientMeetingsFocus({
+                                        id: m.id,
+                                        date: m.date,
+                                        tab: isConsult ? 'consults' : 'bookings',
+                                      });
+                                      navigate(`/admin/meetings?tab=${isConsult ? 'consults' : 'bookings'}`);
+                                    }}
+                                    actionAriaLabel={isConsult ? 'Send quote' : 'Edit meeting'}
+                                    onConsultPhotoClick={setClientDetailsConsultPhotoPreviewSrc}
+                                  />
                                 );
                               })
                             )}
@@ -3724,6 +3706,13 @@ export default function AdminClients() {
         images={mediaViewerUrls}
         currentIndex={mediaViewerIndex}
         onNavigate={setMediaViewerIndex}
+      />
+      <ImageViewerModal
+        isOpen={Boolean(clientDetailsConsultPhotoPreviewSrc)}
+        onClose={() => setClientDetailsConsultPhotoPreviewSrc(null)}
+        images={clientDetailsConsultPhotoPreviewSrc ? [clientDetailsConsultPhotoPreviewSrc] : []}
+        currentIndex={0}
+        onNavigate={() => {}}
       />
       {/* Enlarged profile image — same overlay + circular frame as Account → Profile */}
       {showEnlargedProfileImage && selectedClient && !profilePhotoError && (
