@@ -12741,3 +12741,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said the prior change thickened the **black circle** border, not the **red X**; asked to **undo** and fix.
 
 **Changes:** **`consultation/page.tsx`** — circle border back **1.07px**; replace **`close-icon` `<img>`** with inline SVG matching asset path, **`fill`/`stroke` `#EB1C24`**, **`strokeWidth` 0.4** (asset was **0.1**, **+0.3**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin signed forms: PDF viewer + list header colors + vertical center
+
+**Context (this chat):** User wanted **`SIGNED APR …`** text red only, time gray Futura medium; detail view as **PDF** (fields + photo ID + uploads) with **save/download**; **vertically center** two list panels; modal wider for PDF.
+
+**Changes:** **`jspdf`** dependency. **`signedOrderFormPdf.ts`** — **`buildSignedOrderFormPdf`**. **`SignedOrderFormPdfPanel.tsx`** — blob URL + **iframe** + download. **`admin/clients/page.tsx`** — **`SignedOrderFormListRow`**; list **`justifyContent: center`** when **≥2** forms; detail **`maxWidth` 520px**. **`npm run build`**. Pushed **`preview/mobile`**.
