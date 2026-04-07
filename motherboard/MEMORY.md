@@ -12573,3 +12573,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted consult **order tracking** hair inspo photos to use the **same border treatment** as **attached hair inspo** on the booking flow (**`/booking/consultation`** thumbs: white ring + black hairline) and **uniform** thumb size.
 
 **Changes:** **`bookingConsultHairInspoThumb.tsx`** — shared **88×88** outer + inner frame (**`padding: 1px`**, **`border: 3px solid white`**, **`boxShadow: 0 0 0 1.1px black`**, **`#f5f5f5`** fill, **`object-fit: cover`**) + **`BookingConsultHairInspoThumb`**. **`consultation/page.tsx`** uses shared constants/styles. **`concierge/page.tsx`** replaces **50×80** black-border thumbs with **`BookingConsultHairInspoThumb`**, **`gap: 13px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult order status bar: ⅓ / ⅔ / 100% by status
+
+**Context (this chat):** User wanted the **consult** booking **order tracking bar** to show **⅓** fill when **PLACED**, **⅔** when **PROCESSING**, **100%** when **COMPLETE**.
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **100/3**, **PROCESSING** → **200/3**, **COMPLETE**/**DELIVERED** → **100**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
