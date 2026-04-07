@@ -12501,3 +12501,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked that **only** orders containing **units**, **bundles**, **frontals**, or **closures** need to sign the **order authorization form** (not bookings, gift cards, membership, etc.).
 
 **Changes:** **`orderAuthorizationForm.ts`** (cart + order helpers); **`checkout/page.tsx`** persists **`requiresOrderAuthorizationForm`** on **`userOrders_*`** and passes it in summary **`navigate` state**; **`checkout/confirm/page.tsx`** gates 24h copy + **SIGN ORDER FORM**; **`orders/page.tsx`** gates auto-cancel, list CTAs, strip, **IN REVIEW**; **`orderTracking.ts`** advances post-confirm only when form applies; **`concierge/page.tsx`** signature UI + 24h logic; **`types/cart.ts`** **`category`**. **`npx tsc --noEmit`**. Commit **`cb3afad`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult orders: PLACED → PROCESSING → COMPLETE
+
+**Context (this chat):** User wanted **consult** checkout orders: after **24 hours** **PLACED** → **PROCESSING**; after admin sends consult offer (**client alert**), matching order → **COMPLETE**.
+
+**Changes:** **`src/utils/consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**, **`markConsultOrderCompleteAfterQuoteSent`** (match **`orderNumber`** to meeting **`metadata.orderNumber`**). **`orders/page.tsx`** — apply advance on **`userOrders_*`** load + **`updateUser`**, **1min** interval; **`PROCESSING`** red status styling; mock **`kateena-consult-2`**; optional **`consultProcessingStartedAt`**, **`consultQuoteId`**. **`AdminMeetingsHub.tsx`** — after **`postAdminConsultQuote`**, update **`userOrders_${client}`** when **`quote.id`** + **`quoteMeeting.metadata.orderNumber`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
