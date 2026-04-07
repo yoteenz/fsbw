@@ -1404,7 +1404,6 @@ function OrdersPage() {
 
   // State for forcing re-render to update countdown
   const [_countdownTick, setCountdownTick] = useState(0);
-
   // Update countdown display every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -2290,9 +2289,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </p>
                                  )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
-                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(expandedOrder);
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
                                      <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
@@ -3192,9 +3195,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </p>
                                  )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
-                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(expandedOrder);
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
                                      <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>

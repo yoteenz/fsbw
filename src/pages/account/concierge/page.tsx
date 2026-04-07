@@ -617,6 +617,12 @@ function ConciergePage() {
   const orderTrackingSectionRef = useRef<HTMLDivElement | null>(null);
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
+  const [, setConsultBarTick] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setConsultBarTick((n) => n + 1), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const CONCIERGE_TRACKING_STATUSES = [
     'PLACED', 'CONFIRMED', 'PREPARING', 'SHIPPED_TO_HUB', 'IN_TRANSIT',
@@ -3364,7 +3370,7 @@ function ConciergePage() {
                                   selectedOrder &&
                                   orderUsesDigitalFulfillmentTimeline(selectedOrder) &&
                                   String(selectedOrder.bookingFlowType || '').trim().toLowerCase() === 'consult'
-                                    ? consultDigitalOrderTrackingBarFillPct(selectedOrder)
+                                    ? consultDigitalOrderTrackingBarFillPct(selectedOrder, Date.now())
                                     : null;
                                 if (consultBarFill != null) {
                                   progress = consultBarFill;
@@ -3474,7 +3480,18 @@ function ConciergePage() {
                                   }
                                   
                                   if (!needsAuthForm) {
-                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                    const isConsultOrder =
+                                      String(selectedOrder?.bookingFlowType || '').trim().toLowerCase() ===
+                                      'consult';
+                                    durationText = isConsultOrder
+                                      ? '3 DAYS'
+                                      : stageDuration === 0
+                                        ? 'SAME DAY'
+                                        : stageDuration === 1
+                                          ? '1 DAY'
+                                          : stageDuration === 28
+                                            ? '4 WEEKS'
+                                            : `${stageDuration} DAYS`;
                                   } else if (isFormSigned) {
                                     durationText = '2 DAYS';
                                   } else if (isPastTimeLimit) {

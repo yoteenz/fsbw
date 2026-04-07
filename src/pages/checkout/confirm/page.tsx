@@ -1647,7 +1647,10 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   {(() => {
                     const di = getDigitalFulfillmentStageIndex(summaryOrderForTracking);
                     const labels = digitalFulfillmentStageLabels();
-                    const consultBarPct = consultDigitalOrderTrackingBarFillPct(summaryOrderForTracking);
+                    const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                      summaryOrderForTracking,
+                      Date.now()
+                    );
                     return (
                       <>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
