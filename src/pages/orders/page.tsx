@@ -304,15 +304,20 @@ function OrdersPage() {
     }
   };
 
-  /** Details for expanded order: cap size always first (e.g. cap size: m, cap size: xxs/xs/s); then only non-default options. */
-  const getNonDefaultDetailLines = (productName: string, options: Record<string, string> | undefined): string[] => {
+  /** Details for expanded order: cap size always first for units; then only non-default options. A/C booking rows omit cap size. */
+  const getNonDefaultDetailLines = (
+    productName: string,
+    options: Record<string, string> | undefined,
+    omitCapSizeLine?: boolean
+  ): string[] => {
     const fmt = (label: string, value: string) => `${label}: ${value.toLowerCase()}`;
     const opts = options ? Object.fromEntries(Object.entries(options).filter(([k]) => !k.startsWith('_'))) : {};
     const name = productName.toUpperCase();
     const lines: string[] = [];
-    // Cap size is always the first line (only "default" selection we always list)
-    const capSize = opts.capSize || 'M';
-    lines.push(fmt('cap size', capSize.replace(/\//g, ' / ')));
+    if (!omitCapSizeLine) {
+      const capSize = opts.capSize || 'M';
+      lines.push(fmt('cap size', capSize.replace(/\//g, ' / ')));
+    }
     if (Object.keys(opts).length === 0 && !options) return lines;
     const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
     if (opts.density && opts.density !== defaultDensity) {
@@ -1978,10 +1983,11 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                               {orderProducts.map((product) => {
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
-                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
-                                const expandedProductThumbPx =
+                                const isAcExpanded =
                                   expandedOrder.bookingFlowType === 'appointment' ||
-                                  expandedOrder.bookingFlowType === 'consult'
+                                  expandedOrder.bookingFlowType === 'consult';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts, isAcExpanded);
+                                const expandedProductThumbPx = isAcExpanded
                                     ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
                                     : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
@@ -2208,9 +2214,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </h2>
                                    <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                  </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
-                                 </p>
+                                 {!(
+                                   expandedOrder.bookingFlowType === 'appointment' ||
+                                   expandedOrder.bookingFlowType === 'consult'
+                                 ) && (
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                     DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
+                                   </p>
+                                 )}
                                  {(() => {
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
@@ -2830,10 +2841,11 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                               {orderProductsArchived.map((product) => {
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
-                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
-                                const expandedArchivedThumbPx =
+                                const isAcExpandedArchived =
                                   expandedOrder.bookingFlowType === 'appointment' ||
-                                  expandedOrder.bookingFlowType === 'consult'
+                                  expandedOrder.bookingFlowType === 'consult';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts, isAcExpandedArchived);
+                                const expandedArchivedThumbPx = isAcExpandedArchived
                                     ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
                                     : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
@@ -3060,9 +3072,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </h2>
                                    <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                  </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
-                                 </p>
+                                 {!(
+                                   expandedOrder.bookingFlowType === 'appointment' ||
+                                   expandedOrder.bookingFlowType === 'consult'
+                                 ) && (
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                     DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
+                                   </p>
+                                 )}
                                  {(() => {
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
