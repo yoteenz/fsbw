@@ -32,6 +32,7 @@ import {
   type AdminMeeting
 } from '../../../utils/adminMeetingsMock';
 import { AdminMeetingClientPanel, AdminMeetingClientPanelShell } from '../../../utils/adminMeetingClientPanels';
+import { storeAdminMeetingsFocusFromClientDetails } from '../../../utils/adminMeetingsFocusSession';
 import {
   getSignedFormsForClientDisplay,
   type StoredSignedOrderForm,
@@ -3287,8 +3288,20 @@ export default function AdminClients() {
                                     disableProfileNavigation
                                     hideProfileAvatar
                                     onProfileClick={() => {}}
-                                    onActionClick={(e) => e.preventDefault()}
-                                    actionAriaLabel=""
+                                    onActionClick={(e) => {
+                                      e.stopPropagation();
+                                      storeAdminMeetingsFocusFromClientDetails({ id: m.id, date: m.date });
+                                      const tab = m.category === 'consultation' ? 'consults' : 'bookings';
+                                      navigate(`/admin/meetings?tab=${tab}`);
+                                    }}
+                                    actionAriaLabel={
+                                      m.category === 'consultation' ? 'Send quote' : 'Edit meeting'
+                                    }
+                                    actionIconSrc={
+                                      m.category === 'consultation'
+                                        ? '/assets/edit-meeting-icon.svg'
+                                        : '/assets/edit-meeting-icon-booking.svg'
+                                    }
                                     onConsultPhotoClick={setClientDetailsConsultPhotoPreviewSrc}
                                   />
                                 </AdminMeetingClientPanelShell>

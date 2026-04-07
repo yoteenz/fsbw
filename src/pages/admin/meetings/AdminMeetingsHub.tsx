@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
@@ -26,6 +26,10 @@ import {
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
+import {
+  clearAdminMeetingsFocusFromClientDetails,
+  readAdminMeetingsFocusFromClientDetails,
+} from '../../../utils/adminMeetingsFocusSession';
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
 import {
@@ -332,6 +336,7 @@ export default function AdminMeetingsHub() {
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
+  const clientDetailsFocusAppliedRef = useRef(false);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
@@ -465,6 +470,42 @@ export default function AdminMeetingsHub() {
       return a.time.localeCompare(b.time);
     });
   }, [range.start, range.end, apiMeetings, localTick]);
+
+  /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
+  useEffect(() => {
+    const focus = readAdminMeetingsFocusFromClientDetails();
+    if (!focus) {
+      clientDetailsFocusAppliedRef.current = false;
+      return;
+    }
+    if (clientDetailsFocusAppliedRef.current) return;
+    const focusYm = focus.date.slice(0, 7);
+    const anchorYm = calendarAnchor.slice(0, 7);
+    if (focusYm !== anchorYm) {
+      setCalendarAnchor(focus.date);
+      return;
+    }
+    const row = mergedMeetings.find((m) => m.id === focus.meetingId);
+    if (!row) {
+      clientDetailsFocusAppliedRef.current = true;
+      clearAdminMeetingsFocusFromClientDetails();
+      return;
+    }
+    clientDetailsFocusAppliedRef.current = true;
+    clearAdminMeetingsFocusFromClientDetails();
+    if (row.category === 'consultation') {
+      setMainTab('consults');
+      setViewAllMode(null);
+      setQuoteMeeting(row);
+      setEditMeeting(null);
+    } else {
+      setMainTab('bookings');
+      setViewAllMode(null);
+      setSelectedDay(row.date);
+      setEditMeeting(row);
+      setQuoteMeeting(null);
+    }
+  }, [mergedMeetings, calendarAnchor]);
 
   const appointmentMeetings = useMemo(
     () => mergedMeetings.filter((m) => m.category !== 'consultation'),
@@ -1880,6 +1921,7 @@ export default function AdminMeetingsHub() {
                                 setEditMeeting(m);
                               }}
                               actionAriaLabel="Edit meeting"
+                              actionIconSrc="/assets/edit-meeting-icon-booking.svg"
                             />
                           </AdminMeetingClientPanelShell>
                         ))}
@@ -1910,6 +1952,7 @@ export default function AdminMeetingsHub() {
                                 setQuoteMeeting(m);
                               }}
                               actionAriaLabel="Send quote"
+                              actionIconSrc="/assets/edit-meeting-icon.svg"
                               onConsultPhotoClick={setConsultPhotoPreviewSrc}
                             />
                           </AdminMeetingClientPanelShell>
