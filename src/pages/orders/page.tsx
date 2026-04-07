@@ -40,6 +40,7 @@ import {
   sortOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
+import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 
 interface OrderLineItem {
   productName: string;
@@ -72,6 +73,8 @@ interface Order {
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
   bookingFlowType?: 'appointment' | 'consult';
+  /** Standard vs premium booking cart line — used with bookingFlowType for cart-matching thumbnails. */
+  bookingTier?: 'standard' | 'premium';
   bookingHairOption?: string;
   /** Gift card / membership / other checkout that skips shipping — 3-stage timeline only, no order form. */
   digitalFulfillmentOnly?: boolean;
@@ -210,6 +213,18 @@ function OrdersPage() {
         // For NOIR, use natural front image (2D version without background)
         return '/assets/natural front.png';
     }
+  };
+
+  /** List / expanded-row thumbnail: A/C booking orders use the same badge PNGs as the cart. */
+  const ordersPageOrderThumbnailSrc = (order: Order): string => {
+    const tier = order.bookingTier === 'premium' ? 'premium' : 'standard';
+    if (order.bookingFlowType === 'appointment') {
+      return bookingCartItemThumbnailSrc({ type: 'booking-appointment', bookingTier: tier }) || order.productImage;
+    }
+    if (order.bookingFlowType === 'consult') {
+      return bookingCartItemThumbnailSrc({ type: 'booking-consult', bookingTier: tier }) || order.productImage;
+    }
+    return order.productImage;
   };
 
   // Hair origin by product (matches cart for "X RAW Y" line)
@@ -790,6 +805,7 @@ function OrdersPage() {
       placedAt: Date.now() - (2 * 60 * 60 * 1000),
       orderFormSigned: false,
       bookingFlowType: 'consult',
+      bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
     }
@@ -1853,7 +1869,7 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                            : Array.from({ length: expandedOrder.items }, (_, i) => ({
                                id: `${expandedOrder.id}-product-${i}`,
                                name: expandedOrder.productName,
-                               image: expandedOrder.productImage,
+                               image: ordersPageOrderThumbnailSrc(expandedOrder),
                                price: orderAmount / expandedOrder.items,
                                options: undefined as Record<string, string> | undefined
                              }));
@@ -2363,7 +2379,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              }}
                            >
                              <img
-                               src={order.productImage}
+                               src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
                                  width: '102px',
@@ -2702,7 +2718,7 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                        : Array.from({ length: expandedOrder.items }, (_, i) => ({
                            id: `${expandedOrder.id}-product-${i}`,
                            name: expandedOrder.productName,
-                           image: expandedOrder.productImage,
+                           image: ordersPageOrderThumbnailSrc(expandedOrder),
                            price: orderAmountArchived / expandedOrder.items,
                            options: undefined as Record<string, string> | undefined
                          }));
@@ -3205,7 +3221,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              }}
                            >
                              <img
-                               src={order.productImage}
+                               src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
                                  width: '102px',

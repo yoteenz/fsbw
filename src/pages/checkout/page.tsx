@@ -54,6 +54,7 @@ import {
 import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
+import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -6305,20 +6306,44 @@ function CheckoutPage() {
                           ? 'appointment'
                           : 'consult'
                         : undefined;
+                      const bookingCartLineForPersist =
+                        bookingsOnlyAc && bookingFlowTypePersist
+                          ? (cartItems as any[]).find((item: any) =>
+                              bookingFlowTypePersist === 'appointment'
+                                ? item?.type === 'booking-appointment'
+                                : item?.type === 'booking-consult'
+                            )
+                          : undefined;
+                      const bookingTierPersist: 'standard' | 'premium' =
+                        bookingCartLineForPersist?.bookingTier === 'premium' ? 'premium' : 'standard';
+                      const bookingOrderThumb =
+                        bookingFlowTypePersist &&
+                        bookingCartItemThumbnailSrc({
+                          type:
+                            bookingFlowTypePersist === 'appointment'
+                              ? 'booking-appointment'
+                              : 'booking-consult',
+                          bookingTier: bookingTierPersist,
+                        });
                       const newOrder = {
                         id: `order-${nextOrderNumber}`,
                         orderNumber: `ORDER ${orderNumber}`,
                         date: orderDate,
                         status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
                         productName,
-                        productImage: '/assets/natural front.png',
+                        productImage: bookingOrderThumb ?? '/assets/natural front.png',
                         total: subtotal,
                         subtotal: orderAmount,
                         items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
                         placedAt: Date.now(),
                         pointsEarned,
                         ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
-                        ...(bookingFlowTypePersist ? { bookingFlowType: bookingFlowTypePersist } : {})
+                        ...(bookingFlowTypePersist
+                          ? {
+                              bookingFlowType: bookingFlowTypePersist,
+                              bookingTier: bookingTierPersist,
+                            }
+                          : {})
                       };
                       activeOrders.push(newOrder);
                       localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
