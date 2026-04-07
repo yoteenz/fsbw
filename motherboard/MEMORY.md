@@ -12613,3 +12613,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to reduce **consult order tracking** hair inspo photo size by **30%** (booking consult upload thumbs unchanged).
 
 **Changes:** **`bookingConsultHairInspoThumb.tsx`** — optional **`scale`** (default **1**); outer box **88 × scale** px. **`concierge/page.tsx`** — **`BookingConsultHairInspoThumb`** **`scale={0.7}`** (~**62×62**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bar fill: 30% / 60% / 100%
+
+**Context (this chat):** User asked to change consult order tracking bar from **⅓ / ⅔** to **30%** (**PLACED**), **60%** (**PROCESSING**), **100%** (**COMPLETE**).
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** returns **30**, **60**, **100**; **`MEMORY.md`** consult bar section title updated. Commit **`fcb26ed`**. Pushed **`preview/mobile`**.
