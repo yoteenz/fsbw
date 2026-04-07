@@ -174,7 +174,8 @@ export default function BookingConsultationPage() {
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [authRev, setAuthRev] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  /** Avoid clearing inspo session on empty state during Strict Mode’s first mount/unmount (restores thumbnails after remount). */
+  const inspoSessionMayClearWhenEmptyRef = useRef(false);
   const [hairOption, setHairOption] = useState<HairOption>(() =>
     isPremiumMemberForGatedFeatures() ? 'WIG + INSTALL' : 'WIG ONLY'
   );
@@ -206,9 +207,18 @@ export default function BookingConsultationPage() {
   const consultWigInstallDateDisabled = useMemo(() => createBookingDateDisabledFn('two_calendar_months'), []);
 
   useEffect(() => {
+    const id = window.requestAnimationFrame(() => {
+      inspoSessionMayClearWhenEmptyRef.current = true;
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
     try {
       if (inspoItems.length === 0) {
-        sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        if (inspoSessionMayClearWhenEmptyRef.current) {
+          sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        }
       } else {
         sessionStorage.setItem(CONSULT_INSPO_SESSION_KEY, JSON.stringify(inspoItems));
       }
@@ -447,6 +457,7 @@ export default function BookingConsultationPage() {
         } catch {
           /* ignore */
         }
+        inspoSessionMayClearWhenEmptyRef.current = true;
         setInspoItems([]);
         setAddToBagState('added');
         setTimeout(() => {
@@ -524,29 +535,37 @@ export default function BookingConsultationPage() {
               <div style={{ position: 'relative', width: '100%' }}>
                 {inspoItems.length < MAX_HAIR_INSPO_PHOTOS ? (
                   <>
+                    <label
+                      htmlFor="consult-hair-inspo-file"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        margin: 0,
+                      }}
+                    >
                     <input
-                      ref={fileInputRef}
                       id="consult-hair-inspo-file"
                       type="file"
-                      accept="image/*,.heic,.heif"
+                      accept="image/*,image/heic,image/heif,.heic,.heif"
                       multiple
                       aria-labelledby="consult-inspo-heading"
                       onChange={handleFileChange}
                       style={{
                         position: 'absolute',
+                        inset: 0,
                         width: '100%',
-                        height: '36px',
+                        height: '100%',
+                        minHeight: '36px',
                         opacity: 0,
                         cursor: 'pointer',
-                        zIndex: 3,
-                        top: 0,
-                        left: 0,
-                        margin: 0
+                        zIndex: 2,
+                        margin: 0,
+                        fontSize: 0,
                       }}
                     />
                     <div
-                      role="presentation"
-                      onClick={() => fileInputRef.current?.click()}
                       style={{
                         width: '100%',
                         minHeight: '36px',
@@ -560,13 +579,13 @@ export default function BookingConsultationPage() {
                         color: inspoItems.length > 0 ? '#808080' : '#000000',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        cursor: 'pointer',
                         textTransform: 'uppercase',
                         position: 'relative',
                         overflow: 'hidden',
                         display: 'flex',
                         alignItems: 'center',
-                        textAlign: 'left'
+                        textAlign: 'left',
+                        pointerEvents: 'none',
                       }}
                     >
                       <span
@@ -603,6 +622,7 @@ export default function BookingConsultationPage() {
                         {inspoItems.length > 0 ? hairInspoSubmittedLabel(inspoItems.length) : 'NO FILE SELECTED'}
                       </span>
                     </div>
+                    </label>
                   </>
                 ) : (
                   <button
