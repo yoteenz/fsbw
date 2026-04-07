@@ -12358,4 +12358,6 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
-**Follow-up:** **GO TO CONCIERGE** below orders card when expanded, **`membershipType === 'PREMIUM'`** only → **`/account/concierge?orderId=…#order-tracking`**; Concierge scrolls **#order-tracking** into view when order selected.
+**Follow-up:** **GO TO CONCIERGE** below orders card when expanded, **premium + 6/12mo** (**`showLongPremiumConciergeExtras`**) → **`/account/concierge?orderId=…#order-tracking`**; Concierge scrolls **#order-tracking** into view when order selected.
+
+**Follow-up 2:** Physical **ORDER TRACKING** under **REWARDS** and **GO TO CONCIERGE** only for **6- & 12-month** premium (**`getEffectiveSubscriptionTier`**). **Checkout summary** (`confirm/page.tsx`) aligned: section order like expanded order, **ORDER STATUS** for digital summary, **REWARDS** copy/icon match, **SIGN ORDER FORM** after summary card; **`orderInternalId`** from checkout **`navigate` state** for concierge link. **`tsc --noEmit`**. Pushed **`preview/mobile`**.

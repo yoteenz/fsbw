@@ -10,6 +10,7 @@ import {
   readFounderAccountViewAsClientFromStorage,
   excludeFounderSeedMockOrders,
   clearAppAuth,
+  getEffectiveSubscriptionTier,
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
@@ -1326,8 +1327,12 @@ function OrdersPage() {
     return `${currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹')}${formattedPrice}`;
   };
 
-  const isPremiumMember = (user: { membershipType?: string } | null | undefined) =>
-    String(user?.membershipType ?? '').toUpperCase() === 'PREMIUM';
+  /** Premium + 6- or 12-month subscription (matches Concierge special-offer gating). */
+  const showLongPremiumConciergeExtras = (user: { email?: string; membershipType?: string; subscriptionTier?: string } | null | undefined) => {
+    if (!user || String(user.membershipType ?? '').toUpperCase() !== 'PREMIUM') return false;
+    const st = getEffectiveSubscriptionTier(user);
+    return st === '6months' || st === '12months';
+  };
 
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
@@ -2176,7 +2181,11 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && !orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
+                           {expandedOrder.status !== 'CANCELED' &&
+                             expandedOrder.status !== 'CANCELLED' &&
+                             !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
+                             currentUser &&
+                             showLongPremiumConciergeExtras(currentUser) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -2216,7 +2225,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                </div>
-                           )}
+                             )}
                          </div>
                        );
                    }
@@ -3002,7 +3011,11 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && !orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
+                           {expandedOrder.status !== 'CANCELED' &&
+                             expandedOrder.status !== 'CANCELLED' &&
+                             !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
+                             currentUser &&
+                             showLongPremiumConciergeExtras(currentUser) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -3042,7 +3055,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                </div>
-                           )}
+                             )}
                          </div>
                        </div>
                      );
@@ -3233,7 +3246,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                 );
               })()}
               {(() => {
-                if (!expandedOrderId || !currentUser || !isPremiumMember(currentUser)) return null;
+                if (!expandedOrderId || !currentUser || !showLongPremiumConciergeExtras(currentUser)) return null;
                 const expandedForConcierge =
                   activeOrders.find((o) => o.id === expandedOrderId) || pastOrders.find((o) => o.id === expandedOrderId);
                 if (!expandedForConcierge) return null;

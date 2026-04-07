@@ -2476,6 +2476,7 @@ function CheckoutPage() {
           navigate('/checkout/summary', {
             state: {
               orderNumber: orderNumber,
+              orderInternalId: `order-${nextOrderNumber}`,
               confirmationNumber: confirmationNumber,
               orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
               orderTotal: paymentData.amount,
@@ -6468,6 +6469,7 @@ function CheckoutPage() {
                     navigate('/checkout/summary', {
                       state: {
                         orderNumber,
+                        orderInternalId: `order-${nextOrderNumber}`,
                         orderDate,
                         orderTotal: subtotal,
                         shippingMethod: shippingMethodDisplay,

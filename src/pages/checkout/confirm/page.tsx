@@ -23,6 +23,12 @@ import {
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  digitalFulfillmentStageLabels,
+  getDigitalFulfillmentStageIndex,
+  orderUsesDigitalFulfillmentTimeline,
+} from '../../../utils/digitalOrderFulfillment';
+import { getOrderTrackingStageFromOrder, ORDER_TRACKING_STAGE_LABELS } from '../../../utils/orderTracking';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -141,6 +147,7 @@ function CheckoutConfirmPage() {
     
     return {
       orderNumber: orderNumber,
+      orderInternalId: `order-${nextOrderNumber}`,
       confirmationNumber: confirmationNumber,
       orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
       orderTotal: mockOrderTotal,
@@ -205,6 +212,54 @@ function CheckoutConfirmPage() {
   /** No order form or shipping-style tracking on summary: membership, A/C bookings, gift cards, other digital lines. */
   const isDigitalFulfillmentSummary =
     isPremiumMembershipSummary || isBookingsOnlyOrder || isOnlyDigitalProductsSummary;
+
+  const showLongPremiumConfirmSummary = React.useMemo(() => {
+    try {
+      const cu = localStorage.getItem('currentUser');
+      if (!cu) return false;
+      const u = JSON.parse(cu);
+      if (String(u?.membershipType ?? '').toUpperCase() !== 'PREMIUM') return false;
+      const st = getEffectiveSubscriptionTier(u);
+      return st === '6months' || st === '12months';
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const summaryOrderForTracking = React.useMemo(() => {
+    const idRaw = (orderData as { orderInternalId?: string }).orderInternalId;
+    if (typeof idRaw === 'string' && idRaw.trim()) {
+      return {
+        id: idRaw.trim(),
+        status: 'PREPARING' as const,
+        digitalFulfillmentOnly: false as const,
+        adminTrackingStageOverride: null as null,
+        trackingTimelineShiftDays: 0,
+        trackingStageNotes: {} as Record<string, string>,
+      };
+    }
+    const bookingFlowType = isBookingsOnlyOrder
+      ? cartItems.some((i: { type?: string }) => i?.type === 'booking-appointment')
+        ? 'appointment'
+        : 'consult'
+      : undefined;
+    return {
+      id: 'checkout-summary',
+      status: (isDigitalFulfillmentSummary ? 'PLACED' : 'PREPARING') as string,
+      digitalFulfillmentOnly: Boolean(isPremiumMembershipSummary || isOnlyDigitalProductsSummary),
+      ...(bookingFlowType ? { bookingFlowType } : {}),
+      adminTrackingStageOverride: null as null,
+      trackingTimelineShiftDays: 0,
+      trackingStageNotes: {} as Record<string, string>,
+    };
+  }, [
+    orderData,
+    cartItems,
+    isBookingsOnlyOrder,
+    isDigitalFulfillmentSummary,
+    isPremiumMembershipSummary,
+    isOnlyDigitalProductsSummary,
+  ]);
 
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
   const getOrdinalSuffix = (day: number): string => {
@@ -1089,7 +1144,7 @@ function CheckoutConfirmPage() {
               {/* Products Horizontal Scroll */}
               <div 
                 ref={scrollContainerRef}
-                className="relative overflow-hidden mb-6"
+                className="relative overflow-x-auto mb-6"
                 style={{ 
                   height: '180px',
                   cursor: isDragging ? 'grabbing' : 'grab',
@@ -1115,7 +1170,10 @@ function CheckoutConfirmPage() {
                     height: '100%',
                     alignItems: 'flex-start',
                     willChange: 'transform',
-                    paddingRight: '10px'
+                    paddingRight: '10px',
+                    justifyContent: cartItems.length === 1 ? 'center' : cartItems.length === 2 ? 'center' : 'flex-start',
+                    paddingLeft: cartItems.length >= 3 ? 'calc(50% - 160px)' : undefined,
+                    marginLeft: cartItems.length === 1 ? 0 : cartItems.length >= 2 ? '-10px' : undefined,
                   }}
                 >
                   {cartItems.map((item, index) => {
@@ -1347,41 +1405,6 @@ function CheckoutConfirmPage() {
             )}
             </div>
 
-            {/* Sign Order Form Button - physical wig orders only */}
-            {!showMobileMenu && !isDigitalFulfillmentSummary && (
-              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
-                <button
-                  onClick={() => {
-                    navigate('/tools/order-form', {
-                      state: {
-                        orderNumber: orderData.orderNumber,
-                        orderDate: orderData.orderDate,
-                        firstName: orderData.firstName,
-                        lastName: orderData.lastName,
-                        email: orderData.email,
-                        shippingAddress: orderData.shippingAddress,
-                        city: orderData.city,
-                        state: orderData.state,
-                        zip: orderData.zip,
-                        country: orderData.country
-                      }
-                    });
-                  }}
-                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                  style={{
-                    borderWidth: '1.3px',
-                    color: '#EB1C24',
-                    fontFamily: '"Futura PT Medium"',
-                    backgroundColor: '#FFFFFF',
-                    textTransform: 'uppercase'
-                  }}
-                  type="button"
-                >
-                  SIGN ORDER FORM
-                </button>
-              </div>
-            )}
-
             {/* ORDER SUMMARY CARD - Only show when menu is closed */}
             {!showMobileMenu && (() => {
               const accountUser = (() => { try { const u = localStorage.getItem('currentUser'); return u ? JSON.parse(u) : null; } catch { return null; } })();
@@ -1392,7 +1415,7 @@ function CheckoutConfirmPage() {
                 style={{ borderWidth: '1.3px' }}
               >
               {/* ORDER SUMMARY */}
-              <div style={{ marginBottom: '55px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1436,7 +1459,7 @@ function CheckoutConfirmPage() {
 
               {/* SHIPPING — hidden for digital / A&C / membership (no ship tracking on summary) */}
               {!isDigitalFulfillmentSummary && (
-              <div style={{ marginBottom: '55px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1512,8 +1535,76 @@ function CheckoutConfirmPage() {
               </div>
               )}
 
+              {isDigitalFulfillmentSummary && (
+                <div style={{ marginBottom: '20px' }}>
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '12px',
+                        color: '#EB1C24',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        margin: '0',
+                      }}
+                    >
+                      ORDER STATUS
+                    </h2>
+                    <img
+                      src="/assets/order-tracking.svg"
+                      alt=""
+                      style={{
+                        width: 18,
+                        height: 18,
+                        filter:
+                          'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                      }}
+                    />
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '9px',
+                      color: '#666',
+                      margin: '0 0 10px 0',
+                      textTransform: 'uppercase',
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
+                  </p>
+                  {(() => {
+                    const di = getDigitalFulfillmentStageIndex(summaryOrderForTracking);
+                    const labels = digitalFulfillmentStageLabels();
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                        {labels.map((label, i) => {
+                          const isCurrent = i === di;
+                          return (
+                            <p
+                              key={`confirm-dig-${i}`}
+                              style={{
+                                fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                fontSize: '9px',
+                                color: isCurrent ? '#EB1C24' : '#000',
+                                margin: 0,
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {isCurrent ? '● ' : '○ '}
+                              {label}
+                              {isCurrent ? ' · CURRENT' : ''}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
               {/* PAYMENT */}
-              <div style={{ marginBottom: '55px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                   <h2
                     style={{
@@ -1652,7 +1743,7 @@ function CheckoutConfirmPage() {
                 if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
                 const tierUpper = String(displayTier).toUpperCase();
                 return (
-                <div>
+                <div style={{ marginBottom: '5px' }}>
                   <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                     <h2
                       style={{
@@ -1666,15 +1757,15 @@ function CheckoutConfirmPage() {
                     >
                       REWARDS
                     </h2>
-                    <img src="/assets/rewards-icon.svg" alt="" style={{ width: 14.55, height: 14.55, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                    <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'RE EARNING <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{Number(displayPoints).toLocaleString()}</span> LOYALTY POINTS WITH THIS ORDER{Number(displayPoints) === 0 ? '.' : '!'}
+                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{Number(displayPoints).toLocaleString()}</span> LOYALTY POINTS{Number(displayPoints) === 0 ? '.' : '!'}
                       </p>
                       <span style={{ 
-                        fontFamily: (tierUpper === 'RED' || tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                        fontFamily: (tierUpper === 'RED' || tierUpper === 'GOLD') ? '"Futura PT Medium"' : '"Futura PT Demi"',
                         fontSize: '10px', 
                         color: tierUpper === 'RED' ? '#EB1C24' : tierUpper === 'SILVER' ? '#808080' : (tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '#000000' : '#808080',
                         textTransform: 'uppercase' 
@@ -1686,9 +1777,143 @@ function CheckoutConfirmPage() {
                 </div>
               );
               })()}
+
+              {!isDigitalFulfillmentSummary &&
+                showLongPremiumConfirmSummary &&
+                !orderUsesDigitalFulfillmentTimeline(summaryOrderForTracking) && (
+                  <div style={{ marginBottom: '20px' }}>
+                    <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                      <h2
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: '#EB1C24',
+                          fontWeight: '500',
+                          textTransform: 'uppercase',
+                          margin: '0',
+                        }}
+                      >
+                        ORDER TRACKING
+                      </h2>
+                      <img
+                        src="/assets/order-tracking.svg"
+                        alt=""
+                        style={{
+                          width: 18,
+                          height: 18,
+                          filter:
+                            'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                        }}
+                      />
+                    </div>
+                    {(() => {
+                      const st = getOrderTrackingStageFromOrder(summaryOrderForTracking as unknown as Record<string, unknown>);
+                      const shift = Number((summaryOrderForTracking as { trackingTimelineShiftDays?: number }).trackingTimelineShiftDays) || 0;
+                      return (
+                        <>
+                          {shift !== 0 && (
+                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                              TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                            </p>
+                          )}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                            {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                              const notes = (summaryOrderForTracking as { trackingStageNotes?: Record<string, string> }).trackingStageNotes;
+                              const note = notes?.[String(i)]?.trim();
+                              const isCurrent = i === st;
+                              return (
+                                <div key={`confirm-st-${i}`}>
+                                  <p
+                                    style={{
+                                      fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                      fontSize: '9px',
+                                      color: isCurrent ? '#EB1C24' : '#000',
+                                      margin: 0,
+                                      textTransform: 'uppercase',
+                                    }}
+                                  >
+                                    {isCurrent ? '● ' : '○ '}
+                                    {label}
+                                    {isCurrent ? ' · CURRENT' : ''}
+                                  </p>
+                                  {note ? (
+                                    <p
+                                      style={{
+                                        fontFamily: '"Futura PT Book"',
+                                        fontSize: '9px',
+                                        color: '#666',
+                                        margin: '2px 0 0 0',
+                                        textTransform: 'uppercase',
+                                        lineHeight: 1.35,
+                                      }}
+                                    >
+                                      {note}
+                                    </p>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             );
             })()}
+
+            {/* Sign Order Form — below summary card (aligned with Orders expanded flow) */}
+            {!showMobileMenu && !isDigitalFulfillmentSummary && (
+              <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
+                <button
+                  onClick={() => {
+                    navigate('/tools/order-form', {
+                      state: {
+                        orderNumber: orderData.orderNumber,
+                        orderDate: orderData.orderDate,
+                        firstName: orderData.firstName,
+                        lastName: orderData.lastName,
+                        email: orderData.email,
+                        shippingAddress: orderData.shippingAddress,
+                        city: orderData.city,
+                        state: orderData.state,
+                        zip: orderData.zip,
+                        country: orderData.country,
+                      },
+                    });
+                  }}
+                  className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                  style={{
+                    borderWidth: '1.3px',
+                    color: '#EB1C24',
+                    fontFamily: '"Futura PT Medium"',
+                    backgroundColor: '#FFFFFF',
+                    textTransform: 'uppercase',
+                  }}
+                  type="button"
+                >
+                  SIGN ORDER FORM
+                </button>
+              </div>
+            )}
+
+            {showLongPremiumConfirmSummary && (orderData as { orderInternalId?: string }).orderInternalId && (
+              <div className="px-0 w-full" style={{ marginTop: '4px', marginBottom: '12px' }}>
+                <button
+                  type="button"
+                  className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                  style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '11px', fontWeight: 500 }}
+                  onClick={() =>
+                    navigate(
+                      `/account/concierge?orderId=${encodeURIComponent(String((orderData as { orderInternalId?: string }).orderInternalId))}#order-tracking`
+                    )
+                  }
+                >
+                  GO TO CONCIERGE
+                </button>
+              </div>
+            )}
 
             {/* Navigation Buttons */}
             {!showMobileMenu && (
