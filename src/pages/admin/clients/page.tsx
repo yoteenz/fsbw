@@ -1852,7 +1852,7 @@ export default function AdminClients() {
                     {selectedClient ? (
                       <>
                         {/* Circular profile area centered above the tab bar */}
-                        <div className="flex justify-center mb-4">
+                        <div className="flex justify-center mb-4" style={{ marginTop: '6px' }}>
                           <div
                             className="relative rounded-full flex items-center justify-center overflow-hidden shrink-0"
                             style={{
