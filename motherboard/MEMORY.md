@@ -12669,3 +12669,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to remove the period from copy like **“1 OF 3 PHOTOS SUBMITTED.”** in the hair inspo input area on the consult booking page.
 
 **Changes:** **`src/pages/booking/consultation/page.tsx`** — **`hairInspoSubmittedLabel`** returns **`…SUBMITTED`** without **`.`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X button 2px lower
+
+**Context (this chat):** User asked to move the **X** delete control on hair inspo thumbnails **down 2px** (consult booking page only).
+
+**Changes:** **`consultation/page.tsx`** — remove button **`top`** **`-6px` → `-4px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
