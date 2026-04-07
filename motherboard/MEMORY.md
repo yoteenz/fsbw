@@ -12693,3 +12693,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User repeated that the gray line under the red client name was **missing** (likely **1px #e5e7eb** too faint on frosted card, or header row skipped when **`selectedClient`** was null).
 
 **Changes:** **`admin/clients/page.tsx`** — single header row always (email fallback title when client not resolved); **`borderBottom: '1.3px solid #9ca3af'`** (design-system gray). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details: 6px above profile avatar
+
+**Context (this chat):** User asked for **6px** extra space **above** the circular profile image in the client details toggle.
+
+**Changes:** **`admin/clients/page.tsx`** — profile wrapper **`marginTop: '6px'`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
