@@ -708,7 +708,7 @@ export default function BookingConsultationPage() {
                         aria-label="Remove inspo photo"
                         style={{
                           position: 'absolute',
-                          top: '-6px',
+                          top: '-4px',
                           right: '-4px',
                           width: '14px',
                           height: '14px',
