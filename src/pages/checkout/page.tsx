@@ -6282,95 +6282,102 @@ function CheckoutPage() {
                     }
                   }
                   
-                  // Persist order to user's order history and mark first purchase (so their referral code becomes active)
+                  // Persist order to user's order history and mark first purchase (so their referral code becomes active).
+                  // Premium membership upgrades (/checkout/upgrade) are not product orders — skip userOrders_* for those.
                   if (isSignedIn && email) {
                     try {
                       const userOrdersKey = `userOrders_${email.trim().toLowerCase()}`;
                       const existing = localStorage.getItem(userOrdersKey);
                       const ordersData = existing ? JSON.parse(existing) : { activeOrders: [], pastOrders: [] };
                       const activeOrders = ordersData.activeOrders || [];
-                      const wasFirstOrder = activeOrders.length === 0 && (ordersData.pastOrders || []).length === 0;
-                      const firstItem = cartItems[0];
-                      const productName = firstItem?.name || 'Order';
-                      const onlyGiftOrDigital =
-                        cartItems.length > 0 &&
-                        cartItems.every(
-                          (i: any) =>
-                            i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
-                        );
-                      const digitalFulfillmentOnly = Boolean(isSubscriptionUpgrade || onlyGiftOrDigital);
-                      const bookingsOnlyAc = isBookingsOnlyCheckout;
-                      const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
-                      const bookingFlowTypePersist = bookingsOnlyAc
-                        ? cartItems.some((item: any) => item?.type === 'booking-appointment')
-                          ? 'appointment'
-                          : 'consult'
-                        : undefined;
-                      const bookingCartLineForPersist =
-                        bookingsOnlyAc && bookingFlowTypePersist
-                          ? (cartItems as any[]).find((item: any) =>
-                              bookingFlowTypePersist === 'appointment'
-                                ? item?.type === 'booking-appointment'
-                                : item?.type === 'booking-consult'
-                            )
+                      const pastOrdersBucket = ordersData.pastOrders || [];
+                      const wasFirstOrder =
+                        activeOrders.length === 0 && pastOrdersBucket.length === 0;
+
+                      if (!isSubscriptionUpgrade) {
+                        const firstItem = cartItems[0];
+                        const productName = firstItem?.name || 'Order';
+                        const onlyGiftOrDigital =
+                          cartItems.length > 0 &&
+                          cartItems.every(
+                            (i: any) =>
+                              i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
+                          );
+                        const digitalFulfillmentOnly = Boolean(onlyGiftOrDigital);
+                        const bookingsOnlyAc = isBookingsOnlyCheckout;
+                        const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
+                        const bookingFlowTypePersist = bookingsOnlyAc
+                          ? cartItems.some((item: any) => item?.type === 'booking-appointment')
+                            ? 'appointment'
+                            : 'consult'
                           : undefined;
-                      const bookingTierPersist: 'standard' | 'premium' =
-                        bookingCartLineForPersist?.bookingTier === 'premium' ? 'premium' : 'standard';
-                      const bookingOrderThumb =
-                        bookingFlowTypePersist &&
-                        bookingCartItemThumbnailSrc({
-                          type:
-                            bookingFlowTypePersist === 'appointment'
-                              ? 'booking-appointment'
-                              : 'booking-consult',
-                          bookingTier: bookingTierPersist,
-                        });
-                      const newOrder = {
-                        id: `order-${nextOrderNumber}`,
-                        orderNumber: `ORDER ${orderNumber}`,
-                        date: orderDate,
-                        status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
-                        productName,
-                        productImage: bookingOrderThumb ?? '/assets/natural front.png',
-                        total: subtotal,
-                        subtotal: orderAmount,
-                        items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
-                        placedAt: Date.now(),
-                        pointsEarned,
-                        ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
-                        ...(bookingFlowTypePersist
-                          ? {
-                              bookingFlowType: bookingFlowTypePersist,
-                              bookingTier: bookingTierPersist,
-                            }
-                          : {})
-                      };
-                      activeOrders.push(newOrder);
-                      localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
-                      const consultWithMeasurements = (cartItems as any[]).find(
-                        (item: any) =>
-                          item?.type === 'booking-consult' &&
-                          item?.bookingHeadMeasurements &&
-                          typeof item.bookingHeadMeasurements === 'object'
-                      );
-                      if (consultWithMeasurements?.bookingHeadMeasurements) {
-                        saveLastSubmittedBookingConsultHeadMeasurements(
-                          email,
-                          consultWithMeasurements.bookingHeadMeasurements as Record<string, unknown>
+                        const bookingCartLineForPersist =
+                          bookingsOnlyAc && bookingFlowTypePersist
+                            ? (cartItems as any[]).find((item: any) =>
+                                bookingFlowTypePersist === 'appointment'
+                                  ? item?.type === 'booking-appointment'
+                                  : item?.type === 'booking-consult'
+                              )
+                            : undefined;
+                        const bookingTierPersist: 'standard' | 'premium' =
+                          bookingCartLineForPersist?.bookingTier === 'premium' ? 'premium' : 'standard';
+                        const bookingOrderThumb =
+                          bookingFlowTypePersist &&
+                          bookingCartItemThumbnailSrc({
+                            type:
+                              bookingFlowTypePersist === 'appointment'
+                                ? 'booking-appointment'
+                                : 'booking-consult',
+                            bookingTier: bookingTierPersist,
+                          });
+                        const newOrder = {
+                          id: `order-${nextOrderNumber}`,
+                          orderNumber: `ORDER ${orderNumber}`,
+                          date: orderDate,
+                          status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
+                          productName,
+                          productImage: bookingOrderThumb ?? '/assets/natural front.png',
+                          total: subtotal,
+                          subtotal: orderAmount,
+                          items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
+                          placedAt: Date.now(),
+                          pointsEarned,
+                          ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
+                          ...(bookingFlowTypePersist
+                            ? {
+                                bookingFlowType: bookingFlowTypePersist,
+                                bookingTier: bookingTierPersist,
+                              }
+                            : {})
+                        };
+                        activeOrders.push(newOrder);
+                        localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
+                        const consultWithMeasurements = (cartItems as any[]).find(
+                          (item: any) =>
+                            item?.type === 'booking-consult' &&
+                            item?.bookingHeadMeasurements &&
+                            typeof item.bookingHeadMeasurements === 'object'
                         );
-                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                        if (consultWithMeasurements?.bookingHeadMeasurements) {
+                          saveLastSubmittedBookingConsultHeadMeasurements(
+                            email,
+                            consultWithMeasurements.bookingHeadMeasurements as Record<string, unknown>
+                          );
+                          window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                        }
+                        const currentUserRaw = localStorage.getItem('currentUser');
+                        const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
+                        appendOrderReceivedAccountAlert(currentUserForAlert, {
+                          id: newOrder.id,
+                          orderNumber: newOrder.orderNumber,
+                          bookingFlowType: cartItems.some((item: any) => item?.type === 'booking-appointment')
+                            ? 'appointment'
+                            : cartItems.some((item: any) => item?.type === 'booking-consult')
+                            ? 'consult'
+                            : undefined,
+                        });
                       }
-                      const currentUserRaw = localStorage.getItem('currentUser');
-                      const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
-                      appendOrderReceivedAccountAlert(currentUserForAlert, {
-                        id: newOrder.id,
-                        orderNumber: newOrder.orderNumber,
-                        bookingFlowType: cartItems.some((item: any) => item?.type === 'booking-appointment')
-                          ? 'appointment'
-                          : cartItems.some((item: any) => item?.type === 'booking-consult')
-                          ? 'consult'
-                          : undefined,
-                      });
+
                       if (wasFirstOrder) {
                         const currentUser = localStorage.getItem('currentUser');
                         if (currentUser) {

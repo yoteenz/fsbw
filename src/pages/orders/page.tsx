@@ -35,6 +35,7 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
 import {
+  filterOutPremiumMembershipUpgradeOrders,
   normalizeUserOrdersBuckets,
   orderStatusIsCanceled,
   sortOrdersNewestFirst,
@@ -686,15 +687,22 @@ function OrdersPage() {
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
         }
         const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+        const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
         const sorted = {
-          activeOrders: sortOrdersNewestFirst(norm.activeOrders),
-          pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+          activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
+          pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
         };
         try {
-          const before = JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders });
-          const after = JSON.stringify({ activeOrders: sorted.activeOrders, pastOrders: sorted.pastOrders });
-          if (before !== after) {
-            localStorage.setItem(userOrdersKey, after);
+          const sortedNormOnly = {
+            activeOrders: sortOrdersNewestFirst(norm.activeOrders),
+            pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+          };
+          const needsSortPersist =
+            JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders }) !==
+            JSON.stringify(sortedNormOnly);
+          const needsFilterPersist = JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted);
+          if (needsSortPersist || needsFilterPersist) {
+            localStorage.setItem(userOrdersKey, JSON.stringify(sorted));
             window.dispatchEvent(new CustomEvent('ordersUpdated'));
           }
         } catch (_) {}
@@ -994,7 +1002,12 @@ function OrdersPage() {
                       pastOrders = excludeFounderSeedMockOrders(pastOrders);
                     }
                     const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+                    const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
                     const sorted = {
+                      activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
+                      pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+                    };
+                    const sortedNormOnly = {
                       activeOrders: sortOrdersNewestFirst(norm.activeOrders),
                       pastOrders: sortOrdersNewestFirst(norm.pastOrders),
                     };
@@ -1002,7 +1015,8 @@ function OrdersPage() {
                       sorted.activeOrders.length !== activeOrders.length ||
                       sorted.pastOrders.length !== pastOrders.length ||
                       norm.activeOrders.length !== activeOrders.length ||
-                      norm.pastOrders.length !== pastOrders.length
+                      norm.pastOrders.length !== pastOrders.length ||
+                      JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted)
                     ) {
                       try {
                         localStorage.setItem(

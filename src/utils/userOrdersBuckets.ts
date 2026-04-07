@@ -1,5 +1,7 @@
 /** Keep canceled orders out of active list; merge into past for orders UI + localStorage. */
 
+import { SUBSCRIPTION_TIERS, type SubscriptionTierId } from '../constants/subscriptionPricing';
+
 export function orderStatusIsCanceled(status: unknown): boolean {
   const s = String(status ?? '').toUpperCase();
   return s === 'CANCELED' || s === 'CANCELLED';
@@ -31,6 +33,31 @@ export function normalizeUserOrdersBuckets<T extends { id?: string; status?: str
   }
 
   return { activeOrders: nextActive, pastOrders: [...pastList, ...appended] };
+}
+
+const SUBSCRIPTION_TIER_ORDER_NAMES = new Set(
+  (Object.keys(SUBSCRIPTION_TIERS) as SubscriptionTierId[]).map(
+    (k) => SUBSCRIPTION_TIERS[k].name.toUpperCase()
+  )
+);
+
+/**
+ * Premium membership checkout (`/checkout/upgrade`) — not a product order for Account → Orders.
+ * Detects persisted rows (flag) and legacy rows (digital-only + tier display name, not A/C booking).
+ */
+export function orderIsPremiumMembershipUpgradeOnly(o: Record<string, unknown>): boolean {
+  if (o.isSubscriptionUpgrade === true) return true;
+  const booking = String(o.bookingFlowType ?? '').trim().toLowerCase();
+  if (booking === 'appointment' || booking === 'consult') return false;
+  if (o.digitalFulfillmentOnly !== true) return false;
+  const name = String(o.productName ?? '').toUpperCase().trim();
+  return SUBSCRIPTION_TIER_ORDER_NAMES.has(name);
+}
+
+/** Strip membership-upgrade rows from persisted buckets (Account → Orders is for product / booking orders only). */
+export function filterOutPremiumMembershipUpgradeOrders<T>(active: T[], past: T[]): { activeOrders: T[]; pastOrders: T[] } {
+  const keep = (o: T) => !orderIsPremiumMembershipUpgradeOnly(o as Record<string, unknown>);
+  return { activeOrders: active.filter(keep), pastOrders: past.filter(keep) };
 }
 
 /** Parse MM-DD-YYYY (common order `date` field) to epoch ms; 0 if invalid. */
