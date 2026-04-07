@@ -34,7 +34,11 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
-import { normalizeUserOrdersBuckets, orderStatusIsCanceled } from '../../utils/userOrdersBuckets';
+import {
+  normalizeUserOrdersBuckets,
+  orderStatusIsCanceled,
+  sortOrdersNewestFirst,
+} from '../../utils/userOrdersBuckets';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 
 interface OrderLineItem {
@@ -667,16 +671,19 @@ function OrdersPage() {
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
         }
         const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
-        if (norm.activeOrders.length !== activeOrders.length || norm.pastOrders.length !== pastOrders.length) {
-          try {
-            localStorage.setItem(
-              userOrdersKey,
-              JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders })
-            );
+        const sorted = {
+          activeOrders: sortOrdersNewestFirst(norm.activeOrders),
+          pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+        };
+        try {
+          const before = JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders });
+          const after = JSON.stringify({ activeOrders: sorted.activeOrders, pastOrders: sorted.pastOrders });
+          if (before !== after) {
+            localStorage.setItem(userOrdersKey, after);
             window.dispatchEvent(new CustomEvent('ordersUpdated'));
-          } catch (_) {}
-        }
-        return norm;
+          }
+        } catch (_) {}
+        return sorted;
       }
     } catch (e) {
       console.error('Error loading user orders:', e);
@@ -891,8 +898,8 @@ function OrdersPage() {
   const getUserOrdersData = () => {
     if (isMockOrdersAccount()) {
       return {
-        activeOrders: kateenaMockActiveOrders,
-        pastOrders: kateenaMockPastOrders
+        activeOrders: sortOrdersNewestFirst(kateenaMockActiveOrders),
+        pastOrders: sortOrdersNewestFirst(kateenaMockPastOrders),
       };
     }
     return getUserOrders();
@@ -971,16 +978,25 @@ function OrdersPage() {
                       pastOrders = excludeFounderSeedMockOrders(pastOrders);
                     }
                     const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
-                    if (norm.activeOrders.length !== activeOrders.length || norm.pastOrders.length !== pastOrders.length) {
+                    const sorted = {
+                      activeOrders: sortOrdersNewestFirst(norm.activeOrders),
+                      pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+                    };
+                    if (
+                      sorted.activeOrders.length !== activeOrders.length ||
+                      sorted.pastOrders.length !== pastOrders.length ||
+                      norm.activeOrders.length !== activeOrders.length ||
+                      norm.pastOrders.length !== pastOrders.length
+                    ) {
                       try {
                         localStorage.setItem(
                           key,
-                          JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders })
+                          JSON.stringify({ activeOrders: sorted.activeOrders, pastOrders: sorted.pastOrders })
                         );
                         window.dispatchEvent(new CustomEvent('ordersUpdated'));
                       } catch (_) {}
                     }
-                    return norm;
+                    return sorted;
                   }
                 } catch (_) {}
                 return { activeOrders: [], pastOrders: [] };
@@ -988,15 +1004,18 @@ function OrdersPage() {
             : { activeOrders: [], pastOrders: [] };
         }
 
-        setActiveOrders(ordersData.activeOrders);
-        setPastOrders(ordersData.pastOrders);
+        setActiveOrders(sortOrdersNewestFirst(ordersData.activeOrders));
+        setPastOrders(sortOrdersNewestFirst(ordersData.pastOrders));
 
         // Keep localStorage in sync for mock-data account so account profile card count matches orders page
         if (parsedUser?.email && useMock) {
           const key = `userOrders_${parsedUser.email}`;
           localStorage.setItem(
             key,
-            JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders })
+            JSON.stringify({
+              activeOrders: sortOrdersNewestFirst(ordersData.activeOrders),
+              pastOrders: sortOrdersNewestFirst(ordersData.pastOrders),
+            })
           );
           window.dispatchEvent(new CustomEvent('ordersUpdated'));
         }
@@ -1275,10 +1294,10 @@ function OrdersPage() {
             const ids = new Set(prevPast.map((o) => o.id).filter(Boolean) as string[]);
             const append = toArchive.filter((o) => !o.id || !ids.has(o.id));
             if (append.length === 0) return prevPast;
-            return [...prevPast, ...append];
+            return sortOrdersNewestFirst([...prevPast, ...append]);
           });
         }
-        return nextActive;
+        return sortOrdersNewestFirst(nextActive);
       });
     };
 
@@ -1340,12 +1359,12 @@ function OrdersPage() {
           setPastOrders(prevPast => {
             const existingIds = new Set(prevPast.map(o => o.id));
             const newOrders = toArchive.filter(o => !existingIds.has(o.id));
-            if (newOrders.length === 0) return prevPast;
-            return [...prevPast, ...newOrders];
+            if (newOrders.length === 0) return sortOrdersNewestFirst(prevPast);
+            return sortOrdersNewestFirst([...prevPast, ...newOrders]);
           });
         }
 
-        return toKeep;
+        return sortOrdersNewestFirst(toKeep);
       });
     };
 
@@ -2533,8 +2552,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           }
                         });
                       }
+
+                      const stripSorted = sortOrdersNewestFirst(ordersToDisplay);
                       
-                      return ordersToDisplay.map((order, _index) => {
+                      return stripSorted.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses
                         if (order.status === 'DELIVERED') {
                           return (
