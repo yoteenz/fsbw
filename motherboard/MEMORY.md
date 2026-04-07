@@ -12557,3 +12557,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted **consult-only** order tracking (Concierge) to show **client-submitted hair inspo photos** above the gray line above **ESTIMATED DURATION**, instead of the **SILKY** texture thumbnail.
 
 **Changes:** **`consultOrderInspoPhotos.ts`** — **`consultBookingInspoPhotoUrlsFromOrder`**. **`checkout/page.tsx`** — persist **`bookingInspoPhotoUrls`** on **`newOrder`** from consult cart line. **`orders/page.tsx`** — **`Order.bookingInspoPhotoUrls`**; mock consult orders sample URLs. **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`** and URLs exist, render **50×80** bordered photo strip in expanded tracking (replaces texture for stage 0 no-form path and “other stages” fallback). **`npx tsc --noEmit`**. Commit **`a784ad4`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Admin client details Appointments: edit booking / consult icons + meetings handoff
+
+**Context (this chat):** User wanted **edit booking** and **edit consult** icons on the **right** of client panels on the **Appointments** tab (client details toggle), matching **A/C** tabs on **admin meetings**.
+
+**Changes:** **`adminMeetingsFocusSession.ts`** — **`store` / `read` / `clear`** for **`adminMeetingsFocusFromClientDetails`** (**meeting id** + **date**). **`adminMeetingClientPanels.tsx`** — optional **`actionIconSrc`** (default booking SVG). **`admin/clients/page.tsx`** — **`actionAriaLabel`**, **`actionIconSrc`** (**booking** vs **consult**), **`onActionClick`** stores focus + **`navigate('/admin/meetings?tab=…')`**. **`AdminMeetingsHub.tsx`** — on load, align **`calendarAnchor`** to focus date, then **`setEditMeeting`** / **`setQuoteMeeting`** + **`setSelectedDay`** for bookings; **consults** use **`edit-meeting-icon.svg`** on hub list. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
