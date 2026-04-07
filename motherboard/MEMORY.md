@@ -12629,3 +12629,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted consult order tracking bar to **fill over 3 days**: **PLACED** from **10%** progressing; **PROCESSING** **≥30%**; **100%** when **3 days** elapse / **COMPLETE**; **ESTIMATED DURATION** **3 DAYS** (not same day) on Concierge for consult.
 
 **Changes:** **`digitalOrderFulfillment.ts`** — **`CONSULT_ORDER_TRACKING_WINDOW_MS`**, **`consultDigitalOrderTrackingBarFillPct(order, nowMs)`**: linear **10→100%** from **`placedAt`** / **`date`**; **PLACED** stays **below 30%**; **PROCESSING** (and mapped statuses) **`max(30%, linear)`**. **`consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**: **72h** from **`placedAt`** sets **COMPLETE** (still **24h** → **PROCESSING**). **`orders/page.tsx`** — consult bar uses **`Date.now()`** + **`_countdownTick`** for live updates. **`concierge/page.tsx`** — **1min** tick for bar; stage **0** duration **3 DAYS** for consult. **`checkout/confirm/page.tsx`** — **`consultDigitalOrderTrackingBarFillPct(..., Date.now())`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Booking consult: hair inspo file control + session draft
+
+**Context (this chat):** User reported consult **hair inspo** not working and **thumbnails** not showing under **CHOOSE FILE**.
+
+**Changes:** **`consultation/page.tsx`** — **`inspoSessionMayClearWhenEmptyRef`**: don’t **`removeItem`** on empty **`inspoItems`** until after first paint (avoids React **Strict Mode** mount/unmount wiping **`sessionStorage`** before draft hydrates). Hair inspo row: **`<label htmlFor>`** + invisible **`input[type=file]`** over row, styled row **`pointerEvents: 'none'`**; **`accept`** adds **`image/heic`/`heif`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
