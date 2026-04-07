@@ -269,13 +269,9 @@ function OrdersPage() {
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? ORDER_AC_LIST_THUMB_PX
       : ORDER_LIST_THUMB_PX;
-  /** Tighter gap above "N ITEM(S)" for A/C booking rows only (**2px** wig rows → **-14px** for A/C). */
-  const ordersPageListItemsLabelMarginTopPx = (order: Order): number => {
-    const base = 2;
-    if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') return base - 16;
-    return base;
-  };
-  /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs + ITEMS label. */
+  /** Top margin for the "N ITEM(S)" line under list thumbnails (wig / non–A-C orders only). */
+  const ordersPageListItemsLabelMarginTopPx = (): number => 2;
+  /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs; wig rows show ITEMS label below. */
   const ORDER_LIST_THUMB_SLOT_STYLE: React.CSSProperties = {
     flexShrink: 0,
     width: ORDER_LIST_THUMB_PX,
@@ -2534,12 +2530,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                }}
                              />
                            </button>
+                           {order.bookingFlowType !== 'appointment' && order.bookingFlowType !== 'consult' && (
                            <p
                              style={{
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: `${ordersPageListItemsLabelMarginTopPx(order)}px 0 0 0`,
+                               margin: `${ordersPageListItemsLabelMarginTopPx()}px 0 0 0`,
                                textTransform: 'uppercase',
                                textAlign: 'center',
                                width: '100%',
@@ -2547,6 +2544,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
                            </p>
+                           )}
                          </div>
                          
                          {/* Order Context Text */}
@@ -3397,12 +3395,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                }}
                              />
                            </button>
+                           {order.bookingFlowType !== 'appointment' && order.bookingFlowType !== 'consult' && (
                            <p
                              style={{
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: `${ordersPageListItemsLabelMarginTopPx(order)}px 0 0 0`,
+                               margin: `${ordersPageListItemsLabelMarginTopPx()}px 0 0 0`,
                                textTransform: 'uppercase',
                                textAlign: 'center',
                                width: '100%',
@@ -3410,6 +3409,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
                            </p>
+                           )}
                          </div>
                          
                          {/* Order Context Text */}
