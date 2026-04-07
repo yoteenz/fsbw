@@ -3061,63 +3061,153 @@ export default function AdminClients() {
                             {appointments.length === 0 ? (
                               <div className="bg-white border border-gray-200 p-4 text-center" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase' }}>NO APPOINTMENTS YET</div>
                             ) : (
-                            appointments.map((appointment: any, index: number) => {
-                              const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
-                              const pillStyle: Record<string, string> = {
-                                height: '15px',
-                                padding: '0 6px',
-                                boxSizing: 'border-box',
-                                borderRadius: '2px',
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '8px',
-                                ...(s === 'SCHEDULED' ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
-                                  : s === 'COMPLETED' ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
-                                  : s === 'CANCELED' || s === 'CANCELLED' ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
-                                  : { backgroundColor: '#f3f4f6', color: '#808080' }),
-                              };
-                              return (
-                                <div
-                                  key={index}
-                                  className="bg-white border border-gray-200 p-4"
-                                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-                                >
-                                  <div className="flex flex-col items-center justify-center" style={{ flexShrink: 0, width: '85px', minHeight: '85px', transform: 'translateX(-12px)' }}>
+                              appointments.map((appointment: any, index: number) => {
+                                const s = (appointment.status || '').toUpperCase().replace(/\s+/g, ' ');
+                                const pillStyle: Record<string, string> = {
+                                  height: '15px',
+                                  padding: '0 6px',
+                                  boxSizing: 'border-box',
+                                  borderRadius: '2px',
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '8px',
+                                  ...(s === 'SCHEDULED'
+                                    ? { backgroundColor: 'rgba(234, 179, 8, 0.2)', color: '#a16207' }
+                                    : s === 'COMPLETED'
+                                      ? { backgroundColor: 'rgba(235, 28, 36, 0.15)', color: '#EB1C24' }
+                                      : s === 'CANCELED' || s === 'CANCELLED'
+                                        ? { backgroundColor: 'rgba(107, 114, 128, 0.2)', color: '#6b7280' }
+                                        : { backgroundColor: '#f3f4f6', color: '#808080' }),
+                                };
+                                return (
+                                  <div
+                                    key={index}
+                                    className="bg-white border border-gray-200 p-4"
+                                    style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                                  >
                                     <div
+                                      className="flex flex-col items-center justify-center"
                                       style={{
+                                        flexShrink: 0,
                                         width: '85px',
-                                        height: '85px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: '#f9fafb',
-                                        border: '1px solid #e5e7eb',
-                                        borderRadius: '2px'
+                                        minHeight: '85px',
+                                        transform: 'translateX(-12px)',
                                       }}
                                     >
-                                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', textTransform: 'uppercase' }}>APT</span>
+                                      <div
+                                        style={{
+                                          width: '85px',
+                                          height: '85px',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          backgroundColor: '#f9fafb',
+                                          border: '1px solid #e5e7eb',
+                                          borderRadius: '2px',
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            fontFamily: '"Futura PT Medium"',
+                                            fontSize: '10px',
+                                            color: '#808080',
+                                            textTransform: 'uppercase',
+                                          }}
+                                        >
+                                          APT
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div
+                                      style={{
+                                        flex: 1,
+                                        minWidth: 0,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        transform: 'translate(-10px, -12px)',
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontFamily: '"Covered By Your Grace", cursive',
+                                          fontSize: '16px',
+                                          color: '#000000',
+                                          margin: 0,
+                                          lineHeight: 1.25,
+                                        }}
+                                      >
+                                        {appointment.date}
+                                      </p>
+                                      <div style={{ marginTop: '2px' }}>
+                                        <h4
+                                          style={{
+                                            fontFamily: '"Futura PT Medium"',
+                                            fontSize: '10px',
+                                            color: '#EB1C24',
+                                            margin: 0,
+                                            textTransform: 'uppercase',
+                                          }}
+                                        >
+                                          {appointment.type || 'APPOINTMENT'}
+                                        </h4>
+                                      </div>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '12px',
+                                          color: '#808080',
+                                          margin: 0,
+                                          marginTop: '2px',
+                                          transform: 'translateY(-4px)',
+                                          textTransform: 'uppercase',
+                                        }}
+                                      >
+                                        {appointment.time || '—'}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        flexShrink: 0,
+                                        transform: 'translateX(-6px)',
+                                      }}
+                                    >
+                                      <span className="admin-order-status-pill" style={pillStyle}>
+                                        <span style={{ lineHeight: 1 }}>{appointment.status}</span>
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          const cat = String(appointment.category || '').toLowerCase();
+                                          const tab =
+                                            cat === 'consultation' || cat === 'consult' ? 'consults' : 'bookings';
+                                          navigate(`/admin/meetings?tab=${tab}`);
+                                        }}
+                                        aria-label="Open in meetings"
+                                        style={{
+                                          border: 'none',
+                                          background: 'transparent',
+                                          padding: '4px',
+                                          cursor: 'pointer',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                        }}
+                                      >
+                                        <img
+                                          src="/assets/edit-meeting-icon-booking.svg"
+                                          alt=""
+                                          width={11}
+                                          height={11}
+                                        />
+                                      </button>
                                     </div>
                                   </div>
-                                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', transform: 'translate(-10px, -12px)' }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: '16px', color: '#000000', margin: 0, lineHeight: 1.25 }}>
-                                      {appointment.date}
-                                    </p>
-                                    <div style={{ marginTop: '2px' }}>
-                                      <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
-                                        {appointment.type || 'APPOINTMENT'}
-                                      </h4>
-                                    </div>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#808080', margin: 0, marginTop: '2px', transform: 'translateY(-4px)', textTransform: 'uppercase' }}>
-                                      {appointment.time || '—'}
-                                    </p>
-                                  </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, transform: 'translateX(-6px)' }}>
-                                    <span className="admin-order-status-pill" style={pillStyle}>
-                                      <span style={{ lineHeight: 1 }}>{appointment.status}</span>
-                                    </span>
-                                  </div>
-                                </div>
-                              );
-                            })
+                                );
+                              })
                             )}
                           </div>
                         )}
