@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
+    "html2canvas": "^1.4.1",
     "jimp": "^1.6.0",
     "jspdf": "^4.2.1",
     "react": "^19.0.0",

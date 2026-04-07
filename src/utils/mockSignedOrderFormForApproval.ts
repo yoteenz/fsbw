@@ -85,8 +85,9 @@ function mockSignatureDataUrl(): string {
 }
 
 /**
- * Full sample signed authorization form (canvas PNGs) for stakeholder PDF / layout approval.
- * Safe to prepend to admin “signed forms” list; not persisted to localStorage.
+ * Sample signed form for admin PDF approval: mock ID / card / signature images + fields.
+ * The generated PDF is a **visual snapshot** of the order authorization page layout (see `signedOrderFormPdfSnapshotDom`).
+ * Prepended to admin “signed forms” list only; not persisted to localStorage.
  */
 export function getMockSignedOrderFormForApproval(): StoredSignedOrderForm {
   if (cachedMock) return cachedMock;
