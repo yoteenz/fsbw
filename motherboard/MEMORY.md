@@ -12509,3 +12509,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted **consult** checkout orders: after **24 hours** **PLACED** → **PROCESSING**; after admin sends consult offer (**client alert**), matching order → **COMPLETE**.
 
 **Changes:** **`src/utils/consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**, **`markConsultOrderCompleteAfterQuoteSent`** (match **`orderNumber`** to meeting **`metadata.orderNumber`**). **`orders/page.tsx`** — apply advance on **`userOrders_*`** load + **`updateUser`**, **1min** interval; **`PROCESSING`** red status styling; mock **`kateena-consult-2`**; optional **`consultProcessingStartedAt`**, **`consultQuoteId`**. **`AdminMeetingsHub.tsx`** — after **`postAdminConsultQuote`**, update **`userOrders_${client}`** when **`quote.id`** + **`quoteMeeting.metadata.orderNumber`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: no “N ITEM(S)” under A/C thumbnails
+
+**Context (this chat):** User asked to remove the **“1 ITEM”** / item-count line from **appointment/consult** orders only on the Account Orders page (active + archived lists).
+
+**Changes:** **`src/pages/orders/page.tsx`** — render the Covered By Your Grace **`{order.items} ITEM(S)`** paragraph only when **`bookingFlowType`** is not **`appointment`** or **`consult`**; **`ordersPageListItemsLabelMarginTopPx`** is a constant **2px** (A/C-specific negative margin removed). **`npx tsc --noEmit`**. Commit **`2de6d82`**. Pushed **`preview/mobile`**.
