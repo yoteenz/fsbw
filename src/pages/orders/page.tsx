@@ -263,8 +263,9 @@ function OrdersPage() {
   };
 
   const ORDER_LIST_THUMB_PX = 102;
-  /** A/C booking badge thumbs: 35% smaller than wig list thumbnails (102 × 0.65). */
-  const ORDER_AC_LIST_THUMB_PX = Math.round(ORDER_LIST_THUMB_PX * 0.65);
+  /** A/C booking badge thumbs vs wig list thumbs: base **0.65** of column width, **+10%** → **0.715** (list + expanded). */
+  const ORDER_AC_THUMB_SCALE = 0.65 * 1.1;
+  const ORDER_AC_LIST_THUMB_PX = Math.round(ORDER_LIST_THUMB_PX * ORDER_AC_THUMB_SCALE);
   const ordersPageListThumbnailSizePx = (order: Order): number =>
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? ORDER_AC_LIST_THUMB_PX
@@ -293,7 +294,7 @@ function OrdersPage() {
   };
 
   const ORDER_EXPANDED_PRODUCT_THUMB_PX = 120;
-  const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * 0.65);
+  const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * ORDER_AC_THUMB_SCALE);
 
   // Hair origin by product (matches cart for "X RAW Y" line)
   const getHairOrigin = (productName: string): string => {
