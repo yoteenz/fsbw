@@ -12701,3 +12701,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked for **6px** extra space **above** the circular profile image in the client details toggle.
 
 **Changes:** **`admin/clients/page.tsx`** — profile wrapper **`marginTop: '6px'`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X +10% size
+
+**Context (this chat):** User asked to increase the **X** delete control on hair inspo thumbnails by **10%** (consult booking page).
+
+**Changes:** **`consultation/page.tsx`** — circular button **14→15.4px**, border **0.97→1.07px**, inner icon **8.4→9.24px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
