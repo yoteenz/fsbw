@@ -23,6 +23,8 @@ export type AdminMeetingHubStyleCardProps = {
   onActionClick: (e: MouseEvent<HTMLButtonElement>) => void;
   actionAriaLabel: string;
   onConsultPhotoClick?: (src: string) => void;
+  /** Nudge avatar + body copy together (e.g. admin client-details Appointments tab). */
+  contentInsetLeftPx?: number;
 };
 
 /** Same white card + profile column + top-right edit icon as Admin → Meetings booking/consult lists. */
@@ -33,6 +35,7 @@ export function AdminMeetingHubStyleCard({
   onActionClick,
   actionAriaLabel,
   onConsultPhotoClick,
+  contentInsetLeftPx,
 }: AdminMeetingHubStyleCardProps) {
   const meta = m.metadata || {};
   const hair = String(meta.hairOption || m.notes || '—');
@@ -50,7 +53,10 @@ export function AdminMeetingHubStyleCard({
       }}
     >
       <div className="flex justify-between items-start" style={{ gap: '12px' }}>
-        <div className="min-w-0 flex-1">
+        <div
+          className="min-w-0 flex-1"
+          style={contentInsetLeftPx != null && contentInsetLeftPx !== 0 ? { paddingLeft: contentInsetLeftPx } : undefined}
+        >
           <div className="flex items-start gap-2.5">
             {onProfileClick ? (
               <button

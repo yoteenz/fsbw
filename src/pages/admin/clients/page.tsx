@@ -3175,6 +3175,7 @@ export default function AdminClients() {
                                     key={m.id}
                                     m={m}
                                     variant={isConsult ? 'consult' : 'booking'}
+                                    contentInsetLeftPx={6}
                                     onProfileClick={() => setShowEnlargedProfileImage(true)}
                                     onActionClick={(e) => {
                                       e.stopPropagation();
