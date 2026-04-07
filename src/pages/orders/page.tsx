@@ -3309,8 +3309,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                     <button
                       type="button"
                       disabled={allReviewed}
-                      className={`relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white uppercase ${allReviewed ? 'cursor-default opacity-90' : 'cursor-pointer hover:bg-gray-50'}`}
-                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}
+                      className={`relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white uppercase cursor-pointer disabled:opacity-100 ${allReviewed ? '' : 'hover:bg-gray-50'}`}
+                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', opacity: 1 }}
                       onClick={() =>
                         !allReviewed &&
                         navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })

@@ -12378,6 +12378,8 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
+**Follow-up:** **REVIEW(S) SUBMITTED** state keeps the **same** red **Futura** button look as **LEAVE A REVIEW** (no dimmed opacity / grayed styling); still **`disabled`** and non-navigating.
+
 ---
 
 ## 2026-04-06 — Admin client details: view signed order forms
