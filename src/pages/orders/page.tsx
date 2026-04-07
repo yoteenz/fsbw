@@ -34,6 +34,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import { normalizeUserOrdersBuckets, orderStatusIsCanceled } from '../../utils/userOrdersBuckets';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 
 interface OrderLineItem {
@@ -665,7 +666,17 @@ function OrdersPage() {
           activeOrders = excludeFounderSeedMockOrders(activeOrders);
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
         }
-        return { activeOrders, pastOrders };
+        const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+        if (norm.activeOrders.length !== activeOrders.length || norm.pastOrders.length !== pastOrders.length) {
+          try {
+            localStorage.setItem(
+              userOrdersKey,
+              JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders })
+            );
+            window.dispatchEvent(new CustomEvent('ordersUpdated'));
+          } catch (_) {}
+        }
+        return norm;
       }
     } catch (e) {
       console.error('Error loading user orders:', e);
@@ -696,22 +707,6 @@ function OrdersPage() {
         { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '22"' }, subtotal: 835 },
         { productName: 'NOIR', options: { capSize: 'M', color: 'OFF BLACK', length: '24"', hairline: 'LAGOS' }, subtotal: 800 }
       ]
-    },
-    {
-      id: 'test-order-4',
-      orderNumber: 'ORDER #666',
-      confirmationNumber: 'X6R6S6',
-      date: getDateDaysAgo(2), // 2 days ago (matching concierge)
-      status: 'CANCELED',
-      productName: 'BLANCO',
-      productImage: getProductImage('BLANCO'),
-      total: 820,
-      items: 1,
-      trackingNumber: undefined,
-      trackingCarrier: undefined,
-      placedAt: Date.now() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
-      canceledAt: Date.now() - (12 * 60 * 60 * 1000), // Canceled 12 hours ago
-      orderFormSigned: false
     },
     {
       id: 'test-order-5',
@@ -794,6 +789,22 @@ function OrdersPage() {
   ];
 
   const kateenaMockPastOrders: Order[] = [
+    {
+      id: 'test-order-4',
+      orderNumber: 'ORDER #666',
+      confirmationNumber: 'X6R6S6',
+      date: getDateDaysAgo(2),
+      status: 'CANCELED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 820,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (25 * 60 * 60 * 1000),
+      canceledAt: Date.now() - (12 * 60 * 60 * 1000),
+      orderFormSigned: false
+    },
     // Mock order with one product showing 6 lines of detail (cap size, density, lace, color, hairline, styling)
     {
       id: 'detail-lines-test',
@@ -947,7 +958,7 @@ function OrdersPage() {
                 try {
                   const key = `userOrders_${parsedUser.email}`;
                   const stored = localStorage.getItem(key);
-                  if (stored) {
+                    if (stored) {
                     const o = JSON.parse(stored);
                     let activeOrders: Order[] = o.activeOrders || [];
                     let pastOrders: Order[] = o.pastOrders || [];
@@ -959,7 +970,17 @@ function OrdersPage() {
                       activeOrders = excludeFounderSeedMockOrders(activeOrders);
                       pastOrders = excludeFounderSeedMockOrders(pastOrders);
                     }
-                    return { activeOrders, pastOrders };
+                    const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+                    if (norm.activeOrders.length !== activeOrders.length || norm.pastOrders.length !== pastOrders.length) {
+                      try {
+                        localStorage.setItem(
+                          key,
+                          JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders })
+                        );
+                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                      } catch (_) {}
+                    }
+                    return norm;
                   }
                 } catch (_) {}
                 return { activeOrders: [], pastOrders: [] };
@@ -1228,9 +1249,8 @@ function OrdersPage() {
       const now = Date.now();
       const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-      setActiveOrders(prevActive => {
-        return prevActive.map(order => {
-          // Only auto-cancel PLACED orders that haven't been signed
+      setActiveOrders((prevActive) => {
+        const mapped = prevActive.map((order) => {
           if (
             order.status === 'PLACED' &&
             order.placedAt &&
@@ -1239,16 +1259,26 @@ function OrdersPage() {
           ) {
             const timeSincePlaced = now - order.placedAt;
             if (timeSincePlaced >= twentyFourHours) {
-              // Cancel order and issue refund
               return {
                 ...order,
                 status: 'CANCELED',
-                canceledAt: now // Set cancellation timestamp
+                canceledAt: now,
               };
             }
           }
           return order;
         });
+        const toArchive = mapped.filter((o) => orderStatusIsCanceled(o.status));
+        const nextActive = mapped.filter((o) => !orderStatusIsCanceled(o.status));
+        if (toArchive.length > 0) {
+          setPastOrders((prevPast) => {
+            const ids = new Set(prevPast.map((o) => o.id).filter(Boolean) as string[]);
+            const append = toArchive.filter((o) => !o.id || !ids.has(o.id));
+            if (append.length === 0) return prevPast;
+            return [...prevPast, ...append];
+          });
+        }
+        return nextActive;
       });
     };
 
@@ -1299,15 +1329,8 @@ function OrdersPage() {
               toKeep.push(order);
             }
           }
-          // Archive CANCELED orders after 24 hours
-          else if (order.status === 'CANCELED' && order.canceledAt) {
-            const timeSinceCanceled = now - order.canceledAt;
-            if (timeSinceCanceled >= twentyFourHours) {
-              // Move to archived after 24 hours
-              toArchive.push(order);
-            } else {
-              toKeep.push(order);
-            }
+          else if (orderStatusIsCanceled(order.status)) {
+            toArchive.push(order);
           } else {
             toKeep.push(order);
           }

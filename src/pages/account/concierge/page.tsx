@@ -8,6 +8,7 @@ import { getCurrentUser, getEffectiveSubscriptionTier, isMockDataAccount, isAyot
 import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
 import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
@@ -718,13 +719,14 @@ function ConciergePage() {
             id: 'test-order-4',
             orderNumber: 'ORDER #666',
             date: canceledFormattedDate,
-            status: 'PLACED', // Still in PLACED status (never progressed)
+            status: 'CANCELED',
             productName: 'BLANCO',
             productImage: '/assets/natural front.png',
             total: 820,
             items: 1,
-            trackingStage: 0, // Still at confirmed stage
-            orderFormSigned: false, // Form was NOT signed
+            trackingStage: 0,
+            orderFormSigned: false,
+            canceledAt: Date.now(),
             placedAt: canceledOrderDate.getTime() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
             // Selection data for icons
             length: '18"',
@@ -771,8 +773,8 @@ function ConciergePage() {
           };
           
           const testOrdersData = {
-            activeOrders: [testOrder, deliveredOrder, canceledOrder, awaitingSignatureOrder],
-            pastOrders: []
+            activeOrders: [testOrder, deliveredOrder, awaitingSignatureOrder],
+            pastOrders: [canceledOrder],
           };
           
           localStorage.setItem(userOrdersKey, JSON.stringify(testOrdersData));
@@ -781,8 +783,8 @@ function ConciergePage() {
         
         if (storedOrders) {
           const orders = JSON.parse(storedOrders);
-          const active = orders.activeOrders || [];
-          const past = orders.pastOrders || [];
+          let active = [...(orders.activeOrders || [])];
+          let past = [...(orders.pastOrders || [])];
           
           // Check if there's already a test order for testing
           const existingTestOrderIndex = [...active, ...past].findIndex((order: any) => 
@@ -980,14 +982,15 @@ function ConciergePage() {
             id: 'test-order-4',
             orderNumber: 'ORDER #666',
             date: canceledFormattedDate,
-            status: 'PLACED', // Still in PLACED status (never progressed)
+            status: 'CANCELED',
             productName: 'BLANCO',
             productImage: '/assets/natural front.png',
             total: 820,
             items: 1,
-            trackingStage: 0, // Still at confirmed stage
-            orderFormSigned: false, // Form was NOT signed
-            placedAt: canceledOrderDate.getTime() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
+            trackingStage: 0,
+            orderFormSigned: false,
+            canceledAt: Date.now(),
+            placedAt: canceledOrderDate.getTime() - (25 * 60 * 60 * 1000),
             // Selection data for icons
             length: '18"',
             density: '200%',
@@ -1006,16 +1009,15 @@ function ConciergePage() {
           );
           
           if (existingCanceledOrderIndex >= 0) {
-            // Update existing canceled order
             if (existingCanceledOrderIndex < active.length) {
-              active[existingCanceledOrderIndex] = canceledOrder;
+              active.splice(existingCanceledOrderIndex, 1);
             } else {
               const pastIndex = existingCanceledOrderIndex - active.length;
-              past[pastIndex] = canceledOrder;
+              past.splice(pastIndex, 1);
             }
+            past.push(canceledOrder);
           } else {
-            // Add new canceled order
-            active.push(canceledOrder);
+            past.push(canceledOrder);
           }
           
           // Create or update an order awaiting signature (form not signed + within 24 hours)
@@ -1068,6 +1070,10 @@ function ConciergePage() {
             active.push(awaitingSignatureOrder);
           }
           
+          const norm = normalizeUserOrdersBuckets(active, past);
+          active = norm.activeOrders;
+          past = norm.pastOrders;
+
           // Save back to localStorage
           const updatedOrders = {
             activeOrders: active,
