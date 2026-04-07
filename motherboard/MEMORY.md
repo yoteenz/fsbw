@@ -12605,3 +12605,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to remove the **“YOU'RE EARNING…”** line at checkout for carts that don’t earn loyalty points (digital / gift / membership / consult-only, etc.).
 
 **Changes:** **`checkout/page.tsx`** — loyalty block (signed-in copy + **SIGN IN** CTA) renders only when **`cartHasAnyLoyaltyEarningLine(cartItems)`**; black separator **`marginTop`** **-14px** when loyalty row hidden (same as subscription upgrade). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo 30% smaller
+
+**Context (this chat):** User asked to reduce **consult order tracking** hair inspo photo size by **30%** (booking consult upload thumbs unchanged).
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — optional **`scale`** (default **1**); outer box **88 × scale** px. **`concierge/page.tsx`** — **`BookingConsultHairInspoThumb`** **`scale={0.7}`** (~**62×62**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
