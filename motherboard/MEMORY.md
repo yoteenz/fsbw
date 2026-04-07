@@ -12717,3 +12717,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked for signed-forms popup updates: title **SIGNED FORMS**; **ORDER #** line black Futura Book; tighter gap between **ORDER STATUS** label and value (single space); signed **time** gray Futura Medium; tap row opens full form with **red X** back to list; list vertically centered when multiple forms, **top-aligned** when one; backdrop tap returns to list before closing.
 
 **Changes:** **`admin/clients/page.tsx`** — **`signedFormDetailId`** state; **`SignedOrderFormCard`** **`list` / `full`** variants; **`formatSignedFormOrderNumberDisplay`**, **`formatSignedAtParts`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Client details header rule + profile spacing fix
+
+**Context (this chat):** User said the gray line under the red client name was the **wrong gray** vs other dividers, and **6px above profile** did not show (likely **margin collapse** with header **`marginBottom`**).
+
+**Changes:** **`admin/clients/page.tsx`** — header **`borderBottom`** **`1px solid #e5e7eb`** (matches overview spacer + tab **`borderTop`** rules); profile row **`marginTop: 6px` → `paddingTop: 6px`** on the flex wrapper. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
