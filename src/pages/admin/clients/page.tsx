@@ -23,6 +23,8 @@ import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
 import ImageViewerModal from '../../../components/ImageViewerModal';
 import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
+import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hooks/useSignedOrderFormPdf';
+import { mergeSignedFormsWithMockApproval } from '../../../utils/mockSignedOrderFormForApproval';
 import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
@@ -634,7 +636,7 @@ function SignedOrderFormListRow({ form, onOpenDetail }: { form: StoredSignedOrde
       <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{orderTitle}</span>
         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{' · '}</span>
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', fontWeight: 400 }}>{`SIGNED ${datePart}`}</span>
+        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', fontWeight: 500 }}>{`SIGNED ${datePart}`}</span>
         {timePart ? (
           <>
             <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{' '}</span>
@@ -1179,8 +1181,31 @@ export default function AdminClients() {
     void signedFormsListBump;
     const email = (selectedClientEmail || '').trim().toLowerCase();
     if (!email) return [];
-    return getSignedFormsForClientDisplay(email, selectedRawOrders as Record<string, unknown>[]);
+    const list = getSignedFormsForClientDisplay(email, selectedRawOrders as Record<string, unknown>[]);
+    return mergeSignedFormsWithMockApproval(list);
   }, [selectedClientEmail, selectedRawOrders, signedFormsListBump]);
+
+  const signedFormDetail = useMemo(() => {
+    if (!signedFormDetailId) return null;
+    return signedFormsForSelectedClient.find((f) => f.id === signedFormDetailId) ?? null;
+  }, [signedFormDetailId, signedFormsForSelectedClient]);
+
+  const {
+    url: signedFormDetailPdfUrl,
+    loading: signedFormDetailPdfLoading,
+    error: signedFormDetailPdfError,
+  } = useSignedOrderFormPdf(signedFormDetail);
+
+  const downloadSignedFormDetailPdf = useCallback(() => {
+    if (!signedFormDetailPdfUrl || !signedFormDetail) return;
+    const a = document.createElement('a');
+    a.href = signedFormDetailPdfUrl;
+    a.download = signedOrderFormPdfFileName(signedFormDetail);
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }, [signedFormDetailPdfUrl, signedFormDetail]);
 
   const selectedClientProfilePhotoSrc = selectedClient
     ? String(
@@ -3938,9 +3963,6 @@ export default function AdminClients() {
         </div>
       )}
       {showSignedFormsPopup && selectedClient && (() => {
-        const signedFormDetail = signedFormDetailId
-          ? signedFormsForSelectedClient.find((f) => f.id === signedFormDetailId)
-          : null;
         const listCount = signedFormsForSelectedClient.length;
         const listVertCenter = listCount >= 2;
         return (
@@ -3954,91 +3976,125 @@ export default function AdminClients() {
           role="presentation"
         >
           <div
-            className="p-4 overflow-hidden bg-white"
-            style={{
-              maxWidth: signedFormDetail ? '520px' : '400px',
-              width: '92%',
-              maxHeight: '88vh',
-              border: '1.3px solid black',
-              borderRadius: 0,
-              transform: 'translateY(-6px)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
+            className="flex flex-col items-stretch sm:items-center"
+            style={{ width: '100%', maxWidth: 'min(520px, 100%)', gap: '12px', padding: '0 12px', transform: 'translateY(-6px)' }}
             onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-labelledby="signed-forms-title"
           >
-            <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
-              <p id="signed-forms-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500, textAlign: 'left' }}>
-                {signedFormDetail ? 'ORDER FORM' : 'SIGNED FORMS'}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  if (signedFormDetailId) setSignedFormDetailId(null);
-                  else setShowSignedFormsPopup(false);
-                }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                aria-label={signedFormDetailId ? 'Back to signed forms list' : 'Close signed forms'}
-              >
-                {signedFormDetail ? (
-                  <img
-                    src="/assets/close-icon.svg"
-                    alt=""
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      display: 'block',
-                      filter:
-                        'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
-                    }}
+            <div
+              className="p-4 overflow-hidden bg-white"
+              style={{
+                maxWidth: signedFormDetail ? '520px' : '400px',
+                width: '100%',
+                alignSelf: 'center',
+                maxHeight: signedFormDetail ? 'min(78vh, 720px)' : '88vh',
+                border: '1.3px solid black',
+                borderRadius: 0,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              role="dialog"
+              aria-labelledby="signed-forms-title"
+            >
+              <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+                <p id="signed-forms-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500, textAlign: 'left' }}>
+                  {signedFormDetail ? 'ORDER FORM' : 'SIGNED FORMS'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (signedFormDetailId) setSignedFormDetailId(null);
+                    else setShowSignedFormsPopup(false);
+                  }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  aria-label={signedFormDetailId ? 'Back to signed forms list' : 'Close signed forms'}
+                >
+                  {signedFormDetail ? (
+                    <img
+                      src="/assets/close-icon.svg"
+                      alt=""
+                      style={{
+                        width: '18px',
+                        height: '18px',
+                        display: 'block',
+                        filter:
+                          'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                      }}
+                    />
+                  ) : (
+                    <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                  )}
+                </button>
+              </div>
+              {signedFormDetail ? (
+                <div
+                  className="flex-1 min-h-0 flex flex-col overflow-hidden"
+                  style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}
+                >
+                  <SignedOrderFormPdfPanel
+                    url={signedFormDetailPdfUrl}
+                    loading={signedFormDetailPdfLoading}
+                    error={signedFormDetailPdfError}
                   />
-                ) : (
-                  <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
-                )}
-              </button>
+                </div>
+              ) : (
+                <div
+                  className="overflow-y-auto flex-1 min-h-0 flex flex-col"
+                  style={{
+                    paddingLeft: '8px',
+                    paddingRight: '8px',
+                    paddingBottom: '16px',
+                    justifyContent: listVertCenter ? 'center' : 'flex-start',
+                  }}
+                >
+                  <div style={{ width: '100%' }}>
+                    {signedFormsForSelectedClient.length === 0 ? (
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '11px',
+                          color: '#808080',
+                          margin: 0,
+                          textAlign: 'center',
+                          padding: '20px 8px',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        NO SIGNED FORMS ON FILE FOR THIS CLIENT YET.
+                      </p>
+                    ) : (
+                      signedFormsForSelectedClient.map((f) => (
+                        <SignedOrderFormListRow key={f.id} form={f} onOpenDetail={() => setSignedFormDetailId(f.id)} />
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             {signedFormDetail ? (
-              <div
-                className="flex-1 min-h-0 flex flex-col overflow-hidden"
-                style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}
-              >
-                <SignedOrderFormPdfPanel form={signedFormDetail} />
-              </div>
-            ) : (
-              <div
-                className="overflow-y-auto flex-1 min-h-0 flex flex-col"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  downloadSignedFormDetailPdf();
+                }}
+                disabled={!signedFormDetailPdfUrl || signedFormDetailPdfLoading}
                 style={{
-                  paddingLeft: '8px',
-                  paddingRight: '8px',
-                  paddingBottom: '16px',
-                  justifyContent: listVertCenter ? 'center' : 'flex-start',
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#EB1C24',
+                  background: '#fff',
+                  border: '1.3px solid #000',
+                  padding: '8px 12px',
+                  cursor: signedFormDetailPdfUrl && !signedFormDetailPdfLoading ? 'pointer' : 'not-allowed',
+                  textTransform: 'uppercase',
+                  alignSelf: 'center',
+                  width: '100%',
+                  maxWidth: '520px',
                 }}
               >
-                <div style={{ width: '100%' }}>
-                  {signedFormsForSelectedClient.length === 0 ? (
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '11px',
-                        color: '#808080',
-                        margin: 0,
-                        textAlign: 'center',
-                        padding: '20px 8px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      NO SIGNED FORMS ON FILE FOR THIS CLIENT YET.
-                    </p>
-                  ) : (
-                    signedFormsForSelectedClient.map((f) => (
-                      <SignedOrderFormListRow key={f.id} form={f} onOpenDetail={() => setSignedFormDetailId(f.id)} />
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
+                SAVE / DOWNLOAD PDF
+              </button>
+            ) : null}
           </div>
         </div>
         );
