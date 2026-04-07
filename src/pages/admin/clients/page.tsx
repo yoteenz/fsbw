@@ -614,9 +614,54 @@ function formatSignedAtParts(signedAt: number): { datePart: string; timePart: st
   }
 }
 
-function SignedOrderFormListRow({ form, onOpenDetail }: { form: StoredSignedOrderForm; onOpenDetail: () => void }) {
+function normalizeOrderNumberTokenForMatch(s: string): string {
+  return s
+    .replace(/^ORDER\s*#?\s*/i, '')
+    .replace(/^#/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+}
+
+/** Match signed form row to admin order list for status display (defaults to DELIVERED). */
+function orderStatusLabelForSignedForm(
+  form: StoredSignedOrderForm,
+  orders: Array<Record<string, unknown>>
+): string {
+  const formId = form.orderId?.trim();
+  const formTok = normalizeOrderNumberTokenForMatch(String(form.orderNumber || ''));
+  for (const o of orders) {
+    if (formId && o.id != null && String(o.id) === formId) {
+      const st = String(o.status || '').trim();
+      return (st || 'DELIVERED').toUpperCase();
+    }
+  }
+  if (formTok) {
+    for (const o of orders) {
+      const on = String(o.orderNumber || o.order_number || '');
+      const oTok = normalizeOrderNumberTokenForMatch(on);
+      if (oTok && oTok === formTok) {
+        const st = String(o.status || '').trim();
+        return (st || 'DELIVERED').toUpperCase();
+      }
+    }
+  }
+  const fromFields = String(form.formFields?.status || '').trim();
+  return (fromFields || 'DELIVERED').toUpperCase();
+}
+
+function SignedOrderFormListRow({
+  form,
+  onOpenDetail,
+  clientOrders,
+}: {
+  form: StoredSignedOrderForm;
+  onOpenDetail: () => void;
+  clientOrders: Array<Record<string, unknown>>;
+}) {
   const { datePart, timePart } = formatSignedAtParts(form.signedAt);
   const orderTitle = formatSignedFormOrderNumberDisplay(form.orderNumber);
+  const orderStatusLabel = orderStatusLabelForSignedForm(form, clientOrders);
 
   return (
     <button
@@ -644,12 +689,24 @@ function SignedOrderFormListRow({ form, onOpenDetail }: { form: StoredSignedOrde
           </>
         ) : null}
       </p>
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '9px',
+          color: '#808080',
+          fontWeight: 500,
+          margin: '0 0 6px 0',
+          textTransform: 'uppercase',
+        }}
+      >
+        {`ORDER STATUS: ${orderStatusLabel}`}
+      </p>
       {form.summaryOnly ? (
-        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
           TAP TO VIEW PDF
         </p>
       ) : (
-        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
           TAP TO VIEW / DOWNLOAD PDF
         </p>
       )}
@@ -4063,7 +4120,12 @@ export default function AdminClients() {
                       </p>
                     ) : (
                       signedFormsForSelectedClient.map((f) => (
-                        <SignedOrderFormListRow key={f.id} form={f} onOpenDetail={() => setSignedFormDetailId(f.id)} />
+                        <SignedOrderFormListRow
+                        key={f.id}
+                        form={f}
+                        clientOrders={selectedRawOrders as Record<string, unknown>[]}
+                        onOpenDetail={() => setSignedFormDetailId(f.id)}
+                      />
                       ))
                     )}
                   </div>
