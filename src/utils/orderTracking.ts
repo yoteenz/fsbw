@@ -192,3 +192,27 @@ export function orderHasConciergeStyleStatus(order: Record<string, unknown> | nu
   const s = String(order?.status || '').toUpperCase();
   return CONCIERGE_TRACKING_STATUSES.includes(s);
 }
+
+/** True when expanded tracking should show a DELIVERED row after PACKAGE SHIPPED. */
+export function orderShowsDeliveredTrackingLine(order: Record<string, unknown> | null | undefined): boolean {
+  return String(order?.status || '').toUpperCase() === 'DELIVERED';
+}
+
+/**
+ * Bubble + red text for a standard stage row (0–8). When order is DELIVERED, `getOrderTrackingStageFromOrder` is 8
+ * for both SHIPPED and DELIVERED — highlight DELIVERED only, not PACKAGE SHIPPED.
+ */
+export function orderTrackingStageRowIsCurrent(
+  order: Record<string, unknown> | null | undefined,
+  stageIndex: number,
+  computedStage: number
+): boolean {
+  if (stageIndex !== computedStage) return false;
+  if (stageIndex === 8 && orderShowsDeliveredTrackingLine(order) && computedStage === 8) return false;
+  return true;
+}
+
+/** Current row for the extra DELIVERED line below PACKAGE SHIPPED. */
+export function orderTrackingDeliveredRowIsCurrent(order: Record<string, unknown> | null | undefined, computedStage: number): boolean {
+  return orderShowsDeliveredTrackingLine(order) && computedStage === 8;
+}

@@ -14,7 +14,14 @@ import {
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
-import { getCarrierTrackingUrl, getOrderTrackingStageFromOrder, ORDER_TRACKING_STAGE_LABELS } from '../../utils/orderTracking';
+import {
+  getCarrierTrackingUrl,
+  getOrderTrackingStageFromOrder,
+  ORDER_TRACKING_STAGE_LABELS,
+  orderTrackingDeliveredRowIsCurrent,
+  orderTrackingStageRowIsCurrent,
+  orderShowsDeliveredTrackingLine,
+} from '../../utils/orderTracking';
 import {
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
@@ -2208,6 +2215,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
                                    const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   const ordRec = expandedOrder as unknown as Record<string, unknown>;
+                                   const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ordRec, st);
                                    return (
                                      <>
                                        {shift !== 0 && (
@@ -2218,7 +2227,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                          {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
                                            const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
+                                           const isCurrent = orderTrackingStageRowIsCurrent(ordRec, i, st);
                                            return (
                                              <div key={`${expandedOrder.id}-st-${i}`}>
                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -2235,6 +2244,24 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                              </div>
                                            );
                                          })}
+                                         {orderShowsDeliveredTrackingLine(ordRec) ? (
+                                           <div key={`${expandedOrder.id}-st-delivered`}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent)} aria-hidden />
+                                               <p
+                                                 style={{
+                                                   fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                                   fontSize: '9px',
+                                                   color: deliveredRowCurrent ? '#EB1C24' : '#000',
+                                                   margin: 0,
+                                                   textTransform: 'uppercase',
+                                                 }}
+                                               >
+                                                 DELIVERED
+                                               </p>
+                                             </div>
+                                           </div>
+                                         ) : null}
                                        </div>
                                      </>
                                    );
@@ -3058,6 +3085,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
                                    const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   const ordRec = expandedOrder as unknown as Record<string, unknown>;
+                                   const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ordRec, st);
                                    return (
                                      <>
                                        {shift !== 0 && (
@@ -3068,7 +3097,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                          {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
                                            const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
+                                           const isCurrent = orderTrackingStageRowIsCurrent(ordRec, i, st);
                                            return (
                                              <div key={`${expandedOrder.id}-st-arch-${i}`}>
                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -3085,6 +3114,24 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                              </div>
                                            );
                                          })}
+                                         {orderShowsDeliveredTrackingLine(ordRec) ? (
+                                           <div key={`${expandedOrder.id}-st-arch-delivered`}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent)} aria-hidden />
+                                               <p
+                                                 style={{
+                                                   fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                                   fontSize: '9px',
+                                                   color: deliveredRowCurrent ? '#EB1C24' : '#000',
+                                                   margin: 0,
+                                                   textTransform: 'uppercase',
+                                                 }}
+                                               >
+                                                 DELIVERED
+                                               </p>
+                                             </div>
+                                           </div>
+                                         ) : null}
                                        </div>
                                      </>
                                    );

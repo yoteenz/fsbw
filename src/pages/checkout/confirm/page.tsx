@@ -28,7 +28,13 @@ import {
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline,
 } from '../../../utils/digitalOrderFulfillment';
-import { getOrderTrackingStageFromOrder, ORDER_TRACKING_STAGE_LABELS } from '../../../utils/orderTracking';
+import {
+  getOrderTrackingStageFromOrder,
+  ORDER_TRACKING_STAGE_LABELS,
+  orderTrackingDeliveredRowIsCurrent,
+  orderTrackingStageRowIsCurrent,
+  orderShowsDeliveredTrackingLine,
+} from '../../../utils/orderTracking';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -1746,8 +1752,10 @@ function CheckoutConfirmPage() {
                       />
                     </div>
                     {(() => {
-                      const st = getOrderTrackingStageFromOrder(summaryOrderForTracking as unknown as Record<string, unknown>);
+                      const ord = summaryOrderForTracking as unknown as Record<string, unknown>;
+                      const st = getOrderTrackingStageFromOrder(ord);
                       const shift = Number((summaryOrderForTracking as { trackingTimelineShiftDays?: number }).trackingTimelineShiftDays) || 0;
+                      const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ord, st);
                       return (
                         <>
                           {shift !== 0 && (
@@ -1759,7 +1767,7 @@ function CheckoutConfirmPage() {
                             {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
                               const notes = (summaryOrderForTracking as { trackingStageNotes?: Record<string, string> }).trackingStageNotes;
                               const note = notes?.[String(i)]?.trim();
-                              const isCurrent = i === st;
+                              const isCurrent = orderTrackingStageRowIsCurrent(ord, i, st);
                               return (
                                 <div key={`confirm-st-${i}`}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1794,6 +1802,24 @@ function CheckoutConfirmPage() {
                                 </div>
                               );
                             })}
+                            {orderShowsDeliveredTrackingLine(ord) ? (
+                              <div key="confirm-st-delivered">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <span style={orderTrackBubbleStyleConfirm(deliveredRowCurrent)} aria-hidden />
+                                  <p
+                                    style={{
+                                      fontFamily: deliveredRowCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                      fontSize: '9px',
+                                      color: deliveredRowCurrent ? '#EB1C24' : '#000',
+                                      margin: 0,
+                                      textTransform: 'uppercase',
+                                    }}
+                                  >
+                                    DELIVERED
+                                  </p>
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                         </>
                       );

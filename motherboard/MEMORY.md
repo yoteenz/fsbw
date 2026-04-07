@@ -12395,3 +12395,5 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up:** Removed **` · SUMMARY`** suffix from signed-form card headers in the modal (**`SignedOrderFormCard`**).
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Expanded **ORDER TRACKING** (orders + checkout summary): extra **`DELIVERED`** row under **PACKAGE SHIPPED** when **`status === 'DELIVERED'`**; red current styling on **DELIVERED** (not **PACKAGE SHIPPED**). Helpers in **`orderTracking.ts`**: **`orderShowsDeliveredTrackingLine`**, **`orderTrackingStageRowIsCurrent`**, **`orderTrackingDeliveredRowIsCurrent`**. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
