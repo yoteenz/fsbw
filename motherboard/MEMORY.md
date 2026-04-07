@@ -12541,3 +12541,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** After **-6px** vertical nudge, user asked to move **A/C** thumbnails **down 2px** (net **-4px** vs baseline).
 
 **Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_TRANSLATE_Y_PX`** **-6** → **-4**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Merge preview/mobile into master
+
+**Context (this chat):** User asked to push all work from **`preview/mobile`** to **`master`**.
+
+**Changes:** Checked out **`master`**, pulled **`origin/master`**, fast-forward merged **`preview/mobile`** (no merge commit; **`master`** advanced **`e68c284` → `e07924a`**), pushed **`origin/master`**. **`preview/mobile`** and **`master`** now share tip **`e07924a`**.
