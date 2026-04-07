@@ -713,7 +713,7 @@ export default function BookingConsultationPage() {
                           width: '15.4px',
                           height: '15.4px',
                           backgroundColor: '#FFFFFF',
-                          border: '1.37px solid #000000',
+                          border: '1.07px solid #000000',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
@@ -724,19 +724,23 @@ export default function BookingConsultationPage() {
                           flexShrink: 0
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          style={{
-                            width: '9.24px',
-                            height: '9.24px',
-                            objectFit: 'contain',
-                            display: 'block',
-                            flexShrink: 0,
-                            filter:
-                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                          }}
-                        />
+                        <svg
+                          width={9.24}
+                          height={9.24}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden
+                          style={{ display: 'block', flexShrink: 0 }}
+                        >
+                          <path
+                            d="M6.40038 18.3074L5.69238 17.5994L11.2924 11.9994L5.69238 6.39941L6.40038 5.69141L12.0004 11.2914L17.6004 5.69141L18.3084 6.39941L12.7084 11.9994L18.3084 17.5994L17.6004 18.3074L12.0004 12.7074L6.40038 18.3074Z"
+                            fill="#EB1C24"
+                            stroke="#EB1C24"
+                            strokeWidth={0.4}
+                            strokeLinejoin="round"
+                          />
+                        </svg>
                       </button>
                       <div style={bookingConsultHairInspoThumbFrameStyle}>
                         <img
