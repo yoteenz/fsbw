@@ -12661,3 +12661,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Actions:** Checked out **`preview/mobile`**, fast-forward merged through **`bc8d145`** (same tip as the cursor branch), **`git push -u origin preview/mobile`**, **`git push origin --delete cursor/appointment-notes-border-spacing-8444`**, deleted local cursor branch. **`motherboard/CORE.md`** — branch policy updated: **only `preview/mobile`**, no new **`cursor/*`** unless user explicitly asks.
 
 **Convention:** Agents must **ignore** default task-branch naming when it conflicts; use **`preview/mobile`** for all pushes here.
+
+---
+
+## 2026-04-07 — Consult hair inspo: no trailing period on “N OF 3 PHOTOS SUBMITTED”
+
+**Context (this chat):** User asked to remove the period from copy like **“1 OF 3 PHOTOS SUBMITTED.”** in the hair inspo input area on the consult booking page.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`hairInspoSubmittedLabel`** returns **`…SUBMITTED`** without **`.`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
