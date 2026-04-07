@@ -12725,3 +12725,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said the gray line under the red client name was the **wrong gray** vs other dividers, and **6px above profile** did not show (likely **margin collapse** with header **`marginBottom`**).
 
 **Changes:** **`admin/clients/page.tsx`** — header **`borderBottom`** **`1px solid #e5e7eb`** (matches overview spacer + tab **`borderTop`** rules); profile row **`marginTop: 6px` → `paddingTop: 6px`** on the flex wrapper. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X ring +0.3px
+
+**Context (this chat):** User asked to increase **line thickness** of the red **X** delete control on hair inspo thumbs by **0.3px** (consult booking).
+
+**Changes:** **`consultation/page.tsx`** — circular remove button border **1.07px → 1.37px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
