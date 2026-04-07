@@ -261,6 +261,12 @@ function OrdersPage() {
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? ORDER_AC_LIST_THUMB_PX
       : ORDER_LIST_THUMB_PX;
+  /** Tighter gap above "N ITEM(S)" for A/C booking rows only (6px less than wig rows). */
+  const ordersPageListItemsLabelMarginTopPx = (order: Order): number => {
+    const base = 2;
+    if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') return base - 6;
+    return base;
+  };
   /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs + ITEMS label. */
   const ORDER_LIST_THUMB_SLOT_STYLE: React.CSSProperties = {
     flexShrink: 0,
@@ -2464,7 +2470,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: '2px 0 0 0',
+                               margin: `${ordersPageListItemsLabelMarginTopPx(order)}px 0 0 0`,
                                textTransform: 'uppercase',
                                textAlign: 'center',
                                width: '100%',
@@ -3308,7 +3314,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: '2px 0 0 0',
+                               margin: `${ordersPageListItemsLabelMarginTopPx(order)}px 0 0 0`,
                                textTransform: 'uppercase',
                                textAlign: 'center',
                                width: '100%',
