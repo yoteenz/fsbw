@@ -243,6 +243,26 @@ function OrdersPage() {
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? ORDER_AC_LIST_THUMB_PX
       : ORDER_LIST_THUMB_PX;
+  /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs + ITEMS label. */
+  const ORDER_LIST_THUMB_SLOT_STYLE: React.CSSProperties = {
+    flexShrink: 0,
+    width: ORDER_LIST_THUMB_PX,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
+  const ORDER_LIST_THUMB_BUTTON_STYLE: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    width: ORDER_LIST_THUMB_PX,
+    height: ORDER_LIST_THUMB_PX,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+  };
 
   const ORDER_EXPANDED_PRODUCT_THUMB_PX = 120;
   const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * 0.65);
@@ -2406,15 +2426,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                      {activeOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
-                         <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                         <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{
-                               background: 'none',
-                               border: 'none',
-                               padding: 0,
-                               cursor: 'pointer'
-                             }}
+                             style={ORDER_LIST_THUMB_BUTTON_STYLE}
                            >
                              <img
                                src={ordersPageOrderThumbnailSrc(order)}
@@ -2432,7 +2447,9 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
                                margin: '2px 0 0 0',
-                               textTransform: 'uppercase'
+                               textTransform: 'uppercase',
+                               textAlign: 'center',
+                               width: '100%',
                              }}
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
@@ -3253,15 +3270,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                      {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
-                         <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                         <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{
-                               background: 'none',
-                               border: 'none',
-                               padding: 0,
-                               cursor: 'pointer'
-                             }}
+                             style={ORDER_LIST_THUMB_BUTTON_STYLE}
                            >
                              <img
                                src={ordersPageOrderThumbnailSrc(order)}
@@ -3279,7 +3291,9 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
                                margin: '2px 0 0 0',
-                               textTransform: 'uppercase'
+                               textTransform: 'uppercase',
+                               textAlign: 'center',
+                               width: '100%',
                              }}
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
