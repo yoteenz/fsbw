@@ -27,6 +27,11 @@ import {
   sanitizeConsultHeadMeasurementInput,
 } from '../../../utils/bookingConsultHeadMeasurementInput';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import {
+  bookingConsultHairInspoThumbFrameStyle,
+  bookingConsultHairInspoThumbImgStyle,
+  BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
+} from '../../../utils/bookingConsultHairInspoThumb';
 
 const CONSULT_DEPOSIT_USD = 40;
 
@@ -672,8 +677,8 @@ export default function BookingConsultationPage() {
                       key={item.id}
                       style={{
                         position: 'relative',
-                        width: '88px',
-                        height: '88px',
+                        width: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
+                        height: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
                         flexShrink: 0
                       }}
                     >
@@ -713,33 +718,12 @@ export default function BookingConsultationPage() {
                           }}
                         />
                       </button>
-                      <div
-                        style={{
-                          position: 'relative',
-                          padding: '1px',
-                          border: '3px solid white',
-                          boxShadow: '0 0 0 1.1px black',
-                          boxSizing: 'border-box',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: '#f5f5f5',
-                          overflow: 'hidden'
-                        }}
-                      >
+                      <div style={bookingConsultHairInspoThumbFrameStyle}>
                         <img
                           src={item.dataUrl}
                           alt=""
                           loading="eager"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            display: 'block'
-                          }}
+                          style={bookingConsultHairInspoThumbImgStyle}
                         />
                       </div>
                     </div>
