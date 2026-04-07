@@ -662,6 +662,7 @@ function SignedOrderFormListRow({
   const { datePart, timePart } = formatSignedAtParts(form.signedAt);
   const orderTitle = formatSignedFormOrderNumberDisplay(form.orderNumber);
   const orderStatusLabel = orderStatusLabelForSignedForm(form, clientOrders);
+  const statusIsDelivered = orderStatusLabel === 'DELIVERED';
 
   return (
     <button
@@ -693,13 +694,13 @@ function SignedOrderFormListRow({
         style={{
           fontFamily: '"Futura PT Medium"',
           fontSize: '9px',
-          color: '#808080',
           fontWeight: 500,
           margin: '0 0 6px 0',
           textTransform: 'uppercase',
         }}
       >
-        {`ORDER STATUS: ${orderStatusLabel}`}
+        <span style={{ color: '#808080' }}>ORDER STATUS: </span>
+        <span style={{ color: statusIsDelivered ? '#000000' : '#808080' }}>{orderStatusLabel}</span>
       </p>
       {form.summaryOnly ? (
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
@@ -4085,7 +4086,7 @@ export default function AdminClients() {
               {signedFormDetail ? (
                 <div
                   className="flex-1 min-h-0 flex flex-col overflow-hidden"
-                  style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}
+                  style={{ paddingLeft: '0', paddingRight: '0', paddingBottom: '16px' }}
                 >
                   <SignedOrderFormPdfPanel
                     url={signedFormDetailPdfUrl}

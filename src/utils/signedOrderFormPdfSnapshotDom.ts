@@ -22,6 +22,7 @@ function displayUpper(s: string): string {
   return s.trim().toUpperCase();
 }
 
+/** Matches `/shop/order-form` inputs: 36px total height incl. padding (`border-box`). */
 function setBoxStyle(el: HTMLElement, invalid = false): void {
   Object.assign(el.style, {
     width: '100%',
@@ -30,6 +31,7 @@ function setBoxStyle(el: HTMLElement, invalid = false): void {
     border: `1.3px solid ${invalid ? RED : BLACK}`,
     fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
     fontSize: '11px',
+    lineHeight: '1.2',
     backgroundColor: '#FFFFFF',
     color: GRAY_TEXT,
     boxSizing: 'border-box',
@@ -38,7 +40,23 @@ function setBoxStyle(el: HTMLElement, invalid = false): void {
     display: 'flex',
     alignItems: 'center',
     textTransform: 'uppercase',
+    overflow: 'hidden',
   } as CSSStyleDeclaration);
+}
+
+function appendCheckboxMark(box: HTMLElement): void {
+  const img = document.createElement('img');
+  img.src = '/assets/checkbox.svg';
+  img.alt = '';
+  Object.assign(img.style, {
+    width: '14px',
+    height: '14px',
+    display: 'block',
+    flexShrink: '0',
+    objectFit: 'contain',
+    objectPosition: 'center',
+  });
+  box.appendChild(img);
 }
 
 function labelStyle(): Partial<CSSStyleDeclaration> {
@@ -73,11 +91,7 @@ function checkboxRow(checked: boolean, labelHtml: string): HTMLDivElement {
     flexShrink: '0',
   });
   if (checked) {
-    const img = document.createElement('img');
-    img.src = '/assets/checkbox.svg';
-    img.alt = '';
-    Object.assign(img.style, { width: '16px', height: '16px', position: 'absolute' });
-    box.appendChild(img);
+    appendCheckboxMark(box);
   }
 
   const lab = document.createElement('span');
@@ -387,11 +401,7 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
     position: 'relative',
   });
   if (signedLike && form.signatureDataUrl) {
-    const img = document.createElement('img');
-    img.src = '/assets/checkbox.svg';
-    img.alt = '';
-    Object.assign(img.style, { width: '16px', height: '16px', position: 'absolute' });
-    b.appendChild(img);
+    appendCheckboxMark(b);
   }
   boxWrap.appendChild(b);
   const byText = document.createElement('p');
