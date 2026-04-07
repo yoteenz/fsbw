@@ -1796,68 +1796,44 @@ export default function AdminClients() {
                 {selectedClientEmail ? (
                   /* Details view: profile, orders, appointments */
                   <div className="px-5 pb-6" style={{ paddingTop: '10px', position: 'relative' }}>
-                    {selectedClient ? (
-                      <div
-                        className="flex items-center justify-between"
+                    <div
+                      className="flex items-center justify-between"
+                      style={{
+                        minWidth: 0,
+                        paddingBottom: '10px',
+                        marginBottom: '16px',
+                        borderBottom: '1.3px solid #9ca3af',
+                      }}
+                    >
+                      <p
                         style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '12px',
+                          color: '#EB1C24',
+                          margin: 0,
                           minWidth: 0,
-                          paddingBottom: '10px',
-                          marginBottom: '16px',
-                          borderBottom: '1px solid #e5e7eb',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          paddingRight: '8px',
                         }}
                       >
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '12px',
-                            color: '#EB1C24',
-                            margin: 0,
-                            minWidth: 0,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            paddingRight: '8px',
-                          }}
-                        >
-                          {`${selectedClient.firstName || ''} ${selectedClient.lastName || ''}`.trim().toUpperCase() || 'CLIENT DETAILS'}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={closeClientDetails}
-                          aria-label="Close client details"
-                          style={{
-                            padding: 0,
-                            border: 'none',
-                            background: 'none',
-                            cursor: 'pointer',
-                            lineHeight: 0,
-                            flexShrink: 0,
-                          }}
-                        >
-                          <img
-                            src="/assets/close-icon.svg"
-                            alt=""
-                            width={16}
-                            height={16}
-                            style={{ display: 'block', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }}
-                          />
-                        </button>
-                      </div>
-                    ) : (
+                        {selectedClient
+                          ? `${selectedClient.firstName || ''} ${selectedClient.lastName || ''}`.trim().toUpperCase() ||
+                            'CLIENT DETAILS'
+                          : (selectedClientEmail || '').trim().toUpperCase() || 'CLIENT DETAILS'}
+                      </p>
                       <button
                         type="button"
                         onClick={closeClientDetails}
                         aria-label="Close client details"
                         style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '20px',
                           padding: 0,
                           border: 'none',
                           background: 'none',
                           cursor: 'pointer',
                           lineHeight: 0,
-                          zIndex: 2,
+                          flexShrink: 0,
                         }}
                       >
                         <img
@@ -1865,10 +1841,14 @@ export default function AdminClients() {
                           alt=""
                           width={16}
                           height={16}
-                          style={{ display: 'block', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }}
+                          style={{
+                            display: 'block',
+                            filter:
+                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)',
+                          }}
                         />
                       </button>
-                    )}
+                    </div>
                     {selectedClient ? (
                       <>
                         {/* Circular profile area centered above the tab bar */}
