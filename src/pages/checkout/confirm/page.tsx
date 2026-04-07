@@ -56,29 +56,6 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
 }
 
 const ORDER_TRACK_BUBBLE_PX = 6;
-function orderTrackBubbleStyleConfirm(filled: boolean, pulsate = false): React.CSSProperties {
-  return {
-    width: ORDER_TRACK_BUBBLE_PX,
-    height: ORDER_TRACK_BUBBLE_PX,
-    borderRadius: '50%',
-    border: '1px solid #000',
-    background: filled ? '#EB1C24' : '#fff',
-    flexShrink: 0,
-    boxSizing: 'border-box',
-    ...(pulsate && filled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
-  };
-}
-
-function orderTrackStepLabelStyleConfirm(isCurrent: boolean): React.CSSProperties {
-  return {
-    fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-    fontSize: '9px',
-    color: isCurrent ? '#EB1C24' : '#000',
-    margin: 0,
-    textTransform: 'uppercase',
-    ...(isCurrent ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
-  };
-}
 
 function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): number {
   return orderStripThumbMetrics(item, isSubscriptionUpgrade, { checkoutStrip: true }).cellWidthPx;
@@ -122,6 +99,56 @@ function CheckoutConfirmPage() {
     }
     return false;
   });
+
+  const [ordersAnimationsEnabled, setOrdersAnimationsEnabled] = useState(() => {
+    try {
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+      return localStorage.getItem(key) !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    const sync = () => {
+      try {
+        const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+        setOrdersAnimationsEnabled(localStorage.getItem(key) !== 'false');
+      } catch (_) {}
+    };
+    window.addEventListener('ordersAnimationsChanged', sync as EventListener);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('ordersAnimationsChanged', sync as EventListener);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  const orderTrackBubbleStyleConfirm = React.useCallback(
+    (filled: boolean, pulsate = false): React.CSSProperties => ({
+      width: ORDER_TRACK_BUBBLE_PX,
+      height: ORDER_TRACK_BUBBLE_PX,
+      borderRadius: '50%',
+      border: '1px solid #000',
+      background: filled ? '#EB1C24' : '#fff',
+      flexShrink: 0,
+      boxSizing: 'border-box',
+      ...(pulsate && filled && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+    }),
+    [ordersAnimationsEnabled]
+  );
+
+  const orderTrackStepLabelStyleConfirm = React.useCallback(
+    (isCurrent: boolean): React.CSSProperties => ({
+      fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+      fontSize: '9px',
+      color: isCurrent ? '#EB1C24' : '#000',
+      margin: 0,
+      textTransform: 'uppercase',
+      ...(isCurrent && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+    }),
+    [ordersAnimationsEnabled]
+  );
   
   // Order data - get from location state, payment return, or generate
   const [orderData, setOrderData] = useState(() => {

@@ -1371,7 +1371,7 @@ function OrdersPage() {
     background: filled ? '#EB1C24' : '#fff',
     flexShrink: 0,
     boxSizing: 'border-box',
-    ...(pulsate && filled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+    ...(pulsate && filled && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   });
 
   const orderTrackStepLabelStyle = (isCurrent: boolean): React.CSSProperties => ({
@@ -1380,7 +1380,7 @@ function OrdersPage() {
     color: isCurrent ? '#EB1C24' : '#000',
     margin: 0,
     textTransform: 'uppercase',
-    ...(isCurrent ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+    ...(isCurrent && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   });
 
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */

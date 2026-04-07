@@ -460,6 +460,30 @@ function ConciergePage() {
     };
   }, [selectedCurrency]);
 
+  const [ordersAnimationsEnabled, setOrdersAnimationsEnabled] = useState(() => {
+    try {
+      const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+      return localStorage.getItem(key) !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    const sync = () => {
+      try {
+        const key = getPerUserKey(PER_USER_KEYS.ordersPageAnimationsEnabled, getCurrentUserEmailFromStorage());
+        setOrdersAnimationsEnabled(localStorage.getItem(key) !== 'false');
+      } catch (_) {}
+    };
+    window.addEventListener('ordersAnimationsChanged', sync as EventListener);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('ordersAnimationsChanged', sync as EventListener);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
   const SPECIAL_OFFER_MAX_QUANTITY = 2;
 
   const formatSpecialOfferPrice = (usdAmount: number): string => {
@@ -3546,7 +3570,7 @@ function ConciergePage() {
                                             color: '#EB1C24', 
                                             fontSize: '10px', 
                                             fontWeight: 'bold',
-                                            animation: 'pulsate 1s ease-in-out infinite',
+                                            ...(ordersAnimationsEnabled ? { animation: 'pulsate 1s ease-in-out infinite' } : {}),
                                             display: 'block',
                                             width: '6px',
                                             height: '6px',
