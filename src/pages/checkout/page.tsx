@@ -2234,22 +2234,19 @@ function CheckoutPage() {
 
   const pointsEligibleNetAmount = useMemo(
     () =>
-      isBookingsOnlyCheckout
-        ? 0
-        : computePointsEligibleNetUsd({
-            cartItems,
-            hasSpecialOfferInCart,
-            hasOnlySpecialOfferInCart,
-            orderAmount,
-            orderAmountExcludingSpecialOffer,
-            effectiveDiscount,
-            effectiveReferralDiscount,
-            effectiveGiftCardDiscount,
-            voucherDiscount,
-            consultDiscountAmount,
-          }),
+      computePointsEligibleNetUsd({
+        cartItems,
+        hasSpecialOfferInCart,
+        hasOnlySpecialOfferInCart,
+        orderAmount,
+        orderAmountExcludingSpecialOffer,
+        effectiveDiscount,
+        effectiveReferralDiscount,
+        effectiveGiftCardDiscount,
+        voucherDiscount,
+        consultDiscountAmount,
+      }),
     [
-      isBookingsOnlyCheckout,
       cartItems,
       hasSpecialOfferInCart,
       hasOnlySpecialOfferInCart,
@@ -3155,9 +3152,7 @@ function CheckoutPage() {
                             <>
                               {(() => {
                                 const basePoints =
-                                  isOnlyDigitalProducts || isBookingsOnlyCheckout
-                                    ? 0
-                                    : Math.round(pointsEligibleNetAmount);
+                                  isOnlyDigitalProducts ? 0 : Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';

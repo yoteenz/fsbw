@@ -567,7 +567,8 @@ function CheckoutConfirmPage() {
           ? cartItems.reduce((sum, item) => {
               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
               const isDigital = item.type === 'digital';
-              if (isGiftCard || isDigital) return sum;
+              const isConsultBooking = item.type === 'booking-consult';
+              if (isGiftCard || isDigital || isConsultBooking) return sum;
               return sum + (item.price || 0) * (item.quantity || 1);
             }, 0)
           : 0;
@@ -1900,7 +1901,13 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const subTier = getEffectiveSubscriptionTier(user);
                     const mult = getPointsMultiplier(tier, subTier).multiplier;
                     let pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
-                      if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
+                      if (
+                        item?.name === 'GIFT CARD' ||
+                        item?.type === 'gift-card' ||
+                        item?.type === 'digital' ||
+                        item?.type === 'booking-consult'
+                      )
+                        return sum;
                       return sum + (item?.price || 0) * (item?.quantity || 1);
                     }, 0);
                     try {
