@@ -3145,8 +3145,8 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* Loyalty line — hidden on subscription upgrade (no points on membership purchase) */}
-                    {!isSubscriptionUpgrade && (
+                    {/* Loyalty line — only when something in the cart earns points (hide gift/digital/membership/consult-only) */}
+                    {!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems) && (
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text — keep gap below cart strip without stealing height from thumbnails */}
                       <div style={{ 
@@ -3164,10 +3164,7 @@ function CheckoutPage() {
                           {isSignedIn ? (
                             <>
                               {(() => {
-                                const basePoints =
-                                  isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems)
-                                    ? 0
-                                    : Math.round(pointsEligibleNetAmount);
+                                const basePoints = Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -3195,13 +3192,14 @@ function CheckoutPage() {
                   </div>
                 )}
 
-                {/* BLACK LINE SEPARATOR — subscription upgrade: loyalty row is hidden; pull line up 6px more */}
+                {/* BLACK LINE SEPARATOR — when loyalty row is hidden, pull line up to match spacing */}
                 <div>
                       <div style={{ 
                     paddingTop: '0', 
                     paddingBottom: '1px',
                         borderTop: '1.3px solid #000',
-                    marginTop: isSubscriptionUpgrade ? '-14px' : '-8px'
+                    marginTop:
+                      isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? '-14px' : '-8px'
                   }}>
                   </div>
                 </div>
