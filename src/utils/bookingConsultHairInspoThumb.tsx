@@ -32,12 +32,18 @@ export const bookingConsultHairInspoThumbImgStyle: CSSProperties = {
   display: 'block',
 };
 
-type Props = { src: string; alt: string };
+type Props = { src: string; alt: string; /** e.g. **0.7** = 30% smaller than booking consult upload thumbs */ scale?: number };
 
-/** Read-only hair inspo thumb (Concierge order tracking, etc.). */
-export function BookingConsultHairInspoThumb({ src, alt }: Props) {
+/** Read-only hair inspo thumb (Concierge order tracking, etc.). Default size matches `/booking/consultation`. */
+export function BookingConsultHairInspoThumb({ src, alt, scale = 1 }: Props) {
+  const outerPx = Math.round(BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX * scale);
+  const outerStyle: CSSProperties = {
+    ...bookingConsultHairInspoThumbOuterStyle,
+    width: `${outerPx}px`,
+    height: `${outerPx}px`,
+  };
   return (
-    <div style={bookingConsultHairInspoThumbOuterStyle}>
+    <div style={outerStyle}>
       <div style={bookingConsultHairInspoThumbFrameStyle}>
         <img src={src} alt={alt} style={bookingConsultHairInspoThumbImgStyle} loading="lazy" />
       </div>

@@ -4113,6 +4113,7 @@ function ConciergePage() {
                                                           key={`consult-inspo-${idx}-${src.slice(0, 24)}`}
                                                           src={src}
                                                           alt={`Hair inspo ${idx + 1}`}
+                                                          scale={0.7}
                                                         />
                                                       ))}
                                                     </div>
@@ -4340,6 +4341,7 @@ function ConciergePage() {
                                                       key={`consult-inspo-other-${idx}-${src.slice(0, 24)}`}
                                                       src={src}
                                                       alt={`Hair inspo ${idx + 1}`}
+                                                      scale={0.7}
                                                     />
                                                   ))}
                                                 </div>
