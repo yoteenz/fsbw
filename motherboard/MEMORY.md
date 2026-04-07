@@ -12405,3 +12405,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up:** **`CANCELED` / `CANCELLED`** orders are **never** in **`activeOrders`**: **`normalizeUserOrdersBuckets`** in **`userOrdersBuckets.ts`**; **orders** page migrates LS on read, auto-cancel moves row to **past** immediately, archive effect no longer keeps canceled in active for 24h; **kateena** mock **#666** in **past**; **Concierge** seed + merge normalize buckets and use **CANCELED** + **`canceledAt`** for **#666**. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 **Follow-up:** **Account → Orders** lists (**active**, **past**, bottom status strip) sorted **newest first** via **`orderSortTimeMs`** + **`sortOrdersNewestFirst`** in **`userOrdersBuckets.ts`**; persisted to **`userOrders_*`** when order changes on load. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C thumbnails match cart badges
+
+**Context (this chat):** User wanted **appointment / consult** orders on **Account → Orders** to use the **same thumbnail** as the **cart** (booking badge PNGs), not a wig still or placeholder.
+
+**Changes:**
+- **`src/pages/orders/page.tsx`:** Optional **`bookingTier`** on **`Order`**; **`ordersPageOrderThumbnailSrc`** uses **`bookingCartItemThumbnailSrc`** from **`bookingBadges.ts`** when **`bookingFlowType`** is **`appointment`** or **`consult`**; list thumbnails and expanded synthetic product rows use it. Mock **kateena-consult-1** sets **`bookingTier: 'standard'`** and relies on badge URL (replaces **`gallery-mock.png`** for display).
+- **`src/pages/checkout/page.tsx`:** When persisting a **bookings-only** order to **`userOrders_*`**, set **`productImage`** from the same helper, and store **`bookingTier`** (**`standard`** / **`premium`**) from the matching cart line so premium vs standard matches the cart.
+
+**`npx tsc --noEmit`**. Commit **`fix(orders): use cart booking badge thumbnails for A/C orders`** (**`14d50e9`**). Pushed **`preview/mobile`**.
