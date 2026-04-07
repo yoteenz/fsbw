@@ -12452,3 +12452,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Topics in this chat (cumulative):** A/C cart-matching thumbs; membership excluded from orders; smaller A/C thumbs; this turn: **premium vs standard badge** from **signed-in account**, not stale order field.
 
 **Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageBookingBadgeTierForViewer`** uses **`isPremiumMemberForGatedFeatures()`** (same as cart/booking: active premium subscription tier and/or **BLACK** spend tier); **`ordersPageOrderThumbnailSrc`** passes that tier to **`bookingCartItemThumbnailSrc`** for appointment/consult. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C list column aligned with wig orders
+
+**Context (this chat):** User wanted **appointment/consult** list **thumbnail + ITEMS** text on the **same x-axis** as other orders (smaller A/C image had been shifting the column).
+
+**Topics in this chat (cumulative):** A/C thumbs, size, premium badge from viewer, this turn: **horizontal alignment**.
+
+**Changes:** **`src/pages/orders/page.tsx`** — fixed **102px** thumbnail slot (**`ORDER_LIST_THUMB_SLOT_STYLE`**); **102×102** flex-centered hit area for the image (**`ORDER_LIST_THUMB_BUTTON_STYLE`**); A/C image stays smaller inside; **ITEM** line **`width: 100%`**, **`textAlign: center`**. Applied to **active** and **archived** lists. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
