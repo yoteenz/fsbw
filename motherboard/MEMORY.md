@@ -12493,3 +12493,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to remove from **expanded** appointment/consult orders: the line **“DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.”** and the **“CAP SIZE: M”** detail under the product strip.
 
 **Changes:** **`src/pages/orders/page.tsx`** — hide that **ORDER STATUS** intro paragraph when **`bookingFlowType`** is appointment/consult (active + archived expanded). **`getNonDefaultDetailLines`** optional **`omitCapSizeLine`**; expanded product rows pass **`true`** for A/C so the first cap-size line is not shown (gift-card / digital-only expanded orders unchanged). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Order authorization form: units + BCF bundles/closures/frontals only
+
+**Context (this chat):** User asked that **only** orders containing **units**, **bundles**, **frontals**, or **closures** need to sign the **order authorization form** (not bookings, gift cards, membership, etc.).
+
+**Changes:** **`orderAuthorizationForm.ts`** (cart + order helpers); **`checkout/page.tsx`** persists **`requiresOrderAuthorizationForm`** on **`userOrders_*`** and passes it in summary **`navigate` state**; **`checkout/confirm/page.tsx`** gates 24h copy + **SIGN ORDER FORM**; **`orders/page.tsx`** gates auto-cancel, list CTAs, strip, **IN REVIEW**; **`orderTracking.ts`** advances post-confirm only when form applies; **`concierge/page.tsx`** signature UI + 24h logic; **`types/cart.ts`** **`category`**. **`npx tsc --noEmit`**. Commit **`cb3afad`**. Pushed **`preview/mobile`**.
