@@ -12357,3 +12357,5 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **File:** **`src/pages/orders/page.tsx`** — active + past expanded views: outer scroll **`justifyContent: center`** when one product; **`marginLeft: 0`** for single item; physical **ORDER TRACKING** moved below **REWARDS**; **ORDER STATUS** (digital) still after shipping; concierge paragraph + button removed.
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** **GO TO CONCIERGE** below orders card when expanded, **`membershipType === 'PREMIUM'`** only → **`/account/concierge?orderId=…#order-tracking`**; Concierge scrolls **#order-tracking** into view when order selected.

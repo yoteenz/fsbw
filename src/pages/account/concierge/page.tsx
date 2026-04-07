@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -582,6 +582,7 @@ function ConciergePage() {
   
   // Order tracking state
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+  const orderTrackingSectionRef = useRef<HTMLDivElement | null>(null);
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
 
@@ -1122,6 +1123,17 @@ function ConciergePage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
+
+  // Orders page: /account/concierge?orderId=…#order-tracking — scroll to Order Tracking once order is selected
+  useEffect(() => {
+    if (location.hash !== '#order-tracking') return;
+    const id = new URLSearchParams(location.search).get('orderId');
+    if (!id || selectedOrderId !== id) return;
+    const t = window.setTimeout(() => {
+      orderTrackingSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, [location.hash, location.search, selectedOrderId]);
 
   // Mark selected order's tracking status as seen when user views it (so badge can clear as they view each)
   useEffect(() => {
@@ -2694,6 +2706,8 @@ function ConciergePage() {
 
                 {/* Order Tracking Section */}
                 <div
+                  ref={orderTrackingSectionRef}
+                  id="order-tracking"
                   className="border border-black bg-white/60 backdrop-blur-sm w-full mb-2 transition-all duration-300 ease-out"
                   style={{
                     borderWidth: '1.3px',

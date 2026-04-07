@@ -1326,6 +1326,9 @@ function OrdersPage() {
     return `${currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹')}${formattedPrice}`;
   };
 
+  const isPremiumMember = (user: { membershipType?: string } | null | undefined) =>
+    String(user?.membershipType ?? '').toUpperCase() === 'PREMIUM';
+
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
     if (!orderUsesDigitalFulfillmentTimeline(order)) return null;
@@ -3225,6 +3228,28 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                       onClick={() => navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })}
                     >
                       LEAVE A REVIEW
+                    </button>
+                  </div>
+                );
+              })()}
+              {(() => {
+                if (!expandedOrderId || !currentUser || !isPremiumMember(currentUser)) return null;
+                const expandedForConcierge =
+                  activeOrders.find((o) => o.id === expandedOrderId) || pastOrders.find((o) => o.id === expandedOrderId);
+                if (!expandedForConcierge) return null;
+                return (
+                  <div className="px-0 w-full" style={{ marginTop: '4px', marginBottom: '8px' }}>
+                    <button
+                      type="button"
+                      className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '11px', fontWeight: 500 }}
+                      onClick={() =>
+                        navigate(
+                          `/account/concierge?orderId=${encodeURIComponent(expandedForConcierge.id)}#order-tracking`
+                        )
+                      }
+                    >
+                      GO TO CONCIERGE
                     </button>
                   </div>
                 );
