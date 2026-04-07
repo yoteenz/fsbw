@@ -1,4 +1,5 @@
 import type { StoredSignedOrderForm } from './signedOrderFormsStorage';
+import { MOCK_APPROVAL_SIGNED_FORM_ID } from './mockSignedOrderFormForApproval';
 
 const RED = '#EB1C24';
 const GRAY_TEXT = '#808080';
@@ -95,7 +96,7 @@ function textInput(value: string): HTMLDivElement {
   return d;
 }
 
-function textareaBlock(value: string): HTMLTextAreaElement {
+function textareaBlock(value: string, solidWhiteBg: boolean): HTMLTextAreaElement {
   const ta = document.createElement('textarea');
   ta.readOnly = true;
   ta.value = value;
@@ -106,7 +107,7 @@ function textareaBlock(value: string): HTMLTextAreaElement {
     border: `1.3px solid ${BLACK}`,
     fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
     fontSize: '11px',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: solidWhiteBg ? '#FFFFFF' : 'rgba(255, 255, 255, 0.8)',
     resize: 'none',
     borderRadius: '0',
     boxSizing: 'border-box',
@@ -182,7 +183,7 @@ function uploadBox(hasImage: boolean, imageSrc: string | undefined): HTMLDivElem
   return wrap;
 }
 
-function signatureArea(signatureSrc: string | undefined): HTMLDivElement {
+function signatureArea(signatureSrc: string | undefined, showClearLine: boolean): HTMLDivElement {
   const wrap = document.createElement('div');
   Object.assign(wrap.style, { position: 'relative', width: '100%' });
   const box = document.createElement('div');
@@ -210,138 +211,39 @@ function signatureArea(signatureSrc: string | undefined): HTMLDivElement {
     box.appendChild(img);
   }
   wrap.appendChild(box);
-  const clear = document.createElement('p');
-  clear.textContent = 'CLEAR SIGNATURE';
-  Object.assign(clear.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '10px',
-    color: BLACK,
-    textTransform: 'uppercase',
-    marginTop: '6px',
-    marginBottom: '0',
-    textAlign: 'center',
-  });
-  wrap.appendChild(clear);
+  if (showClearLine) {
+    const clear = document.createElement('p');
+    clear.textContent = 'CLEAR SIGNATURE';
+    Object.assign(clear.style, {
+      fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+      fontSize: '10px',
+      color: BLACK,
+      textTransform: 'uppercase',
+      marginTop: '6px',
+      marginBottom: '0',
+      textAlign: 'center',
+    });
+    wrap.appendChild(clear);
+  }
   return wrap;
 }
 
+type FieldsLayoutMode = 'fullPage' | 'mockPlainWhite';
+
 /**
- * Off-DOM tree matching `/shop/order-form` (order authorization card + submit), for PDF snapshot.
+ * Form fields block only — same stacking/gaps as `/shop/order-form` (inputs through signature).
  */
-export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm): HTMLElement {
+function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLayoutMode): HTMLElement {
   const signedLike = !form.summaryOnly;
-
-  const root = document.createElement('div');
-  root.setAttribute('data-signed-order-form-snapshot', '1');
-  Object.assign(root.style, {
-    width: '390px',
-    boxSizing: 'border-box',
-    position: 'relative',
-    backgroundImage: `url('/assets/marble-half.png')`,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'repeat',
-    padding: '20px 16px 24px',
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-  });
-
-  const card = document.createElement('div');
-  Object.assign(card.style, {
-    border: '1.3px solid black',
-    display: 'flex',
-    flexDirection: 'column',
-    paddingTop: '24px',
-    paddingBottom: '16px',
-    paddingLeft: '20px',
-    paddingRight: '20px',
-    marginBottom: '8px',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    backdropFilter: 'blur(6px)',
-    WebkitBackdropFilter: 'blur(6px)',
-    minWidth: '100%',
-    boxSizing: 'border-box',
-  });
-
-  const headerRow = document.createElement('div');
-  Object.assign(headerRow.style, {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: '-12px',
-    paddingBottom: '4px',
-    borderBottom: '1px solid #e5e7eb',
-    marginBottom: '0',
-  });
-  const h2 = document.createElement('h2');
-  h2.textContent = 'ORDER AUTHORIZATION FORM';
-  Object.assign(h2.style, {
-    fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: RED,
-    margin: '0',
-    textTransform: 'uppercase',
-    fontWeight: '500',
-  });
-  headerRow.appendChild(h2);
-  card.appendChild(headerRow);
-
-  const p1 = document.createElement('p');
-  p1.innerHTML = esc(
-    'THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.',
-  );
-  Object.assign(p1.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: BLACK,
-    lineHeight: '1.8',
-    margin: '18px 0 20px 0',
-    textAlign: 'center',
-    maxWidth: 'calc(100% - 24px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  });
-
-  const p2 = document.createElement('p');
-  p2.innerHTML = `${esc(
-    'YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO ',
-  )}<span style="color:${RED};font-weight:600;">CONTACT@FRONTALSLAYER.COM</span>`;
-  Object.assign(p2.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: BLACK,
-    lineHeight: '1.8',
-    margin: '0 0 20px 0',
-    textAlign: 'center',
-    maxWidth: 'calc(100% - 26px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  });
-
-  const p3 = document.createElement('p');
-  p3.textContent =
-    'THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!';
-  Object.assign(p3.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: BLACK,
-    lineHeight: '1.8',
-    margin: '0 0 30px 0',
-    textAlign: 'center',
-    maxWidth: 'calc(100% - 26px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  });
-
-  card.appendChild(p1);
-  card.appendChild(p2);
-  card.appendChild(p3);
+  const solidWhite = mode === 'mockPlainWhite';
+  const showClearSignature = mode === 'fullPage';
 
   const formCol = document.createElement('div');
   Object.assign(formCol.style, {
     display: 'flex',
     flexDirection: 'column',
     gap: '15px',
-    marginBottom: '20px',
+    marginBottom: solidWhite ? '0' : '20px',
     width: '100%',
   });
 
@@ -448,11 +350,11 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
   addrLab.textContent =
     'IF THE ADDRESS ON YOUR PHOTO ID DIFFERS, PROVIDE THE REASON WHY BELOW. IF NO REASON IS PROVIDED YOUR ORDER MAY BE SUBJECT TO CANCELLATION.';
   addrReason.appendChild(addrLab);
-  addrReason.appendChild(textareaBlock(val(form, 'addressDifferenceReason')));
+  addrReason.appendChild(textareaBlock(val(form, 'addressDifferenceReason'), solidWhite));
   uploadCol.appendChild(addrReason);
 
   const signSection = document.createElement('div');
-  Object.assign(signSection.style, { marginTop: '13px', marginBottom: '-6px' });
+  Object.assign(signSection.style, { marginTop: '13px', marginBottom: solidWhite ? '0' : '-6px' });
   const signRow = document.createElement('div');
   Object.assign(signRow.style, {
     display: 'flex',
@@ -501,11 +403,141 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
   bySignInner.appendChild(byRow);
   signRow.appendChild(bySignInner);
   signSection.appendChild(signRow);
-  signSection.appendChild(signatureArea(form.signatureDataUrl));
+  signSection.appendChild(signatureArea(form.signatureDataUrl, showClearSignature));
   uploadCol.appendChild(signSection);
 
   formCol.appendChild(uploadCol);
-  card.appendChild(formCol);
+  return formCol;
+}
+
+function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm): HTMLElement {
+  const root = document.createElement('div');
+  root.setAttribute('data-signed-order-form-snapshot', 'mock-plain');
+  Object.assign(root.style, {
+    width: '390px',
+    boxSizing: 'border-box',
+    position: 'relative',
+    backgroundColor: '#FFFFFF',
+    padding: '20px 20px 24px',
+    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+  });
+  root.appendChild(buildOrderFormFieldsColumn(form, 'mockPlainWhite'));
+  return root;
+}
+
+/**
+ * Off-DOM tree matching `/shop/order-form` (full page snapshot: marble, card, intro copy, fields, submit).
+ */
+export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm): HTMLElement {
+  if (form.id === MOCK_APPROVAL_SIGNED_FORM_ID) {
+    return buildMockPlainWhiteSnapshotRoot(form);
+  }
+
+  const root = document.createElement('div');
+  root.setAttribute('data-signed-order-form-snapshot', '1');
+  Object.assign(root.style, {
+    width: '390px',
+    boxSizing: 'border-box',
+    position: 'relative',
+    backgroundImage: `url('/assets/marble-half.png')`,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'repeat',
+    padding: '20px 16px 24px',
+    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+  });
+
+  const card = document.createElement('div');
+  Object.assign(card.style, {
+    border: '1.3px solid black',
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: '24px',
+    paddingBottom: '16px',
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    marginBottom: '8px',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(6px)',
+    WebkitBackdropFilter: 'blur(6px)',
+    minWidth: '100%',
+    boxSizing: 'border-box',
+  });
+
+  const headerRow = document.createElement('div');
+  Object.assign(headerRow.style, {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: '-12px',
+    paddingBottom: '4px',
+    borderBottom: '1px solid #e5e7eb',
+    marginBottom: '0',
+  });
+  const h2 = document.createElement('h2');
+  h2.textContent = 'ORDER AUTHORIZATION FORM';
+  Object.assign(h2.style, {
+    fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
+    fontSize: '12px',
+    color: RED,
+    margin: '0',
+    textTransform: 'uppercase',
+    fontWeight: '500',
+  });
+  headerRow.appendChild(h2);
+  card.appendChild(headerRow);
+
+  const p1 = document.createElement('p');
+  p1.innerHTML = esc(
+    'THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.',
+  );
+  Object.assign(p1.style, {
+    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    fontSize: '12px',
+    color: BLACK,
+    lineHeight: '1.8',
+    margin: '18px 0 20px 0',
+    textAlign: 'center',
+    maxWidth: 'calc(100% - 24px)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  });
+
+  const p2 = document.createElement('p');
+  p2.innerHTML = `${esc(
+    'YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO ',
+  )}<span style="color:${RED};font-weight:600;">CONTACT@FRONTALSLAYER.COM</span>`;
+  Object.assign(p2.style, {
+    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    fontSize: '12px',
+    color: BLACK,
+    lineHeight: '1.8',
+    margin: '0 0 20px 0',
+    textAlign: 'center',
+    maxWidth: 'calc(100% - 26px)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  });
+
+  const p3 = document.createElement('p');
+  p3.textContent =
+    'THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!';
+  Object.assign(p3.style, {
+    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    fontSize: '12px',
+    color: BLACK,
+    lineHeight: '1.8',
+    margin: '0 0 30px 0',
+    textAlign: 'center',
+    maxWidth: 'calc(100% - 26px)',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  });
+
+  card.appendChild(p1);
+  card.appendChild(p2);
+  card.appendChild(p3);
+  card.appendChild(buildOrderFormFieldsColumn(form, 'fullPage'));
   root.appendChild(card);
 
   const submit = document.createElement('button');

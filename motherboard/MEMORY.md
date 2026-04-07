@@ -12757,3 +12757,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked for signed order form popup updates: red **“SIGNED …”** date in **Futura PT Medium**; remove gray **stored snapshot incomplete** warning; move **SAVE / DOWNLOAD PDF** below the white modal card; add a **mock** signed form with mock signature, photo ID, and matching card image for layout/PDF approval.
 
 **Changes:** **`SignedOrderFormListRow`** — **`SIGNED ${datePart}`** uses **`Futura PT Medium`** / **fontWeight 500**. **`SignedOrderFormPdfPanel`** — iframe preview only (no warning, no download). **`useSignedOrderFormPdf.ts`** — shared blob URL + loading/error for PDF build. **`admin/clients/page.tsx`** — outer flex wraps white card + download button below card; detail **`maxHeight`** so PDF + button fit in viewport; **`useSignedOrderFormPdf`** + **`downloadSignedFormDetailPdf`**. **`mockSignedOrderFormForApproval.ts`** — canvas **PNG** data URLs (mock ID, card, signature) + full **`formFields`**; **`mergeSignedFormsWithMockApproval`** prepends to admin list (id **`mock-approval-signed-form-v1`**). **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed order PDF as order-form page snapshot
+
+**Context (this chat):** User said the **mock PDF** should look **exactly like** the **`/shop/order-form`** page—a **snapshot** of that UI, not a generic field list.
+
+**Changes:** **`html2canvas`** dependency. **`signedOrderFormPdfSnapshotDom.ts`** — **`buildSignedOrderFormSnapshotElement`**: off-DOM tree mirroring order form **header, three intro paragraphs, fields shown on page** (name, order #/date, email, auth checkboxes, photo ID + last-4 upload areas, address-difference textarea, by-signing + signature pad + submit), same **marble** background asset and **Futura** fallbacks. **`signedOrderFormPdf.ts`** — **`buildSignedOrderFormPdf`** builds snapshot → **`html2canvas`** → **multi-page** **`jsPDF`** strips. **`mockSignedOrderFormForApproval`** comment updated. **`npm run build`**. Pushed **`preview/mobile`**.

@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { StoredSignedOrderForm } from './signedOrderFormsStorage';
+import { MOCK_APPROVAL_SIGNED_FORM_ID } from './mockSignedOrderFormForApproval';
 import { buildSignedOrderFormSnapshotElement } from './signedOrderFormPdfSnapshotDom';
 
 function rasterizeSnapshotToPdfPages(canvas: HTMLCanvasElement): Blob {
@@ -53,7 +54,7 @@ export async function buildSignedOrderFormPdf(form: StoredSignedOrderForm): Prom
       useCORS: true,
       allowTaint: true,
       logging: false,
-      backgroundColor: null,
+      backgroundColor: form.id === MOCK_APPROVAL_SIGNED_FORM_ID ? '#ffffff' : null,
     });
     return rasterizeSnapshotToPdfPages(canvas);
   } finally {
