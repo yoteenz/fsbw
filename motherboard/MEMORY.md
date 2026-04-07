@@ -12685,3 +12685,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said the client details toggle was missing the **gray border** under the **red header client name**.
 
 **Changes:** **`admin/clients/page.tsx`** — header row (name + close) **`borderBottom: '1px solid #e5e7eb'`**, **`paddingBottom: '10px'`**, **`marginBottom: '16px'`** (replaces **`mb-4`** on that row). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details header: visible gray rule + always show bar
+
+**Context (this chat):** User repeated that the gray line under the red client name was **missing** (likely **1px #e5e7eb** too faint on frosted card, or header row skipped when **`selectedClient`** was null).
+
+**Changes:** **`admin/clients/page.tsx`** — single header row always (email fallback title when client not resolved); **`borderBottom: '1.3px solid #9ca3af'`** (design-system gray). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
