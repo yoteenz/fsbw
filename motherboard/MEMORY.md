@@ -12485,3 +12485,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to **reduce spacing above** the **items count** line for **appointment/consult** orders **only** by **6px**.
 
 **Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageListItemsLabelMarginTopPx`**: **2px** for wig orders, **-4px** for A/C (**6px** less gap above the label). Active + archived lists. **`npx tsc --noEmit`**. Commit **`fix(orders): reduce gap above A/C items label by 6px`** (**`71da809`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Expanded A/C orders: drop digital blurb + cap size line
+
+**Context (this chat):** User asked to remove from **expanded** appointment/consult orders: the line **“DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.”** and the **“CAP SIZE: M”** detail under the product strip.
+
+**Changes:** **`src/pages/orders/page.tsx`** — hide that **ORDER STATUS** intro paragraph when **`bookingFlowType`** is appointment/consult (active + archived expanded). **`getNonDefaultDetailLines`** optional **`omitCapSizeLine`**; expanded product rows pass **`true`** for A/C so the first cap-size line is not shown (gift-card / digital-only expanded orders unchanged). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
