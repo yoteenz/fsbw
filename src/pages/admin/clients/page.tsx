@@ -22,6 +22,7 @@ import { clientHasUnreadPriorityMessages, getLastUnreadPriorityMessageTime, isOr
 import { formatBirthday } from '../../../utils/formatBirthday';
 import { formatCountryDisplay } from '../../../utils/formatCountry';
 import ImageViewerModal from '../../../components/ImageViewerModal';
+import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
 import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
@@ -588,30 +589,6 @@ function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; pa
   ];
 }
 
-const SIGNED_FORM_FIELD_ORDER = [
-  'orderNumber',
-  'orderDate',
-  'firstName',
-  'lastName',
-  'email',
-  'phone',
-  'address',
-  'city',
-  'state',
-  'zip',
-  'country',
-  'billingAddress',
-  'billingCity',
-  'billingState',
-  'billingZip',
-  'billingCountry',
-  'cardholderName',
-  'cardNumber',
-  'cardLastFour',
-  'cardType',
-  'expirationDate',
-] as const;
-
 function formatSignedFormOrderNumberDisplay(raw: string | undefined): string {
   const s = String(raw || '').trim();
   if (!s || s === '—') return 'ORDER';
@@ -635,164 +612,46 @@ function formatSignedAtParts(signedAt: number): { datePart: string; timePart: st
   }
 }
 
-function formatSignedFormFieldLabel(key: string): string {
-  const map: Record<string, string> = {
-    orderNumber: 'ORDER NUMBER',
-    orderDate: 'ORDER DATE',
-    firstName: 'FIRST NAME',
-    lastName: 'LAST NAME',
-    email: 'EMAIL',
-    phone: 'PHONE',
-    address: 'SHIPPING ADDRESS',
-    city: 'CITY',
-    state: 'STATE',
-    zip: 'ZIP',
-    country: 'COUNTRY',
-    billingAddress: 'BILLING ADDRESS',
-    billingCity: 'BILLING CITY',
-    billingState: 'BILLING STATE',
-    billingZip: 'BILLING ZIP',
-    billingCountry: 'BILLING COUNTRY',
-    cardholderName: 'CARDHOLDER',
-    cardNumber: 'CARD',
-    cardLastFour: 'CARD (LAST FOUR FILE)',
-    cardType: 'CARD TYPE',
-    expirationDate: 'EXPIRATION',
-    status: 'ORDER STATUS',
-  };
-  return map[key] || key.replace(/([A-Z])/g, ' $1').trim().toUpperCase();
-}
-
-function SignedOrderFormCard({
-  form,
-  variant,
-  onOpenDetail,
-}: {
-  form: StoredSignedOrderForm;
-  variant: 'list' | 'full';
-  onOpenDetail?: () => void;
-}) {
-  const fields = form.formFields || {};
-  const orderedKeys = [
-    ...SIGNED_FORM_FIELD_ORDER.filter((k) => fields[k] != null && String(fields[k]).trim() !== ''),
-    ...Object.keys(fields).filter((k) => !SIGNED_FORM_FIELD_ORDER.includes(k as (typeof SIGNED_FORM_FIELD_ORDER)[number])),
-  ];
+function SignedOrderFormListRow({ form, onOpenDetail }: { form: StoredSignedOrderForm; onOpenDetail: () => void }) {
   const { datePart, timePart } = formatSignedAtParts(form.signedAt);
   const orderTitle = formatSignedFormOrderNumberDisplay(form.orderNumber);
 
-  const body = (
-    <>
-      {orderedKeys.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
-          {orderedKeys.map((key) => {
-            const rawVal = String(fields[key] ?? '');
-            const val = key === 'status' ? rawVal.replace(/\s+/g, ' ').trim() : rawVal;
-            if (key === 'status') {
-              return (
-                <div
-                  key={key}
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    textTransform: 'uppercase',
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  <span style={{ color: '#808080' }}>{formatSignedFormFieldLabel(key)}:</span>
-                  <span style={{ color: '#000' }}>{` ${val}`}</span>
-                </div>
-              );
-            }
-            return (
-              <div
-                key={key}
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '4px 8px',
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '9px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                <span style={{ color: '#808080', flex: '0 0 auto' }}>{formatSignedFormFieldLabel(key)}:</span>
-                <span style={{ color: '#000', wordBreak: 'break-word' }}>{val}</span>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
-      {form.photoIdDataUrl ? (
-        <div style={{ marginBottom: '8px' }}>
-          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>PHOTO ID</p>
-          <img src={form.photoIdDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '140px', objectFit: 'contain', border: '1px solid #ccc' }} />
-        </div>
-      ) : null}
-      {form.cardLastFourDataUrl ? (
-        <div style={{ marginBottom: '8px' }}>
-          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>CARD LAST FOUR (UPLOAD)</p>
-          <img src={form.cardLastFourDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100px', objectFit: 'contain', border: '1px solid #ccc' }} />
-        </div>
-      ) : null}
-      {form.signatureDataUrl ? (
-        <div>
-          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>SIGNATURE</p>
-          <img src={form.signatureDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '80px', objectFit: 'contain', border: '1px solid #ccc', background: '#fff' }} />
-        </div>
-      ) : null}
-    </>
-  );
-
-  if (variant === 'list') {
-    return (
-      <button
-        type="button"
-        onClick={onOpenDetail}
-        style={{
-          border: '1px solid #e5e7eb',
-          padding: '12px',
-          marginBottom: '14px',
-          background: '#fafafa',
-          width: '100%',
-          textAlign: 'left',
-          cursor: 'pointer',
-          borderRadius: 0,
-        }}
-      >
-        <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{orderTitle}</span>
-          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{` · SIGNED ${datePart} `}</span>
-          {timePart ? (
-            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', fontWeight: 500 }}>{timePart}</span>
-          ) : null}
-        </p>
-        {form.summaryOnly ? (
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
-            TAP TO VIEW DETAILS
-          </p>
-        ) : null}
-      </button>
-    );
-  }
-
   return (
-    <div
+    <button
+      type="button"
+      onClick={onOpenDetail}
       style={{
         border: '1px solid #e5e7eb',
         padding: '12px',
         marginBottom: '14px',
         background: '#fafafa',
+        width: '100%',
+        textAlign: 'left',
+        cursor: 'pointer',
+        borderRadius: 0,
       }}
     >
       <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{orderTitle}</span>
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{` · SIGNED ${datePart} `}</span>
+        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{' · '}</span>
+        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', fontWeight: 400 }}>{`SIGNED ${datePart}`}</span>
         {timePart ? (
-          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', fontWeight: 500 }}>{timePart}</span>
+          <>
+            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', fontWeight: 400 }}>{' '}</span>
+            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', fontWeight: 500 }}>{timePart}</span>
+          </>
         ) : null}
       </p>
-      {body}
-    </div>
+      {form.summaryOnly ? (
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
+          TAP TO VIEW PDF
+        </p>
+      ) : (
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>
+          TAP TO VIEW / DOWNLOAD PDF
+        </p>
+      )}
+    </button>
   );
 }
 
@@ -4083,7 +3942,7 @@ export default function AdminClients() {
           ? signedFormsForSelectedClient.find((f) => f.id === signedFormDetailId)
           : null;
         const listCount = signedFormsForSelectedClient.length;
-        const listScrollJustify = listCount > 1 ? 'center' : 'flex-start';
+        const listVertCenter = listCount >= 2;
         return (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center"
@@ -4097,7 +3956,7 @@ export default function AdminClients() {
           <div
             className="p-4 overflow-hidden bg-white"
             style={{
-              maxWidth: '400px',
+              maxWidth: signedFormDetail ? '520px' : '400px',
               width: '92%',
               maxHeight: '88vh',
               border: '1.3px solid black',
@@ -4141,8 +4000,11 @@ export default function AdminClients() {
               </button>
             </div>
             {signedFormDetail ? (
-              <div className="overflow-y-auto flex-1 min-h-0" style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}>
-                <SignedOrderFormCard form={signedFormDetail} variant="full" />
+              <div
+                className="flex-1 min-h-0 flex flex-col overflow-hidden"
+                style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}
+              >
+                <SignedOrderFormPdfPanel form={signedFormDetail} />
               </div>
             ) : (
               <div
@@ -4151,7 +4013,7 @@ export default function AdminClients() {
                   paddingLeft: '8px',
                   paddingRight: '8px',
                   paddingBottom: '16px',
-                  justifyContent: listScrollJustify,
+                  justifyContent: listVertCenter ? 'center' : 'flex-start',
                 }}
               >
                 <div style={{ width: '100%' }}>
@@ -4171,12 +4033,7 @@ export default function AdminClients() {
                     </p>
                   ) : (
                     signedFormsForSelectedClient.map((f) => (
-                      <SignedOrderFormCard
-                        key={f.id}
-                        form={f}
-                        variant="list"
-                        onOpenDetail={() => setSignedFormDetailId(f.id)}
-                      />
+                      <SignedOrderFormListRow key={f.id} form={f} onOpenDetail={() => setSignedFormDetailId(f.id)} />
                     ))
                   )}
                 </div>
