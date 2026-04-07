@@ -17,6 +17,11 @@ function val(form: StoredSignedOrderForm, key: string): string {
   return String(form.formFields?.[key] ?? '').trim();
 }
 
+/** PDF display: all entered text uppercase (labels already uppercase on page). */
+function displayUpper(s: string): string {
+  return s.trim().toUpperCase();
+}
+
 function setBoxStyle(el: HTMLElement, invalid = false): void {
   Object.assign(el.style, {
     width: '100%',
@@ -32,6 +37,7 @@ function setBoxStyle(el: HTMLElement, invalid = false): void {
     outline: 'none',
     display: 'flex',
     alignItems: 'center',
+    textTransform: 'uppercase',
   } as CSSStyleDeclaration);
 }
 
@@ -92,14 +98,14 @@ function checkboxRow(checked: boolean, labelHtml: string): HTMLDivElement {
 function textInput(value: string): HTMLDivElement {
   const d = document.createElement('div');
   setBoxStyle(d);
-  d.textContent = value || ' ';
+  d.textContent = displayUpper(value) || ' ';
   return d;
 }
 
 function textareaBlock(value: string, solidWhiteBg: boolean): HTMLTextAreaElement {
   const ta = document.createElement('textarea');
   ta.readOnly = true;
-  ta.value = value;
+  ta.value = displayUpper(value);
   Object.assign(ta.style, {
     width: '100%',
     minHeight: '88px',
@@ -113,6 +119,7 @@ function textareaBlock(value: string, solidWhiteBg: boolean): HTMLTextAreaElemen
     boxSizing: 'border-box',
     outline: 'none',
     color: GRAY_TEXT,
+    textTransform: 'uppercase',
   });
   return ta;
 }
@@ -410,6 +417,24 @@ function buildOrderFormFieldsColumn(form: StoredSignedOrderForm, mode: FieldsLay
   return formCol;
 }
 
+function pdfBrandingHeader(): HTMLElement {
+  const h = document.createElement('h2');
+  h.textContent = 'FRONTAL SLAYER ORDER AUTHORIZATION FORM';
+  Object.assign(h.style, {
+    fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
+    fontSize: '11px',
+    color: RED,
+    margin: '0 0 14px 0',
+    paddingBottom: '8px',
+    borderBottom: '1px solid #e5e7eb',
+    textTransform: 'uppercase',
+    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: '1.35',
+  });
+  return h;
+}
+
 function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm): HTMLElement {
   const root = document.createElement('div');
   root.setAttribute('data-signed-order-form-snapshot', 'mock-plain');
@@ -421,6 +446,7 @@ function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm): HTMLEleme
     padding: '20px 20px 24px',
     fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
   });
+  root.appendChild(pdfBrandingHeader());
   root.appendChild(buildOrderFormFieldsColumn(form, 'mockPlainWhite'));
   return root;
 }
@@ -464,28 +490,7 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
     boxSizing: 'border-box',
   });
 
-  const headerRow = document.createElement('div');
-  Object.assign(headerRow.style, {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: '-12px',
-    paddingBottom: '4px',
-    borderBottom: '1px solid #e5e7eb',
-    marginBottom: '0',
-  });
-  const h2 = document.createElement('h2');
-  h2.textContent = 'ORDER AUTHORIZATION FORM';
-  Object.assign(h2.style, {
-    fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: RED,
-    margin: '0',
-    textTransform: 'uppercase',
-    fontWeight: '500',
-  });
-  headerRow.appendChild(h2);
-  card.appendChild(headerRow);
+  card.appendChild(pdfBrandingHeader());
 
   const p1 = document.createElement('p');
   p1.innerHTML = esc(

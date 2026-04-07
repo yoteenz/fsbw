@@ -4,7 +4,8 @@ import type { StoredSignedOrderForm } from './signedOrderFormsStorage';
 import { MOCK_APPROVAL_SIGNED_FORM_ID } from './mockSignedOrderFormForApproval';
 import { buildSignedOrderFormSnapshotElement } from './signedOrderFormPdfSnapshotDom';
 
-function rasterizeSnapshotToPdfPages(canvas: HTMLCanvasElement): Blob {
+/** Single letter page: scale snapshot to fit (uniform), centered in printable area. */
+function rasterizeSnapshotToSinglePdfPage(canvas: HTMLCanvasElement): Blob {
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
   const pdfW = doc.internal.pageSize.getWidth();
   const pdfH = doc.internal.pageSize.getHeight();
@@ -13,26 +14,12 @@ function rasterizeSnapshotToPdfPages(canvas: HTMLCanvasElement): Blob {
   const maxH = pdfH - margin * 2;
   const imgW = canvas.width;
   const imgH = canvas.height;
-  const scale = maxW / imgW;
-  const totalH = imgH * scale;
-  let yPdf = 0;
-  let first = true;
-  while (yPdf < totalH - 0.5) {
-    if (!first) doc.addPage();
-    first = false;
-    const hThis = Math.min(maxH, totalH - yPdf);
-    const yPx = yPdf / scale;
-    const hPx = hThis / scale;
-    const part = document.createElement('canvas');
-    part.width = imgW;
-    part.height = Math.max(1, Math.ceil(hPx));
-    const ctx = part.getContext('2d');
-    if (ctx) {
-      ctx.drawImage(canvas, 0, yPx, imgW, hPx, 0, 0, imgW, hPx);
-    }
-    doc.addImage(part.toDataURL('image/png'), 'PNG', margin, margin, maxW, hThis);
-    yPdf += hThis;
-  }
+  const scale = Math.min(maxW / imgW, maxH / imgH);
+  const drawW = imgW * scale;
+  const drawH = imgH * scale;
+  const x = margin + (maxW - drawW) / 2;
+  const y = margin + (maxH - drawH) / 2;
+  doc.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, drawW, drawH);
   return doc.output('blob');
 }
 
@@ -56,7 +43,7 @@ export async function buildSignedOrderFormPdf(form: StoredSignedOrderForm): Prom
       logging: false,
       backgroundColor: form.id === MOCK_APPROVAL_SIGNED_FORM_ID ? '#ffffff' : null,
     });
-    return rasterizeSnapshotToPdfPages(canvas);
+    return rasterizeSnapshotToSinglePdfPage(canvas);
   } finally {
     el.remove();
   }

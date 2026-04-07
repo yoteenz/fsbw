@@ -13,6 +13,11 @@ import {
   fileToDataUrl,
   markOrderFormSignedInUserOrders,
 } from '../../../utils/signedOrderFormsStorage';
+import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import {
+  loadLastOrderAuthorizationFormDraft,
+  saveLastOrderAuthorizationFormDraft,
+} from '../../../utils/lastOrderAuthorizationFormDraft';
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -51,6 +56,7 @@ function OrderFormPage() {
   const [lastFourDigitsPreview, setLastFourDigitsPreview] = useState<string | null>(null);
   const [addressDifferenceReason, setAddressDifferenceReason] = useState('');
   const [isDrawing, setIsDrawing] = useState(false);
+  const [orderFormDraftHydrateKey, setOrderFormDraftHydrateKey] = useState(0);
   const photoIdInputRef = useRef<HTMLInputElement>(null);
   const lastFourDigitsInputRef = useRef<HTMLInputElement>(null);
   const signatureCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -173,6 +179,72 @@ function OrderFormPage() {
       window.removeEventListener('signInStateChanged', handleStorageChange as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    const bump = () => setOrderFormDraftHydrateKey((k) => k + 1);
+    window.addEventListener('signedOrderFormsUpdated', bump);
+    window.addEventListener('storage', bump);
+    window.addEventListener('signInStateChanged', bump);
+    return () => {
+      window.removeEventListener('signedOrderFormsUpdated', bump);
+      window.removeEventListener('storage', bump);
+      window.removeEventListener('signInStateChanged', bump);
+    };
+  }, []);
+
+  /** Repeat orders: pre-fill from last submitted authorization (per user). Order # / date from checkout always win. */
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('isSignedIn') !== 'true') return;
+    const email = getCurrentUserEmailFromStorage();
+    if (!email) return;
+    const draft = loadLastOrderAuthorizationFormDraft(email);
+    if (!draft) return;
+
+    setFormData((prev) => {
+      const d = draft.formFields;
+      const next = { ...prev };
+      const take = (k: keyof typeof next) => {
+        const v = d[k as keyof typeof d];
+        if (typeof v === 'string' && v.trim() && !String((next as any)[k] || '').trim()) {
+          (next as any)[k] = v;
+        }
+      };
+      take('firstName');
+      take('lastName');
+      take('email');
+      take('phone');
+      take('address');
+      take('city');
+      take('state');
+      take('zip');
+      take('country');
+      take('billingAddress');
+      take('billingCity');
+      take('billingState');
+      take('billingZip');
+      take('billingCountry');
+      take('cardholderName');
+      take('cardNumber');
+      take('cardLastFour');
+      take('cardType');
+      take('expirationDate');
+      return next;
+    });
+
+    setAddressDifferenceReason((prev) => {
+      const v = draft.formFields.addressDifferenceReason;
+      if (prev.trim() || !v?.trim()) return prev;
+      return v;
+    });
+
+    if (draft.photoIdDataUrl?.startsWith('data:image')) {
+      setPhotoIdPreview((p) => p || draft.photoIdDataUrl!);
+    }
+    if (draft.cardLastFourDataUrl?.startsWith('data:image')) {
+      setLastFourDigitsPreview((p) => p || draft.cardLastFourDataUrl!);
+    }
+  }, [orderFormDraftHydrateKey, location.key]);
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -353,24 +425,45 @@ function OrderFormPage() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  // Initialize canvas
+  // Signature canvas size + optional pre-fill from last submitted form (after layout)
   useEffect(() => {
-    const canvas = signatureCanvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Set canvas size
-    canvas.width = canvas.offsetWidth;
-    canvas.height = 150;
-    
-    // Set drawing style
-    ctx.strokeStyle = '#EB1C24';
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }, []);
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) return;
+      const canvas = signatureCanvasRef.current;
+      if (!canvas) return;
+      if (canvas.offsetWidth === 0) {
+        requestAnimationFrame(run);
+        return;
+      }
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 150;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.strokeStyle = '#EB1C24';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (typeof window === 'undefined' || localStorage.getItem('isSignedIn') !== 'true') return;
+      const email = getCurrentUserEmailFromStorage();
+      if (!email) return;
+      const draft = loadLastOrderAuthorizationFormDraft(email);
+      const sig = draft?.signatureDataUrl;
+      if (!sig || !sig.startsWith('data:image')) return;
+      const img = new Image();
+      img.onload = () => {
+        if (cancelled) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = sig;
+    };
+    requestAnimationFrame(run);
+    return () => {
+      cancelled = true;
+    };
+  }, [orderFormDraftHydrateKey, location.key]);
 
   const isSignatureEmpty = (): boolean => {
     const canvas = signatureCanvasRef.current;
@@ -554,7 +647,10 @@ function OrderFormPage() {
     }
     
     // Validate required photo ID file
-    if (!photoIdFile) {
+    const hasPhotoId =
+      !!photoIdFile ||
+      (!!photoIdPreview && photoIdPreview.startsWith('data:image'));
+    if (!hasPhotoId) {
       setValidationMessage('PLEASE UPLOAD A PHOTO ID SHOWING THE CARDHOLDER NAME/ADDRESS.');
       setShowValidationModal(true);
       return;
@@ -571,8 +667,16 @@ function OrderFormPage() {
       try {
         const canvas = signatureCanvasRef.current;
         const signatureDataUrl = canvas ? canvas.toDataURL('image/png') : '';
-        const photoIdDataUrl = photoIdFile ? await fileToDataUrl(photoIdFile) : '';
-        const cardLastFourDataUrl = lastFourDigitsFile ? await fileToDataUrl(lastFourDigitsFile) : '';
+        const photoIdDataUrl = photoIdFile
+          ? await fileToDataUrl(photoIdFile)
+          : photoIdPreview && photoIdPreview.startsWith('data:image')
+            ? photoIdPreview
+            : '';
+        const cardLastFourDataUrl = lastFourDigitsFile
+          ? await fileToDataUrl(lastFourDigitsFile)
+          : lastFourDigitsPreview && lastFourDigitsPreview.startsWith('data:image')
+            ? lastFourDigitsPreview
+            : '';
         const stateData = location.state as { orderId?: string } | null | undefined;
         const orderId = stateData?.orderId != null ? String(stateData.orderId) : undefined;
         const cardDigits = formData.cardNumber.replace(/\D/g, '');
@@ -602,6 +706,12 @@ function OrderFormPage() {
           signatureDataUrl: signatureDataUrl || undefined,
         });
         markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
+        saveLastOrderAuthorizationFormDraft(formData.email.trim(), {
+          formFields,
+          photoIdDataUrl: photoIdDataUrl || undefined,
+          cardLastFourDataUrl: cardLastFourDataUrl || undefined,
+          signatureDataUrl: signatureDataUrl || undefined,
+        });
       } catch (e) {
         console.error('Order form persist failed:', e);
       }

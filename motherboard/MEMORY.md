@@ -12765,3 +12765,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said the **mock PDF** should look **exactly like** the **`/shop/order-form`** page—a **snapshot** of that UI, not a generic field list.
 
 **Changes:** **`html2canvas`** dependency. **`signedOrderFormPdfSnapshotDom.ts`** — **`buildSignedOrderFormSnapshotElement`**: off-DOM tree mirroring order form **header, three intro paragraphs, fields shown on page** (name, order #/date, email, auth checkboxes, photo ID + last-4 upload areas, address-difference textarea, by-signing + signature pad + submit), same **marble** background asset and **Futura** fallbacks. **`signedOrderFormPdf.ts`** — **`buildSignedOrderFormPdf`** builds snapshot → **`html2canvas`** → **multi-page** **`jsPDF`** strips. **`mockSignedOrderFormForApproval`** comment updated. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Mock signed-form PDF: white fields-only snapshot
+
+**Context (this chat):** User wanted the **mock approval PDF** only: **no** first page (no **ORDER AUTHORIZATION** title / three intro paragraphs), **no** marble or glassmorphism **card**, **no** **CLEAR SIGNATURE** line, **no** **SUBMIT** button—only **labels, inputs, proof photos, signature** in the **same positions** as the live form, on a **plain white** background.
+
+**Changes:** **`signedOrderFormPdfSnapshotDom.ts`** — shared **`buildOrderFormFieldsColumn`**; when **`form.id === MOCK_APPROVAL_SIGNED_FORM_ID`**, **`buildSignedOrderFormSnapshotElement`** returns **`buildMockPlainWhiteSnapshotRoot`** (390px width, white bg, fields column only). Full snapshot unchanged for real stored forms. **`signatureArea`** takes **`showClearLine`** (false for mock). **`signedOrderFormPdf.ts`** — **`html2canvas`** **`backgroundColor: '#ffffff'`** for mock id. **`mockSignedOrderFormForApproval`** comment. **`npm run build`**. Pushed **`preview/mobile`**.
