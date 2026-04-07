@@ -292,6 +292,12 @@ function OrdersPage() {
     justifyContent: 'center',
     boxSizing: 'border-box',
   };
+  /** Nudge A/C list badges up vs wig thumbs (same 102×102 tap target). */
+  const ORDER_AC_THUMB_TRANSLATE_Y_PX = -6;
+  const ordersPageListThumbButtonStyleForOrder = (order: Order): React.CSSProperties =>
+    order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
+      ? { ...ORDER_LIST_THUMB_BUTTON_STYLE, transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` }
+      : ORDER_LIST_THUMB_BUTTON_STYLE;
 
   const ORDER_EXPANDED_PRODUCT_THUMB_PX = 120;
   const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * ORDER_AC_THUMB_SCALE);
@@ -2067,7 +2073,8 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                        width: `${expandedProductThumbPx}px`,
                                        height: `${expandedProductThumbPx}px`,
                                        objectFit: 'contain',
-                                       cursor: 'pointer'
+                                       cursor: 'pointer',
+                                       ...(isAcExpanded ? { transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` } : {}),
                                      }}
                                    />
                                    <p
@@ -2519,7 +2526,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                          <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={ORDER_LIST_THUMB_BUTTON_STYLE}
+                             style={ordersPageListThumbButtonStyleForOrder(order)}
                            >
                              <img
                                src={ordersPageOrderThumbnailSrc(order)}
@@ -2940,7 +2947,8 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                        width: `${expandedArchivedThumbPx}px`,
                                        height: `${expandedArchivedThumbPx}px`,
                                        objectFit: 'contain',
-                                       cursor: 'pointer'
+                                       cursor: 'pointer',
+                                       ...(isAcExpandedArchived ? { transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` } : {}),
                                      }}
                                    />
                                    <p
@@ -3384,7 +3392,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                          <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={ORDER_LIST_THUMB_BUTTON_STYLE}
+                             style={ordersPageListThumbButtonStyleForOrder(order)}
                            >
                              <img
                                src={ordersPageOrderThumbnailSrc(order)}
