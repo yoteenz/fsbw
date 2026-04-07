@@ -12392,4 +12392,6 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/admin/clients/page.tsx`:** Link under avatar; modal with per-form cards; refresh on **`ordersUpdated`**, **`signedOrderFormsUpdated`**, **`storage`**; mock **`rawOrders`** first two get **`orderFormSigned`** for demo.
 - **`src/pages/orders/page.tsx`** / **`src/pages/checkout/confirm/page.tsx`:** Pass **`orderId`** / **`orderInternalId`** in **`navigate`** state to order form for storage linkage.
 
+**Follow-up:** Removed **` · SUMMARY`** suffix from signed-form card headers in the modal (**`SignedOrderFormCard`**).
+
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.

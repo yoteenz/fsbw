@@ -664,7 +664,6 @@ function SignedOrderFormCard({ form }: { form: StoredSignedOrderForm }) {
     >
       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
         {form.orderNumber ? String(form.orderNumber).toUpperCase() : 'ORDER'} · SIGNED {signedLabel.toUpperCase()}
-        {form.summaryOnly ? ' · SUMMARY' : ''}
       </p>
       {orderedKeys.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
