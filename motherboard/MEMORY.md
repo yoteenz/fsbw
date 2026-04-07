@@ -12709,3 +12709,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to increase the **X** delete control on hair inspo thumbnails by **10%** (consult booking page).
 
 **Changes:** **`consultation/page.tsx`** — circular button **14→15.4px**, border **0.97→1.07px**, inner icon **8.4→9.24px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin “view signed forms” modal UX
+
+**Context (this chat):** User asked for signed-forms popup updates: title **SIGNED FORMS**; **ORDER #** line black Futura Book; tighter gap between **ORDER STATUS** label and value (single space); signed **time** gray Futura Medium; tap row opens full form with **red X** back to list; list vertically centered when multiple forms, **top-aligned** when one; backdrop tap returns to list before closing.
+
+**Changes:** **`admin/clients/page.tsx`** — **`signedFormDetailId`** state; **`SignedOrderFormCard`** **`list` / `full`** variants; **`formatSignedFormOrderNumberDisplay`**, **`formatSignedAtParts`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
