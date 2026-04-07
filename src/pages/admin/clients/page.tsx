@@ -1797,7 +1797,15 @@ export default function AdminClients() {
                   /* Details view: profile, orders, appointments */
                   <div className="px-5 pb-6" style={{ paddingTop: '10px', position: 'relative' }}>
                     {selectedClient ? (
-                      <div className="flex items-center justify-between mb-4" style={{ minWidth: 0 }}>
+                      <div
+                        className="flex items-center justify-between"
+                        style={{
+                          minWidth: 0,
+                          paddingBottom: '10px',
+                          marginBottom: '16px',
+                          borderBottom: '1px solid #e5e7eb',
+                        }}
+                      >
                         <p
                           style={{
                             fontFamily: '"Futura PT Medium"',
