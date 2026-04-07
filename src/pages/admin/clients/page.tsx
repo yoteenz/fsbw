@@ -1902,7 +1902,7 @@ export default function AdminClients() {
                         minWidth: 0,
                         paddingBottom: '10px',
                         marginBottom: '16px',
-                        borderBottom: '1.3px solid #9ca3af',
+                        borderBottom: '1px solid #e5e7eb',
                       }}
                     >
                       <p
@@ -1952,7 +1952,7 @@ export default function AdminClients() {
                     {selectedClient ? (
                       <>
                         {/* Circular profile area centered above the tab bar */}
-                        <div className="flex justify-center mb-4" style={{ marginTop: '6px' }}>
+                        <div className="flex justify-center mb-4" style={{ paddingTop: '6px' }}>
                           <div
                             className="relative rounded-full flex items-center justify-center overflow-hidden shrink-0"
                             style={{
