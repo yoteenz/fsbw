@@ -12320,3 +12320,15 @@ Verification: `tsc --noEmit`.
 **Change:** **`src/pages/admin/components/RecentActivity.tsx`** — wrapper around the toggle buttons: **`justify-end` → `justify-start`**.
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin reviews page: stars, header, verified, sort, media layout
+
+**Context:** User asked to shrink **stars ~35%**; **client line** black as **`NAME - TX`**; red **`(VERIFIED)`** for purchase-verified reviews; sort label **6px** further left; gray **product** line **Futura PT Medium**; **videos** same **72×72** thumb as photos on **row below** photos.
+
+**Changes:**
+- **`src/utils/usAddressStateDisplay.ts`:** **`usStateAbbrevFromAddressLine`**, **`compactRegionCodeForReviewHeader`**.
+- **`src/pages/admin/reviews/page.tsx`:** Stars **`14 * 0.65` px**; **`clientRegionCode`** + **`verifiedPurchase`**; **`(VERIFIED)`** when verified (API: **`verifiedPurchase` / `verified_purchase` / `purchase_verified`** truthy); sort **`left: -8px`**; product **Futura PT Medium**; media rows: photos then videos, **72×72**, **`object-fit: cover`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.

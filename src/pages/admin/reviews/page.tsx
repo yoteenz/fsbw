@@ -8,7 +8,11 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { getMockClientsForAyoteenz } from '../clients/page';
-import { regionParenLabelFromAddressLine } from '../../../utils/usAddressStateDisplay';
+import {
+  compactRegionCodeForReviewHeader,
+  regionParenLabelFromAddressLine,
+  usStateAbbrevFromAddressLine,
+} from '../../../utils/usAddressStateDisplay';
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
@@ -40,9 +44,16 @@ type AdminReviewRow = {
   clientProfilePhotoUrl?: string;
   /** Reviewer email when API provides it (profile photo join). */
   clientEmail?: string;
-  /** Full region for display, e.g. US state full name — shown after client name. */
+  /** Full region label (e.g. US state full name) — used to derive short code. */
   clientRegionParen?: string;
+  /** Short region for header, e.g. TX (optional; else derived from `clientRegionParen`). */
+  clientRegionCode?: string;
+  /** Review tied to an authenticated purchase of the product (admin display). */
+  verifiedPurchase?: boolean;
 };
+
+const REVIEW_STAR_PX = Math.round(14 * 0.65 * 10) / 10;
+const REVIEW_MEDIA_THUMB_PX = 72;
 
 const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
 
@@ -63,6 +74,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     client: 'ZARA ADAMS',
     clientEmail: 'mock1@test.com',
     clientRegionParen: 'CALIFORNIA',
+    verifiedPurchase: true,
     rating: 5,
     product: 'SOFT WAVE 30"',
     review:
@@ -78,6 +90,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     client: 'AMY BROOKS',
     clientEmail: 'mock2@test.com',
     clientRegionParen: 'NEW YORK',
+    verifiedPurchase: true,
     rating: 5,
     product: 'NOIR 26"',
     review: 'Best wig experience ever! Professional service and the wig exceeded my expectations. Will definitely be coming back.',
@@ -92,6 +105,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     client: 'QUINN CHEN',
     clientEmail: 'mock3@test.com',
     clientRegionParen: 'TEXAS',
+    verifiedPurchase: true,
     rating: 4,
     product: 'CURLY 28"',
     review: 'Great quality wig and excellent customer service. The curl pattern is perfect and very natural looking.',
@@ -106,6 +120,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     client: 'DIANA FOSTER',
     clientEmail: 'mock4@test.com',
     clientRegionParen: 'ILLINOIS',
+    verifiedPurchase: true,
     rating: 5,
     product: 'SLAY STYLING TOOL',
     review: 'Game changer for at-home styling. Heat is even and the cord length is perfect. Worth every penny.',
@@ -120,6 +135,7 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
     client: 'ELENA GARCIA',
     clientEmail: 'mock5@test.com',
     clientRegionParen: 'FLORIDA',
+    verifiedPurchase: false,
     rating: 4,
     product: 'WIG CARE KIT',
     review: 'Everything I needed in one kit. Instructions were clear and my units look fresher after every wash.',
@@ -158,8 +174,17 @@ function enrichReviewsWithMockClientRegion(rows: AdminReviewRow[]): AdminReviewR
     }
     const c = mockByEmail.get(em);
     const region = regionParenLabelFromAddressLine(c?.address);
-    if (!region) return r;
-    return { ...r, clientRegionParen: region };
+    const abbr = usStateAbbrevFromAddressLine(c?.address);
+    const mergedParen = (r.clientRegionParen || '').trim() || region;
+    let code = (r.clientRegionCode || '').trim().toUpperCase() || undefined;
+    if (abbr) code = abbr;
+    else if (!code && mergedParen) code = compactRegionCodeForReviewHeader(mergedParen);
+    if (!region && !abbr && !mergedParen) return r;
+    return {
+      ...r,
+      clientRegionParen: mergedParen || r.clientRegionParen,
+      clientRegionCode: code ?? r.clientRegionCode,
+    };
   });
 }
 
@@ -349,6 +374,17 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
 
   const regionRaw = x.clientRegionParen ?? x.client_region_paren ?? x.client_state_full ?? x.reviewer_state_full;
   const regionStr = typeof regionRaw === 'string' ? regionRaw.trim().toUpperCase() : '';
+  const codeRaw = x.clientRegionCode ?? x.client_region_code ?? x.reviewer_state_abbr;
+  const codeStr = typeof codeRaw === 'string' ? codeRaw.trim().toUpperCase() : '';
+  const regionCode =
+    codeStr ||
+    (regionStr ? compactRegionCodeForReviewHeader(regionStr) : undefined);
+  const vRaw = x.verifiedPurchase ?? x.verified_purchase ?? x.purchase_verified;
+  const verifiedPurchase =
+    vRaw === true ||
+    vRaw === 1 ||
+    String(vRaw).toLowerCase() === 'true' ||
+    String(vRaw).toLowerCase() === '1';
 
   return {
     id: stableId,
@@ -356,6 +392,7 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
     rating: Number(x.rating) || 0,
     clientEmail: String(x.email ?? x.clientEmail ?? '').trim() || undefined,
     clientRegionParen: regionStr || undefined,
+    clientRegionCode: regionCode,
     product: String(x.product ?? ''),
     review: String(x.review ?? x.body ?? ''),
     date: String(x.date ?? x.createdAt ?? x.created_at ?? ''),
@@ -366,6 +403,7 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
     videoUrls: videoUrls.length > 0 ? videoUrls : undefined,
     scope: reviewScopeFromUnknown(x as { scope?: unknown }),
     clientProfilePhotoUrl: clientProfilePhotoUrlFromApi(x),
+    verifiedPurchase,
   };
 }
 
@@ -478,7 +516,7 @@ export default function AdminReviews() {
           onClick={() => setShowReviewSortDropdown((v) => !v)}
           className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors max-w-[120px]"
         >
-          <span className="truncate min-w-0" style={{ position: 'relative', left: '-2px' }}>
+          <span className="truncate min-w-0" style={{ position: 'relative', left: '-8px' }}>
             {reviewSortOptionToLabel(reviewSortOption)}
           </span>
           <svg
@@ -547,6 +585,11 @@ export default function AdminReviews() {
 
   const renderReviewCard = (review: AdminReviewRow) => {
     const stars = reviewStarCount(review);
+    const regionBit = (review.clientRegionCode || compactRegionCodeForReviewHeader(review.clientRegionParen) || '')
+      .trim()
+      .toUpperCase();
+    const clientHeader =
+      `${review.client.trim().toUpperCase()}${regionBit ? ` - ${regionBit}` : ''}`;
     const photoUrls = review.photoUrls ?? [];
     const videoUrls = review.videoUrls ?? [];
     const mediaCount = review.photos + review.videos;
@@ -572,19 +615,28 @@ export default function AdminReviews() {
                 style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '11px',
-                  color: '#EB1C24',
+                  color: '#000',
                   margin: '8px 0 0',
                   textAlign: 'left',
                   width: '100%',
+                  lineHeight: 1.35,
                 }}
               >
-                {review.client}
-                {review.clientRegionParen ? ` (${review.clientRegionParen})` : ''}
+                <span>{clientHeader}</span>
+                {review.verifiedPurchase !== false ? (
+                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{' '}(VERIFIED)</span>
+                ) : null}
               </p>
             </div>
             <p
               className="mt-1 w-full"
-              style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080', margin: 0, textAlign: 'left' }}
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
+                color: '#808080',
+                margin: 0,
+                textAlign: 'left',
+              }}
             >
               {review.product}
             </p>
@@ -596,11 +648,11 @@ export default function AdminReviews() {
                     key={i}
                     src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
                     alt=""
-                    width={14}
-                    height={14}
+                    width={REVIEW_STAR_PX}
+                    height={REVIEW_STAR_PX}
                     style={{
-                      width: '14px',
-                      height: '14px',
+                      width: `${REVIEW_STAR_PX}px`,
+                      height: `${REVIEW_STAR_PX}px`,
                       objectFit: 'contain',
                       filter: 'drop-shadow(0 0 0 1px black)',
                       stroke: '1px black',
@@ -674,7 +726,7 @@ export default function AdminReviews() {
             </span>
           </div>
           {mediaOpen && hasExpandableMedia ? (
-            <div className="mt-2 space-y-2 w-full">
+            <div className="mt-2 w-full flex flex-col gap-2">
               {photoUrls.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {photoUrls.map((url, idx) => (
@@ -683,8 +735,12 @@ export default function AdminReviews() {
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block shrink-0"
-                      style={{ width: '72px', height: '72px', border: '0.8px solid #000' }}
+                      className="block shrink-0 overflow-hidden"
+                      style={{
+                        width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        border: '0.8px solid #000',
+                      }}
                     >
                       <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </a>
@@ -692,16 +748,24 @@ export default function AdminReviews() {
                 </div>
               ) : null}
               {videoUrls.length > 0 ? (
-                <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-wrap gap-2">
                   {videoUrls.map((url, idx) => (
-                    <video
+                    <div
                       key={`${review.id}-v-${idx}`}
-                      src={url}
-                      controls
-                      playsInline
-                      className="w-full max-w-full"
-                      style={{ maxHeight: '200px', border: '0.8px solid #000' }}
-                    />
+                      className="shrink-0 overflow-hidden bg-black"
+                      style={{
+                        width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        border: '0.8px solid #000',
+                      }}
+                    >
+                      <video
+                        src={url}
+                        controls
+                        playsInline
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : null}

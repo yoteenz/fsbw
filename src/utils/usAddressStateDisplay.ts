@@ -79,3 +79,33 @@ export function regionParenLabelFromAddressLine(address: string | undefined | nu
   if (upper.length >= 3 && upper.length <= 40 && /^[A-Z0-9\s.'-]+$/.test(upper)) return upper;
   return undefined;
 }
+
+/** US state abbreviation from trailing `, ST 12345` in an address line. */
+export function usStateAbbrevFromAddressLine(address: string | undefined | null): string | undefined {
+  const t = (address || '').trim();
+  if (!t) return undefined;
+  const m = t.match(/,\s*([A-Za-z]{2})\s+(\d{5})(?:-\d{4})?\s*$/);
+  if (!m) return undefined;
+  return m[1].toUpperCase();
+}
+
+const US_FULL_NAME_TO_ABBR: Record<string, string> = (() => {
+  const m: Record<string, string> = {};
+  for (const [abbr, full] of Object.entries(US_STATE_NAMES)) {
+    m[full.toUpperCase()] = abbr;
+  }
+  return m;
+})();
+
+/**
+ * Short region for review header: `TX` from full state name, existing 2-letter code, or first two letters.
+ */
+export function compactRegionCodeForReviewHeader(region: string | undefined | null): string | undefined {
+  const raw = (region || '').trim().toUpperCase();
+  if (!raw) return undefined;
+  if (/^[A-Z]{2}$/.test(raw)) return raw;
+  const fromFull = US_FULL_NAME_TO_ABBR[raw];
+  if (fromFull) return fromFull;
+  if (raw.length <= 4) return raw;
+  return raw.slice(0, 2);
+}
