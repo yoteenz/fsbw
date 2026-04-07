@@ -293,7 +293,7 @@ function OrdersPage() {
     boxSizing: 'border-box',
   };
   /** Nudge A/C list badges up vs wig thumbs (same 102×102 tap target). */
-  const ORDER_AC_THUMB_TRANSLATE_Y_PX = -6;
+  const ORDER_AC_THUMB_TRANSLATE_Y_PX = -4;
   const ordersPageListThumbButtonStyleForOrder = (order: Order): React.CSSProperties =>
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? { ...ORDER_LIST_THUMB_BUTTON_STYLE, transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` }

@@ -12533,3 +12533,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to move **appointment/consult** thumbnails **up 6px** on the Account Orders page.
 
 **Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_TRANSLATE_Y_PX = -6`** on list thumb **button** (**`ordersPageListThumbButtonStyleForOrder`**) and on expanded product **`<img>`** when order is A/C (active + archived expanded). **`npx tsc --noEmit`**. Commit **`0cc812d`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: A/C thumbnails down 2px
+
+**Context (this chat):** After **-6px** vertical nudge, user asked to move **A/C** thumbnails **down 2px** (net **-4px** vs baseline).
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_TRANSLATE_Y_PX`** **-6** → **-4**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
