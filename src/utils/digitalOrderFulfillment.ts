@@ -25,6 +25,17 @@ export function getDigitalFulfillmentStageIndex(order: DigitalFulfillmentOrder |
   return 0;
 }
 
+/** Consult-only: single progress bar fill — PLACED ⅓, PROCESSING ⅔, COMPLETE (or DELIVERED) 100%. */
+export function consultDigitalOrderTrackingBarFillPct(
+  order: DigitalFulfillmentOrder | null | undefined
+): number | null {
+  if (!order || String(order.bookingFlowType || '').trim().toLowerCase() !== 'consult') return null;
+  const st = String(order.status || '').trim().toUpperCase();
+  if (st === 'COMPLETE' || st === 'DELIVERED') return 100;
+  if (st === 'PROCESSING') return (200 / 3);
+  return 100 / 3;
+}
+
 export function digitalFulfillmentStageLabels(): readonly string[] {
   return DIGITAL_FULFILLMENT_STAGES;
 }

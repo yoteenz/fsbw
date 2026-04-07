@@ -12,6 +12,10 @@ import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
 import { orderRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
 import { consultBookingInspoPhotoUrlsFromOrder } from '../../../utils/consultOrderInspoPhotos';
+import {
+  consultDigitalOrderTrackingBarFillPct,
+  orderUsesDigitalFulfillmentTimeline,
+} from '../../../utils/digitalOrderFulfillment';
 import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
@@ -3355,6 +3359,16 @@ function ConciergePage() {
                                 // CANCELED orders should not show progress - freeze at 0% or current progress
                                 let progress = isDeliveredLastStage ? 100 : 
                                   (isCanceled ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true, tShift));
+                                const consultBarFill =
+                                  !isCanceled &&
+                                  selectedOrder &&
+                                  orderUsesDigitalFulfillmentTimeline(selectedOrder) &&
+                                  String(selectedOrder.bookingFlowType || '').trim().toLowerCase() === 'consult'
+                                    ? consultDigitalOrderTrackingBarFillPct(selectedOrder)
+                                    : null;
+                                if (consultBarFill != null) {
+                                  progress = consultBarFill;
+                                }
                                 
                                 // Check if previous stage is complete (100% progress) - needed for upcoming stage logic
                                 let previousStageComplete = false;
@@ -4409,7 +4423,10 @@ function ConciergePage() {
                                             >
                                               <div
                                                 style={{
-                                                  width: isCompleted || isDeliveredLastStage ? '100%' : `${progress}%`,
+                                                  width:
+                                                    isCompleted || isDeliveredLastStage
+                                                      ? '100%'
+                                                      : `${Math.min(100, Math.max(0, progress))}%`,
                                                   height: '100%',
                                                   backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
                                                   transition: 'width 0.3s ease',

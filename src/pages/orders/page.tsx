@@ -27,6 +27,7 @@ import {
   orderShowsDeliveredTrackingLine,
 } from '../../utils/orderTracking';
 import {
+  consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline
@@ -2291,7 +2292,9 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(expandedOrder);
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
@@ -2311,6 +2314,32 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          );
                                        })}
                                      </div>
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
+                                       </div>
+                                     )}
+                                     </>
                                    );
                                  })()}
                                </div>
@@ -3165,7 +3194,9 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  {(() => {
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(expandedOrder);
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
@@ -3185,6 +3216,32 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          );
                                        })}
                                      </div>
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
+                                       </div>
+                                     )}
+                                     </>
                                    );
                                  })()}
                                </div>

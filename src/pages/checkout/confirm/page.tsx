@@ -24,6 +24,7 @@ import {
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
+  consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline,
@@ -1646,7 +1647,9 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   {(() => {
                     const di = getDigitalFulfillmentStageIndex(summaryOrderForTracking);
                     const labels = digitalFulfillmentStageLabels();
+                    const consultBarPct = consultDigitalOrderTrackingBarFillPct(summaryOrderForTracking);
                     return (
+                      <>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                         {labels.map((label, i) => {
                           const isCurrent = i === di;
@@ -1661,6 +1664,32 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                           );
                         })}
                       </div>
+                      {consultBarPct != null && (
+                        <div style={{ marginTop: '12px' }}>
+                          <div
+                            style={{
+                              width: '100%',
+                              height: '7px',
+                              backgroundColor: '#E0E0E0',
+                              borderRadius: consultBarPct > 0 ? '4px' : '0',
+                              overflow: 'hidden',
+                              border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                              boxSizing: 'border-box',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${consultBarPct}%`,
+                                height: '100%',
+                                backgroundColor: '#EB1C24',
+                                transition: 'width 0.3s ease',
+                                borderRadius: consultBarPct > 0 ? '4px' : '0',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      </>
                     );
                   })()}
                 </div>
