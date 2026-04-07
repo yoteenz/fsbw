@@ -12432,3 +12432,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/orders/page.tsx`:** After normalize/sort, **filter** membership-upgrade rows; **persist** cleaned **`userOrders_*`** when legacy rows are removed.
 
 **`npx tsc --noEmit`**. Commit **`fix(orders): exclude premium membership upgrades from account orders`** (**`2d11010`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: smaller A/C booking thumbnails
+
+**Context (this chat):** User asked to **decrease** the **appointment/consult** booking **badge thumbnail** on **Account → Orders** by **35%** (relative to the default list size).
+
+**Topics in this chat (cumulative):** A/C thumbnails match cart badges; membership upgrades excluded from orders; this turn: **35% smaller** A/C thumbs on orders page.
+
+**Changes:** **`src/pages/orders/page.tsx`** — list thumbnails use **102px** for wig orders and **rounded 102 × 0.65** for **`bookingFlowType`** appointment/consult; expanded product row images use **120px** vs **120 × 0.65** for A/C. **`npx tsc --noEmit`**. Commit **`fix(orders): shrink A/C booking thumbnails 35% on orders page`** (**`f3aeac3`**). Pushed **`preview/mobile`**.
