@@ -11875,48 +11875,777 @@ Verification: `tsc --noEmit`.
 
 ---
 
-## 2026-04-06 — Admin client details Appointments: same booking edit icon as meetings hub
+## 2026-04-06 — Push policy: all agent work on `preview/mobile` only
 
-**Context (this chat):** User wanted the **Appointments** tab on admin client details to use the **same panel edit icon as the bookings (A) tab** on **Admin → Meetings** — specifically **`/assets/edit-meeting-icon-booking.svg`** for all rows (not the consult-only **`edit-meeting-icon.svg`**).
+**Context:** User said changes were pushed to the wrong / new branches (`cursor/appointment-notes-border-spacing-8444` etc.) and work was getting lost; **all** changes from this thread must go to **`preview/mobile`** only — **do not create new branches**.
 
-**Topics covered:**
-- **`preview/mobile`** had already been updated to set **`actionIconSrc="/assets/edit-meeting-icon-booking.svg"`** on **`AdminMeetingClientPanel`** for both booking and consult rows.
-- Work was required on branch **`cursor/appointment-notes-border-spacing-8444`**, whose **`admin/clients/page.tsx`** is an older variant: **`appointments`** is still an **empty typed array** with **inline APT cards** (no **`AdminMeetingClientPanel`** / focus handoff yet). Stash + checkout caused a merge conflict; keeping the inline layout was necessary for **`tsc`** to pass.
+**Outcome:** Fast-forwarded `preview/mobile` to include the full commit chain from the feature branch (appointment/consult booking UI, account alerts + notification key migration, digital/A&C orders UX, consult head measurement labels, motherboard entries), then **`git push -u origin preview/mobile`**. Local checkout left on `preview/mobile` tracking origin.
 
-**Decisions / outcomes:**
-- On **`cursor/appointment-notes-border-spacing-8444`**: extend each inline appointment row with a right-side control using **`edit-meeting-icon-booking.svg`** (11×11, transparent button), **`navigate('/admin/meetings?tab=bookings')`** by default, **`?tab=consults`** if **`appointment.category`** is **`consultation`** / **`consult`** for forward-compatible data.
-
-**Changes:** `src/pages/admin/clients/page.tsx`. Verification: **`npx tsc --noEmit`**. Pushed branch; draft PR **#11**.
-
-**Conventions:** When **`preview/mobile`** and the Cursor task branch diverge on large pages, port the **minimal** UI delta onto the branch’s actual structure rather than dropping in blocks that depend on missing imports/types.
+**Convention for future turns in this repo:** Implement and push **only** on **`preview/mobile`** unless the user explicitly names another branch.
 
 ---
 
-## 2026-04-06 — Admin client Appointments tab: same meeting cards + icons as Meetings hub
+## 2026-04-06 — Consult booking intro paragraph copy
 
-**Context (this chat):** User said icons on client details **Appointments** were still wrong; screenshot showed **Admin → Meetings → BOOKINGS** cards (profile left, red pencil top-right on white bordered cards).
+**Change:** On the booking consult page body copy under the hero, removed **“WITHIN 72 HOURS”** from the follow-up sentence so it reads: *YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.*
+
+**File:** `src/pages/booking/consultation/page.tsx`. Pushed to **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account Rewards: Bohemy on excludes-taxes line + REDEEM
+
+**Change:** On **Account → Rewards** (`/account/rewards`, implemented in `membership/page.tsx`), set **`(EXCLUDES TAXES + SHIPPING FEES)`** and each loyalty **`REDEEM`** button label to **`fontFamily: "Bohemy", cursive`** (slightly larger sizes: 11px / 12px) in both standard and premium rewards layouts. Pushed to **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS tab = meetings + consults (mock sync)
+
+**Context:** User wanted **consult** rows from admin **Bookings/Consults** (incl. mock clients) to appear under the client-details **APPOINTMENTS** tab, aligned with meetings hub + account flows; tab was always empty (`appointments = []`).
+
+**Implementation:**
+- `adminMeetingsMock.ts`: **`listAggregatedAdminMeetingsForClientDetails()`** merges **`generateMockMeetingsForRange`** (~12 mo back / forward) + **`loadLocalMeetings`** (same id merge as `AdminMeetingsHub`); **`compareAdminMeetingsNewestFirst`**, **`formatMeetingIsoDateForDisplay`**.
+- `admin/clients/page.tsx`: **`useMemo`** filters merged meetings by **`clientEmail`**; maps **consultation** → type **`CONSULT — …`**, **appointment** → existing **`type`**; status **Confirmed → SCHEDULED**, **Pending → PENDING**, **Canceled → CANCELED** for pill styling. Empty copy: **NO APPOINTMENTS OR CONSULTS YET**. **`storage` + `focus`** bump state so local scheduled meetings refresh.
+
+**Files:** `src/utils/adminMeetingsMock.ts`, `src/pages/admin/clients/page.tsx`. Pushed **`preview/mobile`** (`531b947`).
+
+---
+
+## 2026-04-06 — Booking A/C calendar divider color matches SELECT A SERVICE
+
+**Change:** User asked for the gray line above the calendar on booking **appointment** and **consult** to match the line above **SELECT A SERVICE** on the appointment page. Both calendar wrappers now use **`borderTop: '1px solid #e5e7eb'`** (replacing **`1.3px solid #9ca3af`**). **`preview/mobile`** commit `88c3c5a`.
+
+---
+
+## 2026-04-06 — Account Rewards: Bohemy excludes line + redeem in lowercase
+
+**Context:** User asked to show the red **(excludes taxes + shipping fees)** line and red **redeem** button labels in **lowercase Bohemy** instead of uppercase.
+
+**Change:** In `src/pages/account/membership/page.tsx` (standard + premium rewards blocks): **`textTransform: 'lowercase'`** on those elements; copy updated to **`(excludes taxes + shipping fees)`** and button children **`redeem`**. Verification: `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS: merge Supabase meetings like meetings hub
+
+**Context:** User confirmed wiring the client-details **APPOINTMENTS** tab the same way as **`AdminMeetingsHub`**: the hub merges **`apiMeetings`** from **`getAdminMeetings()`** (Supabase); the tab previously only had mock + **`adminMeetingsScheduled`** local rows.
 
 **Changes:**
-- **`adminMeetingHubModel.ts`** — extracted shared meeting-card helpers from **`AdminMeetingsHub.tsx`** (formatting, tier, booking payment bar, consult inspo, sort, etc.).
-- **`AdminMeetingHubStyleCard.tsx`** — single component renders **booking** vs **consult** card body + **`edit-meeting-icon-booking.svg`** with same button offsets as hub.
-- **`AdminMeetingsHub.tsx`** — uses **`AdminMeetingHubStyleCard`** for list rows; **`adminClientMeetingsFocusSession`** on load: jump calendar month, **`selectedDay`**, open **edit** / **quote** panel for row from client details.
-- **`admin/clients/page.tsx`** — **Appointments** loads **`getAdminMeetings`** when tab opens; merges **mock + local + API** for current year filtered by client **email** / **user id**; lists **`AdminMeetingHubStyleCard`** (newest first); pencil stores focus + navigates to hub; consult thumbs use **`ImageViewerModal`**.
-- **`adminClientMeetingsFocusSession.ts`** — **`sessionStorage`** handoff **`id` / `date` / `tab`**.
+- **`listAggregatedAdminMeetingsForClientDetails(apiMeetings?: AdminMeeting[])`** — optional API list; merge order **mock → API (in range) → local** (same id overwrite rules as hub).
+- **`admin/clients/page.tsx`** — on mount (when Supabase configured + signed-in admin): **`getAdminMeetings()`** + **`normalizeApiMeeting`**, store in **`apiMeetingsForClientDetails`**; pass into aggregate for the tab **`useMemo`**.
 
-Verification: **`npx tsc --noEmit`**.
+**Verification:** `tsc --noEmit`.
 
 ---
 
-## 2026-04-06 — Consult booking: hair inspo thumbs left-aligned
+## 2026-04-06 — Account Alerts: newest notifications first
 
-**Context (this chat):** User asked for hair inspo photo attachments on the **consult booking** page to align **left** instead of **centered**.
+**Context:** User reported **NEW** tab showed **new alerts at the bottom**; they should be **at the top** with older below.
 
-**Changes:** **`src/pages/booking/consultation/page.tsx`** — inspo thumbnails flex row **`justifyContent: 'flex-start'`** (was **`center`**). **`npx tsc --noEmit`**.
+**Cause:** **`mergeAccountNotifications`** built a **`Map`** and returned **`Array.from(byId.values())`**, which does not preserve a useful order when account-synthesized rows (e.g. **`order_received_*`**) merge with older **`localStorage`** entries — newer logical alerts could sort after stale rows.
+
+**Fix:**
+- **`sortNotificationsNewestFirst`** in **`notifications/page.tsx`**: sort by **`sortAt`** (epoch ms) when present, else by parsed **`date`** (M-D-YYYY); stable tie-break for the four fixed account rows.
+- **`mergeAccountNotifications`** returns **`sortNotificationsNewestFirst(...)`**.
+- After merging **admin** Supabase **`notifications.items`**, re-sort the full list the same way; admin rows get **`sortAt`** from **`createdAt`** when parseable.
+- **`buildOrderReceivedAccountAlert`**: optional **`sortAt`** from order **`placedAt` / `updatedAt` / `createdAt`**.
+- **`appendOrderTrackingClientNotification`**: sets **`sortAt: Date.now()`** on tracking rows.
+
+**Files:** `src/pages/account/notifications/page.tsx`, `src/utils/orderAccountAlerts.ts`, `src/utils/orderTracking.ts`. **`tsc --noEmit`**.
 
 ---
 
-## 2026-04-06 — Admin client Appointments cards: content +6px right
+## 2026-04-06 — Vercel / Safari: stale chunk “Importing a module script failed” auto-recovery
 
-**Context (this chat):** User asked to move **all text and images only inside** the client panel cards on **Admin → Clients → Appointments** **6px to the right** together (not the meetings hub).
+**Context:** User saw red **ERROR: Component Failed to Load** with **Importing a module script failed** on Vercel; **manual refresh fixed it** — classic **old tab + new deploy**: hashed **`/assets/*.js`** URLs 404 while **`index.html`** is cached or the shell still references removed chunks.
 
-**Changes:** **`AdminMeetingHubStyleCard.tsx`** — optional **`contentInsetLeftPx`** applies **`paddingLeft`** to the main content column (avatar + body). **`admin/clients/page.tsx`** — **`contentInsetLeftPx={6}`** on those cards only. **`npx tsc --noEmit`**.
+**Fix:**
+- **`src/utils/chunkLoadRecovery.ts`**: **`isDynamicImportChunkFailure`** (includes Safari strings: *importing a module script failed*, *failed to load module script*, *dynamically imported module*); **`hardReloadOnceForStaleChunks`** — **`sessionStorage`**-guarded full reload (90s cooldown) to avoid loops offline.
+- **`lazyWithRetry`** in **`App.tsx`**: treat those as chunk errors, **4 retries** + cache clear between attempts; on final failure call **`hardReloadOnceForStaleChunks()`** (if cooldown blocks reload, rethrow so the error boundary UI can still show **Reload**).
+- **`ErrorBoundary`**: on chunk-like errors call **`hardReloadOnceForStaleChunks()`** immediately; removed broken timeout/retry that read stale **`retryCount`** and rarely reloaded.
+
+**Files:** `src/utils/chunkLoadRecovery.ts`, `src/App.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Account Rewards: +6px Bohemy excludes line + redeem
+
+**Change:** On **Account → Rewards** (`membership/page.tsx`), red **(excludes taxes + shipping fees)** **`fontSize` 11px → 17px**; red **redeem** button **`fontSize` 12px → 18px** (both standard + premium blocks). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS = meetings hub client panels (shared component)
+
+**Context:** User said **APPOINTMENTS** tab client panels still did not match **Bookings / Consults** panels on **`/admin/meetings`**; they must be **identical**.
+
+**Implementation:**
+- New **`src/utils/adminMeetingClientPanels.tsx`**: extracted meeting-card helpers (profile, tier, install line, add-ons, payment bar, consult hair/notes/inspo) + **`AdminMeetingClientPanel`** / **`AdminMeetingClientPanelShell`** (same markup as hub lists). **`onConsultPhotoClick`** for consult thumbnails; **`disableProfileNavigation`** + empty **`actionAriaLabel`** hides profile button + right edit icon on client-details (already on that client).
+- **`AdminMeetingsHub.tsx`**: imports shared helpers + renders **`AdminMeetingClientPanel`** for **`sortedAppointmentsList`** / **`sortedConsultsList`** (removed ~750 lines of duplicated helpers).
+- **`admin/clients/page.tsx`**: **`appointments`** is **`AdminMeeting[]`** filtered/sorted; tab renders same panels + consult photo lightbox (hub parity).
+
+**Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account Rewards: excludes line 16px, no parens; redeem 16px
+
+**Change:** **`membership/page.tsx`** (standard + premium rewards): red **excludes taxes + shipping fees** line **`fontSize` 16px** (was 17px), **no parentheses** around the text; **redeem** buttons **`fontSize` 16px** (was 18px). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult booking: head measurement inputs inset 4px from inner gap
+
+**Change:** On **`booking/consultation`**, 2-column head measurement grid unchanged in outer width; each **`input`** is **`calc(100% - 4px)`** wide with **`marginRight: 4px`** (left column) or **`marginLeft: 4px`** (right column) so boxes are **4px narrower from the inner side only** and sit farther apart. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin: `getAdminMeetings` refresh on focus + after writes (cohesive FE/BE)
+
+**Context:** User wanted frontend/backend cohesive; mirror **local** meetings bump pattern for **`getAdminMeetings()`**.
+
+**Implementation:**
+- **`src/hooks/useAdminMeetingsApiRefresh.ts`**: **`useAdminMeetingsApiRefresh(setRows, skipInitial?)`** — refetch normalized API meetings on **focus**, **storage**, **`signInStateChanged`**, **`adminMeetingsUpdated`**, and custom **`adminMeetingsApiRefresh`**. **`fetchAdminMeetingsApiNormalized()`** for dashboard bootstrap (no double fetch with **`skipInitial: true`**). **`dispatchAdminMeetingsApiRefresh()`** after successful server writes.
+- **`AdminMeetingsHub`**, **`admin/clients`**: use hook (replaces mount-only fetch).
+- **`admin/dashboard`**: init uses **`fetchAdminMeetingsApiNormalized()`** in **`Promise.all`**; hook with **`skipInitial`** for ongoing sync.
+- **`admin/meetings/schedule`**: after **`postAdminMeeting`** success → **`dispatchAdminMeetingsApiRefresh()`**; hub **`patchAdminMeeting`** success path → same dispatch.
+
+**Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Mobile menu toggle height: Noir parity + shared constants
+
+**Context:** User asked to confirm **Account → Rewards** (and **all** menu toggles) use the **same menu panel height** as **Noir** (`calc(100dvh - 80px)`). Account flows had been using **`calc(100dvh - 160px)`** for the flyout.
+
+**Implementation:**
+- **`src/layouts/menuToggleHeights.ts`**: **`MENU_TOGGLE_PANEL_HEIGHT`** = `calc(100dvh - 80px)`; **`ACCOUNT_MAIN_COLUMN_MIN_HEIGHT`** = `calc(100dvh - 160px)` for main column when menu closed.
+- Account pages with hamburger: flyout **`minHeight`/`height`** → **`MENU_TOGGLE_PANEL_HEIGHT`**; outer column **`minHeight`** → **`ACCOUNT_MAIN_COLUMN_MIN_HEIGHT`** where applicable.
+- **`BookingFlowLayout`**, **`straight/noir/page.tsx`**: use **`MENU_TOGGLE_PANEL_HEIGHT`**.
+- **`layouts/PAGE_LAYOUT.md`**: documents both.
+
+**Verify:** `tsc --noEmit`.
+
+---
+
+## 2026-04-06 — Account alerts: order-received above tier when dates tie
+
+**Context:** User wanted **WE'VE RECEIVED YOUR ORDER** above **YOU'RE NOW … TIER** (orders after account creation); they still appeared at the bottom.
+
+**Cause:** **`sortNotificationsNewestFirst`** tie-break favored **`acc_tier`** over **`order_received_*`** when **`sortAt`** and parsed **`date`** matched (same calendar day).
+
+**Fix:** **`newestFirstTieBreakRank`**: **`order_received_*`** first; then stable **`acc_tier` … `acc_settings`**; then other **`acc_*`**. **`getAccountNotifications`** prepends order-received rows.
+
+**Files:** `src/pages/account/notifications/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult head measurements: labels aligned with inset inputs
+
+**Context:** After narrowing inputs 4px from the inner column edge, **FRONT TO NAPE**, **EAR TO EAR ACROSS FOREHEAD**, **NAPE OF NECK** (and all head measurement labels) stayed full column width while inputs were inset.
+
+**Fix:** Wrap each field in a **`div`** that applies the same **`width: calc(100% - 4px)`** + **`marginLeft`/`marginRight`**; **`input`** is **`width: 100%`** inside that wrapper.
+
+**File:** `src/pages/booking/consultation/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details APPOINTMENTS: no profile avatar, text shifted left
+
+**Context:** User asked to **remove profile icons** from the **APPOINTMENTS** tab of admin **client details** only and **shift panel text left** to remove leftover spacing.
+
+**Change:** **`AdminMeetingClientPanel`** **`hideProfileAvatar`** — skips avatar column; when set, **bookings** body **`marginLeft: 0`**, first line **`margin: 0`**, **consults** clears **`translate(6px,6px)`** and left indents on hair / inspo / notes. **`admin/clients/page.tsx`** passes **`hideProfileAvatar`** on that tab only (meetings hub unchanged).
+
+**Files:** `src/utils/adminMeetingClientPanels.tsx`, `src/pages/admin/clients/page.tsx`. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin consult cards: head measurement abbr EEC + EEF, mock data
+
+**Context:** User specified abbreviated labels **EEC** (ear-to-ear across forehead) and **EEF** (ear-to-ear over crown) for the red parenthesized measurement line on admin consult client panels (meetings hub consult tab + client details appointments for consult rows).
+
+**Changes:**
+- **`src/utils/adminConsultHeadMeasurementsDisplay.ts`:** `horizontalTempleToTemple` → **EEC**; `verticalTempleToTemple` → **EEF** (was EOC). File comment documents abbr map.
+- **`src/utils/adminMeetingsMock.ts`:** Mock **consultation** meetings now include deterministic **`metadata.headMeasurements`** so the new line renders for mock consults without real checkout data.
+
+**Shared UI:** Line still rendered only via **`AdminMeetingClientPanel`** consult branch (`formatConsultHeadMeasurementsParenLine`). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin consult head measurement abbrs corrected (EEF forehead, EEC crown)
+
+**Context:** User clarified **EEF** = ear-to-ear **across forehead** (`horizontalTempleToTemple`) and **EEC** = ear-to-ear **over crown** (`verticalTempleToTemple`). An earlier implementation had these two swapped.
+
+**Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — swap abbrs so **`verticalTempleToTemple` → EEC**, **`horizontalTempleToTemple` → EEF**; file header comment updated. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Wig consult: pre-fill head measurements from last checkout
+
+**Context:** Signed-in clients who already completed a wig consult should not re-type the same head measurements on every new consult booking.
+
+**Implementation:**
+- **`src/utils/bookingConsultHeadMeasurementsPersist.ts`:** Per-user localStorage key `lastBookingConsultHeadMeasurements_${email}`; **`saveLastSubmittedBookingConsultHeadMeasurements`** / **`loadLastSubmittedBookingConsultHeadMeasurements`** (requires at least circumference + front-to-nape to save).
+- **`src/pages/checkout/page.tsx`:** After a successful signed-in order save, if the cart includes **`booking-consult`** with **`bookingHeadMeasurements`**, persist them and dispatch **`ordersUpdated`** so an open consult page can hydrate.
+- **`src/pages/booking/consultation/page.tsx`:** On mount / sign-in / **`ordersUpdated`**, if all six fields are still empty, merge saved values into state (user can edit before add-to-bag).
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Wig consult pre-fill: explicit “you can edit” copy
+
+**Context:** User wanted to confirm that **pre-filled head measurements remain editable** (not read-only) when values come from the last checkout.
+
+**Reality:** Fields were already controlled **`input`**s with **`onChange`**; no `readOnly` / `disabled`.
+
+**Change:** **`src/pages/booking/consultation/page.tsx`** — after hydrating from saved measurements, show a short gray line: *“YOUR LAST SUBMITTED MEASUREMENTS ARE FILLED IN BELOW — EDIT ANY FIELD IF THEY HAVE CHANGED.”* Clear hint on sign-out or when no saved payload. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult head measurements: max 4 digits, decimal after 2nd digit
+
+**Context:** User asked for inch inputs capped at **four numeric digits**; if a decimal is used it must sit **after the second digit** (e.g. `14.22`, `14.2`).
+
+**Implementation:**
+- **`src/utils/bookingConsultHeadMeasurementInput.ts`:** **`sanitizeConsultHeadMeasurementInput`** (live typing) and **`finalizeConsultHeadMeasurementValue`** (strip trailing `.` for cart/save).
+- **`src/pages/booking/consultation/page.tsx`:** `updateHeadMeasurement` uses sanitizer; add-to-bag uses finalize; prefill sanitizes loaded values; **`maxLength={6}`** on inputs (`XX.XX`).
+- **`src/utils/bookingConsultHeadMeasurementsPersist.ts`:** Save/load normalizes through the same rules.
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin client details toggle: tab bottom spacing matches meetings hub
+
+**Context:** Content under the client-details toggle tabs (DETAILS / CART / WISHLIST row and ACTIVITY / ORDERS / … row) sat too tight under the tab labels compared to the admin meetings page tab strip.
+
+**Change:** **`src/pages/admin/clients/page.tsx`** — add **`marginBottom: '10px'`** on both tab row wrappers (matches meetings hub header **`pb-2`** + content **`paddingTop: 2px`**). **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Consult head measurements: auto-insert "." after 2nd digit when 3rd digit typed
+
+**Context:** User wanted the inch fields to **automatically add a decimal** when a **third digit** is entered (e.g. `142` → `14.2`, `1422` → `14.22`).
+
+**Change:** **`src/utils/bookingConsultHeadMeasurementInput.ts`** — when there is **no** `.` in the raw input, if digit count is **3 or 4**, format as **`firstTwo + "." + rest`** (still max 4 digits total). One- and two-digit entries stay unchanged.
+
+---
+
+## 2026-04-06 — Admin consult measurement line: no parentheses
+
+**Context:** User asked to drop the wrapping **`()`** around the abbreviated head-measurement string on admin consult client panels.
+
+**Change:** **`src/utils/adminConsultHeadMeasurementsDisplay.ts`** — **`formatConsultHeadMeasurementsParenLine`** now returns **`parts.join(' · ')`** (e.g. `19" C · 21" FN · …`) instead of parenthesized form. Function name kept for call sites. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin meetings view-all bookings grid: red line without product name
+
+**Context:** In **view all bookings** **grid** view, the red service line showed **`NEW INSTALL: SOFT WAVE $760`**; user wanted **`NEW INSTALL: $760`** (no unit/wig name).
+
+**Change:** **`formatBookingInstallLineForViewAllGrid`** in **`src/utils/adminMeetingClientPanels.tsx`** — **`installKind: `** + **`formatUsd(unitPrice)`** (no **`unitLabel`**, no trailing **` USD`**). **`AdminMeetingsHub.tsx`** grid cell uses this helper; list view and full client panels unchanged. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin Meetings: “TSTS” phantom text — calendar keys + consult hair line
+
+**Context:** User asked what **`TSTS`** is on consult tab and view-all; repo has **no** literal `TSTS` in `src/`. Prior motherboard notes treated it as layout/wrap artifacts.
+
+**Fixes:**
+- **`AdminMeetingsHub.tsx`:** Calendar weekday row used **duplicate React keys** (`T`, `S` twice) → unique keys **`cal-dow-0`…`6`** + **`whiteSpace: 'nowrap'`** on the row.
+- **`adminMeetingClientPanels.tsx`:** Consult black “hair” line no longer falls back to **`m.notes`** (long mock/API notes could wrap into confusing fragments). Uses **`hairOption` / `bookingHairOption` / `consultType`** or **`consultTypeLabelForMeeting(m)`**; line is **ellipsis + nowrap**.
+
+**Files:** above + **`motherboard/MEMORY.md`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — View all bookings/consults list: text block +6px up (avatars unchanged)
+
+**Context:** User wanted the **list view** copy (name/tier + meeting rows) shifted **up 6px** in **view all** mode only, **without** moving profile avatars.
+
+**Change:** **`AdminMeetingsHub.tsx`** — text column wrapper **`transform`** from **`translateX(6px)`** to **`translate(6px, -6px)`** for **`viewAllListClientPanels`** cards only.
+
+---
+
+## 2026-04-06 — View all list: space after label colon
+
+**Context:** List rows showed **`WIG ONLY:MON,`** with no space after the colon.
+
+**Change:** **`viewAllListMeetingLabel`** in **`adminMeetingClientPanels.tsx`** — return strings end with **`": "`** (trailing space) for both appointment and consult labels.
+
+---
+
+## 2026-04-06 — View all list colon spacing: flex gap (trailing space collapsed)
+
+**Context:** User still saw **`WIG ONLY:MON,`** after adding a trailing space in **`viewAllListMeetingLabel`** — whitespace at the end of a flex item does not reliably separate from the next sibling.
+
+**Change:** Revert label strings to **`LABEL:`** only; **`AdminMeetingsHub.tsx`** view-all list row uses **`fontSize: '9px'`** + **`gap: '0.35em'`** between label and date (**`1ch`** was dropped — too wide vs one space).
+
+---
+
+## 2026-04-06 — Admin reviews page: tab summaries, Noir stars, video filter, layout
+
+**Context:** User requested admin **`/admin/reviews`** updates: remove red SHOP/TOOLS headings; remove duplicate summary under tools; profile initials above client name; summary cards reflect **shop-only** / **tools-only** / **combined** by tab; Noir product-page stars; stars below gray product line; date **black**; **VIDEOS** sort shows **video count > 0** only; sort row **6px left**.
+
+**Changes (`src/pages/admin/reviews/page.tsx`):**
+- Summary grid uses **`displayAvg`** / **`displayTotal`** / **`totalReviewsLabel`** from tab (**ALL** = combined avg + count, **SHOP** / **TOOLS** = scope-only); right label **SHOP REVIEWS** / **TOOL REVIEWS** / **TOTAL REVIEWS**.
+- Removed inner tools summary + red **SHOP REVIEWS** / **TOOLS REVIEWS** **h3**s; shared **`renderSortDropdown()`** on all tabs (padding/margin **6px left** vs prior).
+- Cards: **40px** initials avatar, Noir **`filled-star.png`** (14px, outline, dim empty), stars **after** product line, date **`#000`**.
+- **`sortReviewsByOption`:** **PHOTOS** / **VIDEOS** pre-filter **`photos > 0`** / **`videos > 0`** then sort.
+- Dropped unused API **`averageRating`** / **`totalReviews`** state (client recomputes from rows).
+
+**`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: profile photos from API / profiles
+
+**Context:** User asked to wire **real profile photos** when the API provides URLs.
+
+**Implementation:**
+- **`api/admin/reviews`:** Each review JSON includes **`clientProfilePhotoUrl`** — from review-row fields (snake/camel aliases) or **`profiles.profile_image`** by **`reviews.email`** (batch on GET). PATCH/POST enrich the same way.
+- **`admin/reviews/page.tsx`:** **`ReviewClientAvatar`** — shows photo or initials on load error; **`normalizeApiReview`** maps URL + fixes **`photos`** when API sends an array.
+- **`supabase/migrations/20260407120000_reviews_client_profile_photo_url.sql`:** optional **`reviews.client_profile_photo_url`** for explicit storage.
+
+**`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: 5-star sort, strict star filter, profile thumb, layout
+
+**Context:** **5 STAR** sort option; dropdown **+2px** right; profile **icons** (default **`profile-thumb.png`**) **above** client name; star filters **exact** rating only; Noir stars use **`reviewStarCount`**.
+
+**File:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews: empty stars = Noir outline (`star-symbol`)
+
+**Context:** User wanted unrated positions (e.g. 5th star on a 4★ review) to look like Noir **outline** stars (white/light fill + black border), not a faded filled star.
+
+**Change:** Filled slots use **`filled-star.png`**; empty slots use **`star-symbol.png`** with same **`drop-shadow`** / **`stroke`** as Noir product strip. **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin pending ↔ reviews ↔ client REVIEWS tab sync
+
+**Context:** User asked to **confirm** admin **Reviews**, **Pending → REVIEWS**, and **client details REVIEWS** are connected. Prior: **`/api/admin/pending`** never counted **`reviews`** (always 0); Pending REVIEWS tab was **hardcoded**; client **`media`** count ignored **`videos`**.
+
+**Changes:**
+- **`api/admin/pending.ts`:** Count **`reviews`** with **`status = 'pending'`**; return **`pendingReviewBreakdown`** (total, withPhotos, withVideos, textOnly). Photo/video helpers match **`admin/reviews`** list semantics.
+- **`src/utils/api.ts`:** **`getAdminPending`** returns **`pendingReviewBreakdown`**.
+- **`src/pages/admin/pending/page.tsx`:** Loads **`getAdminPending` + `getAdminReviews`**; pending header uses **`max(api count, pending rows in full list)`**; REVIEWS tab shows **live breakdown** (replaces fake PRIORITY block); overview uses zeros when API empty; note ties UI to **Admin → Reviews** + **Client → REVIEWS**.
+- **`src/pages/admin/clients/page.tsx`:** **`adminReviewCountsByEmail`** **`media`** += 1 if **`photos` or `videos`** > 0.
+- **`supabase/migrations/20260407140000_reviews_videos_count.sql`:** **`reviews.videos`** column (default 0) for DB-backed video counts.
+- **`src/pages/admin/dashboard/page.tsx`:** Pending catch fallback includes **`pendingReviewBreakdown`**.
+
+**`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews UI: sort popover + avatar alignment
+
+**Context:** Sort menu clipped when list empty; match clients overview sort width; avatar left above client name.
+
+**File:** **`src/pages/admin/reviews/page.tsx`** — sort row outside scroll; **120px** menu **`z-40`**; clients-matching margins; avatar **`items-start`** / no auto margin. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin pending: overview aggregates all sections; tab mock UIs
+
+**Context:** User wanted **REVIEWS / FORMS / AFFILIATE** former summary tables moved under **OVERVIEW**; each tab should show **submitted**-style content (account reviews, order auth forms, affiliate photos/videos/socials) with **mock data** for UI design.
+
+**File:** **`src/pages/admin/pending/page.tsx`**
+- **OVERVIEW:** PENDING ITEMS + reviews-by-type (API when loaded) + ORDER FORMS rows + TIER UPGRADES + AFFILIATE REQUESTS + REFUND REQUESTS + AFFILIATE QUEUE (all former tab copy).
+- **REVIEWS:** **`MOCK_PENDING_CLIENT_REVIEWS`** cards (client, email, product, excerpt, stars, status, date).
+- **FORMS:** **`MOCK_ORDER_AUTH_FORMS`** (order #, client, status, date).
+- **AFFILIATE:** thumbnail grid for photos/videos + social link rows; **`SectionTitle`**, **`DataRow`** helpers.
+
+**`tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — Admin reviews sort nudge: label −4px, menu −2px
+
+**File:** **`src/pages/admin/reviews/page.tsx`** — sort label **`relative; left: -4px`**; dropdown panel **`left: -2px`**. **`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin reviews: avatar → client details, expandable media, spacing
+
+**Full conversation (this chat):** Prior summary covered booking/consult borders, digital orders, alerts, head measurements, admin meetings grid/list, pending/reviews work, etc. **This turn:** user asked for four updates on **`/admin/reviews`**.
+
+**Requests and outcomes:**
+1. **Sort text only 2px left** — changed sort button label from **`left: -4px`** to **`left: -2px`** (menu position unchanged at **`left: -2px`**).
+2. **Profile icons open client details** — when **`clientEmail`** is set, avatar is a **button** that **`navigate`s** to **`/admin/clients/overview?email=...`** (same pattern as meetings hub). No-op (non-interactive avatar) if email missing.
+3. **“3 photos” / videos line toggles content** — footer shows **`N photo(s) · M video(s)`**; if there are resolvable URLs, the line is a **toggle** that shows **photo grid** (links open new tab) and **`<video controls>`** rows below; tap again to collapse. **`normalizeApiReview`** extracts URLs from **`photos`** jsonb (strings or `{url}` objects) and optional **`video_urls` / `videoUrls`**. If DB has counts but no URLs, **placeholder** images (picsum seeded by review id) and a **sample mp4** fill slots so UI is testable. **`withDefaultReviewMedia`** applies placeholders to default mock rows. Default mock **client names + emails** aligned to admin mock clients (**mock1@test.com** … **mock5@test.com**).
+4. **4px above black body text** — review body **`p`** uses **`margin: calc(0.25rem + 4px) 0 0`** (replaces plain **`mt-1`**).
+
+**Files:** **`src/pages/admin/reviews/page.tsx`**. **`tsc --noEmit`**. **Git:** committed and pushed **`preview/mobile`** (`b40931d`). PR tool could not attach (branch/head mismatch in cloud); user can open PR from **`preview/mobile`** if needed.
+
+---
+
+## 2026-04-06 — Admin reviews: return from client details, media row, stars, state
+
+**Context (this chat turn):** User wanted closing **client details** after opening from **Admin → Reviews** to return to **`/admin/reviews`** (not client overview). **Photo/video** line: **Futura PT Medium**, **uppercase**; **PUBLISHED/PENDING** stays on the **same row** when media is expanded; **+2px** above **stars** only; **full state (or region)** in parens after client name (e.g. **QUINN CHEN (TEXAS)**).
+
+**Changes:**
+- **`src/pages/admin/clients/page.tsx`:** **`returnTo=reviews`** query param — **`closeClientDetails`** **`navigate('/admin/reviews')`**; block-client confirm also routes to reviews when **`returnTo=reviews`**.
+- **`src/pages/admin/reviews/page.tsx`:** Navigate with **`&returnTo=reviews`**; footer restructured so status + media summary share one **flex row**, expanded thumbs/videos in a **sibling** below; media label **Futura PT Medium** + **`textTransform: 'uppercase'`** + **PHOTO(S)/VIDEO(S)** copy; stars row **`marginTop: calc(0.25rem + 2px)`**; **`clientRegionParen`** on rows + **`enrichReviewsWithMockClientRegion`** via **`getMockClientsForAyoteenz`** + **`regionParenLabelFromAddressLine`**; API **`normalizeApiReview`** reads optional region fields.
+- **`src/utils/usAddressStateDisplay.ts`:** US **abbr → full state** from trailing **`, ST ZIP`**, else last comma segment for non-US.
+
+**`tsc --noEmit`**.
+
+---
+
+## 2026-04-06 — Admin dashboard reviews card: content % + total count alignment
+
+**Context:** User wanted **CONTENT REVIEWS** row under **POSITIVE SENTIMENT** on the dashboard **REVIEWS** card — **% of reviews that include photo or video**; also asked why dashboard showed **71** total reviews while **Admin → Reviews → ALL** showed **5**.
+
+**Cause of disconnect:** Dashboard used **`getAdminReviews().totalReviews`**, which counted **all DB rows** (including rejected). Admin reviews page **ALL** tab only shows **published + pending** (and with no API, **5** default mock rows).
+
+**Changes:**
+- **`api/admin/reviews.ts`:** **`totalReviews`** = **published + pending** only; added **`reviewsWithMedia`**, **`contentReviewsPercent`**, **`positiveSentimentPercent`**; include **`videos`** on each review item.
+- **`src/utils/api.ts`:** **`getAdminReviews`** typings + new fields.
+- **`src/utils/adminReviewAggregates.ts`:** Helpers for visible counts, media %, visible average (dashboard recomputation fallback).
+- **`src/pages/admin/dashboard/page.tsx`:** **CONTENT REVIEWS: N%** line; dynamic **POSITIVE SENTIMENT** % and **PHOTOS/VIDEOS** count; mock dashboard uses **`reviewsWithPhotosVideos` / totalReviews** for content %.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin dashboard: list/grid toggle left-aligned
+
+**Context:** User wanted the **list vs grid** view toggle below the dashboard stat cards aligned to the **left** instead of the **right**.
+
+**Change:** **`src/pages/admin/components/RecentActivity.tsx`** — wrapper around the toggle buttons: **`justify-end` → `justify-start`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin reviews page: stars, header, verified, sort, media layout
+
+**Context:** User asked to shrink **stars ~35%**; **client line** black as **`NAME - TX`**; red **`(VERIFIED)`** for purchase-verified reviews; sort label **6px** further left; gray **product** line **Futura PT Medium**; **videos** same **72×72** thumb as photos on **row below** photos.
+
+**Changes:**
+- **`src/utils/usAddressStateDisplay.ts`:** **`usStateAbbrevFromAddressLine`**, **`compactRegionCodeForReviewHeader`**.
+- **`src/pages/admin/reviews/page.tsx`:** Stars **`14 * 0.65` px**; **`clientRegionCode`** + **`verifiedPurchase`**; **`(VERIFIED)`** when verified (API: **`verifiedPurchase` / `verified_purchase` / `purchase_verified`** truthy); sort **`left: -8px`**; product **Futura PT Medium**; media rows: photos then videos, **72×72**, **`object-fit: cover`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Client line separator between name and state: **` · `** (middle dot) instead of **` - `**.
+
+---
+
+## 2026-04-08 — Reviews `verified_purchase` column + API
+
+**Context:** User asked to implement persistence for **(VERIFIED)** on admin reviews.
+
+**Changes:**
+- **`supabase/migrations/20260408120000_reviews_verified_purchase.sql`:** **`reviews.verified_purchase boolean NOT NULL DEFAULT false`** + comment.
+- **`api/admin/reviews.ts`:** **`toReviewItem`** includes **`verifiedPurchase`**; **POST** accepts **`verifiedPurchase` / `verified_purchase`**; **PATCH** can update **`verified_purchase`** alone or with **`status`**.
+- **`src/utils/api.ts`:** **`patchAdminReview(id, { status?, verifiedPurchase? })`**; **`postAdminReview`** body may include **`verifiedPurchase`**.
+
+Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders expanded detail: layout + tracking position
+
+**Context:** User wanted to remove **“UPDATES FROM PRODUCTION…”** copy and **OPEN IN CONCIERGE** from expanded order; **single-item** product row **centered**; **ORDER TRACKING** block **after REWARDS** (not after **SHIPPING**).
+
+**File:** **`src/pages/orders/page.tsx`** — active + past expanded views: outer scroll **`justifyContent: center`** when one product; **`marginLeft: 0`** for single item; physical **ORDER TRACKING** moved below **REWARDS**; **ORDER STATUS** (digital) still after shipping; concierge paragraph + button removed.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** **GO TO CONCIERGE** below orders card when expanded, **premium + 6/12mo** (**`showLongPremiumConciergeExtras`**) → **`/account/concierge?orderId=…#order-tracking`**; Concierge scrolls **#order-tracking** into view when order selected.
+
+**Follow-up 2:** Physical **ORDER TRACKING** under **REWARDS** and **GO TO CONCIERGE** only for **6- & 12-month** premium (**`getEffectiveSubscriptionTier`**). **Checkout summary** (`confirm/page.tsx`) aligned: section order like expanded order, **ORDER STATUS** for digital summary, **REWARDS** copy/icon match, **SIGN ORDER FORM** after summary card; **`orderInternalId`** from checkout **`navigate` state** for concierge link. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up 3:** **GO TO CONCIERGE** / long-premium blocks use **`getEffectiveSubscriptionTier === '6months' | '12months'`** only (dropped extra **`membershipType === 'PREMIUM'`** check so 6/12mo is the sole gate). **`tsc --noEmit`**. Pushed **`preview/mobile`** (`c8000d6`).
+
+---
+
+## 2026-04-06 — Expanded orders: review gating, tracking UI, loyalty points display
+
+**Context (this chat):** User asked for more **expanded order** behavior: **archived** orders should **not** show **GO TO CONCIERGE** (only **LEAVE A REVIEW**, which becomes non-interactive **REVIEW(S) SUBMITTED** when every line item is reviewed); **ORDER TRACKING** above **REWARDS**; **leave review** only after **3 days** post-delivery (archived); **smaller** tracking **bubbles** (25% reduction), drop **" · CURRENT"**; current step bubble **red fill + black border**, same size as others; **GO TO CONCIERGE** **Futura PT Medium** + **top margin** match leave-review button; fix **YOU'VE EARNED 0** by **not** falling back to **`currentUser.loyaltyPoints`**.
+
+**Changes:**
+- **`src/utils/orderReviewSubmissionPersist.ts`:** Per-item review keys in **`orderReviewItems_{orderId}`**; **`getEligibleReviewLineItemsForOrder`**, **`allOrderLineItemsReviewed`**, legacy **`reviewSubmitted_{id}`** honored when no per-item keys.
+- **`src/pages/account/reviews/leave-review-order/page.tsx`:** Hydrate **`submittedForIndex`** from storage; on submit **append** item key, set legacy flag when **all** done; **all reviewed** state with **BACK TO ORDERS**; hide submit row when complete.
+- **`src/pages/orders/page.tsx`:** **GO TO CONCIERGE** only for **active** expanded orders; **`reviewsUpdated`** bump for button state; leave-review window **`deliveredAt` + 72h**; **`displayLoyaltyPointsForExpandedOrder`** ( **`pointsEarned` → subtotal → total → 0** ); tracking + digital status: **6px** circles, red current, no **CURRENT** suffix; **ORDER TRACKING** before **REWARDS**; concierge **`marginTop: -5px`**.
+- **`src/pages/checkout/confirm/page.tsx`:** Same **tracking** bubble treatment and **ORDER TRACKING** before **REWARDS**; rewards fallback **no** **`accountUser.loyaltyPoints`** / **1290**; concierge block **`marginTop: 2px`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** **REVIEW(S) SUBMITTED** state keeps the **same** red **Futura** button look as **LEAVE A REVIEW** (no dimmed opacity / grayed styling); still **`disabled`** and non-navigating.
+
+---
+
+## 2026-04-06 — Admin client details: view signed order forms
+
+**Context (this chat):** User asked for red **Futura PT Medium** line **VIEW SIGNED FORMS** under the **profile icon** in the **admin client details** toggle, opening a **popup** listing that client’s **signed** order authorization forms.
+
+**Changes:**
+- **`src/utils/signedOrderFormsStorage.ts`:** **`signedOrderFormsByEmail`** in localStorage; **`appendSignedOrderForm`**, **`getSignedFormsForClientDisplay`** (merges stored snapshots with orders where **`orderFormSigned`**); **`markOrderFormSignedInUserOrders`**; **`signedOrderFormsUpdated`** event on append.
+- **`src/pages/shop/order-form/page.tsx`:** On valid submit, persist snapshot (sanitized fields, photo/signature **data URLs**) + mark matching **`userOrders_*`** row **`orderFormSigned`**; **`ordersUpdated`** from marker.
+- **`src/pages/admin/clients/page.tsx`:** Link under avatar; modal with per-form cards; refresh on **`ordersUpdated`**, **`signedOrderFormsUpdated`**, **`storage`**; mock **`rawOrders`** first two get **`orderFormSigned`** for demo.
+- **`src/pages/orders/page.tsx`** / **`src/pages/checkout/confirm/page.tsx`:** Pass **`orderId`** / **`orderInternalId`** in **`navigate`** state to order form for storage linkage.
+
+**Follow-up:** Removed **` · SUMMARY`** suffix from signed-form card headers in the modal (**`SignedOrderFormCard`**).
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Expanded **ORDER TRACKING** (orders + checkout summary): extra **`DELIVERED`** row under **PACKAGE SHIPPED** when **`status === 'DELIVERED'`**; red current styling on **DELIVERED** (not **PACKAGE SHIPPED**). Helpers in **`orderTracking.ts`**: **`orderShowsDeliveredTrackingLine`**, **`orderTrackingStageRowIsCurrent`**, **`orderTrackingDeliveredRowIsCurrent`**. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Current tracking step **bubble + label** use Concierge-style **`orderTrackingPulsate`** (1s ease-in-out infinite opacity). **`ORDER_TRACKING_PULSATE_KEYFRAMES_CSS`** / **`ORDER_TRACKING_PULSATE_ANIMATION`** exported from **`orderTracking.ts`**; injected on **orders** and **checkout confirm** pages. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Pulse respects **Account → Settings → Animations** (**`PER_USER_KEYS.ordersPageAnimationsEnabled`** / **`ordersAnimationsChanged`**): when **`false`**, tracking current step is static red circle + black border (no **`animation`** on bubble or label). **Concierge** current-stage inner dot uses the same flag. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** **`CANCELED` / `CANCELLED`** orders are **never** in **`activeOrders`**: **`normalizeUserOrdersBuckets`** in **`userOrdersBuckets.ts`**; **orders** page migrates LS on read, auto-cancel moves row to **past** immediately, archive effect no longer keeps canceled in active for 24h; **kateena** mock **#666** in **past**; **Concierge** seed + merge normalize buckets and use **CANCELED** + **`canceledAt`** for **#666**. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** **Account → Orders** lists (**active**, **past**, bottom status strip) sorted **newest first** via **`orderSortTimeMs`** + **`sortOrdersNewestFirst`** in **`userOrdersBuckets.ts`**; persisted to **`userOrders_*`** when order changes on load. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C thumbnails match cart badges
+
+**Context (this chat):** User wanted **appointment / consult** orders on **Account → Orders** to use the **same thumbnail** as the **cart** (booking badge PNGs), not a wig still or placeholder.
+
+**Changes:**
+- **`src/pages/orders/page.tsx`:** Optional **`bookingTier`** on **`Order`**; **`ordersPageOrderThumbnailSrc`** uses **`bookingCartItemThumbnailSrc`** from **`bookingBadges.ts`** when **`bookingFlowType`** is **`appointment`** or **`consult`**; list thumbnails and expanded synthetic product rows use it. Mock **kateena-consult-1** sets **`bookingTier: 'standard'`** and relies on badge URL (replaces **`gallery-mock.png`** for display).
+- **`src/pages/checkout/page.tsx`:** When persisting a **bookings-only** order to **`userOrders_*`**, set **`productImage`** from the same helper, and store **`bookingTier`** (**`standard`** / **`premium`**) from the matching cart line so premium vs standard matches the cart.
+
+**`npx tsc --noEmit`**. Commit **`fix(orders): use cart booking badge thumbnails for A/C orders`** (**`14d50e9`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Premium membership upgrades not on Account Orders
+
+**Context (this chat):** User asked that **premium membership upgrades only** should **not** be treated as **orders** and should **not** appear on **Account → Orders**.
+
+**Topics in this chat (cumulative):** Earlier: A/C order thumbnails aligned with cart booking badges (**`14d50e9`**). This turn: membership upgrade exclusion.
+
+**Changes:**
+- **`src/utils/userOrdersBuckets.ts`:** **`orderIsPremiumMembershipUpgradeOnly`** (explicit **`isSubscriptionUpgrade`** flag or legacy **`digitalFulfillmentOnly`** + subscription tier **`productName`**, excluding A/C **`bookingFlowType`**); **`filterOutPremiumMembershipUpgradeOrders`**.
+- **`src/pages/checkout/page.tsx`:** On successful checkout, **do not** append to **`userOrders_*`** when **`isSubscriptionUpgrade`**; still run **`hasMadeFirstPurchase`** when that checkout is the user’s first bucket entry (membership-only first “purchase” still activates referral behavior).
+- **`src/pages/orders/page.tsx`:** After normalize/sort, **filter** membership-upgrade rows; **persist** cleaned **`userOrders_*`** when legacy rows are removed.
+
+**`npx tsc --noEmit`**. Commit **`fix(orders): exclude premium membership upgrades from account orders`** (**`2d11010`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: smaller A/C booking thumbnails
+
+**Context (this chat):** User asked to **decrease** the **appointment/consult** booking **badge thumbnail** on **Account → Orders** by **35%** (relative to the default list size).
+
+**Topics in this chat (cumulative):** A/C thumbnails match cart badges; membership upgrades excluded from orders; this turn: **35% smaller** A/C thumbs on orders page.
+
+**Changes:** **`src/pages/orders/page.tsx`** — list thumbnails use **102px** for wig orders and **rounded 102 × 0.65** for **`bookingFlowType`** appointment/consult; expanded product row images use **120px** vs **120 × 0.65** for A/C. **`npx tsc --noEmit`**. Commit **`fix(orders): shrink A/C booking thumbnails 35% on orders page`** (**`f3aeac3`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C thumbnails follow viewer premium status
+
+**Context (this chat):** Consult (and A/C) booking thumbnails on **Account → Orders** showed the **standard** consult badge for **premium** accounts because **`order.bookingTier`** was missing or **`standard`** on persisted orders.
+
+**Topics in this chat (cumulative):** A/C cart-matching thumbs; membership excluded from orders; smaller A/C thumbs; this turn: **premium vs standard badge** from **signed-in account**, not stale order field.
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageBookingBadgeTierForViewer`** uses **`isPremiumMemberForGatedFeatures()`** (same as cart/booking: active premium subscription tier and/or **BLACK** spend tier); **`ordersPageOrderThumbnailSrc`** passes that tier to **`bookingCartItemThumbnailSrc`** for appointment/consult. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C list column aligned with wig orders
+
+**Context (this chat):** User wanted **appointment/consult** list **thumbnail + ITEMS** text on the **same x-axis** as other orders (smaller A/C image had been shifting the column).
+
+**Topics in this chat (cumulative):** A/C thumbs, size, premium badge from viewer, this turn: **horizontal alignment**.
+
+**Changes:** **`src/pages/orders/page.tsx`** — fixed **102px** thumbnail slot (**`ORDER_LIST_THUMB_SLOT_STYLE`**); **102×102** flex-centered hit area for the image (**`ORDER_LIST_THUMB_BUTTON_STYLE`**); A/C image stays smaller inside; **ITEM** line **`width: 100%`**, **`textAlign: center`**. Applied to **active** and **archived** lists. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C badges = subscription only + admin override refresh
+
+**Context (this chat):** After switching **admin** to **standard** (Rewards tier toggles), **Account → Orders** still showed **premium** A/C thumbnails. User wants badges tied to **current membership** always.
+
+**Root causes:** (1) **`isPremiumMemberForGatedFeatures()`** treats **BLACK** spend tier as premium, so standard + BLACK still got premium badges. (2) **`adminSubscriptionOverride`** is written in the **same tab** as Orders — **`storage`** does not fire there, so the page did not re-render.
+
+**Changes:**
+- **`src/utils/adminAuth.ts`:** **`MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT`** constant for same-tab broadcast.
+- **`src/pages/orders/page.tsx`:** **`ordersPageBookingBadgeTierForViewer`** uses **`getEffectiveSubscriptionTier(currentUser) != null`** (subscription / PREMIUM membership + founder override only, not BLACK-only). Listener bumps re-render on that event + cross-tab **`storage`** for **`adminSubscriptionOverride`**; **`ordersPageOrderThumbnailSrc`** reads **`bookingBadgeMembershipBump`** so img **`src`** updates.
+- **`src/pages/account/membership/page.tsx`:** Dispatch **`MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT`** when saving **`ADMIN_SUBSCRIPTION_OVERRIDE_KEY`**.
+
+**`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: tighter spacing above A/C “N ITEM(S)”
+
+**Context (this chat):** User asked to **reduce spacing above** the **items count** line for **appointment/consult** orders **only** (refined to **`-14px`** top margin vs **2px** on wig rows).
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageListItemsLabelMarginTopPx`**: **2px** for wig orders, **-14px** for A/C (**`base - 16`**). Active + archived lists. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Expanded A/C orders: drop digital blurb + cap size line
+
+**Context (this chat):** User asked to remove from **expanded** appointment/consult orders: the line **“DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.”** and the **“CAP SIZE: M”** detail under the product strip.
+
+**Changes:** **`src/pages/orders/page.tsx`** — hide that **ORDER STATUS** intro paragraph when **`bookingFlowType`** is appointment/consult (active + archived expanded). **`getNonDefaultDetailLines`** optional **`omitCapSizeLine`**; expanded product rows pass **`true`** for A/C so the first cap-size line is not shown (gift-card / digital-only expanded orders unchanged). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Order authorization form: units + BCF bundles/closures/frontals only
+
+**Context (this chat):** User asked that **only** orders containing **units**, **bundles**, **frontals**, or **closures** need to sign the **order authorization form** (not bookings, gift cards, membership, etc.).
+
+**Changes:** **`orderAuthorizationForm.ts`** (cart + order helpers); **`checkout/page.tsx`** persists **`requiresOrderAuthorizationForm`** on **`userOrders_*`** and passes it in summary **`navigate` state**; **`checkout/confirm/page.tsx`** gates 24h copy + **SIGN ORDER FORM**; **`orders/page.tsx`** gates auto-cancel, list CTAs, strip, **IN REVIEW**; **`orderTracking.ts`** advances post-confirm only when form applies; **`concierge/page.tsx`** signature UI + 24h logic; **`types/cart.ts`** **`category`**. **`npx tsc --noEmit`**. Commit **`cb3afad`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult orders: PLACED → PROCESSING → COMPLETE
+
+**Context (this chat):** User wanted **consult** checkout orders: after **24 hours** **PLACED** → **PROCESSING**; after admin sends consult offer (**client alert**), matching order → **COMPLETE**.
+
+**Changes:** **`src/utils/consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**, **`markConsultOrderCompleteAfterQuoteSent`** (match **`orderNumber`** to meeting **`metadata.orderNumber`**). **`orders/page.tsx`** — apply advance on **`userOrders_*`** load + **`updateUser`**, **1min** interval; **`PROCESSING`** red status styling; mock **`kateena-consult-2`**; optional **`consultProcessingStartedAt`**, **`consultQuoteId`**. **`AdminMeetingsHub.tsx`** — after **`postAdminConsultQuote`**, update **`userOrders_${client}`** when **`quote.id`** + **`quoteMeeting.metadata.orderNumber`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: no “N ITEM(S)” under A/C thumbnails
+
+**Context (this chat):** User asked to remove the **“1 ITEM”** / item-count line from **appointment/consult** orders only on the Account Orders page (active + archived lists).
+
+**Changes:** **`src/pages/orders/page.tsx`** — render the Covered By Your Grace **`{order.items} ITEM(S)`** paragraph only when **`bookingFlowType`** is not **`appointment`** or **`consult`**; **`ordersPageListItemsLabelMarginTopPx`** is a constant **2px** (A/C-specific negative margin removed). **`npx tsc --noEmit`**. Commit **`2de6d82`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: A/C thumbnails +10%
+
+**Context (this chat):** User asked to increase **appointment/consult** thumbnail size on the Account Orders page by **10%** (vs prior **0.65** of wig thumb size).
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_SCALE = 0.65 * 1.1`** (**0.715**) for **`ORDER_AC_LIST_THUMB_PX`** and **`ORDER_AC_EXPANDED_PRODUCT_THUMB_PX`**. **`npx tsc --noEmit`**. Commit **`5085ded`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: A/C thumbnails up 6px
+
+**Context (this chat):** User asked to move **appointment/consult** thumbnails **up 6px** on the Account Orders page.
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_TRANSLATE_Y_PX = -6`** on list thumb **button** (**`ordersPageListThumbButtonStyleForOrder`**) and on expanded product **`<img>`** when order is A/C (active + archived expanded). **`npx tsc --noEmit`**. Commit **`0cc812d`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: A/C thumbnails down 2px
+
+**Context (this chat):** After **-6px** vertical nudge, user asked to move **A/C** thumbnails **down 2px** (net **-4px** vs baseline).
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_TRANSLATE_Y_PX`** **-6** → **-4**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Merge preview/mobile into master
+
+**Context (this chat):** User asked to push all work from **`preview/mobile`** to **`master`**.
+
+**Changes:** Checked out **`master`**, pulled **`origin/master`**, fast-forward merged **`preview/mobile`** (no merge commit; **`master`** advanced **`e68c284` → `e07924a`**), pushed **`origin/master`**. **`preview/mobile`** and **`master`** now share tip **`e07924a`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo photos above duration line
+
+**Context (this chat):** User wanted **consult-only** order tracking (Concierge) to show **client-submitted hair inspo photos** above the gray line above **ESTIMATED DURATION**, instead of the **SILKY** texture thumbnail.
+
+**Changes:** **`consultOrderInspoPhotos.ts`** — **`consultBookingInspoPhotoUrlsFromOrder`**. **`checkout/page.tsx`** — persist **`bookingInspoPhotoUrls`** on **`newOrder`** from consult cart line. **`orders/page.tsx`** — **`Order.bookingInspoPhotoUrls`**; mock consult orders sample URLs. **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`** and URLs exist, render **50×80** bordered photo strip in expanded tracking (replaces texture for stage 0 no-form path and “other stages” fallback). **`npx tsc --noEmit`**. Commit **`a784ad4`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Admin client details Appointments: edit booking / consult icons + meetings handoff
+
+**Context (this chat):** User wanted **edit booking** and **edit consult** icons on the **right** of client panels on the **Appointments** tab (client details toggle), matching **A/C** tabs on **admin meetings**.
+
+**Changes:** **`adminMeetingsFocusSession.ts`** — **`store` / `read` / `clear`** for **`adminMeetingsFocusFromClientDetails`** (**meeting id** + **date**). **`adminMeetingClientPanels.tsx`** — optional **`actionIconSrc`** (default booking SVG). **`admin/clients/page.tsx`** — **`actionAriaLabel`**, **`actionIconSrc`** (**booking** vs **consult**), **`onActionClick`** stores focus + **`navigate('/admin/meetings?tab=…')`**. **`AdminMeetingsHub.tsx`** — on load, align **`calendarAnchor`** to focus date, then **`setEditMeeting`** / **`setQuoteMeeting`** + **`setSelectedDay`** for bookings; **consults** use **`edit-meeting-icon.svg`** on hub list. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo same frame as booking consult upload
+
+**Context (this chat):** User wanted consult **order tracking** hair inspo photos to use the **same border treatment** as **attached hair inspo** on the booking flow (**`/booking/consultation`** thumbs: white ring + black hairline) and **uniform** thumb size.
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — shared **88×88** outer + inner frame (**`padding: 1px`**, **`border: 3px solid white`**, **`boxShadow: 0 0 0 1.1px black`**, **`#f5f5f5`** fill, **`object-fit: cover`**) + **`BookingConsultHairInspoThumb`**. **`consultation/page.tsx`** uses shared constants/styles. **`concierge/page.tsx`** replaces **50×80** black-border thumbs with **`BookingConsultHairInspoThumb`**, **`gap: 13px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult order status bar: 30% / 60% / 100% by status
+
+**Context (this chat):** User wanted the **consult** booking **order tracking bar** to show staged fill when **PLACED** / **PROCESSING** / **COMPLETE** (updated to **30% / 60% / 100%**).
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **30%**, **PROCESSING** → **60%**, **COMPLETE**/**DELIVERED** → **100%**; was **⅓ / ⅔**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bookings: no loyalty points at checkout
+
+**Context (this chat):** User asked that **consult** bookings **not** earn loyalty points at checkout (**appointment** deposits still earn).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — only **`booking-appointment`** adds to points net; **`booking-consult`** stays in cart **pool** for discount allocation but **excluded** from earned base (both simple + mixed-special branches). **`checkout/page.tsx`** — removed **`isBookingsOnlyCheckout → 0`** shortcut and consult-only strip zeroing so **appointment-only** bookings still earn; **`pointsEligibleNetAmount`** drives the loyalty line. **`checkout/confirm/page.tsx`** — fallback **`pointsEligibleAmount`** reducers skip **`booking-consult`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout loyalty: no points on gift cards, digital, membership lines
+
+**Context (this chat):** User asked that **membership subscriptions/upgrades**, **gift cards**, and **other digital** checkout lines **not** earn loyalty points (with consult already excluded).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — **`isMembershipSubscriptionCartLine`** (**`subscriptionTier`** **3/6/12** months or legacy **`digital`** + name pattern), **`cartHasAnyLoyaltyEarningLine`**; membership lines skipped in gross loops like gift/digital. **`computePointsEligibleNetUsd`** returns **0** when no earning lines. **`checkout/page.tsx`** — **`pointsEligibleNetAmount`** + **`pointsEarned`** / **`checkoutSummaryRewards`** gated by **`!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine`**. **`checkout/confirm/page.tsx`** — **`isMembershipTierCartItem`** delegates to shared helper; reduces + rewards block skip membership + force **0** when no earning lines. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout: hide loyalty row when cart earns no points
+
+**Context (this chat):** User asked to remove the **“YOU'RE EARNING…”** line at checkout for carts that don’t earn loyalty points (digital / gift / membership / consult-only, etc.).
+
+**Changes:** **`checkout/page.tsx`** — loyalty block (signed-in copy + **SIGN IN** CTA) renders only when **`cartHasAnyLoyaltyEarningLine(cartItems)`**; black separator **`marginTop`** **-14px** when loyalty row hidden (same as subscription upgrade). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo 30% smaller
+
+**Context (this chat):** User asked to reduce **consult order tracking** hair inspo photo size by **30%** (booking consult upload thumbs unchanged).
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — optional **`scale`** (default **1**); outer box **88 × scale** px. **`concierge/page.tsx`** — **`BookingConsultHairInspoThumb`** **`scale={0.7}`** (~**62×62**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bar fill: 30% / 60% / 100%
+
+**Context (this chat):** User asked to change consult order tracking bar from **⅓ / ⅔** to **30%** (**PLACED**), **60%** (**PROCESSING**), **100%** (**COMPLETE**).
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** returns **30**, **60**, **100**; **`MEMORY.md`** consult bar section title updated. Commit **`fcb26ed`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult tracking: 3-day bar fill + auto-complete + 3-day duration copy
+
+**Context (this chat):** User wanted consult order tracking bar to **fill over 3 days**: **PLACED** from **10%** progressing; **PROCESSING** **≥30%**; **100%** when **3 days** elapse / **COMPLETE**; **ESTIMATED DURATION** **3 DAYS** (not same day) on Concierge for consult.
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`CONSULT_ORDER_TRACKING_WINDOW_MS`**, **`consultDigitalOrderTrackingBarFillPct(order, nowMs)`**: linear **10→100%** from **`placedAt`** / **`date`**; **PLACED** stays **below 30%**; **PROCESSING** (and mapped statuses) **`max(30%, linear)`**. **`consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**: **72h** from **`placedAt`** sets **COMPLETE** (still **24h** → **PROCESSING**). **`orders/page.tsx`** — consult bar uses **`Date.now()`** + **`_countdownTick`** for live updates. **`concierge/page.tsx`** — **1min** tick for bar; stage **0** duration **3 DAYS** for consult. **`checkout/confirm/page.tsx`** — **`consultDigitalOrderTrackingBarFillPct(..., Date.now())`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Booking consult: hair inspo file control + session draft
+
+**Context (this chat):** User reported consult **hair inspo** not working and **thumbnails** not showing under **CHOOSE FILE**.
+
+**Changes:** **`consultation/page.tsx`** — **`inspoSessionMayClearWhenEmptyRef`**: don’t **`removeItem`** on empty **`inspoItems`** until after first paint (avoids React **Strict Mode** mount/unmount wiping **`sessionStorage`** before draft hydrates). Hair inspo row: **`<label htmlFor>`** + invisible **`input[type=file]`** over row, styled row **`pointerEvents: 'none'`**; **`accept`** adds **`image/heic`/`heif`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Merge `preview/mobile` into feature branch: meetings + client details
+
+**Context (this chat):** User asked to **`git fetch origin preview/mobile`** and resolve merge conflicts, classifying simple vs complicated.
+
+**Conflict classification:**
+- **Complicated / divergent intent:** Feature branch introduced **`adminMeetingHubModel.ts`** + **`adminClientMeetingsFocusSession.ts`** and **`AdminMeetingHubStyleCard`** fed from the hub model; **`preview/mobile`** kept meeting helpers in **`adminMeetingClientPanels.tsx`**, **`adminMeetingsFocusSession`** (no tab), **`useAdminMeetingsApiRefresh`**, **`markConsultOrderCompleteAfterQuoteSent`**, **`listAggregatedAdminMeetingsForClientDetails`**, and **`AdminMeetingClientPanel`** for hub rows. These needed a **single** design, not a mechanical pick-one.
+- **Simple:** **`motherboard/MEMORY.md`** — keep **`preview/mobile`** timeline; drop duplicate HEAD-only entries. **`AdminMeetingsHub`** list UI — keep **`AdminMeetingHubStyleCard`**. Remove unused import after merge.
+
+**Resolution:** Deleted **`adminMeetingHubModel.ts`** and **`adminClientMeetingsFocusSession.ts`**. **`AdminMeetingHubStyleCard`** now imports card helpers from **`adminMeetingClientPanels`**. Extended **`adminMeetingsFocusSession`** payload with optional **`tab?: 'bookings' | 'consults'`**; **`storeAdminMeetingsFocusFromClientDetails`** accepts **`tab`**; hub focus effect uses stored tab when present. **`admin/clients/page.tsx`**: **`appointments`** from **`listAggregatedAdminMeetingsForClientDetails`**, **`AdminMeetingHubStyleCard`** + **`contentInsetLeftPx={6}`**, focus via extended session; removed per-tab **`getAdminMeetings`** + duplicate state. **`npx tsc --noEmit`**.

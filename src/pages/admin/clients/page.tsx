@@ -4,6 +4,7 @@ import AdminHeader from '../components/AdminHeader';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { isAyoteenzAdminAccount, getEffectiveTierName, isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import {
   getAdminClients,
   getAdminOrders,
@@ -12,7 +13,6 @@ import {
   getAdminActivity,
   getAdminReviews,
   exportClientsCsv,
-  getAdminMeetings,
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -27,16 +27,16 @@ import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlist
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
 import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
 import {
-  endOfYear,
-  generateMockMeetingsForRange,
-  loadLocalMeetings,
-  normalizeApiMeeting,
-  startOfYear,
+  compareAdminMeetingsNewestFirst,
+  listAggregatedAdminMeetingsForClientDetails,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
-import { meetingClientEmailKey, meetingSortTimeMs } from '../../../utils/adminMeetingHubModel';
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
-import { storeAdminClientMeetingsFocus } from '../../../utils/adminClientMeetingsFocusSession';
+import { storeAdminMeetingsFocusFromClientDetails } from '../../../utils/adminMeetingsFocusSession';
+import {
+  getSignedFormsForClientDisplay,
+  type StoredSignedOrderForm,
+} from '../../../utils/signedOrderFormsStorage';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -588,6 +588,116 @@ function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; pa
   ];
 }
 
+const SIGNED_FORM_FIELD_ORDER = [
+  'orderNumber',
+  'orderDate',
+  'firstName',
+  'lastName',
+  'email',
+  'phone',
+  'address',
+  'city',
+  'state',
+  'zip',
+  'country',
+  'billingAddress',
+  'billingCity',
+  'billingState',
+  'billingZip',
+  'billingCountry',
+  'cardholderName',
+  'cardNumber',
+  'cardLastFour',
+  'cardType',
+  'expirationDate',
+] as const;
+
+function formatSignedFormFieldLabel(key: string): string {
+  const map: Record<string, string> = {
+    orderNumber: 'ORDER NUMBER',
+    orderDate: 'ORDER DATE',
+    firstName: 'FIRST NAME',
+    lastName: 'LAST NAME',
+    email: 'EMAIL',
+    phone: 'PHONE',
+    address: 'SHIPPING ADDRESS',
+    city: 'CITY',
+    state: 'STATE',
+    zip: 'ZIP',
+    country: 'COUNTRY',
+    billingAddress: 'BILLING ADDRESS',
+    billingCity: 'BILLING CITY',
+    billingState: 'BILLING STATE',
+    billingZip: 'BILLING ZIP',
+    billingCountry: 'BILLING COUNTRY',
+    cardholderName: 'CARDHOLDER',
+    cardNumber: 'CARD',
+    cardLastFour: 'CARD (LAST FOUR FILE)',
+    cardType: 'CARD TYPE',
+    expirationDate: 'EXPIRATION',
+    status: 'ORDER STATUS',
+  };
+  return map[key] || key.replace(/([A-Z])/g, ' $1').trim().toUpperCase();
+}
+
+function SignedOrderFormCard({ form }: { form: StoredSignedOrderForm }) {
+  const fields = form.formFields || {};
+  const orderedKeys = [
+    ...SIGNED_FORM_FIELD_ORDER.filter((k) => fields[k] != null && String(fields[k]).trim() !== ''),
+    ...Object.keys(fields).filter((k) => !SIGNED_FORM_FIELD_ORDER.includes(k as (typeof SIGNED_FORM_FIELD_ORDER)[number])),
+  ];
+  const signedLabel = (() => {
+    try {
+      return new Date(form.signedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch {
+      return '—';
+    }
+  })();
+
+  return (
+    <div
+      style={{
+        border: '1px solid #e5e7eb',
+        padding: '12px',
+        marginBottom: '14px',
+        background: '#fafafa',
+      }}
+    >
+      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+        {form.orderNumber ? String(form.orderNumber).toUpperCase() : 'ORDER'} · SIGNED {signedLabel.toUpperCase()}
+      </p>
+      {orderedKeys.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
+          {orderedKeys.map((key) => (
+            <div key={key} style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 8px', fontFamily: '"Futura PT Book"', fontSize: '9px', textTransform: 'uppercase' }}>
+              <span style={{ color: '#808080', flex: '0 0 auto' }}>{formatSignedFormFieldLabel(key)}:</span>
+              <span style={{ color: '#000', wordBreak: 'break-word' }}>{String(fields[key])}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {form.photoIdDataUrl ? (
+        <div style={{ marginBottom: '8px' }}>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>PHOTO ID</p>
+          <img src={form.photoIdDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '140px', objectFit: 'contain', border: '1px solid #ccc' }} />
+        </div>
+      ) : null}
+      {form.cardLastFourDataUrl ? (
+        <div style={{ marginBottom: '8px' }}>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>CARD LAST FOUR (UPLOAD)</p>
+          <img src={form.cardLastFourDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100px', objectFit: 'contain', border: '1px solid #ccc' }} />
+        </div>
+      ) : null}
+      {form.signatureDataUrl ? (
+        <div>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>SIGNATURE</p>
+          <img src={form.signatureDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '80px', objectFit: 'contain', border: '1px solid #ccc', background: '#fff' }} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export default function AdminClients() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -613,6 +723,8 @@ export default function AdminClients() {
   const [mediaViewerUrls, setMediaViewerUrls] = useState<string[]>([]);
   const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
   const [showInvitesPopup, setShowInvitesPopup] = useState(false);
+  const [showSignedFormsPopup, setShowSignedFormsPopup] = useState(false);
+  const [signedFormsListBump, setSignedFormsListBump] = useState(0);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [adminOrdersByUserId, setAdminOrdersByUserId] = useState<Record<string, { activeOrders: unknown[]; pastOrders: unknown[] }>>({});
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
@@ -620,12 +732,14 @@ export default function AdminClients() {
   const [adminActivityByUserId, setAdminActivityByUserId] = useState<Record<string, Array<{ id: string; eventType: string; payload?: unknown; createdAt: string }>>>({});
   const [adminReviewCountsByEmail, setAdminReviewCountsByEmail] = useState<Record<string, { total: number; media: number; pending: number }>>({});
   const [cartWishlistLoading] = useState(false);
+  /** Bump when `adminMeetingsScheduled` may change (same browser as admin meetings). */
+  const [adminMeetingsTick, setAdminMeetingsTick] = useState(0);
+  /** Supabase/API meetings merged into client APPOINTMENTS tab (same source as meetings hub). */
+  const [apiMeetingsForClientDetails, setApiMeetingsForClientDetails] = useState<AdminMeeting[]>([]);
+  const [clientDetailsConsultPhotoPreviewSrc, setClientDetailsConsultPhotoPreviewSrc] = useState<string | null>(null);
   const [personalSectionTab, setPersonalSectionTab] = useState<typeof PERSONAL_SECTION_TABS[number]>('details');
   const [exportingCsv, setExportingCsv] = useState(false);
   const [adminClientsApiError, setAdminClientsApiError] = useState<'forbidden' | 'service_unavailable' | null>(null);
-  /** Merged API meetings for admin client-details Appointments tab (same source as /admin/meetings). */
-  const [clientDetailsApiMeetings, setClientDetailsApiMeetings] = useState<AdminMeeting[] | null>(null);
-  const [clientDetailsConsultPhotoPreviewSrc, setClientDetailsConsultPhotoPreviewSrc] = useState<string | null>(null);
 
   /** Overview list is a max-height scroll region; preserve its scrollTop when opening/closing details. */
   const clientsListScrollElRef = useRef<HTMLDivElement | null>(null);
@@ -641,6 +755,10 @@ export default function AdminClients() {
   const closeClientDetails = useCallback(() => {
     if (returnTo === 'meetings') {
       navigate(`/admin/meetings?tab=${meetingsReturnTab}`);
+      return;
+    }
+    if (returnTo === 'reviews') {
+      navigate('/admin/reviews');
       return;
     }
     setSelectedClientEmail(null);
@@ -693,35 +811,6 @@ export default function AdminClients() {
     setClientDetailsConsultPhotoPreviewSrc(null);
   }, [selectedClientEmail, detailsTab]);
 
-  useEffect(() => {
-    if (detailsTab !== 'appointments' || !selectedClientEmail) {
-      setClientDetailsApiMeetings(null);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      try {
-        const raw = localStorage.getItem('currentUser');
-        const cu = raw ? JSON.parse(raw) : null;
-        if (!isSupabaseConfigured() || !cu?.email || !isAdminEmail(String(cu.email))) {
-          if (!cancelled) setClientDetailsApiMeetings([]);
-          return;
-        }
-        const r = await getAdminMeetings();
-        const rows = Array.isArray(r.meetings) ? r.meetings : [];
-        const norm = rows
-          .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
-          .filter(Boolean) as AdminMeeting[];
-        if (!cancelled) setClientDetailsApiMeetings(norm);
-      } catch {
-        if (!cancelled) setClientDetailsApiMeetings([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [detailsTab, selectedClientEmail]);
-
   /** Viewing your own client row: debounced push local cart/wishlist to Supabase so admin GET tabs match this browser. */
   useEffect(() => {
     const e = (selectedClientEmail || '').trim().toLowerCase();
@@ -763,6 +852,19 @@ export default function AdminClients() {
     }, 450);
     return () => window.clearTimeout(t);
   }, [selectedClientEmail]);
+
+  useEffect(() => {
+    const bump = () => setAdminMeetingsTick((n) => n + 1);
+    window.addEventListener('storage', bump);
+    window.addEventListener('focus', bump);
+    return () => {
+      window.removeEventListener('storage', bump);
+      window.removeEventListener('focus', bump);
+    };
+  }, []);
+
+  /** `/api/admin/meetings` — refetch on focus/storage/sign-in like meetings hub (cohesive with backend). */
+  useAdminMeetingsApiRefresh(setApiMeetingsForClientDetails);
 
   const loadData = useCallback(() => {
     try {
@@ -930,8 +1032,9 @@ export default function AdminClients() {
           if (!email) continue;
           if (!next[email]) next[email] = { total: 0, media: 0, pending: 0 };
           next[email].total += 1;
-          const photos = Array.isArray(r.photos) ? r.photos.length : 0;
-          if (photos > 0) next[email].media += 1;
+          const photoN = Array.isArray(r.photos) ? r.photos.length : Number(r.photos) || 0;
+          const videoN = Number(r.videos) || 0;
+          if (photoN > 0 || videoN > 0) next[email].media += 1;
           const status = (r.status || '').toString().trim().toLowerCase();
           if (status === 'pending') next[email].pending += 1;
         }
@@ -1061,6 +1164,10 @@ export default function AdminClients() {
             base.savings = s;
             base.subtotal = total + s;
           }
+          if (i < 2) {
+            base.orderFormSigned = true;
+            base.orderFormSignedAt = Date.now() - (i + 1) * 86400000;
+          }
           return base;
         });
         const orderSortTime = (o: any) => {
@@ -1097,6 +1204,25 @@ export default function AdminClients() {
     return 0;
   })();
 
+  useEffect(() => {
+    const bump = () => setSignedFormsListBump((n) => n + 1);
+    window.addEventListener('ordersUpdated', bump);
+    window.addEventListener('signedOrderFormsUpdated', bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener('ordersUpdated', bump);
+      window.removeEventListener('signedOrderFormsUpdated', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
+
+  const signedFormsForSelectedClient = useMemo(() => {
+    void signedFormsListBump;
+    const email = (selectedClientEmail || '').trim().toLowerCase();
+    if (!email) return [];
+    return getSignedFormsForClientDisplay(email, selectedRawOrders as Record<string, unknown>[]);
+  }, [selectedClientEmail, selectedRawOrders, signedFormsListBump]);
+
   const selectedClientProfilePhotoSrc = selectedClient
     ? String(
         (selectedClient as any).profileImage ||
@@ -1111,37 +1237,17 @@ export default function AdminClients() {
   const selectedTotalSpent = selectedOrderHistory.reduce((s: number, o: any) => s + (o.amount || 0), 0);
   const selectedJoinDate = selectedClient?.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 
-  const clientDetailsMeetingsForSelected = useMemo(() => {
-    if (!selectedClient) return [];
-    const emailNorm = String(selectedClient.email || '')
-      .trim()
-      .toLowerCase();
-    const userId = String((selectedClient as { id?: string }).id || '').trim();
-    const yearStart = startOfYear(new Date().toISOString().slice(0, 10));
-    const yearEnd = endOfYear(new Date().toISOString().slice(0, 10));
-    const mock = generateMockMeetingsForRange(yearStart, yearEnd);
-    const local = loadLocalMeetings().filter((m) => m.date >= yearStart && m.date <= yearEnd);
-    const byId = new Map<string, AdminMeeting>();
-    for (const m of mock) byId.set(m.id, m);
-    if (clientDetailsApiMeetings) {
-      for (const m of clientDetailsApiMeetings) {
-        if (m.date >= yearStart && m.date <= yearEnd) byId.set(m.id, m);
-      }
-    }
-    for (const m of local) {
-      if (m.date >= yearStart && m.date <= yearEnd) byId.set(m.id, m);
-    }
-    const all = [...byId.values()];
-    return all.filter((m) => {
-      if (emailNorm && meetingClientEmailKey(m) === emailNorm) return true;
-      if (userId && String(m.userId || '').trim() === userId) return true;
-      return false;
-    });
-  }, [selectedClient, clientDetailsApiMeetings]);
-
-  const clientDetailsMeetingsSorted = useMemo(() => {
-    return [...clientDetailsMeetingsForSelected].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
-  }, [clientDetailsMeetingsForSelected]);
+  /**
+   * Bookings + consults for this client (same merged source as /admin/meetings: mock + API + localStorage drafts).
+   * Consult rows appear here under APPOINTMENTS so client details match the meetings hub per client.
+   */
+  const appointments = useMemo(() => {
+    const email = (selectedClientEmail || '').trim().toLowerCase();
+    if (!email || !selectedClient) return [];
+    return listAggregatedAdminMeetingsForClientDetails(apiMeetingsForClientDetails)
+      .filter((m) => String(m.clientEmail || '').trim().toLowerCase() === email)
+      .sort(compareAdminMeetingsNewestFirst);
+  }, [selectedClient, selectedClientEmail, adminMeetingsTick, apiMeetingsForClientDetails]);
 
   // NEW / ORDERS / CHARGES: NEW = unfulfilled orders (not shipped, delivered, or fulfilled yet) — see isOrderUnfulfilled
   const getClientRow = (u: any, index: number) => {
@@ -1788,6 +1894,22 @@ export default function AdminClients() {
                             </div>
                           </div>
                         </div>
+                        <div className="flex justify-center" style={{ marginTop: '-8px', marginBottom: '12px' }}>
+                          <button
+                            type="button"
+                            onClick={() => setShowSignedFormsPopup(true)}
+                            className="bg-transparent border-none p-0 cursor-pointer"
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              fontWeight: 500,
+                            }}
+                          >
+                            VIEW SIGNED FORMS
+                          </button>
+                        </div>
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="mb-4" style={{ display: 'grid', gridTemplateColumns: '1fr 72px', alignItems: 'baseline', gap: '2px 0' }}>
                             <p style={{ fontFamily: '"Futura PT Medium"', color: '#808080', fontSize: '12px', margin: 0 }}>{selectedReferralCode}</p>
@@ -2240,8 +2362,11 @@ export default function AdminClients() {
                         })()}
                         {/* Client details section: DETAILS | Cart | Wishlist tabs – same spacing as marketing */}
                         <div className="bg-white border border-gray-200 p-4 mb-6">
-                          <div className="flex flex-wrap justify-center gap-[14px]">
-                            {PERSONAL_SECTION_TABS.map((tab) => (
+                        <div
+                          className="flex flex-wrap justify-center gap-[14px]"
+                          style={{ marginBottom: '10px' }}
+                        >
+                          {PERSONAL_SECTION_TABS.map((tab) => (
                               <button
                                 key={tab}
                                 type="button"
@@ -2428,7 +2553,10 @@ export default function AdminClients() {
                             );
                           })()}
                         </div>
-                        <div className="flex flex-wrap justify-center gap-[14px]">
+                        <div
+                          className="flex flex-wrap justify-center gap-[14px]"
+                          style={{ marginBottom: '10px' }}
+                        >
                           {DETAILS_TABS.map((tab) => (
                             <button
                               key={tab}
@@ -3142,34 +3270,23 @@ export default function AdminClients() {
                           </div>
                         )}
                         {detailsTab === 'appointments' && (
-                          <div className="space-y-3">
-                            {clientDetailsApiMeetings === null ? (
-                              <div
-                                className="bg-white border border-gray-200 p-4 text-center"
+                          <div style={{ marginTop: '6px' }}>
+                            {appointments.length === 0 ? (
+                              <p
                                 style={{
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                  fontFamily: '"Futura PT Medium"',
                                   fontSize: '11px',
                                   color: '#808080',
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                LOADING APPOINTMENTS…
-                              </div>
-                            ) : clientDetailsMeetingsSorted.length === 0 ? (
-                              <div
-                                className="bg-white border border-gray-200 p-4 text-center"
-                                style={{
-                                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                  fontSize: '11px',
-                                  color: '#808080',
-                                  textTransform: 'uppercase',
+                                  textAlign: 'center',
+                                  padding: '16px',
                                 }}
                               >
                                 NO APPOINTMENTS OR CONSULTS YET
-                              </div>
+                              </p>
                             ) : (
-                              clientDetailsMeetingsSorted.map((m) => {
+                              appointments.map((m) => {
                                 const isConsult = m.category === 'consultation';
+                                const tab = isConsult ? 'consults' : 'bookings';
                                 return (
                                   <AdminMeetingHubStyleCard
                                     key={m.id}
@@ -3179,12 +3296,8 @@ export default function AdminClients() {
                                     onProfileClick={() => setShowEnlargedProfileImage(true)}
                                     onActionClick={(e) => {
                                       e.stopPropagation();
-                                      storeAdminClientMeetingsFocus({
-                                        id: m.id,
-                                        date: m.date,
-                                        tab: isConsult ? 'consults' : 'bookings',
-                                      });
-                                      navigate(`/admin/meetings?tab=${isConsult ? 'consults' : 'bookings'}`);
+                                      storeAdminMeetingsFocusFromClientDetails({ id: m.id, date: m.date, tab });
+                                      navigate(`/admin/meetings?tab=${tab}`);
                                     }}
                                     actionAriaLabel={isConsult ? 'Send quote' : 'Edit meeting'}
                                     onConsultPhotoClick={setClientDetailsConsultPhotoPreviewSrc}
@@ -3652,7 +3765,8 @@ export default function AdminClients() {
             loadData();
             closeClientDetails();
             setShowBlockConfirm(false);
-            if (returnTo !== 'meetings') navigate('/admin/clients');
+            if (returnTo === 'reviews') navigate('/admin/reviews');
+            else if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
         title="BLOCK CLIENT?"
@@ -3760,6 +3874,40 @@ export default function AdminClients() {
           </div>
         </div>
       )}
+      {clientDetailsConsultPhotoPreviewSrc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)' }}
+          onClick={() => setClientDetailsConsultPhotoPreviewSrc(null)}
+          role="presentation"
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              maxHeight: '90vh',
+              border: '1.3px solid #000',
+              background: '#fff',
+              padding: '10px',
+              boxSizing: 'border-box',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <img
+              src={clientDetailsConsultPhotoPreviewSrc}
+              alt="Consult submitted photo preview"
+              style={{
+                width: '100%',
+                maxHeight: 'calc(90vh - 20px)',
+                objectFit: 'contain',
+                display: 'block',
+                background: '#f3f4f6',
+              }}
+            />
+          </div>
+        </div>
+      )}
       {showInvitesPopup && (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center"
@@ -3835,6 +3983,64 @@ export default function AdminClients() {
                 </table>
               )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSignedFormsPopup && selectedClient && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+          onClick={() => setShowSignedFormsPopup(false)}
+          role="presentation"
+        >
+          <div
+            className="p-4 overflow-hidden bg-white"
+            style={{
+              maxWidth: '400px',
+              width: '92%',
+              maxHeight: '88vh',
+              border: '1.3px solid black',
+              borderRadius: 0,
+              transform: 'translateY(-6px)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-labelledby="signed-forms-title"
+          >
+            <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+              <p id="signed-forms-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500, textAlign: 'left' }}>
+                SIGNED ORDER FORMS
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowSignedFormsPopup(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                aria-label="Close signed forms"
+              >
+                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 min-h-0" style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}>
+              {signedFormsForSelectedClient.length === 0 ? (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    margin: 0,
+                    textAlign: 'center',
+                    padding: '20px 8px',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  NO SIGNED FORMS ON FILE FOR THIS CLIENT YET.
+                </p>
+              ) : (
+                signedFormsForSelectedClient.map((f) => <SignedOrderFormCard key={f.id} form={f} />)
+              )}
             </div>
           </div>
         </div>

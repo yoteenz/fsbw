@@ -5,16 +5,29 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import {
+  ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
   isMockDataAccount,
   isMockProfileChromeActive,
   readFounderAccountViewAsClientFromStorage,
   excludeFounderSeedMockOrders,
   clearAppAuth,
+  getEffectiveSubscriptionTier,
+  MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT,
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
-import { getCarrierTrackingUrl, getOrderTrackingStageFromOrder, ORDER_TRACKING_STAGE_LABELS } from '../../utils/orderTracking';
 import {
+  getCarrierTrackingUrl,
+  getOrderTrackingStageFromOrder,
+  ORDER_TRACKING_PULSATE_ANIMATION,
+  ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
+  ORDER_TRACKING_STAGE_LABELS,
+  orderTrackingDeliveredRowIsCurrent,
+  orderTrackingStageRowIsCurrent,
+  orderShowsDeliveredTrackingLine,
+} from '../../utils/orderTracking';
+import {
+  consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline
@@ -23,6 +36,17 @@ import summaryIcon from '../../assets/icons/summary-icon.svg?url';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import {
+  filterOutPremiumMembershipUpgradeOrders,
+  normalizeUserOrdersBuckets,
+  orderStatusIsCanceled,
+  sortOrdersNewestFirst,
+} from '../../utils/userOrdersBuckets';
+import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrderLifecycle';
+import { orderRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
+import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
+import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 
 interface OrderLineItem {
   productName: string;
@@ -55,13 +79,25 @@ interface Order {
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
   bookingFlowType?: 'appointment' | 'consult';
+  /** Standard vs premium booking cart line — used with bookingFlowType for cart-matching thumbnails. */
+  bookingTier?: 'standard' | 'premium';
   bookingHairOption?: string;
   /** Gift card / membership / other checkout that skips shipping — 3-stage timeline only, no order form. */
   digitalFulfillmentOnly?: boolean;
   /** When status is COMPLETE (digital flow), optional deep link for "VIEW OFFER" (e.g. consult quote). */
   consultOfferRoute?: string;
+  /** Consult: when status moved PLACED → PROCESSING after 24h. */
+  consultProcessingStartedAt?: number;
+  /** Consult: linked admin quote id after offer sent. */
+  consultQuoteId?: string;
+  /** Consult: client-submitted hair inspo (data URLs or remote), max 3 at checkout. */
+  bookingInspoPhotoUrls?: string[];
   completedAt?: number;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
+  /** Loyalty points earned on this order (set at checkout); avoids falling back to account lifetime balance. */
+  pointsEarned?: number;
+  /** When false, no 24h authorization form flow (e.g. bookings-only). Omitted = legacy non-digital orders need form. */
+  requiresOrderAuthorizationForm?: boolean;
 }
 
 function OrdersPage() {
@@ -137,6 +173,28 @@ function OrdersPage() {
     };
   }, []);
 
+  const [reviewSubmissionUiBump, setReviewSubmissionUiBump] = useState(0);
+  useEffect(() => {
+    const bump = () => setReviewSubmissionUiBump((n) => n + 1);
+    window.addEventListener('reviewsUpdated', bump);
+    return () => window.removeEventListener('reviewsUpdated', bump);
+  }, []);
+
+  /** Re-render A/C booking badges when membership / admin preview changes (`storage` skips same-tab writes). */
+  const [bookingBadgeMembershipBump, setBookingBadgeMembershipBump] = useState(0);
+  useEffect(() => {
+    const bump = () => setBookingBadgeMembershipBump((n) => n + 1);
+    window.addEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, bump as EventListener);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === ADMIN_SUBSCRIPTION_OVERRIDE_KEY) bump();
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, bump as EventListener);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   // Only mock profile chrome (not VIEW AS CLIENT) gets seeded test orders
   const isMockOrdersAccount = () => isMockProfileChromeActive(currentUser);
 
@@ -186,6 +244,67 @@ function OrdersPage() {
     }
   };
 
+  /**
+   * A/C badge tier: **current membership / subscription only** (`getEffectiveSubscriptionTier`), including
+   * founder **`adminSubscriptionOverride`**. Not spend tier (BLACK alone stays **standard** consult badge) and
+   * not `isPremiumMemberForGatedFeatures` (that mixes in BLACK for lobby gates).
+   */
+  const ordersPageBookingBadgeTierForViewer = (): 'premium' | 'standard' =>
+    getEffectiveSubscriptionTier(currentUser) != null ? 'premium' : 'standard';
+
+  /** List / expanded-row thumbnail: A/C booking orders use the same badge PNGs as the cart. */
+  const ordersPageOrderThumbnailSrc = (order: Order): string => {
+    void bookingBadgeMembershipBump;
+    const tier = ordersPageBookingBadgeTierForViewer();
+    if (order.bookingFlowType === 'appointment') {
+      return bookingCartItemThumbnailSrc({ type: 'booking-appointment', bookingTier: tier }) || order.productImage;
+    }
+    if (order.bookingFlowType === 'consult') {
+      return bookingCartItemThumbnailSrc({ type: 'booking-consult', bookingTier: tier }) || order.productImage;
+    }
+    return order.productImage;
+  };
+
+  const ORDER_LIST_THUMB_PX = 102;
+  /** A/C booking badge thumbs vs wig list thumbs: base **0.65** of column width, **+10%** → **0.715** (list + expanded). */
+  const ORDER_AC_THUMB_SCALE = 0.65 * 1.1;
+  const ORDER_AC_LIST_THUMB_PX = Math.round(ORDER_LIST_THUMB_PX * ORDER_AC_THUMB_SCALE);
+  const ordersPageListThumbnailSizePx = (order: Order): number =>
+    order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
+      ? ORDER_AC_LIST_THUMB_PX
+      : ORDER_LIST_THUMB_PX;
+  /** Top margin for the "N ITEM(S)" line under list thumbnails (wig / non–A-C orders only). */
+  const ordersPageListItemsLabelMarginTopPx = (): number => 2;
+  /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs; wig rows show ITEMS label below. */
+  const ORDER_LIST_THUMB_SLOT_STYLE: React.CSSProperties = {
+    flexShrink: 0,
+    width: ORDER_LIST_THUMB_PX,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
+  const ORDER_LIST_THUMB_BUTTON_STYLE: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    width: ORDER_LIST_THUMB_PX,
+    height: ORDER_LIST_THUMB_PX,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+  };
+  /** Nudge A/C list badges up vs wig thumbs (same 102×102 tap target). */
+  const ORDER_AC_THUMB_TRANSLATE_Y_PX = -4;
+  const ordersPageListThumbButtonStyleForOrder = (order: Order): React.CSSProperties =>
+    order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
+      ? { ...ORDER_LIST_THUMB_BUTTON_STYLE, transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` }
+      : ORDER_LIST_THUMB_BUTTON_STYLE;
+
+  const ORDER_EXPANDED_PRODUCT_THUMB_PX = 120;
+  const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * ORDER_AC_THUMB_SCALE);
+
   // Hair origin by product (matches cart for "X RAW Y" line)
   const getHairOrigin = (productName: string): string => {
     switch (productName.toUpperCase()) {
@@ -199,15 +318,20 @@ function OrdersPage() {
     }
   };
 
-  /** Details for expanded order: cap size always first (e.g. cap size: m, cap size: xxs/xs/s); then only non-default options. */
-  const getNonDefaultDetailLines = (productName: string, options: Record<string, string> | undefined): string[] => {
+  /** Details for expanded order: cap size always first for units; then only non-default options. A/C booking rows omit cap size. */
+  const getNonDefaultDetailLines = (
+    productName: string,
+    options: Record<string, string> | undefined,
+    omitCapSizeLine?: boolean
+  ): string[] => {
     const fmt = (label: string, value: string) => `${label}: ${value.toLowerCase()}`;
     const opts = options ? Object.fromEntries(Object.entries(options).filter(([k]) => !k.startsWith('_'))) : {};
     const name = productName.toUpperCase();
     const lines: string[] = [];
-    // Cap size is always the first line (only "default" selection we always list)
-    const capSize = opts.capSize || 'M';
-    lines.push(fmt('cap size', capSize.replace(/\//g, ' / ')));
+    if (!omitCapSizeLine) {
+      const capSize = opts.capSize || 'M';
+      lines.push(fmt('cap size', capSize.replace(/\//g, ' / ')));
+    }
     if (Object.keys(opts).length === 0 && !options) return lines;
     const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
     if (opts.density && opts.density !== defaultDensity) {
@@ -644,7 +768,32 @@ function OrdersPage() {
           activeOrders = excludeFounderSeedMockOrders(activeOrders);
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
         }
-        return { activeOrders, pastOrders };
+        const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+        const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
+        const sorted = {
+          activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
+          pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+        };
+        const consultAdvanced = {
+          activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
+          pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+        };
+        try {
+          const sortedNormOnly = {
+            activeOrders: sortOrdersNewestFirst(norm.activeOrders),
+            pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+          };
+          const needsSortPersist =
+            JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders }) !==
+            JSON.stringify(sortedNormOnly);
+          const needsFilterPersist = JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted);
+          const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
+          if (needsSortPersist || needsFilterPersist || needsConsultPersist) {
+            localStorage.setItem(userOrdersKey, JSON.stringify(consultAdvanced));
+            window.dispatchEvent(new CustomEvent('ordersUpdated'));
+          }
+        } catch (_) {}
+        return consultAdvanced;
       }
     } catch (e) {
       console.error('Error loading user orders:', e);
@@ -675,22 +824,6 @@ function OrdersPage() {
         { productName: 'NOIR', options: { capSize: 'M', color: 'ESPRESSO', length: '22"' }, subtotal: 835 },
         { productName: 'NOIR', options: { capSize: 'M', color: 'OFF BLACK', length: '24"', hairline: 'LAGOS' }, subtotal: 800 }
       ]
-    },
-    {
-      id: 'test-order-4',
-      orderNumber: 'ORDER #666',
-      confirmationNumber: 'X6R6S6',
-      date: getDateDaysAgo(2), // 2 days ago (matching concierge)
-      status: 'CANCELED',
-      productName: 'BLANCO',
-      productImage: getProductImage('BLANCO'),
-      total: 820,
-      items: 1,
-      trackingNumber: undefined,
-      trackingCarrier: undefined,
-      placedAt: Date.now() - (25 * 60 * 60 * 1000), // 25 hours ago (past 24 hour limit)
-      canceledAt: Date.now() - (12 * 60 * 60 * 1000), // Canceled 12 hours ago
-      orderFormSigned: false
     },
     {
       id: 'test-order-5',
@@ -767,12 +900,52 @@ function OrdersPage() {
       placedAt: Date.now() - (2 * 60 * 60 * 1000),
       orderFormSigned: false,
       bookingFlowType: 'consult',
+      bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
+      bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
+    },
+    {
+      id: 'kateena-consult-2',
+      orderNumber: 'ORDER #331',
+      confirmationNumber: 'K3C3Q1',
+      date: getDateDaysAgo(2),
+      status: 'PROCESSING',
+      productName: 'WIG CONSULT',
+      productImage: '/assets/gallery-mock.png',
+      total: 40,
+      subtotal: 40,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (30 * 60 * 60 * 1000),
+      consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
+      orderFormSigned: false,
+      bookingFlowType: 'consult',
+      bookingTier: 'standard',
+      bookingHairOption: 'WIG ONLY',
+      bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
+      consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
     }
   ];
 
   const kateenaMockPastOrders: Order[] = [
+    {
+      id: 'test-order-4',
+      orderNumber: 'ORDER #666',
+      confirmationNumber: 'X6R6S6',
+      date: getDateDaysAgo(2),
+      status: 'CANCELED',
+      productName: 'BLANCO',
+      productImage: getProductImage('BLANCO'),
+      total: 820,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (25 * 60 * 60 * 1000),
+      canceledAt: Date.now() - (12 * 60 * 60 * 1000),
+      orderFormSigned: false
+    },
     // Mock order with one product showing 6 lines of detail (cap size, density, lace, color, hairline, styling)
     {
       id: 'detail-lines-test',
@@ -859,8 +1032,8 @@ function OrdersPage() {
   const getUserOrdersData = () => {
     if (isMockOrdersAccount()) {
       return {
-        activeOrders: kateenaMockActiveOrders,
-        pastOrders: kateenaMockPastOrders
+        activeOrders: sortOrdersNewestFirst(kateenaMockActiveOrders),
+        pastOrders: sortOrdersNewestFirst(kateenaMockPastOrders),
       };
     }
     return getUserOrders();
@@ -919,14 +1092,17 @@ function OrdersPage() {
         const useMock = parsedUser ? isMockProfileChromeActive(parsedUser) : false;
         let ordersData: { activeOrders: Order[]; pastOrders: Order[] };
         if (useMock) {
-          ordersData = { activeOrders: kateenaMockActiveOrders, pastOrders: kateenaMockPastOrders };
+          ordersData = {
+            activeOrders: advanceConsultOrdersPlacedToProcessing(kateenaMockActiveOrders),
+            pastOrders: advanceConsultOrdersPlacedToProcessing(kateenaMockPastOrders),
+          };
         } else {
           ordersData = parsedUser?.email
             ? (() => {
                 try {
                   const key = `userOrders_${parsedUser.email}`;
                   const stored = localStorage.getItem(key);
-                  if (stored) {
+                    if (stored) {
                     const o = JSON.parse(stored);
                     let activeOrders: Order[] = o.activeOrders || [];
                     let pastOrders: Order[] = o.pastOrders || [];
@@ -938,7 +1114,41 @@ function OrdersPage() {
                       activeOrders = excludeFounderSeedMockOrders(activeOrders);
                       pastOrders = excludeFounderSeedMockOrders(pastOrders);
                     }
-                    return { activeOrders, pastOrders };
+                    const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
+                    const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
+                    const sorted = {
+                      activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
+                      pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+                    };
+                    const consultAdvanced = {
+                      activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
+                      pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+                    };
+                    const sortedNormOnly = {
+                      activeOrders: sortOrdersNewestFirst(norm.activeOrders),
+                      pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+                    };
+                    const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
+                    if (
+                      sorted.activeOrders.length !== activeOrders.length ||
+                      sorted.pastOrders.length !== pastOrders.length ||
+                      norm.activeOrders.length !== activeOrders.length ||
+                      norm.pastOrders.length !== pastOrders.length ||
+                      JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted) ||
+                      needsConsultPersist
+                    ) {
+                      try {
+                        localStorage.setItem(
+                          key,
+                          JSON.stringify({
+                            activeOrders: consultAdvanced.activeOrders,
+                            pastOrders: consultAdvanced.pastOrders,
+                          })
+                        );
+                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                      } catch (_) {}
+                    }
+                    return consultAdvanced;
                   }
                 } catch (_) {}
                 return { activeOrders: [], pastOrders: [] };
@@ -946,15 +1156,18 @@ function OrdersPage() {
             : { activeOrders: [], pastOrders: [] };
         }
 
-        setActiveOrders(ordersData.activeOrders);
-        setPastOrders(ordersData.pastOrders);
+        setActiveOrders(sortOrdersNewestFirst(ordersData.activeOrders));
+        setPastOrders(sortOrdersNewestFirst(ordersData.pastOrders));
 
         // Keep localStorage in sync for mock-data account so account profile card count matches orders page
         if (parsedUser?.email && useMock) {
           const key = `userOrders_${parsedUser.email}`;
           localStorage.setItem(
             key,
-            JSON.stringify({ activeOrders: ordersData.activeOrders, pastOrders: ordersData.pastOrders })
+            JSON.stringify({
+              activeOrders: sortOrdersNewestFirst(ordersData.activeOrders),
+              pastOrders: sortOrdersNewestFirst(ordersData.pastOrders),
+            })
           );
           window.dispatchEvent(new CustomEvent('ordersUpdated'));
         }
@@ -1191,7 +1404,6 @@ function OrdersPage() {
 
   // State for forcing re-render to update countdown
   const [_countdownTick, setCountdownTick] = useState(0);
-
   // Update countdown display every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1201,33 +1413,54 @@ function OrdersPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Consult checkout: after 24h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
+  useEffect(() => {
+    const tick = () => {
+      setActiveOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
+      setPastOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
+    };
+    tick();
+    const interval = setInterval(tick, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Auto-cancel PLACED orders after 24 hours if authorization form not signed
   useEffect(() => {
     const checkAndCancelExpired = () => {
       const now = Date.now();
       const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-      setActiveOrders(prevActive => {
-        return prevActive.map(order => {
-          // Only auto-cancel PLACED orders that haven't been signed
+      setActiveOrders((prevActive) => {
+        const mapped = prevActive.map((order) => {
           if (
             order.status === 'PLACED' &&
             order.placedAt &&
             !order.orderFormSigned &&
-            !orderUsesDigitalFulfillmentTimeline(order)
+            !orderUsesDigitalFulfillmentTimeline(order) &&
+            orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
           ) {
             const timeSincePlaced = now - order.placedAt;
             if (timeSincePlaced >= twentyFourHours) {
-              // Cancel order and issue refund
               return {
                 ...order,
                 status: 'CANCELED',
-                canceledAt: now // Set cancellation timestamp
+                canceledAt: now,
               };
             }
           }
           return order;
         });
+        const toArchive = mapped.filter((o) => orderStatusIsCanceled(o.status));
+        const nextActive = mapped.filter((o) => !orderStatusIsCanceled(o.status));
+        if (toArchive.length > 0) {
+          setPastOrders((prevPast) => {
+            const ids = new Set(prevPast.map((o) => o.id).filter(Boolean) as string[]);
+            const append = toArchive.filter((o) => !o.id || !ids.has(o.id));
+            if (append.length === 0) return prevPast;
+            return sortOrdersNewestFirst([...prevPast, ...append]);
+          });
+        }
+        return sortOrdersNewestFirst(nextActive);
       });
     };
 
@@ -1278,15 +1511,8 @@ function OrdersPage() {
               toKeep.push(order);
             }
           }
-          // Archive CANCELED orders after 24 hours
-          else if (order.status === 'CANCELED' && order.canceledAt) {
-            const timeSinceCanceled = now - order.canceledAt;
-            if (timeSinceCanceled >= twentyFourHours) {
-              // Move to archived after 24 hours
-              toArchive.push(order);
-            } else {
-              toKeep.push(order);
-            }
+          else if (orderStatusIsCanceled(order.status)) {
+            toArchive.push(order);
           } else {
             toKeep.push(order);
           }
@@ -1296,12 +1522,12 @@ function OrdersPage() {
           setPastOrders(prevPast => {
             const existingIds = new Set(prevPast.map(o => o.id));
             const newOrders = toArchive.filter(o => !existingIds.has(o.id));
-            if (newOrders.length === 0) return prevPast;
-            return [...prevPast, ...newOrders];
+            if (newOrders.length === 0) return sortOrdersNewestFirst(prevPast);
+            return sortOrdersNewestFirst([...prevPast, ...newOrders]);
           });
         }
 
-        return toKeep;
+        return sortOrdersNewestFirst(toKeep);
       });
     };
 
@@ -1324,6 +1550,43 @@ function OrdersPage() {
     const formattedPrice = convertedPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     return `${currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹')}${formattedPrice}`;
   };
+
+  /** 6- or 12-month premium subscription only (not 3-month); matches Concierge long-premium perks. */
+  const showLongPremiumConciergeExtras = (user: { email?: string; membershipType?: string; subscriptionTier?: string } | null | undefined) => {
+    if (!user) return false;
+    const st = getEffectiveSubscriptionTier(user);
+    return st === '6months' || st === '12months';
+  };
+
+  /** Points line on expanded card: use per-order checkout value when present; else estimate from order subtotal/total (not account lifetime balance). */
+  const displayLoyaltyPointsForExpandedOrder = (order: Order): number => {
+    const pe = (order as Order & { pointsEarned?: unknown }).pointsEarned;
+    if (typeof pe === 'number' && Number.isFinite(pe)) return Math.round(pe);
+    if (order.subtotal != null && Number.isFinite(Number(order.subtotal))) return Math.round(Number(order.subtotal));
+    if (order.total != null && Number.isFinite(Number(order.total))) return Math.round(Number(order.total));
+    return 0;
+  };
+
+  const ORDER_TRACK_BUBBLE_PX = 6;
+  const orderTrackBubbleStyle = (filled: boolean, pulsate = false): React.CSSProperties => ({
+    width: ORDER_TRACK_BUBBLE_PX,
+    height: ORDER_TRACK_BUBBLE_PX,
+    borderRadius: '50%',
+    border: '1px solid #000',
+    background: filled ? '#EB1C24' : '#fff',
+    flexShrink: 0,
+    boxSizing: 'border-box',
+    ...(pulsate && filled && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+  });
+
+  const orderTrackStepLabelStyle = (isCurrent: boolean): React.CSSProperties => ({
+    fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+    fontSize: '9px',
+    color: isCurrent ? '#EB1C24' : '#000',
+    margin: 0,
+    textTransform: 'uppercase',
+    ...(isCurrent && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
+  });
 
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
@@ -1423,6 +1686,7 @@ function OrdersPage() {
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      <style>{ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}</style>
       {/* Marble Background */}
       <div 
         className="fixed inset-0 -z-10"
@@ -1565,8 +1829,8 @@ function OrdersPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)',
-                  height: 'calc(100dvh - 160px)'
+                  minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                  height: MENU_TOGGLE_PANEL_HEIGHT
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
@@ -1752,7 +2016,7 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                            : Array.from({ length: expandedOrder.items }, (_, i) => ({
                                id: `${expandedOrder.id}-product-${i}`,
                                name: expandedOrder.productName,
-                               image: expandedOrder.productImage,
+                               image: ordersPageOrderThumbnailSrc(expandedOrder),
                                price: orderAmount / expandedOrder.items,
                                options: undefined as Record<string, string> | undefined
                              }));
@@ -1766,7 +2030,7 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                height: 'auto',
                                marginBottom: '20px',
                                display: 'flex',
-                               justifyContent: 'flex-start'
+                               justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start'
                              }}
                            >
                              <div
@@ -1778,13 +2042,19 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                  justifyContent: orderProducts.length === 1 ? 'center' : orderProducts.length === 2 ? 'center' : 'flex-start',
                                  paddingRight: '10px',
                                  paddingLeft: orderProducts.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                                 marginLeft: orderProducts.length >= 2 ? '-10px' : undefined,
+                                 marginLeft: orderProducts.length === 1 ? 0 : orderProducts.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProducts.map((product) => {
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
-                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                const isAcExpanded =
+                                  expandedOrder.bookingFlowType === 'appointment' ||
+                                  expandedOrder.bookingFlowType === 'consult';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts, isAcExpanded);
+                                const expandedProductThumbPx = isAcExpanded
+                                    ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
+                                    : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
                                 <div
                                   key={product.id}
@@ -1804,10 +2074,11 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                      alt={product.name}
                                      onClick={() => navigate(getProductRoute(product.name))}
                                      style={{
-                                       width: '120px',
-                                       height: '120px',
+                                       width: `${expandedProductThumbPx}px`,
+                                       height: `${expandedProductThumbPx}px`,
                                        objectFit: 'contain',
-                                       cursor: 'pointer'
+                                       cursor: 'pointer',
+                                       ...(isAcExpanded ? { transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` } : {}),
                                      }}
                                    />
                                    <p
@@ -2001,8 +2272,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              </div>
                            )}
 
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
-                             orderUsesDigitalFulfillmentTimeline(expandedOrder) ? (
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -2010,89 +2280,72 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </h2>
                                    <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                  </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
-                                 </p>
+                                 {!(
+                                   expandedOrder.bookingFlowType === 'appointment' ||
+                                   expandedOrder.bookingFlowType === 'consult'
+                                 ) && (
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                     DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
+                                   </p>
+                                 )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
                                          return (
-                                           <p
+                                           <div
                                              key={`${expandedOrder.id}-dig-${i}`}
                                              style={{
-                                               fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                               fontSize: '9px',
-                                               color: isCurrent ? '#EB1C24' : '#000',
-                                               margin: 0,
-                                               textTransform: 'uppercase'
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               gap: '6px',
+                                               margin: 0
                                              }}
                                            >
-                                             {isCurrent ? '● ' : '○ '}
-                                             {label}
-                                             {isCurrent ? ' · CURRENT' : ''}
-                                           </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                             <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
+                                           </div>
                                          );
                                        })}
                                      </div>
-                                   );
-                                 })()}
-                               </div>
-                             ) : (
-                               <div style={{ marginBottom: '20px' }}>
-                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                     ORDER TRACKING
-                                   </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
-                                 </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
-                                 </p>
-                                 <button
-                                   type="button"
-                                   onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
-                                   className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                                   style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
-                                 >
-                                   OPEN IN CONCIERGE
-                                 </button>
-                                 {(() => {
-                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
-                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
-                                   return (
-                                     <>
-                                       {shift !== 0 && (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
-                                         </p>
-                                       )}
-                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
-                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
-                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
-                                           return (
-                                             <div key={`${expandedOrder.id}-st-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
-                                               {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                                                   {note}
-                                                 </p>
-                                               ) : null}
-                                             </div>
-                                           );
-                                         })}
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
                                        </div>
+                                     )}
                                      </>
                                    );
                                  })()}
                                </div>
-                             )
                            )}
                            
                            {/* PAYMENT */}
@@ -2199,6 +2452,62 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
+                           {expandedOrder.status !== 'CANCELED' &&
+                             expandedOrder.status !== 'CANCELLED' &&
+                             !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
+                             currentUser &&
+                             showLongPremiumConciergeExtras(currentUser) && (
+                               <div style={{ marginBottom: '20px' }}>
+                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                     ORDER TRACKING
+                                   </h2>
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 </div>
+                                 {(() => {
+                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   const ordRec = expandedOrder as unknown as Record<string, unknown>;
+                                   const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ordRec, st);
+                                   return (
+                                     <>
+                                       {shift !== 0 && (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                         </p>
+                                       )}
+                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                           const isCurrent = orderTrackingStageRowIsCurrent(ordRec, i, st);
+                                           return (
+                                             <div key={`${expandedOrder.id}-st-${i}`}>
+                                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                 <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                                 <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
+                                               </div>
+                                               {note ? (
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
+                                                   {note}
+                                                 </p>
+                                               ) : null}
+                                             </div>
+                                           );
+                                         })}
+                                         {orderShowsDeliveredTrackingLine(ordRec) ? (
+                                           <div key={`${expandedOrder.id}-st-delivered`}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
+                                               <p style={orderTrackStepLabelStyle(deliveredRowCurrent)}>DELIVERED</p>
+                                             </div>
+                                           </div>
+                                         ) : null}
+                                       </div>
+                                     </>
+                                   );
+                                 })()}
+                               </div>
+                             )}
                            {/* REWARDS */}
                            {currentUser && (
                              <div style={{ marginBottom: '5px' }}>
@@ -2211,7 +2520,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
+                                     {(() => {
+                                       const pts = displayLoyaltyPointsForExpandedOrder(expandedOrder);
+                                       return (
+                                         <>
+                                           YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pts.toLocaleString()}</span> LOYALTY POINTS{pts === 0 ? '.' : '!'}
+                                         </>
+                                       );
+                                     })()}
                                    </p>
                                    <span style={{
                                      fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
@@ -2243,37 +2559,36 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                      {activeOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
-                         <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                         <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{
-                               background: 'none',
-                               border: 'none',
-                               padding: 0,
-                               cursor: 'pointer'
-                             }}
+                             style={ordersPageListThumbButtonStyleForOrder(order)}
                            >
                              <img
-                               src={order.productImage}
+                               src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
-                                 width: '102px',
-                                 height: '102px',
+                                 width: `${ordersPageListThumbnailSizePx(order)}px`,
+                                 height: `${ordersPageListThumbnailSizePx(order)}px`,
                                  objectFit: 'contain'
                                }}
                              />
                            </button>
+                           {order.bookingFlowType !== 'appointment' && order.bookingFlowType !== 'consult' && (
                            <p
                              style={{
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: '2px 0 0 0',
-                               textTransform: 'uppercase'
+                               margin: `${ordersPageListItemsLabelMarginTopPx()}px 0 0 0`,
+                               textTransform: 'uppercase',
+                               textAlign: 'center',
+                               width: '100%',
                              }}
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
                            </p>
+                           )}
                          </div>
                          
                          {/* Order Context Text */}
@@ -2293,19 +2608,22 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
-                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
-                           {order.status === 'PLACED' && order.placedAt && !order.orderFormSigned && !orderUsesDigitalFulfillmentTimeline(order) && (
+                           {order.status === 'PLACED' &&
+                             order.placedAt &&
+                             !order.orderFormSigned &&
+                             !orderUsesDigitalFulfillmentTimeline(order) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }} onClick={() => {
-                              // Get customer info from current user if signed in
                               let customerData: any = {};
-                              // Strip "ORDER " prefix from order number if present
                               const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
                               if (currentUser) {
                                 customerData = {
+                                  orderId: order.id,
                                   orderNumber: orderNumber,
                                   orderDate: order.date,
                                   firstName: currentUser.firstName || '',
@@ -2318,10 +2636,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                   country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
                                 };
                               } else {
-                                customerData = {
-                                  orderNumber: orderNumber,
-                                  orderDate: order.date
-                                };
+                                customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
                               }
                               navigate('/tools/order-form', { state: customerData });
                              }}>
@@ -2330,7 +2645,9 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
                              </p>
                            )}
-                           {order.status === 'PLACED' && order.orderFormSigned && (
+                           {order.status === 'PLACED' &&
+                             order.orderFormSigned &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW
                              </p>
@@ -2441,8 +2758,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           }
                         });
                       }
+
+                      const stripSorted = sortOrdersNewestFirst(ordersToDisplay);
                       
-                      return ordersToDisplay.map((order, _index) => {
+                      return stripSorted.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses
                         if (order.status === 'DELIVERED') {
                           return (
@@ -2456,8 +2775,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                             </span>
                           );
                         }
-                        // For PLACED orders with signed form, show "ORDER FORM IN REVIEW"
-                        if (order.status === 'PLACED' && order.orderFormSigned) {
+                        // For PLACED orders with signed form, show "ORDER FORM IN REVIEW" (unit/bundle/F&C only)
+                        if (
+                          order.status === 'PLACED' &&
+                          order.orderFormSigned &&
+                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                        ) {
                           return (
                             <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
                               <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
@@ -2469,8 +2792,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                             </span>
                           );
                         }
-                        // For PLACED orders without signed form, show countdown in scrolling text
-                        if (order.status === 'PLACED' && order.placedAt) {
+                        // For PLACED orders without signed form, show countdown (authorization required only)
+                        if (
+                          order.status === 'PLACED' &&
+                          order.placedAt &&
+                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) &&
+                          !order.orderFormSigned
+                        ) {
                           return (
                             <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
                               <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
@@ -2502,10 +2830,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               {order.orderNumber}:{' '}
                             </span>
                             <span style={{ 
-                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#808080',
-                              fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                              fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
-                              {order.status === 'PLACED' && order.orderFormSigned ? 'ORDER FORM IN REVIEW' : order.status}
+                              {order.status === 'PLACED' &&
+                              order.orderFormSigned &&
+                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                                ? 'ORDER FORM IN REVIEW'
+                                : order.status}
                             </span>
                           </span>
                         );
@@ -2589,7 +2921,7 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                        : Array.from({ length: expandedOrder.items }, (_, i) => ({
                            id: `${expandedOrder.id}-product-${i}`,
                            name: expandedOrder.productName,
-                           image: expandedOrder.productImage,
+                           image: ordersPageOrderThumbnailSrc(expandedOrder),
                            price: orderAmountArchived / expandedOrder.items,
                            options: undefined as Record<string, string> | undefined
                          }));
@@ -2604,7 +2936,7 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                height: 'auto',
                                marginBottom: '20px',
                                display: 'flex',
-                               justifyContent: 'flex-start'
+                               justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start'
                              }}
                            >
                              <div
@@ -2616,13 +2948,19 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                  justifyContent: orderProductsArchived.length === 1 ? 'center' : orderProductsArchived.length === 2 ? 'center' : 'flex-start',
                                  paddingRight: '10px',
                                  paddingLeft: orderProductsArchived.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                                 marginLeft: orderProductsArchived.length >= 2 ? '-10px' : undefined,
+                                 marginLeft: orderProductsArchived.length === 1 ? 0 : orderProductsArchived.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProductsArchived.map((product) => {
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
-                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                const isAcExpandedArchived =
+                                  expandedOrder.bookingFlowType === 'appointment' ||
+                                  expandedOrder.bookingFlowType === 'consult';
+                                const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts, isAcExpandedArchived);
+                                const expandedArchivedThumbPx = isAcExpandedArchived
+                                    ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
+                                    : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
                                 <div
                                   key={product.id}
@@ -2642,10 +2980,11 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                      alt={product.name}
                                      onClick={() => navigate(getProductRoute(product.name))}
                                      style={{
-                                       width: '120px',
-                                       height: '120px',
+                                       width: `${expandedArchivedThumbPx}px`,
+                                       height: `${expandedArchivedThumbPx}px`,
                                        objectFit: 'contain',
-                                       cursor: 'pointer'
+                                       cursor: 'pointer',
+                                       ...(isAcExpandedArchived ? { transform: `translateY(${ORDER_AC_THUMB_TRANSLATE_Y_PX}px)` } : {}),
                                      }}
                                    />
                                    <p
@@ -2839,8 +3178,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              </div>
                            )}
 
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
-                             orderUsesDigitalFulfillmentTimeline(expandedOrder) ? (
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -2848,89 +3186,72 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </h2>
                                    <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                  </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
-                                 </p>
+                                 {!(
+                                   expandedOrder.bookingFlowType === 'appointment' ||
+                                   expandedOrder.bookingFlowType === 'consult'
+                                 ) && (
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
+                                     DIGITAL SERVICE — NO SHIPPING OR ORDER FORM. STATUS UPDATES HERE.
+                                   </p>
+                                 )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
                                          return (
-                                           <p
+                                           <div
                                              key={`${expandedOrder.id}-dig-${i}`}
                                              style={{
-                                               fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                               fontSize: '9px',
-                                               color: isCurrent ? '#EB1C24' : '#000',
-                                               margin: 0,
-                                               textTransform: 'uppercase'
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               gap: '6px',
+                                               margin: 0
                                              }}
                                            >
-                                             {isCurrent ? '● ' : '○ '}
-                                             {label}
-                                             {isCurrent ? ' · CURRENT' : ''}
-                                           </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                             <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
+                                           </div>
                                          );
                                        })}
                                      </div>
-                                   );
-                                 })()}
-                               </div>
-                             ) : (
-                               <div style={{ marginBottom: '20px' }}>
-                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                     ORDER TRACKING
-                                   </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
-                                 </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
-                                 </p>
-                                 <button
-                                   type="button"
-                                   onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
-                                   className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                                   style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
-                                 >
-                                   OPEN IN CONCIERGE
-                                 </button>
-                                 {(() => {
-                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
-                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
-                                   return (
-                                     <>
-                                       {shift !== 0 && (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
-                                         </p>
-                                       )}
-                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
-                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
-                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
-                                           return (
-                                             <div key={`${expandedOrder.id}-st-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
-                                               {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                                                   {note}
-                                                 </p>
-                                               ) : null}
-                                             </div>
-                                           );
-                                         })}
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
                                        </div>
+                                     )}
                                      </>
                                    );
                                  })()}
                                </div>
-                             )
                            )}
                            
                            {/* PAYMENT */}
@@ -3037,6 +3358,62 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
+                           {expandedOrder.status !== 'CANCELED' &&
+                             expandedOrder.status !== 'CANCELLED' &&
+                             !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
+                             currentUser &&
+                             showLongPremiumConciergeExtras(currentUser) && (
+                               <div style={{ marginBottom: '20px' }}>
+                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                     ORDER TRACKING
+                                   </h2>
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 </div>
+                                 {(() => {
+                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   const ordRec = expandedOrder as unknown as Record<string, unknown>;
+                                   const deliveredRowCurrent = orderTrackingDeliveredRowIsCurrent(ordRec, st);
+                                   return (
+                                     <>
+                                       {shift !== 0 && (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                         </p>
+                                       )}
+                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                           const isCurrent = orderTrackingStageRowIsCurrent(ordRec, i, st);
+                                           return (
+                                             <div key={`${expandedOrder.id}-st-arch-${i}`}>
+                                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                 <span style={orderTrackBubbleStyle(isCurrent, isCurrent)} aria-hidden />
+                                                 <p style={orderTrackStepLabelStyle(isCurrent)}>{label}</p>
+                                               </div>
+                                               {note ? (
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
+                                                   {note}
+                                                 </p>
+                                               ) : null}
+                                             </div>
+                                           );
+                                         })}
+                                         {orderShowsDeliveredTrackingLine(ordRec) ? (
+                                           <div key={`${expandedOrder.id}-st-arch-delivered`}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                               <span style={orderTrackBubbleStyle(deliveredRowCurrent, deliveredRowCurrent)} aria-hidden />
+                                               <p style={orderTrackStepLabelStyle(deliveredRowCurrent)}>DELIVERED</p>
+                                             </div>
+                                           </div>
+                                         ) : null}
+                                       </div>
+                                     </>
+                                   );
+                                 })()}
+                               </div>
+                             )}
                            {/* REWARDS */}
                            {currentUser && (
                              <div style={{ marginBottom: '5px' }}>
@@ -3049,7 +3426,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
+                                     {(() => {
+                                       const pts = displayLoyaltyPointsForExpandedOrder(expandedOrder);
+                                       return (
+                                         <>
+                                           YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pts.toLocaleString()}</span> LOYALTY POINTS{pts === 0 ? '.' : '!'}
+                                         </>
+                                       );
+                                     })()}
                                    </p>
                                    <span style={{
                                      fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
@@ -3073,37 +3457,36 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                      {pastOrders.map((order) => (
                        <div key={order.id} className="flex items-center gap-3" style={{ flexShrink: 0 }}>
                          {/* Thumbnail */}
-                         <div className="flex flex-col items-center" style={{ flexShrink: 0 }}>
+                         <div style={ORDER_LIST_THUMB_SLOT_STYLE}>
                            <button
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{
-                               background: 'none',
-                               border: 'none',
-                               padding: 0,
-                               cursor: 'pointer'
-                             }}
+                             style={ordersPageListThumbButtonStyleForOrder(order)}
                            >
                              <img
-                               src={order.productImage}
+                               src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
-                                 width: '102px',
-                                 height: '102px',
+                                 width: `${ordersPageListThumbnailSizePx(order)}px`,
+                                 height: `${ordersPageListThumbnailSizePx(order)}px`,
                                  objectFit: 'contain'
                                }}
                              />
                            </button>
+                           {order.bookingFlowType !== 'appointment' && order.bookingFlowType !== 'consult' && (
                            <p
                              style={{
                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                color: '#EB1C24',
                                fontSize: '12px',
-                               margin: '2px 0 0 0',
-                               textTransform: 'uppercase'
+                               margin: `${ordersPageListItemsLabelMarginTopPx()}px 0 0 0`,
+                               textTransform: 'uppercase',
+                               textAlign: 'center',
+                               width: '100%',
                              }}
                            >
                              {order.items} {order.items === 1 ? 'ITEM' : 'ITEMS'}
                            </p>
+                           )}
                          </div>
                          
                          {/* Order Context Text */}
@@ -3123,12 +3506,46 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
-                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
-                           {order.status === 'PLACED' && order.orderFormSigned && (
+                           {order.status === 'PLACED' &&
+                             order.placedAt &&
+                             !order.orderFormSigned &&
+                             !orderUsesDigitalFulfillmentTimeline(order) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }} onClick={() => {
+                              let customerData: any = {};
+                              const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
+                              if (currentUser) {
+                                customerData = {
+                                  orderId: order.id,
+                                  orderNumber: orderNumber,
+                                  orderDate: order.date,
+                                  firstName: currentUser.firstName || '',
+                                  lastName: currentUser.lastName || '',
+                                  email: currentUser.email || '',
+                                  shippingAddress: currentUser.defaultAddress?.address || currentUser.shippingAddress?.address || '',
+                                  city: currentUser.defaultAddress?.city || currentUser.shippingAddress?.city || '',
+                                  state: currentUser.defaultAddress?.state || currentUser.shippingAddress?.state || '',
+                                  zip: currentUser.defaultAddress?.zip || currentUser.shippingAddress?.zip || '',
+                                  country: currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'UNITED STATES'
+                                };
+                              } else {
+                                customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
+                              }
+                              navigate('/tools/order-form', { state: customerData });
+                             }}>
+                               <span style={{ color: '#000000' }}>CLICK </span>
+                               <span style={{ color: '#EB1C24' }}>HERE</span>
+                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
+                             </p>
+                           )}
+                           {order.status === 'PLACED' &&
+                             order.orderFormSigned &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW
                              </p>
@@ -3232,22 +3649,51 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
               </div>
               )}
 
-              {/* Leave a review - below Past Orders card, only when an archived order is expanded and delivered 24+ hours (same placement as other action buttons) */}
+              {/* Leave a review - archived only, 3 days after delivered through review window end (same top spacing as concierge) */}
               {(() => {
+                void reviewSubmissionUiBump;
                 const expandedArchived = expandedOrderId ? pastOrders.find(o => o.id === expandedOrderId) : null;
-                const showLeaveReview = expandedArchived?.status === 'DELIVERED' &&
+                const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+                const showLeaveReview =
+                  expandedArchived?.status === 'DELIVERED' &&
                   expandedArchived.deliveredAt != null &&
-                  (Date.now() - expandedArchived.deliveredAt >= 24 * 60 * 60 * 1000);
+                  Date.now() - expandedArchived.deliveredAt >= THREE_DAYS_MS;
                 if (!showLeaveReview || !expandedArchived) return null;
+                const allReviewed = allOrderLineItemsReviewed(expandedArchived.id, expandedArchived);
                 return (
                   <div className="px-0 w-full" style={{ marginTop: '-5px', marginBottom: '20px' }}>
                     <button
                       type="button"
-                      className="relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
-                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}
-                      onClick={() => navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })}
+                      disabled={allReviewed}
+                      className={`relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white uppercase cursor-pointer disabled:opacity-100 ${allReviewed ? '' : 'hover:bg-gray-50'}`}
+                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', opacity: 1 }}
+                      onClick={() =>
+                        !allReviewed &&
+                        navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })
+                      }
                     >
-                      LEAVE A REVIEW
+                      {allReviewed ? 'REVIEW(S) SUBMITTED' : 'LEAVE A REVIEW'}
+                    </button>
+                  </div>
+                );
+              })()}
+              {(() => {
+                if (!expandedOrderId || !currentUser || !showLongPremiumConciergeExtras(currentUser)) return null;
+                const expandedForConcierge = activeOrders.find((o) => o.id === expandedOrderId);
+                if (!expandedForConcierge) return null;
+                return (
+                  <div className="px-0 w-full" style={{ marginTop: '-5px', marginBottom: '8px' }}>
+                    <button
+                      type="button"
+                      className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                      style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontSize: '11px', fontWeight: 500 }}
+                      onClick={() =>
+                        navigate(
+                          `/account/concierge?orderId=${encodeURIComponent(expandedForConcierge.id)}#order-tracking`
+                        )
+                      }
+                    >
+                      GO TO CONCIERGE
                     </button>
                   </div>
                 );

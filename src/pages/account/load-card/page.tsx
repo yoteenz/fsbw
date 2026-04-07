@@ -16,6 +16,7 @@ import loadCardImage from './load-card.png';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
 /** Uppercase A–Z / 0–9 only, max 12 chars, shown as XXXX-XXXX-XXXX */
 function formatGiftBarcodeInput(raw: string): string {
@@ -436,8 +437,8 @@ function LoadCardPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)',
-                  height: 'calc(100dvh - 160px)'
+                  minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                  height: MENU_TOGGLE_PANEL_HEIGHT
                 }}
               >
                 {/* Mobile menu content - same structure as account page */}

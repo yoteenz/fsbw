@@ -5,6 +5,8 @@ export interface CartItem {
   quantity: number;
   image: string;
   type?: string;
+  /** BCF PDP: `bundles` | `closures` | `frontals` (with `type: 'shop-texture-category'`). */
+  category?: string;
   balance?: number;
   capSize?: string;
   capSizePrice?: number;

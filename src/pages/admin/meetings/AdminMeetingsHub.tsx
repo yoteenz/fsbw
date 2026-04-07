@@ -2,14 +2,13 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
-  getAdminMeetings,
   patchAdminMeeting,
   postAdminConsultQuote,
   postAdminMeetingClientAlert,
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   ADDON_COMBO_OPTIONS,
@@ -23,17 +22,22 @@ import {
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
-  normalizeApiMeeting,
   parseISODateLocal,
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
 import {
+  clearAdminMeetingsFocusFromClientDetails,
+  readAdminMeetingsFocusFromClientDetails,
+} from '../../../utils/adminMeetingsFocusSession';
+import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
+import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
+import {
   addDaysIso,
   bookingPaidInFullSalesUsd,
   consultCodeFromOrder,
   consultTypeLabelForMeeting,
-  formatBookingInstallLineForCard,
+  formatBookingInstallLineForViewAllGrid,
   formatHeaderDate,
   formatUsd,
   formatViewAllListMeetingDateOnly,
@@ -51,10 +55,8 @@ import {
   sortMeetingsByOption,
   tierPremium,
   viewAllListMeetingLabel,
-} from '../../../utils/adminMeetingHubModel';
-import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
+} from '../../../utils/adminMeetingClientPanels';
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
-import { clearAdminClientMeetingsFocus, readAdminClientMeetingsFocus } from '../../../utils/adminClientMeetingsFocusSession';
 
 const UNIT_OPTIONS = [
   { id: 'NOIR', label: 'NOIR' },
@@ -269,6 +271,7 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
 const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
 const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
 
+/** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
 
@@ -332,7 +335,7 @@ export default function AdminMeetingsHub() {
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
-  const clientDetailsMeetingsFocusAppliedRef = useRef(false);
+  const clientDetailsFocusAppliedRef = useRef(false);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
@@ -354,26 +357,7 @@ export default function AdminMeetingsHub() {
     [quoteUnitId, quoteSelections]
   );
 
-  useEffect(() => {
-    let currentUser: { email?: string } | null = null;
-    try {
-      const raw = localStorage.getItem('currentUser');
-      currentUser = raw ? JSON.parse(raw) : null;
-    } catch {
-      /* ignore */
-    }
-    if (isSupabaseConfigured() && currentUser?.email && isAdminEmail(currentUser.email)) {
-      getAdminMeetings()
-        .then((r) => {
-          const rows = Array.isArray(r.meetings) ? r.meetings : [];
-          const norm = rows
-            .map((row) => normalizeApiMeeting(row as Record<string, unknown>))
-            .filter(Boolean) as AdminMeeting[];
-          setApiMeetings(norm);
-        })
-        .catch(() => {});
-    }
-  }, []);
+  useAdminMeetingsApiRefresh(setApiMeetings);
 
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
@@ -486,6 +470,47 @@ export default function AdminMeetingsHub() {
     });
   }, [range.start, range.end, apiMeetings, localTick]);
 
+  /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
+  useEffect(() => {
+    const focus = readAdminMeetingsFocusFromClientDetails();
+    if (!focus) {
+      clientDetailsFocusAppliedRef.current = false;
+      return;
+    }
+    if (clientDetailsFocusAppliedRef.current) return;
+    const focusYm = focus.date.slice(0, 7);
+    const anchorYm = calendarAnchor.slice(0, 7);
+    if (focusYm !== anchorYm) {
+      setCalendarAnchor(focus.date);
+      return;
+    }
+    const row = mergedMeetings.find((m) => m.id === focus.meetingId);
+    if (!row) {
+      clientDetailsFocusAppliedRef.current = true;
+      clearAdminMeetingsFocusFromClientDetails();
+      return;
+    }
+    clientDetailsFocusAppliedRef.current = true;
+    clearAdminMeetingsFocusFromClientDetails();
+    const isConsultRow = row.category === 'consultation';
+    if (focus.tab === 'consults') {
+      setMainTab('consults');
+    } else if (focus.tab === 'bookings') {
+      setMainTab('bookings');
+    } else {
+      setMainTab(isConsultRow ? 'consults' : 'bookings');
+    }
+    setViewAllMode(null);
+    if (isConsultRow) {
+      setQuoteMeeting(row);
+      setEditMeeting(null);
+    } else {
+      setSelectedDay(row.date);
+      setEditMeeting(row);
+      setQuoteMeeting(null);
+    }
+  }, [mergedMeetings, calendarAnchor]);
+
   const appointmentMeetings = useMemo(
     () => mergedMeetings.filter((m) => m.category !== 'consultation'),
     [mergedMeetings]
@@ -559,37 +584,6 @@ export default function AdminMeetingsHub() {
     [filteredConsultMeetings, meetingSortOption]
   );
 
-  useEffect(() => {
-    if (clientDetailsMeetingsFocusAppliedRef.current) return;
-    const raw = readAdminClientMeetingsFocus();
-    if (!raw) return;
-    setMainTab(raw.tab);
-    setViewAllMode(null);
-    const monthStart = startOfMonth(raw.date);
-    const anchorMonth = calendarAnchor.slice(0, 7);
-    const targetMonth = monthStart.slice(0, 7);
-    if (anchorMonth !== targetMonth) {
-      setCalendarAnchor(monthStart);
-      return;
-    }
-    setSelectedDay(raw.date);
-    const found = mergedMeetings.find((m) => m.id === raw.id);
-    if (!found) {
-      clientDetailsMeetingsFocusAppliedRef.current = true;
-      clearAdminClientMeetingsFocus();
-      return;
-    }
-    if (raw.tab === 'bookings') {
-      setEditMeeting(found);
-      setQuoteMeeting(null);
-    } else {
-      setQuoteMeeting(found);
-      setEditMeeting(null);
-    }
-    clientDetailsMeetingsFocusAppliedRef.current = true;
-    clearAdminClientMeetingsFocus();
-  }, [mergedMeetings, calendarAnchor]);
-
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
     const meetingsTabForReturn = mainTab === 'consults' ? 'consults' : 'bookings';
@@ -622,14 +616,27 @@ export default function AdminMeetingsHub() {
         label: 'ESTIMATED TOTAL',
         value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
       });
-      await postAdminConsultQuote({
+      const res = (await postAdminConsultQuote({
         clientEmail: email,
         unitKey: quoteUnit,
         selections: { unit: quoteUnit, subPage: quoteSub },
         priceBreakdown: breakdown,
         adminMessage: quoteMessage,
         thumbnailSrc: '/assets/NOIR/noir-thumb.png',
-      });
+      })) as { quote?: { id?: string } };
+      const quoteId = String(res?.quote?.id || '').trim();
+      const orderRef = String(
+        (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
+          ? quoteMeeting.metadata.orderNumber
+          : '') || ''
+      ).trim();
+      if (quoteId && orderRef) {
+        markConsultOrderCompleteAfterQuoteSent({
+          clientEmail: email,
+          orderNumberFromCheckout: orderRef,
+          consultQuoteId: quoteId,
+        });
+      }
       setQuoteMeeting(null);
       setShowSendQuoteConfirm(false);
       setHubNotice('QUOTE SENT — CLIENT ALERT CREATED.');
@@ -683,6 +690,7 @@ export default function AdminMeetingsHub() {
       setEditMessage('');
       setHubNotice(doneNotice);
       refreshLocal();
+      if (uuid) dispatchAdminMeetingsApiRefresh();
     } catch (e) {
       setHubNotice(e instanceof Error ? e.message.toUpperCase() : 'UPDATE FAILED');
     } finally {
@@ -1402,7 +1410,7 @@ export default function AdminMeetingsHub() {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    {formatBookingInstallLineForCard(latest)}
+                                    {formatBookingInstallLineForViewAllGrid(latest)}
                                   </p>
                                   <p
                                     style={{
@@ -1485,7 +1493,14 @@ export default function AdminMeetingsHub() {
                                   style={{ width: '62px', height: '62px', objectFit: 'cover', borderRadius: '9999px', border: '0.7px solid #000', flexShrink: 0 }}
                                 />
                               </button>
-                              <div style={{ minWidth: 0, flex: 1, transform: 'translateX(6px)' }}>
+                              <div
+                                style={{
+                                  minWidth: 0,
+                                  flex: 1,
+                                  /* Text only: nudge up 6px vs avatar; keep prior 6px horizontal inset */
+                                  transform: 'translate(6px, -6px)',
+                                }}
+                              >
                                 <button
                                   type="button"
                                   onClick={() => openClientAccount(clientGroup.latestMeeting)}
@@ -1528,7 +1543,18 @@ export default function AdminMeetingsHub() {
                                   }}
                                 >
                                   {clientGroup.meetings.map((meeting) => (
-                                    <div key={meeting.id} style={{ display: 'flex', alignItems: 'baseline', gap: '0px', minWidth: 0, lineHeight: '12px' }}>
+                                    <div
+                                      key={meeting.id}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'baseline',
+                                        /* ~one word-space at 9px — 1ch was digit-width (too wide vs a real space) */
+                                        fontSize: '9px',
+                                        gap: '0.35em',
+                                        minWidth: 0,
+                                        lineHeight: '12px',
+                                      }}
+                                    >
                                       <span
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
@@ -1822,9 +1848,12 @@ export default function AdminMeetingsHub() {
                         <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={18} height={18} draggable={false} />
                       </button>
                     </div>
-                    <div className="grid grid-cols-7 gap-1 text-center mb-1" style={{ fontSize: '8px', color: '#808080' }}>
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) => (
-                        <span key={d}>{d}</span>
+                    <div
+                      className="grid grid-cols-7 gap-1 text-center mb-1"
+                      style={{ fontSize: '8px', color: '#808080', whiteSpace: 'nowrap' }}
+                    >
+                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                        <span key={`cal-dow-${i}`}>{d}</span>
                       ))}
                     </div>
                     <div className="grid grid-cols-7 gap-1 mb-4">

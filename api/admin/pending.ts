@@ -4,7 +4,20 @@ import { getSupabaseAdmin } from '../_lib/supabase';
 
 type OrderItem = { status?: string; [k: string]: unknown };
 
-/** GET /api/admin/pending – pending counts from orders (admin only). */
+function reviewPhotoCount(row: Record<string, unknown>): number {
+  const p = row.photos;
+  if (Array.isArray(p)) return p.length;
+  const n = Number(p);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function reviewVideoCount(row: Record<string, unknown>): number {
+  const v = row.videos;
+  const n = typeof v === 'number' ? v : Number(v);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+/** GET /api/admin/pending – pending counts from orders + reviews table (admin only). */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -21,7 +34,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) return res.status(500).json({ error: error.message });
     const rows = Array.isArray(data) ? data : [];
 
-    let pendingReviews = 0;
     let orderForms = 0;
 
     for (const row of rows) {
@@ -32,11 +44,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    let pendingReviews = 0;
+    let pendingWithPhotos = 0;
+    let pendingWithVideos = 0;
+    let pendingTextOnly = 0;
+    try {
+      const { data: revData, error: revErr } = await supabase
+        .from('reviews')
+        .select('photos,videos,status')
+        .eq('status', 'pending')
+        .limit(2000);
+      if (!revErr && Array.isArray(revData)) {
+        pendingReviews = revData.length;
+        for (const raw of revData) {
+          const r = raw as Record<string, unknown>;
+          const pc = reviewPhotoCount(r);
+          const vc = reviewVideoCount(r);
+          if (pc > 0) pendingWithPhotos += 1;
+          if (vc > 0) pendingWithVideos += 1;
+          if (pc === 0 && vc === 0) pendingTextOnly += 1;
+        }
+      }
+    } catch {
+      /* reviews table missing or RLS — keep zeros */
+    }
+
     return res.status(200).json({
-      pendingReviews: pendingReviews || 0,
+      pendingReviews,
       orderForms,
+      pendingReviewBreakdown: {
+        total: pendingReviews,
+        withPhotos: pendingWithPhotos,
+        withVideos: pendingWithVideos,
+        textOnly: pendingTextOnly,
+      },
       pendingItems: [
-        { label: 'PENDING REVIEWS', value: String(pendingReviews || 0) },
+        { label: 'PENDING REVIEWS', value: String(pendingReviews) },
         { label: 'ORDER FORMS', value: String(orderForms) },
         { label: 'TIER UPGRADES', value: '0' },
         { label: 'AFFILIATE REQUESTS', value: '0' },

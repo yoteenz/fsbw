@@ -18,6 +18,20 @@ import { createBookingDateDisabledFn } from '../../../utils/bookingDateRules';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { BOOKING_PATHS } from '../../../utils/membershipRoutePolicy';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  loadLastSubmittedBookingConsultHeadMeasurements,
+  type BookingConsultHeadMeasurementsSaved,
+} from '../../../utils/bookingConsultHeadMeasurementsPersist';
+import {
+  finalizeConsultHeadMeasurementValue,
+  sanitizeConsultHeadMeasurementInput,
+} from '../../../utils/bookingConsultHeadMeasurementInput';
+import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import {
+  bookingConsultHairInspoThumbFrameStyle,
+  bookingConsultHairInspoThumbImgStyle,
+  BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
+} from '../../../utils/bookingConsultHairInspoThumb';
 
 const CONSULT_DEPOSIT_USD = 40;
 
@@ -160,7 +174,8 @@ export default function BookingConsultationPage() {
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [authRev, setAuthRev] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  /** Avoid clearing inspo session on empty state during Strict Mode’s first mount/unmount (restores thumbnails after remount). */
+  const inspoSessionMayClearWhenEmptyRef = useRef(false);
   const [hairOption, setHairOption] = useState<HairOption>(() =>
     isPremiumMemberForGatedFeatures() ? 'WIG + INSTALL' : 'WIG ONLY'
   );
@@ -177,6 +192,10 @@ export default function BookingConsultationPage() {
   const [showConsultAccessModal, setShowConsultAccessModal] = useState(false);
   const [showWigInstallFeatureModal, setShowWigInstallFeatureModal] = useState(false);
   const [headMeasurements, setHeadMeasurements] = useState<HeadMeasurements>(EMPTY_HEAD_MEASUREMENTS);
+  /** Shown after we hydrate from last checkout so clients know fields stay editable. */
+  const [showSavedMeasurementsEditHint, setShowSavedMeasurementsEditHint] = useState(false);
+  /** Bumped when order history updates (e.g. consult checkout) so we can pre-fill newly saved measurements. */
+  const [consultMeasurementsHydrateKey, setConsultMeasurementsHydrateKey] = useState(0);
   const [consultPreferredDateIso, setConsultPreferredDateIso] = useState('');
   const [consultPreferredTime, setConsultPreferredTime] = useState('');
   const [showConsultTimeDropdown, setShowConsultTimeDropdown] = useState(false);
@@ -188,9 +207,18 @@ export default function BookingConsultationPage() {
   const consultWigInstallDateDisabled = useMemo(() => createBookingDateDisabledFn('two_calendar_months'), []);
 
   useEffect(() => {
+    const id = window.requestAnimationFrame(() => {
+      inspoSessionMayClearWhenEmptyRef.current = true;
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
     try {
       if (inspoItems.length === 0) {
-        sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        if (inspoSessionMayClearWhenEmptyRef.current) {
+          sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        }
       } else {
         sessionStorage.setItem(CONSULT_INSPO_SESSION_KEY, JSON.stringify(inspoItems));
       }
@@ -212,6 +240,48 @@ export default function BookingConsultationPage() {
     window.addEventListener('signInStateChanged', bump);
     return () => window.removeEventListener('signInStateChanged', bump);
   }, []);
+
+  useEffect(() => {
+    const bump = () => setConsultMeasurementsHydrateKey((k) => k + 1);
+    window.addEventListener('ordersUpdated', bump);
+    return () => window.removeEventListener('ordersUpdated', bump);
+  }, []);
+
+  /** Repeat wig consults: pre-fill head measurements from last completed checkout (per user). Inputs stay fully editable. */
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('isSignedIn') !== 'true') {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
+    const email = getCurrentUserEmailFromStorage();
+    if (!email) {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
+    const saved = loadLastSubmittedBookingConsultHeadMeasurements(email);
+    if (!saved) {
+      setShowSavedMeasurementsEditHint(false);
+      return;
+    }
+    setHeadMeasurements((prev) => {
+      const allEmpty = HEAD_MEASUREMENT_FIELDS.every((f) => !String(prev[f.key]).trim());
+      if (!allEmpty) return prev;
+      const merged: HeadMeasurements = { ...EMPTY_HEAD_MEASUREMENTS };
+      let anyFromSaved = false;
+      for (const f of HEAD_MEASUREMENT_FIELDS) {
+        const v = saved[f.key as keyof BookingConsultHeadMeasurementsSaved];
+        if (v) {
+          merged[f.key] = sanitizeConsultHeadMeasurementInput(v);
+          anyFromSaved = true;
+        }
+      }
+      if (anyFromSaved) {
+        queueMicrotask(() => setShowSavedMeasurementsEditHint(true));
+      }
+      return merged;
+    });
+  }, [authRev, consultMeasurementsHydrateKey]);
 
   useEffect(() => {
     const premium = isPremiumMemberForGatedFeatures();
@@ -294,8 +364,10 @@ export default function BookingConsultationPage() {
   };
 
   const updateHeadMeasurement = (field: HeadMeasurementField, next: string) => {
-    const sanitized = next.replace(/[^\d.]/g, '');
-    setHeadMeasurements((prev) => ({ ...prev, [field]: sanitized }));
+    setHeadMeasurements((prev) => ({
+      ...prev,
+      [field]: sanitizeConsultHeadMeasurementInput(next),
+    }));
   };
 
   const handleAddToBag = () => {
@@ -345,12 +417,12 @@ export default function BookingConsultationPage() {
           bookingCartItemThumbnailSrc({ type: 'booking-consult', bookingTier: tier }) ||
           '/assets/consultation-standard.png';
         const trimmedHeadMeasurements = {
-          circumference: headMeasurements.circumference.trim(),
-          frontToNape: headMeasurements.frontToNape.trim(),
-          verticalTempleToTemple: headMeasurements.verticalTempleToTemple.trim(),
-          horizontalTempleToTemple: headMeasurements.horizontalTempleToTemple.trim(),
-          earToEar: headMeasurements.earToEar.trim(),
-          napeOfNeck: headMeasurements.napeOfNeck.trim(),
+          circumference: finalizeConsultHeadMeasurementValue(headMeasurements.circumference),
+          frontToNape: finalizeConsultHeadMeasurementValue(headMeasurements.frontToNape),
+          verticalTempleToTemple: finalizeConsultHeadMeasurementValue(headMeasurements.verticalTempleToTemple),
+          horizontalTempleToTemple: finalizeConsultHeadMeasurementValue(headMeasurements.horizontalTempleToTemple),
+          earToEar: finalizeConsultHeadMeasurementValue(headMeasurements.earToEar),
+          napeOfNeck: finalizeConsultHeadMeasurementValue(headMeasurements.napeOfNeck),
         };
         const newItem = {
           id: `booking-consult-${Date.now()}`,
@@ -385,6 +457,7 @@ export default function BookingConsultationPage() {
         } catch {
           /* ignore */
         }
+        inspoSessionMayClearWhenEmptyRef.current = true;
         setInspoItems([]);
         setAddToBagState('added');
         setTimeout(() => {
@@ -440,7 +513,7 @@ export default function BookingConsultationPage() {
             BOOK A COMPLIMENTARY CONSULT TO NARROW DOWN TEXTURE, ORIGIN, LENGTH, DENSITY OR OVERALL FINISH. SELECT WIG + INSTALL OR WIG ONLY.
           </BookingBodyParagraph>
           <BookingBodyParagraph style={{ marginBottom: 0 }}>
-            ADD YOUR HEAD MEASUREMENTS ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITHIN 72 HOURS WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
+            ADD YOUR HEAD MEASUREMENTS ALONG WITH HAIR INSPO PHOTOS FOR THE BEST, MOST ACCURATE RESULTS. YOU WILL RECEIVE A FOLLOW UP RESPONSE WITH A CHECKLIST, PRICE BREAKDOWN & PAYMENT DETAILS.
           </BookingBodyParagraph>
         </div>
 
@@ -462,29 +535,37 @@ export default function BookingConsultationPage() {
               <div style={{ position: 'relative', width: '100%' }}>
                 {inspoItems.length < MAX_HAIR_INSPO_PHOTOS ? (
                   <>
+                    <label
+                      htmlFor="consult-hair-inspo-file"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        margin: 0,
+                      }}
+                    >
                     <input
-                      ref={fileInputRef}
                       id="consult-hair-inspo-file"
                       type="file"
-                      accept="image/*,.heic,.heif"
+                      accept="image/*,image/heic,image/heif,.heic,.heif"
                       multiple
                       aria-labelledby="consult-inspo-heading"
                       onChange={handleFileChange}
                       style={{
                         position: 'absolute',
+                        inset: 0,
                         width: '100%',
-                        height: '36px',
+                        height: '100%',
+                        minHeight: '36px',
                         opacity: 0,
                         cursor: 'pointer',
-                        zIndex: 3,
-                        top: 0,
-                        left: 0,
-                        margin: 0
+                        zIndex: 2,
+                        margin: 0,
+                        fontSize: 0,
                       }}
                     />
                     <div
-                      role="presentation"
-                      onClick={() => fileInputRef.current?.click()}
                       style={{
                         width: '100%',
                         minHeight: '36px',
@@ -498,13 +579,13 @@ export default function BookingConsultationPage() {
                         color: inspoItems.length > 0 ? '#808080' : '#000000',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        cursor: 'pointer',
                         textTransform: 'uppercase',
                         position: 'relative',
                         overflow: 'hidden',
                         display: 'flex',
                         alignItems: 'center',
-                        textAlign: 'left'
+                        textAlign: 'left',
+                        pointerEvents: 'none',
                       }}
                     >
                       <span
@@ -541,6 +622,7 @@ export default function BookingConsultationPage() {
                         {inspoItems.length > 0 ? hairInspoSubmittedLabel(inspoItems.length) : 'NO FILE SELECTED'}
                       </span>
                     </div>
+                    </label>
                   </>
                 ) : (
                   <button
@@ -615,8 +697,8 @@ export default function BookingConsultationPage() {
                       key={item.id}
                       style={{
                         position: 'relative',
-                        width: '88px',
-                        height: '88px',
+                        width: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
+                        height: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
                         flexShrink: 0
                       }}
                     >
@@ -656,33 +738,12 @@ export default function BookingConsultationPage() {
                           }}
                         />
                       </button>
-                      <div
-                        style={{
-                          position: 'relative',
-                          padding: '1px',
-                          border: '3px solid white',
-                          boxShadow: '0 0 0 1.1px black',
-                          boxSizing: 'border-box',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: '#f5f5f5',
-                          overflow: 'hidden'
-                        }}
-                      >
+                      <div style={bookingConsultHairInspoThumbFrameStyle}>
                         <img
                           src={item.dataUrl}
                           alt=""
                           loading="eager"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            display: 'block'
-                          }}
+                          style={bookingConsultHairInspoThumbImgStyle}
                         />
                       </div>
                     </div>
@@ -754,9 +815,25 @@ export default function BookingConsultationPage() {
           </div>
 
           <div style={{ width: '100%', minWidth: 0 }}>
-            <p style={{ ...labelStyle, marginBottom: '10px', textAlign: 'left' }}>
+            <p style={{ ...labelStyle, marginBottom: showSavedMeasurementsEditHint ? '6px' : '10px', textAlign: 'left' }}>
               HEAD MEASUREMENTS (IN INCHES):
             </p>
+            {showSavedMeasurementsEditHint ? (
+              <p
+                style={{
+                  fontFamily: bookingFontBook,
+                  fontSize: '8px',
+                  color: '#808080',
+                  margin: '0 0 10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em',
+                  lineHeight: 1.45,
+                  textAlign: 'left',
+                }}
+              >
+                YOUR LAST SUBMITTED MEASUREMENTS ARE FILLED IN BELOW — EDIT ANY FIELD IF THEY HAVE CHANGED.
+              </p>
+            ) : null}
             <div
               style={{
                 display: 'grid',
@@ -764,40 +841,50 @@ export default function BookingConsultationPage() {
                 gap: '10px 8px',
               }}
             >
-              {HEAD_MEASUREMENT_FIELDS.map((field) => (
-                <label
-                  key={field.key}
-                  style={{
-                    display: 'block',
-                    fontFamily: bookingFontMedium,
-                    fontSize: '9px',
-                    color: '#000',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.02em',
-                  }}
-                >
-                  {field.label}
-                  {field.required ? <span style={{ color: '#EB1C24' }}>*</span> : null}
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={headMeasurements[field.key]}
-                    onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
-                    className="bg-white/80 backdrop-blur-sm"
-                    style={{
-                      width: '100%',
-                      marginTop: '6px',
-                      boxSizing: 'border-box',
-                      border: '1.3px solid #000',
-                      fontFamily: bookingFontMedium,
-                      fontSize: '11px',
-                      color: '#EB1C24',
-                      padding: '10px 12px',
-                      textTransform: 'uppercase',
-                    }}
-                  />
-                </label>
-              ))}
+              {HEAD_MEASUREMENT_FIELDS.map((field, idx) => {
+                const isLeftColumn = idx % 2 === 0;
+                /** Same inset for label + input so copy stays aligned when inputs are 4px narrower toward the column gap. */
+                const columnInset =
+                  isLeftColumn
+                    ? { width: 'calc(100% - 4px)' as const, marginRight: '4px' as const, marginLeft: 0 as const }
+                    : { width: 'calc(100% - 4px)' as const, marginLeft: '4px' as const, marginRight: 0 as const };
+                return (
+                  <div key={field.key} style={{ ...columnInset, minWidth: 0, boxSizing: 'border-box' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontFamily: bookingFontMedium,
+                        fontSize: '9px',
+                        color: '#000',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {field.label}
+                      {field.required ? <span style={{ color: '#EB1C24' }}>*</span> : null}
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        maxLength={6}
+                        value={headMeasurements[field.key]}
+                        onChange={(e) => updateHeadMeasurement(field.key, e.target.value)}
+                        className="bg-white/80 backdrop-blur-sm"
+                        style={{
+                          width: '100%',
+                          marginTop: '6px',
+                          boxSizing: 'border-box',
+                          border: '1.3px solid #000',
+                          fontFamily: bookingFontMedium,
+                          fontSize: '11px',
+                          color: '#EB1C24',
+                          padding: '10px 12px',
+                          textTransform: 'uppercase',
+                        }}
+                      />
+                    </label>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -834,7 +921,7 @@ export default function BookingConsultationPage() {
             <>
               <div
                 style={{
-                  borderTop: '1.3px solid #9ca3af',
+                  borderTop: '1px solid #e5e7eb',
                   paddingTop: '20px',
                   marginTop: 0,
                   marginBottom: consultScheduledSummaryVisible ? '16px' : '10px',

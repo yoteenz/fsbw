@@ -10,6 +10,14 @@ import { clearAppAuth } from '../../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../../utils/signInReturnTo';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../../layouts/menuToggleHeights';
+import {
+  appendReviewedOrderItemKey,
+  getEligibleReviewLineItemsForOrder,
+  hasLegacyOrderReviewSubmitted,
+  loadReviewedOrderItemKeys,
+  orderReviewItemStorageKey,
+} from '../../../../utils/orderReviewSubmissionPersist';
 
 interface OrderLineItem {
   productName: string;
@@ -43,26 +51,6 @@ function getProductImage(productName: string): string {
     default:
       return '/assets/natural front.png';
   }
-}
-
-/** Build list of items eligible for review: delivered orders only; unique by product + options (no duplicates). When no lineItems, one reviewable item per order.items so multi-item orders show PREV/NEXT. */
-function getEligibleReviewItems(order: Order): OrderLineItem[] {
-  if (order.status !== 'DELIVERED') return [];
-  if (order.lineItems && order.lineItems.length > 0) {
-    const seen = new Set<string>();
-    return order.lineItems.filter((item) => {
-      const key = `${item.productName}|${JSON.stringify(item.options || {})}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }
-  // No lineItems: one eligible item per quantity so "NEXT ITEM" appears for multi-item orders
-  const count = Math.max(1, order.items);
-  return Array.from({ length: count }, (_, i) => ({
-    productName: order.productName,
-    options: count > 1 ? { _item: String(i) } : undefined
-  }));
 }
 
 const BRAND_RED = '#EB1C24';
@@ -128,6 +116,23 @@ function LeaveReviewOrderPage() {
   }, [orderId, currentUser?.email, order]);
 
   useEffect(() => {
+    if (!order) return;
+    const eligible = getEligibleReviewLineItemsForOrder(order);
+    const reviewedKeys = loadReviewedOrderItemKeys(order.id);
+    const submitted = new Set<number>();
+    if (hasLegacyOrderReviewSubmitted(order.id) && reviewedKeys.size === 0) {
+      eligible.forEach((_, i) => submitted.add(i));
+    } else {
+      eligible.forEach((item, i) => {
+        if (reviewedKeys.has(orderReviewItemStorageKey(item.productName, item.options))) submitted.add(i);
+      });
+    }
+    setSubmittedForIndex(submitted);
+    const firstOpen = eligible.findIndex((_, i) => !submitted.has(i));
+    setCurrentItemIndex(firstOpen >= 0 ? firstOpen : eligible.length > 0 ? eligible.length - 1 : 0);
+  }, [order]);
+
+  useEffect(() => {
     const handleCartCountUpdate = (e: CustomEvent) => setCartCount(e.detail);
     const handleStorage = () => {
       try {
@@ -182,10 +187,12 @@ function LeaveReviewOrderPage() {
     navigate(signInHrefWithReturnTo(location));
   };
 
-  const eligibleItems = order ? getEligibleReviewItems(order) : [];
+  const eligibleItems = order ? getEligibleReviewLineItemsForOrder(order) : [];
   const itemCount = eligibleItems.length;
   const currentItem = itemCount > 0 ? eligibleItems[currentItemIndex] : null;
   const isSubmittedForCurrent = currentItemIndex !== undefined && submittedForIndex.has(currentItemIndex);
+  const allItemsReviewed =
+    itemCount > 0 && Array.from({ length: itemCount }, (_, i) => i).every((i) => submittedForIndex.has(i));
   const isFirst = currentItemIndex === 0;
   const isLast = currentItemIndex === itemCount - 1;
   const isSingle = itemCount <= 1;
@@ -230,7 +237,14 @@ function LeaveReviewOrderPage() {
         list.push(newReview);
         localStorage.setItem(key, JSON.stringify(list));
         localStorage.setItem(getReviewsNewApprovedKey(email), 'true');
-        if (order?.id) localStorage.setItem(`reviewSubmitted_${order.id}`, 'true');
+        if (order?.id && currentItem) {
+          appendReviewedOrderItemKey(order.id, orderReviewItemStorageKey(currentItem.productName, currentItem.options));
+          const allKeys = new Set(loadReviewedOrderItemKeys(order.id));
+          const allDone = eligibleItems.every((it) =>
+            allKeys.has(orderReviewItemStorageKey(it.productName, it.options))
+          );
+          if (allDone) localStorage.setItem(`reviewSubmitted_${order.id}`, 'true');
+        }
         window.dispatchEvent(new CustomEvent('reviewsUpdated'));
         trackActivity('add_review', { productName: currentItem.productName, rating });
       } catch (e) {
@@ -400,8 +414,8 @@ function LeaveReviewOrderPage() {
                 maxWidth: 'none',
                 overflow: 'visible',
                 backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                minHeight: 'calc(100dvh - 160px)',
-                height: 'calc(100dvh - 160px)'
+                minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                height: MENU_TOGGLE_PANEL_HEIGHT
               }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
@@ -494,7 +508,30 @@ function LeaveReviewOrderPage() {
                 </h2>
               </div>
 
-              {currentItem && (
+              {allItemsReviewed && itemCount > 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px 8px' }}>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: '#808080',
+                      margin: '0 0 16px 0',
+                      textTransform: 'uppercase',
+                      lineHeight: 1.5
+                    }}
+                  >
+                    ALL ITEMS FOR THIS ORDER HAVE BEEN REVIEWED.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => order && navigate('/account/orders', { state: { expandOrderId: order.id }, replace: true })}
+                    className="relative z-10 border border-black w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                    style={{ borderWidth: '1.3px', color: BRAND_RED, fontFamily: '"Futura PT Medium"' }}
+                  >
+                    BACK TO ORDERS
+                  </button>
+                </div>
+              ) : currentItem ? (
                 <>
                   {/* Product image */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
@@ -763,7 +800,7 @@ function LeaveReviewOrderPage() {
                   </div>
 
                 </>
-              )}
+              ) : null}
 
               {itemCount === 0 && (
                 <p
@@ -774,7 +811,7 @@ function LeaveReviewOrderPage() {
             </div>
 
             {/* Submit Review - below card; single item "REVIEW SUBMITTED" returns to expanded order */}
-            {currentItem && (
+            {currentItem && !allItemsReviewed && (
               <div className="px-0 w-full" style={{ marginTop: '11px', marginBottom: '20px' }}>
                 {isSubmittedForCurrent ? (
                   <button

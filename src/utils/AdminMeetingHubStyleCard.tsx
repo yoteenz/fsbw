@@ -12,7 +12,7 @@ import {
   meetingClientProfilePhoto,
   tierLabelColor,
   tierPremium,
-} from './adminMeetingHubModel';
+} from './adminMeetingClientPanels';
 
 export type AdminMeetingHubStyleCardVariant = 'booking' | 'consult';
 

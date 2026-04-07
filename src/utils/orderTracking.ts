@@ -2,8 +2,19 @@
  * Shared order tracking fields (localStorage userOrders_${email}) for admin, Orders, and Concierge.
  */
 
+/** Inject once per page (e.g. `<style>{ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}</style>`). Matches Concierge `pulsate`. */
+export const ORDER_TRACKING_PULSATE_KEYFRAMES_CSS = `
+@keyframes orderTrackingPulsate {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+`;
+
+export const ORDER_TRACKING_PULSATE_ANIMATION = 'orderTrackingPulsate 1s ease-in-out infinite';
+
 import { getAccountNotifications, mergeAccountNotifications } from '../pages/account/notifications/page';
 import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
+import { orderRequiresOrderAuthorizationForm } from './orderAuthorizationForm';
 
 /** Nine pipeline stages (indices 0–8); labels match Concierge ORDER TRACKING UI. */
 export const ORDER_TRACKING_STAGE_LABELS = [
@@ -115,11 +126,13 @@ export function appendOrderTrackingClientNotification(
     })();
     const title = 'ORDER TRACKING UPDATE';
     const message = `${opts.stageLabel}: ${(opts.note || '').trim()}`.trim().toUpperCase();
+    const ts = Date.now();
     const n = {
-      id: `order_track_${opts.orderId}_${Date.now()}`,
+      id: `order_track_${opts.orderId}_${ts}`,
       title,
       message: message || 'VIEW YOUR ORDER FOR DETAILS.',
       date: today,
+      sortAt: ts,
       isRead: false,
       icon: 'f',
       actionText: 'VIEW TRACKING',
@@ -180,7 +193,11 @@ export function getOrderTrackingStageFromOrder(order: Record<string, unknown> | 
 
   const st = String(order.status || '').toUpperCase();
   const baseStage = statusMap[st] ?? 0;
-  if ((st === 'PLACED' || st === 'CONFIRMED') && order.orderFormSigned === true) {
+  if (
+    (st === 'PLACED' || st === 'CONFIRMED') &&
+    order.orderFormSigned === true &&
+    orderRequiresOrderAuthorizationForm(order)
+  ) {
     return Math.max(1, baseStage);
   }
   return baseStage;
@@ -189,4 +206,28 @@ export function getOrderTrackingStageFromOrder(order: Record<string, unknown> | 
 export function orderHasConciergeStyleStatus(order: Record<string, unknown> | null | undefined): boolean {
   const s = String(order?.status || '').toUpperCase();
   return CONCIERGE_TRACKING_STATUSES.includes(s);
+}
+
+/** True when expanded tracking should show a DELIVERED row after PACKAGE SHIPPED. */
+export function orderShowsDeliveredTrackingLine(order: Record<string, unknown> | null | undefined): boolean {
+  return String(order?.status || '').toUpperCase() === 'DELIVERED';
+}
+
+/**
+ * Bubble + red text for a standard stage row (0–8). When order is DELIVERED, `getOrderTrackingStageFromOrder` is 8
+ * for both SHIPPED and DELIVERED — highlight DELIVERED only, not PACKAGE SHIPPED.
+ */
+export function orderTrackingStageRowIsCurrent(
+  order: Record<string, unknown> | null | undefined,
+  stageIndex: number,
+  computedStage: number
+): boolean {
+  if (stageIndex !== computedStage) return false;
+  if (stageIndex === 8 && orderShowsDeliveredTrackingLine(order) && computedStage === 8) return false;
+  return true;
+}
+
+/** Current row for the extra DELIVERED line below PACKAGE SHIPPED. */
+export function orderTrackingDeliveredRowIsCurrent(order: Record<string, unknown> | null | undefined, computedStage: number): boolean {
+  return orderShowsDeliveredTrackingLine(order) && computedStage === 8;
 }

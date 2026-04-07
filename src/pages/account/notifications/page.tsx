@@ -15,6 +15,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
 interface Notification {
   id: string;
@@ -23,6 +24,8 @@ interface Notification {
   actionText?: string;
   actionRoute?: string;
   date: string;
+  /** Epoch ms when known — newest alerts sort first. */
+  sortAt?: number;
   isRead: boolean;
   icon: string; // 'f' or 'fc'
 }
@@ -107,6 +110,12 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   const notifs: Notification[] = [];
   const newAccount = isNewAccount(user);
 
+  /** Checkout / orders happen after signup — surface above onboarding acc_* when dates tie. */
+  const orderReceivedAlertsEarly = getOrderReceivedAccountAlerts(user);
+  if (orderReceivedAlertsEarly.length > 0) {
+    notifs.push(...orderReceivedAlertsEarly);
+  }
+
   // New accounts: only these four alerts (no spend tier, standard member, add shipping+payment, update profile)
   const storedTier = typeof window !== 'undefined' ? localStorage.getItem(`lastKnownTier_${email}`) : null;
   const tier = (user.currentTierName || user.tier || storedTier || '').toUpperCase() || 'PENDING';
@@ -168,12 +177,6 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
     isRead: false,
     icon: 'f'
   });
-
-  /** Same “order received” rows as post-checkout (`appendOrderReceivedAccountAlert`), including for new accounts. */
-  const orderReceivedAlertsEarly = getOrderReceivedAccountAlerts(user);
-  if (orderReceivedAlertsEarly.length > 0) {
-    notifs.push(...orderReceivedAlertsEarly);
-  }
 
   if (newAccount) {
     return notifs;
@@ -362,6 +365,49 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   return notifs;
 }
 
+/** Parse M-D-YYYY or MM-D-YYYY to local midnight; invalid → 0. */
+function parseNotificationDisplayDateMs(dateStr: string): number {
+  const parts = (dateStr || '').trim().split('-').map(Number);
+  if (parts.length !== 3) return 0;
+  const [month, day, year] = parts;
+  if (!month || !day || !year) return 0;
+  const d = new Date(year, month - 1, day);
+  const t = d.getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
+const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
+  `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
+  `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
+];
+
+/**
+ * When timestamps tie (same calendar day etc.), lower = closer to top of NEW list.
+ * Order-received alerts sort above onboarding acc_* (tier, membership, …) so checkout feels "after" signup.
+ */
+function newestFirstTieBreakRank(id: string): number {
+  if (id.startsWith('order_received_')) return 0;
+  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
+  if (stableIdx >= 0) return 1 + stableIdx;
+  if (id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
+  return 50;
+}
+
+/** Newest first: `sortAt` when set, else `date` string; tie-breakers for same-day rows. */
+export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
+  return [...list].sort((a, b) => {
+    const sa = typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : parseNotificationDisplayDateMs(a.date);
+    const sb = typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : parseNotificationDisplayDateMs(b.date);
+    if (sb !== sa) return sb - sa;
+    const ra = newestFirstTieBreakRank(a.id);
+    const rb = newestFirstTieBreakRank(b.id);
+    if (ra !== rb) return ra - rb;
+    return String(b.id).localeCompare(String(a.id));
+  });
+}
+
 /** Merge stored notifications with account notifications (account ones upserted by id). Account + order-received alerts stay in NEW until user archives — do not use stored isRead for them. Exported for account page badge logic. */
 export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
@@ -372,7 +418,7 @@ export function mergeAccountNotifications(stored: Notification[], account: Notif
       n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || n.id.startsWith('order_received_');
     byId.set(n.id, { ...n, isRead: isManaged ? false : (existing?.isRead ?? n.isRead) });
   });
-  return Array.from(byId.values());
+  return sortNotificationsNewestFirst(Array.from(byId.values()));
 }
 
 function NotificationsPage() {
@@ -498,12 +544,16 @@ function NotificationsPage() {
               };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
-              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              const createdMs = created ? new Date(created).getTime() : NaN;
+              const date = created && !Number.isNaN(createdMs)
+                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
+                : today;
               return {
                 id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
+                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
                 isRead: !!item.read,
                 icon: 'f',
                 actionText: item.actionText,
@@ -514,7 +564,7 @@ function NotificationsPage() {
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
             });
-            merged = Array.from(byId.values());
+            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
           }
         }
 
@@ -567,12 +617,16 @@ function NotificationsPage() {
               };
               const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
               const created = item.createdAt || '';
-              const date = created ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}` : today;
+              const createdMs = created ? new Date(created).getTime() : NaN;
+              const date = created && !Number.isNaN(createdMs)
+                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
+                : today;
               return {
                 id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
                 title,
                 message,
                 date,
+                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
                 isRead: !!item.read,
                 icon: 'f',
                 actionText: item.actionText,
@@ -583,7 +637,7 @@ function NotificationsPage() {
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
             });
-            merged = Array.from(byId.values());
+            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
           }
         }
 
@@ -810,8 +864,8 @@ function NotificationsPage() {
                   maxWidth: 'none', 
                   overflow: 'visible',
                   backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                  minHeight: 'calc(100dvh - 160px)',
-                  height: 'calc(100dvh - 160px)'
+                  minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                  height: MENU_TOGGLE_PANEL_HEIGHT
                 }}
               >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>

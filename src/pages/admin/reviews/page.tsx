@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -7,10 +7,16 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { getMockClientsForAyoteenz } from '../clients/page';
+import {
+  compactRegionCodeForReviewHeader,
+  regionParenLabelFromAddressLine,
+  usStateAbbrevFromAddressLine,
+} from '../../../utils/usAddressStateDisplay';
 
 const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
 
-const REVIEW_SORT_OPTIONS = ['1 STAR', '2 STAR', '3 STAR', '4 STAR', 'PHOTOS', 'VIDEOS'] as const;
+const REVIEW_SORT_OPTIONS = ['1 STAR', '2 STAR', '3 STAR', '4 STAR', '5 STAR', 'PHOTOS', 'VIDEOS'] as const;
 type ReviewSortOption = (typeof REVIEW_SORT_OPTIONS)[number];
 
 function reviewSortOptionToLabel(opt: ReviewSortOption): string {
@@ -22,6 +28,7 @@ type ReviewScope = 'shop' | 'tools';
 type AdminReviewRow = {
   id: number;
   client: string;
+  /** 1–5 for display/sort; invalid values clamped when filtering */
   rating: number;
   product: string;
   review: string;
@@ -30,7 +37,31 @@ type AdminReviewRow = {
   photos: number;
   videos: number;
   scope: ReviewScope;
+  /** Resolved attachment URLs (API jsonb arrays or separate columns). */
+  photoUrls?: string[];
+  videoUrls?: string[];
+  /** From API: `profiles.profile_image` join or optional column on `reviews`. */
+  clientProfilePhotoUrl?: string;
+  /** Reviewer email when API provides it (profile photo join). */
+  clientEmail?: string;
+  /** Full region label (e.g. US state full name) — used to derive short code. */
+  clientRegionParen?: string;
+  /** Short region for header, e.g. TX (optional; else derived from `clientRegionParen`). */
+  clientRegionCode?: string;
+  /** Review tied to an authenticated purchase of the product (admin display). */
+  verifiedPurchase?: boolean;
 };
+
+const REVIEW_STAR_PX = Math.round(14 * 0.65 * 10) / 10;
+const REVIEW_MEDIA_THUMB_PX = 72;
+
+const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
+
+function reviewStarCount(r: AdminReviewRow): number {
+  const n = Math.round(Number(r.rating));
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(5, Math.max(0, n));
+}
 
 function reviewScopeFromUnknown(raw: { scope?: unknown }): ReviewScope {
   const s = String(raw.scope ?? '').toLowerCase();
@@ -40,7 +71,10 @@ function reviewScopeFromUnknown(raw: { scope?: unknown }): ReviewScope {
 const DEFAULT_REVIEWS: AdminReviewRow[] = [
   {
     id: 1,
-    client: 'SARAH JOHNSON',
+    client: 'ZARA ADAMS',
+    clientEmail: 'mock1@test.com',
+    clientRegionParen: 'CALIFORNIA',
+    verifiedPurchase: true,
     rating: 5,
     product: 'SOFT WAVE 30"',
     review:
@@ -53,7 +87,10 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
   },
   {
     id: 2,
-    client: 'MARIA RODRIGUEZ',
+    client: 'AMY BROOKS',
+    clientEmail: 'mock2@test.com',
+    clientRegionParen: 'NEW YORK',
+    verifiedPurchase: true,
     rating: 5,
     product: 'NOIR 26"',
     review: 'Best wig experience ever! Professional service and the wig exceeded my expectations. Will definitely be coming back.',
@@ -65,7 +102,10 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
   },
   {
     id: 3,
-    client: 'ASHLEY WILLIAMS',
+    client: 'QUINN CHEN',
+    clientEmail: 'mock3@test.com',
+    clientRegionParen: 'TEXAS',
+    verifiedPurchase: true,
     rating: 4,
     product: 'CURLY 28"',
     review: 'Great quality wig and excellent customer service. The curl pattern is perfect and very natural looking.',
@@ -77,7 +117,10 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
   },
   {
     id: 4,
-    client: 'JORDAN LEE',
+    client: 'DIANA FOSTER',
+    clientEmail: 'mock4@test.com',
+    clientRegionParen: 'ILLINOIS',
+    verifiedPurchase: true,
     rating: 5,
     product: 'SLAY STYLING TOOL',
     review: 'Game changer for at-home styling. Heat is even and the cord length is perfect. Worth every penny.',
@@ -89,7 +132,10 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
   },
   {
     id: 5,
-    client: 'TAYLOR MARTIN',
+    client: 'ELENA GARCIA',
+    clientEmail: 'mock5@test.com',
+    clientRegionParen: 'FLORIDA',
+    verifiedPurchase: false,
     rating: 4,
     product: 'WIG CARE KIT',
     review: 'Everything I needed in one kit. Instructions were clear and my units look fresher after every wash.',
@@ -101,6 +147,47 @@ const DEFAULT_REVIEWS: AdminReviewRow[] = [
   },
 ];
 
+function withDefaultReviewMedia(rows: AdminReviewRow[]): AdminReviewRow[] {
+  return rows.map((r) => {
+    const hasPhotoUrls = (r.photoUrls?.length ?? 0) > 0;
+    const hasVideoUrls = (r.videoUrls?.length ?? 0) > 0;
+    if (hasPhotoUrls || hasVideoUrls) return r;
+    const { photoUrls, videoUrls } = mockReviewMediaPlaceholders(r.id, r.photos, r.videos);
+    return { ...r, photoUrls, videoUrls };
+  });
+}
+
+/** Fill `clientRegionParen` from admin mock client addresses when email matches (founder mock list). */
+function enrichReviewsWithMockClientRegion(rows: AdminReviewRow[]): AdminReviewRow[] {
+  let mockByEmail: Map<string, { address?: string }> | null = null;
+  return rows.map((r) => {
+    if ((r.clientRegionParen || '').trim()) return r;
+    const em = (r.clientEmail || '').trim().toLowerCase();
+    if (!em) return r;
+    if (!mockByEmail) {
+      mockByEmail = new Map(
+        getMockClientsForAyoteenz().map((c: { email?: string; address?: string }) => [
+          (c.email || '').trim().toLowerCase(),
+          c,
+        ])
+      );
+    }
+    const c = mockByEmail.get(em);
+    const region = regionParenLabelFromAddressLine(c?.address);
+    const abbr = usStateAbbrevFromAddressLine(c?.address);
+    const mergedParen = (r.clientRegionParen || '').trim() || region;
+    let code = (r.clientRegionCode || '').trim().toUpperCase() || undefined;
+    if (abbr) code = abbr;
+    else if (!code && mergedParen) code = compactRegionCodeForReviewHeader(mergedParen);
+    if (!region && !abbr && !mergedParen) return r;
+    return {
+      ...r,
+      clientRegionParen: mergedParen || r.clientRegionParen,
+      clientRegionCode: code ?? r.clientRegionCode,
+    };
+  });
+}
+
 function parseReviewDate(d: string): number {
   const t = Date.parse(d);
   if (!Number.isNaN(t)) return t;
@@ -109,38 +196,150 @@ function parseReviewDate(d: string): number {
   return 0;
 }
 
+const NOIR_REVIEW_STAR_FILLED_SRC = '/assets/NOIR/filled-star.png';
+/** Outline / empty stars — same asset as Noir marble strip product rows */
+const NOIR_REVIEW_STAR_OUTLINE_SRC = '/assets/NOIR/star-symbol.png';
+
+function averageRatingForVisible(rows: AdminReviewRow[]): number {
+  const vis = rows.filter((r) => r.status === 'published' || r.status === 'pending');
+  if (vis.length === 0) return 0;
+  const sum = vis.reduce((s, r) => s + (Number(r.rating) || 0), 0);
+  return Math.round((sum / vis.length) * 10) / 10;
+}
+
+function clientProfilePhotoUrlFromApi(x: Record<string, unknown>): string | undefined {
+  const raw = x.clientProfilePhotoUrl ?? x.client_profile_photo_url ?? x.profilePhotoUrl ?? x.profile_photo_url;
+  const s = typeof raw === 'string' ? raw.trim() : '';
+  if (!s) return undefined;
+  if (s.startsWith('http') || s.startsWith('/') || s.startsWith('data:')) return s;
+  return undefined;
+}
+
+/** Accept absolute URLs for review attachment previews (admin list). */
+function isReviewMediaUrl(s: string): boolean {
+  const t = s.trim();
+  if (!t) return false;
+  return t.startsWith('http') || t.startsWith('/') || t.startsWith('data:');
+}
+
+function urlFromReviewMediaEntry(entry: unknown): string | undefined {
+  if (typeof entry === 'string') {
+    const t = entry.trim();
+    return isReviewMediaUrl(t) ? t : undefined;
+  }
+  if (entry && typeof entry === 'object') {
+    const o = entry as Record<string, unknown>;
+    const cand = o.url ?? o.src ?? o.href ?? o.path;
+    if (typeof cand === 'string' && isReviewMediaUrl(cand)) return cand.trim();
+  }
+  return undefined;
+}
+
+function stringUrlsFromUnknownArray(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  for (const item of raw) {
+    const u = urlFromReviewMediaEntry(item);
+    if (u) out.push(u);
+  }
+  return out;
+}
+
+function mockReviewMediaPlaceholders(reviewId: number, photoCount: number, videoCount: number): { photoUrls: string[]; videoUrls: string[] } {
+  const photoUrls = Array.from({ length: Math.max(0, photoCount) }, (_, i) =>
+    `https://picsum.photos/seed/baw-admin-review-${reviewId}-p${i}/200/200`
+  );
+  const videoUrls = Array.from({ length: Math.max(0, videoCount) }, () =>
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+  );
+  return { photoUrls, videoUrls };
+}
+
+function ReviewClientAvatar({
+  review,
+  onOpenClientDetails,
+}: {
+  review: AdminReviewRow;
+  onOpenClientDetails: (email: string) => void;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const custom = (review.clientProfilePhotoUrl || '').trim();
+  const primary =
+    custom && (custom.startsWith('http') || custom.startsWith('/') || custom.startsWith('data:'))
+      ? custom
+      : '';
+  const src = !imgError && primary ? primary : DEFAULT_CLIENT_PROFILE_THUMB;
+  const email = (review.clientEmail || '').trim();
+  const interactive = email.length > 0;
+
+  const inner = (
+    <div
+      className="rounded-full shrink-0 overflow-hidden"
+      style={{
+        width: '44px',
+        height: '44px',
+        border: '0.8px solid #000',
+      }}
+      aria-hidden
+    >
+      <img
+        src={src}
+        alt=""
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        onError={() => {
+          if (primary) setImgError(true);
+        }}
+      />
+    </div>
+  );
+
+  if (!interactive) return inner;
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpenClientDetails(email)}
+      className="p-0 border-0 bg-transparent cursor-pointer"
+      style={{ lineHeight: 0 }}
+      aria-label={`Open client details for ${review.client}`}
+    >
+      {inner}
+    </button>
+  );
+}
+
 function sortReviewsByOption(list: AdminReviewRow[], option: ReviewSortOption): AdminReviewRow[] {
-  const out = [...list];
+  const starFilter = (n: number) => list.filter((r) => reviewStarCount(r) === n);
+  const base =
+    option === 'VIDEOS'
+      ? list.filter((r) => r.videos > 0)
+      : option === 'PHOTOS'
+        ? list.filter((r) => r.photos > 0)
+        : option === '1 STAR'
+          ? starFilter(1)
+          : option === '2 STAR'
+            ? starFilter(2)
+            : option === '3 STAR'
+              ? starFilter(3)
+              : option === '4 STAR'
+                ? starFilter(4)
+                : option === '5 STAR'
+                  ? starFilter(5)
+                  : [...list];
+  const out = [...base];
   const byDate = (a: AdminReviewRow, b: AdminReviewRow) => parseReviewDate(b.date) - parseReviewDate(a.date);
   if (option === 'PHOTOS') {
     out.sort((a, b) => (b.photos - a.photos) || byDate(a, b));
   } else if (option === 'VIDEOS') {
     out.sort((a, b) => (b.videos - a.videos) || byDate(a, b));
-  } else if (option === '1 STAR') {
-    out.sort((a, b) => (a.rating - b.rating) || byDate(a, b));
-  } else if (option === '2 STAR') {
-    out.sort((a, b) => {
-      const pa = a.rating === 2 ? 0 : 1;
-      const pb = b.rating === 2 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return byDate(a, b);
-    });
-  } else if (option === '3 STAR') {
-    out.sort((a, b) => {
-      const pa = a.rating === 3 ? 0 : 1;
-      const pb = b.rating === 3 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return byDate(a, b);
-    });
-  } else {
-    /* 4 STAR */
-    out.sort((a, b) => {
-      const pa = a.rating >= 4 ? 0 : 1;
-      const pb = b.rating >= 4 ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      if (pa === 0) return (b.rating - a.rating) || byDate(a, b);
-      return byDate(a, b);
-    });
+  } else if (
+    option === '1 STAR' ||
+    option === '2 STAR' ||
+    option === '3 STAR' ||
+    option === '4 STAR' ||
+    option === '5 STAR'
+  ) {
+    out.sort(byDate);
   }
   return out;
 }
@@ -149,17 +348,62 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
   const x = item as Record<string, unknown>;
   const statusRaw = String(x.status ?? 'published').toLowerCase();
   const status: 'published' | 'pending' = statusRaw === 'pending' ? 'pending' : 'published';
+  const photosField = x.photos;
+  const photoUrlsFromRow = stringUrlsFromUnknownArray(photosField);
+  const photoCount = Array.isArray(photosField)
+    ? Math.max(photosField.length, photoUrlsFromRow.length)
+    : (Number(photosField) || 0) || photoUrlsFromRow.length;
+
+  const videoUrlsFromRow = stringUrlsFromUnknownArray(x.video_urls ?? x.videoUrls ?? x.videos_urls);
+  const videosField = x.videos;
+  let videoCount = typeof videosField === 'number' && Number.isFinite(videosField) ? Number(videosField) : 0;
+  if (Array.isArray(videosField)) {
+    videoCount = Math.max(videosField.length, stringUrlsFromUnknownArray(videosField).length);
+  }
+  videoCount = Math.max(videoCount, videoUrlsFromRow.length);
+
+  const idNum = typeof x.id === 'number' ? x.id : Number(x.id);
+  const stableId = Number.isFinite(idNum) && idNum > 0 ? idNum : index + 1;
+  const { photoUrls: mockPhotos, videoUrls: mockVideos } = mockReviewMediaPlaceholders(
+    stableId,
+    photoCount,
+    videoCount
+  );
+  const photoUrls = photoUrlsFromRow.length > 0 ? photoUrlsFromRow : photoCount > 0 ? mockPhotos.slice(0, photoCount) : [];
+  const videoUrls = videoUrlsFromRow.length > 0 ? videoUrlsFromRow : videoCount > 0 ? mockVideos.slice(0, videoCount) : [];
+
+  const regionRaw = x.clientRegionParen ?? x.client_region_paren ?? x.client_state_full ?? x.reviewer_state_full;
+  const regionStr = typeof regionRaw === 'string' ? regionRaw.trim().toUpperCase() : '';
+  const codeRaw = x.clientRegionCode ?? x.client_region_code ?? x.reviewer_state_abbr;
+  const codeStr = typeof codeRaw === 'string' ? codeRaw.trim().toUpperCase() : '';
+  const regionCode =
+    codeStr ||
+    (regionStr ? compactRegionCodeForReviewHeader(regionStr) : undefined);
+  const vRaw = x.verifiedPurchase ?? x.verified_purchase ?? x.purchase_verified;
+  const verifiedPurchase =
+    vRaw === true ||
+    vRaw === 1 ||
+    String(vRaw).toLowerCase() === 'true' ||
+    String(vRaw).toLowerCase() === '1';
+
   return {
-    id: typeof x.id === 'number' ? x.id : Number(x.id) || index + 1,
+    id: stableId,
     client: String(x.client ?? ''),
     rating: Number(x.rating) || 0,
+    clientEmail: String(x.email ?? x.clientEmail ?? '').trim() || undefined,
+    clientRegionParen: regionStr || undefined,
+    clientRegionCode: regionCode,
     product: String(x.product ?? ''),
     review: String(x.review ?? x.body ?? ''),
-    date: String(x.date ?? ''),
+    date: String(x.date ?? x.createdAt ?? x.created_at ?? ''),
     status,
-    photos: Number(x.photos) || 0,
-    videos: Number(x.videos) || 0,
+    photos: photoCount,
+    videos: videoCount,
+    photoUrls: photoUrls.length > 0 ? photoUrls : undefined,
+    videoUrls: videoUrls.length > 0 ? videoUrls : undefined,
     scope: reviewScopeFromUnknown(x as { scope?: unknown }),
+    clientProfilePhotoUrl: clientProfilePhotoUrlFromApi(x),
+    verifiedPurchase,
   };
 }
 
@@ -172,11 +416,12 @@ export default function AdminReviews() {
     defaultValue: 'ALL',
     allowedValues: REVIEW_TABS,
   });
-  const [reviews, setReviews] = useState<AdminReviewRow[]>(DEFAULT_REVIEWS);
-  const [averageRating, setAverageRating] = useState(4.8);
-  const [totalReviews, setTotalReviews] = useState(247);
+  const [reviews, setReviews] = useState<AdminReviewRow[]>(() =>
+    withDefaultReviewMedia(enrichReviewsWithMockClientRegion(DEFAULT_REVIEWS))
+  );
   const [reviewSortOption, setReviewSortOption] = useState<ReviewSortOption>('4 STAR');
   const [showReviewSortDropdown, setShowReviewSortDropdown] = useState(false);
+  const [expandedReviewMediaIds, setExpandedReviewMediaIds] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -190,9 +435,11 @@ export default function AdminReviews() {
       getAdminReviews()
         .then((r) => {
           if (r.reviews.length > 0) {
-            setReviews(r.reviews.map((item, i) => normalizeApiReview(item, i)));
-            setAverageRating(r.averageRating || 0);
-            setTotalReviews(r.totalReviews || 0);
+            setReviews(
+              withDefaultReviewMedia(
+                enrichReviewsWithMockClientRegion(r.reviews.map((item, i) => normalizeApiReview(item, i)))
+              )
+            );
           }
         })
         .catch(() => {});
@@ -202,40 +449,332 @@ export default function AdminReviews() {
   const visible = (r: AdminReviewRow) => r.status === 'published' || r.status === 'pending';
   const shopReviews = reviews.filter((r) => visible(r) && r.scope === 'shop');
   const toolsReviews = reviews.filter((r) => visible(r) && r.scope === 'tools');
-  const toolsPublishedCount = reviews.filter((r) => r.status === 'published' && r.scope === 'tools').length;
+  const allVisible = useMemo(() => reviews.filter(visible), [reviews]);
+
+  const summaryAllAvg = useMemo(() => averageRatingForVisible(allVisible), [allVisible]);
+  const summaryAllTotal = allVisible.length;
+  const summaryShopAvg = useMemo(() => averageRatingForVisible(shopReviews), [shopReviews]);
+  const summaryShopTotal = shopReviews.length;
+  const summaryToolsAvg = useMemo(() => averageRatingForVisible(toolsReviews), [toolsReviews]);
+  const summaryToolsTotal = toolsReviews.length;
+
+  const displayAvg =
+    activeTab === 'SHOP' ? summaryShopAvg : activeTab === 'TOOLS' ? summaryToolsAvg : summaryAllAvg;
+  const displayTotal =
+    activeTab === 'SHOP' ? summaryShopTotal : activeTab === 'TOOLS' ? summaryToolsTotal : summaryAllTotal;
+  const totalReviewsLabel =
+    activeTab === 'SHOP' ? 'SHOP REVIEWS' : activeTab === 'TOOLS' ? 'TOOL REVIEWS' : 'TOTAL REVIEWS';
 
   const allVisibleSorted = useMemo(
-    () => sortReviewsByOption(reviews.filter(visible), reviewSortOption),
-    [reviews, reviewSortOption]
+    () => sortReviewsByOption(allVisible, reviewSortOption),
+    [allVisible, reviewSortOption]
+  );
+  const shopVisibleSorted = useMemo(
+    () => sortReviewsByOption(shopReviews, reviewSortOption),
+    [shopReviews, reviewSortOption]
+  );
+  const toolsVisibleSorted = useMemo(
+    () => sortReviewsByOption(toolsReviews, reviewSortOption),
+    [toolsReviews, reviewSortOption]
   );
 
-  const renderReviewCard = (review: AdminReviewRow) => (
-    <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
-      <div className="flex justify-between items-start">
-        <div>
-          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24' }}>{review.client}</p>
-          <div className="flex items-center gap-1 mt-1">
-            {[...Array(5)].map((_, i) => (
-              <span key={i} style={{ color: i < review.rating ? '#EB1C24' : '#ccc', fontSize: '10px' }}>
-                ★
-              </span>
-            ))}
-          </div>
-        </div>
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{review.date}</span>
-      </div>
-      <p className="mt-1" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>
-        {review.product}
-      </p>
-      <p className="mt-1" style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000' }}>
-        {review.review}
-      </p>
-      <div className="flex justify-between items-center mt-2">
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>{review.photos} photos</span>
-        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{review.status.toUpperCase()}</span>
+  const openClientDetailsFromReview = useCallback(
+    (email: string) => {
+      const e = email.trim().toLowerCase();
+      if (!e) return;
+      navigate(
+        `/admin/clients/overview?email=${encodeURIComponent(e)}&returnTo=reviews`
+      );
+    },
+    [navigate]
+  );
+
+  const toggleReviewMediaExpanded = useCallback((reviewId: number) => {
+    setExpandedReviewMediaIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(reviewId)) next.delete(reviewId);
+      else next.add(reviewId);
+      return next;
+    });
+  }, []);
+
+  const renderSortDropdown = () => (
+    <div
+      className="grid gap-2 px-5 py-2 font-medium text-black items-center min-w-0"
+      style={{
+        fontFamily: '"Futura PT Book"',
+        fontSize: '11px',
+        gridTemplateColumns: '1fr',
+        marginTop: '7px',
+        marginLeft: '-4px',
+        marginBottom: '4px',
+      }}
+    >
+      <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
+        <button
+          type="button"
+          onClick={() => setShowReviewSortDropdown((v) => !v)}
+          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors max-w-[120px]"
+        >
+          <span className="truncate min-w-0" style={{ position: 'relative', left: '-8px' }}>
+            {reviewSortOptionToLabel(reviewSortOption)}
+          </span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            className="flex-shrink-0"
+            style={{
+              transform: showReviewSortDropdown ? 'rotate(180deg)' : 'none',
+              color: '#EB1C24',
+              marginLeft: '-2px',
+            }}
+          >
+            <path
+              d="M3 4.5L6 7.5L9 4.5"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        {showReviewSortDropdown && (
+          <>
+            <div
+              className="fixed inset-0 z-30"
+              aria-hidden="true"
+              onClick={() => setShowReviewSortDropdown(false)}
+            />
+            <div
+              className="absolute py-1 bg-white border border-black shadow-lg z-40 max-h-60 overflow-y-auto overflow-x-hidden"
+              style={{
+                left: '-2px',
+                borderWidth: '1.3px',
+                marginTop: '7px',
+                width: '120px',
+                maxWidth: '120px',
+                boxSizing: 'border-box',
+              }}
+            >
+              {REVIEW_SORT_OPTIONS.filter((opt) => opt !== reviewSortOption).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    setReviewSortOption(opt);
+                    setShowReviewSortDropdown(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    color: '#000',
+                    fontWeight: 400,
+                  }}
+                >
+                  {reviewSortOptionToLabel(opt)}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
+
+  const renderReviewCard = (review: AdminReviewRow) => {
+    const stars = reviewStarCount(review);
+    const regionBit = (review.clientRegionCode || compactRegionCodeForReviewHeader(review.clientRegionParen) || '')
+      .trim()
+      .toUpperCase();
+    const clientHeader =
+      `${review.client.trim().toUpperCase()}${regionBit ? ` · ${regionBit}` : ''}`;
+    const photoUrls = review.photoUrls ?? [];
+    const videoUrls = review.videoUrls ?? [];
+    const mediaCount = review.photos + review.videos;
+    const hasMediaUrls = photoUrls.length > 0 || videoUrls.length > 0;
+    const hasExpandableMedia = mediaCount > 0 && hasMediaUrls;
+    const mediaOpen = expandedReviewMediaIds.has(review.id);
+    const mediaSummaryParts: string[] = [];
+    if (review.photos > 0) {
+      mediaSummaryParts.push(`${review.photos} ${review.photos === 1 ? 'PHOTO' : 'PHOTOS'}`);
+    }
+    if (review.videos > 0) {
+      mediaSummaryParts.push(`${review.videos} ${review.videos === 1 ? 'VIDEO' : 'VIDEOS'}`);
+    }
+    const mediaSummary = mediaSummaryParts.length > 0 ? mediaSummaryParts.join(' · ') : `${review.photos} PHOTOS`;
+
+    return (
+      <div key={review.id} className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1 flex flex-col">
+            <div className="flex flex-col items-start w-full">
+              <ReviewClientAvatar review={review} onOpenClientDetails={openClientDetailsFromReview} />
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '11px',
+                  color: '#000',
+                  margin: '8px 0 0',
+                  textAlign: 'left',
+                  width: '100%',
+                  lineHeight: 1.35,
+                }}
+              >
+                <span>{clientHeader}</span>
+                {review.verifiedPurchase !== false ? (
+                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{' '}(VERIFIED)</span>
+                ) : null}
+              </p>
+            </div>
+            <p
+              className="mt-1 w-full"
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '11px',
+                color: '#808080',
+                margin: 0,
+                textAlign: 'left',
+              }}
+            >
+              {review.product}
+            </p>
+            <div className="flex items-center gap-1" style={{ marginTop: 'calc(0.25rem + 2px)' }}>
+              {[...Array(5)].map((_, i) => {
+                const filled = i < stars;
+                return (
+                  <img
+                    key={i}
+                    src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
+                    alt=""
+                    width={REVIEW_STAR_PX}
+                    height={REVIEW_STAR_PX}
+                    style={{
+                      width: `${REVIEW_STAR_PX}px`,
+                      height: `${REVIEW_STAR_PX}px`,
+                      objectFit: 'contain',
+                      filter: 'drop-shadow(0 0 0 1px black)',
+                      stroke: '1px black',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <span
+            style={{
+              fontFamily: '"Futura PT Book"',
+              fontSize: '11px',
+              color: '#000',
+              flexShrink: 0,
+              textAlign: 'right',
+            }}
+          >
+            {review.date}
+          </span>
+        </div>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '11px',
+            color: '#000',
+            margin: 'calc(0.25rem + 4px) 0 0',
+          }}
+        >
+          {review.review}
+        </p>
+        <div className="mt-2">
+          <div className="flex justify-between items-center gap-2">
+            <div className="min-w-0 flex-1 pr-2">
+              {hasExpandableMedia ? (
+                <button
+                  type="button"
+                  onClick={() => toggleReviewMediaExpanded(review.id)}
+                  className="text-left p-0 border-0 bg-transparent cursor-pointer"
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {mediaSummary}
+                </button>
+              ) : (
+                <span
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {mediaSummary}
+                </span>
+              )}
+            </div>
+            <span
+              style={{
+                fontFamily: '"Futura PT Book"',
+                fontSize: '11px',
+                color: '#EB1C24',
+                flexShrink: 0,
+              }}
+            >
+              {review.status.toUpperCase()}
+            </span>
+          </div>
+          {mediaOpen && hasExpandableMedia ? (
+            <div className="mt-2 w-full flex flex-col gap-2">
+              {photoUrls.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {photoUrls.map((url, idx) => (
+                    <a
+                      key={`${review.id}-p-${idx}`}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block shrink-0 overflow-hidden"
+                      style={{
+                        width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        border: '0.8px solid #000',
+                      }}
+                    >
+                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+              {videoUrls.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {videoUrls.map((url, idx) => (
+                    <div
+                      key={`${review.id}-v-${idx}`}
+                      className="shrink-0 overflow-hidden bg-black"
+                      style={{
+                        width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                        border: '0.8px solid #000',
+                      }}
+                    >
+                      <video
+                        src={url}
+                        controls
+                        playsInline
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -282,7 +821,7 @@ export default function AdminReviews() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {averageRating}
+                    {displayAvg % 1 === 0 ? displayAvg : displayAvg.toFixed(1)}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     AVERAGE RATING
@@ -301,10 +840,10 @@ export default function AdminReviews() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {totalReviews}
+                    {displayTotal}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                    TOTAL REVIEWS
+                    {totalReviewsLabel}
                   </p>
                 </div>
               </div>
@@ -339,6 +878,9 @@ export default function AdminReviews() {
                 ))}
               </div>
 
+              {/* Sort lives outside scroll so the menu is never clipped when the list is empty */}
+              {renderSortDropdown()}
+
               {/* Tab content – padding below scroll viewport (above card bottom) */}
               <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
                 <div
@@ -349,132 +891,24 @@ export default function AdminReviews() {
                     boxSizing: 'border-box',
                   }}
                 >
-                {activeTab === 'ALL' && (
-                  <>
-                    <div
-                      className="grid gap-2 py-2 font-medium text-black items-center min-w-0"
-                      style={{
-                        fontFamily: '"Futura PT Book"',
-                        fontSize: '11px',
-                        gridTemplateColumns: '1fr',
-                        marginTop: '0',
-                        marginBottom: '4px',
-                        marginLeft: '-4px',
-                      }}
-                    >
-                      <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setShowReviewSortDropdown((v) => !v)}
-                          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors"
-                        >
-                          <span>{reviewSortOptionToLabel(reviewSortOption)}</span>
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 12 12"
-                            fill="none"
-                            className="flex-shrink-0"
-                            style={{
-                              transform: showReviewSortDropdown ? 'rotate(180deg)' : 'none',
-                              color: '#EB1C24',
-                              marginLeft: '-2px',
-                            }}
-                          >
-                            <path
-                              d="M3 4.5L6 7.5L9 4.5"
-                              stroke="currentColor"
-                              strokeWidth="1.2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-                        {showReviewSortDropdown && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-10"
-                              aria-hidden="true"
-                              onClick={() => setShowReviewSortDropdown(false)}
-                            />
-                            <div
-                              className="absolute left-0 py-1 bg-white border border-black shadow-lg z-20 min-w-[120px] max-h-60 overflow-y-auto"
-                              style={{ borderWidth: '1.3px', marginTop: '7px' }}
-                            >
-                              {REVIEW_SORT_OPTIONS.filter((opt) => opt !== reviewSortOption).map((opt) => (
-                                <button
-                                  key={opt}
-                                  type="button"
-                                  onClick={() => {
-                                    setReviewSortOption(opt);
-                                    setShowReviewSortDropdown(false);
-                                  }}
-                                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                                  style={{
-                                    fontFamily: '"Futura PT Book"',
-                                    color: '#000',
-                                    fontWeight: 400,
-                                  }}
-                                >
-                                  {reviewSortOptionToLabel(opt)}
-                                </button>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>
-                  </>
-                )}
+                {activeTab === 'ALL' && <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>}
                 {activeTab === 'SHOP' && (
-                  <>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
-                      SHOP REVIEWS
-                    </h3>
-                    {shopReviews.length === 0 ? (
-                      <div className="py-6 text-center">
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No shop reviews at this time.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">{shopReviews.map(renderReviewCard)}</div>
-                    )}
-                  </>
+                  shopReviews.length === 0 ? (
+                    <div className="py-6 text-center">
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No shop reviews at this time.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-0">{shopVisibleSorted.map(renderReviewCard)}</div>
+                  )
                 )}
                 {activeTab === 'TOOLS' && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div
-                        className="text-center py-3"
-                        style={{
-                          backgroundColor: 'rgba(0,0,0,0.04)',
-                          borderRadius: '4px',
-                          height: '80px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'flex-end',
-                          paddingBottom: '10px',
-                        }}
-                      >
-                        <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                          {toolsPublishedCount}
-                        </p>
-                        <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                          TOOLS
-                        </p>
-                      </div>
+                  toolsReviews.length === 0 ? (
+                    <div className="py-6 text-center">
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No tools reviews at this time.</p>
                     </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>
-                      TOOLS REVIEWS
-                    </h3>
-                    {toolsReviews.length === 0 ? (
-                      <div className="py-6 text-center">
-                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#808080' }}>No tools reviews at this time.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-0">{toolsReviews.map(renderReviewCard)}</div>
-                    )}
-                  </>
+                  ) : (
+                    <div className="space-y-0">{toolsVisibleSorted.map(renderReviewCard)}</div>
+                  )
                 )}
                 </div>
               </div>

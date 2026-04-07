@@ -51,8 +51,14 @@ import {
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../utils/checkoutOrderStripDisplay';
-import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
+import {
+  cartHasAnyLoyaltyEarningLine,
+  computePointsEligibleNetUsd,
+} from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
+import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -2231,7 +2237,7 @@ function CheckoutPage() {
 
   const pointsEligibleNetAmount = useMemo(
     () =>
-      isBookingsOnlyCheckout
+      !cartHasAnyLoyaltyEarningLine(cartItems)
         ? 0
         : computePointsEligibleNetUsd({
             cartItems,
@@ -2246,7 +2252,6 @@ function CheckoutPage() {
             consultDiscountAmount,
           }),
     [
-      isBookingsOnlyCheckout,
       cartItems,
       hasSpecialOfferInCart,
       hasOnlySpecialOfferInCart,
@@ -2353,7 +2358,10 @@ function CheckoutPage() {
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
           // Calculate points earned (tier + 12mo premium multiplier)
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2418,8 +2426,11 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
-          // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          // Calculate points earned (if signed in) - exclude gift cards, digital, membership, consult; tier + 12mo premium multiplier
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2468,22 +2479,26 @@ function CheckoutPage() {
           sessionStorage.setItem(
             'checkoutSummaryRewards',
             JSON.stringify({
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier
             })
           );
           navigate('/checkout/summary', {
             state: {
               orderNumber: orderNumber,
+              orderInternalId: `order-${nextOrderNumber}`,
               confirmationNumber: confirmationNumber,
               orderDate: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
               orderTotal: paymentData.amount,
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier,
-              isSubscriptionUpgrade
+              isSubscriptionUpgrade,
+              requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
             }
           });
         }
@@ -3130,8 +3145,8 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* Loyalty line — hidden on subscription upgrade (no points on membership purchase) */}
-                    {!isSubscriptionUpgrade && (
+                    {/* Loyalty line — only when something in the cart earns points (hide gift/digital/membership/consult-only) */}
+                    {!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems) && (
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text — keep gap below cart strip without stealing height from thumbnails */}
                       <div style={{ 
@@ -3149,10 +3164,7 @@ function CheckoutPage() {
                           {isSignedIn ? (
                             <>
                               {(() => {
-                                const basePoints =
-                                  isOnlyDigitalProducts || isBookingsOnlyCheckout
-                                    ? 0
-                                    : Math.round(pointsEligibleNetAmount);
+                                const basePoints = Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -3180,13 +3192,14 @@ function CheckoutPage() {
                   </div>
                 )}
 
-                {/* BLACK LINE SEPARATOR — subscription upgrade: loyalty row is hidden; pull line up 6px more */}
+                {/* BLACK LINE SEPARATOR — when loyalty row is hidden, pull line up to match spacing */}
                 <div>
                       <div style={{ 
                     paddingTop: '0', 
                     paddingBottom: '1px',
                         borderTop: '1.3px solid #000',
-                    marginTop: isSubscriptionUpgrade ? '-14px' : '-8px'
+                    marginTop:
+                      isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? '-14px' : '-8px'
                   }}>
                   </div>
                 </div>
@@ -5931,8 +5944,11 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in) — use net eligible USD (matches strip + consult code / stack rules; booking lines not double-counted)
-                  const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+                  // Calculate points earned (if signed in) — net eligible USD; zero when no earning lines (gift/digital/membership/consult-only)
+                  const basePoints =
+                    isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+                      ? Math.round(pointsEligibleNetAmount)
+                      : 0;
                   const multiplier = getPointsMultiplierForUser();
                   const pointsEarned = Math.round(basePoints * multiplier);
                   
@@ -6279,58 +6295,114 @@ function CheckoutPage() {
                     }
                   }
                   
-                  // Persist order to user's order history and mark first purchase (so their referral code becomes active)
+                  // Persist order to user's order history and mark first purchase (so their referral code becomes active).
+                  // Premium membership upgrades (/checkout/upgrade) are not product orders — skip userOrders_* for those.
                   if (isSignedIn && email) {
                     try {
                       const userOrdersKey = `userOrders_${email.trim().toLowerCase()}`;
                       const existing = localStorage.getItem(userOrdersKey);
                       const ordersData = existing ? JSON.parse(existing) : { activeOrders: [], pastOrders: [] };
                       const activeOrders = ordersData.activeOrders || [];
-                      const wasFirstOrder = activeOrders.length === 0 && (ordersData.pastOrders || []).length === 0;
-                      const firstItem = cartItems[0];
-                      const productName = firstItem?.name || 'Order';
-                      const onlyGiftOrDigital =
-                        cartItems.length > 0 &&
-                        cartItems.every(
-                          (i: any) =>
-                            i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
+                      const pastOrdersBucket = ordersData.pastOrders || [];
+                      const wasFirstOrder =
+                        activeOrders.length === 0 && pastOrdersBucket.length === 0;
+
+                      if (!isSubscriptionUpgrade) {
+                        const firstItem = cartItems[0];
+                        const productName = firstItem?.name || 'Order';
+                        const onlyGiftOrDigital =
+                          cartItems.length > 0 &&
+                          cartItems.every(
+                            (i: any) =>
+                              i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
+                          );
+                        const digitalFulfillmentOnly = Boolean(onlyGiftOrDigital);
+                        const bookingsOnlyAc = isBookingsOnlyCheckout;
+                        const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
+                        const bookingFlowTypePersist = bookingsOnlyAc
+                          ? cartItems.some((item: any) => item?.type === 'booking-appointment')
+                            ? 'appointment'
+                            : 'consult'
+                          : undefined;
+                        const bookingCartLineForPersist =
+                          bookingsOnlyAc && bookingFlowTypePersist
+                            ? (cartItems as any[]).find((item: any) =>
+                                bookingFlowTypePersist === 'appointment'
+                                  ? item?.type === 'booking-appointment'
+                                  : item?.type === 'booking-consult'
+                              )
+                            : undefined;
+                        const bookingTierPersist: 'standard' | 'premium' =
+                          bookingCartLineForPersist?.bookingTier === 'premium' ? 'premium' : 'standard';
+                        const bookingOrderThumb =
+                          bookingFlowTypePersist &&
+                          bookingCartItemThumbnailSrc({
+                            type:
+                              bookingFlowTypePersist === 'appointment'
+                                ? 'booking-appointment'
+                                : 'booking-consult',
+                            bookingTier: bookingTierPersist,
+                          });
+                        const requiresOrderAuthorizationForm = cartRequiresOrderAuthorizationForm(cartItems as any[]);
+                        const consultInspoPersist =
+                          bookingFlowTypePersist === 'consult' &&
+                          Array.isArray(bookingCartLineForPersist?.bookingInspoPhotoUrls)
+                            ? (bookingCartLineForPersist.bookingInspoPhotoUrls as unknown[]).filter(
+                                (u): u is string => typeof u === 'string' && u.trim().length > 0
+                              )
+                            : undefined;
+                        const newOrder = {
+                          id: `order-${nextOrderNumber}`,
+                          orderNumber: `ORDER ${orderNumber}`,
+                          date: orderDate,
+                          status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
+                          productName,
+                          productImage: bookingOrderThumb ?? '/assets/natural front.png',
+                          total: subtotal,
+                          subtotal: orderAmount,
+                          items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
+                          placedAt: Date.now(),
+                          pointsEarned,
+                          requiresOrderAuthorizationForm,
+                          ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
+                          ...(bookingFlowTypePersist
+                            ? {
+                                bookingFlowType: bookingFlowTypePersist,
+                                bookingTier: bookingTierPersist,
+                              }
+                            : {}),
+                          ...(consultInspoPersist && consultInspoPersist.length > 0
+                            ? { bookingInspoPhotoUrls: consultInspoPersist }
+                            : {})
+                        };
+                        activeOrders.push(newOrder);
+                        localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
+                        const consultWithMeasurements = (cartItems as any[]).find(
+                          (item: any) =>
+                            item?.type === 'booking-consult' &&
+                            item?.bookingHeadMeasurements &&
+                            typeof item.bookingHeadMeasurements === 'object'
                         );
-                      const digitalFulfillmentOnly = Boolean(isSubscriptionUpgrade || onlyGiftOrDigital);
-                      const bookingsOnlyAc = isBookingsOnlyCheckout;
-                      const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
-                      const bookingFlowTypePersist = bookingsOnlyAc
-                        ? cartItems.some((item: any) => item?.type === 'booking-appointment')
-                          ? 'appointment'
-                          : 'consult'
-                        : undefined;
-                      const newOrder = {
-                        id: `order-${nextOrderNumber}`,
-                        orderNumber: `ORDER ${orderNumber}`,
-                        date: orderDate,
-                        status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
-                        productName,
-                        productImage: '/assets/natural front.png',
-                        total: subtotal,
-                        subtotal: orderAmount,
-                        items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
-                        placedAt: Date.now(),
-                        pointsEarned,
-                        ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
-                        ...(bookingFlowTypePersist ? { bookingFlowType: bookingFlowTypePersist } : {})
-                      };
-                      activeOrders.push(newOrder);
-                      localStorage.setItem(userOrdersKey, JSON.stringify({ ...ordersData, activeOrders }));
-                      const currentUserRaw = localStorage.getItem('currentUser');
-                      const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
-                      appendOrderReceivedAccountAlert(currentUserForAlert, {
-                        id: newOrder.id,
-                        orderNumber: newOrder.orderNumber,
-                        bookingFlowType: cartItems.some((item: any) => item?.type === 'booking-appointment')
-                          ? 'appointment'
-                          : cartItems.some((item: any) => item?.type === 'booking-consult')
-                          ? 'consult'
-                          : undefined,
-                      });
+                        if (consultWithMeasurements?.bookingHeadMeasurements) {
+                          saveLastSubmittedBookingConsultHeadMeasurements(
+                            email,
+                            consultWithMeasurements.bookingHeadMeasurements as Record<string, unknown>
+                          );
+                          window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                        }
+                        const currentUserRaw = localStorage.getItem('currentUser');
+                        const currentUserForAlert = currentUserRaw ? JSON.parse(currentUserRaw) : { email };
+                        appendOrderReceivedAccountAlert(currentUserForAlert, {
+                          id: newOrder.id,
+                          orderNumber: newOrder.orderNumber,
+                          bookingFlowType: cartItems.some((item: any) => item?.type === 'booking-appointment')
+                            ? 'appointment'
+                            : cartItems.some((item: any) => item?.type === 'booking-consult')
+                            ? 'consult'
+                            : undefined,
+                        });
+                      }
+
                       if (wasFirstOrder) {
                         const currentUser = localStorage.getItem('currentUser');
                         if (currentUser) {
@@ -6431,7 +6503,8 @@ function CheckoutPage() {
                   sessionStorage.setItem(
                     'checkoutSummaryRewards',
                     JSON.stringify({
-                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                      pointsEarned:
+                        isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                       tier: effectiveTierSummary
                     })
                   );
@@ -6454,6 +6527,7 @@ function CheckoutPage() {
                     navigate('/checkout/summary', {
                       state: {
                         orderNumber,
+                        orderInternalId: `order-${nextOrderNumber}`,
                         orderDate,
                         orderTotal: subtotal,
                         shippingMethod: shippingMethodDisplay,
@@ -6467,10 +6541,12 @@ function CheckoutPage() {
                         country: selectedCountry || 'US',
                         paymentMethod: paymentMethodDisplay,
                         email,
-                        pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                        pointsEarned:
+                          isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                         tier: effectiveTierSummary,
                         cartItems: cartItems,
-                        isSubscriptionUpgrade
+                        isSubscriptionUpgrade,
+                        requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
                       }
                     });
                   })();

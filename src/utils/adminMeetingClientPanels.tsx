@@ -1,8 +1,10 @@
-import { parseISODateLocal, startOfMonth, endOfMonth, type AdminMeeting } from './adminMeetingsMock';
+import type { ReactNode } from 'react';
+import type { AdminMeeting } from './adminMeetingsMock';
+import { endOfMonth, parseISODateLocal, startOfMonth } from './adminMeetingsMock';
+import { formatConsultHeadMeasurementsParenLine } from './adminConsultHeadMeasurementsDisplay';
 
-export type { AdminMeeting };
 
-export const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
+const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
   braids: 'BRAIDS',
   'brow-clean': 'BROW SCULPTING',
   'brow-tint': 'BROW TINT',
@@ -12,7 +14,7 @@ export const BOOKING_ADDON_LABEL_BY_ID: Record<string, string> = {
   travel: 'TRAVEL FEE',
 };
 
-export const BOOKING_ADDON_LABELS = new Set<string>([
+const BOOKING_ADDON_LABELS = new Set<string>([
   'BRAIDS',
   'BROW SCULPTING',
   'BROW TINT',
@@ -22,7 +24,7 @@ export const BOOKING_ADDON_LABELS = new Set<string>([
   'TRAVEL FEE',
 ]);
 
-export const BOOKING_ADDON_ORDER = [
+const BOOKING_ADDON_ORDER = [
   'CLEAN LACE',
   'BRAIDS',
   'BROW SCULPTING',
@@ -32,7 +34,7 @@ export const BOOKING_ADDON_ORDER = [
   'TRAVEL FEE',
 ] as const;
 
-export const BOOKING_ADDON_PRICE_BY_LABEL: Record<(typeof BOOKING_ADDON_ORDER)[number], number> = {
+const BOOKING_ADDON_PRICE_BY_LABEL: Record<(typeof BOOKING_ADDON_ORDER)[number], number> = {
   'CLEAN LACE': 40,
   BRAIDS: 60,
   'BROW SCULPTING': 40,
@@ -42,9 +44,9 @@ export const BOOKING_ADDON_PRICE_BY_LABEL: Record<(typeof BOOKING_ADDON_ORDER)[n
   'TRAVEL FEE': 1200,
 };
 
-export const BOOKING_UNIT_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
+const BOOKING_UNIT_LABELS = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL', 'OCEAN CURL'] as const;
 
-export const BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL: Record<(typeof BOOKING_UNIT_LABELS)[number], number> = {
+const BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL: Record<(typeof BOOKING_UNIT_LABELS)[number], number> = {
   NOIR: 740,
   BLANCO: 820,
   'SOFT WAVE': 760,
@@ -53,7 +55,7 @@ export const BOOKING_UNIT_FALLBACK_PRICE_BY_LABEL: Record<(typeof BOOKING_UNIT_L
   'OCEAN CURL': 780,
 };
 
-export const CLIENT_STATE_BY_EMAIL: Record<string, string> = {
+const CLIENT_STATE_BY_EMAIL: Record<string, string> = {
   'mock1@test.com': 'CA',
   'mock2@test.com': 'NY',
   'mock3@test.com': 'TX',
@@ -93,6 +95,11 @@ export function formatHeaderDate(dateStr: string): string {
   }
 }
 
+const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
+const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
+const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
+type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
+
 export function monthMatrix(anchorISO: string): { label: string; iso: string; inMonth: boolean }[][] {
   const start = parseISODateLocal(startOfMonth(anchorISO));
   const end = parseISODateLocal(endOfMonth(anchorISO));
@@ -127,7 +134,7 @@ export function tierLabelColor(m: AdminMeeting): string {
   return tierPremium(m) ? '#000000' : '#808080';
 }
 
-export function normalizeInstallKindLabel(raw: unknown): 'NEW INSTALL' | 'RE-INSTALL' | null {
+function normalizeInstallKindLabel(raw: unknown): 'NEW INSTALL' | 'RE-INSTALL' | null {
   const upper = String(raw || '')
     .trim()
     .toUpperCase()
@@ -141,7 +148,7 @@ export function normalizeInstallKindLabel(raw: unknown): 'NEW INSTALL' | 'RE-INS
   return null;
 }
 
-export function normalizeBookingAddonLabel(raw: unknown): string | null {
+function normalizeBookingAddonLabel(raw: unknown): string | null {
   const upper = String(raw || '')
     .trim()
     .toUpperCase()
@@ -157,14 +164,14 @@ export function normalizeBookingAddonLabel(raw: unknown): string | null {
   return null;
 }
 
-export function orderedUniqueAddons(addons: string[]): string[] {
+function orderedUniqueAddons(addons: string[]): string[] {
   const set = new Set(addons);
   const ordered = BOOKING_ADDON_ORDER.filter((label) => set.has(label));
   const extras = [...set].filter((label) => !ordered.includes(label as (typeof BOOKING_ADDON_ORDER)[number]));
   return [...ordered, ...extras];
 }
 
-export function normalizeBookingUnitLabel(raw: unknown): (typeof BOOKING_UNIT_LABELS)[number] | null {
+function normalizeBookingUnitLabel(raw: unknown): (typeof BOOKING_UNIT_LABELS)[number] | null {
   const upper = String(raw || '')
     .trim()
     .toUpperCase()
@@ -180,7 +187,7 @@ export function normalizeBookingUnitLabel(raw: unknown): (typeof BOOKING_UNIT_LA
   return null;
 }
 
-export function normalizeUsdPrice(raw: unknown): number | null {
+function normalizeUsdPrice(raw: unknown): number | null {
   if (raw == null) return null;
   const n =
     typeof raw === 'number'
@@ -194,7 +201,7 @@ export function normalizeUsdPrice(raw: unknown): number | null {
   return Math.round(n);
 }
 
-export function parseUsStateFromAddress(raw: unknown): string | null {
+function parseUsStateFromAddress(raw: unknown): string | null {
   const value = String(raw || '').trim().toUpperCase();
   if (!value) return null;
   const parts = value.split(',').map((p) => p.trim()).filter(Boolean);
@@ -209,14 +216,14 @@ export function meetingClientEmailKey(m: AdminMeeting): string {
   return String(m.clientEmail || '').trim().toLowerCase();
 }
 
-export function normalizeProfileImageCandidate(raw: unknown): string | null {
+function normalizeProfileImageCandidate(raw: unknown): string | null {
   const value = String(raw || '').trim();
   if (!value) return null;
   if (value.startsWith('/assets/') || /^https?:\/\//i.test(value) || value.startsWith('data:image/')) return value;
   return null;
 }
 
-export function profileImageFromRegisteredUsersByEmail(email: string): string | null {
+function profileImageFromRegisteredUsersByEmail(email: string): string | null {
   if (!email || typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem('registeredUsers');
@@ -249,7 +256,7 @@ export function meetingClientProfilePhoto(m: AdminMeeting): string {
   return '/assets/profile-thumb.png';
 }
 
-export function meetingClientStateCode(m: AdminMeeting): string | null {
+function meetingClientStateCode(m: AdminMeeting): string | null {
   const email = meetingClientEmailKey(m);
   if (email && CLIENT_STATE_BY_EMAIL[email]) return CLIENT_STATE_BY_EMAIL[email];
   const meta = (m.metadata && typeof m.metadata === 'object' ? m.metadata : {}) as Record<string, unknown>;
@@ -337,7 +344,7 @@ export function meetingSortTimeMs(m: AdminMeeting): number {
   return base.getTime();
 }
 
-export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: string): AdminMeeting[] {
+export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
   const filtered = (() => {
     if (sortOption === 'Premium') return rows.filter((m) => tierPremium(m));
     if (sortOption === 'Standard') return rows.filter((m) => !tierPremium(m));
@@ -510,6 +517,12 @@ export function formatBookingInstallLineForCard(m: AdminMeeting): string {
   return `${details.installKind}: ${details.unitLabel} $${details.unitPriceUsd.toLocaleString('en-US')} USD`;
 }
 
+/** View-all grid cards: install kind + price only (no wig unit name). */
+export function formatBookingInstallLineForViewAllGrid(m: AdminMeeting): string {
+  const details = getBookingCardDetails(m);
+  return `${details.installKind}: ${formatUsd(details.unitPriceUsd)}`;
+}
+
 export function formatBookingAddonsLineForCard(m: AdminMeeting): string {
   const details = getBookingCardDetails(m);
   return details.addons.length > 0 ? `ADD-ONS: ${details.addons.join(', ')}` : 'ADD-ONS: NONE';
@@ -640,7 +653,7 @@ export function formatMinutesAsHoursAndMinutes(rawDuration: string): string {
   return `${hours} HRS ${minutes} MINS`;
 }
 
-export function toLocalDateEndOfDay(isoDate: string): Date | null {
+function toLocalDateEndOfDay(isoDate: string): Date | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ''))) return null;
   const [y, m, d] = String(isoDate).split('-').map(Number);
   const dt = new Date(y, m - 1, d, 23, 59, 59, 999);
@@ -757,4 +770,296 @@ export function consultInspo(m: AdminMeeting): string[] {
   const deduped = Array.from(new Set(normalized));
   const capped = deduped.slice(0, 3);
   return capped.length > 0 ? capped : ['/assets/gallery-mock.png'];
+}
+
+export type AdminMeetingClientPanelVariant = 'bookings' | 'consults';
+
+export type AdminMeetingClientPanelProps = {
+  m: AdminMeeting;
+  variant: AdminMeetingClientPanelVariant;
+  onProfileClick: () => void;
+  onActionClick: (e: React.MouseEvent) => void;
+  actionAriaLabel: string;
+  /** Right-side action icon (bookings default: edit-meeting-icon-booking.svg; consults: edit-meeting-icon.svg on meetings hub). */
+  actionIconSrc?: string;
+  /** Consult thumbnails only — opens lightbox (same as meetings hub). */
+  onConsultPhotoClick?: (src: string) => void;
+  /** When true, profile avatar is not a button (e.g. client-details tab for the same client). */
+  disableProfileNavigation?: boolean;
+  /** Omit avatar column entirely (admin client-details APPOINTMENTS tab only). */
+  hideProfileAvatar?: boolean;
+};
+
+/** Same card body as AdminMeetingsHub bookings/consults lists (profile, lines, payment or consult content). */
+export function AdminMeetingClientPanel({
+  m,
+  variant,
+  onProfileClick,
+  onActionClick,
+  actionAriaLabel,
+  actionIconSrc,
+  onConsultPhotoClick,
+  disableProfileNavigation,
+  hideProfileAvatar,
+}: AdminMeetingClientPanelProps) {
+  const rightIconSrc = actionIconSrc ?? '/assets/edit-meeting-icon-booking.svg';
+  const profileAvatar = (
+    <img
+      src={meetingClientProfilePhoto(m)}
+      alt=""
+      width={44}
+      height={44}
+      style={{ width: '44px', height: '44px', objectFit: 'cover', borderRadius: '9999px', border: '0.8px solid #000', display: 'block' }}
+    />
+  );
+  const profileWrapStyle = {
+    border: 'none',
+    background: 'none',
+    cursor: disableProfileNavigation ? ('default' as const) : ('pointer' as const),
+    padding: 0,
+    lineHeight: 0,
+    flexShrink: 0,
+    marginTop: '8px',
+    marginLeft: '4px',
+  } as const;
+  const profileBlock = hideProfileAvatar ? null : disableProfileNavigation ? (
+    <div style={profileWrapStyle}>{profileAvatar}</div>
+  ) : (
+    <button type="button" onClick={onProfileClick} aria-label="Open client details" style={profileWrapStyle}>
+      {profileAvatar}
+    </button>
+  );
+
+  const bodyMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const consultTitleTransform = hideProfileAvatar ? 'translate(0, 0)' : 'translate(6px, 6px)';
+  const consultHairMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const consultImgsMarginLeft = hideProfileAvatar ? 0 : '10px';
+  const consultNotesMarginLeft = hideProfileAvatar ? 0 : '6px';
+  const bookingsFirstLineMargin = hideProfileAvatar ? '0' : '7px 0 0';
+
+  if (variant === 'bookings') {
+    const payment = getBookingPaymentStatusForCard(m);
+    const isRedDueBar = payment.dueWithinFinal48Hours || payment.duePassed;
+    return (
+      <div className="flex justify-between items-start" style={{ gap: '12px' }}>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start gap-2.5">
+            {profileBlock}
+            <div className="min-w-0 flex-1" style={{ marginLeft: bodyMarginLeft }}>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: bookingsFirstLineMargin }}>
+                <span style={{ color: '#EB1C24' }}>{meetingClientDisplayNameWithState(m)}</span>{' '}
+                <span style={{ color: tierLabelColor(m) }}>· {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}</span>
+              </p>
+              <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#808080', margin: '4px 0 0' }}>
+                {formatBookingInstallLineForCard(m)}
+              </p>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  fontSize: '9px',
+                  color: '#000000',
+                  margin: '4px 0 0',
+                  whiteSpace: 'normal',
+                  overflowWrap: 'anywhere',
+                  wordBreak: 'break-word',
+                  maxWidth: '100%',
+                }}
+              >
+                {formatBookingAddonsLineForCardDisplay(m)}
+              </p>
+              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '4px 0 0' }}>
+                {formatHeaderDate(m.date)} · {m.time} · {formatMinutesAsHoursAndMinutes(m.duration)}
+              </p>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '12px 0 0' }}>
+                CURRENT BALANCE: {formatUsd(payment.remainingDueUsd)} OF {formatUsd(payment.paidTotalUsd)} USD
+              </p>
+              <div style={{ marginTop: '4px' }}>
+                <div
+                  style={{
+                    width: '100%',
+                    height: '9px',
+                    backgroundColor: isRedDueBar ? '#EB1C24' : '#E0E0E0',
+                    borderRadius: '0',
+                    overflow: 'hidden',
+                    border: isRedDueBar ? '1px solid #000000' : '1px solid #808080',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${payment.dueProgressPct}%`,
+                      height: '100%',
+                      backgroundColor: isRedDueBar ? '#EB1C24' : '#808080',
+                      transition: 'width 0.3s ease',
+                      borderRadius: '0',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', marginBottom: '7px' }}>
+                  <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: 0 }}>PAYMENT DUE: {payment.finalPaymentDueDateText}</p>
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', margin: 0, textAlign: 'right' }}>{payment.finalPaymentDueText}</p>
+                </div>
+                {payment.autopayStatus === 'paid' ? (
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '0 0 2px' }}>
+                    AUTOPAY STATUS: FINAL PAYMENT PROCESSED SUCCESSFULLY
+                  </p>
+                ) : payment.autopayStatus === 'failed' ? (
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: '0 0 2px' }}>
+                    AUTOPAY STATUS: FAILED{payment.autopayLastError ? ` · ${payment.autopayLastError}` : ''}
+                  </p>
+                ) : payment.autopayStatus === 'scheduled' ? (
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080', margin: '0 0 2px' }}>
+                    AUTOPAY STATUS: SCHEDULED ON CARD ON FILE
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+        {actionAriaLabel ? (
+          <button
+            type="button"
+            onClick={onActionClick}
+            style={{
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+              flexShrink: 0,
+              position: 'relative',
+              zIndex: 2,
+              marginTop: '4px',
+              marginRight: '3px',
+            }}
+            aria-label={actionAriaLabel}
+          >
+            <img src={rightIconSrc} alt="" width={11} height={11} />
+          </button>
+        ) : null}
+      </div>
+    );
+  }
+
+  const meta = m.metadata || {};
+  /** Consult: wig line from explicit metadata or derived label — never `m.notes` (long text caused wrap/phantom fragments). */
+  const hair =
+    m.category === 'consultation'
+      ? (() => {
+          const explicit = String(meta.hairOption || meta.bookingHairOption || meta.consultType || '').trim();
+          return explicit || consultTypeLabelForMeeting(m);
+        })()
+      : String(meta.hairOption || m.notes || '—');
+  const notes = String(meta.consultNotes || '').trim() || m.notes;
+  const measurementParenLine = formatConsultHeadMeasurementsParenLine(meta as Record<string, unknown>);
+  const imgs = consultInspo(m);
+  return (
+    <div className="flex justify-between items-start" style={{ gap: '12px' }}>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start gap-2.5">
+          {profileBlock}
+          <div className="min-w-0 flex-1" style={{ marginLeft: bodyMarginLeft }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', margin: 0, color: '#EB1C24', transform: consultTitleTransform }}>
+              {meetingClientDisplayNameWithState(m)}{' '}
+              <span style={{ color: tierLabelColor(m) }}>· {tierPremium(m) ? 'PREMIUM' : 'STANDARD'}</span>
+            </p>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '9px',
+                color: '#000',
+                margin: '8px 0 0',
+                marginLeft: consultHairMarginLeft,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {hair}
+            </p>
+            {imgs.length > 0 && (
+              <div className="flex flex-wrap mt-2" style={{ marginLeft: consultImgsMarginLeft, gap: '8px' }}>
+                {imgs.slice(0, 3).map((src, i) => (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onConsultPhotoClick?.(src);
+                    }}
+                    aria-label="Enlarge submitted consult photo"
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      background: '#f3f4f6',
+                      border: '3px solid #FFFFFF',
+                      boxShadow: '0 0 0 1.1px #000000',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      padding: 0,
+                      cursor: 'zoom-in',
+                    }}
+                  >
+                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  </button>
+                ))}
+              </div>
+            )}
+            {measurementParenLine ? (
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '9px',
+                  color: '#EB1C24',
+                  marginTop: '8px',
+                  marginLeft: consultNotesMarginLeft,
+                  marginBottom: '4px',
+                  lineHeight: 1.35,
+                }}
+              >
+                {measurementParenLine}
+              </p>
+            ) : null}
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', marginTop: measurementParenLine ? '0' : '8px', marginLeft: consultNotesMarginLeft, marginBottom: '3px' }}>{notes}</p>
+            <div style={{ height: '3px' }} />
+          </div>
+        </div>
+      </div>
+      {actionAriaLabel ? (
+        <button
+          type="button"
+          onClick={onActionClick}
+          style={{
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            padding: '4px',
+            flexShrink: 0,
+            position: 'relative',
+            zIndex: 2,
+            marginTop: '4px',
+            marginRight: '3px',
+          }}
+          aria-label={actionAriaLabel}
+        >
+          <img src={rightIconSrc} alt="" width={11} height={11} />
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+export function AdminMeetingClientPanelShell({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="mb-3"
+      style={{
+        background: '#fff',
+        border: '1px solid #d1d5db',
+        borderRadius: '0',
+        padding: '10px',
+      }}
+    >
+      {children}
+    </div>
+  );
 }
