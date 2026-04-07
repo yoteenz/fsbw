@@ -42,6 +42,7 @@ import {
 } from '../../utils/userOrdersBuckets';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { isPremiumMemberForGatedFeatures } from '../../utils/premiumMemberAccess';
 
 interface OrderLineItem {
   productName: string;
@@ -216,9 +217,16 @@ function OrdersPage() {
     }
   };
 
+  /**
+   * A/C badge tier on this page: match **current account** (premium subscription and/or BLACK tier),
+   * same gate as cart/booking — not only `order.bookingTier` (often unset or wrong on older persisted orders).
+   */
+  const ordersPageBookingBadgeTierForViewer = (): 'premium' | 'standard' =>
+    isPremiumMemberForGatedFeatures() ? 'premium' : 'standard';
+
   /** List / expanded-row thumbnail: A/C booking orders use the same badge PNGs as the cart. */
   const ordersPageOrderThumbnailSrc = (order: Order): string => {
-    const tier = order.bookingTier === 'premium' ? 'premium' : 'standard';
+    const tier = ordersPageBookingBadgeTierForViewer();
     if (order.bookingFlowType === 'appointment') {
       return bookingCartItemThumbnailSrc({ type: 'booking-appointment', bookingTier: tier }) || order.productImage;
     }

@@ -12442,3 +12442,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Topics in this chat (cumulative):** A/C thumbnails match cart badges; membership upgrades excluded from orders; this turn: **35% smaller** A/C thumbs on orders page.
 
 **Changes:** **`src/pages/orders/page.tsx`** — list thumbnails use **102px** for wig orders and **rounded 102 × 0.65** for **`bookingFlowType`** appointment/consult; expanded product row images use **120px** vs **120 × 0.65** for A/C. **`npx tsc --noEmit`**. Commit **`fix(orders): shrink A/C booking thumbnails 35% on orders page`** (**`f3aeac3`**). Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders: A/C thumbnails follow viewer premium status
+
+**Context (this chat):** Consult (and A/C) booking thumbnails on **Account → Orders** showed the **standard** consult badge for **premium** accounts because **`order.bookingTier`** was missing or **`standard`** on persisted orders.
+
+**Topics in this chat (cumulative):** A/C cart-matching thumbs; membership excluded from orders; smaller A/C thumbs; this turn: **premium vs standard badge** from **signed-in account**, not stale order field.
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageBookingBadgeTierForViewer`** uses **`isPremiumMemberForGatedFeatures()`** (same as cart/booking: active premium subscription tier and/or **BLACK** spend tier); **`ordersPageOrderThumbnailSrc`** passes that tier to **`bookingCartItemThumbnailSrc`** for appointment/consult. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
