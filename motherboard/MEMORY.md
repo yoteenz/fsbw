@@ -12482,9 +12482,9 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ## 2026-04-07 — Account orders: tighter spacing above A/C “N ITEM(S)”
 
-**Context (this chat):** User asked to **reduce spacing above** the **items count** line for **appointment/consult** orders **only** by **6px**.
+**Context (this chat):** User asked to **reduce spacing above** the **items count** line for **appointment/consult** orders **only** (refined to **`-14px`** top margin vs **2px** on wig rows).
 
-**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageListItemsLabelMarginTopPx`**: **2px** for wig orders, **-4px** for A/C (**6px** less gap above the label). Active + archived lists. **`npx tsc --noEmit`**. Commit **`fix(orders): reduce gap above A/C items label by 6px`** (**`71da809`**). Pushed **`preview/mobile`**.
+**Changes:** **`src/pages/orders/page.tsx`** — **`ordersPageListItemsLabelMarginTopPx`**: **2px** for wig orders, **-14px** for A/C (**`base - 16`**). Active + archived lists. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 ---
 

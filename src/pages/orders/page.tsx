@@ -264,10 +264,10 @@ function OrdersPage() {
     order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
       ? ORDER_AC_LIST_THUMB_PX
       : ORDER_LIST_THUMB_PX;
-  /** Tighter gap above "N ITEM(S)" for A/C booking rows only (6px less than wig rows). */
+  /** Tighter gap above "N ITEM(S)" for A/C booking rows only (**2px** wig rows → **-14px** for A/C). */
   const ordersPageListItemsLabelMarginTopPx = (order: Order): number => {
     const base = 2;
-    if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') return base - 6;
+    if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') return base - 16;
     return base;
   };
   /** Fixed column so A/C badges (smaller img) share the same x-axis as 102px wig thumbs + ITEMS label. */
