@@ -12581,3 +12581,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted the **consult** booking **order tracking bar** to show **⅓** fill when **PLACED**, **⅔** when **PROCESSING**, **100%** when **COMPLETE**.
 
 **Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **100/3**, **PROCESSING** → **200/3**, **COMPLETE**/**DELIVERED** → **100**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bookings: no loyalty points at checkout
+
+**Context (this chat):** User asked that **consult** bookings **not** earn loyalty points at checkout (**appointment** deposits still earn).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — only **`booking-appointment`** adds to points net; **`booking-consult`** stays in cart **pool** for discount allocation but **excluded** from earned base (both simple + mixed-special branches). **`checkout/page.tsx`** — removed **`isBookingsOnlyCheckout → 0`** shortcut and consult-only strip zeroing so **appointment-only** bookings still earn; **`pointsEligibleNetAmount`** drives the loyalty line. **`checkout/confirm/page.tsx`** — fallback **`pointsEligibleAmount`** reducers skip **`booking-consult`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
