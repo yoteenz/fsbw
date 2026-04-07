@@ -691,15 +691,32 @@ export async function exportClientsCsv(): Promise<string> {
   return URL.createObjectURL(blob);
 }
 
-/** Admin: update review status. */
-export async function patchAdminReview(id: string, status: 'pending' | 'published' | 'rejected'): Promise<unknown> {
-  const res = await apiFetch('/api/admin/reviews', { method: 'PATCH', body: { id, status } });
+/** Admin: update review status and/or verified purchase flag. */
+export async function patchAdminReview(
+  id: string,
+  updates: {
+    status?: 'pending' | 'published' | 'rejected';
+    verifiedPurchase?: boolean;
+  }
+): Promise<unknown> {
+  const res = await apiFetch('/api/admin/reviews', {
+    method: 'PATCH',
+    body: { id, ...updates },
+  });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
 /** Admin: create review. */
-export async function postAdminReview(body: { email: string; clientName?: string; rating: number; product?: string; review?: string; status?: string }): Promise<unknown> {
+export async function postAdminReview(body: {
+  email: string;
+  clientName?: string;
+  rating: number;
+  product?: string;
+  review?: string;
+  status?: string;
+  verifiedPurchase?: boolean;
+}): Promise<unknown> {
   const res = await apiFetch('/api/admin/reviews', { method: 'POST', body });
   if (!res.ok) throw new Error(await res.text());
   return res.json();

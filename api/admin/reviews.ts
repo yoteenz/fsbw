@@ -29,6 +29,9 @@ function clientProfilePhotoFromReviewRow(r: Record<string, unknown>): string | u
 }
 
 function toReviewItem(r: Record<string, unknown>) {
+  const vp = r.verified_purchase ?? r.verifiedPurchase;
+  const verifiedPurchase =
+    vp === true || vp === 1 || String(vp).toLowerCase() === 'true' || String(vp).toLowerCase() === '1';
   return {
     id: r.id,
     client: (r.client_name || r.email || '').toString().toUpperCase(),
@@ -40,6 +43,7 @@ function toReviewItem(r: Record<string, unknown>) {
     status: r.status,
     photos: Array.isArray(r.photos) ? r.photos : [],
     videos: Number(r.videos) || 0,
+    verifiedPurchase,
     date: r.created_at,
     createdAt: r.created_at,
     clientProfilePhotoUrl: clientProfilePhotoFromReviewRow(r),
@@ -168,16 +172,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
     const id = body.id as string;
     const status = body.status as string;
-    if (!id || !status || !['pending', 'published', 'rejected'].includes(status)) {
-      return res.status(400).json({ error: 'id and status (pending|published|rejected) required' });
+    const vpRaw = body.verifiedPurchase ?? body.verified_purchase;
+    const hasVp = vpRaw !== undefined && vpRaw !== null && String(vpRaw).length > 0;
+    const verifiedPurchase = hasVp
+      ? vpRaw === true || vpRaw === 1 || String(vpRaw).toLowerCase() === 'true' || String(vpRaw).toLowerCase() === '1'
+      : undefined;
+    const statusOk = typeof status === 'string' && ['pending', 'published', 'rejected'].includes(status);
+    if (!id || (!statusOk && verifiedPurchase === undefined)) {
+      return res.status(400).json({
+        error: 'id required, and either status (pending|published|rejected) or verifiedPurchase (boolean)',
+      });
     }
     try {
-      const { data, error } = await supabase
-        .from('reviews')
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
+      const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (statusOk) patch.status = status;
+      if (verifiedPurchase !== undefined) patch.verified_purchase = verifiedPurchase;
+      const { data, error } = await supabase.from('reviews').update(patch).eq('id', id).select().single();
       if (error) return res.status(500).json({ error: error.message });
       await writeAuditLog({
         actorId: admin.id,
@@ -185,7 +195,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         action: 'review.update',
         resourceType: 'reviews',
         resourceId: id,
-        details: { status },
+        details: { status: statusOk ? status : undefined, verified_purchase: verifiedPurchase },
       });
       const raw = (data ?? {}) as Record<string, unknown>;
       let item = toReviewItem(raw);
@@ -207,6 +217,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const product = (body.product as string) || '';
     const review = (body.review as string) || '';
     const status = (body.status as string) || 'pending';
+    const vpIn = body.verifiedPurchase ?? body.verified_purchase;
+    const verifiedPurchaseInsert =
+      vpIn === true ||
+      vpIn === 1 ||
+      String(vpIn).toLowerCase() === 'true' ||
+      String(vpIn).toLowerCase() === '1';
     if (!email) return res.status(400).json({ error: 'email required' });
     try {
       const { data, error } = await supabase
@@ -218,6 +234,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           product,
           review,
           status: ['pending', 'published', 'rejected'].includes(status) ? status : 'pending',
+          verified_purchase: verifiedPurchaseInsert,
         })
         .select()
         .single();

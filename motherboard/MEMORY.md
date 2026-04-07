@@ -12334,3 +12334,16 @@ Verification: `tsc --noEmit`.
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 **Follow-up:** Client line separator between name and state: **` · `** (middle dot) instead of **` - `**.
+
+---
+
+## 2026-04-08 — Reviews `verified_purchase` column + API
+
+**Context:** User asked to implement persistence for **(VERIFIED)** on admin reviews.
+
+**Changes:**
+- **`supabase/migrations/20260408120000_reviews_verified_purchase.sql`:** **`reviews.verified_purchase boolean NOT NULL DEFAULT false`** + comment.
+- **`api/admin/reviews.ts`:** **`toReviewItem`** includes **`verifiedPurchase`**; **POST** accepts **`verifiedPurchase` / `verified_purchase`**; **PATCH** can update **`verified_purchase`** alone or with **`status`**.
+- **`src/utils/api.ts`:** **`patchAdminReview(id, { status?, verifiedPurchase? })`**; **`postAdminReview`** body may include **`verifiedPurchase`**.
+
+Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**. Pushed **`preview/mobile`**.
