@@ -1327,9 +1327,9 @@ function OrdersPage() {
     return `${currency.symbol.replace('&#36;', '$').replace('&euro;', '€').replace('&pound;', '£').replace('&yen;', '¥').replace('&#8377;', '₹')}${formattedPrice}`;
   };
 
-  /** Premium + 6- or 12-month subscription (matches Concierge special-offer gating). */
+  /** 6- or 12-month premium subscription only (not 3-month); matches Concierge long-premium perks. */
   const showLongPremiumConciergeExtras = (user: { email?: string; membershipType?: string; subscriptionTier?: string } | null | undefined) => {
-    if (!user || String(user.membershipType ?? '').toUpperCase() !== 'PREMIUM') return false;
+    if (!user) return false;
     const st = getEffectiveSubscriptionTier(user);
     return st === '6months' || st === '12months';
   };

@@ -218,7 +218,6 @@ function CheckoutConfirmPage() {
       const cu = localStorage.getItem('currentUser');
       if (!cu) return false;
       const u = JSON.parse(cu);
-      if (String(u?.membershipType ?? '').toUpperCase() !== 'PREMIUM') return false;
       const st = getEffectiveSubscriptionTier(u);
       return st === '6months' || st === '12months';
     } catch {
