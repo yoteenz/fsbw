@@ -12363,3 +12363,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up 2:** Physical **ORDER TRACKING** under **REWARDS** and **GO TO CONCIERGE** only for **6- & 12-month** premium (**`getEffectiveSubscriptionTier`**). **Checkout summary** (`confirm/page.tsx`) aligned: section order like expanded order, **ORDER STATUS** for digital summary, **REWARDS** copy/icon match, **SIGN ORDER FORM** after summary card; **`orderInternalId`** from checkout **`navigate` state** for concierge link. **`tsc --noEmit`**. Pushed **`preview/mobile`**.
 
 **Follow-up 3:** **GO TO CONCIERGE** / long-premium blocks use **`getEffectiveSubscriptionTier === '6months' | '12months'`** only (dropped extra **`membershipType === 'PREMIUM'`** check so 6/12mo is the sole gate). **`tsc --noEmit`**. Pushed **`preview/mobile`** (`c8000d6`).
+
+---
+
+## 2026-04-06 — Expanded orders: review gating, tracking UI, loyalty points display
+
+**Context (this chat):** User asked for more **expanded order** behavior: **archived** orders should **not** show **GO TO CONCIERGE** (only **LEAVE A REVIEW**, which becomes non-interactive **REVIEW(S) SUBMITTED** when every line item is reviewed); **ORDER TRACKING** above **REWARDS**; **leave review** only after **3 days** post-delivery (archived); **smaller** tracking **bubbles** (25% reduction), drop **" · CURRENT"**; current step bubble **red fill + black border**, same size as others; **GO TO CONCIERGE** **Futura PT Medium** + **top margin** match leave-review button; fix **YOU'VE EARNED 0** by **not** falling back to **`currentUser.loyaltyPoints`**.
+
+**Changes:**
+- **`src/utils/orderReviewSubmissionPersist.ts`:** Per-item review keys in **`orderReviewItems_{orderId}`**; **`getEligibleReviewLineItemsForOrder`**, **`allOrderLineItemsReviewed`**, legacy **`reviewSubmitted_{id}`** honored when no per-item keys.
+- **`src/pages/account/reviews/leave-review-order/page.tsx`:** Hydrate **`submittedForIndex`** from storage; on submit **append** item key, set legacy flag when **all** done; **all reviewed** state with **BACK TO ORDERS**; hide submit row when complete.
+- **`src/pages/orders/page.tsx`:** **GO TO CONCIERGE** only for **active** expanded orders; **`reviewsUpdated`** bump for button state; leave-review window **`deliveredAt` + 72h**; **`displayLoyaltyPointsForExpandedOrder`** ( **`pointsEarned` → subtotal → total → 0** ); tracking + digital status: **6px** circles, red current, no **CURRENT** suffix; **ORDER TRACKING** before **REWARDS**; concierge **`marginTop: -5px`**.
+- **`src/pages/checkout/confirm/page.tsx`:** Same **tracking** bubble treatment and **ORDER TRACKING** before **REWARDS**; rewards fallback **no** **`accountUser.loyaltyPoints`** / **1290**; concierge block **`marginTop: 2px`**.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
