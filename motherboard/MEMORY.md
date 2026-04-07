@@ -12332,3 +12332,5 @@ Verification: `tsc --noEmit`.
 - **`src/pages/admin/reviews/page.tsx`:** Stars **`14 * 0.65` px**; **`clientRegionCode`** + **`verifiedPurchase`**; **`(VERIFIED)`** when verified (API: **`verifiedPurchase` / `verified_purchase` / `purchase_verified`** truthy); sort **`left: -8px`**; product **Futura PT Medium**; media rows: photos then videos, **72×72**, **`object-fit: cover`**.
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+**Follow-up:** Client line separator between name and state: **` · `** (middle dot) instead of **` - `**.

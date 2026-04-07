@@ -589,7 +589,7 @@ export default function AdminReviews() {
       .trim()
       .toUpperCase();
     const clientHeader =
-      `${review.client.trim().toUpperCase()}${regionBit ? ` - ${regionBit}` : ''}`;
+      `${review.client.trim().toUpperCase()}${regionBit ? ` · ${regionBit}` : ''}`;
     const photoUrls = review.photoUrls ?? [];
     const videoUrls = review.videoUrls ?? [];
     const mediaCount = review.photos + review.videos;
