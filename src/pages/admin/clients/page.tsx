@@ -32,6 +32,10 @@ import {
   type AdminMeeting
 } from '../../../utils/adminMeetingsMock';
 import { AdminMeetingClientPanel, AdminMeetingClientPanelShell } from '../../../utils/adminMeetingClientPanels';
+import {
+  getSignedFormsForClientDisplay,
+  type StoredSignedOrderForm,
+} from '../../../utils/signedOrderFormsStorage';
 
 const TABS = ['ALL', 'REVIEWS', 'REWARDS', 'INVITES'] as const;
 
@@ -583,6 +587,117 @@ function getMockActivityForMayaOwen(): Array<{ id: string; eventType: string; pa
   ];
 }
 
+const SIGNED_FORM_FIELD_ORDER = [
+  'orderNumber',
+  'orderDate',
+  'firstName',
+  'lastName',
+  'email',
+  'phone',
+  'address',
+  'city',
+  'state',
+  'zip',
+  'country',
+  'billingAddress',
+  'billingCity',
+  'billingState',
+  'billingZip',
+  'billingCountry',
+  'cardholderName',
+  'cardNumber',
+  'cardLastFour',
+  'cardType',
+  'expirationDate',
+] as const;
+
+function formatSignedFormFieldLabel(key: string): string {
+  const map: Record<string, string> = {
+    orderNumber: 'ORDER NUMBER',
+    orderDate: 'ORDER DATE',
+    firstName: 'FIRST NAME',
+    lastName: 'LAST NAME',
+    email: 'EMAIL',
+    phone: 'PHONE',
+    address: 'SHIPPING ADDRESS',
+    city: 'CITY',
+    state: 'STATE',
+    zip: 'ZIP',
+    country: 'COUNTRY',
+    billingAddress: 'BILLING ADDRESS',
+    billingCity: 'BILLING CITY',
+    billingState: 'BILLING STATE',
+    billingZip: 'BILLING ZIP',
+    billingCountry: 'BILLING COUNTRY',
+    cardholderName: 'CARDHOLDER',
+    cardNumber: 'CARD',
+    cardLastFour: 'CARD (LAST FOUR FILE)',
+    cardType: 'CARD TYPE',
+    expirationDate: 'EXPIRATION',
+    status: 'ORDER STATUS',
+  };
+  return map[key] || key.replace(/([A-Z])/g, ' $1').trim().toUpperCase();
+}
+
+function SignedOrderFormCard({ form }: { form: StoredSignedOrderForm }) {
+  const fields = form.formFields || {};
+  const orderedKeys = [
+    ...SIGNED_FORM_FIELD_ORDER.filter((k) => fields[k] != null && String(fields[k]).trim() !== ''),
+    ...Object.keys(fields).filter((k) => !SIGNED_FORM_FIELD_ORDER.includes(k as (typeof SIGNED_FORM_FIELD_ORDER)[number])),
+  ];
+  const signedLabel = (() => {
+    try {
+      return new Date(form.signedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch {
+      return '—';
+    }
+  })();
+
+  return (
+    <div
+      style={{
+        border: '1px solid #e5e7eb',
+        padding: '12px',
+        marginBottom: '14px',
+        background: '#fafafa',
+      }}
+    >
+      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+        {form.orderNumber ? String(form.orderNumber).toUpperCase() : 'ORDER'} · SIGNED {signedLabel.toUpperCase()}
+        {form.summaryOnly ? ' · SUMMARY' : ''}
+      </p>
+      {orderedKeys.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
+          {orderedKeys.map((key) => (
+            <div key={key} style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 8px', fontFamily: '"Futura PT Book"', fontSize: '9px', textTransform: 'uppercase' }}>
+              <span style={{ color: '#808080', flex: '0 0 auto' }}>{formatSignedFormFieldLabel(key)}:</span>
+              <span style={{ color: '#000', wordBreak: 'break-word' }}>{String(fields[key])}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {form.photoIdDataUrl ? (
+        <div style={{ marginBottom: '8px' }}>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>PHOTO ID</p>
+          <img src={form.photoIdDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '140px', objectFit: 'contain', border: '1px solid #ccc' }} />
+        </div>
+      ) : null}
+      {form.cardLastFourDataUrl ? (
+        <div style={{ marginBottom: '8px' }}>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>CARD LAST FOUR (UPLOAD)</p>
+          <img src={form.cardLastFourDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100px', objectFit: 'contain', border: '1px solid #ccc' }} />
+        </div>
+      ) : null}
+      {form.signatureDataUrl ? (
+        <div>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>SIGNATURE</p>
+          <img src={form.signatureDataUrl} alt="" style={{ maxWidth: '100%', maxHeight: '80px', objectFit: 'contain', border: '1px solid #ccc', background: '#fff' }} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export default function AdminClients() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -608,6 +723,8 @@ export default function AdminClients() {
   const [mediaViewerUrls, setMediaViewerUrls] = useState<string[]>([]);
   const [mediaViewerIndex, setMediaViewerIndex] = useState(0);
   const [showInvitesPopup, setShowInvitesPopup] = useState(false);
+  const [showSignedFormsPopup, setShowSignedFormsPopup] = useState(false);
+  const [signedFormsListBump, setSignedFormsListBump] = useState(0);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [adminOrdersByUserId, setAdminOrdersByUserId] = useState<Record<string, { activeOrders: unknown[]; pastOrders: unknown[] }>>({});
   const [adminCartByUserId, setAdminCartByUserId] = useState<Record<string, unknown[]>>({});
@@ -1043,6 +1160,10 @@ export default function AdminClients() {
             base.savings = s;
             base.subtotal = total + s;
           }
+          if (i < 2) {
+            base.orderFormSigned = true;
+            base.orderFormSignedAt = Date.now() - (i + 1) * 86400000;
+          }
           return base;
         });
         const orderSortTime = (o: any) => {
@@ -1078,6 +1199,25 @@ export default function AdminClients() {
     if (!Number.isNaN(lp) && lp > 0) return Math.round(lp);
     return 0;
   })();
+
+  useEffect(() => {
+    const bump = () => setSignedFormsListBump((n) => n + 1);
+    window.addEventListener('ordersUpdated', bump);
+    window.addEventListener('signedOrderFormsUpdated', bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener('ordersUpdated', bump);
+      window.removeEventListener('signedOrderFormsUpdated', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
+
+  const signedFormsForSelectedClient = useMemo(() => {
+    void signedFormsListBump;
+    const email = (selectedClientEmail || '').trim().toLowerCase();
+    if (!email) return [];
+    return getSignedFormsForClientDisplay(email, selectedRawOrders as Record<string, unknown>[]);
+  }, [selectedClientEmail, selectedRawOrders, signedFormsListBump]);
 
   const selectedClientProfilePhotoSrc = selectedClient
     ? String(
@@ -1749,6 +1889,22 @@ export default function AdminClients() {
                               {[(selectedClient?.firstName || '').trim().charAt(0), (selectedClient?.lastName || '').trim().charAt(0)].filter(Boolean).join('').toUpperCase() || '?'}
                             </div>
                           </div>
+                        </div>
+                        <div className="flex justify-center" style={{ marginTop: '-8px', marginBottom: '12px' }}>
+                          <button
+                            type="button"
+                            onClick={() => setShowSignedFormsPopup(true)}
+                            className="bg-transparent border-none p-0 cursor-pointer"
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '10px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              fontWeight: 500,
+                            }}
+                          >
+                            VIEW SIGNED FORMS
+                          </button>
                         </div>
                         <div className="bg-white border border-gray-200 p-4 mb-6">
                           <div className="mb-4" style={{ display: 'grid', gridTemplateColumns: '1fr 72px', alignItems: 'baseline', gap: '2px 0' }}>
@@ -3810,6 +3966,64 @@ export default function AdminClients() {
                 </table>
               )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSignedFormsPopup && selectedClient && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+          onClick={() => setShowSignedFormsPopup(false)}
+          role="presentation"
+        >
+          <div
+            className="p-4 overflow-hidden bg-white"
+            style={{
+              maxWidth: '400px',
+              width: '92%',
+              maxHeight: '88vh',
+              border: '1.3px solid black',
+              borderRadius: 0,
+              transform: 'translateY(-6px)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-labelledby="signed-forms-title"
+          >
+            <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+              <p id="signed-forms-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500, textAlign: 'left' }}>
+                SIGNED ORDER FORMS
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowSignedFormsPopup(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                aria-label="Close signed forms"
+              >
+                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 min-h-0" style={{ paddingLeft: '8px', paddingRight: '8px', paddingBottom: '16px' }}>
+              {signedFormsForSelectedClient.length === 0 ? (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '11px',
+                    color: '#808080',
+                    margin: 0,
+                    textAlign: 'center',
+                    padding: '20px 8px',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  NO SIGNED FORMS ON FILE FOR THIS CLIENT YET.
+                </p>
+              ) : (
+                signedFormsForSelectedClient.map((f) => <SignedOrderFormCard key={f.id} form={f} />)
+              )}
             </div>
           </div>
         </div>

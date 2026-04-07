@@ -12377,3 +12377,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/checkout/confirm/page.tsx`:** Same **tracking** bubble treatment and **ORDER TRACKING** before **REWARDS**; rewards fallback **no** **`accountUser.loyaltyPoints`** / **1290**; concierge block **`marginTop: 2px`**.
 
 **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin client details: view signed order forms
+
+**Context (this chat):** User asked for red **Futura PT Medium** line **VIEW SIGNED FORMS** under the **profile icon** in the **admin client details** toggle, opening a **popup** listing that client’s **signed** order authorization forms.
+
+**Changes:**
+- **`src/utils/signedOrderFormsStorage.ts`:** **`signedOrderFormsByEmail`** in localStorage; **`appendSignedOrderForm`**, **`getSignedFormsForClientDisplay`** (merges stored snapshots with orders where **`orderFormSigned`**); **`markOrderFormSignedInUserOrders`**; **`signedOrderFormsUpdated`** event on append.
+- **`src/pages/shop/order-form/page.tsx`:** On valid submit, persist snapshot (sanitized fields, photo/signature **data URLs**) + mark matching **`userOrders_*`** row **`orderFormSigned`**; **`ordersUpdated`** from marker.
+- **`src/pages/admin/clients/page.tsx`:** Link under avatar; modal with per-form cards; refresh on **`ordersUpdated`**, **`signedOrderFormsUpdated`**, **`storage`**; mock **`rawOrders`** first two get **`orderFormSigned`** for demo.
+- **`src/pages/orders/page.tsx`** / **`src/pages/checkout/confirm/page.tsx`:** Pass **`orderId`** / **`orderInternalId`** in **`navigate`** state to order form for storage linkage.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.

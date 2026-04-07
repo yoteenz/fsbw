@@ -8,6 +8,11 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  appendSignedOrderForm,
+  fileToDataUrl,
+  markOrderFormSignedInUserOrders,
+} from '../../../utils/signedOrderFormsStorage';
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -562,9 +567,45 @@ function OrderFormPage() {
       return;
     }
     
-    // Handle form submission here
-    console.log('Form submitted:', formData, { photoIdFile, lastFourDigitsFile });
-    // You can add navigation or success message here
+    void (async () => {
+      try {
+        const canvas = signatureCanvasRef.current;
+        const signatureDataUrl = canvas ? canvas.toDataURL('image/png') : '';
+        const photoIdDataUrl = photoIdFile ? await fileToDataUrl(photoIdFile) : '';
+        const cardLastFourDataUrl = lastFourDigitsFile ? await fileToDataUrl(lastFourDigitsFile) : '';
+        const stateData = location.state as { orderId?: string } | null | undefined;
+        const orderId = stateData?.orderId != null ? String(stateData.orderId) : undefined;
+        const cardDigits = formData.cardNumber.replace(/\D/g, '');
+        const formFields: Record<string, string> = {};
+        for (const [k, v] of Object.entries(formData)) {
+          if (k === 'cvv') continue;
+          if (k === 'cardNumber') {
+            formFields.cardNumber =
+              cardDigits.length >= 4 ? `ENDING IN ${cardDigits.slice(-4)}` : (v as string).trim();
+            continue;
+          }
+          formFields[k] = typeof v === 'string' ? v.trim() : String(v);
+        }
+        const entryId =
+          orderId ||
+          `form-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        appendSignedOrderForm({
+          id: entryId,
+          orderId,
+          orderNumber: formData.orderNumber.trim(),
+          orderDate: formData.orderDate.trim(),
+          signedAt: Date.now(),
+          email: formData.email.trim(),
+          formFields,
+          photoIdDataUrl: photoIdDataUrl || undefined,
+          cardLastFourDataUrl: cardLastFourDataUrl || undefined,
+          signatureDataUrl: signatureDataUrl || undefined,
+        });
+        markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
+      } catch (e) {
+        console.error('Order form persist failed:', e);
+      }
+    })();
   };
 
   return (

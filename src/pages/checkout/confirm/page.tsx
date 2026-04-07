@@ -1894,6 +1894,7 @@ function CheckoutConfirmPage() {
                   onClick={() => {
                     navigate('/tools/order-form', {
                       state: {
+                        orderId: (orderData as { orderInternalId?: string }).orderInternalId,
                         orderNumber: orderData.orderNumber,
                         orderDate: orderData.orderDate,
                         firstName: orderData.firstName,

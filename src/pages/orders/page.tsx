@@ -2355,6 +2355,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
                               if (currentUser) {
                                 customerData = {
+                                  orderId: order.id,
                                   orderNumber: orderNumber,
                                   orderDate: order.date,
                                   firstName: currentUser.firstName || '',
@@ -2368,6 +2369,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                 };
                               } else {
                                 customerData = {
+                                  orderId: order.id,
                                   orderNumber: orderNumber,
                                   orderDate: order.date
                                 };
