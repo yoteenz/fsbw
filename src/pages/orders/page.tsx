@@ -25,6 +25,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 
 interface OrderLineItem {
   productName: string;
@@ -64,6 +65,8 @@ interface Order {
   consultOfferRoute?: string;
   completedAt?: number;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
+  /** Loyalty points earned on this order (set at checkout); avoids falling back to account lifetime balance. */
+  pointsEarned?: number;
 }
 
 function OrdersPage() {
@@ -137,6 +140,13 @@ function OrdersPage() {
       window.removeEventListener('signInStateChanged', syncUser);
       window.removeEventListener('focus', syncUser);
     };
+  }, []);
+
+  const [reviewSubmissionUiBump, setReviewSubmissionUiBump] = useState(0);
+  useEffect(() => {
+    const bump = () => setReviewSubmissionUiBump((n) => n + 1);
+    window.addEventListener('reviewsUpdated', bump);
+    return () => window.removeEventListener('reviewsUpdated', bump);
   }, []);
 
   // Only mock profile chrome (not VIEW AS CLIENT) gets seeded test orders
@@ -1334,6 +1344,26 @@ function OrdersPage() {
     return st === '6months' || st === '12months';
   };
 
+  /** Points line on expanded card: use per-order checkout value when present; else estimate from order subtotal/total (not account lifetime balance). */
+  const displayLoyaltyPointsForExpandedOrder = (order: Order): number => {
+    const pe = (order as Order & { pointsEarned?: unknown }).pointsEarned;
+    if (typeof pe === 'number' && Number.isFinite(pe)) return Math.round(pe);
+    if (order.subtotal != null && Number.isFinite(Number(order.subtotal))) return Math.round(Number(order.subtotal));
+    if (order.total != null && Number.isFinite(Number(order.total))) return Math.round(Number(order.total));
+    return 0;
+  };
+
+  const ORDER_TRACK_BUBBLE_PX = 6;
+  const orderTrackBubbleStyle = (filled: boolean): React.CSSProperties => ({
+    width: ORDER_TRACK_BUBBLE_PX,
+    height: ORDER_TRACK_BUBBLE_PX,
+    borderRadius: '50%',
+    border: '1px solid #000',
+    background: filled ? '#EB1C24' : '#fff',
+    flexShrink: 0,
+    boxSizing: 'border-box'
+  });
+
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
     if (!orderUsesDigitalFulfillmentTimeline(order)) return null;
@@ -2029,20 +2059,28 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
                                          return (
-                                           <p
+                                           <div
                                              key={`${expandedOrder.id}-dig-${i}`}
                                              style={{
-                                               fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                               fontSize: '9px',
-                                               color: isCurrent ? '#EB1C24' : '#000',
-                                               margin: 0,
-                                               textTransform: 'uppercase'
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               gap: '6px',
+                                               margin: 0
                                              }}
                                            >
-                                             {isCurrent ? '● ' : '○ '}
-                                             {label}
-                                             {isCurrent ? ' · CURRENT' : ''}
-                                           </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
+                                             <p
+                                               style={{
+                                                 fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                                 fontSize: '9px',
+                                                 color: isCurrent ? '#EB1C24' : '#000',
+                                                 margin: 0,
+                                                 textTransform: 'uppercase'
+                                               }}
+                                             >
+                                               {label}
+                                             </p>
+                                           </div>
                                          );
                                        })}
                                      </div>
@@ -2155,32 +2193,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
-                           {/* REWARDS */}
-                           {currentUser && (
-                             <div style={{ marginBottom: '5px' }}>
-                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                   REWARDS
-                                 </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
-                               </div>
-                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
-                                   </p>
-                                   <span style={{
-                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
-                                     fontSize: '10px',
-                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
-                                     textTransform: 'uppercase'
-                                   }}>
-                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
-                                   </span>
-                                 </div>
-                               </div>
-                             </div>
-                           )}
                            {expandedOrder.status !== 'CANCELED' &&
                              expandedOrder.status !== 'CANCELLED' &&
                              !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
@@ -2209,11 +2221,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                            const isCurrent = i === st;
                                            return (
                                              <div key={`${expandedOrder.id}-st-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
+                                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                 <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
+                                                 <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                   {label}
+                                                 </p>
+                                               </div>
                                                {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
                                                    {note}
                                                  </p>
                                                ) : null}
@@ -2226,6 +2241,39 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  })()}
                                </div>
                              )}
+                           {/* REWARDS */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '5px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   REWARDS
+                                 </h2>
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                     {(() => {
+                                       const pts = displayLoyaltyPointsForExpandedOrder(expandedOrder);
+                                       return (
+                                         <>
+                                           YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pts.toLocaleString()}</span> LOYALTY POINTS{pts === 0 ? '.' : '!'}
+                                         </>
+                                       );
+                                     })()}
+                                   </p>
+                                   <span style={{
+                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                                     fontSize: '10px',
+                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
+                                     textTransform: 'uppercase'
+                                   }}>
+                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
                          </div>
                        );
                    }
@@ -2859,20 +2907,28 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
                                          return (
-                                           <p
+                                           <div
                                              key={`${expandedOrder.id}-dig-${i}`}
                                              style={{
-                                               fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                               fontSize: '9px',
-                                               color: isCurrent ? '#EB1C24' : '#000',
-                                               margin: 0,
-                                               textTransform: 'uppercase'
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               gap: '6px',
+                                               margin: 0
                                              }}
                                            >
-                                             {isCurrent ? '● ' : '○ '}
-                                             {label}
-                                             {isCurrent ? ' · CURRENT' : ''}
-                                           </p>
+                                             <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
+                                             <p
+                                               style={{
+                                                 fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                                 fontSize: '9px',
+                                                 color: isCurrent ? '#EB1C24' : '#000',
+                                                 margin: 0,
+                                                 textTransform: 'uppercase'
+                                               }}
+                                             >
+                                               {label}
+                                             </p>
+                                           </div>
                                          );
                                        })}
                                      </div>
@@ -2985,32 +3041,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                </div>
                              </div>
                            )}
-                           {/* REWARDS */}
-                           {currentUser && (
-                             <div style={{ marginBottom: '5px' }}>
-                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                   REWARDS
-                                 </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
-                               </div>
-                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                                     YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0).toLocaleString()}</span> LOYALTY POINTS{((expandedOrder as any).pointsEarned ?? currentUser?.loyaltyPoints ?? (expandedOrder.subtotal != null ? expandedOrder.subtotal : expandedOrder.total) ?? 0) === 0 ? '.' : '!'}
-                                   </p>
-                                   <span style={{
-                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
-                                     fontSize: '10px',
-                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
-                                     textTransform: 'uppercase'
-                                   }}>
-                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
-                                   </span>
-                                 </div>
-                               </div>
-                             </div>
-                           )}
                            {expandedOrder.status !== 'CANCELED' &&
                              expandedOrder.status !== 'CANCELLED' &&
                              !orderUsesDigitalFulfillmentTimeline(expandedOrder) &&
@@ -3039,11 +3069,14 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                            const isCurrent = i === st;
                                            return (
                                              <div key={`${expandedOrder.id}-st-arch-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
+                                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                 <span style={orderTrackBubbleStyle(isCurrent)} aria-hidden />
+                                                 <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                   {label}
+                                                 </p>
+                                               </div>
                                                {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35, paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px` }}>
                                                    {note}
                                                  </p>
                                                ) : null}
@@ -3056,6 +3089,39 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  })()}
                                </div>
                              )}
+                           {/* REWARDS */}
+                           {currentUser && (
+                             <div style={{ marginBottom: '5px' }}>
+                               <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                 <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                   REWARDS
+                                 </h2>
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                               </div>
+                               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                                     {(() => {
+                                       const pts = displayLoyaltyPointsForExpandedOrder(expandedOrder);
+                                       return (
+                                         <>
+                                           YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{pts.toLocaleString()}</span> LOYALTY POINTS{pts === 0 ? '.' : '!'}
+                                         </>
+                                       );
+                                     })()}
+                                   </p>
+                                   <span style={{
+                                     fontFamily: ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'RED' || ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase() === 'GOLD' ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                                     fontSize: '10px',
+                                     color: (() => { const t = ((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase(); if (t === 'RED') return '#EB1C24'; if (t === 'SILVER') return '#808080'; if (t === 'GOLD') return '#000000'; return '#808080'; })(),
+                                     textTransform: 'uppercase'
+                                   }}>
+                                     {((expandedOrder as any).tier || currentUser?.tier || 'SILVER').toUpperCase()} TIER
+                                   </span>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
                          </div>
                        </div>
                      );
@@ -3225,33 +3291,40 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
               </div>
               )}
 
-              {/* Leave a review - below Past Orders card, only when an archived order is expanded and delivered 24+ hours (same placement as other action buttons) */}
+              {/* Leave a review - archived only, 3 days after delivered through review window end (same top spacing as concierge) */}
               {(() => {
+                void reviewSubmissionUiBump;
                 const expandedArchived = expandedOrderId ? pastOrders.find(o => o.id === expandedOrderId) : null;
-                const showLeaveReview = expandedArchived?.status === 'DELIVERED' &&
+                const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+                const showLeaveReview =
+                  expandedArchived?.status === 'DELIVERED' &&
                   expandedArchived.deliveredAt != null &&
-                  (Date.now() - expandedArchived.deliveredAt >= 24 * 60 * 60 * 1000);
+                  Date.now() - expandedArchived.deliveredAt >= THREE_DAYS_MS;
                 if (!showLeaveReview || !expandedArchived) return null;
+                const allReviewed = allOrderLineItemsReviewed(expandedArchived.id, expandedArchived);
                 return (
                   <div className="px-0 w-full" style={{ marginTop: '-5px', marginBottom: '20px' }}>
                     <button
                       type="button"
-                      className="relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 uppercase"
+                      disabled={allReviewed}
+                      className={`relative z-10 border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white uppercase ${allReviewed ? 'cursor-default opacity-90' : 'cursor-pointer hover:bg-gray-50'}`}
                       style={{ borderWidth: '1.3px', color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}
-                      onClick={() => navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })}
+                      onClick={() =>
+                        !allReviewed &&
+                        navigate(`/account/orders/${expandedArchived.id}/review`, { state: { order: expandedArchived } })
+                      }
                     >
-                      LEAVE A REVIEW
+                      {allReviewed ? 'REVIEW(S) SUBMITTED' : 'LEAVE A REVIEW'}
                     </button>
                   </div>
                 );
               })()}
               {(() => {
                 if (!expandedOrderId || !currentUser || !showLongPremiumConciergeExtras(currentUser)) return null;
-                const expandedForConcierge =
-                  activeOrders.find((o) => o.id === expandedOrderId) || pastOrders.find((o) => o.id === expandedOrderId);
+                const expandedForConcierge = activeOrders.find((o) => o.id === expandedOrderId);
                 if (!expandedForConcierge) return null;
                 return (
-                  <div className="px-0 w-full" style={{ marginTop: '4px', marginBottom: '8px' }}>
+                  <div className="px-0 w-full" style={{ marginTop: '-5px', marginBottom: '8px' }}>
                     <button
                       type="button"
                       className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"

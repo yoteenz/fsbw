@@ -47,6 +47,19 @@ function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): bo
   return cartItems.every(isMembershipTierCartItem);
 }
 
+const ORDER_TRACK_BUBBLE_PX = 6;
+function orderTrackBubbleStyleConfirm(filled: boolean): React.CSSProperties {
+  return {
+    width: ORDER_TRACK_BUBBLE_PX,
+    height: ORDER_TRACK_BUBBLE_PX,
+    borderRadius: '50%',
+    border: '1px solid #000',
+    background: filled ? '#EB1C24' : '#fff',
+    flexShrink: 0,
+    boxSizing: 'border-box',
+  };
+}
+
 function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): number {
   return orderStripThumbMetrics(item, isSubscriptionUpgrade, { checkoutStrip: true }).cellWidthPx;
 }
@@ -1580,20 +1593,23 @@ function CheckoutConfirmPage() {
                         {labels.map((label, i) => {
                           const isCurrent = i === di;
                           return (
-                            <p
+                            <div
                               key={`confirm-dig-${i}`}
-                              style={{
-                                fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                fontSize: '9px',
-                                color: isCurrent ? '#EB1C24' : '#000',
-                                margin: 0,
-                                textTransform: 'uppercase',
-                              }}
+                              style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}
                             >
-                              {isCurrent ? '● ' : '○ '}
-                              {label}
-                              {isCurrent ? ' · CURRENT' : ''}
-                            </p>
+                              <span style={orderTrackBubbleStyleConfirm(isCurrent)} aria-hidden />
+                              <p
+                                style={{
+                                  fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                  fontSize: '9px',
+                                  color: isCurrent ? '#EB1C24' : '#000',
+                                  margin: 0,
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {label}
+                              </p>
+                            </div>
                           );
                         })}
                       </div>
@@ -1701,82 +1717,6 @@ function CheckoutConfirmPage() {
                 </div>
               </div>
 
-              {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match (hidden for premium membership — no points) */}
-              {(() => {
-                if (isPremiumMembershipSummary) return null;
-                let displayPoints: number | undefined;
-                let displayTier: string | undefined;
-                try {
-                  const raw = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutSummaryRewards') : null;
-                  if (raw) {
-                    const p = JSON.parse(raw);
-                    if (p.pointsEarned !== undefined && p.pointsEarned !== null) displayPoints = p.pointsEarned;
-                    if (p.tier != null && p.tier !== '') displayTier = p.tier;
-                  }
-                } catch (_) {}
-                if (displayPoints === undefined || displayTier === undefined) {
-                  try {
-                    const signedIn = typeof localStorage !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
-                    const currentUserRaw = typeof localStorage !== 'undefined' ? localStorage.getItem('currentUser') : null;
-                    const user = currentUserRaw ? JSON.parse(currentUserRaw) : null;
-                    const tier = getEffectiveTierName(user) || (user?.currentTierName || user?.tier || '')?.toString().toUpperCase() || null;
-                    const subTier = getEffectiveSubscriptionTier(user);
-                    const mult = getPointsMultiplier(tier, subTier).multiplier;
-                    let pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
-                      if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
-                      return sum + (item?.price || 0) * (item?.quantity || 1);
-                    }, 0);
-                    try {
-                      const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
-                      if (snap != null && snap !== '') {
-                        const n = parseFloat(String(snap));
-                        if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
-                      }
-                    } catch (_) {}
-                    const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
-                    if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
-                    if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
-                  } catch (_) {}
-                }
-                if (displayPoints === undefined) displayPoints = rewardsFromCheckout.pointsEarned ?? (location.state as any)?.pointsEarned ?? orderData.pointsEarned ?? accountUser?.loyaltyPoints ?? orderData.orderTotal ?? 1290;
-                if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
-                const tierUpper = String(displayTier).toUpperCase();
-                return (
-                <div style={{ marginBottom: '5px' }}>
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '12px',
-                        color: '#EB1C24',
-                        fontWeight: '500',
-                        textTransform: 'uppercase',
-                        margin: '0'
-                      }}
-                    >
-                      REWARDS
-                    </h2>
-                    <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
-                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{Number(displayPoints).toLocaleString()}</span> LOYALTY POINTS{Number(displayPoints) === 0 ? '.' : '!'}
-                      </p>
-                      <span style={{ 
-                        fontFamily: (tierUpper === 'RED' || tierUpper === 'GOLD') ? '"Futura PT Medium"' : '"Futura PT Demi"',
-                        fontSize: '10px', 
-                        color: tierUpper === 'RED' ? '#EB1C24' : tierUpper === 'SILVER' ? '#808080' : (tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '#000000' : '#808080',
-                        textTransform: 'uppercase' 
-                      }}>
-                        {tierUpper} TIER
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-              })()}
-
               {!isDigitalFulfillmentSummary &&
                 showLongPremiumConfirmSummary &&
                 !orderUsesDigitalFulfillmentTimeline(summaryOrderForTracking) && (
@@ -1822,19 +1762,20 @@ function CheckoutConfirmPage() {
                               const isCurrent = i === st;
                               return (
                                 <div key={`confirm-st-${i}`}>
-                                  <p
-                                    style={{
-                                      fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
-                                      fontSize: '9px',
-                                      color: isCurrent ? '#EB1C24' : '#000',
-                                      margin: 0,
-                                      textTransform: 'uppercase',
-                                    }}
-                                  >
-                                    {isCurrent ? '● ' : '○ '}
-                                    {label}
-                                    {isCurrent ? ' · CURRENT' : ''}
-                                  </p>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span style={orderTrackBubbleStyleConfirm(isCurrent)} aria-hidden />
+                                    <p
+                                      style={{
+                                        fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                        fontSize: '9px',
+                                        color: isCurrent ? '#EB1C24' : '#000',
+                                        margin: 0,
+                                        textTransform: 'uppercase',
+                                      }}
+                                    >
+                                      {label}
+                                    </p>
+                                  </div>
                                   {note ? (
                                     <p
                                       style={{
@@ -1844,6 +1785,7 @@ function CheckoutConfirmPage() {
                                         margin: '2px 0 0 0',
                                         textTransform: 'uppercase',
                                         lineHeight: 1.35,
+                                        paddingLeft: `${ORDER_TRACK_BUBBLE_PX + 6}px`,
                                       }}
                                     >
                                       {note}
@@ -1858,6 +1800,89 @@ function CheckoutConfirmPage() {
                     })()}
                   </div>
                 )}
+
+              {/* REWARDS - sessionStorage (from checkout) first, then compute from same logic as checkout so toggle + cart always match (hidden for premium membership — no points) */}
+              {(() => {
+                if (isPremiumMembershipSummary) return null;
+                let displayPoints: number | undefined;
+                let displayTier: string | undefined;
+                try {
+                  const raw = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutSummaryRewards') : null;
+                  if (raw) {
+                    const p = JSON.parse(raw);
+                    if (p.pointsEarned !== undefined && p.pointsEarned !== null) displayPoints = p.pointsEarned;
+                    if (p.tier != null && p.tier !== '') displayTier = p.tier;
+                  }
+                } catch (_) {}
+                if (displayPoints === undefined || displayTier === undefined) {
+                  try {
+                    const signedIn = typeof localStorage !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
+                    const currentUserRaw = typeof localStorage !== 'undefined' ? localStorage.getItem('currentUser') : null;
+                    const user = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+                    const tier = getEffectiveTierName(user) || (user?.currentTierName || user?.tier || '')?.toString().toUpperCase() || null;
+                    const subTier = getEffectiveSubscriptionTier(user);
+                    const mult = getPointsMultiplier(tier, subTier).multiplier;
+                    let pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
+                      if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
+                      return sum + (item?.price || 0) * (item?.quantity || 1);
+                    }, 0);
+                    try {
+                      const snap = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('checkoutLoyaltyBaseUsd') : null;
+                      if (snap != null && snap !== '') {
+                        const n = parseFloat(String(snap));
+                        if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
+                      }
+                    } catch (_) {}
+                    const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+                    if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
+                    if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
+                  } catch (_) {}
+                }
+                if (displayPoints === undefined) {
+                  displayPoints =
+                    rewardsFromCheckout.pointsEarned ??
+                    (location.state as any)?.pointsEarned ??
+                    orderData.pointsEarned ??
+                    orderData.orderTotal ??
+                    0;
+                }
+                if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
+                const tierUpper = String(displayTier).toUpperCase();
+                return (
+                <div style={{ marginBottom: '5px' }}>
+                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                    <h2
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '12px',
+                        color: '#EB1C24',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        margin: '0'
+                      }}
+                    >
+                      REWARDS
+                    </h2>
+                    <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000000', margin: '0', textTransform: 'uppercase' }}>
+                        YOU'VE EARNED <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>{Number(displayPoints).toLocaleString()}</span> LOYALTY POINTS{Number(displayPoints) === 0 ? '.' : '!'}
+                      </p>
+                      <span style={{ 
+                        fontFamily: (tierUpper === 'RED' || tierUpper === 'GOLD') ? '"Futura PT Medium"' : '"Futura PT Demi"',
+                        fontSize: '10px', 
+                        color: tierUpper === 'RED' ? '#EB1C24' : tierUpper === 'SILVER' ? '#808080' : (tierUpper === 'GOLD' || tierUpper === 'BLACK') ? '#000000' : '#808080',
+                        textTransform: 'uppercase' 
+                      }}>
+                        {tierUpper} TIER
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+              })()}
               </div>
             );
             })()}
@@ -1898,7 +1923,7 @@ function CheckoutConfirmPage() {
             )}
 
             {showLongPremiumConfirmSummary && (orderData as { orderInternalId?: string }).orderInternalId && (
-              <div className="px-0 w-full" style={{ marginTop: '4px', marginBottom: '12px' }}>
+              <div className="px-0 w-full" style={{ marginTop: '2px', marginBottom: '12px' }}>
                 <button
                   type="button"
                   className="relative z-10 border border-black w-full text-center py-2 bg-white cursor-pointer hover:bg-gray-50 uppercase"
