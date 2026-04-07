@@ -1767,7 +1767,7 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                height: 'auto',
                                marginBottom: '20px',
                                display: 'flex',
-                               justifyContent: 'flex-start'
+                               justifyContent: orderProducts.length === 1 ? 'center' : 'flex-start'
                              }}
                            >
                              <div
@@ -1779,7 +1779,7 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                  justifyContent: orderProducts.length === 1 ? 'center' : orderProducts.length === 2 ? 'center' : 'flex-start',
                                  paddingRight: '10px',
                                  paddingLeft: orderProducts.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                                 marginLeft: orderProducts.length >= 2 ? '-10px' : undefined,
+                                 marginLeft: orderProducts.length === 1 ? 0 : orderProducts.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProducts.map((product) => {
@@ -2002,8 +2002,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              </div>
                            )}
 
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
-                             orderUsesDigitalFulfillmentTimeline(expandedOrder) ? (
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -2042,58 +2041,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                </div>
-                             ) : (
-                               <div style={{ marginBottom: '20px' }}>
-                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                     ORDER TRACKING
-                                   </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
-                                 </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
-                                 </p>
-                                 <button
-                                   type="button"
-                                   onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
-                                   className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                                   style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
-                                 >
-                                   OPEN IN CONCIERGE
-                                 </button>
-                                 {(() => {
-                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
-                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
-                                   return (
-                                     <>
-                                       {shift !== 0 && (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
-                                         </p>
-                                       )}
-                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
-                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
-                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
-                                           return (
-                                             <div key={`${expandedOrder.id}-st-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
-                                               {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                                                   {note}
-                                                 </p>
-                                               ) : null}
-                                             </div>
-                                           );
-                                         })}
-                                       </div>
-                                     </>
-                                   );
-                                 })()}
-                               </div>
-                             )
                            )}
                            
                            {/* PAYMENT */}
@@ -2225,6 +2172,47 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  </div>
                                </div>
                              </div>
+                           )}
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && !orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
+                               <div style={{ marginBottom: '20px' }}>
+                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                     ORDER TRACKING
+                                   </h2>
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 </div>
+                                 {(() => {
+                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   return (
+                                     <>
+                                       {shift !== 0 && (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                         </p>
+                                       )}
+                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                           const isCurrent = i === st;
+                                           return (
+                                             <div key={`${expandedOrder.id}-st-${i}`}>
+                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
+                                               </p>
+                                               {note ? (
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                   {note}
+                                                 </p>
+                                               ) : null}
+                                             </div>
+                                           );
+                                         })}
+                                       </div>
+                                     </>
+                                   );
+                                 })()}
+                               </div>
                            )}
                          </div>
                        );
@@ -2605,7 +2593,7 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                height: 'auto',
                                marginBottom: '20px',
                                display: 'flex',
-                               justifyContent: 'flex-start'
+                               justifyContent: orderProductsArchived.length === 1 ? 'center' : 'flex-start'
                              }}
                            >
                              <div
@@ -2617,7 +2605,7 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                  justifyContent: orderProductsArchived.length === 1 ? 'center' : orderProductsArchived.length === 2 ? 'center' : 'flex-start',
                                  paddingRight: '10px',
                                  paddingLeft: orderProductsArchived.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                                 marginLeft: orderProductsArchived.length >= 2 ? '-10px' : undefined,
+                                 marginLeft: orderProductsArchived.length === 1 ? 0 : orderProductsArchived.length >= 2 ? '-10px' : undefined,
                                }}
                              >
                               {orderProductsArchived.map((product) => {
@@ -2840,8 +2828,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              </div>
                            )}
 
-                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && (
-                             orderUsesDigitalFulfillmentTimeline(expandedOrder) ? (
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
                                <div style={{ marginBottom: '20px' }}>
                                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
@@ -2880,58 +2867,6 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    );
                                  })()}
                                </div>
-                             ) : (
-                               <div style={{ marginBottom: '20px' }}>
-                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
-                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
-                                     ORDER TRACKING
-                                   </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
-                                 </div>
-                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '0 0 10px 0', textTransform: 'uppercase', lineHeight: 1.45 }}>
-                                   UPDATES FROM PRODUCTION. PREMIUM MEMBERS CAN ALSO USE CONCIERGE FOR LIVE DETAIL.
-                                 </p>
-                                 <button
-                                   type="button"
-                                   onClick={() => navigate(`/account/concierge?orderId=${expandedOrder.id}`)}
-                                   className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-                                   style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', textTransform: 'uppercase', color: '#EB1C24', borderWidth: '1.3px', marginBottom: '12px', backgroundColor: '#fff' }}
-                                 >
-                                   OPEN IN CONCIERGE
-                                 </button>
-                                 {(() => {
-                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
-                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
-                                   return (
-                                     <>
-                                       {shift !== 0 && (
-                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
-                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
-                                         </p>
-                                       )}
-                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
-                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
-                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
-                                           const isCurrent = i === st;
-                                           return (
-                                             <div key={`${expandedOrder.id}-st-${i}`}>
-                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
-                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
-                                               </p>
-                                               {note ? (
-                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
-                                                   {note}
-                                                 </p>
-                                               ) : null}
-                                             </div>
-                                           );
-                                         })}
-                                       </div>
-                                     </>
-                                   );
-                                 })()}
-                               </div>
-                             )
                            )}
                            
                            {/* PAYMENT */}
@@ -3063,6 +2998,47 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  </div>
                                </div>
                              </div>
+                           )}
+                           {expandedOrder.status !== 'CANCELED' && expandedOrder.status !== 'CANCELLED' && !orderUsesDigitalFulfillmentTimeline(expandedOrder) && (
+                               <div style={{ marginBottom: '20px' }}>
+                                 <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '10px', marginTop: '-12px' }}>
+                                   <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
+                                     ORDER TRACKING
+                                   </h2>
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 </div>
+                                 {(() => {
+                                   const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
+                                   const shift = Number((expandedOrder as Order).trackingTimelineShiftDays) || 0;
+                                   return (
+                                     <>
+                                       {shift !== 0 && (
+                                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px 0', textTransform: 'uppercase' }}>
+                                           TIMELINE ADJUSTMENT: {shift > 0 ? `+${shift}` : shift} DAY{Math.abs(shift) === 1 ? '' : 'S'}
+                                         </p>
+                                       )}
+                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
+                                         {ORDER_TRACKING_STAGE_LABELS.map((label, i) => {
+                                           const note = (expandedOrder as Order).trackingStageNotes?.[String(i)]?.trim();
+                                           const isCurrent = i === st;
+                                           return (
+                                             <div key={`${expandedOrder.id}-st-arch-${i}`}>
+                                               <p style={{ fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '9px', color: isCurrent ? '#EB1C24' : '#000', margin: 0, textTransform: 'uppercase' }}>
+                                                 {isCurrent ? '● ' : '○ '}{label}{isCurrent ? ' · CURRENT' : ''}
+                                               </p>
+                                               {note ? (
+                                                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase', lineHeight: 1.35 }}>
+                                                   {note}
+                                                 </p>
+                                               ) : null}
+                                             </div>
+                                           );
+                                         })}
+                                       </div>
+                                     </>
+                                   );
+                                 })()}
+                               </div>
                            )}
                          </div>
                        </div>

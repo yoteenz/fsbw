@@ -12347,3 +12347,13 @@ Verification: `tsc --noEmit`.
 - **`src/utils/api.ts`:** **`patchAdminReview(id, { status?, verifiedPurchase? })`**; **`postAdminReview`** body may include **`verifiedPurchase`**.
 
 Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Account orders expanded detail: layout + tracking position
+
+**Context:** User wanted to remove **“UPDATES FROM PRODUCTION…”** copy and **OPEN IN CONCIERGE** from expanded order; **single-item** product row **centered**; **ORDER TRACKING** block **after REWARDS** (not after **SHIPPING**).
+
+**File:** **`src/pages/orders/page.tsx`** — active + past expanded views: outer scroll **`justifyContent: center`** when one product; **`marginLeft: 0`** for single item; physical **ORDER TRACKING** moved below **REWARDS**; **ORDER STATUS** (digital) still after shipping; concierge paragraph + button removed.
+
+**`tsc --noEmit`**. Pushed **`preview/mobile`**.
