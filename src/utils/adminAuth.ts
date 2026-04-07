@@ -414,6 +414,9 @@ export function excludeFounderSeedMockOrders<T extends { id?: string; bawSeedMoc
 /** localStorage key for founder-privileged admin subscription override (Standard / 3 / 6 / 12 month) for testing UI across pages. */
 export const ADMIN_SUBSCRIPTION_OVERRIDE_KEY = 'adminSubscriptionOverride';
 
+/** Same-tab listeners: `storage` does not fire in the tab that wrote `adminSubscriptionOverride`. */
+export const MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT = 'membershipSubscriptionPreviewChanged';
+
 /** localStorage key for founder-privileged admin spend-tier override (SILVER / RED / BLACK) for testing UI and checkout logic across pages. */
 export const ADMIN_TIER_OVERRIDE_KEY = 'adminTierOverride';
 

@@ -20,6 +20,7 @@ import {
   getEffectiveTierName,
   ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
   ADMIN_TIER_OVERRIDE_KEY,
+  MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT,
   clearAppAuth,
   FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
   excludeFounderSeedMockOrders,
@@ -2509,6 +2510,7 @@ fontFamily: '"Futura PT Book"',
                                         onClick={() => {
                                           setAdminSubscriptionOverride(tier);
                                           localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+                                          window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
                                         }}
                                         style={{
                                           fontFamily: '"Futura PT Medium"',
@@ -2592,6 +2594,7 @@ fontFamily: '"Futura PT Book"',
                               onClick={() => {
                                 setAdminSubscriptionOverride(tier);
                                 localStorage.setItem(ADMIN_SUBSCRIPTION_OVERRIDE_KEY, tier);
+                                window.dispatchEvent(new CustomEvent(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT));
                               }}
                               style={{
                                 fontFamily: '"Futura PT Medium"',

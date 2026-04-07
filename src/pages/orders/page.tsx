@@ -5,12 +5,14 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import {
+  ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
   isMockDataAccount,
   isMockProfileChromeActive,
   readFounderAccountViewAsClientFromStorage,
   excludeFounderSeedMockOrders,
   clearAppAuth,
   getEffectiveSubscriptionTier,
+  MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT,
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
@@ -42,7 +44,6 @@ import {
 } from '../../utils/userOrdersBuckets';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
-import { isPremiumMemberForGatedFeatures } from '../../utils/premiumMemberAccess';
 
 interface OrderLineItem {
   productName: string;
@@ -168,6 +169,21 @@ function OrdersPage() {
     return () => window.removeEventListener('reviewsUpdated', bump);
   }, []);
 
+  /** Re-render A/C booking badges when membership / admin preview changes (`storage` skips same-tab writes). */
+  const [bookingBadgeMembershipBump, setBookingBadgeMembershipBump] = useState(0);
+  useEffect(() => {
+    const bump = () => setBookingBadgeMembershipBump((n) => n + 1);
+    window.addEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, bump as EventListener);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === ADMIN_SUBSCRIPTION_OVERRIDE_KEY) bump();
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT, bump as EventListener);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   // Only mock profile chrome (not VIEW AS CLIENT) gets seeded test orders
   const isMockOrdersAccount = () => isMockProfileChromeActive(currentUser);
 
@@ -218,14 +234,16 @@ function OrdersPage() {
   };
 
   /**
-   * A/C badge tier on this page: match **current account** (premium subscription and/or BLACK tier),
-   * same gate as cart/booking — not only `order.bookingTier` (often unset or wrong on older persisted orders).
+   * A/C badge tier: **current membership / subscription only** (`getEffectiveSubscriptionTier`), including
+   * founder **`adminSubscriptionOverride`**. Not spend tier (BLACK alone stays **standard** consult badge) and
+   * not `isPremiumMemberForGatedFeatures` (that mixes in BLACK for lobby gates).
    */
   const ordersPageBookingBadgeTierForViewer = (): 'premium' | 'standard' =>
-    isPremiumMemberForGatedFeatures() ? 'premium' : 'standard';
+    getEffectiveSubscriptionTier(currentUser) != null ? 'premium' : 'standard';
 
   /** List / expanded-row thumbnail: A/C booking orders use the same badge PNGs as the cart. */
   const ordersPageOrderThumbnailSrc = (order: Order): string => {
+    void bookingBadgeMembershipBump;
     const tier = ordersPageBookingBadgeTierForViewer();
     if (order.bookingFlowType === 'appointment') {
       return bookingCartItemThumbnailSrc({ type: 'booking-appointment', bookingTier: tier }) || order.productImage;
