@@ -27,6 +27,7 @@ import {
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
+import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
 import {
   AdminMeetingClientPanel,
   AdminMeetingClientPanelShell,
@@ -570,14 +571,27 @@ export default function AdminMeetingsHub() {
         label: 'ESTIMATED TOTAL',
         value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
       });
-      await postAdminConsultQuote({
+      const res = (await postAdminConsultQuote({
         clientEmail: email,
         unitKey: quoteUnit,
         selections: { unit: quoteUnit, subPage: quoteSub },
         priceBreakdown: breakdown,
         adminMessage: quoteMessage,
         thumbnailSrc: '/assets/NOIR/noir-thumb.png',
-      });
+      })) as { quote?: { id?: string } };
+      const quoteId = String(res?.quote?.id || '').trim();
+      const orderRef = String(
+        (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
+          ? quoteMeeting.metadata.orderNumber
+          : '') || ''
+      ).trim();
+      if (quoteId && orderRef) {
+        markConsultOrderCompleteAfterQuoteSent({
+          clientEmail: email,
+          orderNumberFromCheckout: orderRef,
+          consultQuoteId: quoteId,
+        });
+      }
       setQuoteMeeting(null);
       setShowSendQuoteConfirm(false);
       setHubNotice('QUOTE SENT — CLIENT ALERT CREATED.');

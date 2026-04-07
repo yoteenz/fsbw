@@ -42,6 +42,7 @@ import {
   orderStatusIsCanceled,
   sortOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
+import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrderLifecycle';
 import { orderRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
@@ -84,6 +85,10 @@ interface Order {
   digitalFulfillmentOnly?: boolean;
   /** When status is COMPLETE (digital flow), optional deep link for "VIEW OFFER" (e.g. consult quote). */
   consultOfferRoute?: string;
+  /** Consult: when status moved PLACED → PROCESSING after 24h. */
+  consultProcessingStartedAt?: number;
+  /** Consult: linked admin quote id after offer sent. */
+  consultQuoteId?: string;
   completedAt?: number;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
   /** Loyalty points earned on this order (set at checkout); avoids falling back to account lifetime balance. */
@@ -763,6 +768,10 @@ function OrdersPage() {
           activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
           pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
         };
+        const consultAdvanced = {
+          activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
+          pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+        };
         try {
           const sortedNormOnly = {
             activeOrders: sortOrdersNewestFirst(norm.activeOrders),
@@ -772,12 +781,13 @@ function OrdersPage() {
             JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders }) !==
             JSON.stringify(sortedNormOnly);
           const needsFilterPersist = JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted);
-          if (needsSortPersist || needsFilterPersist) {
-            localStorage.setItem(userOrdersKey, JSON.stringify(sorted));
+          const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
+          if (needsSortPersist || needsFilterPersist || needsConsultPersist) {
+            localStorage.setItem(userOrdersKey, JSON.stringify(consultAdvanced));
             window.dispatchEvent(new CustomEvent('ordersUpdated'));
           }
         } catch (_) {}
-        return sorted;
+        return consultAdvanced;
       }
     } catch (e) {
       console.error('Error loading user orders:', e);
@@ -887,6 +897,27 @@ function OrdersPage() {
       bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
+    },
+    {
+      id: 'kateena-consult-2',
+      orderNumber: 'ORDER #331',
+      confirmationNumber: 'K3C3Q1',
+      date: getDateDaysAgo(2),
+      status: 'PROCESSING',
+      productName: 'WIG CONSULT',
+      productImage: '/assets/gallery-mock.png',
+      total: 40,
+      subtotal: 40,
+      items: 1,
+      trackingNumber: undefined,
+      trackingCarrier: undefined,
+      placedAt: Date.now() - (30 * 60 * 60 * 1000),
+      consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
+      orderFormSigned: false,
+      bookingFlowType: 'consult',
+      bookingTier: 'standard',
+      bookingHairOption: 'WIG ONLY',
+      consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
     }
   ];
 
@@ -1053,7 +1084,10 @@ function OrdersPage() {
         const useMock = parsedUser ? isMockProfileChromeActive(parsedUser) : false;
         let ordersData: { activeOrders: Order[]; pastOrders: Order[] };
         if (useMock) {
-          ordersData = { activeOrders: kateenaMockActiveOrders, pastOrders: kateenaMockPastOrders };
+          ordersData = {
+            activeOrders: advanceConsultOrdersPlacedToProcessing(kateenaMockActiveOrders),
+            pastOrders: advanceConsultOrdersPlacedToProcessing(kateenaMockPastOrders),
+          };
         } else {
           ordersData = parsedUser?.email
             ? (() => {
@@ -1078,26 +1112,35 @@ function OrdersPage() {
                       activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
                       pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
                     };
+                    const consultAdvanced = {
+                      activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
+                      pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+                    };
                     const sortedNormOnly = {
                       activeOrders: sortOrdersNewestFirst(norm.activeOrders),
                       pastOrders: sortOrdersNewestFirst(norm.pastOrders),
                     };
+                    const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
                     if (
                       sorted.activeOrders.length !== activeOrders.length ||
                       sorted.pastOrders.length !== pastOrders.length ||
                       norm.activeOrders.length !== activeOrders.length ||
                       norm.pastOrders.length !== pastOrders.length ||
-                      JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted)
+                      JSON.stringify(sortedNormOnly) !== JSON.stringify(sorted) ||
+                      needsConsultPersist
                     ) {
                       try {
                         localStorage.setItem(
                           key,
-                          JSON.stringify({ activeOrders: sorted.activeOrders, pastOrders: sorted.pastOrders })
+                          JSON.stringify({
+                            activeOrders: consultAdvanced.activeOrders,
+                            pastOrders: consultAdvanced.pastOrders,
+                          })
                         );
                         window.dispatchEvent(new CustomEvent('ordersUpdated'));
                       } catch (_) {}
                     }
-                    return sorted;
+                    return consultAdvanced;
                   }
                 } catch (_) {}
                 return { activeOrders: [], pastOrders: [] };
@@ -1360,6 +1403,17 @@ function OrdersPage() {
       setCountdownTick(prev => prev + 1);
     }, 1000);
 
+    return () => clearInterval(interval);
+  }, []);
+
+  // Consult checkout: after 24h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
+  useEffect(() => {
+    const tick = () => {
+      setActiveOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
+      setPastOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
+    };
+    tick();
+    const interval = setInterval(tick, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -2512,8 +2566,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
-                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
@@ -2734,8 +2788,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               {order.orderNumber}:{' '}
                             </span>
                             <span style={{ 
-                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '#EB1C24' : '#808080',
-                              fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                              color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                              fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
                               {order.status === 'PLACED' &&
                               order.orderFormSigned &&
@@ -3375,8 +3429,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2' }}>
                              <span style={{ color: '#EB1C24' }}>STATUS: </span>
                              <span style={{ 
-                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '#EB1C24' : '#808080',
-                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
+                               color: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '#EB1C24' : '#808080',
+                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'DELIVERED' || order.status === 'COMPLETE' || order.status === 'CANCELED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                              }}>{order.status}</span>
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
