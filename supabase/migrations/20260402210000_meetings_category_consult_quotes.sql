@@ -37,6 +37,8 @@ create index if not exists consult_quotes_expires_at on public.consult_quotes(ex
 
 alter table public.consult_quotes enable row level security;
 
+drop policy if exists "Users read own consult quotes" on public.consult_quotes;
+
 create policy "Users read own consult quotes"
   on public.consult_quotes for select
   using (auth.uid() = user_id);

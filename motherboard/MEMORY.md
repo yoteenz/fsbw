@@ -12549,3 +12549,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to push all work from **`preview/mobile`** to **`master`**.
 
 **Changes:** Checked out **`master`**, pulled **`origin/master`**, fast-forward merged **`preview/mobile`** (no merge commit; **`master`** advanced **`e68c284` → `e07924a`**), pushed **`origin/master`**. **`preview/mobile`** and **`master`** now share tip **`e07924a`**.
+
+---
+
+## 2026-04-08 — Supabase migration: consult_quotes policy idempotent
+
+**Context:** User ran **`20260402210000_meetings_category_consult_quotes.sql`** in Supabase SQL Editor and hit **`42710`**: policy **`Users read own consult quotes`** already exists (partial / repeat run).
+
+**Changes:** **`supabase/migrations/20260402210000_meetings_category_consult_quotes.sql`** — **`drop policy if exists "Users read own consult quotes" on public.consult_quotes;`** immediately before **`create policy`** so the migration is safe to re-run.
