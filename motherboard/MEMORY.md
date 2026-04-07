@@ -12517,3 +12517,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to remove the **“1 ITEM”** / item-count line from **appointment/consult** orders only on the Account Orders page (active + archived lists).
 
 **Changes:** **`src/pages/orders/page.tsx`** — render the Covered By Your Grace **`{order.items} ITEM(S)`** paragraph only when **`bookingFlowType`** is not **`appointment`** or **`consult`**; **`ordersPageListItemsLabelMarginTopPx`** is a constant **2px** (A/C-specific negative margin removed). **`npx tsc --noEmit`**. Commit **`2de6d82`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Account orders: A/C thumbnails +10%
+
+**Context (this chat):** User asked to increase **appointment/consult** thumbnail size on the Account Orders page by **10%** (vs prior **0.65** of wig thumb size).
+
+**Changes:** **`src/pages/orders/page.tsx`** — **`ORDER_AC_THUMB_SCALE = 0.65 * 1.1`** (**0.715**) for **`ORDER_AC_LIST_THUMB_PX`** and **`ORDER_AC_EXPANDED_PRODUCT_THUMB_PX`**. **`npx tsc --noEmit`**. Commit **`5085ded`**. Pushed **`preview/mobile`**.
