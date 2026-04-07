@@ -14,6 +14,7 @@ export const ORDER_TRACKING_PULSATE_ANIMATION = 'orderTrackingPulsate 1s ease-in
 
 import { getAccountNotifications, mergeAccountNotifications } from '../pages/account/notifications/page';
 import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
+import { orderRequiresOrderAuthorizationForm } from './orderAuthorizationForm';
 
 /** Nine pipeline stages (indices 0–8); labels match Concierge ORDER TRACKING UI. */
 export const ORDER_TRACKING_STAGE_LABELS = [
@@ -192,7 +193,11 @@ export function getOrderTrackingStageFromOrder(order: Record<string, unknown> | 
 
   const st = String(order.status || '').toUpperCase();
   const baseStage = statusMap[st] ?? 0;
-  if ((st === 'PLACED' || st === 'CONFIRMED') && order.orderFormSigned === true) {
+  if (
+    (st === 'PLACED' || st === 'CONFIRMED') &&
+    order.orderFormSigned === true &&
+    orderRequiresOrderAuthorizationForm(order)
+  ) {
     return Math.max(1, baseStage);
   }
   return baseStage;

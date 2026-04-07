@@ -37,6 +37,7 @@ import {
   orderTrackingStageRowIsCurrent,
   orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
+import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -272,6 +273,13 @@ function CheckoutConfirmPage() {
   /** No order form or shipping-style tracking on summary: membership, A/C bookings, gift cards, other digital lines. */
   const isDigitalFulfillmentSummary =
     isPremiumMembershipSummary || isBookingsOnlyOrder || isOnlyDigitalProductsSummary;
+
+  /** Units / BCF bundles|closures|frontals only — from navigate state or recomputed from cart. */
+  const summaryRequiresOrderAuthorizationForm = React.useMemo(() => {
+    const v = (orderData as { requiresOrderAuthorizationForm?: boolean } | null)?.requiresOrderAuthorizationForm;
+    if (v === true || v === false) return v;
+    return cartRequiresOrderAuthorizationForm(cartItems);
+  }, [orderData, cartItems]);
 
   const showLongPremiumConfirmSummary = React.useMemo(() => {
     try {
@@ -1456,8 +1464,10 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   <>THANK YOU! YOUR <span style={{ color: '#EB1C24' }}>PREMIUM MEMBERSHIP</span> PURCHASE IS COMPLETE.<br />ACCESS AND BENEFITS WILL REFLECT ON YOUR ACCOUNT SHORTLY.</>
                 ) : isDigitalFulfillmentSummary ? (
                   <>THANK YOU! YOUR ORDER IS <span style={{ color: '#EB1C24' }}>PLACED</span>. STATUS MOVES <span style={{ color: '#EB1C24' }}>PLACED → PROCESSING → COMPLETE</span> ON YOUR ORDERS PAGE — NO SHIPPING OR ORDER FORM FOR THIS PURCHASE.</>
-                ) : (
+                ) : summaryRequiresOrderAuthorizationForm ? (
                   <>YOUR ORDER IS BEING PROCESSED BUT YOU'RE NOT FINISHED YET.<br/>YOU STILL NEED TO <span style={{ color: '#EB1C24' }}>COMPLETE + SIGN</span> AN ORDER FORM WITHIN 24 HOURS OR YOUR ORDER WILL BE <span style={{ color: '#EB1C24' }}>CANCELED + REFUNDED</span>.</>
+                ) : (
+                  <>THANK YOU! YOUR ORDER IS <span style={{ color: '#EB1C24' }}>PLACED</span>. VIEW STATUS ON YOUR ORDERS PAGE.</>
                 )}
               </p>
               </div>
@@ -1926,7 +1936,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
             })()}
 
             {/* Sign Order Form — below summary card (aligned with Orders expanded flow) */}
-            {!showMobileMenu && !isDigitalFulfillmentSummary && (
+            {!showMobileMenu && !isDigitalFulfillmentSummary && summaryRequiresOrderAuthorizationForm && (
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {

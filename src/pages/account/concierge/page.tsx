@@ -9,6 +9,7 @@ import { calculateSpecialOfferPrice } from '../../../utils/specialOfferPrice';
 import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
+import { orderRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
@@ -3304,7 +3305,12 @@ function ConciergePage() {
                                 // 1. Status is explicitly 'CANCELED', OR
                                 // 2. Status is 'PLACED' with form not signed AND past 24 hours
                                 let isCanceled = selectedOrder?.status === 'CANCELED';
-                                if (!isCanceled && selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned) {
+                                if (
+                                  !isCanceled &&
+                                  selectedOrder?.status === 'PLACED' &&
+                                  !selectedOrder?.orderFormSigned &&
+                                  orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
+                                ) {
                                   // Check if 24 hours have passed since order was placed
                                   const placedAt = selectedOrder?.placedAt;
                                   if (placedAt) {
@@ -3330,7 +3336,11 @@ function ConciergePage() {
                                     }
                                   }
                                 }
-                                const isAwaitingSignature = selectedOrder?.status === 'PLACED' && !selectedOrder?.orderFormSigned && !isCanceled;
+                                const isAwaitingSignature =
+                                  selectedOrder?.status === 'PLACED' &&
+                                  !selectedOrder?.orderFormSigned &&
+                                  !isCanceled &&
+                                  orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>);
                                 
                                 // Check if this is the last stage and order is delivered
                                 const isLastStage = index === 8; // ORDER SHIPPED is the last stage
@@ -3390,7 +3400,11 @@ function ConciergePage() {
                                   }
                                   
                                   // Special case: confirmed stage (index 0) is completed if form is signed
-                                  if (index === 0 && selectedOrder?.orderFormSigned === true) {
+                                  if (
+                                    index === 0 &&
+                                    selectedOrder?.orderFormSigned === true &&
+                                    orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
+                                  ) {
                                     isCompleted = true;
                                   }
                                   
@@ -3405,7 +3419,11 @@ function ConciergePage() {
                                 let durationText = '';
                                 if (index === 0) {
                                   // Confirmed stage: show duration based on form signature status
-                                  const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                  const needsAuthForm = orderRequiresOrderAuthorizationForm(
+                                    selectedOrder as unknown as Record<string, unknown>
+                                  );
+                                  const isFormSigned =
+                                    needsAuthForm && selectedOrder?.orderFormSigned === true;
                                   const orderDate = selectedOrder?.date;
                                   const placedAt = selectedOrder?.placedAt;
                                   
@@ -3435,11 +3453,13 @@ function ConciergePage() {
                                   }
                                   
                                   // Special handling for confirmed stage progress - awaiting signature should be 50%
-                                  if (!isFormSigned && !isPastTimeLimit) {
+                                  if (needsAuthForm && !isFormSigned && !isPastTimeLimit) {
                                     progress = 50; // Awaiting signature: show 50% progress
                                   }
                                   
-                                  if (isFormSigned) {
+                                  if (!needsAuthForm) {
+                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                  } else if (isFormSigned) {
                                     durationText = '2 DAYS';
                                   } else if (isPastTimeLimit) {
                                     durationText = 'INCOMPLETE';
@@ -4049,6 +4069,34 @@ function ConciergePage() {
                                           if (index !== 1 && index !== 2 && index !== 6 && index !== 7 && index !== 8) {
                                             // Confirmed stage (index 0) uses form icon with form and sign/signed text
                                             if (index === 0) {
+                                              const needsAuthFormRow = orderRequiresOrderAuthorizationForm(
+                                                selectedOrder as unknown as Record<string, unknown>
+                                              );
+                                              if (!needsAuthFormRow) {
+                                                const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
+                                                const textureIconTop =
+                                                  productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
+                                                return (
+                                                  <div
+                                                    style={{
+                                                      display: 'flex',
+                                                      gap: '8px',
+                                                      marginBottom: '12px',
+                                                      flexWrap: 'wrap',
+                                                      justifyContent: 'flex-start',
+                                                      marginLeft: '2px',
+                                                    }}
+                                                  >
+                                                    {renderIconBox(
+                                                      'TEXTURE',
+                                                      getTextureIcon(productName),
+                                                      'SILKY',
+                                                      textureIconSize,
+                                                      textureIconTop
+                                                    )}
+                                                  </div>
+                                                );
+                                              }
                                               const isFormSigned = selectedOrder?.orderFormSigned === true;
                                               const orderDate = selectedOrder?.date;
                                               const placedAt = selectedOrder?.placedAt;
@@ -4330,6 +4378,15 @@ function ConciergePage() {
                                                 {(() => {
                                                   // Special handling for confirmed stage (index 0)
                                                   if (index === 0) {
+                                                    const needsAuthStatus = orderRequiresOrderAuthorizationForm(
+                                                      selectedOrder as unknown as Record<string, unknown>
+                                                    );
+                                                    if (!needsAuthStatus) {
+                                                      if (isDeliveredLastStage) return 'STATUS: DELIVERED';
+                                                      if (isCompleted || progress >= 100) return 'STATUS: COMPLETE';
+                                                      if (progress > 0) return `STATUS: ${Math.round(progress)}% COMPLETE`;
+                                                      return `STATUS: ${Math.round(progress)}% COMPLETE`;
+                                                    }
                                                     const isFormSigned = selectedOrder?.orderFormSigned === true;
                                                     const orderDate = selectedOrder?.date;
                                                     const placedAt = selectedOrder?.placedAt;

@@ -55,6 +55,7 @@ import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNe
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -2486,7 +2487,8 @@ function CheckoutPage() {
               cartItems: cartItems,
               pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
               tier: effectiveTier,
-              isSubscriptionUpgrade
+              isSubscriptionUpgrade,
+              requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
             }
           });
         }
@@ -6330,6 +6332,7 @@ function CheckoutPage() {
                                 : 'booking-consult',
                             bookingTier: bookingTierPersist,
                           });
+                        const requiresOrderAuthorizationForm = cartRequiresOrderAuthorizationForm(cartItems as any[]);
                         const newOrder = {
                           id: `order-${nextOrderNumber}`,
                           orderNumber: `ORDER ${orderNumber}`,
@@ -6342,6 +6345,7 @@ function CheckoutPage() {
                           items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
                           placedAt: Date.now(),
                           pointsEarned,
+                          requiresOrderAuthorizationForm,
                           ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
                           ...(bookingFlowTypePersist
                             ? {
@@ -6518,7 +6522,8 @@ function CheckoutPage() {
                         pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
                         tier: effectiveTierSummary,
                         cartItems: cartItems,
-                        isSubscriptionUpgrade
+                        isSubscriptionUpgrade,
+                        requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
                       }
                     });
                   })();
