@@ -12597,3 +12597,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked that **membership subscriptions/upgrades**, **gift cards**, and **other digital** checkout lines **not** earn loyalty points (with consult already excluded).
 
 **Changes:** **`loyaltyPointsEligibleNet.ts`** — **`isMembershipSubscriptionCartLine`** (**`subscriptionTier`** **3/6/12** months or legacy **`digital`** + name pattern), **`cartHasAnyLoyaltyEarningLine`**; membership lines skipped in gross loops like gift/digital. **`computePointsEligibleNetUsd`** returns **0** when no earning lines. **`checkout/page.tsx`** — **`pointsEligibleNetAmount`** + **`pointsEarned`** / **`checkoutSummaryRewards`** gated by **`!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine`**. **`checkout/confirm/page.tsx`** — **`isMembershipTierCartItem`** delegates to shared helper; reduces + rewards block skip membership + force **0** when no earning lines. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout: hide loyalty row when cart earns no points
+
+**Context (this chat):** User asked to remove the **“YOU'RE EARNING…”** line at checkout for carts that don’t earn loyalty points (digital / gift / membership / consult-only, etc.).
+
+**Changes:** **`checkout/page.tsx`** — loyalty block (signed-in copy + **SIGN IN** CTA) renders only when **`cartHasAnyLoyaltyEarningLine(cartItems)`**; black separator **`marginTop`** **-14px** when loyalty row hidden (same as subscription upgrade). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
