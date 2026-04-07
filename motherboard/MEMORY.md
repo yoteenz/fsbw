@@ -12565,3 +12565,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User wanted **edit booking** and **edit consult** icons on the **right** of client panels on the **Appointments** tab (client details toggle), matching **A/C** tabs on **admin meetings**.
 
 **Changes:** **`adminMeetingsFocusSession.ts`** — **`store` / `read` / `clear`** for **`adminMeetingsFocusFromClientDetails`** (**meeting id** + **date**). **`adminMeetingClientPanels.tsx`** — optional **`actionIconSrc`** (default booking SVG). **`admin/clients/page.tsx`** — **`actionAriaLabel`**, **`actionIconSrc`** (**booking** vs **consult**), **`onActionClick`** stores focus + **`navigate('/admin/meetings?tab=…')`**. **`AdminMeetingsHub.tsx`** — on load, align **`calendarAnchor`** to focus date, then **`setEditMeeting`** / **`setQuoteMeeting`** + **`setSelectedDay`** for bookings; **consults** use **`edit-meeting-icon.svg`** on hub list. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo same frame as booking consult upload
+
+**Context (this chat):** User wanted consult **order tracking** hair inspo photos to use the **same border treatment** as **attached hair inspo** on the booking flow (**`/booking/consultation`** thumbs: white ring + black hairline) and **uniform** thumb size.
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — shared **88×88** outer + inner frame (**`padding: 1px`**, **`border: 3px solid white`**, **`boxShadow: 0 0 0 1.1px black`**, **`#f5f5f5`** fill, **`object-fit: cover`**) + **`BookingConsultHairInspoThumb`**. **`consultation/page.tsx`** uses shared constants/styles. **`concierge/page.tsx`** replaces **50×80** black-border thumbs with **`BookingConsultHairInspoThumb`**, **`gap: 13px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
