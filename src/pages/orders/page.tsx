@@ -228,6 +228,17 @@ function OrdersPage() {
     return order.productImage;
   };
 
+  const ORDER_LIST_THUMB_PX = 102;
+  /** A/C booking badge thumbs: 35% smaller than wig list thumbnails (102 × 0.65). */
+  const ORDER_AC_LIST_THUMB_PX = Math.round(ORDER_LIST_THUMB_PX * 0.65);
+  const ordersPageListThumbnailSizePx = (order: Order): number =>
+    order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult'
+      ? ORDER_AC_LIST_THUMB_PX
+      : ORDER_LIST_THUMB_PX;
+
+  const ORDER_EXPANDED_PRODUCT_THUMB_PX = 120;
+  const ORDER_AC_EXPANDED_PRODUCT_THUMB_PX = Math.round(ORDER_EXPANDED_PRODUCT_THUMB_PX * 0.65);
+
   // Hair origin by product (matches cart for "X RAW Y" line)
   const getHairOrigin = (productName: string): string => {
     switch (productName.toUpperCase()) {
@@ -1916,6 +1927,11 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
                                 const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                const expandedProductThumbPx =
+                                  expandedOrder.bookingFlowType === 'appointment' ||
+                                  expandedOrder.bookingFlowType === 'consult'
+                                    ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
+                                    : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
                                 <div
                                   key={product.id}
@@ -1935,8 +1951,8 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                                      alt={product.name}
                                      onClick={() => navigate(getProductRoute(product.name))}
                                      style={{
-                                       width: '120px',
-                                       height: '120px',
+                                       width: `${expandedProductThumbPx}px`,
+                                       height: `${expandedProductThumbPx}px`,
                                        objectFit: 'contain',
                                        cursor: 'pointer'
                                      }}
@@ -2396,8 +2412,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
-                                 width: '102px',
-                                 height: '102px',
+                                 width: `${ordersPageListThumbnailSizePx(order)}px`,
+                                 height: `${ordersPageListThumbnailSizePx(order)}px`,
                                  objectFit: 'contain'
                                }}
                              />
@@ -2766,6 +2782,11 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                 const opts = product.options || {};
                                 const lengthVal = opts.length || '24"';
                                 const nonDefaultDetails = getNonDefaultDetailLines(product.name, opts);
+                                const expandedArchivedThumbPx =
+                                  expandedOrder.bookingFlowType === 'appointment' ||
+                                  expandedOrder.bookingFlowType === 'consult'
+                                    ? ORDER_AC_EXPANDED_PRODUCT_THUMB_PX
+                                    : ORDER_EXPANDED_PRODUCT_THUMB_PX;
                                 return (
                                 <div
                                   key={product.id}
@@ -2785,8 +2806,8 @@ const orderProductsArchived = expandedOrder.lineItems && expandedOrder.lineItems
                                      alt={product.name}
                                      onClick={() => navigate(getProductRoute(product.name))}
                                      style={{
-                                       width: '120px',
-                                       height: '120px',
+                                       width: `${expandedArchivedThumbPx}px`,
+                                       height: `${expandedArchivedThumbPx}px`,
                                        objectFit: 'contain',
                                        cursor: 'pointer'
                                      }}
@@ -3238,8 +3259,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                src={ordersPageOrderThumbnailSrc(order)}
                                alt={order.productName}
                                style={{
-                                 width: '102px',
-                                 height: '102px',
+                                 width: `${ordersPageListThumbnailSizePx(order)}px`,
+                                 height: `${ordersPageListThumbnailSizePx(order)}px`,
                                  objectFit: 'contain'
                                }}
                              />
