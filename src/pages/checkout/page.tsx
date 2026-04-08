@@ -781,12 +781,24 @@ function CheckoutPage() {
     loadCartItems();
   }, [location.pathname]);
 
-  /** Isolated gift-card checkout with nothing to buy → back to gift card product page. */
+  /**
+   * Isolated gift-card checkout with nothing to buy → back to gift card PDP.
+   * Must not use initial `cartItems.length === 0` only: on first paint state is still empty
+   * before `loadCartItems` runs, which incorrectly bounced users off `/checkout/gift-card`.
+   */
   useEffect(() => {
     if (!isGiftCardCheckoutRoute) return;
-    if (cartItems.length > 0) return;
+    let giftLines: unknown[] = [];
+    try {
+      const stored = localStorage.getItem('cartItems');
+      const parsed = stored ? JSON.parse(stored) : [];
+      giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      /* ignore */
+    }
+    if (giftLines.length > 0) return;
     navigate('/tools/gift-card', { replace: true });
-  }, [isGiftCardCheckoutRoute, cartItems.length, navigate]);
+  }, [isGiftCardCheckoutRoute, navigate, cartItems.length]);
 
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
   const goBackToMembershipUpgradeChart = useCallback(() => {
