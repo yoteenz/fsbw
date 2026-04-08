@@ -1430,7 +1430,9 @@ function OrdersPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-cancel PLACED orders after 24 hours if authorization form not signed
+  // Auto-cancel PLACED orders after 24h if the client never signed/submitted the auth form.
+  // If they did submit (orderFormSigned + clientSubmitted, admin not approved yet), we show
+  // "ORDER FORM PENDING ADMIN APPROVAL" and do NOT 24h-cancel—admin approve/decline handles it.
   useEffect(() => {
     const checkAndCancelExpired = () => {
       const now = Date.now();
@@ -2807,7 +2809,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                 {order.orderNumber}:{' '}
                               </span>
                               <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
-                                PENDING ADMIN APPROVAL
+                                ORDER FORM PENDING ADMIN APPROVAL
                               </span>
                             </span>
                           );
@@ -2874,7 +2876,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               {order.status === 'PLACED' &&
                               orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                               orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
-                                ? 'PENDING ADMIN APPROVAL'
+                                ? 'ORDER FORM PENDING ADMIN APPROVAL'
                                 : order.status === 'PLACED' &&
                                     order.orderFormSigned &&
                                     !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
