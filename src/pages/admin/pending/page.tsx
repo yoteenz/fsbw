@@ -32,6 +32,13 @@ import {
   type PendingMockAffiliateItem,
   type PendingMockReview,
 } from '../../../utils/adminPendingMockQueues';
+import { AdminReviewStyleCard } from '../../../components/admin/AdminReviewStyleCard';
+import {
+  compactRegionCodeForReviewHeader,
+  regionParenLabelFromAddressLine,
+  usStateAbbrevFromAddressLine,
+} from '../../../utils/usAddressStateDisplay';
+import { getMockClientsForAyoteenz } from '../clients/page';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -39,10 +46,103 @@ const rowStyle = {
   borderBottom: '1px solid #e5e7eb' as const,
 };
 
-type PendingAdminModal =
-  | { kind: 'form'; item: StoredSignedOrderForm }
-  | { kind: 'review'; item: PendingMockReview }
-  | { kind: 'affiliate'; item: PendingMockAffiliateItem };
+type PendingAdminModal = { kind: 'form'; item: StoredSignedOrderForm } | { kind: 'review'; item: PendingMockReview };
+
+const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
+
+function normalizeEmailKey(email: string): string {
+  return (email || '').trim().toLowerCase();
+}
+
+function orderSummaryForPendingForm(form: StoredSignedOrderForm): { line: string; priceUsd: number } {
+  const email = normalizeEmailKey(form.email);
+  let priceUsd = 0;
+  const parts: string[] = [];
+  try {
+    if (email && form.orderId && typeof window !== 'undefined') {
+      const raw = localStorage.getItem(`userOrders_${email}`);
+      if (raw) {
+        const data = JSON.parse(raw) as { activeOrders?: unknown[]; pastOrders?: unknown[] };
+        const lists = [...(data.activeOrders || []), ...(data.pastOrders || [])];
+        const row = lists.find((o) => String((o as { id?: string }).id || '') === form.orderId) as
+          | {
+              lineItems?: Array<{ productName?: string; subtotal?: number }>;
+              productName?: string;
+              total?: number;
+              subtotal?: number;
+            }
+          | undefined;
+        if (row?.lineItems && Array.isArray(row.lineItems) && row.lineItems.length > 0) {
+          for (const li of row.lineItems) {
+            const name = String(li.productName || 'ITEM').trim().toUpperCase();
+            const sub = Number(li.subtotal);
+            if (Number.isFinite(sub) && sub > 0) priceUsd += Math.round(sub);
+            parts.push(name);
+          }
+        } else if (row) {
+          const name = String(row.productName || 'ORDER').trim().toUpperCase();
+          parts.push(name);
+          const t = Number(row.subtotal ?? row.total);
+          if (Number.isFinite(t) && t > 0) priceUsd = Math.round(t);
+        }
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  if (parts.length === 0) {
+    parts.push('ORDER AUTHORIZATION');
+  }
+  const line = `${parts.join(' · ')}${priceUsd > 0 ? ` · $${priceUsd.toLocaleString()}` : ''}`;
+  return { line, priceUsd };
+}
+
+function FormPendingClientAvatar({
+  email,
+  clientLabel,
+  photoUrl,
+}: {
+  email: string;
+  clientLabel: string;
+  photoUrl?: string;
+}) {
+  const nav = useNavigate();
+  const [imgError, setImgError] = useState(false);
+  const primary = (photoUrl || '').trim();
+  const src =
+    !imgError && primary && (primary.startsWith('http') || primary.startsWith('/') || primary.startsWith('data:'))
+      ? primary
+      : DEFAULT_CLIENT_PROFILE_THUMB;
+  const em = email.trim();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (!em) return;
+        nav(`/admin/clients/overview?email=${encodeURIComponent(em)}&returnTo=pending`);
+      }}
+      className="p-0 border-0 bg-transparent cursor-pointer"
+      style={{ lineHeight: 0 }}
+      aria-label={`Open client details for ${clientLabel}`}
+      disabled={!em}
+    >
+      <div
+        className="rounded-full shrink-0 overflow-hidden"
+        style={{ width: '44px', height: '44px', border: '0.8px solid #000' }}
+        aria-hidden
+      >
+        <img
+          src={src}
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          onError={() => {
+            if (primary) setImgError(true);
+          }}
+        />
+      </div>
+    </button>
+  );
+}
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
@@ -83,6 +183,133 @@ export default function AdminPending() {
   const [adminReviewModal, setAdminReviewModal] = useState<PendingAdminModal | null>(null);
   const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false);
   const [declineReasonDraft, setDeclineReasonDraft] = useState('');
+  const [affiliateDeclineTargetId, setAffiliateDeclineTargetId] = useState<string | null>(null);
+
+  const openClientFromPending = useCallback(
+    (email: string) => {
+      const e = email.trim();
+      if (!e) return;
+      navigate(`/admin/clients/overview?email=${encodeURIComponent(e)}&returnTo=pending`);
+    },
+    [navigate]
+  );
+
+  const sessionUserPhotoByEmail = useMemo(() => {
+    void pendingAuthFormsBump;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (!raw) return null;
+      const u = JSON.parse(raw) as { email?: string; profileImage?: string; avatar?: string };
+      const em = (u.email || '').trim().toLowerCase();
+      const photo = (u.profileImage || u.avatar || '').trim();
+      if (!em) return null;
+      return { email: em, photo: photo || undefined };
+    } catch {
+      return null;
+    }
+  }, [pendingAuthFormsBump]);
+
+  const profilePhotoUrlForFormEmail = useCallback(
+    (email: string) => {
+      const key = normalizeEmailKey(email);
+      if (sessionUserPhotoByEmail?.email === key) return sessionUserPhotoByEmail.photo;
+      return undefined;
+    },
+    [sessionUserPhotoByEmail]
+  );
+
+  const regionLineForFormClient = useCallback((email: string, name: string) => {
+    const key = normalizeEmailKey(email);
+    const mock = getMockClientsForAyoteenz().find((c: { email?: string }) => normalizeEmailKey(c.email || '') === key);
+    const addr = mock && typeof mock === 'object' && 'address' in mock ? String((mock as { address?: string }).address || '') : '';
+    const paren = regionParenLabelFromAddressLine(addr);
+    const abbr = usStateAbbrevFromAddressLine(addr);
+    const code = (abbr || (paren ? compactRegionCodeForReviewHeader(paren) : '') || '').trim().toUpperCase();
+    return `${name.trim().toUpperCase()}${code ? ` · ${code}` : ''}`;
+  }, []);
+
+  const renderAffiliateRow = (item: PendingMockAffiliateItem) => {
+    const cap = (item.caption || '').trim() || 'AFFILIATE SUBMISSION';
+    const body =
+      item.kind === 'social'
+        ? `${String(item.platform || '').toUpperCase()} — ${String(item.handle || '').toUpperCase()}`
+        : item.kind === 'video'
+          ? 'VIDEO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.'
+          : 'PHOTO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.';
+    const photoUrls = item.kind === 'photo' && item.imageSrc ? [item.imageSrc] : [];
+    const videoUrls =
+      item.kind === 'video' && item.imageSrc
+        ? ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
+        : [];
+    const photos = item.kind === 'photo' ? 1 : 0;
+    const videos = item.kind === 'video' ? 1 : 0;
+
+    return (
+      <AdminReviewStyleCard
+        key={item.id}
+        client={item.client}
+        clientEmail={item.email}
+        clientProfilePhotoUrl={item.clientProfilePhotoUrl}
+        clientRegionParen={item.clientRegionParen}
+        clientRegionCode={item.clientRegionCode}
+        productLine={cap}
+        bodyText={body}
+        date={item.date}
+        rating={5}
+        photos={photos}
+        videos={videos}
+        photoUrls={photoUrls}
+        videoUrls={videoUrls}
+        verifiedPurchase={false}
+        showStars={false}
+        statusLabel="PENDING"
+        onOpenClientDetails={openClientFromPending}
+      >
+        <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
+          <button
+            type="button"
+            onClick={() => approvePendingMockAffiliate(item.id)}
+            style={{
+              flex: 1,
+              minWidth: '100px',
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '10px',
+              color: '#fff',
+              background: '#EB1C24',
+              border: '1.3px solid #000',
+              padding: '8px 10px',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+            }}
+          >
+            APPROVE
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAffiliateDeclineTargetId(item.id);
+              setDeclineReasonDraft('');
+              setShowDeclineReasonModal(true);
+            }}
+            style={{
+              flex: 1,
+              minWidth: '100px',
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '10px',
+              color: '#EB1C24',
+              background: '#fff',
+              border: '1.3px solid #000',
+              padding: '8px 10px',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+            }}
+          >
+            DECLINE
+          </button>
+        </div>
+      </AdminReviewStyleCard>
+    );
+  };
 
   const pendingAuthFormsCount = useMemo(() => {
     void pendingAuthFormsBump;
@@ -266,42 +493,55 @@ export default function AdminPending() {
     setAdminReviewModal(null);
     setShowDeclineReasonModal(false);
     setDeclineReasonDraft('');
+    setAffiliateDeclineTargetId(null);
+  }, []);
+
+  const closeDeclineReasonOnly = useCallback(() => {
+    setShowDeclineReasonModal(false);
+    setDeclineReasonDraft('');
+    setAffiliateDeclineTargetId(null);
   }, []);
 
   const submitDecline = useCallback(() => {
+    if (affiliateDeclineTargetId) {
+      declinePendingMockAffiliate(affiliateDeclineTargetId, declineReasonDraft);
+      closeDeclineReasonOnly();
+      return;
+    }
     if (!adminReviewModal) return;
     if (adminReviewModal.kind === 'form') {
       declineOrderFormSubmission(adminReviewModal.item, declineReasonDraft);
-    } else if (adminReviewModal.kind === 'review') {
-      declinePendingMockReview(adminReviewModal.item.id, declineReasonDraft);
     } else {
-      declinePendingMockAffiliate(adminReviewModal.item.id, declineReasonDraft);
+      declinePendingMockReview(adminReviewModal.item.id, declineReasonDraft);
     }
     closeAdminReviewModal();
-  }, [adminReviewModal, declineReasonDraft, closeAdminReviewModal]);
+  }, [
+    affiliateDeclineTargetId,
+    adminReviewModal,
+    declineReasonDraft,
+    closeAdminReviewModal,
+    closeDeclineReasonOnly,
+  ]);
 
   const modalTitle = (() => {
     if (!adminReviewModal) return '';
     if (adminReviewModal.kind === 'form') return 'REVIEW ORDER FORM';
-    if (adminReviewModal.kind === 'review') return 'REVIEW CLIENT REVIEW';
-    return 'REVIEW AFFILIATE SUBMISSION';
+    return 'REVIEW CLIENT REVIEW';
   })();
 
   const declineModalTitle = (() => {
+    if (affiliateDeclineTargetId) return 'DECLINE AFFILIATE SUBMISSION';
     if (!adminReviewModal) return '';
     if (adminReviewModal.kind === 'form') return 'DECLINE ORDER FORM';
-    if (adminReviewModal.kind === 'review') return 'DECLINE REVIEW';
-    return 'DECLINE AFFILIATE SUBMISSION';
+    return 'DECLINE REVIEW';
   })();
 
   const onApproveClick = () => {
     if (!adminReviewModal) return;
     if (adminReviewModal.kind === 'form') {
       approveOrderFormSubmission(adminReviewModal.item);
-    } else if (adminReviewModal.kind === 'review') {
-      approvePendingMockReview(adminReviewModal.item.id);
     } else {
-      approvePendingMockAffiliate(adminReviewModal.item.id);
+      approvePendingMockReview(adminReviewModal.item.id);
     }
     closeAdminReviewModal();
   };
@@ -512,41 +752,22 @@ export default function AdminPending() {
                         </p>
                       ) : (
                         pendingMockReviewsList.map((r) => (
-                          <div key={r.id} className="py-3" style={rowStyle}>
-                            <div className="flex justify-between items-start gap-2">
-                              <div className="min-w-0 flex-1">
-                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{r.client}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{r.email}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{r.product}</p>
-                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0', lineHeight: 1.35 }}>
-                                  {r.excerpt}
-                                </p>
-                                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
-                                  {r.rating} STARS · PENDING
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={() => setAdminReviewModal({ kind: 'review', item: r })}
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '9px',
-                                    color: '#EB1C24',
-                                    fontWeight: 500,
-                                    margin: '8px 0 0',
-                                    padding: 0,
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    textTransform: 'uppercase',
-                                    display: 'block',
-                                  }}
-                                >
-                                  VIEW REVIEW
-                                </button>
-                              </div>
-                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{r.date}</span>
-                            </div>
-                          </div>
+                          <AdminReviewStyleCard
+                            key={r.id}
+                            client={r.client}
+                            clientEmail={r.email}
+                            productLine={r.product}
+                            bodyText={r.excerpt}
+                            date={r.date}
+                            rating={r.rating}
+                            photos={0}
+                            videos={0}
+                            verifiedPurchase
+                            statusLabel="PENDING"
+                            footerLinkLabel="VIEW REVIEW"
+                            onFooterLinkClick={() => setAdminReviewModal({ kind: 'review', item: r })}
+                            onOpenClientDetails={openClientFromPending}
+                          />
                         ))
                       )}
                     </>
@@ -560,32 +781,65 @@ export default function AdminPending() {
                         </p>
                       ) : (
                         pendingAuthFormsList.map((f) => {
-                          const name = `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
-                          const dateStr = (() => {
+                          const nameRaw =
+                            `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
+                          const nameUpper = nameRaw.toUpperCase();
+                          const orderPlacedDate = (() => {
                             try {
                               return new Date(f.signedAt).toLocaleDateString(undefined, { dateStyle: 'short' });
                             } catch {
                               return '—';
                             }
                           })();
+                          const { line: orderContentsLine } = orderSummaryForPendingForm(f);
                           const showView = pendingFormShowsViewFormAction(f);
+                          const photoForClient = profilePhotoUrlForFormEmail(f.email);
                           return (
                             <div key={`${f.email}-${f.id}`} className="py-3" style={rowStyle}>
                               <div className="flex justify-between items-start gap-2">
-                                <div className="min-w-0 flex-1">
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{f.orderNumber}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{name}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{f.email}</p>
+                                <div className="min-w-0 flex-1 flex flex-col">
+                                  <FormPendingClientAvatar email={f.email} clientLabel={nameUpper} photoUrl={photoForClient} />
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '11px',
+                                      color: '#000',
+                                      margin: '8px 0 0',
+                                      lineHeight: 1.35,
+                                    }}
+                                  >
+                                    {regionLineForFormClient(f.email, nameRaw)}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '11px',
+                                      color: '#EB1C24',
+                                      margin: '6px 0 0',
+                                    }}
+                                  >
+                                    {String(f.orderNumber || '').toUpperCase()}
+                                  </p>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '11px',
+                                      color: '#808080',
+                                      margin: '6px 0 0',
+                                    }}
+                                  >
+                                    {orderContentsLine}
+                                  </p>
                                   {showView ? (
                                     <button
                                       type="button"
                                       onClick={() => setAdminReviewModal({ kind: 'form', item: f })}
                                       style={{
                                         fontFamily: '"Futura PT Medium"',
-                                        fontSize: '9px',
+                                        fontSize: '11px',
                                         color: '#EB1C24',
                                         fontWeight: 500,
-                                        margin: '8px 0 0',
+                                        margin: '10px 0 0',
                                         padding: 0,
                                         border: 'none',
                                         background: 'none',
@@ -597,12 +851,22 @@ export default function AdminPending() {
                                       VIEW FORM
                                     </button>
                                   ) : (
-                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '8px 0 0' }}>
+                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '10px 0 0' }}>
                                       SIGNED · PENDING VERIFY
                                     </p>
                                   )}
                                 </div>
-                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{dateStr}</span>
+                                <span
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    fontSize: '11px',
+                                    color: '#000',
+                                    flexShrink: 0,
+                                    textAlign: 'right',
+                                  }}
+                                >
+                                  {orderPlacedDate}
+                                </span>
                               </div>
                             </div>
                           );
@@ -620,106 +884,11 @@ export default function AdminPending() {
                       ) : (
                         <>
                           <SectionTitle>PHOTOS</SectionTitle>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {pendingMockAffiliateList
-                              .filter((x) => x.kind === 'photo')
-                              .map((item) => (
-                                <button
-                                  key={item.id}
-                                  type="button"
-                                  onClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
-                                  style={{
-                                    width: '72px',
-                                    height: '72px',
-                                    border: '3px solid #fff',
-                                    boxShadow: '0 0 0 1.1px #000',
-                                    overflow: 'hidden',
-                                    background: '#f3f4f6',
-                                    padding: 0,
-                                    cursor: 'pointer',
-                                  }}
-                                >
-                                  <img src={item.imageSrc || '/assets/gallery-mock.png'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                </button>
-                              ))}
-                          </div>
-
+                          {pendingMockAffiliateList.filter((x) => x.kind === 'photo').map(renderAffiliateRow)}
                           <SectionTitle>VIDEOS</SectionTitle>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {pendingMockAffiliateList
-                              .filter((x) => x.kind === 'video')
-                              .map((item) => (
-                                <button
-                                  key={item.id}
-                                  type="button"
-                                  onClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
-                                  style={{
-                                    width: '72px',
-                                    height: '72px',
-                                    border: '3px solid #fff',
-                                    boxShadow: '0 0 0 1.1px #000',
-                                    overflow: 'hidden',
-                                    background: '#f3f4f6',
-                                    position: 'relative',
-                                    padding: 0,
-                                    cursor: 'pointer',
-                                  }}
-                                >
-                                  <img
-                                    src={item.imageSrc || '/assets/gallery-mock.png'}
-                                    alt=""
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }}
-                                  />
-                                  <span
-                                    style={{
-                                      position: 'absolute',
-                                      inset: 0,
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      fontFamily: '"Futura PT Medium"',
-                                      fontSize: '8px',
-                                      color: '#EB1C24',
-                                      pointerEvents: 'none',
-                                    }}
-                                  >
-                                    ▶
-                                  </span>
-                                </button>
-                              ))}
-                          </div>
-
+                          {pendingMockAffiliateList.filter((x) => x.kind === 'video').map(renderAffiliateRow)}
                           <SectionTitle>SOCIAL LINKS</SectionTitle>
-                          <div className="space-y-0">
-                            {pendingMockAffiliateList
-                              .filter((x) => x.kind === 'social')
-                              .map((s) => (
-                                <div key={s.id} className="py-2" style={rowStyle}>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{s.platform}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '4px 0 0' }}>{s.handle}</p>
-                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{s.date}</p>
-                                  <button
-                                    type="button"
-                                    onClick={() => setAdminReviewModal({ kind: 'affiliate', item: s })}
-                                    style={{
-                                      fontFamily: '"Futura PT Medium"',
-                                      fontSize: '9px',
-                                      color: '#EB1C24',
-                                      fontWeight: 500,
-                                      margin: '8px 0 0',
-                                      padding: 0,
-                                      border: 'none',
-                                      background: 'none',
-                                      cursor: 'pointer',
-                                      textTransform: 'uppercase',
-                                      display: 'block',
-                                    }}
-                                  >
-                                    VIEW SUBMISSION
-                                  </button>
-                                </div>
-                              ))}
-                          </div>
+                          {pendingMockAffiliateList.filter((x) => x.kind === 'social').map(renderAffiliateRow)}
                         </>
                       )}
                     </>
@@ -790,7 +959,7 @@ export default function AdminPending() {
               <div className="flex-1 min-h-0 flex flex-col overflow-auto" style={{ paddingBottom: '12px' }}>
                 {adminReviewModal.kind === 'form' ? (
                   <SignedOrderFormPdfPanel url={formReviewPdfUrl} loading={formReviewPdfLoading} error={formReviewPdfError} />
-                ) : adminReviewModal.kind === 'review' ? (
+                ) : (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
                       {adminReviewModal.item.client}
@@ -801,58 +970,6 @@ export default function AdminPending() {
                     <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>
                       {adminReviewModal.item.rating} STARS · {adminReviewModal.item.date}
                     </p>
-                  </div>
-                ) : (
-                  <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
-                    {adminReviewModal.item.kind === 'social' ? (
-                      <>
-                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
-                          {adminReviewModal.item.platform}
-                        </p>
-                        <p style={{ margin: '0 0 6px' }}>{adminReviewModal.item.handle}</p>
-                        <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>{adminReviewModal.item.date}</p>
-                      </>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                        <div
-                          style={{
-                            width: '100%',
-                            maxWidth: '280px',
-                            border: '1.3px solid #000',
-                            overflow: 'hidden',
-                            background: '#f3f4f6',
-                            position: 'relative',
-                          }}
-                        >
-                          <img
-                            src={adminReviewModal.item.imageSrc || '/assets/gallery-mock.png'}
-                            alt=""
-                            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
-                          />
-                          {adminReviewModal.item.kind === 'video' ? (
-                            <span
-                              style={{
-                                position: 'absolute',
-                                inset: 0,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '14px',
-                                color: '#EB1C24',
-                                pointerEvents: 'none',
-                                background: 'rgba(0,0,0,0.12)',
-                              }}
-                            >
-                              ▶
-                            </span>
-                          ) : null}
-                        </div>
-                        <p style={{ margin: 0, color: '#808080', fontSize: '10px', textTransform: 'uppercase' }}>
-                          {adminReviewModal.item.kind === 'video' ? 'VIDEO SUBMISSION' : 'PHOTO SUBMISSION'} · {adminReviewModal.item.date}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -922,11 +1039,11 @@ export default function AdminPending() {
         </div>
       )}
 
-      {adminReviewModal && showDeclineReasonModal && (
+      {showDeclineReasonModal && (adminReviewModal || affiliateDeclineTargetId) && (
         <div
           className="fixed inset-0 z-[100000] flex items-center justify-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
-          onClick={() => setShowDeclineReasonModal(false)}
+          onClick={() => closeDeclineReasonOnly()}
           role="presentation"
         >
           <div
@@ -976,7 +1093,7 @@ export default function AdminPending() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowDeclineReasonModal(false)}
+                onClick={() => closeDeclineReasonOnly()}
                 style={{
                   flex: 1,
                   fontFamily: '"Futura PT Medium"',

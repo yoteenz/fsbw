@@ -25,6 +25,13 @@ export type PendingMockAffiliateKind = 'photo' | 'video' | 'social';
 export type PendingMockAffiliateItem = {
   id: string;
   kind: PendingMockAffiliateKind;
+  client: string;
+  email: string;
+  clientProfilePhotoUrl?: string;
+  clientRegionParen?: string;
+  clientRegionCode?: string;
+  /** Gray subtitle under client (e.g. AFFILIATE PHOTO SUBMISSION) */
+  caption?: string;
   /** Thumbnail for photo/video */
   imageSrc?: string;
   platform?: string;
@@ -68,14 +75,68 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
 ];
 
 const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
-  { id: 'mock-aff-ph-0', kind: 'photo', imageSrc: '/assets/gallery-mock.png', date: '3/27/2026', status: 'PENDING' },
-  { id: 'mock-aff-ph-1', kind: 'photo', imageSrc: '/assets/gallery-mock.png', date: '3/27/2026', status: 'PENDING' },
-  { id: 'mock-aff-ph-2', kind: 'photo', imageSrc: '/assets/gallery-mock.png', date: '3/26/2026', status: 'PENDING' },
-  { id: 'mock-aff-vd-0', kind: 'video', imageSrc: '/assets/gallery-mock.png', date: '3/25/2026', status: 'PENDING' },
-  { id: 'mock-aff-vd-1', kind: 'video', imageSrc: '/assets/gallery-mock.png', date: '3/24/2026', status: 'PENDING' },
+  {
+    id: 'mock-aff-ph-0',
+    kind: 'photo',
+    client: 'SARAH JOHNSON',
+    email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
+    caption: 'AFFILIATE PHOTO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/27/2026',
+    status: 'PENDING',
+  },
+  {
+    id: 'mock-aff-ph-1',
+    kind: 'photo',
+    client: 'MARIA RODRIGUEZ',
+    email: 'maria.r@email.com',
+    clientRegionParen: 'TEXAS',
+    caption: 'AFFILIATE PHOTO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/27/2026',
+    status: 'PENDING',
+  },
+  {
+    id: 'mock-aff-ph-2',
+    kind: 'photo',
+    client: 'JORDAN LEE',
+    email: 'jordan.lee@email.com',
+    clientRegionParen: 'NEW YORK',
+    caption: 'AFFILIATE PHOTO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/26/2026',
+    status: 'PENDING',
+  },
+  {
+    id: 'mock-aff-vd-0',
+    kind: 'video',
+    client: 'SARAH JOHNSON',
+    email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
+    caption: 'AFFILIATE VIDEO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/25/2026',
+    status: 'PENDING',
+  },
+  {
+    id: 'mock-aff-vd-1',
+    kind: 'video',
+    client: 'DIANA FOSTER',
+    email: 'mock4@test.com',
+    clientRegionParen: 'ILLINOIS',
+    caption: 'AFFILIATE VIDEO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/24/2026',
+    status: 'PENDING',
+  },
   {
     id: 'mock-aff-soc-0',
     kind: 'social',
+    client: 'SARAH JOHNSON',
+    email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
+    caption: 'AFFILIATE SOCIAL LINK',
     platform: 'INSTAGRAM',
     handle: '@CLIENTSTYLE · REEL SUBMITTED',
     date: '3/27/2026',
@@ -84,6 +145,10 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
   {
     id: 'mock-aff-soc-1',
     kind: 'social',
+    client: 'MARIA RODRIGUEZ',
+    email: 'maria.r@email.com',
+    clientRegionParen: 'TEXAS',
+    caption: 'AFFILIATE SOCIAL LINK',
     platform: 'TIKTOK',
     handle: '@WIGGLOW · TAGGED @FRONTALSLAYER',
     date: '3/24/2026',
@@ -92,12 +157,31 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
   {
     id: 'mock-aff-soc-2',
     kind: 'social',
+    client: 'JORDAN LEE',
+    email: 'jordan.lee@email.com',
+    clientRegionParen: 'NEW YORK',
+    caption: 'AFFILIATE SOCIAL LINK',
     platform: 'YOUTUBE',
     handle: 'SHORTS · INSTALL ROUTINE',
     date: '3/20/2026',
     status: 'PENDING',
   },
 ];
+
+function mergeAffiliateWithDefaults(stored: PendingMockAffiliateItem[]): PendingMockAffiliateItem[] {
+  const byId = new Map(DEFAULT_AFFILIATE.map((d) => [d.id, d]));
+  return stored.map((row) => {
+    const base = byId.get(row.id);
+    if (!base) {
+      return {
+        ...row,
+        client: row.client || 'CLIENT',
+        email: row.email || '',
+      };
+    }
+    return { ...base, ...row, kind: row.kind || base.kind };
+  });
+}
 
 function parseReviews(raw: string | null): PendingMockReview[] {
   if (!raw) return [];
@@ -155,7 +239,11 @@ export function listPendingMockAffiliateForAdmin(): PendingMockAffiliateItem[] {
     saveAffiliate(DEFAULT_AFFILIATE);
     return [...DEFAULT_AFFILIATE];
   }
-  return existing;
+  const merged = mergeAffiliateWithDefaults(existing);
+  if (existing.some((row) => !(row.client || '').trim() || !(row.email || '').trim())) {
+    saveAffiliate(merged);
+  }
+  return merged;
 }
 
 export function countPendingMockReviews(): number {
