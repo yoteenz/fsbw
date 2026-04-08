@@ -12871,3 +12871,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked that if **BCF** is in the cart **or paired with a unit**, the **longest** processing time applies for the order.
 
 **Changes:** **`checkoutBcfProcessing.ts`** — **`cartLineIsUnitProduct`** (**`capSize`** set, or future **`shop-texture-category`** **`category: units`**), **`cartHasUnitProduct`**, **`cartUsesBcfOnlyProcessingWindows`** (= has BCF **and** no unit lines **and** all relevant lines are BCF). **`getCheckoutProcessingTimePersistentLabel`**, **`checkoutExpressProcessingAllowed`**, **`getConfirmPageFallbackProcessingLabel`** use **`cartUsesBcfOnlyProcessingWindows`** instead of BCF-only-without-units check. **`checkout/page.tsx`** — UI standard/express labels keyed off **`bcfOnlyProcessingWindows`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Unified admin calendar (BrandExpiresDatePicker + meetings hub)
+
+**Context (this chat):** User asked to use the **same calendar design** as **Admin → Meetings → Bookings** for **Admin → Brand → Create code** (expires), and to **update all calendars** to that design.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — optional **`visibleMonthAnchor`** + **`onVisibleMonthAnchorChange`** (controlled month nav), **`selectionIso`**, **`getDayMeta`** (**`AdminCalendarDayMeta`**: disabled, appointment highlight, title), **`onDayClick`** (filter mode without changing value), **`hideClearDate`**. Admin-meetings grid styling extended when **`getDayMeta`** is set (white + red text for days with appointments, gray empty days). **`AdminMeetingsHub.tsx`** — bookings tab replaces inline **`monthMatrix`** markup with **`BrandExpiresDatePicker`** (same travel-block disable + appointment tint + day filter toggle); month changes keep **`calendarAnchor`** day when possible. **`admin/brand/page.tsx`** — create-code expiry uses **`monthLabelVariant="adminMeetings"`** + hub-matching arrow scale. **`admin/meetings/schedule/page.tsx`** and **`admin/special-offer/page.tsx`** — replace native **`type="date"`** with inline **`BrandExpiresDatePicker`** (same variant, **`hideClearDate`**). **`npm run build`**.
