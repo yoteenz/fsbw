@@ -115,7 +115,7 @@ function rasterizeSnapshotToSinglePdfPage(canvas: HTMLCanvasElement): Blob {
  * Printable PDF: visual snapshot of the live `/shop/order-form` layout (same typography, borders, copy).
  */
 export async function buildSignedOrderFormPdf(form: StoredSignedOrderForm): Promise<Blob> {
-  const el = buildSignedOrderFormSnapshotElement(form);
+  const el = buildSignedOrderFormSnapshotElement(form, { pdfColumnOnly: true });
   el.style.position = 'fixed';
   el.style.left = '-12000px';
   el.style.top = '0';

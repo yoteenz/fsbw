@@ -5,6 +5,15 @@ const RED = '#EB1C24';
 const GRAY_TEXT = '#808080';
 const BLACK = '#000000';
 
+/** Live order-form root is 390px with 16px horizontal padding — PDF captures card-only at this inner width. */
+const ORDER_FORM_SNAPSHOT_ROOT_W_PX = 390;
+const ORDER_FORM_SNAPSHOT_ROOT_PAD_H_PX = 16;
+const ORDER_FORM_SNAPSHOT_CARD_PAD_H_PX = 20;
+/** Width of the bordered card column (no outer marble gutter in the raster). */
+const PDF_SNAPSHOT_CARD_OUTER_W_PX =
+  ORDER_FORM_SNAPSHOT_ROOT_W_PX - ORDER_FORM_SNAPSHOT_ROOT_PAD_H_PX * 2;
+const MOCK_PLAIN_SNAPSHOT_INNER_W_PX = ORDER_FORM_SNAPSHOT_ROOT_W_PX - ORDER_FORM_SNAPSHOT_ROOT_PAD_H_PX * 2;
+
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -445,45 +454,83 @@ function pdfBrandingHeader(): HTMLElement {
   return h;
 }
 
-function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm): HTMLElement {
+function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm, pdfColumnOnly: boolean): HTMLElement {
   const root = document.createElement('div');
   root.setAttribute('data-signed-order-form-snapshot', 'mock-plain');
   root.setAttribute('data-pdf-snapshot-root', '1');
-  Object.assign(root.style, {
-    width: '390px',
-    boxSizing: 'border-box',
-    position: 'relative',
-    backgroundColor: '#FFFFFF',
-    padding: '20px 20px 24px',
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-  });
+  if (pdfColumnOnly) {
+    Object.assign(root.style, {
+      width: `${MOCK_PLAIN_SNAPSHOT_INNER_W_PX}px`,
+      boxSizing: 'border-box',
+      position: 'relative',
+      backgroundColor: '#FFFFFF',
+      padding: '0',
+      fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    });
+  } else {
+    Object.assign(root.style, {
+      width: `${ORDER_FORM_SNAPSHOT_ROOT_W_PX}px`,
+      boxSizing: 'border-box',
+      position: 'relative',
+      backgroundColor: '#FFFFFF',
+      padding: '20px 20px 24px',
+      fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    });
+  }
   root.appendChild(pdfBrandingHeader());
   root.appendChild(buildOrderFormFieldsColumn(form, 'mockPlainWhite'));
   return root;
 }
 
+export type BuildSignedOrderFormSnapshotOptions = {
+  /**
+   * PDF / print: raster width = main card column only (same inner width as live page card),
+   * no outer 16px “marble” gutters or full-width submit bar — avoids side whitespace in viewer.
+   */
+  pdfColumnOnly?: boolean;
+};
+
 /**
  * Off-DOM tree matching `/shop/order-form` (full page snapshot: marble, card, intro copy, fields, submit).
  */
-export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm): HTMLElement {
+export function buildSignedOrderFormSnapshotElement(
+  form: StoredSignedOrderForm,
+  opts?: BuildSignedOrderFormSnapshotOptions
+): HTMLElement {
+  const pdfColumnOnly = Boolean(opts?.pdfColumnOnly);
+
   if (form.id === MOCK_APPROVAL_SIGNED_FORM_ID) {
-    return buildMockPlainWhiteSnapshotRoot(form);
+    return buildMockPlainWhiteSnapshotRoot(form, pdfColumnOnly);
   }
 
   const root = document.createElement('div');
   root.setAttribute('data-signed-order-form-snapshot', '1');
   root.setAttribute('data-pdf-snapshot-root', '1');
-  Object.assign(root.style, {
-    width: '390px',
-    boxSizing: 'border-box',
-    position: 'relative',
-    backgroundImage: `url('/assets/marble-half.png')`,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'repeat',
-    padding: '20px 16px 24px',
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-  });
+
+  if (pdfColumnOnly) {
+    Object.assign(root.style, {
+      width: `${PDF_SNAPSHOT_CARD_OUTER_W_PX}px`,
+      boxSizing: 'border-box',
+      position: 'relative',
+      backgroundColor: '#FFFFFF',
+      backgroundImage: 'none',
+      padding: '0',
+      margin: '0',
+      fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    });
+  } else {
+    Object.assign(root.style, {
+      width: `${ORDER_FORM_SNAPSHOT_ROOT_W_PX}px`,
+      boxSizing: 'border-box',
+      position: 'relative',
+      backgroundImage: `url('/assets/marble-half.png')`,
+      backgroundSize: 'contain',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'repeat',
+      padding: '20px 16px 24px',
+      fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
+    });
+  }
 
   const card = document.createElement('div');
   card.setAttribute('data-pdf-snapshot-card', '1');
@@ -493,64 +540,50 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
     flexDirection: 'column',
     paddingTop: '24px',
     paddingBottom: '16px',
-    paddingLeft: '20px',
-    paddingRight: '20px',
-    marginBottom: '8px',
+    paddingLeft: `${ORDER_FORM_SNAPSHOT_CARD_PAD_H_PX}px`,
+    paddingRight: `${ORDER_FORM_SNAPSHOT_CARD_PAD_H_PX}px`,
+    marginBottom: pdfColumnOnly ? '0' : '8px',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     backdropFilter: 'blur(6px)',
     WebkitBackdropFilter: 'blur(6px)',
-    minWidth: '100%',
+    width: '100%',
+    maxWidth: '100%',
     boxSizing: 'border-box',
   });
 
   card.appendChild(pdfBrandingHeader());
 
-  const p1 = document.createElement('p');
-  p1.innerHTML = esc(
-    'THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.',
-  );
-  Object.assign(p1.style, {
+  const introParaStyle = (marginTop: string, marginBottom: string): Partial<CSSStyleDeclaration> => ({
     fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
     fontSize: '12px',
     color: BLACK,
     lineHeight: '1.8',
-    margin: '18px 0 20px 0',
+    marginTop,
+    marginBottom,
+    marginLeft: '0',
+    marginRight: '0',
     textAlign: 'center',
-    maxWidth: 'calc(100% - 24px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    maxWidth: '100%',
+    width: '100%',
+    boxSizing: 'border-box',
   });
+
+  const p1 = document.createElement('p');
+  p1.innerHTML = esc(
+    'THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.',
+  );
+  Object.assign(p1.style, introParaStyle('18px', '20px'));
 
   const p2 = document.createElement('p');
   p2.innerHTML = `${esc(
     'YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO ',
   )}<span style="color:${RED};font-weight:600;">CONTACT@FRONTALSLAYER.COM</span>`;
-  Object.assign(p2.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: BLACK,
-    lineHeight: '1.8',
-    margin: '0 0 20px 0',
-    textAlign: 'center',
-    maxWidth: 'calc(100% - 26px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  });
+  Object.assign(p2.style, introParaStyle('0', '20px'));
 
   const p3 = document.createElement('p');
   p3.textContent =
     'THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!';
-  Object.assign(p3.style, {
-    fontFamily: '"Futura PT Book", Futura, "Trebuchet MS", sans-serif',
-    fontSize: '12px',
-    color: BLACK,
-    lineHeight: '1.8',
-    margin: '0 0 30px 0',
-    textAlign: 'center',
-    maxWidth: 'calc(100% - 26px)',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  });
+  Object.assign(p3.style, introParaStyle('0', '30px'));
 
   card.appendChild(p1);
   card.appendChild(p2);
@@ -558,24 +591,26 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
   card.appendChild(buildOrderFormFieldsColumn(form, 'fullPage'));
   root.appendChild(card);
 
-  const submit = document.createElement('button');
-  submit.type = 'button';
-  submit.textContent = 'SUBMIT';
-  Object.assign(submit.style, {
-    width: '100%',
-    border: '1.3px solid black',
-    color: RED,
-    fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
-    backgroundColor: '#FFFFFF',
-    textTransform: 'uppercase',
-    fontSize: '11px',
-    fontWeight: '600',
-    paddingTop: '8px',
-    paddingBottom: '8px',
-    cursor: 'default',
-    boxSizing: 'border-box',
-  });
-  root.appendChild(submit);
+  if (!pdfColumnOnly) {
+    const submit = document.createElement('button');
+    submit.type = 'button';
+    submit.textContent = 'SUBMIT';
+    Object.assign(submit.style, {
+      width: '100%',
+      border: '1.3px solid black',
+      color: RED,
+      fontFamily: '"Futura PT Medium", Futura, "Trebuchet MS", sans-serif',
+      backgroundColor: '#FFFFFF',
+      textTransform: 'uppercase',
+      fontSize: '11px',
+      fontWeight: '600',
+      paddingTop: '8px',
+      paddingBottom: '8px',
+      cursor: 'default',
+      boxSizing: 'border-box',
+    });
+    root.appendChild(submit);
+  }
 
   return root;
 }
