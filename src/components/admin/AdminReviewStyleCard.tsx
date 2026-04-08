@@ -119,6 +119,8 @@ export type AdminReviewStyleCardProps = {
   clientRegionCode?: string;
   productLine: string;
   bodyText: string;
+  /** Body line font size (e.g. affiliate counts line 10px). */
+  bodyFontSize?: string;
   date: string;
   rating: number;
   photos: number;
@@ -132,6 +134,8 @@ export type AdminReviewStyleCardProps = {
   mediaPresentation?: 'expandable' | 'inline';
   /** Rendered after inline/expandable media, before footer link (e.g. rejected content). */
   afterMedia?: ReactNode;
+  /** When true and no media URLs, omit gray “0 PHOTOS” row entirely. */
+  hideMediaRowWhenEmpty?: boolean;
   footerLinkLabel?: string;
   onFooterLinkClick?: () => void;
   onOpenClientDetails?: (email: string) => void;
@@ -152,6 +156,7 @@ export function AdminReviewStyleCard({
   clientRegionCode: codeIn,
   productLine,
   bodyText,
+  bodyFontSize = '11px',
   date,
   rating,
   photos,
@@ -162,6 +167,7 @@ export function AdminReviewStyleCard({
   statusLabel,
   mediaPresentation = 'expandable',
   afterMedia,
+  hideMediaRowWhenEmpty = false,
   footerLinkLabel,
   onFooterLinkClick,
   onOpenClientDetails,
@@ -182,7 +188,12 @@ export function AdminReviewStyleCard({
 
   let photoUrls = photoUrlsIn ?? [];
   let videoUrls = videoUrlsIn ?? [];
-  if (photoUrls.length === 0 && videoUrls.length === 0 && (photos > 0 || videos > 0)) {
+  if (
+    !hideMediaRowWhenEmpty &&
+    photoUrls.length === 0 &&
+    videoUrls.length === 0 &&
+    (photos > 0 || videos > 0)
+  ) {
     const ph = mockReviewMediaPlaceholders(`${client}-${date}`, photos, videos);
     photoUrls = ph.photoUrls;
     videoUrls = ph.videoUrls;
@@ -289,7 +300,7 @@ export function AdminReviewStyleCard({
       <p
         style={{
           fontFamily: '"Futura PT Book"',
-          fontSize: '11px',
+          fontSize: bodyFontSize,
           color: '#000',
           margin: 'calc(0.25rem + 4px) 0 0',
         }}
@@ -297,7 +308,7 @@ export function AdminReviewStyleCard({
         {bodyText}
       </p>
       <div className="mt-2">
-        {showInlineMedia ? (
+        {hideMediaRowWhenEmpty && !hasMediaUrls && mediaCount === 0 ? null : showInlineMedia ? (
           <div className="flex flex-wrap" style={{ marginTop: '4px', gap: '8px' }}>
             {photoUrls.map((url, idx) => (
               <a
@@ -316,7 +327,7 @@ export function AdminReviewStyleCard({
               </div>
             ))}
           </div>
-        ) : (
+        ) : hideMediaRowWhenEmpty && !hasMediaUrls && mediaCount === 0 ? null : (
           <>
             <div className="flex justify-between items-center gap-2">
               <div className="min-w-0 flex-1 pr-2">

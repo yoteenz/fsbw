@@ -39,12 +39,7 @@ import {
   type PendingMockReview,
 } from '../../../utils/adminPendingMockQueues';
 import { AdminReviewStyleCard } from '../../../components/admin/AdminReviewStyleCard';
-import {
-  compactRegionCodeForReviewHeader,
-  regionParenLabelFromAddressLine,
-  usStateAbbrevFromAddressLine,
-} from '../../../utils/usAddressStateDisplay';
-import { getMockClientsForAyoteenz } from '../clients/page';
+import { compactRegionCodeForReviewHeader } from '../../../utils/usAddressStateDisplay';
 import {
   serverAffiliateRowToPendingMock,
   serverDbReviewToPendingMock,
@@ -59,7 +54,10 @@ const rowStyle = {
   borderBottom: '1px solid #e5e7eb' as const,
 };
 
-type PendingAdminModal = { kind: 'form'; item: StoredSignedOrderForm } | { kind: 'review'; item: PendingMockReview };
+type PendingAdminModal =
+  | { kind: 'form'; item: StoredSignedOrderForm }
+  | { kind: 'review'; item: PendingMockReview }
+  | { kind: 'affiliate'; item: PendingMockAffiliateItem };
 
 type AffiliateDeclineTarget = { mockId: string; serverId?: string };
 
@@ -77,13 +75,26 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
   const email = normalizeEmailKey(form.email);
   let priceUsd = 0;
   const parts: string[] = [];
+  const normOrderNum = (s: string) =>
+    s
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toUpperCase()
+      .replace(/^ORDER\s+/i, '');
   try {
-    if (email && form.orderId && typeof window !== 'undefined') {
+    if (email && typeof window !== 'undefined') {
       const raw = localStorage.getItem(`userOrders_${email}`);
       if (raw) {
         const data = JSON.parse(raw) as { activeOrders?: unknown[]; pastOrders?: unknown[] };
         const lists = [...(data.activeOrders || []), ...(data.pastOrders || [])];
-        const row = lists.find((o) => String((o as { id?: string }).id || '') === form.orderId) as
+        const formOrderId = (form.orderId || '').trim();
+        const formNum = normOrderNum(String(form.orderNumber || ''));
+        const row = lists.find((o) => {
+          const oid = String((o as { id?: string }).id || '').trim();
+          if (formOrderId && oid === formOrderId) return true;
+          const onum = normOrderNum(String((o as { orderNumber?: string }).orderNumber || ''));
+          return formNum && onum && onum === formNum;
+        }) as
           | {
               lineItems?: Array<{ productName?: string; subtotal?: number }>;
               productName?: string;
@@ -112,7 +123,7 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
   const fp = fingerprintSignedOrderFormFields(form.formFields);
   const preApproved = orderFormMatchesPreviouslyApprovedFingerprint(form.email, form.id, fp);
   const priceBit = priceUsd > 0 ? `$${priceUsd.toLocaleString()}` : '';
-  const statusBit = preApproved ? 'PRE-APPROVED' : 'NEW FORM';
+  const statusBit = preApproved ? 'PRE-APPROVED' : 'ORIGINAL';
   const grayLine = priceBit ? `${priceBit} · ${statusBit}` : statusBit;
   return { line: grayLine, priceUsd, formFingerprint: fp };
 }
@@ -212,6 +223,15 @@ function affiliateSubmittedCountsLine(
   parts.push(`${videos} ${videos === 1 ? 'VIDEO SUBMISSION' : 'VIDEO SUBMISSIONS'}.`);
   parts.push(`${socials} ${socials === 1 ? 'SOCIAL TAG' : 'SOCIAL TAGS'}.`);
   return parts.join(' ');
+}
+
+function regionCodeFromSignedFormFields(formFields: Record<string, string> | undefined): string {
+  if (!formFields || typeof formFields !== 'object') return '';
+  const raw = String(formFields.state || formFields.billingState || '').trim();
+  if (!raw) return '';
+  const u = raw.toUpperCase();
+  if (/^[A-Z]{2}$/.test(u)) return u;
+  return (compactRegionCodeForReviewHeader(u) || '').trim().toUpperCase();
 }
 
 function loadAffiliateContentMapForEmail(email: string): Record<string, { photos?: unknown[]; videos?: unknown[]; socials?: unknown[] }> | null {
@@ -356,23 +376,6 @@ export default function AdminPending() {
     },
     [sessionUserPhotoByEmail]
   );
-
-  const regionLineForFormClient = useCallback((email: string, name: string) => {
-    const key = normalizeEmailKey(email);
-    const demoRegion: Record<string, string> = {
-      'sarah.j@email.com': 'CA',
-      'maria.r@email.com': 'TX',
-      'jordan.lee@email.com': 'NY',
-    };
-    const demoCode = demoRegion[key];
-    if (demoCode) return `${name.trim().toUpperCase()} · ${demoCode}`;
-    const mock = getMockClientsForAyoteenz().find((c: { email?: string }) => normalizeEmailKey(c.email || '') === key);
-    const addr = mock && typeof mock === 'object' && 'address' in mock ? String((mock as { address?: string }).address || '') : '';
-    const paren = regionParenLabelFromAddressLine(addr);
-    const abbr = usStateAbbrevFromAddressLine(addr);
-    const code = (abbr || (paren ? compactRegionCodeForReviewHeader(paren) : '') || '').trim().toUpperCase();
-    return `${name.trim().toUpperCase()}${code ? ` · ${code}` : ''}`;
-  }, []);
 
   const pendingAuthFormsCount = useMemo(() => {
     void pendingAuthFormsBump;
@@ -544,6 +547,7 @@ export default function AdminPending() {
             clientRegionCode={item.clientRegionCode}
             productLine={grayLine}
             bodyText={countsBody}
+            bodyFontSize="10px"
             date={item.date}
             rating={5}
             photos={photos}
@@ -554,73 +558,10 @@ export default function AdminPending() {
             showStars={false}
             mediaPresentation="inline"
             afterMedia={rejectedBlock}
+            footerLinkLabel="VIEW CONTENT"
+            onFooterLinkClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
             onOpenClientDetails={openClientFromPending}
-          >
-            {item.kind === 'social' ? (
-              <p
-                style={{
-                  fontFamily: '"Futura PT Book"',
-                  fontSize: '10px',
-                  color: '#000',
-                  margin: '10px 0 0',
-                  lineHeight: 1.4,
-                  wordBreak: 'break-word',
-                }}
-              >
-                {String(item.platform || '').toUpperCase()} — {String(item.handle || '').toUpperCase()}
-              </p>
-            ) : null}
-            <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  if (item.serverType === 'affiliate' && item.serverId) {
-                    void patchAdminPendingQueue({ type: 'affiliate', id: item.serverId, decision: 'approve' }).then(() =>
-                      refreshServerQueues()
-                    );
-                    return;
-                  }
-                  approvePendingMockAffiliate(item.id);
-                }}
-                style={{
-                  flex: 1,
-                  minWidth: '100px',
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '10px',
-                  color: '#EB1C24',
-                  background: '#fff',
-                  border: '1.3px solid #000',
-                  padding: '8px 10px',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                }}
-              >
-                APPROVE
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAffiliateDeclineTarget({ mockId: item.id, serverId: item.serverId });
-                  setDeclineReasonDraft('');
-                  setShowDeclineReasonModal(true);
-                }}
-                style={{
-                  flex: 1,
-                  minWidth: '100px',
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '10px',
-                  color: '#EB1C24',
-                  background: '#fff',
-                  border: '1.3px solid #000',
-                  padding: '8px 10px',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                }}
-              >
-                REJECT
-              </button>
-            </div>
-          </AdminReviewStyleCard>
+          />
         </div>
       );
     },
@@ -818,6 +759,7 @@ export default function AdminPending() {
         declinePendingMockAffiliate(mockId, declineReasonDraft);
       }
       closeDeclineReasonOnly();
+      if (adminReviewModal?.kind === 'affiliate') closeAdminReviewModal();
       return;
     }
     if (!adminReviewModal) return;
@@ -865,7 +807,15 @@ export default function AdminPending() {
 
   const modalTitle = (() => {
     if (!adminReviewModal) return '';
-    if (adminReviewModal.kind === 'form') return 'REVIEW ORDER FORM';
+    if (adminReviewModal.kind === 'form') {
+      const fn = String(adminReviewModal.item.formFields?.firstName || '').trim();
+      const ln = String(adminReviewModal.item.formFields?.lastName || '').trim();
+      const nm = `${fn} ${ln}`.trim().toUpperCase();
+      return nm || 'ORDER FORM';
+    }
+    if (adminReviewModal.kind === 'affiliate') {
+      return adminReviewModal.item.client.trim().toUpperCase() || 'AFFILIATE';
+    }
     return adminReviewModal.item.client.trim().toUpperCase() || 'REVIEW';
   })();
 
@@ -878,6 +828,18 @@ export default function AdminPending() {
 
   const onApproveClick = () => {
     if (!adminReviewModal) return;
+    if (adminReviewModal.kind === 'affiliate') {
+      const it = adminReviewModal.item;
+      if (it.serverType === 'affiliate' && it.serverId) {
+        void patchAdminPendingQueue({ type: 'affiliate', id: it.serverId, decision: 'approve' }).then(() =>
+          refreshServerQueues()
+        );
+      } else {
+        approvePendingMockAffiliate(it.id);
+      }
+      closeAdminReviewModal();
+      return;
+    }
     if (adminReviewModal.kind === 'form') {
       const f = adminReviewModal.item;
       if (f.serverQueueId) {
@@ -1126,6 +1088,8 @@ export default function AdminPending() {
                             photoUrls={r.photoUrls}
                             videoUrls={r.videoUrls}
                             verifiedPurchase
+                            mediaPresentation="inline"
+                            hideMediaRowWhenEmpty
                             footerLinkLabel="VIEW REVIEW"
                             onFooterLinkClick={() => setAdminReviewModal({ kind: 'review', item: r })}
                             onOpenClientDetails={openClientFromPending}
@@ -1146,6 +1110,8 @@ export default function AdminPending() {
                           const nameRaw =
                             `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
                           const nameUpper = nameRaw.toUpperCase();
+                          const formState = regionCodeFromSignedFormFields(f.formFields);
+                          const clientLine = `${nameUpper}${formState ? ` · ${formState}` : ''}`;
                           const orderPlacedDate = (() => {
                             try {
                               return new Date(f.signedAt).toLocaleDateString(undefined, { dateStyle: 'short' });
@@ -1170,7 +1136,7 @@ export default function AdminPending() {
                                       lineHeight: 1.35,
                                     }}
                                   >
-                                    {regionLineForFormClient(f.email, nameRaw)}
+                                    {clientLine}
                                   </p>
                                   <p
                                     style={{
@@ -1293,7 +1259,7 @@ export default function AdminPending() {
                 maxWidth: '520px',
                 width: '100%',
                 alignSelf: 'center',
-                maxHeight: 'min(78vh, 720px)',
+                maxHeight: adminReviewModal.kind === 'form' ? 'min(88vh, 820px)' : 'min(78vh, 720px)',
                 border: '1.3px solid black',
                 borderRadius: 0,
                 display: 'flex',
@@ -1322,7 +1288,66 @@ export default function AdminPending() {
               </div>
               <div className="flex-1 min-h-0 flex flex-col overflow-auto" style={{ paddingBottom: '12px' }}>
                 {adminReviewModal.kind === 'form' ? (
-                  <SignedOrderFormPdfPanel url={formReviewPdfUrl} loading={formReviewPdfLoading} error={formReviewPdfError} />
+                  <SignedOrderFormPdfPanel
+                    url={formReviewPdfUrl}
+                    loading={formReviewPdfLoading}
+                    error={formReviewPdfError}
+                    variant="adminModal"
+                  />
+                ) : adminReviewModal.kind === 'affiliate' ? (
+                  (() => {
+                    const it = adminReviewModal.item;
+                    const prodFromOrder =
+                      it.orderId && it.email ? productNameForOrderId(it.email, it.orderId) : '';
+                    const pkStored = affiliateProductKey(it);
+                    const effectiveProduct = pkStored !== 'PRODUCT' ? pkStored : prodFromOrder || 'PRODUCT';
+                    const grayLine = affiliateProductKindLine({ ...it, productName: effectiveProduct });
+                    const contentMap = loadAffiliateContentMapForEmail(it.email);
+                    const countsBody = affiliateSubmittedCountsLine(it.email, effectiveProduct, contentMap);
+                    const photoUrls = it.kind === 'photo' && it.imageSrc ? [it.imageSrc] : [];
+                    const videoUrls =
+                      it.kind === 'video'
+                        ? it.videoDataUrl
+                          ? [it.videoDataUrl]
+                          : it.imageSrc
+                            ? [it.imageSrc]
+                            : ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
+                        : [];
+                    const consultFrame = {
+                      width: '50px',
+                      height: '50px',
+                      background: '#f3f4f6',
+                      border: '3px solid #FFFFFF',
+                      boxShadow: '0 0 0 1.1px #000000',
+                      boxSizing: 'border-box' as const,
+                      overflow: 'hidden',
+                    };
+                    return (
+                      <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
+                        <p style={{ margin: '0 0 8px', color: '#808080', fontSize: '10px', textTransform: 'uppercase' }}>{grayLine}</p>
+                        <p style={{ margin: '0 0 10px', fontSize: '10px', textTransform: 'uppercase' }}>{countsBody}</p>
+                        {it.kind === 'social' ? (
+                          <p style={{ margin: '0 0 10px', fontSize: '10px' }}>
+                            {String(it.platform || '').toUpperCase()} — {String(it.handle || '').toUpperCase()}
+                          </p>
+                        ) : null}
+                        {(photoUrls.length > 0 || videoUrls.length > 0) && (
+                          <div className="flex flex-wrap" style={{ gap: '8px' }}>
+                            {photoUrls.map((src, i) => (
+                              <a key={`am-p-${i}`} href={src} target="_blank" rel="noopener noreferrer" style={{ ...consultFrame, display: 'block' }}>
+                                <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                              </a>
+                            ))}
+                            {videoUrls.map((src, i) => (
+                              <div key={`am-v-${i}`} style={consultFrame}>
+                                <video src={src} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
@@ -1337,28 +1362,48 @@ export default function AdminPending() {
                     {(adminReviewModal.item.photoUrls?.length || adminReviewModal.item.videoUrls?.length) ? (
                       <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {(adminReviewModal.item.photoUrls || []).map((src, i) => (
-                          <img
+                          <a
                             key={`rv-ph-${i}`}
-                            src={src}
-                            alt=""
-                            style={{ maxWidth: '120px', maxHeight: '120px', objectFit: 'cover', border: '1px solid #e5e7eb' }}
-                          />
+                            href={src}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              width: '50px',
+                              height: '50px',
+                              background: '#f3f4f6',
+                              border: '3px solid #FFFFFF',
+                              boxShadow: '0 0 0 1.1px #000000',
+                              boxSizing: 'border-box',
+                              overflow: 'hidden',
+                              display: 'block',
+                            }}
+                          >
+                            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          </a>
                         ))}
                         {(adminReviewModal.item.videoUrls || []).map((src, i) => (
-                          <video
+                          <div
                             key={`rv-vd-${i}`}
-                            src={src}
-                            controls
-                            playsInline
-                            style={{ maxWidth: '100%', maxHeight: '200px', border: '1px solid #e5e7eb' }}
-                          />
+                            style={{
+                              width: '50px',
+                              height: '50px',
+                              background: '#f3f4f6',
+                              border: '3px solid #FFFFFF',
+                              boxShadow: '0 0 0 1.1px #000000',
+                              boxSizing: 'border-box',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <video src={src} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                          </div>
                         ))}
                       </div>
                     ) : null}
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 flex-shrink-0 flex-wrap" style={{ marginTop: '8px' }}>
+            </div>
+            <div className="flex gap-2 flex-shrink-0 flex-wrap" style={{ width: '100%', maxWidth: '520px', alignSelf: 'center' }}>
                 <button
                   type="button"
                   onClick={onApproveClick}
@@ -1380,7 +1425,14 @@ export default function AdminPending() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowDeclineReasonModal(true)}
+                  onClick={() => {
+                    if (adminReviewModal.kind === 'affiliate') {
+                      const it = adminReviewModal.item;
+                      setAffiliateDeclineTarget({ mockId: it.id, serverId: it.serverId });
+                    }
+                    setDeclineReasonDraft('');
+                    setShowDeclineReasonModal(true);
+                  }}
                   style={{
                     flex: 1,
                     minWidth: '120px',
@@ -1397,7 +1449,6 @@ export default function AdminPending() {
                   REJECT
                 </button>
               </div>
-            </div>
             {adminReviewModal.kind === 'form' ? (
               <button
                 type="button"

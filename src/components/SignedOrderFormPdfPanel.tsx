@@ -2,6 +2,8 @@ type Props = {
   url: string | null;
   loading: boolean;
   error: string | null;
+  /** Taller iframe for admin pending form modal (full form in view). */
+  variant?: 'default' | 'adminModal';
 };
 
 function pdfIframeSrc(blobUrl: string): string {
@@ -10,9 +12,9 @@ function pdfIframeSrc(blobUrl: string): string {
 }
 
 /** PDF preview only (iframe). Download lives outside the modal card in admin clients. */
-export function SignedOrderFormPdfPanel({ url, loading, error }: Props) {
+export function SignedOrderFormPdfPanel({ url, loading, error, variant = 'default' }: Props) {
   /** Bounded viewport so native PDF viewers can scale the whole page to fit (see `#view=Fit`). */
-  const viewportH = 'min(56vh, 520px)';
+  const viewportH = variant === 'adminModal' ? 'min(72vh, 680px)' : 'min(56vh, 520px)';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', minHeight: 0, flex: 1, alignItems: 'stretch' }}>
       <div
