@@ -25,7 +25,8 @@ const MONTH_LABELS = [
 ] as const;
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
-const ADMIN_MEETINGS_WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
+/** Sun-first columns (matches US locale grid). */
+const ADMIN_MEETINGS_WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] as const;
 
 type CalendarGridCell = {
   day: number | null;
@@ -60,11 +61,6 @@ function daysInMonth(year: number, monthIndex: number): number {
 
 function startWeekdaySun0(year: number, monthIndex: number): number {
   return new Date(year, monthIndex, 1).getDay();
-}
-
-function startWeekdayMonday0(year: number, monthIndex: number): number {
-  const sun0 = new Date(year, monthIndex, 1).getDay();
-  return sun0 === 0 ? 6 : sun0 - 1;
 }
 
 function formatTriggerLabel(iso: string): string {
@@ -174,7 +170,7 @@ export default function BrandExpiresDatePicker({
 
   const grid = useMemo<CalendarGridCell[]>(() => {
     if (monthLabelVariant === 'adminMeetings') {
-      const first = startWeekdayMonday0(viewYear, viewMonth);
+      const first = startWeekdaySun0(viewYear, viewMonth);
       const cur = new Date(viewYear, viewMonth, 1);
       cur.setDate(cur.getDate() - first);
       const cells: CalendarGridCell[] = [];
