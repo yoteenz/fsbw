@@ -64,8 +64,7 @@ function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
 /** Black title line — same rules as cart dropdown. */
 function bagProductTitleLine(item: { name?: string; type?: string; category?: string; balance?: number; price?: number }): string {
   if (isGiftCardCartLine(item)) {
-    const v = Number(item.balance ?? item.price) || 0;
-    return `GIFT CARD · $${v}`;
+    return 'GIFT CARD';
   }
   if (item.type === 'booking-appointment') {
     return 'BOOKING';
