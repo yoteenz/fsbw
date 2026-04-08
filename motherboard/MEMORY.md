@@ -12887,3 +12887,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked for **gift cards** to have their **own checkout page**, similar to **A/C bookings** (`/checkout/bookings`) and **membership upgrade** checkout routing.
 
 **Changes:** **`giftCardCheckout.ts`** — **`isGiftCardCartLine`**, **`filterGiftCardCartLines`**, **`isGiftCardCheckoutPath`**, **`isGiftCardOnlyCheckoutState`**. **`checkoutNavigatePath.ts`** — **`checkoutPathForCartItems`** → **`/checkout/bookings`**, **`/checkout/gift-card`**, or **`/checkout`**. **`App.tsx`** — route **`/checkout/gift-card`** → **`CheckoutPage`**. **`checkout/page.tsx`** — load **only gift card lines** on that path; **`/checkout`** **replace** navigates to bookings or gift-card when bag is **only** those lines; empty gift-card checkout **replace** → **`/tools/gift-card`**; nav breadcrumb **GIFT CARD**; **`checkout_start`** payload includes **`giftCard`** / **`bookings`**. **`CartDropdown`** + **`shopping-bag/page.tsx`** — checkout button uses **`checkoutPathForCartItems`**. **`signInReturnTo.ts`** — legacy **`checkout/gift-card`** and **`checkout/bookings`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Calendar weekday columns: Sun-first (S M T W T F S)
+
+**Context (this chat):** User asked to structure calendar weekday columns as **S M T W T F S** instead of **M T W T F S S**.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — **`adminMeetings`** grid uses **`startWeekdaySun0`** (same rolling 42-cell layout as before but aligned to Sunday); header row **`ADMIN_MEETINGS_WEEKDAYS`** set to **`['S','M','T','W','T','F','S']`**; removed unused **`startWeekdayMonday0`**. **`npm run build`**.
