@@ -12911,3 +12911,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said gift card flow still **only added to cart** instead of routing to **`/checkout/gift-card`** — root cause was **`/home/tools`** gift card carousel still using **`handleAddToCart`** (bag icon toggle), not the PDP button.
 
 **Changes:** **`giftCardCheckoutSession.ts`** — shared **`writeGiftCardSelectionForCheckoutSession`** (strip prior gift-card lines, prepend one line, quantity-based **`cartCount`**, dispatch sync events). **`tools/gift-card/page.tsx`** — PDP uses that helper. **`tools/page.tsx`** — replace bag icons with **PROCEED TO CHECKOUT** per denomination; same helper + **`navigate('/checkout/gift-card')`**; remove **`inCart`** sync effect; **`trackActivity`** from strip (**`tools_gift_strip`**). **`npm run build`**.
+
+---
+
+## 2026-04-06 — Fix `/checkout/gift-card` bounce (empty cart race)
+
+**Context (this chat):** User said **PROCEED TO CHECKOUT** still did not land on gift checkout — **`checkout/page.tsx`** had an effect: on **`/checkout/gift-card`**, if **`cartItems.length === 0`**, **`replace`** navigate to **`/tools/gift-card`**. On first mount **`cartItems`** is still **`[]`** until **`loadCartItems`** runs, so navigation was immediately overwritten.
+
+**Changes:** **`checkout/page.tsx`** — empty gift-checkout redirect now checks **`localStorage` `cartItems`** via **`filterGiftCardCartLines`**; only redirect when there are **no** gift lines in storage. **`cartItems.length`** kept in deps so after **`loadCartItems`** clears bad state we still redirect. **`npm run build`**.
