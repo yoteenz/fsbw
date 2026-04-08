@@ -17,6 +17,21 @@ import type { StoredSignedOrderForm } from '../../../utils/signedOrderFormsStora
 import { approveOrderFormSubmission, declineOrderFormSubmission } from '../../../utils/signedOrderFormsStorage';
 import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
 import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hooks/useSignedOrderFormPdf';
+import { seedPendingTestOrderFormsIfNeeded } from '../../../utils/mockSignedOrderFormForApproval';
+import {
+  approvePendingMockAffiliate,
+  approvePendingMockReview,
+  countPendingMockAffiliate,
+  countPendingMockReviews,
+  declinePendingMockAffiliate,
+  declinePendingMockReview,
+  listPendingMockAffiliateVisible,
+  listPendingMockReviewsVisible,
+  PENDING_MOCK_AFFILIATE_UPDATED_EVENT,
+  PENDING_MOCK_REVIEWS_UPDATED_EVENT,
+  type PendingMockAffiliateItem,
+  type PendingMockReview,
+} from '../../../utils/adminPendingMockQueues';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -24,48 +39,10 @@ const rowStyle = {
   borderBottom: '1px solid #e5e7eb' as const,
 };
 
-/** Mock: client reviews as submitted on Account → Reviews (pending admin). */
-const MOCK_PENDING_CLIENT_REVIEWS = [
-  {
-    id: '1',
-    client: 'SARAH JOHNSON',
-    email: 'sarah.j@email.com',
-    product: 'NOIR 24" RAW RUSSIAN',
-    rating: 5,
-    excerpt: 'ABSOLUTELY IN LOVE WITH THE QUALITY AND THE INSTALL TEAM WAS SO PROFESSIONAL.',
-    date: '3/28/2026',
-    status: 'PENDING' as const,
-  },
-  {
-    id: '2',
-    client: 'MARIA RODRIGUEZ',
-    email: 'maria.r@email.com',
-    product: 'SOFT WAVE 26"',
-    rating: 4,
-    excerpt: 'GREAT TEXTURE, SHIPPING WAS FAST. WOULD LOVE SLIGHTLY MORE DENSITY NEXT TIME.',
-    date: '3/26/2026',
-    status: 'PENDING' as const,
-  },
-  {
-    id: '3',
-    client: 'JORDAN LEE',
-    email: 'jordan.lee@email.com',
-    product: 'SLAY STYLING TOOL',
-    rating: 5,
-    excerpt: 'GAME CHANGER FOR MY MORNING ROUTINE. FIVE STARS.',
-    date: '3/22/2026',
-    status: 'PENDING' as const,
-  },
-] as const;
-
-/** Mock: affiliate submissions (Account → Affiliate). */
-const MOCK_AFFILIATE_PHOTOS = ['/assets/gallery-mock.png', '/assets/gallery-mock.png', '/assets/gallery-mock.png'] as const;
-const MOCK_AFFILIATE_VIDEOS = ['/assets/gallery-mock.png', '/assets/gallery-mock.png'] as const;
-const MOCK_AFFILIATE_SOCIALS = [
-  { platform: 'INSTAGRAM', handle: '@CLIENTSTYLE · REEL SUBMITTED', date: '3/27/2026' },
-  { platform: 'TIKTOK', handle: '@WIGGLOW · TAGGED @FRONTALSLAYER', date: '3/24/2026' },
-  { platform: 'YOUTUBE', handle: 'SHORTS · INSTALL ROUTINE', date: '3/20/2026' },
-] as const;
+type PendingAdminModal =
+  | { kind: 'form'; item: StoredSignedOrderForm }
+  | { kind: 'review'; item: PendingMockReview }
+  | { kind: 'affiliate'; item: PendingMockAffiliateItem };
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
@@ -102,7 +79,8 @@ export default function AdminPending() {
     textOnly: number;
   }>({ total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 });
   const [pendingAuthFormsBump, setPendingAuthFormsBump] = useState(0);
-  const [formReviewTarget, setFormReviewTarget] = useState<StoredSignedOrderForm | null>(null);
+  const [mockQueuesBump, setMockQueuesBump] = useState(0);
+  const [adminReviewModal, setAdminReviewModal] = useState<PendingAdminModal | null>(null);
   const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false);
   const [declineReasonDraft, setDeclineReasonDraft] = useState('');
 
@@ -116,6 +94,26 @@ export default function AdminPending() {
     return listPendingOrderAuthorizationFormsForAdmin();
   }, [pendingAuthFormsBump]);
 
+  const mockReviewsPendingCount = useMemo(() => {
+    void mockQueuesBump;
+    return countPendingMockReviews();
+  }, [mockQueuesBump]);
+
+  const mockAffiliatePendingCount = useMemo(() => {
+    void mockQueuesBump;
+    return countPendingMockAffiliate();
+  }, [mockQueuesBump]);
+
+  const pendingMockReviewsList = useMemo(() => {
+    void mockQueuesBump;
+    return listPendingMockReviewsVisible();
+  }, [mockQueuesBump]);
+
+  const pendingMockAffiliateList = useMemo(() => {
+    void mockQueuesBump;
+    return listPendingMockAffiliateVisible();
+  }, [mockQueuesBump]);
+
   useEffect(() => {
     const bump = () => setPendingAuthFormsBump((n) => n + 1);
     window.addEventListener(PENDING_ORDER_FORMS_UPDATED_EVENT, bump);
@@ -124,6 +122,22 @@ export default function AdminPending() {
     return () => {
       window.removeEventListener(PENDING_ORDER_FORMS_UPDATED_EVENT, bump);
       window.removeEventListener('signedOrderFormsUpdated', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
+
+  useEffect(() => {
+    seedPendingTestOrderFormsIfNeeded();
+  }, []);
+
+  useEffect(() => {
+    const bump = () => setMockQueuesBump((n) => n + 1);
+    window.addEventListener(PENDING_MOCK_REVIEWS_UPDATED_EVENT, bump);
+    window.addEventListener(PENDING_MOCK_AFFILIATE_UPDATED_EVENT, bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener(PENDING_MOCK_REVIEWS_UPDATED_EVENT, bump);
+      window.removeEventListener(PENDING_MOCK_AFFILIATE_UPDATED_EVENT, bump);
       window.removeEventListener('storage', bump);
     };
   }, []);
@@ -214,39 +228,83 @@ export default function AdminPending() {
             { label: 'REFUND REQUESTS', value: '0' },
             { label: 'SYSTEM ALERTS', value: '0' },
           ];
-    return base.map((row) =>
-      row.label === 'ORDER FORMS' ? { ...row, value: String(pendingAuthFormsCount) } : row
-    );
-  }, [pendingItems, pendingReviews, orderForms, pendingAuthFormsCount]);
+    return base.map((row) => {
+      if (row.label === 'ORDER FORMS') return { ...row, value: String(pendingAuthFormsCount) };
+      if (row.label === 'PENDING REVIEWS') {
+        const n = Number.parseInt(String(row.value), 10);
+        const api = Number.isFinite(n) ? n : 0;
+        return { ...row, value: String(api + mockReviewsPendingCount) };
+      }
+      if (row.label === 'AFFILIATE REQUESTS') {
+        const n = Number.parseInt(String(row.value), 10);
+        const api = Number.isFinite(n) ? n : 0;
+        return { ...row, value: String(api + mockAffiliatePendingCount) };
+      }
+      return row;
+    });
+  }, [pendingItems, pendingReviews, orderForms, pendingAuthFormsCount, mockReviewsPendingCount, mockAffiliatePendingCount]);
 
+  const formModalTarget = adminReviewModal?.kind === 'form' ? adminReviewModal.item : null;
   const {
     url: formReviewPdfUrl,
     loading: formReviewPdfLoading,
     error: formReviewPdfError,
-  } = useSignedOrderFormPdf(formReviewTarget);
+  } = useSignedOrderFormPdf(formModalTarget);
 
   const downloadFormReviewPdf = useCallback(() => {
-    if (!formReviewPdfUrl || !formReviewTarget) return;
+    if (!formReviewPdfUrl || !formModalTarget) return;
     const a = document.createElement('a');
     a.href = formReviewPdfUrl;
-    a.download = signedOrderFormPdfFileName(formReviewTarget);
+    a.download = signedOrderFormPdfFileName(formModalTarget);
     a.rel = 'noopener';
     document.body.appendChild(a);
     a.click();
     a.remove();
-  }, [formReviewPdfUrl, formReviewTarget]);
+  }, [formReviewPdfUrl, formModalTarget]);
 
-  const closeFormReview = useCallback(() => {
-    setFormReviewTarget(null);
+  const closeAdminReviewModal = useCallback(() => {
+    setAdminReviewModal(null);
     setShowDeclineReasonModal(false);
     setDeclineReasonDraft('');
   }, []);
 
   const submitDecline = useCallback(() => {
-    if (!formReviewTarget) return;
-    declineOrderFormSubmission(formReviewTarget, declineReasonDraft);
-    closeFormReview();
-  }, [formReviewTarget, declineReasonDraft, closeFormReview]);
+    if (!adminReviewModal) return;
+    if (adminReviewModal.kind === 'form') {
+      declineOrderFormSubmission(adminReviewModal.item, declineReasonDraft);
+    } else if (adminReviewModal.kind === 'review') {
+      declinePendingMockReview(adminReviewModal.item.id, declineReasonDraft);
+    } else {
+      declinePendingMockAffiliate(adminReviewModal.item.id, declineReasonDraft);
+    }
+    closeAdminReviewModal();
+  }, [adminReviewModal, declineReasonDraft, closeAdminReviewModal]);
+
+  const modalTitle = (() => {
+    if (!adminReviewModal) return '';
+    if (adminReviewModal.kind === 'form') return 'REVIEW ORDER FORM';
+    if (adminReviewModal.kind === 'review') return 'REVIEW CLIENT REVIEW';
+    return 'REVIEW AFFILIATE SUBMISSION';
+  })();
+
+  const declineModalTitle = (() => {
+    if (!adminReviewModal) return '';
+    if (adminReviewModal.kind === 'form') return 'DECLINE ORDER FORM';
+    if (adminReviewModal.kind === 'review') return 'DECLINE REVIEW';
+    return 'DECLINE AFFILIATE SUBMISSION';
+  })();
+
+  const onApproveClick = () => {
+    if (!adminReviewModal) return;
+    if (adminReviewModal.kind === 'form') {
+      approveOrderFormSubmission(adminReviewModal.item);
+    } else if (adminReviewModal.kind === 'review') {
+      approvePendingMockReview(adminReviewModal.item.id);
+    } else {
+      approvePendingMockAffiliate(adminReviewModal.item.id);
+    }
+    closeAdminReviewModal();
+  };
 
   const formsRows = [
     { label: 'INCOMPLETE FORMS', value: '5' },
@@ -323,7 +381,7 @@ export default function AdminPending() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {pendingReviews}
+                    {pendingReviews + mockReviewsPendingCount}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     PENDING REVIEWS
@@ -342,7 +400,7 @@ export default function AdminPending() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {orderForms}
+                    {pendingAuthFormsCount}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     ORDER FORMS
@@ -403,7 +461,7 @@ export default function AdminPending() {
                         ALIGNS WITH <span style={{ color: '#000' }}>ADMIN → REVIEWS</span> &amp; <span style={{ color: '#000' }}>CLIENT → REVIEWS</span> WHEN API DATA LOADS.
                       </p>
                       <div className="space-y-0">
-                        <DataRow label="PENDING (ALL)" value={String(reviewBreakdown.total)} />
+                        <DataRow label="PENDING (ALL)" value={String(reviewBreakdown.total + mockReviewsPendingCount)} />
                         <DataRow label="WITH PHOTOS" value={String(reviewBreakdown.withPhotos)} />
                         <DataRow label="WITH VIDEOS" value={String(reviewBreakdown.withVideos)} />
                         <DataRow label="TEXT ONLY" value={String(reviewBreakdown.textOnly)} />
@@ -448,27 +506,49 @@ export default function AdminPending() {
 
                   {activeTab === 'REVIEWS' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 10px', lineHeight: 1.35 }}>
-                        MOCK: SUBMITTED CLIENT REVIEWS (ACCOUNT → REVIEWS). DESIGN PREVIEW ONLY.
-                      </p>
-                      {MOCK_PENDING_CLIENT_REVIEWS.map((r) => (
-                        <div key={r.id} className="py-3" style={rowStyle}>
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="min-w-0 flex-1">
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{r.client}</p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{r.email}</p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{r.product}</p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0', lineHeight: 1.35 }}>
-                                {r.excerpt}
-                              </p>
-                              <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
-                                {r.rating} STARS · {r.status}
-                              </p>
+                      {pendingMockReviewsList.length === 0 ? (
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
+                          NO REVIEWS PENDING APPROVAL.
+                        </p>
+                      ) : (
+                        pendingMockReviewsList.map((r) => (
+                          <div key={r.id} className="py-3" style={rowStyle}>
+                            <div className="flex justify-between items-start gap-2">
+                              <div className="min-w-0 flex-1">
+                                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{r.client}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{r.email}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{r.product}</p>
+                                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0', lineHeight: 1.35 }}>
+                                  {r.excerpt}
+                                </p>
+                                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>
+                                  {r.rating} STARS · PENDING
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => setAdminReviewModal({ kind: 'review', item: r })}
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '9px',
+                                    color: '#EB1C24',
+                                    fontWeight: 500,
+                                    margin: '8px 0 0',
+                                    padding: 0,
+                                    border: 'none',
+                                    background: 'none',
+                                    cursor: 'pointer',
+                                    textTransform: 'uppercase',
+                                    display: 'block',
+                                  }}
+                                >
+                                  VIEW REVIEW
+                                </button>
+                              </div>
+                              <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{r.date}</span>
                             </div>
-                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{r.date}</span>
                           </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </>
                   )}
 
@@ -499,7 +579,7 @@ export default function AdminPending() {
                                   {showView ? (
                                     <button
                                       type="button"
-                                      onClick={() => setFormReviewTarget(f)}
+                                      onClick={() => setAdminReviewModal({ kind: 'form', item: f })}
                                       style={{
                                         fontFamily: '"Futura PT Medium"',
                                         fontSize: '9px',
@@ -533,73 +613,115 @@ export default function AdminPending() {
 
                   {activeTab === 'AFFILIATE' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 10px', lineHeight: 1.35 }}>
-                        MOCK: ACCOUNT → AFFILIATE SUBMISSIONS (PHOTOS, VIDEOS, SOCIALS). DESIGN PREVIEW ONLY.
-                      </p>
-
-                      <SectionTitle>PHOTOS</SectionTitle>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {MOCK_AFFILIATE_PHOTOS.map((src, i) => (
-                          <div
-                            key={i}
-                            style={{
-                              width: '72px',
-                              height: '72px',
-                              border: '3px solid #fff',
-                              boxShadow: '0 0 0 1.1px #000',
-                              overflow: 'hidden',
-                              background: '#f3f4f6',
-                            }}
-                          >
-                            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      {pendingMockAffiliateList.length === 0 ? (
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
+                          NO AFFILIATE SUBMISSIONS PENDING APPROVAL.
+                        </p>
+                      ) : (
+                        <>
+                          <SectionTitle>PHOTOS</SectionTitle>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {pendingMockAffiliateList
+                              .filter((x) => x.kind === 'photo')
+                              .map((item) => (
+                                <button
+                                  key={item.id}
+                                  type="button"
+                                  onClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
+                                  style={{
+                                    width: '72px',
+                                    height: '72px',
+                                    border: '3px solid #fff',
+                                    boxShadow: '0 0 0 1.1px #000',
+                                    overflow: 'hidden',
+                                    background: '#f3f4f6',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <img src={item.imageSrc || '/assets/gallery-mock.png'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </button>
+                              ))}
                           </div>
-                        ))}
-                      </div>
 
-                      <SectionTitle>VIDEOS</SectionTitle>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {MOCK_AFFILIATE_VIDEOS.map((src, i) => (
-                          <div
-                            key={i}
-                            style={{
-                              width: '72px',
-                              height: '72px',
-                              border: '3px solid #fff',
-                              boxShadow: '0 0 0 1.1px #000',
-                              overflow: 'hidden',
-                              background: '#f3f4f6',
-                              position: 'relative',
-                            }}
-                          >
-                            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
-                            <span
-                              style={{
-                                position: 'absolute',
-                                inset: 0,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '8px',
-                                color: '#EB1C24',
-                              }}
-                            >
-                              ▶
-                            </span>
+                          <SectionTitle>VIDEOS</SectionTitle>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {pendingMockAffiliateList
+                              .filter((x) => x.kind === 'video')
+                              .map((item) => (
+                                <button
+                                  key={item.id}
+                                  type="button"
+                                  onClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
+                                  style={{
+                                    width: '72px',
+                                    height: '72px',
+                                    border: '3px solid #fff',
+                                    boxShadow: '0 0 0 1.1px #000',
+                                    overflow: 'hidden',
+                                    background: '#f3f4f6',
+                                    position: 'relative',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <img
+                                    src={item.imageSrc || '/assets/gallery-mock.png'}
+                                    alt=""
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }}
+                                  />
+                                  <span
+                                    style={{
+                                      position: 'absolute',
+                                      inset: 0,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '8px',
+                                      color: '#EB1C24',
+                                      pointerEvents: 'none',
+                                    }}
+                                  >
+                                    ▶
+                                  </span>
+                                </button>
+                              ))}
                           </div>
-                        ))}
-                      </div>
 
-                      <SectionTitle>SOCIAL LINKS</SectionTitle>
-                      <div className="space-y-0">
-                        {MOCK_AFFILIATE_SOCIALS.map((s, i) => (
-                          <div key={i} className="py-2" style={rowStyle}>
-                            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{s.platform}</p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '4px 0 0' }}>{s.handle}</p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{s.date}</p>
+                          <SectionTitle>SOCIAL LINKS</SectionTitle>
+                          <div className="space-y-0">
+                            {pendingMockAffiliateList
+                              .filter((x) => x.kind === 'social')
+                              .map((s) => (
+                                <div key={s.id} className="py-2" style={rowStyle}>
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0 }}>{s.platform}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '4px 0 0' }}>{s.handle}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{s.date}</p>
+                                  <button
+                                    type="button"
+                                    onClick={() => setAdminReviewModal({ kind: 'affiliate', item: s })}
+                                    style={{
+                                      fontFamily: '"Futura PT Medium"',
+                                      fontSize: '9px',
+                                      color: '#EB1C24',
+                                      fontWeight: 500,
+                                      margin: '8px 0 0',
+                                      padding: 0,
+                                      border: 'none',
+                                      background: 'none',
+                                      cursor: 'pointer',
+                                      textTransform: 'uppercase',
+                                      display: 'block',
+                                    }}
+                                  >
+                                    VIEW SUBMISSION
+                                  </button>
+                                </div>
+                              ))}
                           </div>
-                        ))}
-                      </div>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
@@ -620,11 +742,11 @@ export default function AdminPending() {
         </div>
       </div>
 
-      {formReviewTarget && !showDeclineReasonModal && (
+      {adminReviewModal && !showDeclineReasonModal && (
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
-          onClick={closeFormReview}
+          onClick={closeAdminReviewModal}
           role="presentation"
         >
           <div
@@ -645,13 +767,13 @@ export default function AdminPending() {
                 flexDirection: 'column',
               }}
               role="dialog"
-              aria-labelledby="pending-form-review-title"
+              aria-labelledby="pending-admin-review-title"
             >
               <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
-                <p id="pending-form-review-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500 }}>
-                  REVIEW ORDER FORM
+                <p id="pending-admin-review-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500 }}>
+                  {modalTitle}
                 </p>
-                <button type="button" onClick={closeFormReview} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
+                <button type="button" onClick={closeAdminReviewModal} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
                   <img
                     src="/assets/close-icon.svg"
                     alt=""
@@ -665,18 +787,80 @@ export default function AdminPending() {
                   />
                 </button>
               </div>
-              <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ paddingBottom: '12px' }}>
-                <SignedOrderFormPdfPanel url={formReviewPdfUrl} loading={formReviewPdfLoading} error={formReviewPdfError} />
+              <div className="flex-1 min-h-0 flex flex-col overflow-auto" style={{ paddingBottom: '12px' }}>
+                {adminReviewModal.kind === 'form' ? (
+                  <SignedOrderFormPdfPanel url={formReviewPdfUrl} loading={formReviewPdfLoading} error={formReviewPdfError} />
+                ) : adminReviewModal.kind === 'review' ? (
+                  <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
+                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
+                      {adminReviewModal.item.client}
+                    </p>
+                    <p style={{ margin: '0 0 6px', color: '#808080', fontSize: '10px' }}>{adminReviewModal.item.email}</p>
+                    <p style={{ margin: '0 0 6px', textTransform: 'uppercase' }}>{adminReviewModal.item.product}</p>
+                    <p style={{ margin: '0 0 6px' }}>{adminReviewModal.item.excerpt}</p>
+                    <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>
+                      {adminReviewModal.item.rating} STARS · {adminReviewModal.item.date}
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
+                    {adminReviewModal.item.kind === 'social' ? (
+                      <>
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
+                          {adminReviewModal.item.platform}
+                        </p>
+                        <p style={{ margin: '0 0 6px' }}>{adminReviewModal.item.handle}</p>
+                        <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>{adminReviewModal.item.date}</p>
+                      </>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                        <div
+                          style={{
+                            width: '100%',
+                            maxWidth: '280px',
+                            border: '1.3px solid #000',
+                            overflow: 'hidden',
+                            background: '#f3f4f6',
+                            position: 'relative',
+                          }}
+                        >
+                          <img
+                            src={adminReviewModal.item.imageSrc || '/assets/gallery-mock.png'}
+                            alt=""
+                            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
+                          />
+                          {adminReviewModal.item.kind === 'video' ? (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontFamily: '"Futura PT Medium"',
+                                fontSize: '14px',
+                                color: '#EB1C24',
+                                pointerEvents: 'none',
+                                background: 'rgba(0,0,0,0.12)',
+                              }}
+                            >
+                              ▶
+                            </span>
+                          ) : null}
+                        </div>
+                        <p style={{ margin: 0, color: '#808080', fontSize: '10px', textTransform: 'uppercase' }}>
+                          {adminReviewModal.item.kind === 'video' ? 'VIDEO SUBMISSION' : 'PHOTO SUBMISSION'} · {adminReviewModal.item.date}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="flex gap-2 flex-shrink-0 flex-wrap" style={{ marginTop: '8px' }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!formReviewTarget) return;
-                    approveOrderFormSubmission(formReviewTarget);
-                    closeFormReview();
-                  }}
-                  disabled={formReviewPdfLoading}
+                  onClick={onApproveClick}
+                  disabled={adminReviewModal.kind === 'form' && formReviewPdfLoading}
                   style={{
                     flex: 1,
                     minWidth: '120px',
@@ -686,7 +870,7 @@ export default function AdminPending() {
                     background: '#EB1C24',
                     border: '1.3px solid #000',
                     padding: '8px 10px',
-                    cursor: formReviewPdfLoading ? 'not-allowed' : 'pointer',
+                    cursor: adminReviewModal.kind === 'form' && formReviewPdfLoading ? 'not-allowed' : 'pointer',
                     textTransform: 'uppercase',
                   }}
                 >
@@ -712,31 +896,33 @@ export default function AdminPending() {
                 </button>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={downloadFormReviewPdf}
-              disabled={!formReviewPdfUrl || formReviewPdfLoading}
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '10px',
-                color: '#EB1C24',
-                background: '#fff',
-                border: '1.3px solid #000',
-                padding: '8px 12px',
-                cursor: formReviewPdfUrl && !formReviewPdfLoading ? 'pointer' : 'not-allowed',
-                textTransform: 'uppercase',
-                alignSelf: 'center',
-                width: '100%',
-                maxWidth: '520px',
-              }}
-            >
-              SAVE / DOWNLOAD PDF
-            </button>
+            {adminReviewModal.kind === 'form' ? (
+              <button
+                type="button"
+                onClick={downloadFormReviewPdf}
+                disabled={!formReviewPdfUrl || formReviewPdfLoading}
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#EB1C24',
+                  background: '#fff',
+                  border: '1.3px solid #000',
+                  padding: '8px 12px',
+                  cursor: formReviewPdfUrl && !formReviewPdfLoading ? 'pointer' : 'not-allowed',
+                  textTransform: 'uppercase',
+                  alignSelf: 'center',
+                  width: '100%',
+                  maxWidth: '520px',
+                }}
+              >
+                SAVE / DOWNLOAD PDF
+              </button>
+            ) : null}
           </div>
         </div>
       )}
 
-      {formReviewTarget && showDeclineReasonModal && (
+      {adminReviewModal && showDeclineReasonModal && (
         <div
           className="fixed inset-0 z-[100000] flex items-center justify-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
@@ -751,7 +937,7 @@ export default function AdminPending() {
             aria-labelledby="decline-reason-title"
           >
             <p id="decline-reason-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: '0 0 12px', textTransform: 'uppercase' }}>
-              DECLINE ORDER FORM
+              {declineModalTitle}
             </p>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '0 0 8px' }}>
               OPTIONAL REASON (SHOWN TO OPS / YOUR RECORDS):

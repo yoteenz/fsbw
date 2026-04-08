@@ -12842,6 +12842,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-06 — Admin Pending: approve/decline on Reviews + Affiliate; seed test forms
+
+**Context (this chat):** User wanted the same **approve / decline (optional reason)** flow as **FORMS** on **REVIEWS** and **AFFILIATE** tabs; **mock order forms** on **FORMS** tab for testing.
+
+**Changes:** **`adminPendingMockQueues.ts`** — **`localStorage`** queues **`adminPendingMockReviews_v1`**, **`adminPendingMockAffiliate_v1`** (seed defaults once); **`approve`/`decline`**, **`listVisible`**, counts, **`PENDING_MOCK_*_UPDATED_EVENT`**. **`mockSignedOrderFormForApproval.ts`** — **`seedPendingTestOrderFormsIfNeeded()`** one-time appends **2** **`appendSignedOrderForm`** rows (**`adminApproved: false`**, mock images when DOM), flag **`adminPendingTestOrderFormsSeeded_v1`**. **`admin/pending/page.tsx`** — unified **`adminReviewModal`** (**form** / **review** / **affiliate**); **VIEW REVIEW**, photo/video tap, **VIEW SUBMISSION**; same modal **APPROVE**/**DECLINE**/reason submodal; **SAVE/DOWNLOAD PDF** only for forms; overview card **ORDER FORMS** uses **`pendingAuthFormsCount`**; **PENDING REVIEWS** + **AFFILIATE REQUESTS** (and overview totals) add mock pending counts; removed static **MOCK:** gray banners on those tabs. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
 ## 2026-04-06 — Admin Pending FORMS tab: remove gray intro line
 
 **Context (this chat):** User asked to remove the **gray** explanatory text on the **FORMS** tab of **Admin → Pending** (mock / design-preview style copy above the list).

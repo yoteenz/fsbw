@@ -1,4 +1,5 @@
 import type { StoredSignedOrderForm } from './signedOrderFormsStorage';
+import { appendSignedOrderForm } from './signedOrderFormsStorage';
 
 export const MOCK_APPROVAL_SIGNED_FORM_ID = 'mock-approval-signed-form-v1';
 
@@ -169,4 +170,98 @@ export function getMockSignedOrderFormForApproval(): StoredSignedOrderForm {
 export function mergeSignedFormsWithMockApproval(list: StoredSignedOrderForm[]): StoredSignedOrderForm[] {
   if (list.some((f) => f.id === MOCK_APPROVAL_SIGNED_FORM_ID)) return list;
   return [getMockSignedOrderFormForApproval(), ...list];
+}
+
+const PENDING_TEST_FORMS_SEEDED_KEY = 'adminPendingTestOrderFormsSeeded_v1';
+
+function buildTestPendingSignedForm(opts: {
+  id: string;
+  email: string;
+  orderNumber: string;
+  orderDate: string;
+  firstName: string;
+  lastName: string;
+  signedAt: number;
+}): StoredSignedOrderForm {
+  const photoIdDataUrl = typeof document !== 'undefined' ? mockPhotoIdDataUrl() : '';
+  const cardLastFourDataUrl = typeof document !== 'undefined' ? mockCardLastFourDataUrl() : '';
+  const signatureDataUrl = typeof document !== 'undefined' ? mockSignatureDataUrl() : '';
+  return {
+    id: opts.id,
+    orderNumber: opts.orderNumber,
+    orderDate: opts.orderDate,
+    signedAt: opts.signedAt,
+    email: opts.email,
+    summaryOnly: false,
+    adminApproved: false,
+    adminDeclined: false,
+    formFields: {
+      orderNumber: opts.orderNumber,
+      orderDate: opts.orderDate,
+      firstName: opts.firstName,
+      lastName: opts.lastName,
+      email: opts.email,
+      phone: '(555) 010-0200',
+      address: '200 Test Ave',
+      city: 'Miami',
+      state: 'FL',
+      zip: '33101',
+      country: 'United States',
+      billingAddress: '200 Test Ave',
+      billingCity: 'Miami',
+      billingState: 'FL',
+      billingZip: '33101',
+      billingCountry: 'United States',
+      cardholderName: `${opts.firstName} ${opts.lastName}`,
+      cardNumber: '•••• •••• •••• 4242',
+      cardLastFour: '4242',
+      cardType: 'Visa',
+      expirationDate: '12/28',
+    },
+    ...(photoIdDataUrl ? { photoIdDataUrl } : {}),
+    ...(cardLastFourDataUrl ? { cardLastFourDataUrl } : {}),
+    ...(signatureDataUrl ? { signatureDataUrl } : {}),
+  };
+}
+
+/**
+ * One-time: append 2 pending (adminApproved: false) order forms for Admin → Pending → FORMS testing.
+ * Idempotent per browser (localStorage flag).
+ */
+export function seedPendingTestOrderFormsIfNeeded(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (localStorage.getItem(PENDING_TEST_FORMS_SEEDED_KEY) === '1') return;
+    const now = Date.now();
+    appendSignedOrderForm(
+      buildTestPendingSignedForm({
+        id: 'pending-test-form-alpha',
+        email: 'pending.forms.test.alpha@preview.local',
+        orderNumber: 'ORDER #TEST-ALPHA',
+        orderDate: '04-08-2026',
+        firstName: 'Riley',
+        lastName: 'Chen',
+        signedAt: now - 3600_000,
+      })
+    );
+    appendSignedOrderForm(
+      buildTestPendingSignedForm({
+        id: 'pending-test-form-beta',
+        email: 'pending.forms.test.beta@preview.local',
+        orderNumber: 'ORDER #TEST-BETA',
+        orderDate: '04-07-2026',
+        firstName: 'Morgan',
+        lastName: 'Blake',
+        signedAt: now - 7200_000,
+      })
+    );
+    localStorage.setItem(PENDING_TEST_FORMS_SEEDED_KEY, '1');
+    try {
+      window.dispatchEvent(new CustomEvent('pendingOrderAuthorizationFormsUpdated'));
+    } catch {
+      /* ignore */
+    }
+  } catch {
+    /* ignore */
+  }
 }
