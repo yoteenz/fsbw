@@ -14,7 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { trackActivity } from '../../../utils/activity';
-import { isGiftCardCartLine } from '../../../utils/giftCardCheckout';
+import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 
 function GiftCardPage() {
   const navigate = useNavigate();
@@ -296,29 +296,11 @@ function GiftCardPage() {
     if (checkoutSubmitting) return;
     setCheckoutSubmitting(true);
     try {
-      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const prior = Array.isArray(cartItems) ? cartItems : [];
-      const newItem = {
-        id: `gift-card-${selectedBalance}-${Date.now()}`,
-        name: 'GIFT CARD',
-        price: selectedBalance,
-        quantity: 1,
-        balance: selectedBalance,
+      const newCartCount = writeGiftCardSelectionForCheckoutSession({
+        balanceUsd: selectedBalance,
         image: '/assets/giftcard-product.png',
-        type: 'gift-card',
-      };
-      const withoutGiftLines = prior.filter((i: { type?: string; name?: string }) => !isGiftCardCartLine(i));
-      const updatedCartItems = [newItem, ...withoutGiftLines];
-      localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-
-      const newCartCount = updatedCartItems.reduce((sum: number, row: { quantity?: number }) => sum + (row.quantity || 1), 0);
-      localStorage.setItem('cartCount', String(newCartCount));
+      });
       setCartCount(newCartCount);
-
-      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
-      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
-      window.dispatchEvent(new Event('cartUpdated'));
-
       trackActivity('add_to_cart', { source: 'gift_card_pdp', productName: 'GIFT CARD' });
       trackActivity('cart_navigate', { destination: 'checkout_gift_card' });
       navigate('/checkout/gift-card');

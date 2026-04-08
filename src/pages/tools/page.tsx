@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMarbleStripSnapStep } from '../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
-import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -13,6 +12,8 @@ import { formatPriceUsd } from '../../utils/currencyFormat';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { trackActivity } from '../../utils/activity';
+import { writeGiftCardSelectionForCheckoutSession } from '../../utils/giftCardCheckoutSession';
 
 function ToolsPage() {
   const navigate = useNavigate();
@@ -84,87 +85,16 @@ function ToolsPage() {
   }, []);
 
   // Gift card products state
-  const [giftCardProducts, setGiftCardProducts] = useState([
-    {
-      id: 'gift-card-10',
-      name: 'GIFT CARD',
-      price: 10,
-      inCart: false
-    },
-    {
-      id: 'gift-card-15',
-      name: 'GIFT CARD',
-      price: 15,
-      inCart: false
-    },
-    {
-      id: 'gift-card-25',
-      name: 'GIFT CARD',
-      price: 25,
-      inCart: false
-    },
-    {
-      id: 'gift-card-50',
-      name: 'GIFT CARD',
-      price: 50,
-      inCart: false
-    },
-    {
-      id: 'gift-card-75',
-      name: 'GIFT CARD',
-      price: 75,
-      inCart: false
-    },
-    {
-      id: 'gift-card-100',
-      name: 'GIFT CARD',
-      price: 100,
-      inCart: false
-    },
-    {
-      id: 'gift-card-250',
-      name: 'GIFT CARD',
-      price: 250,
-      inCart: false
-    },
-    {
-      id: 'gift-card-500',
-      name: 'GIFT CARD',
-      price: 500,
-      inCart: false
-    }
+  const [giftCardProducts] = useState([
+    { id: 'gift-card-10', name: 'GIFT CARD', price: 10 },
+    { id: 'gift-card-15', name: 'GIFT CARD', price: 15 },
+    { id: 'gift-card-25', name: 'GIFT CARD', price: 25 },
+    { id: 'gift-card-50', name: 'GIFT CARD', price: 50 },
+    { id: 'gift-card-75', name: 'GIFT CARD', price: 75 },
+    { id: 'gift-card-100', name: 'GIFT CARD', price: 100 },
+    { id: 'gift-card-250', name: 'GIFT CARD', price: 250 },
+    { id: 'gift-card-500', name: 'GIFT CARD', price: 500 },
   ]);
-
-  // Sync gift card products' inCart state with cart items
-  useEffect(() => {
-    const updateGiftCardCartStatus = () => {
-      try {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        setGiftCardProducts(prevProducts => 
-          prevProducts.map(p => {
-            const inCart = cartItems.some((item: any) => 
-              (item.name === 'GIFT CARD' || item.type === 'gift-card') && item.balance === p.price
-            );
-            return { ...p, inCart };
-          })
-        );
-      } catch (error) {
-        console.error('Error updating gift card cart status:', error);
-      }
-    };
-
-    // Initial sync
-    updateGiftCardCartStatus();
-
-    // Listen for cart updates
-    window.addEventListener('cartUpdated', updateGiftCardCartStatus);
-    window.addEventListener('storage', updateGiftCardCartStatus);
-
-    return () => {
-      window.removeEventListener('cartUpdated', updateGiftCardCartStatus);
-      window.removeEventListener('storage', updateGiftCardCartStatus);
-    };
-  }, []);
 
   // Gift card marble strip: measured snap (same as PDP similar / shop UNITS)
   const [giftCardPage, setGiftCardPage] = useState(0);
@@ -336,78 +266,23 @@ function ToolsPage() {
     setGiftCardPage((p) => (p >= giftCardMaxPage ? 0 : p + 1));
   };
 
-  const handleAddToCart = (product: any, e?: MouseEvent<HTMLDivElement>) => {
-    if (e) {
-      e.stopPropagation();
-    }
-    
+  const handleGiftCardProceedToCheckout = (
+    product: { id: string; price: number },
+    e?: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e?.stopPropagation();
+    e?.preventDefault();
     try {
-      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      
-      // Check if this exact gift card (same balance) is already in cart
-      const existingItemIndex = cartItems.findIndex((item: any) => 
-        (item.name === 'GIFT CARD' || item.type === 'gift-card') && item.balance === product.price
-      );
-
-      if (existingItemIndex !== -1) {
-        // Remove from cart
-        const updatedCartItems = cartItems.filter((_: any, index: number) => index !== existingItemIndex);
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-        
-        // Update cart count
-        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
-        const removedQuantity = cartItems[existingItemIndex].quantity || 1;
-        const newCount = Math.max(0, currentCount - removedQuantity);
-        localStorage.setItem('cartCount', newCount.toString());
-        setCartCount(newCount);
-        
-        // Update UI state
-        setGiftCardProducts(prevProducts => 
-          prevProducts.map(p => 
-            p.id === product.id ? { ...p, inCart: false } : p
-          )
-        );
-        
-        // Dispatch cart count update event
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
-          window.dispatchEvent(new Event('cartUpdated'));
-        }, 100);
-      } else {
-        // Add to cart
-        const newItem = {
-          id: `gift-card-${product.price}-${Date.now()}`,
-          name: 'GIFT CARD',
-          price: product.price,
-          quantity: 1,
-          balance: product.price,
-          image: '/assets/gift-card asset.png',
-          type: 'gift-card'
-        };
-        
-        // Add new item at the beginning (newest first)
-        const updatedCartItems = [newItem, ...cartItems];
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-        
-        const newCartCount = updatedCartItems.length;
-        localStorage.setItem('cartCount', newCartCount.toString());
-        setCartCount(newCartCount);
-        
-        // Update UI state
-    setGiftCardProducts(prevProducts => 
-      prevProducts.map(p => 
-            p.id === product.id ? { ...p, inCart: true } : p
-      )
-    );
-        
-        // Dispatch cart count update event
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
-          window.dispatchEvent(new Event('cartUpdated'));
-        }, 100);
-      }
+      const newCartCount = writeGiftCardSelectionForCheckoutSession({
+        balanceUsd: product.price,
+        image: '/assets/gift-card asset.png',
+      });
+      setCartCount(newCartCount);
+      trackActivity('add_to_cart', { source: 'tools_gift_strip', productName: 'GIFT CARD', balance: product.price });
+      trackActivity('cart_navigate', { destination: 'checkout_gift_card' });
+      navigate('/checkout/gift-card');
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error proceeding to gift card checkout:', error);
     }
   };
 
@@ -786,40 +661,30 @@ function ToolsPage() {
                             transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)'
                           }}
                         >
-                          {/* Shopping Bag Icon */}
-                          <div 
-                            style={{ 
-                              position: 'absolute', 
-                              top: '8px',
-                              ...(index % 2 === 0 ? { left: '12px' } : { right: '12px' }),
-                              cursor: 'pointer',
+                          {/* Checkout CTA — same flow as gift card PDP (isolated /checkout/gift-card) */}
+                          <button
+                            type="button"
+                            onClick={(e) => handleGiftCardProceedToCheckout(product, e)}
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              ...(index % 2 === 0 ? { left: '6px' } : { right: '6px' }),
                               zIndex: 10,
-                              width: '20px',
-                              height: '23px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
+                              maxWidth: 'calc(50% - 8px)',
+                              padding: '4px 6px',
+                              border: '1px solid #000',
+                              background: '#fff',
+                              cursor: 'pointer',
+                              fontFamily: '"Futura PT Medium", Futura, sans-serif',
+                              fontSize: '7px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              lineHeight: 1.15,
+                              textAlign: 'center',
                             }}
-                            onClick={(e) => handleAddToCart(product, e)}
                           >
-                            {product.inCart ? (
-                              <img
-                                src="/assets/card-added.svg"
-                                alt="In cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            ) : (
-                              <img
-                                src="/assets/card-add.svg"
-                                alt="Add to cart"
-                                width={20}
-                                height={23}
-                                style={{ width: '20px !important', height: '23px !important' }}
-                              />
-                            )}
-                          </div>
+                            PROCEED TO CHECKOUT
+                          </button>
 
                           {/* Gift Card Image */}
                           <img
