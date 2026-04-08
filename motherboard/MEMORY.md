@@ -13009,3 +13009,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** PDF preview still looked off-center; user wanted **no excess white** left/right of inputs — match **main card** inner column width, not full 390px marble root.
 
 **Changes:** **`signedOrderFormPdfSnapshotDom.ts`** — **`buildSignedOrderFormSnapshotElement(form, { pdfColumnOnly })`**: PDF path uses root **358px** (390 − 2×16 padding) containing **only** the bordered card; **no** outer root padding, **no** full-width SUBMIT bar; intro paragraphs use **`maxWidth: 100%`** (removed **`calc(100% - 24px)`** side gutters). Mock plain PDF uses **358px** root, **0** padding. **`signedOrderFormPdf.ts`** — calls **`pdfColumnOnly: true`**. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Order form PDF: width-fit page (remove viewer side bars)
+
+**Context:** User still saw **large white bands** beside inputs in the modal; screenshots showed content **shifted** or **shrunk** — not DOM padding. Root cause: **`rasterizeSnapshotToSinglePdfPage`** used **`scale = min(maxW/imgW, maxH/imgH)`** on a **tall** form, so scale was **height-limited** → image **narrower** than page → **horizontal letterboxing** (looks like extra left/right white).
+
+**Changes:** **`signedOrderFormPdf.ts`** — **`rasterizeSnapshotToWidthFitPdfPage`**: fixed **612pt** page width, **`scale = maxW/imgW`**, **`pageHeight = drawH + 2×margin`** custom format, image at **`(margin, margin)`** — no width shrink. **`SignedOrderFormPdfPanel.tsx`** — iframe hash adds **`zoom=page-width`** with **`FitH`**. **`npm run build`**.
