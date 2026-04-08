@@ -12935,3 +12935,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to push all changes from **`preview/mobile`** to **`master`** so branches stay in sync.
 
 **Changes:** Resolved **`motherboard/MEMORY.md`** merge conflict (kept **`master`** Supabase migration note + full **`preview/mobile`** MEMORY tail). Completed merge **`preview/mobile` → `master`**, push **`origin/master`**.
+
+---
+
+## 2026-04-08 — Shopping bag: gift card +/- updates denomination (dynamic value)
+
+**Context (this chat):** User increased a **$250** gift card from qty **1** to **2**; subtotal showed **$500** but the line still read **$250**. They wanted the stored line to represent a **$500** card (dynamic denomination), not two × $250 at **`quantity` 2**.
+
+**Changes:** **`giftCardCheckout.ts`** — **`applyGiftCardBagQuantityDelta`** (+/- adjusts **`price`/`balance`**, keeps **`quantity: 1`**, stores **`giftCardUnitUsd`** step size, max **10** steps); **`migrateGiftCardCartLinesForStorage`** converts legacy **`quantity` > 1** rows on load. **`giftCardCheckoutSession.ts`** — new lines set **`giftCardUnitUsd`**. **`shopping-bag/page.tsx`** — gift lines use delta helper for cart + saved-for-later; title **`GIFT CARD · $N`**; counter shows **`total / giftCardUnitUsd`**; price display uses line total; **`loadCartItems`/`loadSavedForLater`** run migration. **`npm run build`**.
