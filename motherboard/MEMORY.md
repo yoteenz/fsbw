@@ -12977,3 +12977,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** Checkout tabs already used **`checkoutBcfProcessing`** strings, but **SHOP → bundles/closures/frontals PDP** (`texture-category-product`) **SHIPPING** tab still showed unit copy (**6–8** / **4–6**).
 
 **Changes:** **`shop/texture-category-product/page.tsx`** — **`shippingCopy`** updated to **4 TO 6** standard, **3 TO 4** express + **$120**, third line covers **custom color / styling / add-ons** (no express, extended timelines aligned with **`getCheckoutProcessingTimePersistentLabel`**). **`npm run build`**.
+
+---
+
+## 2026-04-08 — Gift card proceed: replace bag with gift line only
+
+**Context:** **`writeGiftCardSelectionForCheckoutSession`** prepended the new gift card and **kept** units/BCF/etc. in **`cartItems`**. **`/checkout/gift-card`** only **filters** in memory, so the **shopping bag** and **cart icon** still showed the unit.
+
+**Changes:** **`giftCardCheckoutSession.ts`** — persist **`cartItems`** as **`[newGiftLine]`** only (isolated checkout matches digital flow: storage matches filtered checkout). **`npm run build`**.

@@ -1,5 +1,3 @@
-import { isGiftCardCartLine } from './giftCardCheckout';
-
 export type WriteGiftCardCheckoutOpts = {
   balanceUsd: number;
   /** Cart line image; tools hub and PDP use different assets */
@@ -7,16 +5,14 @@ export type WriteGiftCardCheckoutOpts = {
 };
 
 /**
- * Puts exactly one gift-card line at the front of the bag (removes prior gift-card lines),
- * updates cartCount from line quantities, persists, and dispatches cart sync events.
- * Caller should navigate to `/checkout/gift-card` after.
+ * Isolated gift-card checkout: **replaces** the bag with exactly one gift-card line (same idea as
+ * `/checkout/gift-card` filtering — no units, BCF, bookings, etc. left in storage).
+ * Updates cartCount, persists, and dispatches cart sync events. Caller navigates to `/checkout/gift-card`.
  */
 export function writeGiftCardSelectionForCheckoutSession(opts: WriteGiftCardCheckoutOpts): number {
   const balanceUsd = opts.balanceUsd;
   const image = opts.image ?? '/assets/giftcard-product.png';
 
-  const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-  const prior = Array.isArray(cartItems) ? cartItems : [];
   const newItem = {
     id: `gift-card-${balanceUsd}-${Date.now()}`,
     name: 'GIFT CARD',
@@ -27,8 +23,7 @@ export function writeGiftCardSelectionForCheckoutSession(opts: WriteGiftCardChec
     image,
     type: 'gift-card',
   };
-  const withoutGiftLines = prior.filter((i: { type?: string; name?: string }) => !isGiftCardCartLine(i));
-  const updatedCartItems = [newItem, ...withoutGiftLines];
+  const updatedCartItems = [newItem];
   localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
 
   const newCartCount = updatedCartItems.reduce(
