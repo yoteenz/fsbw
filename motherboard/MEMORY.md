@@ -13025,3 +13025,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** After width-fit PDF, user saw form **too zoomed** in the popup — **`FitH` + `zoom=page-width`** fills iframe width on a **tall** page so only the top shows.
 
 **Changes:** **`SignedOrderFormPdfPanel.tsx`** — iframe **`#view=Fit`** (whole page in view), drop **`FitH`** / **`page-width`**; wrapper **`height/minHeight/maxHeight: min(56vh, 520px)`** + **`overflow: hidden`** so WebKit has a real viewport for fit; iframe **100%×100%**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Wire client submissions into Admin Pending (forms, affiliate, reviews)
+
+**Context:** User asked to **confirm** that order authorization forms from the order form page land on **Admin → Pending → FORMS**, affiliate submissions from **`/account/affiliate`** on **AFFILIATE**, and submitted reviews on **REVIEWS**. Previously, forms were stored without **`adminApproved: false`** so they did not match the pending filter; reviews and affiliate only used **mock** queues and did not enqueue real client submits.
+
+**Topics covered:** End-to-end localStorage wiring for the three tabs; gift-card one-time ID flow still **auto-approved** (not admin pending).
+
+**Decisions / outcomes:** Standard order forms append with **`adminApproved: false`**; gift-card identity-only keeps **`adminApproved: true`**. **`appendSignedOrderForm`** dispatches **`pendingOrderAuthorizationFormsUpdated`**. Affiliate submit builds diff-based **`ClientAffiliatePendingRow`** items and **`enqueuePendingMockAffiliateItems`**. Leave-review saves **`moderationStatus: 'pending'`**, enqueues **`enqueuePendingMockReviews`** with optional photo/video data URLs; **Account → Reviews** filters out pending rows and **`getUserSubmittedReviewCount`** excludes them until admin approves (removes **`moderationStatus`**). Admin approve/decline for **`source: 'client'`** rows updates affiliate per-user storage or removes/unwraps review entries. Pending UI shows review media in modal; affiliate video uses **`videoDataUrl`** when present.
+
+**Changes:** **`adminPendingClientSync.ts`** (new), **`adminPendingMockQueues.ts`**, **`signedOrderFormsStorage.ts`**, **`shop/order-form/page.tsx`**, **`account/affiliate/page.tsx`**, **`account/reviews/leave-review-order/page.tsx`**, **`account/reviews/page.tsx`**, **`constants/reviews.ts`**, **`admin/pending/page.tsx`**, **`motherboard/CORE.md`**. **`npm run build`**.

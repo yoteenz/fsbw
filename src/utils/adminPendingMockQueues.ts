@@ -2,6 +2,11 @@
  * Admin → Pending: mock queues for REVIEWS and AFFILIATE tabs (localStorage + approve/decline).
  */
 
+import {
+  applyAffiliateAdminDecisionToClientStorage,
+  applyClientReviewAdminDecisionToUserStorage,
+} from './adminPendingClientSync';
+
 export const PENDING_MOCK_REVIEWS_UPDATED_EVENT = 'adminPendingMockReviewsUpdated';
 export const PENDING_MOCK_AFFILIATE_UPDATED_EVENT = 'adminPendingMockAffiliateUpdated';
 
@@ -18,6 +23,12 @@ export type PendingMockReview = {
   date: string;
   status: 'PENDING' | 'APPROVED' | 'DECLINED';
   adminDeclineReason?: string;
+  /** Client leave-review flow — sync approve/decline to `userSubmittedReviews_*`. */
+  source?: 'mock' | 'client';
+  photoUrls?: string[];
+  videoUrls?: string[];
+  photoCount?: number;
+  videoCount?: number;
 };
 
 export type PendingMockAffiliateKind = 'photo' | 'video' | 'social';
@@ -34,11 +45,17 @@ export type PendingMockAffiliateItem = {
   caption?: string;
   /** Thumbnail for photo/video */
   imageSrc?: string;
+  /** When kind is video and preview is a data URL, use for playback in admin pending. */
+  videoDataUrl?: string;
   platform?: string;
   handle?: string;
   date: string;
   status: 'PENDING' | 'APPROVED' | 'DECLINED';
   adminDeclineReason?: string;
+  /** Account → Affiliate submissions — sync approve/decline to per-user affiliate storage. */
+  source?: 'mock' | 'client';
+  orderId?: string;
+  affiliateContentId?: string;
 };
 
 const DEFAULT_REVIEWS: PendingMockReview[] = [
@@ -256,32 +273,54 @@ export function countPendingMockAffiliate(): number {
 
 export function approvePendingMockReview(id: string): void {
   const list = listPendingMockReviewsForAdmin();
+  const target = list.find((r) => r.id === id);
   const next = list.map((r) => (r.id === id ? { ...r, status: 'APPROVED' as const, adminDeclineReason: undefined } : r));
   saveReviews(next);
+  if (target?.source === 'client') applyClientReviewAdminDecisionToUserStorage(target, 'APPROVED');
 }
 
 export function declinePendingMockReview(id: string, reason: string): void {
   const r = (reason || '').trim();
   const list = listPendingMockReviewsForAdmin();
+  const target = list.find((row) => row.id === id);
   const next = list.map((row) =>
     row.id === id ? { ...row, status: 'DECLINED' as const, adminDeclineReason: r || undefined } : row
   );
   saveReviews(next);
+  if (target?.source === 'client') applyClientReviewAdminDecisionToUserStorage(target, 'DECLINED', r);
 }
 
 export function approvePendingMockAffiliate(id: string): void {
   const list = listPendingMockAffiliateForAdmin();
+  const target = list.find((r) => r.id === id);
   const next = list.map((r) => (r.id === id ? { ...r, status: 'APPROVED' as const, adminDeclineReason: undefined } : r));
   saveAffiliate(next);
+  if (target?.source === 'client') applyAffiliateAdminDecisionToClientStorage(target, 'APPROVED');
 }
 
 export function declinePendingMockAffiliate(id: string, reason: string): void {
   const r = (reason || '').trim();
   const list = listPendingMockAffiliateForAdmin();
+  const target = list.find((row) => row.id === id);
   const next = list.map((row) =>
     row.id === id ? { ...row, status: 'DECLINED' as const, adminDeclineReason: r || undefined } : row
   );
   saveAffiliate(next);
+  if (target?.source === 'client') applyAffiliateAdminDecisionToClientStorage(target, 'DECLINED', r);
+}
+
+/** Prepend client-submitted rows (Account → Affiliate) so they appear on Admin → Pending → AFFILIATE. */
+export function enqueuePendingMockAffiliateItems(items: PendingMockAffiliateItem[]): void {
+  if (!items.length || typeof window === 'undefined') return;
+  const list = listPendingMockAffiliateForAdmin();
+  saveAffiliate([...items, ...list]);
+}
+
+/** Prepend client-submitted rows (leave-review flow) so they appear on Admin → Pending → REVIEWS. */
+export function enqueuePendingMockReviews(items: PendingMockReview[]): void {
+  if (!items.length || typeof window === 'undefined') return;
+  const list = listPendingMockReviewsForAdmin();
+  saveReviews([...items, ...list]);
 }
 
 /** Visible rows for tabs: pending first, then declined (audit), hide approved from main list or show? User said test UI — show pending + optional line for declined. Show only PENDING in list; approved/declined removed from actionable list. */

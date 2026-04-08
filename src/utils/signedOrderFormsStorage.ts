@@ -178,6 +178,7 @@ export function appendSignedOrderForm(entry: StoredSignedOrderForm): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
     try {
       window.dispatchEvent(new CustomEvent('signedOrderFormsUpdated'));
+      window.dispatchEvent(new CustomEvent('pendingOrderAuthorizationFormsUpdated'));
     } catch {
       /* ignore */
     }

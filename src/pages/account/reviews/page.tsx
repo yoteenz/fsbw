@@ -284,7 +284,10 @@ function ReviewsPage() {
         }
         const raw = localStorage.getItem(getUserSubmittedReviewsKey(user.email));
         const list = raw ? JSON.parse(raw) : [];
-        setUserSubmittedReviews(Array.isArray(list) ? list : []);
+        const arr = Array.isArray(list) ? list : [];
+        setUserSubmittedReviews(
+          arr.filter((row: { moderationStatus?: string }) => String(row?.moderationStatus || '').toLowerCase() !== 'pending')
+        );
         clearNewReviewApproved(user.email);
         window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
       } catch (_) {

@@ -238,8 +238,12 @@ export default function AdminPending() {
           : 'PHOTO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.';
     const photoUrls = item.kind === 'photo' && item.imageSrc ? [item.imageSrc] : [];
     const videoUrls =
-      item.kind === 'video' && item.imageSrc
-        ? ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
+      item.kind === 'video'
+        ? item.videoDataUrl
+          ? [item.videoDataUrl]
+          : item.imageSrc
+            ? [item.imageSrc]
+            : ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
         : [];
     const photos = item.kind === 'photo' ? 1 : 0;
     const videos = item.kind === 'video' ? 1 : 0;
@@ -760,8 +764,10 @@ export default function AdminPending() {
                             bodyText={r.excerpt}
                             date={r.date}
                             rating={r.rating}
-                            photos={0}
-                            videos={0}
+                            photos={r.photoCount ?? (r.photoUrls?.length ? r.photoUrls.length : 0)}
+                            videos={r.videoCount ?? (r.videoUrls?.length ? r.videoUrls.length : 0)}
+                            photoUrls={r.photoUrls}
+                            videoUrls={r.videoUrls}
                             verifiedPurchase
                             statusLabel="PENDING"
                             footerLinkLabel="VIEW REVIEW"
@@ -970,6 +976,27 @@ export default function AdminPending() {
                     <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>
                       {adminReviewModal.item.rating} STARS · {adminReviewModal.item.date}
                     </p>
+                    {(adminReviewModal.item.photoUrls?.length || adminReviewModal.item.videoUrls?.length) ? (
+                      <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {(adminReviewModal.item.photoUrls || []).map((src, i) => (
+                          <img
+                            key={`rv-ph-${i}`}
+                            src={src}
+                            alt=""
+                            style={{ maxWidth: '120px', maxHeight: '120px', objectFit: 'cover', border: '1px solid #e5e7eb' }}
+                          />
+                        ))}
+                        {(adminReviewModal.item.videoUrls || []).map((src, i) => (
+                          <video
+                            key={`rv-vd-${i}`}
+                            src={src}
+                            controls
+                            playsInline
+                            style={{ maxWidth: '100%', maxHeight: '200px', border: '1px solid #e5e7eb' }}
+                          />
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </div>

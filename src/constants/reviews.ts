@@ -39,7 +39,9 @@ export function getUserSubmittedReviewCount(email: string | undefined): number {
   try {
     const raw = localStorage.getItem(getUserSubmittedReviewsKey(email));
     const list = raw ? JSON.parse(raw) : [];
-    return Array.isArray(list) ? list.length : 0;
+    if (!Array.isArray(list)) return 0;
+    return list.filter((row: { moderationStatus?: string }) => String(row?.moderationStatus || '').toLowerCase() !== 'pending')
+      .length;
   } catch {
     return 0;
   }

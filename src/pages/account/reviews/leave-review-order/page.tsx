@@ -18,6 +18,8 @@ import {
   loadReviewedOrderItemKeys,
   orderReviewItemStorageKey,
 } from '../../../../utils/orderReviewSubmissionPersist';
+import { fileToDataUrl } from '../../../../utils/signedOrderFormsStorage';
+import { enqueuePendingMockReviews } from '../../../../utils/adminPendingMockQueues';
 
 interface OrderLineItem {
   productName: string;
@@ -217,26 +219,78 @@ function LeaveReviewOrderPage() {
 
     setSubmittedForIndex((prev) => new Set(prev).add(currentItemIndex));
 
-    // Persist as approved/posted so it appears on reviews page and account card updates
-    const email = currentUser?.email;
-    if (email && currentItem) {
+    void (async () => {
+      const email = currentUser?.email;
+      if (!email || !currentItem) return;
       try {
         const key = getUserSubmittedReviewsKey(email);
         const raw = localStorage.getItem(key);
         const list = raw ? JSON.parse(raw) : [];
+        const reviewId = `user-${Date.now()}`;
+        const dateDash = new Date()
+          .toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
+          .replace(/\//g, '-');
+        const dateShort = new Date().toLocaleDateString('en-US', {
+          month: 'numeric',
+          day: 'numeric',
+          year: 'numeric',
+        });
+        let photoDataUrl: string | undefined;
+        let videoDataUrl: string | undefined;
+        if (photoUploadFile) {
+          try {
+            photoDataUrl = await fileToDataUrl(photoUploadFile);
+          } catch {
+            /* ignore */
+          }
+        }
+        if (videoUploadFile) {
+          try {
+            videoDataUrl = await fileToDataUrl(videoUploadFile);
+          } catch {
+            /* ignore */
+          }
+        }
         const newReview = {
-          id: `user-${Date.now()}`,
-          date: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+          id: reviewId,
+          date: dateDash,
           productName: currentItem.productName,
           subtitle: subject || 'CUSTOMER REVIEW',
           body: reviewText || '',
           rating,
           reviewCount: 1,
-          thumbnail: getProductImage(currentItem.productName)
+          thumbnail: getProductImage(currentItem.productName),
+          moderationStatus: 'pending' as const,
         };
         list.push(newReview);
         localStorage.setItem(key, JSON.stringify(list));
         localStorage.setItem(getReviewsNewApprovedKey(email), 'true');
+
+        const clientLabel = (() => {
+          const u = currentUser as { name?: string; firstName?: string; lastName?: string };
+          const n = `${String(u?.firstName || '').trim()} ${String(u?.lastName || '').trim()}`.trim();
+          if (n) return n.toUpperCase();
+          if (String(u?.name || '').trim()) return String(u.name).trim().toUpperCase();
+          return String(email).trim().toUpperCase();
+        })();
+        enqueuePendingMockReviews([
+          {
+            id: reviewId,
+            client: clientLabel,
+            email: String(email).trim().toLowerCase(),
+            product: (subject || 'CUSTOMER REVIEW').trim().toUpperCase(),
+            rating,
+            excerpt: (reviewText || '').trim(),
+            date: dateShort,
+            status: 'PENDING',
+            source: 'client',
+            photoUrls: photoDataUrl ? [photoDataUrl] : [],
+            videoUrls: videoDataUrl ? [videoDataUrl] : [],
+            photoCount: photoDataUrl ? 1 : 0,
+            videoCount: videoDataUrl ? 1 : 0,
+          },
+        ]);
+
         if (order?.id && currentItem) {
           appendReviewedOrderItemKey(order.id, orderReviewItemStorageKey(currentItem.productName, currentItem.options));
           const allKeys = new Set(loadReviewedOrderItemKeys(order.id));
@@ -250,11 +304,13 @@ function LeaveReviewOrderPage() {
       } catch (e) {
         console.error('Error saving review:', e);
       }
-    }
+    })();
 
     setRating(0);
     setSubject('');
     setReviewText('');
+    setPhotoUploadFile(null);
+    setVideoUploadFile(null);
   };
 
   const goPrev = () => {

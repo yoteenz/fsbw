@@ -707,7 +707,8 @@ function OrderFormPage() {
           photoIdDataUrl: photoIdDataUrl || undefined,
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
-          adminApproved: giftCardIdentityOnly,
+          /** Gift-card one-time ID flow skips admin pending; physical orders await approval (`false`). */
+          adminApproved: giftCardIdentityOnly ? true : false,
         });
         markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
         saveLastOrderAuthorizationFormDraft(formData.email.trim(), {

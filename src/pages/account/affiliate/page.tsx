@@ -9,6 +9,8 @@ import moreWaysIcon from '../../../assets/icons/more-ways.svg?url';
 import affiliateIcon from '../../../assets/icons/affiliate-icon.svg?url';
 import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { buildAffiliatePendingItemsFromContentDiff } from '../../../utils/adminPendingClientSync';
+import { enqueuePendingMockAffiliateItems } from '../../../utils/adminPendingMockQueues';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -1268,15 +1270,77 @@ function AffiliatePage() {
     }
     
       // Update submittedContent using functional update to avoid stale state
-      setSubmittedContent(prev => {
+      setSubmittedContent((prev) => {
+        const prevSlice = prev[expandedOrderId] || { photos: [], videos: [], socials: [] };
+        const email = String((userData as { email?: string })?.email || getCurrentUserEmailFromStorage() || '').trim();
+        const clientName = (() => {
+          const u = userData as { name?: string; firstName?: string; lastName?: string; email?: string };
+          const n = `${String(u?.firstName || '').trim()} ${String(u?.lastName || '').trim()}`.trim();
+          if (n) return n;
+          if (String(u?.name || '').trim()) return String(u.name).trim();
+          return email || 'CLIENT';
+        })();
+        const profilePhoto =
+          String((userData as { profileImage?: string; avatar?: string })?.profileImage || '').trim() ||
+          String((userData as { avatar?: string })?.avatar || '').trim() ||
+          undefined;
+        const pendingRows = buildAffiliatePendingItemsFromContentDiff({
+          orderId: expandedOrderId,
+          clientName,
+          email,
+          clientProfilePhotoUrl: profilePhoto,
+          prev: {
+            photos: (prevSlice.photos || []).map((p) => ({
+              id: p.id,
+              status: p.status,
+              preview: typeof p.preview === 'string' ? p.preview : undefined,
+              submittedDate: p.submittedDate,
+            })),
+            videos: (prevSlice.videos || []).map((v) => ({
+              id: v.id,
+              status: v.status,
+              preview: typeof v.preview === 'string' ? v.preview : undefined,
+              submittedDate: v.submittedDate,
+            })),
+            socials: (prevSlice.socials || []).map((s) => ({
+              id: s.id,
+              status: s.status,
+              link: s.link,
+              platform: s.platform,
+              submittedDate: s.submittedDate,
+            })),
+          },
+          next: {
+            photos: (updatedContent.photos || []).map((p) => ({
+              id: p.id,
+              status: p.status,
+              preview: typeof p.preview === 'string' ? p.preview : undefined,
+              submittedDate: p.submittedDate,
+            })),
+            videos: (updatedContent.videos || []).map((v) => ({
+              id: v.id,
+              status: v.status,
+              preview: typeof v.preview === 'string' ? v.preview : undefined,
+              submittedDate: v.submittedDate,
+            })),
+            socials: (updatedContent.socials || []).map((s) => ({
+              id: s.id,
+              status: s.status,
+              link: s.link,
+              platform: s.platform,
+              submittedDate: s.submittedDate,
+            })),
+          },
+        });
+        if (pendingRows.length) enqueuePendingMockAffiliateItems(pendingRows);
+
         const newContent = {
           ...prev,
-          [expandedOrderId]: updatedContent
+          [expandedOrderId]: updatedContent,
         };
-        
-        // Save to localStorage
+
         saveSubmittedContentToStorage(newContent);
-        
+
         return newContent;
       });
       
