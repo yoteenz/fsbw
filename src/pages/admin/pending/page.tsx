@@ -474,9 +474,6 @@ export default function AdminPending() {
 
                   {activeTab === 'FORMS' && (
                     <>
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 10px', lineHeight: 1.35 }}>
-                        CLIENT-SUBMITTED ORDER AUTHORIZATION FORMS AWAITING YOUR APPROVAL.
-                      </p>
                       {pendingAuthFormsList.length === 0 ? (
                         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
                           NO FORMS PENDING APPROVAL.

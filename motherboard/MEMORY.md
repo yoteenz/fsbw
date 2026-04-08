@@ -12839,3 +12839,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User said the PDF in the **view signed forms** modal still looked **not centered**—wide **empty margins** left/right of the form made **FitH** center on the full raster instead of the **input column**.
 
 **Changes:** **`signedOrderFormPdf.ts`** — after **`html2canvas`**, **`trimCanvasToContentBounds`** scans alpha + non-white pixels, finds bounding box (with small padding), draws a **cropped canvas**, then **`rasterizeSnapshotToSinglePdfPage`**. Falls back to uncropped on **`getImageData`** failure or degenerate bounds. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin Pending FORMS tab: remove gray intro line
+
+**Context (this chat):** User asked to remove the **gray** explanatory text on the **FORMS** tab of **Admin → Pending** (mock / design-preview style copy above the list).
+
+**Changes:** **`admin/pending/page.tsx`** — removed the gray **`CLIENT-SUBMITTED ORDER AUTHORIZATION FORMS…`** paragraph above the pending-forms list. **`npm run build`**. Pushed **`preview/mobile`**.
