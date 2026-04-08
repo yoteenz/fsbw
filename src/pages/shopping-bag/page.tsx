@@ -39,6 +39,7 @@ import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { checkoutPathForCartItems } from '../../utils/checkoutNavigatePath';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -1777,7 +1778,7 @@ function ShoppingBagPage() {
                 EMPTY BAG
               </button>
               <button
-                onClick={() => navigate('/checkout')}
+                onClick={() => navigate(checkoutPathForCartItems(cartItems))}
                 className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                 style={{ 
                   borderWidth: '1.3px', 

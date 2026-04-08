@@ -26,9 +26,15 @@ import {
 import { appendOrderReceivedAccountAlert } from '../../utils/orderAccountAlerts';
 import {
   filterBookingCartLines,
+  isBookingCartLine,
   isBookingsCheckoutPath,
   isBookingsOnlyCheckoutState,
 } from '../../utils/bookingCheckout';
+import {
+  filterGiftCardCartLines,
+  isGiftCardCartLine,
+  isGiftCardCheckoutPath,
+} from '../../utils/giftCardCheckout';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import {
   discountPromoCheckoutBlockReason,
@@ -207,6 +213,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
+  const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
@@ -565,8 +572,10 @@ function CheckoutPage() {
     trackActivity('checkout_start', {
       path: location.pathname,
       upgrade: location.pathname === '/checkout/upgrade',
+      giftCard: isGiftCardCheckoutRoute,
+      bookings: isBookingsCheckoutRoute,
     });
-  }, [location.pathname]);
+  }, [location.pathname, isGiftCardCheckoutRoute, isBookingsCheckoutRoute]);
 
   // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -693,6 +702,21 @@ function CheckoutPage() {
         return;
       }
 
+      if (location.pathname.includes('/checkout/gift-card')) {
+        const stored = localStorage.getItem('cartItems');
+        let regularCartItems: any[] = [];
+        if (stored) {
+          const items = JSON.parse(stored);
+          if (Array.isArray(items) && items.length > 0) {
+            regularCartItems = items;
+          }
+        }
+        const onlyGift = filterGiftCardCartLines(regularCartItems);
+        setIsSubscriptionUpgrade(false);
+        setCartItems(onlyGift);
+        return;
+      }
+
       if (isUpgradeRoute) {
         // This is a subscription upgrade checkout
         const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
@@ -734,6 +758,16 @@ function CheckoutPage() {
 
         setIsSubscriptionUpgrade(false);
         setCartItems(regularCartItems);
+        if (location.pathname === '/checkout' && regularCartItems.length > 0) {
+          if (regularCartItems.every((i: { type?: string }) => isBookingCartLine(i))) {
+            navigate('/checkout/bookings', { replace: true });
+            return;
+          }
+          if (regularCartItems.every((i: { type?: string; name?: string }) => isGiftCardCartLine(i))) {
+            navigate('/checkout/gift-card', { replace: true });
+            return;
+          }
+        }
         return;
       }
     } catch (e) {
@@ -746,6 +780,13 @@ function CheckoutPage() {
   useEffect(() => {
     loadCartItems();
   }, [location.pathname]);
+
+  /** Isolated gift-card checkout with nothing to buy → back to gift card product page. */
+  useEffect(() => {
+    if (!isGiftCardCheckoutRoute) return;
+    if (cartItems.length > 0) return;
+    navigate('/tools/gift-card', { replace: true });
+  }, [isGiftCardCheckoutRoute, cartItems.length, navigate]);
 
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
   const goBackToMembershipUpgradeChart = useCallback(() => {
@@ -2737,7 +2778,13 @@ function CheckoutPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE' : isBookingsCheckoutRoute ? 'BOOKING' : 'BAG'}
+                    {isSubscriptionUpgrade
+                      ? 'UPGRADE'
+                      : isBookingsCheckoutRoute
+                        ? 'BOOKING'
+                        : isGiftCardCheckoutRoute
+                          ? 'GIFT CARD'
+                          : 'BAG'}
                   </span>
                 </>
               )}
