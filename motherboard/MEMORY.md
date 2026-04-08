@@ -12993,3 +12993,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User found **`GIFT CARD · $500`** redundant next to the line price on the bag.
 
 **Changes:** **`shopping-bag/page.tsx`** — **`bagProductTitleLine`** returns **`GIFT CARD`** only for gift lines. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Admin Pending: reviews/forms layout + affiliate per-item approve/decline
+
+**Context:** User wanted **REVIEWS** tab panels to match **Admin → Reviews** styling; **FORMS** tab with avatar, order date top-right, name·state, red order number, gray order summary + price, red VIEW FORM; **AFFILIATE** tab restructured with **per-item APPROVE / DECLINE** (not only modal).
+
+**Changes:** **`AdminReviewStyleCard.tsx`** (new) — shared card: avatar, black date right, client·region, gray product line, stars, black body, expandable media, optional footer link + **`children`**. **`admin/pending/page.tsx`** — REVIEWS uses card + VIEW REVIEW; FORMS uses **`FormPendingClientAvatar`**, **`orderSummaryForPendingForm`** (reads **`userOrders_{email}`** **`lineItems`** / **`total`**), region from mock clients; AFFILIATE uses same card layout (**`showStars: false`**) + inline buttons; decline modal supports **`affiliateDeclineTargetId`** without main modal. **`adminPendingMockQueues.ts`** — affiliate items include **`client`**, **`email`**, region, **`caption`**; **`mergeAffiliateWithDefaults`** + persist when legacy rows missing client/email. **`npm run build`**.
