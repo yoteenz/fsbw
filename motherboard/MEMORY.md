@@ -13082,3 +13082,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - After checkout: **`pushLocalUserOrdersAfterCheckout`** → **`putOrders`** + optional **`patchProfile({ hasMadeFirstPurchase })`** + **`syncProfileFromApi`**. **`persistUserOrderAfterCheckoutAfterCartSaved`** **`useCallback`** used for **card confirm** and **Apple Pay-style** path so both sync.
 
 **Changes:** **`api/cart.ts`**, **`src/utils/api.ts`** (**`CartVersionConflictError`**, **`putCart`/`getCart` version**), **`cartServerSync.ts`**, **`pushCartWishlistToCloud.ts`**, **`syncFromApi.ts`**, **`cartWishlistStorage.ts`**, **`CommerceRouteGuard.tsx`**, **`App.tsx`**, **`checkoutOrderServerSync.ts`**, **`checkout/page.tsx`**, migration **`20260415120000_cart_version.sql`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Account reviews supplemental modal copy + layout
+
+**Context:** User wanted **`ReviewSupplementalContentModal`** UI tweaks: submit left of cancel with same white/red border styling as cancel; label **SUBMIT**; remove gray **PHOTO 1/2**, **VIDEO 1/2** captions; centered black copy **ADD CONTENT TO YOUR REVIEW.** plus parenthetical limits; red header = **`review.productName`** (e.g. NOIR, BUNDLES); **2px less** margin above red **ADD/EDIT CONTENT** link on account reviews.
+
+**Changes:** **`ReviewSupplementalContentModal.tsx`**, **`account/reviews/page.tsx`** (link **`marginTop` 10px → 8px). **`npm run build`**.

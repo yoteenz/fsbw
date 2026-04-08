@@ -453,7 +453,7 @@ function ReviewsPage() {
               fontFamily: '"Futura PT Medium"',
               fontSize: '10px',
               color: '#EB1C24',
-              margin: '10px 0 0',
+              margin: '8px 0 0',
               textTransform: 'uppercase',
               fontWeight: 500,
             }}
@@ -471,7 +471,7 @@ function ReviewsPage() {
             fontFamily: '"Futura PT Medium"',
             fontSize: '10px',
             color: '#EB1C24',
-            margin: '10px 0 0',
+            margin: '8px 0 0',
             padding: 0,
             border: 'none',
             background: 'none',

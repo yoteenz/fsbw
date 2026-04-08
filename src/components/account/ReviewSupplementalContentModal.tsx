@@ -241,7 +241,6 @@ export function ReviewSupplementalContentModal({
   );
 
   const renderFileRow = (
-    label: string,
     file: File | null,
     inputRef: RefObject<HTMLInputElement | null>,
     accept: string,
@@ -313,9 +312,10 @@ export function ReviewSupplementalContentModal({
           )}
         </div>
       </div>
-      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>{label}</p>
     </div>
   );
+
+  const headerProductTitle = (review.productName || 'REVIEW').toString().trim().toUpperCase();
 
   return (
     <div
@@ -333,7 +333,7 @@ export function ReviewSupplementalContentModal({
       >
         <div className="flex justify-between items-center flex-shrink-0 px-4 py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
           <p id="rev-supp-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
-            ADD REVIEW PHOTOS / VIDEOS
+            {headerProductTitle}
           </p>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
             <img
@@ -350,8 +350,31 @@ export function ReviewSupplementalContentModal({
           </button>
         </div>
         <div className="overflow-y-auto flex-1 px-4 py-3" style={{ minHeight: 0 }}>
-          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '0 0 12px', lineHeight: 1.4 }}>
-            UP TO {MAX_REVIEW_SUPPLEMENTAL_PHOTOS} PHOTOS AND {MAX_REVIEW_SUPPLEMENTAL_VIDEOS} VIDEOS TOTAL. YOUR REVIEW TEXT CANNOT BE CHANGED.
+          <p
+            style={{
+              fontFamily: '"Futura PT Book"',
+              fontSize: '10px',
+              color: '#000',
+              margin: '0 0 6px',
+              lineHeight: 1.4,
+              textAlign: 'center',
+              textTransform: 'uppercase',
+            }}
+          >
+            ADD CONTENT TO YOUR REVIEW.
+          </p>
+          <p
+            style={{
+              fontFamily: '"Futura PT Book"',
+              fontSize: '10px',
+              color: '#000',
+              margin: '0 0 12px',
+              lineHeight: 1.4,
+              textAlign: 'center',
+              textTransform: 'uppercase',
+            }}
+          >
+            (UP TO {MAX_REVIEW_SUPPLEMENTAL_PHOTOS} PHOTOS AND {MAX_REVIEW_SUPPLEMENTAL_VIDEOS} VIDEOS TOTAL. YOUR REVIEW TEXT CANNOT BE CHANGED)
           </p>
           {(existingPhotos.length > 0 || existingVideos.length > 0) && (
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 12px' }}>
@@ -362,8 +385,8 @@ export function ReviewSupplementalContentModal({
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '0 0 8px', textTransform: 'uppercase', fontWeight: 500 }}>
             PHOTOS
           </p>
-          {showPhotoRow1 ? renderFileRow('PHOTO 1', photo1File, photo1Ref, 'image/*', true, setPhoto1File) : null}
-          {showPhotoRow2 ? renderFileRow('PHOTO 2', photo2File, photo2Ref, 'image/*', true, setPhoto2File) : null}
+          {showPhotoRow1 ? renderFileRow(photo1File, photo1Ref, 'image/*', true, setPhoto1File) : null}
+          {showPhotoRow2 ? renderFileRow(photo2File, photo2Ref, 'image/*', true, setPhoto2File) : null}
           {!showPhotoRow1 ? (
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px' }}>MAX PHOTOS REACHED.</p>
           ) : null}
@@ -371,8 +394,8 @@ export function ReviewSupplementalContentModal({
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '16px 0 8px', textTransform: 'uppercase', fontWeight: 500 }}>
             VIDEOS
           </p>
-          {showVideoRow1 ? renderFileRow('VIDEO 1', video1File, video1Ref, 'video/*', true, setVideo1File) : null}
-          {showVideoRow2 ? renderFileRow('VIDEO 2', video2File, video2Ref, 'video/*', true, setVideo2File) : null}
+          {showVideoRow1 ? renderFileRow(video1File, video1Ref, 'video/*', true, setVideo1File) : null}
+          {showVideoRow2 ? renderFileRow(video2File, video2Ref, 'video/*', true, setVideo2File) : null}
           {!showVideoRow1 ? (
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px' }}>MAX VIDEOS REACHED.</p>
           ) : null}
@@ -382,6 +405,25 @@ export function ReviewSupplementalContentModal({
           ) : null}
         </div>
         <div className="flex gap-2 flex-shrink-0 px-4 py-3" style={{ borderTop: '1px solid #e5e7eb' }}>
+          <button
+            type="button"
+            disabled={submitting}
+            onClick={() => void handleSubmit()}
+            style={{
+              flex: 1,
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '10px',
+              color: '#EB1C24',
+              background: '#fff',
+              border: '1.3px solid #000',
+              padding: '10px',
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              textTransform: 'uppercase',
+              opacity: submitting ? 0.7 : 1,
+            }}
+          >
+            {submitting ? 'SUBMITTING…' : 'SUBMIT'}
+          </button>
           <button
             type="button"
             onClick={onClose}
@@ -398,25 +440,6 @@ export function ReviewSupplementalContentModal({
             }}
           >
             CANCEL
-          </button>
-          <button
-            type="button"
-            disabled={submitting}
-            onClick={() => void handleSubmit()}
-            style={{
-              flex: 1,
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '10px',
-              color: '#fff',
-              background: '#EB1C24',
-              border: '1.3px solid #000',
-              padding: '10px',
-              cursor: submitting ? 'not-allowed' : 'pointer',
-              textTransform: 'uppercase',
-              opacity: submitting ? 0.7 : 1,
-            }}
-          >
-            {submitting ? 'SUBMITTING…' : 'SUBMIT FOR REVIEW'}
           </button>
         </div>
       </div>
