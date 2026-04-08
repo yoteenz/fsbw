@@ -12823,3 +12823,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User confirmed **PLACED** orders must still **auto-cancel after 24h** when the client **never signed** the authorization form; while **`orderFormAwaitingAdminApproval`** (submitted, waiting on admin), **no** 24h cancel; **Orders** card already showed **ORDER FORM PENDING ADMIN APPROVAL**; **status strip** should match.
 
 **Changes:** **`orders/page.tsx`** — comment above **`checkAndCancelExpired`** documents: cancel when **`!orderFormSigned`** (unsigned); skip cancel only when **`orderFormAwaitingAdminApproval`**; strip branches now use full string **`ORDER FORM PENDING ADMIN APPROVAL`** (was **`PENDING ADMIN APPROVAL`**). **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin view signed forms: TAP TO VIEW PDF in brand red
+
+**Context (this chat):** User asked to change **“TAP TO VIEW PDF”** (and the full-PDF variant) on the **view signed forms** pop-up from **gray** to **red**.
+
+**Changes:** **`admin/clients/page.tsx`** — **`SignedOrderFormListRow`**: **`TAP TO VIEW PDF`** and **`TAP TO VIEW / DOWNLOAD PDF`** paragraphs use **`#EB1C24`** instead of **`#808080`** (still **Futura PT Medium**). Commit + push **`preview/mobile`**.

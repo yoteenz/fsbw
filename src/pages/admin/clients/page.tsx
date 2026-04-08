@@ -703,11 +703,11 @@ function SignedOrderFormListRow({
         <span style={{ color: statusIsDelivered ? '#000000' : '#808080' }}>{orderStatusLabel}</span>
       </p>
       {form.summaryOnly ? (
-        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
           TAP TO VIEW PDF
         </p>
       ) : (
-        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#808080', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: '#EB1C24', fontWeight: 500, margin: 0, textTransform: 'uppercase' }}>
           TAP TO VIEW / DOWNLOAD PDF
         </p>
       )}
