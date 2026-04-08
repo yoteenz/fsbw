@@ -16,8 +16,11 @@ import {
   type StoredReviewSupplementalFields,
 } from '../../../utils/reviewSupplementalMedia';
 import { ReviewSupplementalContentModal } from '../../../components/account/ReviewSupplementalContentModal';
+import { mergeReviewWithSupplementalOverlay } from '../../../utils/accountReviewsSupplementalOverlay';
 
-interface Review {
+type ReviewWithSupplemental = ReviewRow & StoredReviewSupplementalFields;
+
+interface ReviewRow {
   id: string;
   date: string;
   productName: string;
@@ -35,7 +38,7 @@ interface Review {
 }
 
 // Mock shop reviews (wig units)
-const mockShopReviews: Review[] = [
+const mockShopReviews: ReviewRow[] = [
   {
     id: '2',
     date: '04-26-2023',
@@ -119,7 +122,7 @@ const mockShopReviews: Review[] = [
 ];
 
 // Mock tool reviews (e.g. satin bonnet, foam, etc.)
-const mockToolReviews: Review[] = [
+const mockToolReviews: ReviewRow[] = [
   {
     id: 't1',
     date: '04-20-2023',
@@ -257,7 +260,7 @@ function ReviewsPage() {
   });
   const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_INITIAL);
   const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_INITIAL);
-  const [userSubmittedReviews, setUserSubmittedReviews] = useState<Review[]>([]);
+  const [userSubmittedReviews, setUserSubmittedReviews] = useState<ReviewRow[]>([]);
   const [currentUser, setCurrentUser] = useState<{
     email?: string;
     role?: string;
@@ -266,10 +269,20 @@ function ReviewsPage() {
     lastName?: string;
     profileImage?: string;
     avatar?: string;
+    reviewSupplementalOverlay?: Record<string, StoredReviewSupplementalFields>;
   } | null>(null);
-  const [supplementalModalReview, setSupplementalModalReview] = useState<Review | null>(null);
+  const [supplementalModalReview, setSupplementalModalReview] = useState<ReviewRow | null>(null);
 
-  const userReviewIds = useMemo(() => new Set(userSubmittedReviews.map((r) => r.id)), [userSubmittedReviews]);
+  const showMockReviews = isMockDataAccount(currentUser);
+
+  const userReviewIds = useMemo(() => {
+    const set = new Set(userSubmittedReviews.map((r) => r.id));
+    if (showMockReviews) {
+      mockShopReviews.forEach((r) => set.add(r.id));
+      mockToolReviews.forEach((r) => set.add(r.id));
+    }
+    return set;
+  }, [userSubmittedReviews, showMockReviews]);
 
   const clientNameUpper = useMemo(() => {
     const u = currentUser;
@@ -328,7 +341,7 @@ function ReviewsPage() {
         setUserSubmittedReviews(
           arr.filter(
             (row: { moderationStatus?: string }) => String(row?.moderationStatus || '').toLowerCase() !== 'pending'
-          ) as Review[]
+          ) as ReviewRow[]
         );
         clearNewReviewApproved(user.email);
         window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
@@ -385,20 +398,43 @@ function ReviewsPage() {
   };
 
   const handleBack = () => navigate('/account');
-  const showMockReviews = isMockDataAccount(currentUser);
   const shopReviewsList = showMockReviews ? [...userSubmittedReviews, ...mockShopReviews] : [...userSubmittedReviews];
   const toolReviewsList = showMockReviews ? mockToolReviews : [];
-  const totalShop = shopReviewsList.length;
+
+  const emailForOverlay = String(currentUser?.email || '').trim();
+  const serverReviewOverlay = currentUser?.reviewSupplementalOverlay;
+
+  const shopReviewsEnriched = useMemo((): ReviewWithSupplemental[] => {
+    return shopReviewsList.map((r) =>
+      mergeReviewWithSupplementalOverlay(
+        r as unknown as Record<string, unknown>,
+        emailForOverlay,
+        serverReviewOverlay
+      ) as unknown as ReviewWithSupplemental
+    );
+  }, [shopReviewsList, emailForOverlay, serverReviewOverlay]);
+
+  const toolReviewsEnriched = useMemo((): ReviewWithSupplemental[] => {
+    return toolReviewsList.map((r) =>
+      mergeReviewWithSupplementalOverlay(
+        r as unknown as Record<string, unknown>,
+        emailForOverlay,
+        serverReviewOverlay
+      ) as unknown as ReviewWithSupplemental
+    );
+  }, [toolReviewsList, emailForOverlay, serverReviewOverlay]);
+
+  const totalShop = shopReviewsEnriched.length;
   const handleLoadMoreShop = () => setShopVisibleCount(totalShop);
-  const handleLoadMoreTool = () => setToolVisibleCount(toolReviewsList.length);
+  const handleLoadMoreTool = () => setToolVisibleCount(toolReviewsEnriched.length);
   const handleShowLessShop = () => setShopVisibleCount(REVIEWS_INITIAL);
   const handleShowLessTool = () => setToolVisibleCount(REVIEWS_INITIAL);
 
-  const displayedShopReviews = shopReviewsList.slice(0, shopVisibleCount);
-  const displayedToolReviews = toolReviewsList.slice(0, toolVisibleCount);
+  const displayedShopReviews = shopReviewsEnriched.slice(0, shopVisibleCount);
+  const displayedToolReviews = toolReviewsEnriched.slice(0, toolVisibleCount);
   const hasMoreShop = shopVisibleCount < totalShop;
-  const hasMoreTool = toolVisibleCount < toolReviewsList.length;
-  const totalTool = toolReviewsList.length;
+  const hasMoreTool = toolVisibleCount < toolReviewsEnriched.length;
+  const totalTool = toolReviewsEnriched.length;
   // Only show "SHOW LESS" when there are more than 3 products (so collapsing makes sense). For ≤3, all fit in viewport.
   const showShowLessShop = totalShop > REVIEWS_INITIAL && !hasMoreShop;
   const showShowLessTool = totalTool > REVIEWS_INITIAL && !hasMoreTool;
@@ -406,9 +442,9 @@ function ReviewsPage() {
   const BRAND_GRAY = '#808080';
 
   const renderSupplementalLink = useCallback(
-    (review: Review) => {
+    (review: ReviewWithSupplemental) => {
       if (!userReviewIds.has(review.id)) return null;
-      const supp = review as Review & StoredReviewSupplementalFields;
+      const supp = review;
       const label = reviewSupplementalLinkLabel(supp);
       if (label === 'CONTENT PENDING REVIEW') {
         return (
@@ -453,7 +489,7 @@ function ReviewsPage() {
     [userReviewIds]
   );
 
-  const renderReviewRow = (review: Review) => (
+  const renderReviewRow = (review: ReviewWithSupplemental) => (
     <div
       key={review.id}
       className="flex items-start gap-3"

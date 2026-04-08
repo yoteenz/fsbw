@@ -117,22 +117,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (error) return res.status(500).json({ error: error.message });
 
       const queueId = String((data as { id?: string })?.id || '');
-      const { data: prof } = await supabase.from('profiles').select('user_submitted_reviews').eq('id', user.id).maybeSingle();
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('user_submitted_reviews, review_supplemental_overlay')
+        .eq('id', user.id)
+        .maybeSingle();
       const list = Array.isArray((prof as { user_submitted_reviews?: unknown })?.user_submitted_reviews)
         ? [...((prof as { user_submitted_reviews: unknown[] }).user_submitted_reviews)]
         : [];
+      let hit = false;
       const next = list.map((row) => {
         const r = row as Record<string, unknown>;
         if (String(r.id || '') !== clientReviewKey) return row;
+        hit = true;
         return {
           ...r,
           supplementalContentStatus: 'pending',
           supplementalPendingQueueId: queueId,
         };
       });
+      const overlayRaw = (prof as { review_supplemental_overlay?: unknown })?.review_supplemental_overlay;
+      const overlay =
+        overlayRaw && typeof overlayRaw === 'object' && !Array.isArray(overlayRaw)
+          ? { ...(overlayRaw as Record<string, unknown>) }
+          : {};
+      if (!hit) {
+        overlay[clientReviewKey] = {
+          supplementalContentStatus: 'pending',
+          supplementalPendingQueueId: queueId,
+        };
+      }
       await supabase
         .from('profiles')
-        .update({ user_submitted_reviews: next, updated_at: new Date().toISOString() })
+        .update({
+          user_submitted_reviews: next,
+          review_supplemental_overlay: overlay,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', user.id);
 
       return res.status(201).json({ id: queueId });

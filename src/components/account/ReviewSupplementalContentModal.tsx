@@ -11,6 +11,7 @@ import { getUserSubmittedReviewsKey } from '../../constants/reviews';
 import { postClientSubmission, getAccessToken } from '../../utils/api';
 import { isSupabaseConfigured } from '../../utils/supabase';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
+import { patchSupplementalOverlay } from '../../utils/accountReviewsSupplementalOverlay';
 
 export type ReviewForSupplementalModal = {
   id: string;
@@ -146,9 +147,11 @@ export function ReviewSupplementalContentModal({
         });
         const qid = String((res as { id?: string }).id || '').trim();
         if (qid) {
+          let hit = false;
           const next = list.map((row) => {
             const r = row as Record<string, unknown>;
             if (String(r.id || '') !== review.id) return row;
+            hit = true;
             return {
               ...r,
               supplementalContentStatus: 'pending',
@@ -156,6 +159,12 @@ export function ReviewSupplementalContentModal({
             };
           });
           localStorage.setItem(key, JSON.stringify(next));
+          if (!hit) {
+            patchSupplementalOverlay(clientEmail, review.id, {
+              supplementalContentStatus: 'pending',
+              supplementalPendingQueueId: qid,
+            });
+          }
         }
         await syncProfileFromApi();
       } else {
@@ -170,6 +179,10 @@ export function ReviewSupplementalContentModal({
           };
         });
         localStorage.setItem(key, JSON.stringify(next));
+        patchSupplementalOverlay(clientEmail, review.id, {
+          supplementalContentStatus: 'pending',
+          supplementalPendingQueueId: queueId,
+        });
         const dateShort = new Date().toLocaleDateString('en-US', {
           month: 'numeric',
           day: 'numeric',

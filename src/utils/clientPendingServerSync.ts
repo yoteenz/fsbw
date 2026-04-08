@@ -3,6 +3,7 @@
  */
 import { getUserSubmittedReviewsKey } from '../constants/reviews';
 import { getPerUserKey, PER_USER_KEYS } from './perUserStorage';
+import { supplementalOverlayStorageKey } from './accountReviewsSupplementalOverlay';
 
 const SIGNED_FORMS_KEY = 'signedOrderFormsByEmail';
 
@@ -26,6 +27,13 @@ export function persistServerProfileQueuesToLocal(emailRaw: string, profile: Rec
       const all: Record<string, unknown[]> = raw ? JSON.parse(raw) : {};
       all[email] = sof as unknown[];
       localStorage.setItem(SIGNED_FORMS_KEY, JSON.stringify(all));
+    }
+    const rso = profile.reviewSupplementalOverlay;
+    if (rso && typeof rso === 'object' && !Array.isArray(rso)) {
+      const rawL = localStorage.getItem(supplementalOverlayStorageKey(email));
+      const local = rawL ? (JSON.parse(rawL) as Record<string, unknown>) : {};
+      const merged = { ...local, ...(rso as Record<string, unknown>) };
+      localStorage.setItem(supplementalOverlayStorageKey(email), JSON.stringify(merged));
     }
   } catch {
     /* ignore */

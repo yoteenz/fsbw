@@ -5,6 +5,7 @@
 import { getPerUserKey, PER_USER_KEYS } from './perUserStorage';
 import { getUserSubmittedReviewsKey } from '../constants/reviews';
 import { MAX_REVIEW_SUPPLEMENTAL_PHOTOS, MAX_REVIEW_SUPPLEMENTAL_VIDEOS } from './reviewSupplementalMedia';
+import { applySupplementalOverlayAdminDecision } from './accountReviewsSupplementalOverlay';
 
 function normEmail(email: string): string {
   return String(email || '')
@@ -167,6 +168,13 @@ export function applyClientReviewAdminDecisionToUserStorage(
         };
       });
       localStorage.setItem(key, JSON.stringify(next));
+      applySupplementalOverlayAdminDecision(
+        email,
+        queueId,
+        decision === 'APPROVED' ? 'APPROVED' : 'DECLINED',
+        Array.isArray(item.photoUrls) ? item.photoUrls : undefined,
+        Array.isArray(item.videoUrls) ? item.videoUrls : undefined
+      );
       window.dispatchEvent(new CustomEvent('reviewsUpdated'));
       return;
     }

@@ -115,6 +115,7 @@ const JSONB_ROW_KEYS = [
   'user_submitted_reviews',
   'affiliate_submitted_content',
   'signed_order_forms',
+  'review_supplemental_overlay',
 ] as const;
 
 function sanitizeRowForUpsert(row: Record<string, unknown>): Record<string, unknown> {
@@ -167,6 +168,7 @@ function toProfileRow(profile: Record<string, unknown>) {
     user_submitted_reviews: coerceJsonbValue(profile.userSubmittedReviews),
     affiliate_submitted_content: coerceJsonbValue(profile.affiliateSubmittedContent),
     signed_order_forms: coerceJsonbValue(profile.signedOrderForms),
+    review_supplemental_overlay: coerceJsonbValue(profile.reviewSupplementalOverlay),
   };
 }
 

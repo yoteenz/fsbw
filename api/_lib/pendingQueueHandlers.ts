@@ -12,7 +12,7 @@ function normEmail(e: string): string {
 export async function mergeProfileJson(
   supabase: SupabaseClient,
   userId: string,
-  column: 'user_submitted_reviews' | 'affiliate_submitted_content',
+  column: 'user_submitted_reviews' | 'affiliate_submitted_content' | 'review_supplemental_overlay',
   merger: (prev: unknown) => unknown
 ): Promise<void> {
   const { data: row, error: rErr } = await supabase.from('profiles').select(column).eq('id', userId).maybeSingle();
@@ -26,7 +26,7 @@ export async function mergeProfileJson(
   if (error) throw new Error(error.message);
 }
 
-/** Approve supplemental: merge photos/videos into the matching review object in user_submitted_reviews by id === client_review_key. */
+/** Approve supplemental: merge photos/videos into user_submitted_reviews row or catalog overlay by client_review_key. */
 export async function applySupplementalApproval(
   supabase: SupabaseClient,
   userId: string,
@@ -34,11 +34,13 @@ export async function applySupplementalApproval(
   photos: unknown[],
   videos: unknown[]
 ): Promise<void> {
+  let hitList = false;
   await mergeProfileJson(supabase, userId, 'user_submitted_reviews', (prev) => {
     const list = Array.isArray(prev) ? [...prev] : [];
-    return list.map((item) => {
+    const next = list.map((item) => {
       const r = item as Record<string, unknown>;
       if (String(r.id || '') !== clientReviewKey) return item;
+      hitList = true;
       return {
         ...r,
         supplementalPhotos: photos,
@@ -47,7 +49,23 @@ export async function applySupplementalApproval(
         supplementalPendingQueueId: undefined,
       };
     });
+    return next;
   });
+  if (!hitList && clientReviewKey) {
+    await mergeProfileJson(supabase, userId, 'review_supplemental_overlay', (prev) => {
+      const o =
+        prev && typeof prev === 'object' && !Array.isArray(prev)
+          ? { ...(prev as Record<string, unknown>) }
+          : {};
+      o[clientReviewKey] = {
+        supplementalPhotos: photos,
+        supplementalVideos: videos,
+        supplementalContentStatus: 'approved',
+        supplementalPendingQueueId: undefined,
+      };
+      return o;
+    });
+  }
 }
 
 export async function clearSupplementalPendingOnProfile(
@@ -66,6 +84,23 @@ export async function clearSupplementalPendingOnProfile(
         supplementalPendingQueueId: undefined,
       };
     });
+  });
+  await mergeProfileJson(supabase, userId, 'review_supplemental_overlay', (prev) => {
+    const o =
+      prev && typeof prev === 'object' && !Array.isArray(prev)
+        ? { ...(prev as Record<string, unknown>) }
+        : {};
+    for (const k of Object.keys(o)) {
+      const row = o[k] as Record<string, unknown>;
+      if (String(row?.supplementalPendingQueueId || '') === pendingQueueId) {
+        o[k] = {
+          ...row,
+          supplementalContentStatus: 'none',
+          supplementalPendingQueueId: undefined,
+        };
+      }
+    }
+    return o;
   });
 }
 

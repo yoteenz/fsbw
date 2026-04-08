@@ -53,6 +53,7 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
     userSubmittedReviews: row.user_submitted_reviews ?? row.userSubmittedReviews ?? [],
     affiliateSubmittedContent: row.affiliate_submitted_content ?? row.affiliateSubmittedContent ?? {},
     signedOrderForms: row.signed_order_forms ?? row.signedOrderForms ?? [],
+    reviewSupplementalOverlay: row.review_supplemental_overlay ?? row.reviewSupplementalOverlay ?? {},
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
