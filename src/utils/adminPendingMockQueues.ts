@@ -17,6 +17,8 @@ export type PendingMockReview = {
   id: string;
   client: string;
   email: string;
+  clientRegionParen?: string;
+  clientRegionCode?: string;
   product: string;
   rating: number;
   excerpt: string;
@@ -48,6 +50,8 @@ export type PendingMockAffiliateItem = {
   clientProfilePhotoUrl?: string;
   clientRegionParen?: string;
   clientRegionCode?: string;
+  /** Unit / product name for gray line (NOIR, SOFT WAVE, BUNDLES, …) */
+  productName?: string;
   /** Gray subtitle under client (e.g. AFFILIATE PHOTO SUBMISSION) */
   caption?: string;
   /** Thumbnail for photo/video */
@@ -72,6 +76,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     id: 'mock-rev-1',
     client: 'SARAH JOHNSON',
     email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
     product: 'NOIR 24" RAW RUSSIAN',
     rating: 5,
     excerpt: 'ABSOLUTELY IN LOVE WITH THE QUALITY AND THE INSTALL TEAM WAS SO PROFESSIONAL.',
@@ -82,6 +87,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     id: 'mock-rev-2',
     client: 'MARIA RODRIGUEZ',
     email: 'maria.r@email.com',
+    clientRegionParen: 'TEXAS',
     product: 'SOFT WAVE 26"',
     rating: 4,
     excerpt: 'GREAT TEXTURE, SHIPPING WAS FAST. WOULD LOVE SLIGHTLY MORE DENSITY NEXT TIME.',
@@ -92,6 +98,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     id: 'mock-rev-3',
     client: 'JORDAN LEE',
     email: 'jordan.lee@email.com',
+    clientRegionParen: 'NEW YORK',
     product: 'SLAY STYLING TOOL',
     rating: 5,
     excerpt: 'GAME CHANGER FOR MY MORNING ROUTINE. FIVE STARS.',
@@ -107,6 +114,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'SARAH JOHNSON',
     email: 'sarah.j@email.com',
     clientRegionParen: 'CALIFORNIA',
+    productName: 'NOIR',
     caption: 'AFFILIATE PHOTO SUBMISSION',
     imageSrc: '/assets/gallery-mock.png',
     date: '3/27/2026',
@@ -118,6 +126,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'MARIA RODRIGUEZ',
     email: 'maria.r@email.com',
     clientRegionParen: 'TEXAS',
+    productName: 'SOFT WAVE',
     caption: 'AFFILIATE PHOTO SUBMISSION',
     imageSrc: '/assets/gallery-mock.png',
     date: '3/27/2026',
@@ -129,6 +138,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'JORDAN LEE',
     email: 'jordan.lee@email.com',
     clientRegionParen: 'NEW YORK',
+    productName: 'BUNDLES',
     caption: 'AFFILIATE PHOTO SUBMISSION',
     imageSrc: '/assets/gallery-mock.png',
     date: '3/26/2026',
@@ -140,6 +150,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'SARAH JOHNSON',
     email: 'sarah.j@email.com',
     clientRegionParen: 'CALIFORNIA',
+    productName: 'NOIR',
     caption: 'AFFILIATE VIDEO SUBMISSION',
     imageSrc: '/assets/gallery-mock.png',
     date: '3/25/2026',
@@ -151,6 +162,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'DIANA FOSTER',
     email: 'mock4@test.com',
     clientRegionParen: 'ILLINOIS',
+    productName: 'SOFT WAVE',
     caption: 'AFFILIATE VIDEO SUBMISSION',
     imageSrc: '/assets/gallery-mock.png',
     date: '3/24/2026',
@@ -162,6 +174,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'SARAH JOHNSON',
     email: 'sarah.j@email.com',
     clientRegionParen: 'CALIFORNIA',
+    productName: 'NOIR',
     caption: 'AFFILIATE SOCIAL LINK',
     platform: 'INSTAGRAM',
     handle: '@CLIENTSTYLE · REEL SUBMITTED',
@@ -174,6 +187,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'MARIA RODRIGUEZ',
     email: 'maria.r@email.com',
     clientRegionParen: 'TEXAS',
+    productName: 'SOFT WAVE',
     caption: 'AFFILIATE SOCIAL LINK',
     platform: 'TIKTOK',
     handle: '@WIGGLOW · TAGGED @FRONTALSLAYER',
@@ -186,6 +200,7 @@ const DEFAULT_AFFILIATE: PendingMockAffiliateItem[] = [
     client: 'JORDAN LEE',
     email: 'jordan.lee@email.com',
     clientRegionParen: 'NEW YORK',
+    productName: 'OCEAN CURL',
     caption: 'AFFILIATE SOCIAL LINK',
     platform: 'YOUTUBE',
     handle: 'SHORTS · INSTALL ROUTINE',
@@ -339,4 +354,9 @@ export function listPendingMockReviewsVisible(): PendingMockReview[] {
 
 export function listPendingMockAffiliateVisible(): PendingMockAffiliateItem[] {
   return listPendingMockAffiliateForAdmin().filter((r) => r.status === 'PENDING');
+}
+
+/** Declined affiliate rows (for showing rejected reasons under pending items). */
+export function listPendingMockAffiliateDeclined(): PendingMockAffiliateItem[] {
+  return listPendingMockAffiliateForAdmin().filter((r) => r.status === 'DECLINED');
 }

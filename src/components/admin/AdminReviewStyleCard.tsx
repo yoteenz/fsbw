@@ -117,6 +117,8 @@ export type AdminReviewStyleCardProps = {
   verifiedPurchase?: boolean;
   /** Red label on media row right (e.g. PENDING) */
   statusLabel?: string;
+  /** Default: collapsible gray summary + expand. Use `inline` for consult-style thumbs always visible (admin pending affiliate). */
+  mediaPresentation?: 'expandable' | 'inline';
   footerLinkLabel?: string;
   onFooterLinkClick?: () => void;
   onOpenClientDetails?: (email: string) => void;
@@ -145,6 +147,7 @@ export function AdminReviewStyleCard({
   videoUrls: videoUrlsIn,
   verifiedPurchase = true,
   statusLabel,
+  mediaPresentation = 'expandable',
   footerLinkLabel,
   onFooterLinkClick,
   onOpenClientDetails,
@@ -171,11 +174,22 @@ export function AdminReviewStyleCard({
     videoUrls = ph.videoUrls;
   }
 
-  const [mediaOpen, setMediaOpen] = useState(false);
+  const [mediaOpen, setMediaOpen] = useState(mediaPresentation === 'inline');
   const toggleMedia = useCallback(() => setMediaOpen((v) => !v), []);
   const mediaCount = photos + videos;
   const hasMediaUrls = photoUrls.length > 0 || videoUrls.length > 0;
-  const hasExpandableMedia = mediaCount > 0 && hasMediaUrls;
+  const hasExpandableMedia = mediaPresentation === 'expandable' && mediaCount > 0 && hasMediaUrls;
+  const showInlineMedia = mediaPresentation === 'inline' && hasMediaUrls;
+  const consultThumbFrame = {
+    width: '50px',
+    height: '50px',
+    background: '#f3f4f6',
+    border: '3px solid #FFFFFF',
+    boxShadow: '0 0 0 1.1px #000000',
+    boxSizing: 'border-box' as const,
+    overflow: 'hidden',
+    padding: 0,
+  };
   const mediaSummaryParts: string[] = [];
   if (photos > 0) mediaSummaryParts.push(`${photos} ${photos === 1 ? 'PHOTO' : 'PHOTOS'}`);
   if (videos > 0) mediaSummaryParts.push(`${videos} ${videos === 1 ? 'VIDEO' : 'VIDEOS'}`);
@@ -269,89 +283,112 @@ export function AdminReviewStyleCard({
         {bodyText}
       </p>
       <div className="mt-2">
-        <div className="flex justify-between items-center gap-2">
-          <div className="min-w-0 flex-1 pr-2">
-            {hasExpandableMedia ? (
-              <button
-                type="button"
-                onClick={toggleMedia}
-                className="text-left p-0 border-0 bg-transparent cursor-pointer"
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '11px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                }}
+        {showInlineMedia ? (
+          <div className="flex flex-wrap" style={{ marginTop: '4px', gap: '8px' }}>
+            {photoUrls.map((url, idx) => (
+              <a
+                key={`ip-${idx}`}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ ...consultThumbFrame, display: 'block', cursor: 'pointer' }}
               >
-                {mediaSummary}
-              </button>
-            ) : (
-              <span
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '11px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {mediaSummary}
-              </span>
-            )}
-          </div>
-          {statusLabel ? (
-            <span
-              style={{
-                fontFamily: '"Futura PT Book"',
-                fontSize: '11px',
-                color: '#EB1C24',
-                flexShrink: 0,
-              }}
-            >
-              {statusLabel}
-            </span>
-          ) : null}
-        </div>
-        {mediaOpen && hasExpandableMedia ? (
-          <div className="mt-2 w-full flex flex-col gap-2">
-            {photoUrls.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {photoUrls.map((url, idx) => (
-                  <a
-                    key={`p-${idx}`}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block shrink-0 overflow-hidden"
-                    style={{
-                      width: `${REVIEW_MEDIA_THUMB_PX}px`,
-                      height: `${REVIEW_MEDIA_THUMB_PX}px`,
-                      border: '0.8px solid #000',
-                    }}
-                  >
-                    <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  </a>
-                ))}
+                <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </a>
+            ))}
+            {videoUrls.map((url, idx) => (
+              <div key={`iv-${idx}`} style={consultThumbFrame}>
+                <video src={url} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
-            ) : null}
-            {videoUrls.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {videoUrls.map((url, idx) => (
-                  <div
-                    key={`v-${idx}`}
-                    className="shrink-0 overflow-hidden bg-black"
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center gap-2">
+              <div className="min-w-0 flex-1 pr-2">
+                {hasExpandableMedia ? (
+                  <button
+                    type="button"
+                    onClick={toggleMedia}
+                    className="text-left p-0 border-0 bg-transparent cursor-pointer"
                     style={{
-                      width: `${REVIEW_MEDIA_THUMB_PX}px`,
-                      height: `${REVIEW_MEDIA_THUMB_PX}px`,
-                      border: '0.8px solid #000',
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: '#808080',
+                      textTransform: 'uppercase',
                     }}
                   >
-                    <video src={url} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    {mediaSummary}
+                  </button>
+                ) : (
+                  <span
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: '#808080',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {mediaSummary}
+                  </span>
+                )}
+              </div>
+              {statusLabel ? (
+                <span
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    fontSize: '11px',
+                    color: '#EB1C24',
+                    flexShrink: 0,
+                  }}
+                >
+                  {statusLabel}
+                </span>
+              ) : null}
+            </div>
+            {mediaOpen && hasExpandableMedia ? (
+              <div className="mt-2 w-full flex flex-col gap-2">
+                {photoUrls.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {photoUrls.map((url, idx) => (
+                      <a
+                        key={`p-${idx}`}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block shrink-0 overflow-hidden"
+                        style={{
+                          width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                          height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                          border: '0.8px solid #000',
+                        }}
+                      >
+                        <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      </a>
+                    ))}
                   </div>
-                ))}
+                ) : null}
+                {videoUrls.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {videoUrls.map((url, idx) => (
+                      <div
+                        key={`v-${idx}`}
+                        className="shrink-0 overflow-hidden bg-black"
+                        style={{
+                          width: `${REVIEW_MEDIA_THUMB_PX}px`,
+                          height: `${REVIEW_MEDIA_THUMB_PX}px`,
+                          border: '0.8px solid #000',
+                        }}
+                      >
+                        <video src={url} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ) : null}
-          </div>
-        ) : null}
+          </>
+        )}
       </div>
       {footerLinkLabel && onFooterLinkClick ? (
         <button

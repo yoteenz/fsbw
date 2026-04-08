@@ -1289,6 +1289,7 @@ function AffiliatePage() {
           undefined;
         const pendingRows = buildAffiliatePendingItemsFromContentDiff({
           orderId: expandedOrderId,
+          productName: expandedOrder?.productName,
           clientName,
           email,
           clientProfilePhotoUrl: profilePhoto,

@@ -14,7 +14,12 @@ import {
   PENDING_ORDER_FORMS_UPDATED_EVENT,
 } from '../../../utils/pendingOrderAuthorizationForms';
 import type { StoredSignedOrderForm } from '../../../utils/signedOrderFormsStorage';
-import { approveOrderFormSubmission, declineOrderFormSubmission } from '../../../utils/signedOrderFormsStorage';
+import {
+  approveOrderFormSubmission,
+  declineOrderFormSubmission,
+  fingerprintSignedOrderFormFields,
+  orderFormMatchesPreviouslyApprovedFingerprint,
+} from '../../../utils/signedOrderFormsStorage';
 import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
 import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hooks/useSignedOrderFormPdf';
 import { seedPendingTestOrderFormsIfNeeded } from '../../../utils/mockSignedOrderFormForApproval';
@@ -25,6 +30,7 @@ import {
   countPendingMockReviews,
   declinePendingMockAffiliate,
   declinePendingMockReview,
+  listPendingMockAffiliateDeclined,
   listPendingMockAffiliateVisible,
   listPendingMockReviewsVisible,
   PENDING_MOCK_AFFILIATE_UPDATED_EVENT,
@@ -45,6 +51,7 @@ import {
   serverOrderFormRowToStored,
   serverReviewSupplementalToPendingMock,
 } from '../../../utils/serverPendingQueueMappers';
+import { getPerUserKey, PER_USER_KEYS } from '../../../utils/perUserStorage';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -62,7 +69,11 @@ function normalizeEmailKey(email: string): string {
   return (email || '').trim().toLowerCase();
 }
 
-function orderSummaryForPendingForm(form: StoredSignedOrderForm): { line: string; priceUsd: number } {
+function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
+  line: string;
+  priceUsd: number;
+  formFingerprint: string;
+} {
   const email = normalizeEmailKey(form.email);
   let priceUsd = 0;
   const parts: string[] = [];
@@ -101,8 +112,105 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): { line: string
   if (parts.length === 0) {
     parts.push('ORDER AUTHORIZATION');
   }
-  const line = `${parts.join(' · ')}${priceUsd > 0 ? ` · $${priceUsd.toLocaleString()}` : ''}`;
-  return { line, priceUsd };
+  const fp = fingerprintSignedOrderFormFields(form.formFields);
+  const preApproved = orderFormMatchesPreviouslyApprovedFingerprint(form.email, form.id, fp);
+  const priceBit = priceUsd > 0 ? `$${priceUsd.toLocaleString()}` : '';
+  const statusBit = preApproved ? 'PRE-APPROVED' : 'NEW FORM';
+  const grayLine = [priceBit ? `${priceBit} · ${statusBit}` : statusBit, 'ORDER AUTHORIZATION'].filter(Boolean).join(' · ');
+  return { line: grayLine, priceUsd, formFingerprint: fp };
+}
+
+function affiliateProductKey(item: PendingMockAffiliateItem): string {
+  return (item.productName || '').trim().toUpperCase() || 'PRODUCT';
+}
+
+function socialSubmissionLabel(platform: string | undefined): string {
+  const p = (platform || '').trim().toUpperCase();
+  if (p === 'INSTAGRAM') return 'INSTAGRAM REEL';
+  if (p === 'TIKTOK') return 'TIKTOK POST';
+  if (p === 'TWITTER' || p === 'X') return 'TWITTER POST';
+  if (p === 'YOUTUBE') return 'YOUTUBE SHORT';
+  if (p === 'FACEBOOK') return 'FACEBOOK POST';
+  if (p) return `${p} POST`;
+  return 'SOCIAL TAG';
+}
+
+function affiliateProductKindLine(item: PendingMockAffiliateItem): string {
+  const prod = affiliateProductKey(item);
+  if (item.kind === 'photo') return `${prod} PHOTO`;
+  if (item.kind === 'video') return `${prod} VIDEO`;
+  return `${prod} ${socialSubmissionLabel(item.platform)}`;
+}
+
+function productNameForOrderId(clientEmail: string, orderId: string): string {
+  const em = normalizeEmailKey(clientEmail);
+  const oid = (orderId || '').trim();
+  if (!em || !oid || typeof window === 'undefined') return '';
+  try {
+    const raw = localStorage.getItem(`userOrders_${em}`);
+    if (!raw) return '';
+    const data = JSON.parse(raw) as { activeOrders?: unknown[]; pastOrders?: unknown[] };
+    const lists = [...(data.activeOrders || []), ...(data.pastOrders || [])];
+    const row = lists.find((o) => String((o as { id?: string }).id || '') === oid) as
+      | { productName?: string }
+      | undefined;
+    return String(row?.productName || '').trim().toUpperCase();
+  } catch {
+    return '';
+  }
+}
+
+function affiliateSubmittedCountsLine(
+  email: string,
+  productKey: string,
+  contentByOrder: Record<string, { photos?: unknown[]; videos?: unknown[]; socials?: unknown[] }> | null
+): string {
+  const em = normalizeEmailKey(email);
+  const pk = (productKey || '').trim().toUpperCase();
+  if (!em || !pk || !contentByOrder || typeof contentByOrder !== 'object') return '';
+  let photos = 0;
+  let videos = 0;
+  let socials = 0;
+  for (const [orderId, slice] of Object.entries(contentByOrder)) {
+    if (!slice || typeof slice !== 'object') continue;
+    const orderProduct = productNameForOrderId(em, orderId);
+    if (orderProduct && orderProduct !== pk) continue;
+    for (const p of slice.photos || []) {
+      const row = p as { status?: string };
+      if (String(row.status || '').toLowerCase() !== 'approved') continue;
+      photos += 1;
+    }
+    for (const v of slice.videos || []) {
+      const row = v as { status?: string };
+      if (String(row.status || '').toLowerCase() !== 'approved') continue;
+      videos += 1;
+    }
+    for (const s of slice.socials || []) {
+      const row = s as { status?: string };
+      if (String(row.status || '').toLowerCase() !== 'approved') continue;
+      socials += 1;
+    }
+  }
+  const parts: string[] = [];
+  parts.push(`${photos} ${photos === 1 ? 'PHOTO SUBMISSION' : 'PHOTO SUBMISSIONS'}.`);
+  parts.push(`${videos} ${videos === 1 ? 'VIDEO SUBMISSION' : 'VIDEO SUBMISSIONS'}.`);
+  parts.push(`${socials} ${socials === 1 ? 'SOCIAL TAG' : 'SOCIAL TAGS'}.`);
+  return parts.join(' ');
+}
+
+function loadAffiliateContentMapForEmail(email: string): Record<string, { photos?: unknown[]; videos?: unknown[]; socials?: unknown[] }> | null {
+  const em = normalizeEmailKey(email);
+  if (!em || typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(getPerUserKey(PER_USER_KEYS.affiliateSubmittedContent, em));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, { photos?: unknown[]; videos?: unknown[]; socials?: unknown[] }>)
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 function FormPendingClientAvatar({
@@ -322,6 +430,18 @@ export default function AdminPending() {
     return [...serverAffiliateMapped, ...pendingMockAffiliateList];
   }, [serverQueues, serverAffiliateMapped, pendingMockAffiliateList]);
 
+  const affiliateDeclinedByClientProduct = useMemo(() => {
+    void mockQueuesBump;
+    const map = new Map<string, PendingMockAffiliateItem[]>();
+    for (const d of listPendingMockAffiliateDeclined()) {
+      const key = `${normalizeEmailKey(d.email)}|${affiliateProductKey(d)}`;
+      const arr = map.get(key) || [];
+      arr.push(d);
+      map.set(key, arr);
+    }
+    return map;
+  }, [mockQueuesBump]);
+
   const reviewsTabCount = serverQueues ? pendingReviewsMerged.length : pendingReviews + mockReviewsPendingCount;
   const formsTabCount = serverQueues ? pendingAuthFormsMerged.length : pendingAuthFormsCount;
   const affiliateTabCount = serverQueues ? pendingAffiliateMerged.length : mockAffiliatePendingCount;
@@ -345,13 +465,13 @@ export default function AdminPending() {
 
   const renderAffiliateRow = useCallback(
     (item: PendingMockAffiliateItem) => {
-      const cap = (item.caption || '').trim() || 'AFFILIATE SUBMISSION';
-      const body =
-        item.kind === 'social'
-          ? `${String(item.platform || '').toUpperCase()} — ${String(item.handle || '').toUpperCase()}`
-          : item.kind === 'video'
-            ? 'VIDEO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.'
-            : 'PHOTO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.';
+      const prodFromOrder =
+        item.orderId && item.email ? productNameForOrderId(item.email, item.orderId) : '';
+      const pkStored = affiliateProductKey(item);
+      const effectiveProduct = pkStored !== 'PRODUCT' ? pkStored : prodFromOrder || 'PRODUCT';
+      const grayLine = affiliateProductKindLine({ ...item, productName: effectiveProduct });
+      const contentMap = loadAffiliateContentMapForEmail(item.email);
+      const countsBody = affiliateSubmittedCountsLine(item.email, effectiveProduct, contentMap);
       const photoUrls = item.kind === 'photo' && item.imageSrc ? [item.imageSrc] : [];
       const videoUrls =
         item.kind === 'video'
@@ -363,82 +483,114 @@ export default function AdminPending() {
           : [];
       const photos = item.kind === 'photo' ? 1 : 0;
       const videos = item.kind === 'video' ? 1 : 0;
+      const declinedKey = `${normalizeEmailKey(item.email)}|${effectiveProduct}`;
+      const declinedSiblings = affiliateDeclinedByClientProduct.get(declinedKey) || [];
 
       return (
-        <AdminReviewStyleCard
-          key={item.serverId ? `${item.id}-srv-${item.serverId}` : item.id}
-          client={item.client}
-          clientEmail={item.email}
-          clientProfilePhotoUrl={item.clientProfilePhotoUrl}
-          clientRegionParen={item.clientRegionParen}
-          clientRegionCode={item.clientRegionCode}
-          productLine={cap}
-          bodyText={body}
-          date={item.date}
-          rating={5}
-          photos={photos}
-          videos={videos}
-          photoUrls={photoUrls}
-          videoUrls={videoUrls}
-          verifiedPurchase={false}
-          showStars={false}
-          statusLabel="PENDING"
-          onOpenClientDetails={openClientFromPending}
-        >
-          <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
-            <button
-              type="button"
-              onClick={() => {
-                if (item.serverType === 'affiliate' && item.serverId) {
-                  void patchAdminPendingQueue({ type: 'affiliate', id: item.serverId, decision: 'approve' }).then(() =>
-                    refreshServerQueues()
-                  );
-                  return;
-                }
-                approvePendingMockAffiliate(item.id);
-              }}
-              style={{
-                flex: 1,
-                minWidth: '100px',
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '10px',
-                color: '#fff',
-                background: '#EB1C24',
-                border: '1.3px solid #000',
-                padding: '8px 10px',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-              }}
-            >
-              APPROVE
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setAffiliateDeclineTarget({ mockId: item.id, serverId: item.serverId });
-                setDeclineReasonDraft('');
-                setShowDeclineReasonModal(true);
-              }}
-              style={{
-                flex: 1,
-                minWidth: '100px',
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '10px',
-                color: '#EB1C24',
-                background: '#fff',
-                border: '1.3px solid #000',
-                padding: '8px 10px',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-              }}
-            >
-              DECLINE
-            </button>
-          </div>
-        </AdminReviewStyleCard>
+        <div key={item.serverId ? `${item.id}-srv-${item.serverId}` : item.id}>
+          <AdminReviewStyleCard
+            client={item.client}
+            clientEmail={item.email}
+            clientProfilePhotoUrl={item.clientProfilePhotoUrl}
+            clientRegionParen={item.clientRegionParen}
+            clientRegionCode={item.clientRegionCode}
+            productLine={grayLine}
+            bodyText={countsBody}
+            date={item.date}
+            rating={5}
+            photos={photos}
+            videos={videos}
+            photoUrls={photoUrls}
+            videoUrls={videoUrls}
+            verifiedPurchase={false}
+            showStars={false}
+            mediaPresentation="inline"
+            onOpenClientDetails={openClientFromPending}
+          >
+            {item.kind === 'social' ? (
+              <p
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  fontSize: '10px',
+                  color: '#000',
+                  margin: '10px 0 0',
+                  lineHeight: 1.4,
+                  wordBreak: 'break-word',
+                }}
+              >
+                {String(item.platform || '').toUpperCase()} — {String(item.handle || '').toUpperCase()}
+              </p>
+            ) : null}
+            <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  if (item.serverType === 'affiliate' && item.serverId) {
+                    void patchAdminPendingQueue({ type: 'affiliate', id: item.serverId, decision: 'approve' }).then(() =>
+                      refreshServerQueues()
+                    );
+                    return;
+                  }
+                  approvePendingMockAffiliate(item.id);
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '100px',
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#EB1C24',
+                  background: '#fff',
+                  border: '1.3px solid #000',
+                  padding: '8px 10px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                APPROVE
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAffiliateDeclineTarget({ mockId: item.id, serverId: item.serverId });
+                  setDeclineReasonDraft('');
+                  setShowDeclineReasonModal(true);
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '100px',
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#EB1C24',
+                  background: '#fff',
+                  border: '1.3px solid #000',
+                  padding: '8px 10px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                REJECT
+              </button>
+            </div>
+          </AdminReviewStyleCard>
+          {declinedSiblings.length > 0 ? (
+            <div style={{ marginTop: '8px', marginBottom: '4px', paddingLeft: '0' }}>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: '0 0 6px', textTransform: 'uppercase' }}>
+                REJECTED CONTENT
+              </p>
+              {declinedSiblings.map((d) => (
+                <p
+                  key={d.id}
+                  style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 4px' }}
+                >
+                  {(d.adminDeclineReason || '').trim() || 'NO REASON PROVIDED'}
+                </p>
+              ))}
+            </div>
+          ) : null}
+        </div>
       );
     },
-    [openClientFromPending, refreshServerQueues]
+    [openClientFromPending, refreshServerQueues, affiliateDeclinedByClientProduct]
   );
 
   useEffect(() => {
@@ -680,14 +832,14 @@ export default function AdminPending() {
   const modalTitle = (() => {
     if (!adminReviewModal) return '';
     if (adminReviewModal.kind === 'form') return 'REVIEW ORDER FORM';
-    return 'REVIEW CLIENT REVIEW';
+    return adminReviewModal.item.client.trim().toUpperCase() || 'REVIEW';
   })();
 
   const declineModalTitle = (() => {
-    if (affiliateDeclineTarget) return 'DECLINE AFFILIATE SUBMISSION';
+    if (affiliateDeclineTarget) return 'REJECT AFFILIATE SUBMISSION';
     if (!adminReviewModal) return '';
-    if (adminReviewModal.kind === 'form') return 'DECLINE ORDER FORM';
-    return 'DECLINE REVIEW';
+    if (adminReviewModal.kind === 'form') return 'REJECT ORDER FORM';
+    return 'REJECT REVIEW';
   })();
 
   const onApproveClick = () => {
@@ -929,6 +1081,8 @@ export default function AdminPending() {
                             client={r.client}
                             clientEmail={r.email}
                             clientProfilePhotoUrl={r.clientProfilePhotoUrl}
+                            clientRegionParen={r.clientRegionParen}
+                            clientRegionCode={r.clientRegionCode}
                             productLine={r.product}
                             bodyText={r.excerpt}
                             date={r.date}
@@ -938,7 +1092,6 @@ export default function AdminPending() {
                             photoUrls={r.photoUrls}
                             videoUrls={r.videoUrls}
                             verifiedPurchase
-                            statusLabel="PENDING"
                             footerLinkLabel="VIEW REVIEW"
                             onFooterLinkClick={() => setAdminReviewModal({ kind: 'review', item: r })}
                             onOpenClientDetails={openClientFromPending}
@@ -1014,13 +1167,15 @@ export default function AdminPending() {
                                         fontSize: '11px',
                                         color: '#EB1C24',
                                         fontWeight: 500,
-                                        margin: '10px 0 0',
+                                        margin: '6px 0 0',
                                         padding: 0,
                                         border: 'none',
                                         background: 'none',
                                         cursor: 'pointer',
                                         textTransform: 'uppercase',
                                         display: 'block',
+                                        textAlign: 'left',
+                                        width: '100%',
                                       }}
                                     >
                                       VIEW FORM
@@ -1179,8 +1334,8 @@ export default function AdminPending() {
                     minWidth: '120px',
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '10px',
-                    color: '#fff',
-                    background: '#EB1C24',
+                    color: '#EB1C24',
+                    background: '#fff',
                     border: '1.3px solid #000',
                     padding: '8px 10px',
                     cursor: adminReviewModal.kind === 'form' && formReviewPdfLoading ? 'not-allowed' : 'pointer',
@@ -1205,7 +1360,7 @@ export default function AdminPending() {
                     textTransform: 'uppercase',
                   }}
                 >
-                  DECLINE
+                  REJECT
                 </button>
               </div>
             </div>
@@ -1285,7 +1440,7 @@ export default function AdminPending() {
                   textTransform: 'uppercase',
                 }}
               >
-                CONFIRM DECLINE
+                CONFIRM REJECT
               </button>
               <button
                 type="button"

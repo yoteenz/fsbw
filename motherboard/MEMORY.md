@@ -13090,3 +13090,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User wanted **`ReviewSupplementalContentModal`** UI tweaks: submit left of cancel with same white/red border styling as cancel; label **SUBMIT**; remove gray **PHOTO 1/2**, **VIDEO 1/2** captions; centered black copy **ADD CONTENT TO YOUR REVIEW.** plus parenthetical limits; red header = **`review.productName`** (e.g. NOIR, BUNDLES); **2px less** margin above red **ADD/EDIT CONTENT** link on account reviews.
 
 **Changes:** **`ReviewSupplementalContentModal.tsx`**, **`account/reviews/page.tsx`** (link **`marginTop` 10px → 8px). **`npm run build`**.
+
+---
+
+## 2026-04-06 — Admin Pending: approve/reject styling, forms line, affiliate consult thumbs
+
+**Context:** User wanted **Admin → Pending** updates: **APPROVE** white/red like **REJECT** (was DECLINE); modal title **client name** not “REVIEW CLIENT REVIEW”; affiliate tab **consult-style** 50px white-ring thumbs, no gray **1 PHOTO** summary, no red **PENDING** on reviews/affiliate; gray line **PRODUCT + PHOTO/VIDEO/social label**; black line = **approved-count summary** per product from affiliate storage; **REJECTED CONTENT** + red reasons below; forms **VIEW FORM** left under gray line; **$ · PRE-APPROVED / NEW FORM · ORDER AUTHORIZATION** via form fingerprint vs prior **adminApproved** snapshots; reviews use **client · state** like affiliate (**`PendingMockReview.clientRegionParen`**, server mapper optional fields).
+
+**Changes:** **`admin/pending/page.tsx`**, **`AdminReviewStyleCard.tsx`** (**`mediaPresentation: 'inline'`**), **`signedOrderFormsStorage.ts`** (**`fingerprintSignedOrderFormFields`**, **`orderFormMatchesPreviouslyApprovedFingerprint`**), **`adminPendingMockQueues.ts`**, **`adminPendingClientSync.ts`** (**`productName`** on enqueue), **`affiliate/page.tsx`**, **`serverPendingQueueMappers.ts`**. **`npm run build`**.

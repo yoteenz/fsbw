@@ -211,6 +211,8 @@ export type ClientAffiliatePendingRow = {
   email: string;
   clientProfilePhotoUrl?: string;
   caption?: string;
+  /** Product / unit name from order (NOIR, SOFT WAVE, …) */
+  productName?: string;
   imageSrc?: string;
   videoDataUrl?: string;
   platform?: string;
@@ -225,13 +227,15 @@ export type ClientAffiliatePendingRow = {
 /** Build pending-queue rows for affiliate items that just moved to `pending` (new submit or re-submit after reject). */
 export function buildAffiliatePendingItemsFromContentDiff(opts: {
   orderId: string;
+  productName?: string;
   clientName: string;
   email: string;
   clientProfilePhotoUrl?: string;
   prev: AffiliateContentSlice;
   next: AffiliateContentSlice;
 }): ClientAffiliatePendingRow[] {
-  const { orderId, clientName, email, clientProfilePhotoUrl, prev, next } = opts;
+  const { orderId, productName, clientName, email, clientProfilePhotoUrl, prev, next } = opts;
+  const productUpper = (productName || '').trim().toUpperCase() || 'PRODUCT';
   const em = normEmail(email);
   const dateStr = new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
   const out: ClientAffiliatePendingRow[] = [];
@@ -257,6 +261,7 @@ export function buildAffiliatePendingItemsFromContentDiff(opts: {
       client: clientName.toUpperCase(),
       email: em,
       clientProfilePhotoUrl,
+      productName: productUpper,
       caption: 'AFFILIATE PHOTO SUBMISSION',
       imageSrc: preview,
       date: dateStr,
@@ -278,6 +283,7 @@ export function buildAffiliatePendingItemsFromContentDiff(opts: {
       client: clientName.toUpperCase(),
       email: em,
       clientProfilePhotoUrl,
+      productName: productUpper,
       caption: 'AFFILIATE VIDEO SUBMISSION',
       imageSrc: preview,
       videoDataUrl: preview.startsWith('data:video') ? preview : undefined,
@@ -301,6 +307,7 @@ export function buildAffiliatePendingItemsFromContentDiff(opts: {
       client: clientName.toUpperCase(),
       email: em,
       clientProfilePhotoUrl,
+      productName: productUpper,
       caption: 'AFFILIATE SOCIAL LINK',
       platform: plat,
       handle: link.toUpperCase(),

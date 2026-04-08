@@ -36,6 +36,30 @@ function normalizeEmail(email: string): string {
   return (email || '').trim().toLowerCase();
 }
 
+/** Stable comparison of form answers (repeat / prefill vs new inputs). */
+export function fingerprintSignedOrderFormFields(formFields: Record<string, string> | null | undefined): string {
+  const o = formFields && typeof formFields === 'object' ? formFields : {};
+  const keys = Object.keys(o).sort();
+  return keys.map((k) => `${k}:${String(o[k] ?? '').trim().toUpperCase()}`).join('|');
+}
+
+/** True if another admin-approved snapshot for this client has identical field fingerprint (excludes this row). */
+export function orderFormMatchesPreviouslyApprovedFingerprint(
+  clientEmail: string,
+  excludeFormId: string | undefined,
+  fingerprint: string
+): boolean {
+  const key = normalizeEmail(clientEmail);
+  if (!key || !fingerprint) return false;
+  for (const e of loadSignedOrderFormsForEmail(key)) {
+    if (excludeFormId && e.id === excludeFormId) continue;
+    if (e.summaryOnly || e.adminDeclined) continue;
+    if (e.adminApproved !== true) continue;
+    if (fingerprintSignedOrderFormFields(e.formFields) === fingerprint) return true;
+  }
+  return false;
+}
+
 export function loadSignedOrderFormsForEmail(email: string): StoredSignedOrderForm[] {
   const key = normalizeEmail(email);
   if (!key) return [];

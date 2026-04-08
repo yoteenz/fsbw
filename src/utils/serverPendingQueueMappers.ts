@@ -33,6 +33,18 @@ export function serverDbReviewToPendingMock(r: Record<string, unknown>): Pending
     email: String(r.email || '')
       .trim()
       .toLowerCase(),
+    clientRegionParen:
+      typeof r.client_region_paren === 'string'
+        ? r.client_region_paren
+        : typeof r.clientRegionParen === 'string'
+          ? r.clientRegionParen
+          : undefined,
+    clientRegionCode:
+      typeof r.client_region_code === 'string'
+        ? r.client_region_code
+        : typeof r.clientRegionCode === 'string'
+          ? r.clientRegionCode
+          : undefined,
     product: String(r.product || 'REVIEW')
       .trim()
       .toUpperCase(),
@@ -59,6 +71,18 @@ export function serverReviewSupplementalToPendingMock(r: Record<string, unknown>
     id: String(r.id),
     client: em ? em.toUpperCase() : 'CLIENT',
     email: em,
+    clientRegionParen:
+      typeof r.client_region_paren === 'string'
+        ? r.client_region_paren
+        : typeof r.clientRegionParen === 'string'
+          ? r.clientRegionParen
+          : undefined,
+    clientRegionCode:
+      typeof r.client_region_code === 'string'
+        ? r.client_region_code
+        : typeof r.clientRegionCode === 'string'
+          ? r.clientRegionCode
+          : undefined,
     product: String(r.subtitle || r.product || 'SUPPLEMENTAL MEDIA')
       .trim()
       .toUpperCase(),
@@ -98,6 +122,12 @@ export function serverAffiliateRowToPendingMock(r: Record<string, unknown>): Pen
       : kind === 'video'
         ? 'AFFILIATE VIDEO SUBMISSION'
         : 'AFFILIATE PHOTO SUBMISSION';
+  const productName =
+    typeof p.productName === 'string'
+      ? p.productName.trim().toUpperCase()
+      : typeof p.product === 'string'
+        ? p.product.trim().toUpperCase()
+        : '';
   return {
     id: String(p.id || r.id),
     kind,
@@ -106,6 +136,7 @@ export function serverAffiliateRowToPendingMock(r: Record<string, unknown>): Pen
     clientProfilePhotoUrl: typeof p.clientProfilePhotoUrl === 'string' ? p.clientProfilePhotoUrl : undefined,
     clientRegionParen: typeof p.clientRegionParen === 'string' ? p.clientRegionParen : undefined,
     clientRegionCode: typeof p.clientRegionCode === 'string' ? p.clientRegionCode : undefined,
+    productName: productName || undefined,
     caption: cap,
     imageSrc,
     videoDataUrl,
