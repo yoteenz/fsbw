@@ -12895,3 +12895,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to structure calendar weekday columns as **S M T W T F S** instead of **M T W T F S S**.
 
 **Changes:** **`BrandExpiresDatePicker.tsx`** — **`adminMeetings`** grid uses **`startWeekdaySun0`** (same rolling 42-cell layout as before but aligned to Sunday); header row **`ADMIN_MEETINGS_WEEKDAYS`** set to **`['S','M','T','W','T','F','S']`**; removed unused **`startWeekdayMonday0`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Gift card PDP: PROCEED TO CHECKOUT → `/checkout/gift-card`
+
+**Context (this chat):** User asked for the gift card product page to use **PROCEED TO CHECKOUT** instead of **ADD TO BAG**, routing to the **isolated gift card checkout** with a **filtered cart** (gift lines only in that flow).
+
+**Changes:** **`tools/gift-card/page.tsx`** — primary CTA **PROCEED TO CHECKOUT**; on click: remove existing **`gift-card`** lines from **`cartItems`**, prepend the selected-denomination line, recompute **`cartCount`** (sum of quantities), dispatch **`cartCountUpdated`** / **`cartItemsChanged`** / **`cartUpdated`**, **`navigate('/checkout/gift-card')`**; **`trackActivity`** **`add_to_cart`** (source **`gift_card_pdp`**) + **`cart_navigate`**; brief **`…`** disabled state while navigating. **`npm run build`**.
