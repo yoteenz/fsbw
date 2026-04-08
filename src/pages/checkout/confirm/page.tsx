@@ -40,6 +40,10 @@ import {
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
 import {
+  getConfirmPageFallbackProcessingLabel,
+  processingTimelineWeekRangeFromLabel,
+} from '../../../utils/checkoutBcfProcessing';
+import {
   cartHasAnyLoyaltyEarningLine,
   isMembershipSubscriptionCartLine,
 } from '../../../utils/loyaltyPointsEligibleNet';
@@ -341,20 +345,12 @@ function CheckoutConfirmPage() {
     }
   };
 
-  // Helper: processing timeline date range from orderData.processingTime (standard 6-8 weeks, rush 4-6 weeks, customized up to 10 weeks)
+  // Helper: processing timeline date range from orderData.processingTime
   const calculateProcessingTimeline = (orderDateStr: string, processingTime: string): string => {
     try {
       const [month, day, year] = orderDateStr.split('-').map(Number);
       const orderDate = new Date(year, month - 1, day);
-      let minWeeks = 6;
-      let maxWeeks = 8;
-      if (processingTime && processingTime.includes('4')) {
-        minWeeks = 4;
-        maxWeeks = 6;
-      } else if (processingTime && processingTime.includes('10')) {
-        minWeeks = 6;
-        maxWeeks = 10;
-      }
+      const { min: minWeeks, max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime);
       
       // Calculate dates
       const minDate = new Date(orderDate);
@@ -644,19 +640,7 @@ function CheckoutConfirmPage() {
         }
       } catch (_) {}
       
-      // Determine processing time based on order (check if has customizations)
-      const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
-        return (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-               (item.styling && item.styling !== 'NONE') ||
-               (item.addOns && item.addOns.length > 0) ||
-               (item.length && item.length !== '24"') ||
-               (item.density && item.density !== '200%') ||
-               (item.lace && item.lace !== '13X6') ||
-               (item.hairline && item.hairline !== 'NATURAL');
-      });
-      const processingTime = hasCustomizations 
-        ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-        : '6-8 WEEKS';
+      const processingTime = getConfirmPageFallbackProcessingLabel(cartItems);
       
       setOrderData((prev: any) => {
         // Get and increment order number if not already set
@@ -723,19 +707,7 @@ function CheckoutConfirmPage() {
         };
       });
     } else if (location.state && !location.state.processingTime) {
-      // If signed in with location state but no processing time, add it
-      const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
-        return (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-               (item.styling && item.styling !== 'NONE') ||
-               (item.addOns && item.addOns.length > 0) ||
-               (item.length && item.length !== '24"') ||
-               (item.density && item.density !== '200%') ||
-               (item.lace && item.lace !== '13X6') ||
-               (item.hairline && item.hairline !== 'NATURAL');
-      });
-      const processingTime = hasCustomizations 
-        ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-        : '6-8 WEEKS';
+      const processingTime = getConfirmPageFallbackProcessingLabel(cartItems);
       
       setOrderData((prev: any) => ({
         ...prev,
@@ -1572,7 +1544,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const methodUpper = shippingMethod.toUpperCase();
                     const isExpress = methodUpper.includes('EXPRESS');
                     const processingTime = (orderData.processingTime || '').toUpperCase();
-                    const isRush = /RUSH|4\s*[-–]\s*6|4\s*TO\s*6/.test(processingTime);
+                    const isRush = /RUSH|3\s*[-–]\s*4|3\s*TO\s*4|4\s*[-–]\s*6|4\s*TO\s*6/.test(processingTime);
                     const displayLabel = (isRush ? 'RUSH ' : '') + (isExpress ? 'EXPRESS' : 'STANDARD') + ' SHIPPING';
                     const c = String(orderData.country || addr?.country || 'UNITED STATES').trim().toUpperCase();
                     const isDomestic = c === 'US' || c === 'USA' || c === 'U.S.' || c === 'U.S.A.' || /^UNITED\s*STATES(\s+OF\s+AMERICA)?$/i.test(c);

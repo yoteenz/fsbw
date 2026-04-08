@@ -38,6 +38,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import { processingTimelineWeekRangeFromLabel } from '../../utils/checkoutBcfProcessing';
 import {
   filterOutPremiumMembershipUpgradeOrders,
   normalizeUserOrdersBuckets,
@@ -433,12 +434,7 @@ function OrdersPage() {
     try {
       const [month, day, year] = orderDateStr.split('-').map(Number);
       const orderDate = new Date(year, month - 1, day);
-      let minWeeks = 6, maxWeeks = 8;
-      if (processingTime && processingTime.includes('4')) {
-        minWeeks = 4; maxWeeks = 6;
-      } else if (processingTime && processingTime.includes('10')) {
-        minWeeks = 6; maxWeeks = 10;
-      }
+      const { min: minWeeks, max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime || '');
       const minDate = new Date(orderDate);
       minDate.setDate(minDate.getDate() + (minWeeks * 7));
       const maxDate = new Date(orderDate);

@@ -60,6 +60,11 @@ import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/boo
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
 import { buildPersistedLineItemsFromCart } from '../../utils/orderLineItemsPersist';
+import {
+  cartQualifiesForBcfProcessingWindows,
+  checkoutExpressProcessingAllowed,
+  getCheckoutProcessingTimePersistentLabel,
+} from '../../utils/checkoutBcfProcessing';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -601,6 +606,27 @@ function CheckoutPage() {
     });
   }, [cartItems, navigate]);
 
+  const bcfOnlyCart = useMemo(() => cartQualifiesForBcfProcessingWindows(cartItems as unknown[]), [cartItems]);
+
+  const checkoutExpressAllowed = useMemo(
+    () =>
+      checkoutExpressProcessingAllowed({
+        cartItems: cartItems as unknown[],
+        hasColorStylingOrAddOns,
+      }),
+    [cartItems, hasColorStylingOrAddOns]
+  );
+
+  const persistentProcessingTimeLabel = useMemo(
+    () =>
+      getCheckoutProcessingTimePersistentLabel({
+        cartItems: cartItems as unknown[],
+        selectedProcessing: selectedProcessing === 'rush' ? 'rush' : 'standard',
+        hasColorStylingOrAddOns,
+      }),
+    [cartItems, selectedProcessing, hasColorStylingOrAddOns]
+  );
+
   // Voucher applicability: service vouchers only (COLOR/HAIRLINE/STYLING); add-on price > 0. Excludes special-offer lines (no service voucher discount there). Free gifts are separate loyalty redemptions and remain combinable.
   const cartVoucherApplicability = useMemo(() => {
     const isPhysical = (item: any) => item.name !== 'GIFT CARD' && item.type !== 'gift-card' && item.type !== 'digital' && !item.isSpecialOffer;
@@ -1029,10 +1055,10 @@ function CheckoutPage() {
 
   // Automatically switch to standard processing if rush becomes unavailable
   useEffect(() => {
-    if (hasColorStylingOrAddOns && selectedProcessing === 'rush') {
+    if (!checkoutExpressAllowed && selectedProcessing === 'rush') {
       setSelectedProcessing('standard');
     }
-  }, [hasColorStylingOrAddOns, selectedProcessing]);
+  }, [checkoutExpressAllowed, selectedProcessing]);
 
   useEffect(() => {
     const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
@@ -2394,7 +2420,7 @@ function CheckoutPage() {
               );
               return option?.label || `${selectedShippingMethod.carrier} ${selectedShippingMethod.speed.toUpperCase()}`;
             })() : 'STANDARD SHIPPING',
-            processingTime: selectedProcessing === 'rush' ? '4 TO 6 WEEKS' : (hasColorStylingOrAddOns ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)' : '6 TO 8 WEEKS'),
+            processingTime: persistentProcessingTimeLabel,
           };
           
           // Store order data with a key that includes the provider for retrieval after redirect
@@ -2495,6 +2521,7 @@ function CheckoutPage() {
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
+              processingTime: persistentProcessingTimeLabel,
               pointsEarned:
                 isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier,
@@ -4961,20 +4988,20 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        6-8 WEEKS STANDARD PROCESSING
+                        {bcfOnlyCart ? '4-6 WEEKS STANDARD PROCESSING' : '6-8 WEEKS STANDARD PROCESSING'}
                       </label>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: hasColorStylingOrAddOns ? 0.5 : 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: checkoutExpressAllowed ? 1 : 0.5 }}>
                       <div
                         onClick={() => {
-                          if (!hasColorStylingOrAddOns) {
+                          if (checkoutExpressAllowed) {
                             setSelectedProcessing('rush');
                           }
                         }}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                          cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -4985,7 +5012,7 @@ function CheckoutPage() {
                           position: 'relative'
                         }}
                       >
-                        {selectedProcessing === 'rush' && !hasColorStylingOrAddOns && (
+                        {selectedProcessing === 'rush' && checkoutExpressAllowed && (
                           <img 
                             src="/assets/checkbox.svg" 
                             alt="checked" 
@@ -4997,10 +5024,10 @@ function CheckoutPage() {
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'column', 
-                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer' 
+                          cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed' 
                         }} 
                         onClick={() => {
-                          if (!hasColorStylingOrAddOns) {
+                          if (checkoutExpressAllowed) {
                             setSelectedProcessing('rush');
                           }
                         }}
@@ -5010,23 +5037,24 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
                           color: '#000000',
-                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                           textTransform: 'uppercase'
                         }}
                       >
-                          4-6 WEEKS RUSH PROCESSING <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
+                          {bcfOnlyCart ? '3-4 WEEKS EXPRESS PROCESSING' : '4-6 WEEKS RUSH PROCESSING'}{' '}
+                          <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
                         </label>
                         <label 
                           style={{ 
                             fontFamily: '"Futura PT Book"',
                             fontSize: '9px',
                             color: '#EB1C24',
-                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                             textTransform: 'uppercase',
                             marginTop: '2px'
                           }}
                         >
-                          (EXCLUDING COLOR, STYLING & ADD-ONS)
+                          {bcfOnlyCart ? '(EXCLUDING CUSTOM HAIR COLOR)' : '(EXCLUDING COLOR, STYLING & ADD-ONS)'}
                       </label>
                       </div>
                     </div>
@@ -5998,16 +6026,7 @@ function CheckoutPage() {
                       })()
                     : 'STANDARD SHIPPING';
                   
-                  // Calculate processing time based on selected processing and customizations
-                  let processingTimeText = '';
-                  if (selectedProcessing === 'rush') {
-                    processingTimeText = '4 TO 6 WEEKS';
-                  } else {
-                    const hasCustomizations = hasColorStylingOrAddOns;
-                    processingTimeText = hasCustomizations 
-                      ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-                      : '6 TO 8 WEEKS';
-                  }
+                  const processingTimeText = persistentProcessingTimeLabel;
                   
                   // Save payment method/address if checkbox is checked
                   if (savePaymentMethod && isSignedIn) {

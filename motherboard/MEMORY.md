@@ -12855,3 +12855,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to remove the **gray** explanatory text on the **FORMS** tab of **Admin → Pending** (mock / design-preview style copy above the list).
 
 **Changes:** **`admin/pending/page.tsx`** — removed the gray **`CLIENT-SUBMITTED ORDER AUTHORIZATION FORMS…`** paragraph above the pending-forms list. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — BCF bundles/closures/frontals: 4–6 std, 3–4 express (no custom color)
+
+**Context (this chat):** User asked to set processing for **bundles, closures & frontals** to **4–6 weeks** standard and **express** (**rush** option) to **3–4 weeks**, **excluding custom hair color** (non-default color still uses extended window; styling/add-ons on BCF-only carts also force extended and disable express).
+
+**Changes:** **`checkoutBcfProcessing.ts`** — **`cartQualifiesForBcfProcessingWindows`** (all non–gift/digital/booking lines are **`shop-texture-category`** **bundles|closures|frontals**), **`getCheckoutProcessingTimePersistentLabel`**, **`checkoutExpressProcessingAllowed`**, **`processingTimelineWeekRangeFromLabel`** (parses **3–4**, **4–6**, **10** week cases), **`getConfirmPageFallbackProcessingLabel`**. **`checkout/page.tsx`** — labels, persisted **`processingTime`**, Apple Pay **`navigate`** state, express gating. **`checkout/confirm/page.tsx`** — timeline + fallback labels + rush regex for shipping line. **`orders/page.tsx`**, **`admin/clients/page.tsx`** — timeline math uses **`processingTimelineWeekRangeFromLabel`**. **`npm run build`**. Pushed **`preview/mobile`**.

@@ -25,6 +25,7 @@ import ImageViewerModal from '../../../components/ImageViewerModal';
 import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
 import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hooks/useSignedOrderFormPdf';
 import { mergeSignedFormsWithMockApproval } from '../../../utils/mockSignedOrderFormForApproval';
+import { processingTimelineWeekRangeFromLabel } from '../../../utils/checkoutBcfProcessing';
 import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
@@ -200,9 +201,7 @@ function calculateProcessingTimeline(orderDateStr: string, processingTime: strin
       const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
       orderDate = new Date(year, month - 1, day);
     }
-    let minWeeks = 6, maxWeeks = 8;
-    if (processingTime && /4/.test(processingTime)) { minWeeks = 4; maxWeeks = 6; }
-    else if (processingTime && /10/.test(processingTime)) { minWeeks = 6; maxWeeks = 10; }
+    const { min: minWeeks, max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime || '');
     const minDate = new Date(orderDate); minDate.setDate(minDate.getDate() + minWeeks * 7);
     const maxDate = new Date(orderDate); maxDate.setDate(maxDate.getDate() + maxWeeks * 7);
     const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
@@ -227,9 +226,7 @@ function getDueByEndDate(orderDateStr: string, processingTime: string): string {
       const [month, day, year] = parts.length >= 3 ? parts : [1, 1, new Date().getFullYear()];
       orderDate = new Date(year, month - 1, day);
     }
-    let maxWeeks = 8;
-    if (processingTime && /4/.test(processingTime)) maxWeeks = 6;
-    else if (processingTime && /10/.test(processingTime)) maxWeeks = 10;
+    const { max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime || '');
     const maxDate = new Date(orderDate);
     maxDate.setDate(maxDate.getDate() + maxWeeks * 7);
     const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
