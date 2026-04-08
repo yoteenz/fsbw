@@ -12903,3 +12903,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked for the gift card product page to use **PROCEED TO CHECKOUT** instead of **ADD TO BAG**, routing to the **isolated gift card checkout** with a **filtered cart** (gift lines only in that flow).
 
 **Changes:** **`tools/gift-card/page.tsx`** — primary CTA **PROCEED TO CHECKOUT**; on click: remove existing **`gift-card`** lines from **`cartItems`**, prepend the selected-denomination line, recompute **`cartCount`** (sum of quantities), dispatch **`cartCountUpdated`** / **`cartItemsChanged`** / **`cartUpdated`**, **`navigate('/checkout/gift-card')`**; **`trackActivity`** **`add_to_cart`** (source **`gift_card_pdp`**) + **`cart_navigate`**; brief **`…`** disabled state while navigating. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Tools hub gift strip: PROCEED TO CHECKOUT (fix “still adding to bag”)
+
+**Context (this chat):** User said gift card flow still **only added to cart** instead of routing to **`/checkout/gift-card`** — root cause was **`/home/tools`** gift card carousel still using **`handleAddToCart`** (bag icon toggle), not the PDP button.
+
+**Changes:** **`giftCardCheckoutSession.ts`** — shared **`writeGiftCardSelectionForCheckoutSession`** (strip prior gift-card lines, prepend one line, quantity-based **`cartCount`**, dispatch sync events). **`tools/gift-card/page.tsx`** — PDP uses that helper. **`tools/page.tsx`** — replace bag icons with **PROCEED TO CHECKOUT** per denomination; same helper + **`navigate('/checkout/gift-card')`**; remove **`inCart`** sync effect; **`trackActivity`** from strip (**`tools_gift_strip`**). **`npm run build`**.
