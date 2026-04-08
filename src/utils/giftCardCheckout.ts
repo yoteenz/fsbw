@@ -4,6 +4,17 @@ export function isGiftCardCartLine(item: { type?: string; name?: string } | null
   return item?.name === 'GIFT CARD' || item?.type === 'gift-card';
 }
 
+/**
+ * USD total for one gift-card line (single line = full card value). Prefer `balance` then `price`;
+ * multiply by `quantity` only for legacy rows before migration (multiple physical cards).
+ */
+export function giftCardLineTotalUsd(item: { price?: number; balance?: number; quantity?: number } | null | undefined): number {
+  if (!item) return 0;
+  const per = Math.round(Number(item.balance ?? item.price) || 0);
+  const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
+  return Math.round(per * q);
+}
+
 export function filterGiftCardCartLines<T extends { type?: string; name?: string }>(items: T[]): T[] {
   return (items || []).filter((i) => isGiftCardCartLine(i));
 }

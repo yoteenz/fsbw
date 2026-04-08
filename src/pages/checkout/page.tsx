@@ -32,6 +32,7 @@ import {
 } from '../../utils/bookingCheckout';
 import {
   filterGiftCardCartLines,
+  giftCardLineTotalUsd,
   isGiftCardCartLine,
   isGiftCardCheckoutPath,
 } from '../../utils/giftCardCheckout';
@@ -1797,9 +1798,15 @@ function CheckoutPage() {
   };
 
   // Calculate order totals
-  const orderAmount = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-  const orderAmountExcludingSpecialOffer = cartItems.reduce((sum, item) =>
-    item.isSpecialOffer ? sum : sum + (item.price || 0) * (item.quantity || 1), 0);
+  const orderAmount = cartItems.reduce((sum, item) => {
+    if (isGiftCardCartLine(item)) return sum + giftCardLineTotalUsd(item);
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
+  const orderAmountExcludingSpecialOffer = cartItems.reduce((sum, item) => {
+    if (item.isSpecialOffer) return sum;
+    if (isGiftCardCartLine(item)) return sum + giftCardLineTotalUsd(item);
+    return sum + (item.price || 0) * (item.quantity || 1);
+  }, 0);
   
   // Calculate taxable amount (exclude gift cards, digital items, and bookings-only A/C checkout — same as digital flow)
   const taxableAmount = isBookingsOnlyCheckout
@@ -3029,7 +3036,10 @@ function CheckoutPage() {
 
                           const itemLength = item.length || '24"';
                           const redSubtitle = orderStripRedSubtitle(item, itemLength);
-                          const itemPrice = item.price || 580;
+                          const isGiftLineStrip = isGiftCardCartLine(item);
+                          const itemPrice = isGiftLineStrip
+                            ? giftCardLineTotalUsd(item)
+                            : item.price || 580;
                           const isBcfBundleDeal = Boolean((item as { bcfBundleDeal?: boolean }).bcfBundleDeal);
                           const bundleDealListCheckout = bcfBundleDealResolvedListSubtotal(item);
                           const bundleLineTotalCheckout = itemPrice * (item.quantity || 1);

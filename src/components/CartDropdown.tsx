@@ -32,6 +32,7 @@ import {
   bookingEditLinkStyle
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
+import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -661,7 +662,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   // updateQuantity function removed - not currently used
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cartItems.reduce((total, item) => {
+      if (isGiftCardCartLine(item)) return total + giftCardLineTotalUsd(item);
+      return total + (item.price || 0) * (item.quantity || 1);
+    }, 0);
   };
 
   // Points-eligible amount (exclude gift cards and digital) for loyalty line
@@ -1587,7 +1591,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           >
                             {(() => {
                               const listTot = bcfBundleDealResolvedListSubtotal(item as CartItem);
-                              const lineTot = (item.price || 0) * (item.quantity || 1);
+                              const lineTot = isGiftCardCartLine(item)
+                                ? giftCardLineTotalUsd(item)
+                                : (item.price || 0) * (item.quantity || 1);
                               return (
                                 <>
                                   {listTot != null && listTot > lineTot && (
@@ -1646,7 +1652,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             marginLeft: '0',
                             marginRight: '0'
                           }}
-                          dangerouslySetInnerHTML={formatPrice(item.price)}
+                          dangerouslySetInnerHTML={formatPrice(
+                            isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0
+                          )}
                         />
                         )}
                       </div>

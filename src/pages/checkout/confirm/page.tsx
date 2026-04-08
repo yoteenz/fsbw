@@ -39,6 +39,7 @@ import {
   orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
+import { giftCardLineTotalUsd, isGiftCardCartLine } from '../../../utils/giftCardCheckout';
 import {
   getConfirmPageFallbackProcessingLabel,
   processingTimelineWeekRangeFromLabel,
@@ -1238,7 +1239,10 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const displayTitle = orderStripTitleLine(item);
                     const itemLength = item.length || '24"';
                     const redSubtitle = orderStripRedSubtitle(item, itemLength);
-                    const itemPrice = item.price || 580;
+                    const isGiftLineConfirm = isGiftCardCartLine(item);
+                    const itemPrice = isGiftLineConfirm
+                      ? giftCardLineTotalUsd(item)
+                      : item.price || 580;
                     const useDigitalStack = orderStripUseDigitalStackLayout(item, stripUpgrade);
                     const isBcfBundleDeal = Boolean(item.bcfBundleDeal);
                     const bundleDealListSum = bcfBundleDealResolvedListSubtotal(item);
