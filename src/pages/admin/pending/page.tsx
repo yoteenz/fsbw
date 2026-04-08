@@ -1250,16 +1250,24 @@ export default function AdminPending() {
         >
           <div
             className="flex flex-col items-stretch sm:items-center"
-            style={{ width: '100%', maxWidth: 'min(520px, 100%)', gap: '12px', padding: '0 12px' }}
+            style={{
+              width: '100%',
+              maxWidth: adminReviewModal.kind === 'form' ? 'min(440px, calc(100vw - 24px))' : 'min(520px, 100%)',
+              gap: '10px',
+              padding: '12px 12px max(12px, env(safe-area-inset-bottom))',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="p-4 overflow-hidden bg-white"
+              className={adminReviewModal.kind === 'form' ? 'p-3 overflow-hidden bg-white' : 'p-4 overflow-hidden bg-white'}
               style={{
-                maxWidth: '520px',
+                maxWidth: adminReviewModal.kind === 'form' ? '440px' : '520px',
                 width: '100%',
                 alignSelf: 'center',
-                maxHeight: adminReviewModal.kind === 'form' ? 'min(88vh, 820px)' : 'min(78vh, 720px)',
+                maxHeight:
+                  adminReviewModal.kind === 'form'
+                    ? 'min(62dvh, 560px)'
+                    : 'min(78vh, 720px)',
                 border: '1.3px solid black',
                 borderRadius: 0,
                 display: 'flex',
@@ -1268,7 +1276,14 @@ export default function AdminPending() {
               role="dialog"
               aria-labelledby="pending-admin-review-title"
             >
-              <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+              <div
+                className="flex justify-between items-center flex-shrink-0"
+                style={{
+                  marginBottom: adminReviewModal.kind === 'form' ? '8px' : '12px',
+                  borderBottom: '1px solid #e5e7eb',
+                  paddingBottom: adminReviewModal.kind === 'form' ? '6px' : '8px',
+                }}
+              >
                 <p id="pending-admin-review-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500 }}>
                   {modalTitle}
                 </p>
