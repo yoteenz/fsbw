@@ -59,6 +59,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
+import { buildPersistedLineItemsFromCart } from '../../utils/orderLineItemsPersist';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -6351,6 +6352,8 @@ function CheckoutPage() {
                                 (u): u is string => typeof u === 'string' && u.trim().length > 0
                               )
                             : undefined;
+                        const persistedLineItems =
+                          digitalFulfillmentOnly ? undefined : buildPersistedLineItemsFromCart(cartItems as any[]);
                         const newOrder = {
                           id: `order-${nextOrderNumber}`,
                           orderNumber: `ORDER ${orderNumber}`,
@@ -6364,6 +6367,8 @@ function CheckoutPage() {
                           placedAt: Date.now(),
                           pointsEarned,
                           requiresOrderAuthorizationForm,
+                          ...(persistedLineItems && persistedLineItems.length > 0 ? { lineItems: persistedLineItems } : {}),
+                          ...(appliedGiftCardBalance > 0 ? { giftCardAppliedUsd: appliedGiftCardBalance } : {}),
                           ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
                           ...(bookingFlowTypePersist
                             ? {

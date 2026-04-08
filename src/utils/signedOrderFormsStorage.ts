@@ -3,6 +3,8 @@
  * Keyed by normalized client email; entries keyed by order id when available.
  */
 
+import { cancelAndRefundOrderAfterFormDecline } from './orderFormDeclineCancelRefund';
+
 export type StoredSignedOrderForm = {
   id: string;
   orderId?: string;
@@ -150,62 +152,12 @@ export function declineOrderFormSubmission(form: StoredSignedOrderForm, reason: 
     adminDeclineReason: r || undefined,
   });
   if (form.orderId) {
-    markOrderFormDeclinedInUserOrders(form.email, form.orderId, r);
+    cancelAndRefundOrderAfterFormDecline(form.email, form.orderId, r);
   }
   try {
     window.dispatchEvent(new CustomEvent('pendingOrderAuthorizationFormsUpdated'));
   } catch {
     /* ignore */
-  }
-}
-
-export function markOrderFormDeclinedInUserOrders(
-  clientEmail: string,
-  orderId: string,
-  reason: string
-): boolean {
-  const key = normalizeEmail(clientEmail);
-  if (!key || !orderId) return false;
-  const r = (reason || '').trim();
-  try {
-    const raw = localStorage.getItem(`userOrders_${key}`);
-    if (!raw) return false;
-    const data = JSON.parse(raw);
-    const active = Array.isArray(data.activeOrders) ? data.activeOrders : [];
-    const past = Array.isArray(data.pastOrders) ? data.pastOrders : [];
-    const apply = (arr: unknown[]) => {
-      let ch = false;
-      const next = arr.map((row) => {
-        const o = row as Record<string, unknown>;
-        if (String(o.id || '') !== orderId) return row;
-        ch = true;
-        return {
-          ...o,
-          orderFormSigned: false,
-          orderFormSignedAt: undefined,
-          orderFormClientSubmitted: false,
-          orderFormAdminApproved: false,
-          orderFormAdminDeclined: true,
-          orderFormAdminDeclineReason: r || undefined,
-        };
-      });
-      return { list: next, changed: ch };
-    };
-    const a = apply(active);
-    const p = apply(past);
-    if (!a.changed && !p.changed) return false;
-    localStorage.setItem(
-      `userOrders_${key}`,
-      JSON.stringify({ ...data, activeOrders: a.list, pastOrders: p.list })
-    );
-    try {
-      window.dispatchEvent(new CustomEvent('ordersUpdated'));
-    } catch {
-      /* ignore */
-    }
-    return true;
-  } catch {
-    return false;
   }
 }
 
