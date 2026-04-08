@@ -12985,3 +12985,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** **`writeGiftCardSelectionForCheckoutSession`** prepended the new gift card and **kept** units/BCF/etc. in **`cartItems`**. **`/checkout/gift-card`** only **filters** in memory, so the **shopping bag** and **cart icon** still showed the unit.
 
 **Changes:** **`giftCardCheckoutSession.ts`** — persist **`cartItems`** as **`[newGiftLine]`** only (isolated checkout matches digital flow: storage matches filtered checkout). **`npm run build`**.
+
+---
+
+## 2026-04-08 — Shopping bag: gift card title without “· $N”
+
+**Context:** User found **`GIFT CARD · $500`** redundant next to the line price on the bag.
+
+**Changes:** **`shopping-bag/page.tsx`** — **`bagProductTitleLine`** returns **`GIFT CARD`** only for gift lines. **`npm run build`**.
