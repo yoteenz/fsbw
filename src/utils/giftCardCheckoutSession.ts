@@ -23,6 +23,7 @@ export function writeGiftCardSelectionForCheckoutSession(opts: WriteGiftCardChec
     price: balanceUsd,
     quantity: 1,
     balance: balanceUsd,
+    giftCardUnitUsd: balanceUsd,
     image,
     type: 'gift-card',
   };

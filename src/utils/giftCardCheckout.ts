@@ -19,3 +19,115 @@ export function isGiftCardOnlyCheckoutState(
 ): boolean {
   return isGiftCardCheckoutPath(pathname) && items.length > 0 && items.every((i) => isGiftCardCartLine(i));
 }
+
+type GiftCardLineish = {
+  name?: string;
+  type?: string;
+  price?: number;
+  balance?: number;
+  quantity?: number;
+  giftCardUnitUsd?: number;
+};
+
+/**
+ * Shopping-bag +/- for gift cards: one line = one purchasable card whose **value** is `price`/`balance`
+ * (quantity stays **1**). `giftCardUnitUsd` remembers the per-step increment (defaults to initial `price`).
+ * Returns `null` for non–gift lines.
+ */
+const GIFT_CARD_BAG_MAX_UNITS = 10;
+
+export function applyGiftCardBagQuantityDelta<T extends GiftCardLineish>(
+  item: T,
+  delta: 1 | -1
+): { next: T; removeLine: boolean; atMax?: boolean } | null {
+  if (!isGiftCardCartLine(item)) return null;
+  const unitUsd = Math.max(
+    0,
+    Math.round(Number(item.giftCardUnitUsd) || Number(item.price) || Number(item.balance) || 0)
+  );
+  const lineTotalUsd = Math.round(Number(item.balance ?? item.price) || 0);
+  if (unitUsd <= 0 && lineTotalUsd <= 0) {
+    return { next: item, removeLine: true };
+  }
+  const u = unitUsd > 0 ? unitUsd : lineTotalUsd;
+  if (delta === 1) {
+    const nextTotal = lineTotalUsd + u;
+    if (nextTotal > u * GIFT_CARD_BAG_MAX_UNITS) {
+      return { next: item, removeLine: false, atMax: true };
+    }
+    return {
+      next: {
+        ...item,
+        quantity: 1,
+        price: nextTotal,
+        balance: nextTotal,
+        giftCardUnitUsd: u,
+        name: 'GIFT CARD',
+        type: 'gift-card',
+      } as T,
+      removeLine: false,
+    };
+  }
+  if (lineTotalUsd > u) {
+    const nextTotal = lineTotalUsd - u;
+    return {
+      next: {
+        ...item,
+        quantity: 1,
+        price: nextTotal,
+        balance: nextTotal,
+        giftCardUnitUsd: u,
+        name: 'GIFT CARD',
+        type: 'gift-card',
+      } as T,
+      removeLine: false,
+    };
+  }
+  return {
+    next: { ...item, quantity: 0, price: 0, balance: 0, giftCardUnitUsd: u } as T,
+    removeLine: true,
+  };
+}
+
+/**
+ * Normalize legacy gift rows: `quantity` > 1 meant multiple cards at `price` each → one line, total value, step unit.
+ * Adds `giftCardUnitUsd` when missing so bag +/- stays consistent after reload.
+ */
+export function migrateGiftCardCartLinesForStorage<T extends GiftCardLineish>(items: T[]): { next: T[]; changed: boolean } {
+  let changed = false;
+  const next = items.map((item) => {
+    if (!isGiftCardCartLine(item)) return item;
+    const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
+    const perUsd = Math.round(Number(item.price) || Number(item.balance) || 0);
+    const existingUnit = item.giftCardUnitUsd != null ? Math.round(Number(item.giftCardUnitUsd)) : null;
+    if (q > 1) {
+      changed = true;
+      const totalUsd = Math.round(perUsd * q);
+      const unitUsd = Math.round(totalUsd / q) || perUsd;
+      return {
+        ...item,
+        quantity: 1,
+        price: totalUsd,
+        balance: totalUsd,
+        giftCardUnitUsd: unitUsd,
+        name: 'GIFT CARD',
+        type: 'gift-card',
+      } as T;
+    }
+    const unitUsd = existingUnit != null && existingUnit > 0 ? existingUnit : perUsd;
+    if (existingUnit == null && perUsd > 0) {
+      changed = true;
+      return {
+        ...item,
+        quantity: 1,
+        price: perUsd,
+        balance: perUsd,
+        giftCardUnitUsd: unitUsd,
+        name: 'GIFT CARD',
+        type: 'gift-card',
+      } as T;
+    }
+    return item;
+  });
+  return { next, changed };
+}

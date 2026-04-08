@@ -40,6 +40,11 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { checkoutPathForCartItems } from '../../utils/checkoutNavigatePath';
+import {
+  applyGiftCardBagQuantityDelta,
+  isGiftCardCartLine,
+  migrateGiftCardCartLinesForStorage,
+} from '../../utils/giftCardCheckout';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -57,7 +62,11 @@ function bagRowCartThumbBoxPx(item: { name?: string; type?: string }): number {
 }
 
 /** Black title line — same rules as cart dropdown. */
-function bagProductTitleLine(item: { name?: string; type?: string; category?: string }): string {
+function bagProductTitleLine(item: { name?: string; type?: string; category?: string; balance?: number; price?: number }): string {
+  if (isGiftCardCartLine(item)) {
+    const v = Number(item.balance ?? item.price) || 0;
+    return `GIFT CARD · $${v}`;
+  }
   if (item.type === 'booking-appointment') {
     return 'BOOKING';
   }
@@ -88,6 +97,15 @@ function bagProductRedSubtitle(item: any, itemLength: string, hairOriginForName:
 }
 
 /** Unit wig lines: same origins as cart dropdown. */
+/** Gift card bag row: +/- changes **value**; counter shows steps of `giftCardUnitUsd` (default per-card value). */
+function giftCardBagStepCount(item: { type?: string; name?: string; giftCardUnitUsd?: number; price?: number; balance?: number }): number {
+  if (!isGiftCardCartLine(item)) return 0;
+  const u = Math.round(Number(item.giftCardUnitUsd) || Number(item.price) || Number(item.balance) || 0);
+  const total = Math.round(Number(item.balance ?? item.price) || 0);
+  if (u <= 0) return total > 0 ? 1 : 0;
+  return Math.max(0, Math.round(total / u));
+}
+
 function bagHairOriginForProductName(productName: string): string {
   switch (productName) {
     case 'NOIR':
@@ -364,7 +382,16 @@ function ShoppingBagPage() {
             localStorage.setItem('cartCount', String(newCount));
             window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
           }
-          const strip = stripIneligibleBcfBundleDealLines(clamped);
+          const giftMigrated = migrateGiftCardCartLinesForStorage(clamped);
+          let afterGift = giftMigrated.next;
+          if (giftMigrated.changed) {
+            localStorage.setItem('cartItems', JSON.stringify(afterGift));
+            const newCount = afterGift.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+            localStorage.setItem('cartCount', String(newCount));
+            window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+            window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+          }
+          const strip = stripIneligibleBcfBundleDealLines(afterGift);
           if (strip.removedUnitCount > 0) {
             localStorage.setItem('cartItems', JSON.stringify(strip.next));
             const newCount = strip.next.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -398,7 +425,12 @@ function ShoppingBagPage() {
           if (savedChanged) {
             localStorage.setItem('savedForLater', JSON.stringify(clamped));
           }
-          const stripSaved = stripIneligibleBcfBundleDealLines(clamped);
+          const giftMigrated = migrateGiftCardCartLinesForStorage(clamped);
+          if (giftMigrated.changed) {
+            localStorage.setItem('savedForLater', JSON.stringify(giftMigrated.next));
+            window.dispatchEvent(new Event('savedItemsChanged'));
+          }
+          const stripSaved = stripIneligibleBcfBundleDealLines(giftMigrated.next);
           if (stripSaved.removedUnitCount > 0) {
             localStorage.setItem('savedForLater', JSON.stringify(stripSaved.next));
             window.dispatchEvent(new Event('savedItemsChanged'));
@@ -547,6 +579,43 @@ function ShoppingBagPage() {
       const currentItem = cartItems.find(i => i.id === itemId);
       if (!currentItem) return;
       if (currentItem.bcfBundleDeal) return;
+
+      const giftDelta = applyGiftCardBagQuantityDelta(
+        currentItem,
+        delta > 0 ? 1 : -1
+      );
+      if (giftDelta) {
+        if (giftDelta.atMax) return;
+        if (giftDelta.removeLine) {
+          if (deleteTimeoutRef.current) {
+            clearTimeout(deleteTimeoutRef.current);
+            deleteTimeoutRef.current = null;
+          }
+          setDeleteItemConfirm({ itemId, type: 'cart' });
+          return;
+        }
+        const newItems = cartItems.map((i) => (i.id === itemId ? giftDelta.next : i));
+        setCartItems(newItems);
+        localStorage.setItem('cartItems', JSON.stringify(newItems));
+        window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+        const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
+        localStorage.setItem('cartCount', newCount.toString());
+        setCartCount(newCount);
+        window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+        window.dispatchEvent(new CustomEvent('cartUpdated'));
+        const nm = cartLineLabel(currentItem);
+        if (delta === 1) {
+          trackActivity('add_to_cart', { source: 'shopping_bag', change: 'quantity_up', productName: nm || undefined });
+        } else if (delta === -1) {
+          trackActivity('remove_from_cart', { source: 'shopping_bag', change: 'quantity_down', productName: nm || undefined });
+        }
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+        return;
+      }
+
       const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
@@ -562,11 +631,10 @@ function ShoppingBagPage() {
         return;
       }
       
-      const newItems = cartItems.map(i => {
-        if (i.id === itemId) {
-          return { ...i, quantity: Math.max(0, Math.min(maxQty, newQty)) };
-        }
-        return i;
+      const clampedQty = Math.max(0, Math.min(maxQty, newQty));
+      const newItems = cartItems.map((i) => {
+        if (i.id !== itemId) return i;
+        return { ...i, quantity: clampedQty };
       });
       setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
@@ -721,6 +789,32 @@ function ShoppingBagPage() {
       const currentItem = savedForLater.find(i => i.id === itemId);
       if (!currentItem) return;
       if (currentItem.bcfBundleDeal) return;
+
+      const giftDelta = applyGiftCardBagQuantityDelta(
+        currentItem,
+        delta > 0 ? 1 : -1
+      );
+      if (giftDelta) {
+        if (giftDelta.atMax) return;
+        if (giftDelta.removeLine) {
+          if (deleteTimeoutRef.current) {
+            clearTimeout(deleteTimeoutRef.current);
+            deleteTimeoutRef.current = null;
+          }
+          setDeleteItemConfirm({ itemId, type: 'saved' });
+          return;
+        }
+        const newSavedForLater = savedForLater.map((i) => (i.id === itemId ? giftDelta.next : i));
+        setSavedForLater(newSavedForLater);
+        localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
+        window.dispatchEvent(new CustomEvent('savedItemsChanged'));
+        if (deleteTimeoutRef.current) {
+          clearTimeout(deleteTimeoutRef.current);
+          deleteTimeoutRef.current = null;
+        }
+        return;
+      }
+
       const maxQty = currentItem.isSpecialOffer ? 2 : 10;
       const currentQty = currentItem.quantity ?? 0;
       const newQty = currentQty + delta;
@@ -736,11 +830,10 @@ function ShoppingBagPage() {
         return;
       }
       
-      const newSavedForLater = savedForLater.map(i => {
-        if (i.id === itemId) {
-          return { ...i, quantity: Math.max(0, Math.min(maxQty, newQty)) };
-        }
-        return i;
+      const clampedSavedQty = Math.max(0, Math.min(maxQty, newQty));
+      const newSavedForLater = savedForLater.map((i) => {
+        if (i.id !== itemId) return i;
+        return { ...i, quantity: clampedSavedQty };
       });
       setSavedForLater(newSavedForLater);
       localStorage.setItem('savedForLater', JSON.stringify(newSavedForLater));
@@ -1344,14 +1437,17 @@ function ShoppingBagPage() {
                       const itemImage = getItemImage();
 
                       const itemLength = item.length || '24"';
-                      const itemPrice = item.price || 580;
-                      const itemQuantity = item.quantity ?? 1;
+                      const isGiftLine = isGiftCardCartLine(item);
+                      const itemPrice = isGiftLine
+                        ? Number(item.balance ?? item.price) || 0
+                        : item.price || 580;
+                      const itemQuantity = isGiftLine ? giftCardBagStepCount(item) : item.quantity ?? 1;
                       const isBookingLine =
                         item.type === 'booking-consult' || item.type === 'booking-appointment';
                       const isBundleDealLine = Boolean(item.bcfBundleDeal);
                       const isQtyOnlyLine = isBookingLine || isBundleDealLine;
                       const bundleDealListTot = bcfBundleDealResolvedListSubtotal(item);
-                      const bundleDealLineTot = itemPrice * itemQuantity;
+                      const bundleDealLineTot = itemPrice * (isGiftLine ? 1 : itemQuantity);
 
                        return (
                          <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
@@ -1669,10 +1765,14 @@ function ShoppingBagPage() {
                                       type="button"
                                       onClick={() => handleQuantityChange(itemId, 1)}
                                       disabled={
-                                        isBundleDealLine || itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                        isBundleDealLine ||
+                                        itemQuantity >=
+                                          (isGiftLine ? 10 : item.isSpecialOffer ? 2 : 10)
                                       }
                                       className={`px-2 py-0.5 text-red-500 bg-white quantity-plus-btn flex items-center justify-center ${
-                                        isBundleDealLine || itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                        isBundleDealLine ||
+                                        itemQuantity >=
+                                          (isGiftLine ? 10 : item.isSpecialOffer ? 2 : 10)
                                           ? 'opacity-50 cursor-not-allowed'
                                           : 'hover:bg-gray-50 cursor-pointer'
                                       }`}
@@ -1892,11 +1992,16 @@ function ShoppingBagPage() {
                   const itemImage = getItemImage();
 
                   const itemLength = item.length || '24"';
-                  const itemPrice = item.price || 580;
-                  const itemQuantity = item.quantity ?? 0;
+                  const isSavedGiftLine = isGiftCardCartLine(item);
+                  const itemPrice = isSavedGiftLine
+                    ? Number(item.balance ?? item.price) || 0
+                    : item.price || 580;
+                  const itemQuantity = isSavedGiftLine
+                    ? giftCardBagStepCount(item)
+                    : item.quantity ?? 0;
                   const isSavedBundleDeal = Boolean(item.bcfBundleDeal);
                   const savedBundleListTot = bcfBundleDealResolvedListSubtotal(item);
-                  const savedBundleLineTot = itemPrice * itemQuantity;
+                  const savedBundleLineTot = itemPrice * (isSavedGiftLine ? 1 : itemQuantity);
                   const isSavedBookingLine =
                     item.type === 'booking-consult' || item.type === 'booking-appointment';
                   const isSavedQtyOnlyLine = isSavedBookingLine || isSavedBundleDeal;
@@ -2186,9 +2291,13 @@ function ShoppingBagPage() {
                                  <button
                                    type="button"
                                    onClick={() => handleSavedQuantityChange(itemId, 1)}
-                                   disabled={itemQuantity >= (item.isSpecialOffer ? 2 : 10)}
+                                   disabled={
+                                     itemQuantity >=
+                                       (isSavedGiftLine ? 10 : item.isSpecialOffer ? 2 : 10)
+                                   }
                                    className={`px-2 py-0.5 text-red-500 bg-white quantity-plus-btn flex items-center justify-center ${
-                                     itemQuantity >= (item.isSpecialOffer ? 2 : 10)
+                                     itemQuantity >=
+                                       (isSavedGiftLine ? 10 : item.isSpecialOffer ? 2 : 10)
                                        ? 'opacity-50 cursor-not-allowed'
                                        : 'hover:bg-gray-50 cursor-pointer'
                                    }`}
