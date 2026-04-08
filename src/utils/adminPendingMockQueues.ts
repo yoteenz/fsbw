@@ -33,6 +33,9 @@ export type PendingMockReview = {
   reviewSupplementalSubmission?: boolean;
   targetReviewId?: string;
   clientProfilePhotoUrl?: string;
+  /** Server `pending_*` row — use PATCH /api/admin/pending-queue instead of local mock approve. */
+  serverType?: 'db_review' | 'review_supplemental';
+  serverId?: string;
 };
 
 export type PendingMockAffiliateKind = 'photo' | 'video' | 'social';
@@ -60,6 +63,8 @@ export type PendingMockAffiliateItem = {
   source?: 'mock' | 'client';
   orderId?: string;
   affiliateContentId?: string;
+  serverType?: 'affiliate';
+  serverId?: string;
 };
 
 const DEFAULT_REVIEWS: PendingMockReview[] = [

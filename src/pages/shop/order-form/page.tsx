@@ -18,6 +18,9 @@ import {
   loadLastOrderAuthorizationFormDraft,
   saveLastOrderAuthorizationFormDraft,
 } from '../../../utils/lastOrderAuthorizationFormDraft';
+import { postClientSubmission, getAccessToken } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { syncProfileFromApi } from '../../../utils/syncFromApi';
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -696,7 +699,7 @@ function OrderFormPage() {
         const giftCardIdentityOnly = Boolean(
           (location.state as { giftCardIdentityVerificationOnly?: boolean } | null)?.giftCardIdentityVerificationOnly
         );
-        appendSignedOrderForm({
+        const formSnapshot = {
           id: entryId,
           orderId,
           orderNumber: formData.orderNumber.trim(),
@@ -707,9 +710,17 @@ function OrderFormPage() {
           photoIdDataUrl: photoIdDataUrl || undefined,
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
-          /** Gift-card one-time ID flow skips admin pending; physical orders await approval (`false`). */
           adminApproved: giftCardIdentityOnly ? true : false,
-        });
+        };
+        appendSignedOrderForm(formSnapshot);
+        if (isSupabaseConfigured() && (await getAccessToken()) && !giftCardIdentityOnly) {
+          try {
+            await postClientSubmission({ kind: 'order_form', payload: formSnapshot });
+            await syncProfileFromApi();
+          } catch {
+            /* offline / migration not run — local row still works */
+          }
+        }
         markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
         saveLastOrderAuthorizationFormDraft(formData.email.trim(), {
           formFields,

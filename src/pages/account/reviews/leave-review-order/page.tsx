@@ -19,7 +19,9 @@ import {
   orderReviewItemStorageKey,
 } from '../../../../utils/orderReviewSubmissionPersist';
 import { fileToDataUrl } from '../../../../utils/signedOrderFormsStorage';
-import { enqueuePendingMockReviews } from '../../../../utils/adminPendingMockQueues';
+import { postClientSubmission, getAccessToken } from '../../../../utils/api';
+import { isSupabaseConfigured } from '../../../../utils/supabase';
+import { syncProfileFromApi } from '../../../../utils/syncFromApi';
 
 interface OrderLineItem {
   productName: string;
@@ -226,15 +228,6 @@ function LeaveReviewOrderPage() {
         const key = getUserSubmittedReviewsKey(email);
         const raw = localStorage.getItem(key);
         const list = raw ? JSON.parse(raw) : [];
-        const reviewId = `user-${Date.now()}`;
-        const dateDash = new Date()
-          .toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
-          .replace(/\//g, '-');
-        const dateShort = new Date().toLocaleDateString('en-US', {
-          month: 'numeric',
-          day: 'numeric',
-          year: 'numeric',
-        });
         let photoDataUrl: string | undefined;
         let videoDataUrl: string | undefined;
         if (photoUploadFile) {
@@ -251,45 +244,65 @@ function LeaveReviewOrderPage() {
             /* ignore */
           }
         }
-        const newReview = {
-          id: reviewId,
-          date: dateDash,
-          productName: currentItem.productName,
-          subtitle: subject || 'CUSTOMER REVIEW',
-          body: reviewText || '',
-          rating,
-          reviewCount: 1,
-          thumbnail: getProductImage(currentItem.productName),
-          moderationStatus: 'pending' as const,
-        };
-        list.push(newReview);
-        localStorage.setItem(key, JSON.stringify(list));
-        localStorage.setItem(getReviewsNewApprovedKey(email), 'true');
-
-        const clientLabel = (() => {
+        const clientName = (() => {
           const u = currentUser as { name?: string; firstName?: string; lastName?: string };
           const n = `${String(u?.firstName || '').trim()} ${String(u?.lastName || '').trim()}`.trim();
-          if (n) return n.toUpperCase();
-          if (String(u?.name || '').trim()) return String(u.name).trim().toUpperCase();
-          return String(email).trim().toUpperCase();
+          if (n) return n;
+          if (String(u?.name || '').trim()) return String(u.name).trim();
+          return '';
         })();
-        enqueuePendingMockReviews([
-          {
+
+        let reviewId = `user-${Date.now()}`;
+        const dateDash = new Date()
+          .toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
+          .replace(/\//g, '-');
+
+        if (isSupabaseConfigured() && (await getAccessToken())) {
+          try {
+            const res = await postClientSubmission({
+              kind: 'review',
+              rating,
+              product: currentItem.productName,
+              review: reviewText || '',
+              clientName,
+              photos: photoDataUrl ? [photoDataUrl] : [],
+              videos: videoDataUrl ? [videoDataUrl] : [],
+            });
+            const sid = String((res as { id?: string }).id || '').trim();
+            if (sid) reviewId = sid;
+            await syncProfileFromApi();
+          } catch {
+            /* fallback local */
+            const newReview = {
+              id: reviewId,
+              date: dateDash,
+              productName: currentItem.productName,
+              subtitle: subject || 'CUSTOMER REVIEW',
+              body: reviewText || '',
+              rating,
+              reviewCount: 1,
+              thumbnail: getProductImage(currentItem.productName),
+              moderationStatus: 'pending' as const,
+            };
+            list.push(newReview);
+            localStorage.setItem(key, JSON.stringify(list));
+          }
+        } else {
+          const newReview = {
             id: reviewId,
-            client: clientLabel,
-            email: String(email).trim().toLowerCase(),
-            product: (subject || 'CUSTOMER REVIEW').trim().toUpperCase(),
+            date: dateDash,
+            productName: currentItem.productName,
+            subtitle: subject || 'CUSTOMER REVIEW',
+            body: reviewText || '',
             rating,
-            excerpt: (reviewText || '').trim(),
-            date: dateShort,
-            status: 'PENDING',
-            source: 'client',
-            photoUrls: photoDataUrl ? [photoDataUrl] : [],
-            videoUrls: videoDataUrl ? [videoDataUrl] : [],
-            photoCount: photoDataUrl ? 1 : 0,
-            videoCount: videoDataUrl ? 1 : 0,
-          },
-        ]);
+            reviewCount: 1,
+            thumbnail: getProductImage(currentItem.productName),
+            moderationStatus: 'pending' as const,
+          };
+          list.push(newReview);
+          localStorage.setItem(key, JSON.stringify(list));
+        }
+        localStorage.setItem(getReviewsNewApprovedKey(email), 'true');
 
         if (order?.id && currentItem) {
           appendReviewedOrderItemKey(order.id, orderReviewItemStorageKey(currentItem.productName, currentItem.options));

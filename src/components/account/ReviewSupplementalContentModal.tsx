@@ -8,7 +8,9 @@ import {
   type StoredReviewSupplementalFields,
 } from '../../utils/reviewSupplementalMedia';
 import { getUserSubmittedReviewsKey } from '../../constants/reviews';
-import { enqueuePendingMockReviews } from '../../utils/adminPendingMockQueues';
+import { postClientSubmission, getAccessToken } from '../../utils/api';
+import { isSupabaseConfigured } from '../../utils/supabase';
+import { syncProfileFromApi } from '../../utils/syncFromApi';
 
 export type ReviewForSupplementalModal = {
   id: string;
@@ -126,48 +128,75 @@ export function ReviewSupplementalContentModal({
       const cappedPhotos = photoUrls.slice(0, MAX_REVIEW_SUPPLEMENTAL_PHOTOS);
       const cappedVideos = videoUrls.slice(0, MAX_REVIEW_SUPPLEMENTAL_VIDEOS);
 
-      const queueId = `rev-supp-${review.id}-${Date.now()}`;
       const key = getUserSubmittedReviewsKey(clientEmail);
       const raw = localStorage.getItem(key);
       const list = raw ? (JSON.parse(raw) as unknown[]) : [];
       if (!Array.isArray(list)) throw new Error('Invalid storage');
 
-      const next = list.map((row) => {
-        const r = row as Record<string, unknown>;
-        if (String(r.id || '') !== review.id) return row;
-        return {
-          ...r,
-          supplementalContentStatus: 'pending',
-          supplementalPendingQueueId: queueId,
-        };
-      });
-      localStorage.setItem(key, JSON.stringify(next));
-
-      const dateShort = new Date().toLocaleDateString('en-US', {
-        month: 'numeric',
-        day: 'numeric',
-        year: 'numeric',
-      });
-
-      const pendingRow: PendingMockReview = {
-        id: queueId,
-        client: clientNameUpper,
-        email: clientEmail.trim().toLowerCase(),
-        product: `${(review.subtitle || 'CUSTOMER REVIEW').toUpperCase()} · SUPPLEMENTAL MEDIA`,
-        rating: review.rating,
-        excerpt: review.body.trim() || 'SUPPLEMENTAL PHOTOS/VIDEOS FOR THIS REVIEW.',
-        date: dateShort,
-        status: 'PENDING',
-        source: 'client',
-        reviewSupplementalSubmission: true,
-        targetReviewId: review.id,
-        photoUrls: cappedPhotos,
-        videoUrls: cappedVideos,
-        photoCount: cappedPhotos.length,
-        videoCount: cappedVideos.length,
-        clientProfilePhotoUrl,
-      };
-      enqueuePendingMockReviews([pendingRow]);
+      if (isSupabaseConfigured() && (await getAccessToken())) {
+        const res = await postClientSubmission({
+          kind: 'review_supplemental',
+          clientReviewKey: review.id,
+          rating: review.rating,
+          product: review.productName,
+          subtitle: review.subtitle,
+          reviewExcerpt: review.body,
+          photos: cappedPhotos,
+          videos: cappedVideos,
+        });
+        const qid = String((res as { id?: string }).id || '').trim();
+        if (qid) {
+          const next = list.map((row) => {
+            const r = row as Record<string, unknown>;
+            if (String(r.id || '') !== review.id) return row;
+            return {
+              ...r,
+              supplementalContentStatus: 'pending',
+              supplementalPendingQueueId: qid,
+            };
+          });
+          localStorage.setItem(key, JSON.stringify(next));
+        }
+        await syncProfileFromApi();
+      } else {
+        const queueId = `rev-supp-${review.id}-${Date.now()}`;
+        const next = list.map((row) => {
+          const r = row as Record<string, unknown>;
+          if (String(r.id || '') !== review.id) return row;
+          return {
+            ...r,
+            supplementalContentStatus: 'pending',
+            supplementalPendingQueueId: queueId,
+          };
+        });
+        localStorage.setItem(key, JSON.stringify(next));
+        const dateShort = new Date().toLocaleDateString('en-US', {
+          month: 'numeric',
+          day: 'numeric',
+          year: 'numeric',
+        });
+        const { enqueuePendingMockReviews } = await import('../../utils/adminPendingMockQueues');
+        enqueuePendingMockReviews([
+          {
+            id: queueId,
+            client: clientNameUpper,
+            email: clientEmail.trim().toLowerCase(),
+            product: `${(review.subtitle || 'CUSTOMER REVIEW').toUpperCase()} · SUPPLEMENTAL MEDIA`,
+            rating: review.rating,
+            excerpt: review.body.trim() || 'SUPPLEMENTAL PHOTOS/VIDEOS FOR THIS REVIEW.',
+            date: dateShort,
+            status: 'PENDING',
+            source: 'client',
+            reviewSupplementalSubmission: true,
+            targetReviewId: review.id,
+            photoUrls: cappedPhotos,
+            videoUrls: cappedVideos,
+            photoCount: cappedPhotos.length,
+            videoCount: cappedVideos.length,
+            clientProfilePhotoUrl,
+          } as PendingMockReview,
+        ]);
+      }
 
       window.dispatchEvent(new CustomEvent('reviewsUpdated'));
       onSubmitted();

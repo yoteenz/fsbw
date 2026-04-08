@@ -112,6 +112,9 @@ const JSONB_ROW_KEYS = [
   'voucher_history',
   'digital_cash_history',
   'welcome_discount_tiers_credited_by_period',
+  'user_submitted_reviews',
+  'affiliate_submitted_content',
+  'signed_order_forms',
 ] as const;
 
 function sanitizeRowForUpsert(row: Record<string, unknown>): Record<string, unknown> {
@@ -161,6 +164,9 @@ function toProfileRow(profile: Record<string, unknown>) {
     notification_sales: typeof profile.notificationSales === 'boolean' ? profile.notificationSales : true,
     notification_order_tracking:
       typeof profile.notificationOrderTracking === 'boolean' ? profile.notificationOrderTracking : true,
+    user_submitted_reviews: coerceJsonbValue(profile.userSubmittedReviews),
+    affiliate_submitted_content: coerceJsonbValue(profile.affiliateSubmittedContent),
+    signed_order_forms: coerceJsonbValue(profile.signedOrderForms),
   };
 }
 

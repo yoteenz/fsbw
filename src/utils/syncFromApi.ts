@@ -5,6 +5,7 @@
  * We never remove adminSubscriptionOverride or adminTierOverride (rewards/membership page); only explicit Sign Out clears auth.
  */
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
+import { persistServerProfileQueuesToLocal } from './clientPendingServerSync';
 import {
   isAdminEmail,
   isAyoteenzAdminAccount,
@@ -142,6 +143,7 @@ export async function syncProfileFromApi(): Promise<Record<string, unknown> | nu
     }
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
     localStorage.setItem('isSignedIn', 'true');
+    persistServerProfileQueuesToLocal(email, merged);
     persistAuthBackup();
     return merged;
   } catch {
@@ -282,6 +284,7 @@ export function applyAdminSyncPayload(
     if (idx !== -1) (registeredUsers as Record<string, unknown>[])[idx] = merged;
     else registeredUsers.push(merged);
     localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+    persistServerProfileQueuesToLocal(e, merged as Record<string, unknown>);
   }
 
   localStorage.setItem(

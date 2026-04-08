@@ -26,6 +26,8 @@ export type StoredSignedOrderForm = {
   adminDeclined?: boolean;
   adminDeclinedAt?: number;
   adminDeclineReason?: string;
+  /** Set when row came from `pending_order_forms` server queue (admin PATCH target). */
+  serverQueueId?: string;
 };
 
 const STORAGE_KEY = 'signedOrderFormsByEmail';

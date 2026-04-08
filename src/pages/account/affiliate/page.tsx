@@ -11,6 +11,9 @@ import { isMockDataAccount, clearAppAuth } from '../../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { buildAffiliatePendingItemsFromContentDiff } from '../../../utils/adminPendingClientSync';
 import { enqueuePendingMockAffiliateItems } from '../../../utils/adminPendingMockQueues';
+import { postClientSubmission, getAccessToken } from '../../../utils/api';
+import { isSupabaseConfigured } from '../../../utils/supabase';
+import { syncProfileFromApi } from '../../../utils/syncFromApi';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -1340,6 +1343,20 @@ function AffiliatePage() {
         };
 
         saveSubmittedContentToStorage(newContent);
+
+        void (async () => {
+          if (!pendingRows.length || !isSupabaseConfigured() || !(await getAccessToken())) return;
+          try {
+            await postClientSubmission({
+              kind: 'affiliate',
+              items: pendingRows,
+              affiliateContent: newContent,
+            });
+            await syncProfileFromApi();
+          } catch (e) {
+            console.error('Affiliate server sync failed:', e);
+          }
+        })();
 
         return newContent;
       });

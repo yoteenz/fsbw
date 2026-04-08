@@ -50,6 +50,9 @@ export function fromProfileRow(row: Record<string, unknown>): Record<string, unk
       (row.notification_order_tracking as boolean | null | undefined) ??
       (row.notificationOrderTracking as boolean | null | undefined) ??
       true,
+    userSubmittedReviews: row.user_submitted_reviews ?? row.userSubmittedReviews ?? [],
+    affiliateSubmittedContent: row.affiliate_submitted_content ?? row.affiliateSubmittedContent ?? {},
+    signedOrderForms: row.signed_order_forms ?? row.signedOrderForms ?? [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

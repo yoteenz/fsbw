@@ -534,6 +534,46 @@ export async function getAdminReviews(): Promise<AdminReviewsApiResponse> {
   };
 }
 
+export type AdminPendingQueueResponse = {
+  orderForms: unknown[];
+  affiliate: unknown[];
+  reviewSupplemental: unknown[];
+  dbReviews: unknown[];
+};
+
+/** Admin: server-backed pending queues (cross-device). */
+export async function getAdminPendingQueue(): Promise<AdminPendingQueueResponse> {
+  const res = await apiFetch('/api/admin/pending-queue');
+  if (res.status === 403) throw new Error('Forbidden');
+  if (!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  return {
+    orderForms: Array.isArray(data.orderForms) ? data.orderForms : [],
+    affiliate: Array.isArray(data.affiliate) ? data.affiliate : [],
+    reviewSupplemental: Array.isArray(data.reviewSupplemental) ? data.reviewSupplemental : [],
+    dbReviews: Array.isArray(data.dbReviews) ? data.dbReviews : [],
+  };
+}
+
+export async function patchAdminPendingQueue(body: {
+  type: 'order_form' | 'affiliate' | 'review_supplemental' | 'db_review';
+  id: string;
+  decision: 'approve' | 'decline';
+  reason?: string;
+}): Promise<void> {
+  const res = await apiFetch('/api/admin/pending-queue', { method: 'PATCH', body });
+  if (res.status === 403) throw new Error('Forbidden');
+  if (!res.ok) throw new Error(await res.text());
+}
+
+/** Authenticated client: write to server pending queues / profile JSON. */
+export async function postClientSubmission(body: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const res = await apiFetch('/api/client/submissions', { method: 'POST', body });
+  if (res.status === 401) throw new Error('Unauthorized');
+  if (!res.ok) throw new Error(await res.text());
+  return (await res.json()) as Record<string, unknown>;
+}
+
 /** Admin: meetings list (empty until table exists). */
 export async function getAdminMeetings(): Promise<{ meetings: unknown[] }> {
   const res = await apiFetch('/api/admin/meetings');

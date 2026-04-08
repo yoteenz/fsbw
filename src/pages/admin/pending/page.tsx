@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, type ReactNode } from 'react
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { getAdminPending, getAdminReviews } from '../../../utils/api';
+import { getAdminPending, getAdminReviews, getAdminPendingQueue, patchAdminPendingQueue } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -39,6 +39,12 @@ import {
   usStateAbbrevFromAddressLine,
 } from '../../../utils/usAddressStateDisplay';
 import { getMockClientsForAyoteenz } from '../clients/page';
+import {
+  serverAffiliateRowToPendingMock,
+  serverDbReviewToPendingMock,
+  serverOrderFormRowToStored,
+  serverReviewSupplementalToPendingMock,
+} from '../../../utils/serverPendingQueueMappers';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -47,6 +53,8 @@ const rowStyle = {
 };
 
 type PendingAdminModal = { kind: 'form'; item: StoredSignedOrderForm } | { kind: 'review'; item: PendingMockReview };
+
+type AffiliateDeclineTarget = { mockId: string; serverId?: string };
 
 const DEFAULT_CLIENT_PROFILE_THUMB = '/assets/profile-thumb.png';
 
@@ -183,7 +191,14 @@ export default function AdminPending() {
   const [adminReviewModal, setAdminReviewModal] = useState<PendingAdminModal | null>(null);
   const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false);
   const [declineReasonDraft, setDeclineReasonDraft] = useState('');
-  const [affiliateDeclineTargetId, setAffiliateDeclineTargetId] = useState<string | null>(null);
+  const [affiliateDeclineTarget, setAffiliateDeclineTarget] = useState<AffiliateDeclineTarget | null>(null);
+  const [serverQueues, setServerQueues] = useState<{
+    orderForms: unknown[];
+    affiliate: unknown[];
+    reviewSupplemental: unknown[];
+    dbReviews: unknown[];
+  } | null>(null);
+  const [serverQueueBump, setServerQueueBump] = useState(0);
 
   const openClientFromPending = useCallback(
     (email: string) => {
@@ -228,93 +243,6 @@ export default function AdminPending() {
     return `${name.trim().toUpperCase()}${code ? ` · ${code}` : ''}`;
   }, []);
 
-  const renderAffiliateRow = (item: PendingMockAffiliateItem) => {
-    const cap = (item.caption || '').trim() || 'AFFILIATE SUBMISSION';
-    const body =
-      item.kind === 'social'
-        ? `${String(item.platform || '').toUpperCase()} — ${String(item.handle || '').toUpperCase()}`
-        : item.kind === 'video'
-          ? 'VIDEO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.'
-          : 'PHOTO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.';
-    const photoUrls = item.kind === 'photo' && item.imageSrc ? [item.imageSrc] : [];
-    const videoUrls =
-      item.kind === 'video'
-        ? item.videoDataUrl
-          ? [item.videoDataUrl]
-          : item.imageSrc
-            ? [item.imageSrc]
-            : ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
-        : [];
-    const photos = item.kind === 'photo' ? 1 : 0;
-    const videos = item.kind === 'video' ? 1 : 0;
-
-    return (
-      <AdminReviewStyleCard
-        key={item.id}
-        client={item.client}
-        clientEmail={item.email}
-        clientProfilePhotoUrl={item.clientProfilePhotoUrl}
-        clientRegionParen={item.clientRegionParen}
-        clientRegionCode={item.clientRegionCode}
-        productLine={cap}
-        bodyText={body}
-        date={item.date}
-        rating={5}
-        photos={photos}
-        videos={videos}
-        photoUrls={photoUrls}
-        videoUrls={videoUrls}
-        verifiedPurchase={false}
-        showStars={false}
-        statusLabel="PENDING"
-        onOpenClientDetails={openClientFromPending}
-      >
-        <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
-          <button
-            type="button"
-            onClick={() => approvePendingMockAffiliate(item.id)}
-            style={{
-              flex: 1,
-              minWidth: '100px',
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '10px',
-              color: '#fff',
-              background: '#EB1C24',
-              border: '1.3px solid #000',
-              padding: '8px 10px',
-              cursor: 'pointer',
-              textTransform: 'uppercase',
-            }}
-          >
-            APPROVE
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAffiliateDeclineTargetId(item.id);
-              setDeclineReasonDraft('');
-              setShowDeclineReasonModal(true);
-            }}
-            style={{
-              flex: 1,
-              minWidth: '100px',
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '10px',
-              color: '#EB1C24',
-              background: '#fff',
-              border: '1.3px solid #000',
-              padding: '8px 10px',
-              cursor: 'pointer',
-              textTransform: 'uppercase',
-            }}
-          >
-            DECLINE
-          </button>
-        </div>
-      </AdminReviewStyleCard>
-    );
-  };
-
   const pendingAuthFormsCount = useMemo(() => {
     void pendingAuthFormsBump;
     return countPendingOrderAuthorizationFormsForAdmin();
@@ -344,6 +272,174 @@ export default function AdminPending() {
     void mockQueuesBump;
     return listPendingMockAffiliateVisible();
   }, [mockQueuesBump]);
+
+  const serverFormsList = useMemo(() => {
+    void serverQueueBump;
+    if (!serverQueues?.orderForms?.length) return [];
+    return (serverQueues.orderForms as Record<string, unknown>[])
+      .map((row) => serverOrderFormRowToStored(row))
+      .filter((x): x is StoredSignedOrderForm => Boolean(x));
+  }, [serverQueues, serverQueueBump]);
+
+  const pendingAuthFormsMerged = useMemo(() => {
+    const server = serverFormsList;
+    const serverOrderIds = new Set(server.map((s) => s.orderId).filter(Boolean) as string[]);
+    const localExtra = pendingAuthFormsList.filter((l) => {
+      if (l.serverQueueId) return false;
+      if (l.orderId && serverOrderIds.has(l.orderId)) return false;
+      return true;
+    });
+    return server.length ? [...server, ...localExtra] : pendingAuthFormsList;
+  }, [serverFormsList, pendingAuthFormsList]);
+
+  const serverDbReviewsMapped = useMemo(() => {
+    void serverQueueBump;
+    if (!serverQueues?.dbReviews?.length) return [];
+    return (serverQueues.dbReviews as Record<string, unknown>[]).map(serverDbReviewToPendingMock);
+  }, [serverQueues, serverQueueBump]);
+
+  const serverReviewSuppMapped = useMemo(() => {
+    void serverQueueBump;
+    if (!serverQueues?.reviewSupplemental?.length) return [];
+    return (serverQueues.reviewSupplemental as Record<string, unknown>[]).map(serverReviewSupplementalToPendingMock);
+  }, [serverQueues, serverQueueBump]);
+
+  const pendingReviewsMerged = useMemo(() => {
+    if (!serverQueues) return pendingMockReviewsList;
+    return [...serverDbReviewsMapped, ...serverReviewSuppMapped, ...pendingMockReviewsList];
+  }, [serverQueues, serverDbReviewsMapped, serverReviewSuppMapped, pendingMockReviewsList]);
+
+  const serverAffiliateMapped = useMemo(() => {
+    void serverQueueBump;
+    if (!serverQueues?.affiliate?.length) return [];
+    return (serverQueues.affiliate as Record<string, unknown>[])
+      .map((row) => serverAffiliateRowToPendingMock(row))
+      .filter((x): x is PendingMockAffiliateItem => Boolean(x));
+  }, [serverQueues, serverQueueBump]);
+
+  const pendingAffiliateMerged = useMemo(() => {
+    if (!serverQueues) return pendingMockAffiliateList;
+    return [...serverAffiliateMapped, ...pendingMockAffiliateList];
+  }, [serverQueues, serverAffiliateMapped, pendingMockAffiliateList]);
+
+  const reviewsTabCount = serverQueues ? pendingReviewsMerged.length : pendingReviews + mockReviewsPendingCount;
+  const formsTabCount = serverQueues ? pendingAuthFormsMerged.length : pendingAuthFormsCount;
+  const affiliateTabCount = serverQueues ? pendingAffiliateMerged.length : mockAffiliatePendingCount;
+
+  const refreshServerQueues = useCallback(() => {
+    if (!isSupabaseConfigured()) return;
+    getAdminPendingQueue()
+      .then((q) => {
+        setServerQueues(q);
+        setServerQueueBump((n) => n + 1);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    refreshServerQueues();
+    const t = setInterval(refreshServerQueues, 12000);
+    return () => clearInterval(t);
+  }, [refreshServerQueues]);
+
+  const renderAffiliateRow = useCallback(
+    (item: PendingMockAffiliateItem) => {
+      const cap = (item.caption || '').trim() || 'AFFILIATE SUBMISSION';
+      const body =
+        item.kind === 'social'
+          ? `${String(item.platform || '').toUpperCase()} — ${String(item.handle || '').toUpperCase()}`
+          : item.kind === 'video'
+            ? 'VIDEO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.'
+            : 'PHOTO SUBMISSION — TAP PHOTOS BELOW TO EXPAND.';
+      const photoUrls = item.kind === 'photo' && item.imageSrc ? [item.imageSrc] : [];
+      const videoUrls =
+        item.kind === 'video'
+          ? item.videoDataUrl
+            ? [item.videoDataUrl]
+            : item.imageSrc
+              ? [item.imageSrc]
+              : ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4']
+          : [];
+      const photos = item.kind === 'photo' ? 1 : 0;
+      const videos = item.kind === 'video' ? 1 : 0;
+
+      return (
+        <AdminReviewStyleCard
+          key={item.serverId ? `${item.id}-srv-${item.serverId}` : item.id}
+          client={item.client}
+          clientEmail={item.email}
+          clientProfilePhotoUrl={item.clientProfilePhotoUrl}
+          clientRegionParen={item.clientRegionParen}
+          clientRegionCode={item.clientRegionCode}
+          productLine={cap}
+          bodyText={body}
+          date={item.date}
+          rating={5}
+          photos={photos}
+          videos={videos}
+          photoUrls={photoUrls}
+          videoUrls={videoUrls}
+          verifiedPurchase={false}
+          showStars={false}
+          statusLabel="PENDING"
+          onOpenClientDetails={openClientFromPending}
+        >
+          <div className="flex gap-2 flex-wrap" style={{ marginTop: '12px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                if (item.serverType === 'affiliate' && item.serverId) {
+                  void patchAdminPendingQueue({ type: 'affiliate', id: item.serverId, decision: 'approve' }).then(() =>
+                    refreshServerQueues()
+                  );
+                  return;
+                }
+                approvePendingMockAffiliate(item.id);
+              }}
+              style={{
+                flex: 1,
+                minWidth: '100px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#fff',
+                background: '#EB1C24',
+                border: '1.3px solid #000',
+                padding: '8px 10px',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+              }}
+            >
+              APPROVE
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAffiliateDeclineTarget({ mockId: item.id, serverId: item.serverId });
+                setDeclineReasonDraft('');
+                setShowDeclineReasonModal(true);
+              }}
+              style={{
+                flex: 1,
+                minWidth: '100px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#EB1C24',
+                background: '#fff',
+                border: '1.3px solid #000',
+                padding: '8px 10px',
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+              }}
+            >
+              DECLINE
+            </button>
+          </div>
+        </AdminReviewStyleCard>
+      );
+    },
+    [openClientFromPending, refreshServerQueues]
+  );
 
   useEffect(() => {
     const bump = () => setPendingAuthFormsBump((n) => n + 1);
@@ -460,6 +556,11 @@ export default function AdminPending() {
             { label: 'SYSTEM ALERTS', value: '0' },
           ];
     return base.map((row) => {
+      if (serverQueues) {
+        if (row.label === 'ORDER FORMS') return { ...row, value: String(formsTabCount) };
+        if (row.label === 'PENDING REVIEWS') return { ...row, value: String(reviewsTabCount) };
+        if (row.label === 'AFFILIATE REQUESTS') return { ...row, value: String(affiliateTabCount) };
+      }
       if (row.label === 'ORDER FORMS') return { ...row, value: String(pendingAuthFormsCount) };
       if (row.label === 'PENDING REVIEWS') {
         const n = Number.parseInt(String(row.value), 10);
@@ -473,7 +574,18 @@ export default function AdminPending() {
       }
       return row;
     });
-  }, [pendingItems, pendingReviews, orderForms, pendingAuthFormsCount, mockReviewsPendingCount, mockAffiliatePendingCount]);
+  }, [
+    pendingItems,
+    pendingReviews,
+    orderForms,
+    pendingAuthFormsCount,
+    mockReviewsPendingCount,
+    mockAffiliatePendingCount,
+    serverQueues,
+    formsTabCount,
+    reviewsTabCount,
+    affiliateTabCount,
+  ]);
 
   const formModalTarget = adminReviewModal?.kind === 'form' ? adminReviewModal.item : null;
   const {
@@ -497,34 +609,72 @@ export default function AdminPending() {
     setAdminReviewModal(null);
     setShowDeclineReasonModal(false);
     setDeclineReasonDraft('');
-    setAffiliateDeclineTargetId(null);
+    setAffiliateDeclineTarget(null);
   }, []);
 
   const closeDeclineReasonOnly = useCallback(() => {
     setShowDeclineReasonModal(false);
     setDeclineReasonDraft('');
-    setAffiliateDeclineTargetId(null);
+    setAffiliateDeclineTarget(null);
   }, []);
 
   const submitDecline = useCallback(() => {
-    if (affiliateDeclineTargetId) {
-      declinePendingMockAffiliate(affiliateDeclineTargetId, declineReasonDraft);
+    if (affiliateDeclineTarget) {
+      const { mockId, serverId } = affiliateDeclineTarget;
+      if (serverId) {
+        void patchAdminPendingQueue({
+          type: 'affiliate',
+          id: serverId,
+          decision: 'decline',
+          reason: declineReasonDraft,
+        }).then(() => refreshServerQueues());
+      } else {
+        declinePendingMockAffiliate(mockId, declineReasonDraft);
+      }
       closeDeclineReasonOnly();
       return;
     }
     if (!adminReviewModal) return;
     if (adminReviewModal.kind === 'form') {
-      declineOrderFormSubmission(adminReviewModal.item, declineReasonDraft);
+      const f = adminReviewModal.item;
+      if (f.serverQueueId) {
+        void patchAdminPendingQueue({
+          type: 'order_form',
+          id: f.serverQueueId,
+          decision: 'decline',
+          reason: declineReasonDraft,
+        }).then(() => refreshServerQueues());
+      } else {
+        declineOrderFormSubmission(f, declineReasonDraft);
+      }
     } else {
-      declinePendingMockReview(adminReviewModal.item.id, declineReasonDraft);
+      const r = adminReviewModal.item;
+      if (r.serverType === 'db_review' && r.serverId) {
+        void patchAdminPendingQueue({
+          type: 'db_review',
+          id: r.serverId,
+          decision: 'decline',
+          reason: declineReasonDraft,
+        }).then(() => refreshServerQueues());
+      } else if (r.serverType === 'review_supplemental' && r.serverId) {
+        void patchAdminPendingQueue({
+          type: 'review_supplemental',
+          id: r.serverId,
+          decision: 'decline',
+          reason: declineReasonDraft,
+        }).then(() => refreshServerQueues());
+      } else {
+        declinePendingMockReview(r.id, declineReasonDraft);
+      }
     }
     closeAdminReviewModal();
   }, [
-    affiliateDeclineTargetId,
+    affiliateDeclineTarget,
     adminReviewModal,
     declineReasonDraft,
     closeAdminReviewModal,
     closeDeclineReasonOnly,
+    refreshServerQueues,
   ]);
 
   const modalTitle = (() => {
@@ -534,7 +684,7 @@ export default function AdminPending() {
   })();
 
   const declineModalTitle = (() => {
-    if (affiliateDeclineTargetId) return 'DECLINE AFFILIATE SUBMISSION';
+    if (affiliateDeclineTarget) return 'DECLINE AFFILIATE SUBMISSION';
     if (!adminReviewModal) return '';
     if (adminReviewModal.kind === 'form') return 'DECLINE ORDER FORM';
     return 'DECLINE REVIEW';
@@ -543,9 +693,27 @@ export default function AdminPending() {
   const onApproveClick = () => {
     if (!adminReviewModal) return;
     if (adminReviewModal.kind === 'form') {
-      approveOrderFormSubmission(adminReviewModal.item);
+      const f = adminReviewModal.item;
+      if (f.serverQueueId) {
+        void patchAdminPendingQueue({ type: 'order_form', id: f.serverQueueId, decision: 'approve' }).then(() =>
+          refreshServerQueues()
+        );
+      } else {
+        approveOrderFormSubmission(f);
+      }
     } else {
-      approvePendingMockReview(adminReviewModal.item.id);
+      const r = adminReviewModal.item;
+      if (r.serverType === 'db_review' && r.serverId) {
+        void patchAdminPendingQueue({ type: 'db_review', id: r.serverId, decision: 'approve' }).then(() =>
+          refreshServerQueues()
+        );
+      } else if (r.serverType === 'review_supplemental' && r.serverId) {
+        void patchAdminPendingQueue({ type: 'review_supplemental', id: r.serverId, decision: 'approve' }).then(() =>
+          refreshServerQueues()
+        );
+      } else {
+        approvePendingMockReview(r.id);
+      }
     }
     closeAdminReviewModal();
   };
@@ -625,7 +793,7 @@ export default function AdminPending() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {pendingReviews + mockReviewsPendingCount}
+                    {reviewsTabCount}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     PENDING REVIEWS
@@ -644,7 +812,7 @@ export default function AdminPending() {
                   }}
                 >
                   <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {pendingAuthFormsCount}
+                    {formsTabCount}
                   </p>
                   <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
                     ORDER FORMS
@@ -705,7 +873,7 @@ export default function AdminPending() {
                         ALIGNS WITH <span style={{ color: '#000' }}>ADMIN → REVIEWS</span> &amp; <span style={{ color: '#000' }}>CLIENT → REVIEWS</span> WHEN API DATA LOADS.
                       </p>
                       <div className="space-y-0">
-                        <DataRow label="PENDING (ALL)" value={String(reviewBreakdown.total + mockReviewsPendingCount)} />
+                        <DataRow label="PENDING (ALL)" value={String(serverQueues ? reviewsTabCount : reviewBreakdown.total + mockReviewsPendingCount)} />
                         <DataRow label="WITH PHOTOS" value={String(reviewBreakdown.withPhotos)} />
                         <DataRow label="WITH VIDEOS" value={String(reviewBreakdown.withVideos)} />
                         <DataRow label="TEXT ONLY" value={String(reviewBreakdown.textOnly)} />
@@ -750,12 +918,12 @@ export default function AdminPending() {
 
                   {activeTab === 'REVIEWS' && (
                     <>
-                      {pendingMockReviewsList.length === 0 ? (
+                      {pendingReviewsMerged.length === 0 ? (
                         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
                           NO REVIEWS PENDING APPROVAL.
                         </p>
                       ) : (
-                        pendingMockReviewsList.map((r) => (
+                        pendingReviewsMerged.map((r) => (
                           <AdminReviewStyleCard
                             key={r.id}
                             client={r.client}
@@ -782,12 +950,12 @@ export default function AdminPending() {
 
                   {activeTab === 'FORMS' && (
                     <>
-                      {pendingAuthFormsList.length === 0 ? (
+                      {pendingAuthFormsMerged.length === 0 ? (
                         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
                           NO FORMS PENDING APPROVAL.
                         </p>
                       ) : (
-                        pendingAuthFormsList.map((f) => {
+                        pendingAuthFormsMerged.map((f) => {
                           const nameRaw =
                             `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
                           const nameUpper = nameRaw.toUpperCase();
@@ -884,18 +1052,18 @@ export default function AdminPending() {
 
                   {activeTab === 'AFFILIATE' && (
                     <>
-                      {pendingMockAffiliateList.length === 0 ? (
+                      {pendingAffiliateMerged.length === 0 ? (
                         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
                           NO AFFILIATE SUBMISSIONS PENDING APPROVAL.
                         </p>
                       ) : (
                         <>
                           <SectionTitle>PHOTOS</SectionTitle>
-                          {pendingMockAffiliateList.filter((x) => x.kind === 'photo').map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'photo').map(renderAffiliateRow)}
                           <SectionTitle>VIDEOS</SectionTitle>
-                          {pendingMockAffiliateList.filter((x) => x.kind === 'video').map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'video').map(renderAffiliateRow)}
                           <SectionTitle>SOCIAL LINKS</SectionTitle>
-                          {pendingMockAffiliateList.filter((x) => x.kind === 'social').map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'social').map(renderAffiliateRow)}
                         </>
                       )}
                     </>
@@ -1067,7 +1235,7 @@ export default function AdminPending() {
         </div>
       )}
 
-      {showDeclineReasonModal && (adminReviewModal || affiliateDeclineTargetId) && (
+      {showDeclineReasonModal && (adminReviewModal || affiliateDeclineTarget) && (
         <div
           className="fixed inset-0 z-[100000] flex items-center justify-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
