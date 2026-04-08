@@ -61,7 +61,7 @@ import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
 import { buildPersistedLineItemsFromCart } from '../../utils/orderLineItemsPersist';
 import {
-  cartQualifiesForBcfProcessingWindows,
+  cartUsesBcfOnlyProcessingWindows,
   checkoutExpressProcessingAllowed,
   getCheckoutProcessingTimePersistentLabel,
 } from '../../utils/checkoutBcfProcessing';
@@ -606,7 +606,7 @@ function CheckoutPage() {
     });
   }, [cartItems, navigate]);
 
-  const bcfOnlyCart = useMemo(() => cartQualifiesForBcfProcessingWindows(cartItems as unknown[]), [cartItems]);
+  const bcfOnlyProcessingWindows = useMemo(() => cartUsesBcfOnlyProcessingWindows(cartItems as unknown[]), [cartItems]);
 
   const checkoutExpressAllowed = useMemo(
     () =>
@@ -4988,7 +4988,7 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        {bcfOnlyCart ? '4-6 WEEKS STANDARD PROCESSING' : '6-8 WEEKS STANDARD PROCESSING'}
+                        {bcfOnlyProcessingWindows ? '4-6 WEEKS STANDARD PROCESSING' : '6-8 WEEKS STANDARD PROCESSING'}
                       </label>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: checkoutExpressAllowed ? 1 : 0.5 }}>
@@ -5041,7 +5041,7 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                          {bcfOnlyCart ? '3-4 WEEKS EXPRESS PROCESSING' : '4-6 WEEKS RUSH PROCESSING'}{' '}
+                          {bcfOnlyProcessingWindows ? '3-4 WEEKS EXPRESS PROCESSING' : '4-6 WEEKS RUSH PROCESSING'}{' '}
                           <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
                         </label>
                         <label 
@@ -5054,7 +5054,7 @@ function CheckoutPage() {
                             marginTop: '2px'
                           }}
                         >
-                          {bcfOnlyCart ? '(EXCLUDING CUSTOM HAIR COLOR)' : '(EXCLUDING COLOR, STYLING & ADD-ONS)'}
+                          {bcfOnlyProcessingWindows ? '(EXCLUDING CUSTOM HAIR COLOR)' : '(EXCLUDING COLOR, STYLING & ADD-ONS)'}
                       </label>
                       </div>
                     </div>

@@ -29,6 +29,31 @@ export function cartQualifiesForBcfProcessingWindows(items: unknown[] | null | u
   return relevant.every((row) => cartLineIsBcfBundleClosureFrontal(row as Record<string, unknown>));
 }
 
+/** Build-a-wig units have `capSize`; future shop lines may use `shop-texture-category` + category `units`. */
+export function cartLineIsUnitProduct(item: Record<string, unknown> | null | undefined): boolean {
+  if (!item || lineSkipsBcfProcessingRules(item)) return false;
+  if (cartLineIsBcfBundleClosureFrontal(item)) return false;
+  const t = String(item.type || '').trim().toLowerCase();
+  if (t === 'shop-texture-category') {
+    const c = String(item.category || '').toLowerCase();
+    return c === 'units' || c === 'unit';
+  }
+  const cap = item.capSize;
+  return cap != null && String(cap).trim() !== '';
+}
+
+export function cartHasUnitProduct(items: unknown[] | null | undefined): boolean {
+  if (!Array.isArray(items)) return false;
+  return items.some((row) => cartLineIsUnitProduct(row as Record<string, unknown>));
+}
+
+/** Shorter BCF windows apply only when there is BCF and no unit lines in the same order. */
+export function cartUsesBcfOnlyProcessingWindows(items: unknown[] | null | undefined): boolean {
+  if (!Array.isArray(items)) return false;
+  if (!cartHasBcfBundlesClosuresOrFrontals(items)) return false;
+  return !cartHasUnitProduct(items) && cartQualifiesForBcfProcessingWindows(items);
+}
+
 function defaultHairColorForUnitName(itemName: unknown): string {
   const n = String(itemName || '').toUpperCase().trim();
   return n === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK';
@@ -58,9 +83,9 @@ function cartHasStylingOrAddOnsOnlyPhysical(items: unknown[]): boolean {
 
 /**
  * Persisted / display processing window for checkout orders.
- * BCF-only (bundles, closures, frontals): **4–6** standard; **3–4** express when eligible.
- * Custom color (non-default) or styling/add-ons → extended **6–8 (up to 10)** on standard; express disabled for BCF-only when color/styling/add-ons.
- * Other carts: unchanged (6–8 standard, 4–6 rush when no color/styling/add-ons).
+ * **BCF-only** (bundles/closures/frontals, no units): **4–6** standard; **3–4** express when eligible.
+ * **BCF + unit** (or unit-only): **longer unit windows** take precedence (6–8 / 4–6 rush / extended).
+ * BCF-only: custom color or styling/add-ons → extended; express off when those apply.
  */
 export function getCheckoutProcessingTimePersistentLabel(opts: {
   cartItems: unknown[];
@@ -69,17 +94,17 @@ export function getCheckoutProcessingTimePersistentLabel(opts: {
 }): string {
   const { cartItems, selectedProcessing, hasColorStylingOrAddOns } = opts;
   const items = Array.isArray(cartItems) ? cartItems : [];
-  const bcfOnly = cartQualifiesForBcfProcessingWindows(items);
+  const bcfOnlyWindows = cartUsesBcfOnlyProcessingWindows(items);
   const customColor = cartHasCustomHairColor(items);
   const stylingOrAddOns = cartHasStylingOrAddOnsOnlyPhysical(items);
 
-  const rushAllowed = !customColor && (bcfOnly ? !stylingOrAddOns : !hasColorStylingOrAddOns);
+  const rushAllowed = !customColor && (bcfOnlyWindows ? !stylingOrAddOns : !hasColorStylingOrAddOns);
   const effectiveRush = selectedProcessing === 'rush' && rushAllowed;
 
   if (effectiveRush) {
-    return bcfOnly ? '3 TO 4 WEEKS' : '4 TO 6 WEEKS';
+    return bcfOnlyWindows ? '3 TO 4 WEEKS' : '4 TO 6 WEEKS';
   }
-  if (bcfOnly) {
+  if (bcfOnlyWindows) {
     if (customColor || stylingOrAddOns) {
       return '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)';
     }
@@ -95,10 +120,10 @@ export function checkoutExpressProcessingAllowed(opts: {
   hasColorStylingOrAddOns: boolean;
 }): boolean {
   const items = Array.isArray(opts.cartItems) ? opts.cartItems : [];
-  const bcfOnly = cartQualifiesForBcfProcessingWindows(items);
+  const bcfOnlyWindows = cartUsesBcfOnlyProcessingWindows(items);
   const customColor = cartHasCustomHairColor(items);
   const stylingOrAddOns = cartHasStylingOrAddOnsOnlyPhysical(items);
-  return !customColor && (bcfOnly ? !stylingOrAddOns : !opts.hasColorStylingOrAddOns);
+  return !customColor && (bcfOnlyWindows ? !stylingOrAddOns : !opts.hasColorStylingOrAddOns);
 }
 
 /** Min/max weeks for date-range UI from persisted `processingTime` string. */
@@ -141,10 +166,10 @@ function confirmNonBcfHasExtendedProcessing(item: Record<string, unknown>): bool
 /** When confirm page has no `processingTime` in navigation state (e.g. Apple Pay path). */
 export function getConfirmPageFallbackProcessingLabel(cartItems: unknown[]): string {
   const items = Array.isArray(cartItems) ? cartItems : [];
-  const bcfOnly = cartQualifiesForBcfProcessingWindows(items);
+  const bcfOnlyWindows = cartUsesBcfOnlyProcessingWindows(items);
   const customColor = cartHasCustomHairColor(items);
   const stylingOrAddOns = cartHasStylingOrAddOnsOnlyPhysical(items);
-  if (bcfOnly) {
+  if (bcfOnlyWindows) {
     if (customColor || stylingOrAddOns) {
       return '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)';
     }
