@@ -12831,3 +12831,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to change **“TAP TO VIEW PDF”** (and the full-PDF variant) on the **view signed forms** pop-up from **gray** to **red**.
 
 **Changes:** **`admin/clients/page.tsx`** — **`SignedOrderFormListRow`**: **`TAP TO VIEW PDF`** and **`TAP TO VIEW / DOWNLOAD PDF`** paragraphs use **`#EB1C24`** instead of **`#808080`** (still **Futura PT Medium**). Commit + push **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed-form PDF: crop snapshot to content for centered viewer
+
+**Context (this chat):** User said the PDF in the **view signed forms** modal still looked **not centered**—wide **empty margins** left/right of the form made **FitH** center on the full raster instead of the **input column**.
+
+**Changes:** **`signedOrderFormPdf.ts`** — after **`html2canvas`**, **`trimCanvasToContentBounds`** scans alpha + non-white pixels, finds bounding box (with small padding), draws a **cropped canvas**, then **`rasterizeSnapshotToSinglePdfPage`**. Falls back to uncropped on **`getImageData`** failure or degenerate bounds. **`npm run build`**. Pushed **`preview/mobile`**.
