@@ -31,6 +31,7 @@ import {
   bookingEditLinkClassName,
   bookingEditLinkStyle
 } from '../utils/bookingAppointmentFormDraft';
+import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -699,7 +700,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const handleCheckout = () => {
     trackActivity('cart_navigate', { destination: 'checkout' });
     onClose();
-    navigate('/checkout');
+    navigate(checkoutPathForCartItems(cartItems as { type?: string; name?: string }[]));
   };
 
   const handleViewCart = () => {

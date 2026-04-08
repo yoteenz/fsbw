@@ -10,7 +10,16 @@ import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
 import { orderRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
-import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
+import {
+  getOrderTrackingStageFromOrder,
+  orderFormEffectiveSignedForPipeline,
+} from '../../../utils/orderTracking';
+import { consultBookingInspoPhotoUrlsFromOrder } from '../../../utils/consultOrderInspoPhotos';
+import {
+  consultDigitalOrderTrackingBarFillPct,
+  orderUsesDigitalFulfillmentTimeline,
+} from '../../../utils/digitalOrderFulfillment';
+import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
 import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
@@ -611,6 +620,12 @@ function ConciergePage() {
   const orderTrackingSectionRef = useRef<HTMLDivElement | null>(null);
   const [activeOrders, setActiveOrders] = useState<any[]>([]);
   const [expandedStages, setExpandedStages] = useState<Set<number>>(new Set());
+  const [, setConsultBarTick] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setConsultBarTick((n) => n + 1), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const CONCIERGE_TRACKING_STATUSES = [
     'PLACED', 'CONFIRMED', 'PREPARING', 'SHIPPED_TO_HUB', 'IN_TRANSIT',
@@ -3308,7 +3323,7 @@ function ConciergePage() {
                                 if (
                                   !isCanceled &&
                                   selectedOrder?.status === 'PLACED' &&
-                                  !selectedOrder?.orderFormSigned &&
+                                  selectedOrder?.orderFormSigned !== true &&
                                   orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
                                 ) {
                                   // Check if 24 hours have passed since order was placed
@@ -3338,7 +3353,7 @@ function ConciergePage() {
                                 }
                                 const isAwaitingSignature =
                                   selectedOrder?.status === 'PLACED' &&
-                                  !selectedOrder?.orderFormSigned &&
+                                  selectedOrder?.orderFormSigned !== true &&
                                   !isCanceled &&
                                   orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>);
                                 
@@ -3353,6 +3368,16 @@ function ConciergePage() {
                                 // CANCELED orders should not show progress - freeze at 0% or current progress
                                 let progress = isDeliveredLastStage ? 100 : 
                                   (isCanceled ? 0 : getStageProgress(index, selectedOrder?.date, hasCustomization, true, tShift));
+                                const consultBarFill =
+                                  !isCanceled &&
+                                  selectedOrder &&
+                                  orderUsesDigitalFulfillmentTimeline(selectedOrder) &&
+                                  String(selectedOrder.bookingFlowType || '').trim().toLowerCase() === 'consult'
+                                    ? consultDigitalOrderTrackingBarFillPct(selectedOrder, Date.now())
+                                    : null;
+                                if (consultBarFill != null) {
+                                  progress = consultBarFill;
+                                }
                                 
                                 // Check if previous stage is complete (100% progress) - needed for upcoming stage logic
                                 let previousStageComplete = false;
@@ -3402,7 +3427,7 @@ function ConciergePage() {
                                   // Special case: confirmed stage (index 0) is completed if form is signed
                                   if (
                                     index === 0 &&
-                                    selectedOrder?.orderFormSigned === true &&
+                                    orderFormEffectiveSignedForPipeline(selectedOrder as unknown as Record<string, unknown>) &&
                                     orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
                                   ) {
                                     isCompleted = true;
@@ -3423,7 +3448,8 @@ function ConciergePage() {
                                     selectedOrder as unknown as Record<string, unknown>
                                   );
                                   const isFormSigned =
-                                    needsAuthForm && selectedOrder?.orderFormSigned === true;
+                                    needsAuthForm &&
+                                    orderFormEffectiveSignedForPipeline(selectedOrder as unknown as Record<string, unknown>);
                                   const orderDate = selectedOrder?.date;
                                   const placedAt = selectedOrder?.placedAt;
                                   
@@ -3458,7 +3484,18 @@ function ConciergePage() {
                                   }
                                   
                                   if (!needsAuthForm) {
-                                    durationText = stageDuration === 0 ? 'SAME DAY' : stageDuration === 1 ? '1 DAY' : stageDuration === 28 ? '4 WEEKS' : `${stageDuration} DAYS`;
+                                    const isConsultOrder =
+                                      String(selectedOrder?.bookingFlowType || '').trim().toLowerCase() ===
+                                      'consult';
+                                    durationText = isConsultOrder
+                                      ? '3 DAYS'
+                                      : stageDuration === 0
+                                        ? 'SAME DAY'
+                                        : stageDuration === 1
+                                          ? '1 DAY'
+                                          : stageDuration === 28
+                                            ? '4 WEEKS'
+                                            : `${stageDuration} DAYS`;
                                   } else if (isFormSigned) {
                                     durationText = '2 DAYS';
                                   } else if (isPastTimeLimit) {
@@ -4073,6 +4110,36 @@ function ConciergePage() {
                                                 selectedOrder as unknown as Record<string, unknown>
                                               );
                                               if (!needsAuthFormRow) {
+                                                const consultInspoUrls = consultBookingInspoPhotoUrlsFromOrder(
+                                                  selectedOrder as unknown as Record<string, unknown>
+                                                );
+                                                if (
+                                                  selectedOrder.bookingFlowType === 'consult' &&
+                                                  consultInspoUrls.length > 0
+                                                ) {
+                                                  return (
+                                                    <div
+                                                      style={{
+                                                        display: 'flex',
+                                                        gap: '13px',
+                                                        marginBottom: '12px',
+                                                        flexWrap: 'wrap',
+                                                        justifyContent: 'flex-start',
+                                                        marginLeft: '2px',
+                                                        alignItems: 'flex-start',
+                                                      }}
+                                                    >
+                                                      {consultInspoUrls.map((src, idx) => (
+                                                        <BookingConsultHairInspoThumb
+                                                          key={`consult-inspo-${idx}-${src.slice(0, 24)}`}
+                                                          src={src}
+                                                          alt={`Hair inspo ${idx + 1}`}
+                                                          scale={0.7}
+                                                        />
+                                                      ))}
+                                                    </div>
+                                                  );
+                                                }
                                                 const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
                                                 const textureIconTop =
                                                   productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
@@ -4097,7 +4164,9 @@ function ConciergePage() {
                                                   </div>
                                                 );
                                               }
-                                              const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                              const isFormSigned = orderFormEffectiveSignedForPipeline(
+                                                selectedOrder as unknown as Record<string, unknown>
+                                              );
                                               const orderDate = selectedOrder?.date;
                                               const placedAt = selectedOrder?.placedAt;
                                               
@@ -4270,7 +4339,37 @@ function ConciergePage() {
                                                 </div>
                                               );
                                             }
-                                            // Other stages use silky texture icon
+                                            // Other stages: consult shows submitted hair inspo; else silky texture icon
+                                            const consultInspoUrlsOther = consultBookingInspoPhotoUrlsFromOrder(
+                                              selectedOrder as unknown as Record<string, unknown>
+                                            );
+                                            if (
+                                              selectedOrder.bookingFlowType === 'consult' &&
+                                              consultInspoUrlsOther.length > 0
+                                            ) {
+                                              return (
+                                                <div
+                                                  style={{
+                                                    display: 'flex',
+                                                    gap: '13px',
+                                                    marginBottom: '12px',
+                                                    flexWrap: 'wrap',
+                                                    justifyContent: 'flex-start',
+                                                    marginLeft: '2px',
+                                                    alignItems: 'flex-start',
+                                                  }}
+                                                >
+                                                  {consultInspoUrlsOther.map((src, idx) => (
+                                                    <BookingConsultHairInspoThumb
+                                                      key={`consult-inspo-other-${idx}-${src.slice(0, 24)}`}
+                                                      src={src}
+                                                      alt={`Hair inspo ${idx + 1}`}
+                                                      scale={0.7}
+                                                    />
+                                                  ))}
+                                                </div>
+                                              );
+                                            }
                                             const textureIconSize = productName === 'BLANCO' ? '35.48px' : '83px';
                                             const textureIconTop = productName === 'BLANCO' ? 'calc(50% + 5px)' : 'calc(50% + 2px)';
                                             return (
@@ -4349,7 +4448,10 @@ function ConciergePage() {
                                             >
                                               <div
                                                 style={{
-                                                  width: isCompleted || isDeliveredLastStage ? '100%' : `${progress}%`,
+                                                  width:
+                                                    isCompleted || isDeliveredLastStage
+                                                      ? '100%'
+                                                      : `${Math.min(100, Math.max(0, progress))}%`,
                                                   height: '100%',
                                                   backgroundColor: isCompleted || isDeliveredLastStage ? '#EB1C24' : '#EB1C24',
                                                   transition: 'width 0.3s ease',
@@ -4387,7 +4489,9 @@ function ConciergePage() {
                                                       if (progress > 0) return `STATUS: ${Math.round(progress)}% COMPLETE`;
                                                       return `STATUS: ${Math.round(progress)}% COMPLETE`;
                                                     }
-                                                    const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                                    const isFormSigned = orderFormEffectiveSignedForPipeline(
+                                                      selectedOrder as unknown as Record<string, unknown>
+                                                    );
                                                     const orderDate = selectedOrder?.date;
                                                     const placedAt = selectedOrder?.placedAt;
                                                     

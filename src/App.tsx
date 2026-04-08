@@ -917,6 +917,11 @@ function App() {
             <CheckoutPage />
           </Suspense>
         } />
+        <Route path="/checkout/gift-card" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <CheckoutPage />
+          </Suspense>
+        } />
         <Route path="/checkout" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutPage />

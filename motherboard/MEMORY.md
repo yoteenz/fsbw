@@ -12557,3 +12557,381 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User ran **`20260402210000_meetings_category_consult_quotes.sql`** in Supabase SQL Editor and hit **`42710`**: policy **`Users read own consult quotes`** already exists (partial / repeat run).
 
 **Changes:** **`supabase/migrations/20260402210000_meetings_category_consult_quotes.sql`** — **`drop policy if exists "Users read own consult quotes" on public.consult_quotes;`** immediately before **`create policy`** so the migration is safe to re-run.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo photos above duration line
+
+**Context (this chat):** User wanted **consult-only** order tracking (Concierge) to show **client-submitted hair inspo photos** above the gray line above **ESTIMATED DURATION**, instead of the **SILKY** texture thumbnail.
+
+**Changes:** **`consultOrderInspoPhotos.ts`** — **`consultBookingInspoPhotoUrlsFromOrder`**. **`checkout/page.tsx`** — persist **`bookingInspoPhotoUrls`** on **`newOrder`** from consult cart line. **`orders/page.tsx`** — **`Order.bookingInspoPhotoUrls`**; mock consult orders sample URLs. **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`** and URLs exist, render **50×80** bordered photo strip in expanded tracking (replaces texture for stage 0 no-form path and “other stages” fallback). **`npx tsc --noEmit`**. Commit **`a784ad4`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Admin client details Appointments: edit booking / consult icons + meetings handoff
+
+**Context (this chat):** User wanted **edit booking** and **edit consult** icons on the **right** of client panels on the **Appointments** tab (client details toggle), matching **A/C** tabs on **admin meetings**.
+
+**Changes:** **`adminMeetingsFocusSession.ts`** — **`store` / `read` / `clear`** for **`adminMeetingsFocusFromClientDetails`** (**meeting id** + **date**). **`adminMeetingClientPanels.tsx`** — optional **`actionIconSrc`** (default booking SVG). **`admin/clients/page.tsx`** — **`actionAriaLabel`**, **`actionIconSrc`** (**booking** vs **consult**), **`onActionClick`** stores focus + **`navigate('/admin/meetings?tab=…')`**. **`AdminMeetingsHub.tsx`** — on load, align **`calendarAnchor`** to focus date, then **`setEditMeeting`** / **`setQuoteMeeting`** + **`setSelectedDay`** for bookings; **consults** use **`edit-meeting-icon.svg`** on hub list. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo same frame as booking consult upload
+
+**Context (this chat):** User wanted consult **order tracking** hair inspo photos to use the **same border treatment** as **attached hair inspo** on the booking flow (**`/booking/consultation`** thumbs: white ring + black hairline) and **uniform** thumb size.
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — shared **88×88** outer + inner frame (**`padding: 1px`**, **`border: 3px solid white`**, **`boxShadow: 0 0 0 1.1px black`**, **`#f5f5f5`** fill, **`object-fit: cover`**) + **`BookingConsultHairInspoThumb`**. **`consultation/page.tsx`** uses shared constants/styles. **`concierge/page.tsx`** replaces **50×80** black-border thumbs with **`BookingConsultHairInspoThumb`**, **`gap: 13px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult order status bar: 30% / 60% / 100% by status
+
+**Context (this chat):** User wanted the **consult** booking **order tracking bar** to show staged fill when **PLACED** / **PROCESSING** / **COMPLETE** (updated to **30% / 60% / 100%**).
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** (**PLACED** → **30%**, **PROCESSING** → **60%**, **COMPLETE**/**DELIVERED** → **100%**; was **⅓ / ⅔**). **`orders/page.tsx`** + **`checkout/confirm/page.tsx`** — progress row under **ORDER STATUS** for consult only (Concierge-style **7px** bar). **`concierge/page.tsx`** — same fill overrides **`getStageProgress`** for consult digital timeline; inner fill **`width`** clamped **0–100%**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bookings: no loyalty points at checkout
+
+**Context (this chat):** User asked that **consult** bookings **not** earn loyalty points at checkout (**appointment** deposits still earn).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — only **`booking-appointment`** adds to points net; **`booking-consult`** stays in cart **pool** for discount allocation but **excluded** from earned base (both simple + mixed-special branches). **`checkout/page.tsx`** — removed **`isBookingsOnlyCheckout → 0`** shortcut and consult-only strip zeroing so **appointment-only** bookings still earn; **`pointsEligibleNetAmount`** drives the loyalty line. **`checkout/confirm/page.tsx`** — fallback **`pointsEligibleAmount`** reducers skip **`booking-consult`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout loyalty: no points on gift cards, digital, membership lines
+
+**Context (this chat):** User asked that **membership subscriptions/upgrades**, **gift cards**, and **other digital** checkout lines **not** earn loyalty points (with consult already excluded).
+
+**Changes:** **`loyaltyPointsEligibleNet.ts`** — **`isMembershipSubscriptionCartLine`** (**`subscriptionTier`** **3/6/12** months or legacy **`digital`** + name pattern), **`cartHasAnyLoyaltyEarningLine`**; membership lines skipped in gross loops like gift/digital. **`computePointsEligibleNetUsd`** returns **0** when no earning lines. **`checkout/page.tsx`** — **`pointsEligibleNetAmount`** + **`pointsEarned`** / **`checkoutSummaryRewards`** gated by **`!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine`**. **`checkout/confirm/page.tsx`** — **`isMembershipTierCartItem`** delegates to shared helper; reduces + rewards block skip membership + force **0** when no earning lines. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Checkout: hide loyalty row when cart earns no points
+
+**Context (this chat):** User asked to remove the **“YOU'RE EARNING…”** line at checkout for carts that don’t earn loyalty points (digital / gift / membership / consult-only, etc.).
+
+**Changes:** **`checkout/page.tsx`** — loyalty block (signed-in copy + **SIGN IN** CTA) renders only when **`cartHasAnyLoyaltyEarningLine(cartItems)`**; black separator **`marginTop`** **-14px** when loyalty row hidden (same as subscription upgrade). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Concierge consult tracking: hair inspo 30% smaller
+
+**Context (this chat):** User asked to reduce **consult order tracking** hair inspo photo size by **30%** (booking consult upload thumbs unchanged).
+
+**Changes:** **`bookingConsultHairInspoThumb.tsx`** — optional **`scale`** (default **1**); outer box **88 × scale** px. **`concierge/page.tsx`** — **`BookingConsultHairInspoThumb`** **`scale={0.7}`** (~**62×62**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult bar fill: 30% / 60% / 100%
+
+**Context (this chat):** User asked to change consult order tracking bar from **⅓ / ⅔** to **30%** (**PLACED**), **60%** (**PROCESSING**), **100%** (**COMPLETE**).
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`consultDigitalOrderTrackingBarFillPct`** returns **30**, **60**, **100**; **`MEMORY.md`** consult bar section title updated. Commit **`fcb26ed`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Consult tracking: 3-day bar fill + auto-complete + 3-day duration copy
+
+**Context (this chat):** User wanted consult order tracking bar to **fill over 3 days**: **PLACED** from **10%** progressing; **PROCESSING** **≥30%**; **100%** when **3 days** elapse / **COMPLETE**; **ESTIMATED DURATION** **3 DAYS** (not same day) on Concierge for consult.
+
+**Changes:** **`digitalOrderFulfillment.ts`** — **`CONSULT_ORDER_TRACKING_WINDOW_MS`**, **`consultDigitalOrderTrackingBarFillPct(order, nowMs)`**: linear **10→100%** from **`placedAt`** / **`date`**; **PLACED** stays **below 30%**; **PROCESSING** (and mapped statuses) **`max(30%, linear)`**. **`consultOrderLifecycle.ts`** — **`advanceConsultOrdersPlacedToProcessing`**: **72h** from **`placedAt`** sets **COMPLETE** (still **24h** → **PROCESSING**). **`orders/page.tsx`** — consult bar uses **`Date.now()`** + **`_countdownTick`** for live updates. **`concierge/page.tsx`** — **1min** tick for bar; stage **0** duration **3 DAYS** for consult. **`checkout/confirm/page.tsx`** — **`consultDigitalOrderTrackingBarFillPct(..., Date.now())`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-08 — Booking consult: hair inspo file control + session draft
+
+**Context (this chat):** User reported consult **hair inspo** not working and **thumbnails** not showing under **CHOOSE FILE**.
+
+**Changes:** **`consultation/page.tsx`** — **`inspoSessionMayClearWhenEmptyRef`**: don’t **`removeItem`** on empty **`inspoItems`** until after first paint (avoids React **Strict Mode** mount/unmount wiping **`sessionStorage`** before draft hydrates). Hair inspo row: **`<label htmlFor>`** + invisible **`input[type=file]`** over row, styled row **`pointerEvents: 'none'`**; **`accept`** adds **`image/heic`/`heif`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Merge `preview/mobile` into feature branch: meetings + client details
+
+**Context (this chat):** User asked to **`git fetch origin preview/mobile`** and resolve merge conflicts, classifying simple vs complicated.
+
+**Conflict classification:**
+- **Complicated / divergent intent:** Feature branch introduced **`adminMeetingHubModel.ts`** + **`adminClientMeetingsFocusSession.ts`** and **`AdminMeetingHubStyleCard`** fed from the hub model; **`preview/mobile`** kept meeting helpers in **`adminMeetingClientPanels.tsx`**, **`adminMeetingsFocusSession`** (no tab), **`useAdminMeetingsApiRefresh`**, **`markConsultOrderCompleteAfterQuoteSent`**, **`listAggregatedAdminMeetingsForClientDetails`**, and **`AdminMeetingClientPanel`** for hub rows. These needed a **single** design, not a mechanical pick-one.
+- **Simple:** **`motherboard/MEMORY.md`** — keep **`preview/mobile`** timeline; drop duplicate HEAD-only entries. **`AdminMeetingsHub`** list UI — keep **`AdminMeetingHubStyleCard`**. Remove unused import after merge.
+
+**Resolution:** Deleted **`adminMeetingHubModel.ts`** and **`adminClientMeetingsFocusSession.ts`**. **`AdminMeetingHubStyleCard`** now imports card helpers from **`adminMeetingClientPanels`**. Extended **`adminMeetingsFocusSession`** payload with optional **`tab?: 'bookings' | 'consults'`**; **`storeAdminMeetingsFocusFromClientDetails`** accepts **`tab`**; hub focus effect uses stored tab when present. **`admin/clients/page.tsx`**: **`appointments`** from **`listAggregatedAdminMeetingsForClientDetails`**, **`AdminMeetingHubStyleCard`** + **`contentInsetLeftPx={6}`**, focus via extended session; removed per-tab **`getAdminMeetings`** + duplicate state. **`npx tsc --noEmit`**.
+
+---
+
+## 2026-04-07 — All work on `preview/mobile` only; remove `cursor/*` branch
+
+**Context (this chat):** User said changes were pushed to the wrong branch (**`cursor/appointment-notes-border-spacing-8444`**); they want **everything on `preview/mobile`** only, the cursor branch **deleted**, and asked why agents keep creating branches after they asked for a memory **not** to.
+
+**Why it happened:** Cloud / task instructions still designated a **`cursor/…`** branch; that overrode the repo’s stated preference until the user repeated it.
+
+**Actions:** Checked out **`preview/mobile`**, fast-forward merged through **`bc8d145`** (same tip as the cursor branch), **`git push -u origin preview/mobile`**, **`git push origin --delete cursor/appointment-notes-border-spacing-8444`**, deleted local cursor branch. **`motherboard/CORE.md`** — branch policy updated: **only `preview/mobile`**, no new **`cursor/*`** unless user explicitly asks.
+
+**Convention:** Agents must **ignore** default task-branch naming when it conflicts; use **`preview/mobile`** for all pushes here.
+
+---
+
+## 2026-04-07 — Consult hair inspo: no trailing period on “N OF 3 PHOTOS SUBMITTED”
+
+**Context (this chat):** User asked to remove the period from copy like **“1 OF 3 PHOTOS SUBMITTED.”** in the hair inspo input area on the consult booking page.
+
+**Changes:** **`src/pages/booking/consultation/page.tsx`** — **`hairInspoSubmittedLabel`** returns **`…SUBMITTED`** without **`.`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X button 2px lower
+
+**Context (this chat):** User asked to move the **X** delete control on hair inspo thumbnails **down 2px** (consult booking page only).
+
+**Changes:** **`consultation/page.tsx`** — remove button **`top`** **`-6px` → `-4px`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details: gray rule under red header name
+
+**Context (this chat):** User said the client details toggle was missing the **gray border** under the **red header client name**.
+
+**Changes:** **`admin/clients/page.tsx`** — header row (name + close) **`borderBottom: '1px solid #e5e7eb'`**, **`paddingBottom: '10px'`**, **`marginBottom: '16px'`** (replaces **`mb-4`** on that row). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details header: visible gray rule + always show bar
+
+**Context (this chat):** User repeated that the gray line under the red client name was **missing** (likely **1px #e5e7eb** too faint on frosted card, or header row skipped when **`selectedClient`** was null).
+
+**Changes:** **`admin/clients/page.tsx`** — single header row always (email fallback title when client not resolved); **`borderBottom: '1.3px solid #9ca3af'`** (design-system gray). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin client details: 6px above profile avatar
+
+**Context (this chat):** User asked for **6px** extra space **above** the circular profile image in the client details toggle.
+
+**Changes:** **`admin/clients/page.tsx`** — profile wrapper **`marginTop: '6px'`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X +10% size
+
+**Context (this chat):** User asked to increase the **X** delete control on hair inspo thumbnails by **10%** (consult booking page).
+
+**Changes:** **`consultation/page.tsx`** — circular button **14→15.4px**, border **0.97→1.07px**, inner icon **8.4→9.24px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin “view signed forms” modal UX
+
+**Context (this chat):** User asked for signed-forms popup updates: title **SIGNED FORMS**; **ORDER #** line black Futura Book; tighter gap between **ORDER STATUS** label and value (single space); signed **time** gray Futura Medium; tap row opens full form with **red X** back to list; list vertically centered when multiple forms, **top-aligned** when one; backdrop tap returns to list before closing.
+
+**Changes:** **`admin/clients/page.tsx`** — **`signedFormDetailId`** state; **`SignedOrderFormCard`** **`list` / `full`** variants; **`formatSignedFormOrderNumberDisplay`**, **`formatSignedAtParts`**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Client details header rule + profile spacing fix
+
+**Context (this chat):** User said the gray line under the red client name was the **wrong gray** vs other dividers, and **6px above profile** did not show (likely **margin collapse** with header **`marginBottom`**).
+
+**Changes:** **`admin/clients/page.tsx`** — header **`borderBottom`** **`1px solid #e5e7eb`** (matches overview spacer + tab **`borderTop`** rules); profile row **`marginTop: 6px` → `paddingTop: 6px`** on the flex wrapper. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: remove X ring +0.3px
+
+**Context (this chat):** User asked to increase **line thickness** of the red **X** delete control on hair inspo thumbs by **0.3px** (consult booking).
+
+**Changes:** **`consultation/page.tsx`** — circular remove button border **1.07px → 1.37px**. **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Consult hair inspo: X stroke +0.3px (not circle border)
+
+**Context (this chat):** User said the prior change thickened the **black circle** border, not the **red X**; asked to **undo** and fix.
+
+**Changes:** **`consultation/page.tsx`** — circle border back **1.07px**; replace **`close-icon` `<img>`** with inline SVG matching asset path, **`fill`/`stroke` `#EB1C24`**, **`strokeWidth` 0.4** (asset was **0.1**, **+0.3**). **`npx tsc --noEmit`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-07 — Admin signed forms: PDF viewer + list header colors + vertical center
+
+**Context (this chat):** User wanted **`SIGNED APR …`** text red only, time gray Futura medium; detail view as **PDF** (fields + photo ID + uploads) with **save/download**; **vertically center** two list panels; modal wider for PDF.
+
+**Changes:** **`jspdf`** dependency. **`signedOrderFormPdf.ts`** — **`buildSignedOrderFormPdf`**. **`SignedOrderFormPdfPanel.tsx`** — blob URL + **iframe** + download. **`admin/clients/page.tsx`** — **`SignedOrderFormListRow`**; list **`justifyContent: center`** when **≥2** forms; detail **`maxWidth` 520px**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin signed forms popup: Futura Medium date, download outside card, mock PDF
+
+**Context (this chat):** User asked for signed order form popup updates: red **“SIGNED …”** date in **Futura PT Medium**; remove gray **stored snapshot incomplete** warning; move **SAVE / DOWNLOAD PDF** below the white modal card; add a **mock** signed form with mock signature, photo ID, and matching card image for layout/PDF approval.
+
+**Changes:** **`SignedOrderFormListRow`** — **`SIGNED ${datePart}`** uses **`Futura PT Medium`** / **fontWeight 500**. **`SignedOrderFormPdfPanel`** — iframe preview only (no warning, no download). **`useSignedOrderFormPdf.ts`** — shared blob URL + loading/error for PDF build. **`admin/clients/page.tsx`** — outer flex wraps white card + download button below card; detail **`maxHeight`** so PDF + button fit in viewport; **`useSignedOrderFormPdf`** + **`downloadSignedFormDetailPdf`**. **`mockSignedOrderFormForApproval.ts`** — canvas **PNG** data URLs (mock ID, card, signature) + full **`formFields`**; **`mergeSignedFormsWithMockApproval`** prepends to admin list (id **`mock-approval-signed-form-v1`**). **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed order PDF as order-form page snapshot
+
+**Context (this chat):** User said the **mock PDF** should look **exactly like** the **`/shop/order-form`** page—a **snapshot** of that UI, not a generic field list.
+
+**Changes:** **`html2canvas`** dependency. **`signedOrderFormPdfSnapshotDom.ts`** — **`buildSignedOrderFormSnapshotElement`**: off-DOM tree mirroring order form **header, three intro paragraphs, fields shown on page** (name, order #/date, email, auth checkboxes, photo ID + last-4 upload areas, address-difference textarea, by-signing + signature pad + submit), same **marble** background asset and **Futura** fallbacks. **`signedOrderFormPdf.ts`** — **`buildSignedOrderFormPdf`** builds snapshot → **`html2canvas`** → **multi-page** **`jsPDF`** strips. **`mockSignedOrderFormForApproval`** comment updated. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Mock signed-form PDF: white fields-only snapshot
+
+**Context (this chat):** User wanted the **mock approval PDF** only: **no** first page (no **ORDER AUTHORIZATION** title / three intro paragraphs), **no** marble or glassmorphism **card**, **no** **CLEAR SIGNATURE** line, **no** **SUBMIT** button—only **labels, inputs, proof photos, signature** in the **same positions** as the live form, on a **plain white** background.
+
+**Changes:** **`signedOrderFormPdfSnapshotDom.ts`** — shared **`buildOrderFormFieldsColumn`**; when **`form.id === MOCK_APPROVAL_SIGNED_FORM_ID`**, **`buildSignedOrderFormSnapshotElement`** returns **`buildMockPlainWhiteSnapshotRoot`** (390px width, white bg, fields column only). Full snapshot unchanged for real stored forms. **`signatureArea`** takes **`showClearLine`** (false for mock). **`signedOrderFormPdf.ts`** — **`html2canvas`** **`backgroundColor: '#ffffff'`** for mock id. **`mockSignedOrderFormForApproval`** comment. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Order auth PDF: one page, uppercase values, branding header, repeat prefill
+
+**Context (this chat):** User asked: signed-form **PDF** fits **one page**; **input text uppercase** in PDF; red header **“FRONTAL SLAYER ORDER AUTHORIZATION FORM”**; **auto prefill** order authorization like consult **head measurements**—reuse last submitted **fields + ID/card photos + signature** so repeat orders don’t re-enter/re-attach.
+
+**Changes:** **`signedOrderFormPdf.ts`** — single-page PDF via **uniform scale** to fit letter (no multi-page slice). **`signedOrderFormPdfSnapshotDom.ts`** — **`pdfBrandingHeader()`** on mock + full snapshots; **`displayUpper`** + **`textTransform: uppercase`** on faux inputs/textarea; removed duplicate small **ORDER AUTHORIZATION** h2 on full snapshot. **`lastOrderAuthorizationFormDraft.ts`** — per-user **`localStorage`** draft (**`lastOrderAuthorizationFormDraft_${email}`**) with carry-over fields (not order #/date/CVV) + image data URLs; **`save`/`load`**. **`order-form/page.tsx`** — after successful submit **`saveLastOrderAuthorizationFormDraft`**; on load merge draft into **`formData`** only where checkout left empty; **`photoIdPreview`/`lastFourDigitsPreview`** from draft; signature canvas draws draft PNG after layout; photo ID validation accepts **preview data URL** without new **`File`**; submit uses preview URLs when no new file. Listeners: **`signedOrderFormsUpdated`**, **`storage`**, **`signInStateChanged`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin signed forms list: order status line + Futura Medium hints
+
+**Context (this chat):** User asked to **update** the **TAP TO VIEW PDF** line to **gray Futura PT Medium**, and add **ORDER STATUS: DELIVERED** (or real status) **above** that line in the signed-forms popup list rows.
+
+**Changes:** **`admin/clients/page.tsx`** — **`orderStatusLabelForSignedForm`** matches **`form.orderId`** / normalized **order number** to **`selectedRawOrders`**; status uppercase, default **`DELIVERED`** if missing; synthetic rows use **`formFields.status`** when no match. **`SignedOrderFormListRow`** — new gray **Futura PT Medium** **`ORDER STATUS: …`** paragraph with **`marginBottom: 6px`** above hints; **summary** and **full** hint lines use **`Futura PT Medium`** / **`#808080`** / **`fontWeight 500`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed forms PDF viewer centering + PDF snapshot input/checkbox tweaks + DELIVERED black
+
+**Context (this chat):** User wanted the **PDF** centered in the modal viewport (was shifted right); **PDF snapshot** faux inputs same **36px** height as live form; checkbox **X** centered like authorization page; **ORDER STATUS:** line gray but **`DELIVERED`** word **black** only.
+
+**Changes:** **`SignedOrderFormPdfPanel.tsx`** — scrollable flex wrapper **`justifyContent: center`**, iframe **`maxWidth: 100%`**, PDF hash **`#toolbar=1&navpanes=0&view=FitH`**; removed detail horizontal padding in **`admin/clients/page.tsx`**. **`signedOrderFormPdfSnapshotDom.ts`** — faux inputs **`lineHeight: 1.2`**, **`overflow: hidden`** for **36px** box; shared **`appendCheckboxMark`** — **14×14** **`object-fit: contain`** in **16×16** flex box (no absolute). **`SignedOrderFormListRow`** — split spans: **`ORDER STATUS: `** gray, value **black** if **`DELIVERED`** else gray. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin Pending FORMS: approve/decline workflow + client signed-forms gating
+
+**Context (this chat):** User wanted **Admin → Pending → FORMS** to replace **AWAITING SIGNATURE** with red **VIEW FORM** only; tap opens modal with **PDF**, **APPROVE** (adds to client **view signed forms** only when approved, advances order/tracking) or **DECLINE** (optional reason). Submissions queue after order-form submit; client details list shows **approved** forms only.
+
+**Changes:** **`StoredSignedOrderForm`** — **`adminApproved`**, **`adminDeclined`**, timestamps/reason; **`order-form/page.tsx`** — new submits with **`adminApproved: false`**. **`markOrderFormSignedInUserOrders`** — sets **`orderFormClientSubmitted`**, **`orderFormAdminApproved: false`**. **`finalizeClientOrderAfterAdminFormApproval`**, **`markOrderFormDeclinedInUserOrders`**, **`approveOrderFormSubmission`**, **`declineOrderFormSubmission`**, **`updateSignedOrderFormEntry`** in **`signedOrderFormsStorage.ts`**. **`getSignedFormsForClientDisplay`** — filters **`adminApproved === false`** stored rows; synthetic rows skip when **`orderFormClientSubmitted && !orderFormAdminApproved`**. **`orderTracking.ts`** — **`orderFormAwaitingAdminApproval`**, **`orderFormEffectiveSignedForPipeline`**; stage bump only after admin approval. **`orders/page.tsx`** — **`Order`** flags; **24h cancel** skips awaiting-admin; **PENDING ADMIN APPROVAL** / strip labels; **IN REVIEW** only after admin OK. **`concierge/page.tsx`** — awaiting signature = **`orderFormSigned !== true`**; effective signed for progress uses helper. **`pendingOrderAuthorizationForms.ts`** — list/count pending (**`adminApproved === false`**, not declined, not summary). **`admin/pending/page.tsx`** — real FORMS list, **`VIEW FORM`**, review modal (**`SignedOrderFormPdfPanel`**, **APPROVE**/**DECLINE**/reason submodal, download), overview **ORDER FORMS** count from local queue. **`mockSignedOrderFormForApproval`** — **`adminApproved: true`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Form decline: cancel/refund + inventory depletion fixes
+
+**Context (this chat):** User asked that when an order form is **declined/rejected**, the **order is canceled/refunded** with **stock restored**; and to **confirm inventory** tracks **product availability** from **purchases** (increase/decrease correctly).
+
+**Decisions / outcomes:** There is no separate server stock table—**admin revenue inventory** is derived from **`getDepletedInventory`** over **`userOrders_*`**. **Canceled** orders are **excluded** from depletion so canceling **restocks**. **Refund** is modeled as **re-crediting digital cash** for the **gift card amount applied at checkout** (when **`giftCardAppliedUsd`** is set), **reversing loyalty points** from that order, **reversing referrer $20** when the matching **`referralEarnings`** entry exists, and **`hasMadeFirstPurchase`** reset when the client has **no non-canceled orders** left.
+
+**Changes:** **`orderFormDeclineCancelRefund.ts`** — **`cancelAndRefundOrderAfterFormDecline`** (move order to **past** as **`CANCELED`**, flags **`canceledDueToFormDecline`**, **`refundedDueToFormDecline`**, **`formDeclineRefundedAt`**). **`signedOrderFormsStorage.ts`** — **`declineOrderFormSubmission`** calls it (removed **`markOrderFormDeclinedInUserOrders`**-only path). **`checkout/page.tsx`** — persist **`lineItems`** (**`orderLineItemsPersist`**: name, qty, type per cart line) and **`giftCardAppliedUsd`** on new orders for physical/checkout flows. **`adminRevenueStats.ts`** — **`getDepletedInventory`** / **`getProductSalesCounts`**: skip **`CANCELED`**, skip **`digitalFulfillmentOnly`**, skip non-physical line types (**gift-card**, **digital**, **booking-***), use **per-line quantity**, apply **packaging** depletion only when at least one shippable wig line exists; product name matching aligned with sales counts (**includes**). **`npm run build`**.
+
+---
+
+## 2026-04-06 — Orders: 24h unsigned cancel + pending-admin strip copy
+
+**Context (this chat):** User confirmed **PLACED** orders must still **auto-cancel after 24h** when the client **never signed** the authorization form; while **`orderFormAwaitingAdminApproval`** (submitted, waiting on admin), **no** 24h cancel; **Orders** card already showed **ORDER FORM PENDING ADMIN APPROVAL**; **status strip** should match.
+
+**Changes:** **`orders/page.tsx`** — comment above **`checkAndCancelExpired`** documents: cancel when **`!orderFormSigned`** (unsigned); skip cancel only when **`orderFormAwaitingAdminApproval`**; strip branches now use full string **`ORDER FORM PENDING ADMIN APPROVAL`** (was **`PENDING ADMIN APPROVAL`**). **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin view signed forms: TAP TO VIEW PDF in brand red
+
+**Context (this chat):** User asked to change **“TAP TO VIEW PDF”** (and the full-PDF variant) on the **view signed forms** pop-up from **gray** to **red**.
+
+**Changes:** **`admin/clients/page.tsx`** — **`SignedOrderFormListRow`**: **`TAP TO VIEW PDF`** and **`TAP TO VIEW / DOWNLOAD PDF`** paragraphs use **`#EB1C24`** instead of **`#808080`** (still **Futura PT Medium**). Commit + push **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed-form PDF: crop snapshot to content for centered viewer
+
+**Context (this chat):** User said the PDF in the **view signed forms** modal still looked **not centered**—wide **empty margins** left/right of the form made **FitH** center on the full raster instead of the **input column**.
+
+**Changes:** **`signedOrderFormPdf.ts`** — after **`html2canvas`**, **`trimCanvasToContentBounds`** scans alpha + non-white pixels, finds bounding box (with small padding), draws a **cropped canvas**, then **`rasterizeSnapshotToSinglePdfPage`**. Falls back to uncropped on **`getImageData`** failure or degenerate bounds. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin Pending: approve/decline on Reviews + Affiliate; seed test forms
+
+**Context (this chat):** User wanted the same **approve / decline (optional reason)** flow as **FORMS** on **REVIEWS** and **AFFILIATE** tabs; **mock order forms** on **FORMS** tab for testing.
+
+**Changes:** **`adminPendingMockQueues.ts`** — **`localStorage`** queues **`adminPendingMockReviews_v1`**, **`adminPendingMockAffiliate_v1`** (seed defaults once); **`approve`/`decline`**, **`listVisible`**, counts, **`PENDING_MOCK_*_UPDATED_EVENT`**. **`mockSignedOrderFormForApproval.ts`** — **`seedPendingTestOrderFormsIfNeeded()`** one-time appends **2** **`appendSignedOrderForm`** rows (**`adminApproved: false`**, mock images when DOM), flag **`adminPendingTestOrderFormsSeeded_v1`**. **`admin/pending/page.tsx`** — unified **`adminReviewModal`** (**form** / **review** / **affiliate**); **VIEW REVIEW**, photo/video tap, **VIEW SUBMISSION**; same modal **APPROVE**/**DECLINE**/reason submodal; **SAVE/DOWNLOAD PDF** only for forms; overview card **ORDER FORMS** uses **`pendingAuthFormsCount`**; **PENDING REVIEWS** + **AFFILIATE REQUESTS** (and overview totals) add mock pending counts; removed static **MOCK:** gray banners on those tabs. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Admin Pending FORMS tab: remove gray intro line
+
+**Context (this chat):** User asked to remove the **gray** explanatory text on the **FORMS** tab of **Admin → Pending** (mock / design-preview style copy above the list).
+
+**Changes:** **`admin/pending/page.tsx`** — removed the gray **`CLIENT-SUBMITTED ORDER AUTHORIZATION FORMS…`** paragraph above the pending-forms list. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — BCF bundles/closures/frontals: 4–6 std, 3–4 express (no custom color)
+
+**Context (this chat):** User asked to set processing for **bundles, closures & frontals** to **4–6 weeks** standard and **express** (**rush** option) to **3–4 weeks**, **excluding custom hair color** (non-default color still uses extended window; styling/add-ons on BCF-only carts also force extended and disable express).
+
+**Changes:** **`checkoutBcfProcessing.ts`** — **`cartQualifiesForBcfProcessingWindows`** (all non–gift/digital/booking lines are **`shop-texture-category`** **bundles|closures|frontals**), **`getCheckoutProcessingTimePersistentLabel`**, **`checkoutExpressProcessingAllowed`**, **`processingTimelineWeekRangeFromLabel`** (parses **3–4**, **4–6**, **10** week cases), **`getConfirmPageFallbackProcessingLabel`**. **`checkout/page.tsx`** — labels, persisted **`processingTime`**, Apple Pay **`navigate`** state, express gating. **`checkout/confirm/page.tsx`** — timeline + fallback labels + rush regex for shipping line. **`orders/page.tsx`**, **`admin/clients/page.tsx`** — timeline math uses **`processingTimelineWeekRangeFromLabel`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — BCF + unit cart: unit (longer) processing wins
+
+**Context (this chat):** User asked that if **BCF** is in the cart **or paired with a unit**, the **longest** processing time applies for the order.
+
+**Changes:** **`checkoutBcfProcessing.ts`** — **`cartLineIsUnitProduct`** (**`capSize`** set, or future **`shop-texture-category`** **`category: units`**), **`cartHasUnitProduct`**, **`cartUsesBcfOnlyProcessingWindows`** (= has BCF **and** no unit lines **and** all relevant lines are BCF). **`getCheckoutProcessingTimePersistentLabel`**, **`checkoutExpressProcessingAllowed`**, **`getConfirmPageFallbackProcessingLabel`** use **`cartUsesBcfOnlyProcessingWindows`** instead of BCF-only-without-units check. **`checkout/page.tsx`** — UI standard/express labels keyed off **`bcfOnlyProcessingWindows`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Unified admin calendar (BrandExpiresDatePicker + meetings hub)
+
+**Context (this chat):** User asked to use the **same calendar design** as **Admin → Meetings → Bookings** for **Admin → Brand → Create code** (expires), and to **update all calendars** to that design.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — optional **`visibleMonthAnchor`** + **`onVisibleMonthAnchorChange`** (controlled month nav), **`selectionIso`**, **`getDayMeta`** (**`AdminCalendarDayMeta`**: disabled, appointment highlight, title), **`onDayClick`** (filter mode without changing value), **`hideClearDate`**. Admin-meetings grid styling extended when **`getDayMeta`** is set (white + red text for days with appointments, gray empty days). **`AdminMeetingsHub.tsx`** — bookings tab replaces inline **`monthMatrix`** markup with **`BrandExpiresDatePicker`** (same travel-block disable + appointment tint + day filter toggle); month changes keep **`calendarAnchor`** day when possible. **`admin/brand/page.tsx`** — create-code expiry uses **`monthLabelVariant="adminMeetings"`** + hub-matching arrow scale. **`admin/meetings/schedule/page.tsx`** and **`admin/special-offer/page.tsx`** — replace native **`type="date"`** with inline **`BrandExpiresDatePicker`** (same variant, **`hideClearDate`**). **`npm run build`**.
+
+---
+
+## 2026-04-06 — Isolated gift card checkout route `/checkout/gift-card`
+
+**Context (this chat):** User asked for **gift cards** to have their **own checkout page**, similar to **A/C bookings** (`/checkout/bookings`) and **membership upgrade** checkout routing.
+
+**Changes:** **`giftCardCheckout.ts`** — **`isGiftCardCartLine`**, **`filterGiftCardCartLines`**, **`isGiftCardCheckoutPath`**, **`isGiftCardOnlyCheckoutState`**. **`checkoutNavigatePath.ts`** — **`checkoutPathForCartItems`** → **`/checkout/bookings`**, **`/checkout/gift-card`**, or **`/checkout`**. **`App.tsx`** — route **`/checkout/gift-card`** → **`CheckoutPage`**. **`checkout/page.tsx`** — load **only gift card lines** on that path; **`/checkout`** **replace** navigates to bookings or gift-card when bag is **only** those lines; empty gift-card checkout **replace** → **`/tools/gift-card`**; nav breadcrumb **GIFT CARD**; **`checkout_start`** payload includes **`giftCard`** / **`bookings`**. **`CartDropdown`** + **`shopping-bag/page.tsx`** — checkout button uses **`checkoutPathForCartItems`**. **`signInReturnTo.ts`** — legacy **`checkout/gift-card`** and **`checkout/bookings`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Calendar weekday columns: Sun-first (S M T W T F S)
+
+**Context (this chat):** User asked to structure calendar weekday columns as **S M T W T F S** instead of **M T W T F S S**.
+
+**Changes:** **`BrandExpiresDatePicker.tsx`** — **`adminMeetings`** grid uses **`startWeekdaySun0`** (same rolling 42-cell layout as before but aligned to Sunday); header row **`ADMIN_MEETINGS_WEEKDAYS`** set to **`['S','M','T','W','T','F','S']`**; removed unused **`startWeekdayMonday0`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Gift card PDP: PROCEED TO CHECKOUT → `/checkout/gift-card`
+
+**Context (this chat):** User asked for the gift card product page to use **PROCEED TO CHECKOUT** instead of **ADD TO BAG**, routing to the **isolated gift card checkout** with a **filtered cart** (gift lines only in that flow).
+
+**Changes:** **`tools/gift-card/page.tsx`** — primary CTA **PROCEED TO CHECKOUT**; on click: remove existing **`gift-card`** lines from **`cartItems`**, prepend the selected-denomination line, recompute **`cartCount`** (sum of quantities), dispatch **`cartCountUpdated`** / **`cartItemsChanged`** / **`cartUpdated`**, **`navigate('/checkout/gift-card')`**; **`trackActivity`** **`add_to_cart`** (source **`gift_card_pdp`**) + **`cart_navigate`**; brief **`…`** disabled state while navigating. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Tools hub gift strip: PROCEED TO CHECKOUT (fix “still adding to bag”)
+
+**Context (this chat):** User said gift card flow still **only added to cart** instead of routing to **`/checkout/gift-card`** — root cause was **`/home/tools`** gift card carousel still using **`handleAddToCart`** (bag icon toggle), not the PDP button.
+
+**Changes:** **`giftCardCheckoutSession.ts`** — shared **`writeGiftCardSelectionForCheckoutSession`** (strip prior gift-card lines, prepend one line, quantity-based **`cartCount`**, dispatch sync events). **`tools/gift-card/page.tsx`** — PDP uses that helper. **`tools/page.tsx`** — replace bag icons with **PROCEED TO CHECKOUT** per denomination; same helper + **`navigate('/checkout/gift-card')`**; remove **`inCart`** sync effect; **`trackActivity`** from strip (**`tools_gift_strip`**). **`npm run build`**.
+
+---
+
+## 2026-04-06 — Fix `/checkout/gift-card` bounce (empty cart race)
+
+**Context (this chat):** User said **PROCEED TO CHECKOUT** still did not land on gift checkout — **`checkout/page.tsx`** had an effect: on **`/checkout/gift-card`**, if **`cartItems.length === 0`**, **`replace`** navigate to **`/tools/gift-card`**. On first mount **`cartItems`** is still **`[]`** until **`loadCartItems`** runs, so navigation was immediately overwritten.
+
+**Changes:** **`checkout/page.tsx`** — empty gift-checkout redirect now checks **`localStorage` `cartItems`** via **`filterGiftCardCartLines`**; only redirect when there are **no** gift lines in storage. **`cartItems.length`** kept in deps so after **`loadCartItems`** clears bad state we still redirect. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Merge preview/mobile into master (sync)
+
+**Context (this chat):** User asked to push all changes from **`preview/mobile`** to **`master`** so branches stay in sync.
+
+**Changes:** Resolved **`motherboard/MEMORY.md`** merge conflict (kept **`master`** Supabase migration note + full **`preview/mobile`** MEMORY tail). Completed merge **`preview/mobile` → `master`**, push **`origin/master`**.

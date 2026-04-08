@@ -22,11 +22,13 @@ import {
   ORDER_TRACKING_PULSATE_ANIMATION,
   ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
   ORDER_TRACKING_STAGE_LABELS,
+  orderFormAwaitingAdminApproval,
   orderTrackingDeliveredRowIsCurrent,
   orderTrackingStageRowIsCurrent,
   orderShowsDeliveredTrackingLine,
 } from '../../utils/orderTracking';
 import {
+  consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline
@@ -36,6 +38,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../layouts/menuToggleHeights';
+import { processingTimelineWeekRangeFromLabel } from '../../utils/checkoutBcfProcessing';
 import {
   filterOutPremiumMembershipUpgradeOrders,
   normalizeUserOrdersBuckets,
@@ -77,6 +80,11 @@ interface Order {
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
+  /** Client submitted authorization; false until admin approves (Pending → FORMS). */
+  orderFormClientSubmitted?: boolean;
+  orderFormAdminApproved?: boolean;
+  orderFormAdminDeclined?: boolean;
+  orderFormAdminDeclineReason?: string;
   bookingFlowType?: 'appointment' | 'consult';
   /** Standard vs premium booking cart line — used with bookingFlowType for cart-matching thumbnails. */
   bookingTier?: 'standard' | 'premium';
@@ -89,6 +97,8 @@ interface Order {
   consultProcessingStartedAt?: number;
   /** Consult: linked admin quote id after offer sent. */
   consultQuoteId?: string;
+  /** Consult: client-submitted hair inspo (data URLs or remote), max 3 at checkout. */
+  bookingInspoPhotoUrls?: string[];
   completedAt?: number;
   lineItems?: OrderLineItem[]; // Optional per-item detail for review eligibility (unique by product + options)
   /** Loyalty points earned on this order (set at checkout); avoids falling back to account lifetime balance. */
@@ -424,12 +434,7 @@ function OrdersPage() {
     try {
       const [month, day, year] = orderDateStr.split('-').map(Number);
       const orderDate = new Date(year, month - 1, day);
-      let minWeeks = 6, maxWeeks = 8;
-      if (processingTime && processingTime.includes('4')) {
-        minWeeks = 4; maxWeeks = 6;
-      } else if (processingTime && processingTime.includes('10')) {
-        minWeeks = 6; maxWeeks = 10;
-      }
+      const { min: minWeeks, max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime || '');
       const minDate = new Date(orderDate);
       minDate.setDate(minDate.getDate() + (minWeeks * 7));
       const maxDate = new Date(orderDate);
@@ -899,6 +904,7 @@ function OrdersPage() {
       bookingFlowType: 'consult',
       bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
+      bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
     },
     {
@@ -920,6 +926,7 @@ function OrdersPage() {
       bookingFlowType: 'consult',
       bookingTier: 'standard',
       bookingHairOption: 'WIG ONLY',
+      bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
       consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
     }
   ];
@@ -1399,7 +1406,6 @@ function OrdersPage() {
 
   // State for forcing re-render to update countdown
   const [_countdownTick, setCountdownTick] = useState(0);
-
   // Update countdown display every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1420,7 +1426,9 @@ function OrdersPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-cancel PLACED orders after 24 hours if authorization form not signed
+  // Auto-cancel PLACED orders after 24h if the client never signed/submitted the auth form.
+  // If they did submit (orderFormSigned + clientSubmitted, admin not approved yet), we show
+  // "ORDER FORM PENDING ADMIN APPROVAL" and do NOT 24h-cancel—admin approve/decline handles it.
   useEffect(() => {
     const checkAndCancelExpired = () => {
       const now = Date.now();
@@ -1428,6 +1436,13 @@ function OrdersPage() {
 
       setActiveOrders((prevActive) => {
         const mapped = prevActive.map((order) => {
+          if (
+            order.status === 'PLACED' &&
+            order.placedAt &&
+            orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>)
+          ) {
+            return order;
+          }
           if (
             order.status === 'PLACED' &&
             order.placedAt &&
@@ -2285,9 +2300,15 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </p>
                                  )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
@@ -2307,6 +2328,32 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          );
                                        })}
                                      </div>
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
+                                       </div>
+                                     )}
+                                     </>
                                    );
                                  })()}
                                </div>
@@ -2578,6 +2625,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
+                             orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM PENDING ADMIN APPROVAL
+                             </p>
+                           )}
+                           {order.status === 'PLACED' &&
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
@@ -2611,6 +2665,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
+                             !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW
@@ -2739,10 +2794,27 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                             </span>
                           );
                         }
+                        if (
+                          order.status === 'PLACED' &&
+                          orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                        ) {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                ORDER FORM PENDING ADMIN APPROVAL
+                              </span>
+                            </span>
+                          );
+                        }
                         // For PLACED orders with signed form, show "ORDER FORM IN REVIEW" (unit/bundle/F&C only)
                         if (
                           order.status === 'PLACED' &&
                           order.orderFormSigned &&
+                          !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                           orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
                         ) {
                           return (
@@ -2798,10 +2870,15 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
                               {order.status === 'PLACED' &&
-                              order.orderFormSigned &&
+                              orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                               orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
-                                ? 'ORDER FORM IN REVIEW'
-                                : order.status}
+                                ? 'ORDER FORM PENDING ADMIN APPROVAL'
+                                : order.status === 'PLACED' &&
+                                    order.orderFormSigned &&
+                                    !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                                    orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                                  ? 'ORDER FORM IN REVIEW'
+                                  : order.status}
                             </span>
                           </span>
                         );
@@ -3159,9 +3236,15 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </p>
                                  )}
                                  {(() => {
+                                   void _countdownTick;
                                    const di = getDigitalFulfillmentStageIndex(expandedOrder);
                                    const labels = digitalFulfillmentStageLabels();
+                                   const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                                     expandedOrder,
+                                     Date.now()
+                                   );
                                    return (
+                                     <>
                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                                        {labels.map((label, i) => {
                                          const isCurrent = i === di;
@@ -3181,6 +3264,32 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                          );
                                        })}
                                      </div>
+                                     {consultBarPct != null && (
+                                       <div style={{ marginTop: '12px' }}>
+                                         <div
+                                           style={{
+                                             width: '100%',
+                                             height: '7px',
+                                             backgroundColor: '#E0E0E0',
+                                             borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             overflow: 'hidden',
+                                             border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                                             boxSizing: 'border-box',
+                                           }}
+                                         >
+                                           <div
+                                             style={{
+                                               width: `${consultBarPct}%`,
+                                               height: '100%',
+                                               backgroundColor: '#EB1C24',
+                                               transition: 'width 0.3s ease',
+                                               borderRadius: consultBarPct > 0 ? '4px' : '0',
+                                             }}
+                                           />
+                                         </div>
+                                       </div>
+                                     )}
+                                     </>
                                    );
                                  })()}
                                </div>
@@ -3444,6 +3553,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
+                             orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM PENDING ADMIN APPROVAL
+                             </p>
+                           )}
+                           {order.status === 'PLACED' &&
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
@@ -3477,6 +3593,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
+                             !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW

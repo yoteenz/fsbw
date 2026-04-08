@@ -41,6 +41,18 @@ export const STARTING_INVENTORY = {
   } as Record<string, number>,
 };
 
+function orderInventoryCanceled(order: RevenueOrderForStats): boolean {
+  const s = String(order.status || '').toUpperCase();
+  return s === 'CANCELED' || s === 'CANCELLED';
+}
+
+/** Wig SKU depletion only; gift cards, digital, bookings excluded. */
+function lineItemConsumesWigInventory(line: { type?: string; productName?: string; name?: string }): boolean {
+  const t = String(line.type || '').toLowerCase();
+  if (t === 'gift-card' || t === 'digital' || t === 'booking-appointment' || t === 'booking-consult') return false;
+  return true;
+}
+
 function hasFreeGift(order: RevenueOrderForStats, key: 'brush' | 'melt'): boolean {
   const addOns = order.addOns ?? [];
   const opts = order.options ?? {};
@@ -129,13 +141,38 @@ export function getDepletedInventory(orders: RevenueOrderForStats[]): DepletedIn
   const packaging = { ...STARTING_INVENTORY.packaging };
 
   for (const order of orders) {
-    const lineItems = order.lineItems ?? (order.items ? [{ productName: order.productName || 'NOIR' }] : [{ productName: 'NOIR' }]);
+    if (orderInventoryCanceled(order)) continue;
+    if (order.digitalFulfillmentOnly) continue;
 
-    for (const line of lineItems) {
-      const name = (line.productName || 'NOIR').toString().toUpperCase().replace(/\s+/g, ' ');
-      const key = PRODUCT_NAMES.find((p) => p.replace(/\s+/g, ' ') === name) || 'NOIR';
-      if (products[key] != null) products[key] = Math.max(0, (products[key] ?? 0) - 1);
+    const rawLines =
+      order.lineItems && order.lineItems.length > 0
+        ? order.lineItems
+        : order.items
+          ? [
+              {
+                productName: order.productName || 'NOIR',
+                name: order.productName,
+                quantity: Math.max(1, Math.floor(Number(order.items)) || 1),
+              },
+            ]
+          : [{ productName: order.productName || 'NOIR', quantity: 1 }];
+
+    let anyPhysicalShippable = false;
+    for (const line of rawLines) {
+      if (!lineItemConsumesWigInventory(line as { type?: string })) continue;
+      anyPhysicalShippable = true;
+      const qty = Math.max(1, Math.floor(Number((line as { quantity?: number }).quantity) || 1));
+      const label = ((line as { productName?: string; name?: string }).productName ||
+        (line as { name?: string }).name ||
+        order.productName ||
+        'NOIR') as string;
+      const name = label.toString().toUpperCase().replace(/\s+/g, ' ').trim();
+      const key =
+        PRODUCT_NAMES.find((p) => name === p.replace(/\s+/g, ' ') || name.includes(p)) || 'NOIR';
+      if (products[key] != null) products[key] = Math.max(0, (products[key] ?? 0) - qty);
     }
+
+    if (!anyPhysicalShippable) continue;
 
     const useBrush = hasFreeGift(order, 'brush') ? 1 : 0;
     const useMelt = hasFreeGift(order, 'melt') ? 1 : 0;
@@ -174,11 +211,16 @@ export function getProductSalesCounts(orders: RevenueOrderForStats[]): ProductSa
   const counts: Record<string, number> = Object.fromEntries(PRODUCT_NAMES.map((p) => [p, 0])) as Record<string, number>;
   const normalize = (name: string) => (name || '').toUpperCase().replace(/\s+/g, ' ').trim();
   for (const order of orders) {
-    const items = order.lineItems?.length ? order.lineItems : [{ productName: order.productName }];
+    if (orderInventoryCanceled(order)) continue;
+    const items = order.lineItems?.length ? order.lineItems : [{ productName: order.productName, quantity: 1 }];
     for (const item of items) {
-      const n = normalize((item as { productName?: string }).productName || '');
+      if (!lineItemConsumesWigInventory(item as { type?: string })) continue;
+      const n = normalize((item as { productName?: string; name?: string }).productName || (item as { name?: string }).name || '');
       const key = PRODUCT_NAMES.find((p) => n === p || n.includes(p) || p.replace(/\s+/g, ' ').includes(n));
-      if (key) counts[key]++;
+      if (key) {
+        const q = Math.max(1, Math.floor(Number((item as { quantity?: number }).quantity) || 1));
+        counts[key] += q;
+      }
     }
   }
   return PRODUCT_NAMES.map((name) => ({ label: name, count: counts[name] ?? 0 })).sort((a, b) => b.count - a.count);

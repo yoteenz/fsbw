@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import BrandExpiresDatePicker, { type AdminCalendarDayMeta } from '../../../components/BrandExpiresDatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
@@ -26,11 +27,13 @@ import {
   startOfMonth,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
+import {
+  clearAdminMeetingsFocusFromClientDetails,
+  readAdminMeetingsFocusFromClientDetails,
+} from '../../../utils/adminMeetingsFocusSession';
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
 import {
-  AdminMeetingClientPanel,
-  AdminMeetingClientPanelShell,
   addDaysIso,
   bookingPaidInFullSalesUsd,
   consultCodeFromOrder,
@@ -47,13 +50,13 @@ import {
   meetingIsCurrentOrActive,
   meetingMatchesPageSearch,
   meetingSortTimeMs,
-  monthMatrix,
   normalizeMoneyValue,
   normalizeSearchText,
   sortMeetingsByOption,
   tierPremium,
   viewAllListMeetingLabel,
 } from '../../../utils/adminMeetingClientPanels';
+import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
 
 const UNIT_OPTIONS = [
   { id: 'NOIR', label: 'NOIR' },
@@ -265,9 +268,6 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
   return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`;
 }
 
-const CALENDAR_LEFT_ARROW_SRC = '/assets/calendar-left-arrow.svg';
-const CALENDAR_RIGHT_ARROW_SRC = '/assets/calendar-right-arrow.svg';
-
 /** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
@@ -332,6 +332,7 @@ export default function AdminMeetingsHub() {
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
+  const clientDetailsFocusAppliedRef = useRef(false);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
@@ -465,6 +466,47 @@ export default function AdminMeetingsHub() {
       return a.time.localeCompare(b.time);
     });
   }, [range.start, range.end, apiMeetings, localTick]);
+
+  /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
+  useEffect(() => {
+    const focus = readAdminMeetingsFocusFromClientDetails();
+    if (!focus) {
+      clientDetailsFocusAppliedRef.current = false;
+      return;
+    }
+    if (clientDetailsFocusAppliedRef.current) return;
+    const focusYm = focus.date.slice(0, 7);
+    const anchorYm = calendarAnchor.slice(0, 7);
+    if (focusYm !== anchorYm) {
+      setCalendarAnchor(focus.date);
+      return;
+    }
+    const row = mergedMeetings.find((m) => m.id === focus.meetingId);
+    if (!row) {
+      clientDetailsFocusAppliedRef.current = true;
+      clearAdminMeetingsFocusFromClientDetails();
+      return;
+    }
+    clientDetailsFocusAppliedRef.current = true;
+    clearAdminMeetingsFocusFromClientDetails();
+    const isConsultRow = row.category === 'consultation';
+    if (focus.tab === 'consults') {
+      setMainTab('consults');
+    } else if (focus.tab === 'bookings') {
+      setMainTab('bookings');
+    } else {
+      setMainTab(isConsultRow ? 'consults' : 'bookings');
+    }
+    setViewAllMode(null);
+    if (isConsultRow) {
+      setQuoteMeeting(row);
+      setEditMeeting(null);
+    } else {
+      setSelectedDay(row.date);
+      setEditMeeting(row);
+      setQuoteMeeting(null);
+    }
+  }, [mergedMeetings, calendarAnchor]);
 
   const appointmentMeetings = useMemo(
     () => mergedMeetings.filter((m) => m.category !== 'consultation'),
@@ -652,13 +694,6 @@ export default function AdminMeetingsHub() {
       setEditSubmitting(false);
     }
   };
-
-  const monthLabel = useMemo(() => {
-    const [y, m] = calendarAnchor.split('-').map(Number);
-    return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long' }).toLowerCase();
-  }, [calendarAnchor]);
-
-  const calWeeks = useMemo(() => monthMatrix(calendarAnchor), [calendarAnchor]);
 
   const viewAllBaseRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
@@ -1007,6 +1042,36 @@ export default function AdminMeetingsHub() {
     }
     return blocked;
   }, [appointmentMeetings]);
+
+  const adminBookingsCalendarVisibleMonth = `${calendarAnchor.slice(0, 7)}-01`;
+
+  const getAdminBookingsCalendarDayMeta = useCallback(
+    (iso: string): AdminCalendarDayMeta => {
+      const hasAppt = apptDates.has(iso);
+      const hasTravelBlock = travelBlackoutDates.has(iso);
+      const hasTravelHalfDay = travelHalfDayDates.has(iso);
+      const title = hasTravelBlock
+        ? 'TRAVEL BLOCK: UNAVAILABLE (FULL DAY)'
+        : hasTravelHalfDay
+          ? 'TRAVEL BLOCK: AFTER 12PM UNAVAILABLE'
+          : undefined;
+      return {
+        disabled: hasTravelBlock,
+        appointmentHighlight: !hasTravelBlock && hasAppt,
+        title,
+      };
+    },
+    [apptDates, travelBlackoutDates, travelHalfDayDates]
+  );
+
+  const onAdminBookingsCalendarMonthChange = useCallback((isoFirstOfMonth: string) => {
+    const target = parseISODateLocal(isoFirstOfMonth);
+    const cur = parseISODateLocal(calendarAnchor);
+    if (target.getFullYear() === cur.getFullYear() && target.getMonth() === cur.getMonth()) return;
+    const y = target.getFullYear();
+    const mo = String(target.getMonth() + 1).padStart(2, '0');
+    setCalendarAnchor(`${y}-${mo}-${String(cur.getDate()).padStart(2, '0')}`);
+  }, [calendarAnchor]);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -1762,93 +1827,20 @@ export default function AdminMeetingsHub() {
                   </>
                 ) : mainTab === 'bookings' ? (
                   <>
-                    <div className="flex items-center justify-between mb-2" style={{ marginTop: '4px' }}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const s = parseISODateLocal(startOfMonth(calendarAnchor));
-                          s.setMonth(s.getMonth() - 1);
-                          const y = s.getFullYear();
-                          const mo = String(s.getMonth() + 1).padStart(2, '0');
-                          setCalendarAnchor(`${y}-${mo}-01`);
-                        }}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '2px 6px' }}
-                        aria-label="Previous month"
-                      >
-                        <img src={CALENDAR_LEFT_ARROW_SRC} alt="" width={17} height={17} draggable={false} />
-                      </button>
-                      <span
-                        style={{
-                          fontFamily: '"Bohemy", sans-serif',
-                          fontSize: '25px',
-                          color: '#000',
-                          textTransform: 'lowercase',
-                          fontWeight: 200,
-                        }}
-                      >
-                        {monthLabel}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const s = parseISODateLocal(startOfMonth(calendarAnchor));
-                          s.setMonth(s.getMonth() + 1);
-                          const y = s.getFullYear();
-                          const mo = String(s.getMonth() + 1).padStart(2, '0');
-                          setCalendarAnchor(`${y}-${mo}-01`);
-                        }}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '2px 6px' }}
-                        aria-label="Next month"
-                      >
-                        <img src={CALENDAR_RIGHT_ARROW_SRC} alt="" width={18} height={18} draggable={false} />
-                      </button>
-                    </div>
-                    <div
-                      className="grid grid-cols-7 gap-1 text-center mb-1"
-                      style={{ fontSize: '8px', color: '#808080', whiteSpace: 'nowrap' }}
-                    >
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                        <span key={`cal-dow-${i}`}>{d}</span>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-7 gap-1 mb-4">
-                      {calWeeks.flat().map((cell) => {
-                        const hasAppt = apptDates.has(cell.iso);
-                        const hasTravelBlock = travelBlackoutDates.has(cell.iso);
-                        const hasTravelHalfDay = travelHalfDayDates.has(cell.iso);
-                        const hasWhiteCalendarCell = !hasTravelBlock && hasAppt;
-                        const disabled = hasTravelBlock;
-                        const title = hasTravelBlock
-                          ? 'TRAVEL BLOCK: UNAVAILABLE (FULL DAY)'
-                          : hasTravelHalfDay
-                          ? 'TRAVEL BLOCK: AFTER 12PM UNAVAILABLE'
-                          : undefined;
-                        return (
-                          <button
-                            key={cell.iso}
-                            type="button"
-                            onClick={() => {
-                              if (disabled) return;
-                              setSelectedDay((current) => (current === cell.iso ? null : cell.iso));
-                            }}
-                            disabled={disabled}
-                            title={title}
-                            style={{
-                              fontFamily: '"Futura PT Medium"',
-                              fontSize: '10px',
-                              padding: '6px 0',
-                              border: selectedDay === cell.iso ? '1px solid #EB1C24' : hasWhiteCalendarCell ? '1px solid #e5e7eb' : '1px solid #e5e7eb',
-                              borderRadius: '0',
-                              background: hasTravelBlock ? '#f3f4f6' : hasAppt ? '#fff' : '#f3f4f6',
-                              color: hasTravelBlock ? '#9ca3af' : hasAppt ? '#EB1C24' : '#9ca3af',
-                              cursor: disabled ? 'not-allowed' : 'pointer',
-                              opacity: disabled ? 0.65 : 1,
-                            }}
-                          >
-                            {cell.label}
-                          </button>
-                        );
-                      })}
+                    <div style={{ marginTop: '4px', marginBottom: '16px' }}>
+                      <BrandExpiresDatePicker
+                        inline
+                        monthLabelVariant="adminMeetings"
+                        navArrowScale={17 / 22}
+                        value={calendarAnchor}
+                        onChange={() => {}}
+                        visibleMonthAnchor={adminBookingsCalendarVisibleMonth}
+                        onVisibleMonthAnchorChange={onAdminBookingsCalendarMonthChange}
+                        selectionIso={selectedDay ?? ''}
+                        getDayMeta={getAdminBookingsCalendarDayMeta}
+                        hideClearDate
+                        onDayClick={(iso) => setSelectedDay((current) => (current === iso ? null : iso))}
+                      />
                     </div>
                     {sortedAppointmentsList.length === 0 ? (
                       <p
@@ -1870,18 +1862,17 @@ export default function AdminMeetingsHub() {
                           {renderMeetingsSortDropdown()}
                         </div>
                         {sortedAppointmentsList.map((m) => (
-                          <AdminMeetingClientPanelShell key={m.id}>
-                            <AdminMeetingClientPanel
-                              m={m}
-                              variant="bookings"
-                              onProfileClick={() => openClientAccount(m)}
-                              onActionClick={(e) => {
-                                e.stopPropagation();
-                                setEditMeeting(m);
-                              }}
-                              actionAriaLabel="Edit meeting"
-                            />
-                          </AdminMeetingClientPanelShell>
+                          <AdminMeetingHubStyleCard
+                            key={m.id}
+                            m={m}
+                            variant="booking"
+                            onProfileClick={() => openClientAccount(m)}
+                            onActionClick={(e) => {
+                              e.stopPropagation();
+                              setEditMeeting(m);
+                            }}
+                            actionAriaLabel="Edit meeting"
+                          />
                         ))}
                       </div>
                     )}
@@ -1900,19 +1891,18 @@ export default function AdminMeetingsHub() {
                     ) : (
                       <div style={{ marginTop: '6px' }}>
                         {sortedConsultsList.map((m) => (
-                          <AdminMeetingClientPanelShell key={m.id}>
-                            <AdminMeetingClientPanel
-                              m={m}
-                              variant="consults"
-                              onProfileClick={() => openClientAccount(m)}
-                              onActionClick={(e) => {
-                                e.stopPropagation();
-                                setQuoteMeeting(m);
-                              }}
-                              actionAriaLabel="Send quote"
-                              onConsultPhotoClick={setConsultPhotoPreviewSrc}
-                            />
-                          </AdminMeetingClientPanelShell>
+                          <AdminMeetingHubStyleCard
+                            key={m.id}
+                            m={m}
+                            variant="consult"
+                            onProfileClick={() => openClientAccount(m)}
+                            onActionClick={(e) => {
+                              e.stopPropagation();
+                              setQuoteMeeting(m);
+                            }}
+                            actionAriaLabel="Send quote"
+                            onConsultPhotoClick={setConsultPhotoPreviewSrc}
+                          />
                         ))}
                       </div>
                     )}

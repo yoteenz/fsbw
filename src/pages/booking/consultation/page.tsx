@@ -27,6 +27,11 @@ import {
   sanitizeConsultHeadMeasurementInput,
 } from '../../../utils/bookingConsultHeadMeasurementInput';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import {
+  bookingConsultHairInspoThumbFrameStyle,
+  bookingConsultHairInspoThumbImgStyle,
+  BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX,
+} from '../../../utils/bookingConsultHairInspoThumb';
 
 const CONSULT_DEPOSIT_USD = 40;
 
@@ -67,7 +72,7 @@ const EMPTY_HEAD_MEASUREMENTS: HeadMeasurements = {
 const MAX_HAIR_INSPO_PHOTOS = 3;
 
 function hairInspoSubmittedLabel(count: number): string {
-  return `${count} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS SUBMITTED.`;
+  return `${count} OF ${MAX_HAIR_INSPO_PHOTOS} PHOTOS SUBMITTED`;
 }
 
 /** Persists across consult URL remounts (`/booking/consultation` → `/booking/premium/consultation` from MembershipRouteSync). */
@@ -169,7 +174,8 @@ export default function BookingConsultationPage() {
   const navigate = useNavigate();
   const isPremiumBooking = location.pathname.includes('/booking/premium/');
   const [authRev, setAuthRev] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  /** Avoid clearing inspo session on empty state during Strict Mode’s first mount/unmount (restores thumbnails after remount). */
+  const inspoSessionMayClearWhenEmptyRef = useRef(false);
   const [hairOption, setHairOption] = useState<HairOption>(() =>
     isPremiumMemberForGatedFeatures() ? 'WIG + INSTALL' : 'WIG ONLY'
   );
@@ -201,9 +207,18 @@ export default function BookingConsultationPage() {
   const consultWigInstallDateDisabled = useMemo(() => createBookingDateDisabledFn('two_calendar_months'), []);
 
   useEffect(() => {
+    const id = window.requestAnimationFrame(() => {
+      inspoSessionMayClearWhenEmptyRef.current = true;
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
     try {
       if (inspoItems.length === 0) {
-        sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        if (inspoSessionMayClearWhenEmptyRef.current) {
+          sessionStorage.removeItem(CONSULT_INSPO_SESSION_KEY);
+        }
       } else {
         sessionStorage.setItem(CONSULT_INSPO_SESSION_KEY, JSON.stringify(inspoItems));
       }
@@ -442,6 +457,7 @@ export default function BookingConsultationPage() {
         } catch {
           /* ignore */
         }
+        inspoSessionMayClearWhenEmptyRef.current = true;
         setInspoItems([]);
         setAddToBagState('added');
         setTimeout(() => {
@@ -519,29 +535,37 @@ export default function BookingConsultationPage() {
               <div style={{ position: 'relative', width: '100%' }}>
                 {inspoItems.length < MAX_HAIR_INSPO_PHOTOS ? (
                   <>
+                    <label
+                      htmlFor="consult-hair-inspo-file"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        margin: 0,
+                      }}
+                    >
                     <input
-                      ref={fileInputRef}
                       id="consult-hair-inspo-file"
                       type="file"
-                      accept="image/*,.heic,.heif"
+                      accept="image/*,image/heic,image/heif,.heic,.heif"
                       multiple
                       aria-labelledby="consult-inspo-heading"
                       onChange={handleFileChange}
                       style={{
                         position: 'absolute',
+                        inset: 0,
                         width: '100%',
-                        height: '36px',
+                        height: '100%',
+                        minHeight: '36px',
                         opacity: 0,
                         cursor: 'pointer',
-                        zIndex: 3,
-                        top: 0,
-                        left: 0,
-                        margin: 0
+                        zIndex: 2,
+                        margin: 0,
+                        fontSize: 0,
                       }}
                     />
                     <div
-                      role="presentation"
-                      onClick={() => fileInputRef.current?.click()}
                       style={{
                         width: '100%',
                         minHeight: '36px',
@@ -555,13 +579,13 @@ export default function BookingConsultationPage() {
                         color: inspoItems.length > 0 ? '#808080' : '#000000',
                         boxSizing: 'border-box',
                         borderRadius: '0',
-                        cursor: 'pointer',
                         textTransform: 'uppercase',
                         position: 'relative',
                         overflow: 'hidden',
                         display: 'flex',
                         alignItems: 'center',
-                        textAlign: 'left'
+                        textAlign: 'left',
+                        pointerEvents: 'none',
                       }}
                     >
                       <span
@@ -598,6 +622,7 @@ export default function BookingConsultationPage() {
                         {inspoItems.length > 0 ? hairInspoSubmittedLabel(inspoItems.length) : 'NO FILE SELECTED'}
                       </span>
                     </div>
+                    </label>
                   </>
                 ) : (
                   <button
@@ -662,7 +687,7 @@ export default function BookingConsultationPage() {
                     gap: '13px',
                     width: '100%',
                     marginTop: '14px',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     alignItems: 'flex-start',
                     minHeight: '88px'
                   }}
@@ -672,8 +697,8 @@ export default function BookingConsultationPage() {
                       key={item.id}
                       style={{
                         position: 'relative',
-                        width: '88px',
-                        height: '88px',
+                        width: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
+                        height: `${BOOKING_CONSULT_HAIR_INSPO_THUMB_OUTER_PX}px`,
                         flexShrink: 0
                       }}
                     >
@@ -683,12 +708,12 @@ export default function BookingConsultationPage() {
                         aria-label="Remove inspo photo"
                         style={{
                           position: 'absolute',
-                          top: '-6px',
+                          top: '-4px',
                           right: '-4px',
-                          width: '14px',
-                          height: '14px',
+                          width: '15.4px',
+                          height: '15.4px',
                           backgroundColor: '#FFFFFF',
-                          border: '0.97px solid #000000',
+                          border: '1.07px solid #000000',
                           borderRadius: '50%',
                           cursor: 'pointer',
                           display: 'flex',
@@ -699,47 +724,30 @@ export default function BookingConsultationPage() {
                           flexShrink: 0
                         }}
                       >
-                        <img
-                          src="/assets/close-icon.svg"
-                          alt=""
-                          style={{
-                            width: '8.4px',
-                            height: '8.4px',
-                            objectFit: 'contain',
-                            display: 'block',
-                            flexShrink: 0,
-                            filter:
-                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
-                          }}
-                        />
+                        <svg
+                          width={9.24}
+                          height={9.24}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden
+                          style={{ display: 'block', flexShrink: 0 }}
+                        >
+                          <path
+                            d="M6.40038 18.3074L5.69238 17.5994L11.2924 11.9994L5.69238 6.39941L6.40038 5.69141L12.0004 11.2914L17.6004 5.69141L18.3084 6.39941L12.7084 11.9994L18.3084 17.5994L17.6004 18.3074L12.0004 12.7074L6.40038 18.3074Z"
+                            fill="#EB1C24"
+                            stroke="#EB1C24"
+                            strokeWidth={0.4}
+                            strokeLinejoin="round"
+                          />
+                        </svg>
                       </button>
-                      <div
-                        style={{
-                          position: 'relative',
-                          padding: '1px',
-                          border: '3px solid white',
-                          boxShadow: '0 0 0 1.1px black',
-                          boxSizing: 'border-box',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: '#f5f5f5',
-                          overflow: 'hidden'
-                        }}
-                      >
+                      <div style={bookingConsultHairInspoThumbFrameStyle}>
                         <img
                           src={item.dataUrl}
                           alt=""
                           loading="eager"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            display: 'block'
-                          }}
+                          style={bookingConsultHairInspoThumbImgStyle}
                         />
                       </div>
                     </div>

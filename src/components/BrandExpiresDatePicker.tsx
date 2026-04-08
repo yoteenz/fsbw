@@ -25,7 +25,8 @@ const MONTH_LABELS = [
 ] as const;
 
 const WEEKDAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
-const ADMIN_MEETINGS_WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
+/** Sun-first columns (matches US locale grid). */
+const ADMIN_MEETINGS_WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] as const;
 
 type CalendarGridCell = {
   day: number | null;
@@ -62,16 +63,18 @@ function startWeekdaySun0(year: number, monthIndex: number): number {
   return new Date(year, monthIndex, 1).getDay();
 }
 
-function startWeekdayMonday0(year: number, monthIndex: number): number {
-  const sun0 = new Date(year, monthIndex, 1).getDay();
-  return sun0 === 0 ? 6 : sun0 - 1;
-}
-
 function formatTriggerLabel(iso: string): string {
   const p = parseIsoLocal(iso);
   if (!p) return '';
   return `${pad2(p.m + 1)}-${pad2(p.d)}-${p.y}`;
 }
+
+export type AdminCalendarDayMeta = {
+  disabled?: boolean;
+  /** White cell + red date (has booking that day). */
+  appointmentHighlight?: boolean;
+  title?: string;
+};
 
 type Props = {
   value: string;
@@ -84,6 +87,20 @@ type Props = {
   navArrowScale?: number;
   /** Calendar month label visual treatment. */
   monthLabelVariant?: 'default' | 'adminMeetings';
+  /**
+   * Controlled month (e.g. `YYYY-MM-01`). When set with `onVisibleMonthAnchorChange`, prev/next
+   * update the parent instead of internal view state (admin meetings hub).
+   */
+  visibleMonthAnchor?: string;
+  onVisibleMonthAnchorChange?: (isoFirstOfMonth: string) => void;
+  /** Highlight ring for selected day; defaults to `value` when unset. */
+  selectionIso?: string;
+  /** Admin meetings: per-day disabled / appointment styling / native title. */
+  getDayMeta?: (isoYmd: string) => AdminCalendarDayMeta;
+  /** If set, day click invokes this instead of `onChange` (filter mode). */
+  onDayClick?: (isoYmd: string) => void;
+  /** Hide the bottom CLEAR DATE row (e.g. admin meetings month navigator). */
+  hideClearDate?: boolean;
 };
 
 /**
@@ -96,7 +113,13 @@ export default function BrandExpiresDatePicker({
   inline = false,
   isDateDisabled,
   navArrowScale = 1,
-  monthLabelVariant = 'default'
+  monthLabelVariant = 'default',
+  visibleMonthAnchor,
+  onVisibleMonthAnchorChange,
+  selectionIso,
+  getDayMeta,
+  onDayClick,
+  hideClearDate = false,
 }: Props) {
   const navLeftPx = Math.max(1, Math.round(NAV_ARROW_BASE_LEFT_PX * navArrowScale));
   const navRightPx = Math.max(1, Math.round(NAV_ARROW_BASE_RIGHT_PX * navArrowScale));
@@ -108,13 +131,23 @@ export default function BrandExpiresDatePicker({
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
 
+  const controlledMonth = Boolean(visibleMonthAnchor && onVisibleMonthAnchorChange);
+
   useEffect(() => {
+    if (controlledMonth) {
+      const p = parseIsoLocal((visibleMonthAnchor || '').trim());
+      if (p) {
+        setViewYear(p.y);
+        setViewMonth(p.m);
+      }
+      return;
+    }
     const p = parseIsoLocal(value);
     if (p) {
       setViewYear(p.y);
       setViewMonth(p.m);
     }
-  }, [value]);
+  }, [value, visibleMonthAnchor, controlledMonth]);
 
   useEffect(() => {
     if (!open) return;
@@ -137,7 +170,7 @@ export default function BrandExpiresDatePicker({
 
   const grid = useMemo<CalendarGridCell[]>(() => {
     if (monthLabelVariant === 'adminMeetings') {
-      const first = startWeekdayMonday0(viewYear, viewMonth);
+      const first = startWeekdaySun0(viewYear, viewMonth);
       const cur = new Date(viewYear, viewMonth, 1);
       cur.setDate(cur.getDate() - first);
       const cells: CalendarGridCell[] = [];
@@ -174,6 +207,11 @@ export default function BrandExpiresDatePicker({
   );
 
   const goPrev = useCallback(() => {
+    if (controlledMonth && onVisibleMonthAnchorChange) {
+      const d = new Date(viewYear, viewMonth - 1, 1);
+      onVisibleMonthAnchorChange(toIsoDateLocal(d.getFullYear(), d.getMonth(), 1));
+      return;
+    }
     setViewMonth((m) => {
       if (m === 0) {
         setViewYear((y) => y - 1);
@@ -181,9 +219,14 @@ export default function BrandExpiresDatePicker({
       }
       return m - 1;
     });
-  }, []);
+  }, [controlledMonth, onVisibleMonthAnchorChange, viewYear, viewMonth]);
 
   const goNext = useCallback(() => {
+    if (controlledMonth && onVisibleMonthAnchorChange) {
+      const d = new Date(viewYear, viewMonth + 1, 1);
+      onVisibleMonthAnchorChange(toIsoDateLocal(d.getFullYear(), d.getMonth(), 1));
+      return;
+    }
     setViewMonth((m) => {
       if (m === 11) {
         setViewYear((y) => y + 1);
@@ -191,7 +234,7 @@ export default function BrandExpiresDatePicker({
       }
       return m + 1;
     });
-  }, []);
+  }, [controlledMonth, onVisibleMonthAnchorChange, viewYear, viewMonth]);
 
   const todayY = now.getFullYear();
   const todayM = now.getMonth();
@@ -199,6 +242,7 @@ export default function BrandExpiresDatePicker({
 
   const selectedParsed = parseIsoLocal(value.trim());
   const selectedIso = value.trim();
+  const ringIso = (selectionIso ?? selectedIso).trim();
   const isAdminMeetingsVariant = monthLabelVariant === 'adminMeetings';
   const weekdayLabels = isAdminMeetingsVariant ? ADMIN_MEETINGS_WEEKDAYS : WEEKDAYS;
 
@@ -347,28 +391,72 @@ export default function BrandExpiresDatePicker({
               return <div key={idx} className={isAdminMeetingsVariant ? '' : 'aspect-square'} />;
             }
             const iso = cell.iso ?? toIsoDateLocal(viewYear, viewMonth, d);
-            const isDisabled = isDateDisabled?.(iso) ?? false;
-            const isSelected = !isDisabled && selectedIso === iso;
+            const meta = getDayMeta?.(iso);
+            const metaDisabled = meta?.disabled === true;
+            const isDisabled = metaDisabled || (isDateDisabled?.(iso) ?? false);
+            const hasApptHighlight = meta?.appointmentHighlight === true;
+            const isRingSelected = !isDisabled && ringIso === iso;
             const isToday = viewYear === todayY && viewMonth === todayM && d === todayD;
             const showTodayOutline =
-              !isAdminMeetingsVariant && !isDisabled && isToday && (selectedParsed == null || isSelected);
+              !isAdminMeetingsVariant && !isDisabled && isToday && (selectedParsed == null || isRingSelected);
+            const handleClick = () => {
+              if (isDisabled) return;
+              if (onDayClick) {
+                onDayClick(iso);
+                return;
+              }
+              selectDay(iso);
+            };
+            const borderColor = isRingSelected
+              ? '#EB1C24'
+              : isAdminMeetingsVariant && getDayMeta
+                ? '#e5e7eb'
+                : isAdminMeetingsVariant
+                  ? '#e5e7eb'
+                  : showTodayOutline
+                    ? '#EB1C24'
+                    : 'transparent';
+            const textColor = isDisabled
+              ? '#9ca3af'
+              : isAdminMeetingsVariant && getDayMeta
+                ? hasApptHighlight
+                  ? '#EB1C24'
+                  : '#9ca3af'
+                : isRingSelected
+                  ? '#EB1C24'
+                  : '#000000';
+            const bgColor =
+              isAdminMeetingsVariant && getDayMeta
+                ? isDisabled
+                  ? '#f3f4f6'
+                  : hasApptHighlight
+                    ? '#fff'
+                    : '#f3f4f6'
+                : isAdminMeetingsVariant
+                  ? isDisabled
+                    ? '#f3f4f6'
+                    : '#fff'
+                  : isRingSelected
+                    ? '#FFFFFF'
+                    : 'transparent';
             return (
               <button
                 key={iso}
                 type="button"
-                onClick={isDisabled ? undefined : () => selectDay(iso)}
+                onClick={handleClick}
                 disabled={isDisabled}
+                title={meta?.title}
                 className={isAdminMeetingsVariant ? '' : 'aspect-square flex items-center justify-center cursor-pointer'}
                 style={{
                   fontFamily: '"Futura PT Medium", Futura, sans-serif',
                   fontSize: isAdminMeetingsVariant ? '10px' : '11px',
-                  fontWeight: isAdminMeetingsVariant ? 500 : isSelected ? 500 : 400,
+                  fontWeight: isAdminMeetingsVariant ? 500 : isRingSelected ? 500 : 400,
                   boxSizing: 'border-box',
                   borderStyle: 'solid',
-                  borderWidth: isAdminMeetingsVariant ? '1px' : isSelected || showTodayOutline ? '1.3px' : '1px',
-                  borderColor: isSelected ? '#EB1C24' : isAdminMeetingsVariant ? '#e5e7eb' : showTodayOutline ? '#EB1C24' : 'transparent',
-                  color: isDisabled ? '#9ca3af' : isSelected ? '#EB1C24' : '#000000',
-                  backgroundColor: isAdminMeetingsVariant ? (isDisabled ? '#f3f4f6' : '#fff') : isSelected ? '#FFFFFF' : 'transparent',
+                  borderWidth: isAdminMeetingsVariant ? '1px' : isRingSelected || showTodayOutline ? '1.3px' : '1px',
+                  borderColor,
+                  color: textColor,
+                  backgroundColor: bgColor,
                   minHeight: isAdminMeetingsVariant ? undefined : inline ? '32px' : '36px',
                   padding: isAdminMeetingsVariant ? '6px 0' : 0,
                   borderRadius: 0,
@@ -385,6 +473,7 @@ export default function BrandExpiresDatePicker({
           })}
         </div>
 
+        {!hideClearDate ? (
         <div className="flex justify-center mt-3 pt-2 border-t" style={{ borderColor: '#e5e7eb' }}>
           <button
             type="button"
@@ -402,6 +491,7 @@ export default function BrandExpiresDatePicker({
             CLEAR DATE
           </button>
         </div>
+        ) : null}
       </div>
     </div>
   );

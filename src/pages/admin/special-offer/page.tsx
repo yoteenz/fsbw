@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
+import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import {
   getOptionsForUnit,
@@ -484,23 +485,18 @@ function AdminSpecialOfferPageInner({ embedded = false }: AdminSpecialOfferPageP
                 </div>
 
                 {/* Start date */}
-                <div>
+                <div className="min-w-0">
                   <label style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#666', display: 'block', marginBottom: '4px' }}>START DATE</label>
-                  <input
-                    type="date"
-                    value={config.startDate}
-                    onChange={(e) => setConfig((c) => ({ ...c, startDate: e.target.value }))}
-                    style={{
-                      width: '100%',
-                      padding: '8px 10px',
-                      border: '1.3px solid #000',
-                      borderRadius: 0,
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '11px',
-                      background: '#fff',
-                      boxSizing: 'border-box'
-                    }}
-                  />
+                  <div className="w-full min-w-0">
+                    <BrandExpiresDatePicker
+                      inline
+                      monthLabelVariant="adminMeetings"
+                      navArrowScale={17 / 22}
+                      value={config.startDate}
+                      onChange={(iso) => setConfig((c) => ({ ...c, startDate: iso }))}
+                      hideClearDate
+                    />
+                  </div>
                 </div>
     </div>
   );

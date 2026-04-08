@@ -26,9 +26,15 @@ import {
 import { appendOrderReceivedAccountAlert } from '../../utils/orderAccountAlerts';
 import {
   filterBookingCartLines,
+  isBookingCartLine,
   isBookingsCheckoutPath,
   isBookingsOnlyCheckoutState,
 } from '../../utils/bookingCheckout';
+import {
+  filterGiftCardCartLines,
+  isGiftCardCartLine,
+  isGiftCardCheckoutPath,
+} from '../../utils/giftCardCheckout';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import {
   discountPromoCheckoutBlockReason,
@@ -51,11 +57,20 @@ import {
   orderStripTitleLine,
   orderStripUseDigitalStackLayout
 } from '../../utils/checkoutOrderStripDisplay';
-import { computePointsEligibleNetUsd } from '../../utils/loyaltyPointsEligibleNet';
+import {
+  cartHasAnyLoyaltyEarningLine,
+  computePointsEligibleNetUsd,
+} from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
+import { buildPersistedLineItemsFromCart } from '../../utils/orderLineItemsPersist';
+import {
+  cartUsesBcfOnlyProcessingWindows,
+  checkoutExpressProcessingAllowed,
+  getCheckoutProcessingTimePersistentLabel,
+} from '../../utils/checkoutBcfProcessing';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -198,6 +213,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
+  const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
@@ -556,8 +572,10 @@ function CheckoutPage() {
     trackActivity('checkout_start', {
       path: location.pathname,
       upgrade: location.pathname === '/checkout/upgrade',
+      giftCard: isGiftCardCheckoutRoute,
+      bookings: isBookingsCheckoutRoute,
     });
-  }, [location.pathname]);
+  }, [location.pathname, isGiftCardCheckoutRoute, isBookingsCheckoutRoute]);
 
   // Currency state - per user so it doesn't bleed between accounts
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -596,6 +614,27 @@ function CheckoutPage() {
       return hasNonDefaultColor || hasNonDefaultStyling || hasAddOns;
     });
   }, [cartItems, navigate]);
+
+  const bcfOnlyProcessingWindows = useMemo(() => cartUsesBcfOnlyProcessingWindows(cartItems as unknown[]), [cartItems]);
+
+  const checkoutExpressAllowed = useMemo(
+    () =>
+      checkoutExpressProcessingAllowed({
+        cartItems: cartItems as unknown[],
+        hasColorStylingOrAddOns,
+      }),
+    [cartItems, hasColorStylingOrAddOns]
+  );
+
+  const persistentProcessingTimeLabel = useMemo(
+    () =>
+      getCheckoutProcessingTimePersistentLabel({
+        cartItems: cartItems as unknown[],
+        selectedProcessing: selectedProcessing === 'rush' ? 'rush' : 'standard',
+        hasColorStylingOrAddOns,
+      }),
+    [cartItems, selectedProcessing, hasColorStylingOrAddOns]
+  );
 
   // Voucher applicability: service vouchers only (COLOR/HAIRLINE/STYLING); add-on price > 0. Excludes special-offer lines (no service voucher discount there). Free gifts are separate loyalty redemptions and remain combinable.
   const cartVoucherApplicability = useMemo(() => {
@@ -663,6 +702,21 @@ function CheckoutPage() {
         return;
       }
 
+      if (location.pathname.includes('/checkout/gift-card')) {
+        const stored = localStorage.getItem('cartItems');
+        let regularCartItems: any[] = [];
+        if (stored) {
+          const items = JSON.parse(stored);
+          if (Array.isArray(items) && items.length > 0) {
+            regularCartItems = items;
+          }
+        }
+        const onlyGift = filterGiftCardCartLines(regularCartItems);
+        setIsSubscriptionUpgrade(false);
+        setCartItems(onlyGift);
+        return;
+      }
+
       if (isUpgradeRoute) {
         // This is a subscription upgrade checkout
         const subscriptionItem = localStorage.getItem('subscriptionUpgrade');
@@ -704,6 +758,16 @@ function CheckoutPage() {
 
         setIsSubscriptionUpgrade(false);
         setCartItems(regularCartItems);
+        if (location.pathname === '/checkout' && regularCartItems.length > 0) {
+          if (regularCartItems.every((i: { type?: string }) => isBookingCartLine(i))) {
+            navigate('/checkout/bookings', { replace: true });
+            return;
+          }
+          if (regularCartItems.every((i: { type?: string; name?: string }) => isGiftCardCartLine(i))) {
+            navigate('/checkout/gift-card', { replace: true });
+            return;
+          }
+        }
         return;
       }
     } catch (e) {
@@ -716,6 +780,25 @@ function CheckoutPage() {
   useEffect(() => {
     loadCartItems();
   }, [location.pathname]);
+
+  /**
+   * Isolated gift-card checkout with nothing to buy → back to gift card PDP.
+   * Must not use initial `cartItems.length === 0` only: on first paint state is still empty
+   * before `loadCartItems` runs, which incorrectly bounced users off `/checkout/gift-card`.
+   */
+  useEffect(() => {
+    if (!isGiftCardCheckoutRoute) return;
+    let giftLines: unknown[] = [];
+    try {
+      const stored = localStorage.getItem('cartItems');
+      const parsed = stored ? JSON.parse(stored) : [];
+      giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      /* ignore */
+    }
+    if (giftLines.length > 0) return;
+    navigate('/tools/gift-card', { replace: true });
+  }, [isGiftCardCheckoutRoute, navigate, cartItems.length]);
 
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
   const goBackToMembershipUpgradeChart = useCallback(() => {
@@ -1025,10 +1108,10 @@ function CheckoutPage() {
 
   // Automatically switch to standard processing if rush becomes unavailable
   useEffect(() => {
-    if (hasColorStylingOrAddOns && selectedProcessing === 'rush') {
+    if (!checkoutExpressAllowed && selectedProcessing === 'rush') {
       setSelectedProcessing('standard');
     }
-  }, [hasColorStylingOrAddOns, selectedProcessing]);
+  }, [checkoutExpressAllowed, selectedProcessing]);
 
   useEffect(() => {
     const key = getPerUserKey(PER_USER_KEYS.selectedCurrency, getCurrentUserEmailFromStorage());
@@ -2234,7 +2317,7 @@ function CheckoutPage() {
 
   const pointsEligibleNetAmount = useMemo(
     () =>
-      isBookingsOnlyCheckout
+      !cartHasAnyLoyaltyEarningLine(cartItems)
         ? 0
         : computePointsEligibleNetUsd({
             cartItems,
@@ -2249,7 +2332,6 @@ function CheckoutPage() {
             consultDiscountAmount,
           }),
     [
-      isBookingsOnlyCheckout,
       cartItems,
       hasSpecialOfferInCart,
       hasOnlySpecialOfferInCart,
@@ -2356,7 +2438,10 @@ function CheckoutPage() {
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
           // Calculate points earned (tier + 12mo premium multiplier)
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2388,7 +2473,7 @@ function CheckoutPage() {
               );
               return option?.label || `${selectedShippingMethod.carrier} ${selectedShippingMethod.speed.toUpperCase()}`;
             })() : 'STANDARD SHIPPING',
-            processingTime: selectedProcessing === 'rush' ? '4 TO 6 WEEKS' : (hasColorStylingOrAddOns ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)' : '6 TO 8 WEEKS'),
+            processingTime: persistentProcessingTimeLabel,
           };
           
           // Store order data with a key that includes the provider for retrieval after redirect
@@ -2421,8 +2506,11 @@ function CheckoutPage() {
           orderConfirmations[orderNumber] = confirmationNumber;
           localStorage.setItem('orderConfirmations', JSON.stringify(orderConfirmations));
           
-          // Calculate points earned (if signed in) - exclude gift cards and digital items; tier + 12mo premium multiplier
-          const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+          // Calculate points earned (if signed in) - exclude gift cards, digital, membership, consult; tier + 12mo premium multiplier
+          const basePoints =
+            isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+              ? Math.round(pointsEligibleNetAmount)
+              : 0;
           const multiplier = getPointsMultiplierForUser();
           const pointsEarned = Math.round(basePoints * multiplier);
           
@@ -2471,7 +2559,8 @@ function CheckoutPage() {
           sessionStorage.setItem(
             'checkoutSummaryRewards',
             JSON.stringify({
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier
             })
           );
@@ -2485,7 +2574,9 @@ function CheckoutPage() {
               transactionId: result.transactionId,
               paymentMethod: provider,
               cartItems: cartItems,
-              pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+              processingTime: persistentProcessingTimeLabel,
+              pointsEarned:
+                isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
               tier: effectiveTier,
               isSubscriptionUpgrade,
               requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
@@ -2699,7 +2790,13 @@ function CheckoutPage() {
                   <span
                     style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
                   >
-                    {isSubscriptionUpgrade ? 'UPGRADE' : isBookingsCheckoutRoute ? 'BOOKING' : 'BAG'}
+                    {isSubscriptionUpgrade
+                      ? 'UPGRADE'
+                      : isBookingsCheckoutRoute
+                        ? 'BOOKING'
+                        : isGiftCardCheckoutRoute
+                          ? 'GIFT CARD'
+                          : 'BAG'}
                   </span>
                 </>
               )}
@@ -3135,8 +3232,8 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* Loyalty line — hidden on subscription upgrade (no points on membership purchase) */}
-                    {!isSubscriptionUpgrade && (
+                    {/* Loyalty line — only when something in the cart earns points (hide gift/digital/membership/consult-only) */}
+                    {!isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems) && (
                     <div className="overflow-hidden mt-auto pt-2">
                       {/* Loyalty Points Text — keep gap below cart strip without stealing height from thumbnails */}
                       <div style={{ 
@@ -3154,10 +3251,7 @@ function CheckoutPage() {
                           {isSignedIn ? (
                             <>
                               {(() => {
-                                const basePoints =
-                                  isOnlyDigitalProducts || isBookingsOnlyCheckout
-                                    ? 0
-                                    : Math.round(pointsEligibleNetAmount);
+                                const basePoints = Math.round(pointsEligibleNetAmount);
                                 const multiplier = getPointsMultiplierForUser();
                                 const actualPoints = Math.round(basePoints * multiplier);
                                 const punctuation = actualPoints === 0 ? '.' : '!';
@@ -3185,13 +3279,14 @@ function CheckoutPage() {
                   </div>
                 )}
 
-                {/* BLACK LINE SEPARATOR — subscription upgrade: loyalty row is hidden; pull line up 6px more */}
+                {/* BLACK LINE SEPARATOR — when loyalty row is hidden, pull line up to match spacing */}
                 <div>
                       <div style={{ 
                     paddingTop: '0', 
                     paddingBottom: '1px',
                         borderTop: '1.3px solid #000',
-                    marginTop: isSubscriptionUpgrade ? '-14px' : '-8px'
+                    marginTop:
+                      isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? '-14px' : '-8px'
                   }}>
                   </div>
                 </div>
@@ -4952,20 +5047,20 @@ function CheckoutPage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        6-8 WEEKS STANDARD PROCESSING
+                        {bcfOnlyProcessingWindows ? '4-6 WEEKS STANDARD PROCESSING' : '6-8 WEEKS STANDARD PROCESSING'}
                       </label>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: hasColorStylingOrAddOns ? 0.5 : 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', opacity: checkoutExpressAllowed ? 1 : 0.5 }}>
                       <div
                         onClick={() => {
-                          if (!hasColorStylingOrAddOns) {
+                          if (checkoutExpressAllowed) {
                             setSelectedProcessing('rush');
                           }
                         }}
                         style={{
                           width: '16px',
                           height: '16px',
-                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                          cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -4976,7 +5071,7 @@ function CheckoutPage() {
                           position: 'relative'
                         }}
                       >
-                        {selectedProcessing === 'rush' && !hasColorStylingOrAddOns && (
+                        {selectedProcessing === 'rush' && checkoutExpressAllowed && (
                           <img 
                             src="/assets/checkbox.svg" 
                             alt="checked" 
@@ -4988,10 +5083,10 @@ function CheckoutPage() {
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'column', 
-                          cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer' 
+                          cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed' 
                         }} 
                         onClick={() => {
-                          if (!hasColorStylingOrAddOns) {
+                          if (checkoutExpressAllowed) {
                             setSelectedProcessing('rush');
                           }
                         }}
@@ -5001,23 +5096,24 @@ function CheckoutPage() {
                           fontFamily: '"Futura PT Book"',
                           fontSize: '10px',
                           color: '#000000',
-                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                           textTransform: 'uppercase'
                         }}
                       >
-                          4-6 WEEKS RUSH PROCESSING <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
+                          {bcfOnlyProcessingWindows ? '3-4 WEEKS EXPRESS PROCESSING' : '4-6 WEEKS RUSH PROCESSING'}{' '}
+                          <span className="delivery-price" dangerouslySetInnerHTML={formatPrice(120)}></span>
                         </label>
                         <label 
                           style={{ 
                             fontFamily: '"Futura PT Book"',
                             fontSize: '9px',
                             color: '#EB1C24',
-                            cursor: hasColorStylingOrAddOns ? 'not-allowed' : 'pointer',
+                            cursor: checkoutExpressAllowed ? 'pointer' : 'not-allowed',
                             textTransform: 'uppercase',
                             marginTop: '2px'
                           }}
                         >
-                          (EXCLUDING COLOR, STYLING & ADD-ONS)
+                          {bcfOnlyProcessingWindows ? '(EXCLUDING CUSTOM HAIR COLOR)' : '(EXCLUDING COLOR, STYLING & ADD-ONS)'}
                       </label>
                       </div>
                     </div>
@@ -5936,8 +6032,11 @@ function CheckoutPage() {
                     return;
                   }
                   
-                  // Calculate points earned (if signed in) — use net eligible USD (matches strip + consult code / stack rules; booking lines not double-counted)
-                  const basePoints = isSignedIn ? Math.round(pointsEligibleNetAmount) : 0;
+                  // Calculate points earned (if signed in) — net eligible USD; zero when no earning lines (gift/digital/membership/consult-only)
+                  const basePoints =
+                    isSignedIn && !isSubscriptionUpgrade && cartHasAnyLoyaltyEarningLine(cartItems)
+                      ? Math.round(pointsEligibleNetAmount)
+                      : 0;
                   const multiplier = getPointsMultiplierForUser();
                   const pointsEarned = Math.round(basePoints * multiplier);
                   
@@ -5986,16 +6085,7 @@ function CheckoutPage() {
                       })()
                     : 'STANDARD SHIPPING';
                   
-                  // Calculate processing time based on selected processing and customizations
-                  let processingTimeText = '';
-                  if (selectedProcessing === 'rush') {
-                    processingTimeText = '4 TO 6 WEEKS';
-                  } else {
-                    const hasCustomizations = hasColorStylingOrAddOns;
-                    processingTimeText = hasCustomizations 
-                      ? '6 TO 8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-                      : '6 TO 8 WEEKS';
-                  }
+                  const processingTimeText = persistentProcessingTimeLabel;
                   
                   // Save payment method/address if checkbox is checked
                   if (savePaymentMethod && isSignedIn) {
@@ -6333,6 +6423,15 @@ function CheckoutPage() {
                             bookingTier: bookingTierPersist,
                           });
                         const requiresOrderAuthorizationForm = cartRequiresOrderAuthorizationForm(cartItems as any[]);
+                        const consultInspoPersist =
+                          bookingFlowTypePersist === 'consult' &&
+                          Array.isArray(bookingCartLineForPersist?.bookingInspoPhotoUrls)
+                            ? (bookingCartLineForPersist.bookingInspoPhotoUrls as unknown[]).filter(
+                                (u): u is string => typeof u === 'string' && u.trim().length > 0
+                              )
+                            : undefined;
+                        const persistedLineItems =
+                          digitalFulfillmentOnly ? undefined : buildPersistedLineItemsFromCart(cartItems as any[]);
                         const newOrder = {
                           id: `order-${nextOrderNumber}`,
                           orderNumber: `ORDER ${orderNumber}`,
@@ -6346,12 +6445,17 @@ function CheckoutPage() {
                           placedAt: Date.now(),
                           pointsEarned,
                           requiresOrderAuthorizationForm,
+                          ...(persistedLineItems && persistedLineItems.length > 0 ? { lineItems: persistedLineItems } : {}),
+                          ...(appliedGiftCardBalance > 0 ? { giftCardAppliedUsd: appliedGiftCardBalance } : {}),
                           ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
                           ...(bookingFlowTypePersist
                             ? {
                                 bookingFlowType: bookingFlowTypePersist,
                                 bookingTier: bookingTierPersist,
                               }
+                            : {}),
+                          ...(consultInspoPersist && consultInspoPersist.length > 0
+                            ? { bookingInspoPhotoUrls: consultInspoPersist }
                             : {})
                         };
                         activeOrders.push(newOrder);
@@ -6482,7 +6586,8 @@ function CheckoutPage() {
                   sessionStorage.setItem(
                     'checkoutSummaryRewards',
                     JSON.stringify({
-                      pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                      pointsEarned:
+                        isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                       tier: effectiveTierSummary
                     })
                   );
@@ -6519,7 +6624,8 @@ function CheckoutPage() {
                         country: selectedCountry || 'US',
                         paymentMethod: paymentMethodDisplay,
                         email,
-                        pointsEarned: isSubscriptionUpgrade ? 0 : pointsEarned,
+                        pointsEarned:
+                          isSubscriptionUpgrade || !cartHasAnyLoyaltyEarningLine(cartItems) ? 0 : pointsEarned,
                         tier: effectiveTierSummary,
                         cartItems: cartItems,
                         isSubscriptionUpgrade,

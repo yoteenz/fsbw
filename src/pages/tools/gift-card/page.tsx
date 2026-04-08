@@ -13,6 +13,8 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { trackActivity } from '../../../utils/activity';
+import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 
 function GiftCardPage() {
   const navigate = useNavigate();
@@ -83,8 +85,7 @@ function GiftCardPage() {
     MXN: { symbol: '&#36;', rate: 20.0, name: 'Mexican Peso' }
   }), []);
 
-  // Add to bag button states
-  const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
+  const [checkoutSubmitting, setCheckoutSubmitting] = useState(false);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -291,43 +292,23 @@ function GiftCardPage() {
     return selectedBalance;
   };
 
-  const handleAddToBag = () => {
-    setAddToBagState('adding');
-    
-    setTimeout(() => {
-      try {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        const newItem = {
-          id: `gift-card-${selectedBalance}-${Date.now()}`,
-          name: 'GIFT CARD',
-          price: selectedBalance,
-          quantity: 1,
-          balance: selectedBalance,
-          image: '/assets/giftcard-product.png',
-          type: 'gift-card'
-        };
-        
-        // Add new item at the beginning (newest first)
-        const updatedCartItems = [newItem, ...cartItems];
-        localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-        
-        const newCartCount = updatedCartItems.length;
-        localStorage.setItem('cartCount', newCartCount.toString());
-        setCartCount(newCartCount);
-        
-        window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCartCount }));
-        window.dispatchEvent(new Event('cartUpdated'));
-        
-        setAddToBagState('added');
-        
-        setTimeout(() => {
-          setAddToBagState('idle');
-        }, 2000);
-      } catch (e) {
-        console.error('Error adding to cart:', e);
-        setAddToBagState('idle');
-      }
-    }, 500);
+  const handleProceedToCheckout = () => {
+    if (checkoutSubmitting) return;
+    setCheckoutSubmitting(true);
+    try {
+      const newCartCount = writeGiftCardSelectionForCheckoutSession({
+        balanceUsd: selectedBalance,
+        image: '/assets/giftcard-product.png',
+      });
+      setCartCount(newCartCount);
+      trackActivity('add_to_cart', { source: 'gift_card_pdp', productName: 'GIFT CARD' });
+      trackActivity('cart_navigate', { destination: 'checkout_gift_card' });
+      navigate('/checkout/gift-card');
+    } catch (e) {
+      console.error('Error proceeding to gift card checkout:', e);
+    } finally {
+      setCheckoutSubmitting(false);
+    }
   };
 
   // Similar products scroll handlers
@@ -805,30 +786,23 @@ function GiftCardPage() {
             </div>
           </div>
 
-          {/* ADD TO BAG BUTTON - match product page (text-[11px], no single-line-btn) */}
+          {/* PROCEED TO CHECKOUT — gift card PDP goes straight to isolated /checkout/gift-card (filtered view) */}
           <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
-              onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
+              type="button"
+              onClick={handleProceedToCheckout}
+              disabled={checkoutSubmitting}
               className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
-                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
+                checkoutSubmitting ? 'bg-white cursor-not-allowed' : 'bg-white cursor-pointer hover:bg-gray-50'
               }`}
-              style={{ 
-                borderWidth: '1.3px', 
+              style={{
+                borderWidth: '1.3px',
                 color: '#EB1C24',
                 fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                backgroundColor: '#FFFFFF'
+                backgroundColor: '#FFFFFF',
               }}
             >
-              {addToBagState === 'idle' && 'ADD TO BAG'}
-              {addToBagState === 'adding' && 'ADDING...'}
-              {addToBagState === 'added' && (
-                <span className="flex items-center justify-center gap-1">
-                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#808080' }}>IN THE BAG</span>
-                </span>
-              )}
+              {checkoutSubmitting ? '…' : 'PROCEED TO CHECKOUT'}
             </button>
           </div>
 

@@ -24,6 +24,7 @@ import {
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
+  consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
   getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline,
@@ -38,16 +39,18 @@ import {
   orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
+import {
+  getConfirmPageFallbackProcessingLabel,
+  processingTimelineWeekRangeFromLabel,
+} from '../../../utils/checkoutBcfProcessing';
+import {
+  cartHasAnyLoyaltyEarningLine,
+  isMembershipSubscriptionCartLine,
+} from '../../../utils/loyaltyPointsEligibleNet';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
-  if (!item || item.name === 'GIFT CARD' || item.type === 'gift-card') return false;
-  const st = item.subscriptionTier;
-  if (st === '3months' || st === '6months' || st === '12months') return true;
-  return (
-    item.type === 'digital' &&
-    /\b(3|6|12)\s*MONTHS\b/i.test(String(item.name || ''))
-  );
+  return isMembershipSubscriptionCartLine(item);
 }
 
 function isPremiumMembershipUpgradeSummary(cartItems: any[], orderData: any): boolean {
@@ -342,20 +345,12 @@ function CheckoutConfirmPage() {
     }
   };
 
-  // Helper: processing timeline date range from orderData.processingTime (standard 6-8 weeks, rush 4-6 weeks, customized up to 10 weeks)
+  // Helper: processing timeline date range from orderData.processingTime
   const calculateProcessingTimeline = (orderDateStr: string, processingTime: string): string => {
     try {
       const [month, day, year] = orderDateStr.split('-').map(Number);
       const orderDate = new Date(year, month - 1, day);
-      let minWeeks = 6;
-      let maxWeeks = 8;
-      if (processingTime && processingTime.includes('4')) {
-        minWeeks = 4;
-        maxWeeks = 6;
-      } else if (processingTime && processingTime.includes('10')) {
-        minWeeks = 6;
-        maxWeeks = 10;
-      }
+      const { min: minWeeks, max: maxWeeks } = processingTimelineWeekRangeFromLabel(processingTime);
       
       // Calculate dates
       const minDate = new Date(orderDate);
@@ -566,7 +561,8 @@ function CheckoutConfirmPage() {
           ? cartItems.reduce((sum, item) => {
               const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
               const isDigital = item.type === 'digital';
-              if (isGiftCard || isDigital) return sum;
+              const isConsultBooking = item.type === 'booking-consult';
+              if (isGiftCard || isDigital || isConsultBooking || isMembershipSubscriptionCartLine(item)) return sum;
               return sum + (item.price || 0) * (item.quantity || 1);
             }, 0)
           : 0;
@@ -593,7 +589,8 @@ function CheckoutConfirmPage() {
             if (Number.isFinite(n) && n >= 0) baseUsd = n;
           }
         } catch (_) {}
-        const basePoints = signedIn ? Math.round(baseUsd) : 0;
+        const basePoints =
+          signedIn && cartHasAnyLoyaltyEarningLine(cartItems) ? Math.round(baseUsd) : 0;
         pointsEarned = Math.round(basePoints * multiplier);
       }
 
@@ -643,19 +640,7 @@ function CheckoutConfirmPage() {
         }
       } catch (_) {}
       
-      // Determine processing time based on order (check if has customizations)
-      const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
-        return (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-               (item.styling && item.styling !== 'NONE') ||
-               (item.addOns && item.addOns.length > 0) ||
-               (item.length && item.length !== '24"') ||
-               (item.density && item.density !== '200%') ||
-               (item.lace && item.lace !== '13X6') ||
-               (item.hairline && item.hairline !== 'NATURAL');
-      });
-      const processingTime = hasCustomizations 
-        ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-        : '6-8 WEEKS';
+      const processingTime = getConfirmPageFallbackProcessingLabel(cartItems);
       
       setOrderData((prev: any) => {
         // Get and increment order number if not already set
@@ -722,19 +707,7 @@ function CheckoutConfirmPage() {
         };
       });
     } else if (location.state && !location.state.processingTime) {
-      // If signed in with location state but no processing time, add it
-      const hasCustomizations = cartItems.length > 0 && cartItems.some(item => {
-        return (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-               (item.styling && item.styling !== 'NONE') ||
-               (item.addOns && item.addOns.length > 0) ||
-               (item.length && item.length !== '24"') ||
-               (item.density && item.density !== '200%') ||
-               (item.lace && item.lace !== '13X6') ||
-               (item.hairline && item.hairline !== 'NATURAL');
-      });
-      const processingTime = hasCustomizations 
-        ? '6-8 WEEKS (UP TO 10 WEEKS FOR CUSTOMIZED UNITS)'
-        : '6-8 WEEKS';
+      const processingTime = getConfirmPageFallbackProcessingLabel(cartItems);
       
       setOrderData((prev: any) => ({
         ...prev,
@@ -1571,7 +1544,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const methodUpper = shippingMethod.toUpperCase();
                     const isExpress = methodUpper.includes('EXPRESS');
                     const processingTime = (orderData.processingTime || '').toUpperCase();
-                    const isRush = /RUSH|4\s*[-–]\s*6|4\s*TO\s*6/.test(processingTime);
+                    const isRush = /RUSH|3\s*[-–]\s*4|3\s*TO\s*4|4\s*[-–]\s*6|4\s*TO\s*6/.test(processingTime);
                     const displayLabel = (isRush ? 'RUSH ' : '') + (isExpress ? 'EXPRESS' : 'STANDARD') + ' SHIPPING';
                     const c = String(orderData.country || addr?.country || 'UNITED STATES').trim().toUpperCase();
                     const isDomestic = c === 'US' || c === 'USA' || c === 'U.S.' || c === 'U.S.A.' || /^UNITED\s*STATES(\s+OF\s+AMERICA)?$/i.test(c);
@@ -1646,7 +1619,12 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   {(() => {
                     const di = getDigitalFulfillmentStageIndex(summaryOrderForTracking);
                     const labels = digitalFulfillmentStageLabels();
+                    const consultBarPct = consultDigitalOrderTrackingBarFillPct(
+                      summaryOrderForTracking,
+                      Date.now()
+                    );
                     return (
+                      <>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '200px', overflowY: 'auto' }}>
                         {labels.map((label, i) => {
                           const isCurrent = i === di;
@@ -1661,6 +1639,32 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                           );
                         })}
                       </div>
+                      {consultBarPct != null && (
+                        <div style={{ marginTop: '12px' }}>
+                          <div
+                            style={{
+                              width: '100%',
+                              height: '7px',
+                              backgroundColor: '#E0E0E0',
+                              borderRadius: consultBarPct > 0 ? '4px' : '0',
+                              overflow: 'hidden',
+                              border: consultBarPct === 0 ? '1px solid #808080' : 'none',
+                              boxSizing: 'border-box',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${consultBarPct}%`,
+                                height: '100%',
+                                backgroundColor: '#EB1C24',
+                                transition: 'width 0.3s ease',
+                                borderRadius: consultBarPct > 0 ? '4px' : '0',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      </>
                     );
                   })()}
                 </div>
@@ -1871,7 +1875,14 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const subTier = getEffectiveSubscriptionTier(user);
                     const mult = getPointsMultiplier(tier, subTier).multiplier;
                     let pointsEligibleAmount = (cartItems || []).reduce((sum: number, item: any) => {
-                      if (item?.name === 'GIFT CARD' || item?.type === 'gift-card' || item?.type === 'digital') return sum;
+                      if (
+                        item?.name === 'GIFT CARD' ||
+                        item?.type === 'gift-card' ||
+                        item?.type === 'digital' ||
+                        item?.type === 'booking-consult' ||
+                        isMembershipSubscriptionCartLine(item)
+                      )
+                        return sum;
                       return sum + (item?.price || 0) * (item?.quantity || 1);
                     }, 0);
                     try {
@@ -1881,7 +1892,10 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         if (Number.isFinite(n) && n >= 0) pointsEligibleAmount = n;
                       }
                     } catch (_) {}
-                    const basePoints = signedIn ? Math.round(pointsEligibleAmount) : 0;
+                    const basePoints =
+                      signedIn && cartHasAnyLoyaltyEarningLine(cartItems)
+                        ? Math.round(pointsEligibleAmount)
+                        : 0;
                     if (displayPoints === undefined) displayPoints = Math.round(basePoints * mult);
                     if (displayTier === undefined) displayTier = (getEffectiveTierName(user) || orderData.tier || accountUser?.tier || 'SILVER').toString().toUpperCase();
                   } catch (_) {}
@@ -1894,6 +1908,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     orderData.orderTotal ??
                     0;
                 }
+                if (!cartHasAnyLoyaltyEarningLine(cartItems)) displayPoints = 0;
                 if (displayTier === undefined) displayTier = rewardsFromCheckout.tier || (location.state as any)?.tier || orderData.tier || accountUser?.tier || 'SILVER';
                 const tierUpper = String(displayTier).toUpperCase();
                 return (

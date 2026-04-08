@@ -16,6 +16,21 @@ import { getAccountNotifications, mergeAccountNotifications } from '../pages/acc
 import { getNotificationsStorageKeyForUserEmail } from './orderAccountAlerts';
 import { orderRequiresOrderAuthorizationForm } from './orderAuthorizationForm';
 
+/** Client submitted auth form; admin has not approved yet (Pending → FORMS). */
+export function orderFormAwaitingAdminApproval(order: Record<string, unknown> | null | undefined): boolean {
+  if (!order || order.orderFormSigned !== true) return false;
+  if (order.orderFormAdminDeclined === true) return false;
+  if (order.orderFormAdminApproved === true) return false;
+  return order.orderFormClientSubmitted === true;
+}
+
+/** Treat as “signed for pipeline / UI” once admin approved or legacy row (no client-submitted flag). */
+export function orderFormEffectiveSignedForPipeline(order: Record<string, unknown> | null | undefined): boolean {
+  if (!order || order.orderFormSigned !== true) return false;
+  if (orderFormAwaitingAdminApproval(order)) return false;
+  return true;
+}
+
 /** Nine pipeline stages (indices 0–8); labels match Concierge ORDER TRACKING UI. */
 export const ORDER_TRACKING_STAGE_LABELS = [
   'ORDER CONFIRMED',
@@ -195,7 +210,7 @@ export function getOrderTrackingStageFromOrder(order: Record<string, unknown> | 
   const baseStage = statusMap[st] ?? 0;
   if (
     (st === 'PLACED' || st === 'CONFIRMED') &&
-    order.orderFormSigned === true &&
+    orderFormEffectiveSignedForPipeline(order) &&
     orderRequiresOrderAuthorizationForm(order)
   ) {
     return Math.max(1, baseStage);

@@ -780,6 +780,8 @@ export type AdminMeetingClientPanelProps = {
   onProfileClick: () => void;
   onActionClick: (e: React.MouseEvent) => void;
   actionAriaLabel: string;
+  /** Right-side action icon (bookings default: edit-meeting-icon-booking.svg; consults: edit-meeting-icon.svg on meetings hub). */
+  actionIconSrc?: string;
   /** Consult thumbnails only — opens lightbox (same as meetings hub). */
   onConsultPhotoClick?: (src: string) => void;
   /** When true, profile avatar is not a button (e.g. client-details tab for the same client). */
@@ -795,10 +797,12 @@ export function AdminMeetingClientPanel({
   onProfileClick,
   onActionClick,
   actionAriaLabel,
+  actionIconSrc,
   onConsultPhotoClick,
   disableProfileNavigation,
   hideProfileAvatar,
 }: AdminMeetingClientPanelProps) {
+  const rightIconSrc = actionIconSrc ?? '/assets/edit-meeting-icon-booking.svg';
   const profileAvatar = (
     <img
       src={meetingClientProfilePhoto(m)}
@@ -929,7 +933,7 @@ export function AdminMeetingClientPanel({
             }}
             aria-label={actionAriaLabel}
           >
-            <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
+            <img src={rightIconSrc} alt="" width={11} height={11} />
           </button>
         ) : null}
       </div>
@@ -1037,7 +1041,7 @@ export function AdminMeetingClientPanel({
           }}
           aria-label={actionAriaLabel}
         >
-          <img src="/assets/edit-meeting-icon-booking.svg" alt="" width={11} height={11} />
+          <img src={rightIconSrc} alt="" width={11} height={11} />
         </button>
       ) : null}
     </div>

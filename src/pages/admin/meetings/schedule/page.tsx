@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
+import BrandExpiresDatePicker from '../../../../components/BrandExpiresDatePicker';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import {
@@ -304,15 +305,18 @@ export default function AdminMeetingsSchedule() {
                 </label>
 
                 <div className="grid grid-cols-2 gap-2 mb-3">
-                  <label className="block" style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000' }}>
+                  <label className="block min-w-0" style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000' }}>
                     DATE
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="mt-1 w-full border p-2"
-                      style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', borderColor: '#e5e7eb' }}
-                    />
+                    <div className="mt-1 w-full min-w-0">
+                      <BrandExpiresDatePicker
+                        inline
+                        monthLabelVariant="adminMeetings"
+                        navArrowScale={17 / 22}
+                        value={date}
+                        onChange={setDate}
+                        hideClearDate
+                      />
+                    </div>
                   </label>
                   <label className="block" style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000' }}>
                     TIME
