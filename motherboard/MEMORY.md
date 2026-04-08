@@ -13017,3 +13017,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User still saw **large white bands** beside inputs in the modal; screenshots showed content **shifted** or **shrunk** — not DOM padding. Root cause: **`rasterizeSnapshotToSinglePdfPage`** used **`scale = min(maxW/imgW, maxH/imgH)`** on a **tall** form, so scale was **height-limited** → image **narrower** than page → **horizontal letterboxing** (looks like extra left/right white).
 
 **Changes:** **`signedOrderFormPdf.ts`** — **`rasterizeSnapshotToWidthFitPdfPage`**: fixed **612pt** page width, **`scale = maxW/imgW`**, **`pageHeight = drawH + 2×margin`** custom format, image at **`(margin, margin)`** — no width shrink. **`SignedOrderFormPdfPanel.tsx`** — iframe hash adds **`zoom=page-width`** with **`FitH`**. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Order form PDF preview: fit whole page in modal (not width-zoom crop)
+
+**Context:** After width-fit PDF, user saw form **too zoomed** in the popup — **`FitH` + `zoom=page-width`** fills iframe width on a **tall** page so only the top shows.
+
+**Changes:** **`SignedOrderFormPdfPanel.tsx`** — iframe **`#view=Fit`** (whole page in view), drop **`FitH`** / **`page-width`**; wrapper **`height/minHeight/maxHeight: min(56vh, 520px)`** + **`overflow: hidden`** so WebKit has a real viewport for fit; iframe **100%×100%**. **`npm run build`**.
