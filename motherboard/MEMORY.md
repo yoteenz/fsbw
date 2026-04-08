@@ -12961,3 +12961,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** After increasing gift card “steps” in the bag (e.g. **$100** → **4** steps = **$400**), checkout still showed **$100** on the black price line under **DIGITAL ONLY** (strip used **`item.price` only**, ignoring **`balance`** and legacy **`quantity` > 1**).
 
 **Changes:** **`giftCardCheckout.ts`** — **`giftCardLineTotalUsd`** (`balance ?? price`, × **`quantity`** for unmigrated rows). **`checkout/page.tsx`** — horizontal strip **`itemPrice`** for gift lines; **`orderAmount`** / **`orderAmountExcludingSpecialOffer`** sum gift lines via helper. **`checkout/confirm/page.tsx`** — same strip fix. **`CartDropdown.tsx`** — per-line black price + bundle line total + **`getTotalPrice`**. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Signed order form PDF: trim + center (marble was blocking crop)
+
+**Context:** User said PDF preview in the modal still looked off-center after **`trimCanvasToContentBounds`** — the **marble** root background and **glass** card (`rgba` + backdrop blur) painted **non-white** pixels across the full canvas, so the trim step found “content” on every column and **never cropped** side margins; a safety check also skipped small crops.
+
+**Changes:** **`signedOrderFormPdfSnapshotDom.ts`** — **`data-pdf-snapshot-root`** on roots, **`data-pdf-snapshot-card`** on the inner card. **`signedOrderFormPdf.ts`** — **`stripDecorativeSnapshotBackgrounds`** before **`html2canvas`** (remove marble, solid white card, clear backdrop filters); **`html2canvas`** always **`backgroundColor: '#ffffff'`**; **`trimCanvasToContentBounds`** — slightly looser near-white threshold (**252**), **removed** the “tiny crop ⇒ abort” guard; still **2px** pad then existing **`rasterizeSnapshotToSinglePdfPage`**. **`npm run build`**.

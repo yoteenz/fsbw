@@ -1,8 +1,26 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import type { StoredSignedOrderForm } from './signedOrderFormsStorage';
-import { MOCK_APPROVAL_SIGNED_FORM_ID } from './mockSignedOrderFormForApproval';
 import { buildSignedOrderFormSnapshotElement } from './signedOrderFormPdfSnapshotDom';
+
+/**
+ * Marble / glass card backgrounds paint non-white pixels across the full snapshot width, so
+ * {@link trimCanvasToContentBounds} would see “content” everywhere and not crop. Strip them
+ * for capture only so trim + PDF centering target the form column.
+ */
+function stripDecorativeSnapshotBackgrounds(el: HTMLElement): void {
+  if (el.dataset.pdfSnapshotRoot === '1') {
+    el.style.backgroundImage = 'none';
+    el.style.backgroundColor = '#ffffff';
+    el.style.backgroundRepeat = 'no-repeat';
+  }
+  const card = el.querySelector<HTMLElement>('[data-pdf-snapshot-card="1"]');
+  if (card) {
+    card.style.backgroundColor = '#ffffff';
+    card.style.setProperty('backdrop-filter', 'none');
+    card.style.setProperty('-webkit-backdrop-filter', 'none');
+  }
+}
 
 /**
  * Tighten the raster to real ink (forms, text, images). Pure-white / transparent
@@ -24,13 +42,14 @@ function trimCanvasToContentBounds(source: HTMLCanvasElement): HTMLCanvasElement
   }
   const d = img.data;
 
+  /** Treat near-white (incl. anti-alias) as background so margins trim after marble strip. */
   const isContentPixel = (i: number): boolean => {
     const a = d[i + 3];
     if (a < 12) return false;
     const r = d[i];
     const g = d[i + 1];
     const b = d[i + 2];
-    if (r >= 251 && g >= 251 && b >= 251) return false;
+    if (r >= 252 && g >= 252 && b >= 252) return false;
     return true;
   };
 
@@ -63,7 +82,6 @@ function trimCanvasToContentBounds(source: HTMLCanvasElement): HTMLCanvasElement
   const cw = maxX - minX + 1;
   const ch = maxY - minY + 1;
   if (cw < 8 || ch < 8) return source;
-  if (cw < w * 0.25 && ch < h * 0.12) return source;
 
   const out = document.createElement('canvas');
   out.width = cw;
@@ -105,13 +123,14 @@ export async function buildSignedOrderFormPdf(form: StoredSignedOrderForm): Prom
   document.body.appendChild(el);
 
   try {
+    stripDecorativeSnapshotBackgrounds(el);
     await new Promise<void>((r) => requestAnimationFrame(() => r()));
     const canvas = await html2canvas(el, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       logging: false,
-      backgroundColor: form.id === MOCK_APPROVAL_SIGNED_FORM_ID ? '#ffffff' : null,
+      backgroundColor: '#ffffff',
     });
     return rasterizeSnapshotToSinglePdfPage(trimCanvasToContentBounds(canvas));
   } finally {

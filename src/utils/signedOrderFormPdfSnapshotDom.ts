@@ -448,6 +448,7 @@ function pdfBrandingHeader(): HTMLElement {
 function buildMockPlainWhiteSnapshotRoot(form: StoredSignedOrderForm): HTMLElement {
   const root = document.createElement('div');
   root.setAttribute('data-signed-order-form-snapshot', 'mock-plain');
+  root.setAttribute('data-pdf-snapshot-root', '1');
   Object.assign(root.style, {
     width: '390px',
     boxSizing: 'border-box',
@@ -471,6 +472,7 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
 
   const root = document.createElement('div');
   root.setAttribute('data-signed-order-form-snapshot', '1');
+  root.setAttribute('data-pdf-snapshot-root', '1');
   Object.assign(root.style, {
     width: '390px',
     boxSizing: 'border-box',
@@ -484,6 +486,7 @@ export function buildSignedOrderFormSnapshotElement(form: StoredSignedOrderForm)
   });
 
   const card = document.createElement('div');
+  card.setAttribute('data-pdf-snapshot-card', '1');
   Object.assign(card.style, {
     border: '1.3px solid black',
     display: 'flex',
