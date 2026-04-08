@@ -340,18 +340,57 @@ export async function putOrders(
   };
 }
 
-export async function getCart(): Promise<{ items: unknown[] }> {
+export async function getCart(): Promise<{ items: unknown[]; version?: number }> {
   const res = await apiFetch('/api/cart');
   if (res.status === 401) return { items: [] };
   if (!res.ok) throw new Error(await res.text());
-  const data = await res.json();
-  return { items: Array.isArray(data.items) ? data.items : [] };
+  const data = (await res.json()) as { items?: unknown; version?: unknown };
+  const items = Array.isArray(data.items) ? data.items : [];
+  const version =
+    typeof data.version === 'number' && Number.isFinite(data.version) && data.version >= 1
+      ? Math.floor(data.version)
+      : undefined;
+  return { items, version };
 }
 
-export async function putCart(items: unknown[]): Promise<{ items: unknown[] }> {
-  const res = await apiFetch('/api/cart', { method: 'PUT', body: { items } });
-  if (!res.ok) throw new Error(await res.text());
-  return (await res.json()) as { items: unknown[] };
+export class CartVersionConflictError extends Error {
+  readonly serverVersion: number | null;
+  constructor(serverVersion: number | null, message?: string) {
+    super(message || 'cart_version_conflict');
+    this.name = 'CartVersionConflictError';
+    this.serverVersion = serverVersion;
+  }
+}
+
+export async function putCart(
+  items: unknown[],
+  baseVersion?: number | null
+): Promise<{ items: unknown[]; version?: number }> {
+  const body: Record<string, unknown> = { items };
+  if (baseVersion != null && Number.isFinite(baseVersion) && baseVersion >= 1) {
+    body.baseVersion = Math.floor(baseVersion);
+  }
+  const res = await apiFetch('/api/cart', { method: 'PUT', body });
+  const text = await res.text();
+  if (res.status === 409) {
+    let serverVersion: number | null = null;
+    try {
+      const j = JSON.parse(text) as { serverVersion?: unknown };
+      if (typeof j.serverVersion === 'number' && Number.isFinite(j.serverVersion)) {
+        serverVersion = Math.floor(j.serverVersion);
+      }
+    } catch {
+      /* ignore */
+    }
+    throw new CartVersionConflictError(serverVersion);
+  }
+  if (!res.ok) throw new Error(text || 'putCart failed');
+  const data = JSON.parse(text) as { items?: unknown; version?: unknown };
+  const version =
+    typeof data.version === 'number' && Number.isFinite(data.version) && data.version >= 1
+      ? Math.floor(data.version)
+      : undefined;
+  return { items: Array.isArray(data.items) ? data.items : [], version };
 }
 
 export async function getWishlist(): Promise<{ items: unknown[] }> {

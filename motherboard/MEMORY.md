@@ -13067,3 +13067,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** When **`isMockDataAccount`**, treat all **mock shop + tool** review ids as eligible for the supplemental link. **`accountReviewsSupplementalOverlay.ts`** — per-email **`localStorage`** map for supplemental state on catalog rows; **`mergeReviewWithSupplementalOverlay`** merges local + optional **`currentUser.reviewSupplementalOverlay`** from profile sync. Server: migration **`review_supplemental_overlay`** on **`profiles`**; **`applySupplementalApproval`** / **`clearSupplementalPendingOnProfile`** update overlay when **`client_review_key`** is not in **`user_submitted_reviews`**; **`POST review_supplemental`** writes overlay when no list row matches. **`applyClientReviewAdminDecisionToUserStorage`** also calls **`applySupplementalOverlayAdminDecision`** for mock-queue declines/approves. Modal **`patchSupplementalOverlay`** when server path skips list update.
 
 **Changes:** **`accountReviewsSupplementalOverlay.ts`**, **`account/reviews/page.tsx`**, **`ReviewSupplementalContentModal.tsx`**, **`clientPendingServerSync.ts`**, **`adminPendingClientSync.ts`**, **`pendingQueueHandlers.ts`**, **`client/submissions.ts`**, **`profileMapping.ts`**, **`profile.ts`**, migration **`20260414100000_profiles_review_supplemental_overlay.sql`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Commerce gated on Supabase session + cart versioning + order push after checkout
+
+**Context:** User asked for a **layered remedy** for anonymous/local-only commerce: gate **checkout** (and ideally path to checkout) on **signed-in Supabase**; **persist cart** to DB with **conflict handling** and **hydrate on load**; ensure **orders** are not only localStorage after purchase; profile sync already partly exists.
+
+**Decisions / outcomes:**
+- When **`VITE_SUPABASE_URL`** is set, **`CommerceRouteGuard`** wraps **`/bag`**, **`/checkout`**, **`/checkout/bookings`**, **`/checkout/gift-card`** (not **`/checkout/upgrade`**): requires **`getSession().access_token`**; otherwise redirect to sign-in with **`returnTo`**. On allow, calls **`syncCartFromApi()`** so server cart merges in before pay.
+- **`public.cart.version`** (migration **`20260415120000_cart_version.sql`**) + API: **`GET /api/cart`** returns **`{ items, version }`**; **`PUT`** accepts optional **`baseVersion`** — mismatch → **409** with **`serverVersion`**; success bumps version. Client stores last known version in **`localStorage.serverCartVersion`**; **`putCart`** sends **`baseVersion`** when known. **409** path: **`getCart` → merge (union by line key, higher qty wins) → putCart(serverVersion)**.
+- **`syncCartFromApi`** merges **local + server** (same merge) instead of overwriting with server-only.
+- **`swapCartAndWishlistToUser`** / **`applyAdminSyncPayload`** clear **`serverCartVersion`** so first push after user switch is unversioned (avoids stale version).
+- After checkout: **`pushLocalUserOrdersAfterCheckout`** → **`putOrders`** + optional **`patchProfile({ hasMadeFirstPurchase })`** + **`syncProfileFromApi`**. **`persistUserOrderAfterCheckoutAfterCartSaved`** **`useCallback`** used for **card confirm** and **Apple Pay-style** path so both sync.
+
+**Changes:** **`api/cart.ts`**, **`src/utils/api.ts`** (**`CartVersionConflictError`**, **`putCart`/`getCart` version**), **`cartServerSync.ts`**, **`pushCartWishlistToCloud.ts`**, **`syncFromApi.ts`**, **`cartWishlistStorage.ts`**, **`CommerceRouteGuard.tsx`**, **`App.tsx`**, **`checkoutOrderServerSync.ts`**, **`checkout/page.tsx`**, migration **`20260415120000_cart_version.sql`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

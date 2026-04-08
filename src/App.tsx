@@ -15,6 +15,7 @@ import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
+import CommerceRouteGuard from './components/CommerceRouteGuard';
 import MembershipRouteSync from './components/MembershipRouteSync';
 import { clearTestDataForNonAdminUserIfNeeded } from './utils/clearTestDataForNonAdmin';
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth';
@@ -903,9 +904,11 @@ function App() {
           </Suspense>
         } />
         <Route path="/bag" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <ShoppingBagPage />
-          </Suspense>
+          <CommerceRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ShoppingBagPage />
+            </Suspense>
+          </CommerceRouteGuard>
         } />
         <Route path="/checkout/upgrade" element={
           <Suspense fallback={<LoadingScreen />}>
@@ -913,19 +916,25 @@ function App() {
           </Suspense>
         } />
         <Route path="/checkout/bookings" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <CheckoutPage />
-          </Suspense>
+          <CommerceRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <CheckoutPage />
+            </Suspense>
+          </CommerceRouteGuard>
         } />
         <Route path="/checkout/gift-card" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <CheckoutPage />
-          </Suspense>
+          <CommerceRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <CheckoutPage />
+            </Suspense>
+          </CommerceRouteGuard>
         } />
         <Route path="/checkout" element={
-          <Suspense fallback={<LoadingScreen />}>
-            <CheckoutPage />
-          </Suspense>
+          <CommerceRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <CheckoutPage />
+            </Suspense>
+          </CommerceRouteGuard>
         } />
         <Route path="/checkout/summary" element={
           <Suspense fallback={<LoadingScreen />}>

@@ -1,3 +1,5 @@
+import { writeStoredCartVersion } from './cartServerSync';
+
 /**
  * Per-user cart, wishlist, and saved lists storage.
  * When the signed-in user changes, we swap global localStorage so the active user's data is shown.
@@ -52,6 +54,7 @@ function loadFromUserKeys(email: string | null): void {
     // Clear cart UI state when switching user so the new user doesn't see previous user's add-to-bag/edit state
     CART_UI_KEYS.forEach((k) => localStorage.removeItem(k));
     if (email) {
+      writeStoredCartVersion(null);
       const e = normalizeEmail(email);
       const cart = localStorage.getItem(cartKey(e));
       const wishlist = localStorage.getItem(wishlistKey(e));
@@ -62,6 +65,7 @@ function loadFromUserKeys(email: string | null): void {
       if (lists !== null) localStorage.setItem('userLists', lists);
       else localStorage.removeItem('userLists');
     } else {
+      writeStoredCartVersion(null);
       localStorage.setItem('cartItems', '[]');
       localStorage.setItem('cartCount', '0');
       localStorage.setItem('wishlistItems', '[]');

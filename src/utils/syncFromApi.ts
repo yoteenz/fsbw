@@ -6,6 +6,7 @@
  */
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { persistServerProfileQueuesToLocal } from './clientPendingServerSync';
+import { mergeCartItemsUnion, writeStoredCartVersion } from './cartServerSync';
 import {
   isAdminEmail,
   isAyoteenzAdminAccount,
@@ -173,10 +174,23 @@ export async function syncOrdersFromApi(): Promise<void> {
 
 export async function syncCartFromApi(): Promise<void> {
   try {
-    const { items } = await getCart();
-    const arr = Array.isArray(items) ? items : [];
-    localStorage.setItem('cartItems', JSON.stringify(arr));
-    localStorage.setItem('cartCount', String(arr.length));
+    const { items, version } = await getCart();
+    const serverArr = Array.isArray(items) ? items : [];
+    let local: unknown[] = [];
+    try {
+      const raw = localStorage.getItem('cartItems');
+      const parsed = raw ? JSON.parse(raw) : [];
+      local = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      local = [];
+    }
+    const merged = mergeCartItemsUnion(local, serverArr);
+    localStorage.setItem('cartItems', JSON.stringify(merged));
+    localStorage.setItem('cartCount', String(merged.length));
+    if (version != null) writeStoredCartVersion(version);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('cartUpdated'));
+    }
   } catch {
     // ignore
   }
@@ -298,6 +312,7 @@ export function applyAdminSyncPayload(
   const cartItems = Array.isArray(payload.cart?.items) ? payload.cart.items : [];
   localStorage.setItem('cartItems', JSON.stringify(cartItems));
   localStorage.setItem('cartCount', String(cartItems.length));
+  writeStoredCartVersion(null);
 
   const wishlistItems = Array.isArray(payload.wishlist?.items) ? payload.wishlist.items : [];
   localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));

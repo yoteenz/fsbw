@@ -4,8 +4,9 @@
  */
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import { isSignedIn } from './adminAuth';
-import { putCart, putWishlist, putOrders } from './api';
+import { putCart, putWishlist, putOrders, getCart, CartVersionConflictError } from './api';
 import { trackActivity } from './activity';
+import { mergeCartItemsUnion, readStoredCartVersion, writeStoredCartVersion } from './cartServerSync';
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -27,10 +28,26 @@ export function schedulePushCartWishlistToCloud(): void {
       let wishSynced = false;
       if (Array.isArray(cart)) {
         try {
-          await putCart(cart);
+          const base = readStoredCartVersion();
+          const res = await putCart(cart, base);
+          if (res.version != null) writeStoredCartVersion(res.version);
           cartSynced = true;
-        } catch {
-          /* ignore */
+        } catch (e) {
+          if (e instanceof CartVersionConflictError) {
+            try {
+              const { items: serverItems, version: serverVersion } = await getCart();
+              const merged = mergeCartItemsUnion(cart, Array.isArray(serverItems) ? serverItems : []);
+              const put = await putCart(merged, serverVersion ?? null);
+              localStorage.setItem('cartItems', JSON.stringify(merged));
+              localStorage.setItem('cartCount', String(merged.length));
+              if (put.version != null) writeStoredCartVersion(put.version);
+              window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+              window.dispatchEvent(new Event('cartUpdated'));
+              cartSynced = true;
+            } catch {
+              /* ignore */
+            }
+          }
         }
       }
       if (Array.isArray(wish)) {
