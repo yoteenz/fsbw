@@ -704,6 +704,7 @@ function OrderFormPage() {
           photoIdDataUrl: photoIdDataUrl || undefined,
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
+          adminApproved: false,
         });
         markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
         saveLastOrderAuthorizationFormDraft(formData.email.trim(), {

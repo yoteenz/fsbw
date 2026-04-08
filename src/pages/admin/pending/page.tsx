@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -7,6 +7,16 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import {
+  countPendingOrderAuthorizationFormsForAdmin,
+  listPendingOrderAuthorizationFormsForAdmin,
+  pendingFormShowsViewFormAction,
+  PENDING_ORDER_FORMS_UPDATED_EVENT,
+} from '../../../utils/pendingOrderAuthorizationForms';
+import type { StoredSignedOrderForm } from '../../../utils/signedOrderFormsStorage';
+import { approveOrderFormSubmission, declineOrderFormSubmission } from '../../../utils/signedOrderFormsStorage';
+import { SignedOrderFormPdfPanel } from '../../../components/SignedOrderFormPdfPanel';
+import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hooks/useSignedOrderFormPdf';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -46,14 +56,6 @@ const MOCK_PENDING_CLIENT_REVIEWS = [
     date: '3/22/2026',
     status: 'PENDING' as const,
   },
-] as const;
-
-/** Mock: signed / awaiting order authorization forms. */
-const MOCK_ORDER_AUTH_FORMS = [
-  { id: '1', order: 'ORDER #2847', client: 'ASHLEY WILLIAMS', date: '3/29/2026', status: 'AWAITING SIGNATURE' },
-  { id: '2', order: 'ORDER #2842', client: 'TAYLOR MARTIN', date: '3/28/2026', status: 'SIGNED · PENDING VERIFY' },
-  { id: '3', order: 'ORDER #2839', client: 'KEIRA MARTINEZ', date: '3/27/2026', status: 'INCOMPLETE' },
-  { id: '4', order: 'ORDER #2831', client: 'NINA PATEL', date: '3/25/2026', status: 'AWAITING SIGNATURE' },
 ] as const;
 
 /** Mock: affiliate submissions (Account → Affiliate). */
@@ -99,6 +101,32 @@ export default function AdminPending() {
     withVideos: number;
     textOnly: number;
   }>({ total: 0, withPhotos: 0, withVideos: 0, textOnly: 0 });
+  const [pendingAuthFormsBump, setPendingAuthFormsBump] = useState(0);
+  const [formReviewTarget, setFormReviewTarget] = useState<StoredSignedOrderForm | null>(null);
+  const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false);
+  const [declineReasonDraft, setDeclineReasonDraft] = useState('');
+
+  const pendingAuthFormsCount = useMemo(() => {
+    void pendingAuthFormsBump;
+    return countPendingOrderAuthorizationFormsForAdmin();
+  }, [pendingAuthFormsBump]);
+
+  const pendingAuthFormsList = useMemo(() => {
+    void pendingAuthFormsBump;
+    return listPendingOrderAuthorizationFormsForAdmin();
+  }, [pendingAuthFormsBump]);
+
+  useEffect(() => {
+    const bump = () => setPendingAuthFormsBump((n) => n + 1);
+    window.addEventListener(PENDING_ORDER_FORMS_UPDATED_EVENT, bump);
+    window.addEventListener('signedOrderFormsUpdated', bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener(PENDING_ORDER_FORMS_UPDATED_EVENT, bump);
+      window.removeEventListener('signedOrderFormsUpdated', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -145,12 +173,17 @@ export default function AdminPending() {
                 })()
               : pending.pendingReviewBreakdown
           );
+          const localForms = countPendingOrderAuthorizationFormsForAdmin();
           setPendingItems(
             pending.pendingItems.length
-              ? pending.pendingItems.map((row, i) => (i === 0 ? { ...row, value: String(pendingCount) } : row))
+              ? pending.pendingItems.map((row, i) => {
+                  if (i === 0) return { ...row, value: String(pendingCount) };
+                  if (row.label === 'ORDER FORMS') return { ...row, value: String(localForms) };
+                  return row;
+                })
               : [
                   { label: 'PENDING REVIEWS', value: String(pendingCount) },
-                  { label: 'ORDER FORMS', value: String(pending.orderForms) },
+                  { label: 'ORDER FORMS', value: String(localForms) },
                   { label: 'TIER UPGRADES', value: '0' },
                   { label: 'AFFILIATE REQUESTS', value: '0' },
                   { label: 'REFUND REQUESTS', value: '0' },
@@ -169,17 +202,51 @@ export default function AdminPending() {
     }
   }, [searchParams]);
 
-  const displayItems =
-    pendingItems.length > 0
-      ? pendingItems
-      : [
-          { label: 'PENDING REVIEWS', value: String(pendingReviews) },
-          { label: 'ORDER FORMS', value: String(orderForms) },
-          { label: 'TIER UPGRADES', value: '0' },
-          { label: 'AFFILIATE REQUESTS', value: '0' },
-          { label: 'REFUND REQUESTS', value: '0' },
-          { label: 'SYSTEM ALERTS', value: '0' },
-        ];
+  const displayItems = useMemo(() => {
+    const base =
+      pendingItems.length > 0
+        ? pendingItems
+        : [
+            { label: 'PENDING REVIEWS', value: String(pendingReviews) },
+            { label: 'ORDER FORMS', value: String(orderForms) },
+            { label: 'TIER UPGRADES', value: '0' },
+            { label: 'AFFILIATE REQUESTS', value: '0' },
+            { label: 'REFUND REQUESTS', value: '0' },
+            { label: 'SYSTEM ALERTS', value: '0' },
+          ];
+    return base.map((row) =>
+      row.label === 'ORDER FORMS' ? { ...row, value: String(pendingAuthFormsCount) } : row
+    );
+  }, [pendingItems, pendingReviews, orderForms, pendingAuthFormsCount]);
+
+  const {
+    url: formReviewPdfUrl,
+    loading: formReviewPdfLoading,
+    error: formReviewPdfError,
+  } = useSignedOrderFormPdf(formReviewTarget);
+
+  const downloadFormReviewPdf = useCallback(() => {
+    if (!formReviewPdfUrl || !formReviewTarget) return;
+    const a = document.createElement('a');
+    a.href = formReviewPdfUrl;
+    a.download = signedOrderFormPdfFileName(formReviewTarget);
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }, [formReviewPdfUrl, formReviewTarget]);
+
+  const closeFormReview = useCallback(() => {
+    setFormReviewTarget(null);
+    setShowDeclineReasonModal(false);
+    setDeclineReasonDraft('');
+  }, []);
+
+  const submitDecline = useCallback(() => {
+    if (!formReviewTarget) return;
+    declineOrderFormSubmission(formReviewTarget, declineReasonDraft);
+    closeFormReview();
+  }, [formReviewTarget, declineReasonDraft, closeFormReview]);
 
   const formsRows = [
     { label: 'INCOMPLETE FORMS', value: '5' },
@@ -408,20 +475,62 @@ export default function AdminPending() {
                   {activeTab === 'FORMS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 10px', lineHeight: 1.35 }}>
-                        MOCK: ORDER AUTHORIZATION FORMS FROM CLIENTS. DESIGN PREVIEW ONLY.
+                        CLIENT-SUBMITTED ORDER AUTHORIZATION FORMS AWAITING YOUR APPROVAL.
                       </p>
-                      {MOCK_ORDER_AUTH_FORMS.map((f) => (
-                        <div key={f.id} className="py-3" style={rowStyle}>
-                          <div className="flex justify-between items-start gap-2">
-                            <div className="min-w-0 flex-1">
-                              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{f.order}</p>
-                              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{f.client}</p>
-                              <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '6px 0 0' }}>{f.status}</p>
+                      {pendingAuthFormsList.length === 0 ? (
+                        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
+                          NO FORMS PENDING APPROVAL.
+                        </p>
+                      ) : (
+                        pendingAuthFormsList.map((f) => {
+                          const name = `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
+                          const dateStr = (() => {
+                            try {
+                              return new Date(f.signedAt).toLocaleDateString(undefined, { dateStyle: 'short' });
+                            } catch {
+                              return '—';
+                            }
+                          })();
+                          const showView = pendingFormShowsViewFormAction(f);
+                          return (
+                            <div key={`${f.email}-${f.id}`} className="py-3" style={rowStyle}>
+                              <div className="flex justify-between items-start gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: 0 }}>{f.orderNumber}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '6px 0 0' }}>{name}</p>
+                                  <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '4px 0 0' }}>{f.email}</p>
+                                  {showView ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => setFormReviewTarget(f)}
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '9px',
+                                        color: '#EB1C24',
+                                        fontWeight: 500,
+                                        margin: '8px 0 0',
+                                        padding: 0,
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                        textTransform: 'uppercase',
+                                        display: 'block',
+                                      }}
+                                    >
+                                      VIEW FORM
+                                    </button>
+                                  ) : (
+                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '8px 0 0' }}>
+                                      SIGNED · PENDING VERIFY
+                                    </p>
+                                  )}
+                                </div>
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{dateStr}</span>
+                              </div>
                             </div>
-                            <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', flexShrink: 0 }}>{f.date}</span>
-                          </div>
-                        </div>
-                      ))}
+                          );
+                        })
+                      )}
                     </>
                   )}
 
@@ -513,6 +622,196 @@ export default function AdminPending() {
           </div>
         </div>
       </div>
+
+      {formReviewTarget && !showDeclineReasonModal && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}
+          onClick={closeFormReview}
+          role="presentation"
+        >
+          <div
+            className="flex flex-col items-stretch sm:items-center"
+            style={{ width: '100%', maxWidth: 'min(520px, 100%)', gap: '12px', padding: '0 12px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-4 overflow-hidden bg-white"
+              style={{
+                maxWidth: '520px',
+                width: '100%',
+                alignSelf: 'center',
+                maxHeight: 'min(78vh, 720px)',
+                border: '1.3px solid black',
+                borderRadius: 0,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              role="dialog"
+              aria-labelledby="pending-form-review-title"
+            >
+              <div className="flex justify-between items-center flex-shrink-0" style={{ marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+                <p id="pending-form-review-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase', fontWeight: 500 }}>
+                  REVIEW ORDER FORM
+                </p>
+                <button type="button" onClick={closeFormReview} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
+                  <img
+                    src="/assets/close-icon.svg"
+                    alt=""
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      display: 'block',
+                      filter:
+                        'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                    }}
+                  />
+                </button>
+              </div>
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ paddingBottom: '12px' }}>
+                <SignedOrderFormPdfPanel url={formReviewPdfUrl} loading={formReviewPdfLoading} error={formReviewPdfError} />
+              </div>
+              <div className="flex gap-2 flex-shrink-0 flex-wrap" style={{ marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!formReviewTarget) return;
+                    approveOrderFormSubmission(formReviewTarget);
+                    closeFormReview();
+                  }}
+                  disabled={formReviewPdfLoading}
+                  style={{
+                    flex: 1,
+                    minWidth: '120px',
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#fff',
+                    background: '#EB1C24',
+                    border: '1.3px solid #000',
+                    padding: '8px 10px',
+                    cursor: formReviewPdfLoading ? 'not-allowed' : 'pointer',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  APPROVE
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeclineReasonModal(true)}
+                  style={{
+                    flex: 1,
+                    minWidth: '120px',
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    background: '#fff',
+                    border: '1.3px solid #000',
+                    padding: '8px 10px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  DECLINE
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={downloadFormReviewPdf}
+              disabled={!formReviewPdfUrl || formReviewPdfLoading}
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#EB1C24',
+                background: '#fff',
+                border: '1.3px solid #000',
+                padding: '8px 12px',
+                cursor: formReviewPdfUrl && !formReviewPdfLoading ? 'pointer' : 'not-allowed',
+                textTransform: 'uppercase',
+                alignSelf: 'center',
+                width: '100%',
+                maxWidth: '520px',
+              }}
+            >
+              SAVE / DOWNLOAD PDF
+            </button>
+          </div>
+        </div>
+      )}
+
+      {formReviewTarget && showDeclineReasonModal && (
+        <div
+          className="fixed inset-0 z-[100000] flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
+          onClick={() => setShowDeclineReasonModal(false)}
+          role="presentation"
+        >
+          <div
+            className="bg-white p-4 mx-4"
+            style={{ maxWidth: '400px', width: '100%', border: '1.3px solid #000' }}
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-labelledby="decline-reason-title"
+          >
+            <p id="decline-reason-title" style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#EB1C24', margin: '0 0 12px', textTransform: 'uppercase' }}>
+              DECLINE ORDER FORM
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', margin: '0 0 8px' }}>
+              OPTIONAL REASON (SHOWN TO OPS / YOUR RECORDS):
+            </p>
+            <textarea
+              value={declineReasonDraft}
+              onChange={(e) => setDeclineReasonDraft(e.target.value)}
+              rows={4}
+              style={{
+                width: '100%',
+                border: '1px solid #e5e7eb',
+                fontFamily: '"Futura PT Book"',
+                fontSize: '11px',
+                padding: '8px',
+                boxSizing: 'border-box',
+                marginBottom: '12px',
+              }}
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={submitDecline}
+                style={{
+                  flex: 1,
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#fff',
+                  background: '#EB1C24',
+                  border: '1.3px solid #000',
+                  padding: '8px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                CONFIRM DECLINE
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDeclineReasonModal(false)}
+                style={{
+                  flex: 1,
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '10px',
+                  color: '#000',
+                  background: '#fff',
+                  border: '1.3px solid #000',
+                  padding: '8px',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                BACK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

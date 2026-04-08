@@ -10,7 +10,10 @@ import { getOptionsForUnit, type UnitId } from '../../../utils/productOptions';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { normalizeUserOrdersBuckets } from '../../../utils/userOrdersBuckets';
 import { orderRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
-import { getOrderTrackingStageFromOrder } from '../../../utils/orderTracking';
+import {
+  getOrderTrackingStageFromOrder,
+  orderFormEffectiveSignedForPipeline,
+} from '../../../utils/orderTracking';
 import { consultBookingInspoPhotoUrlsFromOrder } from '../../../utils/consultOrderInspoPhotos';
 import {
   consultDigitalOrderTrackingBarFillPct,
@@ -3320,7 +3323,7 @@ function ConciergePage() {
                                 if (
                                   !isCanceled &&
                                   selectedOrder?.status === 'PLACED' &&
-                                  !selectedOrder?.orderFormSigned &&
+                                  selectedOrder?.orderFormSigned !== true &&
                                   orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
                                 ) {
                                   // Check if 24 hours have passed since order was placed
@@ -3350,7 +3353,7 @@ function ConciergePage() {
                                 }
                                 const isAwaitingSignature =
                                   selectedOrder?.status === 'PLACED' &&
-                                  !selectedOrder?.orderFormSigned &&
+                                  selectedOrder?.orderFormSigned !== true &&
                                   !isCanceled &&
                                   orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>);
                                 
@@ -3424,7 +3427,7 @@ function ConciergePage() {
                                   // Special case: confirmed stage (index 0) is completed if form is signed
                                   if (
                                     index === 0 &&
-                                    selectedOrder?.orderFormSigned === true &&
+                                    orderFormEffectiveSignedForPipeline(selectedOrder as unknown as Record<string, unknown>) &&
                                     orderRequiresOrderAuthorizationForm(selectedOrder as unknown as Record<string, unknown>)
                                   ) {
                                     isCompleted = true;
@@ -3445,7 +3448,8 @@ function ConciergePage() {
                                     selectedOrder as unknown as Record<string, unknown>
                                   );
                                   const isFormSigned =
-                                    needsAuthForm && selectedOrder?.orderFormSigned === true;
+                                    needsAuthForm &&
+                                    orderFormEffectiveSignedForPipeline(selectedOrder as unknown as Record<string, unknown>);
                                   const orderDate = selectedOrder?.date;
                                   const placedAt = selectedOrder?.placedAt;
                                   
@@ -4160,7 +4164,9 @@ function ConciergePage() {
                                                   </div>
                                                 );
                                               }
-                                              const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                              const isFormSigned = orderFormEffectiveSignedForPipeline(
+                                                selectedOrder as unknown as Record<string, unknown>
+                                              );
                                               const orderDate = selectedOrder?.date;
                                               const placedAt = selectedOrder?.placedAt;
                                               
@@ -4483,7 +4489,9 @@ function ConciergePage() {
                                                       if (progress > 0) return `STATUS: ${Math.round(progress)}% COMPLETE`;
                                                       return `STATUS: ${Math.round(progress)}% COMPLETE`;
                                                     }
-                                                    const isFormSigned = selectedOrder?.orderFormSigned === true;
+                                                    const isFormSigned = orderFormEffectiveSignedForPipeline(
+                                                      selectedOrder as unknown as Record<string, unknown>
+                                                    );
                                                     const orderDate = selectedOrder?.date;
                                                     const placedAt = selectedOrder?.placedAt;
                                                     

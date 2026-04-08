@@ -12789,3 +12789,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** User asked to **update** the **TAP TO VIEW PDF** line to **gray Futura PT Medium**, and add **ORDER STATUS: DELIVERED** (or real status) **above** that line in the signed-forms popup list rows.
 
 **Changes:** **`admin/clients/page.tsx`** — **`orderStatusLabelForSignedForm`** matches **`form.orderId`** / normalized **order number** to **`selectedRawOrders`**; status uppercase, default **`DELIVERED`** if missing; synthetic rows use **`formFields.status`** when no match. **`SignedOrderFormListRow`** — new gray **Futura PT Medium** **`ORDER STATUS: …`** paragraph with **`marginBottom: 6px`** above hints; **summary** and **full** hint lines use **`Futura PT Medium`** / **`#808080`** / **`fontWeight 500`**. **`npm run build`**. Pushed **`preview/mobile`**.
+
+---
+
+## 2026-04-06 — Signed forms PDF viewer centering + PDF snapshot input/checkbox tweaks + DELIVERED black
+
+**Context (this chat):** User wanted the **PDF** centered in the modal viewport (was shifted right); **PDF snapshot** faux inputs same **36px** height as live form; checkbox **X** centered like authorization page; **ORDER STATUS:** line gray but **`DELIVERED`** word **black** only.
+
+**Changes:** **`SignedOrderFormPdfPanel.tsx`** — scrollable flex wrapper **`justifyContent: center`**, iframe **`maxWidth: 100%`**, PDF hash **`#toolbar=1&navpanes=0&view=FitH`**; removed detail horizontal padding in **`admin/clients/page.tsx`**. **`signedOrderFormPdfSnapshotDom.ts`** — faux inputs **`lineHeight: 1.2`**, **`overflow: hidden`** for **36px** box; shared **`appendCheckboxMark`** — **14×14** **`object-fit: contain`** in **16×16** flex box (no absolute). **`SignedOrderFormListRow`** — split spans: **`ORDER STATUS: `** gray, value **black** if **`DELIVERED`** else gray. **`npm run build`**. Pushed **`preview/mobile`**.

@@ -100,6 +100,7 @@ export function getMockSignedOrderFormForApproval(): StoredSignedOrderForm {
       signedAt: Date.UTC(2099, 0, 15, 16, 30, 0),
       email: 'mock-approval@preview.local',
       summaryOnly: false,
+      adminApproved: true,
       formFields: {
         orderNumber: 'ORDER #MOCK-APPROVAL',
         orderDate: '04-06-2026',
@@ -134,6 +135,7 @@ export function getMockSignedOrderFormForApproval(): StoredSignedOrderForm {
     signedAt: Date.UTC(2099, 0, 15, 16, 30, 0),
     email: 'mock-approval@preview.local',
     summaryOnly: false,
+    adminApproved: true,
     formFields: {
       orderNumber: 'ORDER #MOCK-APPROVAL',
       orderDate: '04-06-2026',

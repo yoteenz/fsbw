@@ -22,6 +22,7 @@ import {
   ORDER_TRACKING_PULSATE_ANIMATION,
   ORDER_TRACKING_PULSATE_KEYFRAMES_CSS,
   ORDER_TRACKING_STAGE_LABELS,
+  orderFormAwaitingAdminApproval,
   orderTrackingDeliveredRowIsCurrent,
   orderTrackingStageRowIsCurrent,
   orderShowsDeliveredTrackingLine,
@@ -78,6 +79,11 @@ interface Order {
   placedAt?: number; // Timestamp when order was placed (for 24-hour authorization countdown)
   canceledAt?: number; // Timestamp when order was canceled (for 24-hour archive logic)
   orderFormSigned?: boolean; // Whether the order form has been signed
+  /** Client submitted authorization; false until admin approves (Pending → FORMS). */
+  orderFormClientSubmitted?: boolean;
+  orderFormAdminApproved?: boolean;
+  orderFormAdminDeclined?: boolean;
+  orderFormAdminDeclineReason?: string;
   bookingFlowType?: 'appointment' | 'consult';
   /** Standard vs premium booking cart line — used with bookingFlowType for cart-matching thumbnails. */
   bookingTier?: 'standard' | 'premium';
@@ -1435,6 +1441,13 @@ function OrdersPage() {
           if (
             order.status === 'PLACED' &&
             order.placedAt &&
+            orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>)
+          ) {
+            return order;
+          }
+          if (
+            order.status === 'PLACED' &&
+            order.placedAt &&
             !order.orderFormSigned &&
             !orderUsesDigitalFulfillmentTimeline(order) &&
             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
@@ -2614,6 +2627,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
+                             orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM PENDING ADMIN APPROVAL
+                             </p>
+                           )}
+                           {order.status === 'PLACED' &&
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
@@ -2647,6 +2667,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
+                             !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW
@@ -2775,10 +2796,27 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                             </span>
                           );
                         }
+                        if (
+                          order.status === 'PLACED' &&
+                          orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                        ) {
+                          return (
+                            <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
+                              <span className="text-black" style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                {order.orderNumber}:{' '}
+                              </span>
+                              <span style={{ color: '#000000', fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' }}>
+                                PENDING ADMIN APPROVAL
+                              </span>
+                            </span>
+                          );
+                        }
                         // For PLACED orders with signed form, show "ORDER FORM IN REVIEW" (unit/bundle/F&C only)
                         if (
                           order.status === 'PLACED' &&
                           order.orderFormSigned &&
+                          !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                           orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
                         ) {
                           return (
@@ -2834,10 +2872,15 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               fontFamily: (order.status === 'CONFIRMED' || order.status === 'SHIPPED' || order.status === 'PROCESSING') ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif'
                             }}>
                               {order.status === 'PLACED' &&
-                              order.orderFormSigned &&
+                              orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                               orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
-                                ? 'ORDER FORM IN REVIEW'
-                                : order.status}
+                                ? 'PENDING ADMIN APPROVAL'
+                                : order.status === 'PLACED' &&
+                                    order.orderFormSigned &&
+                                    !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                                    orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                                  ? 'ORDER FORM IN REVIEW'
+                                  : order.status}
                             </span>
                           </span>
                         );
@@ -3512,6 +3555,13 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
+                             orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
+                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
+                               ORDER FORM PENDING ADMIN APPROVAL
+                             </p>
+                           )}
+                           {order.status === 'PLACED' &&
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
@@ -3545,6 +3595,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
+                             !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM IN REVIEW
