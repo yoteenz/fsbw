@@ -71,6 +71,7 @@ import {
   checkoutExpressProcessingAllowed,
   getCheckoutProcessingTimePersistentLabel,
 } from '../../utils/checkoutBcfProcessing';
+import { cartRequiresGiftCardIdentityForm } from '../../utils/giftCardFirstPurchaseForm';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -2474,6 +2475,7 @@ function CheckoutPage() {
               return option?.label || `${selectedShippingMethod.carrier} ${selectedShippingMethod.speed.toUpperCase()}`;
             })() : 'STANDARD SHIPPING',
             processingTime: persistentProcessingTimeLabel,
+            requiresGiftCardIdentityForm: cartRequiresGiftCardIdentityForm(cartItems as unknown[], email),
           };
           
           // Store order data with a key that includes the provider for retrieval after redirect
@@ -2580,6 +2582,7 @@ function CheckoutPage() {
               tier: effectiveTier,
               isSubscriptionUpgrade,
               requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
+              requiresGiftCardIdentityForm: cartRequiresGiftCardIdentityForm(cartItems as unknown[], email),
             }
           });
         }
@@ -6423,6 +6426,10 @@ function CheckoutPage() {
                             bookingTier: bookingTierPersist,
                           });
                         const requiresOrderAuthorizationForm = cartRequiresOrderAuthorizationForm(cartItems as any[]);
+                        const requiresGiftCardIdentityForm = cartRequiresGiftCardIdentityForm(
+                          cartItems as unknown[],
+                          email
+                        );
                         const consultInspoPersist =
                           bookingFlowTypePersist === 'consult' &&
                           Array.isArray(bookingCartLineForPersist?.bookingInspoPhotoUrls)
@@ -6445,6 +6452,7 @@ function CheckoutPage() {
                           placedAt: Date.now(),
                           pointsEarned,
                           requiresOrderAuthorizationForm,
+                          ...(requiresGiftCardIdentityForm ? { requiresGiftCardIdentityForm: true as const } : {}),
                           ...(persistedLineItems && persistedLineItems.length > 0 ? { lineItems: persistedLineItems } : {}),
                           ...(appliedGiftCardBalance > 0 ? { giftCardAppliedUsd: appliedGiftCardBalance } : {}),
                           ...(digitalFulfillmentOnly ? { digitalFulfillmentOnly: true as const } : {}),
@@ -6630,6 +6638,7 @@ function CheckoutPage() {
                         cartItems: cartItems,
                         isSubscriptionUpgrade,
                         requiresOrderAuthorizationForm: cartRequiresOrderAuthorizationForm(cartItems as any[]),
+                        requiresGiftCardIdentityForm: cartRequiresGiftCardIdentityForm(cartItems as unknown[], email),
                       }
                     });
                   })();

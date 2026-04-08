@@ -693,6 +693,9 @@ function OrderFormPage() {
         const entryId =
           orderId ||
           `form-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        const giftCardIdentityOnly = Boolean(
+          (location.state as { giftCardIdentityVerificationOnly?: boolean } | null)?.giftCardIdentityVerificationOnly
+        );
         appendSignedOrderForm({
           id: entryId,
           orderId,
@@ -704,7 +707,7 @@ function OrderFormPage() {
           photoIdDataUrl: photoIdDataUrl || undefined,
           cardLastFourDataUrl: cardLastFourDataUrl || undefined,
           signatureDataUrl: signatureDataUrl || undefined,
-          adminApproved: false,
+          adminApproved: giftCardIdentityOnly,
         });
         markOrderFormSignedInUserOrders(formData.email.trim(), formData.orderNumber.trim());
         saveLastOrderAuthorizationFormDraft(formData.email.trim(), {

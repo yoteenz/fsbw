@@ -273,9 +273,17 @@ function CheckoutConfirmPage() {
     [cartItems]
   );
 
-  /** No order form or shipping-style tracking on summary: membership, A/C bookings, gift cards, other digital lines. */
+  const summaryRequiresGiftCardIdentityForm = React.useMemo(() => {
+    const v = (orderData as { requiresGiftCardIdentityForm?: boolean } | null)?.requiresGiftCardIdentityForm;
+    if (v === true || v === false) return v;
+    return false;
+  }, [orderData]);
+
+  /** No order form or shipping-style tracking on summary: membership, A/C bookings, gift cards (after ID verified), other digital lines. */
   const isDigitalFulfillmentSummary =
-    isPremiumMembershipSummary || isBookingsOnlyOrder || isOnlyDigitalProductsSummary;
+    isPremiumMembershipSummary ||
+    isBookingsOnlyOrder ||
+    (isOnlyDigitalProductsSummary && !summaryRequiresGiftCardIdentityForm);
 
   /** Units / BCF bundles|closures|frontals only — from navigate state or recomputed from cart. */
   const summaryRequiresOrderAuthorizationForm = React.useMemo(() => {
@@ -283,6 +291,9 @@ function CheckoutConfirmPage() {
     if (v === true || v === false) return v;
     return cartRequiresOrderAuthorizationForm(cartItems);
   }, [orderData, cartItems]);
+
+  const summaryShowSignOrderFormButton =
+    summaryRequiresOrderAuthorizationForm || summaryRequiresGiftCardIdentityForm;
 
   const showLongPremiumConfirmSummary = React.useMemo(() => {
     try {
@@ -298,11 +309,13 @@ function CheckoutConfirmPage() {
 
   const summaryOrderForTracking = React.useMemo(() => {
     const idRaw = (orderData as { orderInternalId?: string }).orderInternalId;
+    const giftFirst = summaryRequiresGiftCardIdentityForm;
     if (typeof idRaw === 'string' && idRaw.trim()) {
       return {
         id: idRaw.trim(),
-        status: 'PREPARING' as const,
-        digitalFulfillmentOnly: false as const,
+        status: (giftFirst ? 'PLACED' : 'PREPARING') as string,
+        digitalFulfillmentOnly: giftFirst ? (true as const) : (false as const),
+        ...(giftFirst ? { requiresGiftCardIdentityForm: true as const, orderFormSigned: false as const } : {}),
         adminTrackingStageOverride: null as null,
         trackingTimelineShiftDays: 0,
         trackingStageNotes: {} as Record<string, string>,
@@ -329,6 +342,7 @@ function CheckoutConfirmPage() {
     isDigitalFulfillmentSummary,
     isPremiumMembershipSummary,
     isOnlyDigitalProductsSummary,
+    summaryRequiresGiftCardIdentityForm,
   ]);
 
   // Helper function to get ordinal suffix (ST, ND, RD, TH)
@@ -1951,7 +1965,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
             })()}
 
             {/* Sign Order Form — below summary card (aligned with Orders expanded flow) */}
-            {!showMobileMenu && !isDigitalFulfillmentSummary && summaryRequiresOrderAuthorizationForm && (
+            {!showMobileMenu && !isDigitalFulfillmentSummary && summaryShowSignOrderFormButton && (
               <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
                   onClick={() => {
@@ -1968,6 +1982,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         state: orderData.state,
                         zip: orderData.zip,
                         country: orderData.country,
+                        giftCardIdentityVerificationOnly: summaryRequiresGiftCardIdentityForm,
                       },
                     });
                   }}
@@ -1981,7 +1996,9 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   }}
                   type="button"
                 >
-                  SIGN ORDER FORM
+                  {summaryRequiresGiftCardIdentityForm && !summaryRequiresOrderAuthorizationForm
+                    ? 'VERIFY ID — ONE-TIME FOR GIFT CARDS'
+                    : 'SIGN ORDER FORM'}
                 </button>
               </div>
             )}

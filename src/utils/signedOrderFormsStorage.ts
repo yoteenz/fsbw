@@ -4,6 +4,7 @@
  */
 
 import { cancelAndRefundOrderAfterFormDecline } from './orderFormDeclineCancelRefund';
+import { setGiftCardPurchaserVerifiedForEmail } from './giftCardFirstPurchaseForm';
 
 export type StoredSignedOrderForm = {
   id: string;
@@ -284,15 +285,21 @@ export function markOrderFormSignedInUserOrders(email: string, orderNumberFromFo
     for (const arr of [active, past]) {
       for (let i = 0; i < arr.length; i++) {
         if (match(arr[i] as Record<string, unknown>)) {
+          const row = arr[i] as Record<string, unknown>;
+          const giftFirstOnly = row.requiresGiftCardIdentityForm === true;
           arr[i] = {
             ...(arr[i] as object),
             orderFormSigned: true,
             orderFormSignedAt: now,
             orderFormClientSubmitted: true,
-            orderFormAdminApproved: false,
+            orderFormAdminApproved: giftFirstOnly ? true : false,
+            ...(giftFirstOnly ? { orderFormAdminApprovedAt: now } : {}),
             orderFormAdminDeclined: false,
             orderFormAdminDeclineReason: undefined,
           };
+          if (giftFirstOnly) {
+            setGiftCardPurchaserVerifiedForEmail(key);
+          }
           changed = true;
         }
       }

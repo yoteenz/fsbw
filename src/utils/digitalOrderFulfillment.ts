@@ -9,12 +9,23 @@ export type DigitalFulfillmentOrder = {
   status?: string;
   placedAt?: number;
   date?: string;
+  /** First gift-only purchase: ID form required before treating as normal digital timeline. */
+  requiresGiftCardIdentityForm?: boolean;
+  orderFormSigned?: boolean;
 };
 
 const DIGITAL_FULFILLMENT_STAGES = ['PLACED', 'PROCESSING', 'COMPLETE'] as const;
 
 export function orderUsesDigitalFulfillmentTimeline(order: DigitalFulfillmentOrder | null | undefined): boolean {
-  if (!order || order.digitalFulfillmentOnly === true) return true;
+  if (!order) return false;
+  if (
+    order.digitalFulfillmentOnly === true &&
+    order.requiresGiftCardIdentityForm === true &&
+    order.orderFormSigned !== true
+  ) {
+    return false;
+  }
+  if (order.digitalFulfillmentOnly === true) return true;
   const t = String(order.bookingFlowType || '').trim().toLowerCase();
   return t === 'appointment' || t === 'consult';
 }

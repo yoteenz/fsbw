@@ -46,7 +46,7 @@ import {
   sortOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
 import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrderLifecycle';
-import { orderRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
+import { orderNeedsClientAuthFormSignature } from '../../utils/giftCardFirstPurchaseForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 
@@ -105,6 +105,8 @@ interface Order {
   pointsEarned?: number;
   /** When false, no 24h authorization form flow (e.g. bookings-only). Omitted = legacy non-digital orders need form. */
   requiresOrderAuthorizationForm?: boolean;
+  /** First gift-card-only purchase: one-time ID verification via order form. */
+  requiresGiftCardIdentityForm?: boolean;
 }
 
 function OrdersPage() {
@@ -1448,7 +1450,7 @@ function OrdersPage() {
             order.placedAt &&
             !order.orderFormSigned &&
             !orderUsesDigitalFulfillmentTimeline(order) &&
-            orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+            orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>)
           ) {
             const timeSincePlaced = now - order.placedAt;
             if (timeSincePlaced >= twentyFourHours) {
@@ -2626,7 +2628,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
                              orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM PENDING ADMIN APPROVAL
                              </p>
@@ -2635,7 +2637,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }} onClick={() => {
                               let customerData: any = {};
                               const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
@@ -2656,19 +2658,30 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               } else {
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
                               }
-                              navigate('/tools/order-form', { state: customerData });
+                              navigate('/tools/order-form', {
+                                state: {
+                                  ...customerData,
+                                  giftCardIdentityVerificationOnly: (order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm === true,
+                                },
+                              });
                              }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>
-                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
+                               <span style={{ color: '#000000' }}>
+                                 {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
+                                   ? ' TO VERIFY ID (ONE-TIME FOR GIFT CARDS)'
+                                   : ' TO SIGN ORDER FORM'}
+                               </span>
                              </p>
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
                              !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
-                               ORDER FORM IN REVIEW
+                               {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
+                                 ? 'GIFT CARD VERIFICATION ON FILE'
+                                 : 'ORDER FORM IN REVIEW'}
                              </p>
                            )}
                            {!orderUsesDigitalFulfillmentTimeline(order) ? (
@@ -2797,7 +2810,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                         if (
                           order.status === 'PLACED' &&
                           orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                          orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>)
                         ) {
                           return (
                             <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
@@ -2815,7 +2828,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           order.status === 'PLACED' &&
                           order.orderFormSigned &&
                           !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                          orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>)
                         ) {
                           return (
                             <span key={order.id} className="text-[9px] text-left font-futura uppercase" style={{ fontWeight: '500', marginRight: '10px' }}>
@@ -2832,7 +2845,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                         if (
                           order.status === 'PLACED' &&
                           order.placedAt &&
-                          orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) &&
+                          orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) &&
                           !order.orderFormSigned
                         ) {
                           return (
@@ -2871,12 +2884,12 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                             }}>
                               {order.status === 'PLACED' &&
                               orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                              orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                              orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>)
                                 ? 'ORDER FORM PENDING ADMIN APPROVAL'
                                 : order.status === 'PLACED' &&
                                     order.orderFormSigned &&
                                     !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                                    orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>)
+                                    orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>)
                                   ? 'ORDER FORM IN REVIEW'
                                   : order.status}
                             </span>
@@ -3554,7 +3567,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            {renderDigitalFulfillmentAmountRowExtras(order)}
                            {order.status === 'PLACED' &&
                              orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
                                ORDER FORM PENDING ADMIN APPROVAL
                              </p>
@@ -3563,7 +3576,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                              order.placedAt &&
                              !order.orderFormSigned &&
                              !orderUsesDigitalFulfillmentTimeline(order) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }} onClick={() => {
                               let customerData: any = {};
                               const orderNumber = order.orderNumber.replace(/^ORDER\s+/i, '');
@@ -3584,19 +3597,30 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                               } else {
                                 customerData = { orderId: order.id, orderNumber: orderNumber, orderDate: order.date };
                               }
-                              navigate('/tools/order-form', { state: customerData });
+                              navigate('/tools/order-form', {
+                                state: {
+                                  ...customerData,
+                                  giftCardIdentityVerificationOnly: (order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm === true,
+                                },
+                              });
                              }}>
                                <span style={{ color: '#000000' }}>CLICK </span>
                                <span style={{ color: '#EB1C24' }}>HERE</span>
-                               <span style={{ color: '#000000' }}> TO SIGN ORDER FORM</span>
+                               <span style={{ color: '#000000' }}>
+                                 {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
+                                   ? ' TO VERIFY ID (ONE-TIME FOR GIFT CARDS)'
+                                   : ' TO SIGN ORDER FORM'}
+                               </span>
                              </p>
                            )}
                            {order.status === 'PLACED' &&
                              order.orderFormSigned &&
                              !orderFormAwaitingAdminApproval(order as unknown as Record<string, unknown>) &&
-                             orderRequiresOrderAuthorizationForm(order as unknown as Record<string, unknown>) && (
+                             orderNeedsClientAuthFormSignature(order as unknown as Record<string, unknown>) && (
                              <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2' }}>
-                               ORDER FORM IN REVIEW
+                               {(order as { requiresGiftCardIdentityForm?: boolean }).requiresGiftCardIdentityForm
+                                 ? 'GIFT CARD VERIFICATION ON FILE'
+                                 : 'ORDER FORM IN REVIEW'}
                              </p>
                            )}
                            {!orderUsesDigitalFulfillmentTimeline(order) ? (

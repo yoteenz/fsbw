@@ -29,6 +29,8 @@ export const PER_USER_KEYS = {
   referralEarnings: 'referralEarnings',
   affiliateSubmittedContent: 'affiliateSubmittedContent',
   notifications: 'notifications',
+  /** After one completed gift-card identity verification (order form); gift-only carts skip re-verification. */
+  giftCardPurchaserIdentityVerified: 'giftCardPurchaserIdentityVerified',
 } as const;
 
 /**
