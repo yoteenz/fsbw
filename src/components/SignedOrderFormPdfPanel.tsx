@@ -5,8 +5,8 @@ type Props = {
 };
 
 function pdfIframeSrc(blobUrl: string): string {
-  // Fit page width inside viewer; helps avoid horizontal offset in Chrome’s PDF UI.
-  return `${blobUrl}#toolbar=1&navpanes=0&view=FitH`;
+  // Fit page width (tall single-page PDFs use custom height; FitH avoids side letterboxing in the viewer).
+  return `${blobUrl}#toolbar=1&navpanes=0&view=FitH&zoom=page-width`;
 }
 
 /** PDF preview only (iframe). Download lives outside the modal card in admin clients. */

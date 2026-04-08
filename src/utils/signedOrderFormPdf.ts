@@ -92,22 +92,27 @@ function trimCanvasToContentBounds(source: HTMLCanvasElement): HTMLCanvasElement
   return out;
 }
 
-/** Single letter page: scale snapshot to fit (uniform), centered in printable area. */
-function rasterizeSnapshotToSinglePdfPage(canvas: HTMLCanvasElement): Blob {
-  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
-  const pdfW = doc.internal.pageSize.getWidth();
-  const pdfH = doc.internal.pageSize.getHeight();
+/**
+ * One PDF page sized to the snapshot: **scale to full printable width** (no horizontal letterboxing).
+ * Tall forms extend page height instead of shrinking width to fit letter height (which caused side white bars).
+ */
+function rasterizeSnapshotToWidthFitPdfPage(canvas: HTMLCanvasElement): Blob {
   const margin = 36;
-  const maxW = pdfW - margin * 2;
-  const maxH = pdfH - margin * 2;
+  /** Letter width so printed / desktop viewers stay standard; height grows with content. */
+  const pageWPt = 612;
+  const maxW = pageWPt - margin * 2;
   const imgW = canvas.width;
   const imgH = canvas.height;
-  const scale = Math.min(maxW / imgW, maxH / imgH);
+  if (imgW < 1 || imgH < 1) {
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    return doc.output('blob');
+  }
+  const scale = maxW / imgW;
   const drawW = imgW * scale;
   const drawH = imgH * scale;
-  const x = margin + (maxW - drawW) / 2;
-  const y = margin + (maxH - drawH) / 2;
-  doc.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, drawW, drawH);
+  const pageHPt = drawH + margin * 2;
+  const doc = new jsPDF({ unit: 'pt', format: [pageWPt, pageHPt] });
+  doc.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin, drawW, drawH);
   return doc.output('blob');
 }
 
@@ -132,7 +137,7 @@ export async function buildSignedOrderFormPdf(form: StoredSignedOrderForm): Prom
       logging: false,
       backgroundColor: '#ffffff',
     });
-    return rasterizeSnapshotToSinglePdfPage(trimCanvasToContentBounds(canvas));
+    return rasterizeSnapshotToWidthFitPdfPage(trimCanvasToContentBounds(canvas));
   } finally {
     el.remove();
   }
