@@ -13,6 +13,37 @@ export const PENDING_MOCK_AFFILIATE_UPDATED_EVENT = 'adminPendingMockAffiliateUp
 const REVIEWS_KEY = 'adminPendingMockReviews_v1';
 const AFFILIATE_KEY = 'adminPendingMockAffiliate_v1';
 
+/** Shown under pending affiliate rows so admins can see “REJECTED CONTENT” styling (demo). */
+const DEMONSTRATION_DECLINED_AFFILIATE: PendingMockAffiliateItem[] = [
+  {
+    id: 'demo-declined-noir-ph',
+    kind: 'photo',
+    client: 'SARAH JOHNSON',
+    email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
+    productName: 'NOIR',
+    caption: 'AFFILIATE PHOTO SUBMISSION',
+    imageSrc: '/assets/gallery-mock.png',
+    date: '3/20/2026',
+    status: 'DECLINED',
+    adminDeclineReason: 'IMAGE TOO DARK — PLEASE RESUBMIT WITH BRIGHTER LIGHTING.',
+  },
+  {
+    id: 'demo-declined-noir-soc',
+    kind: 'social',
+    client: 'SARAH JOHNSON',
+    email: 'sarah.j@email.com',
+    clientRegionParen: 'CALIFORNIA',
+    productName: 'NOIR',
+    caption: 'AFFILIATE SOCIAL LINK',
+    platform: 'INSTAGRAM',
+    handle: '@OLDHANDLE — REEL REMOVED',
+    date: '3/18/2026',
+    status: 'DECLINED',
+    adminDeclineReason: 'LINK EXPIRED OR PRIVATE — NEED PUBLIC REEL URL.',
+  },
+];
+
 export type PendingMockReview = {
   id: string;
   client: string;
@@ -277,12 +308,20 @@ export function listPendingMockAffiliateForAdmin(): PendingMockAffiliateItem[] {
   if (typeof window === 'undefined') return [];
   const existing = parseAffiliate(localStorage.getItem(AFFILIATE_KEY));
   if (existing.length === 0) {
-    saveAffiliate(DEFAULT_AFFILIATE);
-    return [...DEFAULT_AFFILIATE];
+    saveAffiliate([...DEFAULT_AFFILIATE, ...DEMONSTRATION_DECLINED_AFFILIATE]);
+    return [...DEFAULT_AFFILIATE, ...DEMONSTRATION_DECLINED_AFFILIATE];
   }
   const merged = mergeAffiliateWithDefaults(existing);
   if (existing.some((row) => !(row.client || '').trim() || !(row.email || '').trim())) {
     saveAffiliate(merged);
+  }
+  const demoIds = new Set(DEMONSTRATION_DECLINED_AFFILIATE.map((d) => d.id));
+  const hasAllDemo = DEMONSTRATION_DECLINED_AFFILIATE.every((d) => merged.some((r) => r.id === d.id));
+  if (!hasAllDemo) {
+    const withoutDup = merged.filter((r) => !demoIds.has(r.id));
+    const next = [...withoutDup, ...DEMONSTRATION_DECLINED_AFFILIATE];
+    saveAffiliate(next);
+    return next;
   }
   return merged;
 }

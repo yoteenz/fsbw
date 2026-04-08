@@ -29,9 +29,20 @@ function mockReviewMediaPlaceholders(seed: string, photoCount: number, videoCoun
   return { photoUrls, videoUrls };
 }
 
+/** Admin Pending mock queue emails → state (not in getMockClientsForAyoteenz). */
+const PENDING_QUEUE_DEMO_REGION: Record<string, { paren: string; code: string }> = {
+  'sarah.j@email.com': { paren: 'CALIFORNIA', code: 'CA' },
+  'maria.r@email.com': { paren: 'TEXAS', code: 'TX' },
+  'jordan.lee@email.com': { paren: 'NEW YORK', code: 'NY' },
+};
+
 function enrichRegionFromMockEmail(email: string, existingParen?: string, existingCode?: string): { paren?: string; code?: string } {
   const em = email.trim().toLowerCase();
   if (!em) return {};
+  const demo = PENDING_QUEUE_DEMO_REGION[em];
+  if (demo && (!(existingParen || '').trim() && !(existingCode || '').trim())) {
+    return { paren: demo.paren, code: demo.code };
+  }
   const mock = getMockClientsForAyoteenz().find((c: { email?: string }) => (c.email || '').trim().toLowerCase() === em);
   const addr = mock && typeof mock === 'object' && 'address' in mock ? String((mock as { address?: string }).address || '') : '';
   const region = regionParenLabelFromAddressLine(addr);
@@ -119,6 +130,8 @@ export type AdminReviewStyleCardProps = {
   statusLabel?: string;
   /** Default: collapsible gray summary + expand. Use `inline` for consult-style thumbs always visible (admin pending affiliate). */
   mediaPresentation?: 'expandable' | 'inline';
+  /** Rendered after inline/expandable media, before footer link (e.g. rejected content). */
+  afterMedia?: ReactNode;
   footerLinkLabel?: string;
   onFooterLinkClick?: () => void;
   onOpenClientDetails?: (email: string) => void;
@@ -148,6 +161,7 @@ export function AdminReviewStyleCard({
   verifiedPurchase = true,
   statusLabel,
   mediaPresentation = 'expandable',
+  afterMedia,
   footerLinkLabel,
   onFooterLinkClick,
   onOpenClientDetails,
@@ -412,6 +426,7 @@ export function AdminReviewStyleCard({
         </button>
       ) : null}
       {children}
+      {afterMedia}
     </div>
   );
 }

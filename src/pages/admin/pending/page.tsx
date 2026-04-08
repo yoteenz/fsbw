@@ -109,14 +109,11 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
   } catch {
     /* ignore */
   }
-  if (parts.length === 0) {
-    parts.push('ORDER AUTHORIZATION');
-  }
   const fp = fingerprintSignedOrderFormFields(form.formFields);
   const preApproved = orderFormMatchesPreviouslyApprovedFingerprint(form.email, form.id, fp);
   const priceBit = priceUsd > 0 ? `$${priceUsd.toLocaleString()}` : '';
   const statusBit = preApproved ? 'PRE-APPROVED' : 'NEW FORM';
-  const grayLine = [priceBit ? `${priceBit} · ${statusBit}` : statusBit, 'ORDER AUTHORIZATION'].filter(Boolean).join(' · ');
+  const grayLine = priceBit ? `${priceBit} · ${statusBit}` : statusBit;
   return { line: grayLine, priceUsd, formFingerprint: fp };
 }
 
@@ -167,28 +164,47 @@ function affiliateSubmittedCountsLine(
 ): string {
   const em = normalizeEmailKey(email);
   const pk = (productKey || '').trim().toUpperCase();
-  if (!em || !pk || !contentByOrder || typeof contentByOrder !== 'object') return '';
+  if (!em || !pk) return '';
   let photos = 0;
   let videos = 0;
   let socials = 0;
-  for (const [orderId, slice] of Object.entries(contentByOrder)) {
-    if (!slice || typeof slice !== 'object') continue;
-    const orderProduct = productNameForOrderId(em, orderId);
-    if (orderProduct && orderProduct !== pk) continue;
-    for (const p of slice.photos || []) {
-      const row = p as { status?: string };
-      if (String(row.status || '').toLowerCase() !== 'approved') continue;
-      photos += 1;
+  if (contentByOrder && typeof contentByOrder === 'object') {
+    for (const [orderId, slice] of Object.entries(contentByOrder)) {
+      if (!slice || typeof slice !== 'object') continue;
+      const orderProduct = productNameForOrderId(em, orderId);
+      if (orderProduct && orderProduct !== pk) continue;
+      for (const p of slice.photos || []) {
+        const row = p as { status?: string };
+        const st = String(row.status || '').toLowerCase();
+        if (st !== 'approved' && st !== 'pending') continue;
+        photos += 1;
+      }
+      for (const v of slice.videos || []) {
+        const row = v as { status?: string };
+        const st = String(row.status || '').toLowerCase();
+        if (st !== 'approved' && st !== 'pending') continue;
+        videos += 1;
+      }
+      for (const s of slice.socials || []) {
+        const row = s as { status?: string };
+        const st = String(row.status || '').toLowerCase();
+        if (st !== 'approved' && st !== 'pending') continue;
+        socials += 1;
+      }
     }
-    for (const v of slice.videos || []) {
-      const row = v as { status?: string };
-      if (String(row.status || '').toLowerCase() !== 'approved') continue;
-      videos += 1;
-    }
-    for (const s of slice.socials || []) {
-      const row = s as { status?: string };
-      if (String(row.status || '').toLowerCase() !== 'approved') continue;
-      socials += 1;
+  }
+  if (photos === 0 && videos === 0 && socials === 0) {
+    const demo: Record<string, { p: number; v: number; s: number }> = {
+      'sarah.j@email.com|NOIR': { p: 2, v: 1, s: 3 },
+      'maria.r@email.com|SOFT WAVE': { p: 1, v: 2, s: 1 },
+      'jordan.lee@email.com|BUNDLES': { p: 3, v: 0, s: 2 },
+      'mock4@test.com|SOFT WAVE': { p: 0, v: 1, s: 0 },
+    };
+    const hit = demo[`${em}|${pk}`];
+    if (hit) {
+      photos = hit.p;
+      videos = hit.v;
+      socials = hit.s;
     }
   }
   const parts: string[] = [];
@@ -343,6 +359,13 @@ export default function AdminPending() {
 
   const regionLineForFormClient = useCallback((email: string, name: string) => {
     const key = normalizeEmailKey(email);
+    const demoRegion: Record<string, string> = {
+      'sarah.j@email.com': 'CA',
+      'maria.r@email.com': 'TX',
+      'jordan.lee@email.com': 'NY',
+    };
+    const demoCode = demoRegion[key];
+    if (demoCode) return `${name.trim().toUpperCase()} · ${demoCode}`;
     const mock = getMockClientsForAyoteenz().find((c: { email?: string }) => normalizeEmailKey(c.email || '') === key);
     const addr = mock && typeof mock === 'object' && 'address' in mock ? String((mock as { address?: string }).address || '') : '';
     const paren = regionParenLabelFromAddressLine(addr);
@@ -486,6 +509,31 @@ export default function AdminPending() {
       const declinedKey = `${normalizeEmailKey(item.email)}|${effectiveProduct}`;
       const declinedSiblings = affiliateDeclinedByClientProduct.get(declinedKey) || [];
 
+      const rejectedBlock =
+        declinedSiblings.length > 0 ? (
+          <div style={{ marginTop: '12px' }}>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#000',
+                margin: '0 0 6px',
+                textTransform: 'uppercase',
+              }}
+            >
+              REJECTED CONTENT
+            </p>
+            {declinedSiblings.map((d) => (
+              <p
+                key={d.id}
+                style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 4px' }}
+              >
+                {(d.adminDeclineReason || '').trim() || 'NO REASON PROVIDED'}
+              </p>
+            ))}
+          </div>
+        ) : null;
+
       return (
         <div key={item.serverId ? `${item.id}-srv-${item.serverId}` : item.id}>
           <AdminReviewStyleCard
@@ -505,6 +553,7 @@ export default function AdminPending() {
             verifiedPurchase={false}
             showStars={false}
             mediaPresentation="inline"
+            afterMedia={rejectedBlock}
             onOpenClientDetails={openClientFromPending}
           >
             {item.kind === 'social' ? (
@@ -572,21 +621,6 @@ export default function AdminPending() {
               </button>
             </div>
           </AdminReviewStyleCard>
-          {declinedSiblings.length > 0 ? (
-            <div style={{ marginTop: '8px', marginBottom: '4px', paddingLeft: '0' }}>
-              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: '0 0 6px', textTransform: 'uppercase' }}>
-                REJECTED CONTENT
-              </p>
-              {declinedSiblings.map((d) => (
-                <p
-                  key={d.id}
-                  style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 4px' }}
-                >
-                  {(d.adminDeclineReason || '').trim() || 'NO REASON PROVIDED'}
-                </p>
-              ))}
-            </div>
-          ) : null}
         </div>
       );
     },
