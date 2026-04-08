@@ -760,6 +760,7 @@ export default function AdminPending() {
                             key={r.id}
                             client={r.client}
                             clientEmail={r.email}
+                            clientProfilePhotoUrl={r.clientProfilePhotoUrl}
                             productLine={r.product}
                             bodyText={r.excerpt}
                             date={r.date}

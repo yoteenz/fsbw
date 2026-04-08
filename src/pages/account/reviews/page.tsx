@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -10,6 +10,12 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import {
+  reviewSupplementalCanAddOrEdit,
+  reviewSupplementalLinkLabel,
+  type StoredReviewSupplementalFields,
+} from '../../../utils/reviewSupplementalMedia';
+import { ReviewSupplementalContentModal } from '../../../components/account/ReviewSupplementalContentModal';
 
 interface Review {
   id: string;
@@ -20,6 +26,12 @@ interface Review {
   rating: number;
   reviewCount: number;
   thumbnail: string;
+  /** Set on client-submitted rows from `userSubmittedReviews_*`. */
+  moderationStatus?: string;
+  supplementalPhotos?: string[];
+  supplementalVideos?: string[];
+  supplementalContentStatus?: string;
+  supplementalPendingQueueId?: string;
 }
 
 // Mock shop reviews (wig units)
@@ -246,7 +258,35 @@ function ReviewsPage() {
   const [shopVisibleCount, setShopVisibleCount] = useState(REVIEWS_INITIAL);
   const [toolVisibleCount, setToolVisibleCount] = useState(REVIEWS_INITIAL);
   const [userSubmittedReviews, setUserSubmittedReviews] = useState<Review[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ email?: string; role?: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{
+    email?: string;
+    role?: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImage?: string;
+    avatar?: string;
+  } | null>(null);
+  const [supplementalModalReview, setSupplementalModalReview] = useState<Review | null>(null);
+
+  const userReviewIds = useMemo(() => new Set(userSubmittedReviews.map((r) => r.id)), [userSubmittedReviews]);
+
+  const clientNameUpper = useMemo(() => {
+    const u = currentUser;
+    if (!u) return 'CLIENT';
+    const n = `${String(u.firstName || '').trim()} ${String(u.lastName || '').trim()}`.trim();
+    if (n) return n.toUpperCase();
+    if (String(u.name || '').trim()) return String(u.name).trim().toUpperCase();
+    return String(u.email || 'CLIENT').trim().toUpperCase();
+  }, [currentUser]);
+
+  const clientProfilePhotoUrl = useMemo(() => {
+    const u = currentUser;
+    if (!u) return undefined;
+    const a = String(u.profileImage || '').trim();
+    const b = String(u.avatar || '').trim();
+    return a || b || undefined;
+  }, [currentUser]);
 
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -286,7 +326,9 @@ function ReviewsPage() {
         const list = raw ? JSON.parse(raw) : [];
         const arr = Array.isArray(list) ? list : [];
         setUserSubmittedReviews(
-          arr.filter((row: { moderationStatus?: string }) => String(row?.moderationStatus || '').toLowerCase() !== 'pending')
+          arr.filter(
+            (row: { moderationStatus?: string }) => String(row?.moderationStatus || '').toLowerCase() !== 'pending'
+          ) as Review[]
         );
         clearNewReviewApproved(user.email);
         window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
@@ -362,6 +404,54 @@ function ReviewsPage() {
   const showShowLessTool = totalTool > REVIEWS_INITIAL && !hasMoreTool;
 
   const BRAND_GRAY = '#808080';
+
+  const renderSupplementalLink = useCallback(
+    (review: Review) => {
+      if (!userReviewIds.has(review.id)) return null;
+      const supp = review as Review & StoredReviewSupplementalFields;
+      const label = reviewSupplementalLinkLabel(supp);
+      if (label === 'CONTENT PENDING REVIEW') {
+        return (
+          <p
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '10px',
+              color: '#EB1C24',
+              margin: '10px 0 0',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}
+          >
+            CONTENT PENDING REVIEW
+          </p>
+        );
+      }
+      if (!reviewSupplementalCanAddOrEdit(supp)) return null;
+      return (
+        <button
+          type="button"
+          onClick={() => setSupplementalModalReview(review)}
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '10px',
+            color: '#EB1C24',
+            margin: '10px 0 0',
+            padding: 0,
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            display: 'block',
+            textAlign: 'left',
+          }}
+        >
+          {label}
+        </button>
+      );
+    },
+    [userReviewIds]
+  );
 
   const renderReviewRow = (review: Review) => (
     <div
@@ -461,12 +551,45 @@ function ReviewsPage() {
         >
           {review.body}
         </p>
+        {renderSupplementalLink(review)}
       </div>
     </div>
   );
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
+      {currentUser?.email ? (
+        <ReviewSupplementalContentModal
+          open={Boolean(supplementalModalReview)}
+          review={
+            supplementalModalReview
+              ? {
+                  id: supplementalModalReview.id,
+                  subtitle: supplementalModalReview.subtitle,
+                  productName: supplementalModalReview.productName,
+                  body: supplementalModalReview.body,
+                  rating: supplementalModalReview.rating,
+                  supplementalPhotos: supplementalModalReview.supplementalPhotos,
+                  supplementalVideos: supplementalModalReview.supplementalVideos,
+                  supplementalContentStatus: supplementalModalReview.supplementalContentStatus as
+                    | 'none'
+                    | 'pending'
+                    | 'approved'
+                    | 'rejected'
+                    | undefined,
+                  supplementalPendingQueueId: supplementalModalReview.supplementalPendingQueueId,
+                }
+              : null
+          }
+          clientEmail={currentUser.email}
+          clientNameUpper={clientNameUpper}
+          clientProfilePhotoUrl={clientProfilePhotoUrl}
+          onClose={() => setSupplementalModalReview(null)}
+          onSubmitted={() => {
+            /* list refreshes via reviewsUpdated */
+          }}
+        />
+      ) : null}
       <div
         className="fixed inset-0 -z-10"
         style={{

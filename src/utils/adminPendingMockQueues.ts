@@ -29,6 +29,10 @@ export type PendingMockReview = {
   videoUrls?: string[];
   photoCount?: number;
   videoCount?: number;
+  /** Account → Reviews “add/edit content” only — approve merges media onto `targetReviewId`. */
+  reviewSupplementalSubmission?: boolean;
+  targetReviewId?: string;
+  clientProfilePhotoUrl?: string;
 };
 
 export type PendingMockAffiliateKind = 'photo' | 'video' | 'social';

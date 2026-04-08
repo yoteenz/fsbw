@@ -13037,3 +13037,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Standard order forms append with **`adminApproved: false`**; gift-card identity-only keeps **`adminApproved: true`**. **`appendSignedOrderForm`** dispatches **`pendingOrderAuthorizationFormsUpdated`**. Affiliate submit builds diff-based **`ClientAffiliatePendingRow`** items and **`enqueuePendingMockAffiliateItems`**. Leave-review saves **`moderationStatus: 'pending'`**, enqueues **`enqueuePendingMockReviews`** with optional photo/video data URLs; **Account → Reviews** filters out pending rows and **`getUserSubmittedReviewCount`** excludes them until admin approves (removes **`moderationStatus`**). Admin approve/decline for **`source: 'client'`** rows updates affiliate per-user storage or removes/unwraps review entries. Pending UI shows review media in modal; affiliate video uses **`videoDataUrl`** when present.
 
 **Changes:** **`adminPendingClientSync.ts`** (new), **`adminPendingMockQueues.ts`**, **`signedOrderFormsStorage.ts`**, **`shop/order-form/page.tsx`**, **`account/affiliate/page.tsx`**, **`account/reviews/leave-review-order/page.tsx`**, **`account/reviews/page.tsx`**, **`constants/reviews.ts`**, **`admin/pending/page.tsx`**, **`motherboard/CORE.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Account Reviews: add/edit supplemental photos & videos (admin pending)
+
+**Context:** User wanted **ADD CONTENT** / **EDIT CONTENT** (red) below black review body on **Account → Reviews** for **user-submitted** reviews only; modal with up to **2 photos + 2 videos** (affiliate-style file rows); cannot edit review text; after submit show **CONTENT PENDING REVIEW** until admin approves on **Pending → REVIEWS**.
+
+**Decisions / outcomes:** Stored on each review: **`supplementalPhotos`**, **`supplementalVideos`**, **`supplementalContentStatus`** (`none` | `pending` | `approved` | `rejected`), **`supplementalPendingQueueId`**. Submit enqueues **`PendingMockReview`** with **`reviewSupplementalSubmission: true`** and full media payload; **`applyClientReviewAdminDecisionToUserStorage`** matches queue row by **`supplementalPendingQueueId`**: approve writes capped arrays + **`approved`**, decline clears pending state. Link hidden when all 4 slots approved. Mock catalog reviews unchanged.
+
+**Changes:** **`reviewSupplementalMedia.ts`**, **`ReviewSupplementalContentModal.tsx`**, **`account/reviews/page.tsx`**, **`adminPendingMockQueues.ts`** (types + **`clientProfilePhotoUrl`**), **`adminPendingClientSync.ts`**, **`admin/pending/page.tsx`** (pass avatar), **`motherboard/CORE.md`**. **`npm run build`**.

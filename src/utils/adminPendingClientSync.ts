@@ -4,6 +4,7 @@
 
 import { getPerUserKey, PER_USER_KEYS } from './perUserStorage';
 import { getUserSubmittedReviewsKey } from '../constants/reviews';
+import { MAX_REVIEW_SUPPLEMENTAL_PHOTOS, MAX_REVIEW_SUPPLEMENTAL_VIDEOS } from './reviewSupplementalMedia';
 
 function normEmail(email: string): string {
   return String(email || '')
@@ -97,6 +98,10 @@ type ReviewQueueItemLike = {
   source?: 'mock' | 'client';
   id: string;
   email: string;
+  reviewSupplementalSubmission?: boolean;
+  targetReviewId?: string;
+  photoUrls?: string[];
+  videoUrls?: string[];
 };
 
 /** After admin approves/declines an affiliate row that came from Account → Affiliate. */
@@ -134,7 +139,39 @@ export function applyClientReviewAdminDecisionToUserStorage(
     const raw = localStorage.getItem(key);
     const list = raw ? (JSON.parse(raw) as unknown[]) : [];
     if (!Array.isArray(list)) return;
-    const id = String(item.id || '');
+    const queueId = String(item.id || '');
+
+    if (item.reviewSupplementalSubmission === true) {
+      const next = list.map((row) => {
+        const r = row as Record<string, unknown>;
+        if (String(r.supplementalPendingQueueId || '') !== queueId) return row;
+        if (decision === 'APPROVED') {
+          const ph = (Array.isArray(item.photoUrls) ? item.photoUrls : [])
+            .filter((u) => typeof u === 'string' && u.length > 0)
+            .slice(0, MAX_REVIEW_SUPPLEMENTAL_PHOTOS);
+          const vd = (Array.isArray(item.videoUrls) ? item.videoUrls : [])
+            .filter((u) => typeof u === 'string' && u.length > 0)
+            .slice(0, MAX_REVIEW_SUPPLEMENTAL_VIDEOS);
+          return {
+            ...r,
+            supplementalPhotos: ph,
+            supplementalVideos: vd,
+            supplementalContentStatus: 'approved',
+            supplementalPendingQueueId: undefined,
+          };
+        }
+        return {
+          ...r,
+          supplementalContentStatus: 'none',
+          supplementalPendingQueueId: undefined,
+        };
+      });
+      localStorage.setItem(key, JSON.stringify(next));
+      window.dispatchEvent(new CustomEvent('reviewsUpdated'));
+      return;
+    }
+
+    const id = queueId;
     if (decision === 'APPROVED') {
       const next = list.map((row) => {
         const r = row as Record<string, unknown>;
