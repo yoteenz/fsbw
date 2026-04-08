@@ -12969,3 +12969,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User said PDF preview in the modal still looked off-center after **`trimCanvasToContentBounds`** — the **marble** root background and **glass** card (`rgba` + backdrop blur) painted **non-white** pixels across the full canvas, so the trim step found “content” on every column and **never cropped** side margins; a safety check also skipped small crops.
 
 **Changes:** **`signedOrderFormPdfSnapshotDom.ts`** — **`data-pdf-snapshot-root`** on roots, **`data-pdf-snapshot-card`** on the inner card. **`signedOrderFormPdf.ts`** — **`stripDecorativeSnapshotBackgrounds`** before **`html2canvas`** (remove marble, solid white card, clear backdrop filters); **`html2canvas`** always **`backgroundColor: '#ffffff'`**; **`trimCanvasToContentBounds`** — slightly looser near-white threshold (**252**), **removed** the “tiny crop ⇒ abort” guard; still **2px** pad then existing **`rasterizeSnapshotToSinglePdfPage`**. **`npm run build`**.
+
+---
+
+## 2026-04-08 — BCF PDP shipping tab: 4–6 std / 3–4 express copy
+
+**Context:** Checkout tabs already used **`checkoutBcfProcessing`** strings, but **SHOP → bundles/closures/frontals PDP** (`texture-category-product`) **SHIPPING** tab still showed unit copy (**6–8** / **4–6**).
+
+**Changes:** **`shop/texture-category-product/page.tsx`** — **`shippingCopy`** updated to **4 TO 6** standard, **3 TO 4** express + **$120**, third line covers **custom color / styling / add-ons** (no express, extended timelines aligned with **`getCheckoutProcessingTimePersistentLabel`**). **`npm run build`**.
