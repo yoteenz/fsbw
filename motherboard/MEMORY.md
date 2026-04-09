@@ -13140,3 +13140,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Cause / fix:** **`usePersistentQueryState`** compared **`URLSearchParams.toString()`** to **`location.search`** as raw strings; browser ordering/encoding can differ so the hook kept calling **`navigate(..., { replace: true })`** in a tight loop. Added **`canonicalQueryString()`** (sort key/value pairs) and skip navigate when canonical forms match.
 
 **Changes:** **`src/hooks/usePersistentQueryState.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin Pending “VIEW REVIEW” modal: product thumb, stars, typography, date+time
+
+**Context:** User asked to rework the **VIEW REVIEW** popup on **Admin → Pending → REVIEWS**: remove reviewer name/email; show **centered product thumbnail** (same resolution as admin reviews list / 72px black border), **centered star row** below; product title **gray Futura PT Medium**; replace **“N STARS · date”** with **date • time** in **red Futura PT Book** (e.g. `3/28/2026 • 3:27PM`).
+
+**Decisions / outcomes:** New helper **`adminReviewProductThumb.ts`**: **`adminReviewProductThumbSrcFromTitle`** maps product strings to the same unit thumbs as wishlist (**NOIR** / peak-lagos / **BLANCO** / waves / curls / gift / **SLAY STYLING TOOL** → **`neon-tools.png`**, **WIG CARE KIT** → **`wig-brush.png`**); **`formatAdminReviewSubmittedAtLine`** builds **M/D/YYYY • h:mma** when **`submittedAtIso`** exists, else falls back to legacy **`date`**. **`PendingMockReview.submittedAtIso`** optional; mock defaults + **`serverPendingQueueMappers`** pass **`created_at`**. Modal body in **`admin/pending/page.tsx`** uses centered stack + same star PNGs as **`AdminReviewStyleCard`**.
+
+**Changes:** **`src/utils/adminReviewProductThumb.ts`**, **`src/pages/admin/pending/page.tsx`**, **`src/utils/adminPendingMockQueues.ts`**, **`src/utils/serverPendingQueueMappers.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

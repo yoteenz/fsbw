@@ -49,8 +49,17 @@ import {
 } from '../../../utils/serverPendingQueueMappers';
 import { getPerUserKey, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { getPointsMultiplier } from '../../../constants/tiers';
+import {
+  adminReviewProductThumbSrcFromTitle,
+  formatAdminReviewSubmittedAtLine,
+} from '../../../utils/adminReviewProductThumb';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
+
+const REVIEW_MODAL_PRODUCT_THUMB_PX = 72;
+const REVIEW_STAR_PX = Math.round(14 * 0.65 * 10) / 10;
+const NOIR_REVIEW_STAR_FILLED_SRC = '/assets/NOIR/filled-star.png';
+const NOIR_REVIEW_STAR_OUTLINE_SRC = '/assets/NOIR/star-symbol.png';
 
 /** Avatar + left column right, date left — symmetric nudge inside list cards. */
 const PENDING_CARD_CONTENT_NUDGE_PX = 6;
@@ -1532,19 +1541,77 @@ export default function AdminPending() {
                     );
                   })()
                 ) : (
+                  (() => {
+                    const rv = adminReviewModal.item;
+                    const thumbSrc = adminReviewProductThumbSrcFromTitle(rv.product);
+                    const starN = Math.min(5, Math.max(0, Math.round(Number(rv.rating))));
+                    const dateTimeLine = formatAdminReviewSubmittedAtLine(rv.submittedAtIso, rv.date);
+                    return (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: '0 0 8px', textTransform: 'uppercase' }}>
-                      {adminReviewModal.item.client}
+                    <div className="flex flex-col items-center w-full" style={{ marginBottom: '12px' }}>
+                      <div
+                        className="shrink-0 overflow-hidden"
+                        style={{
+                          width: `${REVIEW_MODAL_PRODUCT_THUMB_PX}px`,
+                          height: `${REVIEW_MODAL_PRODUCT_THUMB_PX}px`,
+                          border: '0.8px solid #000',
+                        }}
+                      >
+                        <img
+                          src={thumbSrc}
+                          alt=""
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-center gap-1" style={{ marginTop: '8px' }}>
+                        {[...Array(5)].map((_, i) => {
+                          const filled = i < starN;
+                          return (
+                            <img
+                              key={i}
+                              src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
+                              alt=""
+                              width={REVIEW_STAR_PX}
+                              height={REVIEW_STAR_PX}
+                              style={{
+                                width: `${REVIEW_STAR_PX}px`,
+                                height: `${REVIEW_STAR_PX}px`,
+                                objectFit: 'contain',
+                                filter: 'drop-shadow(0 0 0 1px black)',
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        color: '#808080',
+                        margin: '0 0 8px',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {rv.product}
                     </p>
-                    <p style={{ margin: '0 0 6px', color: '#808080', fontSize: '10px' }}>{adminReviewModal.item.email}</p>
-                    <p style={{ margin: '0 0 6px', textTransform: 'uppercase' }}>{adminReviewModal.item.product}</p>
-                    <p style={{ margin: '0 0 6px' }}>{adminReviewModal.item.excerpt}</p>
-                    <p style={{ margin: 0, color: '#808080', fontSize: '10px' }}>
-                      {adminReviewModal.item.rating} STARS · {adminReviewModal.item.date}
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book"',
+                        fontSize: '11px',
+                        color: '#EB1C24',
+                        margin: '0 0 8px',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {dateTimeLine}
                     </p>
-                    {(adminReviewModal.item.photoUrls?.length || adminReviewModal.item.videoUrls?.length) ? (
+                    <p style={{ margin: '0 0 12px' }}>{rv.excerpt}</p>
+                    {(rv.photoUrls?.length || rv.videoUrls?.length) ? (
                       <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {(adminReviewModal.item.photoUrls || []).map((src, i) => (
+                        {(rv.photoUrls || []).map((src, i) => (
                           <a
                             key={`rv-ph-${i}`}
                             href={src}
@@ -1564,7 +1631,7 @@ export default function AdminPending() {
                             <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                           </a>
                         ))}
-                        {(adminReviewModal.item.videoUrls || []).map((src, i) => (
+                        {(rv.videoUrls || []).map((src, i) => (
                           <div
                             key={`rv-vd-${i}`}
                             style={{
@@ -1583,6 +1650,8 @@ export default function AdminPending() {
                       </div>
                     ) : null}
                   </div>
+                    );
+                  })()
                 )}
               </div>
             </div>

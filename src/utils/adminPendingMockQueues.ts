@@ -66,6 +66,8 @@ export type PendingMockReview = {
   reviewSupplementalSubmission?: boolean;
   targetReviewId?: string;
   clientProfilePhotoUrl?: string;
+  /** ISO timestamp for modal date+time line (from server `created_at` or mock). */
+  submittedAtIso?: string;
   /** Server `pending_*` row — use PATCH /api/admin/pending-queue instead of local mock approve. */
   serverType?: 'db_review' | 'review_supplemental';
   serverId?: string;
@@ -112,6 +114,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     rating: 5,
     excerpt: 'ABSOLUTELY IN LOVE WITH THE QUALITY AND THE INSTALL TEAM WAS SO PROFESSIONAL.',
     date: '3/28/2026',
+    submittedAtIso: '2026-03-28T15:27:00.000Z',
     status: 'PENDING',
   },
   {
@@ -123,6 +126,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     rating: 4,
     excerpt: 'GREAT TEXTURE, SHIPPING WAS FAST. WOULD LOVE SLIGHTLY MORE DENSITY NEXT TIME.',
     date: '3/26/2026',
+    submittedAtIso: '2026-03-26T14:00:00.000Z',
     status: 'PENDING',
   },
   {
@@ -134,6 +138,7 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     rating: 5,
     excerpt: 'GAME CHANGER FOR MY MORNING ROUTINE. FIVE STARS.',
     date: '3/22/2026',
+    submittedAtIso: '2026-03-22T11:30:00.000Z',
     status: 'PENDING',
   },
 ];
