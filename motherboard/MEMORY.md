@@ -13130,3 +13130,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`admin/clients/page.tsx`**: **`returnTo=pending`** → back navigates to **`/admin/pending`** (close details + block confirm).
 
 **Changes:** **`AdminReviewStyleCard.tsx`**, **`admin/pending/page.tsx`**, **`mockSignedOrderFormForApproval.ts`**, **`admin/clients/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-08 — Safari replaceState limit + usePersistentQueryState canonical query compare
+
+**Context:** User saw **Component Failed to Load** / **Attempt to use `history.replaceState()` more than 100 times per 10 seconds** on **`fsbw.vercel.app`** (mobile Safari).
+
+**Cause / fix:** **`usePersistentQueryState`** compared **`URLSearchParams.toString()`** to **`location.search`** as raw strings; browser ordering/encoding can differ so the hook kept calling **`navigate(..., { replace: true })`** in a tight loop. Added **`canonicalQueryString()`** (sort key/value pairs) and skip navigate when canonical forms match.
+
+**Changes:** **`src/hooks/usePersistentQueryState.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
