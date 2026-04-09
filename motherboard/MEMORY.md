@@ -13105,4 +13105,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Follow-up 3 (mobile form modal):** **`adminModal`** PDF uses **`#view=FitH`** + **`toolbar=0`** in iframe; viewport **`min(46dvh, 380px)`**; wrapper **`overflow: auto`** for vertical scroll. Pending **form** modal card **`maxWidth` 440px**, **`maxHeight` `min(62dvh, 560px)`**, tighter padding; outer stack uses **safe-area** bottom padding.
 
-**Follow-up 4:** Admin Pending **top two summary tiles** depend on **`activeTab`**: **OVERVIEW** = **TOTAL POINTS** (review photo/video slots × mock rates × Silver multiplier + form order totals × multiplier + affiliate **`points`** from **`affiliateSubmittedContent`** slice by **`orderId`**) & **TOTAL SPEND** (sum **`orderPriceUsdForForm`** for **pending** forms only); **REVIEWS** = **POSITIVE SENTIMENT** % (avg rating /5) & **TOTAL REVIEWS** (all mock queue + extra **`dbReviews`** ids); **FORMS** = **NEW FORMS** (not pre-approved fingerprint) & **TOTAL FORMS** (all in **`signedOrderFormsByEmail`**); **AFFILIATE** = **NEW CONTENT** (pending row is client’s first in local affiliate queue, or no local history) & **TOTAL CONTENT** (full mock affiliate list length). **`orderPriceUsdForForm`** extracted from **`orderSummaryForPendingForm`**.
+**Follow-up 4:** Admin Pending **top two summary tiles** depend on **`activeTab`**: **OVERVIEW** = **TOTAL POINTS** (review photo/video slots × mock rates × Silver multiplier + form order totals × multiplier + affiliate **`points`** from **`affiliateSubmittedContent`** slice by **`orderId`**) & **TOTAL SPEND** (sum **`orderPriceUsdForForm`** for **pending** forms only); **REVIEWS** = **POSITIVE SENTIMENT** % (avg rating /5) & **TOTAL REVIEWS** (pending merged list length; see next entry); **FORMS** = **NEW FORMS** (not pre-approved fingerprint) & **TOTAL FORMS** (pending merged list length); **AFFILIATE** = **NEW CONTENT** (pending row is client’s first in local affiliate queue, or no local history) & **TOTAL CONTENT** (pending merged list length). **`orderPriceUsdForForm`** extracted from **`orderSummaryForPendingForm`**.
+
+---
+
+## 2026-04-06 — Admin Pending: enforce pending-only totals in summary metrics (code + commit)
+
+**Context:** Prior assistant response was truncated; work left uncommitted on **`preview/mobile`**.
+
+**Outcome:** **`pendingSummaryMetrics`** in **`src/pages/admin/pending/page.tsx`** now sets **REVIEWS** **`totalReviews`**, **FORMS** **`totalForms`**, and **AFFILIATE** **`totalContent`** from the same **pending merged** lists used for the tab rows (**`reviewsList` / `formsList` / `affList`** lengths), not from full mock queues or **`listPendingOrderAuthorizationFormsForAdmin`**. Removed unused **`listPendingMockReviewsForAdmin`** import and the **dbReviews**-extra counting block.
+
+**Changes:** **`src/pages/admin/pending/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

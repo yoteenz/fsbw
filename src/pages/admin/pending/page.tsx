@@ -33,7 +33,6 @@ import {
   listPendingMockAffiliateDeclined,
   listPendingMockAffiliateForAdmin,
   listPendingMockAffiliateVisible,
-  listPendingMockReviewsForAdmin,
   listPendingMockReviewsVisible,
   PENDING_MOCK_AFFILIATE_UPDATED_EVENT,
   PENDING_MOCK_REVIEWS_UPDATED_EVENT,
@@ -545,17 +544,6 @@ export default function AdminPending() {
     const positivePct =
       ratingCount > 0 ? Math.round((avgRating / 5) * 100) : 0;
 
-    const allMockReviews = listPendingMockReviewsForAdmin();
-    const reviewIds = new Set(allMockReviews.map((x) => x.id));
-    let serverReviewExtra = 0;
-    if (serverQueues?.dbReviews?.length) {
-      for (const row of serverQueues.dbReviews as Record<string, unknown>[]) {
-        const id = String(row.id || '');
-        if (id && !reviewIds.has(id)) serverReviewExtra += 1;
-      }
-    }
-    const totalReviewsSubmittedHere = allMockReviews.length + serverReviewExtra;
-
     const formsList = pendingAuthFormsMerged;
     let newFormsCount = 0;
     for (const f of formsList) {
@@ -563,8 +551,6 @@ export default function AdminPending() {
       const pre = orderFormMatchesPreviouslyApprovedFingerprint(f.email, f.id, fp);
       if (!pre) newFormsCount += 1;
     }
-    const totalFormsSubmittedHere = listPendingOrderAuthorizationFormsForAdmin().length;
-
     const affList = pendingAffiliateMerged;
     const allAffiliateHistory = listPendingMockAffiliateForAdmin();
     const firstAffiliateRowIdByEmail = new Map<string, string>();
@@ -581,8 +567,6 @@ export default function AdminPending() {
       const firstId = firstAffiliateRowIdByEmail.get(em);
       if (!firstAffiliateRowIdByEmail.has(em) || firstId === it.id) newAffiliateContent += 1;
     }
-    const totalAffiliateContentHere = allAffiliateHistory.length;
-
     const reviewPts = pendingPointsFromReviewsCounts(photoSlots, videoSlots);
     const formPts = pendingPointsFromForms(formsList);
     const affPts = pendingPointsFromAffiliateItems(affList);
@@ -600,15 +584,15 @@ export default function AdminPending() {
       },
       reviews: {
         positivePct,
-        totalReviews: totalReviewsSubmittedHere,
+        totalReviews: reviewsList.length,
       },
       forms: {
         newForms: newFormsCount,
-        totalForms: totalFormsSubmittedHere,
+        totalForms: formsList.length,
       },
       affiliate: {
         newContent: newAffiliateContent,
-        totalContent: totalAffiliateContentHere,
+        totalContent: affList.length,
       },
     };
   }, [
