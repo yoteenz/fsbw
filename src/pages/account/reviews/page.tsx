@@ -17,6 +17,7 @@ import {
 } from '../../../utils/reviewSupplementalMedia';
 import { ReviewSupplementalContentModal } from '../../../components/account/ReviewSupplementalContentModal';
 import { mergeReviewWithSupplementalOverlay } from '../../../utils/accountReviewsSupplementalOverlay';
+import { accountReviewProductThumbnailSrc } from '../../../utils/accountReviewProductThumbnail';
 
 type ReviewWithSupplemental = ReviewRow & StoredReviewSupplementalFields;
 
@@ -156,24 +157,6 @@ const mockToolReviews: ReviewRow[] = [
 ];
 
 const REVIEWS_INITIAL = 3; // max products shown on scroll; "load more" shows all, "show less" reverts to 3
-
-/** Product thumbnails matching affiliate/orders (2D mannequin / unit images). Tools use generic product fallback; profile photo is only used on alerts page. */
-function getProductThumbnail(productName: string): string {
-  switch (productName.toUpperCase()) {
-    case 'BLANCO':
-      return '/assets/2D BLANCO FRONT.png';
-    case 'SOFT WAVE':
-    case 'BEACH WAVE':
-      return '/assets/2D WAVY FRONT.png';
-    case 'SOFT CURL':
-    case 'OCEAN CURL':
-      return '/assets/2D CURLY FRONT.png';
-    case 'NOIR':
-      return '/assets/natural front.png';
-    default:
-      return '/assets/natural front.png';
-  }
-}
 
 /** Route to unit page for shop products; tools/default go to straight/noir. */
 function getProductRoute(productName: string): string {
@@ -516,7 +499,7 @@ function ReviewsPage() {
           }}
         >
           <img
-            src={getProductThumbnail(review.productName)}
+            src={accountReviewProductThumbnailSrc(review.productName)}
             alt={review.productName}
             style={{
               width: '102px',

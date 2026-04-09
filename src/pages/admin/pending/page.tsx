@@ -50,14 +50,15 @@ import {
 import { getPerUserKey, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { getPointsMultiplier } from '../../../constants/tiers';
 import {
-  adminReviewProductThumbSrcFromTitle,
-  formatAdminReviewSubmittedAtLine,
-} from '../../../utils/adminReviewProductThumb';
+  accountReviewThumbnailFromProductTitle,
+  formatReviewSubmittedDateTimeLine,
+} from '../../../utils/accountReviewProductThumbnail';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
-const REVIEW_MODAL_PRODUCT_THUMB_PX = 72;
-const REVIEW_STAR_PX = Math.round(14 * 0.65 * 10) / 10;
+/** Match Account → Reviews product image column */
+const ACCOUNT_REVIEWS_MODAL_THUMB_PX = 102;
+const ACCOUNT_REVIEWS_MODAL_STAR_PX = 9.11;
 const NOIR_REVIEW_STAR_FILLED_SRC = '/assets/NOIR/filled-star.png';
 const NOIR_REVIEW_STAR_OUTLINE_SRC = '/assets/NOIR/star-symbol.png';
 
@@ -1543,72 +1544,89 @@ export default function AdminPending() {
                 ) : (
                   (() => {
                     const rv = adminReviewModal.item;
-                    const thumbSrc = adminReviewProductThumbSrcFromTitle(rv.product);
-                    const starN = Math.min(5, Math.max(0, Math.round(Number(rv.rating))));
-                    const dateTimeLine = formatAdminReviewSubmittedAtLine(rv.submittedAtIso, rv.date);
+                    const thumbSrc = accountReviewThumbnailFromProductTitle(rv.product);
+                    const starN = Math.min(5, Math.max(1, Math.round(Number(rv.rating)) || 1));
+                    const dateTimeLine = formatReviewSubmittedDateTimeLine(rv.submittedAtIso, rv.date);
+                    const starStroke = 'drop-shadow(0 0 0 1px black)';
                     return (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
-                    <div className="flex flex-col items-center w-full" style={{ marginBottom: '12px' }}>
+                    <div className="flex items-start gap-3" style={{ marginBottom: '12px' }}>
                       <div
-                        className="shrink-0 overflow-hidden"
+                        className="flex-shrink-0"
                         style={{
-                          width: `${REVIEW_MODAL_PRODUCT_THUMB_PX}px`,
-                          height: `${REVIEW_MODAL_PRODUCT_THUMB_PX}px`,
-                          border: '0.8px solid #000',
+                          width: `${ACCOUNT_REVIEWS_MODAL_THUMB_PX}px`,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          marginTop: '-6px',
                         }}
                       >
                         <img
                           src={thumbSrc}
                           alt=""
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                          style={{
+                            width: `${ACCOUNT_REVIEWS_MODAL_THUMB_PX}px`,
+                            height: `${ACCOUNT_REVIEWS_MODAL_THUMB_PX}px`,
+                            objectFit: 'contain',
+                            display: 'block',
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.src = '/assets/natural front.png';
+                          }}
                         />
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '2px',
+                            marginTop: '8px',
+                            marginBottom: '4px',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {[0, 1, 2, 3, 4].map((i) => {
+                            const filled = i < starN;
+                            return (
+                              <img
+                                key={i}
+                                src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
+                                alt=""
+                                style={{
+                                  width: `${ACCOUNT_REVIEWS_MODAL_STAR_PX}px`,
+                                  height: `${ACCOUNT_REVIEWS_MODAL_STAR_PX}px`,
+                                  objectFit: 'contain',
+                                  filter: starStroke,
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-center gap-1" style={{ marginTop: '8px' }}>
-                        {[...Array(5)].map((_, i) => {
-                          const filled = i < starN;
-                          return (
-                            <img
-                              key={i}
-                              src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
-                              alt=""
-                              width={REVIEW_STAR_PX}
-                              height={REVIEW_STAR_PX}
-                              style={{
-                                width: `${REVIEW_STAR_PX}px`,
-                                height: `${REVIEW_STAR_PX}px`,
-                                objectFit: 'contain',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                              }}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
+                      <div className="flex-1 min-w-0" style={{ paddingTop: '2px' }}>
                     <p
                       style={{
                         fontFamily: '"Futura PT Medium"',
                         fontSize: '11px',
                         color: '#808080',
                         margin: '0 0 8px',
-                        textAlign: 'center',
                         textTransform: 'uppercase',
                       }}
                     >
                       {rv.product}
                     </p>
+                    <p style={{ margin: '0 0 6px' }}>{rv.excerpt}</p>
                     <p
                       style={{
                         fontFamily: '"Futura PT Book"',
                         fontSize: '11px',
                         color: '#EB1C24',
-                        margin: '0 0 8px',
-                        textAlign: 'center',
+                        margin: 0,
                         textTransform: 'uppercase',
                       }}
                     >
                       {dateTimeLine}
                     </p>
-                    <p style={{ margin: '0 0 12px' }}>{rv.excerpt}</p>
+                      </div>
+                    </div>
                     {(rv.photoUrls?.length || rv.videoUrls?.length) ? (
                       <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {(rv.photoUrls || []).map((src, i) => (

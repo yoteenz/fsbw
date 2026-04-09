@@ -270,6 +270,24 @@ function parseReviews(raw: string | null): PendingMockReview[] {
   }
 }
 
+/** Backfill `submittedAtIso` from defaults when localStorage predates that field. */
+function mergeReviewsWithDefaults(stored: PendingMockReview[]): PendingMockReview[] {
+  const byId = new Map(DEFAULT_REVIEWS.map((d) => [d.id, d]));
+  let changed = false;
+  const out = stored.map((row) => {
+    const base = byId.get(row.id);
+    if (!base) return row;
+    const nextIso = row.submittedAtIso || base.submittedAtIso;
+    if (nextIso && nextIso !== row.submittedAtIso) {
+      changed = true;
+      return { ...row, submittedAtIso: nextIso };
+    }
+    return row;
+  });
+  if (changed) saveReviews(out);
+  return out;
+}
+
 function parseAffiliate(raw: string | null): PendingMockAffiliateItem[] {
   if (!raw) return [];
   try {
@@ -306,7 +324,7 @@ export function listPendingMockReviewsForAdmin(): PendingMockReview[] {
     saveReviews(DEFAULT_REVIEWS);
     return [...DEFAULT_REVIEWS];
   }
-  return existing;
+  return mergeReviewsWithDefaults(existing);
 }
 
 export function listPendingMockAffiliateForAdmin(): PendingMockAffiliateItem[] {
