@@ -52,6 +52,9 @@ import { getPointsMultiplier } from '../../../constants/tiers';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
+/** Avatar + left column right, date left — symmetric nudge inside list cards. */
+const PENDING_CARD_CONTENT_NUDGE_PX = 6;
+
 const rowStyle = {
   borderBottom: '1px solid #e5e7eb' as const,
 };
@@ -125,7 +128,7 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
   const fp = fingerprintSignedOrderFormFields(form.formFields);
   const preApproved = orderFormMatchesPreviouslyApprovedFingerprint(form.email, form.id, fp);
   const priceBit = priceUsd > 0 ? `$${priceUsd.toLocaleString()}` : '';
-  const statusBit = preApproved ? 'PRE-APPROVED' : 'ORIGINAL';
+  const statusBit = preApproved ? 'PRE-APPROVED COPY' : 'ORIGINAL COPY';
   const grayLine = priceBit ? `${priceBit} · ${statusBit}` : statusBit;
   return { line: grayLine, priceUsd, formFingerprint: fp };
 }
@@ -221,8 +224,8 @@ function affiliateSubmittedCountsLine(
     }
   }
   const parts: string[] = [];
-  parts.push(`${photos} ${photos === 1 ? 'PHOTO SUBMISSION' : 'PHOTO SUBMISSIONS'}.`);
-  parts.push(`${videos} ${videos === 1 ? 'VIDEO SUBMISSION' : 'VIDEO SUBMISSIONS'}.`);
+  parts.push(`${photos} ${photos === 1 ? 'PHOTO' : 'PHOTOS'}.`);
+  parts.push(`${videos} ${videos === 1 ? 'VIDEO' : 'VIDEOS'}.`);
   parts.push(`${socials} ${socials === 1 ? 'SOCIAL TAG' : 'SOCIAL TAGS'}.`);
   return parts.join(' ');
 }
@@ -722,6 +725,7 @@ export default function AdminPending() {
             verifiedPurchase={false}
             showStars={false}
             mediaPresentation="inline"
+            contentNudgePx={PENDING_CARD_CONTENT_NUDGE_PX}
             afterMedia={rejectedBlock}
             footerLinkLabel="VIEW CONTENT"
             onFooterLinkClick={() => setAdminReviewModal({ kind: 'affiliate', item })}
@@ -1248,6 +1252,7 @@ export default function AdminPending() {
                             videoUrls={r.videoUrls}
                             verifiedPurchase
                             mediaPresentation="inline"
+                            contentNudgePx={PENDING_CARD_CONTENT_NUDGE_PX}
                             hideMediaRowWhenEmpty
                             footerLinkLabel="VIEW REVIEW"
                             onFooterLinkClick={() => setAdminReviewModal({ kind: 'review', item: r })}
@@ -1284,7 +1289,10 @@ export default function AdminPending() {
                           return (
                             <div key={`${f.email}-${f.id}`} className="py-3" style={rowStyle}>
                               <div className="flex justify-between items-start gap-2">
-                                <div className="min-w-0 flex-1 flex flex-col">
+                                <div
+                                  className="min-w-0 flex-1 flex flex-col"
+                                  style={{ marginLeft: PENDING_CARD_CONTENT_NUDGE_PX }}
+                                >
                                   <FormPendingClientAvatar email={f.email} clientLabel={nameUpper} photoUrl={photoForClient} />
                                   <p
                                     style={{
@@ -1352,6 +1360,7 @@ export default function AdminPending() {
                                     color: '#000',
                                     flexShrink: 0,
                                     textAlign: 'right',
+                                    marginRight: PENDING_CARD_CONTENT_NUDGE_PX,
                                   }}
                                 >
                                   {orderPlacedDate}

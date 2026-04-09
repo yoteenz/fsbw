@@ -13116,3 +13116,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Outcome:** **`pendingSummaryMetrics`** in **`src/pages/admin/pending/page.tsx`** now sets **REVIEWS** **`totalReviews`**, **FORMS** **`totalForms`**, and **AFFILIATE** **`totalContent`** from the same **pending merged** lists used for the tab rows (**`reviewsList` / `formsList` / `affList`** lengths), not from full mock queues or **`listPendingOrderAuthorizationFormsForAdmin`**. Removed unused **`listPendingMockReviewsForAdmin`** import and the **dbReviews**-extra counting block.
 
 **Changes:** **`src/pages/admin/pending/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-06 — Admin Pending: client nav, card nudge, form labels, affiliate counts copy, mock orders for forms tab
+
+**Context:** User wanted profile avatars to open client details from pending rows; shift avatar + all content below it **6px** right and dates **6px** left; forms gray line **ORIGINAL COPY** / **PRE-APPROVED COPY** with real prices on seeded test forms; affiliate counts line like **2 PHOTOS. 1 VIDEO. 3 SOCIAL TAGS.**
+
+**Outcomes:**
+- **`AdminReviewStyleCard`**: optional **`contentNudgePx`** — top row (avatar + date) and a wrapped block for product line, stars, body, media, footer, **`afterMedia`** all get the same horizontal nudge; date gets matching **`marginRight`**.
+- **`admin/pending/page.tsx`**: **`PENDING_CARD_CONTENT_NUDGE_PX = 6`** on review + affiliate cards; forms tab column uses same left nudge + date right nudge. **`orderSummaryForPendingForm`** status strings updated. **`affiliateSubmittedCountsLine`** shortened to **PHOTO(S)** / **VIDEO(S)** / **SOCIAL TAG(S)** (period-separated).
+- **`mockSignedOrderFormForApproval.ts`**: seed version **`adminPendingTestOrderFormsSeedVersion_v1` = `2`** — writes **`userOrders_*`** for test emails with **`lineItems`** + **`orderId`** on pending forms; adds **`pending-test-form-beta-approved-twin`** (admin-approved, same fingerprint) so beta pending shows **PRE-APPROVED COPY**; upserts **`registeredUsers`** stubs so **`?email=`** client details works; removes old test form ids before re-seed.
+- **`admin/clients/page.tsx`**: **`returnTo=pending`** → back navigates to **`/admin/pending`** (close details + block confirm).
+
+**Changes:** **`AdminReviewStyleCard.tsx`**, **`admin/pending/page.tsx`**, **`mockSignedOrderFormForApproval.ts`**, **`admin/clients/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

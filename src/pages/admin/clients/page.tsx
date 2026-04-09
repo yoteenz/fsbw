@@ -777,6 +777,10 @@ export default function AdminClients() {
       navigate('/admin/reviews');
       return;
     }
+    if (returnTo === 'pending') {
+      navigate('/admin/pending');
+      return;
+    }
     setSelectedClientEmail(null);
     setDetailsTab('activity');
     setExpandedOrderId(null);
@@ -3796,6 +3800,7 @@ export default function AdminClients() {
             closeClientDetails();
             setShowBlockConfirm(false);
             if (returnTo === 'reviews') navigate('/admin/reviews');
+            else if (returnTo === 'pending') navigate('/admin/pending');
             else if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}

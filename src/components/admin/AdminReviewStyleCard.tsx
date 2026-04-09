@@ -143,6 +143,8 @@ export type AdminReviewStyleCardProps = {
   showStars?: boolean;
   /** e.g. approve / decline row */
   children?: ReactNode;
+  /** Nudge avatar + left column right and date text left for tab layout symmetry (e.g. Admin Pending). */
+  contentNudgePx?: number;
 };
 
 /**
@@ -173,6 +175,7 @@ export function AdminReviewStyleCard({
   onOpenClientDetails,
   showStars = true,
   children,
+  contentNudgePx = 0,
 }: AdminReviewStyleCardProps) {
   const enriched = enrichRegionFromMockEmail(clientEmail, parenIn, codeIn);
   const clientRegionParen = (parenIn || '').trim() || enriched.paren || '';
@@ -222,10 +225,12 @@ export function AdminReviewStyleCard({
 
   const stars = reviewStarCount(rating);
 
+  const nudge = Math.max(0, contentNudgePx);
+
   return (
     <div className="py-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
       <div className="flex justify-between items-start gap-2">
-        <div className="min-w-0 flex-1 flex flex-col">
+        <div className="min-w-0 flex-1 flex flex-col" style={nudge ? { marginLeft: nudge } : undefined}>
           <div className="flex flex-col items-start w-full">
             <ReviewClientAvatarButton
               srcPrimary={(clientProfilePhotoUrl || '').trim()}
@@ -250,40 +255,6 @@ export function AdminReviewStyleCard({
               ) : null}
             </p>
           </div>
-          <p
-            className="mt-1 w-full"
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '11px',
-              color: '#808080',
-              margin: 0,
-              textAlign: 'left',
-            }}
-          >
-            {productLine}
-          </p>
-          {showStars ? (
-            <div className="flex items-center gap-1" style={{ marginTop: 'calc(0.25rem + 2px)' }}>
-              {[...Array(5)].map((_, i) => {
-                const filled = i < stars;
-                return (
-                  <img
-                    key={i}
-                    src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
-                    alt=""
-                    width={REVIEW_STAR_PX}
-                    height={REVIEW_STAR_PX}
-                    style={{
-                      width: `${REVIEW_STAR_PX}px`,
-                      height: `${REVIEW_STAR_PX}px`,
-                      objectFit: 'contain',
-                      filter: 'drop-shadow(0 0 0 1px black)',
-                    }}
-                  />
-                );
-              })}
-            </div>
-          ) : null}
         </div>
         <span
           style={{
@@ -292,22 +263,58 @@ export function AdminReviewStyleCard({
             color: '#000',
             flexShrink: 0,
             textAlign: 'right',
+            ...(nudge ? { marginRight: nudge } : {}),
           }}
         >
           {date}
         </span>
       </div>
-      <p
-        style={{
-          fontFamily: '"Futura PT Book"',
-          fontSize: bodyFontSize,
-          color: '#000',
-          margin: 'calc(0.25rem + 4px) 0 0',
-        }}
-      >
-        {bodyText}
-      </p>
-      <div className="mt-2">
+      <div style={nudge ? { marginLeft: nudge } : undefined}>
+        <p
+          className="mt-1 w-full"
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '11px',
+            color: '#808080',
+            margin: 0,
+            textAlign: 'left',
+          }}
+        >
+          {productLine}
+        </p>
+        {showStars ? (
+          <div className="flex items-center gap-1" style={{ marginTop: 'calc(0.25rem + 2px)' }}>
+            {[...Array(5)].map((_, i) => {
+              const filled = i < stars;
+              return (
+                <img
+                  key={i}
+                  src={filled ? NOIR_REVIEW_STAR_FILLED_SRC : NOIR_REVIEW_STAR_OUTLINE_SRC}
+                  alt=""
+                  width={REVIEW_STAR_PX}
+                  height={REVIEW_STAR_PX}
+                  style={{
+                    width: `${REVIEW_STAR_PX}px`,
+                    height: `${REVIEW_STAR_PX}px`,
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 0 0 1px black)',
+                  }}
+                />
+              );
+            })}
+          </div>
+        ) : null}
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: bodyFontSize,
+            color: '#000',
+            margin: 'calc(0.25rem + 4px) 0 0',
+          }}
+        >
+          {bodyText}
+        </p>
+        <div className="mt-2">
         {hideMediaRowWhenEmpty && !hasMediaUrls && mediaCount === 0 ? null : showInlineMedia ? (
           <div className="flex flex-wrap" style={{ marginTop: '4px', gap: '8px' }}>
             {photoUrls.map((url, idx) => (
@@ -414,30 +421,31 @@ export function AdminReviewStyleCard({
             ) : null}
           </>
         )}
+        </div>
+        {footerLinkLabel && onFooterLinkClick ? (
+          <button
+            type="button"
+            onClick={onFooterLinkClick}
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '11px',
+              color: '#EB1C24',
+              fontWeight: 500,
+              margin: '10px 0 0',
+              padding: 0,
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              textTransform: 'uppercase',
+              display: 'block',
+            }}
+          >
+            {footerLinkLabel}
+          </button>
+        ) : null}
+        {children}
+        {afterMedia}
       </div>
-      {footerLinkLabel && onFooterLinkClick ? (
-        <button
-          type="button"
-          onClick={onFooterLinkClick}
-          style={{
-            fontFamily: '"Futura PT Medium"',
-            fontSize: '11px',
-            color: '#EB1C24',
-            fontWeight: 500,
-            margin: '10px 0 0',
-            padding: 0,
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer',
-            textTransform: 'uppercase',
-            display: 'block',
-          }}
-        >
-          {footerLinkLabel}
-        </button>
-      ) : null}
-      {children}
-      {afterMedia}
     </div>
   );
 }
