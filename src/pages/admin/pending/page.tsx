@@ -31,7 +31,9 @@ import {
   declinePendingMockAffiliate,
   declinePendingMockReview,
   listPendingMockAffiliateDeclined,
+  listPendingMockAffiliateForAdmin,
   listPendingMockAffiliateVisible,
+  listPendingMockReviewsForAdmin,
   listPendingMockReviewsVisible,
   PENDING_MOCK_AFFILIATE_UPDATED_EVENT,
   PENDING_MOCK_REVIEWS_UPDATED_EVENT,
@@ -47,6 +49,7 @@ import {
   serverReviewSupplementalToPendingMock,
 } from '../../../utils/serverPendingQueueMappers';
 import { getPerUserKey, PER_USER_KEYS } from '../../../utils/perUserStorage';
+import { getPointsMultiplier } from '../../../constants/tiers';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -67,14 +70,9 @@ function normalizeEmailKey(email: string): string {
   return (email || '').trim().toLowerCase();
 }
 
-function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
-  line: string;
-  priceUsd: number;
-  formFingerprint: string;
-} {
+function orderPriceUsdForForm(form: StoredSignedOrderForm): number {
   const email = normalizeEmailKey(form.email);
   let priceUsd = 0;
-  const parts: string[] = [];
   const normOrderNum = (s: string) =>
     s
       .replace(/\s+/g, ' ')
@@ -104,14 +102,10 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
           | undefined;
         if (row?.lineItems && Array.isArray(row.lineItems) && row.lineItems.length > 0) {
           for (const li of row.lineItems) {
-            const name = String(li.productName || 'ITEM').trim().toUpperCase();
             const sub = Number(li.subtotal);
             if (Number.isFinite(sub) && sub > 0) priceUsd += Math.round(sub);
-            parts.push(name);
           }
         } else if (row) {
-          const name = String(row.productName || 'ORDER').trim().toUpperCase();
-          parts.push(name);
           const t = Number(row.subtotal ?? row.total);
           if (Number.isFinite(t) && t > 0) priceUsd = Math.round(t);
         }
@@ -120,6 +114,15 @@ function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
   } catch {
     /* ignore */
   }
+  return priceUsd;
+}
+
+function orderSummaryForPendingForm(form: StoredSignedOrderForm): {
+  line: string;
+  priceUsd: number;
+  formFingerprint: string;
+} {
+  const priceUsd = orderPriceUsdForForm(form);
   const fp = fingerprintSignedOrderFormFields(form.formFields);
   const preApproved = orderFormMatchesPreviouslyApprovedFingerprint(form.email, form.id, fp);
   const priceBit = priceUsd > 0 ? `$${priceUsd.toLocaleString()}` : '';
@@ -247,6 +250,51 @@ function loadAffiliateContentMapForEmail(email: string): Record<string, { photos
   } catch {
     return null;
   }
+}
+
+function pointsOnAffiliateContentSlice(slice: { photos?: unknown[]; videos?: unknown[]; socials?: unknown[] } | null | undefined): number {
+  if (!slice || typeof slice !== 'object') return 0;
+  let sum = 0;
+  for (const row of [...(slice.photos || []), ...(slice.videos || []), ...(slice.socials || [])]) {
+    const p = Number((row as { points?: unknown }).points);
+    if (Number.isFinite(p) && p > 0) sum += Math.round(p);
+  }
+  return sum;
+}
+
+function pendingAffiliatePointsForItem(item: PendingMockAffiliateItem): number {
+  const em = normalizeEmailKey(item.email);
+  const oid = (item.orderId || '').trim();
+  if (!em || !oid) return 0;
+  const map = loadAffiliateContentMapForEmail(em);
+  if (!map) return 0;
+  const slice = map[oid];
+  return pointsOnAffiliateContentSlice(slice);
+}
+
+function pendingPointsFromReviewsCounts(photoN: number, videoN: number): number {
+  const base = photoN * 400 + videoN * 600;
+  const { multiplier } = getPointsMultiplier('SILVER', null);
+  return Math.round(base * multiplier);
+}
+
+function pendingPointsFromForms(forms: StoredSignedOrderForm[]): number {
+  let sum = 0;
+  for (const f of forms) {
+    const usd = orderPriceUsdForForm(f);
+    if (usd <= 0) continue;
+    const { multiplier } = getPointsMultiplier('SILVER', null);
+    sum += Math.round(usd * multiplier);
+  }
+  return sum;
+}
+
+function pendingPointsFromAffiliateItems(items: PendingMockAffiliateItem[]): number {
+  let sum = 0;
+  for (const it of items) {
+    sum += pendingAffiliatePointsForItem(it);
+  }
+  return sum;
 }
 
 function FormPendingClientAvatar({
@@ -471,6 +519,139 @@ export default function AdminPending() {
   const reviewsTabCount = serverQueues ? pendingReviewsMerged.length : pendingReviews + mockReviewsPendingCount;
   const formsTabCount = serverQueues ? pendingAuthFormsMerged.length : pendingAuthFormsCount;
   const affiliateTabCount = serverQueues ? pendingAffiliateMerged.length : mockAffiliatePendingCount;
+
+  const pendingSummaryMetrics = useMemo(() => {
+    void mockQueuesBump;
+    void serverQueueBump;
+    void pendingAuthFormsBump;
+
+    const reviewsList = pendingReviewsMerged;
+    let photoSlots = 0;
+    let videoSlots = 0;
+    let ratingSum = 0;
+    let ratingCount = 0;
+    for (const r of reviewsList) {
+      const p = r.photoCount ?? (r.photoUrls?.length || 0);
+      const v = r.videoCount ?? (r.videoUrls?.length || 0);
+      photoSlots += p;
+      videoSlots += v;
+      const rt = Number(r.rating);
+      if (Number.isFinite(rt) && rt > 0) {
+        ratingSum += rt;
+        ratingCount += 1;
+      }
+    }
+    const avgRating = ratingCount > 0 ? ratingSum / ratingCount : 0;
+    const positivePct =
+      ratingCount > 0 ? Math.round((avgRating / 5) * 100) : 0;
+
+    const allMockReviews = listPendingMockReviewsForAdmin();
+    const reviewIds = new Set(allMockReviews.map((x) => x.id));
+    let serverReviewExtra = 0;
+    if (serverQueues?.dbReviews?.length) {
+      for (const row of serverQueues.dbReviews as Record<string, unknown>[]) {
+        const id = String(row.id || '');
+        if (id && !reviewIds.has(id)) serverReviewExtra += 1;
+      }
+    }
+    const totalReviewsSubmittedHere = allMockReviews.length + serverReviewExtra;
+
+    const formsList = pendingAuthFormsMerged;
+    let newFormsCount = 0;
+    for (const f of formsList) {
+      const fp = fingerprintSignedOrderFormFields(f.formFields);
+      const pre = orderFormMatchesPreviouslyApprovedFingerprint(f.email, f.id, fp);
+      if (!pre) newFormsCount += 1;
+    }
+    const totalFormsSubmittedHere = listPendingOrderAuthorizationFormsForAdmin().length;
+
+    const affList = pendingAffiliateMerged;
+    const allAffiliateHistory = listPendingMockAffiliateForAdmin();
+    const firstAffiliateRowIdByEmail = new Map<string, string>();
+    for (let i = allAffiliateHistory.length - 1; i >= 0; i--) {
+      const row = allAffiliateHistory[i];
+      const em = normalizeEmailKey(row.email);
+      if (!em || firstAffiliateRowIdByEmail.has(em)) continue;
+      firstAffiliateRowIdByEmail.set(em, row.id);
+    }
+    let newAffiliateContent = 0;
+    for (const it of affList) {
+      const em = normalizeEmailKey(it.email);
+      if (!em) continue;
+      const firstId = firstAffiliateRowIdByEmail.get(em);
+      if (!firstAffiliateRowIdByEmail.has(em) || firstId === it.id) newAffiliateContent += 1;
+    }
+    const totalAffiliateContentHere = allAffiliateHistory.length;
+
+    const reviewPts = pendingPointsFromReviewsCounts(photoSlots, videoSlots);
+    const formPts = pendingPointsFromForms(formsList);
+    const affPts = pendingPointsFromAffiliateItems(affList);
+    const totalPointsOverview = reviewPts + formPts + affPts;
+
+    let formSpendUsd = 0;
+    for (const f of formsList) {
+      formSpendUsd += orderPriceUsdForForm(f);
+    }
+
+    return {
+      overview: {
+        totalPoints: totalPointsOverview,
+        totalSpendUsd: formSpendUsd,
+      },
+      reviews: {
+        positivePct,
+        totalReviews: totalReviewsSubmittedHere,
+      },
+      forms: {
+        newForms: newFormsCount,
+        totalForms: totalFormsSubmittedHere,
+      },
+      affiliate: {
+        newContent: newAffiliateContent,
+        totalContent: totalAffiliateContentHere,
+      },
+    };
+  }, [
+    pendingReviewsMerged,
+    pendingAuthFormsMerged,
+    pendingAffiliateMerged,
+    mockQueuesBump,
+    serverQueueBump,
+    pendingAuthFormsBump,
+    serverQueues,
+  ]);
+
+  const summaryPanelPair = useMemo(() => {
+    const o = pendingSummaryMetrics.overview;
+    const r = pendingSummaryMetrics.reviews;
+    const f = pendingSummaryMetrics.forms;
+    const a = pendingSummaryMetrics.affiliate;
+    if (activeTab === 'OVERVIEW') {
+      return [
+        { value: String(o.totalPoints), label: 'TOTAL POINTS' },
+        {
+          value: o.totalSpendUsd > 0 ? `$${o.totalSpendUsd.toLocaleString()}` : '$0',
+          label: 'TOTAL SPEND',
+        },
+      ] as const;
+    }
+    if (activeTab === 'REVIEWS') {
+      return [
+        { value: `${r.positivePct}%`, label: 'POSITIVE SENTIMENT' },
+        { value: String(r.totalReviews), label: 'TOTAL REVIEWS' },
+      ] as const;
+    }
+    if (activeTab === 'FORMS') {
+      return [
+        { value: String(f.newForms), label: 'NEW FORMS' },
+        { value: String(f.totalForms), label: 'TOTAL FORMS' },
+      ] as const;
+    }
+    return [
+      { value: String(a.newContent), label: 'NEW CONTENT' },
+      { value: String(a.totalContent), label: 'TOTAL CONTENT' },
+    ] as const;
+  }, [activeTab, pendingSummaryMetrics]);
 
   const refreshServerQueues = useCallback(() => {
     if (!isSupabaseConfigured()) return;
@@ -928,44 +1109,38 @@ export default function AdminPending() {
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
 
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
-                <div
-                  className="text-center py-3"
-                  style={{
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                    borderRadius: '4px',
-                    height: '80px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    paddingBottom: '10px',
-                  }}
-                >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {reviewsTabCount}
-                  </p>
-                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                    PENDING REVIEWS
-                  </p>
-                </div>
-                <div
-                  className="text-center py-3"
-                  style={{
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                    borderRadius: '4px',
-                    height: '80px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    paddingBottom: '10px',
-                  }}
-                >
-                  <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', fontSize: '24px' }}>
-                    {formsTabCount}
-                  </p>
-                  <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                    ORDER FORMS
-                  </p>
-                </div>
+                {summaryPanelPair.map((panel) => (
+                  <div
+                    key={panel.label}
+                    className="text-center py-3"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: '4px',
+                      minHeight: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'flex-end',
+                      paddingBottom: '10px',
+                      paddingLeft: '6px',
+                      paddingRight: '6px',
+                    }}
+                  >
+                    <p
+                      className="font-covered-by-your-grace text-xl"
+                      style={{
+                        color: '#EB1C24',
+                        fontSize: panel.value.length > 10 ? '18px' : '24px',
+                        lineHeight: 1.1,
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {panel.value}
+                    </p>
+                    <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px', lineHeight: 1.2 }}>
+                      {panel.label}
+                    </p>
+                  </div>
+                ))}
               </div>
 
               <div className="flex flex-wrap justify-center gap-[14px] px-5">
