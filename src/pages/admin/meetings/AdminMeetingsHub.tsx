@@ -9,7 +9,7 @@ import {
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { isAdminKateenaAccount, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { isAdminEmail } from '../../../utils/adminAuth';
 import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
@@ -468,9 +468,12 @@ export default function AdminMeetingsHub() {
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
       const u = raw ? JSON.parse(raw) : null;
-      if (u && (isAyoteenzAdminAccount(u) || isAdminKateenaAccount(u))) {
+      const em = String((u as { email?: string } | null)?.email || '')
+        .trim()
+        .toLowerCase();
+      if (u && isAdminEmail(em)) {
         const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(calendarAnchor));
-        if (demo.date >= range.start && demo.date <= range.end && !byId.has(demo.id)) {
+        if (demo.date >= range.start && demo.date <= range.end) {
           byId.set(demo.id, demo);
         }
       }

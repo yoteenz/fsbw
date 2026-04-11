@@ -302,7 +302,9 @@ export function meetingSearchBlob(m: AdminMeeting): string {
       String(meta.hairOption || ''),
       String(meta.consultType || ''),
       String(meta.consultNotes || ''),
-      String(meta.bookingHairOption || '')
+      String(meta.bookingHairOption || ''),
+      String(meta.orderNumber || ''),
+      m.id
     );
   } else {
     baseParts.push(

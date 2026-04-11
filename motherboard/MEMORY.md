@@ -13336,3 +13336,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`AdminMeetingsHub`** `mergedMeetings`: inject when **`isAyoteenzAdminAccount(u) || isAdminKateenaAccount(u)`**. **`listAggregatedAdminMeetingsForClientDetails`**: same emails for the merge block.
 
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingsMock.ts`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin Meetings ORDER #331 demo still missing: id collision + admin gate
+
+**Context:** User still did not see the **ORDER #331** demo consult on **CONSULTS** after the founder vs mock-Kateena email gate fix.
+
+**Causes:** (1) Demo meeting **`id`** was **`demo-consult-order-331`** — any **API or localStorage** row with the same **`id`** was merged **after** the inject attempt and **replaced** the demo; **`!byId.has(demo.id)`** then **skipped** re-adding it. (2) Gate was still **too narrow** if the user signs in as another default admin (e.g. **`admin@frontalslayer.com`**). (3) Header search for **`331`** did not match **`metadata.orderNumber`** in **`meetingSearchBlob`**.
+
+**Fix:** Rename stable id to **`demo-baw-consult-order-331`**; merge demo **unconditionally** (when in month range) **after** API/local so it always wins. Use **`isAdminEmail`** for hub + **`listAggregatedAdminMeetingsForClientDetails`**. **`meetingSearchBlob`**: consult branch adds **`orderNumber`** and **`m.id`**.
+
+**Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingClientPanels.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

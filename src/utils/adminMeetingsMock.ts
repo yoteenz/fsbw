@@ -3,7 +3,7 @@
  * Mock rows vary by calendar day (seeded); merged with localStorage drafts.
  */
 import { getMockClientsForAyoteenz } from '../pages/admin/clients/page';
-import { ADMIN_KATEENA_EMAIL, FOUNDER_PRIVILEGED_ADMIN_EMAIL } from './adminAuth';
+import { FOUNDER_PRIVILEGED_ADMIN_EMAIL, isAdminEmail } from './adminAuth';
 
 export type MeetingCategory = 'consultation' | 'appointment';
 
@@ -367,7 +367,8 @@ export function generateMockMeetingsForRange(start: string, end: string): AdminM
 export function adminFounderDemoConsultMeetingOrder331(anchorDate: string): AdminMeeting {
   const email = FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase();
   return {
-    id: 'demo-consult-order-331',
+    /** Distinct from any API `id` so backend rows cannot replace this demo row. */
+    id: 'demo-baw-consult-order-331',
     date: anchorDate,
     time: '2:00 PM',
     client: 'KATEENA ARMSTRONG',
@@ -429,11 +430,11 @@ export function listAggregatedAdminMeetingsForClientDetails(apiMeetings: AdminMe
       const em = String((u as { email?: string })?.email || '')
         .trim()
         .toLowerCase();
-      if (em === FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase() || em === ADMIN_KATEENA_EMAIL.toLowerCase()) {
+      if (em && isAdminEmail(em)) {
         const today = new Date();
         const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(todayKey));
-        if (demo.date >= start && demo.date <= end && !byId.has(demo.id)) {
+        if (demo.date >= start && demo.date <= end) {
           byId.set(demo.id, demo);
         }
       }
