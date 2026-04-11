@@ -13348,3 +13348,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Rename stable id to **`demo-baw-consult-order-331`**; merge demo **unconditionally** (when in month range) **after** API/local so it always wins. Use **`isAdminEmail`** for hub + **`listAggregatedAdminMeetingsForClientDetails`**. **`meetingSearchBlob`**: consult branch adds **`orderNumber`** and **`m.id`**.
 
 **Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingClientPanels.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-10 — Admin send offer: cap size dropdown matches build-a-wig (XS–L + flexible)
+
+**Context:** User reported **Admin → Meetings → Send offer** CAP SIZE dropdown only had flexible options (**XXS/XS/S**, **S/M/L**), not custom **XS, S, M, L** like **build-a-wig** cap-size page.
+
+**Fix:** **`CREATE_OFFER_CAP_SIZE_OPTIONS`** in **`AdminMeetingsHub.tsx`** → **`['XS','S','M','L','XXS/XS/S','S/M/L']`** (same ids/order as **`cap-size/page.tsx`**). **`specialOfferPrice.ts`** **`CAP_SIZE_PRICES`**: explicit **XS, S, L** at **$0** (previously only **M** and flexible keys were explicit; others fell through to **0** anyway).
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

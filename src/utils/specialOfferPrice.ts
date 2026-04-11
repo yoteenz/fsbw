@@ -1,7 +1,7 @@
 /**
  * Calculates the accurate total price for a special offer unit + options,
  * matching build-a-wig / product page pricing (length, density, lace, texture, color, hairline, styling, add-ons).
- * Cap size: **M** = $0; flexible **XXS/XS/S** and **S/M/L** = +$40 (same as build-a-wig hub).
+ * Cap size: **XS, S, M, L** = $0; flexible **XXS/XS/S** and **S/M/L** = +$40 (same as build-a-wig hub).
  */
 
 const UNIT_BASE_PRICES: Record<string, number> = {
@@ -69,7 +69,10 @@ export type SpecialOfferPriceBreakdown = {
 };
 
 const CAP_SIZE_PRICES: Record<string, number> = {
+  XS: 0,
+  S: 0,
   M: 0,
+  L: 0,
   'XXS/XS/S': 40,
   'S/M/L': 40,
 };

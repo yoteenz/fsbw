@@ -106,7 +106,8 @@ type CreateOfferSelections = {
   addOns: string[];
 };
 
-const CREATE_OFFER_CAP_SIZE_OPTIONS = ['M', 'XXS/XS/S', 'S/M/L'] as const;
+/** Same ids/order as build-a-wig cap-size page: custom XS–L then flexible bands. */
+const CREATE_OFFER_CAP_SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XXS/XS/S', 'S/M/L'] as const;
 
 const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
 const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
