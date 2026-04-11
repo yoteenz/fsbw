@@ -333,17 +333,55 @@ export function meetingIsCurrentOrActive(m: AdminMeeting): boolean {
 
 export function meetingSortTimeMs(m: AdminMeeting): number {
   const base = parseISODateLocal(m.date);
-  const timeText = String(m.time || '').trim().toUpperCase();
-  const parsed = timeText.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
-  if (parsed) {
-    let hours = Number(parsed[1]);
-    const mins = Number(parsed[2] || '0');
-    const ampm = parsed[3];
+  const timeText = String(m.time || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // 12h: "2:00 PM", "2 PM", "9:30AM"
+  const parsed12 = timeText.match(/^(\d{1,2})(?::(\d{2}))?(?::\d{2})?\s*(AM|PM)$/);
+  if (parsed12) {
+    let hours = Number(parsed12[1]);
+    const mins = Number(parsed12[2] || '0');
+    const ampm = parsed12[3];
     if (ampm === 'PM' && hours < 12) hours += 12;
     if (ampm === 'AM' && hours === 12) hours = 0;
     base.setHours(hours, mins, 0, 0);
+    return base.getTime();
   }
+
+  // 24h: "14:00", "9:30", "09:15:00"
+  const parsed24 = timeText.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (parsed24) {
+    const hours = Number(parsed24[1]);
+    const mins = Number(parsed24[2]);
+    if (hours >= 0 && hours <= 23 && mins >= 0 && mins <= 59) {
+      base.setHours(hours, mins, 0, 0);
+      return base.getTime();
+    }
+  }
+
   return base.getTime();
+}
+
+function compareMeetingsByClientNameAsc(a: AdminMeeting, b: AdminMeeting): number {
+  const c = meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
+    sensitivity: 'base',
+  });
+  if (c !== 0) return c;
+  const t = meetingSortTimeMs(b) - meetingSortTimeMs(a);
+  if (t !== 0) return t;
+  return String(a.id || '').localeCompare(String(b.id || ''));
+}
+
+function compareMeetingsByTimeDesc(a: AdminMeeting, b: AdminMeeting): number {
+  const t = meetingSortTimeMs(b) - meetingSortTimeMs(a);
+  if (t !== 0) return t;
+  const c = compareMeetingsByClientNameAsc(a, b);
+  if (c !== 0) return c;
+  return String(a.id || '').localeCompare(String(b.id || ''));
 }
 
 export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
@@ -381,7 +419,25 @@ export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSo
     );
     return sorted;
   }
-  sorted.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+
+  const sortAlphaWithinFilter =
+    sortOption === 'Premium' ||
+    sortOption === 'Standard' ||
+    sortOption === 'Re-install' ||
+    sortOption === 'New install' ||
+    sortOption === 'Wig only' ||
+    sortOption === 'Wig + install';
+
+  if (sortOption === 'Most recent') {
+    sorted.sort(compareMeetingsByTimeDesc);
+    return sorted;
+  }
+  if (sortAlphaWithinFilter) {
+    sorted.sort(compareMeetingsByClientNameAsc);
+    return sorted;
+  }
+
+  sorted.sort(compareMeetingsByTimeDesc);
   return sorted;
 }
 

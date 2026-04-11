@@ -13358,3 +13358,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`CREATE_OFFER_CAP_SIZE_OPTIONS`** in **`AdminMeetingsHub.tsx`** → **`['XS','S','M','L','XXS/XS/S','S/M/L']`** (same ids/order as **`cap-size/page.tsx`**). **`specialOfferPrice.ts`** **`CAP_SIZE_PRICES`**: explicit **XS, S, L** at **$0** (previously only **M** and flexible keys were explicit; others fell through to **0** anyway).
 
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-10 — Admin Meetings CONSULTS sort: Most recent + Premium / Wig filters
+
+**Context:** User said **Most recent** on the **CONSULTS** tab did not put the latest at the top; **Premium**, **Wig only**, and **Wig + install** should list clients **A–Z** but looked random.
+
+**Causes:** (1) **`sortMeetingsByOption`** applied **time sort** to every option except **A–Z** / **Z–A**, so filtered views (**Premium**, **Wig only**, **Wig + install**, **Standard**, **Re-install**, **New install**) were sorted by date/time instead of client name. (2) **`meetingSortTimeMs`** only parsed a narrow **12h** pattern; API times like **24h** or odd spacing could yield **midnight** for many rows → ties → unstable order. (3) **`consultMeetings`** pre-sorted by **premium + date string** (no time), which fought **Most recent** before the dropdown sort.
+
+**Fix:** **`sortMeetingsByOption`**: **Most recent** → stable **time descending** (`compareMeetingsByTimeDesc`); **Premium / Standard / Re-install / New install / Wig only / Wig + install** → **client name A–Z** with tie-breakers (time desc, then **`id`**). **`meetingSortTimeMs`**: normalize whitespace, accept **12h** with optional space before AM/PM, optional **seconds**, and **24h** **`H:MM`**. **`AdminMeetingsHub`**: **`consultMeetings`** = filter only (no pre-sort).
+
+**Changes:** **`src/utils/adminMeetingClientPanels.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

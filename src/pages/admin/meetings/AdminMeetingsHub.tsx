@@ -535,15 +535,11 @@ export default function AdminMeetingsHub() {
     [mergedMeetings]
   );
 
-  const consultMeetings = useMemo(() => {
-    const list = mergedMeetings.filter((m) => m.category === 'consultation');
-    return [...list].sort((a, b) => {
-      const pa = tierPremium(a) ? 0 : 1;
-      const pb = tierPremium(b) ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return b.date.localeCompare(a.date);
-    });
-  }, [mergedMeetings]);
+  /** Order comes from `sortMeetingsByOption` on the consult tab; avoid a hidden premium/date pre-sort. */
+  const consultMeetings = useMemo(
+    () => mergedMeetings.filter((m) => m.category === 'consultation'),
+    [mergedMeetings]
+  );
 
   const normalizedClientSearchTokens = useMemo(
     () =>
