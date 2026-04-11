@@ -228,8 +228,11 @@ function AccountPage() {
     }
   });
 
-  /** Nudge voucher / digital cash / load gift down together for real clients only (not founder in admin view). */
-  const clientOnlyVoucherCashGiftDy = React.useMemo(() => {
+  /**
+   * Nudge voucher / digital cash / load gift down together for real clients only (not founder in admin view).
+   * Applied as **margin-top on a wrapper** so flex layout cannot visually cancel stacked `translateY` on siblings.
+   */
+  const clientProfileVoucherBlockMarginTopPx = React.useMemo(() => {
     if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
     return 15;
   }, [userData, founderViewAsClient]);
@@ -2173,59 +2176,82 @@ function AccountPage() {
                       );
                     })()}
 
-                    <p
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setShowVoucherHistoryPopup(true)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowVoucherHistoryPopup(true); } }}
+                    <div
                       style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#808080',
-                        fontSize: '10px',
-                        margin: '0 0 -12px 0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500',
-                        transform: `translateY(${1 + clientOnlyVoucherCashGiftDy}px)`,
-                        cursor: 'pointer'
+                        marginTop: clientProfileVoucherBlockMarginTopPx ? `${clientProfileVoucherBlockMarginTopPx}px` : 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
                       }}
                     >
-                      VOUCHER: {(userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList.length : userData?.voucherCount) ?? 0} AVAILABLE
-                    </p>
+                      <p
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setShowVoucherHistoryPopup(true)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setShowVoucherHistoryPopup(true);
+                          }
+                        }}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#808080',
+                          fontSize: '10px',
+                          margin: '0 0 -12px 0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          transform: 'translateY(1px)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        VOUCHER:{' '}
+                        {(userData?.voucherList && Array.isArray(userData.voucherList)
+                          ? userData.voucherList.length
+                          : userData?.voucherCount) ?? 0}{' '}
+                        AVAILABLE
+                      </p>
 
-                    <p
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setShowDigitalCashHistoryPopup(true)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDigitalCashHistoryPopup(true); } }}
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#000000',
-                        fontSize: '10px',
-                        margin: '0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500',
-                        transform: `translateY(${5 + clientOnlyVoucherCashGiftDy}px)`,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
-                    </p>
+                      <p
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setShowDigitalCashHistoryPopup(true)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setShowDigitalCashHistoryPopup(true);
+                          }
+                        }}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#000000',
+                          fontSize: '10px',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          transform: 'translateY(5px)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
+                      </p>
 
-                    <p
-                      onClick={() => navigate('/account/load-card')}
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '9px',
-                        margin: '0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transform: `translateY(${-2 + clientOnlyVoucherCashGiftDy}px)`
-                      }}
-                    >
-                      LOAD GIFT CARD
-                    </p>
+                      <p
+                        onClick={() => navigate('/account/load-card')}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          color: '#EB1C24',
+                          fontSize: '9px',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          transform: 'translateY(-2px)',
+                        }}
+                      >
+                        LOAD GIFT CARD
+                      </p>
+                    </div>
                   </div>
                 </div>
 
