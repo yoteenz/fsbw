@@ -13314,3 +13314,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context:** User asked to replace confirmation modal text with **CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER.** instead of the longer VIEW OFFER line.
 
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** `ConfirmationModal` message.
+
+---
+
+## 2026-04-09 — Consult orders: PLACED → PROCESSING in 2h + bar phases
+
+**Context:** User asked to change consult-only timeline from **PLACED** to **PROCESSING** within **2 hours** (was 24h) and adjust **tracking percentage / loading bar** logic.
+
+**Fix:** **`CONSULT_PLACED_TO_PROCESSING_MS`** (2h) exported from **`consultOrderLifecycle.ts`**; **`advanceConsultOrdersPlacedToProcessing`** uses it. **`consultDigitalOrderTrackingBarFillPct`**: **PLACED** ramps **10% → ~30%** over the first **2h**; **PROCESSING** ramps **30% → 100%** over the remaining **70h** in the **72h** window from **placedAt**. **`orders/page.tsx`** comments; **`motherboard/CORE.md`** bullet.
+
+**Changes:** **`src/utils/consultOrderLifecycle.ts`**, **`src/utils/digitalOrderFulfillment.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

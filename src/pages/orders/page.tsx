@@ -104,7 +104,7 @@ interface Order {
   consultOfferRoute?: string;
   /** Copy of admin-sent offer (localStorage) for modal when API unavailable. */
   consultOfferSnapshot?: ConsultOfferPersistedSnapshot;
-  /** Consult: when status moved PLACED → PROCESSING after 24h. */
+  /** Consult: when status moved PLACED → PROCESSING after 2h. */
   consultProcessingStartedAt?: number;
   /** Consult: linked admin quote id after offer sent. */
   consultQuoteId?: string;
@@ -1547,7 +1547,7 @@ function OrdersPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Consult checkout: after 24h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
+  // Consult checkout: after 2h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
   useEffect(() => {
     const tick = () => {
       setActiveOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
