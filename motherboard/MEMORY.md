@@ -13164,3 +13164,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Defer the empty-cart bounce with **`setTimeout(..., 0)`** so **`loadCartItems`** runs first; still reads **`localStorage`** as source of truth.
 
 **Changes:** **`src/pages/checkout/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Gift checkout red screen: CommerceRouteGuard vs sign-in auto-redirect loop
+
+**Context:** User reported the **replaceState** / red error screen persisted after the deferred empty-cart bounce fix.
+
+**Actual cause:** With **Supabase configured**, **`CommerceRouteGuard`** allows checkout only when **`getSession().access_token`** exists. **`sign-in/page.tsx`** had a separate effect: if **`localStorage.isSignedIn === 'true'`**, it immediately **`navigate(..., replace)`** to **`returnTo`** (e.g. **`/checkout/gift-card`**). Users with **stale local “signed in”** but **no Supabase session** hit an infinite loop: **checkout → Navigate sign-in → auto back to checkout → …**, hundreds of **`replaceState`** calls (stack showed **`replaceState@[native code]`**).
+
+**Fix:** Auto-redirect on sign-in page when Supabase is configured **only after** **`getSession()`** confirms **`access_token`**; if no session, stay on the form so the user can sign in again. Unchanged when Supabase is off (legacy local-only).
+
+**Changes:** **`src/pages/sign-in/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

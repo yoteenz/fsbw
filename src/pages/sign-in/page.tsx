@@ -189,12 +189,39 @@ function SignInPage() {
     };
   }, []);
 
-  // If already signed in (localStorage), redirect so user is not shown the sign-in form after e.g. reopening browser
+  // If already signed in (localStorage), redirect so user is not shown the sign-in form after e.g. reopening browser.
+  // When Supabase is configured, **only** skip this if there is no live session: `CommerceRouteGuard` on bag/checkout
+  // requires `getSession().access_token`. Legacy `isSignedIn` alone would otherwise loop:
+  // checkout → Navigate sign-in → auto replace back to checkout → … (Safari replaceState limit).
   useEffect(() => {
+    let cancelled = false;
     ensureAuthRestoredFromBackup();
     if (localStorage.getItem('isSignedIn') !== 'true') return;
-    const returnTo = new URLSearchParams(location.search).get('returnTo');
-    navigate(resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null), { replace: true });
+
+    const go = () => {
+      if (cancelled) return;
+      const returnTo = new URLSearchParams(location.search).get('returnTo');
+      navigate(resolveReturnToAfterSignIn(returnTo, location.state as { from?: string } | null), { replace: true });
+    };
+
+    if (!isSupabaseConfigured()) {
+      go();
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const supabase = getSupabase();
+    if (!supabase) return () => { cancelled = true; };
+
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return;
+      if (!session?.access_token) return;
+      go();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [navigate, location.search, location.state]);
 
   // When Supabase is configured: restore session on load (e.g. after email confirm redirect) so user is signed in
