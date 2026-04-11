@@ -164,7 +164,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   return {
     totalUsd: total,
     lines: [
-      { label: 'BASE UNIT', selection: unitLabelFromId(unitId), amountUsd: base },
+      { label: 'UNIT', selection: unitLabelFromId(unitId), amountUsd: base },
       { label: 'CAP SIZE', selection: capSize, amountUsd: capSizePrice },
       { label: 'LENGTH', selection: length, amountUsd: lengthPrice },
       { label: 'DENSITY', selection: density, amountUsd: densityPrice },

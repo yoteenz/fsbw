@@ -200,7 +200,7 @@ export default function ConsultOfferClaimModal({
                 {breakdownLines.map((line: SpecialOfferBreakdownLine) => {
                   const selection = line.selection;
                   const amountText =
-                    line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT');
+                    line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT' && line.label !== 'UNIT');
                   return (
                     <div
                       key={`${line.label}-${selection}`}

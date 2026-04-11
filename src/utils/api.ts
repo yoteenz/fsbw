@@ -899,8 +899,29 @@ export async function postAdminConsultQuote(body: {
   adminMessage?: string;
   thumbnailSrc?: string;
 }): Promise<unknown> {
-  const res = await apiFetch('/api/admin/consult-quotes', { method: 'POST', body });
-  if (!res.ok) throw new Error(await res.text());
+  let res: Response;
+  try {
+    res = await apiFetch('/api/admin/consult-quotes', { method: 'POST', body });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (/failed to fetch|load failed|network|request failed/i.test(msg)) {
+      throw new Error(
+        'Network error — could not reach the server. Offer can still be saved locally when you confirm again, or check your connection and VITE_API_BASE.'
+      );
+    }
+    throw err;
+  }
+  if (!res.ok) {
+    const text = await res.text();
+    let detail = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string' && j.error.trim()) detail = j.error;
+    } catch {
+      /* use raw text */
+    }
+    throw new Error(detail || `Request failed (${res.status})`);
+  }
   return res.json();
 }
 

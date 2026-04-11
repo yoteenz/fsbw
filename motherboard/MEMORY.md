@@ -13370,3 +13370,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`consultMeetings`** = filter only. **`meetingSortTimeMs`**: whitespace normalization, **12h** (optional seconds / spacing), **24h** `H:MM`. **`sortMeetingsByOption`**: **Most recent** and all filter options use **`compareMeetingsByTimeDesc`**; only **A to Z** / **Z to A** use name sort.
 
 **Changes:** **`src/utils/adminMeetingClientPanels.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings Send offer: UI + persist + offline complete + alerts
+
+**Context:** User wanted send-offer panel tweaks (taller **SELECTION** list, **SUB-PAGE** → **CATEGORY**, **BASE UNIT** → **UNIT** with **+** on unit price), **no refresh clearing** the send-offer form, **dynamic unit thumbnail** above dropdowns, and **Send offer** should complete consult order / archived / VIEW OFFER / order-style alert — **“load failed”** on send was breaking the flow.
+
+**Fix:** **`specialOfferPrice`** first breakdown line label **`UNIT`** (was **BASE UNIT**); cart mapping accepts both. **Send offer UI:** thumbnail from **`consultQuoteThumbnailSrcFromUnitKey(quoteUnit)`**; **SELECTION** dropdown **`max-h-[min(70vh,520px)]`**; breakdown shows **UNIT:** with **`+`** for unit line amount. **Session:** **`adminMeetingsQuoteMeetingId`** + per-meeting **`adminMeetingsQuoteDraft_*`** (debounced save); on load, restore meeting + draft and **nudge `calendarAnchor`** to meeting month if needed. **`postAdminConsultQuote`**: clearer network error message. **Send flow:** pass **`clientFirstName` / `clientLastName`** from meeting client name for **`CONSULT-*`** code; on API failure still generate local **`quoteId` + code + expiry`**, **`markConsultOrderCompleteAfterQuoteSent`** (orders moved **active → past** when matched), **`appendConsultOfferCompleteAccountAlert`** to **`notifications_${email}`**. **`markConsultOrderCompleteAfterQuoteSent`**: completed consult rows **removed from active** and **prepended to past**. **`npm run build`**.

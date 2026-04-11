@@ -37,6 +37,7 @@ import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
 import type { ConsultOfferPersistedSnapshot } from '../../../utils/consultOfferFromQuote';
 import { consultQuoteThumbnailSrcFromUnitKey } from '../../../utils/consultOfferFromQuote';
+import { appendConsultOfferCompleteAccountAlert } from '../../../utils/orderAccountAlerts';
 import {
   addDaysIso,
   bookingPaidInFullSalesUsd,
@@ -277,6 +278,19 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
 
+const SESSION_QUOTE_MEETING_ID = 'adminMeetingsQuoteMeetingId';
+const sessionQuoteDraftKey = (meetingId: string) => `adminMeetingsQuoteDraft_${meetingId}`;
+
+function randomConsultDiscountCode(): string {
+  const part = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `CONSULT-${part}`;
+}
+
+function randomQuoteId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  return `quote-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -489,6 +503,105 @@ export default function AdminMeetingsHub() {
     });
   }, [range.start, range.end, apiMeetings, localTick, calendarAnchor]);
 
+  /** Restore Send offer after refresh: align month first, then reopen row when it appears in `mergedMeetings`. */
+  useEffect(() => {
+    if (quoteMeeting || typeof window === 'undefined') return;
+    let id = '';
+    try {
+      id = (sessionStorage.getItem(SESSION_QUOTE_MEETING_ID) || '').trim();
+    } catch {
+      return;
+    }
+    if (!id) return;
+    const m = mergedMeetings.find((x) => x.id === id);
+    if (!m || m.category !== 'consultation') return;
+    const rowYm = m.date.slice(0, 7);
+    const anchorYm = calendarAnchor.slice(0, 7);
+    if (rowYm && rowYm !== anchorYm) {
+      setCalendarAnchor(m.date);
+      return;
+    }
+    setQuoteMeeting(m);
+    setMainTab('consults');
+    setViewAllMode(null);
+  }, [mergedMeetings, quoteMeeting, calendarAnchor]);
+
+  /** Persist quote draft (debounced so session restore hydrate does not overwrite with defaults). */
+  useEffect(() => {
+    if (!quoteMeeting || typeof window === 'undefined') return;
+    const id = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(SESSION_QUOTE_MEETING_ID, quoteMeeting.id);
+        sessionStorage.setItem(
+          sessionQuoteDraftKey(quoteMeeting.id),
+          JSON.stringify({
+            quoteUnit,
+            quoteSub,
+            quoteSelections,
+            quoteMessage,
+          })
+        );
+      } catch {
+        /* ignore */
+      }
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage]);
+
+  const quoteMeetingOpenSeqRef = useRef(0);
+  /** Load saved draft when a consult send-offer row opens (after refresh or Send quote click). */
+  useEffect(() => {
+    if (!quoteMeeting || typeof window === 'undefined') {
+      quoteMeetingOpenSeqRef.current = 0;
+      return;
+    }
+    quoteMeetingOpenSeqRef.current += 1;
+    const seq = quoteMeetingOpenSeqRef.current;
+    const mid = quoteMeeting.id;
+    queueMicrotask(() => {
+      if (seq !== quoteMeetingOpenSeqRef.current) return;
+      try {
+        const raw = sessionStorage.getItem(sessionQuoteDraftKey(mid));
+        if (!raw) return;
+        const d = JSON.parse(raw) as {
+          quoteUnit?: string;
+          quoteSub?: string;
+          quoteSelections?: CreateOfferSelections;
+          quoteMessage?: string;
+        };
+        const unitFromDraft = String(d.quoteUnit || '').trim();
+        if (UNIT_OPTIONS.some((u) => u.id === unitFromDraft)) setQuoteUnit(unitFromDraft);
+        if (SUB_PAGE_OPTIONS.includes((d.quoteSub || '') as QuoteSubPage)) {
+          setQuoteSub(d.quoteSub as QuoteSubPage);
+        }
+        if (typeof d.quoteMessage === 'string') setQuoteMessage(d.quoteMessage);
+        if (!d.quoteSelections || typeof d.quoteSelections !== 'object') return;
+        const uid = quoteUnitIdFromValue(unitFromDraft || quoteUnit);
+        const opts = getOptionsForUnit(uid);
+        const prev = d.quoteSelections;
+        const def = createOfferSelectionsDefaults(uid);
+        setQuoteSelections({
+          capSize: CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prev.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number])
+            ? prev.capSize
+            : def.capSize,
+          length: opts.length.includes(prev.length) ? prev.length : def.length,
+          density: opts.density.includes(prev.density) ? prev.density : def.density,
+          texture: opts.texture.includes(prev.texture) ? prev.texture : def.texture,
+          lace: opts.lace.includes(prev.lace) ? prev.lace : def.lace,
+          hairline: opts.hairline.includes(prev.hairline) ? prev.hairline : def.hairline,
+          color: opts.color.includes(prev.color) ? prev.color : def.color,
+          styling: opts.styling.includes(prev.styling) ? prev.styling : def.styling,
+          addOns:
+            Array.isArray(prev.addOns) && prev.addOns.length
+              ? prev.addOns.filter((a) => opts.addOns.includes(a))
+              : def.addOns,
+        });
+      } catch {
+        /* ignore */
+      }
+    });
+  }, [quoteMeeting]);
+
   /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
   useEffect(() => {
     const focus = readAdminMeetingsFocusFromClientDetails();
@@ -618,68 +731,112 @@ export default function AdminMeetingsHub() {
       setShowSendQuoteConfirm(false);
       return;
     }
+    const clientName = String(quoteMeeting.client || '').trim();
+    const nameParts = clientName.split(/\s+/).filter(Boolean);
+    const clientFirstName = nameParts[0] || '';
+    const clientLastName = nameParts.slice(1).join(' ') || clientFirstName || 'CLIENT';
+
+    const breakdown = generatedQuoteBreakdown.lines.map((line) => ({
+      label: line.label,
+      value:
+        line.amountUsd === 0
+          ? line.selection
+          : `${line.selection} ${formatCreateOfferBreakdownAmount(
+              line.amountUsd,
+              line.label !== 'BASE UNIT' && line.label !== 'UNIT'
+            )}`,
+    }));
+    breakdown.push({
+      label: 'ESTIMATED TOTAL',
+      value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
+    });
+    const selectionsForQuote = {
+      capSize: quoteSelections.capSize,
+      length: quoteSelections.length,
+      density: quoteSelections.density,
+      texture: quoteSelections.texture,
+      lace: quoteSelections.lace,
+      hairline: quoteSelections.hairline,
+      color: quoteSelections.color,
+      styling: quoteSelections.styling,
+      addOns: quoteSelections.addOns,
+    };
+    const thumbSrc = consultQuoteThumbnailSrcFromUnitKey(quoteUnit);
+    const orderRef = String(
+      (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
+        ? quoteMeeting.metadata.orderNumber
+        : '') || ''
+    ).trim();
+
     setQuoteSending(true);
     try {
-      const breakdown = generatedQuoteBreakdown.lines.map((line) => ({
-        label: line.label,
-        value:
-          line.amountUsd === 0
-            ? line.selection
-            : `${line.selection} ${formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT')}`,
-      }));
-      breakdown.push({
-        label: 'ESTIMATED TOTAL',
-        value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
-      });
-      const selectionsForQuote = {
-        capSize: quoteSelections.capSize,
-        length: quoteSelections.length,
-        density: quoteSelections.density,
-        texture: quoteSelections.texture,
-        lace: quoteSelections.lace,
-        hairline: quoteSelections.hairline,
-        color: quoteSelections.color,
-        styling: quoteSelections.styling,
-        addOns: quoteSelections.addOns,
-      };
-      const thumbSrc = consultQuoteThumbnailSrcFromUnitKey(quoteUnit);
-      const res = (await postAdminConsultQuote({
-        clientEmail: email,
-        unitKey: quoteUnit,
-        selections: selectionsForQuote,
-        priceBreakdown: breakdown,
-        adminMessage: quoteMessage,
-        thumbnailSrc: thumbSrc,
-      })) as { quote?: Record<string, unknown>; discountCode?: string };
-      const quoteRow = res?.quote && typeof res.quote === 'object' ? res.quote : {};
-      const quoteId = String((quoteRow as { id?: string }).id || '').trim();
-      const discountCode = String(res?.discountCode || (quoteRow as { discount_code?: string }).discount_code || '').trim();
-      const expiresAt = String((quoteRow as { expires_at?: string }).expires_at || '').trim();
-      const orderRef = String(
-        (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
-          ? quoteMeeting.metadata.orderNumber
-          : '') || ''
-      ).trim();
-      if (quoteId && orderRef) {
-        const snapshot: ConsultOfferPersistedSnapshot = {
+      let quoteId = '';
+      let discountCode = '';
+      let expiresAt = '';
+      let fromApi = false;
+
+      try {
+        const res = (await postAdminConsultQuote({
+          clientEmail: email,
+          clientFirstName,
+          clientLastName,
           unitKey: quoteUnit,
           selections: selectionsForQuote,
           priceBreakdown: breakdown,
           adminMessage: quoteMessage,
           thumbnailSrc: thumbSrc,
-          discountCode,
-          expiresAt,
-        };
+        })) as { quote?: Record<string, unknown>; discountCode?: string };
+        const quoteRow = res?.quote && typeof res.quote === 'object' ? res.quote : {};
+        quoteId = String((quoteRow as { id?: string }).id || '').trim();
+        discountCode = String(res?.discountCode || (quoteRow as { discount_code?: string }).discount_code || '').trim();
+        expiresAt = String((quoteRow as { expires_at?: string }).expires_at || '').trim();
+        fromApi = Boolean(quoteId && discountCode);
+      } catch {
+        /* offline / no profile / network — still complete local order + client alert */
+      }
+
+      if (!fromApi) {
+        quoteId = randomQuoteId();
+        discountCode = randomConsultDiscountCode();
+        expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
+      }
+
+      const snapshot: ConsultOfferPersistedSnapshot = {
+        unitKey: quoteUnit,
+        selections: selectionsForQuote,
+        priceBreakdown: breakdown,
+        adminMessage: quoteMessage,
+        thumbnailSrc: thumbSrc,
+        discountCode,
+        expiresAt,
+      };
+
+      if (orderRef) {
         markConsultOrderCompleteAfterQuoteSent({
           clientEmail: email,
           orderNumberFromCheckout: orderRef,
           consultQuoteId: quoteId,
           consultOfferSnapshot: snapshot,
         });
+        appendConsultOfferCompleteAccountAlert(email, orderRef, quoteId);
       }
+
+      try {
+        sessionStorage.removeItem(SESSION_QUOTE_MEETING_ID);
+        sessionStorage.removeItem(sessionQuoteDraftKey(quoteMeeting.id));
+      } catch {
+        /* ignore */
+      }
+
       setQuoteMeeting(null);
       setShowSendQuoteConfirm(false);
-      setHubNotice('QUOTE SENT — CLIENT ALERT CREATED.');
+      setHubNotice(
+        fromApi
+          ? 'QUOTE SENT — CLIENT ALERT CREATED.'
+          : orderRef
+            ? 'OFFER SAVED LOCALLY — CLIENT ORDER COMPLETED + ALERT (CLOUD SEND FAILED OR UNAVAILABLE).'
+            : 'OFFER SAVED LOCALLY — ADD ORDER # TO MEETING METADATA TO LINK CHECKOUT ORDER.'
+      );
     } catch (e) {
       setHubNotice(e instanceof Error ? e.message.toUpperCase() : 'SEND FAILED');
     } finally {
@@ -917,6 +1074,11 @@ export default function AdminMeetingsHub() {
     : null);
 
   const closeMainCardPanel = () => {
+    try {
+      sessionStorage.removeItem(SESSION_QUOTE_MEETING_ID);
+    } catch {
+      /* ignore */
+    }
     setViewAllMode(null);
     setQuoteMeeting(null);
     setEditMeeting(null);
@@ -979,6 +1141,7 @@ export default function AdminMeetingsHub() {
     options,
     onChange,
     formatOptionLabel,
+    listMaxHeight,
   }: {
     dropdownKey: PanelDropdownKey;
     label: string;
@@ -987,6 +1150,8 @@ export default function AdminMeetingsHub() {
     options: readonly string[];
     onChange: (next: string) => void;
     formatOptionLabel?: (option: string) => string;
+    /** Tailwind max-height class for option list (default `max-h-48`). */
+    listMaxHeight?: string;
   }) => (
     <div className="mt-2">
       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
@@ -1039,7 +1204,7 @@ export default function AdminMeetingsHub() {
               onClick={() => setActivePanelDropdown(null)}
             />
             <div
-              className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
+              className={`absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 overflow-y-auto ${listMaxHeight ?? 'max-h-48'}`}
               style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
             >
               {options.filter((opt) => opt !== value).map((opt) => (
@@ -1678,6 +1843,15 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
+                    <div className="flex justify-center mb-3">
+                      <img
+                        src={consultQuoteThumbnailSrcFromUnitKey(quoteUnit)}
+                        alt=""
+                        width={102}
+                        height={102}
+                        style={{ objectFit: 'contain', display: 'block' }}
+                      />
+                    </div>
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
                       label: 'UNIT',
@@ -1690,7 +1864,7 @@ export default function AdminMeetingsHub() {
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSub',
-                      label: 'SUB-PAGE',
+                      label: 'CATEGORY',
                       value: quoteSub,
                       options: SUB_PAGE_OPTIONS,
                       onChange: (next) => setQuoteSub(next as QuoteSubPage),
@@ -1706,6 +1880,7 @@ export default function AdminMeetingsHub() {
                         const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
                         setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
                       },
+                      listMaxHeight: 'max-h-[min(70vh,520px)]',
                     })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
                       MESSAGE
@@ -1731,7 +1906,10 @@ export default function AdminMeetingsHub() {
                         <div style={{ display: 'grid', rowGap: '6px' }}>
                           {generatedQuoteBreakdown.lines.map((line: SpecialOfferBreakdownLine) => {
                             const selection = line.selection;
-                            const amountText = line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT');
+                            const isUnitLine = line.label === 'BASE UNIT' || line.label === 'UNIT';
+                            const displayLabel = line.label === 'BASE UNIT' ? 'UNIT' : line.label;
+                            const amountText =
+                              line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, !isUnitLine);
                             return (
                               <div
                                 key={`${line.label}-${selection}`}
@@ -1752,7 +1930,7 @@ export default function AdminMeetingsHub() {
                                     minWidth: 0,
                                   }}
                                 >
-                                  <span>{line.label}: </span>
+                                  <span>{displayLabel}: </span>
                                   <span>{selection}</span>
                                 </div>
                                 {amountText ? (
@@ -1813,7 +1991,7 @@ export default function AdminMeetingsHub() {
                       </div>
                     </div>
                     <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
-                      OFFER DETAILS REFLECT THE CURRENT UNIT + SUB-PAGE SELECTION YOU CHOOSE HERE.
+                      OFFER DETAILS REFLECT THE CURRENT UNIT + CATEGORY SELECTION YOU CHOOSE HERE.
                     </p>
                   </div>
                 ) : mainTab === 'overview' ? (

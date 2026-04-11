@@ -153,7 +153,7 @@ export function consultQuoteBreakdownFromRow(quote: Record<string, unknown>): Sp
 }
 
 function lineAmountForCart(label: string, amountUsd: number): number {
-  if (label === 'BASE UNIT') return amountUsd;
+  if (label === 'BASE UNIT' || label === 'UNIT') return amountUsd;
   if (label === 'CAP SIZE') return amountUsd;
   if (label === 'LENGTH') return amountUsd;
   if (label === 'DENSITY') return amountUsd;

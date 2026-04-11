@@ -458,7 +458,7 @@ function OrdersPage() {
         addOns: [],
       },
       priceBreakdown: [
-        { label: 'BASE UNIT', value: 'NOIR $740 USD' },
+        { label: 'UNIT', value: 'NOIR +$740 USD' },
         { label: 'ESTIMATED TOTAL', value: '$740 USD' },
       ],
       adminMessage:
@@ -1041,7 +1041,7 @@ function OrdersPage() {
           addOns: [],
         },
         priceBreakdown: [
-          { label: 'BASE UNIT', value: 'NOIR $740 USD' },
+          { label: 'UNIT', value: 'NOIR +$740 USD' },
           { label: 'ESTIMATED TOTAL', value: '$740 USD' },
         ],
         adminMessage: 'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.',

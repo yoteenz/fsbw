@@ -144,6 +144,42 @@ export function buildOrderReceivedAccountAlert(
   };
 }
 
+/** After admin sends a consult offer: client Alerts row (local) mirroring order-complete style. */
+export function appendConsultOfferCompleteAccountAlert(
+  clientEmail: string,
+  orderNumberDisplay: string,
+  quoteId: string
+): void {
+  const email = String(clientEmail || '').trim().toLowerCase();
+  if (!email || typeof window === 'undefined') return;
+  const qid = String(quoteId || '').trim();
+  const id = qid ? `consult_offer_sent_${qid}` : `consult_offer_sent_${Date.now()}`;
+  const orderNum = orderNumberDisplay.replace(/^ORDER\s*#?\s*/i, '').replace(/^#/, '').trim() || '—';
+  const now = Date.now();
+  const item: StoredNotification = {
+    id,
+    title: 'YOUR ORDER IS READY!',
+    message: `ORDER #${orderNum} IS COMPLETE — VIEW YOUR CUSTOM UNIT OFFER.`,
+    actionText: 'VIEW OFFER',
+    actionRoute: `/account/orders`,
+    date: todayMdy(),
+    sortAt: now,
+    isRead: false,
+    icon: STANDARD_NOTIFICATION_ICON,
+  };
+  try {
+    const key = notificationsKey(email);
+    const raw = localStorage.getItem(key);
+    const existing: StoredNotification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+    const merged = [item, ...existing.filter((n) => n.id !== id)];
+    localStorage.setItem(key, JSON.stringify(merged));
+    window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('storage'));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function appendOrderReceivedAccountAlert(
   user: AlertUser | null | undefined,
   order: AlertOrder

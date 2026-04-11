@@ -116,30 +116,36 @@ export function markConsultOrderCompleteAfterQuoteSent(params: MarkConsultComple
     const past = Array.isArray(data.pastOrders) ? [...data.pastOrders] : [];
     const now = Date.now();
 
-    const patch = (arr: ConsultOrderLike[]): { list: ConsultOrderLike[]; hit: boolean } => {
+    const patch = (arr: ConsultOrderLike[]): { list: ConsultOrderLike[]; hit: boolean; completed: ConsultOrderLike[] } => {
       let hit = false;
-      const list = arr.map((o) => {
-        if (String(o.bookingFlowType || '').toLowerCase() !== 'consult') return o;
+      const completed: ConsultOrderLike[] = [];
+      const list = arr.filter((o) => {
+        if (String(o.bookingFlowType || '').toLowerCase() !== 'consult') return true;
         const st = String(o.status || '').toUpperCase();
-        if (st !== 'PLACED' && st !== 'PROCESSING') return o;
-        if (!consultOrderNumbersMatch(o.orderNumber, orderRef)) return o;
+        if (st !== 'PLACED' && st !== 'PROCESSING') return true;
+        if (!consultOrderNumbersMatch(o.orderNumber, orderRef)) return true;
         hit = true;
-        return {
+        const next = {
           ...o,
           status: 'COMPLETE',
           completedAt: now,
           consultQuoteId: quoteId,
           ...(snapshot ? { consultOfferSnapshot: snapshot } : {}),
         };
+        completed.push(next);
+        return false;
       });
-      return { list, hit };
+      return { list, hit, completed };
     };
 
     const a = patch(active);
     const p = patch(past);
     if (!a.hit && !p.hit) return false;
 
-    localStorage.setItem(key, JSON.stringify({ activeOrders: a.list, pastOrders: p.list }));
+    const nextPast = [...a.completed, ...p.completed, ...p.list];
+    const nextActive = a.list;
+
+    localStorage.setItem(key, JSON.stringify({ activeOrders: nextActive, pastOrders: nextPast }));
     window.dispatchEvent(new CustomEvent('ordersUpdated'));
     return true;
   } catch {
