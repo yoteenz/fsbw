@@ -13296,3 +13296,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`buildFounderDemoConsultOrder331`** + **`mergeFounderAdminConsultOrder331Demo`**: if **`isAyoteenzAdminAccount`**, not mock chrome, not **VIEW AS CLIENT**, and no existing **`ORDER #331`**, prepend demo row to **active** orders and persist **`userOrders_<email>`**. Same object reused in **`kateenaMockActiveOrders`**. **`updateUser`** path also merges so first load injects.
 
 **Changes:** **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin meetings: demo consult row ORDER #331 for founder
+
+**Context:** User wanted **ORDER #331** on **Admin → Meetings → Consults** to test **Send offer**; orders page still showed processing for that checkout order.
+
+**Fix:** **`adminFounderDemoConsultMeetingOrder331`** in **`adminMeetingsMock.ts`** (id **`demo-consult-order-331`**, **`metadata.orderNumber: ORDER #331`**, founder email). Merged into **`AdminMeetingsHub`** `mergedMeetings` when **`isAyoteenzAdminAccount(currentUser)`** and into **`listAggregatedAdminMeetingsForClientDetails`** when signed-in email is founder. Date = first day of **`calendarAnchor`** month at **2:00 PM**.
+
+**Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

@@ -3,6 +3,7 @@
  * Mock rows vary by calendar day (seeded); merged with localStorage drafts.
  */
 import { getMockClientsForAyoteenz } from '../pages/admin/clients/page';
+import { FOUNDER_PRIVILEGED_ADMIN_EMAIL } from './adminAuth';
 
 export type MeetingCategory = 'consultation' | 'appointment';
 
@@ -359,6 +360,42 @@ export function generateMockMeetingsForRange(start: string, end: string): AdminM
   return all;
 }
 
+/**
+ * Fixed consult row for **ORDER #331** on the admin Meetings **Consults** tab (founder email).
+ * `metadata.orderNumber` is passed through **Send offer** → `markConsultOrderCompleteAfterQuoteSent`.
+ */
+export function adminFounderDemoConsultMeetingOrder331(anchorDate: string): AdminMeeting {
+  const email = FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase();
+  return {
+    id: 'demo-consult-order-331',
+    date: anchorDate,
+    time: '2:00 PM',
+    client: 'KATEENA ARMSTRONG',
+    clientEmail: email,
+    type: CONSULTATION_TYPE_LABEL,
+    category: 'consultation',
+    duration: '60 MIN',
+    status: 'Confirmed',
+    notes: 'DEMO: CHECKOUT ORDER #331 — USE SEND OFFER TO TEST CONSULT OFFER FLOW.',
+    metadata: {
+      tier: 'premium',
+      hairOption: 'WIG ONLY',
+      orderNumber: 'ORDER #331',
+      consultNotes: 'DEMO ROW LINKED TO USER ORDER #331.',
+      inspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
+      inspoFileNames: ['noir-thumb.png'],
+      headMeasurements: {
+        circumference: '22"',
+        frontToNape: '24"',
+        verticalTempleToTemple: '13"',
+        horizontalTempleToTemple: '13"',
+        earToEar: '12"',
+        napeOfNeck: '6"',
+      },
+    },
+  };
+}
+
 /** Same window as admin meetings hub uses for a month view, expanded so client details see consult + appointment history. */
 export const MOCK_MEETINGS_AGGREGATE_MONTHS_BACK = 12;
 export const MOCK_MEETINGS_AGGREGATE_MONTHS_FORWARD = 12;
@@ -384,6 +421,27 @@ export function listAggregatedAdminMeetingsForClientDetails(apiMeetings: AdminMe
     if (m.date >= start && m.date <= end) byId.set(m.id, m);
   }
   for (const m of local) byId.set(m.id, m);
+
+  try {
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem('currentUser');
+      const u = raw ? JSON.parse(raw) : null;
+      const em = String((u as { email?: string })?.email || '')
+        .trim()
+        .toLowerCase();
+      if (em === FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase()) {
+        const today = new Date();
+        const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(todayKey));
+        if (demo.date >= start && demo.date <= end && !byId.has(demo.id)) {
+          byId.set(demo.id, demo);
+        }
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
   return [...byId.values()].sort((a, b) => {
     const dc = a.date.localeCompare(b.date);
     if (dc !== 0) return dc;

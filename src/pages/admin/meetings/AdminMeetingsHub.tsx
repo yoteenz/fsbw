@@ -9,6 +9,7 @@ import {
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { isAyoteenzAdminAccount } from '../../../utils/adminAuth';
 import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
@@ -20,6 +21,7 @@ import {
 } from '../../../utils/productOptions';
 import { calculateSpecialOfferPriceBreakdown, type SpecialOfferBreakdownLine } from '../../../utils/specialOfferPrice';
 import {
+  adminFounderDemoConsultMeetingOrder331,
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
@@ -462,12 +464,26 @@ export default function AdminMeetingsHub() {
       if (m.date >= range.start && m.date <= range.end) byId.set(m.id, m);
     }
     for (const m of local) byId.set(m.id, m);
+
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+      const u = raw ? JSON.parse(raw) : null;
+      if (u && isAyoteenzAdminAccount(u)) {
+        const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(calendarAnchor));
+        if (demo.date >= range.start && demo.date <= range.end && !byId.has(demo.id)) {
+          byId.set(demo.id, demo);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     return [...byId.values()].sort((a, b) => {
       const dc = a.date.localeCompare(b.date);
       if (dc !== 0) return dc;
       return a.time.localeCompare(b.time);
     });
-  }, [range.start, range.end, apiMeetings, localTick]);
+  }, [range.start, range.end, apiMeetings, localTick, calendarAnchor]);
 
   /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
   useEffect(() => {
