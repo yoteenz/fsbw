@@ -13405,7 +13405,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Context:** User asked to set **free gift** Bohemy row title **`fontSize`** to **16px** (same as **redeem** button).
 
-**Fix:** Reward label **`fontSize`**: **`16px`** when **`reward.type === 'free_gift'`**, else **`11px`** (both loyalty list blocks in **`membership/page.tsx`**).
+**Fix:** Reward label **`fontSize`**: **`20px`** when **`reward.type === 'free_gift'`** (raised from 16px), else **`11px`** (both loyalty list blocks in **`membership/page.tsx`**).
 
 **Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
 
@@ -13418,3 +13418,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`free_gift`** row Bohemy label and both **redeem** buttons **`fontSize: '20px'`** (both loyalty list blocks); missed first block **`16px`** → **`20px`**.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: portal dropdowns, orders thumbs, custom image, + pricing
+
+**Context (this chat):** User asked for **Admin Meetings → Send offer** updates: taller **category** (and related) dropdown lists showing all options; dropdowns not clipped by the main card; unit preview using **Account → Orders** wig thumbnail assets; **UNIT** price showing **`+$760 USD`** (plus was still missing); **choose file** above the **UNIT** dropdown to upload a custom thumbnail that replaces the default and is sent with the offer.
+
+**Changes:**
+- **`src/utils/accountReviewProductThumbnail.ts`:** added **`ordersPageUnitThumbnailSrcFromUnitKey`** (same 2D paths as **`orders/page.tsx`** `getProductImage`).
+- **`src/pages/admin/meetings/AdminMeetingsHub.tsx`:** **`renderPanelSelectDropdown`** renders the option list via **`createPortal`** to **`document.body`** with **`getBoundingClientRect`** on the open trigger, **`max-height: min(70vh, 520px)`**, overlay z-index **5000+** so lists are not clipped by the card’s **`overflow-hidden`**. **`formatCreateOfferBreakdownAmount`:** positive amounts always get **`+`** (unit line was wrong because **`includeSign`** was **`false`** for **UNIT**). Breakdown UI and persisted **`priceBreakdown`** use signed amounts for all priced lines. Default/sent **`thumbnailSrc`** uses **`quoteOfferThumbnailSrc`** (orders-page paths or optional upload **data URL**). **OFFER IMAGE (OPTIONAL)** file input above **UNIT**; **REMOVE CUSTOM IMAGE**; **`quoteCustomThumbnailSrc`** + session draft **`quoteCustomThumbnailDataUrl`**. **`closeMainCardPanel`** clears custom thumb and dropdown portal state.
+
+**Docs:** **`motherboard/CORE.md`** (send offer portal + thumbs + optional image + **+** pricing), this **MEMORY** entry. **`npm run build`**.

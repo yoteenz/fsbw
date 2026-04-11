@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import BrandExpiresDatePicker, { type AdminCalendarDayMeta } from '../../../components/BrandExpiresDatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
@@ -36,7 +37,7 @@ import {
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
 import type { ConsultOfferPersistedSnapshot } from '../../../utils/consultOfferFromQuote';
-import { consultQuoteThumbnailSrcFromUnitKey } from '../../../utils/consultOfferFromQuote';
+import { ordersPageUnitThumbnailSrcFromUnitKey } from '../../../utils/accountReviewProductThumbnail';
 import { appendConsultOfferCompleteAccountAlert } from '../../../utils/orderAccountAlerts';
 import {
   addDaysIso,
@@ -240,7 +241,9 @@ function updateCreateOfferSelectionsForSubPage(
 function formatCreateOfferBreakdownAmount(amountUsd: number, includeSign: boolean): string {
   const usd = `$${Math.abs(Math.round(amountUsd)).toLocaleString('en-US')} USD`;
   if (!includeSign) return usd;
-  return amountUsd > 0 ? `+${usd}` : `-${usd}`;
+  if (amountUsd > 0) return `+${usd}`;
+  if (amountUsd < 0) return `-${usd}`;
+  return usd;
 }
 
 const EDIT_MESSAGE_BY_REASON: Record<(typeof EDIT_REASONS)[number], { action: 'reschedule' | 'cancel'; message: string }> = {
@@ -347,11 +350,36 @@ export default function AdminMeetingsHub() {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
   const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
+  /** Data URL or blob URL for admin-uploaded offer thumbnail (optional). */
+  const [quoteCustomThumbnailSrc, setQuoteCustomThumbnailSrc] = useState<string | null>(null);
   const [meetingSortOption, setMeetingSortOption] = useState<MeetingSortOption>('Most recent');
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
+  const [panelDropdownRect, setPanelDropdownRect] = useState<DOMRect | null>(null);
+  const panelDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
   const clientDetailsFocusAppliedRef = useRef(false);
+
+  const quoteOfferThumbnailSrc = useMemo(
+    () => quoteCustomThumbnailSrc || ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
+    [quoteCustomThumbnailSrc, quoteUnit]
+  );
+
+  useLayoutEffect(() => {
+    if (!activePanelDropdown || !panelDropdownAnchorRef.current) {
+      setPanelDropdownRect(null);
+      return;
+    }
+    const el = panelDropdownAnchorRef.current;
+    const update = () => setPanelDropdownRect(el.getBoundingClientRect());
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [activePanelDropdown, quoteUnit, quoteSub, quoteSelections, editReason, editMeeting, quoteMeeting]);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
@@ -539,6 +567,7 @@ export default function AdminMeetingsHub() {
             quoteSub,
             quoteSelections,
             quoteMessage,
+            quoteCustomThumbnailDataUrl: quoteCustomThumbnailSrc?.startsWith('data:') ? quoteCustomThumbnailSrc : undefined,
           })
         );
       } catch {
@@ -546,7 +575,7 @@ export default function AdminMeetingsHub() {
       }
     }, 400);
     return () => window.clearTimeout(id);
-  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage]);
+  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage, quoteCustomThumbnailSrc]);
 
   const quoteMeetingOpenSeqRef = useRef(0);
   /** Load saved draft when a consult send-offer row opens (after refresh or Send quote click). */
@@ -562,12 +591,16 @@ export default function AdminMeetingsHub() {
       if (seq !== quoteMeetingOpenSeqRef.current) return;
       try {
         const raw = sessionStorage.getItem(sessionQuoteDraftKey(mid));
-        if (!raw) return;
+        if (!raw) {
+          setQuoteCustomThumbnailSrc(null);
+          return;
+        }
         const d = JSON.parse(raw) as {
           quoteUnit?: string;
           quoteSub?: string;
           quoteSelections?: CreateOfferSelections;
           quoteMessage?: string;
+          quoteCustomThumbnailDataUrl?: string;
         };
         const unitFromDraft = String(d.quoteUnit || '').trim();
         if (UNIT_OPTIONS.some((u) => u.id === unitFromDraft)) setQuoteUnit(unitFromDraft);
@@ -575,6 +608,11 @@ export default function AdminMeetingsHub() {
           setQuoteSub(d.quoteSub as QuoteSubPage);
         }
         if (typeof d.quoteMessage === 'string') setQuoteMessage(d.quoteMessage);
+        if (typeof d.quoteCustomThumbnailDataUrl === 'string' && d.quoteCustomThumbnailDataUrl.startsWith('data:')) {
+          setQuoteCustomThumbnailSrc(d.quoteCustomThumbnailDataUrl);
+        } else {
+          setQuoteCustomThumbnailSrc(null);
+        }
         if (!d.quoteSelections || typeof d.quoteSelections !== 'object') return;
         const uid = quoteUnitIdFromValue(unitFromDraft || quoteUnit);
         const opts = getOptionsForUnit(uid);
@@ -741,10 +779,7 @@ export default function AdminMeetingsHub() {
       value:
         line.amountUsd === 0
           ? line.selection
-          : `${line.selection} ${formatCreateOfferBreakdownAmount(
-              line.amountUsd,
-              line.label !== 'BASE UNIT' && line.label !== 'UNIT'
-            )}`,
+          : `${line.selection} ${formatCreateOfferBreakdownAmount(line.amountUsd, true)}`,
     }));
     breakdown.push({
       label: 'ESTIMATED TOTAL',
@@ -761,7 +796,7 @@ export default function AdminMeetingsHub() {
       styling: quoteSelections.styling,
       addOns: quoteSelections.addOns,
     };
-    const thumbSrc = consultQuoteThumbnailSrcFromUnitKey(quoteUnit);
+    const thumbSrc = quoteOfferThumbnailSrc;
     const orderRef = String(
       (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
         ? quoteMeeting.metadata.orderNumber
@@ -1079,6 +1114,9 @@ export default function AdminMeetingsHub() {
     } catch {
       /* ignore */
     }
+    setActivePanelDropdown(null);
+    setPanelDropdownRect(null);
+    setQuoteCustomThumbnailSrc(null);
     setViewAllMode(null);
     setQuoteMeeting(null);
     setEditMeeting(null);
@@ -1141,7 +1179,7 @@ export default function AdminMeetingsHub() {
     options,
     onChange,
     formatOptionLabel,
-    listMaxHeight,
+    portalMaxHeight,
   }: {
     dropdownKey: PanelDropdownKey;
     label: string;
@@ -1150,88 +1188,126 @@ export default function AdminMeetingsHub() {
     options: readonly string[];
     onChange: (next: string) => void;
     formatOptionLabel?: (option: string) => string;
-    /** Tailwind max-height class for option list (default `max-h-48`). */
-    listMaxHeight?: string;
-  }) => (
-    <div className="mt-2">
-      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
-      <div className="relative mt-1">
-        <button
-          type="button"
-          onClick={() => setActivePanelDropdown((open) => (open === dropdownKey ? null : dropdownKey))}
-          className="w-full"
-          style={{
-            width: '100%',
-            padding: '8px 10px',
-            minHeight: '36px',
-            border: '1.3px solid #000',
-            borderRadius: 0,
-            fontFamily: '"Futura PT Book"',
-            fontSize: '11px',
-            background: '#fff',
-            textTransform: 'uppercase',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            cursor: 'pointer',
-            color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
-            letterSpacing: '0.02em',
-          }}
-        >
-          <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
-            {displayValue ?? value}
-          </span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="flex-shrink-0"
+    /** Fixed-position list `max-height` (viewport-safe) so options are not clipped by the card. */
+    portalMaxHeight?: string;
+  }) => {
+    const maxH = portalMaxHeight ?? 'min(70vh, 520px)';
+    const isOpen = activePanelDropdown === dropdownKey;
+    const portalList =
+      isOpen &&
+      panelDropdownRect &&
+      typeof document !== 'undefined' &&
+      createPortal(
+        <>
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: 5000 }}
+            aria-hidden="true"
+            onClick={() => {
+              setActivePanelDropdown(null);
+              setPanelDropdownRect(null);
+            }}
+          />
+          <div
+            className="py-1 bg-white border border-black shadow-lg overflow-y-auto"
             style={{
-              transform: activePanelDropdown === dropdownKey ? 'rotate(180deg)' : 'none',
-              color: '#EB1C24',
-              marginLeft: '8px',
+              position: 'fixed',
+              left: panelDropdownRect.left,
+              top: panelDropdownRect.bottom + 7,
+              width: panelDropdownRect.width,
+              maxHeight: maxH,
+              borderWidth: '1.3px',
+              borderRadius: 0,
+              zIndex: 5010,
+              boxSizing: 'border-box',
             }}
           >
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        {activePanelDropdown === dropdownKey ? (
-          <>
-            <div
-              className="fixed inset-0 z-10"
-              aria-hidden="true"
-              onClick={() => setActivePanelDropdown(null)}
-            />
-            <div
-              className={`absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 overflow-y-auto ${listMaxHeight ?? 'max-h-48'}`}
-              style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+            {options.filter((opt) => opt !== value).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  onChange(opt);
+                  setActivePanelDropdown(null);
+                  setPanelDropdownRect(null);
+                }}
+                className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  color: '#000',
+                  fontWeight: 400,
+                  backgroundColor: '#fff',
+                }}
+              >
+                {formatOptionLabel ? formatOptionLabel(opt) : opt}
+              </button>
+            ))}
+          </div>
+        </>,
+        document.body
+      );
+    return (
+      <div className="mt-2">
+        <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
+        <div className="relative mt-1">
+          <button
+            ref={(el) => {
+              if (activePanelDropdown === dropdownKey) {
+                panelDropdownAnchorRef.current = el;
+              } else if (panelDropdownAnchorRef.current === el) {
+                panelDropdownAnchorRef.current = null;
+              }
+            }}
+            type="button"
+            onClick={() =>
+              setActivePanelDropdown((open) => {
+                const next = open === dropdownKey ? null : dropdownKey;
+                if (next === null) setPanelDropdownRect(null);
+                return next;
+              })
+            }
+            className="w-full"
+            style={{
+              width: '100%',
+              padding: '8px 10px',
+              minHeight: '36px',
+              border: '1.3px solid #000',
+              borderRadius: 0,
+              fontFamily: '"Futura PT Book"',
+              fontSize: '11px',
+              background: '#fff',
+              textTransform: 'uppercase',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
+              letterSpacing: '0.02em',
+            }}
+          >
+            <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
+              {displayValue ?? value}
+            </span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              className="flex-shrink-0"
+              style={{
+                transform: isOpen ? 'rotate(180deg)' : 'none',
+                color: '#EB1C24',
+                marginLeft: '8px',
+              }}
             >
-              {options.filter((opt) => opt !== value).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => {
-                    onChange(opt);
-                    setActivePanelDropdown(null);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    color: '#000',
-                    fontWeight: 400,
-                    backgroundColor: '#fff',
-                  }}
-                >
-                  {formatOptionLabel ? formatOptionLabel(opt) : opt}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : null}
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {portalList}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const travelBlackoutDates = useMemo(() => {
     const blocked = new Set<string>();
@@ -1830,6 +1906,7 @@ export default function AdminMeetingsHub() {
                         const preset = EDIT_MESSAGE_BY_REASON[next as (typeof EDIT_REASONS)[number]];
                         if (preset) setEditMessage(preset.message);
                       },
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 'auto', paddingTop: '24px' }}>
                       MESSAGE TO CLIENT
@@ -1843,15 +1920,45 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
+                    <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block', marginBottom: '4px' }}>
+                      OFFER IMAGE (OPTIONAL)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full text-[10px]"
+                      style={{ fontFamily: '"Futura PT Book"', marginBottom: '10px' }}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (!f) return;
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          const r = String(reader.result || '');
+                          if (r.startsWith('data:')) setQuoteCustomThumbnailSrc(r);
+                        };
+                        reader.readAsDataURL(f);
+                        e.target.value = '';
+                      }}
+                    />
                     <div className="flex justify-center mb-3">
                       <img
-                        src={consultQuoteThumbnailSrcFromUnitKey(quoteUnit)}
+                        src={quoteOfferThumbnailSrc}
                         alt=""
                         width={102}
                         height={102}
                         style={{ objectFit: 'contain', display: 'block' }}
                       />
                     </div>
+                    {quoteCustomThumbnailSrc ? (
+                      <button
+                        type="button"
+                        className="w-full mb-2 text-[10px] uppercase"
+                        style={{ fontFamily: '"Futura PT Book"', color: '#808080', border: 'none', background: 'none', cursor: 'pointer' }}
+                        onClick={() => setQuoteCustomThumbnailSrc(null)}
+                      >
+                        REMOVE CUSTOM IMAGE
+                      </button>
+                    ) : null}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
                       label: 'UNIT',
@@ -1861,6 +1968,7 @@ export default function AdminMeetingsHub() {
                         const picked = UNIT_OPTIONS.find((u) => u.label === next);
                         setQuoteUnit(picked?.id ?? next);
                       },
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSub',
@@ -1868,6 +1976,7 @@ export default function AdminMeetingsHub() {
                       value: quoteSub,
                       options: SUB_PAGE_OPTIONS,
                       onChange: (next) => setQuoteSub(next as QuoteSubPage),
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSubSelection',
@@ -1880,7 +1989,7 @@ export default function AdminMeetingsHub() {
                         const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
                         setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
                       },
-                      listMaxHeight: 'max-h-[min(70vh,520px)]',
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
                       MESSAGE
@@ -1906,10 +2015,9 @@ export default function AdminMeetingsHub() {
                         <div style={{ display: 'grid', rowGap: '6px' }}>
                           {generatedQuoteBreakdown.lines.map((line: SpecialOfferBreakdownLine) => {
                             const selection = line.selection;
-                            const isUnitLine = line.label === 'BASE UNIT' || line.label === 'UNIT';
                             const displayLabel = line.label === 'BASE UNIT' ? 'UNIT' : line.label;
                             const amountText =
-                              line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, !isUnitLine);
+                              line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, true);
                             return (
                               <div
                                 key={`${line.label}-${selection}`}

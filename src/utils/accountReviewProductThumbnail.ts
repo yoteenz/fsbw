@@ -42,6 +42,24 @@ export function accountReviewThumbnailFromProductTitle(title: string): string {
   return accountReviewProductThumbnailSrc(key);
 }
 
+/** Same 2D paths as **Account → Orders** wig rows (`orders/page.tsx` `getProductImage`). */
+export function ordersPageUnitThumbnailSrcFromUnitKey(unitKey: string): string {
+  const u = String(unitKey || '').trim().toUpperCase();
+  switch (u) {
+    case 'BLANCO':
+      return '/assets/2D BLANCO FRONT.png';
+    case 'SOFT WAVE':
+    case 'BEACH WAVE':
+      return '/assets/2D WAVY FRONT.png';
+    case 'SOFT CURL':
+    case 'OCEAN CURL':
+      return '/assets/2D CURLY FRONT.png';
+    case 'NOIR':
+    default:
+      return '/assets/natural front.png';
+  }
+}
+
 /** `3/28/2026 • 3:27PM` — uses ISO when present, else parses `M/D/YYYY` for a stable noon local time. */
 export function formatReviewSubmittedDateTimeLine(iso: string | undefined, legacyDate: string): string {
   const legacy = (legacyDate || '').trim();
