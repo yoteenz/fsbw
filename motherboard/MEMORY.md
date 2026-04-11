@@ -13361,12 +13361,12 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
-## 2026-04-10 — Admin Meetings CONSULTS sort: Most recent + Premium / Wig filters
+## 2026-04-10 — Admin Meetings CONSULTS / meetings sort (Most recent + filters)
 
-**Context:** User said **Most recent** on the **CONSULTS** tab did not put the latest at the top; **Premium**, **Wig only**, and **Wig + install** should list clients **A–Z** but looked random.
+**Context:** **CONSULTS** tab **Most recent** did not put latest meetings first; **Premium**, **Wig only**, **Wig + install**, **Standard**, **Re-install**, **New install** should use the same **newest-first** order within each filtered set.
 
-**Causes:** (1) **`sortMeetingsByOption`** applied **time sort** to every option except **A–Z** / **Z–A**, so filtered views (**Premium**, **Wig only**, **Wig + install**, **Standard**, **Re-install**, **New install**) were sorted by date/time instead of client name. (2) **`meetingSortTimeMs`** only parsed a narrow **12h** pattern; API times like **24h** or odd spacing could yield **midnight** for many rows → ties → unstable order. (3) **`consultMeetings`** pre-sorted by **premium + date string** (no time), which fought **Most recent** before the dropdown sort.
+**Causes:** **`consultMeetings`** pre-sorted by premium + date string (ignored time). **`meetingSortTimeMs`** parsed only a narrow **12h** pattern → many API rows tied at midnight. A short-lived follow-up sorted filter views **A–Z**; user clarified filters should stay **newest**.
 
-**Fix:** **`sortMeetingsByOption`**: **Most recent** → stable **time descending** (`compareMeetingsByTimeDesc`); **Premium / Standard / Re-install / New install / Wig only / Wig + install** → **client name A–Z** with tie-breakers (time desc, then **`id`**). **`meetingSortTimeMs`**: normalize whitespace, accept **12h** with optional space before AM/PM, optional **seconds**, and **24h** **`H:MM`**. **`AdminMeetingsHub`**: **`consultMeetings`** = filter only (no pre-sort).
+**Fix:** **`consultMeetings`** = filter only. **`meetingSortTimeMs`**: whitespace normalization, **12h** (optional seconds / spacing), **24h** `H:MM`. **`sortMeetingsByOption`**: **Most recent** and all filter options use **`compareMeetingsByTimeDesc`**; only **A to Z** / **Z to A** use name sort.
 
 **Changes:** **`src/utils/adminMeetingClientPanels.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

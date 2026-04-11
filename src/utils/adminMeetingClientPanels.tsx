@@ -420,23 +420,7 @@ export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSo
     return sorted;
   }
 
-  const sortAlphaWithinFilter =
-    sortOption === 'Premium' ||
-    sortOption === 'Standard' ||
-    sortOption === 'Re-install' ||
-    sortOption === 'New install' ||
-    sortOption === 'Wig only' ||
-    sortOption === 'Wig + install';
-
-  if (sortOption === 'Most recent') {
-    sorted.sort(compareMeetingsByTimeDesc);
-    return sorted;
-  }
-  if (sortAlphaWithinFilter) {
-    sorted.sort(compareMeetingsByClientNameAsc);
-    return sorted;
-  }
-
+  /** Premium / Standard / install-type / wig-type filters: same order as "Most recent" (newest first). */
   sorted.sort(compareMeetingsByTimeDesc);
   return sorted;
 }
