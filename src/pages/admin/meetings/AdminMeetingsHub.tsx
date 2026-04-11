@@ -1952,7 +1952,7 @@ export default function AdminMeetingsHub() {
                       htmlFor="adminQuoteOfferImage"
                       style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block', marginBottom: '5px' }}
                     >
-                      OFFER IMAGE (OPTIONAL)
+                      CUSTOM IMAGE:
                     </label>
                     <div className="mb-3">
                       <OrderFormFilePicker

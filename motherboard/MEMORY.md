@@ -13470,3 +13470,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** Added **`src/components/OrderFormFilePicker.tsx`** — shared control (invisible **`input`**, bordered box, **CHOOSE FILE** / **NO FILE SELECTED**, optional in-box image preview) matching order-form photo upload UX. **`order-form/page.tsx`** — **PHOTO ID** and **LAST 4 DIGITS** fields now use **`OrderFormFilePicker`**. **`AdminMeetingsHub.tsx`** — centered **102×102** unit/custom thumb first; **REMOVE CUSTOM IMAGE** clears state + file input; label + **`OrderFormFilePicker`** below ( **`adminQuoteOfferImage`** ); **`quoteOfferImageInputRef`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: label “CUSTOM IMAGE:”
+
+**Context (this chat):** Send offer uses **`OrderFormFilePicker`** below the unit thumb. User asked to replace **“OFFER IMAGE (OPTIONAL)”** with **“CUSTOM IMAGE:”**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** label text; **`motherboard/CORE.md`** consult bullet (**CUSTOM IMAGE:** + **`OrderFormFilePicker`**). This **MEMORY** entry.
