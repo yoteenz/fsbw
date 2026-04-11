@@ -13254,3 +13254,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`consultQuoteIdFromConsultOfferRoute`** in **`consultOfferFromQuote.ts`**. **`consultOfferQuoteIdForOrder`** merges **`consultQuoteId`** + parsed route. **`openConsultOfferForOrder`**: snapshot works **without** stored **`consultQuoteId`** (uses order id as row id fallback). **VIEW OFFER** for **`COMPLETE` + `bookingFlowType === 'consult'`** always. **PREPARING** tracking **HERE**: if **`appointment`/`consult`**, only **expand** on orders page—**no** concierge navigate. Mock **`kateena-consult-2`** (**#331**) given snapshot + quote id for local QA.
 
 **Changes:** **`src/utils/consultOfferFromQuote.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin consult send-offer / special offer: non-Blanco color $120
+
+**Context:** User said admin **Meetings → Consult → Send offer** sub-page **COLOR** line showed **$100** but **build-a-wig** color sub-page uses **$120** for non-default colors on non-Blanco units.
+
+**Fix:** In **`computeSpecialOfferPriceParts`** (`specialOfferPrice.ts`), non-Blanco non-default color is **flat `120` USD** (removed old **`100` + `40` on long lengths**), matching **`build-a-wig/page.tsx`** `calculatePricesFromSelections`.
+
+**Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

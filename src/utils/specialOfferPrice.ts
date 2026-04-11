@@ -109,8 +109,8 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
       if (color === 'GOLDEN') colorPrice = -20;
       else if (color === 'ASH') colorPrice = 20;
     } else {
-      colorPrice = 100;
-      if (['30"', '32"', '34"', '36"', '40"'].includes(length)) colorPrice += 40;
+      // Match build-a-wig `calculatePricesFromSelections` / color sub-page: flat $120 for any non-default color (no length add-on).
+      colorPrice = 120;
     }
   }
 
