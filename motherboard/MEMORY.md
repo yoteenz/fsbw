@@ -13238,3 +13238,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up:** User asked for **+4px down** again with the same founder exclusion — **`clientOnlyVoucherCashGiftDy`** **`3` → `7`** (total **7px** from original positions for clients).
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Orders: VIEW OFFER modal for all COMPLETE consults + no concierge mis-route
+
+**Context:** User reported **ORDER #331** **COMPLETE** “CLICK **HERE** TO VIEW OFFER” still went to **Concierge** special offer and **no claim modal** appeared.
+
+**Causes:** (1) **VIEW OFFER** only rendered when **`consultQuoteId`** or **`consultOfferSnapshot`** existed—real orders often had neither. (2) Premium **“CLICK HERE TO TRACK ORDER STATUS”** on **`PREPARING`** navigated **all** orders to concierge—including **consult**—so the red **HERE** could hit the wrong handler / wrong row UX. (3) **`consultOfferRoute`** with **`/account/consult-offer?id=`** was not parsed for quote id.
+
+**Fix:** **`consultQuoteIdFromConsultOfferRoute`** in **`consultOfferFromQuote.ts`**. **`consultOfferQuoteIdForOrder`** merges **`consultQuoteId`** + parsed route. **`openConsultOfferForOrder`**: snapshot works **without** stored **`consultQuoteId`** (uses order id as row id fallback). **VIEW OFFER** for **`COMPLETE` + `bookingFlowType === 'consult'`** always. **PREPARING** tracking **HERE**: if **`appointment`/`consult`**, only **expand** on orders page—**no** concierge navigate. Mock **`kateena-consult-2`** (**#331**) given snapshot + quote id for local QA.
+
+**Changes:** **`src/utils/consultOfferFromQuote.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

@@ -35,6 +35,30 @@ export function consultQuoteRowFromPersistedSnapshot(
   };
 }
 
+/** Parse `/account/consult-offer?id=<uuid>` from legacy `consultOfferRoute` on orders. */
+export function consultQuoteIdFromConsultOfferRoute(route: string | undefined | null): string {
+  const raw = String(route || '').trim();
+  if (!raw) return '';
+  try {
+    const u = raw.startsWith('http') ? new URL(raw) : new URL(raw, 'https://example.test');
+    if (u.pathname.includes('consult-offer')) {
+      const id = (u.searchParams.get('id') || '').trim();
+      if (id) return id;
+    }
+  } catch {
+    /* ignore */
+  }
+  const m = raw.match(/[?&]id=([^&]+)/);
+  if (m) {
+    try {
+      return decodeURIComponent(m[1].trim());
+    } catch {
+      return m[1].trim();
+    }
+  }
+  return '';
+}
+
 export type ConsultQuoteSelections = {
   capSize?: string;
   length?: string;

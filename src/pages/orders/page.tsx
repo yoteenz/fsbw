@@ -53,7 +53,10 @@ import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { getConsultQuote } from '../../utils/api';
 import { isSupabaseConfigured } from '../../utils/supabase';
 import type { ConsultOfferPersistedSnapshot } from '../../utils/consultOfferFromQuote';
-import { consultQuoteRowFromPersistedSnapshot } from '../../utils/consultOfferFromQuote';
+import {
+  consultQuoteIdFromConsultOfferRoute,
+  consultQuoteRowFromPersistedSnapshot,
+} from '../../utils/consultOfferFromQuote';
 
 interface OrderLineItem {
   productName: string;
@@ -940,6 +943,29 @@ function OrdersPage() {
       bookingTier: 'standard',
       bookingHairOption: 'WIG ONLY',
       bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
+      consultQuoteId: '00000000-0000-4000-8000-000000000088',
+      consultOfferSnapshot: {
+        unitKey: 'NOIR',
+        selections: {
+          capSize: 'M',
+          length: '24"',
+          density: '200%',
+          texture: 'SILKY',
+          lace: '13X6',
+          hairline: 'NATURAL',
+          color: 'OFF BLACK',
+          styling: 'NONE',
+          addOns: [],
+        },
+        priceBreakdown: [
+          { label: 'BASE UNIT', value: 'NOIR $740 USD' },
+          { label: 'ESTIMATED TOTAL', value: '$740 USD' },
+        ],
+        adminMessage: 'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.',
+        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
+        discountCode: 'CONSULT-DEMO88',
+        expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+      },
     }
   ];
 
@@ -1658,33 +1684,53 @@ function OrdersPage() {
     setConsultOfferModalLoading(false);
   };
 
+  const consultOfferQuoteIdForOrder = (order: Order): string => {
+    const direct = String(order.consultQuoteId || '').trim();
+    if (direct) return direct;
+    return consultQuoteIdFromConsultOfferRoute(order.consultOfferRoute);
+  };
+
   const openConsultOfferForOrder = (order: Order) => {
     const gen = ++consultOfferFetchGen.current;
-    const quoteId = String(order.consultQuoteId || '').trim();
+    const quoteId = consultOfferQuoteIdForOrder(order);
     const snap = order.consultOfferSnapshot;
 
-    const openFromSnapshot = () => {
+    const showSnapshot = () => {
       if (gen !== consultOfferFetchGen.current) return;
-      if (!quoteId || !snap) {
+      if (!snap) {
         setConsultOfferModalError('OFFER NOT AVAILABLE.');
         setConsultOfferModalQuote(null);
         setConsultOfferModalLoading(false);
         setConsultOfferModalOpen(true);
         return;
       }
+      const idForRow = quoteId || String(order.id || '').trim() || 'consult-offer';
       setConsultOfferModalError(null);
-      setConsultOfferModalQuote(consultQuoteRowFromPersistedSnapshot(snap, quoteId));
+      setConsultOfferModalQuote(consultQuoteRowFromPersistedSnapshot(snap, idForRow));
       setConsultOfferModalLoading(false);
       setConsultOfferModalOpen(true);
     };
 
+    const showError = () => {
+      if (gen !== consultOfferFetchGen.current) return;
+      setConsultOfferModalError('OFFER NOT AVAILABLE.');
+      setConsultOfferModalQuote(null);
+      setConsultOfferModalLoading(false);
+      setConsultOfferModalOpen(true);
+    };
+
+    if (!quoteId && !snap) {
+      showError();
+      return;
+    }
+
     if (!quoteId) {
-      openFromSnapshot();
+      showSnapshot();
       return;
     }
 
     if (!isSupabaseConfigured()) {
-      openFromSnapshot();
+      showSnapshot();
       return;
     }
 
@@ -1700,12 +1746,12 @@ function OrdersPage() {
           setConsultOfferModalQuote(res.quote as Record<string, unknown>);
           setConsultOfferModalError(null);
         } else {
-          openFromSnapshot();
+          showSnapshot();
           return;
         }
       } catch {
         if (gen !== consultOfferFetchGen.current) return;
-        openFromSnapshot();
+        showSnapshot();
         return;
       } finally {
         if (gen === consultOfferFetchGen.current) setConsultOfferModalLoading(false);
@@ -1716,16 +1762,15 @@ function OrdersPage() {
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
     if (!orderUsesDigitalFulfillmentTimeline(order)) return null;
-    const canViewOffer =
-      order.status === 'COMPLETE' &&
-      (Boolean(String(order.consultQuoteId || '').trim()) || Boolean(order.consultOfferSnapshot));
+    const isConsultComplete =
+      order.status === 'COMPLETE' && String(order.bookingFlowType || '').toLowerCase() === 'consult';
     const onOfferClick = () => {
-      if (!canViewOffer) return;
+      if (!isConsultComplete) return;
       openConsultOfferForOrder(order);
     };
     return (
       <>
-        {order.status === 'COMPLETE' && canViewOffer ? (
+        {isConsultComplete ? (
           <p
             role="button"
             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
@@ -2820,6 +2865,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <span 
                                    style={{ color: '#EB1C24', cursor: 'pointer' }}
                                    onClick={() => {
+                                     if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') {
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       return;
+                                     }
                                      // Check if user is premium member
                                      try {
                                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
@@ -3759,6 +3808,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <span 
                                    style={{ color: '#EB1C24', cursor: 'pointer' }}
                                    onClick={() => {
+                                     if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') {
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       return;
+                                     }
                                      // Check if user is premium member
                                      try {
                                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
