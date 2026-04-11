@@ -13440,3 +13440,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — **`renderPanelSelectDropdown`** `label` props for **`quoteUnit`**, **`quoteSub`**, **`quoteSubSelection`** updated to include trailing **`:`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Account Rewards: Bohemy 20px for voucher / discount / digital cash + excludes line
+
+**Context (this chat):** User asked on **Account → Rewards** loyalty chart to set **red voucher** labels, **gray discount code** and **digital cash** labels **and** their points text to **20px lowercase Bohemy**; also increase **red Bohemy** **“excludes taxes + shipping fees”** to **20px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`** — **`LOYALTY_REWARDS`** labels stored lowercase (**`free gift`**, **`discount code`**, **`voucher`**, **`digital cash`**) for correct display under Bohemy. Both loyalty list blocks: reward title **`fontFamily: Bohemy`**, **`fontSize: 20px`**, **`textTransform: lowercase`**, **`fontWeight: 400`** for all reward types; points span after **“AT”** uses Bohemy **20px** lowercase **`pts`** with existing gray (**`discount`** / **`digital_cash`**) vs red (**`voucher`** / **`free_gift`**) colors. **“excludes taxes + shipping fees”** **`fontSize`** **16px → 20px** in both duplicated sections.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
