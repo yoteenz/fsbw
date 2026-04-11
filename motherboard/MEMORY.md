@@ -13198,3 +13198,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Profile card is two stacked rows: (1) avatar + name/email/membership/voucher/load gift; (2) **100px-wide** left cell for photo actions, **flex** right cell for **DIGITAL CASH**, **`alignItems: 'center'`**. Removed large **`translateY`** on voucher/digital cash in the details column; founder **VIEW AS CLIENT** stays under avatar in row 1.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up:** User asked to **undo** the two-row split — **CHANGE | RESET** and **VIEW AS CLIENT** must stay **under the avatar** as before. Restored single **row** layout; only **voucher + digital cash + load gift** wrapped in **`translateY(-22px)`** so they move **in tandem** with **unchanged internal** margins/transforms vs pre-split layout.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

@@ -1955,20 +1955,13 @@ function AccountPage() {
                     borderWidth: '1.3px',
                     padding: '20px 20px',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
+                    flexDirection: 'row',
+                    gap: '16px',
+                    alignItems: 'center',
                     backgroundColor: 'rgba(255, 255, 255, 0.6)',
                     WebkitBackdropFilter: 'blur(10px)'
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: '16px',
-                      alignItems: 'flex-start',
-                    }}
-                  >
                   {/* Profile Picture - circle viewport matches crop modal framing (no extra scale/translate) */}
                   <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                     <div
@@ -2006,6 +1999,38 @@ function AccountPage() {
                       accept="image/*"
                       style={{ display: 'none' }}
                     />
+                    {isImageChanged ? (
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '9px',
+                          color: '#000000',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <span onClick={handleChangePhotoClick}>CHANGE</span>
+                        <span style={{ margin: '0 4px' }}>|</span>
+                        <span onClick={handleResetPhotoClick}>RESET</span>
+                      </p>
+                    ) : (
+                      <p
+                        onClick={handleChangePhotoClick}
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '9px',
+                          color: '#000000',
+                          margin: '0',
+                          textTransform: 'uppercase',
+                          fontWeight: '500',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        CHANGE PHOTO
+                      </p>
+                    )}
                     {isAyoteenzAdminAccount(userData) && (
                       <p
                         role="button"
@@ -2037,7 +2062,7 @@ function AccountPage() {
                           fontFamily: '"Futura PT Medium"',
                           color: '#EB1C24',
                           fontSize: '9px',
-                          margin: '0',
+                          margin: '4px 0 0 0',
                           textTransform: 'uppercase',
                           fontWeight: '500',
                           cursor: 'pointer',
@@ -2142,6 +2167,8 @@ function AccountPage() {
                       );
                     })()}
 
+                    {/* Nudge voucher + digital cash + load gift together toward CHANGE|RESET; spacing inside block unchanged from prior layout */}
+                    <div style={{ transform: 'translateY(-22px)' }}>
                     <p
                       role="button"
                       tabIndex={0}
@@ -2151,14 +2178,33 @@ function AccountPage() {
                         fontFamily: '"Futura PT Medium"',
                         color: '#808080',
                         fontSize: '10px',
-                        margin: '0',
+                        margin: '0 0 -12px 0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(2px)',
+                        transform: 'translateY(5px)',
                         cursor: 'pointer'
                       }}
                     >
                       VOUCHER: {(userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList.length : userData?.voucherCount) ?? 0} AVAILABLE
+                    </p>
+
+                    <p
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setShowDigitalCashHistoryPopup(true)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDigitalCashHistoryPopup(true); } }}
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#000000',
+                        fontSize: '10px',
+                        margin: '0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        transform: 'translateY(9px)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
                     </p>
 
                     <p
@@ -2171,92 +2217,11 @@ function AccountPage() {
                         textTransform: 'uppercase',
                         fontWeight: '500',
                         cursor: 'pointer',
-                        transform: 'translateY(0px)'
+                        transform: 'translateY(2px)'
                       }}
                     >
                       LOAD GIFT CARD
                     </p>
-                  </div>
-                  </div>
-
-                  {/* Same row: photo CHANGE | RESET (or CHANGE PHOTO) + DIGITAL CASH — aligned under avatar / details columns */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: '16px',
-                      alignItems: 'center',
-                      width: '100%',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '100px',
-                        flexShrink: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        textAlign: 'center',
-                      }}
-                    >
-                      {isImageChanged ? (
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '9px',
-                            color: '#000000',
-                            margin: '0',
-                            textTransform: 'uppercase',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          <span onClick={handleChangePhotoClick}>CHANGE</span>
-                          <span style={{ margin: '0 4px' }}>|</span>
-                          <span onClick={handleResetPhotoClick}>RESET</span>
-                        </p>
-                      ) : (
-                        <p
-                          onClick={handleChangePhotoClick}
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '9px',
-                            color: '#000000',
-                            margin: '0',
-                            textTransform: 'uppercase',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          CHANGE PHOTO
-                        </p>
-                      )}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, transform: 'translateX(6px)' }}>
-                      <p
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setShowDigitalCashHistoryPopup(true)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            setShowDigitalCashHistoryPopup(true);
-                          }
-                        }}
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        DIGITAL CASH: {formatPrice(userData?.giftCardBalance || 0)}
-                      </p>
                     </div>
                   </div>
                 </div>
