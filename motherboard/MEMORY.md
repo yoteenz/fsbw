@@ -13210,3 +13210,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up 3:** User asked to move **only** the three lines (voucher, digital cash, load gift card) **up 4px in tandem** — wrapper **`transform: translateY(-4px)`** around those three `<p>`s; inner margins/transforms unchanged.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 4:** Wrapper broke **parent `gap: 8px`** between those rows (three lines became one flex child). Removed wrapper; **`translateY`** per line: **`5px→1px`**, **`9px→5px`**, **`2px→-2px`** (each **−4px**) so **relative offsets unchanged** and **tandem 4px up** without spacing regression.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

@@ -2167,7 +2167,6 @@ function AccountPage() {
                       );
                     })()}
 
-                    <div style={{ transform: 'translateY(-4px)' }}>
                     <p
                       role="button"
                       tabIndex={0}
@@ -2180,7 +2179,7 @@ function AccountPage() {
                         margin: '0 0 -12px 0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(5px)',
+                        transform: 'translateY(1px)',
                         cursor: 'pointer'
                       }}
                     >
@@ -2199,7 +2198,7 @@ function AccountPage() {
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(9px)',
+                        transform: 'translateY(5px)',
                         cursor: 'pointer'
                       }}
                     >
@@ -2216,12 +2215,11 @@ function AccountPage() {
                         textTransform: 'uppercase',
                         fontWeight: '500',
                         cursor: 'pointer',
-                        transform: 'translateY(2px)'
+                        transform: 'translateY(-2px)'
                       }}
                     >
                       LOAD GIFT CARD
                     </p>
-                    </div>
                   </div>
                 </div>
 
