@@ -13447,6 +13447,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Context (this chat):** User asked on **Account → Rewards** loyalty chart to set **red voucher** labels, **gray discount code** and **digital cash** labels **and** their points text to **20px lowercase Bohemy**; also increase **red Bohemy** **“excludes taxes + shipping fees”** to **20px**.
 
-**Changes:** **`src/pages/account/membership/page.tsx`** — **`LOYALTY_REWARDS`** labels stored lowercase (**`free gift`**, **`discount code`**, **`voucher`**, **`digital cash`**) for correct display under Bohemy. Both loyalty list blocks: reward title **`fontFamily: Bohemy`**, **`fontSize: 20px`**, **`textTransform: lowercase`**, **`fontWeight: 400`** for all reward types; points span after **“AT”** uses Bohemy **20px** lowercase **`pts`** with existing gray (**`discount`** / **`digital_cash`**) vs red (**`voucher`** / **`free_gift`**) colors. **“excludes taxes + shipping fees”** **`fontSize`** **16px → 20px** in both duplicated sections.
+**Changes:** **`src/pages/account/membership/page.tsx`** — **`LOYALTY_REWARDS`** labels stored lowercase (**`free gift`**, **`discount code`**, **`voucher`**, **`digital cash`**) for correct display under Bohemy. Both loyalty list blocks: reward title **`fontFamily: Bohemy`**, **`fontSize: 20px`**, **`textTransform: lowercase`**, **`fontWeight: 400`** for all reward types. **“excludes taxes + shipping fees”** **`fontSize`** **16px → 20px** in both duplicated sections. *(Follow-up: the colored **“… AT N PTS”** span was reverted to **Futura PT Medium** — see next MEMORY entry.)*
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: revert “AT … PTS” line to Futura only
+
+**Context (this chat):** After Bohemy **20px** reward titles + **excludes taxes** line, user asked to change **only** the colored **PTS** detail line (e.g. **“1X HAIRLINE AT 15,000 PTS”**) back to **Futura** — the **“AT … PTS”** block was not meant to use Bohemy.
+
+**Changes:** **`membership/page.tsx`** — both **`LOYALTY_REWARDS.map`** blocks: the span after **“AT”** again uses **`Futura PT Medium`**, **`fontWeight: 500`**, **`… PTS`** (uppercase); gray vs red colors unchanged.
+
+**Docs:** This **MEMORY** entry.

@@ -1363,13 +1363,11 @@ function MembershipPage() {
                                           reward.type === 'discount' || reward.type === 'digital_cash'
                                             ? BRAND_GRAY
                                             : '#EB1C24',
-                                        fontFamily: '"Bohemy", cursive',
-                                        fontSize: '20px',
-                                        fontWeight: 400,
-                                        textTransform: 'lowercase',
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontWeight: '500',
                                       }}
                                     >
-                                      {reward.points.toLocaleString()} pts
+                                      {reward.points.toLocaleString()} PTS
                                     </span>
                                   </p>
                                 </div>
@@ -2187,13 +2185,11 @@ fontFamily: '"Futura PT Book"',
                                               reward.type === 'discount' || reward.type === 'digital_cash'
                                                 ? BRAND_GRAY
                                                 : '#EB1C24',
-                                            fontFamily: '"Bohemy", cursive',
-                                            fontSize: '20px',
-                                            fontWeight: 400,
-                                            textTransform: 'lowercase',
+                                            fontFamily: '"Futura PT Medium"',
+                                            fontWeight: '500',
                                           }}
                                         >
-                                          {reward.points.toLocaleString()} pts
+                                          {reward.points.toLocaleString()} PTS
                                         </span>
                                       </p>
                                     </div>
