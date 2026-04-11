@@ -13408,3 +13408,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Reward label **`fontSize`**: **`16px`** when **`reward.type === 'free_gift'`**, else **`11px`** (both loyalty list blocks in **`membership/page.tsx`**).
 
 **Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT + redeem Bohemy 20px
+
+**Context:** User asked to increase from **16px** to **20px**.
+
+**Fix:** **`free_gift`** row Bohemy label and both **redeem** buttons **`fontSize: '20px'`** (both loyalty list blocks); missed first block **`16px`** → **`20px`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

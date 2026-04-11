@@ -1346,7 +1346,7 @@ function MembershipPage() {
                                   <p
                                     style={{
                                       fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                      fontSize: reward.type === 'free_gift' ? '16px' : '11px',
+                                      fontSize: reward.type === 'free_gift' ? '20px' : '11px',
                                       color: labelColor,
                                       margin: '0 0 2px 0',
                                       textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
@@ -1389,7 +1389,7 @@ function MembershipPage() {
                                   disabled={!canRedeem}
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
-                                    fontSize: '16px',
+                                    fontSize: '20px',
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -2168,7 +2168,7 @@ fontFamily: '"Futura PT Book"',
                                       <p
                                         style={{
                                           fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                          fontSize: reward.type === 'free_gift' ? '16px' : '11px',
+                                          fontSize: reward.type === 'free_gift' ? '20px' : '11px',
                                           color: labelColor,
                                           margin: '0 0 2px 0',
                                           textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
@@ -2211,7 +2211,7 @@ fontFamily: '"Futura PT Book"',
                                       disabled={!canRedeem}
                                       style={{
                                         fontFamily: '"Bohemy", cursive',
-                                        fontSize: '16px',
+                                        fontSize: '20px',
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',
