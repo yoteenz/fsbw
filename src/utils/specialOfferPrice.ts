@@ -1,7 +1,7 @@
 /**
  * Calculates the accurate total price for a special offer unit + options,
  * matching build-a-wig / product page pricing (length, density, lace, texture, color, hairline, styling, add-ons).
- * Cap size for special offer is always custom (XS, S, M, L) so capSizePrice = 0.
+ * Cap size: **M** = $0; flexible **XXS/XS/S** and **S/M/L** = +$40 (same as build-a-wig hub).
  */
 
 const UNIT_BASE_PRICES: Record<string, number> = {
@@ -129,7 +129,10 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
     const arr = styling.split(',').map((s) => s.trim());
     const hasBangs = arr.includes('BANGS');
     const other = arr.find((s) => s !== 'BANGS');
-    const isLong = /30|32|34|36/.test(length);
+    // Match `build-a-wig/page.tsx` + styling sub-page: 30"–36" only (not 40").
+    const len = String(length || '');
+    const isLong =
+      len.includes('30') || len.includes('32') || len.includes('34') || len.includes('36');
     if (hasBangs && other) {
       let sec = STYLING_PRICES[other] ?? 0;
       if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(other)) sec += 40;
@@ -153,8 +156,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const addOnsPrice = addOnLines.reduce((sum, line) => sum + line.amountUsd, 0);
 
   let total = base + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
-  const isWavy = unitId === 'soft-wave' || unitId === 'beach-wave';
-  if (isWavy) total += 20;
+  // Hub `calculatePricesFromSelections` does not add a separate wavy surcharge; base for soft/beach wave is already 760 in `UNIT_BASE_PRICES`.
 
   return {
     totalUsd: total,

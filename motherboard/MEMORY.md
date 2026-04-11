@@ -13264,3 +13264,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** In **`computeSpecialOfferPriceParts`** (`specialOfferPrice.ts`), non-Blanco non-default color is **flat `120` USD** (removed old **`100` + `40` on long lengths**), matching **`build-a-wig/page.tsx`** `calculatePricesFromSelections`.
 
 **Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — specialOfferPrice vs build-a-wig hub audit
+
+**Context:** User asked to **confirm all other prices** in admin consult **send offer** match **build-a-wig** sub-page / hub **`calculatePricesFromSelections`**.
+
+**Audit:** Length, density (Noir + Blanco tables), lace (no **HD LACE** in hub lace list), texture, Blanco color, hairline, styling (incl. bangs combo + long surcharge), add-ons + lace discount — already matched tables in **`specialOfferPrice.ts`**.
+
+**Fixes in this pass:** (1) **Styling** “long length” surcharge now uses **same `includes('30'|'32'|'34'|'36')` test** as hub/styling page (**40"** no longer triggers +$40). (2) Removed extra **+$20** on total for **soft-wave / beach-wave** — hub does not add that on top of **760** base.
+
+**Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
