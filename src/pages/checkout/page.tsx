@@ -18,11 +18,13 @@ import {
   fetchStripeMembershipAvailable,
   createStripeMembershipCheckoutSession,
   getAccessToken,
+  getConsultQuote,
   postBookingAppointmentMeeting,
   postBookingConsultMeeting,
   redeemConsultQuote,
   validateConsultDiscountCode,
 } from '../../utils/api';
+import { SESSION_CONSULT_CLAIM_CODE, SESSION_CONSULT_CLAIM_QUOTE_ID } from '../../utils/consultOfferFromQuote';
 import { appendOrderReceivedAccountAlert } from '../../utils/orderAccountAlerts';
 import {
   filterBookingCartLines,
@@ -218,6 +220,13 @@ function CheckoutPage() {
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
+  const applyDiscountCodeRef = useRef<() => Promise<void>>(async () => {});
+  const [pendingConsultDiscountCode, setPendingConsultDiscountCode] = useState<string | null>(null);
+  const consultClaimBootstrapDoneRef = useRef(false);
+
+  useEffect(() => {
+    consultClaimBootstrapDoneRef.current = false;
+  }, [location.pathname]);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
   const [cartCount, setCartCount] = useState(() => {
@@ -2223,7 +2232,84 @@ function CheckoutPage() {
       setReferralDiscount(0);
     }
   };
-  
+
+  applyDiscountCodeRef.current = handleApplyDiscountCode;
+
+  /** After "Claim offer" adds a unit to the bag, queue CONSULT-* from session or `?consultClaim=` + fetch quote. */
+  useEffect(() => {
+    if (consultClaimBootstrapDoneRef.current) return;
+    if (isSubscriptionUpgrade || isBookingsCheckoutRoute || isGiftCardCheckoutRoute) return;
+
+    let claimId = '';
+    let claimCode = '';
+    try {
+      claimId = (searchParams.get('consultClaim') || '').trim();
+      claimCode = (sessionStorage.getItem(SESSION_CONSULT_CLAIM_CODE) || '').trim().toUpperCase();
+      if (!claimId) claimId = (sessionStorage.getItem(SESSION_CONSULT_CLAIM_QUOTE_ID) || '').trim();
+    } catch {
+      /* ignore */
+    }
+    if (!claimId && !claimCode) return;
+
+    consultClaimBootstrapDoneRef.current = true;
+    let cancelled = false;
+    void (async () => {
+      let code = claimCode;
+      if (!code && claimId) {
+        try {
+          const res = await getConsultQuote(claimId);
+          const q = res?.quote as { discount_code?: string } | undefined;
+          code = String(q?.discount_code || '').trim().toUpperCase();
+        } catch {
+          code = '';
+        }
+      }
+      if (cancelled || !code || !code.startsWith('CONSULT-')) {
+        try {
+          sessionStorage.removeItem(SESSION_CONSULT_CLAIM_CODE);
+          sessionStorage.removeItem(SESSION_CONSULT_CLAIM_QUOTE_ID);
+        } catch {
+          /* ignore */
+        }
+        if (searchParams.get('consultClaim')) {
+          const next = new URLSearchParams(searchParams);
+          next.delete('consultClaim');
+          setSearchParams(next, { replace: true });
+        }
+        return;
+      }
+
+      try {
+        sessionStorage.removeItem(SESSION_CONSULT_CLAIM_CODE);
+        sessionStorage.removeItem(SESSION_CONSULT_CLAIM_QUOTE_ID);
+      } catch {
+        /* ignore */
+      }
+      if (searchParams.get('consultClaim')) {
+        const next = new URLSearchParams(searchParams);
+        next.delete('consultClaim');
+        setSearchParams(next, { replace: true });
+      }
+
+      setDiscountCodeError('');
+      setPendingConsultDiscountCode(code);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubscriptionUpgrade, isBookingsCheckoutRoute, isGiftCardCheckoutRoute, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!pendingConsultDiscountCode) return;
+    if (cartItems.length === 0) return;
+    const c = pendingConsultDiscountCode;
+    setPendingConsultDiscountCode(null);
+    setDiscountCode(c);
+    setDiscountCodeDisplay(c);
+    void applyDiscountCodeRef.current();
+  }, [pendingConsultDiscountCode, cartItems.length]);
+
   // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
   // Voucher discount: one voucher at a time, cannot combine. Subtract add-on price for the single voucher (uses stored price or fallback so red (-$120) etc. always shows).

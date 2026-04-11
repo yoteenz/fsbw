@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import ConsultOfferClaimModal from '../../components/ConsultOfferClaimModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import {
@@ -49,6 +50,10 @@ import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrder
 import { orderNeedsClientAuthFormSignature } from '../../utils/giftCardFirstPurchaseForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { getConsultQuote } from '../../utils/api';
+import { isSupabaseConfigured } from '../../utils/supabase';
+import type { ConsultOfferPersistedSnapshot } from '../../utils/consultOfferFromQuote';
+import { consultQuoteRowFromPersistedSnapshot } from '../../utils/consultOfferFromQuote';
 
 interface OrderLineItem {
   productName: string;
@@ -93,6 +98,8 @@ interface Order {
   digitalFulfillmentOnly?: boolean;
   /** When status is COMPLETE (digital flow), optional deep link for "VIEW OFFER" (e.g. consult quote). */
   consultOfferRoute?: string;
+  /** Copy of admin-sent offer (localStorage) for modal when API unavailable. */
+  consultOfferSnapshot?: ConsultOfferPersistedSnapshot;
   /** Consult: when status moved PLACED → PROCESSING after 24h. */
   consultProcessingStartedAt?: number;
   /** Consult: linked admin quote id after offer sent. */
@@ -142,6 +149,11 @@ function OrdersPage() {
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [consultOfferModalOpen, setConsultOfferModalOpen] = useState(false);
+  const [consultOfferModalLoading, setConsultOfferModalLoading] = useState(false);
+  const [consultOfferModalError, setConsultOfferModalError] = useState<string | null>(null);
+  const [consultOfferModalQuote, setConsultOfferModalQuote] = useState<Record<string, unknown> | null>(null);
+  const consultOfferFetchGen = useRef(0);
   
   // Get current user data
   const [currentUser, setCurrentUser] = useState<any>(() => {
@@ -907,7 +919,6 @@ function OrdersPage() {
       bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
       bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
-      consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
     },
     {
       id: 'kateena-consult-2',
@@ -929,11 +940,50 @@ function OrdersPage() {
       bookingTier: 'standard',
       bookingHairOption: 'WIG ONLY',
       bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
-      consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
     }
   ];
 
   const kateenaMockPastOrders: Order[] = [
+    {
+      id: 'kateena-consult-archived-offer',
+      orderNumber: 'ORDER #320',
+      confirmationNumber: 'C3O2V0',
+      date: getDateDaysAgo(1),
+      status: 'COMPLETE',
+      productName: 'WIG CONSULT',
+      productImage: '/assets/gallery-mock.png',
+      total: 40,
+      subtotal: 40,
+      items: 1,
+      placedAt: Date.now() - (80 * 60 * 60 * 1000),
+      completedAt: Date.now() - (48 * 60 * 60 * 1000),
+      bookingFlowType: 'consult',
+      bookingTier: 'standard',
+      bookingHairOption: 'WIG ONLY',
+      consultQuoteId: '00000000-0000-4000-8000-000000000099',
+      consultOfferSnapshot: {
+        unitKey: 'NOIR',
+        selections: {
+          capSize: 'M',
+          length: '24"',
+          density: '200%',
+          texture: 'SILKY',
+          lace: '13X6',
+          hairline: 'NATURAL',
+          color: 'OFF BLACK',
+          styling: 'NONE',
+          addOns: [],
+        },
+        priceBreakdown: [
+          { label: 'BASE UNIT', value: 'NOIR $740 USD' },
+          { label: 'ESTIMATED TOTAL', value: '$740 USD' },
+        ],
+        adminMessage: 'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.',
+        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
+        discountCode: 'CONSULT-DEMO99',
+        expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+      },
+    },
     {
       id: 'test-order-4',
       orderNumber: 'ORDER #666',
@@ -1601,19 +1651,83 @@ function OrdersPage() {
     ...(isCurrent && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   });
 
+  const closeConsultOfferModal = () => {
+    setConsultOfferModalOpen(false);
+    setConsultOfferModalQuote(null);
+    setConsultOfferModalError(null);
+    setConsultOfferModalLoading(false);
+  };
+
+  const openConsultOfferForOrder = (order: Order) => {
+    const gen = ++consultOfferFetchGen.current;
+    const quoteId = String(order.consultQuoteId || '').trim();
+    const snap = order.consultOfferSnapshot;
+
+    const openFromSnapshot = () => {
+      if (gen !== consultOfferFetchGen.current) return;
+      if (!quoteId || !snap) {
+        setConsultOfferModalError('OFFER NOT AVAILABLE.');
+        setConsultOfferModalQuote(null);
+        setConsultOfferModalLoading(false);
+        setConsultOfferModalOpen(true);
+        return;
+      }
+      setConsultOfferModalError(null);
+      setConsultOfferModalQuote(consultQuoteRowFromPersistedSnapshot(snap, quoteId));
+      setConsultOfferModalLoading(false);
+      setConsultOfferModalOpen(true);
+    };
+
+    if (!quoteId) {
+      openFromSnapshot();
+      return;
+    }
+
+    if (!isSupabaseConfigured()) {
+      openFromSnapshot();
+      return;
+    }
+
+    setConsultOfferModalOpen(true);
+    setConsultOfferModalLoading(true);
+    setConsultOfferModalError(null);
+    setConsultOfferModalQuote(null);
+    void (async () => {
+      try {
+        const res = await getConsultQuote(quoteId);
+        if (gen !== consultOfferFetchGen.current) return;
+        if (res?.quote) {
+          setConsultOfferModalQuote(res.quote as Record<string, unknown>);
+          setConsultOfferModalError(null);
+        } else {
+          openFromSnapshot();
+          return;
+        }
+      } catch {
+        if (gen !== consultOfferFetchGen.current) return;
+        openFromSnapshot();
+        return;
+      } finally {
+        if (gen === consultOfferFetchGen.current) setConsultOfferModalLoading(false);
+      }
+    })();
+  };
+
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
     if (!orderUsesDigitalFulfillmentTimeline(order)) return null;
-    const offerRoute = (order.consultOfferRoute || '').trim();
+    const canViewOffer =
+      order.status === 'COMPLETE' &&
+      (Boolean(String(order.consultQuoteId || '').trim()) || Boolean(order.consultOfferSnapshot));
     const onOfferClick = () => {
-      if (offerRoute) navigate(offerRoute);
-      else navigate(`/account/concierge?orderId=${order.id}`);
+      if (!canViewOffer) return;
+      openConsultOfferForOrder(order);
     };
     return (
       <>
-        {order.status === 'COMPLETE' ? (
+        {order.status === 'COMPLETE' && canViewOffer ? (
           <p
-            role={offerRoute ? 'button' : undefined}
+            role="button"
             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
             onClick={onOfferClick}
           >
@@ -3786,6 +3900,15 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
         message="ARE YOU SURE YOU WANT TO SIGN OUT?"
         confirmText="SIGN OUT"
         cancelText="CANCEL"
+      />
+
+      <ConsultOfferClaimModal
+        isOpen={consultOfferModalOpen}
+        onClose={closeConsultOfferModal}
+        quote={consultOfferModalQuote}
+        loading={consultOfferModalLoading}
+        error={consultOfferModalError}
+        locationForSignIn={location}
       />
       </div>
   );

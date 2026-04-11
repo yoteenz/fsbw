@@ -13214,3 +13214,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up 4:** Wrapper broke **parent `gap: 8px`** between those rows (three lines became one flex child). Removed wrapper; **`translateY`** per line: **`5px→1px`**, **`9px→5px`**, **`2px→-2px`** (each **−4px**) so **relative offsets unchanged** and **tandem 4px up** without spacing regression.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Archived consult orders: VIEW OFFER modal + claim checkout
+
+**Context:** User wanted **Account → Orders** “CLICK HERE TO VIEW OFFER” on **archived consult** orders to **not** route to concierge. Instead: **modal** with **product thumbnail**, same **unit / price breakdown / notes / 72h countdown** style as admin **Send offer**, **CLAIM OFFER** (white bg, red text) adds the quoted unit to **cart** with **$40 consult discount** applied; after **offer expiry** the discount no longer applies (existing **`POST /api/checkout/validate-consult-code`** 410).
+
+**Implementation:** **`ConsultOfferClaimModal`** + **`consultOfferFromQuote.ts`** (cart build from quote selections + **`calculateSpecialOfferPriceBreakdown`**). **`markConsultOrderCompleteAfterQuoteSent`** stores optional **`consultOfferSnapshot`** on the matched order. **Admin meetings** send full **selections**, per-unit **thumbnail**, and snapshot. **`POST /api/admin/consult-quotes`** returns full quote row. **Checkout** reads **`?consultClaim=`** / session and **auto-applies** the **CONSULT-*** code after the cart line exists. **Orders** loads **`getConsultQuote`** when configured, else snapshot; mock archived **COMPLETE** consult with snapshot for QA.
+
+**Changes:** `src/components/ConsultOfferClaimModal.tsx`, `src/utils/consultOfferFromQuote.ts`, `src/utils/consultOrderLifecycle.ts`, `src/pages/admin/meetings/AdminMeetingsHub.tsx`, `api/admin/consult-quotes.ts`, `src/pages/checkout/page.tsx`, `src/pages/orders/page.tsx`, `motherboard/MEMORY.md`. **`npm run build`**.

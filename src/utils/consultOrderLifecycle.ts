@@ -1,3 +1,5 @@
+import type { ConsultOfferPersistedSnapshot } from './consultOfferFromQuote';
+
 /**
  * Consult-only checkout orders (`bookingFlowType: 'consult'`):
  * - After **24h** **PLACED** → **PROCESSING**
@@ -29,6 +31,8 @@ export type ConsultOrderLike = {
   consultProcessingStartedAt?: number;
   completedAt?: number;
   consultQuoteId?: string;
+  /** Local copy of admin-sent offer (unit, breakdown, code, expiry) for VIEW OFFER without Supabase. */
+  consultOfferSnapshot?: ConsultOfferPersistedSnapshot;
 };
 
 const TWENTY_FOUR_H_MS = 24 * 60 * 60 * 1000;
@@ -80,6 +84,8 @@ export type MarkConsultCompleteParams = {
   /** From meeting `metadata.orderNumber` (checkout `#NNN` or `ORDER #NNN`). */
   orderNumberFromCheckout: string;
   consultQuoteId: string;
+  /** When set, stored on the matched order for client VIEW OFFER (localStorage). */
+  consultOfferSnapshot?: ConsultOfferPersistedSnapshot | null;
 };
 
 /**
@@ -94,6 +100,7 @@ export function markConsultOrderCompleteAfterQuoteSent(params: MarkConsultComple
   if (!email || !quoteId) return false;
   const orderRef = String(params.orderNumberFromCheckout || '').trim();
   if (!orderRef) return false;
+  const snapshot = params.consultOfferSnapshot ?? null;
 
   try {
     const key = `userOrders_${email}`;
@@ -120,6 +127,7 @@ export function markConsultOrderCompleteAfterQuoteSent(params: MarkConsultComple
           status: 'COMPLETE',
           completedAt: now,
           consultQuoteId: quoteId,
+          ...(snapshot ? { consultOfferSnapshot: snapshot } : {}),
         };
       });
       return { list, hit };

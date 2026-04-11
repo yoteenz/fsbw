@@ -33,6 +33,8 @@ import {
 } from '../../../utils/adminMeetingsFocusSession';
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
+import type { ConsultOfferPersistedSnapshot } from '../../../utils/consultOfferFromQuote';
+import { consultQuoteThumbnailSrcFromUnitKey } from '../../../utils/consultOfferFromQuote';
 import {
   addDaysIso,
   bookingPaidInFullSalesUsd,
@@ -613,25 +615,50 @@ export default function AdminMeetingsHub() {
         label: 'ESTIMATED TOTAL',
         value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
       });
+      const selectionsForQuote = {
+        capSize: quoteSelections.capSize,
+        length: quoteSelections.length,
+        density: quoteSelections.density,
+        texture: quoteSelections.texture,
+        lace: quoteSelections.lace,
+        hairline: quoteSelections.hairline,
+        color: quoteSelections.color,
+        styling: quoteSelections.styling,
+        addOns: quoteSelections.addOns,
+      };
+      const thumbSrc = consultQuoteThumbnailSrcFromUnitKey(quoteUnit);
       const res = (await postAdminConsultQuote({
         clientEmail: email,
         unitKey: quoteUnit,
-        selections: { unit: quoteUnit, subPage: quoteSub },
+        selections: selectionsForQuote,
         priceBreakdown: breakdown,
         adminMessage: quoteMessage,
-        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
-      })) as { quote?: { id?: string } };
-      const quoteId = String(res?.quote?.id || '').trim();
+        thumbnailSrc: thumbSrc,
+      })) as { quote?: Record<string, unknown>; discountCode?: string };
+      const quoteRow = res?.quote && typeof res.quote === 'object' ? res.quote : {};
+      const quoteId = String((quoteRow as { id?: string }).id || '').trim();
+      const discountCode = String(res?.discountCode || (quoteRow as { discount_code?: string }).discount_code || '').trim();
+      const expiresAt = String((quoteRow as { expires_at?: string }).expires_at || '').trim();
       const orderRef = String(
         (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
           ? quoteMeeting.metadata.orderNumber
           : '') || ''
       ).trim();
       if (quoteId && orderRef) {
+        const snapshot: ConsultOfferPersistedSnapshot = {
+          unitKey: quoteUnit,
+          selections: selectionsForQuote,
+          priceBreakdown: breakdown,
+          adminMessage: quoteMessage,
+          thumbnailSrc: thumbSrc,
+          discountCode,
+          expiresAt,
+        };
         markConsultOrderCompleteAfterQuoteSent({
           clientEmail: email,
           orderNumberFromCheckout: orderRef,
           consultQuoteId: quoteId,
+          consultOfferSnapshot: snapshot,
         });
       }
       setQuoteMeeting(null);

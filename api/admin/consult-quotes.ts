@@ -69,7 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         discount_amount_usd: 40,
         expires_at: expiresAt,
       })
-      .select('id, discount_code, expires_at')
+      .select('id, discount_code, expires_at, unit_key, selections, price_breakdown, admin_message, thumbnail_src, discount_amount_usd')
       .single();
 
     if (insErr) return res.status(500).json({ error: insErr.message });
@@ -120,7 +120,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(201).json({
-      quote: quote,
+      quote,
       discountCode,
       message: 'Consult quote sent',
     });
