@@ -13176,3 +13176,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Auto-redirect on sign-in page when Supabase is configured **only after** **`getSession()`** confirms **`access_token`**; if no session, stay on the form so the user can sign in again. Unchanged when Supabase is off (legacy local-only).
 
 **Changes:** **`src/pages/sign-in/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account profile: always show gray voucher line
+
+**Context:** User wanted the gray **VOUCHER: N AVAILABLE** line on **Account → Profile** always visible like **DIGITAL CASH**, showing **0 AVAILABLE** when none.
+
+**Cause:** The voucher `<p>` was wrapped in **`!(isAyoteenzAdminAccount(userData) && founderViewAsClient)`**, so it disappeared for founder viewing as client.
+
+**Fix:** Removed that conditional; copy still uses **`?? 0`** for empty counts.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

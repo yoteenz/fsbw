@@ -2167,7 +2167,6 @@ function AccountPage() {
                       );
                     })()}
 
-                    {!(isAyoteenzAdminAccount(userData) && founderViewAsClient) && (
                     <p
                       role="button"
                       tabIndex={0}
@@ -2186,7 +2185,6 @@ function AccountPage() {
                     >
                       VOUCHER: {(userData?.voucherList && Array.isArray(userData.voucherList) ? userData.voucherList.length : userData?.voucherCount) ?? 0} AVAILABLE
                     </p>
-                    )}
 
                     <p
                       role="button"
