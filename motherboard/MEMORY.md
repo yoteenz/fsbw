@@ -13388,3 +13388,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** In both **LOYALTY_REWARDS** list blocks: reward row **label** uses **`"Bohemy", cursive`** when **`reward.type === 'free_gift'`**, else Futura Medium; the **points span** after **“AT”** uses **`BRAND_GRAY`** for **`discount`** and **`digital_cash`**, red for **voucher** / **free_gift** detail line points unchanged.
 
 **Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT Bohemy label lowercase
+
+**Context:** User wanted the red **FREE GIFT** line in **Bohemy** to be **lowercase**, not uppercase.
+
+**Fix:** In **`membership/page.tsx`** loyalty reward row label styles: **`textTransform: 'lowercase'`** when **`reward.type === 'free_gift'`**, else **`'uppercase'`** (both list blocks).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

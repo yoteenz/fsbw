@@ -1349,7 +1349,7 @@ function MembershipPage() {
                                       fontSize: '11px',
                                       color: labelColor,
                                       margin: '0 0 2px 0',
-                                      textTransform: 'uppercase',
+                                      textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
                                       fontWeight: '500',
                                     }}
                                   >
@@ -2171,7 +2171,7 @@ fontFamily: '"Futura PT Book"',
                                           fontSize: '11px',
                                           color: labelColor,
                                           margin: '0 0 2px 0',
-                                          textTransform: 'uppercase',
+                                          textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
                                           fontWeight: '500',
                                         }}
                                       >
