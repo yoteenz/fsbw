@@ -13202,3 +13202,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up:** User asked to **undo** the two-row split — **CHANGE | RESET** and **VIEW AS CLIENT** must stay **under the avatar** as before. Restored single **row** layout; only **voucher + digital cash + load gift** wrapped in **`translateY(-22px)`** so they move **in tandem** with **unchanged internal** margins/transforms vs pre-split layout.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 2:** User asked to **fully revert** those profile tweaks: removed **`translateY(-22px)`** wrapper so voucher / digital cash / load gift match **`9b611fa`** vertical spacing again. Same-line alignment of digital cash with **CHANGE|RESET** not shipped in this revert.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

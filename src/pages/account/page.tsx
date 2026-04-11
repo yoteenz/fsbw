@@ -2167,8 +2167,6 @@ function AccountPage() {
                       );
                     })()}
 
-                    {/* Nudge voucher + digital cash + load gift together toward CHANGE|RESET; spacing inside block unchanged from prior layout */}
-                    <div style={{ transform: 'translateY(-22px)' }}>
                     <p
                       role="button"
                       tabIndex={0}
@@ -2222,7 +2220,6 @@ function AccountPage() {
                     >
                       LOAD GIFT CARD
                     </p>
-                    </div>
                   </div>
                 </div>
 
