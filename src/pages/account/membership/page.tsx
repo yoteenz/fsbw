@@ -110,16 +110,16 @@ function PremiumChartBenefitRow({
 }
 
 const LOYALTY_REWARDS = [
-  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 5000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '10% OFF UNIT', points: 10000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X HAIRLINE', points: 15000 },
-  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$100 USD', points: 20000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X COLOR', points: 25000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '30% OFF UNIT', points: 30000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X STYLING', points: 35000 },
-  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$200 USD', points: 40000 },
-  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 45000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '50% OFF UNIT', points: 50000 }
+  { type: 'free_gift' as const, label: 'free gift', detail: 'WITH PURCHASE', points: 5000 },
+  { type: 'discount' as const, label: 'discount code', detail: '10% OFF UNIT', points: 10000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X HAIRLINE', points: 15000 },
+  { type: 'digital_cash' as const, label: 'digital cash', detail: '$100 USD', points: 20000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X COLOR', points: 25000 },
+  { type: 'discount' as const, label: 'discount code', detail: '30% OFF UNIT', points: 30000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X STYLING', points: 35000 },
+  { type: 'digital_cash' as const, label: 'digital cash', detail: '$200 USD', points: 40000 },
+  { type: 'free_gift' as const, label: 'free gift', detail: 'WITH PURCHASE', points: 45000 },
+  { type: 'discount' as const, label: 'discount code', detail: '50% OFF UNIT', points: 50000 }
 ];
 
 const EARN_TASKS = [
@@ -1286,7 +1286,7 @@ function MembershipPage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '16px',
+                              fontSize: '20px',
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400
@@ -1345,12 +1345,12 @@ function MembershipPage() {
                                 <div>
                                   <p
                                     style={{
-                                      fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                      fontSize: reward.type === 'free_gift' ? '20px' : '11px',
+                                      fontFamily: '"Bohemy", cursive',
+                                      fontSize: '20px',
                                       color: labelColor,
                                       margin: '0 0 2px 0',
-                                      textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
-                                      fontWeight: '500',
+                                      textTransform: 'lowercase',
+                                      fontWeight: 400,
                                     }}
                                   >
                                     {reward.label}
@@ -1363,11 +1363,13 @@ function MembershipPage() {
                                           reward.type === 'discount' || reward.type === 'digital_cash'
                                             ? BRAND_GRAY
                                             : '#EB1C24',
-                                        fontFamily: '"Futura PT Medium"',
-                                        fontWeight: '500',
+                                        fontFamily: '"Bohemy", cursive',
+                                        fontSize: '20px',
+                                        fontWeight: 400,
+                                        textTransform: 'lowercase',
                                       }}
                                     >
-                                      {reward.points.toLocaleString()} PTS
+                                      {reward.points.toLocaleString()} pts
                                     </span>
                                   </p>
                                 </div>
@@ -2108,7 +2110,7 @@ fontFamily: '"Futura PT Book"',
                                 style={{
                                   fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '16px',
+                                  fontSize: '20px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'lowercase',
                                   fontWeight: 400
@@ -2167,12 +2169,12 @@ fontFamily: '"Futura PT Book"',
                                     <div>
                                       <p
                                         style={{
-                                          fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                          fontSize: reward.type === 'free_gift' ? '20px' : '11px',
+                                          fontFamily: '"Bohemy", cursive',
+                                          fontSize: '20px',
                                           color: labelColor,
                                           margin: '0 0 2px 0',
-                                          textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
-                                          fontWeight: '500',
+                                          textTransform: 'lowercase',
+                                          fontWeight: 400,
                                         }}
                                       >
                                         {reward.label}
@@ -2185,11 +2187,13 @@ fontFamily: '"Futura PT Book"',
                                               reward.type === 'discount' || reward.type === 'digital_cash'
                                                 ? BRAND_GRAY
                                                 : '#EB1C24',
-                                            fontFamily: '"Futura PT Medium"',
-                                            fontWeight: '500',
+                                            fontFamily: '"Bohemy", cursive',
+                                            fontSize: '20px',
+                                            fontWeight: 400,
+                                            textTransform: 'lowercase',
                                           }}
                                         >
-                                          {reward.points.toLocaleString()} PTS
+                                          {reward.points.toLocaleString()} pts
                                         </span>
                                       </p>
                                     </div>
