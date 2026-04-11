@@ -231,7 +231,7 @@ function AccountPage() {
   /** Nudge voucher / digital cash / load gift down together for real clients only (not founder in admin view). */
   const clientOnlyVoucherCashGiftDy = React.useMemo(() => {
     if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
-    return 7;
+    return 15;
   }, [userData, founderViewAsClient]);
 
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */

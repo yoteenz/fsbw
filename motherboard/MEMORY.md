@@ -13239,6 +13239,10 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
 
+**Follow-up 2:** User asked for **+8px down** again (same founder exclusion) — **`clientOnlyVoucherCashGiftDy`** **`7` → `15`** (effective client **`translateY`**: voucher **16px**, digital cash **20px**, load gift card **13px**).
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
 ---
 
 ## 2026-04-09 — Orders: VIEW OFFER modal for all COMPLETE consults + no concierge mis-route
