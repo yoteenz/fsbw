@@ -13276,3 +13276,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fixes in this pass:** (1) **Styling** “long length” surcharge now uses **same `includes('30'|'32'|'34'|'36')` test** as hub/styling page (**40"** no longer triggers +$40). (2) Removed extra **+$20** on total for **soft-wave / beach-wave** — hub does not add that on top of **760** base.
 
 **Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Account profile: voucher block nudge via wrapper marginTop
+
+**Context:** User reported the **+15px client `translateY`** on **VOUCHER / DIGITAL CASH / LOAD GIFT CARD** was not sticking — looked **overwritten**.
+
+**Fix:** Replaced stacking extra **`translateY`** on each line with a **wrapper `div`**: **`marginTop: 15px`** for clients (**0** for founder **VIEW AS ADMIN**). Per-line **`translateY(1px / 5px / -2px)`** restored; wrapper uses **`gap: 8px`** so spacing between the three lines matches the parent column.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
