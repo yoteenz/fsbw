@@ -13324,3 +13324,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`CONSULT_PLACED_TO_PROCESSING_MS`** (2h) exported from **`consultOrderLifecycle.ts`**; **`advanceConsultOrdersPlacedToProcessing`** uses it. **`consultDigitalOrderTrackingBarFillPct`**: **PLACED** ramps **10% → ~30%** over the first **2h**; **PROCESSING** ramps **30% → 100%** over the remaining **70h** in the **72h** window from **placedAt**. **`orders/page.tsx`** comments; **`motherboard/CORE.md`** bullet.
 
 **Changes:** **`src/utils/consultOrderLifecycle.ts`**, **`src/utils/digitalOrderFulfillment.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin Meetings ORDER #331 demo: show for mock Kateena admin too
+
+**Context:** User could not see the **Kateena Armstrong** mock consult **ORDER #331** on **Admin → Meetings → CONSULTS**.
+
+**Cause:** Demo row merge used **`isAyoteenzAdminAccount`** only (founder Gmail **`kateenaarmstrong@gmail.com`**). The separate mock **Kateena** admin identity is **`kateena.armstrong@frontalslayer.com`** (`isAdminKateenaAccount` / `ADMIN_KATEENA_EMAIL`), so that sign-in never received the inject.
+
+**Fix:** **`AdminMeetingsHub`** `mergedMeetings`: inject when **`isAyoteenzAdminAccount(u) || isAdminKateenaAccount(u)`**. **`listAggregatedAdminMeetingsForClientDetails`**: same emails for the merge block.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingsMock.ts`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

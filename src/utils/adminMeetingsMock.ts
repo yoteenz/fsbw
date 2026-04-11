@@ -3,7 +3,7 @@
  * Mock rows vary by calendar day (seeded); merged with localStorage drafts.
  */
 import { getMockClientsForAyoteenz } from '../pages/admin/clients/page';
-import { FOUNDER_PRIVILEGED_ADMIN_EMAIL } from './adminAuth';
+import { ADMIN_KATEENA_EMAIL, FOUNDER_PRIVILEGED_ADMIN_EMAIL } from './adminAuth';
 
 export type MeetingCategory = 'consultation' | 'appointment';
 
@@ -429,7 +429,7 @@ export function listAggregatedAdminMeetingsForClientDetails(apiMeetings: AdminMe
       const em = String((u as { email?: string })?.email || '')
         .trim()
         .toLowerCase();
-      if (em === FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase()) {
+      if (em === FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase() || em === ADMIN_KATEENA_EMAIL.toLowerCase()) {
         const today = new Date();
         const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(todayKey));
