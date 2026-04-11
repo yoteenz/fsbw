@@ -786,21 +786,27 @@ function CheckoutPage() {
 
   /**
    * Isolated gift-card checkout with nothing to buy → back to gift card PDP.
-   * Must not use initial `cartItems.length === 0` only: on first paint state is still empty
-   * before `loadCartItems` runs, which incorrectly bounced users off `/checkout/gift-card`.
+   * Must not run in the same commit as the first paint: `cartItems` state is still `[]` until
+   * the `loadCartItems` effect runs; an immediate check can false-empty and `replace` to the PDP.
+   * That remounts GiftCardPage → `usePersistentQueryState` ↔ URL sync → Safari's 100 replaceState/10s cap.
+   * Defer one tick and decide from **localStorage** (same source as `loadCartItems`).
    */
   useEffect(() => {
     if (!isGiftCardCheckoutRoute) return;
-    let giftLines: unknown[] = [];
-    try {
-      const stored = localStorage.getItem('cartItems');
-      const parsed = stored ? JSON.parse(stored) : [];
-      giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
-    } catch {
-      /* ignore */
-    }
-    if (giftLines.length > 0) return;
-    navigate('/tools/gift-card', { replace: true });
+    const run = () => {
+      let giftLines: unknown[] = [];
+      try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        /* ignore */
+      }
+      if (giftLines.length > 0) return;
+      navigate('/tools/gift-card', { replace: true });
+    };
+    const t = window.setTimeout(run, 0);
+    return () => clearTimeout(t);
   }, [isGiftCardCheckoutRoute, navigate, cartItems.length]);
 
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */

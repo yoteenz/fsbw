@@ -13152,3 +13152,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/adminReviewProductThumb.ts`**, **`src/pages/admin/pending/page.tsx`**, **`src/utils/adminPendingMockQueues.ts`**, **`src/utils/serverPendingQueueMappers.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
 
 **Follow-up (same thread):** User wanted **Account → Reviews** 2D mannequin assets (not wishlist `noir-thumb`), **only** thumb + stars centered, copy **left** like before, red line **after** body again with **date • time**. Implemented **`accountReviewProductThumbnail.ts`** — shared **`accountReviewProductThumbnailSrc`** with **`account/reviews/page.tsx`**; **`accountReviewThumbnailFromProductTitle`** parses full product lines (NOIR/BLANCO/waves/curls/gift); **`formatReviewSubmittedDateTimeLine`** uses ISO or parses **`M/D/YYYY`** + noon local so time always shows. Modal: **102×102** `object-fit: contain` + Account row star sizing; flex row like account reviews. **`mergeReviewsWithDefaults`** backfills **`submittedAtIso`** for stored mock ids. Removed **`adminReviewProductThumb.ts`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Gift card checkout: Safari replaceState flood (bounce effect race)
+
+**Context:** User again saw **Component Failed to Load** / **`history.replaceState()` more than 100 times per 10 seconds** when tapping **Proceed to checkout** on the gift card PDP.
+
+**Cause:** **`CheckoutPage`** effect for empty **`/checkout/gift-card`** ran in the **same commit** as first mount while **`cartItems`** was still **`[]`** and could **`replace` navigate** to **`/tools/gift-card`** before **`loadCartItems`** applied the new line — rapid **checkout ↔ PDP** remounts; PDP’s **`usePersistentQueryState`** then hammered **`replaceState`**.
+
+**Fix:** Defer the empty-cart bounce with **`setTimeout(..., 0)`** so **`loadCartItems`** runs first; still reads **`localStorage`** as source of truth.
+
+**Changes:** **`src/pages/checkout/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
