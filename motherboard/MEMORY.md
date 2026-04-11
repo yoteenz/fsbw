@@ -13188,3 +13188,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Removed that conditional; copy still uses **`?? 0`** for empty counts.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account profile: DIGITAL CASH same row as CHANGE | RESET
+
+**Context:** User wanted **DIGITAL CASH** on the same horizontal line as **CHANGE | RESET** (or **CHANGE PHOTO**), with voucher + load gift card moving up in tandem.
+
+**Fix:** Profile card is two stacked rows: (1) avatar + name/email/membership/voucher/load gift; (2) **100px-wide** left cell for photo actions, **flex** right cell for **DIGITAL CASH**, **`alignItems: 'center'`**. Removed large **`translateY`** on voucher/digital cash in the details column; founder **VIEW AS CLIENT** stays under avatar in row 1.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
