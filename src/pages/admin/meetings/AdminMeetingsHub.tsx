@@ -13,6 +13,7 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import OrderFormFilePicker from '../../../components/OrderFormFilePicker';
 import {
   ADDON_COMBO_OPTIONS,
   getDefaultColorForUnit,
@@ -358,6 +359,7 @@ export default function AdminMeetingsHub() {
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
   const [panelDropdownRect, setPanelDropdownRect] = useState<DOMRect | null>(null);
   const panelDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
+  const quoteOfferImageInputRef = useRef<HTMLInputElement | null>(null);
   const clientDetailsFocusAppliedRef = useRef(false);
 
   const quoteOfferThumbnailSrc = useMemo(
@@ -1920,26 +1922,6 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
-                    <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block', marginBottom: '4px' }}>
-                      OFFER IMAGE (OPTIONAL)
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="w-full text-[10px]"
-                      style={{ fontFamily: '"Futura PT Book"', marginBottom: '10px' }}
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (!f) return;
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                          const r = String(reader.result || '');
-                          if (r.startsWith('data:')) setQuoteCustomThumbnailSrc(r);
-                        };
-                        reader.readAsDataURL(f);
-                        e.target.value = '';
-                      }}
-                    />
                     <div className="flex justify-center mb-3">
                       <img
                         src={quoteOfferThumbnailSrc}
@@ -1954,11 +1936,45 @@ export default function AdminMeetingsHub() {
                         type="button"
                         className="w-full mb-2 text-[10px] uppercase"
                         style={{ fontFamily: '"Futura PT Book"', color: '#808080', border: 'none', background: 'none', cursor: 'pointer' }}
-                        onClick={() => setQuoteCustomThumbnailSrc(null)}
+                        onClick={() => {
+                          setQuoteCustomThumbnailSrc(null);
+                          try {
+                            if (quoteOfferImageInputRef.current) quoteOfferImageInputRef.current.value = '';
+                          } catch {
+                            /* ignore */
+                          }
+                        }}
                       >
                         REMOVE CUSTOM IMAGE
                       </button>
                     ) : null}
+                    <label
+                      htmlFor="adminQuoteOfferImage"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block', marginBottom: '5px' }}
+                    >
+                      OFFER IMAGE (OPTIONAL)
+                    </label>
+                    <div className="mb-3">
+                      <OrderFormFilePicker
+                        id="adminQuoteOfferImage"
+                        name="adminQuoteOfferImage"
+                        inputRef={quoteOfferImageInputRef}
+                        accept="image/*"
+                        previewSrc={quoteCustomThumbnailSrc}
+                        showSelectedTint={!!quoteCustomThumbnailSrc}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const r = String(reader.result || '');
+                            if (r.startsWith('data:')) setQuoteCustomThumbnailSrc(r);
+                          };
+                          reader.readAsDataURL(f);
+                          e.target.value = '';
+                        }}
+                      />
+                    </div>
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
                       label: 'UNIT:',

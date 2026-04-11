@@ -21,6 +21,7 @@ import {
 import { postClientSubmission, getAccessToken } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { syncProfileFromApi } from '../../../utils/syncFromApi';
+import OrderFormFilePicker from '../../../components/OrderFormFilePicker';
 
 function OrderFormPage() {
   const navigate = useNavigate();
@@ -1372,78 +1373,15 @@ function OrderFormPage() {
                       >
                         <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>PHOTO ID</span> (CARDHOLDER) NAME/ADDRESS SHOULD MATCH ORDER DETAILS. YOU MAY CENSOR OTHER INFO.<span style={{ color: '#EB1C24', fontWeight: 'normal' }}>*</span>
                       </label>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type="file"
-                          id="photoId"
-                          name="photoId"
-                          ref={photoIdInputRef}
-                          onChange={handlePhotoIdChange}
-                          accept="image/*"
-                          style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '36px',
-                            opacity: 0,
-                            cursor: 'pointer',
-                            zIndex: 2
-                          }}
-                        />
-                        <div
-                          onClick={() => photoIdInputRef.current?.click()}
-                          style={{
-                            width: '100%',
-                            minHeight: '36px',
-                            height: photoIdPreview ? 'auto' : '36px',
-                            padding: '8px',
-                            border: '1.3px solid #000000',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            backgroundColor: '#FFFFFF',
-                            color: photoIdFile ? '#808080' : '#EB1C24',
-                            boxSizing: 'border-box',
-                            borderRadius: '0',
-                            cursor: 'pointer',
-                            textTransform: 'uppercase',
-                            position: 'relative',
-                            overflow: photoIdPreview ? 'visible' : 'hidden',
-                            display: photoIdPreview ? 'block' : 'flex',
-                            alignItems: photoIdPreview ? 'normal' : 'center'
-                          }}
-                        >
-                          {photoIdPreview ? (
-                            <img 
-                              src={photoIdPreview} 
-                              alt="Photo ID preview" 
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                                objectFit: 'contain',
-                                objectPosition: 'left center',
-                                display: 'block'
-                              }}
-                            />
-                          ) : (
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ 
-                                padding: '4px 8px',
-                                border: '1px solid #808080',
-                                borderRadius: '4px',
-                                backgroundColor: '#F5F5F5',
-                                color: '#000000',
-                                textTransform: 'uppercase',
-                                fontSize: '11px',
-                                fontFamily: '"Futura PT Book"'
-                              }}>
-                                CHOOSE FILE
-                              </span>
-                              <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
-                                NO FILE SELECTED
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                      <OrderFormFilePicker
+                        id="photoId"
+                        name="photoId"
+                        inputRef={photoIdInputRef}
+                        onChange={handlePhotoIdChange}
+                        accept="image/*"
+                        previewSrc={photoIdPreview}
+                        showSelectedTint={!!photoIdFile}
+                      />
                     </div>
 
                     {/* Optional Last 4 Digits Field */}
@@ -1461,78 +1399,15 @@ function OrderFormPage() {
                       >
                         <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}>LAST 4 DIGITS</span> (CARDHOLDER) PHOTO IDENTIFICATION SHOWING FULL NAME AND LAST 4 DIGITS OF CARD. YOU MAY CENSOR OTHER DIGITS. DISREGARD THIS BOX IF USING A PAYMENT PLAN.
                       </label>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type="file"
-                          id="lastFourDigits"
-                          name="lastFourDigits"
-                          ref={lastFourDigitsInputRef}
-                          onChange={handleLastFourDigitsChange}
-                          accept="image/*"
-                          style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '36px',
-                            opacity: 0,
-                            cursor: 'pointer',
-                            zIndex: 2
-                          }}
-                        />
-                        <div
-                          onClick={() => lastFourDigitsInputRef.current?.click()}
-                          style={{
-                            width: '100%',
-                            minHeight: '36px',
-                            height: lastFourDigitsPreview ? 'auto' : '36px',
-                            padding: '8px',
-                            border: '1.3px solid #000000',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '11px',
-                            backgroundColor: '#FFFFFF',
-                            color: lastFourDigitsFile ? '#808080' : '#EB1C24',
-                            boxSizing: 'border-box',
-                            borderRadius: '0',
-                            cursor: 'pointer',
-                            textTransform: 'uppercase',
-                            position: 'relative',
-                            overflow: lastFourDigitsPreview ? 'visible' : 'hidden',
-                            display: lastFourDigitsPreview ? 'block' : 'flex',
-                            alignItems: lastFourDigitsPreview ? 'normal' : 'center'
-                          }}
-                        >
-                          {lastFourDigitsPreview ? (
-                            <img 
-                              src={lastFourDigitsPreview} 
-                              alt="Last 4 digits preview" 
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                                objectFit: 'contain',
-                                objectPosition: 'left center',
-                                display: 'block'
-                              }}
-                            />
-                          ) : (
-                            <>
-                              <span style={{ 
-                                padding: '4px 8px',
-                                border: '1px solid #808080',
-                                borderRadius: '4px',
-                                backgroundColor: '#F5F5F5',
-                                color: '#000000',
-                                textTransform: 'uppercase',
-                                fontSize: '11px',
-                                fontFamily: '"Futura PT Book"'
-                              }}>
-                                CHOOSE FILE
-                              </span>
-                              <span style={{ marginLeft: '8px', color: '#808080', fontFamily: '"Futura PT Book"', fontSize: '10px' }}>
-                                NO FILE SELECTED
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </div>
+                      <OrderFormFilePicker
+                        id="lastFourDigits"
+                        name="lastFourDigits"
+                        inputRef={lastFourDigitsInputRef}
+                        onChange={handleLastFourDigitsChange}
+                        accept="image/*"
+                        previewSrc={lastFourDigitsPreview}
+                        showSelectedTint={!!lastFourDigitsFile}
+                      />
                     </div>
 
                     {/* Address Difference Reason Section */}
