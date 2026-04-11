@@ -2055,7 +2055,7 @@ export default function AdminMeetingsHub() {
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
         title="SEND OFFER?"
-        message="CLIENT WILL SEE AN ALERT WITH VIEW OFFER (CONSULT OFFER)."
+        message="CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER."
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"
