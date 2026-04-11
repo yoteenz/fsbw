@@ -13430,3 +13430,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`src/pages/admin/meetings/AdminMeetingsHub.tsx`:** **`renderPanelSelectDropdown`** renders the option list via **`createPortal`** to **`document.body`** with **`getBoundingClientRect`** on the open trigger, **`max-height: min(70vh, 520px)`**, overlay z-index **5000+** so lists are not clipped by the card’s **`overflow-hidden`**. **`formatCreateOfferBreakdownAmount`:** positive amounts always get **`+`** (unit line was wrong because **`includeSign`** was **`false`** for **UNIT**). Breakdown UI and persisted **`priceBreakdown`** use signed amounts for all priced lines. Default/sent **`thumbnailSrc`** uses **`quoteOfferThumbnailSrc`** (orders-page paths or optional upload **data URL**). **OFFER IMAGE (OPTIONAL)** file input above **UNIT**; **REMOVE CUSTOM IMAGE**; **`quoteCustomThumbnailSrc`** + session draft **`quoteCustomThumbnailDataUrl`**. **`closeMainCardPanel`** clears custom thumb and dropdown portal state.
 
 **Docs:** **`motherboard/CORE.md`** (send offer portal + thumbs + optional image + **+** pricing), this **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: colons on UNIT / CATEGORY / SELECTION labels
+
+**Context (this chat):** Prior work on Admin Meetings send offer (portal dropdowns, orders-page unit thumbs, custom offer image, **+** unit pricing). User asked to add colons after **UNIT**, **CATEGORY**, and **SELECTION** so labels read **UNIT:**, **CATEGORY:**, **SELECTION:**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — **`renderPanelSelectDropdown`** `label` props for **`quoteUnit`**, **`quoteSub`**, **`quoteSubSelection`** updated to include trailing **`:`**.
+
+**Docs:** This **MEMORY** entry.

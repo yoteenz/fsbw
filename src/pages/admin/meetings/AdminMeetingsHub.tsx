@@ -1961,7 +1961,7 @@ export default function AdminMeetingsHub() {
                     ) : null}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
-                      label: 'UNIT',
+                      label: 'UNIT:',
                       value: UNIT_OPTIONS.find((u) => u.id === quoteUnit)?.label ?? quoteUnit,
                       options: UNIT_OPTIONS.map((u) => u.label),
                       onChange: (next) => {
@@ -1972,7 +1972,7 @@ export default function AdminMeetingsHub() {
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSub',
-                      label: 'CATEGORY',
+                      label: 'CATEGORY:',
                       value: quoteSub,
                       options: SUB_PAGE_OPTIONS,
                       onChange: (next) => setQuoteSub(next as QuoteSubPage),
@@ -1980,7 +1980,7 @@ export default function AdminMeetingsHub() {
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSubSelection',
-                      label: 'SELECTION',
+                      label: 'SELECTION:',
                       value: currentQuoteSubSelectionDisplayValue,
                       options: currentQuoteSubSelectionOptions.map((option) =>
                         quoteSub === 'HAIRLINE' ? hairlineDisplayValue(option) : option
