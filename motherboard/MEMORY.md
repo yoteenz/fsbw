@@ -13306,3 +13306,11 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** **`adminFounderDemoConsultMeetingOrder331`** in **`adminMeetingsMock.ts`** (id **`demo-consult-order-331`**, **`metadata.orderNumber: ORDER #331`**, founder email). Merged into **`AdminMeetingsHub`** `mergedMeetings` when **`isAyoteenzAdminAccount(currentUser)`** and into **`listAggregatedAdminMeetingsForClientDetails`** when signed-in email is founder. Date = first day of **`calendarAnchor`** month at **2:00 PM**.
 
 **Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin send-offer confirm copy
+
+**Context:** User asked to replace confirmation modal text with **CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER.** instead of the longer VIEW OFFER line.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** `ConfirmationModal` message.
