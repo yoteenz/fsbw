@@ -13224,3 +13224,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Implementation:** **`ConsultOfferClaimModal`** + **`consultOfferFromQuote.ts`** (cart build from quote selections + **`calculateSpecialOfferPriceBreakdown`**). **`markConsultOrderCompleteAfterQuoteSent`** stores optional **`consultOfferSnapshot`** on the matched order. **Admin meetings** send full **selections**, per-unit **thumbnail**, and snapshot. **`POST /api/admin/consult-quotes`** returns full quote row. **Checkout** reads **`?consultClaim=`** / session and **auto-applies** the **CONSULT-*** code after the cart line exists. **Orders** loads **`getConsultQuote`** when configured, else snapshot; mock archived **COMPLETE** consult with snapshot for QA.
 
 **Changes:** `src/components/ConsultOfferClaimModal.tsx`, `src/utils/consultOfferFromQuote.ts`, `src/utils/consultOrderLifecycle.ts`, `src/pages/admin/meetings/AdminMeetingsHub.tsx`, `api/admin/consult-quotes.ts`, `src/pages/checkout/page.tsx`, `src/pages/orders/page.tsx`, `motherboard/MEMORY.md`. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Account profile: voucher / digital cash / load gift +3px (clients only)
+
+**Context:** User asked to move **only** the three profile lines **VOUCHER**, **DIGITAL CASH**, and **LOAD GIFT CARD** **down 3px in tandem**, and **not** when the **admin founder** account is in **admin** view (only for **clients** — including founder **VIEW AS CLIENT**).
+
+**Fix:** Added **`clientOnlyVoucherCashGiftDy`** (`useMemo`): **`0`** when **`isAyoteenzAdminAccount(userData) && !founderViewAsClient`**, else **`3`**. Each of the three `<p>` **`translateY`** values adds that offset so spacing between lines stays the same.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

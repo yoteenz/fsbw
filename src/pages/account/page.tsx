@@ -228,6 +228,12 @@ function AccountPage() {
     }
   });
 
+  /** Nudge voucher / digital cash / load gift down together for real clients only (not founder in admin view). */
+  const clientOnlyVoucherCashGiftDy = React.useMemo(() => {
+    if (isAyoteenzAdminAccount(userData) && !founderViewAsClient) return 0;
+    return 3;
+  }, [userData, founderViewAsClient]);
+
   /** When false, founder mock account uses seeded/mock profile chrome on this page only. */
   const profileUsesMockChrome = React.useMemo(
     () => Boolean(userData && isMockProfileChromeActive(userData)),
@@ -2179,7 +2185,7 @@ function AccountPage() {
                         margin: '0 0 -12px 0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(1px)',
+                        transform: `translateY(${1 + clientOnlyVoucherCashGiftDy}px)`,
                         cursor: 'pointer'
                       }}
                     >
@@ -2198,7 +2204,7 @@ function AccountPage() {
                         margin: '0',
                         textTransform: 'uppercase',
                         fontWeight: '500',
-                        transform: 'translateY(5px)',
+                        transform: `translateY(${5 + clientOnlyVoucherCashGiftDy}px)`,
                         cursor: 'pointer'
                       }}
                     >
@@ -2215,7 +2221,7 @@ function AccountPage() {
                         textTransform: 'uppercase',
                         fontWeight: '500',
                         cursor: 'pointer',
-                        transform: 'translateY(-2px)'
+                        transform: `translateY(${-2 + clientOnlyVoucherCashGiftDy}px)`
                       }}
                     >
                       LOAD GIFT CARD
