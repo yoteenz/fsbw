@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import {
   ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
+  isAyoteenzAdminAccount,
   isMockDataAccount,
   isMockProfileChromeActive,
   readFounderAccountViewAsClientFromStorage,
@@ -420,6 +421,74 @@ function OrdersPage() {
     return Date.now() - (hoursAgo * 60 * 60 * 1000);
   };
 
+  /** Demo consult COMPLETE + offer snapshot — same row as Kateena mock chrome; injected for founder admin when not using mock chrome. */
+  const buildFounderDemoConsultOrder331 = (): Order => ({
+    id: 'kateena-consult-2',
+    orderNumber: 'ORDER #331',
+    confirmationNumber: 'K3C3Q1',
+    date: getDateDaysAgo(2),
+    status: 'COMPLETE',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/gallery-mock.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    trackingNumber: undefined,
+    trackingCarrier: undefined,
+    placedAt: Date.now() - (30 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
+    completedAt: Date.now() - (2 * 60 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
+    consultQuoteId: '00000000-0000-4000-8000-000000000088',
+    consultOfferSnapshot: {
+      unitKey: 'NOIR',
+      selections: {
+        capSize: 'M',
+        length: '24"',
+        density: '200%',
+        texture: 'SILKY',
+        lace: '13X6',
+        hairline: 'NATURAL',
+        color: 'OFF BLACK',
+        styling: 'NONE',
+        addOns: [],
+      },
+      priceBreakdown: [
+        { label: 'BASE UNIT', value: 'NOIR $740 USD' },
+        { label: 'ESTIMATED TOTAL', value: '$740 USD' },
+      ],
+      adminMessage:
+        'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.',
+      thumbnailSrc: '/assets/NOIR/noir-thumb.png',
+      discountCode: 'CONSULT-DEMO88',
+      expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+    },
+  });
+
+  const mergeFounderAdminConsultOrder331Demo = (
+    user: { email?: string } | null,
+    activeOrders: Order[],
+    pastOrders: Order[]
+  ): { activeOrders: Order[]; pastOrders: Order[]; merged: boolean } => {
+    if (!user?.email || !isAyoteenzAdminAccount(user)) {
+      return { activeOrders, pastOrders, merged: false };
+    }
+    if (isMockProfileChromeActive(user)) return { activeOrders, pastOrders, merged: false };
+    if (readFounderAccountViewAsClientFromStorage()) return { activeOrders, pastOrders, merged: false };
+    const normNum = (s: string) => s.replace(/\s+/g, ' ').trim().toUpperCase();
+    const has331 = [...activeOrders, ...pastOrders].some((o) => normNum(String(o.orderNumber || '')) === 'ORDER #331');
+    if (has331) return { activeOrders, pastOrders, merged: false };
+    return {
+      activeOrders: [buildFounderDemoConsultOrder331(), ...activeOrders],
+      pastOrders,
+      merged: true,
+    };
+  };
+
   // Helper function to format countdown time
   const formatCountdown = (remainingMs: number): string => {
     if (remainingMs <= 0) return '0 HOURS REMAINING';
@@ -783,6 +852,20 @@ function OrdersPage() {
         const orders = JSON.parse(storedOrders);
         let activeOrders = orders.activeOrders || [];
         let pastOrders = orders.pastOrders || [];
+        const founder331 = mergeFounderAdminConsultOrder331Demo(currentUser, activeOrders, pastOrders);
+        if (founder331.merged) {
+          activeOrders = founder331.activeOrders;
+          pastOrders = founder331.pastOrders;
+          try {
+            localStorage.setItem(
+              userOrdersKey,
+              JSON.stringify({ activeOrders, pastOrders })
+            );
+            window.dispatchEvent(new CustomEvent('ordersUpdated'));
+          } catch (_) {
+            /* ignore */
+          }
+        }
         if (isMockDataAccount(currentUser) && readFounderAccountViewAsClientFromStorage()) {
           activeOrders = excludeFounderSeedMockOrders(activeOrders);
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
@@ -923,51 +1006,7 @@ function OrdersPage() {
       bookingHairOption: 'WIG + INSTALL',
       bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
     },
-    {
-      id: 'kateena-consult-2',
-      orderNumber: 'ORDER #331',
-      confirmationNumber: 'K3C3Q1',
-      date: getDateDaysAgo(2),
-      status: 'COMPLETE',
-      productName: 'WIG CONSULT',
-      productImage: '/assets/gallery-mock.png',
-      total: 40,
-      subtotal: 40,
-      items: 1,
-      trackingNumber: undefined,
-      trackingCarrier: undefined,
-      placedAt: Date.now() - (30 * 60 * 60 * 1000),
-      consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
-      completedAt: Date.now() - (2 * 60 * 60 * 1000),
-      orderFormSigned: false,
-      bookingFlowType: 'consult',
-      bookingTier: 'standard',
-      bookingHairOption: 'WIG ONLY',
-      bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
-      consultQuoteId: '00000000-0000-4000-8000-000000000088',
-      consultOfferSnapshot: {
-        unitKey: 'NOIR',
-        selections: {
-          capSize: 'M',
-          length: '24"',
-          density: '200%',
-          texture: 'SILKY',
-          lace: '13X6',
-          hairline: 'NATURAL',
-          color: 'OFF BLACK',
-          styling: 'NONE',
-          addOns: [],
-        },
-        priceBreakdown: [
-          { label: 'BASE UNIT', value: 'NOIR $740 USD' },
-          { label: 'ESTIMATED TOTAL', value: '$740 USD' },
-        ],
-        adminMessage: 'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.',
-        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
-        discountCode: 'CONSULT-DEMO88',
-        expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
-      },
-    }
+    buildFounderDemoConsultOrder331(),
   ];
 
   const kateenaMockPastOrders: Order[] = [
@@ -1187,6 +1226,20 @@ function OrdersPage() {
                     const o = JSON.parse(stored);
                     let activeOrders: Order[] = o.activeOrders || [];
                     let pastOrders: Order[] = o.pastOrders || [];
+                    const founder331Upd = mergeFounderAdminConsultOrder331Demo(parsedUser, activeOrders, pastOrders);
+                    if (founder331Upd.merged) {
+                      activeOrders = founder331Upd.activeOrders;
+                      pastOrders = founder331Upd.pastOrders;
+                      try {
+                        localStorage.setItem(
+                          key,
+                          JSON.stringify({ activeOrders, pastOrders })
+                        );
+                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                      } catch (_) {
+                        /* ignore */
+                      }
+                    }
                     if (
                       parsedUser &&
                       isMockDataAccount(parsedUser) &&

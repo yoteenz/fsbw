@@ -13286,3 +13286,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Replaced stacking extra **`translateY`** on each line with a **wrapper `div`**: **`marginTop: 15px`** for clients (**0** for founder **VIEW AS ADMIN**). Per-line **`translateY(1px / 5px / -2px)`** restored; wrapper uses **`gap: 8px`** so spacing between the three lines matches the parent column.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Orders: inject ORDER #331 for founder admin (non–mock chrome)
+
+**Context:** User wanted **ORDER #331** (consult **COMPLETE** + offer) on **Account → Orders** for **admin founder** when not using mock profile chrome (real **`userOrders_*`** path).
+
+**Fix:** **`buildFounderDemoConsultOrder331`** + **`mergeFounderAdminConsultOrder331Demo`**: if **`isAyoteenzAdminAccount`**, not mock chrome, not **VIEW AS CLIENT**, and no existing **`ORDER #331`**, prepend demo row to **active** orders and persist **`userOrders_<email>`**. Same object reused in **`kateenaMockActiveOrders`**. **`updateUser`** path also merges so first load injects.
+
+**Changes:** **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
