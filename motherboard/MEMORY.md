@@ -13234,3 +13234,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** Added **`clientOnlyVoucherCashGiftDy`** (`useMemo`): **`0`** when **`isAyoteenzAdminAccount(userData) && !founderViewAsClient`**, else **`3`**. Each of the three `<p>` **`translateY`** values adds that offset so spacing between lines stays the same.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up:** User asked for **+4px down** again with the same founder exclusion — **`clientOnlyVoucherCashGiftDy`** **`3` → `7`** (total **7px** from original positions for clients).
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
