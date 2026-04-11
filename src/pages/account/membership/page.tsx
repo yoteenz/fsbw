@@ -1346,7 +1346,7 @@ function MembershipPage() {
                                   <p
                                     style={{
                                       fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                      fontSize: '11px',
+                                      fontSize: reward.type === 'free_gift' ? '16px' : '11px',
                                       color: labelColor,
                                       margin: '0 0 2px 0',
                                       textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',
@@ -2168,7 +2168,7 @@ fontFamily: '"Futura PT Book"',
                                       <p
                                         style={{
                                           fontFamily: reward.type === 'free_gift' ? '"Bohemy", cursive' : '"Futura PT Medium"',
-                                          fontSize: '11px',
+                                          fontSize: reward.type === 'free_gift' ? '16px' : '11px',
                                           color: labelColor,
                                           margin: '0 0 2px 0',
                                           textTransform: reward.type === 'free_gift' ? 'lowercase' : 'uppercase',

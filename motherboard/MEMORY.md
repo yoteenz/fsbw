@@ -13398,3 +13398,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Fix:** In **`membership/page.tsx`** loyalty reward row label styles: **`textTransform: 'lowercase'`** when **`reward.type === 'free_gift'`**, else **`'uppercase'`** (both list blocks).
 
 **Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT Bohemy label 16px (match redeem)
+
+**Context:** User asked to set **free gift** Bohemy row title **`fontSize`** to **16px** (same as **redeem** button).
+
+**Fix:** Reward label **`fontSize`**: **`16px`** when **`reward.type === 'free_gift'`**, else **`11px`** (both loyalty list blocks in **`membership/page.tsx`**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
