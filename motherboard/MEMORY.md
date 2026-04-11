@@ -13206,3 +13206,7 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Follow-up 2:** User asked to **fully revert** those profile tweaks: removed **`translateY(-22px)`** wrapper so voucher / digital cash / load gift match **`9b611fa`** vertical spacing again. Same-line alignment of digital cash with **CHANGE|RESET** not shipped in this revert.
 
 **Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 3:** User asked to move **only** the three lines (voucher, digital cash, load gift card) **up 4px in tandem** — wrapper **`transform: translateY(-4px)`** around those three `<p>`s; inner margins/transforms unchanged.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.

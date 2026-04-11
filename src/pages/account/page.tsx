@@ -2167,6 +2167,7 @@ function AccountPage() {
                       );
                     })()}
 
+                    <div style={{ transform: 'translateY(-4px)' }}>
                     <p
                       role="button"
                       tabIndex={0}
@@ -2220,6 +2221,7 @@ function AccountPage() {
                     >
                       LOAD GIFT CARD
                     </p>
+                    </div>
                   </div>
                 </div>
 
