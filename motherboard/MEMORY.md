@@ -13460,3 +13460,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`membership/page.tsx`** — both **`LOYALTY_REWARDS.map`** blocks: the span after **“AT”** again uses **`Futura PT Medium`**, **`fontWeight: 500`**, **`… PTS`** (uppercase); gray vs red colors unchanged.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: OrderFormFilePicker below unit thumb
+
+**Context (this chat):** User wanted **OFFER IMAGE (OPTIONAL)** **below** the unit thumbnail (not above) and to use the **same file picker** as the **order authorization** page (**`/tools/order-form`**).
+
+**Changes:** Added **`src/components/OrderFormFilePicker.tsx`** — shared control (invisible **`input`**, bordered box, **CHOOSE FILE** / **NO FILE SELECTED**, optional in-box image preview) matching order-form photo upload UX. **`order-form/page.tsx`** — **PHOTO ID** and **LAST 4 DIGITS** fields now use **`OrderFormFilePicker`**. **`AdminMeetingsHub.tsx`** — centered **102×102** unit/custom thumb first; **REMOVE CUSTOM IMAGE** clears state + file input; label + **`OrderFormFilePicker`** below ( **`adminQuoteOfferImage`** ); **`quoteOfferImageInputRef`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
