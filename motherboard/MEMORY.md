@@ -13824,3 +13824,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/admin/reviews/page.tsx`** — tabs **`OVERVIEW` | `SHOP` | `TOOLS`**; default **`OVERVIEW`**; top cards on overview: **combined** average + **TOTAL (SHOP + TOOLS)**. Overview: **`OverviewAnalyticsPanel`** with **SHOP REVIEWS** and **TOOLS REVIEWS** sections (totals, avg, published/pending, % photos/videos, % verified, 1–5★ bars). Star sort dropdown **only** on **SHOP** / **TOOLS**. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Pending VIEW REVIEW: media under date/time
+
+**Context (this chat):** **VIEW REVIEW** pop-up should show attached **photos/videos** directly **below** the red date/time line (e.g. **`3/28/2026 • 10:27AM`**).
+
+**Changes:** **`pending/page.tsx`** — **`pendingReviewModalDisplayMedia`**: use **`photoUrls`/`videoUrls`** when set, else placeholders from **`photoCount`/`videoCount`**. Media row moved **inside** the right column **immediately after** **`dateTimeLine`**. **`adminPendingMockQueues.ts`** — **`mock-rev-1`** **`photoCount`/`videoCount`**; **`mergeReviewsWithDefaults`** backfills counts from defaults when URLs and counts missing. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.

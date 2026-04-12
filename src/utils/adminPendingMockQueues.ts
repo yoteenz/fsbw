@@ -116,6 +116,8 @@ const DEFAULT_REVIEWS: PendingMockReview[] = [
     date: '3/28/2026',
     submittedAtIso: '2026-03-28T15:27:00.000Z',
     status: 'PENDING',
+    photoCount: 2,
+    videoCount: 1,
   },
   {
     id: 'mock-rev-2',
@@ -278,9 +280,23 @@ function mergeReviewsWithDefaults(stored: PendingMockReview[]): PendingMockRevie
     const base = byId.get(row.id);
     if (!base) return row;
     const nextIso = row.submittedAtIso || base.submittedAtIso;
+    const noUrls = !(row.photoUrls?.length) && !(row.videoUrls?.length);
+    const noCounts = !(row.photoCount || row.videoCount);
+    const baseMedia =
+      (base.photoCount ?? 0) > 0 || (base.videoCount ?? 0) > 0
+        ? { photoCount: base.photoCount, videoCount: base.videoCount }
+        : null;
     if (nextIso && nextIso !== row.submittedAtIso) {
       changed = true;
-      return { ...row, submittedAtIso: nextIso };
+      row = { ...row, submittedAtIso: nextIso };
+    }
+    if (baseMedia && noUrls && noCounts) {
+      changed = true;
+      return {
+        ...row,
+        photoCount: baseMedia.photoCount ?? row.photoCount,
+        videoCount: baseMedia.videoCount ?? row.videoCount,
+      };
     }
     return row;
   });

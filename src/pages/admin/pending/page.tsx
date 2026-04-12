@@ -59,8 +59,29 @@ const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 /** Match Account → Reviews product image column */
 const ACCOUNT_REVIEWS_MODAL_THUMB_PX = 102;
 const ACCOUNT_REVIEWS_MODAL_STAR_PX = 9.11;
+const ACCOUNT_REVIEWS_MODAL_MEDIA_FRAME_PX = 50;
 const NOIR_REVIEW_STAR_FILLED_SRC = '/assets/NOIR/filled-star.png';
 const NOIR_REVIEW_STAR_OUTLINE_SRC = '/assets/NOIR/star-symbol.png';
+
+/** Pending review modal: show photos/videos under date line even when only counts exist (matches list card). */
+function pendingReviewModalDisplayMedia(rv: PendingMockReview): { photoUrls: string[]; videoUrls: string[] } {
+  const existingP = (rv.photoUrls || []).filter(Boolean);
+  const existingV = (rv.videoUrls || []).filter(Boolean);
+  if (existingP.length > 0 || existingV.length > 0) {
+    return { photoUrls: existingP, videoUrls: existingV };
+  }
+  const pCount = rv.photoCount ?? 0;
+  const vCount = rv.videoCount ?? 0;
+  if (pCount <= 0 && vCount <= 0) return { photoUrls: [], videoUrls: [] };
+  const h = String(rv.id || '0').replace(/\W/g, '').slice(0, 12) || '0';
+  const photoUrls = Array.from({ length: Math.max(0, pCount) }, (_, i) =>
+    `https://picsum.photos/seed/baw-pend-modal-${h}-p${i}/200/200`
+  );
+  const videoUrls = Array.from({ length: Math.max(0, vCount) }, () =>
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+  );
+  return { photoUrls, videoUrls };
+}
 
 /** Avatar + left column right, date left — symmetric nudge inside list cards. */
 const PENDING_CARD_CONTENT_NUDGE_PX = 6;
@@ -1547,6 +1568,16 @@ export default function AdminPending() {
                     const thumbSrc = accountReviewThumbnailFromProductTitle(rv.product);
                     const starN = Math.min(5, Math.max(1, Math.round(Number(rv.rating)) || 1));
                     const dateTimeLine = formatReviewSubmittedDateTimeLine(rv.submittedAtIso, rv.date);
+                    const { photoUrls: modalPhotoUrls, videoUrls: modalVideoUrls } = pendingReviewModalDisplayMedia(rv);
+                    const modalMediaFrame = {
+                      width: `${ACCOUNT_REVIEWS_MODAL_MEDIA_FRAME_PX}px`,
+                      height: `${ACCOUNT_REVIEWS_MODAL_MEDIA_FRAME_PX}px`,
+                      background: '#f3f4f6',
+                      border: '3px solid #FFFFFF',
+                      boxShadow: '0 0 0 1.1px #000000',
+                      boxSizing: 'border-box' as const,
+                      overflow: 'hidden',
+                    };
                     const starStroke = 'drop-shadow(0 0 0 1px black)';
                     return (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
@@ -1625,48 +1656,33 @@ export default function AdminPending() {
                     >
                       {dateTimeLine}
                     </p>
-                      </div>
-                    </div>
-                    {(rv.photoUrls?.length || rv.videoUrls?.length) ? (
-                      <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {(rv.photoUrls || []).map((src, i) => (
+                    {modalPhotoUrls.length > 0 || modalVideoUrls.length > 0 ? (
+                      <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {modalPhotoUrls.map((src, i) => (
                           <a
                             key={`rv-ph-${i}`}
                             href={src}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{
-                              width: '50px',
-                              height: '50px',
-                              background: '#f3f4f6',
-                              border: '3px solid #FFFFFF',
-                              boxShadow: '0 0 0 1.1px #000000',
-                              boxSizing: 'border-box',
-                              overflow: 'hidden',
-                              display: 'block',
-                            }}
+                            style={{ ...modalMediaFrame, display: 'block' }}
                           >
                             <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                           </a>
                         ))}
-                        {(rv.videoUrls || []).map((src, i) => (
-                          <div
-                            key={`rv-vd-${i}`}
-                            style={{
-                              width: '50px',
-                              height: '50px',
-                              background: '#f3f4f6',
-                              border: '3px solid #FFFFFF',
-                              boxShadow: '0 0 0 1.1px #000000',
-                              boxSizing: 'border-box',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            <video src={src} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        {modalVideoUrls.map((src, i) => (
+                          <div key={`rv-vd-${i}`} style={modalMediaFrame}>
+                            <video
+                              src={src}
+                              controls
+                              playsInline
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                            />
                           </div>
                         ))}
                       </div>
                     ) : null}
+                      </div>
+                    </div>
                   </div>
                     );
                   })()
