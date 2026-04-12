@@ -45,7 +45,8 @@ import {
   filterOutPremiumMembershipUpgradeOrders,
   normalizeUserOrdersBuckets,
   orderStatusIsCanceled,
-  sortOrdersNewestFirst,
+  sortActiveOrdersByRecentActivityFirst,
+  sortArchivedOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
 import {
   advanceConsultOrdersPlacedToProcessing,
@@ -880,17 +881,21 @@ function OrdersPage() {
         const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
         const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
         const sorted = {
-          activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
-          pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+          activeOrders: sortActiveOrdersByRecentActivityFirst(filtered.activeOrders),
+          pastOrders: sortArchivedOrdersNewestFirst(filtered.pastOrders),
         };
         const consultAdvanced = {
-          activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
-          pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+          activeOrders: sortActiveOrdersByRecentActivityFirst(
+            advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)
+          ),
+          pastOrders: sortArchivedOrdersNewestFirst(
+            advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)
+          ),
         };
         try {
           const sortedNormOnly = {
-            activeOrders: sortOrdersNewestFirst(norm.activeOrders),
-            pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+            activeOrders: sortActiveOrdersByRecentActivityFirst(norm.activeOrders),
+            pastOrders: sortArchivedOrdersNewestFirst(norm.pastOrders),
           };
           const needsSortPersist =
             JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders }) !==
@@ -1159,8 +1164,8 @@ function OrdersPage() {
   const getUserOrdersData = () => {
     if (isMockOrdersAccount()) {
       return {
-        activeOrders: sortOrdersNewestFirst(kateenaMockActiveOrders),
-        pastOrders: sortOrdersNewestFirst(kateenaMockPastOrders),
+        activeOrders: sortActiveOrdersByRecentActivityFirst(kateenaMockActiveOrders),
+        pastOrders: sortArchivedOrdersNewestFirst(kateenaMockPastOrders),
       };
     }
     return getUserOrders();
@@ -1258,16 +1263,20 @@ function OrdersPage() {
                     const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
                     const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
                     const sorted = {
-                      activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
-                      pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(filtered.activeOrders),
+                      pastOrders: sortArchivedOrdersNewestFirst(filtered.pastOrders),
                     };
                     const consultAdvanced = {
-                      activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
-                      pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(
+                        advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)
+                      ),
+                      pastOrders: sortArchivedOrdersNewestFirst(
+                        advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)
+                      ),
                     };
                     const sortedNormOnly = {
-                      activeOrders: sortOrdersNewestFirst(norm.activeOrders),
-                      pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(norm.activeOrders),
+                      pastOrders: sortArchivedOrdersNewestFirst(norm.pastOrders),
                     };
                     const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
                     if (
@@ -1297,8 +1306,8 @@ function OrdersPage() {
             : { activeOrders: [], pastOrders: [] };
         }
 
-        setActiveOrders(sortOrdersNewestFirst(ordersData.activeOrders));
-        setPastOrders(sortOrdersNewestFirst(ordersData.pastOrders));
+        setActiveOrders(sortActiveOrdersByRecentActivityFirst(ordersData.activeOrders));
+        setPastOrders(sortArchivedOrdersNewestFirst(ordersData.pastOrders));
 
         // Keep localStorage in sync for mock-data account so account profile card count matches orders page
         if (parsedUser?.email && useMock) {
@@ -1306,8 +1315,8 @@ function OrdersPage() {
           localStorage.setItem(
             key,
             JSON.stringify({
-              activeOrders: sortOrdersNewestFirst(ordersData.activeOrders),
-              pastOrders: sortOrdersNewestFirst(ordersData.pastOrders),
+              activeOrders: sortActiveOrdersByRecentActivityFirst(ordersData.activeOrders),
+              pastOrders: sortArchivedOrdersNewestFirst(ordersData.pastOrders),
             })
           );
           window.dispatchEvent(new CustomEvent('ordersUpdated'));
@@ -1607,10 +1616,10 @@ function OrdersPage() {
             const ids = new Set(prevPast.map((o) => o.id).filter(Boolean) as string[]);
             const append = toArchive.filter((o) => !o.id || !ids.has(o.id));
             if (append.length === 0) return prevPast;
-            return sortOrdersNewestFirst([...prevPast, ...append]);
+            return sortArchivedOrdersNewestFirst([...prevPast, ...append]);
           });
         }
-        return sortOrdersNewestFirst(nextActive);
+        return sortActiveOrdersByRecentActivityFirst(nextActive);
       });
     };
 
@@ -1672,12 +1681,12 @@ function OrdersPage() {
           setPastOrders(prevPast => {
             const existingIds = new Set(prevPast.map(o => o.id));
             const newOrders = toArchive.filter(o => !existingIds.has(o.id));
-            if (newOrders.length === 0) return sortOrdersNewestFirst(prevPast);
-            return sortOrdersNewestFirst([...prevPast, ...newOrders]);
+            if (newOrders.length === 0) return sortArchivedOrdersNewestFirst(prevPast);
+            return sortArchivedOrdersNewestFirst([...prevPast, ...newOrders]);
           });
         }
 
-        return sortOrdersNewestFirst(toKeep);
+        return sortActiveOrdersByRecentActivityFirst(toKeep);
       });
     };
 
@@ -3062,7 +3071,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                         });
                       }
 
-                      const stripSorted = sortOrdersNewestFirst(ordersToDisplay);
+                      const stripSorted = sortActiveOrdersByRecentActivityFirst(ordersToDisplay);
                       
                       return stripSorted.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses

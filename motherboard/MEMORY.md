@@ -13762,3 +13762,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`sortNotificationsNewestFirst`** — removed **`syntheticSortAtFromId`** added to **`date`-only** rows; primary key is **`sortAt`** else **calendar **`date`** midnight** only, then tie-breakers.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account → Orders: archived vs active sort keys
+
+**Context (this chat):** User wanted **archived** orders sorted with the **most recently finished** order at the top, and **active** orders sorted by **most recent activity / status-related changes** at the top.
+
+**Changes:** **`userOrdersBuckets.ts`** — **`orderArchivedSortTimeMs`** (terminal **`completedAt` / `deliveredAt` / `canceledAt`** by status, not **`placedAt` first**), **`orderActiveActivitySortTimeMs`** (max of **`updatedAt`**, **`consultProcessingStartedAt`**, delivery/complete/cancel, **`placedAt`**, created), **`sortArchivedOrdersNewestFirst`**, **`sortActiveOrdersByRecentActivityFirst`**; **`orderSortTimeMs`** now skips zero timestamps. **`orders/page.tsx`** uses the two new sorters for **`pastOrders`** vs **`activeOrders`** (load, effects, mock strip, bottom status strip). **`orderFormDeclineCancelRefund.ts`** sorts **`past`** with **`sortArchivedOrdersNewestFirst`**. Branch **`cursor/orders-bucket-sort-81f5`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
