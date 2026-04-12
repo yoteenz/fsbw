@@ -33,6 +33,7 @@ import {
   loadLocalMeetings,
   parseISODateLocal,
   startOfMonth,
+  upsertLocalMeeting,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
 import {
@@ -64,6 +65,7 @@ import {
   meetingClientProfilePhoto,
   meetingClientUniqKey,
   meetingHasTravelAddon,
+  meetingIsArchivedForAdminViewAll,
   meetingIsCurrentOrActive,
   meetingMatchesPageSearch,
   meetingSortTimeMs,
@@ -126,8 +128,26 @@ const QUOTE_PART_SELECTION_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 /** Same ids/order as build-a-wig cap-size page: custom XS–L then flexible bands. */
 const CREATE_OFFER_CAP_SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XXS/XS/S', 'S/M/L'] as const;
 
-const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
-const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
+const BOOKING_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Re-install',
+  'New install',
+] as const;
+const CONSULT_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Wig only',
+  'Wig + install',
+] as const;
 const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
@@ -839,15 +859,21 @@ export default function AdminMeetingsHub() {
     return filteredAppointmentMeetings.filter((m) => m.date === selectedDay);
   }, [filteredAppointmentMeetings, selectedDay]);
 
-  const sortedAppointmentsList = useMemo(
-    () => sortMeetingsByOption(appointmentsForSelectedDay, meetingSortOption),
-    [appointmentsForSelectedDay, meetingSortOption]
-  );
+  const sortedAppointmentsList = useMemo(() => {
+    const base =
+      meetingSortOption === 'Archived'
+        ? appointmentsForSelectedDay
+        : appointmentsForSelectedDay.filter((m) => !meetingIsArchivedForAdminViewAll(m));
+    return sortMeetingsByOption(base, meetingSortOption);
+  }, [appointmentsForSelectedDay, meetingSortOption]);
 
-  const sortedConsultsList = useMemo(
-    () => sortMeetingsByOption(filteredConsultMeetings, meetingSortOption),
-    [filteredConsultMeetings, meetingSortOption]
-  );
+  const sortedConsultsList = useMemo(() => {
+    const base =
+      meetingSortOption === 'Archived'
+        ? filteredConsultMeetings
+        : filteredConsultMeetings.filter((m) => !meetingIsArchivedForAdminViewAll(m));
+    return sortMeetingsByOption(base, meetingSortOption);
+  }, [filteredConsultMeetings, meetingSortOption]);
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
@@ -953,8 +979,36 @@ export default function AdminMeetingsHub() {
           consultQuoteId: quoteId,
           consultOfferSnapshot: snapshot,
         });
-        appendConsultOfferCompleteAccountAlert(email, orderRef, quoteId);
       }
+
+      const alertOrderLabel =
+        orderRef ||
+        (typeof quoteMeeting.metadata?.orderNumber === 'string'
+          ? String(quoteMeeting.metadata.orderNumber).trim()
+          : '') ||
+        `CONSULT OFFER`;
+      appendConsultOfferCompleteAccountAlert(email, alertOrderLabel, quoteId);
+
+      upsertLocalMeeting({
+        ...quoteMeeting,
+        status: 'Completed',
+        notes: (() => {
+          const prev = String(quoteMeeting.notes || '').trim();
+          if (prev.toUpperCase().includes('OFFER SENT')) return quoteMeeting.notes;
+          return prev ? `${prev}\nOFFER SENT.` : 'OFFER SENT.';
+        })(),
+        metadata: {
+          ...(quoteMeeting.metadata || {}),
+          consultOfferSent: true,
+          consultQuoteId: quoteId,
+        },
+      });
+      try {
+        window.dispatchEvent(new Event('adminMeetingsUpdated'));
+      } catch {
+        /* ignore */
+      }
+      refreshLocal();
 
       try {
         sessionStorage.removeItem(SESSION_QUOTE_MEETING_ID);
@@ -1032,9 +1086,13 @@ export default function AdminMeetingsHub() {
 
   const viewAllBaseRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
-    const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
+    const raw = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
+    const base =
+      meetingSortOption === 'Archived'
+        ? raw.filter((m) => meetingIsArchivedForAdminViewAll(m))
+        : raw.filter((m) => !meetingIsArchivedForAdminViewAll(m));
     return [...base].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
-  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
+  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings, meetingSortOption]);
 
   const viewAllRows = useMemo(
     () => sortMeetingsByOption(viewAllBaseRows, meetingSortOption),

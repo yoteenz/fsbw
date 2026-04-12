@@ -95,8 +95,26 @@ export function formatHeaderDate(dateStr: string): string {
   }
 }
 
-const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
-const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
+const BOOKING_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Re-install',
+  'New install',
+] as const;
+const CONSULT_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Wig only',
+  'Wig + install',
+] as const;
 const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 
@@ -384,8 +402,19 @@ function compareMeetingsByTimeDesc(a: AdminMeeting, b: AdminMeeting): number {
   return String(a.id || '').localeCompare(String(b.id || ''));
 }
 
+/** Completed / submitted / offer-sent — surfaced via **Archived** sort in view-all. */
+export function meetingIsArchivedForAdminViewAll(m: AdminMeeting): boolean {
+  const st = String(m.status || '').trim().toLowerCase();
+  if (st === 'completed') return true;
+  const meta = m.metadata || {};
+  if (String(meta.consultOfferSent || '').trim().toLowerCase() === 'true') return true;
+  if (String(meta.bookingSubmitted || '').trim().toLowerCase() === 'true') return true;
+  return false;
+}
+
 export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
   const filtered = (() => {
+    if (sortOption === 'Archived') return rows.filter((m) => meetingIsArchivedForAdminViewAll(m));
     if (sortOption === 'Premium') return rows.filter((m) => tierPremium(m));
     if (sortOption === 'Standard') return rows.filter((m) => !tierPremium(m));
     if (sortOption === 'Re-install') {

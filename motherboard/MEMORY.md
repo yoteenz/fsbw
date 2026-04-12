@@ -13652,3 +13652,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`**, render **three** rows all labeled **CONFIRMED**; **`getDigitalFulfillmentStageIndex`** drives current/completed; **`consultDigitalOrderTrackingBarFillPct`** for the active row’s bar; status lines **`STATUS: PLACED`**, **`STATUS: PROCESSING`**, **`STATUS: COMPLETE`**. Expand keys **`-100`..`-102`** so **`toggleStageExpansion`** does not collide with wig pipeline indices.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings: Archived sort + consult offer client alert
+
+**Context (this chat):** Add **Archived** sort on view-all bookings/consults for completed/submitted/offer-sent rows. Fix missing Account → Alerts row after send offer when **`metadata.orderNumber`** was empty (founder demo): **`appendConsultOfferCompleteAccountAlert`** was only called inside **`if (orderRef)`**.
+
+**Changes:** **`meetingIsArchivedForAdminViewAll`** + **Archived** in **`sortMeetingsByOption`** (`adminMeetingClientPanels.tsx`). **`AdminMeetingsHub`**: archived sort option; hide archived rows in default calendar + view-all; always append client alert with fallback label; **`upsertLocalMeeting`** to **Completed** + **`consultOfferSent`** metadata; **`adminMeetingsMock`**: **Completed** status + API normalize.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

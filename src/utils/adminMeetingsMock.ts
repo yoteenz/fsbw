@@ -17,7 +17,7 @@ export type AdminMeeting = {
   type: string;
   category: MeetingCategory;
   duration: string;
-  status: 'Confirmed' | 'Pending' | 'Canceled';
+  status: 'Confirmed' | 'Pending' | 'Canceled' | 'Completed';
   notes: string;
   services?: string[];
   /** From Supabase `meetings.metadata` (checkout + admin). */
@@ -531,7 +531,13 @@ export function normalizeApiMeeting(row: Record<string, unknown>): AdminMeeting 
   const duration = row.duration != null ? String(row.duration) : row.durationMinutes != null ? `${row.durationMinutes} MIN` : '45 MIN';
   const statusRaw = String(row.status ?? 'Pending').toLowerCase();
   const status: AdminMeeting['status'] =
-    statusRaw === 'confirmed' ? 'Confirmed' : statusRaw === 'canceled' || statusRaw === 'cancelled' ? 'Canceled' : 'Pending';
+    statusRaw === 'confirmed'
+      ? 'Confirmed'
+      : statusRaw === 'completed'
+        ? 'Completed'
+        : statusRaw === 'canceled' || statusRaw === 'cancelled'
+          ? 'Canceled'
+          : 'Pending';
   const notes = String(row.notes ?? '');
   const services = Array.isArray(row.services) ? (row.services as string[]).map(String) : undefined;
   const metaRaw = row.metadata;
