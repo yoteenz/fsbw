@@ -13702,3 +13702,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — drop **`getAccessToken`** gate when Supabase is configured (use **`localStorage.isSignedIn`** only for claim). Styling swaps above. Removed heading + unit/cap/price stack under image. Branch **`cursor/consult-offer-claim-modal-fixes-81f5`**, PR **#18**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: custom thumb merge, API omit data URLs, claim → bag
+
+**Context (this chat):** Custom upload thumbnail should **store and show** on VIEW OFFER; discount line copy + **+1px**; **CLAIM OFFER** still went to sign-in / cart dropdown not updating with discount.
+
+**Changes:** **`mergeConsultQuoteWithPersistedThumbnail`** prefers **snapshot** thumb whenever present. **`api/admin/consult-quotes.ts`**: do not insert **`data:`** into **`consult_quotes`** (snapshot on order retains image). **`ConsultOfferClaimModal`**: **`isSignedIn()`** from **`adminAuth`**; active claim **`navigate('/shopping-bag')`** while keeping **`sessionStorage`** consult keys for checkout bootstrap; disclaimer **$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.** at **9px**. Branch **`cursor/consult-offer-thumb-claim-bag-81f5`**, PR **#19**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
