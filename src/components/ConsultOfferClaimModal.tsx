@@ -1,12 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAccessToken } from '../utils/api';
-import { isSupabaseConfigured } from '../utils/supabase';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import {
   buildConsultOfferCartItemFromQuote,
   consultQuoteBreakdownFromRow,
-  consultSelectionsToSpecialOfferOptions,
   SESSION_CONSULT_CLAIM_CODE,
   SESSION_CONSULT_CLAIM_QUOTE_ID,
 } from '../utils/consultOfferFromQuote';
@@ -98,7 +95,6 @@ export default function ConsultOfferClaimModal({
     if (expired) return '';
     return formatOfferTimeLeftLabel(offerLeftMs);
   }, [expiresMs, expired, offerLeftMs, tick]);
-  const unitKey = String(quote?.unit_key || 'NOIR').toUpperCase();
   const thumb =
     typeof quote?.thumbnail_src === 'string' && quote.thumbnail_src.trim()
       ? quote.thumbnail_src.trim()
@@ -107,31 +103,6 @@ export default function ConsultOfferClaimModal({
   const code = String(quote?.discount_code || '').trim().toUpperCase();
 
   const headerTitle = (orderNumberDisplay || '').trim().toUpperCase() || 'YOUR CUSTOM UNIT';
-
-  const capSizeLabel = useMemo(() => {
-    if (!quote) return '';
-    try {
-      const s = consultSelectionsToSpecialOfferOptions(quote.selections);
-      return String(s.capSize || '').trim().toUpperCase();
-    } catch {
-      return '';
-    }
-  }, [quote]);
-
-  const unitPriceDisplayUsd = useMemo(() => {
-    if (!quote) return 0;
-    try {
-      const lines = consultQuoteBreakdownFromRow(quote).lines;
-      let unit = 0;
-      for (const line of lines) {
-        const lab = String(line.label || '').toUpperCase();
-        if (lab === 'UNIT' || lab === 'BASE UNIT') unit += line.amountUsd;
-      }
-      return Math.round(unit);
-    } catch {
-      return 0;
-    }
-  }, [quote]);
 
   const breakdownLines = useMemo(() => {
     if (!quote) return [];
@@ -174,14 +145,9 @@ export default function ConsultOfferClaimModal({
     if (!quote) return;
     if (!expired && !code) return;
     try {
+      /** Cart + consult discount bootstrap are client-side; do not gate on Supabase `getAccessToken()` (token can lag after sign-in and wrongly send users to sign-in). */
       const signedIn = localStorage.getItem('isSignedIn') === 'true';
-      if (isSupabaseConfigured()) {
-        const token = await getAccessToken();
-        if (!signedIn || !token) {
-          navigate(signInHrefWithReturnTo(locationForSignIn));
-          return;
-        }
-      } else if (!signedIn) {
+      if (!signedIn) {
         navigate(signInHrefWithReturnTo(locationForSignIn));
         return;
       }
@@ -278,42 +244,6 @@ export default function ConsultOfferClaimModal({
           <>
             <div className="flex flex-col items-center gap-2 mt-1">
               <img src={thumb} alt="" width={122} height={122} style={{ objectFit: 'contain', display: 'block' }} />
-              <p
-                style={{
-                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
-                  fontSize: '19px',
-                  margin: 0,
-                  textTransform: 'uppercase',
-                  color: '#000',
-                  lineHeight: 1.1,
-                }}
-              >
-                {unitKey}
-              </p>
-              {capSizeLabel ? (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '10px',
-                    color: '#808080',
-                    margin: 0,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  CAP SIZE: {capSizeLabel}
-                </p>
-              ) : null}
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '11px',
-                  color: '#000',
-                  margin: 0,
-                  textTransform: 'uppercase',
-                }}
-              >
-                +${unitPriceDisplayUsd.toLocaleString('en-US')} USD
-              </p>
             </div>
 
             {message ? (
@@ -325,7 +255,7 @@ export default function ConsultOfferClaimModal({
                   marginBottom: '10px',
                   lineHeight: 1.5,
                   textTransform: 'uppercase',
-                  color: '#000',
+                  color: '#EB1C24',
                   textAlign: 'center',
                 }}
               >
@@ -333,12 +263,9 @@ export default function ConsultOfferClaimModal({
               </p>
             ) : null}
 
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginTop: '14px', textTransform: 'uppercase' }}>
-              PRICE BREAKDOWN
-            </p>
             <div
-              className="mt-1"
               style={{
+                marginTop: '14px',
                 border: '1.3px solid #000',
                 background: '#fff',
                 padding: '10px',
@@ -433,8 +360,8 @@ export default function ConsultOfferClaimModal({
               style={{
                 fontFamily: '"Futura PT Medium"',
                 fontSize: '8px',
-                color: '#000',
-                marginTop: '12px',
+                color: '#808080',
+                marginTop: '22px',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
                 textAlign: 'left',
@@ -479,7 +406,7 @@ export default function ConsultOfferClaimModal({
                 style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '9px',
-                  color: '#808080',
+                  color: '#EB1C24',
                   margin: 0,
                   textTransform: 'uppercase',
                   flex: '1 1 auto',
@@ -493,7 +420,7 @@ export default function ConsultOfferClaimModal({
                   style={{
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '9px',
-                    color: '#EB1C24',
+                    color: '#000000',
                     margin: 0,
                     textTransform: 'uppercase',
                     flexShrink: 0,
