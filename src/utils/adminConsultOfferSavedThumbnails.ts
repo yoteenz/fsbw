@@ -1,6 +1,6 @@
 /**
  * Admin Meetings → Send offer: remember custom thumbnail **data URLs** per
- * **unit + length + density + color + hairline + styling + parting** (`partSelection`)
+ * **unit + length + density + color + hairline + styling + parting** (`partSelection`) **+ add-ons**
  * (localStorage only; avoids re-uploading the same image when those match on a later offer).
  */
 
@@ -14,11 +14,13 @@ export type AdminConsultOfferThumbnailMatchFields = {
   hairline: string;
   styling: string;
   partSelection: string;
+  addOns: string[];
 };
 
-/** Deterministic key: same unit + length + density + color + hairline + styling + parting → same string. */
+/** Deterministic key: same unit + length + density + color + hairline + styling + parting + add-ons → same string. */
 export function stableConsultOfferSelectionsKey(unitKey: string, s: AdminConsultOfferThumbnailMatchFields): string {
   const u = String(unitKey || '').trim().toUpperCase();
+  const addOns = [...(s.addOns || [])].map((x) => String(x).trim().toUpperCase()).filter(Boolean).sort();
   const payload = {
     unitKey: u,
     length: String(s.length || '').trim(),
@@ -27,6 +29,7 @@ export function stableConsultOfferSelectionsKey(unitKey: string, s: AdminConsult
     hairline: String(s.hairline || '').trim().toUpperCase(),
     styling: String(s.styling || '').trim().toUpperCase(),
     partSelection: String(s.partSelection || 'MIDDLE').trim().toUpperCase(),
+    addOns,
   };
   return JSON.stringify(payload);
 }

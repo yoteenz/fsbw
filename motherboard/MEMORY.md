@@ -13498,3 +13498,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`partSelection`** on **`AdminConsultOfferThumbnailMatchFields`** and in **`stableConsultOfferSelectionsKey`** payload. **`AdminMeetingsHub`** **`useMemo`** deps include **`quoteSelections.partSelection`**. **`motherboard/CORE.md`** bullet updated.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: SAVE SELECTION key includes add-ons
+
+**Context (this chat):** User asked to **include add-ons** in the **SAVE SELECTION** / auto-load match key (with unit, length, density, color, hairline, styling, parting).
+
+**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`addOns`** array in match fields, **sorted** uppercase entries in JSON key. **`AdminMeetingsHub`** passes **`quoteSelections.addOns`** and **`useMemo`** depends on it. **`motherboard/CORE.md`** bullet updated.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
