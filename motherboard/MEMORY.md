@@ -13538,3 +13538,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** is **`8px`** when **`quoteEffectiveCustomSrc`** (12px tighter than **`20px`** default), else **`20px`**; removed the button’s negative margin. **`mb-2`** unchanged.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — AdminHeader: red search placeholder, breadcrumb nowrap
+
+**Context (this chat):** User wanted **SEARCH ADMIN…** (and other search) placeholder **red** not gray; **ADMIN > DASHBOARD** (breadcrumb + title) should **not wrap** — single line nav text.
+
+**Changes:** **`AdminHeader.tsx`** — search `<input>` **`placeholder:text-[#EB1C24]`** (replaces **`placeholder-gray-400`**). Breadcrumb row: **`flex`**, **`flex-nowrap`**, **`whiteSpace: 'nowrap'`**, parent **`justify-center`**; parent link **`shrink-0`**; title **`truncate`** + **`min-w-0 shrink`** so only the title ellipses if space is extremely tight, **`>`** + parent label stay on one line.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
