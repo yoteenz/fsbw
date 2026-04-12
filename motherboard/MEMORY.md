@@ -13692,3 +13692,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — layout/styling as above; **`formatConsultOfferModalBreakdownAmount`** for signed line items; unit price shows **`+`**. Expired: label **ADD TO BAG**, add to cart without **`bawConsultClaim*`** session keys, **`navigate('/shopping-bag')`**. Branch **`cursor/consult-offer-modal-view-updates-81f5`**, draft PR **#17**, merged into **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: claim sign-in bug, colors, remove duplicate product lines
+
+**Context (this chat):** **CLAIM OFFER** routed to **sign-in** instead of cart + **$40** consult discount at checkout. User wanted inspo message **red**; **$40 APPLIED…** **gray** with **+10px** above it; countdown (**2D 21H LEFT**) **black**; **STATUS: ACTIVE** **red**; remove **PRICE BREAKDOWN** label and duplicate **NOIR / CAP SIZE / +$740** under the thumbnail (keep thumbnail + breakdown box + estimated total).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — drop **`getAccessToken`** gate when Supabase is configured (use **`localStorage.isSignedIn`** only for claim). Styling swaps above. Removed heading + unit/cap/price stack under image. Branch **`cursor/consult-offer-claim-modal-fixes-81f5`**, PR **#18**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
