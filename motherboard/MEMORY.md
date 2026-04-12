@@ -13742,3 +13742,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`consultOfferFromQuote.ts`**, **`ConsultOfferClaimModal.tsx`**, **`shopping-bag/page.tsx`**, **`CartDropdown.tsx`**, **`checkout/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-claim-cart-discount-81f5`**, PR **#22**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Alerts: migrate stale consult “YOUR ORDER IS READY” rows
+
+**Context (this chat):** User saw no effect from consult alert UX — often **stale `notifications_*` in localStorage** or **older Supabase** items (e.g. **VIEW QUOTE**, **`/account/consult-offer`**) never get new **`variant`** / **`actionRoute`**.
+
+**Changes:** **`notifications/page.tsx`** — **`migrateConsultYourOrderReadyNotification`** runs in **`mergeAccountNotifications`** + **`notificationFromSupabaseAdminItem`**; **`consultOfferReady`** tie-break; fix **`newestFirstTieBreakRank`** **`id`** bug. Branch **`cursor/alerts-consult-migrate-stale-81f5`**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
