@@ -385,6 +385,7 @@ export default function AdminMeetingsHub() {
         color: quoteSelections.color,
         hairline: quoteSelections.hairline,
         styling: quoteSelections.styling,
+        partSelection: quoteSelections.partSelection,
       }),
     [
       quoteUnit,
@@ -393,6 +394,7 @@ export default function AdminMeetingsHub() {
       quoteSelections.color,
       quoteSelections.hairline,
       quoteSelections.styling,
+      quoteSelections.partSelection,
     ]
   );
 

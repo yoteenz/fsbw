@@ -13491,10 +13491,10 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
-## 2026-04-11 — Admin send offer: SAVE SELECTION match key = unit + length + density + color + hairline + styling
+## 2026-04-11 — Admin send offer: SAVE SELECTION key includes parting (partSelection)
 
-**Context (this chat):** **SAVE SELECTION** auto-load was narrowed to **unit + length + density + color + hairline**; user asked to **include styling** in the tracked set as well (still exclude cap size, lace, texture, parting, add-ons).
+**Context (this chat):** Match key already **unit + length + density + color + hairline + styling**; user asked to **include parting** for styling (**`partSelection`**: MIDDLE / LEFT / RIGHT).
 
-**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`stableConsultOfferSelectionsKey`** adds **`styling`** (uppercase). **`AdminMeetingsHub`** **`quoteSelectionKey`** **`useMemo`** includes **`quoteSelections.styling`**. **`motherboard/CORE.md`** bullet updated.
+**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`partSelection`** on **`AdminConsultOfferThumbnailMatchFields`** and in **`stableConsultOfferSelectionsKey`** payload. **`AdminMeetingsHub`** **`useMemo`** deps include **`quoteSelections.partSelection`**. **`motherboard/CORE.md`** bullet updated.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
