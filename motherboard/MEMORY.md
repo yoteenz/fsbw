@@ -13834,3 +13834,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`pending/page.tsx`** — **`pendingReviewModalDisplayMedia`**: use **`photoUrls`/`videoUrls`** when set, else placeholders from **`photoCount`/`videoCount`**. Media row moved **inside** the right column **immediately after** **`dateTimeLine`**. **`adminPendingMockQueues.ts`** — **`mock-rev-1`** **`photoCount`/`videoCount`**; **`mergeReviewsWithDefaults`** backfills counts from defaults when URLs and counts missing. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Pending: modal action bar nudge + VIEW FORM under pending verify
+
+**Context (this chat):** Reduce vertical space **above** **APPROVE** / **REJECT** on **VIEW REVIEW** and **affiliate view content** modals only (**4px**). **FORMS** tab: restore red **VIEW FORM** below **SIGNED · PENDING VERIFY** (when order not **PLACED**, **`showView`** false).
+
+**Changes:** **`pending/page.tsx`** — outer modal stack **`gap` 10→6** for **review**/**affiliate**; scroll area **`paddingBottom` 12→8**; **APPROVE**/**REJECT** vertical **`padding` 8→4** for those kinds; review modal content block **`marginBottom` 12→8**. Forms branch: **`SIGNED · PENDING VERIFY`** + same **VIEW FORM** button as **`showView`** path. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.

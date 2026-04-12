@@ -1379,9 +1379,39 @@ export default function AdminPending() {
                                       VIEW FORM
                                     </button>
                                   ) : (
-                                    <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', margin: '10px 0 0' }}>
-                                      SIGNED · PENDING VERIFY
-                                    </p>
+                                    <>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Futura PT Demi"',
+                                          fontSize: '9px',
+                                          color: '#808080',
+                                          margin: '10px 0 0',
+                                        }}
+                                      >
+                                        SIGNED · PENDING VERIFY
+                                      </p>
+                                      <button
+                                        type="button"
+                                        onClick={() => setAdminReviewModal({ kind: 'form', item: f })}
+                                        style={{
+                                          fontFamily: '"Futura PT Medium"',
+                                          fontSize: '11px',
+                                          color: '#EB1C24',
+                                          fontWeight: 500,
+                                          margin: '6px 0 0',
+                                          padding: 0,
+                                          border: 'none',
+                                          background: 'none',
+                                          cursor: 'pointer',
+                                          textTransform: 'uppercase',
+                                          display: 'block',
+                                          textAlign: 'left',
+                                          width: '100%',
+                                        }}
+                                      >
+                                        VIEW FORM
+                                      </button>
+                                    </>
                                   )}
                                 </div>
                                 <span
@@ -1452,7 +1482,8 @@ export default function AdminPending() {
             style={{
               width: '100%',
               maxWidth: adminReviewModal.kind === 'form' ? 'min(440px, calc(100vw - 24px))' : 'min(520px, 100%)',
-              gap: '10px',
+              gap:
+                adminReviewModal.kind === 'review' || adminReviewModal.kind === 'affiliate' ? '6px' : '10px',
               padding: '12px 12px max(12px, env(safe-area-inset-bottom))',
             }}
             onClick={(e) => e.stopPropagation()}
@@ -1500,7 +1531,13 @@ export default function AdminPending() {
                   />
                 </button>
               </div>
-              <div className="flex-1 min-h-0 flex flex-col overflow-auto" style={{ paddingBottom: '12px' }}>
+              <div
+                className="flex-1 min-h-0 flex flex-col overflow-auto"
+                style={{
+                  paddingBottom:
+                    adminReviewModal.kind === 'review' || adminReviewModal.kind === 'affiliate' ? '8px' : '12px',
+                }}
+              >
                 {adminReviewModal.kind === 'form' ? (
                   <SignedOrderFormPdfPanel
                     url={formReviewPdfUrl}
@@ -1581,7 +1618,7 @@ export default function AdminPending() {
                     const starStroke = 'drop-shadow(0 0 0 1px black)';
                     return (
                   <div style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000', lineHeight: 1.45 }}>
-                    <div className="flex items-start gap-3" style={{ marginBottom: '12px' }}>
+                    <div className="flex items-start gap-3" style={{ marginBottom: '8px' }}>
                       <div
                         className="flex-shrink-0"
                         style={{
@@ -1702,7 +1739,10 @@ export default function AdminPending() {
                     color: '#EB1C24',
                     background: '#fff',
                     border: '1.3px solid #000',
-                    padding: '8px 10px',
+                    padding:
+                      adminReviewModal.kind === 'review' || adminReviewModal.kind === 'affiliate'
+                        ? '4px 10px'
+                        : '8px 10px',
                     cursor: adminReviewModal.kind === 'form' && formReviewPdfLoading ? 'not-allowed' : 'pointer',
                     textTransform: 'uppercase',
                   }}
@@ -1727,7 +1767,10 @@ export default function AdminPending() {
                     color: '#EB1C24',
                     background: '#fff',
                     border: '1.3px solid #000',
-                    padding: '8px 10px',
+                    padding:
+                      adminReviewModal.kind === 'review' || adminReviewModal.kind === 'affiliate'
+                        ? '4px 10px'
+                        : '8px 10px',
                     cursor: 'pointer',
                     textTransform: 'uppercase',
                   }}
