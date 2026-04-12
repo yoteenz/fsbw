@@ -13682,3 +13682,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** restructure (outer flex, card + separate button); **`mergeConsultQuoteWithPersistedThumbnail`** in **`consultOfferFromQuote.ts`**; **`orders/page.tsx`** passes **`orderNumberDisplay`**, merges on API fetch, clears label on close.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER modal: tracker row, + prices, ADD TO BAG
+
+**Context (this chat):** Continuation of consult **VIEW OFFER** UX: countdown below the red bar (right, **D/H LEFT** format, red Futura Medium); **STATUS: ACTIVE/INACTIVE** left (gray Futura Medium); **$40** checkout line above tracker, black Futura Medium (**$40 APPLIED AT CHECKOUT ONLY WHILE OFFER IS ACTIVE.**); inspo/admin body **Futura PT Medium**; breakdown amounts with **`+`**; ~4px less gap above CTA; fix undefined **`countdown`** (use **`offerCountdownText`**).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — layout/styling as above; **`formatConsultOfferModalBreakdownAmount`** for signed line items; unit price shows **`+`**. Expired: label **ADD TO BAG**, add to cart without **`bawConsultClaim*`** session keys, **`navigate('/shopping-bag')`**. Branch **`cursor/consult-offer-modal-view-updates-81f5`**, draft PR **#17**, merged into **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
