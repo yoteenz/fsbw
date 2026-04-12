@@ -13814,3 +13814,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`preview/mobile`** was already **in sync** with **`origin`** (nothing to merge/push). Deleted all seven remote branches: **`cursor/alerts-consult-migrate-stale-81f5`**, **`cursor/consult-alerts-view-offer-81f5`**, **`cursor/consult-claim-cart-discount-81f5`**, **`cursor/consult-complete-archived-bucket-81f5`**, **`cursor/consult-offer-claim-modal-fixes-81f5`**, **`cursor/consult-offer-modal-view-updates-81f5`**, **`cursor/consult-offer-thumb-claim-bag-81f5`**. Removed matching **local** **`cursor/*`** branches; **`git fetch --prune`** confirms **no** **`cursor/*`** on **`origin`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Reviews: ALL → OVERVIEW analytics
+
+**Context (this chat):** User asked to rename the **ALL** tab on **Admin → Reviews** to **OVERVIEW** and show **comprehensive analytics** for both **shop** and **tools** reviews.
+
+**Changes:** **`src/pages/admin/reviews/page.tsx`** — tabs **`OVERVIEW` | `SHOP` | `TOOLS`**; default **`OVERVIEW`**; top cards on overview: **combined** average + **TOTAL (SHOP + TOOLS)**. Overview: **`OverviewAnalyticsPanel`** with **SHOP REVIEWS** and **TOOLS REVIEWS** sections (totals, avg, published/pending, % photos/videos, % verified, 1–5★ bars). Star sort dropdown **only** on **SHOP** / **TOOLS**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
