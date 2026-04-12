@@ -79,6 +79,36 @@ function parseOrderDateField(dateStr: unknown): number {
   return Number.isNaN(d) ? 0 : d;
 }
 
+function coerceOrderFieldTimeMs(v: unknown): number | null {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string') {
+    if (/^\d+$/.test(v)) {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+    if (v.includes('T') || v.includes('GMT') || /^\d{4}-\d{2}-\d{2}/.test(v)) {
+      const t = Date.parse(v);
+      if (!Number.isNaN(t)) return t;
+    }
+  }
+  return null;
+}
+
+function orderFieldTimeMs(o: Record<string, unknown>, key: string): number | null {
+  return coerceOrderFieldTimeMs(o[key]);
+}
+
+function firstPositiveTimeMs(
+  o: Record<string, unknown>,
+  keys: readonly string[]
+): number {
+  for (const k of keys) {
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > 0) return t;
+  }
+  return 0;
+}
+
 /**
  * Best-effort "when did this order last move" for sorting (newest first).
  * Prefers explicit timestamps; falls back to `date` string.
@@ -95,28 +125,83 @@ export function orderSortTimeMs(o: Record<string, unknown>): number {
     'created_at',
   ] as const;
   for (const k of keys) {
-    const v = o[k];
-    if (typeof v === 'number' && Number.isFinite(v)) return v;
-    if (typeof v === 'string') {
-      if (/^\d+$/.test(v)) {
-        const n = Number(v);
-        if (Number.isFinite(n)) return n;
-      }
-      if (v.includes('T') || v.includes('GMT') || /^\d{4}-\d{2}-\d{2}/.test(v)) {
-        const t = Date.parse(v);
-        if (!Number.isNaN(t)) return t;
-      }
-    }
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > 0) return t;
   }
   return parseOrderDateField(o.date);
 }
 
-export function sortOrdersNewestFirst<T>(orders: T[]): T[] {
+/**
+ * **Archived / past** bucket: newest **finished** order first (completion, delivery, cancel time),
+ * not "newest placed" — avoids old high order numbers sorting above recently archived rows.
+ */
+export function orderArchivedSortTimeMs(o: Record<string, unknown>): number {
+  const st = String(o.status ?? '').toUpperCase();
+  const dateMs = parseOrderDateField(o.date);
+  if (orderStatusIsCanceled(st)) {
+    const t = firstPositiveTimeMs(o, ['canceledAt', 'completedAt', 'deliveredAt', 'placedAt']);
+    return t || dateMs;
+  }
+  if (st === 'COMPLETE') {
+    const t = firstPositiveTimeMs(o, ['completedAt', 'deliveredAt', 'canceledAt', 'placedAt']);
+    return t || dateMs;
+  }
+  if (st === 'DELIVERED') {
+    const t = firstPositiveTimeMs(o, ['deliveredAt', 'completedAt', 'placedAt']);
+    return t || dateMs;
+  }
+  const terminal = Math.max(
+    orderFieldTimeMs(o, 'completedAt') ?? 0,
+    orderFieldTimeMs(o, 'deliveredAt') ?? 0,
+    orderFieldTimeMs(o, 'canceledAt') ?? 0
+  );
+  if (terminal > 0) return terminal;
+  return orderSortTimeMs(o);
+}
+
+/**
+ * **Active** bucket + mixed strips: sort by latest **activity** (status-related updates, processing start, etc.).
+ */
+export function orderActiveActivitySortTimeMs(o: Record<string, unknown>): number {
+  const keys = [
+    'updatedAt',
+    'updated_at',
+    'consultProcessingStartedAt',
+    'deliveredAt',
+    'completedAt',
+    'canceledAt',
+    'placedAt',
+    'createdAt',
+    'created_at',
+  ] as const;
+  let max = 0;
+  for (const k of keys) {
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > max) max = t;
+  }
+  if (max > 0) return max;
+  return parseOrderDateField(o.date) || 0;
+}
+
+function sortOrdersByKey<T>(orders: T[], keyFn: (o: Record<string, unknown>) => number): T[] {
   return [...orders].sort((a, b) => {
-    const dt = orderSortTimeMs(b as Record<string, unknown>) - orderSortTimeMs(a as Record<string, unknown>);
+    const dt = keyFn(b as Record<string, unknown>) - keyFn(a as Record<string, unknown>);
     if (dt !== 0) return dt;
     const idA = (a as { id?: string }).id ?? '';
     const idB = (b as { id?: string }).id ?? '';
     return String(idB).localeCompare(String(idA));
   });
+}
+
+/** Legacy sort: first non-zero field in `orderSortTimeMs` order (still used where a single key is enough). */
+export function sortOrdersNewestFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderSortTimeMs);
+}
+
+export function sortActiveOrdersByRecentActivityFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderActiveActivitySortTimeMs);
+}
+
+export function sortArchivedOrdersNewestFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderArchivedSortTimeMs);
 }
