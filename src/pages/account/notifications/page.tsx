@@ -450,55 +450,46 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   return notifs;
 }
 
-/** Parse M-D-YYYY or MM-D-YYYY to local midnight; invalid → 0. */
-function parseNotificationDisplayDateMs(dateStr: string): number {
-  const parts = (dateStr || '').trim().split('-').map(Number);
-  if (parts.length !== 3) return 0;
-  const [month, day, year] = parts;
-  if (!month || !day || !year) return 0;
-  const d = new Date(year, month - 1, day);
-  const t = d.getTime();
-  return Number.isNaN(t) ? 0 : t;
-}
-
-const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
-  `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
-];
-
 /**
- * When timestamps tie (same calendar day etc.), lower = closer to top of NEW list.
- * Order-received alerts sort above onboarding acc_* (tier, membership, …) so checkout feels "after" signup.
+ * Alert **`date`** → local midnight ms for **primary** sort (**newest calendar day at top**).
+ * Accepts **M-D-YYYY**, **MM-DD-YYYY**, **M/D/YYYY**, **MM/DD/YYYY**, or strings **`Date.parse`** handles.
  */
-function newestFirstTieBreakRank(n: Pick<Notification, 'id' | 'consultOfferReady'>): number {
-  if (n.consultOfferReady || n.id.startsWith('consult_offer_sent_')) return -3;
-  if (n.id.startsWith('order_received_')) return 0;
-  if (n.id.startsWith(ADMIN_SENT_PREFIX)) return 5;
-  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(n.id);
-  if (stableIdx >= 0) return 1 + stableIdx;
-  if (n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
-  return 50;
+function parseNotificationDisplayDateMs(dateStr: string): number {
+  const t = (dateStr || '').trim();
+  if (!t) return 0;
+  const dash = t.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (dash) {
+    const ms = new Date(Number(dash[3]), Number(dash[1]) - 1, Number(dash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const slash = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const ms = new Date(Number(slash[3]), Number(slash[1]) - 1, Number(slash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const d = Date.parse(t);
+  return Number.isNaN(d) ? 0 : d;
+}
+
+/** Within the same **`date`** calendar day, use **`sortAt`** when set; else fall back to day start so **`date`** still wins across days. */
+function notificationWithinDaySortMs(n: Notification, dayMs: number): number {
+  if (typeof n.sortAt === 'number' && !Number.isNaN(n.sortAt)) return n.sortAt;
+  return dayMs;
 }
 
 /**
- * Newest first: real **`sortAt`** (epoch ms) wins; otherwise calendar **`date`** at local midnight only.
- * Do **not** add per-id synthetic ms to **`date`** — that spread “today” across 24h and could rank static **`acc_*`**
- * rows **above** a newer consult row that had an earlier **`sortAt`** the same day.
+ * **Newest alert date first** (parsed **`date`**), then **newest `sortAt`** within the same day.
+ * Previously **`sortAt`** was the primary key, so an old consult (**`sortAt`** last week) could sit above a **today** row that only had **`date: today`**.
+ * Removed per-type tie-break ranks that reordered same-day rows (e.g. consult above order-received).
  */
 export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
-  const sortMs = (n: Notification): number => {
-    if (typeof n.sortAt === 'number' && !Number.isNaN(n.sortAt)) return n.sortAt;
-    return parseNotificationDisplayDateMs(n.date);
-  };
   return [...list].sort((a, b) => {
-    const sa = sortMs(a);
-    const sb = sortMs(b);
-    if (sb !== sa) return sb - sa;
-    const ra = newestFirstTieBreakRank(a);
-    const rb = newestFirstTieBreakRank(b);
-    if (ra !== rb) return ra - rb;
+    const da = parseNotificationDisplayDateMs(a.date);
+    const db = parseNotificationDisplayDateMs(b.date);
+    if (db !== da) return db - da;
+    const wa = notificationWithinDaySortMs(a, da);
+    const wb = notificationWithinDaySortMs(b, db);
+    if (wb !== wa) return wb - wa;
     return String(b.id).localeCompare(String(a.id));
   });
 }

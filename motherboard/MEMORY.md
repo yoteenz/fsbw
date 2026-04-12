@@ -13857,6 +13857,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-12 — Account Alerts: sort by alert `date` first, then `sortAt` same day
+
+**Context (this chat):** Alerts page should show **most recent date-alert at top**; sorting still wrong.
+
+**Root cause:** **`sortNotificationsNewestFirst`** used **`sortAt`** as the **primary** key when set — e.g. an older consult’s **`sortAt`** could rank **above** a row whose **`date`** is **today** but has no **`sortAt`**. **`parseNotificationDisplayDateMs`** only parsed **`M-D-YYYY`** with **`-`**, so **`M/D/YYYY`** dates parsed as **0**.
+
+**Changes:** **`notifications/page.tsx`** — primary sort = **`parseNotificationDisplayDateMs(date)`** (**`-`** or **`/`** forms + **`Date.parse`** fallback); secondary = **`sortAt`** within same calendar day (else day start). Removed **`newestFirstTieBreakRank`** / **`ACCOUNT_ALERT_STABLE_ORDER`** from sort (same-day order now time-based). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-12 — Account Orders: archived by `date`; active by status activity (not `placedAt` max)
 
 **Context (this chat):** **Archived** card should be **newest `date` at top**; **active** by **most recent status update** — prior sort still felt wrong (**`placedAt`** dominated active max; archived used terminal timestamps over **`M/D/YYYY`** **`date`**).
