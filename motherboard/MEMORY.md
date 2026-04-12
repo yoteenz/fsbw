@@ -13879,6 +13879,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-12 — Account Alerts: canonical three-line row format (memory)
+
+**Context (this chat):** User asked to record for future reference that **all** alerts on **Account → Alerts** should use the same **three text rows**: **black Covered By Your Grace** title; **gray Futura** body; **red Futura** action link.
+
+**Changes:** **`motherboard/CORE.md`** — design-system bullet for **Account → Alerts** three-line typography (title / message / action). **`npm run build`** not required (docs only); prior **`notifications/page.tsx`** already aligned consult title with other alerts.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-12 — Account Orders: archived by `date`; active by status activity (not `placedAt` max)
 
 **Context (this chat):** **Archived** card should be **newest `date` at top**; **active** by **most recent status update** — prior sort still felt wrong (**`placedAt`** dominated active max; archived used terminal timestamps over **`M/D/YYYY`** **`date`**).

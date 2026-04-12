@@ -16,6 +16,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 ## Design system
 
 - **Fonts:** "Futura PT" family (Book, Medium, Demi). "Covered By Your Grace" for accent numbers/dates. Uppercase labels and CTAs common.
+- **Account → Alerts** (`/account/notifications`, `src/pages/account/notifications/page.tsx`): each alert row uses **three** stacked text lines — **(1)** title: **black**, **Covered By Your Grace** (~14px, uppercase); **(2)** body line: **gray** (`#808080`), **Futura PT Demi** (~10px, uppercase); **(3)** action link: **red** (`#EB1C24`), **Futura PT Medium** (~10px, uppercase). Apply this pattern for **all** alerts going forward unless product asks otherwise.
 - **Brand red:** `#EB1C24` — primary buttons, links, active states, key icons.
 - **Backgrounds:** Marble texture (`/assets/marble-half.png`), white/translucent cards (`bg-white/60`, `backdrop-blur-sm`), borders often `1.3px solid black` or `1.3px solid #9ca3af` (gray).
 - **Icons:** SVGs in `public/assets/` (e.g. `special-offer.svg`, `slay-challenge.svg`, `Free Gift.svg`). Use `<img src="/assets/...">` with red filter when they should match brand red.
