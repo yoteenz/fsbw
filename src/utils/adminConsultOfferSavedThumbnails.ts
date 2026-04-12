@@ -1,42 +1,27 @@
 /**
- * Admin Meetings → Send offer: remember custom thumbnail **data URLs** per unit + full selection set
- * (localStorage only; avoids re-uploading the same image for repeat offers).
+ * Admin Meetings → Send offer: remember custom thumbnail **data URLs** per **unit + length + density + color + hairline**
+ * (localStorage only; avoids re-uploading the same image when those five match on a later offer).
  */
 
 const LS_KEY = 'bawAdminConsultOfferSavedThumbnails';
 
-export type AdminConsultOfferSelectionsForKey = {
-  capSize: string;
+/** Fields that **SAVE SELECTION** / auto-load use for matching (only these categories). */
+export type AdminConsultOfferThumbnailMatchFields = {
   length: string;
   density: string;
-  texture: string;
-  lace: string;
-  hairline: string;
   color: string;
-  styling: string;
-  partSelection: string;
-  addOns: string[];
+  hairline: string;
 };
 
-/** Deterministic key: same selections → same string regardless of object key order. */
-export function stableConsultOfferSelectionsKey(
-  unitKey: string,
-  s: AdminConsultOfferSelectionsForKey
-): string {
+/** Deterministic key: same unit + length + density + color + hairline → same string. */
+export function stableConsultOfferSelectionsKey(unitKey: string, s: AdminConsultOfferThumbnailMatchFields): string {
   const u = String(unitKey || '').trim().toUpperCase();
-  const addOns = [...(s.addOns || [])].map((x) => String(x).trim().toUpperCase()).filter(Boolean).sort();
   const payload = {
     unitKey: u,
-    capSize: String(s.capSize || '').trim().toUpperCase(),
     length: String(s.length || '').trim(),
     density: String(s.density || '').trim(),
-    texture: String(s.texture || '').trim().toUpperCase(),
-    lace: String(s.lace || '').trim().toUpperCase(),
-    hairline: String(s.hairline || '').trim().toUpperCase(),
     color: String(s.color || '').trim().toUpperCase(),
-    styling: String(s.styling || '').trim().toUpperCase(),
-    partSelection: String(s.partSelection || 'MIDDLE').trim().toUpperCase(),
-    addOns,
+    hairline: String(s.hairline || '').trim().toUpperCase(),
   };
   return JSON.stringify(payload);
 }

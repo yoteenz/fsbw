@@ -380,18 +380,12 @@ export default function AdminMeetingsHub() {
   const quoteSelectionKey = useMemo(
     () =>
       stableConsultOfferSelectionsKey(quoteUnit, {
-        capSize: quoteSelections.capSize,
         length: quoteSelections.length,
         density: quoteSelections.density,
-        texture: quoteSelections.texture,
-        lace: quoteSelections.lace,
-        hairline: quoteSelections.hairline,
         color: quoteSelections.color,
-        styling: quoteSelections.styling,
-        partSelection: quoteSelections.partSelection,
-        addOns: quoteSelections.addOns,
+        hairline: quoteSelections.hairline,
       }),
-    [quoteUnit, quoteSelections]
+    [quoteUnit, quoteSelections.length, quoteSelections.density, quoteSelections.color, quoteSelections.hairline]
   );
 
   const quoteSavedThumbnailForSelection = quoteSavedThumbnailMap[quoteSelectionKey] || null;
