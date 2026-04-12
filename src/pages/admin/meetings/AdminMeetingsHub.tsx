@@ -1992,8 +1992,8 @@ export default function AdminMeetingsHub() {
                       <img
                         src={quoteOfferThumbnailSrc}
                         alt=""
-                        width={102}
-                        height={102}
+                        width={122}
+                        height={122}
                         style={{ objectFit: 'contain', display: 'block' }}
                       />
                     </div>
@@ -2001,7 +2001,14 @@ export default function AdminMeetingsHub() {
                       <button
                         type="button"
                         className="w-full mb-2 text-[10px] uppercase"
-                        style={{ fontFamily: '"Futura PT Book"', color: '#808080', border: 'none', background: 'none', cursor: 'pointer' }}
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#EB1C24',
+                          border: 'none',
+                          background: 'none',
+                          cursor: 'pointer',
+                          marginTop: '-12px',
+                        }}
                         onClick={() => {
                           if (quoteManualThumbnailSrc) {
                             setQuoteManualThumbnailSrc(null);
@@ -2092,18 +2099,20 @@ export default function AdminMeetingsHub() {
                         portalMaxHeight: 'min(70vh, 520px)',
                       })
                     ) : null}
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
-                      MESSAGE
-                      <textarea
-                        className="w-full mt-1 p-2 border text-[10px]"
-                        rows={3}
-                        value={quoteMessage}
-                        onChange={(e) => setQuoteMessage(e.target.value)}
-                      />
-                    </label>
+                    <div style={{ marginTop: '12px', marginBottom: '12px' }}>
+                      <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 0 }}>
+                        MESSAGE:
+                        <textarea
+                          className="w-full mt-1 p-2 border text-[10px]"
+                          rows={3}
+                          value={quoteMessage}
+                          onChange={(e) => setQuoteMessage(e.target.value)}
+                        />
+                      </label>
+                    </div>
                     <div className="mt-2">
                       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>
-                        PRICE BREAKDOWN
+                        PRICE BREAKDOWN:
                       </label>
                       <div
                         className="mt-1"
@@ -2199,9 +2208,6 @@ export default function AdminMeetingsHub() {
                         </div>
                       </div>
                     </div>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
-                      OFFER DETAILS REFLECT THE CURRENT UNIT + CATEGORY SELECTION YOU CHOOSE HERE.
-                    </p>
                   </div>
                 ) : mainTab === 'overview' ? (
                   <>
@@ -2405,7 +2411,7 @@ export default function AdminMeetingsHub() {
                         className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                         style={{
                           borderWidth: '1.3px',
-                          color: '#808080',
+                          color: '#EB1C24',
                           fontFamily: '"Futura PT Medium"',
                           backgroundColor: '#FFFFFF',
                           whiteSpace: 'nowrap',

@@ -13508,3 +13508,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`addOns`** array in match fields, **sorted** uppercase entries in JSON key. **`AdminMeetingsHub`** passes **`quoteSelections.addOns`** and **`useMemo`** depends on it. **`motherboard/CORE.md`** bullet updated.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: thumb +20%, red SAVE/REMOVE, MESSAGE:/PRICE:, spacing, drop gray blurb
+
+**Context (this chat):** User asked: **+20%** send-offer thumbnail; **SAVE SELECTION** red (not gray); **REMOVE CUSTOM IMAGE** red and **12px less** space above it; **12px** above and below **MESSAGE** section; **MESSAGE:** and **PRICE BREAKDOWN:** labels; remove gray **OFFER DETAILS REFLECT…** line.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — preview **`width/height` 122**; **REMOVE CUSTOM IMAGE** **`#EB1C24`** + **`marginTop: -12px`**; message block wrapper **`marginTop`/`marginBottom` 12px**, **`MESSAGE:`**; **`PRICE BREAKDOWN:`**; **SAVE SELECTION** **`#EB1C24`**; removed bottom `<p>`. **`motherboard/CORE.md`** — send-offer thumb note **~122px** + picker wording.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
