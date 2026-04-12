@@ -13592,3 +13592,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** Fast-forward **`preview/mobile`** to include all commits that had been on **`cursor/site-nav-search-81f5`**; **`git push origin preview/mobile`**. Deleted **`origin/cursor/site-nav-search-81f5`** and local **`cursor/site-nav-search-81f5`**. PR **#16** may still reference the deleted branch; canonical branch is **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-09 — **cursor/appointment-notes-border-spacing-8444**: nothing to merge (stale ref)
+
+**Context (this chat):** User asked to merge any changes not on **`preview/mobile`** from **`cursor/appointment-notes-border-spacing-8444`**, then delete that branch.
+
+**Outcome:** Remote ref was already removed on GitHub; **`git remote prune origin`** dropped stale **`origin/cursor/appointment-notes-border-spacing-8444`**. No unique commits to merge into **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry.
