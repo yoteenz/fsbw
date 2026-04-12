@@ -13762,3 +13762,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`sortNotificationsNewestFirst`** — removed **`syntheticSortAtFromId`** added to **`date`-only** rows; primary key is **`sortAt`** else **calendar **`date`** midnight** only, then tie-breakers.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — VIEW BAG sign-in bounce + mock ORDER #331 archived
+
+**Context (this chat):** Tapping **VIEW BAG** from cart dropdown routed to **sign-in** despite being signed in (especially with consult offer in cart). **ORDER #331** still showed under **active** when it should be **archived** (COMPLETE consult).
+
+**Changes:** **`CommerceRouteGuard.tsx`** — when Supabase is configured but **`getSession()`** has no **`access_token`**, if **`isSignedIn()`** (app/local auth) try **`refreshSession()`** then re-read session; if still no token, **allow** the route anyway so bag/checkout are not blocked during session hydration race. **`onAuthStateChange`**: if token drops but app still signed in, keep **allowed** (matches claim-modal pattern). **`orders/page.tsx`** — removed **`buildFounderDemoConsultOrder331()`** from **`kateenaMockActiveOrders`**; prepended it to **`kateenaMockPastOrders`** so mock profile chrome shows **#331** in **archived**. Branch **`cursor/bag-guard-consult331-archive-81f5`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

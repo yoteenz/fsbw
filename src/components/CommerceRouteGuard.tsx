@@ -3,10 +3,15 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { isSupabaseConfigured, getSupabase } from '../utils/supabase';
 import { syncCartFromApi } from '../utils/syncFromApi';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
+import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 
 /**
  * Bag + product checkout require a live Supabase session when Supabase is configured.
  * Anonymous localStorage checkout is blocked for real-money flows.
+ *
+ * If **`isSignedIn`** is already true (local app auth) but **`getSession()`** has not
+ * hydrated yet (race after refresh / tab restore), still allow the route so **VIEW BAG**
+ * does not bounce to sign-in incorrectly.
  */
 export default function CommerceRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -27,7 +32,28 @@ export default function CommerceRouteGuard({ children }: { children: React.React
       const { data } = await client.auth.getSession();
       if (cancelled) return;
       if (!data.session?.access_token) {
-        setAllowed(false);
+        if (isAppSignedIn()) {
+          try {
+            await client.auth.refreshSession();
+          } catch {
+            /* ignore */
+          }
+          if (cancelled) return;
+          const { data: d2 } = await client.auth.getSession();
+          if (d2.session?.access_token) {
+            try {
+              await syncCartFromApi();
+            } catch {
+              /* still allow */
+            }
+            if (!cancelled) setAllowed(true);
+            return;
+          }
+          /** Signed in per app flags — allow bag/checkout while session catches up. */
+          if (!cancelled) setAllowed(true);
+          return;
+        }
+        if (!cancelled) setAllowed(false);
         return;
       }
       try {
@@ -45,8 +71,10 @@ export default function CommerceRouteGuard({ children }: { children: React.React
       void (async () => {
         const { data: d } = await supabase.auth.getSession();
         if (cancelled) return;
-        if (!d.session?.access_token) setAllowed(false);
-        else {
+        if (!d.session?.access_token) {
+          if (isAppSignedIn()) setAllowed(true);
+          else setAllowed(false);
+        } else {
           try {
             await syncCartFromApi();
           } catch {
