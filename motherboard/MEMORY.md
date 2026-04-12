@@ -13478,3 +13478,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** Send offer uses **`OrderFormFilePicker`** below the unit thumb. User asked to replace **“OFFER IMAGE (OPTIONAL)”** with **“CUSTOM IMAGE:”**.
 
 **Changes:** **`AdminMeetingsHub.tsx`** label text; **`motherboard/CORE.md`** consult bullet (**CUSTOM IMAGE:** + **`OrderFormFilePicker`**). This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: thumb spacing, parting, save custom by selection
+
+**Context (this chat):** User asked for send-offer edits: **20px** space below the **102px** thumbnail; no second large image under the custom picker (thumbnail only); second dropdown **PARTING:** (**MIDDLE** / **LEFT** / **RIGHT**) when **CATEGORY** is **STYLING**, below the styling selection row; **SAVE SELECTION** under **SEND OFFER** when a **data URL** file is chosen — saves current unit + full selections → **`localStorage`** and auto-fills the **same** custom thumb when those selections match later.
+
+**Changes:** **`OrderFormFilePicker`**: optional **`hideInlinePreview`** (CHOOSE FILE + **FILE SELECTED** row, no wide preview). **`adminConsultOfferSavedThumbnails.ts`**: **`stableConsultOfferSelectionsKey`**, load/upsert/delete under **`bawAdminConsultOfferSavedThumbnails`**. **`AdminMeetingsHub`**: **`quoteManualThumbnailSrc`** vs **`quoteSavedThumbnailMap`**; **`quoteEffectiveCustomSrc`** for thumb + send; draft key **`quoteManualThumbnailDataUrl`** (legacy **`quoteCustomThumbnailDataUrl`** read on hydrate); **PARTING** dropdown + **`partSelection`** on **`CreateOfferSelections`**; **SAVE SELECTION** button; remove clears manual or deletes saved entry for current key. **`specialOfferPrice`**: **`partSelection`** on **`SpecialOfferOptions`**, **PARTING** breakdown line **$0**. **`consultOfferFromQuote`**: **`partSelection`** on selections + cart **`partSelection`** from quote; **PART** line skipped in cart price rollup. **`npm run build`**.
+
+**Docs:** **`motherboard/CORE.md`** consult bullet updated; this **MEMORY** entry.

@@ -68,6 +68,7 @@ export type ConsultQuoteSelections = {
   hairline?: string;
   color?: string;
   styling?: string;
+  partSelection?: string;
   addOns?: string[];
 };
 
@@ -123,6 +124,7 @@ export function consultSelectionsToSpecialOfferOptions(selections: unknown): Con
   const hairline = String(s.hairline ?? '').trim();
   const color = String(s.color ?? '').trim();
   const styling = String(s.styling ?? '').trim();
+  const partSelection = String(s.partSelection ?? s.part_selection ?? '').trim();
   let addOns: string[] | undefined;
   if (Array.isArray(s.addOns)) {
     addOns = s.addOns.map((x) => String(x).trim().toUpperCase()).filter(Boolean);
@@ -141,6 +143,7 @@ export function consultSelectionsToSpecialOfferOptions(selections: unknown): Con
   if (hairline) out.hairline = hairline;
   if (color) out.color = color;
   if (styling) out.styling = styling;
+  if (partSelection) out.partSelection = partSelection;
   if (addOns && addOns.length) out.addOns = addOns;
   return out;
 }
@@ -162,6 +165,7 @@ function lineAmountForCart(label: string, amountUsd: number): number {
   if (label === 'HAIRLINE') return amountUsd;
   if (label === 'COLOR') return amountUsd;
   if (label === 'STYLING') return amountUsd;
+  if (label === 'PARTING') return amountUsd;
   if (label === 'ADD-ON' || label === 'ADD-ONS') return amountUsd;
   return 0;
 }
@@ -188,6 +192,7 @@ export function buildConsultOfferCartItemFromQuote(quote: Record<string, unknown
   const color = opts.color || (unitId === 'blanco' ? 'PLATINUM' : 'OFF BLACK');
   const hairline = opts.hairline || 'NATURAL';
   const styling = opts.styling || 'NONE';
+  const partSelection = String(opts.partSelection || 'MIDDLE').trim().toUpperCase() || 'MIDDLE';
   const capSize = opts.capSize || 'M';
   const addOns = Array.isArray(opts.addOns) ? opts.addOns : [];
 
@@ -211,7 +216,9 @@ export function buildConsultOfferCartItemFromQuote(quote: Record<string, unknown
     else if (label === 'COLOR') colorPrice = amt;
     else if (label === 'HAIRLINE') hairlinePrice = amt;
     else if (label === 'STYLING') stylingPrice = amt;
-    else if (label === 'CAP SIZE') capSizePrice = amt;
+    else if (label === 'PARTING') {
+      /* $0 line — not summed into cart line item fields */
+    } else if (label === 'CAP SIZE') capSizePrice = amt;
     else if (label === 'ADD-ON' || label === 'ADD-ONS') addOnsPrice += amt;
   }
 
@@ -244,7 +251,7 @@ export function buildConsultOfferCartItemFromQuote(quote: Record<string, unknown
     hairlinePrice,
     styling,
     stylingPrice,
-    partSelection: 'MIDDLE',
+    partSelection,
     addOns,
     addOnsPrice,
   };

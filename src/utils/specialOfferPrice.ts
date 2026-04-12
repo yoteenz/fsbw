@@ -54,6 +54,8 @@ export type SpecialOfferOptions = {
   color?: string;
   hairline?: string;
   styling?: string;
+  /** Parting / install placement (e.g. MIDDLE, LEFT, RIGHT) — $0 in offer breakdown; cart uses separately. */
+  partSelection?: string;
   addOns?: string[];
 };
 
@@ -96,6 +98,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const color = (options.color || (isBlanco ? 'PLATINUM' : 'OFF BLACK')).trim().toUpperCase();
   const hairline = String(options.hairline || 'NATURAL').trim().toUpperCase();
   const styling = String(options.styling || 'NONE').trim().toUpperCase();
+  const partSelection = String(options.partSelection || 'MIDDLE').trim().toUpperCase();
   const addOns = (options.addOns || []).map((addOn) => String(addOn).trim().toUpperCase()).filter(Boolean);
 
   const capSizePrice = CAP_SIZE_PRICES[capSize] ?? 0;
@@ -173,6 +176,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
       { label: 'HAIRLINE', selection: hairline === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : hairline, amountUsd: hairlinePrice },
       { label: 'COLOR', selection: color, amountUsd: colorPrice },
       { label: 'STYLING', selection: styling, amountUsd: stylingPrice },
+      { label: 'PARTING', selection: partSelection, amountUsd: 0 },
       ...(addOnLines.length > 0 ? addOnLines : [{ label: 'ADD-ONS', selection: 'NONE', amountUsd: 0 }]),
     ],
   };
