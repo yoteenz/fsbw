@@ -1625,7 +1625,58 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               );
                             })()}
                           </div>
-                        ) : (
+                        ) : (() => {
+                          const coLocked = (item as CartItem & { consultOfferQtyLocked?: boolean }).consultOfferQtyLocked === true;
+                          const pre = (item as CartItem & { consultOfferLinePreDiscountUsd?: number }).consultOfferLinePreDiscountUsd;
+                          const qty = item.quantity || 1;
+                          const lineTot = (isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : (item.price || 0)) * qty;
+                          const listTot =
+                            coLocked && typeof pre === 'number' && !Number.isNaN(pre) ? Math.round(pre) * qty : null;
+                          if (coLocked && listTot != null && listTot > lineTot) {
+                            return (
+                              <div
+                                style={{
+                                  fontFamily: '"Futura PT Book"',
+                                  color: '#000000',
+                                  textTransform: 'uppercase',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  marginTop: (() => {
+                                    const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
+                                    const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
+                                    const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
+                                    const hasSpecs =
+                                      (item.density && item.density !== '200%') ||
+                                      (item.lace && item.lace !== '13X6') ||
+                                      (item.texture && item.texture !== defaultTexture) ||
+                                      (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
+                                      (item.hairline && item.hairline !== 'NATURAL') ||
+                                      (item.styling && item.styling !== 'NONE') ||
+                                      (item.addOns && item.addOns.length > 0);
+                                    return hasSpecs ? '2px' : '1px';
+                                  })(),
+                                  marginBottom: '0',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'flex-start',
+                                  gap: '2px',
+                                  lineHeight: '1.15',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color: '#808080',
+                                    textDecoration: 'line-through',
+                                    fontSize: '11px',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                  dangerouslySetInnerHTML={formatPrice(listTot)}
+                                />
+                                <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(lineTot)} />
+                              </div>
+                            );
+                          }
+                          return (
                         <p 
                           style={{ 
                             fontFamily: '"Futura PT Book"',
@@ -1656,7 +1707,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0
                           )}
                         />
-                        )}
+                          );
+                        })()}
                       </div>
                     </div>
                   

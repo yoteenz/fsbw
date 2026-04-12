@@ -2384,6 +2384,17 @@ function CheckoutPage() {
     hasOnlySpecialOfferInCart,
   ]);
 
+  const consultRedeemQuoteIdsFromCart = useMemo(() => {
+    const ids = new Set<string>();
+    for (const item of cartItems as any[]) {
+      if (item?.consultOfferQtyLocked === true) {
+        const id = String(item?.consultOfferQuoteId || '').trim();
+        if (id) ids.add(id);
+      }
+    }
+    return ids;
+  }, [cartItems]);
+
   const consultDiscountAmount = useMemo(() => {
     if (!appliedConsultQuote) return 0;
     return Math.min(appliedConsultQuote.amountUsd, consultCodeEligibleUsd);
@@ -2815,6 +2826,12 @@ function CheckoutPage() {
             void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
               console.error('Error redeeming consult quote code:', err)
             );
+          } else if (!appliedConsultQuote && consultRedeemQuoteIdsFromCart.size > 0 && !isSubscriptionUpgrade) {
+            for (const qid of consultRedeemQuoteIdsFromCart) {
+              void redeemConsultQuote(qid).catch((err: unknown) =>
+                console.error('Error redeeming consult quote code:', err)
+              );
+            }
           }
 
           const summaryOrderDate = new Date()
@@ -6701,6 +6718,12 @@ function CheckoutPage() {
                     void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
                       console.error('Error redeeming consult quote code:', err)
                     );
+                  } else if (!appliedConsultQuote && consultRedeemQuoteIdsFromCart.size > 0 && !isSubscriptionUpgrade) {
+                    for (const qid of consultRedeemQuoteIdsFromCart) {
+                      void redeemConsultQuote(qid).catch((err: unknown) =>
+                        console.error('Error redeeming consult quote code:', err)
+                      );
+                    }
                   }
                   
                   // Create Route protection if package protection is selected (non-blocking)

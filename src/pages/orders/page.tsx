@@ -488,9 +488,10 @@ function OrdersPage() {
     const normNum = (s: string) => s.replace(/\s+/g, ' ').trim().toUpperCase();
     const has331 = [...activeOrders, ...pastOrders].some((o) => normNum(String(o.orderNumber || '')) === 'ORDER #331');
     if (has331) return { activeOrders, pastOrders, merged: false };
+    /** COMPLETE consult demo belongs in **archived** (past), not active. */
     return {
-      activeOrders: [buildFounderDemoConsultOrder331(), ...activeOrders],
-      pastOrders,
+      activeOrders,
+      pastOrders: [buildFounderDemoConsultOrder331(), ...pastOrders],
       merged: true,
     };
   };

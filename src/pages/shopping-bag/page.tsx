@@ -372,6 +372,7 @@ function ShoppingBagPage() {
         if (Array.isArray(items)) {
           const clamped = items.map((i: any) => {
             let row = i;
+            if (i.consultOfferQtyLocked === true) row = { ...row, quantity: 1 };
             if (i.isSpecialOffer && (i.quantity ?? 1) > 2) row = { ...row, quantity: 2 };
             if (i.bcfBundleDeal) row = { ...row, quantity: 3 };
             return row;
@@ -418,6 +419,7 @@ function ShoppingBagPage() {
         if (Array.isArray(items)) {
           const clamped = items.map((i: any) => {
             let row = i;
+            if (i.consultOfferQtyLocked === true) row = { ...row, quantity: 1 };
             if (i.isSpecialOffer && (i.quantity ?? 1) > 2) row = { ...row, quantity: 2 };
             if (i.bcfBundleDeal) row = { ...row, quantity: 3 };
             return row;
@@ -579,6 +581,7 @@ function ShoppingBagPage() {
     try {
       const currentItem = cartItems.find(i => i.id === itemId);
       if (!currentItem) return;
+      if (currentItem.consultOfferQtyLocked === true) return;
       if (currentItem.bcfBundleDeal) return;
 
       const giftDelta = applyGiftCardBagQuantityDelta(
@@ -1448,7 +1451,14 @@ function ShoppingBagPage() {
                       const isBookingLine =
                         item.type === 'booking-consult' || item.type === 'booking-appointment';
                       const isBundleDealLine = Boolean(item.bcfBundleDeal);
-                      const isQtyOnlyLine = isBookingLine || isBundleDealLine;
+                      const isConsultOfferQtyLocked = item.consultOfferQtyLocked === true;
+                      const isQtyOnlyLine = isBookingLine || isBundleDealLine || isConsultOfferQtyLocked;
+                      const consultOfferListTotUsd =
+                        typeof item.consultOfferLinePreDiscountUsd === 'number' &&
+                        !Number.isNaN(item.consultOfferLinePreDiscountUsd)
+                          ? Math.round(item.consultOfferLinePreDiscountUsd) * (isGiftLine ? 1 : itemQuantity)
+                          : null;
+                      const consultOfferLineTotUsd = itemPrice * (isGiftLine ? 1 : itemQuantity);
                       const bundleDealListTot = bcfBundleDealResolvedListSubtotal(item);
                       const bundleDealLineTot = itemPrice * (isGiftLine ? 1 : itemQuantity);
 
@@ -1633,6 +1643,35 @@ function ShoppingBagPage() {
                                     />
                                   )}
                                   <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(bundleDealLineTot)} />
+                                </div>
+                              ) : isConsultOfferQtyLocked &&
+                                consultOfferListTotUsd != null &&
+                                consultOfferListTotUsd > consultOfferLineTotUsd ? (
+                                <div
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#000000',
+                                    fontSize: '12px',
+                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                    marginBottom: '0',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                    gap: '2px',
+                                    lineHeight: '1.15',
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: '#808080',
+                                      textDecoration: 'line-through',
+                                      fontSize: '11px',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                    dangerouslySetInnerHTML={formatPrice(consultOfferListTotUsd)}
+                                  />
+                                  <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(consultOfferLineTotUsd)} />
                                 </div>
                               ) : (
                               <p

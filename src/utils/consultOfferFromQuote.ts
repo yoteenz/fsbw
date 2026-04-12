@@ -18,6 +18,39 @@ export type ConsultOfferPersistedSnapshot = {
 export const SESSION_CONSULT_CLAIM_QUOTE_ID = 'bawConsultClaimQuoteId';
 export const SESSION_CONSULT_CLAIM_CODE = 'bawConsultClaimCode';
 
+/** `localStorage` key: comma-separated **quote ids** for which the client already used **CLAIM OFFER** (one unit per quote). */
+export const LOCAL_CONSULT_OFFER_CLAIMED_QUOTE_IDS_KEY = 'bawConsultOfferClaimedQuoteIds';
+
+export function readConsultOfferClaimedQuoteIds(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(LOCAL_CONSULT_OFFER_CLAIMED_QUOTE_IDS_KEY) || '';
+    return new Set(
+      raw
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    );
+  } catch {
+    return new Set();
+  }
+}
+
+export function appendConsultOfferClaimedQuoteId(quoteId: string): void {
+  const id = String(quoteId || '').trim();
+  if (!id || typeof window === 'undefined') return;
+  try {
+    const cur = readConsultOfferClaimedQuoteIds();
+    if (cur.has(id)) return;
+    cur.add(id);
+    localStorage.setItem(LOCAL_CONSULT_OFFER_CLAIMED_QUOTE_IDS_KEY, Array.from(cur).join(','));
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('consultOfferClaimedIdsChanged'));
+  } catch {
+    /* ignore */
+  }
+}
+
 /** Rehydrate API-shaped quote from order row saved at send-offer time (localStorage / demo). */
 export function consultQuoteRowFromPersistedSnapshot(
   snapshot: ConsultOfferPersistedSnapshot,
@@ -194,7 +227,11 @@ export type ConsultOfferCartBuild = {
 /**
  * Cart shape aligned with unit PDP / checkout expectations.
  */
-export function buildConsultOfferCartItemFromQuote(quote: Record<string, unknown>, quantity = 1): ConsultOfferCartBuild {
+export function buildConsultOfferCartItemFromQuote(
+  quote: Record<string, unknown>,
+  quantity = 1,
+  options?: { consultOfferQtyLocked?: boolean }
+): ConsultOfferCartBuild {
   const unitKey = String(quote.unit_key || 'NOIR').trim().toUpperCase();
   const unitId = consultQuoteUnitIdFromKey(unitKey);
   const name = unitKey || 'NOIR';
@@ -244,11 +281,26 @@ export function buildConsultOfferCartItemFromQuote(quote: Record<string, unknown
       : consultQuoteThumbnailSrcFromUnitKey(unitKey);
 
   const totalPrice = Math.round(breakdown.totalUsd);
+  const discountUsd =
+    typeof (quote as { discount_amount_usd?: unknown }).discount_amount_usd === 'number' &&
+    !Number.isNaN((quote as { discount_amount_usd: number }).discount_amount_usd)
+      ? Math.max(0, Math.round((quote as { discount_amount_usd: number }).discount_amount_usd))
+      : 40;
+  const priceAfterConsult = Math.max(0, totalPrice - discountUsd);
+
+  const qid = String(quote.id || '').trim();
+  const discountCodeStr = String(quote.discount_code || '').trim().toUpperCase();
 
   const cartItem: Record<string, unknown> = {
-    id: `consult-offer-${String(quote.id || '').trim() || Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    id: `consult-offer-${qid || Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     name,
-    price: totalPrice,
+    /** Line total after **$40** consult offer (bag/checkout subtotal); pre-discount kept for code validation. */
+    price: priceAfterConsult,
+    consultOfferLinePreDiscountUsd: totalPrice,
+    consultOfferDiscountUsd: discountUsd,
+    ...(qid ? { consultOfferQuoteId: qid } : {}),
+    ...(discountCodeStr ? { consultOfferDiscountCode: discountCodeStr } : {}),
+    ...(options?.consultOfferQtyLocked ? { consultOfferQtyLocked: true } : {}),
     quantity,
     image: thumb,
     capSize,

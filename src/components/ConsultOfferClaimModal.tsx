@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import {
+  appendConsultOfferClaimedQuoteId,
   buildConsultOfferCartItemFromQuote,
   consultQuoteBreakdownFromRow,
-  SESSION_CONSULT_CLAIM_CODE,
-  SESSION_CONSULT_CLAIM_QUOTE_ID,
+  readConsultOfferClaimedQuoteIds,
 } from '../utils/consultOfferFromQuote';
 import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulfillment';
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
@@ -70,12 +70,23 @@ export default function ConsultOfferClaimModal({
 }: Props) {
   const navigate = useNavigate();
   const [tick, setTick] = useState(0);
+  const [claimUiTick, setClaimUiTick] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
     const t = setInterval(() => setTick((x) => x + 1), 1000);
     return () => clearInterval(t);
   }, [isOpen]);
+
+  useEffect(() => {
+    const bump = () => setClaimUiTick((x) => x + 1);
+    window.addEventListener('consultOfferClaimedIdsChanged', bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener('consultOfferClaimedIdsChanged', bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
 
   const expiresMs = useMemo(() => {
     const raw = quote?.expires_at;
@@ -102,6 +113,24 @@ export default function ConsultOfferClaimModal({
       : '/assets/NOIR/noir-thumb.png';
   const message = String(quote?.admin_message || '');
   const code = String(quote?.discount_code || '').trim().toUpperCase();
+  const quoteIdForClaim = String(quote?.id || '').trim();
+  const claimedSet = readConsultOfferClaimedQuoteIds();
+  const offerAlreadyClaimed = Boolean(quoteIdForClaim && claimedSet.has(quoteIdForClaim));
+  const cartHasThisConsultOffer = useMemo(() => {
+    if (!quoteIdForClaim || typeof window === 'undefined') return false;
+    try {
+      const raw = localStorage.getItem('cartItems');
+      const arr = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(arr)) return false;
+      return arr.some(
+        (it: { consultOfferQuoteId?: string; id?: string }) =>
+          String(it?.consultOfferQuoteId || '').trim() === quoteIdForClaim ||
+          String(it?.id || '').includes(`consult-offer-${quoteIdForClaim}-`)
+      );
+    } catch {
+      return false;
+    }
+  }, [quoteIdForClaim, claimUiTick, quote]);
 
   const headerTitle = (orderNumberDisplay || '').trim().toUpperCase() || 'YOUR CUSTOM UNIT';
 
@@ -145,6 +174,7 @@ export default function ConsultOfferClaimModal({
   const handleClaim = async () => {
     if (!quote) return;
     if (!expired && !code) return;
+    if (!expired && offerAlreadyClaimed) return;
     try {
       /** Use shared auth helper (backup restore) — raw `isSignedIn` alone can be false when flag was cleared. */
       if (!isAppSignedIn()) {
@@ -152,8 +182,11 @@ export default function ConsultOfferClaimModal({
         return;
       }
 
-      const { cartItem, totalPrice } = buildConsultOfferCartItemFromQuote(quote, 1);
-      cartItem.price = totalPrice;
+      const { cartItem } = buildConsultOfferCartItemFromQuote(
+        quote,
+        1,
+        !expired ? { consultOfferQtyLocked: true } : undefined
+      );
 
       const existing = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const next = Array.isArray(existing) ? [...existing, cartItem] : [cartItem];
@@ -163,24 +196,14 @@ export default function ConsultOfferClaimModal({
       const newCount = prevCount + q;
       localStorage.setItem('cartCount', String(newCount));
 
-      if (!expired) {
-        try {
-          sessionStorage.setItem(SESSION_CONSULT_CLAIM_QUOTE_ID, String(quote.id || ''));
-          sessionStorage.setItem(SESSION_CONSULT_CLAIM_CODE, code);
-        } catch {
-          /* ignore */
-        }
+      if (!expired && quoteIdForClaim) {
+        appendConsultOfferClaimedQuoteId(quoteIdForClaim);
       }
 
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
-
-      if (expired) {
-        navigate('/shopping-bag');
-      } else {
-        /** Stay on bag so cart UI updates; `sessionStorage` consult keys remain for checkout discount bootstrap. */
-        navigate('/shopping-bag');
-      }
+      window.dispatchEvent(new CustomEvent('cartItemsChanged'));
+      setClaimUiTick((x) => x + 1);
       onClose();
     } catch (e) {
       console.error(e);
@@ -447,13 +470,21 @@ export default function ConsultOfferClaimModal({
             fontFamily: '"Futura PT Medium"',
             backgroundColor: '#FFFFFF',
           }}
-          disabled={!quote || (!expired && !code)}
+          disabled={
+            !quote ||
+            (!expired && !code) ||
+            (!expired && (offerAlreadyClaimed || cartHasThisConsultOffer))
+          }
           onClick={(e) => {
             e.stopPropagation();
             void handleClaim();
           }}
         >
-          {expired ? 'ADD TO BAG' : 'CLAIM OFFER'}
+          {expired
+            ? 'ADD TO BAG'
+            : offerAlreadyClaimed || cartHasThisConsultOffer
+              ? 'OFFER CLAIMED'
+              : 'CLAIM OFFER'}
         </button>
       ) : null}
     </div>
