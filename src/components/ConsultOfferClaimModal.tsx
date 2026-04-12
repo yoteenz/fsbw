@@ -207,7 +207,6 @@ export default function ConsultOfferClaimModal({
                   const selection = line.selection;
                   const amountText =
                     line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT' && line.label !== 'UNIT');
-                  const concatLeft = line.formatting === 'concat' ? `${line.label}${selection}`.trim() : null;
                   return (
                     <div
                       key={`${line.label}-${selection}-${lineIdx}`}
@@ -228,14 +227,8 @@ export default function ConsultOfferClaimModal({
                           minWidth: 0,
                         }}
                       >
-                        {concatLeft ? (
-                          <span>{concatLeft}</span>
-                        ) : (
-                          <>
-                            <span>{line.label}: </span>
-                            <span>{selection}</span>
-                          </>
-                        )}
+                        <span>{line.label}: </span>
+                        <span>{selection}</span>
                       </div>
                       {amountText ? (
                         <span

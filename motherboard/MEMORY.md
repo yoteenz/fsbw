@@ -13585,6 +13585,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-09 — Styling breakdown: **STYLING: LAYERS (L)** (not **LAYERS(L)**)
+
+**Context (this chat):** User said the styling price breakdown text structure was wrong; it should read **`STYLING: LAYERS (L)`** (category + colon + space before parenthesis), not concatenated **`LAYERS(L)`**.
+
+**Changes:** **`expandStylingBreakdownLineForDisplay`** now emits **`label: 'STYLING'`**, **`selection: 'TOKEN (L|M|R)'`** (space before **`(`**). Removed **`formatting: 'concat'`** from **`SpecialOfferBreakdownLine`** and the special render branch in **`AdminMeetingsHub.tsx`** / **`ConsultOfferClaimModal.tsx`** — standard **`LABEL: `** + **`selection`** layout.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
 ## 2026-04-09 — Git: all work on **preview/mobile**; delete **cursor/site-nav-search-81f5**
 
 **Context (this chat):** User required **all changes on `preview/mobile`**, not a separate agent branch — **undo/correct** and **delete** incorrectly created branch(es).

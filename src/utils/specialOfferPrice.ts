@@ -63,8 +63,6 @@ export type SpecialOfferBreakdownLine = {
   label: string;
   selection: string;
   amountUsd: number;
-  /** `concat`: show **LABEL (M)** style (no `LABEL: …` colon) — used for per-option styling + parting in admin/client breakdown. */
-  formatting?: 'colon' | 'concat';
 };
 
 export type SpecialOfferPriceBreakdown = {
@@ -99,7 +97,8 @@ export function partLetterFromPartSelection(partRaw: string): string {
 }
 
 /**
- * Turn one **STYLING** breakdown line into display rows: **`LAYERS (M)`**, **`CRIMPS (R)`**, etc.
+ * Turn one **STYLING** breakdown line into display rows, each **`STYLING: LAYERS (M)`** style
+ * (category label + option + part letter in parentheses).
  * Full **`amountUsd`** is kept on the **first** row only (matches single pricing line).
  */
 export function expandStylingBreakdownLineForDisplay(
@@ -118,10 +117,9 @@ export function expandStylingBreakdownLineForDisplay(
     .filter(Boolean);
   if (!tokens.length) return [{ ...line, selection: 'NONE', amountUsd: 0 }];
   return tokens.map((tok, i) => ({
-    label: tok,
-    selection: `(${letter})`,
+    label: 'STYLING',
+    selection: `${tok} (${letter})`,
     amountUsd: i === 0 ? line.amountUsd : 0,
-    formatting: 'concat' as const,
   }));
 }
 

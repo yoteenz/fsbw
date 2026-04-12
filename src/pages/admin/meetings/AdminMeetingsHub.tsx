@@ -2140,7 +2140,6 @@ export default function AdminMeetingsHub() {
                             const displayLabel = line.label === 'BASE UNIT' ? 'UNIT' : line.label;
                             const amountText =
                               line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, true);
-                            const concatLeft = line.formatting === 'concat' ? `${line.label}${selection}`.trim() : null;
                             return (
                               <div
                                 key={`${line.label}-${selection}-${lineIdx}`}
@@ -2161,14 +2160,8 @@ export default function AdminMeetingsHub() {
                                     minWidth: 0,
                                   }}
                                 >
-                                  {concatLeft ? (
-                                    <span>{concatLeft}</span>
-                                  ) : (
-                                    <>
-                                      <span>{displayLabel}: </span>
-                                      <span>{selection}</span>
-                                    </>
-                                  )}
+                                  <span>{displayLabel}: </span>
+                                  <span>{selection}</span>
                                 </div>
                                 {amountText ? (
                                   <span
