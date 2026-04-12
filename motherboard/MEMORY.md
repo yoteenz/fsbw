@@ -13844,3 +13844,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`pending/page.tsx`** — outer modal stack **`gap` 10→6** for **review**/**affiliate**; scroll area **`paddingBottom` 12→8**; **APPROVE**/**REJECT** vertical **`padding` 8→4** for those kinds; review modal content block **`marginBottom` 12→8**. Forms branch: **`SIGNED · PENDING VERIFY`** + same **VIEW FORM** button as **`showView`** path. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Pending: sort dropdown on every tab + MOST RECENT
+
+**Context (this chat):** Add **most recent** sort option to the admin **Pending** page sorting dropdown **on each tab**.
+
+**Changes:** **`pending/page.tsx`** — **`PendingTabSortDropdown`** (Admin Reviews–style). **OVERVIEW**: **`MOST RECENT`** | **`A TO Z`** on **PENDING ITEMS** rows. **REVIEWS**: **`MOST RECENT`** plus **1–5 STAR**, **PHOTOS**, **VIDEOS** (same filter semantics as reviews page; **MOST RECENT** = by **`submittedAtIso`** / date / id). **FORMS**: **`MOST RECENT`** | **`OLDEST FIRST`** by **`signedAt`**. **AFFILIATE**: one dropdown for all sections — **`MOST RECENT`**, **`OLDEST FIRST`**, **`A TO Z`**, **`Z TO A`** (by **`date`** / id / client). Tab switch closes open dropdowns. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
