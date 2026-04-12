@@ -5130,7 +5130,7 @@ function ConciergePage() {
                       marginRight: '-10px'
                     }}
                   >
-                    choose which gift you'd like to be included in your next order:
+                    choose which gift you'd like to be included in your order:
                   </p>
                   
                   {/* Gift Selection Options */}

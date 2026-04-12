@@ -13635,6 +13635,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-09 — Concierge free gift prompt copy
+
+**Context (this chat):** User asked to update the free-gift line to: **CHOOSE WHICH GIFT YOU'D LIKE TO BE INCLUDED IN YOUR ORDER:** (Concierge card; existing **`textTransform: 'uppercase'`** applies in UI).
+
+**Changes:** **`concierge/page.tsx`** — string **`next order`** → **`order`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-09 — Concierge: consult order tracking = three **CONFIRMED** rows only
 
 **Context (this chat):** User asked that **consult** orders in **Account → Concierge → Order tracking** show **only the CONFIRMED stage** (no sourcing/constructing/etc.), with copy tied to **PLACED** / **PROCESSING** / **COMPLETE**: **“WE'VE RECEIVED YOUR ORDER.”** → **“PROCESSING YOUR ORDER.”** → **“YOUR ORDER IS COMPLETE.”**
