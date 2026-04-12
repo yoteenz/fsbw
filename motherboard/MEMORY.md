@@ -13582,3 +13582,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`specialOfferPrice.ts`** — optional **`formatting: 'concat'`** on **`SpecialOfferBreakdownLine`**; **`partLetterFromPartSelection`**, **`expandStylingBreakdownLineForDisplay`** splits comma-separated styling into one row per option with **`(M|L|R)`** from parting (**MIDDLE/LEFT/RIGHT**). Full styling **`amountUsd`** stays on the **first** row only. **`AdminMeetingsHub.tsx`** — **`quoteBreakdownDisplayLines`** expands **STYLING** after dropping **PARTING**; render uses single concatenated left text when **`formatting === 'concat'`**. **`ConsultOfferClaimModal.tsx`** — same expansion + render for client **VIEW OFFER** modal.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Git: all work on **preview/mobile**; delete **cursor/site-nav-search-81f5**
+
+**Context (this chat):** User required **all changes on `preview/mobile`**, not a separate agent branch — **undo/correct** and **delete** incorrectly created branch(es).
+
+**Changes:** Fast-forward **`preview/mobile`** to include all commits that had been on **`cursor/site-nav-search-81f5`**; **`git push origin preview/mobile`**. Deleted **`origin/cursor/site-nav-search-81f5`** and local **`cursor/site-nav-search-81f5`**. PR **#16** may still reference the deleted branch; canonical branch is **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry.
