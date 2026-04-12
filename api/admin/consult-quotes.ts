@@ -37,6 +37,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     rawThumb && !rawThumb.startsWith('data:') ? (rawThumb.length > 8000 ? rawThumb.slice(0, 8000) : rawThumb) : null;
   const firstName = String(body.clientFirstName || '').trim();
   const lastName = String(body.clientLastName || '').trim();
+  const orderNumberFromCheckout = String(
+    (body as { orderNumberFromCheckout?: string }).orderNumberFromCheckout || ''
+  ).trim();
 
   if (!clientEmail) return res.status(400).json({ error: 'clientEmail required' });
 
@@ -78,15 +81,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (insErr) return res.status(500).json({ error: insErr.message });
 
     const quoteId = (quote as { id: string }).id;
-    const notifText =
-      '[YOUR ORDER IS READY! · CONSULT] WE\'VE CUSTOMIZED A UNIT JUST FOR YOU.';
+    const orderNumForMsg = orderNumberFromCheckout
+      .replace(/^ORDER\s*#?\s*/i, '')
+      .replace(/^#/, '')
+      .trim();
+    const orderLine =
+      orderNumForMsg && /\d/.test(orderNumForMsg) ? `ORDER #${orderNumForMsg} IS COMPLETE.` : 'YOUR CONSULT ORDER IS COMPLETE.';
+    const notifText = `[YOUR ORDER IS READY!] ${orderLine}`;
+    const orderNumDigits = orderNumForMsg.replace(/\D/g, '');
+    const ordersHref =
+      orderNumDigits
+        ? `/account/orders?orderNumber=${encodeURIComponent(orderNumDigits)}&consultOffer=1`
+        : '/account/orders?consultOffer=1';
     const newItem = {
       id: crypto.randomUUID(),
       text: notifText,
       read: false,
       createdAt: new Date().toISOString(),
-      actionText: 'VIEW QUOTE',
-      actionRoute: `/account/consult-offer?id=${encodeURIComponent(quoteId)}`,
+      actionText: 'VIEW OFFER',
+      actionRoute: ordersHref,
       consultQuoteId: quoteId,
     };
 

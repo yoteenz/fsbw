@@ -25,6 +25,8 @@ export type StoredNotification = {
   sortAt?: number;
   isRead: boolean;
   icon: string;
+  /** When set, Account → Alerts uses consult-offer row styling (black header / gray body / red link). */
+  variant?: 'consult_offer_ready';
 };
 
 const STANDARD_NOTIFICATION_ICON = 'f';
@@ -106,6 +108,26 @@ function displayOrderNumber(order: AlertOrder): string {
   return stripped || '—';
 }
 
+/** Digits for **orderNumber=** deep link (e.g. **332** from `ORDER #332`). */
+export function consultAlertOrderNumberTokenForUrl(orderNumberDisplay: string): string {
+  const s = String(orderNumberDisplay || '')
+    .trim()
+    .toUpperCase()
+    .replace(/^ORDER\s*#?\s*/i, '')
+    .replace(/^#/, '')
+    .trim();
+  const m = s.match(/\d+/);
+  return m ? m[0] : '';
+}
+
+export function buildConsultViewOfferOrdersHref(orderNumberDisplay: string, matchedOrderId?: string): string {
+  const id = String(matchedOrderId || '').trim();
+  if (id) return `/account/orders?orderId=${encodeURIComponent(id)}&consultOffer=1`;
+  const num = consultAlertOrderNumberTokenForUrl(orderNumberDisplay);
+  if (num) return `/account/orders?orderNumber=${encodeURIComponent(num)}&consultOffer=1`;
+  return '/account/orders?consultOffer=1';
+}
+
 function orderTimestampMs(order: AlertOrder): number | undefined {
   if (typeof order.placedAt === 'number' && !Number.isNaN(order.placedAt)) return order.placedAt;
   const u = order.updatedAt;
@@ -148,7 +170,8 @@ export function buildOrderReceivedAccountAlert(
 export function appendConsultOfferCompleteAccountAlert(
   clientEmail: string,
   orderNumberDisplay: string,
-  quoteId: string
+  quoteId: string,
+  options?: { matchedOrderId?: string }
 ): void {
   const email = String(clientEmail || '').trim().toLowerCase();
   if (!email || typeof window === 'undefined') return;
@@ -159,13 +182,14 @@ export function appendConsultOfferCompleteAccountAlert(
   const item: StoredNotification = {
     id,
     title: 'YOUR ORDER IS READY!',
-    message: `ORDER #${orderNum} IS COMPLETE — VIEW YOUR CUSTOM UNIT OFFER.`,
+    message: `ORDER #${orderNum} IS COMPLETE.`,
     actionText: 'VIEW OFFER',
-    actionRoute: `/account/orders`,
+    actionRoute: buildConsultViewOfferOrdersHref(orderNumberDisplay, options?.matchedOrderId),
     date: todayMdy(),
     sortAt: now,
     isRead: false,
     icon: STANDARD_NOTIFICATION_ICON,
+    variant: 'consult_offer_ready',
   };
   try {
     const key = notificationsKey(email);

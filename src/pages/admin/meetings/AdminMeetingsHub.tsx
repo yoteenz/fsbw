@@ -947,6 +947,7 @@ export default function AdminMeetingsHub() {
           priceBreakdown: breakdown,
           adminMessage: quoteMessage,
           thumbnailSrc: thumbSrc,
+          orderNumberFromCheckout: orderRef || undefined,
         })) as { quote?: Record<string, unknown>; discountCode?: string };
         const quoteRow = res?.quote && typeof res.quote === 'object' ? res.quote : {};
         quoteId = String((quoteRow as { id?: string }).id || '').trim();
@@ -973,13 +974,15 @@ export default function AdminMeetingsHub() {
         expiresAt,
       };
 
+      let matchedConsultOrderId = '';
       if (orderRef) {
-        markConsultOrderCompleteAfterQuoteSent({
+        const markRes = markConsultOrderCompleteAfterQuoteSent({
           clientEmail: email,
           orderNumberFromCheckout: orderRef,
           consultQuoteId: quoteId,
           consultOfferSnapshot: snapshot,
         });
+        matchedConsultOrderId = String(markRes.matchedOrderId || '').trim();
       }
 
       const alertOrderLabel =
@@ -988,7 +991,9 @@ export default function AdminMeetingsHub() {
           ? String(quoteMeeting.metadata.orderNumber).trim()
           : '') ||
         `CONSULT OFFER`;
-      appendConsultOfferCompleteAccountAlert(email, alertOrderLabel, quoteId);
+      appendConsultOfferCompleteAccountAlert(email, alertOrderLabel, quoteId, {
+        matchedOrderId: matchedConsultOrderId || undefined,
+      });
 
       upsertLocalMeeting({
         ...quoteMeeting,

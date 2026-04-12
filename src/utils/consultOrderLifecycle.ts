@@ -90,24 +90,31 @@ export type MarkConsultCompleteParams = {
   consultOfferSnapshot?: ConsultOfferPersistedSnapshot | null;
 };
 
+export type MarkConsultOrderCompleteAfterQuoteSentResult = {
+  ok: boolean;
+  /** First matched consult order **`id`** (for deep links to orders + VIEW OFFER). */
+  matchedOrderId?: string;
+};
+
 /**
  * After admin **POST /api/admin/consult-quotes**: set matching **`userOrders_${email}`** row to **COMPLETE**.
- * Returns whether any row was updated.
  */
-export function markConsultOrderCompleteAfterQuoteSent(params: MarkConsultCompleteParams): boolean {
+export function markConsultOrderCompleteAfterQuoteSent(
+  params: MarkConsultCompleteParams
+): MarkConsultOrderCompleteAfterQuoteSentResult {
   const email = String(params.clientEmail || '')
     .trim()
     .toLowerCase();
   const quoteId = String(params.consultQuoteId || '').trim();
-  if (!email || !quoteId) return false;
+  if (!email || !quoteId) return { ok: false };
   const orderRef = String(params.orderNumberFromCheckout || '').trim();
-  if (!orderRef) return false;
+  if (!orderRef) return { ok: false };
   const snapshot = params.consultOfferSnapshot ?? null;
 
   try {
     const key = `userOrders_${email}`;
     const raw = localStorage.getItem(key);
-    if (!raw) return false;
+    if (!raw) return { ok: false };
     const data = JSON.parse(raw) as {
       activeOrders?: ConsultOrderLike[];
       pastOrders?: ConsultOrderLike[];
@@ -140,15 +147,18 @@ export function markConsultOrderCompleteAfterQuoteSent(params: MarkConsultComple
 
     const a = patch(active);
     const p = patch(past);
-    if (!a.hit && !p.hit) return false;
+    if (!a.hit && !p.hit) return { ok: false };
+
+    const firstCompleted = a.completed[0] ?? p.completed[0];
+    const matchedOrderId = String(firstCompleted?.id || '').trim() || undefined;
 
     const nextPast = [...a.completed, ...p.completed, ...p.list];
     const nextActive = a.list;
 
     localStorage.setItem(key, JSON.stringify({ activeOrders: nextActive, pastOrders: nextPast }));
     window.dispatchEvent(new CustomEvent('ordersUpdated'));
-    return true;
+    return { ok: true, matchedOrderId };
   } catch {
-    return false;
+    return { ok: false };
   }
 }

@@ -898,6 +898,8 @@ export async function postAdminConsultQuote(body: {
   priceBreakdown?: unknown[];
   adminMessage?: string;
   thumbnailSrc?: string;
+  /** Checkout-style order ref (e.g. `#332`) for alert copy + deep link to Orders → VIEW OFFER. */
+  orderNumberFromCheckout?: string;
 }): Promise<unknown> {
   let res: Response;
   try {

@@ -47,7 +47,10 @@ import {
   orderStatusIsCanceled,
   sortOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
-import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrderLifecycle';
+import {
+  advanceConsultOrdersPlacedToProcessing,
+  normalizeOrderNumberForConsultMatch,
+} from '../../utils/consultOrderLifecycle';
 import { orderNeedsClientAuthFormSignature } from '../../utils/giftCardFirstPurchaseForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
@@ -160,7 +163,8 @@ function OrdersPage() {
   const [consultOfferModalQuote, setConsultOfferModalQuote] = useState<Record<string, unknown> | null>(null);
   const [consultOfferModalOrderLabel, setConsultOfferModalOrderLabel] = useState<string>('');
   const consultOfferFetchGen = useRef(0);
-  
+  const consultOfferDeepLinkHandledRef = useRef(false);
+
   // Get current user data
   const [currentUser, setCurrentUser] = useState<any>(() => {
     if (typeof window !== 'undefined') {
@@ -1827,6 +1831,40 @@ function OrdersPage() {
       }
     })();
   };
+
+  /** Account → Alerts **VIEW OFFER**: expand matching consult order + open modal; strip query after handling. */
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    if (sp.get('consultOffer') !== '1') {
+      consultOfferDeepLinkHandledRef.current = false;
+      return;
+    }
+    if (consultOfferDeepLinkHandledRef.current) return;
+    const orderIdParam = (sp.get('orderId') || '').trim();
+    const orderNumberParam = (sp.get('orderNumber') || '').trim();
+    const all = [...activeOrders, ...pastOrders];
+    let target: Order | undefined;
+    if (orderIdParam) {
+      target = all.find((o) => o.id === orderIdParam);
+    }
+    if (!target && orderNumberParam) {
+      const want = normalizeOrderNumberForConsultMatch(orderNumberParam);
+      target = all.find(
+        (o) =>
+          String(o.bookingFlowType || '').toLowerCase() === 'consult' &&
+          String(o.status || '').toUpperCase() === 'COMPLETE' &&
+          normalizeOrderNumberForConsultMatch(o.orderNumber) === want
+      );
+    }
+    const quoteId = target ? consultOfferQuoteIdForOrder(target) : '';
+    const hasSnap = Boolean(target?.consultOfferSnapshot);
+    if (!target || (!quoteId && !hasSnap)) return;
+
+    consultOfferDeepLinkHandledRef.current = true;
+    setExpandedOrderId(target.id);
+    openConsultOfferForOrder(target);
+    navigate('/account/orders', { replace: true });
+  }, [location.search, activeOrders, pastOrders, navigate]);
 
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
