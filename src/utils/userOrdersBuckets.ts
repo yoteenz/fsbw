@@ -7,10 +7,16 @@ export function orderStatusIsCanceled(status: unknown): boolean {
   return s === 'CANCELED' || s === 'CANCELLED';
 }
 
+function orderIsCompleteConsultForArchive(o: { status?: string; bookingFlowType?: string }): boolean {
+  if (String(o.bookingFlowType || '').trim().toLowerCase() !== 'consult') return false;
+  return String(o.status || '').trim().toUpperCase() === 'COMPLETE';
+}
+
 /**
  * Remove CANCELED/CANCELLED from `active`; append each to `past` if not already present (by `id` when set).
+ * **Consult** orders with status **COMPLETE** are also moved to **`past`** (archived card), not left on active.
  */
-export function normalizeUserOrdersBuckets<T extends { id?: string; status?: string }>(
+export function normalizeUserOrdersBuckets<T extends { id?: string; status?: string; bookingFlowType?: string }>(
   active: T[] | undefined,
   past: T[] | undefined
 ): { activeOrders: T[]; pastOrders: T[] } {
@@ -20,7 +26,8 @@ export function normalizeUserOrdersBuckets<T extends { id?: string; status?: str
   const nextActive: T[] = [];
 
   for (const o of active || []) {
-    if (!orderStatusIsCanceled(o.status)) {
+    const moveToPast = orderStatusIsCanceled(o.status) || orderIsCompleteConsultForArchive(o);
+    if (!moveToPast) {
       nextActive.push(o);
       continue;
     }
