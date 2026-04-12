@@ -13662,3 +13662,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`meetingIsArchivedForAdminViewAll`** + **Archived** in **`sortMeetingsByOption`** (`adminMeetingClientPanels.tsx`). **`AdminMeetingsHub`**: archived sort option; hide archived rows in default calendar + view-all; always append client alert with fallback label; **`upsertLocalMeeting`** to **Completed** + **`consultOfferSent`** metadata; **`adminMeetingsMock`**: **Completed** status + API normalize.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings view-all: grid vs list client name format
+
+**Context (this chat):** **Grid** view: show **`UMA VANCE`** only (no **`(MN)`**). **List** view: **`UMA VANCE · MN · STANDARD`** (dot separators, no parentheses around state).
+
+**Changes:** **`adminMeetingClientPanels.tsx`** — **`meetingClientNamePlain`**, **`meetingClientViewAllListHeadline`**; **`meetingClientDisplayNameWithState`** uses trimmed name. **`AdminMeetingsHub.tsx`** — grid cards use plain name; list headline from **`meetingClientViewAllListHeadline`**, tier suffix colored only on last **` · PREMIUM|STANDARD`** segment.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

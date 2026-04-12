@@ -61,9 +61,10 @@ import {
   formatUsd,
   formatViewAllListMeetingDateOnly,
   formatViewAllListMeetingTimeOnly,
-  meetingClientDisplayNameWithState,
+  meetingClientNamePlain,
   meetingClientProfilePhoto,
   meetingClientUniqKey,
+  meetingClientViewAllListHeadline,
   meetingHasTravelAddon,
   meetingIsArchivedForAdminViewAll,
   meetingIsCurrentOrActive,
@@ -1118,7 +1119,7 @@ export default function AdminMeetingsHub() {
       if (!existing) {
         byClient.set(key, {
           key,
-          displayName: meetingClientDisplayNameWithState(row),
+          displayName: meetingClientNamePlain(row),
           profilePhoto: meetingClientProfilePhoto(row),
           hasActiveMeeting: meetingIsCurrentOrActive(row),
           totalCount: 1,
@@ -1172,7 +1173,7 @@ export default function AdminMeetingsHub() {
       if (!existing) {
         byClient.set(key, {
           key,
-          displayName: meetingClientDisplayNameWithState(row),
+          displayName: meetingClientViewAllListHeadline(row),
           profilePhoto: meetingClientProfilePhoto(row),
           latestMeeting: row,
           tierIsPremium: tierPremium(row),
@@ -1195,6 +1196,7 @@ export default function AdminMeetingsHub() {
         ...group,
         meetings,
         latestMeeting,
+        displayName: meetingClientViewAllListHeadline(latestMeeting),
         profilePhoto: meetingClientProfilePhoto(latestMeeting),
         tierIsPremium: tierPremium(latestMeeting),
       };
@@ -1988,10 +1990,23 @@ export default function AdminMeetingsHub() {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    <span style={{ color: '#000' }}>{clientGroup.displayName}</span>{' '}
-                                    <span style={{ color: clientGroup.tierIsPremium ? '#000' : '#808080' }}>
-                                      · {clientGroup.tierIsPremium ? 'PREMIUM' : 'STANDARD'}
-                                    </span>
+                                    {(() => {
+                                      const h = clientGroup.displayName;
+                                      const parts = h.split(' · ');
+                                      if (parts.length < 2) return <span style={{ color: '#000' }}>{h}</span>;
+                                      const nameSt = parts.slice(0, -1).join(' · ');
+                                      const tier = parts[parts.length - 1] || '';
+                                      const tierPremiumLabel = tier === 'PREMIUM';
+                                      return (
+                                        <>
+                                          <span style={{ color: '#000' }}>{nameSt}</span>
+                                          <span style={{ color: tierPremiumLabel ? '#000' : '#808080' }}>
+                                            {' · '}
+                                            {tier}
+                                          </span>
+                                        </>
+                                      );
+                                    })()}
                                   </p>
                                 </button>
                                 <div

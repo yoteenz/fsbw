@@ -287,9 +287,23 @@ function meetingClientStateCode(m: AdminMeeting): string | null {
   return fromAddress;
 }
 
+export function meetingClientNamePlain(m: AdminMeeting): string {
+  return String(m.client || '').trim();
+}
+
 export function meetingClientDisplayNameWithState(m: AdminMeeting): string {
   const state = meetingClientStateCode(m);
-  return state ? `${m.client} (${state})` : m.client;
+  const name = meetingClientNamePlain(m);
+  return state ? `${name} (${state})` : name;
+}
+
+/** Admin → Meetings **view all list**: `NAME · ST · PREMIUM|STANDARD` (no parentheses around state). */
+export function meetingClientViewAllListHeadline(m: AdminMeeting): string {
+  const name = meetingClientNamePlain(m);
+  const st = meetingClientStateCode(m);
+  const tier = tierPremium(m) ? 'PREMIUM' : 'STANDARD';
+  if (st) return `${name} · ${st} · ${tier}`;
+  return `${name} · ${tier}`;
 }
 
 export function normalizeSearchText(raw: unknown): string {
