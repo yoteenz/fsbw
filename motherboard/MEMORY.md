@@ -13844,3 +13844,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`pending/page.tsx`** — outer modal stack **`gap` 10→6** for **review**/**affiliate**; scroll area **`paddingBottom` 12→8**; **APPROVE**/**REJECT** vertical **`padding` 8→4** for those kinds; review modal content block **`marginBottom` 12→8**. Forms branch: **`SIGNED · PENDING VERIFY`** + same **VIEW FORM** button as **`showView`** path. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Revert mistaken Admin Pending per-tab sort dropdowns
+
+**Context (this chat):** User said the prior change was **wrong**; they only wanted the **spacing** tweaks above **APPROVE**/**REJECT** on **VIEW REVIEW** and **affiliate view content** modals (not sort dropdowns on every tab).
+
+**Changes:** Reverted commit **`feat(admin-pending): per-tab sort dropdowns including MOST RECENT`** (**`e83e192`**). **`pending/page.tsx`** modal nudge + **VIEW FORM** under verify + media-under-date work **unchanged**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
