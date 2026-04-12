@@ -13762,3 +13762,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`sortNotificationsNewestFirst`** — removed **`syntheticSortAtFromId`** added to **`date`-only** rows; primary key is **`sortAt`** else **calendar **`date`** midnight** only, then tie-breakers.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: OFFER CLAIMED button + gray default inspo line
+
+**Context (this chat):** User asked that **OFFER CLAIMED** not be disabled and keep a **white** background; the default copy **"BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK."** should be **gray Futura PT Medium** instead of red.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — removed **`offerAlreadyClaimed` / `cartHasThisConsultOffer`** from **`disabled`** (only **`!quote`** or active offer missing **`code`**); dropped **`disabled:opacity-50`** for the claimed state so the button stays full white; **`handleClaim`** still no-ops when already claimed. Compared **`admin_message`** to the known default string (case-insensitive) and set paragraph color **`#808080`** for that case only; custom admin messages stay red. Branch **`cursor/consult-offer-claimed-button-style-81f5`**, draft PR **#23** into **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
