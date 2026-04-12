@@ -32,6 +32,22 @@ function formatCreateOfferBreakdownAmount(amountUsd: number, includeSign: boolea
   return amountUsd > 0 ? `+${usd}` : `-${usd}`;
 }
 
+/** Line-item amounts in the consult offer modal always show a leading **+** / **-** (e.g. **+$740 USD**). */
+function formatConsultOfferModalBreakdownAmount(amountUsd: number): string {
+  return formatCreateOfferBreakdownAmount(amountUsd, true);
+}
+
+/** **14D 1H LEFT**-style remaining time (days/hours; finer than hours when &lt;1d). */
+function formatOfferTimeLeftLabel(msRemain: number): string {
+  const left = Math.max(0, msRemain);
+  const days = Math.floor(left / 86400000);
+  const hours = Math.floor((left % 86400000) / 3600000);
+  const minutes = Math.floor((left % 3600000) / 60000);
+  if (days > 0) return `${days}D ${hours}H LEFT`;
+  if (hours > 0) return `${hours}H ${minutes}M LEFT`;
+  return `${Math.max(0, minutes)}M LEFT`;
+}
+
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
@@ -68,18 +84,20 @@ export default function ConsultOfferClaimModal({
     if (typeof raw !== 'string') return null;
     const ms = new Date(raw).getTime();
     return Number.isFinite(ms) ? ms : null;
-  }, [quote, tick]);
-
-  const countdown = useMemo(() => {
-    if (expiresMs == null) return '—';
-    const left = Math.max(0, expiresMs - Date.now());
-    const h = Math.floor(left / 3600000);
-    const m = Math.floor((left % 3600000) / 60000);
-    const s = Math.floor((left % 60000) / 1000);
-    return `${h}H ${m}M ${s}S`;
-  }, [expiresMs, tick]);
+  }, [quote]);
 
   const expired = expiresMs != null && expiresMs <= Date.now();
+
+  const offerLeftMs = useMemo(() => {
+    if (expiresMs == null) return 0;
+    return Math.max(0, expiresMs - Date.now());
+  }, [expiresMs, tick]);
+
+  const offerCountdownText = useMemo(() => {
+    if (expiresMs == null) return '—';
+    if (expired) return '';
+    return formatOfferTimeLeftLabel(offerLeftMs);
+  }, [expiresMs, expired, offerLeftMs, tick]);
   const unitKey = String(quote?.unit_key || 'NOIR').toUpperCase();
   const thumb =
     typeof quote?.thumbnail_src === 'string' && quote.thumbnail_src.trim()
@@ -153,7 +171,8 @@ export default function ConsultOfferClaimModal({
   }, [quote, expired, tick]);
 
   const handleClaim = async () => {
-    if (!quote || expired || !code) return;
+    if (!quote) return;
+    if (!expired && !code) return;
     try {
       const signedIn = localStorage.getItem('isSignedIn') === 'true';
       if (isSupabaseConfigured()) {
@@ -178,18 +197,24 @@ export default function ConsultOfferClaimModal({
       const newCount = prevCount + q;
       localStorage.setItem('cartCount', String(newCount));
 
-      try {
-        sessionStorage.setItem(SESSION_CONSULT_CLAIM_QUOTE_ID, String(quote.id || ''));
-        sessionStorage.setItem(SESSION_CONSULT_CLAIM_CODE, code);
-      } catch {
-        /* ignore */
+      if (!expired) {
+        try {
+          sessionStorage.setItem(SESSION_CONSULT_CLAIM_QUOTE_ID, String(quote.id || ''));
+          sessionStorage.setItem(SESSION_CONSULT_CLAIM_CODE, code);
+        } catch {
+          /* ignore */
+        }
       }
 
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));
 
-      const id = String(quote.id || '').trim();
-      navigate(id ? `/checkout?consultClaim=${encodeURIComponent(id)}` : '/checkout');
+      if (expired) {
+        navigate('/shopping-bag');
+      } else {
+        const id = String(quote.id || '').trim();
+        navigate(id ? `/checkout?consultClaim=${encodeURIComponent(id)}` : '/checkout');
+      }
       onClose();
     } catch (e) {
       console.error(e);
@@ -200,7 +225,7 @@ export default function ConsultOfferClaimModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 gap-4"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 gap-3"
       style={{ background: 'rgba(0,0,0,0.75)' }}
       onClick={onClose}
       role="presentation"
@@ -287,20 +312,20 @@ export default function ConsultOfferClaimModal({
                   textTransform: 'uppercase',
                 }}
               >
-                ${unitPriceDisplayUsd.toLocaleString('en-US')} USD
+                +${unitPriceDisplayUsd.toLocaleString('en-US')} USD
               </p>
             </div>
 
             {message ? (
               <p
                 style={{
-                  fontFamily: '"Futura PT Book"',
+                  fontFamily: '"Futura PT Medium"',
                   fontSize: '9px',
                   marginTop: '12px',
                   marginBottom: '10px',
                   lineHeight: 1.5,
                   textTransform: 'uppercase',
-                  color: '#EB1C24',
+                  color: '#000',
                   textAlign: 'center',
                 }}
               >
@@ -323,7 +348,7 @@ export default function ConsultOfferClaimModal({
                 {breakdownLines.map((line: SpecialOfferBreakdownLine, lineIdx: number) => {
                   const selection = line.selection;
                   const amountText =
-                    line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT' && line.label !== 'UNIT');
+                    line.amountUsd === 0 ? '' : formatConsultOfferModalBreakdownAmount(line.amountUsd);
                   return (
                     <div
                       key={`${line.label}-${selection}-${lineIdx}`}
@@ -406,18 +431,19 @@ export default function ConsultOfferClaimModal({
 
             <p
               style={{
-                fontFamily: '"Futura PT Book"',
-                fontSize: '9px',
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '8px',
                 color: '#000',
                 marginTop: '12px',
-                marginBottom: '6px',
+                marginBottom: '8px',
                 textTransform: 'uppercase',
-                textAlign: 'center',
+                textAlign: 'left',
+                lineHeight: 1.4,
               }}
             >
-              OFFER {expired ? 'ENDED' : 'ENDS IN'} {expired ? '' : countdown}
+              $40 APPLIED AT CHECKOUT ONLY WHILE OFFER IS ACTIVE.
             </p>
-            <div style={{ marginTop: '2px', marginBottom: '4px' }}>
+            <div style={{ marginTop: '0', marginBottom: '4px' }}>
               <div
                 style={{
                   width: '100%',
@@ -440,9 +466,44 @@ export default function ConsultOfferClaimModal({
               </div>
             </div>
 
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '10px', textTransform: 'uppercase' }}>
-              $40 OFF AT CHECKOUT WHEN THE CODE IS APPLIED (WHILE OFFER IS ACTIVE).
-            </p>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: '12px',
+                marginTop: '8px',
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '9px',
+                  color: '#808080',
+                  margin: 0,
+                  textTransform: 'uppercase',
+                  flex: '1 1 auto',
+                  minWidth: 0,
+                }}
+              >
+                STATUS: {expired ? 'INACTIVE' : 'ACTIVE'}
+              </p>
+              {!expired && expiresMs != null ? (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '9px',
+                    color: '#EB1C24',
+                    margin: 0,
+                    textTransform: 'uppercase',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {offerCountdownText}
+                </p>
+              ) : null}
+            </div>
           </>
         ) : (
           <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px' }}>NO OFFER DATA.</p>
@@ -459,13 +520,13 @@ export default function ConsultOfferClaimModal({
             fontFamily: '"Futura PT Medium"',
             backgroundColor: '#FFFFFF',
           }}
-          disabled={expired || !code}
+          disabled={!quote || (!expired && !code)}
           onClick={(e) => {
             e.stopPropagation();
             void handleClaim();
           }}
         >
-          CLAIM OFFER
+          {expired ? 'ADD TO BAG' : 'CLAIM OFFER'}
         </button>
       ) : null}
     </div>
