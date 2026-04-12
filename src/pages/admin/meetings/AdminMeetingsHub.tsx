@@ -1988,7 +1988,10 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
-                    <div className="flex justify-center" style={{ marginBottom: '20px' }}>
+                    <div
+                      className="flex justify-center"
+                      style={{ marginBottom: quoteEffectiveCustomSrc ? '8px' : '20px' }}
+                    >
                       <img
                         src={quoteOfferThumbnailSrc}
                         alt=""
@@ -2007,7 +2010,6 @@ export default function AdminMeetingsHub() {
                           border: 'none',
                           background: 'none',
                           cursor: 'pointer',
-                          marginTop: '-12px',
                         }}
                         onClick={() => {
                           if (quoteManualThumbnailSrc) {

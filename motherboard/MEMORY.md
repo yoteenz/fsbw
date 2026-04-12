@@ -13528,3 +13528,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminHeader.tsx`** — left row always shows **back** (if `showBack`), **search**, **account** (if `showAccountIcon`); center shows **centered** `<input>` when active with horizontal **padding** so it does not overlap icons; removed **X** and trailing **submit** icon in the center (**Enter** still runs **`submitSearch`**). **`handleSearchKeyDown`**: **Backspace** on empty clears and closes. **`handleSearchClick`** refocuses input if already open. **`searchInputRef`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: REMOVE CUSTOM IMAGE gap (margin collapse fix)
+
+**Context (this chat):** **`marginTop: '-12px'`** on **REMOVE CUSTOM IMAGE** did not visibly tighten spacing; likely **margin collapse** between the thumb block’s bottom margin and the button’s **`mb-2`**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** is **`8px`** when **`quoteEffectiveCustomSrc`** (12px tighter than **`20px`** default), else **`20px`**; removed the button’s negative margin. **`mb-2`** unchanged.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
