@@ -6,6 +6,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import {
+  buildConsultViewOfferOrdersHref,
   getNotificationsStorageKeyForUserEmail,
   getOrderReceivedAccountAlerts,
   migrateNotificationsLocalStorageKeys
@@ -30,6 +31,8 @@ interface Notification {
   icon: string; // 'f' or 'fc'
   /** Consult-offer-ready row: black Futura header, gray body, red VIEW OFFER link. */
   variant?: 'consult_offer_ready';
+  /** Set on migrated Supabase **admin_*** consult rows so they tie-break above **acc_***. */
+  consultOfferReady?: boolean;
 }
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
@@ -45,6 +48,53 @@ export function parseAdminSentNotificationText(text: string): { title: string; m
     return { title, message: message || 'VIEW DETAILS.' };
   }
   return { title: 'ALERT', message: t.toUpperCase() || 'VIEW DETAILS.' };
+}
+
+function extractOrderDigitsForConsultAlert(message: string): string {
+  const m = String(message || '').match(/\bORDER\s*#?\s*(\d{1,8})\b/i);
+  if (m) return m[1];
+  const m2 = String(message || '').match(/#\s*(\d{1,8})\b/);
+  return m2 ? m2[1] : '';
+}
+
+/** Upgrades legacy consult-offer rows (old **localStorage** + older **Supabase** payloads). */
+export function migrateConsultYourOrderReadyNotification(n: Notification): Notification {
+  const rawTitle = (n.title || '').trim();
+  const titleU = rawTitle.toUpperCase();
+  const actionU = String(n.actionText || '').trim().toUpperCase();
+  const route = String(n.actionRoute || '').trim();
+  const isReady =
+    titleU === 'YOUR ORDER IS READY!' ||
+    (titleU.includes('YOUR ORDER IS READY') && titleU.includes('CONSULT'));
+  const isTargetAction = actionU === 'VIEW OFFER' || actionU === 'VIEW QUOTE' || actionU === '';
+  if (!isReady || !isTargetAction) return n;
+
+  const digits =
+    extractOrderDigitsForConsultAlert(n.message) ||
+    extractOrderDigitsForConsultAlert(n.title) ||
+    extractOrderDigitsForConsultAlert(route);
+  const orderRef = digits ? `ORDER #${digits}` : '';
+  let actionRoute = n.actionRoute;
+  if (!route.includes('consultOffer=1')) {
+    actionRoute = buildConsultViewOfferOrdersHref(orderRef || n.message, undefined);
+  }
+  const messageU = String(n.message || '').toUpperCase();
+  let message = n.message;
+  if (digits && (!messageU.includes('IS COMPLETE') || messageU.includes('VIEW YOUR') || messageU.includes('CUSTOMIZED'))) {
+    message = `ORDER #${digits} IS COMPLETE.`;
+  } else if (digits && !messageU.includes(`ORDER #${digits}`)) {
+    message = `ORDER #${digits} IS COMPLETE.`;
+  }
+
+  return {
+    ...n,
+    title: 'YOUR ORDER IS READY!',
+    message,
+    actionText: 'VIEW OFFER',
+    actionRoute,
+    variant: 'consult_offer_ready',
+    consultOfferReady: n.id.startsWith(ADMIN_SENT_PREFIX) || n.id.startsWith('consult_offer_sent_'),
+  };
 }
 
 function notificationFromSupabaseAdminItem(
@@ -66,10 +116,7 @@ function notificationFromSupabaseAdminItem(
     created && !Number.isNaN(createdMs)
       ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
       : today;
-  const isConsultOfferReady =
-    title.trim().toUpperCase() === 'YOUR ORDER IS READY!' &&
-    String(item.actionText || '').trim().toUpperCase() === 'VIEW OFFER';
-  return {
+  const draft: Notification = {
     id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
     title,
     message,
@@ -79,8 +126,8 @@ function notificationFromSupabaseAdminItem(
     icon: 'f',
     actionText: item.actionText,
     actionRoute: item.actionRoute,
-    ...(isConsultOfferReady ? { variant: 'consult_offer_ready' as const } : {}),
   };
+  return migrateConsultYourOrderReadyNotification(draft);
 }
 
 /** Vouchers and free gifts are valid for 6 months once credited (keeps inventory moving). Free gifts stay combinable with other checkout offers (see checkout / rewards copy). */
@@ -433,13 +480,13 @@ const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
  * When timestamps tie (same calendar day etc.), lower = closer to top of NEW list.
  * Order-received alerts sort above onboarding acc_* (tier, membership, …) so checkout feels "after" signup.
  */
-function newestFirstTieBreakRank(id: string): number {
-  if (id.startsWith('consult_offer_sent_')) return -3;
-  if (id.startsWith('order_received_')) return 0;
-  if (id.startsWith(ADMIN_SENT_PREFIX)) return 5;
-  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
+function newestFirstTieBreakRank(n: Pick<Notification, 'id' | 'consultOfferReady'>): number {
+  if (n.consultOfferReady || n.id.startsWith('consult_offer_sent_')) return -3;
+  if (n.id.startsWith('order_received_')) return 0;
+  if (n.id.startsWith(ADMIN_SENT_PREFIX)) return 5;
+  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(n.id);
   if (stableIdx >= 0) return 1 + stableIdx;
-  if (id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
+  if (n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
   return 50;
 }
 
@@ -455,8 +502,8 @@ export function sortNotificationsNewestFirst(list: Notification[]): Notification
     const sb =
       typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : baseB + syntheticSortAtFromId(b.id);
     if (sb !== sa) return sb - sa;
-    const ra = newestFirstTieBreakRank(a.id);
-    const rb = newestFirstTieBreakRank(b.id);
+    const ra = newestFirstTieBreakRank(a);
+    const rb = newestFirstTieBreakRank(b);
     if (ra !== rb) return ra - rb;
     return String(b.id).localeCompare(String(a.id));
   });
@@ -465,12 +512,13 @@ export function sortNotificationsNewestFirst(list: Notification[]): Notification
 /** Merge stored notifications with account notifications (account ones upserted by id). Account + order-received alerts stay in NEW until user archives — do not use stored isRead for them. Exported for account page badge logic. */
 export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
-  stored.forEach(n => byId.set(n.id, n));
-  account.forEach(n => {
-    const existing = byId.get(n.id);
+  stored.forEach((n) => byId.set(n.id, migrateConsultYourOrderReadyNotification(n)));
+  account.forEach((n) => {
+    const migrated = migrateConsultYourOrderReadyNotification(n);
+    const existing = byId.get(migrated.id);
     const isManaged =
-      n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || n.id.startsWith('order_received_');
-    byId.set(n.id, { ...n, isRead: isManaged ? false : (existing?.isRead ?? n.isRead) });
+      migrated.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || migrated.id.startsWith('order_received_');
+    byId.set(migrated.id, { ...migrated, isRead: isManaged ? false : (existing?.isRead ?? migrated.isRead) });
   });
   return sortNotificationsNewestFirst(Array.from(byId.values()));
 }
@@ -1045,6 +1093,7 @@ function NotificationsPage() {
                         {displayedNotifications.map((notification) => {
                           const consultOfferReadyRow =
                             notification.variant === 'consult_offer_ready' ||
+                            notification.consultOfferReady === true ||
                             notification.id.startsWith('consult_offer_sent_');
                           return (
                           <div
