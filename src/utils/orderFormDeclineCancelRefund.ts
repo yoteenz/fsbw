@@ -3,7 +3,7 @@
  * reverse loyalty from that order, and restock (inventory follows canceled orders via `getDepletedInventory`).
  */
 
-import { normalizeUserOrdersBuckets, sortOrdersNewestFirst } from './userOrdersBuckets';
+import { normalizeUserOrdersBuckets, sortArchivedOrdersNewestFirst } from './userOrdersBuckets';
 import { getPerUserKey, PER_USER_KEYS } from './perUserStorage';
 
 function userOrdersStorageKey(email: string): string {
@@ -215,7 +215,7 @@ export function cancelAndRefundOrderAfterFormDecline(
     };
 
     past.push(canceled);
-    past = sortOrdersNewestFirst(past as { id?: string; date?: string; placedAt?: number; status?: string }[]);
+    past = sortArchivedOrdersNewestFirst(past as { id?: string; date?: string; placedAt?: number; status?: string }[]);
 
     type BucketRow = { id?: string; status?: string };
     const normalized = normalizeUserOrdersBuckets(active as BucketRow[], past as BucketRow[]);
