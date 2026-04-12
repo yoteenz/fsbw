@@ -13732,3 +13732,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`normalizeUserOrdersBuckets`** in **`userOrdersBuckets.ts`** — **`bookingFlowType: consult`** + **`COMPLETE`** removed from **`activeOrders`** and appended to **`pastOrders`** (same dedupe by **`id`** as canceled). Branch **`cursor/consult-complete-archived-bucket-81f5`**, PR **#21**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult CLAIM OFFER: $40 in cart, no bag route, claim-once, #331 past
+
+**Context (this chat):** **CLAIM OFFER** adds unit with **$40** off without navigating to bag; **OFFER CLAIMED** + **qty 1** lock while active; **ADD TO BAG** when inactive; founder demo **#331** under **archived**.
+
+**Changes:** **`consultOfferFromQuote.ts`**, **`ConsultOfferClaimModal.tsx`**, **`shopping-bag/page.tsx`**, **`CartDropdown.tsx`**, **`checkout/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-claim-cart-discount-81f5`**, PR **#22**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
