@@ -13672,3 +13672,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`adminMeetingClientPanels.tsx`** — **`meetingClientNamePlain`**, **`meetingClientViewAllListHeadline`**; **`meetingClientDisplayNameWithState`** uses trimmed name. **`AdminMeetingsHub.tsx`** — grid cards use plain name; list headline from **`meetingClientViewAllListHeadline`**, tier suffix colored only on last **` · PREMIUM|STANDARD`** segment.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER modal UX + snapshot thumbnail merge
+
+**Context (this chat):** User asked for centered red admin message + 10px below; **CLAIM OFFER** below the card; **OFFER ENDS IN** + red tracking bar under price breakdown (Concierge-style); custom upload thumb visible; red **X** close; header = **order #** + gray border; unit name **Covered By Your Grace** +8px; cap size gray + unit price black; merge API quote with **`data:`** thumb from **`consultOfferSnapshot`**.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** restructure (outer flex, card + separate button); **`mergeConsultQuoteWithPersistedThumbnail`** in **`consultOfferFromQuote.ts`**; **`orders/page.tsx`** passes **`orderNumberDisplay`**, merges on API fetch, clears label on close.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

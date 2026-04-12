@@ -35,6 +35,21 @@ export function consultQuoteRowFromPersistedSnapshot(
   };
 }
 
+/**
+ * API quotes may omit **`data:`** custom thumbnails; merge from local **snapshot** when the API thumb is missing or non-custom.
+ */
+export function mergeConsultQuoteWithPersistedThumbnail(
+  quote: Record<string, unknown> | null | undefined,
+  snapshot: ConsultOfferPersistedSnapshot | null | undefined
+): Record<string, unknown> | null {
+  if (!quote || !snapshot) return quote ?? null;
+  const snapThumb = String(snapshot.thumbnailSrc || '').trim();
+  if (!snapThumb.startsWith('data:')) return quote;
+  const apiThumb = String((quote as { thumbnail_src?: unknown }).thumbnail_src ?? '').trim();
+  if (apiThumb.startsWith('data:')) return quote;
+  return { ...quote, thumbnail_src: snapThumb };
+}
+
 /** Parse `/account/consult-offer?id=<uuid>` from legacy `consultOfferRoute` on orders. */
 export function consultQuoteIdFromConsultOfferRoute(route: string | undefined | null): string {
   const raw = String(route || '').trim();

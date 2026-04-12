@@ -57,6 +57,7 @@ import type { ConsultOfferPersistedSnapshot } from '../../utils/consultOfferFrom
 import {
   consultQuoteIdFromConsultOfferRoute,
   consultQuoteRowFromPersistedSnapshot,
+  mergeConsultQuoteWithPersistedThumbnail,
 } from '../../utils/consultOfferFromQuote';
 
 interface OrderLineItem {
@@ -157,6 +158,7 @@ function OrdersPage() {
   const [consultOfferModalLoading, setConsultOfferModalLoading] = useState(false);
   const [consultOfferModalError, setConsultOfferModalError] = useState<string | null>(null);
   const [consultOfferModalQuote, setConsultOfferModalQuote] = useState<Record<string, unknown> | null>(null);
+  const [consultOfferModalOrderLabel, setConsultOfferModalOrderLabel] = useState<string>('');
   const consultOfferFetchGen = useRef(0);
   
   // Get current user data
@@ -1736,6 +1738,7 @@ function OrdersPage() {
     setConsultOfferModalQuote(null);
     setConsultOfferModalError(null);
     setConsultOfferModalLoading(false);
+    setConsultOfferModalOrderLabel('');
   };
 
   const consultOfferQuoteIdForOrder = (order: Order): string => {
@@ -1748,6 +1751,10 @@ function OrdersPage() {
     const gen = ++consultOfferFetchGen.current;
     const quoteId = consultOfferQuoteIdForOrder(order);
     const snap = order.consultOfferSnapshot;
+    const orderLabel =
+      String(order.orderNumber || '')
+        .trim()
+        .toUpperCase() || `ORDER #${String(order.id || '').trim().toUpperCase()}`;
 
     const showSnapshot = () => {
       if (gen !== consultOfferFetchGen.current) return;
@@ -1755,6 +1762,7 @@ function OrdersPage() {
         setConsultOfferModalError('OFFER NOT AVAILABLE.');
         setConsultOfferModalQuote(null);
         setConsultOfferModalLoading(false);
+        setConsultOfferModalOrderLabel(orderLabel);
         setConsultOfferModalOpen(true);
         return;
       }
@@ -1762,6 +1770,7 @@ function OrdersPage() {
       setConsultOfferModalError(null);
       setConsultOfferModalQuote(consultQuoteRowFromPersistedSnapshot(snap, idForRow));
       setConsultOfferModalLoading(false);
+      setConsultOfferModalOrderLabel(orderLabel);
       setConsultOfferModalOpen(true);
     };
 
@@ -1770,6 +1779,7 @@ function OrdersPage() {
       setConsultOfferModalError('OFFER NOT AVAILABLE.');
       setConsultOfferModalQuote(null);
       setConsultOfferModalLoading(false);
+      setConsultOfferModalOrderLabel(orderLabel);
       setConsultOfferModalOpen(true);
     };
 
@@ -1792,12 +1802,17 @@ function OrdersPage() {
     setConsultOfferModalLoading(true);
     setConsultOfferModalError(null);
     setConsultOfferModalQuote(null);
+    setConsultOfferModalOrderLabel(orderLabel);
     void (async () => {
       try {
         const res = await getConsultQuote(quoteId);
         if (gen !== consultOfferFetchGen.current) return;
         if (res?.quote) {
-          setConsultOfferModalQuote(res.quote as Record<string, unknown>);
+          const merged = mergeConsultQuoteWithPersistedThumbnail(
+            res.quote as Record<string, unknown>,
+            snap || undefined
+          );
+          setConsultOfferModalQuote(merged);
           setConsultOfferModalError(null);
         } else {
           showSnapshot();
@@ -4016,6 +4031,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
         loading={consultOfferModalLoading}
         error={consultOfferModalError}
         locationForSignIn={location}
+        orderNumberDisplay={consultOfferModalOrderLabel}
       />
       </div>
   );
