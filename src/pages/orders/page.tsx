@@ -1018,10 +1018,11 @@ function OrdersPage() {
       bookingHairOption: 'WIG + INSTALL',
       bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
     },
-    buildFounderDemoConsultOrder331(),
   ];
 
   const kateenaMockPastOrders: Order[] = [
+    /** COMPLETE consult demo — archived card (same row as founder inject when mock chrome off). */
+    buildFounderDemoConsultOrder331(),
     {
       id: 'kateena-consult-archived-offer',
       orderNumber: 'ORDER #320',

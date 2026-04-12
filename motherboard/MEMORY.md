@@ -13769,6 +13769,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Context (this chat):** User wanted **archived** orders sorted with the **most recently finished** order at the top, and **active** orders sorted by **most recent activity / status-related changes** at the top.
 
-**Changes:** **`userOrdersBuckets.ts`** — **`orderArchivedSortTimeMs`** (terminal **`completedAt` / `deliveredAt` / `canceledAt`** by status, not **`placedAt` first**), **`orderActiveActivitySortTimeMs`** (max of **`updatedAt`**, **`consultProcessingStartedAt`**, delivery/complete/cancel, **`placedAt`**, created), **`sortArchivedOrdersNewestFirst`**, **`sortActiveOrdersByRecentActivityFirst`**; **`orderSortTimeMs`** now skips zero timestamps. **`orders/page.tsx`** uses the two new sorters for **`pastOrders`** vs **`activeOrders`** (load, effects, mock strip, bottom status strip). **`orderFormDeclineCancelRefund.ts`** sorts **`past`** with **`sortArchivedOrdersNewestFirst`**. Branch **`cursor/orders-bucket-sort-81f5`**.
+**Changes:** **`userOrdersBuckets.ts`** — **`orderArchivedSortTimeMs`**, **`orderActiveActivitySortTimeMs`**, **`sortArchivedOrdersNewestFirst`**, **`sortActiveOrdersByRecentActivityFirst`**; **`orderSortTimeMs`** skips zero timestamps. **`orders/page.tsx`**, **`orderFormDeclineCancelRefund.ts`**. Merged **`preview/mobile`** (no side branch).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — VIEW BAG sign-in bounce + mock ORDER #331 archived
+
+**Context (this chat):** Tapping **VIEW BAG** from cart dropdown routed to **sign-in** despite being signed in (especially with consult offer in cart). **ORDER #331** still showed under **active** when it should be **archived** (COMPLETE consult).
+
+**Changes:** **`CommerceRouteGuard.tsx`** — session hydration / **`refreshSession`** fallback; allow route when **`isSignedIn()`** while token missing. **`orders/page.tsx`** — mock **#331** in **`kateenaMockPastOrders`**, not active. Merged **`preview/mobile`** (no side branch).
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
