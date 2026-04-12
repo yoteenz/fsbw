@@ -246,6 +246,7 @@ export default function AdminHeader({
   const notificationsLongPressJustOccurred = useRef(false);
   const messagesLongPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const notificationsLongPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // Add scroll event listener to close dropdowns
   useEffect(() => {
@@ -303,6 +304,10 @@ export default function AdminHeader({
 
   // Handle search activation
   const handleSearchClick = () => {
+    if (isSearchActive) {
+      searchInputRef.current?.focus();
+      return;
+    }
     setIsSearchActive(true);
   };
 
@@ -334,7 +339,7 @@ export default function AdminHeader({
     navigate(`${targetPath}?${next.toString()}`);
   };
 
-  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       submitSearch();
       return;
@@ -346,6 +351,16 @@ export default function AdminHeader({
         setSearchQuery('');
       }
       setIsSearchActive(false);
+      return;
+    }
+    if (e.key === 'Backspace') {
+      const raw = onExternalSearchChange != null ? (externalSearchValue ?? '') : searchQuery;
+      if (String(raw).length === 0) {
+        e.preventDefault();
+        if (onExternalSearchChange) onExternalSearchChange('');
+        else setSearchQuery('');
+        setIsSearchActive(false);
+      }
     }
   };
 
@@ -536,89 +551,56 @@ export default function AdminHeader({
           className="bg-white/60 backdrop-blur-sm border border-black px-4 py-2 flex items-center justify-center h-10 relative"
           style={{ borderWidth: '1.3px' }}
         >
-          {/* Left side icons - match product pages: flex gap-5, absolute left-4 */}
-          <div className="flex items-center gap-5 absolute left-4 h-full">
-            {showBack && !isSearchActive ? (
-              <>
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  onMouseDown={() => setIsBackPressed(true)}
-                  onMouseUp={() => setIsBackPressed(false)}
-                  onMouseLeave={() => setIsBackPressed(false)}
-                  onTouchStart={() => setIsBackPressed(true)}
-                  onTouchEnd={() => setIsBackPressed(false)}
-                  className="cursor-pointer transition-opacity duration-150"
-                  style={{
-                    height: '15px',
-                    width: '21px',
-                    padding: 0,
-                    border: 'none',
-                    background: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  aria-label="Back"
-                >
-                  <img
-                    src="/assets/back-button.svg"
-                    alt="Back"
-                    width="21"
-                    height="15"
-                    style={{ opacity: isBackPressed ? 0.7 : 1 }}
-                  />
-                </button>
-                {!hideSearchIcon && (
-                <button
-                  type="button"
-                  className="cursor-pointer"
-                  onClick={handleSearchClick}
-                  style={{ transform: 'translateX(-2px)' }}
-                >
-                  <img
-                    src="/assets/search-icon.svg"
-                    alt="Search icon"
-                    width="16"
-                    height="15"
-                  />
-                </button>
-                )}
-                {showAccountIcon && (
-                <button
-                  type="button"
-                  className="cursor-pointer flex items-center justify-center"
-                  onClick={() => navigate('/account')}
-                  aria-label="Account profile"
-                  style={{ width: '20px', height: '20px', padding: 0, border: 'none', background: 'none', marginLeft: '2px', transform: 'translateX(-2px)' }}
-                >
-                  <img
-                    src="/assets/NOIR/account-icon.svg"
-                    alt="Account"
-                    width="15"
-                    height="15"
-                  />
-                </button>
-                )}
-              </>
-            ) : (
-              <>
-              {!isSearchActive && !hideSearchIcon && (
-                <button
-                  type="button"
-                  className="cursor-pointer"
-                  onClick={handleSearchClick}
-                  style={showBack ? { transform: 'translateX(-2px)' } : { transform: 'translateX(2px)' }}
-                >
-                  <img
-                    src="/assets/search-icon.svg"
-                    alt="Search icon"
-                    width="16"
-                    height="15"
-                  />
-                </button>
-              )}
-              {showAccountIcon && (
+          {/* Left: back + search + account — always visible (search active only swaps center title for input) */}
+          <div className="flex items-center gap-5 absolute left-4 h-full z-10">
+            {showBack ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                onMouseDown={() => setIsBackPressed(true)}
+                onMouseUp={() => setIsBackPressed(false)}
+                onMouseLeave={() => setIsBackPressed(false)}
+                onTouchStart={() => setIsBackPressed(true)}
+                onTouchEnd={() => setIsBackPressed(false)}
+                className="cursor-pointer transition-opacity duration-150"
+                style={{
+                  height: '15px',
+                  width: '21px',
+                  padding: 0,
+                  border: 'none',
+                  background: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                aria-label="Back"
+              >
+                <img
+                  src="/assets/back-button.svg"
+                  alt="Back"
+                  width="21"
+                  height="15"
+                  style={{ opacity: isBackPressed ? 0.7 : 1 }}
+                />
+              </button>
+            ) : null}
+            {!hideSearchIcon ? (
+              <button
+                type="button"
+                className="cursor-pointer"
+                onClick={handleSearchClick}
+                style={{ transform: showBack ? 'translateX(-2px)' : 'translateX(2px)' }}
+                aria-label="Open search"
+              >
+                <img
+                  src="/assets/search-icon.svg"
+                  alt=""
+                  width="16"
+                  height="15"
+                />
+              </button>
+            ) : null}
+            {showAccountIcon ? (
               <button
                 type="button"
                 className="cursor-pointer flex items-center justify-center"
@@ -633,65 +615,33 @@ export default function AdminHeader({
                   height="15"
                 />
               </button>
-              )}
-              </>
-            )}
+            ) : null}
           </div>
 
-          {/* Center title or search input - Fixed positioning */}
-          <div className="flex-1 text-center flex items-center justify-center h-full">
+          {/* Center: breadcrumb title OR centered search (replaces title only; icons unchanged) */}
+          <div
+            className="flex-1 text-center flex items-center justify-center h-full min-w-0"
+            style={{ paddingLeft: '96px', paddingRight: '96px' }}
+          >
             {isSearchActive && !hideSearchIcon ? (
-              <div className="w-full flex items-center gap-1 absolute left-4 right-4">
-                <input
-                  type="text"
-                  value={searchInputValue}
-                  onChange={searchInputOnChange}
-                  onBlur={handleSearchBlur}
-                  onKeyDown={handleSearchKeyPress}
-                  placeholder={searchPlaceholder}
-                  className="flex-1 min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
-                  style={{
-                    fontFamily: "'Futura PT Medium'",
-                    fontWeight: 500,
-                    color: '#EB1C24',
-                    fontSize: '12px',
-                    textAlign: 'left',
-                    paddingLeft: '0',
-                  }}
-                  autoFocus
-                />
-                {(searchInputValue ?? '').trim() !== '' && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onExternalSearchChange) onExternalSearchChange('');
-                      else setSearchQuery('');
-                    }}
-                    className="flex-shrink-0 p-0.5 border-none bg-transparent cursor-pointer flex items-center justify-center"
-                    aria-label="Clear search"
-                    style={{ color: '#808080' }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                      <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={submitSearch}
-                  className="flex-shrink-0 p-0.5 border-none bg-transparent cursor-pointer flex items-center justify-center"
-                  aria-label="Submit search"
-                  style={{ color: '#EB1C24' }}
-                >
-                  <img
-                    src="/assets/search-icon.svg"
-                    alt=""
-                    width="13"
-                    height="12"
-                  />
-                </button>
-              </div>
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchInputValue}
+                onChange={searchInputOnChange}
+                onBlur={handleSearchBlur}
+                onKeyDown={handleSearchKeyDown}
+                placeholder={searchPlaceholder}
+                className="w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
+                style={{
+                  fontFamily: "'Futura PT Medium'",
+                  fontWeight: 500,
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                }}
+                autoFocus
+              />
             ) : (
               <div className="overflow-hidden text-ellipsis">
                 <button
