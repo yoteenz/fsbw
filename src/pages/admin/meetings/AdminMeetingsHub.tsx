@@ -384,8 +384,16 @@ export default function AdminMeetingsHub() {
         density: quoteSelections.density,
         color: quoteSelections.color,
         hairline: quoteSelections.hairline,
+        styling: quoteSelections.styling,
       }),
-    [quoteUnit, quoteSelections.length, quoteSelections.density, quoteSelections.color, quoteSelections.hairline]
+    [
+      quoteUnit,
+      quoteSelections.length,
+      quoteSelections.density,
+      quoteSelections.color,
+      quoteSelections.hairline,
+      quoteSelections.styling,
+    ]
   );
 
   const quoteSavedThumbnailForSelection = quoteSavedThumbnailMap[quoteSelectionKey] || null;

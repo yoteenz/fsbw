@@ -13491,10 +13491,10 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
-## 2026-04-11 — Admin send offer: SAVE SELECTION match key = unit + length + density + color + hairline only
+## 2026-04-11 — Admin send offer: SAVE SELECTION match key = unit + length + density + color + hairline + styling
 
-**Context (this chat):** Prior send-offer work saved custom thumbnails keyed on full selection set. User asked that **SAVE SELECTION** auto-load track **only**: **unit**, **color**, **density**, **length**, **hairline** (not cap size, lace, texture, styling, parting, add-ons).
+**Context (this chat):** **SAVE SELECTION** auto-load was narrowed to **unit + length + density + color + hairline**; user asked to **include styling** in the tracked set as well (still exclude cap size, lace, texture, parting, add-ons).
 
-**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`stableConsultOfferSelectionsKey`** JSON payload now only those five fields (+ **unitKey**). **`AdminMeetingsHub`** **`useMemo`** deps trimmed. **`motherboard/CORE.md`** bullet updated. Prior **`localStorage`** entries used wider keys and will not match until admin **SAVE SELECTION** again.
+**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`stableConsultOfferSelectionsKey`** adds **`styling`** (uppercase). **`AdminMeetingsHub`** **`quoteSelectionKey`** **`useMemo`** includes **`quoteSelections.styling`**. **`motherboard/CORE.md`** bullet updated.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
