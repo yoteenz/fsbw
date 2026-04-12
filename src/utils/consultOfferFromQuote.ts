@@ -36,7 +36,8 @@ export function consultQuoteRowFromPersistedSnapshot(
 }
 
 /**
- * API quotes may omit **`data:`** custom thumbnails; merge from local **snapshot** when the API thumb is missing or non-custom.
+ * Prefer the **persisted snapshot** thumbnail when present so **custom upload** images
+ * always show in VIEW OFFER (API row may omit, truncate, or differ from what was sent).
  */
 export function mergeConsultQuoteWithPersistedThumbnail(
   quote: Record<string, unknown> | null | undefined,
@@ -44,9 +45,9 @@ export function mergeConsultQuoteWithPersistedThumbnail(
 ): Record<string, unknown> | null {
   if (!quote || !snapshot) return quote ?? null;
   const snapThumb = String(snapshot.thumbnailSrc || '').trim();
-  if (!snapThumb.startsWith('data:')) return quote;
+  if (!snapThumb) return quote;
   const apiThumb = String((quote as { thumbnail_src?: unknown }).thumbnail_src ?? '').trim();
-  if (apiThumb.startsWith('data:')) return quote;
+  if (apiThumb === snapThumb) return quote;
   return { ...quote, thumbnail_src: snapThumb };
 }
 

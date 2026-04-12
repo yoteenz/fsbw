@@ -31,7 +31,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const selections = body.selections && typeof body.selections === 'object' ? body.selections : {};
   const priceBreakdown = Array.isArray(body.priceBreakdown) ? body.priceBreakdown : [];
   const adminMessage = String(body.adminMessage || body.admin_message || '').trim();
-  const thumbnailSrc = String(body.thumbnailSrc || body.thumbnail_src || '').trim() || null;
+  const rawThumb = String(body.thumbnailSrc || body.thumbnail_src || '').trim();
+  /** `data:` URLs are huge; DB `text` + PostgREST payloads break. Snapshot on the order still stores the image for VIEW OFFER. */
+  const thumbnailSrc =
+    rawThumb && !rawThumb.startsWith('data:') ? (rawThumb.length > 8000 ? rawThumb.slice(0, 8000) : rawThumb) : null;
   const firstName = String(body.clientFirstName || '').trim();
   const lastName = String(body.clientLastName || '').trim();
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
+import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import {
   buildConsultOfferCartItemFromQuote,
   consultQuoteBreakdownFromRow,
@@ -145,9 +146,8 @@ export default function ConsultOfferClaimModal({
     if (!quote) return;
     if (!expired && !code) return;
     try {
-      /** Cart + consult discount bootstrap are client-side; do not gate on Supabase `getAccessToken()` (token can lag after sign-in and wrongly send users to sign-in). */
-      const signedIn = localStorage.getItem('isSignedIn') === 'true';
-      if (!signedIn) {
+      /** Use shared auth helper (backup restore) — raw `isSignedIn` alone can be false when flag was cleared. */
+      if (!isAppSignedIn()) {
         navigate(signInHrefWithReturnTo(locationForSignIn));
         return;
       }
@@ -178,8 +178,8 @@ export default function ConsultOfferClaimModal({
       if (expired) {
         navigate('/shopping-bag');
       } else {
-        const id = String(quote.id || '').trim();
-        navigate(id ? `/checkout?consultClaim=${encodeURIComponent(id)}` : '/checkout');
+        /** Stay on bag so cart UI updates; `sessionStorage` consult keys remain for checkout discount bootstrap. */
+        navigate('/shopping-bag');
       }
       onClose();
     } catch (e) {
@@ -359,7 +359,7 @@ export default function ConsultOfferClaimModal({
             <p
               style={{
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '8px',
+                fontSize: '9px',
                 color: '#808080',
                 marginTop: '22px',
                 marginBottom: '8px',
@@ -368,7 +368,7 @@ export default function ConsultOfferClaimModal({
                 lineHeight: 1.4,
               }}
             >
-              $40 APPLIED AT CHECKOUT ONLY WHILE OFFER IS ACTIVE.
+              $40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.
             </p>
             <div style={{ marginTop: '0', marginBottom: '4px' }}>
               <div
