@@ -360,6 +360,9 @@ export default function AdminMeetingsHub() {
     'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.'
   );
   const [quoteSending, setQuoteSending] = useState(false);
+  /** SAVE SELECTION: same UX pattern as shop **ADD TO BAG** (adding → success, then reset). */
+  const [quoteSaveSelectionState, setQuoteSaveSelectionState] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const quoteSaveSelectionResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showSendQuoteConfirm, setShowSendQuoteConfirm] = useState(false);
   const [editReason, setEditReason] = useState<string>(EDIT_REASONS[0]);
   const [editMessage, setEditMessage] = useState('');
@@ -644,6 +647,26 @@ export default function AdminMeetingsHub() {
     }, 400);
     return () => window.clearTimeout(id);
   }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage, quoteManualThumbnailSrc]);
+
+  useEffect(() => {
+    if (!quoteMeeting) {
+      setQuoteSaveSelectionState('idle');
+      if (quoteSaveSelectionResetTimeoutRef.current) {
+        clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+        quoteSaveSelectionResetTimeoutRef.current = null;
+      }
+    }
+  }, [quoteMeeting]);
+
+  useEffect(
+    () => () => {
+      if (quoteSaveSelectionResetTimeoutRef.current) {
+        clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+        quoteSaveSelectionResetTimeoutRef.current = null;
+      }
+    },
+    []
+  );
 
   const quoteMeetingOpenSeqRef = useRef(0);
   /** Load saved draft when a consult send-offer row opens (after refresh or Send quote click). */
@@ -2421,11 +2444,34 @@ export default function AdminMeetingsHub() {
                       <button
                         type="button"
                         onClick={() => {
-                          const next = upsertAdminConsultOfferSavedThumbnail(quoteSelectionKey, quoteManualThumbnailSrc);
-                          setQuoteSavedThumbnailMap(next);
-                          setHubNotice('CUSTOM IMAGE SAVED FOR THIS SELECTION SET.');
+                          if (quoteSaveSelectionState !== 'idle') return;
+                          setQuoteSaveSelectionState('saving');
+                          if (quoteSaveSelectionResetTimeoutRef.current) {
+                            clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+                            quoteSaveSelectionResetTimeoutRef.current = null;
+                          }
+                          /** Brief delay so **SAVING…** can paint (sync localStorage write; mirrors async add-to-bag feel). */
+                          quoteSaveSelectionResetTimeoutRef.current = setTimeout(() => {
+                            const next = upsertAdminConsultOfferSavedThumbnail(
+                              quoteSelectionKey,
+                              quoteManualThumbnailSrc
+                            );
+                            setQuoteSavedThumbnailMap(next);
+                            setQuoteSaveSelectionState('saved');
+                            quoteSaveSelectionResetTimeoutRef.current = setTimeout(() => {
+                              quoteSaveSelectionResetTimeoutRef.current = null;
+                              setQuoteSaveSelectionState('idle');
+                            }, 2000);
+                          }, 80);
                         }}
-                        className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                        disabled={quoteSending || quoteSaveSelectionState === 'saving'}
+                        className={`border border-black font-futura w-full text-center py-2 text-[11px] font-semibold ${
+                          quoteSaveSelectionState === 'saving'
+                            ? 'bg-white cursor-not-allowed'
+                            : quoteSaveSelectionState === 'saved'
+                              ? 'bg-white cursor-pointer'
+                              : 'bg-white cursor-pointer hover:bg-gray-50'
+                        }`}
                         style={{
                           borderWidth: '1.3px',
                           color: '#EB1C24',
@@ -2433,9 +2479,15 @@ export default function AdminMeetingsHub() {
                           backgroundColor: '#FFFFFF',
                           whiteSpace: 'nowrap',
                         }}
-                        disabled={quoteSending}
                       >
-                        SAVE SELECTION
+                        {quoteSaveSelectionState === 'idle' && 'SAVE SELECTION'}
+                        {quoteSaveSelectionState === 'saving' && 'SAVING…'}
+                        {quoteSaveSelectionState === 'saved' && (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="" width={9} height={9} />
+                            <span style={{ color: '#808080' }}>SELECTION SAVED</span>
+                          </span>
+                        )}
                       </button>
                     ) : null}
                   </>

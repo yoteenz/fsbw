@@ -13622,3 +13622,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** **`8px` → `-2px`** when custom image (tighter gap above button). **REMOVE CUSTOM IMAGE** button: removed **`mb-2`**, set **`marginBottom: '28px'`** (was 8px tailwind + 20px = **28px** below the line only).
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Send offer: **SAVE SELECTION** button states (no hub banner)
+
+**Context (this chat):** User wanted to **remove** the **`hubNotice`** **“CUSTOM IMAGE SAVED FOR THIS SELECTION SET.”** + dismiss, and use **SAVE SELECTION** → **SAVING…** → **SELECTION SAVED** (check + gray) like **ADD TO BAG** on shop texture PDP.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — **`quoteSaveSelectionState`**; timers; no **`setHubNotice`** on save.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
