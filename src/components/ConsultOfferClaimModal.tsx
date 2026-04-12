@@ -49,6 +49,10 @@ function formatOfferTimeLeftLabel(msRemain: number): string {
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
+/** Default admin send-offer copy — shown in **gray** (custom admin messages stay red). */
+const DEFAULT_INSPO_DISCLAIMER =
+  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+
 /** Anchor **placedAt** so the offer window maps onto the same 72h consult bar as Concierge (offer end = +72h). */
 function consultOfferBarAnchorMs(quote: Record<string, unknown> | null): number | null {
   if (!quote) return null;
@@ -112,6 +116,8 @@ export default function ConsultOfferClaimModal({
       ? quote.thumbnail_src.trim()
       : '/assets/NOIR/noir-thumb.png';
   const message = String(quote?.admin_message || '');
+  const isDefaultInspoDisclaimer =
+    message.trim().toUpperCase() === DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
@@ -278,7 +284,7 @@ export default function ConsultOfferClaimModal({
                   marginBottom: '10px',
                   lineHeight: 1.5,
                   textTransform: 'uppercase',
-                  color: '#EB1C24',
+                  color: isDefaultInspoDisclaimer ? '#808080' : '#EB1C24',
                   textAlign: 'center',
                 }}
               >
@@ -463,18 +469,16 @@ export default function ConsultOfferClaimModal({
       {!loading && !error && quote ? (
         <button
           type="button"
-          className="w-full max-w-md border border-black font-futura text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`w-full max-w-md border border-black font-futura text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 ${
+            !quote || (!expired && !code) ? 'disabled:opacity-50 disabled:cursor-not-allowed' : ''
+          }`}
           style={{
             borderWidth: '1.3px',
             color: '#EB1C24',
             fontFamily: '"Futura PT Medium"',
             backgroundColor: '#FFFFFF',
           }}
-          disabled={
-            !quote ||
-            (!expired && !code) ||
-            (!expired && (offerAlreadyClaimed || cartHasThisConsultOffer))
-          }
+          disabled={!quote || (!expired && !code)}
           onClick={(e) => {
             e.stopPropagation();
             void handleClaim();
