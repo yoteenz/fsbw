@@ -13792,3 +13792,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — removed **`offerAlreadyClaimed` / `cartHasThisConsultOffer`** from **`disabled`** (only **`!quote`** or active offer missing **`code`**); conditional Tailwind so claimed state is not dimmed; **`handleClaim`** still no-ops when already claimed; default **`admin_message`** matches → gray **`#808080`**. Merged **`preview/mobile`** (no side branch).
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Branch policy: preview/mobile only; delete cursor branches
+
+**Context (this chat):** User **forbade creating new branches**; asked to **merge everything to `preview/mobile`**, **delete** the branch created in this workstream, and asked why the preference kept being ignored.
+
+**Why:** Cloud agent task instructions **required** **`cursor/*-81f5`** branches and PRs, which **overrode** the user’s **`preview/mobile`-only** rule already documented in **`motherboard/CORE.md`**.
+
+**Changes:** All pending work **cherry-picked onto `preview/mobile`** (orders sort, bag guard + mock **#331**, consult offer claimed CTA + MEMORY consolidation). **`motherboard/CORE.md`** — branch policy tightened: **never** create **`cursor/*`**; merge to **`preview/mobile`** then **delete** remote side branches.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
