@@ -13782,3 +13782,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`CommerceRouteGuard.tsx`** — session hydration / **`refreshSession`** fallback; allow route when **`isSignedIn()`** while token missing. **`orders/page.tsx`** — mock **#331** in **`kateenaMockPastOrders`**, not active. Merged **`preview/mobile`** (no side branch).
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: OFFER CLAIMED button + gray default inspo line
+
+**Context (this chat):** User asked that **OFFER CLAIMED** not be disabled and keep a **white** background; the default copy **"BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK."** should be **gray Futura PT Medium** instead of red.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — removed **`offerAlreadyClaimed` / `cartHasThisConsultOffer`** from **`disabled`** (only **`!quote`** or active offer missing **`code`**); conditional Tailwind so claimed state is not dimmed; **`handleClaim`** still no-ops when already claimed; default **`admin_message`** matches → gray **`#808080`**. Merged **`preview/mobile`** (no side branch).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
