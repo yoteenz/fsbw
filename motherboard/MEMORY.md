@@ -13518,3 +13518,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — preview **`width/height` 122**; **REMOVE CUSTOM IMAGE** **`#EB1C24`** + **`marginTop: -12px`**; message block wrapper **`marginTop`/`marginBottom` 12px**, **`MESSAGE:`**; **`PRICE BREAKDOWN:`**; **SAVE SELECTION** **`#EB1C24`**; removed bottom `<p>`. **`motherboard/CORE.md`** — send-offer thumb note **~122px** + picker wording.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — AdminHeader: search replaces center title only, no X, backspace undo
+
+**Context (this chat):** User reported admin nav **search** removed left icons and pushed the search UI; wanted **no X** button; search field **centered in place of** breadcrumb text (ADMIN > MEETINGS) **only**; **Backspace** when the field is **empty** (plus blur-empty / Escape) restores breadcrumb as undo/escape.
+
+**Changes:** **`AdminHeader.tsx`** — left row always shows **back** (if `showBack`), **search**, **account** (if `showAccountIcon`); center shows **centered** `<input>` when active with horizontal **padding** so it does not overlap icons; removed **X** and trailing **submit** icon in the center (**Enter** still runs **`submitSearch`**). **`handleSearchKeyDown`**: **Backspace** on empty clears and closes. **`handleSearchClick`** refocuses input if already open. **`searchInputRef`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
