@@ -13722,3 +13722,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`orderAccountAlerts.ts`**, **`consultOrderLifecycle.ts`** (**`matchedOrderId`**), **`AdminMeetingsHub.tsx`**, **`api.ts`**, **`api/admin/consult-quotes.ts`**, **`notifications/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-alerts-view-offer-81f5`**, PR **#20**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult COMPLETE orders: move to archived bucket on Orders
+
+**Context (this chat):** After consult orders are **COMPLETE**, they should appear under **archived** orders, not stay on the **active** card.
+
+**Changes:** **`normalizeUserOrdersBuckets`** in **`userOrdersBuckets.ts`** — **`bookingFlowType: consult`** + **`COMPLETE`** removed from **`activeOrders`** and appended to **`pastOrders`** (same dedupe by **`id`** as canceled). Branch **`cursor/consult-complete-archived-bucket-81f5`**, PR **#21**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
