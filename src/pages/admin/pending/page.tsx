@@ -56,131 +56,6 @@ import {
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
-/** Pending list sort — **MOST RECENT** first, then same star/media filters as Admin → Reviews. */
-const PENDING_REVIEWS_SORT_OPTIONS = [
-  'MOST RECENT',
-  '1 STAR',
-  '2 STAR',
-  '3 STAR',
-  '4 STAR',
-  '5 STAR',
-  'PHOTOS',
-  'VIDEOS',
-] as const;
-type PendingReviewsSortOption = (typeof PENDING_REVIEWS_SORT_OPTIONS)[number];
-
-const PENDING_FORMS_SORT_OPTIONS = ['MOST RECENT', 'OLDEST FIRST'] as const;
-type PendingFormsSortOption = (typeof PENDING_FORMS_SORT_OPTIONS)[number];
-
-const PENDING_AFFILIATE_SORT_OPTIONS = ['MOST RECENT', 'OLDEST FIRST', 'A TO Z', 'Z TO A'] as const;
-type PendingAffiliateSortOption = (typeof PENDING_AFFILIATE_SORT_OPTIONS)[number];
-
-const PENDING_OVERVIEW_SORT_OPTIONS = ['MOST RECENT', 'A TO Z'] as const;
-type PendingOverviewSortOption = (typeof PENDING_OVERVIEW_SORT_OPTIONS)[number];
-
-function parsePendingDisplayDateMs(d: string): number {
-  const t = Date.parse(d);
-  if (!Number.isNaN(t)) return t;
-  const m = d.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (m) return new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])).getTime();
-  return 0;
-}
-
-function pendingMockReviewSortTimeMs(r: PendingMockReview): number {
-  if (typeof r.submittedAtIso === 'string' && r.submittedAtIso.trim()) {
-    const t = Date.parse(r.submittedAtIso);
-    if (!Number.isNaN(t)) return t;
-  }
-  const fromDate = parsePendingDisplayDateMs(String(r.date || ''));
-  if (fromDate > 0) return fromDate;
-  const id = String(r.id || '').trim();
-  if (/^\d+$/.test(id)) {
-    const n = Number(id);
-    if (Number.isFinite(n)) return n;
-  }
-  return 0;
-}
-
-function reviewStarCountPending(rating: number): number {
-  const n = Math.round(Number(rating));
-  if (!Number.isFinite(n)) return 0;
-  return Math.min(5, Math.max(0, n));
-}
-
-function sortPendingReviewsList(list: PendingMockReview[], option: PendingReviewsSortOption): PendingMockReview[] {
-  const starFilter = (n: number) => list.filter((r) => reviewStarCountPending(r.rating) === n);
-  const base =
-    option === 'VIDEOS'
-      ? list.filter((r) => (r.videoCount ?? r.videoUrls?.length ?? 0) > 0)
-      : option === 'PHOTOS'
-        ? list.filter((r) => (r.photoCount ?? r.photoUrls?.length ?? 0) > 0)
-        : option === '1 STAR'
-          ? starFilter(1)
-          : option === '2 STAR'
-            ? starFilter(2)
-            : option === '3 STAR'
-              ? starFilter(3)
-              : option === '4 STAR'
-                ? starFilter(4)
-                : option === '5 STAR'
-                  ? starFilter(5)
-                  : [...list];
-  const out = [...base];
-  const byRecent = (a: PendingMockReview, b: PendingMockReview) =>
-    pendingMockReviewSortTimeMs(b) - pendingMockReviewSortTimeMs(a);
-  if (option === 'MOST RECENT') {
-    out.sort(byRecent);
-  } else if (option === 'PHOTOS') {
-    out.sort((a, b) => (b.photoCount ?? b.photoUrls?.length ?? 0) - (a.photoCount ?? a.photoUrls?.length ?? 0) || byRecent(a, b));
-  } else if (option === 'VIDEOS') {
-    out.sort((a, b) => (b.videoCount ?? b.videoUrls?.length ?? 0) - (a.videoCount ?? a.videoUrls?.length ?? 0) || byRecent(a, b));
-  } else if (
-    option === '1 STAR' ||
-    option === '2 STAR' ||
-    option === '3 STAR' ||
-    option === '4 STAR' ||
-    option === '5 STAR'
-  ) {
-    out.sort(byRecent);
-  }
-  return out;
-}
-
-function sortPendingFormsList(list: StoredSignedOrderForm[], option: PendingFormsSortOption): StoredSignedOrderForm[] {
-  const out = [...list];
-  if (option === 'OLDEST FIRST') {
-    out.sort((a, b) => (a.signedAt || 0) - (b.signedAt || 0));
-  } else {
-    out.sort((a, b) => (b.signedAt || 0) - (a.signedAt || 0));
-  }
-  return out;
-}
-
-function pendingAffiliateSortTimeMs(it: PendingMockAffiliateItem): number {
-  const fromDate = parsePendingDisplayDateMs(String(it.date || ''));
-  if (fromDate > 0) return fromDate;
-  const id = String(it.id || '').trim();
-  if (/^\d+$/.test(id)) {
-    const n = Number(id);
-    if (Number.isFinite(n)) return n;
-  }
-  return 0;
-}
-
-function sortPendingAffiliateList(list: PendingMockAffiliateItem[], option: PendingAffiliateSortOption): PendingMockAffiliateItem[] {
-  const out = [...list];
-  if (option === 'OLDEST FIRST') {
-    out.sort((a, b) => pendingAffiliateSortTimeMs(a) - pendingAffiliateSortTimeMs(b));
-  } else if (option === 'A TO Z') {
-    out.sort((a, b) => a.client.localeCompare(b.client, undefined, { sensitivity: 'base' }));
-  } else if (option === 'Z TO A') {
-    out.sort((a, b) => b.client.localeCompare(a.client, undefined, { sensitivity: 'base' }));
-  } else {
-    out.sort((a, b) => pendingAffiliateSortTimeMs(b) - pendingAffiliateSortTimeMs(a));
-  }
-  return out;
-}
-
 /** Match Account → Reviews product image column */
 const ACCOUNT_REVIEWS_MODAL_THUMB_PX = 102;
 const ACCOUNT_REVIEWS_MODAL_STAR_PX = 9.11;
@@ -502,103 +377,6 @@ function FormPendingClientAvatar({
   );
 }
 
-function PendingTabSortDropdown<T extends string>({
-  options,
-  value,
-  onChange,
-  open,
-  onOpenChange,
-}: {
-  options: readonly T[];
-  value: T;
-  onChange: (v: T) => void;
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
-}) {
-  return (
-    <div
-      className="grid gap-2 px-5 py-2 font-medium text-black items-center min-w-0"
-      style={{
-        fontFamily: '"Futura PT Book"',
-        fontSize: '11px',
-        gridTemplateColumns: '1fr',
-        marginTop: '7px',
-        marginLeft: '-4px',
-        marginBottom: '4px',
-      }}
-    >
-      <div className="relative" style={{ paddingLeft: '10px', marginLeft: '6px' }}>
-        <button
-          type="button"
-          onClick={() => onOpenChange(!open)}
-          className="flex items-center gap-1.5 text-black hover:text-gray-800 transition-colors max-w-[160px]"
-        >
-          <span className="truncate min-w-0" style={{ position: 'relative', left: '-8px' }}>
-            {value}
-          </span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="flex-shrink-0"
-            style={{
-              transform: open ? 'rotate(180deg)' : 'none',
-              color: '#EB1C24',
-              marginLeft: '-2px',
-            }}
-          >
-            <path
-              d="M3 4.5L6 7.5L9 4.5"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-30" aria-hidden="true" onClick={() => onOpenChange(false)} />
-            <div
-              className="absolute py-1 bg-white border border-black shadow-lg z-40 max-h-60 overflow-y-auto overflow-x-hidden"
-              style={{
-                left: '-2px',
-                borderWidth: '1.3px',
-                marginTop: '7px',
-                width: '160px',
-                maxWidth: '160px',
-                boxSizing: 'border-box',
-              }}
-            >
-              {options
-                .filter((opt) => opt !== value)
-                .map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => {
-                      onChange(opt);
-                      onOpenChange(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      color: '#000',
-                      fontWeight: 400,
-                    }}
-                  >
-                    {opt}
-                  </button>
-                ))}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '16px 0 8px' }}>{children}</h3>
@@ -636,14 +414,6 @@ export default function AdminPending() {
   const [pendingAuthFormsBump, setPendingAuthFormsBump] = useState(0);
   const [mockQueuesBump, setMockQueuesBump] = useState(0);
   const [adminReviewModal, setAdminReviewModal] = useState<PendingAdminModal | null>(null);
-  const [pendingReviewsSort, setPendingReviewsSort] = useState<PendingReviewsSortOption>('MOST RECENT');
-  const [pendingFormsSort, setPendingFormsSort] = useState<PendingFormsSortOption>('MOST RECENT');
-  const [pendingAffiliateSort, setPendingAffiliateSort] = useState<PendingAffiliateSortOption>('MOST RECENT');
-  const [pendingOverviewSort, setPendingOverviewSort] = useState<PendingOverviewSortOption>('MOST RECENT');
-  const [showPendingReviewsSortDropdown, setShowPendingReviewsSortDropdown] = useState(false);
-  const [showPendingFormsSortDropdown, setShowPendingFormsSortDropdown] = useState(false);
-  const [showPendingAffiliateSortDropdown, setShowPendingAffiliateSortDropdown] = useState(false);
-  const [showPendingOverviewSortDropdown, setShowPendingOverviewSortDropdown] = useState(false);
   const [showDeclineReasonModal, setShowDeclineReasonModal] = useState(false);
   const [declineReasonDraft, setDeclineReasonDraft] = useState('');
   const [affiliateDeclineTarget, setAffiliateDeclineTarget] = useState<AffiliateDeclineTarget | null>(null);
@@ -766,27 +536,6 @@ export default function AdminPending() {
     if (!serverQueues) return pendingMockAffiliateList;
     return [...serverAffiliateMapped, ...pendingMockAffiliateList];
   }, [serverQueues, serverAffiliateMapped, pendingMockAffiliateList]);
-
-  const pendingReviewsSorted = useMemo(
-    () => sortPendingReviewsList(pendingReviewsMerged, pendingReviewsSort),
-    [pendingReviewsMerged, pendingReviewsSort]
-  );
-  const pendingFormsSorted = useMemo(
-    () => sortPendingFormsList(pendingAuthFormsMerged, pendingFormsSort),
-    [pendingAuthFormsMerged, pendingFormsSort]
-  );
-  const affiliatePhotosSorted = useMemo(
-    () => sortPendingAffiliateList(pendingAffiliateMerged.filter((x) => x.kind === 'photo'), pendingAffiliateSort),
-    [pendingAffiliateMerged, pendingAffiliateSort]
-  );
-  const affiliateVideosSorted = useMemo(
-    () => sortPendingAffiliateList(pendingAffiliateMerged.filter((x) => x.kind === 'video'), pendingAffiliateSort),
-    [pendingAffiliateMerged, pendingAffiliateSort]
-  );
-  const affiliateSocialSorted = useMemo(
-    () => sortPendingAffiliateList(pendingAffiliateMerged.filter((x) => x.kind === 'social'), pendingAffiliateSort),
-    [pendingAffiliateMerged, pendingAffiliateSort]
-  );
 
   const affiliateDeclinedByClientProduct = useMemo(() => {
     void mockQueuesBump;
@@ -1121,13 +870,6 @@ export default function AdminPending() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    setShowPendingReviewsSortDropdown(false);
-    setShowPendingFormsSortDropdown(false);
-    setShowPendingAffiliateSortDropdown(false);
-    setShowPendingOverviewSortDropdown(false);
-  }, [activeTab]);
-
   const displayItems = useMemo(() => {
     const base =
       pendingItems.length > 0
@@ -1140,7 +882,7 @@ export default function AdminPending() {
             { label: 'REFUND REQUESTS', value: '0' },
             { label: 'SYSTEM ALERTS', value: '0' },
           ];
-    const mapped = base.map((row) => {
+    return base.map((row) => {
       if (serverQueues) {
         if (row.label === 'ORDER FORMS') return { ...row, value: String(formsTabCount) };
         if (row.label === 'PENDING REVIEWS') return { ...row, value: String(reviewsTabCount) };
@@ -1159,12 +901,7 @@ export default function AdminPending() {
       }
       return row;
     });
-    if (pendingOverviewSort === 'A TO Z') {
-      return [...mapped].sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
-    }
-    return mapped;
   }, [
-    pendingOverviewSort,
     pendingItems,
     pendingReviews,
     orderForms,
@@ -1466,13 +1203,6 @@ export default function AdminPending() {
                 >
                   {activeTab === 'OVERVIEW' && (
                     <>
-                      <PendingTabSortDropdown
-                        options={PENDING_OVERVIEW_SORT_OPTIONS}
-                        value={pendingOverviewSort}
-                        onChange={setPendingOverviewSort}
-                        open={showPendingOverviewSortDropdown}
-                        onOpenChange={setShowPendingOverviewSortDropdown}
-                      />
                       <SectionTitle>PENDING ITEMS</SectionTitle>
                       <div className="space-y-0">
                         {displayItems.map((row) => (
@@ -1535,15 +1265,7 @@ export default function AdminPending() {
                           NO REVIEWS PENDING APPROVAL.
                         </p>
                       ) : (
-                        <>
-                          <PendingTabSortDropdown
-                            options={PENDING_REVIEWS_SORT_OPTIONS}
-                            value={pendingReviewsSort}
-                            onChange={setPendingReviewsSort}
-                            open={showPendingReviewsSortDropdown}
-                            onOpenChange={setShowPendingReviewsSortDropdown}
-                          />
-                          {pendingReviewsSorted.map((r) => (
+                        pendingReviewsMerged.map((r) => (
                           <AdminReviewStyleCard
                             key={r.id}
                             client={r.client}
@@ -1567,8 +1289,7 @@ export default function AdminPending() {
                             onFooterLinkClick={() => setAdminReviewModal({ kind: 'review', item: r })}
                             onOpenClientDetails={openClientFromPending}
                           />
-                        ))}
-                        </>
+                        ))
                       )}
                     </>
                   )}
@@ -1580,15 +1301,7 @@ export default function AdminPending() {
                           NO FORMS PENDING APPROVAL.
                         </p>
                       ) : (
-                        <>
-                          <PendingTabSortDropdown
-                            options={PENDING_FORMS_SORT_OPTIONS}
-                            value={pendingFormsSort}
-                            onChange={setPendingFormsSort}
-                            open={showPendingFormsSortDropdown}
-                            onOpenChange={setShowPendingFormsSortDropdown}
-                          />
-                          {pendingFormsSorted.map((f) => {
+                        pendingAuthFormsMerged.map((f) => {
                           const nameRaw =
                             `${String(f.formFields?.firstName || '').trim()} ${String(f.formFields?.lastName || '').trim()}`.trim() || '—';
                           const nameUpper = nameRaw.toUpperCase();
@@ -1716,8 +1429,7 @@ export default function AdminPending() {
                               </div>
                             </div>
                           );
-                        })}
-                        </>
+                        })
                       )}
                     </>
                   )}
@@ -1730,19 +1442,12 @@ export default function AdminPending() {
                         </p>
                       ) : (
                         <>
-                          <PendingTabSortDropdown
-                            options={PENDING_AFFILIATE_SORT_OPTIONS}
-                            value={pendingAffiliateSort}
-                            onChange={setPendingAffiliateSort}
-                            open={showPendingAffiliateSortDropdown}
-                            onOpenChange={setShowPendingAffiliateSortDropdown}
-                          />
                           <SectionTitle>PHOTOS</SectionTitle>
-                          {affiliatePhotosSorted.map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'photo').map(renderAffiliateRow)}
                           <SectionTitle>VIDEOS</SectionTitle>
-                          {affiliateVideosSorted.map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'video').map(renderAffiliateRow)}
                           <SectionTitle>SOCIAL LINKS</SectionTitle>
-                          {affiliateSocialSorted.map(renderAffiliateRow)}
+                          {pendingAffiliateMerged.filter((x) => x.kind === 'social').map(renderAffiliateRow)}
                         </>
                       )}
                     </>
