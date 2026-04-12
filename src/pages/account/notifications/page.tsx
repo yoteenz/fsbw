@@ -461,14 +461,6 @@ function parseNotificationDisplayDateMs(dateStr: string): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
-/** Spread same-calendar-day rows so newest-first is stable (alerts without **sortAt**). */
-function syntheticSortAtFromId(id: string): number {
-  let h = 0;
-  const s = String(id);
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return (h % 86_400_000) || 1;
-}
-
 const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
   `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
   `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
@@ -490,17 +482,19 @@ function newestFirstTieBreakRank(n: Pick<Notification, 'id' | 'consultOfferReady
   return 50;
 }
 
-/** Newest first: `sortAt` when set, else `date` string; tie-breakers for same-day rows. */
+/**
+ * Newest first: real **`sortAt`** (epoch ms) wins; otherwise calendar **`date`** at local midnight only.
+ * Do **not** add per-id synthetic ms to **`date`** — that spread “today” across 24h and could rank static **`acc_*`**
+ * rows **above** a newer consult row that had an earlier **`sortAt`** the same day.
+ */
 export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
+  const sortMs = (n: Notification): number => {
+    if (typeof n.sortAt === 'number' && !Number.isNaN(n.sortAt)) return n.sortAt;
+    return parseNotificationDisplayDateMs(n.date);
+  };
   return [...list].sort((a, b) => {
-    const baseA =
-      typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : parseNotificationDisplayDateMs(a.date);
-    const baseB =
-      typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : parseNotificationDisplayDateMs(b.date);
-    const sa =
-      typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : baseA + syntheticSortAtFromId(a.id);
-    const sb =
-      typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : baseB + syntheticSortAtFromId(b.id);
+    const sa = sortMs(a);
+    const sb = sortMs(b);
     if (sb !== sa) return sb - sa;
     const ra = newestFirstTieBreakRank(a);
     const rb = newestFirstTieBreakRank(b);
