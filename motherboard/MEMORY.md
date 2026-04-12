@@ -13752,3 +13752,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`notifications/page.tsx`** — **`migrateConsultYourOrderReadyNotification`** runs in **`mergeAccountNotifications`** + **`notificationFromSupabaseAdminItem`**; **`consultOfferReady`** tie-break; fix **`newestFirstTieBreakRank`** **`id`** bug. Branch **`cursor/alerts-consult-migrate-stale-81f5`**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account alerts sort: old rows above new (same-day)
+
+**Context (this chat):** **NEW** tab showed **older** alerts above **newer** ones.
+
+**Changes:** **`sortNotificationsNewestFirst`** — removed **`syntheticSortAtFromId`** added to **`date`-only** rows; primary key is **`sortAt`** else **calendar **`date`** midnight** only, then tie-breakers.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
