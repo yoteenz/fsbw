@@ -13854,3 +13854,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** Reverted commit **`feat(admin-pending): per-tab sort dropdowns including MOST RECENT`** (**`e83e192`**). **`pending/page.tsx`** modal nudge + **VIEW FORM** under verify + media-under-date work **unchanged**. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Account Orders: archived by `date`; active by status activity (not `placedAt` max)
+
+**Context (this chat):** **Archived** card should be **newest `date` at top**; **active** by **most recent status update** — prior sort still felt wrong (**`placedAt`** dominated active max; archived used terminal timestamps over **`M/D/YYYY`** **`date`**).
+
+**Changes:** **`userOrdersBuckets.ts`** — **`parseOrderDateField`**: also **`M/D/YYYY`**. **`orderArchivedSortTimeMs`**: primary sort = parsed **`date`** when present. **`orderActiveActivitySortTimeMs`**: max of status-related keys (**`updatedAt`**, **`consultProcessingStartedAt`**, **`shippedAt`**, delivery/complete/cancel) **excluding** **`placedAt`** from max; fallback **`placedAt`** → **`createdAt`** → **`date`**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.

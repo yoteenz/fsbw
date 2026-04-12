@@ -67,15 +67,24 @@ export function filterOutPremiumMembershipUpgradeOrders<T>(active: T[], past: T[
   return { activeOrders: active.filter(keep), pastOrders: past.filter(keep) };
 }
 
-/** Parse MM-DD-YYYY (common order `date` field) to epoch ms; 0 if invalid. */
+/**
+ * Parse common order **`date`** strings to epoch ms (local midnight); **0** if invalid.
+ * Supports **MM-DD-YYYY**, **M/D/YYYY**, and ISO-ish strings **`Date.parse`** accepts.
+ */
 function parseOrderDateField(dateStr: unknown): number {
   if (typeof dateStr !== 'string' || !dateStr.trim()) return 0;
-  const m = dateStr.trim().match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-  if (m) {
-    const ms = new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])).getTime();
+  const t = dateStr.trim();
+  const dash = t.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (dash) {
+    const ms = new Date(Number(dash[3]), Number(dash[1]) - 1, Number(dash[2])).getTime();
     return Number.isNaN(ms) ? 0 : ms;
   }
-  const d = Date.parse(dateStr);
+  const slash = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const ms = new Date(Number(slash[3]), Number(slash[1]) - 1, Number(slash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const d = Date.parse(t);
   return Number.isNaN(d) ? 0 : d;
 }
 
@@ -132,23 +141,24 @@ export function orderSortTimeMs(o: Record<string, unknown>): number {
 }
 
 /**
- * **Archived / past** bucket: newest **finished** order first (completion, delivery, cancel time),
- * not "newest placed" — avoids old high order numbers sorting above recently archived rows.
+ * **Archived / past** bucket: **newest order `date`** (calendar) at the top, matching the date shown on the card.
+ * When **`date`** is missing, fall back to terminal timestamps then generic **`orderSortTimeMs`**.
  */
 export function orderArchivedSortTimeMs(o: Record<string, unknown>): number {
-  const st = String(o.status ?? '').toUpperCase();
   const dateMs = parseOrderDateField(o.date);
+  if (dateMs > 0) return dateMs;
+  const st = String(o.status ?? '').toUpperCase();
   if (orderStatusIsCanceled(st)) {
     const t = firstPositiveTimeMs(o, ['canceledAt', 'completedAt', 'deliveredAt', 'placedAt']);
-    return t || dateMs;
+    return t || 0;
   }
   if (st === 'COMPLETE') {
     const t = firstPositiveTimeMs(o, ['completedAt', 'deliveredAt', 'canceledAt', 'placedAt']);
-    return t || dateMs;
+    return t || 0;
   }
   if (st === 'DELIVERED') {
     const t = firstPositiveTimeMs(o, ['deliveredAt', 'completedAt', 'placedAt']);
-    return t || dateMs;
+    return t || 0;
   }
   const terminal = Math.max(
     orderFieldTimeMs(o, 'completedAt') ?? 0,
@@ -160,26 +170,34 @@ export function orderArchivedSortTimeMs(o: Record<string, unknown>): number {
 }
 
 /**
- * **Active** bucket + mixed strips: sort by latest **activity** (status-related updates, processing start, etc.).
+ * **Active** bucket + mixed strips: sort by latest **status-related** activity — **not** `placedAt`
+ * (otherwise every row ties to checkout and never re-orders when status advances without new fields).
+ * Falls back to **`placedAt`**, then **`date`**, when no post-placement timestamps exist.
  */
 export function orderActiveActivitySortTimeMs(o: Record<string, unknown>): number {
-  const keys = [
+  const statusActivityKeys = [
     'updatedAt',
     'updated_at',
     'consultProcessingStartedAt',
+    'shippedAt',
+    'shipped_at',
     'deliveredAt',
     'completedAt',
     'canceledAt',
-    'placedAt',
-    'createdAt',
-    'created_at',
   ] as const;
-  let max = 0;
-  for (const k of keys) {
+  let maxStatus = 0;
+  for (const k of statusActivityKeys) {
     const t = orderFieldTimeMs(o, k);
-    if (t != null && t > max) max = t;
+    if (t != null && t > maxStatus) maxStatus = t;
   }
-  if (max > 0) return max;
+  if (maxStatus > 0) return maxStatus;
+  const placed = orderFieldTimeMs(o, 'placedAt');
+  if (placed != null && placed > 0) return placed;
+  const created = Math.max(
+    orderFieldTimeMs(o, 'createdAt') ?? 0,
+    orderFieldTimeMs(o, 'created_at') ?? 0
+  );
+  if (created > 0) return created;
   return parseOrderDateField(o.date) || 0;
 }
 
