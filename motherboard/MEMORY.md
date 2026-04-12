@@ -13804,3 +13804,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** All pending work **cherry-picked onto `preview/mobile`** (orders sort, bag guard + mock **#331**, consult offer claimed CTA + MEMORY consolidation). **`motherboard/CORE.md`** — branch policy tightened: **never** create **`cursor/*`**; merge to **`preview/mobile`** then **delete** remote side branches.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Mass-delete remote `cursor/*` (legacy)
+
+**Context (this chat):** User asked to merge any unpushed work to **`preview/mobile`** and delete the remaining older **`origin/cursor/*`** branches.
+
+**Changes:** **`preview/mobile`** was already **in sync** with **`origin`** (nothing to merge/push). Deleted all seven remote branches: **`cursor/alerts-consult-migrate-stale-81f5`**, **`cursor/consult-alerts-view-offer-81f5`**, **`cursor/consult-claim-cart-discount-81f5`**, **`cursor/consult-complete-archived-bucket-81f5`**, **`cursor/consult-offer-claim-modal-fixes-81f5`**, **`cursor/consult-offer-modal-view-updates-81f5`**, **`cursor/consult-offer-thumb-claim-bag-81f5`**. Removed matching **local** **`cursor/*`** branches; **`git fetch --prune`** confirms **no** **`cursor/*`** on **`origin`**.
+
+**Docs:** This **MEMORY** entry.
