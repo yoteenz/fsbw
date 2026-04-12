@@ -632,7 +632,7 @@ export default function AdminHeader({
                 onBlur={handleSearchBlur}
                 onKeyDown={handleSearchKeyDown}
                 placeholder={searchPlaceholder}
-                className="w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder-gray-400"
+                className="w-full max-w-full min-w-0 bg-transparent border-none outline-none text-xs uppercase placeholder:text-[#EB1C24]"
                 style={{
                   fontFamily: "'Futura PT Medium'",
                   fontWeight: 500,
@@ -643,27 +643,41 @@ export default function AdminHeader({
                 autoFocus
               />
             ) : (
-              <div className="overflow-hidden text-ellipsis">
+              <div
+                className="flex w-full min-w-0 max-w-full flex-nowrap items-center justify-center gap-0 overflow-hidden"
+                style={{ whiteSpace: 'nowrap' }}
+              >
                 <button
+                  type="button"
                   onClick={() => (breadcrumbParentOnClick ?? (() => navigate(breadcrumbParentPath ?? '/admin/dashboard')))()}
                   onMouseEnter={() => setIsBreadcrumbHovered(true)}
                   onMouseLeave={() => setIsBreadcrumbHovered(false)}
                   onTouchEnd={() => setIsBreadcrumbHovered(false)}
-                  className="text-sm uppercase transition-colors cursor-pointer"
+                  className="shrink-0 text-sm uppercase transition-colors cursor-pointer"
                   style={{
                     fontFamily: "'Futura PT Book'",
                     fontWeight: 500,
                     fontSize: '14px',
                     color: isBreadcrumbHovered ? '#EB1C24' : '#000000',
+                    whiteSpace: 'nowrap',
+                    padding: 0,
+                    border: 'none',
+                    background: 'none',
                   }}
                 >
                   {(breadcrumbParentLabel ?? 'ADMIN')} &gt;{' '}
                 </button>
                 <span
-                  className="text-sm text-red-500 uppercase"
-                  style={{ fontFamily: "'Futura PT Medium'", fontWeight: 500, color: '#EB1C24', fontSize: '14px' }}
+                  className="min-w-0 shrink truncate text-sm uppercase"
+                  style={{
+                    fontFamily: "'Futura PT Medium'",
+                    fontWeight: 500,
+                    color: '#EB1C24',
+                    fontSize: '14px',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
-                  {' '}{title}
+                  {title}
                 </span>
               </div>
             )}
