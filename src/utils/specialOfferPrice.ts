@@ -63,6 +63,8 @@ export type SpecialOfferBreakdownLine = {
   label: string;
   selection: string;
   amountUsd: number;
+  /** `concat`: show **LABEL (M)** style (no `LABEL: …` colon) — used for per-option styling + parting in admin/client breakdown. */
+  formatting?: 'colon' | 'concat';
 };
 
 export type SpecialOfferPriceBreakdown = {
@@ -84,6 +86,43 @@ function unitLabelFromId(unitId: string): string {
     .trim()
     .replace(/-/g, ' ')
     .toUpperCase();
+}
+
+/** Single letter for parting in breakdown text, e.g. **LAYERS (M)**. */
+export function partLetterFromPartSelection(partRaw: string): string {
+  const p = String(partRaw || '').trim().toUpperCase();
+  if (p === 'LEFT' || p === 'L') return 'L';
+  if (p === 'RIGHT' || p === 'R') return 'R';
+  if (p === 'MIDDLE' || p === 'M' || p === 'CENTER' || p === 'C') return 'M';
+  if (!p) return 'M';
+  return p.charAt(0);
+}
+
+/**
+ * Turn one **STYLING** breakdown line into display rows: **`LAYERS (M)`**, **`CRIMPS (R)`**, etc.
+ * Full **`amountUsd`** is kept on the **first** row only (matches single pricing line).
+ */
+export function expandStylingBreakdownLineForDisplay(
+  line: SpecialOfferBreakdownLine,
+  partSelectionRaw: string
+): SpecialOfferBreakdownLine[] {
+  if (line.label !== 'STYLING') return [line];
+  const letter = partLetterFromPartSelection(partSelectionRaw);
+  const styling = String(line.selection || '').trim().toUpperCase();
+  if (!styling || styling === 'NONE') {
+    return [{ ...line, selection: 'NONE', amountUsd: 0 }];
+  }
+  const tokens = styling
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter(Boolean);
+  if (!tokens.length) return [{ ...line, selection: 'NONE', amountUsd: 0 }];
+  return tokens.map((tok, i) => ({
+    label: tok,
+    selection: `(${letter})`,
+    amountUsd: i === 0 ? line.amountUsd : 0,
+    formatting: 'concat' as const,
+  }));
 }
 
 function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOptions) {

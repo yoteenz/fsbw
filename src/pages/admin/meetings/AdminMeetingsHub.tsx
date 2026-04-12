@@ -21,7 +21,11 @@ import {
   getOptionsForUnit,
   type UnitId,
 } from '../../../utils/productOptions';
-import { calculateSpecialOfferPriceBreakdown, type SpecialOfferBreakdownLine } from '../../../utils/specialOfferPrice';
+import {
+  calculateSpecialOfferPriceBreakdown,
+  expandStylingBreakdownLineForDisplay,
+  type SpecialOfferBreakdownLine,
+} from '../../../utils/specialOfferPrice';
 import {
   adminFounderDemoConsultMeetingOrder331,
   endOfMonth,
@@ -450,10 +454,15 @@ export default function AdminMeetingsHub() {
     [quoteUnitId, quoteSelections]
   );
 
-  const quoteBreakdownDisplayLines = useMemo(
-    () => generatedQuoteBreakdown.lines.filter((line) => line.label !== 'PARTING'),
-    [generatedQuoteBreakdown.lines]
-  );
+  const quoteBreakdownDisplayLines = useMemo(() => {
+    const partRaw =
+      generatedQuoteBreakdown.lines.find((l) => l.label === 'PARTING')?.selection ?? quoteSelections.partSelection;
+    return generatedQuoteBreakdown.lines
+      .filter((line) => line.label !== 'PARTING')
+      .flatMap((line) =>
+        line.label === 'STYLING' ? expandStylingBreakdownLineForDisplay(line, String(partRaw || '')) : [line]
+      );
+  }, [generatedQuoteBreakdown.lines, quoteSelections.partSelection]);
 
   useAdminMeetingsApiRefresh(setApiMeetings);
 
@@ -2126,14 +2135,15 @@ export default function AdminMeetingsHub() {
                         }}
                       >
                         <div style={{ display: 'grid', rowGap: '6px' }}>
-                          {quoteBreakdownDisplayLines.map((line: SpecialOfferBreakdownLine) => {
+                          {quoteBreakdownDisplayLines.map((line: SpecialOfferBreakdownLine, lineIdx: number) => {
                             const selection = line.selection;
                             const displayLabel = line.label === 'BASE UNIT' ? 'UNIT' : line.label;
                             const amountText =
                               line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, true);
+                            const concatLeft = line.formatting === 'concat' ? `${line.label}${selection}`.trim() : null;
                             return (
                               <div
-                                key={`${line.label}-${selection}`}
+                                key={`${line.label}-${selection}-${lineIdx}`}
                                 style={{
                                   display: 'flex',
                                   alignItems: 'flex-start',
@@ -2151,8 +2161,14 @@ export default function AdminMeetingsHub() {
                                     minWidth: 0,
                                   }}
                                 >
-                                  <span>{displayLabel}: </span>
-                                  <span>{selection}</span>
+                                  {concatLeft ? (
+                                    <span>{concatLeft}</span>
+                                  ) : (
+                                    <>
+                                      <span>{displayLabel}: </span>
+                                      <span>{selection}</span>
+                                    </>
+                                  )}
                                 </div>
                                 {amountText ? (
                                   <span

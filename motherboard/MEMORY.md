@@ -13572,3 +13572,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — when **`quoteMeeting`** is open, hub main card **`minHeight`** **`calc(100dvh - 120px)`** (was **`- 160px`**, +40px). Matching inner scroll **`maxHeight`** **`calc(100dvh - 200px)`** when send-offer open (was **`- 240px`**, +40px usable). Message block wrapper **`marginTop`** **`12px` → `24px`** (+12px above MESSAGE). Price breakdown wrapper **`className="mt-2"`** → **`marginTop: '16px'`** (+8px vs prior 8px tailwind).
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Styling price breakdown: **LAYERS (M)** / **CRIMPS (R)** format
+
+**Context (this chat):** User wanted **styling** part selection shown in the price breakdown like **`LAYERS (M)`**, **`CRIMPS (R)`** (part letter in parentheses), not **`STYLING: LAYERS, CRIMPS`** with a separate parting line.
+
+**Changes:** **`specialOfferPrice.ts`** — optional **`formatting: 'concat'`** on **`SpecialOfferBreakdownLine`**; **`partLetterFromPartSelection`**, **`expandStylingBreakdownLineForDisplay`** splits comma-separated styling into one row per option with **`(M|L|R)`** from parting (**MIDDLE/LEFT/RIGHT**). Full styling **`amountUsd`** stays on the **first** row only. **`AdminMeetingsHub.tsx`** — **`quoteBreakdownDisplayLines`** expands **STYLING** after dropping **PARTING**; render uses single concatenated left text when **`formatting === 'concat'`**. **`ConsultOfferClaimModal.tsx`** — same expansion + render for client **VIEW OFFER** modal.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

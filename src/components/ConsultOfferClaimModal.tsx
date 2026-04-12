@@ -9,7 +9,7 @@ import {
   SESSION_CONSULT_CLAIM_CODE,
   SESSION_CONSULT_CLAIM_QUOTE_ID,
 } from '../utils/consultOfferFromQuote';
-import type { SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
+import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
 
 type Props = {
   isOpen: boolean;
@@ -72,7 +72,13 @@ export default function ConsultOfferClaimModal({
   const breakdownLines = useMemo(() => {
     if (!quote) return [];
     try {
-      return consultQuoteBreakdownFromRow(quote).lines;
+      const lines = consultQuoteBreakdownFromRow(quote).lines;
+      const partRaw = lines.find((l) => l.label === 'PARTING')?.selection ?? '';
+      return lines
+        .filter((l) => l.label !== 'PARTING')
+        .flatMap((line) =>
+          line.label === 'STYLING' ? expandStylingBreakdownLineForDisplay(line, String(partRaw || '')) : [line]
+        );
     } catch {
       return [];
     }
@@ -197,13 +203,14 @@ export default function ConsultOfferClaimModal({
               }}
             >
               <div style={{ display: 'grid', rowGap: '6px' }}>
-                {breakdownLines.map((line: SpecialOfferBreakdownLine) => {
+                {breakdownLines.map((line: SpecialOfferBreakdownLine, lineIdx: number) => {
                   const selection = line.selection;
                   const amountText =
                     line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT' && line.label !== 'UNIT');
+                  const concatLeft = line.formatting === 'concat' ? `${line.label}${selection}`.trim() : null;
                   return (
                     <div
-                      key={`${line.label}-${selection}`}
+                      key={`${line.label}-${selection}-${lineIdx}`}
                       style={{
                         display: 'flex',
                         alignItems: 'flex-start',
@@ -221,8 +228,14 @@ export default function ConsultOfferClaimModal({
                           minWidth: 0,
                         }}
                       >
-                        <span>{line.label}: </span>
-                        <span>{selection}</span>
+                        {concatLeft ? (
+                          <span>{concatLeft}</span>
+                        ) : (
+                          <>
+                            <span>{line.label}: </span>
+                            <span>{selection}</span>
+                          </>
+                        )}
                       </div>
                       {amountText ? (
                         <span
