@@ -13612,3 +13612,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Outcome:** Remote ref was already removed on GitHub; **`git remote prune origin`** dropped stale **`origin/cursor/appointment-notes-border-spacing-8444`**. No unique commits to merge into **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-09 — Admin Send offer: **REMOVE CUSTOM IMAGE** spacing
+
+**Context (this chat):** User asked for **+20px below “REMOVE CUSTOM IMAGE” only** and **−10px above** that text on admin meetings send offer.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** **`8px` → `-2px`** when custom image (tighter gap above button). **REMOVE CUSTOM IMAGE** button: removed **`mb-2`**, set **`marginBottom: '28px'`** (was 8px tailwind + 20px = **28px** below the line only).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

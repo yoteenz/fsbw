@@ -2000,7 +2000,10 @@ export default function AdminMeetingsHub() {
                   <div style={{ marginTop: '12px' }}>
                     <div
                       className="flex justify-center"
-                      style={{ marginBottom: quoteEffectiveCustomSrc ? '8px' : '20px' }}
+                      style={{
+                        /** Custom: was 8px; −10px gap above REMOVE = −2px (margin collapse handled). */
+                        marginBottom: quoteEffectiveCustomSrc ? '-2px' : '20px',
+                      }}
                     >
                       <img
                         src={quoteOfferThumbnailSrc}
@@ -2013,13 +2016,15 @@ export default function AdminMeetingsHub() {
                     {quoteEffectiveCustomSrc ? (
                       <button
                         type="button"
-                        className="w-full mb-2 text-[10px] uppercase"
+                        className="w-full text-[10px] uppercase"
                         style={{
                           fontFamily: '"Futura PT Book"',
                           color: '#EB1C24',
                           border: 'none',
                           background: 'none',
                           cursor: 'pointer',
+                          /** Was mb-2 (8px); +20px below REMOVE only. */
+                          marginBottom: '28px',
                         }}
                         onClick={() => {
                           if (quoteManualThumbnailSrc) {
