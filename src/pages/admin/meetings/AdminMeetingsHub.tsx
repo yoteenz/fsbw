@@ -1456,7 +1456,8 @@ export default function AdminMeetingsHub() {
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
               style={{
                 borderWidth: '1.3px',
-                minHeight: 'calc(100dvh - 160px)',
+                /** Send offer panel: +40px main card min-height vs default hub card. */
+                minHeight: quoteMeeting ? 'calc(100dvh - 120px)' : 'calc(100dvh - 160px)',
               }}
             >
               {activeMainCardTitle ? (
@@ -1647,7 +1648,7 @@ export default function AdminMeetingsHub() {
                 <div
                   className="overflow-y-auto"
                   style={{
-                    maxHeight: 'calc(100dvh - 240px)',
+                    maxHeight: quoteMeeting ? 'calc(100dvh - 200px)' : 'calc(100dvh - 240px)',
                     paddingTop: '2px',
                     boxSizing: 'border-box',
                   }}
@@ -2101,7 +2102,7 @@ export default function AdminMeetingsHub() {
                         portalMaxHeight: 'min(70vh, 520px)',
                       })
                     ) : null}
-                    <div style={{ marginTop: '12px', marginBottom: '12px' }}>
+                    <div style={{ marginTop: '24px', marginBottom: '12px' }}>
                       <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 0 }}>
                         MESSAGE:
                         <textarea
@@ -2112,7 +2113,7 @@ export default function AdminMeetingsHub() {
                         />
                       </label>
                     </div>
-                    <div className="mt-2">
+                    <div style={{ marginTop: '16px' }}>
                       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>
                         PRICE BREAKDOWN:
                       </label>

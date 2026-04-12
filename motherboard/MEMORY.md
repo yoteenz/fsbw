@@ -13562,3 +13562,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** New **`src/hooks/useSiteNavSearch.ts`**, **`src/components/shop/useShopNavSearchBar.tsx`**; edits across the page list above + **`BookingFlowLayout.tsx`**. **`SearchTrigger`** allows **`type`** prop (default **`button`**). Branch **`cursor/site-nav-search-81f5`** off **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings Send offer: card height + MESSAGE / PRICE spacing
+
+**Context (this chat):** User asked to **increase the Send offer toggle main card height by 40px only**, **add 12px above “MESSAGE:”**, and **add 8px above “PRICE BREAKDOWN:”**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — when **`quoteMeeting`** is open, hub main card **`minHeight`** **`calc(100dvh - 120px)`** (was **`- 160px`**, +40px). Matching inner scroll **`maxHeight`** **`calc(100dvh - 200px)`** when send-offer open (was **`- 240px`**, +40px usable). Message block wrapper **`marginTop`** **`12px` → `24px`** (+12px above MESSAGE). Price breakdown wrapper **`className="mt-2"`** → **`marginTop: '16px'`** (+8px vs prior 8px tailwind).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
