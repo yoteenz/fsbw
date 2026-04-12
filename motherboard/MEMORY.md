@@ -13712,3 +13712,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`mergeConsultQuoteWithPersistedThumbnail`** prefers **snapshot** thumb whenever present. **`api/admin/consult-quotes.ts`**: do not insert **`data:`** into **`consult_quotes`** (snapshot on order retains image). **`ConsultOfferClaimModal`**: **`isSignedIn()`** from **`adminAuth`**; active claim **`navigate('/shopping-bag')`** while keeping **`sessionStorage`** consult keys for checkout bootstrap; disclaimer **$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.** at **9px**. Branch **`cursor/consult-offer-thumb-claim-bag-81f5`**, PR **#19**, merged **`preview/mobile`**.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account alerts: consult “order ready” row + VIEW OFFER deep link + sort
+
+**Context (this chat):** Consult-only **YOUR ORDER IS READY** alert on **Account → Alerts**: black header, gray **ORDER #… IS COMPLETE.** line, red **VIEW OFFER** to **Orders** with offer modal; alerts **newest first**.
+
+**Changes:** **`orderAccountAlerts.ts`**, **`consultOrderLifecycle.ts`** (**`matchedOrderId`**), **`AdminMeetingsHub.tsx`**, **`api.ts`**, **`api/admin/consult-quotes.ts`**, **`notifications/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-alerts-view-offer-81f5`**, PR **#20**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
