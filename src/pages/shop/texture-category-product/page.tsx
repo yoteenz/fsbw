@@ -36,6 +36,7 @@ import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } f
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   marbleStripCellBand,
@@ -243,6 +244,7 @@ function BcfColorSwatchDonut({ colorCode }: { colorCode: string }) {
 export default function ShopTextureCategoryProductPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const category = parseShopBcfCategory(location.pathname);
   if (!category) {
     return <Navigate to="/shop/bundles?texture=straight" replace />;
@@ -786,52 +788,54 @@ export default function ShopTextureCategoryProductPage() {
                   >
                     <img alt="Back" width={21} height={15} src="/assets/back-button.svg" />
                   </button>
-                  <button type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search icon" width={16} height={15} src="/assets/search-icon.svg" />
-                  </button>
+                  <SearchTrigger type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img alt="" width={16} height={15} src="/assets/search-icon.svg" />
+                  </SearchTrigger>
                 </>
               )}
             </div>
 
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span
-                    role="link"
-                    tabIndex={0}
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/lobby')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        navigate('/lobby');
-                      }
-                    }}
-                  >
-                    HOME &gt;
-                  </span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
-              ) : (
-                <>
-                  <span
-                    role="link"
-                    tabIndex={0}
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/home/shop')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        navigate('/home/shop');
-                      }
-                    }}
-                  >
-                    SHOP &gt;
-                  </span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{navCrumb}</span>
-                </>
-              )}
-            </p>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)', margin: 0 }}>
+                {showMobileMenu ? (
+                  <>
+                    <span
+                      role="link"
+                      tabIndex={0}
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/lobby')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          navigate('/lobby');
+                        }
+                      }}
+                    >
+                      HOME &gt;
+                    </span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                  </>
+                ) : (
+                  <>
+                    <span
+                      role="link"
+                      tabIndex={0}
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/home/shop')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          navigate('/home/shop');
+                        }
+                      }}
+                    >
+                      SHOP &gt;
+                    </span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{navCrumb}</span>
+                  </>
+                )}
+              </p>
+            </NavCenter>
 
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>

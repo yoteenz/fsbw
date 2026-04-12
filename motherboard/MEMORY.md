@@ -13548,3 +13548,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminHeader.tsx`** — search `<input>` **`placeholder:text-[#EB1C24]`** (replaces **`placeholder-gray-400`**). Breadcrumb row: **`flex`**, **`flex-nowrap`**, **`whiteSpace: 'nowrap'`**, parent **`justify-center`**; parent link **`shrink-0`**; title **`truncate`** + **`min-w-0 shrink`** so only the title ellipses if space is extremely tight, **`>`** + parent label stay on one line.
 
 **Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Site-wide shop nav search (functional magnifier)
+
+**Context (this chat):** User reported the **search icon in the nav bar was not functional** on **home/shop**, **shop/units**, texture/unit PDPs (straight, wavy, curly, BCF pages, build-a-wig, etc.) and asked to **ensure all search icons in that nav pattern work** across the site.
+
+**Topics covered:** Prior conversation summary (admin pending modal, checkout loops, account profile, consult offers, admin meetings send offer, rewards, AdminHeader search) was background; **this task** was implementing **functional search** for the storefront mobile nav.
+
+**Decisions / outcomes:** Introduced **`useSiteNavSearch`** — URL **`?q=`** on the current route, centered input replacing breadcrumb when open (aligned with AdminHeader behavior: Enter submits, Escape / empty backspace closes and strips **`q`**). **`useShopNavSearchBar`** exposes **`NavCenter`** + **`SearchTrigger`** for reuse. Wired into **units** pages, **products** (home/shop + units listing), **straight/wavy/curly** unit PDPs, **build-a-wig** hub + sub-pages, **shop** category + texture BCF PDP, **brand** + **careers**, **tools**, **gift-card**, **checkout** / **confirm**, **bag**, **wishlist**, **order-form**, **`BookingFlowLayout`**. **`products/page.tsx`**: **`unitsProductsFiltered`** by **`q`** so the home UNITS strip narrows matches; other pages get URL state for future filtering / deep links.
+
+**Changes:** New **`src/hooks/useSiteNavSearch.ts`**, **`src/components/shop/useShopNavSearchBar.tsx`**; edits across the page list above + **`BookingFlowLayout.tsx`**. **`SearchTrigger`** allows **`type`** prop (default **`button`**). Branch **`cursor/site-nav-search-81f5`** off **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.

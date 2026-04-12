@@ -66,6 +66,7 @@ import {
   computePointsEligibleNetUsd,
 } from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
@@ -217,6 +218,7 @@ function buildAppliedVoucherQuantitiesFromModal(
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -3026,20 +3028,21 @@ function CheckoutPage() {
                       src="/assets/back-button.svg"
                     />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
+                  <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                       width="16"
                       height="15"
                       src="/assets/search-icon.svg"
                     />
-                  </button>
+                  </SearchTrigger>
                 </>
               )}
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
                   <span 
@@ -3076,6 +3079,7 @@ function CheckoutPage() {
                 </>
               )}
             </p>
+            </NavCenter>
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>

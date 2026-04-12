@@ -8,12 +8,14 @@ import { clearAppAuth } from '../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
 function BrandPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const { slug: paramSlug } = useParams<{ slug?: string }>();
   const slug = paramSlug || (location.pathname.startsWith('/brand/') ? location.pathname.replace(/^\/brand\/?/, '').split('/')[0] : '') || 'about';
   const [cartCount, setCartCount] = useState(() => {
@@ -128,25 +130,27 @@ function BrandPage() {
                   <button onClick={handleBack} className="cursor-pointer" style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}>
                     <img alt="Back" width="21" height="15" src="/assets/back-button.svg" />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search" width="16" height="15" src="/assets/search-icon.svg" />
-                  </button>
+                  <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img alt="" width="16" height="15" src="/assets/search-icon.svg" />
+                  </SearchTrigger>
                 </>
               )}
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/lobby')}>HOME &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
-              ) : (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{navTitle}</span>
-                </>
-              )}
-            </p>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)', margin: 0 }}>
+                {showMobileMenu ? (
+                  <>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => navigate('/lobby')}>HOME &gt;</span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{navTitle}</span>
+                  </>
+                )}
+              </p>
+            </NavCenter>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />

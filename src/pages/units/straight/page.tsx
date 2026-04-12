@@ -10,10 +10,12 @@ import { clearAppAuth } from '../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 
 function StraightUnitsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -509,20 +511,21 @@ function StraightUnitsPage() {
                   src="/assets/back-button.svg"
                 />
               </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+              <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
                 <img
-                  alt="Search icon"
+                  alt=""
                   width="16"
                   height="15"
                   src="/assets/search-icon.svg"
                 />
-              </button>
+              </SearchTrigger>
                 </>
               )}
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
                   <span 
@@ -553,6 +556,7 @@ function StraightUnitsPage() {
                 </>
               )}
             </p>
+            </NavCenter>
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>

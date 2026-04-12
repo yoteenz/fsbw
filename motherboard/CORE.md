@@ -20,6 +20,7 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 - **Backgrounds:** Marble texture (`/assets/marble-half.png`), white/translucent cards (`bg-white/60`, `backdrop-blur-sm`), borders often `1.3px solid black` or `1.3px solid #9ca3af` (gray).
 - **Icons:** SVGs in `public/assets/` (e.g. `special-offer.svg`, `slay-challenge.svg`, `Free Gift.svg`). Use `<img src="/assets/...">` with red filter when they should match brand red.
 - **Layout:** Mobile-first; shared nav with back/menu, breadcrumb-style text (e.g. `ACCOUNT > CONCIERGE`), cart icon, dynamic cart count from localStorage / events.
+- **Shop / product nav search:** Many storefront pages use **`useShopNavSearchBar`** (`src/components/shop/useShopNavSearchBar.tsx`) built on **`useSiteNavSearch`** (`src/hooks/useSiteNavSearch.ts`). Tapping the magnifier opens a centered **`?q=`** search field **in place of** the breadcrumb (Enter commits to current path; Escape / backspace on empty / blur when empty clears **`q`** and restores the crumb). **`/home/shop`** additionally filters the **UNITS** horizontal strip client-side by name / length / origin / route when **`q`** is set.
 
 ## ACTIVE BUILD TARGET (IMPORTANT)
 

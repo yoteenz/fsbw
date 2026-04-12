@@ -13,6 +13,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 
 interface HairlineOption {
   id: string;
@@ -27,6 +28,7 @@ interface HairlineOption {
 function HairlineSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [showLoading, setShowLoading] = useState(true);
   const [selectedHairline, setSelectedHairline] = useState<string[]>(() => {
@@ -683,18 +685,19 @@ function HairlineSelection() {
                     src="/assets/back-button.svg"
                   />
                 </button>
-                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                  <img
-                    alt="Search icon"
+                <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                     width="16"
                     height="15"
                     src="/assets/search-icon.svg"
                   />
-                </button>
+                </SearchTrigger>
               </>
             )}
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+          <NavCenter showMobileMenu={showMobileMenu}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             {showMobileMenu ? (
               <>
                 <span 
@@ -742,6 +745,7 @@ function HairlineSelection() {
               </>
             )}
           </p>
+            </NavCenter>
           <div className="gap-5 flex absolute" style={{ right: '17px' }}>
             <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />

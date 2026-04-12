@@ -12,6 +12,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
 const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -26,6 +27,7 @@ function isStylingValueConfirmed(raw: string | null): boolean {
 export default function AddOnsSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedView, setSelectedView] = useState(1);
   const ADDONS_CORRECT_ORDER = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
@@ -828,18 +830,19 @@ export default function AddOnsSelectionPage() {
                     src="/assets/back-button.svg"
                   />
                 </button>
-                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                  <img
-                    alt="Search icon"
+                <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                     width="16"
                     height="15"
                     src="/assets/search-icon.svg"
                   />
-                </button>
+                </SearchTrigger>
               </>
             )}
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+          <NavCenter showMobileMenu={showMobileMenu}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             {showMobileMenu ? (
               <>
                 <span 
@@ -887,6 +890,7 @@ export default function AddOnsSelectionPage() {
               </>
             )}
           </p>
+            </NavCenter>
           <div className="gap-5 flex absolute" style={{ right: '17px' }}>
             <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
