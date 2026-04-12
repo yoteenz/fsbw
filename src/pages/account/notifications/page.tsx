@@ -1076,10 +1076,6 @@ function NotificationsPage() {
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
                         {displayedNotifications.map((notification) => {
-                          const consultOfferReadyRow =
-                            notification.variant === 'consult_offer_ready' ||
-                            notification.consultOfferReady === true ||
-                            notification.id.startsWith('consult_offer_sent_');
                           return (
                           <div
                             key={notification.id}
@@ -1116,10 +1112,9 @@ function NotificationsPage() {
                               <div className="flex items-center justify-between gap-2" style={{ marginBottom: '4px' }}>
                                 <p
                                   style={{
-                                    fontFamily: consultOfferReadyRow
-                                        ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
-                                        : '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                    fontSize: consultOfferReadyRow ? '11px' : '14px',
+                                    fontFamily:
+                                      '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontSize: '14px',
                                     fontWeight: 'normal',
                                     color: '#000000',
                                     margin: 0,

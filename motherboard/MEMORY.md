@@ -13869,6 +13869,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-12 — Account Alerts: YOUR ORDER IS READY title font
+
+**Context (this chat):** **“YOUR ORDER IS READY!”** alert used wrong font; should match other alerts (**Covered By Your Grace**).
+
+**Changes:** **`notifications/page.tsx`** — removed consult-only **`Futura PT Medium`** / **11px** title branch; all alert titles use **Covered By Your Grace** at **14px** like the rest. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-12 — Account Orders: archived by `date`; active by status activity (not `placedAt` max)
 
 **Context (this chat):** **Archived** card should be **newest `date` at top**; **active** by **most recent status update** — prior sort still felt wrong (**`placedAt`** dominated active max; archived used terminal timestamps over **`M/D/YYYY`** **`date`**).
