@@ -13632,3 +13632,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`AdminMeetingsHub.tsx`** — **`quoteSaveSelectionState`**; timers; no **`setHubNotice`** on save.
 
 **Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Concierge: consult order tracking = three **CONFIRMED** rows only
+
+**Context (this chat):** User asked that **consult** orders in **Account → Concierge → Order tracking** show **only the CONFIRMED stage** (no sourcing/constructing/etc.), with copy tied to **PLACED** / **PROCESSING** / **COMPLETE**: **“WE'VE RECEIVED YOUR ORDER.”** → **“PROCESSING YOUR ORDER.”** → **“YOUR ORDER IS COMPLETE.”**
+
+**Changes:** **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`**, render **three** rows all labeled **CONFIRMED**; **`getDigitalFulfillmentStageIndex`** drives current/completed; **`consultDigitalOrderTrackingBarFillPct`** for the active row’s bar; status lines **`STATUS: PLACED`**, **`STATUS: PROCESSING`**, **`STATUS: COMPLETE`**. Expand keys **`-100`..`-102`** so **`toggleStageExpansion`** does not collide with wig pipeline indices.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
