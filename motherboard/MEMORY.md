@@ -14130,3 +14130,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/wig-preview/live-noir-color.ts`** — `image_urls` is **only** the gray-brick mannequin for that angle; logo guidance is **prompt text** (no “reference image” phrasing for logo). Removed **`WIG_PREVIEW_LIVE_LOGO_URL`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW base Step 1 prompt: FRONTAL SLAYER legibility + 3-angle batch note
+
+**Context (this chat):** User updated **BAW base** Step 1 wording (logo with **FRONTAL SLAYER** fully legible) and clarified the image to recreate is the **currently selected / per-angle** mannequin for **3-angle batch** generation.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`**. **`COPY-PASTE-PROMPTS.txt`**, **`scripts/generate-baw-base-images.mjs`** header comment, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
