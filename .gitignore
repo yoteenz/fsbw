@@ -33,6 +33,7 @@ vite.config.js
 .vercel
 .env*.local
 .env.wig-preview
+.env.live-preview
 
 # Wrong motherboard file (real motherboard is folder motherboard/, not a root file)
 MOTHERBOARD.md
