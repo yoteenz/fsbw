@@ -13946,3 +13946,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** / combined default in **`ConsultOfferClaimModal.tsx`**; **`PREVIOUS_DEFAULT_INSPO_DISCLAIMER`** + **`P2`** so offers already stored with the prior paragraph still get **two-paragraph** red/gray layout with old gray text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo **`adminMessage`** updated. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult disclaimer gray paragraph: unit + branding and visualization
+
+**Context (this chat):** User refined gray paragraph only: **YOUR UNIT** (not “finished unit in person”), closing line **PURELY FOR BRANDING AND VISUALIZATION** (word “AND”, not ampersand).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P2`**; **`INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER`** for prior “in person / visualization only” full message so two-paragraph layout + correct gray persist. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults updated. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
