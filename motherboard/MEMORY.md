@@ -13956,3 +13956,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P2`**; **`INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER`** for prior “in person / visualization only” full message so two-paragraph layout + correct gray persist. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults updated. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult gray disclaimer: 2D model, slightly vary, this feature
+
+**Context (this chat):** User replaced gray paragraph only: **2D MODEL** (not “THIS 2D IMAGE”), **DIFFER OR SLIGHTLY VARY**, period after artisan variation, **THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION**.
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER`** for last shipped default in **`ConsultOfferClaimModal.tsx`**. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
