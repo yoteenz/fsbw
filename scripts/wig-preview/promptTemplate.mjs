@@ -159,13 +159,13 @@ export const WIG_CONSULT_LEGACY_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT_THREE_AT
 
 // =============================================================================
 // BAW — manual fal “base mannequin” hero (NOT wig consult; NOT the bulk script)
-// **2 attachments only** (no logo file): (1) gray brick mannequin, (2) white/rose backdrop.
+// **2 attachments** (no logo file): (1) **the mannequin shot to recreate** — for 3-angle batch work, use the **current angle’s** source (same as the hero/thumb for that view: front / left / right) per fal call; (2) white/rose backdrop.
 // fal: **Aspect ratio Auto**, **Resolution 2K** (product owner–verified; keeps framing closer to source than forcing 9:16).
 // =============================================================================
 
 export const BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS = [
   'Recreate this exact mannequin image.',
-  'The logo on the center of the mannequin’s chest should be clear & legible for accuracy & consistency.',
+  'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
   'Do not change anything else about the photo.',
 ].join(' ');

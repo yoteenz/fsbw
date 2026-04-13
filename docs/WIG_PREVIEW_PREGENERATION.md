@@ -53,7 +53,7 @@ On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/c
 **Manual fal (playground) — aspect ratio and resolution**
 
 - **Wig consult** Step 1: **one** base image only; Step 2–3 as in `COPY-PASTE-PROMPTS.txt`. Step 1 often **9:16**; you can use **Auto + 2K** to match Step 2.
-- **BAW base mannequin** (`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`): **Auto + 2K**, two refs (brick + backdrop). Script: `npm run wig-preview:baw-base` after setting **`BAW_BACKDROP_IMAGE`** to your white/rose backdrop file on disk.
+- **BAW base mannequin** (`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`): **Auto + 2K**, two refs (**first attachment** = the mannequin shot to recreate — for 3-angle batch work, use the **current angle’s** source per call; **second** = white/rose backdrop). Script: `npm run wig-preview:baw-base` after **`BAW_BACKDROP_IMAGE`**.
 - **Bulk text-to-image** (`pregenerate-wig-previews.mjs`): defaults **`FAL_ASPECT_RATIO=auto`** and **`FAL_RESOLUTION=2K`** (override in env if needed).
 
 ---

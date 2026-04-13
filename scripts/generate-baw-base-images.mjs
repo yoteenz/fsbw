@@ -4,7 +4,7 @@
  * **fal-ai/nano-banana-pro/edit** + upload WebP to Supabase Storage.
  *
  * Uses `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` from `scripts/wig-preview/promptTemplate.mjs`.
- * Reference images: (1) gray-brick mannequin, (2) white/rose backdrop — both uploaded to fal storage.
+ * Reference images: (1) **mannequin shot to recreate** (defaults: unit front — override per angle for 3-angle batches), (2) white/rose backdrop — both uploaded to fal storage.
  *
  * Env (required unless DRY_RUN=1):
  *   FAL_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY

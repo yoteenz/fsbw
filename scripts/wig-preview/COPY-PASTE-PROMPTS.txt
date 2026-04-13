@@ -60,8 +60,8 @@ Recreate this exact same photo just change the hair to be styled like the second
 ================================================================================
 BAW — BASE MANNEQUIN IMAGE IN FAL (2 refs only; no separate logo attachment)
 ================================================================================
-Use for **Build-a-wig** base hero, **not** wig consult. In fal: **Aspect ratio: Auto**, **Resolution: 2K**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo file.
+Use for **Build-a-wig** base hero, **not** wig consult. In fal: **Aspect ratio: Auto**, **Resolution: 2K**. Attach **only 2**: (1) **the mannequin image to recreate** — for 3-angle batch runs, use the **same angle** as the UI (front / left / right source for that generation); (2) white/rose backdrop. Do **not** attach a logo file.
 
-Recreate this exact mannequin image. The logo on the center of the mannequin’s chest should be clear & legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image. The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
 (In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)
