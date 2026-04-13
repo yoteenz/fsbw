@@ -13171,3 +13171,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Removed conflict markers and **kept both entries**: **2026-04-08** first, **2026-04-13** second (chronological within the conflict block; newest still near file end). **`src/hooks/usePersistentQueryState.ts`** already contained **`canonicalQueryString()`** — no further hook edits in this chat.
 
 **Changes:** **`motherboard/MEMORY.md`** only (this resolution + this summary entry).
+
+---
+
+## 2026-04-13 — Leaked preview env: rotation steps + stop tracking `.env.wig-preview.txt`
+
+**Context:** Earlier chat flagged **`.env.wig-preview.txt`** as tracked with real **FAL** + **Supabase service role** material. User asked for a **step-by-step** walkthrough to rotate credentials and stop committing that file.
+
+**Topics covered:** How to rotate keys in **fal.ai** and **Supabase** dashboards; **`git rm --cached`** so the file stays locally but leaves the index; **`.gitignore`**; committed **`.env.wig-preview.example.txt`** with placeholders only; reminder that **git history** still contains old blobs until **filter-repo** / **BFG** (if the secret ever reached a remote).
+
+**Decisions / outcomes:** Repo changes committed on **`master`**: ignore **`.env.wig-preview.txt`**, add example template, remove file from version control (working copy retained). User must complete **dashboard rotation** and update any **Vercel / CI / machines** that used the old values; if the leak was pushed, treat keys as compromised and scrub history or accept periodic scanning risk.
+
+**Changes:** **`.gitignore`**, **`.env.wig-preview.example.txt`**, **`git rm --cached .env.wig-preview.txt`** + commit **`Stop tracking wig preview env; add example template and gitignore`**, **`motherboard/MEMORY.md`** (this entry).
