@@ -13,8 +13,7 @@ export const config = {
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  *   WIG_PREVIEW_STORAGE_BUCKET (default: live-preview or wig-preview)
  *   WIG_PREVIEW_PROMPT_VERSION (default: v1)
- *   WIG_PREVIEW_LIVE_LOGO_URL — public URL to logo image for fal image_urls[1]
- *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs
+ *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth';
@@ -53,14 +52,15 @@ function readStringArray(obj: Record<string, unknown>, key: string): string[] {
   return v.map((x) => String(x).toUpperCase()).filter(Boolean);
 }
 
-function buildStep2Prompt(label: string, hex: string): string {
+/** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
+function buildStep2PromptNoLogoAttachment(label: string, hex: string): string {
   return [
     'Recreate this exact mannequin image, but change the black hair color to ' +
       label +
       ' hex code #' +
       hex +
       ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.',
-    'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
+    'The logo on the center of the mannequin’s chest should be clear & legible — FRONTAL SLAYER fully readable — for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
     'Do not change anything else about the photo.',
   ].join(' ');
@@ -90,15 +90,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const logoUrl = process.env.WIG_PREVIEW_LIVE_LOGO_URL?.trim();
   const frontUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim();
   const leftUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
   const rightUrl = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
-  if (!logoUrl || !frontUrl || !leftUrl || !rightUrl) {
+  if (!frontUrl || !leftUrl || !rightUrl) {
     sendJson(res, 503, {
-      error: 'Missing public image URLs for live generation',
+      error: 'Missing public mannequin image URLs for live generation',
       missing: {
-        WIG_PREVIEW_LIVE_LOGO_URL: !logoUrl,
         WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL: !frontUrl,
         WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL: !leftUrl,
         WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL: !rightUrl,
@@ -148,7 +146,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const prompt = buildStep2Prompt(catalog.label, catalog.hex);
+  const prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex);
   const generated: string[] = [];
   const skipped: string[] = [];
 
@@ -168,7 +166,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {
           prompt,
-          image_urls: [mannequinUrl, logoUrl],
+          image_urls: [mannequinUrl],
           aspect_ratio: 'auto',
           resolution: '2K',
           output_format: 'webp',

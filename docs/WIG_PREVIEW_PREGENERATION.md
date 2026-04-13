@@ -46,7 +46,7 @@ On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/c
 
 1. Builds the same **manifest hash** from your current length/density/lace/texture/color/hairline/styling/add-ons.
 2. For each angle (**left / front / right**), checks Storage under **`wig-preview-live/{PROMPT_VERSION}/NOIR/{hash}/{angle}.webp`**.
-3. **Skips fal** if the file already exists; otherwise runs **fal `nano-banana-pro/edit`** (mannequin URL for that angle + logo URL) and **uploads** WebP.
+3. **Skips fal** if the file already exists; otherwise runs **fal `nano-banana-pro/edit`** with **one** `image_url` (that angle’s gray-brick mannequin only). Logo is **only in the prompt text** (no logo attachment), matching your successful manual flow.
 
 **Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Function **`maxDuration`** is set to **120s** (up to ~3 fal calls).
 
