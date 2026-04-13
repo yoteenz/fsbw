@@ -6,7 +6,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 | Piece | Path |
 |--------|------|
-| Prompt template | `scripts/wig-preview/promptTemplate.mjs` |
+| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — top of file: **`NBP_STEP1_PROMPT`**, **`NBP_STEP2_PROMPT(hex)`**, **`NBP_STEP3_PROMPT`** (manual 3-step copy/paste); lower in file: **`buildWigPreviewPrompt`** (automated batch) |
 | NOIR manifest generator | `scripts/generate-noir-wig-preview-manifest.mjs` |
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
 | Example output | `scripts/wig-preview/manifests/noir-sanity-v1.json` (after you run generate) |
@@ -58,6 +58,16 @@ npm run wig-preview:manifest:noir
 DRY_RUN=1 node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-sanity-v1.json
 ```
 
+**Windows PowerShell** (same thing — do **not** use `DRY_RUN=1` in front of the command):
+
+```powershell
+$env:DRY_RUN = "1"
+$env:LIMIT = "3"
+node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-sanity-v1.json
+```
+
+Clear dry run before a real batch: `Remove-Item Env:DRY_RUN -ErrorAction SilentlyContinue`
+
 **3) Real batch with fal** (example):
 
 ```bash
@@ -87,6 +97,18 @@ node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-san
 | `STORAGE_BUCKET` | Default `wig-preview` |
 
 Re-runs **skip** objects that already exist (by attempting `download` on the path).
+
+### If you see **`Forbidden`** on upload (Supabase)
+
+That almost always means **Storage is blocking the write**, not fal.
+
+1. **Bucket name** — In Supabase → **Storage**, the bucket must be named exactly what you set in **`STORAGE_BUCKET`** (e.g. **`live-preview`**). A typo = wrong bucket or no access.
+
+2. **Policies (most common)** — Open bucket **`live-preview`** → **Policies**. For a quick test, add a policy that allows **`INSERT`** (and **`UPDATE`** if you use upsert) for the **`service_role`** path, or temporarily use the **Storage policy templates** (“Allow all for authenticated” won’t apply to service role the same way—use a policy that allows uploads for your use case). Easiest **dev** path: in **SQL Editor**, allow `service_role` full access to that bucket’s objects (Supabase docs: “Storage access policies”). Without any policy allowing insert, uploads return **403 Forbidden**.
+
+3. **Wrong key** — **`SUPABASE_SERVICE_ROLE_KEY`** must be the **service_role** secret from **Project Settings → API**, not the **`anon`** key.
+
+4. Re-run the batch after fixing policies; the script will log a longer error if upload still fails.
 
 ---
 

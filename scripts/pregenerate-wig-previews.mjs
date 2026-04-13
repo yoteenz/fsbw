@@ -46,7 +46,11 @@ async function objectExists(supabase, path) {
 
 async function downloadUrlToBuffer(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Download failed ${res.status}: ${url}`);
+  if (!res.ok) {
+    throw new Error(
+      `Download image from URL failed ${res.status} ${res.statusText || ''} (fal/CDN may block some servers — try again or open URL in browser)`
+    );
+  }
   return Buffer.from(await res.arrayBuffer());
 }
 
@@ -170,12 +174,15 @@ async function main() {
         process.exit(1);
       }
 
-      const folder = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
       const { error: upErr } = await supabase.storage.from(bucket).upload(path, buf, {
         contentType: 'image/webp',
         upsert: true,
       });
-      if (upErr) throw upErr;
+      if (upErr) {
+        throw new Error(
+          `Supabase upload: ${upErr.message || 'unknown'}${upErr.statusCode != null ? ` (HTTP ${upErr.statusCode})` : ''}. Full: ${JSON.stringify(upErr)}`
+        );
+      }
       ok++;
       console.log(`[ok] ${label}`);
       if (sleepMs > 0) await sleep(sleepMs);
