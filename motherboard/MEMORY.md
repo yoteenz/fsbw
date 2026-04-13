@@ -14066,3 +14066,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Actions:** Committed nav + prior **MEMORY** nav entry on **`preview/mobile`** (`Nav: widen shop/BAW crumb area; fix admin breadcrumb spacing`). **`git push origin preview/mobile`**. Stashed unrelated local edits to **`membership` / `pending` / `reviews` / `products`** pages so **`master`** checkout worked. **`git checkout master`**, **`git merge preview/mobile`** — conflict in **`motherboard/MEMORY.md`** (divergent append-only histories). Resolved by **keeping both sides**: **`master`**-only tail entries (fal-first / merge-conflict note / leaked env) then separator then full **`preview/mobile`** MEMORY continuation through the nav entry. **`git commit`** merge, **`git push origin master`**. Returned to **`preview/mobile`**, **`stash pop`** (working tree clean). Accidental **`git pull origin master`** on **`preview/mobile`** earlier was **`git merge --abort`**ed before push.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Chain edit prompt: Step 2/3 same template; from/to placeholders
+
+**Context (this chat):** User wants **all selection combinations** to use one Step 2 shape: change **\<output from step 1\>** to **\<input for step 2\>**, same logo block and quality lines. Step 3 reuses that template with **\<input from step 2\>** to **\<input for step 3\>**.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`buildWigConsultChainEditPrompt(from, to)`** + alias **`BAW_SELECTION_CHAIN_EDIT_PROMPT`**. **`WIG_CONSULT_STEP2_PROMPT(hex)`** uses **output from step 1** → **{label} hair color (hex #…)**. **`WIG_CONSULT_STEP3_PROMPT(from, to)`** (function); **`WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()`** for style-from-2nd-attachment. **`NBP_STEP3_PROMPT`** now a function. Legacy style-only string → **`WIG_CONSULT_STEP3_PROMPT_LEGACY_STYLE_ATTACHMENT`**. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** table updated.
+
+**Docs:** This **MEMORY** entry.

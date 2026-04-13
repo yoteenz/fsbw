@@ -27,28 +27,62 @@ export const WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS = [
 ].join(' ');
 
 /**
- * Step 2 — hair color only from base (wig consult + same pattern for BAW: swap hex per swatch).
- * fal: **aspect ratio Auto**, **resolution 2K** (match Step 1).
- * Attachments: Step 1 output + **logo reference** image so “reference image” in the prompt resolves.
- * @param {string} hairHex - e.g. '#DA3063' or 'DA3063'
- * @param {string} [hairColorLabel='pink'] - e.g. `'pink'` (default, exact proven wording) or `'honey blonde'` for other swatches
+ * Generic Step 2 / Step 3 (and BAW chain edits): same wording for any “change A → B” on the mannequin.
+ * fal: **aspect ratio Auto**, **resolution 2K**. Attach prior step image + **logo reference** so “reference image” = logo.
+ * @param {string} fromDescription - what you are changing from (e.g. “black hair color”, “output from step 1”)
+ * @param {string} toDescription - what you are changing to (e.g. “pink hair color (hex #DA3063)”, “PEAK hairline”)
  */
-export function WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel = 'pink') {
-  const hex = String(hairHex || '').replace(/^#/, '');
-  const label = String(hairColorLabel || 'pink').trim() || 'pink';
+export function buildWigConsultChainEditPrompt(fromDescription, toDescription) {
+  const fromD = String(fromDescription || '').trim() || 'previous state';
+  const toD = String(toDescription || '').trim() || 'target state';
   return [
-    'Recreate this exact mannequin image, but change the black hair color to ' + label + ' hex code #' + hex + '.',
+    'Recreate this exact mannequin image, but change the ' + fromD + ' to ' + toD + '.',
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
     'Do not change anything else about the photo.',
   ].join(' ');
 }
 
-/** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color” step reuses this; pass `hairHex` (and optional label for non-pink swatches). */
+/** BAW / consult chain: same as `buildWigConsultChainEditPrompt` (hairline, styling, etc.). */
+export const BAW_SELECTION_CHAIN_EDIT_PROMPT = buildWigConsultChainEditPrompt;
+
+/**
+ * Step 2 — color from Step 1 output (wig consult + BAW “base → color”).
+ * Same sentence shape as all chain steps; only the “from → to” phrases change.
+ * @param {string} hairHex - e.g. '#DA3063' or 'DA3063'
+ * @param {string} [hairColorLabel='pink'] - e.g. `'pink'` or `'honey blonde'`
+ */
+export function WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel = 'pink') {
+  const hex = String(hairHex || '').replace(/^#/, '');
+  const label = String(hairColorLabel || 'pink').trim() || 'pink';
+  return buildWigConsultChainEditPrompt('output from step 1', label + ' hair color (hex #' + hex + ')');
+}
+
+/** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color”; pass `hairHex` (+ optional label). */
 export const BAW_SELECTION_COLOR_FROM_BASE_PROMPT = WIG_CONSULT_STEP2_PROMPT;
 
-/** Wig consult Step 3 — hair style only (attach: Step 2 output + style reference). */
-export const WIG_CONSULT_STEP3_PROMPT = [
+/**
+ * Step 3 — same template as Step 2: change “input from step 2” → “input for step 3”.
+ * Attach: Step 2 output + any extra refs (e.g. hair style reference as 2nd image); keep logo ref so “reference image” still resolves.
+ * @param {string} fromDescription - e.g. `'hair as in the previous image'` or plain `'input from step 2'`
+ * @param {string} toDescription - e.g. `'hair styled exactly like the second reference attachment'`
+ */
+export function WIG_CONSULT_STEP3_PROMPT(fromDescription, toDescription) {
+  return buildWigConsultChainEditPrompt(fromDescription, toDescription);
+}
+
+/**
+ * Wig consult Step 3 — common case: “input from step 2” → style from 2nd attachment (you still attach Step 2 + style ref + logo ref as needed).
+ */
+export function WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE() {
+  return WIG_CONSULT_STEP3_PROMPT(
+    'input from step 2',
+    'hair styled exactly like the second reference attachment, same hair color as in the image'
+  );
+}
+
+/** Older Step 3 (style-only, second attachment wording). Kept for copy-paste / comparison. */
+export const WIG_CONSULT_STEP3_PROMPT_LEGACY_STYLE_ATTACHMENT = [
   'Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY.',
   'Don’t change the color of her hair or anything else in the photo.',
 ].join(' ');
@@ -82,7 +116,9 @@ export function NBP_STEP2_PROMPT(hairHex, hairColorLabel) {
   return WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel);
 }
 
-export const NBP_STEP3_PROMPT = WIG_CONSULT_STEP3_PROMPT;
+export function NBP_STEP3_PROMPT(fromDescription, toDescription) {
+  return WIG_CONSULT_STEP3_PROMPT(fromDescription, toDescription);
+}
 
 // =============================================================================
 // BAW — automated batch (one fal call per manifest row)

@@ -16,14 +16,21 @@ Recreate this exact mannequin image, but swap out the gray brick background with
 
 (Code: current Step 1 = `WIG_CONSULT_STEP1_PROMPT`. Legacy 3-ref string = `WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`.)
 
---- STEP 2 (fal: **Aspect ratio Auto**, **Resolution 2K**) ---
-Attach **(1)** output from Step 1, **(2)** logo reference image (order matters for “reference image” in the prompt). Swap only the hex for other catalog colors; same prompt shape for BAW base → color.
+--- STEP 2+ template (fal: **Aspect ratio Auto**, **Resolution 2K**) — same for all selection chain edits ---
+Fill in the two blanks. Attach **prior step image** + **logo reference** (logo = “reference image” in the prompt). For extra refs (e.g. style), add more attachments; describe them in <input for step N>.
 
-Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image, but change the <output from step 1> to <input for step 2>. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
-(Code: `WIG_CONSULT_STEP2_PROMPT(hex)` or `WIG_CONSULT_STEP2_PROMPT(hex, 'honey blonde')` for other swatches; alias `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`. Hex with or without #.)
+**Color example (Step 2):** from = `output from step 1`, to = `pink hair color (hex #DA3063)` — code: `WIG_CONSULT_STEP2_PROMPT('#DA3063')` or `WIG_CONSULT_STEP2_PROMPT('#DA3063', 'honey blonde')`; alias `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`.
 
---- STEP 3 (attach: Step 2 output + hair style reference) ---
+--- STEP 3 — reuse Step 2 template; widen “from” / “to” ---
+Attach Step 2 output + style reference (+ logo ref if needed).
+
+Recreate this exact mannequin image, but change the <input from step 2> to <input for step 3>. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+**Style example:** code: `WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()` or `WIG_CONSULT_STEP3_PROMPT('input from step 2', 'your target phrase')`. Generic: `buildWigConsultChainEditPrompt(from, to)` / `BAW_SELECTION_CHAIN_EDIT_PROMPT`.
+
+--- Legacy Step 3 (old wording) ---
 
 Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
 
