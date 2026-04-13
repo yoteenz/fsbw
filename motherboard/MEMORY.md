@@ -14026,3 +14026,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP1_PROMPT`**, **`WIG_CONSULT_STEP2_PROMPT`**, **`WIG_CONSULT_STEP3_PROMPT`**, **`WIG_CONSULT_LEGACY_STEP1_PROMPT`**; **`NBP_STEP*`** re-exports; **`buildWigPreviewPrompt`** = BAW batch only. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Shop / BAW nav: wider center, no wrap; admin crumb space before title
+
+**Context (this chat):** User reported **build-a-wig** (and related shop) nav **breadcrumb text still wrapping**, and admin header showed **ADMIN >DASHBOARD** (missing space after `>`). They asked to **widen the container** for nav text.
+
+**Changes:** **`src/components/shop/useShopNavSearchBar.tsx`** — **`NavCenter`**: horizontal padding **96px → 64px** each side (more room for centered crumb), added **`whitespace-nowrap`**. **`src/pages/admin/components/AdminHeader.tsx`** — center strip: same padding + **`whitespace-nowrap`**; breadcrumb row **`gap-1`** (replaces collapsed trailing space before red title); parent label + chevron inside button as **`inline-flex`** with **`gap-1`** so **ADMIN >** spacing is explicit.
+
+**Docs:** This **MEMORY** entry.

@@ -19,8 +19,8 @@ export function useShopNavSearchBar() {
   }) {
     return (
       <div
-        className="flex-1 flex items-center justify-center min-w-0 h-full"
-        style={{ paddingLeft: '96px', paddingRight: '96px' }}
+        className="flex-1 flex items-center justify-center min-w-0 h-full whitespace-nowrap"
+        style={{ paddingLeft: '64px', paddingRight: '64px' }}
       >
         {navSearchOpen && !showMobileMenu ? <input {...navSearchInputProps} /> : children}
       </div>

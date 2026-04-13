@@ -620,8 +620,8 @@ export default function AdminHeader({
 
           {/* Center: breadcrumb title OR centered search (replaces title only; icons unchanged) */}
           <div
-            className="flex-1 text-center flex items-center justify-center h-full min-w-0"
-            style={{ paddingLeft: '96px', paddingRight: '96px' }}
+            className="flex-1 text-center flex items-center justify-center h-full min-w-0 whitespace-nowrap"
+            style={{ paddingLeft: '64px', paddingRight: '64px' }}
           >
             {isSearchActive && !hideSearchIcon ? (
               <input
@@ -644,7 +644,7 @@ export default function AdminHeader({
               />
             ) : (
               <div
-                className="flex w-full min-w-0 max-w-full flex-nowrap items-center justify-center gap-0 overflow-hidden"
+                className="flex w-full min-w-0 max-w-full flex-nowrap items-center justify-center gap-1 overflow-hidden"
                 style={{ whiteSpace: 'nowrap' }}
               >
                 <button
@@ -653,7 +653,7 @@ export default function AdminHeader({
                   onMouseEnter={() => setIsBreadcrumbHovered(true)}
                   onMouseLeave={() => setIsBreadcrumbHovered(false)}
                   onTouchEnd={() => setIsBreadcrumbHovered(false)}
-                  className="shrink-0 text-sm uppercase transition-colors cursor-pointer"
+                  className="shrink-0 text-sm uppercase transition-colors cursor-pointer inline-flex items-center gap-1"
                   style={{
                     fontFamily: "'Futura PT Book'",
                     fontWeight: 500,
@@ -665,7 +665,8 @@ export default function AdminHeader({
                     background: 'none',
                   }}
                 >
-                  {(breadcrumbParentLabel ?? 'ADMIN')} &gt;{' '}
+                  <span>{breadcrumbParentLabel ?? 'ADMIN'}</span>
+                  <span aria-hidden="true">&gt;</span>
                 </button>
                 <span
                   className="min-w-0 shrink truncate text-sm uppercase"
