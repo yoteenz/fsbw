@@ -7,7 +7,7 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import ImageViewerModal from '../../../components/ImageViewerModal';
+import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
@@ -45,6 +45,19 @@ interface DensityOption {
   image: string;
 }
 
+/** 2D NOIR product-shot PNGs — same for under-carousel links and enlarge modal. */
+const NOIR_2D_ANGLE_DOWNLOAD_ROWS: { file: string; label: string }[] = [
+  { file: 'noir front.png', label: 'FRONT (M)' },
+  { file: 'noir left.png', label: 'LEFT (L)' },
+  { file: 'noir right.png', label: 'RIGHT (R)' },
+];
+
+const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ file, label }) => ({
+  href: `/assets/NOIR/${encodeURIComponent(file)}`,
+  label,
+  download: file.replace(/\s+/g, '-'),
+}));
+
 function NoirSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,6 +77,8 @@ function NoirSelection() {
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
+  /** When set, enlarged `ImageViewerModal` shows the same 2D NOIR PNG download row as under product shots. */
+  const [viewerModalDownloads, setViewerModalDownloads] = useState<ImageViewerDownloadLink[] | null>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -852,13 +867,6 @@ function NoirSelection() {
     '/assets/natural front.png',  // View 1 (default)
     '/assets/natural left.png',  // View 2 (top thumbnail)
     '/assets/natural right.png'  // View 3 (bottom thumbnail)
-  ];
-
-  /** Same PNGs as product shots carousel — filenames match `public/assets/NOIR/`. (m)/(l)/(r) = parting / angle. */
-  const NOIR_2D_ANGLE_DOWNLOADS: { file: string; label: string }[] = [
-    { file: 'noir front.png', label: 'FRONT (M)' },
-    { file: 'noir left.png', label: 'LEFT (L)' },
-    { file: 'noir right.png', label: 'RIGHT (R)' },
   ];
 
   // Get current mannequin images based on selected view
@@ -2294,6 +2302,7 @@ width: 'clamp(200px, 50vw, 320px)',
                         : [currentImages.hero, currentImages.top, currentImages.bottom];
                       setViewerImages(allImages);
                       setViewerCurrentIndex(0);
+                      setViewerModalDownloads(is3DView ? null : NOIR_2D_VIEWER_DOWNLOADS);
                       setShowImageViewer(true);
                     }}
                   >
@@ -2322,6 +2331,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                           : [currentImages.hero, currentImages.top, currentImages.bottom];
                         setViewerImages(allImages);
                         setViewerCurrentIndex(0);
+                        setViewerModalDownloads(is3DView ? null : NOIR_2D_VIEWER_DOWNLOADS);
                         setShowImageViewer(true);
                       }}
                     />
@@ -2802,6 +2812,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(0);
+                    setViewerModalDownloads(NOIR_2D_VIEWER_DOWNLOADS);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2819,6 +2830,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(1);
+                    setViewerModalDownloads(NOIR_2D_VIEWER_DOWNLOADS);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2836,6 +2848,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(2);
+                    setViewerModalDownloads(NOIR_2D_VIEWER_DOWNLOADS);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2879,7 +2892,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 download 2d angles (png)
               </p>
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-                {NOIR_2D_ANGLE_DOWNLOADS.map(({ file, label }) => {
+                {NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ file, label }) => {
                   const href = `/assets/NOIR/${encodeURIComponent(file)}`;
                   const downloadName = file.replace(/\s+/g, '-');
                   return (
@@ -4289,10 +4302,14 @@ width: 'clamp(230px, 57.5vw, 368px)',
       {/* Image Viewer Modal */}
       <ImageViewerModal
         isOpen={showImageViewer}
-        onClose={() => setShowImageViewer(false)}
+        onClose={() => {
+          setShowImageViewer(false);
+          setViewerModalDownloads(null);
+        }}
         images={viewerImages}
         currentIndex={viewerCurrentIndex}
         onNavigate={setViewerCurrentIndex}
+        footerDownloads={viewerModalDownloads ?? undefined}
       />
     </div>
   );
