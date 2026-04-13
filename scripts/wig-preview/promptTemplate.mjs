@@ -12,13 +12,13 @@
 // Copy into fal. Step 1: attach base mannequin + logo ref (2nd attachment per your wording).
 // =============================================================================
 
-/** Wig consult Step 1 — attach: (1) base mannequin, (2) logo. Paste into fal; set output aspect ratio to match image 1 if the UI asks. */
+/** Wig consult Step 1 — attach: (1) base mannequin, (2) logo. Paste into fal; output aspect ratio = image 1; if logo still warps, composite in Photoshop from refs instead of regenerating. */
 export const WIG_CONSULT_STEP1_PROMPT = [
-  'Match the first reference exactly for geometry: same aspect ratio and framing — no vertical stretch, no squashing, no slimming or lengthening the neck or head. The mannequin must occupy the same fraction of the frame height and width as in the first reference; same distance from top of frame to top of hair and from bottom of visible bust to bottom of frame.',
-  'Add only the logo from the second reference onto the center of the chest. The logo must be the same physical size relative to the chest as in the second reference — do not enlarge it; if in doubt, err smaller. It must read as embroidered or stitched into the gray fabric: visible thread texture, slight relief, soft contact shadow on the weave, matte — not a glossy sticker, not a sharp flat digital overlay, not screen-printed plastic.',
-  'Keep the logo artwork sharp and legible at that smaller scale: crisp letterforms matching the second reference colors; no extra glow, halo, or outline beyond subtle stitched edges.',
-  'Output extremely high-quality, crisp, and pixel-perfect.',
-  'Change nothing else: hair, lace line, earrings, stand, background bricks, plant, lighting, or color grading — only add the chest logo as above.',
+  'Treat the output as the first reference image with one change only: add the chest logo. Do not redraw or reinterpret the mannequin — preserve pixel geometry of the bust, shoulders, and neck: same shoulder width and lateral extent in the frame as the first reference, no narrowing of the torso, no “slimmer” bust, no pinched waist, no vertical elongation of the neck or head.',
+  'Match the first reference for global framing: identical aspect ratio, no letterboxing stretch, no anamorphic squeeze — width and height scale together only if the canvas matches image 1.',
+  'Composite the logo from the second reference onto the center of the chest using uniform scaling only: preserve the logo’s original width-to-height aspect ratio exactly — no vertical stretch, no horizontal stretch, no skew. Scale so the logo’s bounding box matches the second reference’s size relative to the chest width in the first image; never larger than that; if uncertain, scale down.',
+  'The logo must read as embroidered or stitched into the gray fabric: thread texture, slight relief, soft contact shadow on the weave, matte — not a glossy sticker or flat overlay.',
+  'Output extremely high-quality, crisp, and pixel-perfect. Do not change hair, lace, earrings, stand, bricks, plant, or lighting.',
 ].join(' ');
 
 /**
