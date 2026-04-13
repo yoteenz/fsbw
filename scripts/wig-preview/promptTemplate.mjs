@@ -12,12 +12,13 @@
 // Copy into fal. Step 1: attach base mannequin + logo ref (2nd attachment per your wording).
 // =============================================================================
 
-/** Wig consult Step 1 — attach: (1) base mannequin, (2) logo. Paste into fal. */
+/** Wig consult Step 1 — attach: (1) base mannequin, (2) logo. Paste into fal; set output aspect ratio to match image 1 if the UI asks. */
 export const WIG_CONSULT_STEP1_PROMPT = [
-  'Recreate the first reference image with identical composition: same crop, scale, camera height, and vertical placement of the mannequin in the frame — do not move the subject higher or lower, and do not zoom in or out compared to the first reference.',
-  'Place the logo from the second reference flat on the center of the mannequin’s chest, using the same proportions as in the second reference: sharp, vector-clean edges, fully legible small text, no blur, no glow, no warping, no extra outline; colors must match the second reference exactly.',
-  'Output must be extremely high-quality, crisp, and pixel-perfect.',
-  'Do not change anything else: hair (length, color, texture, part), lighting character, background, props, mannequin material, stand, or earrings — only add the logo as specified above.',
+  'Match the first reference exactly for geometry: same aspect ratio and framing — no vertical stretch, no squashing, no slimming or lengthening the neck or head. The mannequin must occupy the same fraction of the frame height and width as in the first reference; same distance from top of frame to top of hair and from bottom of visible bust to bottom of frame.',
+  'Add only the logo from the second reference onto the center of the chest. The logo must be the same physical size relative to the chest as in the second reference — do not enlarge it; if in doubt, err smaller. It must read as embroidered or stitched into the gray fabric: visible thread texture, slight relief, soft contact shadow on the weave, matte — not a glossy sticker, not a sharp flat digital overlay, not screen-printed plastic.',
+  'Keep the logo artwork sharp and legible at that smaller scale: crisp letterforms matching the second reference colors; no extra glow, halo, or outline beyond subtle stitched edges.',
+  'Output extremely high-quality, crisp, and pixel-perfect.',
+  'Change nothing else: hair, lace line, earrings, stand, background bricks, plant, lighting, or color grading — only add the chest logo as above.',
 ].join(' ');
 
 /**
