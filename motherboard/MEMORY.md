@@ -13896,3 +13896,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`userOrdersBuckets.ts`** — **`parseOrderDateField`**: also **`M/D/YYYY`**. **`orderArchivedSortTimeMs`**: primary sort = parsed **`date`** when present. **`orderActiveActivitySortTimeMs`**: max of status-related keys (**`updatedAt`**, **`consultProcessingStartedAt`**, **`shippedAt`**, delivery/complete/cancel) **excluding** **`placedAt`** from max; fallback **`placedAt`** → **`createdAt`** → **`date`**. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER modal: longer default disclaimer (uppercase)
+
+**Context (this chat):** Earlier topics: Nano Banana / Artlist / API vendors / internal consult preview workflow. Latest: user asked to replace the default consult-offer disclaimer with a **more thorough** version, **all uppercase**, on the **booking consult VIEW OFFER** pop-up.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — expanded **`DEFAULT_INSPO_DISCLAIMER`** (2D illustrative/marketing, color/style variance, texture/lace/density/length/styling variance, no guarantee vs inspo photo, artisan variation, visualization only). Kept **`LEGACY_DEFAULT_INSPO_DISCLAIMER`** so older stored messages still match **`isDefaultInspoDisclaimer`** (gray styling). **`AdminMeetingsHub.tsx`** — default **`quoteMessage`** matches new copy. **`orders/page.tsx`** — demo **`adminMessage`** snapshots updated for founder consult demos.
+
+**Docs:** This **MEMORY** entry.

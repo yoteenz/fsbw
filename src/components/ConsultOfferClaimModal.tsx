@@ -49,9 +49,13 @@ function formatOfferTimeLeftLabel(msRemain: number): string {
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
+/** Shorter legacy default — still treated as “stock” disclaimer (gray) for older offers. */
+const LEGACY_DEFAULT_INSPO_DISCLAIMER =
+  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+
 /** Default admin send-offer copy — shown in **gray** (custom admin messages stay red). */
 const DEFAULT_INSPO_DISCLAIMER =
-  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLE MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. TEXTURE, LACE, DENSITY, LENGTH, AND STYLING MAY ALSO VARY SLIGHTLY IN PERSON OR ON THE FINISHED WIG. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPIRATION PHOTO OR ANY IN-PERSON LOOK. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
 
 /** Anchor **placedAt** so the offer window maps onto the same 72h consult bar as Concierge (offer end = +72h). */
 function consultOfferBarAnchorMs(quote: Record<string, unknown> | null): number | null {
@@ -116,8 +120,10 @@ export default function ConsultOfferClaimModal({
       ? quote.thumbnail_src.trim()
       : '/assets/NOIR/noir-thumb.png';
   const message = String(quote?.admin_message || '');
+  const msgU = message.trim().toUpperCase();
   const isDefaultInspoDisclaimer =
-    message.trim().toUpperCase() === DEFAULT_INSPO_DISCLAIMER.toUpperCase();
+    msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === LEGACY_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
