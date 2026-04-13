@@ -13926,3 +13926,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — **`DEFAULT_INSPO_DISCLAIMER_P1`** / **`P2`** + combined **`DEFAULT_INSPO_DISCLAIMER`** for stored/API string match; when message equals current default, render two **`<p>`**s with spacing (**8px** margin-top between); legacy one-paragraph defaults unchanged (all gray). **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER: narrower default disclaimer column
+
+**Context (this chat):** User asked to narrow the container for the red/gray default disclaimer by **10px** so lines wrap sooner.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — two-paragraph disclaimer wrapper: **`maxWidth: calc(100% - 10px)`** + **`marginLeft` / `marginRight: auto`** (centered). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
