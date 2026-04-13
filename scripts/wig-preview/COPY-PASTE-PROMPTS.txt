@@ -1,18 +1,14 @@
 ================================================================================
-TWO DIFFERENT USES (do not mix them up)
+TWO DIFFERENT USES
 ================================================================================
-
-WIG CONSULT = 3 steps in fal (base mannequin → hair color → hair style). Prompts below.
-BAW        = many images from the site's option list — uses code in promptTemplate.mjs
-            at the bottom (buildWigPreviewPrompt) + the pregenerate script. NOT these 3 steps.
+WIG CONSULT = 3 steps in fal (section below). BAW base hero = next section. BAW bulk = buildWigPreviewPrompt in promptTemplate.mjs + pregenerate script.
 
 ================================================================================
-WIG CONSULT — CURRENT (Step 1: logo from 2nd attachment; base image sets room/background)
+WIG CONSULT — STEP 1 (3 refs) + STEPS 2–3
 ================================================================================
+In fal: **9:16**. Attach **3**: (1) gray brick mannequin, (2) white/rose backdrop, (3) logo.
 
---- STEP 1 ---
-
-Recreate this exact mannequin image. Use my logo from the 2nd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
 --- STEP 2 (attach: output from Step 1 only; change hex if needed) ---
 
@@ -23,16 +19,10 @@ Recreate this exact mannequin image, but change the black hair color to pink hex
 Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
 
 ================================================================================
-WIG CONSULT — LEGACY STEP 1 (stored for later — brick → white/rose + logo from 3rd ref)
+BAW — BASE MANNEQUIN IMAGE IN FAL (2 refs only; logo in text, no logo attachment)
 ================================================================================
+Use for **Build-a-wig** base hero, **not** wig consult. In fal: **9:16**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo file.
 
-Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. On the center of the mannequin’s chest, add the Frontal Slayer brand mark: a red stylized “F/S” monogram with the words FRONTAL SLAYER in small red sans-serif capital letters across the middle of the mark — compact and proportional, roughly one-quarter to one-third of the chest width at its widest point, sharp and legible, matching brand red, subtle stitched-on look, not oversized and not a huge banner. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
-(Then use the same STEP 2 and STEP 3 blocks above.)
-
-================================================================================
-WHEN STEP 1 DIFFERS BY FEATURE
-================================================================================
-Edit scripts/wig-preview/promptTemplate.mjs — constants at the top:
-  WIG_CONSULT_STEP1_PROMPT     = current consult / base + logo wording
-  WIG_CONSULT_LEGACY_STEP1_PROMPT = older white/rose + 3rd-ref logo wording
+(In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)
