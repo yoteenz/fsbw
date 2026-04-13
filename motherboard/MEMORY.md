@@ -14140,3 +14140,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`**. **`COPY-PASTE-PROMPTS.txt`**, **`scripts/generate-baw-base-images.mjs`** header comment, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — NOIR 2D download links in enlarge modal
+
+**Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
+
+**Changes:** **`ImageViewerModal`** — optional **`footerDownloads`** + export **`ImageViewerDownloadLink`**. **`noir/page.tsx`** — module constants **`NOIR_2D_ANGLE_DOWNLOAD_ROWS`** / **`NOIR_2D_VIEWER_DOWNLOADS`**; set downloads when opening viewer from **2D** hero or product shots; **3D** hero → no footer; modal **`onClose`** clears.
+
+**Docs:** This **MEMORY** entry.
