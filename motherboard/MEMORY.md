@@ -13916,3 +13916,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — updated **`DEFAULT_INSPO_DISCLAIMER`**; added **`PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER`** so quotes already sent with the prior long paragraph still count as default (**gray**). **`AdminMeetingsHub.tsx`** and **`orders/page.tsx`** demo **`adminMessage`** aligned with new copy.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER: default disclaimer two paragraphs (red + gray)
+
+**Context (this chat):** User wanted the **current default** consult-offer message split into **two paragraphs** in the VIEW OFFER modal: first block **brand red** (`#EB1C24`), second block **gray** (`#808080`).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — **`DEFAULT_INSPO_DISCLAIMER_P1`** / **`P2`** + combined **`DEFAULT_INSPO_DISCLAIMER`** for stored/API string match; when message equals current default, render two **`<p>`**s with spacing (**8px** margin-top between); legacy one-paragraph defaults unchanged (all gray). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.

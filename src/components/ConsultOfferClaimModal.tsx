@@ -57,9 +57,16 @@ const LEGACY_DEFAULT_INSPO_DISCLAIMER =
 const PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER =
   'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLE MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. TEXTURE, LACE, DENSITY, LENGTH, AND STYLING MAY ALSO VARY SLIGHTLY IN PERSON OR ON THE FINISHED WIG. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPIRATION PHOTO OR ANY IN-PERSON LOOK. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
 
-/** Default admin send-offer copy — shown in **gray** (custom admin messages stay red). */
-const DEFAULT_INSPO_DISCLAIMER =
-  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
+/** First paragraph of default disclaimer — **red** in modal. */
+const DEFAULT_INSPO_DISCLAIMER_P1 =
+  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+
+/** Second paragraph — **gray** in modal. Persisted `admin_message` is P1 + space + P2 (single field). */
+const DEFAULT_INSPO_DISCLAIMER_P2 =
+  'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
+
+/** Default admin send-offer copy (one string for DB / `isDefaultInspoDisclaimer` match). */
+const DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Anchor **placedAt** so the offer window maps onto the same 72h consult bar as Concierge (offer end = +72h). */
 function consultOfferBarAnchorMs(quote: Record<string, unknown> | null): number | null {
@@ -129,6 +136,7 @@ export default function ConsultOfferClaimModal({
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === LEGACY_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
+  const isCurrentDefaultTwoParagraphDisclaimer = msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
@@ -287,20 +295,55 @@ export default function ConsultOfferClaimModal({
             </div>
 
             {message ? (
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium"',
-                  fontSize: '9px',
-                  marginTop: '12px',
-                  marginBottom: '10px',
-                  lineHeight: 1.5,
-                  textTransform: 'uppercase',
-                  color: isDefaultInspoDisclaimer ? '#808080' : '#EB1C24',
-                  textAlign: 'center',
-                }}
-              >
-                {message}
-              </p>
+              isCurrentDefaultTwoParagraphDisclaimer ? (
+                <div
+                  style={{
+                    marginTop: '12px',
+                    marginBottom: '10px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '9px',
+                      margin: 0,
+                      lineHeight: 1.5,
+                      textTransform: 'uppercase',
+                      color: '#EB1C24',
+                    }}
+                  >
+                    {DEFAULT_INSPO_DISCLAIMER_P1}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '9px',
+                      margin: '8px 0 0',
+                      lineHeight: 1.5,
+                      textTransform: 'uppercase',
+                      color: '#808080',
+                    }}
+                  >
+                    {DEFAULT_INSPO_DISCLAIMER_P2}
+                  </p>
+                </div>
+              ) : (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '9px',
+                    marginTop: '12px',
+                    marginBottom: '10px',
+                    lineHeight: 1.5,
+                    textTransform: 'uppercase',
+                    color: isDefaultInspoDisclaimer ? '#808080' : '#EB1C24',
+                    textAlign: 'center',
+                  }}
+                >
+                  {message}
+                </p>
+              )
             ) : null}
 
             <div
