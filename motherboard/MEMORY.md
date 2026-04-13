@@ -13966,3 +13966,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER`** for last shipped default in **`ConsultOfferClaimModal.tsx`**. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults. **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Founder demo: two extra mock wig consult orders (#340, #341) + meetings
+
+**Context (this chat):** User asked for **two more** mock **wig consult** orders on the **admin founder** account to test **custom image generation** and **AI model generation** from **admin dash** and **Account → Orders**.
+
+**Changes:** **`orders/page.tsx`** — **`buildFounderDemoConsultOrder340`** (COMPLETE, gallery/mock inspo, offer thumb **`/assets/gallery-mock.png`**, **`CONSULT-DEMO340`**, NOIR selections), **`buildFounderDemoConsultOrder341`** (COMPLETE, blanco thumb inspo, **`CONSULT-DEMO341`**, BLANCO selections). **`mergeFounderAdminConsultOrder331Demo`** injects any missing **ORDER #331**, **#340**, or **#341** into **past** (not only 331). Shared **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`**; **`kateenaMockPastOrders`** includes 340/341. **`adminMeetingsMock.ts`** — **`adminFounderDemoConsultMeetingOrder340`** / **`341`**; **`listAggregatedAdminMeetingsForClientDetails`** + **`AdminMeetingsHub`** **`mergedMeetings`** merge all three demos. **`motherboard/CORE.md`** — admin demo consults bullet updated for #340/#341 ids and times.
+
+**Docs:** This **MEMORY** entry.
