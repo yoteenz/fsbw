@@ -43,12 +43,12 @@ export const WIG_CONSULT_LEGACY_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT;
 // =============================================================================
 // BAW — manual fal “base mannequin” hero (NOT wig consult; NOT the bulk script)
 // **2 attachments only** (no logo file): (1) gray brick mannequin, (2) white/rose backdrop.
-// Logo in text. fal **9:16**. Use when a 3rd logo attachment skews size.
+// fal: **Aspect ratio Auto**, **Resolution 2K** (product owner–verified; keeps framing closer to source than forcing 9:16).
 // =============================================================================
 
 export const BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS = [
-  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
-  'On the center of the mannequin’s chest, add the Frontal Slayer brand mark: a red stylized “F/S” monogram with the words FRONTAL SLAYER in small red sans-serif capital letters across the middle of the mark — compact and proportional, roughly one-quarter to one-third of the chest width at its widest point, sharp and legible, matching brand red, subtle stitched-on look, not oversized and not a huge banner.',
+  'Recreate this exact mannequin image.',
+  'The logo on the center of the mannequin’s chest should be clear & legible for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
   'Do not change anything else about the photo.',
 ].join(' ');

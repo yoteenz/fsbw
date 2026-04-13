@@ -19,10 +19,10 @@ Recreate this exact mannequin image, but change the black hair color to pink hex
 Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
 
 ================================================================================
-BAW — BASE MANNEQUIN IMAGE IN FAL (2 refs only; logo in text, no logo attachment)
+BAW — BASE MANNEQUIN IMAGE IN FAL (2 refs only; no separate logo attachment)
 ================================================================================
-Use for **Build-a-wig** base hero, **not** wig consult. In fal: **9:16**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo file.
+Use for **Build-a-wig** base hero, **not** wig consult. In fal: **Aspect ratio: Auto**, **Resolution: 2K**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo file.
 
-Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. On the center of the mannequin’s chest, add the Frontal Slayer brand mark: a red stylized “F/S” monogram with the words FRONTAL SLAYER in small red sans-serif capital letters across the middle of the mark — compact and proportional, roughly one-quarter to one-third of the chest width at its widest point, sharp and legible, matching brand red, subtle stitched-on look, not oversized and not a huge banner. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image. The logo on the center of the mannequin’s chest should be clear & legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
 (In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)
