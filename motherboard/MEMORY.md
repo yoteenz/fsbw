@@ -14006,3 +14006,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`motherboard/CORE.md`** — new **Conventions** bullet **“Explanations for this product owner”** (plain language, analogies, Windows-friendly notes, minimal jargon). This **MEMORY** entry records the preference for all agents.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Wig consult vs BAW prompts in promptTemplate.mjs
+
+**Context (this chat):** User clarified **wig consult** 3-step fal flow is separate from **BAW selection** bulk images. Consult Step 1: **logo from 2nd reference** on base mannequin; Step 2 / 3 same intent. **Legacy** Step 1 (brick → white/rose + logo from **3rd** ref) kept for later.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP1_PROMPT`**, **`WIG_CONSULT_STEP2_PROMPT`**, **`WIG_CONSULT_STEP3_PROMPT`**, **`WIG_CONSULT_LEGACY_STEP1_PROMPT`**; **`NBP_STEP*`** re-exports; **`buildWigPreviewPrompt`** = BAW batch only. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
