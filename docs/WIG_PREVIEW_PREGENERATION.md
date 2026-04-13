@@ -32,7 +32,13 @@ Create a **public** (or signed-URL) bucket named **`wig-preview`** in Supabase u
 
 ---
 
-## B) On your computer (after phone setup)
+## B) On your computer (after phone setup) — **Windows**
+
+1. **Open the project folder** in File Explorer (the folder where your site code lives after `git clone` or download).
+2. **Open a terminal in that folder:** click the address bar, type `powershell`, press Enter — *or* Shift+right-click empty space → “Open in Terminal” / “Open PowerShell window here.”*
+3. **Check Node is installed:** in that window type `node -v` then Enter. If you see a version number (e.g. `v20.x`), you’re good. If not, install **Node.js LTS** from [https://nodejs.org](https://nodejs.org) using the Windows installer, then close and reopen the terminal.
+
+Then run:
 
 ```bash
 cd /path/to/fsbw
