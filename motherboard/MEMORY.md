@@ -14120,3 +14120,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/wigPreviewSelectionHash.ts`**, **`api/_lib/bawCatalogHairColors.ts`**. **`src/pages/build-a-wig/color/page.tsx`** — admin + NOIR edit/customize color: `postWigPreviewLiveNoirColor`, live hero/thumbs + status line. **`src/utils/api.ts`** — **`postWigPreviewLiveNoirColor`**. **`scripts/generate-noir-wig-preview-manifest.mjs`** uses **`selectionStoragePath.mjs`**. **`package.json`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR fal: single mannequin ref, logo in text only (no logo URL)
+
+**Context (this chat):** User said live generation should **not** depend on a **logo attachment**; their successful prompt did not use a separate logo image.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`** — `image_urls` is **only** the gray-brick mannequin for that angle; logo guidance is **prompt text** (no “reference image” phrasing for logo). Removed **`WIG_PREVIEW_LIVE_LOGO_URL`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
