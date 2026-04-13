@@ -428,6 +428,9 @@ function OrdersPage() {
     return Date.now() - (hoursAgo * 60 * 60 * 1000);
   };
 
+  const FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE =
+    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
+
   /** Demo consult COMPLETE + offer snapshot — same row as Kateena mock chrome; injected for founder admin when not using mock chrome. */
   const buildFounderDemoConsultOrder331 = (): Order => ({
     id: 'kateena-consult-2',
@@ -468,11 +471,100 @@ function OrdersPage() {
         { label: 'UNIT', value: 'NOIR +$740 USD' },
         { label: 'ESTIMATED TOTAL', value: '$740 USD' },
       ],
-      adminMessage:
-        'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.',
+      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
       thumbnailSrc: '/assets/NOIR/noir-thumb.png',
       discountCode: 'CONSULT-DEMO88',
       expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+    },
+  });
+
+  /** Demo **ORDER #340** — custom upload / gallery inspo + distinct offer code. */
+  const buildFounderDemoConsultOrder340 = (): Order => ({
+    id: 'kateena-consult-demo-340',
+    orderNumber: 'ORDER #340',
+    confirmationNumber: 'D3M4C0',
+    date: getDateDaysAgo(1),
+    status: 'COMPLETE',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/gallery-mock.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    placedAt: Date.now() - (28 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (5 * 60 * 60 * 1000),
+    completedAt: Date.now() - (1 * 60 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
+    consultQuoteId: '00000000-0000-4000-8000-000000000340',
+    consultOfferSnapshot: {
+      unitKey: 'NOIR',
+      selections: {
+        capSize: 'M',
+        length: '26"',
+        density: '180%',
+        texture: 'SILKY',
+        lace: '13X4',
+        hairline: 'NATURAL',
+        color: 'ESPRESSO',
+        styling: 'BANGS',
+        addOns: [],
+      },
+      priceBreakdown: [
+        { label: 'UNIT', value: 'NOIR +$760 USD' },
+        { label: 'ESTIMATED TOTAL', value: '$760 USD' },
+      ],
+      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
+      thumbnailSrc: '/assets/gallery-mock.png',
+      discountCode: 'CONSULT-DEMO340',
+      expiresAt: new Date(Date.now() + 68 * 60 * 60 * 1000).toISOString(),
+    },
+  });
+
+  /** Demo **ORDER #341** — BLANCO + default unit thumb for AI preview path testing. */
+  const buildFounderDemoConsultOrder341 = (): Order => ({
+    id: 'kateena-consult-demo-341',
+    orderNumber: 'ORDER #341',
+    confirmationNumber: 'D3M4C1',
+    date: getDateDaysAgo(1),
+    status: 'COMPLETE',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/NOIR/blanco-thumb.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    placedAt: Date.now() - (26 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (4 * 60 * 60 * 1000),
+    completedAt: Date.now() - (50 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/NOIR/blanco-thumb.png'],
+    consultQuoteId: '00000000-0000-4000-8000-000000000341',
+    consultOfferSnapshot: {
+      unitKey: 'BLANCO',
+      selections: {
+        capSize: 'M',
+        length: '22"',
+        density: '200%',
+        texture: 'SILKY',
+        lace: '13X6',
+        hairline: 'PEAK',
+        color: 'PLATINUM BLONDE',
+        styling: 'NONE',
+        addOns: [],
+      },
+      priceBreakdown: [
+        { label: 'UNIT', value: 'BLANCO +$820 USD' },
+        { label: 'ESTIMATED TOTAL', value: '$820 USD' },
+      ],
+      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
+      thumbnailSrc: '/assets/NOIR/blanco-thumb.png',
+      discountCode: 'CONSULT-DEMO341',
+      expiresAt: new Date(Date.now() + 66 * 60 * 60 * 1000).toISOString(),
     },
   });
 
@@ -487,12 +579,18 @@ function OrdersPage() {
     if (isMockProfileChromeActive(user)) return { activeOrders, pastOrders, merged: false };
     if (readFounderAccountViewAsClientFromStorage()) return { activeOrders, pastOrders, merged: false };
     const normNum = (s: string) => s.replace(/\s+/g, ' ').trim().toUpperCase();
-    const has331 = [...activeOrders, ...pastOrders].some((o) => normNum(String(o.orderNumber || '')) === 'ORDER #331');
-    if (has331) return { activeOrders, pastOrders, merged: false };
-    /** COMPLETE consult demo belongs in **archived** (past), not active. */
+    const existing = new Set(
+      [...activeOrders, ...pastOrders].map((o) => normNum(String(o.orderNumber || '')))
+    );
+    const toInject: Order[] = [];
+    if (!existing.has('ORDER #331')) toInject.push(buildFounderDemoConsultOrder331());
+    if (!existing.has('ORDER #340')) toInject.push(buildFounderDemoConsultOrder340());
+    if (!existing.has('ORDER #341')) toInject.push(buildFounderDemoConsultOrder341());
+    if (toInject.length === 0) return { activeOrders, pastOrders, merged: false };
+    /** COMPLETE consult demos belong in **archived** (past), not active. */
     return {
       activeOrders,
-      pastOrders: [buildFounderDemoConsultOrder331(), ...pastOrders],
+      pastOrders: [...toInject, ...pastOrders],
       merged: true,
     };
   };
@@ -1023,6 +1121,8 @@ function OrdersPage() {
   const kateenaMockPastOrders: Order[] = [
     /** COMPLETE consult demo — archived card (same row as founder inject when mock chrome off). */
     buildFounderDemoConsultOrder331(),
+    buildFounderDemoConsultOrder340(),
+    buildFounderDemoConsultOrder341(),
     {
       id: 'kateena-consult-archived-offer',
       orderNumber: 'ORDER #320',
@@ -1057,8 +1157,7 @@ function OrdersPage() {
           { label: 'UNIT', value: 'NOIR +$740 USD' },
           { label: 'ESTIMATED TOTAL', value: '$740 USD' },
         ],
-        adminMessage:
-          'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.',
+        adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
         thumbnailSrc: '/assets/NOIR/noir-thumb.png',
         discountCode: 'CONSULT-DEMO99',
         expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),

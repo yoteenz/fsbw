@@ -28,6 +28,8 @@ import {
 } from '../../../utils/specialOfferPrice';
 import {
   adminFounderDemoConsultMeetingOrder331,
+  adminFounderDemoConsultMeetingOrder340,
+  adminFounderDemoConsultMeetingOrder341,
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
@@ -607,9 +609,16 @@ export default function AdminMeetingsHub() {
         .trim()
         .toLowerCase();
       if (u && isAdminEmail(em)) {
-        const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(calendarAnchor));
-        if (demo.date >= range.start && demo.date <= range.end) {
-          byId.set(demo.id, demo);
+        const anchor = startOfMonth(calendarAnchor);
+        const demos = [
+          adminFounderDemoConsultMeetingOrder331(anchor),
+          adminFounderDemoConsultMeetingOrder340(anchor),
+          adminFounderDemoConsultMeetingOrder341(anchor),
+        ];
+        for (const demo of demos) {
+          if (demo.date >= range.start && demo.date <= range.end) {
+            byId.set(demo.id, demo);
+          }
         }
       }
     } catch {

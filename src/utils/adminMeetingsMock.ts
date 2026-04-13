@@ -397,6 +397,72 @@ export function adminFounderDemoConsultMeetingOrder331(anchorDate: string): Admi
   };
 }
 
+/** Demo consult **ORDER #340** — custom thumbnail / send-offer testing (founder). */
+export function adminFounderDemoConsultMeetingOrder340(anchorDate: string): AdminMeeting {
+  const email = FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase();
+  return {
+    id: 'demo-baw-consult-order-340',
+    date: anchorDate,
+    time: '3:30 PM',
+    client: 'KATEENA ARMSTRONG',
+    clientEmail: email,
+    type: CONSULTATION_TYPE_LABEL,
+    category: 'consultation',
+    duration: '60 MIN',
+    status: 'Confirmed',
+    notes: 'DEMO: ORDER #340 — TEST CUSTOM IMAGE + SEND OFFER.',
+    metadata: {
+      tier: 'standard',
+      hairOption: 'WIG ONLY',
+      orderNumber: 'ORDER #340',
+      consultNotes: 'DEMO: CUSTOM UPLOAD PREVIEW PATH.',
+      inspoPhotoUrls: ['/assets/gallery-mock.png'],
+      inspoFileNames: ['gallery-mock.png'],
+      headMeasurements: {
+        circumference: '22"',
+        frontToNape: '14"',
+        verticalTempleToTemple: '13"',
+        horizontalTempleToTemple: '13"',
+        earToEar: '12"',
+        napeOfNeck: '6"',
+      },
+    },
+  };
+}
+
+/** Demo consult **ORDER #341** — AI preview / alternate unit (founder). */
+export function adminFounderDemoConsultMeetingOrder341(anchorDate: string): AdminMeeting {
+  const email = FOUNDER_PRIVILEGED_ADMIN_EMAIL.toLowerCase();
+  return {
+    id: 'demo-baw-consult-order-341',
+    date: anchorDate,
+    time: '4:45 PM',
+    client: 'KATEENA ARMSTRONG',
+    clientEmail: email,
+    type: CONSULTATION_TYPE_LABEL,
+    category: 'consultation',
+    duration: '60 MIN',
+    status: 'Confirmed',
+    notes: 'DEMO: ORDER #341 — TEST AI MODEL PREVIEW + SEND OFFER.',
+    metadata: {
+      tier: 'standard',
+      hairOption: 'WIG ONLY',
+      orderNumber: 'ORDER #341',
+      consultNotes: 'DEMO: BLANCO UNIT + OFFER SNAPSHOT.',
+      inspoPhotoUrls: ['/assets/NOIR/blanco-thumb.png'],
+      inspoFileNames: ['blanco-thumb.png'],
+      headMeasurements: {
+        circumference: '22"',
+        frontToNape: '14"',
+        verticalTempleToTemple: '13"',
+        horizontalTempleToTemple: '13"',
+        earToEar: '12"',
+        napeOfNeck: '6"',
+      },
+    },
+  };
+}
+
 /** Same window as admin meetings hub uses for a month view, expanded so client details see consult + appointment history. */
 export const MOCK_MEETINGS_AGGREGATE_MONTHS_BACK = 12;
 export const MOCK_MEETINGS_AGGREGATE_MONTHS_FORWARD = 12;
@@ -433,9 +499,16 @@ export function listAggregatedAdminMeetingsForClientDetails(apiMeetings: AdminMe
       if (em && isAdminEmail(em)) {
         const today = new Date();
         const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        const demo = adminFounderDemoConsultMeetingOrder331(startOfMonth(todayKey));
-        if (demo.date >= start && demo.date <= end) {
-          byId.set(demo.id, demo);
+        const anchor = startOfMonth(todayKey);
+        const demos = [
+          adminFounderDemoConsultMeetingOrder331(anchor),
+          adminFounderDemoConsultMeetingOrder340(anchor),
+          adminFounderDemoConsultMeetingOrder341(anchor),
+        ];
+        for (const demo of demos) {
+          if (demo.date >= start && demo.date <= end) {
+            byId.set(demo.id, demo);
+          }
         }
       }
     }
