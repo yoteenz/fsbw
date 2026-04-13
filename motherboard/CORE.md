@@ -60,6 +60,8 @@ Canonical reference for stack, design, and main flows. Keep this updated when th
 
 ## Conventions
 
+- **Explanations for this product owner:** When walking through setup, architecture, or technical steps, assume the reader may **not** be developer-savvy yet. Prefer **plain language**, short steps, analogies (e.g. shopping list, photo album, hired artist), and **Windows-friendly** notes where relevant; introduce jargon only when needed and define it in one line. Put long checklists in **`docs/`** when appropriate so the chat stays scannable.
+
 - **Lobby (home) nav:** Neon logo (center) → `/home/shop`. Products (neon-products) → `/shop/units`. Tools (neon-tools) → `/home/tools`. Implemented in `src/pages/lobby/page.tsx`.
 - **App default route:** `/` and the index route redirect to **`/home/shop`** (`App.tsx`), not `/shop/units`.
 - **Paths:** Pages under `src/pages/` (e.g. `account/`, `account/settings/`, `account/concierge/`, `admin/`). Shared components in `src/components/`, utils in `src/utils/`.

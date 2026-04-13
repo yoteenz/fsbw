@@ -13996,3 +13996,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`**, **`scripts/generate-noir-wig-preview-manifest.mjs`** (presets `sanity` / `medium` / `full`), **`scripts/pregenerate-wig-previews.mjs`** (fal **`fal-ai/nano-banana-pro`** or Replicate + **`REPLICATE_MODEL_VERSION`**, Supabase upload, skip-if-exists, **`DRY_RUN`** without Supabase env). **`docs/WIG_PREVIEW_PREGENERATION.md`**. **`package.json`**: **`wig-preview:manifest:noir`**, **`wig-preview:batch`**, devDependency **`@fal-ai/client`**. **`.gitignore`**: **`.env.wig-preview`**. **`scripts/wig-preview/manifests/noir-sanity-v1.json`** (384 rows). **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Communication preference: plain-language explanations; Windows at home
+
+**Context (this chat):** User said they are **very new** to coding/backend jargon; asked for prior wig-preview / fal setup to be broken down in a **digestible, non-developer** way (analogies: instructions, shopping list, hired artist, photo folder). They confirmed **Windows** at home for laptop steps. They asked to **create a memory** so future agents explain steps **cognizant** that they are not code/developer-savvy yet.
+
+**Changes:** **`motherboard/CORE.md`** — new **Conventions** bullet **“Explanations for this product owner”** (plain language, analogies, Windows-friendly notes, minimal jargon). This **MEMORY** entry records the preference for all agents.
+
+**Docs:** This **MEMORY** entry.
