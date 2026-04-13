@@ -6,9 +6,10 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 | Piece | Path |
 |--------|------|
-| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (3 refs), Steps 2–3. **BAW manual base (fal):** `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` (2 refs; logo stays from reference). **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
+| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (**1** ref: brick mannequin only), `WIG_CONSULT_STEP2_PROMPT(hex)` (Step 1 + logo ref; fal **Auto** + **2K**), Step 3. Legacy 3-ref Step 1: `WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`. **BAW:** `BAW_SELECTION_COLOR_FROM_BASE_PROMPT(hex)`; base batch: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`. **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
 | NOIR manifest generator | `scripts/generate-noir-wig-preview-manifest.mjs` |
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
+| BAW base images (NOIR / BLANCO / SOFT_WAVE) | `scripts/generate-baw-base-images.mjs` — `npm run wig-preview:baw-base` (needs `BAW_BACKDROP_IMAGE` path + fal + Supabase) |
 | Example output | `scripts/wig-preview/manifests/noir-sanity-v1.json` (after you run generate) |
 
 **Storage convention**
@@ -21,8 +22,9 @@ Create a **public** (or signed-URL) bucket in Supabase for previews. The example
 
 **Manual fal (playground) — aspect ratio and resolution**
 
-- **Wig consult** Steps 1–3: product workflow often uses **9:16** in fal (see `scripts/wig-preview/COPY-PASTE-PROMPTS.txt`).
-- **BAW base mannequin** (`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`): use **Aspect ratio: Auto** (or “Default” if your UI labels it that way) and **Resolution: 2K** so the output stays closer to your source framing (~1002×1625) and avoids forced crops that can squeeze the mannequin or stretch the logo.
+- **Wig consult** Step 1: **one** base image only; Step 2–3 as in `COPY-PASTE-PROMPTS.txt`. Step 1 often **9:16**; you can use **Auto + 2K** to match Step 2.
+- **BAW base mannequin** (`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`): **Auto + 2K**, two refs (brick + backdrop). Script: `npm run wig-preview:baw-base` after setting **`BAW_BACKDROP_IMAGE`** to your white/rose backdrop file on disk.
+- **Bulk text-to-image** (`pregenerate-wig-previews.mjs`): defaults **`FAL_ASPECT_RATIO=auto`** and **`FAL_RESOLUTION=2K`** (override in env if needed).
 
 ---
 
@@ -73,6 +75,32 @@ node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-san
 
 Clear dry run before a real batch: `Remove-Item Env:DRY_RUN -ErrorAction SilentlyContinue`
 
+**2b) BAW base hero (NOIR / BLANCO / SOFT_WAVE)** — `fal-ai/nano-banana-pro/edit` + Supabase:
+
+Put your **white/rose backdrop** image somewhere in the project (or an absolute path), then:
+
+```bash
+export FAL_KEY="..."
+export SUPABASE_URL="https://xxxx.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="eyJ..."
+export STORAGE_BUCKET="live-preview"   # if you use that bucket
+export BAW_BACKDROP_IMAGE="public/assets/your-white-rose-backdrop.png"
+npm run wig-preview:baw-base
+```
+
+PowerShell:
+
+```powershell
+$env:FAL_KEY = "..."
+$env:SUPABASE_URL = "https://xxxx.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "eyJ..."
+$env:STORAGE_BUCKET = "live-preview"
+$env:BAW_BACKDROP_IMAGE = "public/assets/your-white-rose-backdrop.png"
+npm run wig-preview:baw-base
+```
+
+Outputs **`baw-base/{PROMPT_VERSION}/NOIR.webp`** (and `BLANCO.webp`, `SOFT_WAVE.webp`). `DRY_RUN=1` prints paths only. Override brick paths with `NOIR_BRICK_IMAGE`, `BLANCO_BRICK_IMAGE`, `SOFT_WAVE_BRICK_IMAGE` if defaults do not match your machine.
+
 **3) Real batch with fal** (example):
 
 ```bash
@@ -100,6 +128,10 @@ node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-san
 | `LIMIT=5` | Only first 5 rows (smoke test) |
 | `SLEEP_MS=1200` | Pause between calls (rate limits) |
 | `STORAGE_BUCKET` | Default `wig-preview` |
+| `FAL_ASPECT_RATIO` / `FAL_RESOLUTION` | Bulk `pregenerate-wig-previews.mjs` fal text-to-image (defaults `auto` / `2K`) |
+| `BAW_BACKDROP_IMAGE` | **Required** for `wig-preview:baw-base`: path to white/rose backdrop on disk |
+| `UNITS` | `NOIR,BLANCO,SOFT_WAVE` (comma-separated) for baw-base script |
+| `NOIR_BRICK_IMAGE` etc. | Override default brick mannequin path per unit |
 
 Re-runs **skip** objects that already exist (by attempting `download` on the path).
 

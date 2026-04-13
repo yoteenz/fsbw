@@ -57,12 +57,14 @@ async function downloadUrlToBuffer(url) {
 async function generateFal(prompt) {
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: falKey });
+  const aspectRatio = process.env.FAL_ASPECT_RATIO || 'auto';
+  const resolution = process.env.FAL_RESOLUTION || '2K';
   const result = await fal.subscribe('fal-ai/nano-banana-pro', {
     input: {
       prompt,
-      aspect_ratio: '3:4',
+      aspect_ratio: aspectRatio,
       output_format: 'webp',
-      resolution: '1K',
+      resolution,
       num_images: 1,
     },
     logs: false,

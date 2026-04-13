@@ -4,15 +4,24 @@ TWO DIFFERENT USES
 WIG CONSULT = 3 steps in fal (section below). BAW base hero = next section. BAW bulk = buildWigPreviewPrompt in promptTemplate.mjs + pregenerate script.
 
 ================================================================================
-WIG CONSULT — STEP 1 (3 refs) + STEPS 2–3
+WIG CONSULT — STEP 1 (1 ref only) + STEPS 2–3
 ================================================================================
-In fal: **9:16**. Attach **3**: (1) gray brick mannequin, (2) white/rose backdrop, (3) logo.
+In fal: **9:16** (or **Auto + 2K** if you prefer to match Step 2). Attach **only 1**: gray brick mannequin (base reference). **No** logo file, **no** separate backdrop file — backdrop + logo are described in the prompt text.
+
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like your standard white/rose studio consult backdrop. On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible — red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- Optional legacy (3 refs) — same text as before, for fal runs where you still attach backdrop + logo ---
 
 Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
---- STEP 2 (attach: output from Step 1 only; change hex if needed) ---
+(Code: current Step 1 = `WIG_CONSULT_STEP1_PROMPT`. Legacy 3-ref string = `WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`.)
 
-Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+--- STEP 2 (fal: **Aspect ratio Auto**, **Resolution 2K**) ---
+Attach **(1)** output from Step 1, **(2)** logo reference image (order matters for “reference image” in the prompt). Swap only the hex for other catalog colors; same prompt shape for BAW base → color.
+
+Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+(Code: `WIG_CONSULT_STEP2_PROMPT(hex)` or `WIG_CONSULT_STEP2_PROMPT(hex, 'honey blonde')` for other swatches; alias `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`. Hex with or without #.)
 
 --- STEP 3 (attach: Step 2 output + hair style reference) ---
 

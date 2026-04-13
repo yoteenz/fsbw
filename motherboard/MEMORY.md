@@ -14019,6 +14019,26 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Step 2 perfected: hair hex + logo legibility; Auto + 2K; BAW reuse
+
+**Context (this chat):** User finalized **Step 2** with same fal settings as Step 1 (**aspect ratio Auto**, **resolution 2K**). New wording: change black hair to target hex; logo must match **reference image** with **FRONTAL SLAYER** fully legible; quality line; change nothing else. They want one prompt shape for **all** base → color (swap hex; later hairline/styling references).
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP2_PROMPT(hairHex)`** updated (hair line uses **match hex code #** + hex for any swatch; logo + quality + unchanged). Comment documents **Auto + 2K** and attachments: Step 1 output + **logo reference**. Export alias **`BAW_SELECTION_COLOR_FROM_BASE_PROMPT`** = same function. **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`** — Step 2 block + attachment order. **`docs/WIG_PREVIEW_PREGENERATION.md`** — prompt table row for Step 2 / BAW alias.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Wig consult Step 1: one base ref only; BAW base generator script
+
+**Context (this chat):** User said **wig consult Step 1** no longer uses a **logo attachment** — only the **base reference** image. They asked to finish the interrupted work: **`generate-baw-base-images.mjs`** for NOIR / BLANCO / SOFT_WAVE base BAW images.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP1_PROMPT`** = single-ref wording (backdrop + logo in **text**); **`WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`** holds old 3-ref string; **`WIG_CONSULT_LEGACY_STEP1_PROMPT`** points to the 3-ref string for backward compatibility. **`NBP_STEP2_PROMPT`** forwards optional `hairColorLabel`. **`scripts/generate-baw-base-images.mjs`** — fal **`nano-banana-pro/edit`**, brick + backdrop uploads, **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`**, Supabase **`baw-base/{PROMPT_VERSION}/{UNIT}.webp`**, env **`BAW_BACKDROP_IMAGE`**, defaults for brick paths, **`UNITS`**, dry-run. **`package.json`** — **`wig-preview:baw-base`**. **`pregenerate-wig-previews.mjs`** — fal defaults **`FAL_ASPECT_RATIO=auto`**, **`FAL_RESOLUTION=2K`**. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** — Step 1 one-ref + baw-base section and env table.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-13 — Wig consult vs BAW prompts in promptTemplate.mjs
 
 **Context (this chat):** User clarified **wig consult** 3-step fal flow is separate from **BAW selection** bulk images. Consult Step 1: **logo from 2nd reference** on base mannequin; Step 2 / 3 same intent. **Legacy** Step 1 (brick → white/rose + logo from **3rd** ref) kept for later.

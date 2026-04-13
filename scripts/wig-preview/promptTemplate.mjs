@@ -6,12 +6,20 @@
  */
 
 // =============================================================================
-// WIG CONSULT — Step 1 (3 refs) + Steps 2–3. Not BAW.
-// Attachments Step 1: (1) gray brick mannequin, (2) white/rose backdrop, (3) logo. fal **9:16**.
+// WIG CONSULT — Step 1 (1 ref only) + Steps 2–3. Not BAW.
+// Step 1 attachment: **gray brick mannequin only** (no logo file, no separate backdrop file). fal **9:16** in playground unless you match Auto + 2K like Step 2.
 // =============================================================================
 
-/** Wig consult Step 1 — proven wording; use aspect ratio 9:16 in fal. */
+/** Wig consult Step 1 — brick → white/rose backdrop + logo described in text (single base reference). */
 export const WIG_CONSULT_STEP1_PROMPT = [
+  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like your standard white/rose studio consult backdrop.',
+  'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible — red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the photo.',
+].join(' ');
+
+/** Previous Step 1 (3 attachments: mannequin, backdrop, logo). Kept for copy-paste / older runs. */
+export const WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS = [
   'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
   'Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
@@ -19,17 +27,25 @@ export const WIG_CONSULT_STEP1_PROMPT = [
 ].join(' ');
 
 /**
- * Wig consult Step 2 — hair color only (attach: output of Step 1).
+ * Step 2 — hair color only from base (wig consult + same pattern for BAW: swap hex per swatch).
+ * fal: **aspect ratio Auto**, **resolution 2K** (match Step 1).
+ * Attachments: Step 1 output + **logo reference** image so “reference image” in the prompt resolves.
  * @param {string} hairHex - e.g. '#DA3063' or 'DA3063'
+ * @param {string} [hairColorLabel='pink'] - e.g. `'pink'` (default, exact proven wording) or `'honey blonde'` for other swatches
  */
-export function WIG_CONSULT_STEP2_PROMPT(hairHex) {
+export function WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel = 'pink') {
   const hex = String(hairHex || '').replace(/^#/, '');
+  const label = String(hairColorLabel || 'pink').trim() || 'pink';
   return [
-    'Recreate this exact mannequin image, but change the black hair color to pink hex code #' + hex + '.',
+    'Recreate this exact mannequin image, but change the black hair color to ' + label + ' hex code #' + hex + '.',
+    'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
     'Do not change anything else about the photo.',
   ].join(' ');
 }
+
+/** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color” step reuses this; pass `hairHex` (and optional label for non-pink swatches). */
+export const BAW_SELECTION_COLOR_FROM_BASE_PROMPT = WIG_CONSULT_STEP2_PROMPT;
 
 /** Wig consult Step 3 — hair style only (attach: Step 2 output + style reference). */
 export const WIG_CONSULT_STEP3_PROMPT = [
@@ -37,8 +53,8 @@ export const WIG_CONSULT_STEP3_PROMPT = [
   'Don’t change the color of her hair or anything else in the photo.',
 ].join(' ');
 
-/** Same as `WIG_CONSULT_STEP1_PROMPT` — kept for older docs. */
-export const WIG_CONSULT_LEGACY_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT;
+/** Same as legacy 3-ref Step 1 — kept for older docs and A/B testing. */
+export const WIG_CONSULT_LEGACY_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS;
 
 // =============================================================================
 // BAW — manual fal “base mannequin” hero (NOT wig consult; NOT the bulk script)
@@ -62,8 +78,8 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
 
 export const NBP_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT;
 
-export function NBP_STEP2_PROMPT(hairHex) {
-  return WIG_CONSULT_STEP2_PROMPT(hairHex);
+export function NBP_STEP2_PROMPT(hairHex, hairColorLabel) {
+  return WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel);
 }
 
 export const NBP_STEP3_PROMPT = WIG_CONSULT_STEP3_PROMPT;

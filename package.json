@@ -10,7 +10,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "wig-preview:manifest:noir": "node scripts/generate-noir-wig-preview-manifest.mjs",
-    "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs"
+    "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
+    "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
