@@ -8,17 +8,27 @@
  */
 
 // =============================================================================
-// WIG CONSULT — current 3-step (base mannequin → selections / color → style)
-// Copy into fal. Step 1: attach base mannequin + logo ref (2nd attachment per your wording).
+// WIG CONSULT — Step 1 (proven in fal: 9:16 + proportionate logo)
+// Attachments: (1) gray brick mannequin, (2) white/rose backdrop ref, (3) logo ref
 // =============================================================================
 
-/** Wig consult Step 1 — attach: (1) base mannequin, (2) logo. Paste into fal; output aspect ratio = image 1; if logo still warps, composite in Photoshop from refs instead of regenerating. */
+/** Wig consult Step 1 — simple prompt that worked for you; use aspect ratio 9:16 in fal. */
 export const WIG_CONSULT_STEP1_PROMPT = [
-  'Treat the output as the first reference image with one change only: add the chest logo. Do not redraw or reinterpret the mannequin — preserve pixel geometry of the bust, shoulders, and neck: same shoulder width and lateral extent in the frame as the first reference, no narrowing of the torso, no “slimmer” bust, no pinched waist, no vertical elongation of the neck or head.',
-  'Match the first reference for global framing: identical aspect ratio, no letterboxing stretch, no anamorphic squeeze — width and height scale together only if the canvas matches image 1.',
-  'Composite the logo from the second reference onto the center of the chest using uniform scaling only: preserve the logo’s original width-to-height aspect ratio exactly — no vertical stretch, no horizontal stretch, no skew. Scale so the logo’s bounding box matches the second reference’s size relative to the chest width in the first image; never larger than that; if uncertain, scale down.',
-  'The logo must read as embroidered or stitched into the gray fabric: thread texture, slight relief, soft contact shadow on the weave, matte — not a glossy sticker or flat overlay.',
-  'Output extremely high-quality, crisp, and pixel-perfect. Do not change hair, lace, earrings, stand, bricks, plant, or lighting.',
+  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
+  'Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the photo.',
+].join(' ');
+
+/**
+ * Wig consult Step 1 — **only 2 attachments** (no logo file): (1) gray brick mannequin, (2) white/rose backdrop ref.
+ * Logo is described in text so fal does not rescale from a third image. Use **9:16** in fal. Try this if logo size was wrong with 3 refs.
+ */
+export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = [
+  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
+  'On the center of the mannequin’s chest, add the Frontal Slayer brand mark: a red stylized “F/S” monogram with the words FRONTAL SLAYER in small red sans-serif capital letters across the middle of the mark — compact and proportional, roughly one-quarter to one-third of the chest width at its widest point, sharp and legible, matching brand red, subtle stitched-on look, not oversized and not a huge banner.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the photo.',
 ].join(' ');
 
 /**
@@ -40,23 +50,14 @@ export const WIG_CONSULT_STEP3_PROMPT = [
   'Don’t change the color of her hair or anything else in the photo.',
 ].join(' ');
 
-// =============================================================================
-// WIG CONSULT — legacy Step 1 (white/rose background + logo from 3rd ref) — keep for later
-// =============================================================================
-
-export const WIG_CONSULT_LEGACY_STEP1_PROMPT = [
-  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
-  'Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
-  'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not change anything else about the photo.',
-].join(' ');
+/** Same copy as Step 1 above — kept for older docs / imports. */
+export const WIG_CONSULT_LEGACY_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT;
 
 // =============================================================================
-// Backward-compatible names (same as wig consult; old Step 1 = legacy)
+// Backward-compatible names
 // =============================================================================
 
-/** @deprecated Use `WIG_CONSULT_LEGACY_STEP1_PROMPT` — kept so old notes still match. */
-export const NBP_STEP1_PROMPT = WIG_CONSULT_LEGACY_STEP1_PROMPT;
+export const NBP_STEP1_PROMPT = WIG_CONSULT_STEP1_PROMPT;
 
 export function NBP_STEP2_PROMPT(hairHex) {
   return WIG_CONSULT_STEP2_PROMPT(hairHex);

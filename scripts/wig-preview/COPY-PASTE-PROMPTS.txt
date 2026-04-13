@@ -1,20 +1,14 @@
 ================================================================================
-TWO DIFFERENT USES (do not mix them up)
+TWO DIFFERENT USES
 ================================================================================
-
-WIG CONSULT = 3 steps in fal (base mannequin → hair color → hair style). Prompts below.
-BAW        = many images from the site's option list — uses code in promptTemplate.mjs
-            at the bottom (buildWigPreviewPrompt) + the pregenerate script. NOT these 3 steps.
+WIG CONSULT = 3 steps in fal (paste below). BAW = buildWigPreviewPrompt in promptTemplate.mjs bottom + pregenerate script.
 
 ================================================================================
-WIG CONSULT — CURRENT (Step 1: logo from 2nd attachment; base image sets room/background)
+WIG CONSULT — STEP 1 (the one that worked for you)
 ================================================================================
+In fal: aspect ratio **9:16**. Attach **3 images**: (1) gray brick mannequin, (2) white/rose backdrop example, (3) logo.
 
---- STEP 1 (attach: 1st = base mannequin, 2nd = logo; output aspect ratio = image 1) ---
-
-Treat the output as the first reference image with one change only: add the chest logo. Do not redraw or reinterpret the mannequin — preserve pixel geometry of the bust, shoulders, and neck: same shoulder width and lateral extent in the frame as the first reference, no narrowing of the torso, no “slimmer” bust, no pinched waist, no vertical elongation of the neck or head. Match the first reference for global framing: identical aspect ratio, no letterboxing stretch, no anamorphic squeeze — width and height scale together only if the canvas matches image 1. Composite the logo from the second reference onto the center of the chest using uniform scaling only: preserve the logo’s original width-to-height aspect ratio exactly — no vertical stretch, no horizontal stretch, no skew. Scale so the logo’s bounding box matches the second reference’s size relative to the chest width in the first image; never larger than that; if uncertain, scale down. The logo must read as embroidered or stitched into the gray fabric: thread texture, slight relief, soft contact shadow on the weave, matte — not a glossy sticker or flat overlay. Output extremely high-quality, crisp, and pixel-perfect. Do not change hair, lace, earrings, stand, bricks, plant, or lighting.
-
-If fal still warps the logo or narrows the bust after this, use Photoshop (or similar): paste logo on a new layer, uniform scale only, warp/displace lightly to follow fabric — models often cannot match pixel-perfect composite.
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
 --- STEP 2 (attach: output from Step 1 only; change hex if needed) ---
 
@@ -25,16 +19,10 @@ Recreate this exact mannequin image, but change the black hair color to pink hex
 Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
 
 ================================================================================
-WIG CONSULT — LEGACY STEP 1 (stored for later — brick → white/rose + logo from 3rd ref)
+WIG CONSULT — STEP 1 ALTERNATIVE (only 2 images: NO logo file — may fix wrong logo size)
 ================================================================================
+In fal: **9:16**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo image.
 
-Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. On the center of the mannequin’s chest, add the Frontal Slayer brand mark: a red stylized “F/S” monogram with the words FRONTAL SLAYER in small red sans-serif capital letters across the middle of the mark — compact and proportional, roughly one-quarter to one-third of the chest width at its widest point, sharp and legible, matching brand red, subtle stitched-on look, not oversized and not a huge banner. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
-(Then use the same STEP 2 and STEP 3 blocks above.)
-
-================================================================================
-WHEN STEP 1 DIFFERS BY FEATURE
-================================================================================
-Edit scripts/wig-preview/promptTemplate.mjs — constants at the top:
-  WIG_CONSULT_STEP1_PROMPT     = current consult / base + logo wording
-  WIG_CONSULT_LEGACY_STEP1_PROMPT = older white/rose + 3rd-ref logo wording
+(In code: `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs)
