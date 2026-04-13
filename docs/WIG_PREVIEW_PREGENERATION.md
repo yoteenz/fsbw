@@ -6,7 +6,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 | Piece | Path |
 |--------|------|
-| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — top of file: **`NBP_STEP1_PROMPT`**, **`NBP_STEP2_PROMPT(hex)`**, **`NBP_STEP3_PROMPT`** (manual 3-step copy/paste); lower in file: **`buildWigPreviewPrompt`** (automated batch) |
+| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult (top):** `WIG_CONSULT_STEP1_PROMPT`, `WIG_CONSULT_STEP2_PROMPT(hex)`, `WIG_CONSULT_STEP3_PROMPT`, plus **`WIG_CONSULT_LEGACY_STEP1_PROMPT`** (stored white/rose Step 1). **`NBP_STEP*`** still re-export for old notes. **BAW batch (bottom):** `buildWigPreviewPrompt` |
 | NOIR manifest generator | `scripts/generate-noir-wig-preview-manifest.mjs` |
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
 | Example output | `scripts/wig-preview/manifests/noir-sanity-v1.json` (after you run generate) |
