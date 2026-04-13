@@ -47,15 +47,23 @@ export function buildWigConsultChainEditPrompt(fromDescription, toDescription) {
 export const BAW_SELECTION_CHAIN_EDIT_PROMPT = buildWigConsultChainEditPrompt;
 
 /**
- * Step 2 — color from Step 1 output (wig consult + BAW “base → color”).
- * Same sentence shape as all chain steps; only the “from → to” phrases change.
- * @param {string} hairHex - e.g. '#DA3063' or 'DA3063'
- * @param {string} [hairColorLabel='pink'] - e.g. `'pink'` or `'honey blonde'`
+ * Step 2 — hair color only (wig consult + BAW “base → color”). Attach Step 1 output + logo reference; fal **Auto** + **2K**.
+ * @param {string} [hairHex='63D54B'] - e.g. `'63D54B'` or `'#63D54B'`
+ * @param {string} [hairColorLabel='slime'] - catalog name, e.g. `'slime'`, `'pink'`
  */
-export function WIG_CONSULT_STEP2_PROMPT(hairHex, hairColorLabel = 'pink') {
+export function WIG_CONSULT_STEP2_PROMPT(hairHex = '63D54B', hairColorLabel = 'slime') {
   const hex = String(hairHex || '').replace(/^#/, '');
-  const label = String(hairColorLabel || 'pink').trim() || 'pink';
-  return buildWigConsultChainEditPrompt('output from step 1', label + ' hair color (hex #' + hex + ')');
+  const label = String(hairColorLabel || 'slime').trim() || 'slime';
+  return [
+    'Recreate this exact mannequin image, but change the black hair color to ' +
+      label +
+      ' hex code #' +
+      hex +
+      ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.',
+    'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
+    'The photo should be extremely high-quality, crisp & pixel perfect.',
+    'Do not change anything else about the photo.',
+  ].join(' ');
 }
 
 /** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color”; pass `hairHex` (+ optional label). */
