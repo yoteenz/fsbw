@@ -17,7 +17,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 Example: `wig-preview/v1/NOIR/a1b2c3....webp`
 
-Create a **public** (or signed-URL) bucket named **`wig-preview`** in Supabase unless you override `STORAGE_BUCKET`.
+Create a **public** (or signed-URL) bucket in Supabase for previews. The examples use **`wig-preview`**; if you named yours something else (e.g. **`live-preview`**), set **`STORAGE_BUCKET=live-preview`** when you run the batch script so uploads go to the right bucket.
 
 ---
 
