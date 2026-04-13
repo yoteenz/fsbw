@@ -300,6 +300,9 @@ export default function ConsultOfferClaimModal({
                   style={{
                     marginTop: '12px',
                     marginBottom: '10px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    maxWidth: 'calc(100% - 10px)',
                     textAlign: 'center',
                   }}
                 >
