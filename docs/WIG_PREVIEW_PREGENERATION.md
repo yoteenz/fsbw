@@ -6,7 +6,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 | Piece | Path |
 |--------|------|
-| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (3 refs), Steps 2–3. **BAW manual base (fal):** `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` (2 refs, logo in text). **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
+| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (3 refs), Steps 2–3. **BAW manual base (fal):** `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` (2 refs; logo stays from reference). **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
 | NOIR manifest generator | `scripts/generate-noir-wig-preview-manifest.mjs` |
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
 | Example output | `scripts/wig-preview/manifests/noir-sanity-v1.json` (after you run generate) |
@@ -18,6 +18,11 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 Example: `wig-preview/v1/NOIR/a1b2c3....webp`
 
 Create a **public** (or signed-URL) bucket in Supabase for previews. The examples use **`wig-preview`**; if you named yours something else (e.g. **`live-preview`**), set **`STORAGE_BUCKET=live-preview`** when you run the batch script so uploads go to the right bucket.
+
+**Manual fal (playground) — aspect ratio and resolution**
+
+- **Wig consult** Steps 1–3: product workflow often uses **9:16** in fal (see `scripts/wig-preview/COPY-PASTE-PROMPTS.txt`).
+- **BAW base mannequin** (`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`): use **Aspect ratio: Auto** (or “Default” if your UI labels it that way) and **Resolution: 2K** so the output stays closer to your source framing (~1002×1625) and avoids forced crops that can squeeze the mannequin or stretch the logo.
 
 ---
 

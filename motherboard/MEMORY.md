@@ -14009,6 +14009,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-13 — BAW base fal prompt simplified + fal settings Auto / 2K
+
+**Context (this chat):** User finalized **BAW base mannequin** Step 1 wording (logo clear and legible on chest; high quality; change nothing else). They reported successful fal settings: **aspect ratio Auto** (not forced 9:16) and **resolution 2K**.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`** updated to that short prompt; header comment documents **Auto + 2K**. **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`** — BAW section aligned (Auto, 2K, new prompt text). **`docs/WIG_PREVIEW_PREGENERATION.md`** — short “Manual fal” note: wig consult often **9:16**; BAW base uses **Auto + 2K** to stay closer to ~1002×1625 framing; table row wording for BAW manual prompt. **`src/pages/straight/noir/page.tsx`** — define **`NOIR_2D_ANGLE_DOWNLOADS`** (front/left/right PNGs) so the **2D angle download** links compile (**`npm run build`**).
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-13 — Wig consult vs BAW prompts in promptTemplate.mjs
 
 **Context (this chat):** User clarified **wig consult** 3-step fal flow is separate from **BAW selection** bulk images. Consult Step 1: **logo from 2nd reference** on base mannequin; Step 2 / 3 same intent. **Legacy** Step 1 (brick → white/rose + logo from **3rd** ref) kept for later.

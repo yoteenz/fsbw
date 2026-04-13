@@ -854,6 +854,13 @@ function NoirSelection() {
     '/assets/natural right.png'  // View 3 (bottom thumbnail)
   ];
 
+  /** Same PNGs as product shots carousel — filenames match `public/assets/NOIR/`. (m)/(l)/(r) = parting / angle. */
+  const NOIR_2D_ANGLE_DOWNLOADS: { file: string; label: string }[] = [
+    { file: 'noir front.png', label: 'FRONT (M)' },
+    { file: 'noir left.png', label: 'LEFT (L)' },
+    { file: 'noir right.png', label: 'RIGHT (R)' },
+  ];
+
   // Get current mannequin images based on selected view
   const getCurrentImages = () => {
     if (selectedMannequinView === 0) {
@@ -2851,6 +2858,47 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 }}
               >
                 product shots
+              </div>
+            </div>
+
+            {/* 2D mannequin angles — download originals for generation (same files as carousel) */}
+            <div
+              className="flex flex-col items-center gap-1 px-2"
+              style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
+            >
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '9px',
+                  color: '#808080',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  margin: 0,
+                }}
+              >
+                download 2d angles (png)
+              </p>
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
+                {NOIR_2D_ANGLE_DOWNLOADS.map(({ file, label }) => {
+                  const href = `/assets/NOIR/${encodeURIComponent(file)}`;
+                  const downloadName = file.replace(/\s+/g, '-');
+                  return (
+                    <a
+                      key={file}
+                      href={href}
+                      download={downloadName}
+                      style={{
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '10px',
+                        color: '#EB1C24',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '2px',
+                      }}
+                    >
+                      {label}
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
