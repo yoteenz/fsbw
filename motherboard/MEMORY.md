@@ -14143,6 +14143,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-13 — Founder-only 2D angle downloads; Blanco & Soft Wave; fix 3D vs 2D file targets
+
+**Context (this chat):** Continuation from prior work on **2D mannequin PNG download links** for product pages. User asked: links **only** for **admin founder** (`kateenaarmstrong@gmail.com`); same pattern on **Blanco** and **Soft Wave**, not only NOIR; downloads felt like **3D** instead of **2D with brick** (product shots carousel uses 3D renders; true 2D brick shots use different asset paths).
+
+**Decisions / outcomes:** Gate **inline “download 2d angles”** and **`ImageViewerModal` `footerDownloads`** on **`isAdminFounderAccount`** (email from `localStorage` `currentUser`), refreshed on `storage` / `focus` / `signInStateChanged`. **2D download hrefs** must match **hero 2D** sources: NOIR → `/assets/NOIR/noir%20{left|front|right}.png` with L/M/R order; Blanco → `/assets/2D%20BLANCO%20{LEFT|FRONT|RIGHT}.png`; Soft Wave → `/assets/2D%20WAVY%20{LEFT|FRONT|RIGHT}.png`. Opening the viewer from **3D** hero or from **product shots** (3D strip) sets **`footerDownloads` to null** so the modal does not offer wrong files.
+
+**Changes:** **`src/pages/straight/noir/page.tsx`**, **`src/pages/straight/blanco/page.tsx`**, **`src/pages/wavy/soft-wave/page.tsx`** — founder gating, constants, under–product-shots links (Blanco/Soft Wave), `viewerModalDownloads` wiring.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
