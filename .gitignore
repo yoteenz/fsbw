@@ -33,6 +33,9 @@ vite.config.js
 .vercel
 .env*.local
 
+# Local wig preview secrets (never commit)
+.env.wig-preview.txt
+
 # Wrong motherboard file (real motherboard is folder motherboard/, not a root file)
 MOTHERBOARD.md
 Motherboard.md
