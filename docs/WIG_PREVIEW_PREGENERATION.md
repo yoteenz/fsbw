@@ -38,7 +38,17 @@ Or open `scripts/wig-preview/manifests/noir-sanity-v1.json` (or your preset’s 
 
 4. **Later batch run:** `pregenerate-wig-previews.mjs` will **not** regenerate that slot — you keep your hand-picked image.
 
-**“Categorical” folders:** Categories are the **path segments** (`wig-preview` / `v1` / `NOIR` / hash). There is no separate database table in this repo yet — the **hash encodes** the full selection tuple. The **mobile preview site does not yet load these paths** in Build-a-Wig; wiring the UI is a follow-up (compute the same hash client-side or fetch a small index from the API).
+**“Categorical” folders:** Categories are the **path segments** (`wig-preview` / `v1` / `NOIR` / hash). There is no separate database table in this repo yet — the **hash encodes** the full selection tuple.
+
+### Live preview (Build-a-Wig → NOIR → Color) — admin only
+
+On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/customize/color`**, when you are signed in as an **admin** (same emails as `ADMIN_EMAILS` / `VITE_ADMIN_EMAILS`) **and** have a Supabase session, the color page calls **`POST /api/wig-preview/live-noir-color`**. The server:
+
+1. Builds the same **manifest hash** from your current length/density/lace/texture/color/hairline/styling/add-ons.
+2. For each angle (**left / front / right**), checks Storage under **`wig-preview-live/{PROMPT_VERSION}/NOIR/{hash}/{angle}.webp`**.
+3. **Skips fal** if the file already exists; otherwise runs **fal `nano-banana-pro/edit`** (mannequin URL for that angle + logo URL) and **uploads** WebP.
+
+**Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Function **`maxDuration`** is set to **120s** (up to ~3 fal calls).
 
 **Manual fal (playground) — aspect ratio and resolution**
 

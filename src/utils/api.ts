@@ -972,6 +972,47 @@ export async function redeemConsultQuote(quoteId: string): Promise<void> {
   if (!res.ok) throw new Error(await res.text());
 }
 
+export type WigPreviewLiveNoirColorPayload = {
+  color: string;
+  length?: string;
+  density?: string;
+  lace?: string;
+  texture?: string;
+  hairline?: string;
+  styling?: string;
+  addOns?: string[];
+};
+
+export type WigPreviewLiveNoirColorResult = {
+  ok: boolean;
+  manifestHash: string;
+  bucket: string;
+  paths: { front: string; left: string; right: string };
+  publicUrls: { front: string | null; left: string | null; right: string | null };
+  generated: string[];
+  skipped: string[];
+  selections: Record<string, unknown>;
+};
+
+/** Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles); fal runs only for missing angles. */
+export async function postWigPreviewLiveNoirColor(
+  body: WigPreviewLiveNoirColorPayload
+): Promise<WigPreviewLiveNoirColorResult> {
+  const res = await apiFetch('/api/wig-preview/live-noir-color', { method: 'POST', body });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Live preview failed');
+  }
+  return JSON.parse(text) as WigPreviewLiveNoirColorResult;
+}
+
 /** Admin: notify client about reschedule/cancel request for an appointment. */
 export async function postAdminMeetingClientAlert(body: {
   meetingId: string;

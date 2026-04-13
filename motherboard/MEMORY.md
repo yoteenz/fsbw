@@ -14108,3 +14108,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/selectionStoragePath.mjs`**, **`resolve-wig-preview-storage-path.mjs`**, **`npm run wig-preview:resolve-path`**; manifest generator uses shared hash; **`docs/WIG_PREVIEW_PREGENERATION.md`** — hand-made images subsection.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR color preview: Build-a-Wig color page + API + fal
+
+**Context (this chat):** User wanted the **mobile preview** flow: Build-a-wig → select color → **generate 3 angles** for NOIR via **fal** if not already stored, not manual one-by-one uploads only.
+
+**Decisions:** **Admin-only** live endpoint (cost control): **`POST /api/wig-preview/live-noir-color`** with `requireAdmin`. Storage prefix **`wig-preview-live/{v}/NOIR/{manifestHash}/front|left|right.webp`** (separate from batch **`wig-preview/.../{hash}.webp`**). Server skips fal per-angle if object exists. **`@fal-ai/client`** moved to **dependencies** for Vercel.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/wigPreviewSelectionHash.ts`**, **`api/_lib/bawCatalogHairColors.ts`**. **`src/pages/build-a-wig/color/page.tsx`** — admin + NOIR edit/customize color: `postWigPreviewLiveNoirColor`, live hero/thumbs + status line. **`src/utils/api.ts`** — **`postWigPreviewLiveNoirColor`**. **`scripts/generate-noir-wig-preview-manifest.mjs`** uses **`selectionStoragePath.mjs`**. **`package.json`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
