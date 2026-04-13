@@ -13986,3 +13986,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`buildFounderDemoConsultOrder340`** / **`341`**: **`PROCESSING`**, no **`consultQuoteId`**, **`consultOfferSnapshot`**, or **`completedAt`**; **`placedAt`** 9–10h ago (past 2h consult gate, under 72h). **`mergeFounderAdminConsultOrder331Demo`**: inject **#331** into **past** only; **#340**/**#341** into **active**; strip stale **COMPLETE** rows with same **`kateena-consult-demo-340`** / **`341`** ids from active/past before inject. **`kateenaMockActiveOrders`**: moved 340/341 here from past mock list. **`motherboard/CORE.md`**: inject behavior clarified.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Wig preview pre-gen: NOIR manifest + fal/Replicate batch script
+
+**Context (this chat):** User asked to start pre-generation (NOIR first), manifest + storage convention, phone setup for fal/Replicate; scaffold in repo.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`**, **`scripts/generate-noir-wig-preview-manifest.mjs`** (presets `sanity` / `medium` / `full`), **`scripts/pregenerate-wig-previews.mjs`** (fal **`fal-ai/nano-banana-pro`** or Replicate + **`REPLICATE_MODEL_VERSION`**, Supabase upload, skip-if-exists, **`DRY_RUN`** without Supabase env). **`docs/WIG_PREVIEW_PREGENERATION.md`**. **`package.json`**: **`wig-preview:manifest:noir`**, **`wig-preview:batch`**, devDependency **`@fal-ai/client`**. **`.gitignore`**: **`.env.wig-preview`**. **`scripts/wig-preview/manifests/noir-sanity-v1.json`** (384 rows). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
