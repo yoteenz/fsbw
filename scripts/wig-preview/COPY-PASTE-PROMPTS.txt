@@ -1,0 +1,28 @@
+================================================================================
+TWO DIFFERENT USES
+================================================================================
+WIG CONSULT = 3 steps in fal (section below). BAW base hero = next section. BAW bulk = buildWigPreviewPrompt in promptTemplate.mjs + pregenerate script.
+
+================================================================================
+WIG CONSULT — STEP 1 (3 refs) + STEPS 2–3
+================================================================================
+In fal: **9:16**. Attach **3**: (1) gray brick mannequin, (2) white/rose backdrop, (3) logo.
+
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- STEP 2 (attach: output from Step 1 only; change hex if needed) ---
+
+Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- STEP 3 (attach: Step 2 output + hair style reference) ---
+
+Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
+
+================================================================================
+BAW — BASE MANNEQUIN IMAGE IN FAL (2 refs only; no separate logo attachment)
+================================================================================
+Use for **Build-a-wig** base hero, **not** wig consult. In fal: **Aspect ratio: Auto**, **Resolution: 2K**. Attach **only 2**: (1) gray brick mannequin, (2) white/rose backdrop. Do **not** attach a logo file.
+
+Recreate this exact mannequin image. The logo on the center of the mannequin’s chest should be clear & legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+(In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)

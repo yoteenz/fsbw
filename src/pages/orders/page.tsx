@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import ConsultOfferClaimModal from '../../components/ConsultOfferClaimModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import {
   ADMIN_SUBSCRIPTION_OVERRIDE_KEY,
+  isAyoteenzAdminAccount,
   isMockDataAccount,
   isMockProfileChromeActive,
   readFounderAccountViewAsClientFromStorage,
@@ -43,12 +45,24 @@ import {
   filterOutPremiumMembershipUpgradeOrders,
   normalizeUserOrdersBuckets,
   orderStatusIsCanceled,
-  sortOrdersNewestFirst,
+  sortActiveOrdersByRecentActivityFirst,
+  sortArchivedOrdersNewestFirst,
 } from '../../utils/userOrdersBuckets';
-import { advanceConsultOrdersPlacedToProcessing } from '../../utils/consultOrderLifecycle';
+import {
+  advanceConsultOrdersPlacedToProcessing,
+  normalizeOrderNumberForConsultMatch,
+} from '../../utils/consultOrderLifecycle';
 import { orderNeedsClientAuthFormSignature } from '../../utils/giftCardFirstPurchaseForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { getConsultQuote } from '../../utils/api';
+import { isSupabaseConfigured } from '../../utils/supabase';
+import type { ConsultOfferPersistedSnapshot } from '../../utils/consultOfferFromQuote';
+import {
+  consultQuoteIdFromConsultOfferRoute,
+  consultQuoteRowFromPersistedSnapshot,
+  mergeConsultQuoteWithPersistedThumbnail,
+} from '../../utils/consultOfferFromQuote';
 
 interface OrderLineItem {
   productName: string;
@@ -93,7 +107,9 @@ interface Order {
   digitalFulfillmentOnly?: boolean;
   /** When status is COMPLETE (digital flow), optional deep link for "VIEW OFFER" (e.g. consult quote). */
   consultOfferRoute?: string;
-  /** Consult: when status moved PLACED → PROCESSING after 24h. */
+  /** Copy of admin-sent offer (localStorage) for modal when API unavailable. */
+  consultOfferSnapshot?: ConsultOfferPersistedSnapshot;
+  /** Consult: when status moved PLACED → PROCESSING after 2h. */
   consultProcessingStartedAt?: number;
   /** Consult: linked admin quote id after offer sent. */
   consultQuoteId?: string;
@@ -142,7 +158,14 @@ function OrdersPage() {
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
-  
+  const [consultOfferModalOpen, setConsultOfferModalOpen] = useState(false);
+  const [consultOfferModalLoading, setConsultOfferModalLoading] = useState(false);
+  const [consultOfferModalError, setConsultOfferModalError] = useState<string | null>(null);
+  const [consultOfferModalQuote, setConsultOfferModalQuote] = useState<Record<string, unknown> | null>(null);
+  const [consultOfferModalOrderLabel, setConsultOfferModalOrderLabel] = useState<string>('');
+  const consultOfferFetchGen = useRef(0);
+  const consultOfferDeepLinkHandledRef = useRef(false);
+
   // Get current user data
   const [currentUser, setCurrentUser] = useState<any>(() => {
     if (typeof window !== 'undefined') {
@@ -403,6 +426,137 @@ function OrdersPage() {
   // Helper function to get a timestamp X hours ago
   const getTimestampHoursAgo = (hoursAgo: number): number => {
     return Date.now() - (hoursAgo * 60 * 60 * 1000);
+  };
+
+  const FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE =
+    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
+
+  /** Demo consult COMPLETE + offer snapshot — same row as Kateena mock chrome; injected for founder admin when not using mock chrome. */
+  const buildFounderDemoConsultOrder331 = (): Order => ({
+    id: 'kateena-consult-2',
+    orderNumber: 'ORDER #331',
+    confirmationNumber: 'K3C3Q1',
+    date: getDateDaysAgo(2),
+    status: 'COMPLETE',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/gallery-mock.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    trackingNumber: undefined,
+    trackingCarrier: undefined,
+    placedAt: Date.now() - (30 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
+    completedAt: Date.now() - (2 * 60 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
+    consultQuoteId: '00000000-0000-4000-8000-000000000088',
+    consultOfferSnapshot: {
+      unitKey: 'NOIR',
+      selections: {
+        capSize: 'M',
+        length: '24"',
+        density: '200%',
+        texture: 'SILKY',
+        lace: '13X6',
+        hairline: 'NATURAL',
+        color: 'OFF BLACK',
+        styling: 'NONE',
+        addOns: [],
+      },
+      priceBreakdown: [
+        { label: 'UNIT', value: 'NOIR +$740 USD' },
+        { label: 'ESTIMATED TOTAL', value: '$740 USD' },
+      ],
+      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
+      thumbnailSrc: '/assets/NOIR/noir-thumb.png',
+      discountCode: 'CONSULT-DEMO88',
+      expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+    },
+  });
+
+  /** Demo **ORDER #340** — **PROCESSING**, no quote yet: test Send offer + custom image path from admin. */
+  const buildFounderDemoConsultOrder340 = (): Order => ({
+    id: 'kateena-consult-demo-340',
+    orderNumber: 'ORDER #340',
+    confirmationNumber: 'D3M4C0',
+    date: getDateDaysAgo(0),
+    status: 'PROCESSING',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/gallery-mock.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    /** >2h after place so lifecycle stays PROCESSING (not PLACED); under 72h so it does not auto-COMPLETE. */
+    placedAt: Date.now() - (10 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (8 * 60 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
+  });
+
+  /** Demo **ORDER #341** — **PROCESSING**, no quote yet: test Send offer + AI preview path from admin. */
+  const buildFounderDemoConsultOrder341 = (): Order => ({
+    id: 'kateena-consult-demo-341',
+    orderNumber: 'ORDER #341',
+    confirmationNumber: 'D3M4C1',
+    date: getDateDaysAgo(0),
+    status: 'PROCESSING',
+    productName: 'WIG CONSULT',
+    productImage: '/assets/NOIR/blanco-thumb.png',
+    total: 40,
+    subtotal: 40,
+    items: 1,
+    placedAt: Date.now() - (9 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (7 * 60 * 60 * 1000),
+    orderFormSigned: false,
+    bookingFlowType: 'consult',
+    bookingTier: 'standard',
+    bookingHairOption: 'WIG ONLY',
+    bookingInspoPhotoUrls: ['/assets/NOIR/blanco-thumb.png'],
+  });
+
+  const mergeFounderAdminConsultOrder331Demo = (
+    user: { email?: string } | null,
+    activeOrders: Order[],
+    pastOrders: Order[]
+  ): { activeOrders: Order[]; pastOrders: Order[]; merged: boolean } => {
+    if (!user?.email || !isAyoteenzAdminAccount(user)) {
+      return { activeOrders, pastOrders, merged: false };
+    }
+    if (isMockProfileChromeActive(user)) return { activeOrders, pastOrders, merged: false };
+    if (readFounderAccountViewAsClientFromStorage()) return { activeOrders, pastOrders, merged: false };
+    /** Drop prior **COMPLETE + snapshot** injects for #340/#341 so localStorage upgrades to **PROCESSING** demos. */
+    const stripStaleFounderDemoConsult340341 = (arr: Order[]) =>
+      arr.filter((o) => {
+        const id = String(o.id || '');
+        if (id !== 'kateena-consult-demo-340' && id !== 'kateena-consult-demo-341') return true;
+        if (String(o.status || '').toUpperCase() === 'COMPLETE' && o.consultOfferSnapshot) return false;
+        return true;
+      });
+    activeOrders = stripStaleFounderDemoConsult340341(activeOrders);
+    pastOrders = stripStaleFounderDemoConsult340341(pastOrders);
+    const normNum = (s: string) => s.replace(/\s+/g, ' ').trim().toUpperCase();
+    const existing = new Set(
+      [...activeOrders, ...pastOrders].map((o) => normNum(String(o.orderNumber || '')))
+    );
+    const toInjectPast: Order[] = [];
+    const toInjectActive: Order[] = [];
+    if (!existing.has('ORDER #331')) toInjectPast.push(buildFounderDemoConsultOrder331());
+    /** #340 / #341 are **PROCESSING** with no snapshot — inject into **active** so Send offer can be tested end-to-end. */
+    if (!existing.has('ORDER #340')) toInjectActive.push(buildFounderDemoConsultOrder340());
+    if (!existing.has('ORDER #341')) toInjectActive.push(buildFounderDemoConsultOrder341());
+    if (toInjectPast.length === 0 && toInjectActive.length === 0) return { activeOrders, pastOrders, merged: false };
+    return {
+      activeOrders: [...toInjectActive, ...activeOrders],
+      pastOrders: [...toInjectPast, ...pastOrders],
+      merged: true,
+    };
   };
 
   // Helper function to format countdown time
@@ -768,6 +922,20 @@ function OrdersPage() {
         const orders = JSON.parse(storedOrders);
         let activeOrders = orders.activeOrders || [];
         let pastOrders = orders.pastOrders || [];
+        const founder331 = mergeFounderAdminConsultOrder331Demo(currentUser, activeOrders, pastOrders);
+        if (founder331.merged) {
+          activeOrders = founder331.activeOrders;
+          pastOrders = founder331.pastOrders;
+          try {
+            localStorage.setItem(
+              userOrdersKey,
+              JSON.stringify({ activeOrders, pastOrders })
+            );
+            window.dispatchEvent(new CustomEvent('ordersUpdated'));
+          } catch (_) {
+            /* ignore */
+          }
+        }
         if (isMockDataAccount(currentUser) && readFounderAccountViewAsClientFromStorage()) {
           activeOrders = excludeFounderSeedMockOrders(activeOrders);
           pastOrders = excludeFounderSeedMockOrders(pastOrders);
@@ -775,17 +943,21 @@ function OrdersPage() {
         const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
         const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
         const sorted = {
-          activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
-          pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+          activeOrders: sortActiveOrdersByRecentActivityFirst(filtered.activeOrders),
+          pastOrders: sortArchivedOrdersNewestFirst(filtered.pastOrders),
         };
         const consultAdvanced = {
-          activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
-          pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+          activeOrders: sortActiveOrdersByRecentActivityFirst(
+            advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)
+          ),
+          pastOrders: sortArchivedOrdersNewestFirst(
+            advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)
+          ),
         };
         try {
           const sortedNormOnly = {
-            activeOrders: sortOrdersNewestFirst(norm.activeOrders),
-            pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+            activeOrders: sortActiveOrdersByRecentActivityFirst(norm.activeOrders),
+            pastOrders: sortArchivedOrdersNewestFirst(norm.pastOrders),
           };
           const needsSortPersist =
             JSON.stringify({ activeOrders: norm.activeOrders, pastOrders: norm.pastOrders }) !==
@@ -907,33 +1079,54 @@ function OrdersPage() {
       bookingTier: 'standard',
       bookingHairOption: 'WIG + INSTALL',
       bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
-      consultOfferRoute: '/account/concierge?orderId=kateena-consult-1'
     },
+    buildFounderDemoConsultOrder340(),
+    buildFounderDemoConsultOrder341(),
+  ];
+
+  const kateenaMockPastOrders: Order[] = [
+    /** COMPLETE consult demo — archived card (same row as founder inject when mock chrome off). */
+    buildFounderDemoConsultOrder331(),
     {
-      id: 'kateena-consult-2',
-      orderNumber: 'ORDER #331',
-      confirmationNumber: 'K3C3Q1',
-      date: getDateDaysAgo(2),
-      status: 'PROCESSING',
+      id: 'kateena-consult-archived-offer',
+      orderNumber: 'ORDER #320',
+      confirmationNumber: 'C3O2V0',
+      date: getDateDaysAgo(1),
+      status: 'COMPLETE',
       productName: 'WIG CONSULT',
       productImage: '/assets/gallery-mock.png',
       total: 40,
       subtotal: 40,
       items: 1,
-      trackingNumber: undefined,
-      trackingCarrier: undefined,
-      placedAt: Date.now() - (30 * 60 * 60 * 1000),
-      consultProcessingStartedAt: Date.now() - (6 * 60 * 60 * 1000),
-      orderFormSigned: false,
+      placedAt: Date.now() - (80 * 60 * 60 * 1000),
+      completedAt: Date.now() - (48 * 60 * 60 * 1000),
       bookingFlowType: 'consult',
       bookingTier: 'standard',
       bookingHairOption: 'WIG ONLY',
-      bookingInspoPhotoUrls: ['/assets/NOIR/noir-thumb.png'],
-      consultOfferRoute: '/account/concierge?orderId=kateena-consult-2'
-    }
-  ];
-
-  const kateenaMockPastOrders: Order[] = [
+      consultQuoteId: '00000000-0000-4000-8000-000000000099',
+      consultOfferSnapshot: {
+        unitKey: 'NOIR',
+        selections: {
+          capSize: 'M',
+          length: '24"',
+          density: '200%',
+          texture: 'SILKY',
+          lace: '13X6',
+          hairline: 'NATURAL',
+          color: 'OFF BLACK',
+          styling: 'NONE',
+          addOns: [],
+        },
+        priceBreakdown: [
+          { label: 'UNIT', value: 'NOIR +$740 USD' },
+          { label: 'ESTIMATED TOTAL', value: '$740 USD' },
+        ],
+        adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
+        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
+        discountCode: 'CONSULT-DEMO99',
+        expiresAt: new Date(Date.now() + 70 * 60 * 60 * 1000).toISOString(),
+      },
+    },
     {
       id: 'test-order-4',
       orderNumber: 'ORDER #666',
@@ -1036,8 +1229,8 @@ function OrdersPage() {
   const getUserOrdersData = () => {
     if (isMockOrdersAccount()) {
       return {
-        activeOrders: sortOrdersNewestFirst(kateenaMockActiveOrders),
-        pastOrders: sortOrdersNewestFirst(kateenaMockPastOrders),
+        activeOrders: sortActiveOrdersByRecentActivityFirst(kateenaMockActiveOrders),
+        pastOrders: sortArchivedOrdersNewestFirst(kateenaMockPastOrders),
       };
     }
     return getUserOrders();
@@ -1110,6 +1303,20 @@ function OrdersPage() {
                     const o = JSON.parse(stored);
                     let activeOrders: Order[] = o.activeOrders || [];
                     let pastOrders: Order[] = o.pastOrders || [];
+                    const founder331Upd = mergeFounderAdminConsultOrder331Demo(parsedUser, activeOrders, pastOrders);
+                    if (founder331Upd.merged) {
+                      activeOrders = founder331Upd.activeOrders;
+                      pastOrders = founder331Upd.pastOrders;
+                      try {
+                        localStorage.setItem(
+                          key,
+                          JSON.stringify({ activeOrders, pastOrders })
+                        );
+                        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+                      } catch (_) {
+                        /* ignore */
+                      }
+                    }
                     if (
                       parsedUser &&
                       isMockDataAccount(parsedUser) &&
@@ -1121,16 +1328,20 @@ function OrdersPage() {
                     const norm = normalizeUserOrdersBuckets<Order>(activeOrders, pastOrders);
                     const filtered = filterOutPremiumMembershipUpgradeOrders(norm.activeOrders, norm.pastOrders);
                     const sorted = {
-                      activeOrders: sortOrdersNewestFirst(filtered.activeOrders),
-                      pastOrders: sortOrdersNewestFirst(filtered.pastOrders),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(filtered.activeOrders),
+                      pastOrders: sortArchivedOrdersNewestFirst(filtered.pastOrders),
                     };
                     const consultAdvanced = {
-                      activeOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)),
-                      pastOrders: sortOrdersNewestFirst(advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(
+                        advanceConsultOrdersPlacedToProcessing(sorted.activeOrders)
+                      ),
+                      pastOrders: sortArchivedOrdersNewestFirst(
+                        advanceConsultOrdersPlacedToProcessing(sorted.pastOrders)
+                      ),
                     };
                     const sortedNormOnly = {
-                      activeOrders: sortOrdersNewestFirst(norm.activeOrders),
-                      pastOrders: sortOrdersNewestFirst(norm.pastOrders),
+                      activeOrders: sortActiveOrdersByRecentActivityFirst(norm.activeOrders),
+                      pastOrders: sortArchivedOrdersNewestFirst(norm.pastOrders),
                     };
                     const needsConsultPersist = JSON.stringify(sorted) !== JSON.stringify(consultAdvanced);
                     if (
@@ -1160,8 +1371,8 @@ function OrdersPage() {
             : { activeOrders: [], pastOrders: [] };
         }
 
-        setActiveOrders(sortOrdersNewestFirst(ordersData.activeOrders));
-        setPastOrders(sortOrdersNewestFirst(ordersData.pastOrders));
+        setActiveOrders(sortActiveOrdersByRecentActivityFirst(ordersData.activeOrders));
+        setPastOrders(sortArchivedOrdersNewestFirst(ordersData.pastOrders));
 
         // Keep localStorage in sync for mock-data account so account profile card count matches orders page
         if (parsedUser?.email && useMock) {
@@ -1169,8 +1380,8 @@ function OrdersPage() {
           localStorage.setItem(
             key,
             JSON.stringify({
-              activeOrders: sortOrdersNewestFirst(ordersData.activeOrders),
-              pastOrders: sortOrdersNewestFirst(ordersData.pastOrders),
+              activeOrders: sortActiveOrdersByRecentActivityFirst(ordersData.activeOrders),
+              pastOrders: sortArchivedOrdersNewestFirst(ordersData.pastOrders),
             })
           );
           window.dispatchEvent(new CustomEvent('ordersUpdated'));
@@ -1417,7 +1628,7 @@ function OrdersPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Consult checkout: after 24h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
+  // Consult checkout: after 2h on PLACED, status becomes PROCESSING (persisted via userOrders sync effect)
   useEffect(() => {
     const tick = () => {
       setActiveOrders((prev) => advanceConsultOrdersPlacedToProcessing(prev));
@@ -1470,10 +1681,10 @@ function OrdersPage() {
             const ids = new Set(prevPast.map((o) => o.id).filter(Boolean) as string[]);
             const append = toArchive.filter((o) => !o.id || !ids.has(o.id));
             if (append.length === 0) return prevPast;
-            return sortOrdersNewestFirst([...prevPast, ...append]);
+            return sortArchivedOrdersNewestFirst([...prevPast, ...append]);
           });
         }
-        return sortOrdersNewestFirst(nextActive);
+        return sortActiveOrdersByRecentActivityFirst(nextActive);
       });
     };
 
@@ -1535,12 +1746,12 @@ function OrdersPage() {
           setPastOrders(prevPast => {
             const existingIds = new Set(prevPast.map(o => o.id));
             const newOrders = toArchive.filter(o => !existingIds.has(o.id));
-            if (newOrders.length === 0) return sortOrdersNewestFirst(prevPast);
-            return sortOrdersNewestFirst([...prevPast, ...newOrders]);
+            if (newOrders.length === 0) return sortArchivedOrdersNewestFirst(prevPast);
+            return sortArchivedOrdersNewestFirst([...prevPast, ...newOrders]);
           });
         }
 
-        return sortOrdersNewestFirst(toKeep);
+        return sortActiveOrdersByRecentActivityFirst(toKeep);
       });
     };
 
@@ -1601,19 +1812,149 @@ function OrdersPage() {
     ...(isCurrent && ordersAnimationsEnabled ? { animation: ORDER_TRACKING_PULSATE_ANIMATION } : {}),
   });
 
+  const closeConsultOfferModal = () => {
+    setConsultOfferModalOpen(false);
+    setConsultOfferModalQuote(null);
+    setConsultOfferModalError(null);
+    setConsultOfferModalLoading(false);
+    setConsultOfferModalOrderLabel('');
+  };
+
+  const consultOfferQuoteIdForOrder = (order: Order): string => {
+    const direct = String(order.consultQuoteId || '').trim();
+    if (direct) return direct;
+    return consultQuoteIdFromConsultOfferRoute(order.consultOfferRoute);
+  };
+
+  const openConsultOfferForOrder = (order: Order) => {
+    const gen = ++consultOfferFetchGen.current;
+    const quoteId = consultOfferQuoteIdForOrder(order);
+    const snap = order.consultOfferSnapshot;
+    const orderLabel =
+      String(order.orderNumber || '')
+        .trim()
+        .toUpperCase() || `ORDER #${String(order.id || '').trim().toUpperCase()}`;
+
+    const showSnapshot = () => {
+      if (gen !== consultOfferFetchGen.current) return;
+      if (!snap) {
+        setConsultOfferModalError('OFFER NOT AVAILABLE.');
+        setConsultOfferModalQuote(null);
+        setConsultOfferModalLoading(false);
+        setConsultOfferModalOrderLabel(orderLabel);
+        setConsultOfferModalOpen(true);
+        return;
+      }
+      const idForRow = quoteId || String(order.id || '').trim() || 'consult-offer';
+      setConsultOfferModalError(null);
+      setConsultOfferModalQuote(consultQuoteRowFromPersistedSnapshot(snap, idForRow));
+      setConsultOfferModalLoading(false);
+      setConsultOfferModalOrderLabel(orderLabel);
+      setConsultOfferModalOpen(true);
+    };
+
+    const showError = () => {
+      if (gen !== consultOfferFetchGen.current) return;
+      setConsultOfferModalError('OFFER NOT AVAILABLE.');
+      setConsultOfferModalQuote(null);
+      setConsultOfferModalLoading(false);
+      setConsultOfferModalOrderLabel(orderLabel);
+      setConsultOfferModalOpen(true);
+    };
+
+    if (!quoteId && !snap) {
+      showError();
+      return;
+    }
+
+    if (!quoteId) {
+      showSnapshot();
+      return;
+    }
+
+    if (!isSupabaseConfigured()) {
+      showSnapshot();
+      return;
+    }
+
+    setConsultOfferModalOpen(true);
+    setConsultOfferModalLoading(true);
+    setConsultOfferModalError(null);
+    setConsultOfferModalQuote(null);
+    setConsultOfferModalOrderLabel(orderLabel);
+    void (async () => {
+      try {
+        const res = await getConsultQuote(quoteId);
+        if (gen !== consultOfferFetchGen.current) return;
+        if (res?.quote) {
+          const merged = mergeConsultQuoteWithPersistedThumbnail(
+            res.quote as Record<string, unknown>,
+            snap || undefined
+          );
+          setConsultOfferModalQuote(merged);
+          setConsultOfferModalError(null);
+        } else {
+          showSnapshot();
+          return;
+        }
+      } catch {
+        if (gen !== consultOfferFetchGen.current) return;
+        showSnapshot();
+        return;
+      } finally {
+        if (gen === consultOfferFetchGen.current) setConsultOfferModalLoading(false);
+      }
+    })();
+  };
+
+  /** Account → Alerts **VIEW OFFER**: expand matching consult order + open modal; strip query after handling. */
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    if (sp.get('consultOffer') !== '1') {
+      consultOfferDeepLinkHandledRef.current = false;
+      return;
+    }
+    if (consultOfferDeepLinkHandledRef.current) return;
+    const orderIdParam = (sp.get('orderId') || '').trim();
+    const orderNumberParam = (sp.get('orderNumber') || '').trim();
+    const all = [...activeOrders, ...pastOrders];
+    let target: Order | undefined;
+    if (orderIdParam) {
+      target = all.find((o) => o.id === orderIdParam);
+    }
+    if (!target && orderNumberParam) {
+      const want = normalizeOrderNumberForConsultMatch(orderNumberParam);
+      target = all.find(
+        (o) =>
+          String(o.bookingFlowType || '').toLowerCase() === 'consult' &&
+          String(o.status || '').toUpperCase() === 'COMPLETE' &&
+          normalizeOrderNumberForConsultMatch(o.orderNumber) === want
+      );
+    }
+    const quoteId = target ? consultOfferQuoteIdForOrder(target) : '';
+    const hasSnap = Boolean(target?.consultOfferSnapshot);
+    if (!target || (!quoteId && !hasSnap)) return;
+
+    consultOfferDeepLinkHandledRef.current = true;
+    setExpandedOrderId(target.id);
+    openConsultOfferForOrder(target);
+    navigate('/account/orders', { replace: true });
+  }, [location.search, activeOrders, pastOrders, navigate]);
+
   /** Compact order row: digital / A&C — no order-form line; no fake tracking; VIEW OFFER only when COMPLETE. */
   const renderDigitalFulfillmentAmountRowExtras = (order: Order) => {
     if (!orderUsesDigitalFulfillmentTimeline(order)) return null;
-    const offerRoute = (order.consultOfferRoute || '').trim();
+    const isConsultComplete =
+      order.status === 'COMPLETE' && String(order.bookingFlowType || '').toLowerCase() === 'consult';
     const onOfferClick = () => {
-      if (offerRoute) navigate(offerRoute);
-      else navigate(`/account/concierge?orderId=${order.id}`);
+      if (!isConsultComplete) return;
+      openConsultOfferForOrder(order);
     };
     return (
       <>
-        {order.status === 'COMPLETE' ? (
+        {isConsultComplete ? (
           <p
-            role={offerRoute ? 'button' : undefined}
+            role="button"
             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
             onClick={onOfferClick}
           >
@@ -2706,6 +3047,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <span 
                                    style={{ color: '#EB1C24', cursor: 'pointer' }}
                                    onClick={() => {
+                                     if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') {
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       return;
+                                     }
                                      // Check if user is premium member
                                      try {
                                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
@@ -2791,7 +3136,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                         });
                       }
 
-                      const stripSorted = sortOrdersNewestFirst(ordersToDisplay);
+                      const stripSorted = sortActiveOrdersByRecentActivityFirst(ordersToDisplay);
                       
                       return stripSorted.map((order, _index) => {
                         // For delivered orders, only show "DELIVERED" status, hide all other statuses
@@ -3645,6 +3990,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <span 
                                    style={{ color: '#EB1C24', cursor: 'pointer' }}
                                    onClick={() => {
+                                     if (order.bookingFlowType === 'appointment' || order.bookingFlowType === 'consult') {
+                                       setExpandedOrderId(order.id === expandedOrderId ? null : order.id);
+                                       return;
+                                     }
                                      // Check if user is premium member
                                      try {
                                        const isSignedIn = localStorage.getItem('isSignedIn') === 'true';
@@ -3786,6 +4135,16 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
         message="ARE YOU SURE YOU WANT TO SIGN OUT?"
         confirmText="SIGN OUT"
         cancelText="CANCEL"
+      />
+
+      <ConsultOfferClaimModal
+        isOpen={consultOfferModalOpen}
+        onClose={closeConsultOfferModal}
+        quote={consultOfferModalQuote}
+        loading={consultOfferModalLoading}
+        error={consultOfferModalError}
+        locationForSignIn={location}
+        orderNumberDisplay={consultOfferModalOrderLabel}
       />
       </div>
   );

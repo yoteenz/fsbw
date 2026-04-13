@@ -32,6 +32,8 @@ vite.config.js
 
 .vercel
 .env*.local
+.env.wig-preview
+.env.live-preview
 
 # Local wig preview secrets (never commit)
 .env.wig-preview.txt

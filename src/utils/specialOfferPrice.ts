@@ -1,7 +1,7 @@
 /**
  * Calculates the accurate total price for a special offer unit + options,
  * matching build-a-wig / product page pricing (length, density, lace, texture, color, hairline, styling, add-ons).
- * Cap size for special offer is always custom (XS, S, M, L) so capSizePrice = 0.
+ * Cap size: **XS, S, M, L** = $0; flexible **XXS/XS/S** and **S/M/L** = +$40 (same as build-a-wig hub).
  */
 
 const UNIT_BASE_PRICES: Record<string, number> = {
@@ -54,6 +54,8 @@ export type SpecialOfferOptions = {
   color?: string;
   hairline?: string;
   styling?: string;
+  /** Parting / install placement (e.g. MIDDLE, LEFT, RIGHT) — $0 in offer breakdown; cart uses separately. */
+  partSelection?: string;
   addOns?: string[];
 };
 
@@ -69,7 +71,10 @@ export type SpecialOfferPriceBreakdown = {
 };
 
 const CAP_SIZE_PRICES: Record<string, number> = {
+  XS: 0,
+  S: 0,
   M: 0,
+  L: 0,
   'XXS/XS/S': 40,
   'S/M/L': 40,
 };
@@ -79,6 +84,43 @@ function unitLabelFromId(unitId: string): string {
     .trim()
     .replace(/-/g, ' ')
     .toUpperCase();
+}
+
+/** Single letter for parting in breakdown text, e.g. **LAYERS (M)**. */
+export function partLetterFromPartSelection(partRaw: string): string {
+  const p = String(partRaw || '').trim().toUpperCase();
+  if (p === 'LEFT' || p === 'L') return 'L';
+  if (p === 'RIGHT' || p === 'R') return 'R';
+  if (p === 'MIDDLE' || p === 'M' || p === 'CENTER' || p === 'C') return 'M';
+  if (!p) return 'M';
+  return p.charAt(0);
+}
+
+/**
+ * Turn one **STYLING** breakdown line into display rows, each **`STYLING: LAYERS (M)`** style
+ * (category label + option + part letter in parentheses).
+ * Full **`amountUsd`** is kept on the **first** row only (matches single pricing line).
+ */
+export function expandStylingBreakdownLineForDisplay(
+  line: SpecialOfferBreakdownLine,
+  partSelectionRaw: string
+): SpecialOfferBreakdownLine[] {
+  if (line.label !== 'STYLING') return [line];
+  const letter = partLetterFromPartSelection(partSelectionRaw);
+  const styling = String(line.selection || '').trim().toUpperCase();
+  if (!styling || styling === 'NONE') {
+    return [{ ...line, selection: 'NONE', amountUsd: 0 }];
+  }
+  const tokens = styling
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter(Boolean);
+  if (!tokens.length) return [{ ...line, selection: 'NONE', amountUsd: 0 }];
+  return tokens.map((tok, i) => ({
+    label: 'STYLING',
+    selection: `${tok} (${letter})`,
+    amountUsd: i === 0 ? line.amountUsd : 0,
+  }));
 }
 
 function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOptions) {
@@ -93,6 +135,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const color = (options.color || (isBlanco ? 'PLATINUM' : 'OFF BLACK')).trim().toUpperCase();
   const hairline = String(options.hairline || 'NATURAL').trim().toUpperCase();
   const styling = String(options.styling || 'NONE').trim().toUpperCase();
+  const partSelection = String(options.partSelection || 'MIDDLE').trim().toUpperCase();
   const addOns = (options.addOns || []).map((addOn) => String(addOn).trim().toUpperCase()).filter(Boolean);
 
   const capSizePrice = CAP_SIZE_PRICES[capSize] ?? 0;
@@ -109,8 +152,8 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
       if (color === 'GOLDEN') colorPrice = -20;
       else if (color === 'ASH') colorPrice = 20;
     } else {
-      colorPrice = 100;
-      if (['30"', '32"', '34"', '36"', '40"'].includes(length)) colorPrice += 40;
+      // Match build-a-wig `calculatePricesFromSelections` / color sub-page: flat $120 for any non-default color (no length add-on).
+      colorPrice = 120;
     }
   }
 
@@ -129,7 +172,10 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
     const arr = styling.split(',').map((s) => s.trim());
     const hasBangs = arr.includes('BANGS');
     const other = arr.find((s) => s !== 'BANGS');
-    const isLong = /30|32|34|36/.test(length);
+    // Match `build-a-wig/page.tsx` + styling sub-page: 30"–36" only (not 40").
+    const len = String(length || '');
+    const isLong =
+      len.includes('30') || len.includes('32') || len.includes('34') || len.includes('36');
     if (hasBangs && other) {
       let sec = STYLING_PRICES[other] ?? 0;
       if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(other)) sec += 40;
@@ -153,13 +199,12 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const addOnsPrice = addOnLines.reduce((sum, line) => sum + line.amountUsd, 0);
 
   let total = base + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;
-  const isWavy = unitId === 'soft-wave' || unitId === 'beach-wave';
-  if (isWavy) total += 20;
+  // Hub `calculatePricesFromSelections` does not add a separate wavy surcharge; base for soft/beach wave is already 760 in `UNIT_BASE_PRICES`.
 
   return {
     totalUsd: total,
     lines: [
-      { label: 'BASE UNIT', selection: unitLabelFromId(unitId), amountUsd: base },
+      { label: 'UNIT', selection: unitLabelFromId(unitId), amountUsd: base },
       { label: 'CAP SIZE', selection: capSize, amountUsd: capSizePrice },
       { label: 'LENGTH', selection: length, amountUsd: lengthPrice },
       { label: 'DENSITY', selection: density, amountUsd: densityPrice },
@@ -168,6 +213,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
       { label: 'HAIRLINE', selection: hairline === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : hairline, amountUsd: hairlinePrice },
       { label: 'COLOR', selection: color, amountUsd: colorPrice },
       { label: 'STYLING', selection: styling, amountUsd: stylingPrice },
+      { label: 'PARTING', selection: partSelection, amountUsd: 0 },
       ...(addOnLines.length > 0 ? addOnLines : [{ label: 'ADD-ONS', selection: 'NONE', amountUsd: 0 }]),
     ],
   };

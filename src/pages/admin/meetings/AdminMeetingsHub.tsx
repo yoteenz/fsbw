@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import BrandExpiresDatePicker, { type AdminCalendarDayMeta } from '../../../components/BrandExpiresDatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
@@ -9,8 +10,10 @@ import {
 } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { isAdminEmail } from '../../../utils/adminAuth';
 import { dispatchAdminMeetingsApiRefresh, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import OrderFormFilePicker from '../../../components/OrderFormFilePicker';
 import {
   ADDON_COMBO_OPTIONS,
   getDefaultColorForUnit,
@@ -18,13 +21,21 @@ import {
   getOptionsForUnit,
   type UnitId,
 } from '../../../utils/productOptions';
-import { calculateSpecialOfferPriceBreakdown, type SpecialOfferBreakdownLine } from '../../../utils/specialOfferPrice';
 import {
+  calculateSpecialOfferPriceBreakdown,
+  expandStylingBreakdownLineForDisplay,
+  type SpecialOfferBreakdownLine,
+} from '../../../utils/specialOfferPrice';
+import {
+  adminFounderDemoConsultMeetingOrder331,
+  adminFounderDemoConsultMeetingOrder340,
+  adminFounderDemoConsultMeetingOrder341,
   endOfMonth,
   generateMockMeetingsForRange,
   loadLocalMeetings,
   parseISODateLocal,
   startOfMonth,
+  upsertLocalMeeting,
   type AdminMeeting,
 } from '../../../utils/adminMeetingsMock';
 import {
@@ -33,6 +44,15 @@ import {
 } from '../../../utils/adminMeetingsFocusSession';
 import { buildRevenueOrdersList } from '../../../utils/adminRevenueStats';
 import { markConsultOrderCompleteAfterQuoteSent } from '../../../utils/consultOrderLifecycle';
+import type { ConsultOfferPersistedSnapshot } from '../../../utils/consultOfferFromQuote';
+import { ordersPageUnitThumbnailSrcFromUnitKey } from '../../../utils/accountReviewProductThumbnail';
+import { appendConsultOfferCompleteAccountAlert } from '../../../utils/orderAccountAlerts';
+import {
+  deleteAdminConsultOfferSavedThumbnail,
+  loadAdminConsultOfferSavedThumbnails,
+  stableConsultOfferSelectionsKey,
+  upsertAdminConsultOfferSavedThumbnail,
+} from '../../../utils/adminConsultOfferSavedThumbnails';
 import {
   addDaysIso,
   bookingPaidInFullSalesUsd,
@@ -43,10 +63,12 @@ import {
   formatUsd,
   formatViewAllListMeetingDateOnly,
   formatViewAllListMeetingTimeOnly,
-  meetingClientDisplayNameWithState,
+  meetingClientNamePlain,
   meetingClientProfilePhoto,
   meetingClientUniqKey,
+  meetingClientViewAllListHeadline,
   meetingHasTravelAddon,
+  meetingIsArchivedForAdminViewAll,
   meetingIsCurrentOrActive,
   meetingMatchesPageSearch,
   meetingSortTimeMs,
@@ -87,7 +109,7 @@ const EDIT_REASONS = [
   'OTHER',
 ] as const;
 
-type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub' | 'quoteSubSelection';
+type PanelDropdownKey = 'editReason' | 'quoteUnit' | 'quoteSub' | 'quoteSubSelection' | 'quotePartSelection';
 type QuoteSubPage = (typeof SUB_PAGE_OPTIONS)[number];
 
 type CreateOfferSelections = {
@@ -99,13 +121,36 @@ type CreateOfferSelections = {
   hairline: string;
   color: string;
   styling: string;
+  /** Parting when styling applies (cart / claim). */
+  partSelection: string;
   addOns: string[];
 };
 
-const CREATE_OFFER_CAP_SIZE_OPTIONS = ['M', 'XXS/XS/S', 'S/M/L'] as const;
+const QUOTE_PART_SELECTION_OPTIONS = ['MIDDLE', 'LEFT', 'RIGHT'] as const;
 
-const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
-const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
+/** Same ids/order as build-a-wig cap-size page: custom XS–L then flexible bands. */
+const CREATE_OFFER_CAP_SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XXS/XS/S', 'S/M/L'] as const;
+
+const BOOKING_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Re-install',
+  'New install',
+] as const;
+const CONSULT_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Wig only',
+  'Wig + install',
+] as const;
 const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 function meetingSortOptionToLabel(opt: MeetingSortOption): string {
@@ -136,6 +181,7 @@ function createOfferSelectionsDefaults(unitId: UnitId): CreateOfferSelections {
     hairline: 'NATURAL',
     color: getDefaultColorForUnit(unitId),
     styling: 'NONE',
+    partSelection: 'MIDDLE',
     addOns: [],
   };
 }
@@ -234,7 +280,9 @@ function updateCreateOfferSelectionsForSubPage(
 function formatCreateOfferBreakdownAmount(amountUsd: number, includeSign: boolean): string {
   const usd = `$${Math.abs(Math.round(amountUsd)).toLocaleString('en-US')} USD`;
   if (!includeSign) return usd;
-  return amountUsd > 0 ? `+${usd}` : `-${usd}`;
+  if (amountUsd > 0) return `+${usd}`;
+  if (amountUsd < 0) return `-${usd}`;
+  return usd;
 }
 
 const EDIT_MESSAGE_BY_REASON: Record<(typeof EDIT_REASONS)[number], { action: 'reschedule' | 'cancel'; message: string }> = {
@@ -271,6 +319,19 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
 /** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
   'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
+
+const SESSION_QUOTE_MEETING_ID = 'adminMeetingsQuoteMeetingId';
+const sessionQuoteDraftKey = (meetingId: string) => `adminMeetingsQuoteDraft_${meetingId}`;
+
+function randomConsultDiscountCode(): string {
+  const part = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `CONSULT-${part}`;
+}
+
+function randomQuoteId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  return `quote-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
 
 export default function AdminMeetingsHub() {
   useRequireAdminPageAccess();
@@ -319,20 +380,81 @@ export default function AdminMeetingsHub() {
     createOfferSelectionsDefaults(quoteUnitIdFromValue(UNIT_OPTIONS[0].id))
   );
   const [quoteMessage, setQuoteMessage] = useState(
-    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.'
+    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.'
   );
   const [quoteSending, setQuoteSending] = useState(false);
+  /** SAVE SELECTION: same UX pattern as shop **ADD TO BAG** (adding → success, then reset). */
+  const [quoteSaveSelectionState, setQuoteSaveSelectionState] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const quoteSaveSelectionResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showSendQuoteConfirm, setShowSendQuoteConfirm] = useState(false);
   const [editReason, setEditReason] = useState<string>(EDIT_REASONS[0]);
   const [editMessage, setEditMessage] = useState('');
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [hubNotice, setHubNotice] = useState<string | null>(null);
   const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
+  /** Admin-uploaded image for this session (optional); takes precedence over saved-by-selection map. */
+  const [quoteManualThumbnailSrc, setQuoteManualThumbnailSrc] = useState<string | null>(null);
+  /** `selectionKey` → data URL from “SAVE SELECTION” (localStorage-backed). */
+  const [quoteSavedThumbnailMap, setQuoteSavedThumbnailMap] = useState<Record<string, string>>(() =>
+    typeof window !== 'undefined' ? loadAdminConsultOfferSavedThumbnails() : {}
+  );
   const [meetingSortOption, setMeetingSortOption] = useState<MeetingSortOption>('Most recent');
   const [showMeetingSortDropdown, setShowMeetingSortDropdown] = useState(false);
   const [viewAllDisplayMode, setViewAllDisplayMode] = useState<'list' | 'grid'>('list');
   const [activePanelDropdown, setActivePanelDropdown] = useState<PanelDropdownKey | null>(null);
+  const [panelDropdownRect, setPanelDropdownRect] = useState<DOMRect | null>(null);
+  const panelDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
+  const quoteOfferImageInputRef = useRef<HTMLInputElement | null>(null);
   const clientDetailsFocusAppliedRef = useRef(false);
+
+  const quoteSelectionKey = useMemo(
+    () =>
+      stableConsultOfferSelectionsKey(quoteUnit, {
+        length: quoteSelections.length,
+        density: quoteSelections.density,
+        color: quoteSelections.color,
+        hairline: quoteSelections.hairline,
+        styling: quoteSelections.styling,
+        partSelection: quoteSelections.partSelection,
+        addOns: quoteSelections.addOns,
+      }),
+    [
+      quoteUnit,
+      quoteSelections.length,
+      quoteSelections.density,
+      quoteSelections.color,
+      quoteSelections.hairline,
+      quoteSelections.styling,
+      quoteSelections.partSelection,
+      quoteSelections.addOns,
+    ]
+  );
+
+  const quoteSavedThumbnailForSelection = quoteSavedThumbnailMap[quoteSelectionKey] || null;
+  const quoteEffectiveCustomSrc = quoteManualThumbnailSrc ?? quoteSavedThumbnailForSelection;
+  const quoteOfferThumbnailSrc =
+    quoteEffectiveCustomSrc || ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit);
+
+  useEffect(() => {
+    if (!quoteMeeting) return;
+    setQuoteSavedThumbnailMap(loadAdminConsultOfferSavedThumbnails());
+  }, [quoteMeeting]);
+
+  useLayoutEffect(() => {
+    if (!activePanelDropdown || !panelDropdownAnchorRef.current) {
+      setPanelDropdownRect(null);
+      return;
+    }
+    const el = panelDropdownAnchorRef.current;
+    const update = () => setPanelDropdownRect(el.getBoundingClientRect());
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [activePanelDropdown, quoteUnit, quoteSub, quoteSelections, editReason, editMeeting, quoteMeeting]);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
@@ -350,9 +472,23 @@ export default function AdminMeetingsHub() {
     [quoteSelections, quoteSub]
   );
   const generatedQuoteBreakdown = useMemo(
-    () => calculateSpecialOfferPriceBreakdown(quoteUnitId, quoteSelections),
+    () =>
+      calculateSpecialOfferPriceBreakdown(quoteUnitId, {
+        ...quoteSelections,
+        partSelection: quoteSelections.partSelection,
+      }),
     [quoteUnitId, quoteSelections]
   );
+
+  const quoteBreakdownDisplayLines = useMemo(() => {
+    const partRaw =
+      generatedQuoteBreakdown.lines.find((l) => l.label === 'PARTING')?.selection ?? quoteSelections.partSelection;
+    return generatedQuoteBreakdown.lines
+      .filter((line) => line.label !== 'PARTING')
+      .flatMap((line) =>
+        line.label === 'STYLING' ? expandStylingBreakdownLineForDisplay(line, String(partRaw || '')) : [line]
+      );
+  }, [generatedQuoteBreakdown.lines, quoteSelections.partSelection]);
 
   useAdminMeetingsApiRefresh(setApiMeetings);
 
@@ -440,6 +576,11 @@ export default function AdminMeetingsHub() {
         color: options.color.includes(previous.color) ? previous.color : defaults.color,
         styling: options.styling.includes(previous.styling) ? previous.styling : defaults.styling,
         addOns: previous.addOns.every((addOn) => options.addOns.includes(addOn)) ? previous.addOns : defaults.addOns,
+        partSelection: QUOTE_PART_SELECTION_OPTIONS.includes(
+          String(previous.partSelection || '').toUpperCase() as (typeof QUOTE_PART_SELECTION_OPTIONS)[number]
+        )
+          ? String(previous.partSelection || '').toUpperCase()
+          : defaults.partSelection,
       };
       return JSON.stringify(next) === JSON.stringify(previous) ? previous : next;
     });
@@ -460,12 +601,173 @@ export default function AdminMeetingsHub() {
       if (m.date >= range.start && m.date <= range.end) byId.set(m.id, m);
     }
     for (const m of local) byId.set(m.id, m);
+
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
+      const u = raw ? JSON.parse(raw) : null;
+      const em = String((u as { email?: string } | null)?.email || '')
+        .trim()
+        .toLowerCase();
+      if (u && isAdminEmail(em)) {
+        const anchor = startOfMonth(calendarAnchor);
+        const demos = [
+          adminFounderDemoConsultMeetingOrder331(anchor),
+          adminFounderDemoConsultMeetingOrder340(anchor),
+          adminFounderDemoConsultMeetingOrder341(anchor),
+        ];
+        for (const demo of demos) {
+          if (demo.date >= range.start && demo.date <= range.end) {
+            byId.set(demo.id, demo);
+          }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     return [...byId.values()].sort((a, b) => {
       const dc = a.date.localeCompare(b.date);
       if (dc !== 0) return dc;
       return a.time.localeCompare(b.time);
     });
-  }, [range.start, range.end, apiMeetings, localTick]);
+  }, [range.start, range.end, apiMeetings, localTick, calendarAnchor]);
+
+  /** Restore Send offer after refresh: align month first, then reopen row when it appears in `mergedMeetings`. */
+  useEffect(() => {
+    if (quoteMeeting || typeof window === 'undefined') return;
+    let id = '';
+    try {
+      id = (sessionStorage.getItem(SESSION_QUOTE_MEETING_ID) || '').trim();
+    } catch {
+      return;
+    }
+    if (!id) return;
+    const m = mergedMeetings.find((x) => x.id === id);
+    if (!m || m.category !== 'consultation') return;
+    const rowYm = m.date.slice(0, 7);
+    const anchorYm = calendarAnchor.slice(0, 7);
+    if (rowYm && rowYm !== anchorYm) {
+      setCalendarAnchor(m.date);
+      return;
+    }
+    setQuoteMeeting(m);
+    setMainTab('consults');
+    setViewAllMode(null);
+  }, [mergedMeetings, quoteMeeting, calendarAnchor]);
+
+  /** Persist quote draft (debounced so session restore hydrate does not overwrite with defaults). */
+  useEffect(() => {
+    if (!quoteMeeting || typeof window === 'undefined') return;
+    const id = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(SESSION_QUOTE_MEETING_ID, quoteMeeting.id);
+        sessionStorage.setItem(
+          sessionQuoteDraftKey(quoteMeeting.id),
+          JSON.stringify({
+            quoteUnit,
+            quoteSub,
+            quoteSelections,
+            quoteMessage,
+            quoteManualThumbnailDataUrl: quoteManualThumbnailSrc?.startsWith('data:') ? quoteManualThumbnailSrc : undefined,
+          })
+        );
+      } catch {
+        /* ignore */
+      }
+    }, 400);
+    return () => window.clearTimeout(id);
+  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage, quoteManualThumbnailSrc]);
+
+  useEffect(() => {
+    if (!quoteMeeting) {
+      setQuoteSaveSelectionState('idle');
+      if (quoteSaveSelectionResetTimeoutRef.current) {
+        clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+        quoteSaveSelectionResetTimeoutRef.current = null;
+      }
+    }
+  }, [quoteMeeting]);
+
+  useEffect(
+    () => () => {
+      if (quoteSaveSelectionResetTimeoutRef.current) {
+        clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+        quoteSaveSelectionResetTimeoutRef.current = null;
+      }
+    },
+    []
+  );
+
+  const quoteMeetingOpenSeqRef = useRef(0);
+  /** Load saved draft when a consult send-offer row opens (after refresh or Send quote click). */
+  useEffect(() => {
+    if (!quoteMeeting || typeof window === 'undefined') {
+      quoteMeetingOpenSeqRef.current = 0;
+      return;
+    }
+    quoteMeetingOpenSeqRef.current += 1;
+    const seq = quoteMeetingOpenSeqRef.current;
+    const mid = quoteMeeting.id;
+    queueMicrotask(() => {
+      if (seq !== quoteMeetingOpenSeqRef.current) return;
+      try {
+        const raw = sessionStorage.getItem(sessionQuoteDraftKey(mid));
+        if (!raw) {
+          setQuoteManualThumbnailSrc(null);
+          return;
+        }
+        const d = JSON.parse(raw) as {
+          quoteUnit?: string;
+          quoteSub?: string;
+          quoteSelections?: CreateOfferSelections;
+          quoteMessage?: string;
+          quoteManualThumbnailDataUrl?: string;
+        };
+        const unitFromDraft = String(d.quoteUnit || '').trim();
+        if (UNIT_OPTIONS.some((u) => u.id === unitFromDraft)) setQuoteUnit(unitFromDraft);
+        if (SUB_PAGE_OPTIONS.includes((d.quoteSub || '') as QuoteSubPage)) {
+          setQuoteSub(d.quoteSub as QuoteSubPage);
+        }
+        if (typeof d.quoteMessage === 'string') setQuoteMessage(d.quoteMessage);
+        const legacyThumb = (d as { quoteCustomThumbnailDataUrl?: string }).quoteCustomThumbnailDataUrl;
+        if (typeof d.quoteManualThumbnailDataUrl === 'string' && d.quoteManualThumbnailDataUrl.startsWith('data:')) {
+          setQuoteManualThumbnailSrc(d.quoteManualThumbnailDataUrl);
+        } else if (typeof legacyThumb === 'string' && legacyThumb.startsWith('data:')) {
+          setQuoteManualThumbnailSrc(legacyThumb);
+        } else {
+          setQuoteManualThumbnailSrc(null);
+        }
+        if (!d.quoteSelections || typeof d.quoteSelections !== 'object') return;
+        const uid = quoteUnitIdFromValue(unitFromDraft || quoteUnit);
+        const opts = getOptionsForUnit(uid);
+        const prev = d.quoteSelections;
+        const def = createOfferSelectionsDefaults(uid);
+        setQuoteSelections({
+          capSize: CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prev.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number])
+            ? prev.capSize
+            : def.capSize,
+          length: opts.length.includes(prev.length) ? prev.length : def.length,
+          density: opts.density.includes(prev.density) ? prev.density : def.density,
+          texture: opts.texture.includes(prev.texture) ? prev.texture : def.texture,
+          lace: opts.lace.includes(prev.lace) ? prev.lace : def.lace,
+          hairline: opts.hairline.includes(prev.hairline) ? prev.hairline : def.hairline,
+          color: opts.color.includes(prev.color) ? prev.color : def.color,
+          styling: opts.styling.includes(prev.styling) ? prev.styling : def.styling,
+          addOns:
+            Array.isArray(prev.addOns) && prev.addOns.length
+              ? prev.addOns.filter((a) => opts.addOns.includes(a))
+              : def.addOns,
+          partSelection: QUOTE_PART_SELECTION_OPTIONS.includes(
+            String((prev as CreateOfferSelections).partSelection || '').toUpperCase() as (typeof QUOTE_PART_SELECTION_OPTIONS)[number]
+          )
+            ? String((prev as CreateOfferSelections).partSelection || '').toUpperCase()
+            : def.partSelection,
+        });
+      } catch {
+        /* ignore */
+      }
+    });
+  }, [quoteMeeting]);
 
   /** Open edit / quote for a row navigated from admin client details (calendar month + merged list must include the meeting). */
   useEffect(() => {
@@ -513,15 +815,11 @@ export default function AdminMeetingsHub() {
     [mergedMeetings]
   );
 
-  const consultMeetings = useMemo(() => {
-    const list = mergedMeetings.filter((m) => m.category === 'consultation');
-    return [...list].sort((a, b) => {
-      const pa = tierPremium(a) ? 0 : 1;
-      const pb = tierPremium(b) ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      return b.date.localeCompare(a.date);
-    });
-  }, [mergedMeetings]);
+  /** Order comes from `sortMeetingsByOption` on the consult tab; avoid a hidden premium/date pre-sort. */
+  const consultMeetings = useMemo(
+    () => mergedMeetings.filter((m) => m.category === 'consultation'),
+    [mergedMeetings]
+  );
 
   const normalizedClientSearchTokens = useMemo(
     () =>
@@ -571,15 +869,21 @@ export default function AdminMeetingsHub() {
     return filteredAppointmentMeetings.filter((m) => m.date === selectedDay);
   }, [filteredAppointmentMeetings, selectedDay]);
 
-  const sortedAppointmentsList = useMemo(
-    () => sortMeetingsByOption(appointmentsForSelectedDay, meetingSortOption),
-    [appointmentsForSelectedDay, meetingSortOption]
-  );
+  const sortedAppointmentsList = useMemo(() => {
+    const base =
+      meetingSortOption === 'Archived'
+        ? appointmentsForSelectedDay
+        : appointmentsForSelectedDay.filter((m) => !meetingIsArchivedForAdminViewAll(m));
+    return sortMeetingsByOption(base, meetingSortOption);
+  }, [appointmentsForSelectedDay, meetingSortOption]);
 
-  const sortedConsultsList = useMemo(
-    () => sortMeetingsByOption(filteredConsultMeetings, meetingSortOption),
-    [filteredConsultMeetings, meetingSortOption]
-  );
+  const sortedConsultsList = useMemo(() => {
+    const base =
+      meetingSortOption === 'Archived'
+        ? filteredConsultMeetings
+        : filteredConsultMeetings.filter((m) => !meetingIsArchivedForAdminViewAll(m));
+    return sortMeetingsByOption(base, meetingSortOption);
+  }, [filteredConsultMeetings, meetingSortOption]);
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
@@ -600,43 +904,143 @@ export default function AdminMeetingsHub() {
       setShowSendQuoteConfirm(false);
       return;
     }
+    const clientName = String(quoteMeeting.client || '').trim();
+    const nameParts = clientName.split(/\s+/).filter(Boolean);
+    const clientFirstName = nameParts[0] || '';
+    const clientLastName = nameParts.slice(1).join(' ') || clientFirstName || 'CLIENT';
+
+    const breakdown = quoteBreakdownDisplayLines.map((line) => ({
+      label: line.label,
+      value:
+        line.amountUsd === 0
+          ? line.selection
+          : `${line.selection} ${formatCreateOfferBreakdownAmount(line.amountUsd, true)}`,
+    }));
+    breakdown.push({
+      label: 'ESTIMATED TOTAL',
+      value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
+    });
+    const selectionsForQuote = {
+      capSize: quoteSelections.capSize,
+      length: quoteSelections.length,
+      density: quoteSelections.density,
+      texture: quoteSelections.texture,
+      lace: quoteSelections.lace,
+      hairline: quoteSelections.hairline,
+      color: quoteSelections.color,
+      styling: quoteSelections.styling,
+      partSelection: quoteSelections.partSelection,
+      addOns: quoteSelections.addOns,
+    };
+    const thumbSrc = quoteOfferThumbnailSrc;
+    const orderRef = String(
+      (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
+        ? quoteMeeting.metadata.orderNumber
+        : '') || ''
+    ).trim();
+
     setQuoteSending(true);
     try {
-      const breakdown = generatedQuoteBreakdown.lines.map((line) => ({
-        label: line.label,
-        value:
-          line.amountUsd === 0
-            ? line.selection
-            : `${line.selection} ${formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT')}`,
-      }));
-      breakdown.push({
-        label: 'ESTIMATED TOTAL',
-        value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
-      });
-      const res = (await postAdminConsultQuote({
-        clientEmail: email,
+      let quoteId = '';
+      let discountCode = '';
+      let expiresAt = '';
+      let fromApi = false;
+
+      try {
+        const res = (await postAdminConsultQuote({
+          clientEmail: email,
+          clientFirstName,
+          clientLastName,
+          unitKey: quoteUnit,
+          selections: selectionsForQuote,
+          priceBreakdown: breakdown,
+          adminMessage: quoteMessage,
+          thumbnailSrc: thumbSrc,
+          orderNumberFromCheckout: orderRef || undefined,
+        })) as { quote?: Record<string, unknown>; discountCode?: string };
+        const quoteRow = res?.quote && typeof res.quote === 'object' ? res.quote : {};
+        quoteId = String((quoteRow as { id?: string }).id || '').trim();
+        discountCode = String(res?.discountCode || (quoteRow as { discount_code?: string }).discount_code || '').trim();
+        expiresAt = String((quoteRow as { expires_at?: string }).expires_at || '').trim();
+        fromApi = Boolean(quoteId && discountCode);
+      } catch {
+        /* offline / no profile / network — still complete local order + client alert */
+      }
+
+      if (!fromApi) {
+        quoteId = randomQuoteId();
+        discountCode = randomConsultDiscountCode();
+        expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
+      }
+
+      const snapshot: ConsultOfferPersistedSnapshot = {
         unitKey: quoteUnit,
-        selections: { unit: quoteUnit, subPage: quoteSub },
+        selections: selectionsForQuote,
         priceBreakdown: breakdown,
         adminMessage: quoteMessage,
-        thumbnailSrc: '/assets/NOIR/noir-thumb.png',
-      })) as { quote?: { id?: string } };
-      const quoteId = String(res?.quote?.id || '').trim();
-      const orderRef = String(
-        (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
-          ? quoteMeeting.metadata.orderNumber
-          : '') || ''
-      ).trim();
-      if (quoteId && orderRef) {
-        markConsultOrderCompleteAfterQuoteSent({
+        thumbnailSrc: thumbSrc,
+        discountCode,
+        expiresAt,
+      };
+
+      let matchedConsultOrderId = '';
+      if (orderRef) {
+        const markRes = markConsultOrderCompleteAfterQuoteSent({
           clientEmail: email,
           orderNumberFromCheckout: orderRef,
           consultQuoteId: quoteId,
+          consultOfferSnapshot: snapshot,
         });
+        matchedConsultOrderId = String(markRes.matchedOrderId || '').trim();
       }
+
+      const alertOrderLabel =
+        orderRef ||
+        (typeof quoteMeeting.metadata?.orderNumber === 'string'
+          ? String(quoteMeeting.metadata.orderNumber).trim()
+          : '') ||
+        `CONSULT OFFER`;
+      appendConsultOfferCompleteAccountAlert(email, alertOrderLabel, quoteId, {
+        matchedOrderId: matchedConsultOrderId || undefined,
+      });
+
+      upsertLocalMeeting({
+        ...quoteMeeting,
+        status: 'Completed',
+        notes: (() => {
+          const prev = String(quoteMeeting.notes || '').trim();
+          if (prev.toUpperCase().includes('OFFER SENT')) return quoteMeeting.notes;
+          return prev ? `${prev}\nOFFER SENT.` : 'OFFER SENT.';
+        })(),
+        metadata: {
+          ...(quoteMeeting.metadata || {}),
+          consultOfferSent: true,
+          consultQuoteId: quoteId,
+        },
+      });
+      try {
+        window.dispatchEvent(new Event('adminMeetingsUpdated'));
+      } catch {
+        /* ignore */
+      }
+      refreshLocal();
+
+      try {
+        sessionStorage.removeItem(SESSION_QUOTE_MEETING_ID);
+        sessionStorage.removeItem(sessionQuoteDraftKey(quoteMeeting.id));
+      } catch {
+        /* ignore */
+      }
+
       setQuoteMeeting(null);
       setShowSendQuoteConfirm(false);
-      setHubNotice('QUOTE SENT — CLIENT ALERT CREATED.');
+      setHubNotice(
+        fromApi
+          ? 'QUOTE SENT — CLIENT ALERT CREATED.'
+          : orderRef
+            ? 'OFFER SAVED LOCALLY — CLIENT ORDER COMPLETED + ALERT (CLOUD SEND FAILED OR UNAVAILABLE).'
+            : 'OFFER SAVED LOCALLY — ADD ORDER # TO MEETING METADATA TO LINK CHECKOUT ORDER.'
+      );
     } catch (e) {
       setHubNotice(e instanceof Error ? e.message.toUpperCase() : 'SEND FAILED');
     } finally {
@@ -697,9 +1101,13 @@ export default function AdminMeetingsHub() {
 
   const viewAllBaseRows = useMemo(() => {
     if (!viewAllMode) return [] as AdminMeeting[];
-    const base = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
+    const raw = viewAllMode === 'bookings' ? filteredAppointmentMeetings : filteredConsultMeetings;
+    const base =
+      meetingSortOption === 'Archived'
+        ? raw.filter((m) => meetingIsArchivedForAdminViewAll(m))
+        : raw.filter((m) => !meetingIsArchivedForAdminViewAll(m));
     return [...base].sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
-  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings]);
+  }, [viewAllMode, filteredAppointmentMeetings, filteredConsultMeetings, meetingSortOption]);
 
   const viewAllRows = useMemo(
     () => sortMeetingsByOption(viewAllBaseRows, meetingSortOption),
@@ -725,7 +1133,7 @@ export default function AdminMeetingsHub() {
       if (!existing) {
         byClient.set(key, {
           key,
-          displayName: meetingClientDisplayNameWithState(row),
+          displayName: meetingClientNamePlain(row),
           profilePhoto: meetingClientProfilePhoto(row),
           hasActiveMeeting: meetingIsCurrentOrActive(row),
           totalCount: 1,
@@ -779,7 +1187,7 @@ export default function AdminMeetingsHub() {
       if (!existing) {
         byClient.set(key, {
           key,
-          displayName: meetingClientDisplayNameWithState(row),
+          displayName: meetingClientViewAllListHeadline(row),
           profilePhoto: meetingClientProfilePhoto(row),
           latestMeeting: row,
           tierIsPremium: tierPremium(row),
@@ -802,6 +1210,7 @@ export default function AdminMeetingsHub() {
         ...group,
         meetings,
         latestMeeting,
+        displayName: meetingClientViewAllListHeadline(latestMeeting),
         profilePhoto: meetingClientProfilePhoto(latestMeeting),
         tierIsPremium: tierPremium(latestMeeting),
       };
@@ -874,6 +1283,14 @@ export default function AdminMeetingsHub() {
     : null);
 
   const closeMainCardPanel = () => {
+    try {
+      sessionStorage.removeItem(SESSION_QUOTE_MEETING_ID);
+    } catch {
+      /* ignore */
+    }
+    setActivePanelDropdown(null);
+    setPanelDropdownRect(null);
+    setQuoteManualThumbnailSrc(null);
     setViewAllMode(null);
     setQuoteMeeting(null);
     setEditMeeting(null);
@@ -936,6 +1353,7 @@ export default function AdminMeetingsHub() {
     options,
     onChange,
     formatOptionLabel,
+    portalMaxHeight,
   }: {
     dropdownKey: PanelDropdownKey;
     label: string;
@@ -944,86 +1362,126 @@ export default function AdminMeetingsHub() {
     options: readonly string[];
     onChange: (next: string) => void;
     formatOptionLabel?: (option: string) => string;
-  }) => (
-    <div className="mt-2">
-      <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
-      <div className="relative mt-1">
-        <button
-          type="button"
-          onClick={() => setActivePanelDropdown((open) => (open === dropdownKey ? null : dropdownKey))}
-          className="w-full"
-          style={{
-            width: '100%',
-            padding: '8px 10px',
-            minHeight: '36px',
-            border: '1.3px solid #000',
-            borderRadius: 0,
-            fontFamily: '"Futura PT Book"',
-            fontSize: '11px',
-            background: '#fff',
-            textTransform: 'uppercase',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            cursor: 'pointer',
-            color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
-            letterSpacing: '0.02em',
-          }}
-        >
-          <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
-            {displayValue ?? value}
-          </span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            className="flex-shrink-0"
+    /** Fixed-position list `max-height` (viewport-safe) so options are not clipped by the card. */
+    portalMaxHeight?: string;
+  }) => {
+    const maxH = portalMaxHeight ?? 'min(70vh, 520px)';
+    const isOpen = activePanelDropdown === dropdownKey;
+    const portalList =
+      isOpen &&
+      panelDropdownRect &&
+      typeof document !== 'undefined' &&
+      createPortal(
+        <>
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: 5000 }}
+            aria-hidden="true"
+            onClick={() => {
+              setActivePanelDropdown(null);
+              setPanelDropdownRect(null);
+            }}
+          />
+          <div
+            className="py-1 bg-white border border-black shadow-lg overflow-y-auto"
             style={{
-              transform: activePanelDropdown === dropdownKey ? 'rotate(180deg)' : 'none',
-              color: '#EB1C24',
-              marginLeft: '8px',
+              position: 'fixed',
+              left: panelDropdownRect.left,
+              top: panelDropdownRect.bottom + 7,
+              width: panelDropdownRect.width,
+              maxHeight: maxH,
+              borderWidth: '1.3px',
+              borderRadius: 0,
+              zIndex: 5010,
+              boxSizing: 'border-box',
             }}
           >
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        {activePanelDropdown === dropdownKey ? (
-          <>
-            <div
-              className="fixed inset-0 z-10"
-              aria-hidden="true"
-              onClick={() => setActivePanelDropdown(null)}
-            />
-            <div
-              className="absolute left-0 right-0 py-1 bg-white border border-black shadow-lg z-20 max-h-48 overflow-y-auto"
-              style={{ borderWidth: '1.3px', borderRadius: 0, marginTop: '7px' }}
+            {options.filter((opt) => opt !== value).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  onChange(opt);
+                  setActivePanelDropdown(null);
+                  setPanelDropdownRect(null);
+                }}
+                className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  color: '#000',
+                  fontWeight: 400,
+                  backgroundColor: '#fff',
+                }}
+              >
+                {formatOptionLabel ? formatOptionLabel(opt) : opt}
+              </button>
+            ))}
+          </div>
+        </>,
+        document.body
+      );
+    return (
+      <div className="mt-2">
+        <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>{label}</label>
+        <div className="relative mt-1">
+          <button
+            ref={(el) => {
+              if (activePanelDropdown === dropdownKey) {
+                panelDropdownAnchorRef.current = el;
+              } else if (panelDropdownAnchorRef.current === el) {
+                panelDropdownAnchorRef.current = null;
+              }
+            }}
+            type="button"
+            onClick={() =>
+              setActivePanelDropdown((open) => {
+                const next = open === dropdownKey ? null : dropdownKey;
+                if (next === null) setPanelDropdownRect(null);
+                return next;
+              })
+            }
+            className="w-full"
+            style={{
+              width: '100%',
+              padding: '8px 10px',
+              minHeight: '36px',
+              border: '1.3px solid #000',
+              borderRadius: 0,
+              fontFamily: '"Futura PT Book"',
+              fontSize: '11px',
+              background: '#fff',
+              textTransform: 'uppercase',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              color: editMeeting || quoteMeeting ? '#EB1C24' : '#000',
+              letterSpacing: '0.02em',
+            }}
+          >
+            <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
+              {displayValue ?? value}
+            </span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              className="flex-shrink-0"
+              style={{
+                transform: isOpen ? 'rotate(180deg)' : 'none',
+                color: '#EB1C24',
+                marginLeft: '8px',
+              }}
             >
-              {options.filter((opt) => opt !== value).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => {
-                    onChange(opt);
-                    setActivePanelDropdown(null);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs uppercase hover:bg-gray-100 transition-colors"
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    color: '#000',
-                    fontWeight: 400,
-                    backgroundColor: '#fff',
-                  }}
-                >
-                  {formatOptionLabel ? formatOptionLabel(opt) : opt}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : null}
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {portalList}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const travelBlackoutDates = useMemo(() => {
     const blocked = new Set<string>();
@@ -1104,7 +1562,8 @@ export default function AdminMeetingsHub() {
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
               style={{
                 borderWidth: '1.3px',
-                minHeight: 'calc(100dvh - 160px)',
+                /** Send offer panel: +40px main card min-height vs default hub card. */
+                minHeight: quoteMeeting ? 'calc(100dvh - 120px)' : 'calc(100dvh - 160px)',
               }}
             >
               {activeMainCardTitle ? (
@@ -1295,7 +1754,7 @@ export default function AdminMeetingsHub() {
                 <div
                   className="overflow-y-auto"
                   style={{
-                    maxHeight: 'calc(100dvh - 240px)',
+                    maxHeight: quoteMeeting ? 'calc(100dvh - 200px)' : 'calc(100dvh - 240px)',
                     paddingTop: '2px',
                     boxSizing: 'border-box',
                   }}
@@ -1545,10 +2004,23 @@ export default function AdminMeetingsHub() {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    <span style={{ color: '#000' }}>{clientGroup.displayName}</span>{' '}
-                                    <span style={{ color: clientGroup.tierIsPremium ? '#000' : '#808080' }}>
-                                      · {clientGroup.tierIsPremium ? 'PREMIUM' : 'STANDARD'}
-                                    </span>
+                                    {(() => {
+                                      const h = clientGroup.displayName;
+                                      const parts = h.split(' · ');
+                                      if (parts.length < 2) return <span style={{ color: '#000' }}>{h}</span>;
+                                      const nameSt = parts.slice(0, -1).join(' · ');
+                                      const tier = parts[parts.length - 1] || '';
+                                      const tierPremiumLabel = tier === 'PREMIUM';
+                                      return (
+                                        <>
+                                          <span style={{ color: '#000' }}>{nameSt}</span>
+                                          <span style={{ color: tierPremiumLabel ? '#000' : '#808080' }}>
+                                            {' · '}
+                                            {tier}
+                                          </span>
+                                        </>
+                                      );
+                                    })()}
                                   </p>
                                 </button>
                                 <div
@@ -1622,6 +2094,7 @@ export default function AdminMeetingsHub() {
                         const preset = EDIT_MESSAGE_BY_REASON[next as (typeof EDIT_REASONS)[number]];
                         if (preset) setEditMessage(preset.message);
                       },
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 'auto', paddingTop: '24px' }}>
                       MESSAGE TO CLIENT
@@ -1635,26 +2108,100 @@ export default function AdminMeetingsHub() {
                   </div>
                 ) : quoteMeeting ? (
                   <div style={{ marginTop: '12px' }}>
+                    <div
+                      className="flex justify-center"
+                      style={{
+                        /** Custom: was 8px; −10px gap above REMOVE = −2px (margin collapse handled). */
+                        marginBottom: quoteEffectiveCustomSrc ? '-2px' : '20px',
+                      }}
+                    >
+                      <img
+                        src={quoteOfferThumbnailSrc}
+                        alt=""
+                        width={122}
+                        height={122}
+                        style={{ objectFit: 'contain', display: 'block' }}
+                      />
+                    </div>
+                    {quoteEffectiveCustomSrc ? (
+                      <button
+                        type="button"
+                        className="w-full text-[10px] uppercase"
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          color: '#EB1C24',
+                          border: 'none',
+                          background: 'none',
+                          cursor: 'pointer',
+                          /** Was mb-2 (8px); +20px below REMOVE only. */
+                          marginBottom: '28px',
+                        }}
+                        onClick={() => {
+                          if (quoteManualThumbnailSrc) {
+                            setQuoteManualThumbnailSrc(null);
+                          } else if (quoteSavedThumbnailForSelection) {
+                            setQuoteSavedThumbnailMap(deleteAdminConsultOfferSavedThumbnail(quoteSelectionKey));
+                          }
+                          try {
+                            if (quoteOfferImageInputRef.current) quoteOfferImageInputRef.current.value = '';
+                          } catch {
+                            /* ignore */
+                          }
+                        }}
+                      >
+                        REMOVE CUSTOM IMAGE
+                      </button>
+                    ) : null}
+                    <label
+                      htmlFor="adminQuoteOfferImage"
+                      style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block', marginBottom: '5px' }}
+                    >
+                      CUSTOM IMAGE:
+                    </label>
+                    <div className="mb-3">
+                      <OrderFormFilePicker
+                        id="adminQuoteOfferImage"
+                        name="adminQuoteOfferImage"
+                        inputRef={quoteOfferImageInputRef}
+                        accept="image/*"
+                        previewSrc={quoteManualThumbnailSrc}
+                        showSelectedTint={!!quoteManualThumbnailSrc}
+                        hideInlinePreview
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (!f) return;
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const r = String(reader.result || '');
+                            if (r.startsWith('data:')) setQuoteManualThumbnailSrc(r);
+                          };
+                          reader.readAsDataURL(f);
+                          e.target.value = '';
+                        }}
+                      />
+                    </div>
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteUnit',
-                      label: 'UNIT',
+                      label: 'UNIT:',
                       value: UNIT_OPTIONS.find((u) => u.id === quoteUnit)?.label ?? quoteUnit,
                       options: UNIT_OPTIONS.map((u) => u.label),
                       onChange: (next) => {
                         const picked = UNIT_OPTIONS.find((u) => u.label === next);
                         setQuoteUnit(picked?.id ?? next);
                       },
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSub',
-                      label: 'SUB-PAGE',
+                      label: 'CATEGORY:',
                       value: quoteSub,
                       options: SUB_PAGE_OPTIONS,
                       onChange: (next) => setQuoteSub(next as QuoteSubPage),
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
                     {renderPanelSelectDropdown({
                       dropdownKey: 'quoteSubSelection',
-                      label: 'SELECTION',
+                      label: 'SELECTION:',
                       value: currentQuoteSubSelectionDisplayValue,
                       options: currentQuoteSubSelectionOptions.map((option) =>
                         quoteSub === 'HAIRLINE' ? hairlineDisplayValue(option) : option
@@ -1663,19 +2210,36 @@ export default function AdminMeetingsHub() {
                         const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
                         setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
                       },
+                      portalMaxHeight: 'min(70vh, 520px)',
                     })}
-                    <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: '100px' }}>
-                      MESSAGE
-                      <textarea
-                        className="w-full mt-1 p-2 border text-[10px]"
-                        rows={3}
-                        value={quoteMessage}
-                        onChange={(e) => setQuoteMessage(e.target.value)}
-                      />
-                    </label>
-                    <div className="mt-2">
+                    {quoteSub === 'STYLING' ? (
+                      renderPanelSelectDropdown({
+                        dropdownKey: 'quotePartSelection',
+                        label: 'PARTING:',
+                        value: quoteSelections.partSelection,
+                        options: [...QUOTE_PART_SELECTION_OPTIONS],
+                        onChange: (next) =>
+                          setQuoteSelections((previous) => ({
+                            ...previous,
+                            partSelection: next,
+                          })),
+                        portalMaxHeight: 'min(70vh, 520px)',
+                      })
+                    ) : null}
+                    <div style={{ marginTop: '24px', marginBottom: '12px' }}>
+                      <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', marginTop: 0 }}>
+                        MESSAGE:
+                        <textarea
+                          className="w-full mt-1 p-2 border text-[10px]"
+                          rows={3}
+                          value={quoteMessage}
+                          onChange={(e) => setQuoteMessage(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                    <div style={{ marginTop: '16px' }}>
                       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', display: 'block' }}>
-                        PRICE BREAKDOWN
+                        PRICE BREAKDOWN:
                       </label>
                       <div
                         className="mt-1"
@@ -1686,12 +2250,14 @@ export default function AdminMeetingsHub() {
                         }}
                       >
                         <div style={{ display: 'grid', rowGap: '6px' }}>
-                          {generatedQuoteBreakdown.lines.map((line: SpecialOfferBreakdownLine) => {
+                          {quoteBreakdownDisplayLines.map((line: SpecialOfferBreakdownLine, lineIdx: number) => {
                             const selection = line.selection;
-                            const amountText = line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, line.label !== 'BASE UNIT');
+                            const displayLabel = line.label === 'BASE UNIT' ? 'UNIT' : line.label;
+                            const amountText =
+                              line.amountUsd === 0 ? '' : formatCreateOfferBreakdownAmount(line.amountUsd, true);
                             return (
                               <div
-                                key={`${line.label}-${selection}`}
+                                key={`${line.label}-${selection}-${lineIdx}`}
                                 style={{
                                   display: 'flex',
                                   alignItems: 'flex-start',
@@ -1709,7 +2275,7 @@ export default function AdminMeetingsHub() {
                                     minWidth: 0,
                                   }}
                                 >
-                                  <span>{line.label}: </span>
+                                  <span>{displayLabel}: </span>
                                   <span>{selection}</span>
                                 </div>
                                 {amountText ? (
@@ -1769,9 +2335,6 @@ export default function AdminMeetingsHub() {
                         </div>
                       </div>
                     </div>
-                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#808080', marginTop: '8px' }}>
-                      OFFER DETAILS REFLECT THE CURRENT UNIT + SUB-PAGE SELECTION YOU CHOOSE HERE.
-                    </p>
                   </div>
                 ) : mainTab === 'overview' ? (
                   <>
@@ -1948,21 +2511,73 @@ export default function AdminMeetingsHub() {
                     </button>
                   </>
                 ) : quoteMeeting ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowSendQuoteConfirm(true)}
-                    className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={{
-                      borderWidth: '1.3px',
-                      color: '#EB1C24',
-                      fontFamily: '"Futura PT Medium"',
-                      backgroundColor: '#FFFFFF',
-                      whiteSpace: 'nowrap',
-                    }}
-                    disabled={quoteSending}
-                  >
-                    {quoteSending ? '…' : 'SEND OFFER'}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowSendQuoteConfirm(true)}
+                      className="border border-black font-futura w-full text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                      disabled={quoteSending}
+                    >
+                      {quoteSending ? '…' : 'SEND OFFER'}
+                    </button>
+                    {quoteManualThumbnailSrc?.startsWith('data:') ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (quoteSaveSelectionState !== 'idle') return;
+                          setQuoteSaveSelectionState('saving');
+                          if (quoteSaveSelectionResetTimeoutRef.current) {
+                            clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
+                            quoteSaveSelectionResetTimeoutRef.current = null;
+                          }
+                          /** Brief delay so **SAVING…** can paint (sync localStorage write; mirrors async add-to-bag feel). */
+                          quoteSaveSelectionResetTimeoutRef.current = setTimeout(() => {
+                            const next = upsertAdminConsultOfferSavedThumbnail(
+                              quoteSelectionKey,
+                              quoteManualThumbnailSrc
+                            );
+                            setQuoteSavedThumbnailMap(next);
+                            setQuoteSaveSelectionState('saved');
+                            quoteSaveSelectionResetTimeoutRef.current = setTimeout(() => {
+                              quoteSaveSelectionResetTimeoutRef.current = null;
+                              setQuoteSaveSelectionState('idle');
+                            }, 2000);
+                          }, 80);
+                        }}
+                        disabled={quoteSending || quoteSaveSelectionState === 'saving'}
+                        className={`border border-black font-futura w-full text-center py-2 text-[11px] font-semibold ${
+                          quoteSaveSelectionState === 'saving'
+                            ? 'bg-white cursor-not-allowed'
+                            : quoteSaveSelectionState === 'saved'
+                              ? 'bg-white cursor-pointer'
+                              : 'bg-white cursor-pointer hover:bg-gray-50'
+                        }`}
+                        style={{
+                          borderWidth: '1.3px',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          backgroundColor: '#FFFFFF',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {quoteSaveSelectionState === 'idle' && 'SAVE SELECTION'}
+                        {quoteSaveSelectionState === 'saving' && 'SAVING…'}
+                        {quoteSaveSelectionState === 'saved' && (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="" width={9} height={9} />
+                            <span style={{ color: '#808080' }}>SELECTION SAVED</span>
+                          </span>
+                        )}
+                      </button>
+                    ) : null}
+                  </>
                 ) : (
                   <>
                     <button
@@ -2012,7 +2627,7 @@ export default function AdminMeetingsHub() {
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
         title="SEND OFFER?"
-        message="CLIENT WILL SEE AN ALERT WITH VIEW OFFER (CONSULT OFFER)."
+        message="CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER."
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"

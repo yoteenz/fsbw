@@ -18,11 +18,13 @@ import {
   fetchStripeMembershipAvailable,
   createStripeMembershipCheckoutSession,
   getAccessToken,
+  getConsultQuote,
   postBookingAppointmentMeeting,
   postBookingConsultMeeting,
   redeemConsultQuote,
   validateConsultDiscountCode,
 } from '../../utils/api';
+import { SESSION_CONSULT_CLAIM_CODE, SESSION_CONSULT_CLAIM_QUOTE_ID } from '../../utils/consultOfferFromQuote';
 import { appendOrderReceivedAccountAlert } from '../../utils/orderAccountAlerts';
 import {
   filterBookingCartLines,
@@ -64,6 +66,7 @@ import {
   computePointsEligibleNetUsd,
 } from '../../utils/loyaltyPointsEligibleNet';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
@@ -215,9 +218,17 @@ function buildAppliedVoucherQuantitiesFromModal(
 function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const isBookingsCheckoutRoute = isBookingsCheckoutPath(location.pathname);
   const isGiftCardCheckoutRoute = isGiftCardCheckoutPath(location.pathname);
   const [searchParams, setSearchParams] = useSearchParams();
+  const applyDiscountCodeRef = useRef<() => Promise<void>>(async () => {});
+  const [pendingConsultDiscountCode, setPendingConsultDiscountCode] = useState<string | null>(null);
+  const consultClaimBootstrapDoneRef = useRef(false);
+
+  useEffect(() => {
+    consultClaimBootstrapDoneRef.current = false;
+  }, [location.pathname]);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
   const [cartCount, setCartCount] = useState(() => {
@@ -786,21 +797,27 @@ function CheckoutPage() {
 
   /**
    * Isolated gift-card checkout with nothing to buy → back to gift card PDP.
-   * Must not use initial `cartItems.length === 0` only: on first paint state is still empty
-   * before `loadCartItems` runs, which incorrectly bounced users off `/checkout/gift-card`.
+   * Must not run in the same commit as the first paint: `cartItems` state is still `[]` until
+   * the `loadCartItems` effect runs; an immediate check can false-empty and `replace` to the PDP.
+   * That remounts GiftCardPage → `usePersistentQueryState` ↔ URL sync → Safari's 100 replaceState/10s cap.
+   * Defer one tick and decide from **localStorage** (same source as `loadCartItems`).
    */
   useEffect(() => {
     if (!isGiftCardCheckoutRoute) return;
-    let giftLines: unknown[] = [];
-    try {
-      const stored = localStorage.getItem('cartItems');
-      const parsed = stored ? JSON.parse(stored) : [];
-      giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
-    } catch {
-      /* ignore */
-    }
-    if (giftLines.length > 0) return;
-    navigate('/tools/gift-card', { replace: true });
+    const run = () => {
+      let giftLines: unknown[] = [];
+      try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        /* ignore */
+      }
+      if (giftLines.length > 0) return;
+      navigate('/tools/gift-card', { replace: true });
+    };
+    const t = window.setTimeout(run, 0);
+    return () => clearTimeout(t);
   }, [isGiftCardCheckoutRoute, navigate, cartItems.length]);
 
   /** Return to Account → Rewards with the premium comparison chart open (tier selection), not the default rewards cards. */
@@ -2217,7 +2234,84 @@ function CheckoutPage() {
       setReferralDiscount(0);
     }
   };
-  
+
+  applyDiscountCodeRef.current = handleApplyDiscountCode;
+
+  /** After "Claim offer" adds a unit to the bag, queue CONSULT-* from session or `?consultClaim=` + fetch quote. */
+  useEffect(() => {
+    if (consultClaimBootstrapDoneRef.current) return;
+    if (isSubscriptionUpgrade || isBookingsCheckoutRoute || isGiftCardCheckoutRoute) return;
+
+    let claimId = '';
+    let claimCode = '';
+    try {
+      claimId = (searchParams.get('consultClaim') || '').trim();
+      claimCode = (sessionStorage.getItem(SESSION_CONSULT_CLAIM_CODE) || '').trim().toUpperCase();
+      if (!claimId) claimId = (sessionStorage.getItem(SESSION_CONSULT_CLAIM_QUOTE_ID) || '').trim();
+    } catch {
+      /* ignore */
+    }
+    if (!claimId && !claimCode) return;
+
+    consultClaimBootstrapDoneRef.current = true;
+    let cancelled = false;
+    void (async () => {
+      let code = claimCode;
+      if (!code && claimId) {
+        try {
+          const res = await getConsultQuote(claimId);
+          const q = res?.quote as { discount_code?: string } | undefined;
+          code = String(q?.discount_code || '').trim().toUpperCase();
+        } catch {
+          code = '';
+        }
+      }
+      if (cancelled || !code || !code.startsWith('CONSULT-')) {
+        try {
+          sessionStorage.removeItem(SESSION_CONSULT_CLAIM_CODE);
+          sessionStorage.removeItem(SESSION_CONSULT_CLAIM_QUOTE_ID);
+        } catch {
+          /* ignore */
+        }
+        if (searchParams.get('consultClaim')) {
+          const next = new URLSearchParams(searchParams);
+          next.delete('consultClaim');
+          setSearchParams(next, { replace: true });
+        }
+        return;
+      }
+
+      try {
+        sessionStorage.removeItem(SESSION_CONSULT_CLAIM_CODE);
+        sessionStorage.removeItem(SESSION_CONSULT_CLAIM_QUOTE_ID);
+      } catch {
+        /* ignore */
+      }
+      if (searchParams.get('consultClaim')) {
+        const next = new URLSearchParams(searchParams);
+        next.delete('consultClaim');
+        setSearchParams(next, { replace: true });
+      }
+
+      setDiscountCodeError('');
+      setPendingConsultDiscountCode(code);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isSubscriptionUpgrade, isBookingsCheckoutRoute, isGiftCardCheckoutRoute, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!pendingConsultDiscountCode) return;
+    if (cartItems.length === 0) return;
+    const c = pendingConsultDiscountCode;
+    setPendingConsultDiscountCode(null);
+    setDiscountCode(c);
+    setDiscountCodeDisplay(c);
+    void applyDiscountCodeRef.current();
+  }, [pendingConsultDiscountCode, cartItems.length]);
+
   // Gift card discount should NOT be applied to subscription upgrades. When applied, this is shown as "DIGITAL CASH" (account balance). This balance includes tier welcome discount (Silver $10, Red $40, Black $80) credited when the user reaches each spend tier. If a gift card code is applied instead, that replaces this line (label "GIFT CARD"); both cannot be applied together.
   const giftCardDiscount = isSubscriptionUpgrade ? 0 : appliedGiftCardBalance; // Automatically applied gift card balance (digital cash)
   // Voucher discount: one voucher at a time, cannot combine. Subtract add-on price for the single voucher (uses stored price or fallback so red (-$120) etc. always shows).
@@ -2289,6 +2383,17 @@ function CheckoutPage() {
     hasSpecialOfferInCart,
     hasOnlySpecialOfferInCart,
   ]);
+
+  const consultRedeemQuoteIdsFromCart = useMemo(() => {
+    const ids = new Set<string>();
+    for (const item of cartItems as any[]) {
+      if (item?.consultOfferQtyLocked === true) {
+        const id = String(item?.consultOfferQuoteId || '').trim();
+        if (id) ids.add(id);
+      }
+    }
+    return ids;
+  }, [cartItems]);
 
   const consultDiscountAmount = useMemo(() => {
     if (!appliedConsultQuote) return 0;
@@ -2721,6 +2826,12 @@ function CheckoutPage() {
             void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
               console.error('Error redeeming consult quote code:', err)
             );
+          } else if (!appliedConsultQuote && consultRedeemQuoteIdsFromCart.size > 0 && !isSubscriptionUpgrade) {
+            for (const qid of consultRedeemQuoteIdsFromCart) {
+              void redeemConsultQuote(qid).catch((err: unknown) =>
+                console.error('Error redeeming consult quote code:', err)
+              );
+            }
           }
 
           const summaryOrderDate = new Date()
@@ -2934,20 +3045,21 @@ function CheckoutPage() {
                       src="/assets/back-button.svg"
                     />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
+                  <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                       width="16"
                       height="15"
                       src="/assets/search-icon.svg"
                     />
-                  </button>
+                  </SearchTrigger>
                 </>
               )}
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
                   <span 
@@ -2984,6 +3096,7 @@ function CheckoutPage() {
                 </>
               )}
             </p>
+            </NavCenter>
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -6605,6 +6718,12 @@ function CheckoutPage() {
                     void redeemConsultQuote(appliedConsultQuote.quoteId).catch((err: unknown) =>
                       console.error('Error redeeming consult quote code:', err)
                     );
+                  } else if (!appliedConsultQuote && consultRedeemQuoteIdsFromCart.size > 0 && !isSubscriptionUpgrade) {
+                    for (const qid of consultRedeemQuoteIdsFromCart) {
+                      void redeemConsultQuote(qid).catch((err: unknown) =>
+                        console.error('Error redeeming consult quote code:', err)
+                      );
+                    }
                   }
                   
                   // Create Route protection if package protection is selected (non-blocking)

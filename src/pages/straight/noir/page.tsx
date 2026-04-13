@@ -16,6 +16,7 @@ import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   marbleStripScrollRowStyle,
@@ -48,6 +49,7 @@ function NoirSelection() {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   // Fix for window.REACT_APP_NAVIGATE - use navigate hook instead
   const [selectedDensity, setSelectedDensity] = useState(() => {
     return localStorage.getItem('selectedDensity') || '200%';
@@ -850,6 +852,13 @@ function NoirSelection() {
     '/assets/natural front.png',  // View 1 (default)
     '/assets/natural left.png',  // View 2 (top thumbnail)
     '/assets/natural right.png'  // View 3 (bottom thumbnail)
+  ];
+
+  /** Same PNGs as product shots carousel — filenames match `public/assets/NOIR/`. (m)/(l)/(r) = parting / angle. */
+  const NOIR_2D_ANGLE_DOWNLOADS: { file: string; label: string }[] = [
+    { file: 'noir front.png', label: 'FRONT (M)' },
+    { file: 'noir left.png', label: 'LEFT (L)' },
+    { file: 'noir right.png', label: 'RIGHT (R)' },
   ];
 
   // Get current mannequin images based on selected view
@@ -2026,18 +2035,19 @@ function NoirSelection() {
                     src="/assets/back-button.svg"
                   />
                 </button>
-                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                  <img
-                    alt="Search icon"
+                <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                     width="16"
                     height="15"
                     src="/assets/search-icon.svg"
                   />
-                </button>
+                </SearchTrigger>
               </>
             )}
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', transform: 'translateY(1px)' }}>
+          <NavCenter showMobileMenu={showMobileMenu}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', transform: 'translateY(1px)' }}>
             {showMobileMenu ? (
               <>
                 <span 
@@ -2078,6 +2088,7 @@ function NoirSelection() {
               </>
             )}
           </p>
+            </NavCenter>
           <div className="gap-5 flex absolute" style={{ right: '17px' }}>
             <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
@@ -2847,6 +2858,47 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 }}
               >
                 product shots
+              </div>
+            </div>
+
+            {/* 2D mannequin angles — download originals for generation (same files as carousel) */}
+            <div
+              className="flex flex-col items-center gap-1 px-2"
+              style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
+            >
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '9px',
+                  color: '#808080',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  margin: 0,
+                }}
+              >
+                download 2d angles (png)
+              </p>
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
+                {NOIR_2D_ANGLE_DOWNLOADS.map(({ file, label }) => {
+                  const href = `/assets/NOIR/${encodeURIComponent(file)}`;
+                  const downloadName = file.replace(/\s+/g, '-');
+                  return (
+                    <a
+                      key={file}
+                      href={href}
+                      download={downloadName}
+                      style={{
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '10px',
+                        color: '#EB1C24',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '2px',
+                      }}
+                    >
+                      {label}
+                    </a>
+                  );
+                })}
               </div>
             </div>
 

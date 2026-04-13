@@ -13183,3 +13183,899 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Repo changes committed on **`master`**: ignore **`.env.wig-preview.txt`**, add example template, remove file from version control (working copy retained). User must complete **dashboard rotation** and update any **Vercel / CI / machines** that used the old values; if the leak was pushed, treat keys as compromised and scrub history or accept periodic scanning risk.
 
 **Changes:** **`.gitignore`**, **`.env.wig-preview.example.txt`**, **`git rm --cached .env.wig-preview.txt`** + commit **`Stop tracking wig preview env; add example template and gitignore`**, **`motherboard/MEMORY.md`** (this entry).
+
+---
+
+## 2026-04-09 — Admin Pending “VIEW REVIEW” modal: product thumb, stars, typography, date+time
+
+**Context:** User asked to rework the **VIEW REVIEW** popup on **Admin → Pending → REVIEWS**: remove reviewer name/email; show **centered product thumbnail** (same resolution as admin reviews list / 72px black border), **centered star row** below; product title **gray Futura PT Medium**; replace **“N STARS · date”** with **date • time** in **red Futura PT Book** (e.g. `3/28/2026 • 3:27PM`).
+
+**Decisions / outcomes:** New helper **`adminReviewProductThumb.ts`**: **`adminReviewProductThumbSrcFromTitle`** maps product strings to the same unit thumbs as wishlist (**NOIR** / peak-lagos / **BLANCO** / waves / curls / gift / **SLAY STYLING TOOL** → **`neon-tools.png`**, **WIG CARE KIT** → **`wig-brush.png`**); **`formatAdminReviewSubmittedAtLine`** builds **M/D/YYYY • h:mma** when **`submittedAtIso`** exists, else falls back to legacy **`date`**. **`PendingMockReview.submittedAtIso`** optional; mock defaults + **`serverPendingQueueMappers`** pass **`created_at`**. Modal body in **`admin/pending/page.tsx`** uses centered stack + same star PNGs as **`AdminReviewStyleCard`**.
+
+**Changes:** **`src/utils/adminReviewProductThumb.ts`**, **`src/pages/admin/pending/page.tsx`**, **`src/utils/adminPendingMockQueues.ts`**, **`src/utils/serverPendingQueueMappers.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up (same thread):** User wanted **Account → Reviews** 2D mannequin assets (not wishlist `noir-thumb`), **only** thumb + stars centered, copy **left** like before, red line **after** body again with **date • time**. Implemented **`accountReviewProductThumbnail.ts`** — shared **`accountReviewProductThumbnailSrc`** with **`account/reviews/page.tsx`**; **`accountReviewThumbnailFromProductTitle`** parses full product lines (NOIR/BLANCO/waves/curls/gift); **`formatReviewSubmittedDateTimeLine`** uses ISO or parses **`M/D/YYYY`** + noon local so time always shows. Modal: **102×102** `object-fit: contain` + Account row star sizing; flex row like account reviews. **`mergeReviewsWithDefaults`** backfills **`submittedAtIso`** for stored mock ids. Removed **`adminReviewProductThumb.ts`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Gift card checkout: Safari replaceState flood (bounce effect race)
+
+**Context:** User again saw **Component Failed to Load** / **`history.replaceState()` more than 100 times per 10 seconds** when tapping **Proceed to checkout** on the gift card PDP.
+
+**Cause:** **`CheckoutPage`** effect for empty **`/checkout/gift-card`** ran in the **same commit** as first mount while **`cartItems`** was still **`[]`** and could **`replace` navigate** to **`/tools/gift-card`** before **`loadCartItems`** applied the new line — rapid **checkout ↔ PDP** remounts; PDP’s **`usePersistentQueryState`** then hammered **`replaceState`**.
+
+**Fix:** Defer the empty-cart bounce with **`setTimeout(..., 0)`** so **`loadCartItems`** runs first; still reads **`localStorage`** as source of truth.
+
+**Changes:** **`src/pages/checkout/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Gift checkout red screen: CommerceRouteGuard vs sign-in auto-redirect loop
+
+**Context:** User reported the **replaceState** / red error screen persisted after the deferred empty-cart bounce fix.
+
+**Actual cause:** With **Supabase configured**, **`CommerceRouteGuard`** allows checkout only when **`getSession().access_token`** exists. **`sign-in/page.tsx`** had a separate effect: if **`localStorage.isSignedIn === 'true'`**, it immediately **`navigate(..., replace)`** to **`returnTo`** (e.g. **`/checkout/gift-card`**). Users with **stale local “signed in”** but **no Supabase session** hit an infinite loop: **checkout → Navigate sign-in → auto back to checkout → …**, hundreds of **`replaceState`** calls (stack showed **`replaceState@[native code]`**).
+
+**Fix:** Auto-redirect on sign-in page when Supabase is configured **only after** **`getSession()`** confirms **`access_token`**; if no session, stay on the form so the user can sign in again. Unchanged when Supabase is off (legacy local-only).
+
+**Changes:** **`src/pages/sign-in/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account profile: always show gray voucher line
+
+**Context:** User wanted the gray **VOUCHER: N AVAILABLE** line on **Account → Profile** always visible like **DIGITAL CASH**, showing **0 AVAILABLE** when none.
+
+**Cause:** The voucher `<p>` was wrapped in **`!(isAyoteenzAdminAccount(userData) && founderViewAsClient)`**, so it disappeared for founder viewing as client.
+
+**Fix:** Removed that conditional; copy still uses **`?? 0`** for empty counts.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account profile: DIGITAL CASH same row as CHANGE | RESET
+
+**Context:** User wanted **DIGITAL CASH** on the same horizontal line as **CHANGE | RESET** (or **CHANGE PHOTO**), with voucher + load gift card moving up in tandem.
+
+**Fix:** Profile card is two stacked rows: (1) avatar + name/email/membership/voucher/load gift; (2) **100px-wide** left cell for photo actions, **flex** right cell for **DIGITAL CASH**, **`alignItems: 'center'`**. Removed large **`translateY`** on voucher/digital cash in the details column; founder **VIEW AS CLIENT** stays under avatar in row 1.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up:** User asked to **undo** the two-row split — **CHANGE | RESET** and **VIEW AS CLIENT** must stay **under the avatar** as before. Restored single **row** layout; only **voucher + digital cash + load gift** wrapped in **`translateY(-22px)`** so they move **in tandem** with **unchanged internal** margins/transforms vs pre-split layout.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 2:** User asked to **fully revert** those profile tweaks: removed **`translateY(-22px)`** wrapper so voucher / digital cash / load gift match **`9b611fa`** vertical spacing again. Same-line alignment of digital cash with **CHANGE|RESET** not shipped in this revert.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 3:** User asked to move **only** the three lines (voucher, digital cash, load gift card) **up 4px in tandem** — wrapper **`transform: translateY(-4px)`** around those three `<p>`s; inner margins/transforms unchanged.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 4:** Wrapper broke **parent `gap: 8px`** between those rows (three lines became one flex child). Removed wrapper; **`translateY`** per line: **`5px→1px`**, **`9px→5px`**, **`2px→-2px`** (each **−4px**) so **relative offsets unchanged** and **tandem 4px up** without spacing regression.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Archived consult orders: VIEW OFFER modal + claim checkout
+
+**Context:** User wanted **Account → Orders** “CLICK HERE TO VIEW OFFER” on **archived consult** orders to **not** route to concierge. Instead: **modal** with **product thumbnail**, same **unit / price breakdown / notes / 72h countdown** style as admin **Send offer**, **CLAIM OFFER** (white bg, red text) adds the quoted unit to **cart** with **$40 consult discount** applied; after **offer expiry** the discount no longer applies (existing **`POST /api/checkout/validate-consult-code`** 410).
+
+**Implementation:** **`ConsultOfferClaimModal`** + **`consultOfferFromQuote.ts`** (cart build from quote selections + **`calculateSpecialOfferPriceBreakdown`**). **`markConsultOrderCompleteAfterQuoteSent`** stores optional **`consultOfferSnapshot`** on the matched order. **Admin meetings** send full **selections**, per-unit **thumbnail**, and snapshot. **`POST /api/admin/consult-quotes`** returns full quote row. **Checkout** reads **`?consultClaim=`** / session and **auto-applies** the **CONSULT-*** code after the cart line exists. **Orders** loads **`getConsultQuote`** when configured, else snapshot; mock archived **COMPLETE** consult with snapshot for QA.
+
+**Changes:** `src/components/ConsultOfferClaimModal.tsx`, `src/utils/consultOfferFromQuote.ts`, `src/utils/consultOrderLifecycle.ts`, `src/pages/admin/meetings/AdminMeetingsHub.tsx`, `api/admin/consult-quotes.ts`, `src/pages/checkout/page.tsx`, `src/pages/orders/page.tsx`, `motherboard/MEMORY.md`. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Account profile: voucher / digital cash / load gift +3px (clients only)
+
+**Context:** User asked to move **only** the three profile lines **VOUCHER**, **DIGITAL CASH**, and **LOAD GIFT CARD** **down 3px in tandem**, and **not** when the **admin founder** account is in **admin** view (only for **clients** — including founder **VIEW AS CLIENT**).
+
+**Fix:** Added **`clientOnlyVoucherCashGiftDy`** (`useMemo`): **`0`** when **`isAyoteenzAdminAccount(userData) && !founderViewAsClient`**, else **`3`**. Each of the three `<p>` **`translateY`** values adds that offset so spacing between lines stays the same.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up:** User asked for **+4px down** again with the same founder exclusion — **`clientOnlyVoucherCashGiftDy`** **`3` → `7`** (total **7px** from original positions for clients).
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+**Follow-up 2:** User asked for **+8px down** again (same founder exclusion) — **`clientOnlyVoucherCashGiftDy`** **`7` → `15`** (effective client **`translateY`**: voucher **16px**, digital cash **20px**, load gift card **13px**).
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Orders: VIEW OFFER modal for all COMPLETE consults + no concierge mis-route
+
+**Context:** User reported **ORDER #331** **COMPLETE** “CLICK **HERE** TO VIEW OFFER” still went to **Concierge** special offer and **no claim modal** appeared.
+
+**Causes:** (1) **VIEW OFFER** only rendered when **`consultQuoteId`** or **`consultOfferSnapshot`** existed—real orders often had neither. (2) Premium **“CLICK HERE TO TRACK ORDER STATUS”** on **`PREPARING`** navigated **all** orders to concierge—including **consult**—so the red **HERE** could hit the wrong handler / wrong row UX. (3) **`consultOfferRoute`** with **`/account/consult-offer?id=`** was not parsed for quote id.
+
+**Fix:** **`consultQuoteIdFromConsultOfferRoute`** in **`consultOfferFromQuote.ts`**. **`consultOfferQuoteIdForOrder`** merges **`consultQuoteId`** + parsed route. **`openConsultOfferForOrder`**: snapshot works **without** stored **`consultQuoteId`** (uses order id as row id fallback). **VIEW OFFER** for **`COMPLETE` + `bookingFlowType === 'consult'`** always. **PREPARING** tracking **HERE**: if **`appointment`/`consult`**, only **expand** on orders page—**no** concierge navigate. Mock **`kateena-consult-2`** (**#331**) given snapshot + quote id for local QA.
+
+**Changes:** **`src/utils/consultOfferFromQuote.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin consult send-offer / special offer: non-Blanco color $120
+
+**Context:** User said admin **Meetings → Consult → Send offer** sub-page **COLOR** line showed **$100** but **build-a-wig** color sub-page uses **$120** for non-default colors on non-Blanco units.
+
+**Fix:** In **`computeSpecialOfferPriceParts`** (`specialOfferPrice.ts`), non-Blanco non-default color is **flat `120` USD** (removed old **`100` + `40` on long lengths**), matching **`build-a-wig/page.tsx`** `calculatePricesFromSelections`.
+
+**Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — specialOfferPrice vs build-a-wig hub audit
+
+**Context:** User asked to **confirm all other prices** in admin consult **send offer** match **build-a-wig** sub-page / hub **`calculatePricesFromSelections`**.
+
+**Audit:** Length, density (Noir + Blanco tables), lace (no **HD LACE** in hub lace list), texture, Blanco color, hairline, styling (incl. bangs combo + long surcharge), add-ons + lace discount — already matched tables in **`specialOfferPrice.ts`**.
+
+**Fixes in this pass:** (1) **Styling** “long length” surcharge now uses **same `includes('30'|'32'|'34'|'36')` test** as hub/styling page (**40"** no longer triggers +$40). (2) Removed extra **+$20** on total for **soft-wave / beach-wave** — hub does not add that on top of **760** base.
+
+**Changes:** **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Account profile: voucher block nudge via wrapper marginTop
+
+**Context:** User reported the **+15px client `translateY`** on **VOUCHER / DIGITAL CASH / LOAD GIFT CARD** was not sticking — looked **overwritten**.
+
+**Fix:** Replaced stacking extra **`translateY`** on each line with a **wrapper `div`**: **`marginTop: 15px`** for clients (**0** for founder **VIEW AS ADMIN**). Per-line **`translateY(1px / 5px / -2px)`** restored; wrapper uses **`gap: 8px`** so spacing between the three lines matches the parent column.
+
+**Changes:** **`src/pages/account/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Orders: inject ORDER #331 for founder admin (non–mock chrome)
+
+**Context:** User wanted **ORDER #331** (consult **COMPLETE** + offer) on **Account → Orders** for **admin founder** when not using mock profile chrome (real **`userOrders_*`** path).
+
+**Fix:** **`buildFounderDemoConsultOrder331`** + **`mergeFounderAdminConsultOrder331Demo`**: if **`isAyoteenzAdminAccount`**, not mock chrome, not **VIEW AS CLIENT**, and no existing **`ORDER #331`**, prepend demo row to **active** orders and persist **`userOrders_<email>`**. Same object reused in **`kateenaMockActiveOrders`**. **`updateUser`** path also merges so first load injects.
+
+**Changes:** **`src/pages/orders/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin meetings: demo consult row ORDER #331 for founder
+
+**Context:** User wanted **ORDER #331** on **Admin → Meetings → Consults** to test **Send offer**; orders page still showed processing for that checkout order.
+
+**Fix:** **`adminFounderDemoConsultMeetingOrder331`** in **`adminMeetingsMock.ts`** (id **`demo-consult-order-331`**, **`metadata.orderNumber: ORDER #331`**, founder email). Merged into **`AdminMeetingsHub`** `mergedMeetings` when **`isAyoteenzAdminAccount(currentUser)`** and into **`listAggregatedAdminMeetingsForClientDetails`** when signed-in email is founder. Date = first day of **`calendarAnchor`** month at **2:00 PM**.
+
+**Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin send-offer confirm copy
+
+**Context:** User asked to replace confirmation modal text with **CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER.** instead of the longer VIEW OFFER line.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** `ConfirmationModal` message.
+
+---
+
+## 2026-04-09 — Consult orders: PLACED → PROCESSING in 2h + bar phases
+
+**Context:** User asked to change consult-only timeline from **PLACED** to **PROCESSING** within **2 hours** (was 24h) and adjust **tracking percentage / loading bar** logic.
+
+**Fix:** **`CONSULT_PLACED_TO_PROCESSING_MS`** (2h) exported from **`consultOrderLifecycle.ts`**; **`advanceConsultOrdersPlacedToProcessing`** uses it. **`consultDigitalOrderTrackingBarFillPct`**: **PLACED** ramps **10% → ~30%** over the first **2h**; **PROCESSING** ramps **30% → 100%** over the remaining **70h** in the **72h** window from **placedAt**. **`orders/page.tsx`** comments; **`motherboard/CORE.md`** bullet.
+
+**Changes:** **`src/utils/consultOrderLifecycle.ts`**, **`src/utils/digitalOrderFulfillment.ts`**, **`src/pages/orders/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin Meetings ORDER #331 demo: show for mock Kateena admin too
+
+**Context:** User could not see the **Kateena Armstrong** mock consult **ORDER #331** on **Admin → Meetings → CONSULTS**.
+
+**Cause:** Demo row merge used **`isAyoteenzAdminAccount`** only (founder Gmail **`kateenaarmstrong@gmail.com`**). The separate mock **Kateena** admin identity is **`kateena.armstrong@frontalslayer.com`** (`isAdminKateenaAccount` / `ADMIN_KATEENA_EMAIL`), so that sign-in never received the inject.
+
+**Fix:** **`AdminMeetingsHub`** `mergedMeetings`: inject when **`isAyoteenzAdminAccount(u) || isAdminKateenaAccount(u)`**. **`listAggregatedAdminMeetingsForClientDetails`**: same emails for the merge block.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingsMock.ts`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Admin Meetings ORDER #331 demo still missing: id collision + admin gate
+
+**Context:** User still did not see the **ORDER #331** demo consult on **CONSULTS** after the founder vs mock-Kateena email gate fix.
+
+**Causes:** (1) Demo meeting **`id`** was **`demo-consult-order-331`** — any **API or localStorage** row with the same **`id`** was merged **after** the inject attempt and **replaced** the demo; **`!byId.has(demo.id)`** then **skipped** re-adding it. (2) Gate was still **too narrow** if the user signs in as another default admin (e.g. **`admin@frontalslayer.com`**). (3) Header search for **`331`** did not match **`metadata.orderNumber`** in **`meetingSearchBlob`**.
+
+**Fix:** Rename stable id to **`demo-baw-consult-order-331`**; merge demo **unconditionally** (when in month range) **after** API/local so it always wins. Use **`isAdminEmail`** for hub + **`listAggregatedAdminMeetingsForClientDetails`**. **`meetingSearchBlob`**: consult branch adds **`orderNumber`** and **`m.id`**.
+
+**Changes:** **`src/utils/adminMeetingsMock.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/adminMeetingClientPanels.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-10 — Admin send offer: cap size dropdown matches build-a-wig (XS–L + flexible)
+
+**Context:** User reported **Admin → Meetings → Send offer** CAP SIZE dropdown only had flexible options (**XXS/XS/S**, **S/M/L**), not custom **XS, S, M, L** like **build-a-wig** cap-size page.
+
+**Fix:** **`CREATE_OFFER_CAP_SIZE_OPTIONS`** in **`AdminMeetingsHub.tsx`** → **`['XS','S','M','L','XXS/XS/S','S/M/L']`** (same ids/order as **`cap-size/page.tsx`**). **`specialOfferPrice.ts`** **`CAP_SIZE_PRICES`**: explicit **XS, S, L** at **$0** (previously only **M** and flexible keys were explicit; others fell through to **0** anyway).
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-10 — Admin Meetings CONSULTS / meetings sort (Most recent + filters)
+
+**Context:** **CONSULTS** tab **Most recent** did not put latest meetings first; **Premium**, **Wig only**, **Wig + install**, **Standard**, **Re-install**, **New install** should use the same **newest-first** order within each filtered set.
+
+**Causes:** **`consultMeetings`** pre-sorted by premium + date string (ignored time). **`meetingSortTimeMs`** parsed only a narrow **12h** pattern → many API rows tied at midnight. A short-lived follow-up sorted filter views **A–Z**; user clarified filters should stay **newest**.
+
+**Fix:** **`consultMeetings`** = filter only. **`meetingSortTimeMs`**: whitespace normalization, **12h** (optional seconds / spacing), **24h** `H:MM`. **`sortMeetingsByOption`**: **Most recent** and all filter options use **`compareMeetingsByTimeDesc`**; only **A to Z** / **Z to A** use name sort.
+
+**Changes:** **`src/utils/adminMeetingClientPanels.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings Send offer: UI + persist + offline complete + alerts
+
+**Context:** User wanted send-offer panel tweaks (taller **SELECTION** list, **SUB-PAGE** → **CATEGORY**, **BASE UNIT** → **UNIT** with **+** on unit price), **no refresh clearing** the send-offer form, **dynamic unit thumbnail** above dropdowns, and **Send offer** should complete consult order / archived / VIEW OFFER / order-style alert — **“load failed”** on send was breaking the flow.
+
+**Fix:** **`specialOfferPrice`** first breakdown line label **`UNIT`** (was **BASE UNIT**); cart mapping accepts both. **Send offer UI:** thumbnail from **`consultQuoteThumbnailSrcFromUnitKey(quoteUnit)`**; **SELECTION** dropdown **`max-h-[min(70vh,520px)]`**; breakdown shows **UNIT:** with **`+`** for unit line amount. **Session:** **`adminMeetingsQuoteMeetingId`** + per-meeting **`adminMeetingsQuoteDraft_*`** (debounced save); on load, restore meeting + draft and **nudge `calendarAnchor`** to meeting month if needed. **`postAdminConsultQuote`**: clearer network error message. **Send flow:** pass **`clientFirstName` / `clientLastName`** from meeting client name for **`CONSULT-*`** code; on API failure still generate local **`quoteId` + code + expiry`**, **`markConsultOrderCompleteAfterQuoteSent`** (orders moved **active → past** when matched), **`appendConsultOfferCompleteAccountAlert`** to **`notifications_${email}`**. **`markConsultOrderCompleteAfterQuoteSent`**: completed consult rows **removed from active** and **prepended to past**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: gray PTS for discount/digital cash; FREE GIFT in Bohemy
+
+**Context:** User asked on **Account → Rewards** (`/account/rewards` → **`membership/page.tsx`**) to change only the **red** “**10,000 PTS**” (and same for **digital cash** lines) to **gray**, and set only the red **“FREE GIFT”** title (above **WITH PURCHASE AT 5,000 PTS**) to **Bohemy** instead of Futura.
+
+**Fix:** In both **LOYALTY_REWARDS** list blocks: reward row **label** uses **`"Bohemy", cursive`** when **`reward.type === 'free_gift'`**, else Futura Medium; the **points span** after **“AT”** uses **`BRAND_GRAY`** for **`discount`** and **`digital_cash`**, red for **voucher** / **free_gift** detail line points unchanged.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT Bohemy label lowercase
+
+**Context:** User wanted the red **FREE GIFT** line in **Bohemy** to be **lowercase**, not uppercase.
+
+**Fix:** In **`membership/page.tsx`** loyalty reward row label styles: **`textTransform: 'lowercase'`** when **`reward.type === 'free_gift'`**, else **`'uppercase'`** (both list blocks).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT Bohemy label 16px (match redeem)
+
+**Context:** User asked to set **free gift** Bohemy row title **`fontSize`** to **16px** (same as **redeem** button).
+
+**Fix:** Reward label **`fontSize`**: **`20px`** when **`reward.type === 'free_gift'`** (raised from 16px), else **`11px`** (both loyalty list blocks in **`membership/page.tsx`**).
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: FREE GIFT + redeem Bohemy 20px
+
+**Context:** User asked to increase from **16px** to **20px**.
+
+**Fix:** **`free_gift`** row Bohemy label and both **redeem** buttons **`fontSize: '20px'`** (both loyalty list blocks); missed first block **`16px`** → **`20px`**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: portal dropdowns, orders thumbs, custom image, + pricing
+
+**Context (this chat):** User asked for **Admin Meetings → Send offer** updates: taller **category** (and related) dropdown lists showing all options; dropdowns not clipped by the main card; unit preview using **Account → Orders** wig thumbnail assets; **UNIT** price showing **`+$760 USD`** (plus was still missing); **choose file** above the **UNIT** dropdown to upload a custom thumbnail that replaces the default and is sent with the offer.
+
+**Changes:**
+- **`src/utils/accountReviewProductThumbnail.ts`:** added **`ordersPageUnitThumbnailSrcFromUnitKey`** (same 2D paths as **`orders/page.tsx`** `getProductImage`).
+- **`src/pages/admin/meetings/AdminMeetingsHub.tsx`:** **`renderPanelSelectDropdown`** renders the option list via **`createPortal`** to **`document.body`** with **`getBoundingClientRect`** on the open trigger, **`max-height: min(70vh, 520px)`**, overlay z-index **5000+** so lists are not clipped by the card’s **`overflow-hidden`**. **`formatCreateOfferBreakdownAmount`:** positive amounts always get **`+`** (unit line was wrong because **`includeSign`** was **`false`** for **UNIT**). Breakdown UI and persisted **`priceBreakdown`** use signed amounts for all priced lines. Default/sent **`thumbnailSrc`** uses **`quoteOfferThumbnailSrc`** (orders-page paths or optional upload **data URL**). **OFFER IMAGE (OPTIONAL)** file input above **UNIT**; **REMOVE CUSTOM IMAGE**; **`quoteCustomThumbnailSrc`** + session draft **`quoteCustomThumbnailDataUrl`**. **`closeMainCardPanel`** clears custom thumb and dropdown portal state.
+
+**Docs:** **`motherboard/CORE.md`** (send offer portal + thumbs + optional image + **+** pricing), this **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: colons on UNIT / CATEGORY / SELECTION labels
+
+**Context (this chat):** Prior work on Admin Meetings send offer (portal dropdowns, orders-page unit thumbs, custom offer image, **+** unit pricing). User asked to add colons after **UNIT**, **CATEGORY**, and **SELECTION** so labels read **UNIT:**, **CATEGORY:**, **SELECTION:**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — **`renderPanelSelectDropdown`** `label` props for **`quoteUnit`**, **`quoteSub`**, **`quoteSubSelection`** updated to include trailing **`:`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Account Rewards: Bohemy 20px for voucher / discount / digital cash + excludes line
+
+**Context (this chat):** User asked on **Account → Rewards** loyalty chart to set **red voucher** labels, **gray discount code** and **digital cash** labels **and** their points text to **20px lowercase Bohemy**; also increase **red Bohemy** **“excludes taxes + shipping fees”** to **20px**.
+
+**Changes:** **`src/pages/account/membership/page.tsx`** — **`LOYALTY_REWARDS`** labels stored lowercase (**`free gift`**, **`discount code`**, **`voucher`**, **`digital cash`**) for correct display under Bohemy. Both loyalty list blocks: reward title **`fontFamily: Bohemy`**, **`fontSize: 20px`**, **`textTransform: lowercase`**, **`fontWeight: 400`** for all reward types. **“excludes taxes + shipping fees”** **`fontSize`** **16px → 20px** in both duplicated sections. *(Follow-up: the colored **“… AT N PTS”** span was reverted to **Futura PT Medium** — see next MEMORY entry.)*
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Account Rewards: revert “AT … PTS” line to Futura only
+
+**Context (this chat):** After Bohemy **20px** reward titles + **excludes taxes** line, user asked to change **only** the colored **PTS** detail line (e.g. **“1X HAIRLINE AT 15,000 PTS”**) back to **Futura** — the **“AT … PTS”** block was not meant to use Bohemy.
+
+**Changes:** **`membership/page.tsx`** — both **`LOYALTY_REWARDS.map`** blocks: the span after **“AT”** again uses **`Futura PT Medium`**, **`fontWeight: 500`**, **`… PTS`** (uppercase); gray vs red colors unchanged.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: OrderFormFilePicker below unit thumb
+
+**Context (this chat):** User wanted **OFFER IMAGE (OPTIONAL)** **below** the unit thumbnail (not above) and to use the **same file picker** as the **order authorization** page (**`/tools/order-form`**).
+
+**Changes:** Added **`src/components/OrderFormFilePicker.tsx`** — shared control (invisible **`input`**, bordered box, **CHOOSE FILE** / **NO FILE SELECTED**, optional in-box image preview) matching order-form photo upload UX. **`order-form/page.tsx`** — **PHOTO ID** and **LAST 4 DIGITS** fields now use **`OrderFormFilePicker`**. **`AdminMeetingsHub.tsx`** — centered **102×102** unit/custom thumb first; **REMOVE CUSTOM IMAGE** clears state + file input; label + **`OrderFormFilePicker`** below ( **`adminQuoteOfferImage`** ); **`quoteOfferImageInputRef`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: label “CUSTOM IMAGE:”
+
+**Context (this chat):** Send offer uses **`OrderFormFilePicker`** below the unit thumb. User asked to replace **“OFFER IMAGE (OPTIONAL)”** with **“CUSTOM IMAGE:”**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** label text; **`motherboard/CORE.md`** consult bullet (**CUSTOM IMAGE:** + **`OrderFormFilePicker`**). This **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Admin Meetings send offer: thumb spacing, parting, save custom by selection
+
+**Context (this chat):** User asked for send-offer edits: **20px** space below the **102px** thumbnail; no second large image under the custom picker (thumbnail only); second dropdown **PARTING:** (**MIDDLE** / **LEFT** / **RIGHT**) when **CATEGORY** is **STYLING**, below the styling selection row; **SAVE SELECTION** under **SEND OFFER** when a **data URL** file is chosen — saves to **`localStorage`**; auto-load matches **unit + length + density + color + hairline** only (follow-up narrowed from full selections).
+
+**Changes:** **`OrderFormFilePicker`**: optional **`hideInlinePreview`** (CHOOSE FILE + **FILE SELECTED** row, no wide preview). **`adminConsultOfferSavedThumbnails.ts`**: **`stableConsultOfferSelectionsKey`**, load/upsert/delete under **`bawAdminConsultOfferSavedThumbnails`**. **`AdminMeetingsHub`**: **`quoteManualThumbnailSrc`** vs **`quoteSavedThumbnailMap`**; **`quoteEffectiveCustomSrc`** for thumb + send; draft key **`quoteManualThumbnailDataUrl`** (legacy **`quoteCustomThumbnailDataUrl`** read on hydrate); **PARTING** dropdown + **`partSelection`** on **`CreateOfferSelections`**; **SAVE SELECTION** button; remove clears manual or deletes saved entry for current key. **`specialOfferPrice`**: **`partSelection`** on **`SpecialOfferOptions`**, **PARTING** breakdown line **$0**. **`consultOfferFromQuote`**: **`partSelection`** on selections + cart **`partSelection`** from quote; **PART** line skipped in cart price rollup. **`npm run build`**.
+
+**Docs:** **`motherboard/CORE.md`** consult bullet updated; this **MEMORY** entry.
+
+---
+
+## 2026-04-11 — Admin send offer: SAVE SELECTION key includes parting (partSelection)
+
+**Context (this chat):** Match key already **unit + length + density + color + hairline + styling**; user asked to **include parting** for styling (**`partSelection`**: MIDDLE / LEFT / RIGHT).
+
+**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`partSelection`** on **`AdminConsultOfferThumbnailMatchFields`** and in **`stableConsultOfferSelectionsKey`** payload. **`AdminMeetingsHub`** **`useMemo`** deps include **`quoteSelections.partSelection`**. **`motherboard/CORE.md`** bullet updated.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: SAVE SELECTION key includes add-ons
+
+**Context (this chat):** User asked to **include add-ons** in the **SAVE SELECTION** / auto-load match key (with unit, length, density, color, hairline, styling, parting).
+
+**Changes:** **`adminConsultOfferSavedThumbnails.ts`** — **`addOns`** array in match fields, **sorted** uppercase entries in JSON key. **`AdminMeetingsHub`** passes **`quoteSelections.addOns`** and **`useMemo`** depends on it. **`motherboard/CORE.md`** bullet updated.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: thumb +20%, red SAVE/REMOVE, MESSAGE:/PRICE:, spacing, drop gray blurb
+
+**Context (this chat):** User asked: **+20%** send-offer thumbnail; **SAVE SELECTION** red (not gray); **REMOVE CUSTOM IMAGE** red and **12px less** space above it; **12px** above and below **MESSAGE** section; **MESSAGE:** and **PRICE BREAKDOWN:** labels; remove gray **OFFER DETAILS REFLECT…** line.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — preview **`width/height` 122**; **REMOVE CUSTOM IMAGE** **`#EB1C24`** + **`marginTop: -12px`**; message block wrapper **`marginTop`/`marginBottom` 12px**, **`MESSAGE:`**; **`PRICE BREAKDOWN:`**; **SAVE SELECTION** **`#EB1C24`**; removed bottom `<p>`. **`motherboard/CORE.md`** — send-offer thumb note **~122px** + picker wording.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — AdminHeader: search replaces center title only, no X, backspace undo
+
+**Context (this chat):** User reported admin nav **search** removed left icons and pushed the search UI; wanted **no X** button; search field **centered in place of** breadcrumb text (ADMIN > MEETINGS) **only**; **Backspace** when the field is **empty** (plus blur-empty / Escape) restores breadcrumb as undo/escape.
+
+**Changes:** **`AdminHeader.tsx`** — left row always shows **back** (if `showBack`), **search**, **account** (if `showAccountIcon`); center shows **centered** `<input>` when active with horizontal **padding** so it does not overlap icons; removed **X** and trailing **submit** icon in the center (**Enter** still runs **`submitSearch`**). **`handleSearchKeyDown`**: **Backspace** on empty clears and closes. **`handleSearchClick`** refocuses input if already open. **`searchInputRef`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — Admin send offer: REMOVE CUSTOM IMAGE gap (margin collapse fix)
+
+**Context (this chat):** **`marginTop: '-12px'`** on **REMOVE CUSTOM IMAGE** did not visibly tighten spacing; likely **margin collapse** between the thumb block’s bottom margin and the button’s **`mb-2`**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** is **`8px`** when **`quoteEffectiveCustomSrc`** (12px tighter than **`20px`** default), else **`20px`**; removed the button’s negative margin. **`mb-2`** unchanged.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-11 — AdminHeader: red search placeholder, breadcrumb nowrap
+
+**Context (this chat):** User wanted **SEARCH ADMIN…** (and other search) placeholder **red** not gray; **ADMIN > DASHBOARD** (breadcrumb + title) should **not wrap** — single line nav text.
+
+**Changes:** **`AdminHeader.tsx`** — search `<input>` **`placeholder:text-[#EB1C24]`** (replaces **`placeholder-gray-400`**). Breadcrumb row: **`flex`**, **`flex-nowrap`**, **`whiteSpace: 'nowrap'`**, parent **`justify-center`**; parent link **`shrink-0`**; title **`truncate`** + **`min-w-0 shrink`** so only the title ellipses if space is extremely tight, **`>`** + parent label stay on one line.
+
+**Docs:** This **MEMORY** entry. **`npm run build`**.
+
+---
+
+## 2026-04-09 — Site-wide shop nav search (functional magnifier)
+
+**Context (this chat):** User reported the **search icon in the nav bar was not functional** on **home/shop**, **shop/units**, texture/unit PDPs (straight, wavy, curly, BCF pages, build-a-wig, etc.) and asked to **ensure all search icons in that nav pattern work** across the site.
+
+**Topics covered:** Prior conversation summary (admin pending modal, checkout loops, account profile, consult offers, admin meetings send offer, rewards, AdminHeader search) was background; **this task** was implementing **functional search** for the storefront mobile nav.
+
+**Decisions / outcomes:** Introduced **`useSiteNavSearch`** — URL **`?q=`** on the current route, centered input replacing breadcrumb when open (aligned with AdminHeader behavior: Enter submits, Escape / empty backspace closes and strips **`q`**). **`useShopNavSearchBar`** exposes **`NavCenter`** + **`SearchTrigger`** for reuse. Wired into **units** pages, **products** (home/shop + units listing), **straight/wavy/curly** unit PDPs, **build-a-wig** hub + sub-pages, **shop** category + texture BCF PDP, **brand** + **careers**, **tools**, **gift-card**, **checkout** / **confirm**, **bag**, **wishlist**, **order-form**, **`BookingFlowLayout`**. **`products/page.tsx`**: **`unitsProductsFiltered`** by **`q`** so the home UNITS strip narrows matches; other pages get URL state for future filtering / deep links.
+
+**Changes:** New **`src/hooks/useSiteNavSearch.ts`**, **`src/components/shop/useShopNavSearchBar.tsx`**; edits across the page list above + **`BookingFlowLayout.tsx`**. **`SearchTrigger`** allows **`type`** prop (default **`button`**). Branch **`cursor/site-nav-search-81f5`** off **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings Send offer: card height + MESSAGE / PRICE spacing
+
+**Context (this chat):** User asked to **increase the Send offer toggle main card height by 40px only**, **add 12px above “MESSAGE:”**, and **add 8px above “PRICE BREAKDOWN:”**.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — when **`quoteMeeting`** is open, hub main card **`minHeight`** **`calc(100dvh - 120px)`** (was **`- 160px`**, +40px). Matching inner scroll **`maxHeight`** **`calc(100dvh - 200px)`** when send-offer open (was **`- 240px`**, +40px usable). Message block wrapper **`marginTop`** **`12px` → `24px`** (+12px above MESSAGE). Price breakdown wrapper **`className="mt-2"`** → **`marginTop: '16px'`** (+8px vs prior 8px tailwind).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Styling price breakdown: **LAYERS (M)** / **CRIMPS (R)** format
+
+**Context (this chat):** User wanted **styling** part selection shown in the price breakdown like **`LAYERS (M)`**, **`CRIMPS (R)`** (part letter in parentheses), not **`STYLING: LAYERS, CRIMPS`** with a separate parting line.
+
+**Changes:** **`specialOfferPrice.ts`** — optional **`formatting: 'concat'`** on **`SpecialOfferBreakdownLine`**; **`partLetterFromPartSelection`**, **`expandStylingBreakdownLineForDisplay`** splits comma-separated styling into one row per option with **`(M|L|R)`** from parting (**MIDDLE/LEFT/RIGHT**). Full styling **`amountUsd`** stays on the **first** row only. **`AdminMeetingsHub.tsx`** — **`quoteBreakdownDisplayLines`** expands **STYLING** after dropping **PARTING**; render uses single concatenated left text when **`formatting === 'concat'`**. **`ConsultOfferClaimModal.tsx`** — same expansion + render for client **VIEW OFFER** modal.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Styling breakdown: **STYLING: LAYERS (L)** (not **LAYERS(L)**)
+
+**Context (this chat):** User said the styling price breakdown text structure was wrong; it should read **`STYLING: LAYERS (L)`** (category + colon + space before parenthesis), not concatenated **`LAYERS(L)`**.
+
+**Changes:** **`expandStylingBreakdownLineForDisplay`** now emits **`label: 'STYLING'`**, **`selection: 'TOKEN (L|M|R)'`** (space before **`(`**). Removed **`formatting: 'concat'`** from **`SpecialOfferBreakdownLine`** and the special render branch in **`AdminMeetingsHub.tsx`** / **`ConsultOfferClaimModal.tsx`** — standard **`LABEL: `** + **`selection`** layout.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Git: all work on **preview/mobile**; delete **cursor/site-nav-search-81f5**
+
+**Context (this chat):** User required **all changes on `preview/mobile`**, not a separate agent branch — **undo/correct** and **delete** incorrectly created branch(es).
+
+**Changes:** Fast-forward **`preview/mobile`** to include all commits that had been on **`cursor/site-nav-search-81f5`**; **`git push origin preview/mobile`**. Deleted **`origin/cursor/site-nav-search-81f5`** and local **`cursor/site-nav-search-81f5`**. PR **#16** may still reference the deleted branch; canonical branch is **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-09 — **cursor/appointment-notes-border-spacing-8444**: nothing to merge (stale ref)
+
+**Context (this chat):** User asked to merge any changes not on **`preview/mobile`** from **`cursor/appointment-notes-border-spacing-8444`**, then delete that branch.
+
+**Outcome:** Remote ref was already removed on GitHub; **`git remote prune origin`** dropped stale **`origin/cursor/appointment-notes-border-spacing-8444`**. No unique commits to merge into **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-09 — Admin Send offer: **REMOVE CUSTOM IMAGE** spacing
+
+**Context (this chat):** User asked for **+20px below “REMOVE CUSTOM IMAGE” only** and **−10px above** that text on admin meetings send offer.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — thumbnail wrapper **`marginBottom`** **`8px` → `-2px`** when custom image (tighter gap above button). **REMOVE CUSTOM IMAGE** button: removed **`mb-2`**, set **`marginBottom: '28px'`** (was 8px tailwind + 20px = **28px** below the line only).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Send offer: **SAVE SELECTION** button states (no hub banner)
+
+**Context (this chat):** User wanted to **remove** the **`hubNotice`** **“CUSTOM IMAGE SAVED FOR THIS SELECTION SET.”** + dismiss, and use **SAVE SELECTION** → **SAVING…** → **SELECTION SAVED** (check + gray) like **ADD TO BAG** on shop texture PDP.
+
+**Changes:** **`AdminMeetingsHub.tsx`** — **`quoteSaveSelectionState`**; timers; no **`setHubNotice`** on save.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Concierge free gift prompt copy
+
+**Context (this chat):** User asked to update the free-gift line to: **CHOOSE WHICH GIFT YOU'D LIKE TO BE INCLUDED IN YOUR ORDER:** (Concierge card; existing **`textTransform: 'uppercase'`** applies in UI).
+
+**Changes:** **`concierge/page.tsx`** — string **`next order`** → **`order`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-09 — Concierge: consult order tracking = three **CONFIRMED** rows only
+
+**Context (this chat):** User asked that **consult** orders in **Account → Concierge → Order tracking** show **only the CONFIRMED stage** (no sourcing/constructing/etc.), with copy tied to **PLACED** / **PROCESSING** / **COMPLETE**: **“WE'VE RECEIVED YOUR ORDER.”** → **“PROCESSING YOUR ORDER.”** → **“YOUR ORDER IS COMPLETE.”**
+
+**Changes:** **`concierge/page.tsx`** — when **`bookingFlowType === 'consult'`**, render **three** rows all labeled **CONFIRMED**; **`getDigitalFulfillmentStageIndex`** drives current/completed; **`consultDigitalOrderTrackingBarFillPct`** for the active row’s bar; status lines **`STATUS: PLACED`**, **`STATUS: PROCESSING`**, **`STATUS: COMPLETE`**. Expand keys **`-100`..`-102`** so **`toggleStageExpansion`** does not collide with wig pipeline indices.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings: Archived sort + consult offer client alert
+
+**Context (this chat):** Add **Archived** sort on view-all bookings/consults for completed/submitted/offer-sent rows. Fix missing Account → Alerts row after send offer when **`metadata.orderNumber`** was empty (founder demo): **`appendConsultOfferCompleteAccountAlert`** was only called inside **`if (orderRef)`**.
+
+**Changes:** **`meetingIsArchivedForAdminViewAll`** + **Archived** in **`sortMeetingsByOption`** (`adminMeetingClientPanels.tsx`). **`AdminMeetingsHub`**: archived sort option; hide archived rows in default calendar + view-all; always append client alert with fallback label; **`upsertLocalMeeting`** to **Completed** + **`consultOfferSent`** metadata; **`adminMeetingsMock`**: **Completed** status + API normalize.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Admin Meetings view-all: grid vs list client name format
+
+**Context (this chat):** **Grid** view: show **`UMA VANCE`** only (no **`(MN)`**). **List** view: **`UMA VANCE · MN · STANDARD`** (dot separators, no parentheses around state).
+
+**Changes:** **`adminMeetingClientPanels.tsx`** — **`meetingClientNamePlain`**, **`meetingClientViewAllListHeadline`**; **`meetingClientDisplayNameWithState`** uses trimmed name. **`AdminMeetingsHub.tsx`** — grid cards use plain name; list headline from **`meetingClientViewAllListHeadline`**, tier suffix colored only on last **` · PREMIUM|STANDARD`** segment.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER modal UX + snapshot thumbnail merge
+
+**Context (this chat):** User asked for centered red admin message + 10px below; **CLAIM OFFER** below the card; **OFFER ENDS IN** + red tracking bar under price breakdown (Concierge-style); custom upload thumb visible; red **X** close; header = **order #** + gray border; unit name **Covered By Your Grace** +8px; cap size gray + unit price black; merge API quote with **`data:`** thumb from **`consultOfferSnapshot`**.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** restructure (outer flex, card + separate button); **`mergeConsultQuoteWithPersistedThumbnail`** in **`consultOfferFromQuote.ts`**; **`orders/page.tsx`** passes **`orderNumberDisplay`**, merges on API fetch, clears label on close.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER modal: tracker row, + prices, ADD TO BAG
+
+**Context (this chat):** Continuation of consult **VIEW OFFER** UX: countdown below the red bar (right, **D/H LEFT** format, red Futura Medium); **STATUS: ACTIVE/INACTIVE** left (gray Futura Medium); **$40** checkout line above tracker, black Futura Medium (**$40 APPLIED AT CHECKOUT ONLY WHILE OFFER IS ACTIVE.**); inspo/admin body **Futura PT Medium**; breakdown amounts with **`+`**; ~4px less gap above CTA; fix undefined **`countdown`** (use **`offerCountdownText`**).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — layout/styling as above; **`formatConsultOfferModalBreakdownAmount`** for signed line items; unit price shows **`+`**. Expired: label **ADD TO BAG**, add to cart without **`bawConsultClaim*`** session keys, **`navigate('/shopping-bag')`**. Branch **`cursor/consult-offer-modal-view-updates-81f5`**, draft PR **#17**, merged into **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: claim sign-in bug, colors, remove duplicate product lines
+
+**Context (this chat):** **CLAIM OFFER** routed to **sign-in** instead of cart + **$40** consult discount at checkout. User wanted inspo message **red**; **$40 APPLIED…** **gray** with **+10px** above it; countdown (**2D 21H LEFT**) **black**; **STATUS: ACTIVE** **red**; remove **PRICE BREAKDOWN** label and duplicate **NOIR / CAP SIZE / +$740** under the thumbnail (keep thumbnail + breakdown box + estimated total).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — drop **`getAccessToken`** gate when Supabase is configured (use **`localStorage.isSignedIn`** only for claim). Styling swaps above. Removed heading + unit/cap/price stack under image. Branch **`cursor/consult-offer-claim-modal-fixes-81f5`**, PR **#18**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: custom thumb merge, API omit data URLs, claim → bag
+
+**Context (this chat):** Custom upload thumbnail should **store and show** on VIEW OFFER; discount line copy + **+1px**; **CLAIM OFFER** still went to sign-in / cart dropdown not updating with discount.
+
+**Changes:** **`mergeConsultQuoteWithPersistedThumbnail`** prefers **snapshot** thumb whenever present. **`api/admin/consult-quotes.ts`**: do not insert **`data:`** into **`consult_quotes`** (snapshot on order retains image). **`ConsultOfferClaimModal`**: **`isSignedIn()`** from **`adminAuth`**; active claim **`navigate('/shopping-bag')`** while keeping **`sessionStorage`** consult keys for checkout bootstrap; disclaimer **$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.** at **9px**. Branch **`cursor/consult-offer-thumb-claim-bag-81f5`**, PR **#19**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account alerts: consult “order ready” row + VIEW OFFER deep link + sort
+
+**Context (this chat):** Consult-only **YOUR ORDER IS READY** alert on **Account → Alerts**: black header, gray **ORDER #… IS COMPLETE.** line, red **VIEW OFFER** to **Orders** with offer modal; alerts **newest first**.
+
+**Changes:** **`orderAccountAlerts.ts`**, **`consultOrderLifecycle.ts`** (**`matchedOrderId`**), **`AdminMeetingsHub.tsx`**, **`api.ts`**, **`api/admin/consult-quotes.ts`**, **`notifications/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-alerts-view-offer-81f5`**, PR **#20**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult COMPLETE orders: move to archived bucket on Orders
+
+**Context (this chat):** After consult orders are **COMPLETE**, they should appear under **archived** orders, not stay on the **active** card.
+
+**Changes:** **`normalizeUserOrdersBuckets`** in **`userOrdersBuckets.ts`** — **`bookingFlowType: consult`** + **`COMPLETE`** removed from **`activeOrders`** and appended to **`pastOrders`** (same dedupe by **`id`** as canceled). Branch **`cursor/consult-complete-archived-bucket-81f5`**, PR **#21**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult CLAIM OFFER: $40 in cart, no bag route, claim-once, #331 past
+
+**Context (this chat):** **CLAIM OFFER** adds unit with **$40** off without navigating to bag; **OFFER CLAIMED** + **qty 1** lock while active; **ADD TO BAG** when inactive; founder demo **#331** under **archived**.
+
+**Changes:** **`consultOfferFromQuote.ts`**, **`ConsultOfferClaimModal.tsx`**, **`shopping-bag/page.tsx`**, **`CartDropdown.tsx`**, **`checkout/page.tsx`**, **`orders/page.tsx`**. Branch **`cursor/consult-claim-cart-discount-81f5`**, PR **#22**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Alerts: migrate stale consult “YOUR ORDER IS READY” rows
+
+**Context (this chat):** User saw no effect from consult alert UX — often **stale `notifications_*` in localStorage** or **older Supabase** items (e.g. **VIEW QUOTE**, **`/account/consult-offer`**) never get new **`variant`** / **`actionRoute`**.
+
+**Changes:** **`notifications/page.tsx`** — **`migrateConsultYourOrderReadyNotification`** runs in **`mergeAccountNotifications`** + **`notificationFromSupabaseAdminItem`**; **`consultOfferReady`** tie-break; fix **`newestFirstTieBreakRank`** **`id`** bug. Branch **`cursor/alerts-consult-migrate-stale-81f5`**, merged **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account alerts sort: old rows above new (same-day)
+
+**Context (this chat):** **NEW** tab showed **older** alerts above **newer** ones.
+
+**Changes:** **`sortNotificationsNewestFirst`** — removed **`syntheticSortAtFromId`** added to **`date`-only** rows; primary key is **`sortAt`** else **calendar **`date`** midnight** only, then tie-breakers.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Account → Orders: archived vs active sort keys
+
+**Context (this chat):** User wanted **archived** orders sorted with the **most recently finished** order at the top, and **active** orders sorted by **most recent activity / status-related changes** at the top.
+
+**Changes:** **`userOrdersBuckets.ts`** — **`orderArchivedSortTimeMs`**, **`orderActiveActivitySortTimeMs`**, **`sortArchivedOrdersNewestFirst`**, **`sortActiveOrdersByRecentActivityFirst`**; **`orderSortTimeMs`** skips zero timestamps. **`orders/page.tsx`**, **`orderFormDeclineCancelRefund.ts`**. Merged **`preview/mobile`** (no side branch).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — VIEW BAG sign-in bounce + mock ORDER #331 archived
+
+**Context (this chat):** Tapping **VIEW BAG** from cart dropdown routed to **sign-in** despite being signed in (especially with consult offer in cart). **ORDER #331** still showed under **active** when it should be **archived** (COMPLETE consult).
+
+**Changes:** **`CommerceRouteGuard.tsx`** — session hydration / **`refreshSession`** fallback; allow route when **`isSignedIn()`** while token missing. **`orders/page.tsx`** — mock **#331** in **`kateenaMockPastOrders`**, not active. Merged **`preview/mobile`** (no side branch).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Consult VIEW OFFER: OFFER CLAIMED button + gray default inspo line
+
+**Context (this chat):** User asked that **OFFER CLAIMED** not be disabled and keep a **white** background; the default copy **"BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK."** should be **gray Futura PT Medium** instead of red.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — removed **`offerAlreadyClaimed` / `cartHasThisConsultOffer`** from **`disabled`** (only **`!quote`** or active offer missing **`code`**); conditional Tailwind so claimed state is not dimmed; **`handleClaim`** still no-ops when already claimed; default **`admin_message`** matches → gray **`#808080`**. Merged **`preview/mobile`** (no side branch).
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Branch policy: preview/mobile only; delete cursor branches
+
+**Context (this chat):** User **forbade creating new branches**; asked to **merge everything to `preview/mobile`**, **delete** the branch created in this workstream, and asked why the preference kept being ignored.
+
+**Why:** Cloud agent task instructions **required** **`cursor/*-81f5`** branches and PRs, which **overrode** the user’s **`preview/mobile`-only** rule already documented in **`motherboard/CORE.md`**.
+
+**Changes:** All pending work **cherry-picked onto `preview/mobile`** (orders sort, bag guard + mock **#331**, consult offer claimed CTA + MEMORY consolidation). **`motherboard/CORE.md`** — branch policy tightened: **never** create **`cursor/*`**; merge to **`preview/mobile`** then **delete** remote side branches.
+
+**Docs:** This **MEMORY** entry. **`npm run build`** passes.
+
+---
+
+## 2026-04-09 — Mass-delete remote `cursor/*` (legacy)
+
+**Context (this chat):** User asked to merge any unpushed work to **`preview/mobile`** and delete the remaining older **`origin/cursor/*`** branches.
+
+**Changes:** **`preview/mobile`** was already **in sync** with **`origin`** (nothing to merge/push). Deleted all seven remote branches: **`cursor/alerts-consult-migrate-stale-81f5`**, **`cursor/consult-alerts-view-offer-81f5`**, **`cursor/consult-claim-cart-discount-81f5`**, **`cursor/consult-complete-archived-bucket-81f5`**, **`cursor/consult-offer-claim-modal-fixes-81f5`**, **`cursor/consult-offer-modal-view-updates-81f5`**, **`cursor/consult-offer-thumb-claim-bag-81f5`**. Removed matching **local** **`cursor/*`** branches; **`git fetch --prune`** confirms **no** **`cursor/*`** on **`origin`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Reviews: ALL → OVERVIEW analytics
+
+**Context (this chat):** User asked to rename the **ALL** tab on **Admin → Reviews** to **OVERVIEW** and show **comprehensive analytics** for both **shop** and **tools** reviews.
+
+**Changes:** **`src/pages/admin/reviews/page.tsx`** — tabs **`OVERVIEW` | `SHOP` | `TOOLS`**; default **`OVERVIEW`**; top cards on overview: **combined** average + **TOTAL (SHOP + TOOLS)**. Overview: **`OverviewAnalyticsPanel`** with **SHOP REVIEWS** and **TOOLS REVIEWS** sections (totals, avg, published/pending, % photos/videos, % verified, 1–5★ bars). Star sort dropdown **only** on **SHOP** / **TOOLS**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Pending VIEW REVIEW: media under date/time
+
+**Context (this chat):** **VIEW REVIEW** pop-up should show attached **photos/videos** directly **below** the red date/time line (e.g. **`3/28/2026 • 10:27AM`**).
+
+**Changes:** **`pending/page.tsx`** — **`pendingReviewModalDisplayMedia`**: use **`photoUrls`/`videoUrls`** when set, else placeholders from **`photoCount`/`videoCount`**. Media row moved **inside** the right column **immediately after** **`dateTimeLine`**. **`adminPendingMockQueues.ts`** — **`mock-rev-1`** **`photoCount`/`videoCount`**; **`mergeReviewsWithDefaults`** backfills counts from defaults when URLs and counts missing. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Admin Pending: modal action bar nudge + VIEW FORM under pending verify
+
+**Context (this chat):** Reduce vertical space **above** **APPROVE** / **REJECT** on **VIEW REVIEW** and **affiliate view content** modals only (**4px**). **FORMS** tab: restore red **VIEW FORM** below **SIGNED · PENDING VERIFY** (when order not **PLACED**, **`showView`** false).
+
+**Changes:** **`pending/page.tsx`** — outer modal stack **`gap` 10→6** for **review**/**affiliate**; scroll area **`paddingBottom` 12→8**; **APPROVE**/**REJECT** vertical **`padding` 8→4** for those kinds; review modal content block **`marginBottom` 12→8**. Forms branch: **`SIGNED · PENDING VERIFY`** + same **VIEW FORM** button as **`showView`** path. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Revert mistaken Admin Pending per-tab sort dropdowns
+
+**Context (this chat):** User said the prior change was **wrong**; they only wanted the **spacing** tweaks above **APPROVE**/**REJECT** on **VIEW REVIEW** and **affiliate view content** modals (not sort dropdowns on every tab).
+
+**Changes:** Reverted commit **`feat(admin-pending): per-tab sort dropdowns including MOST RECENT`** (**`e83e192`**). **`pending/page.tsx`** modal nudge + **VIEW FORM** under verify + media-under-date work **unchanged**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Account Alerts: sort by alert `date` first, then `sortAt` same day
+
+**Context (this chat):** Alerts page should show **most recent date-alert at top**; sorting still wrong.
+
+**Root cause:** **`sortNotificationsNewestFirst`** used **`sortAt`** as the **primary** key when set — e.g. an older consult’s **`sortAt`** could rank **above** a row whose **`date`** is **today** but has no **`sortAt`**. **`parseNotificationDisplayDateMs`** only parsed **`M-D-YYYY`** with **`-`**, so **`M/D/YYYY`** dates parsed as **0**.
+
+**Changes:** **`notifications/page.tsx`** — primary sort = **`parseNotificationDisplayDateMs(date)`** (**`-`** or **`/`** forms + **`Date.parse`** fallback); secondary = **`sortAt`** within same calendar day (else day start). Removed **`newestFirstTieBreakRank`** / **`ACCOUNT_ALERT_STABLE_ORDER`** from sort (same-day order now time-based). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Account Alerts: YOUR ORDER IS READY title font
+
+**Context (this chat):** **“YOUR ORDER IS READY!”** alert used wrong font; should match other alerts (**Covered By Your Grace**).
+
+**Changes:** **`notifications/page.tsx`** — removed consult-only **`Futura PT Medium`** / **11px** title branch; all alert titles use **Covered By Your Grace** at **14px** like the rest. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Account Alerts: canonical three-line row format (memory)
+
+**Context (this chat):** User asked to record for future reference that **all** alerts on **Account → Alerts** should use the same **three text rows**: **black Covered By Your Grace** title; **gray Futura** body; **red Futura** action link.
+
+**Changes:** **`motherboard/CORE.md`** — design-system bullet for **Account → Alerts** three-line typography (title / message / action). **`npm run build`** not required (docs only); prior **`notifications/page.tsx`** already aligned consult title with other alerts.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-12 — Account Orders: archived by `date`; active by status activity (not `placedAt` max)
+
+**Context (this chat):** **Archived** card should be **newest `date` at top**; **active** by **most recent status update** — prior sort still felt wrong (**`placedAt`** dominated active max; archived used terminal timestamps over **`M/D/YYYY`** **`date`**).
+
+**Changes:** **`userOrdersBuckets.ts`** — **`parseOrderDateField`**: also **`M/D/YYYY`**. **`orderArchivedSortTimeMs`**: primary sort = parsed **`date`** when present. **`orderActiveActivitySortTimeMs`**: max of status-related keys (**`updatedAt`**, **`consultProcessingStartedAt`**, **`shippedAt`**, delivery/complete/cancel) **excluding** **`placedAt`** from max; fallback **`placedAt`** → **`createdAt`** → **`date`**. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER modal: longer default disclaimer (uppercase)
+
+**Context (this chat):** Earlier topics: Nano Banana / Artlist / API vendors / internal consult preview workflow. Latest: user asked to replace the default consult-offer disclaimer with a **more thorough** version, **all uppercase**, on the **booking consult VIEW OFFER** pop-up.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — expanded **`DEFAULT_INSPO_DISCLAIMER`** (2D illustrative/marketing, color/style variance, texture/lace/density/length/styling variance, no guarantee vs inspo photo, artisan variation, visualization only). Kept **`LEGACY_DEFAULT_INSPO_DISCLAIMER`** so older stored messages still match **`isDefaultInspoDisclaimer`** (gray styling). **`AdminMeetingsHub.tsx`** — default **`quoteMessage`** matches new copy. **`orders/page.tsx`** — demo **`adminMessage`** snapshots updated for founder consult demos.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult offer disclaimer copy revision (shorter)
+
+**Context (this chat):** User replaced the long default VIEW OFFER / send-offer disclaimer with a **shorter** version: **COLORS AND STYLING** (not “style” only), **finished unit in person**, **INSPO IMAGES** (not “inspiration photo”), dropped texture/lace/density/length/styling sentence.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — updated **`DEFAULT_INSPO_DISCLAIMER`**; added **`PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER`** so quotes already sent with the prior long paragraph still count as default (**gray**). **`AdminMeetingsHub.tsx`** and **`orders/page.tsx`** demo **`adminMessage`** aligned with new copy.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER: default disclaimer two paragraphs (red + gray)
+
+**Context (this chat):** User wanted the **current default** consult-offer message split into **two paragraphs** in the VIEW OFFER modal: first block **brand red** (`#EB1C24`), second block **gray** (`#808080`).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — **`DEFAULT_INSPO_DISCLAIMER_P1`** / **`P2`** + combined **`DEFAULT_INSPO_DISCLAIMER`** for stored/API string match; when message equals current default, render two **`<p>`**s with spacing (**8px** margin-top between); legacy one-paragraph defaults unchanged (all gray). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult VIEW OFFER: narrower default disclaimer column
+
+**Context (this chat):** User asked to narrow the container for the red/gray default disclaimer by **10px** so lines wrap sooner.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — two-paragraph disclaimer wrapper: **`maxWidth: calc(100% - 10px)`** + **`marginLeft` / `marginRight: auto`** (centered). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult default disclaimer gray paragraph copy tweak
+
+**Context (this chat):** User updated only the **second (gray)** paragraph: removed **AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS**; after artisan variation uses **comma** then **THIS IS PURELY FOR VISUALIZATION** (user-supplied punctuation).
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** / combined default in **`ConsultOfferClaimModal.tsx`**; **`PREVIOUS_DEFAULT_INSPO_DISCLAIMER`** + **`P2`** so offers already stored with the prior paragraph still get **two-paragraph** red/gray layout with old gray text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo **`adminMessage`** updated. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult disclaimer gray paragraph: unit + branding and visualization
+
+**Context (this chat):** User refined gray paragraph only: **YOUR UNIT** (not “finished unit in person”), closing line **PURELY FOR BRANDING AND VISUALIZATION** (word “AND”, not ampersand).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P2`**; **`INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER`** for prior “in person / visualization only” full message so two-paragraph layout + correct gray persist. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults updated. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult gray disclaimer: 2D model, slightly vary, this feature
+
+**Context (this chat):** User replaced gray paragraph only: **2D MODEL** (not “THIS 2D IMAGE”), **DIFFER OR SLIGHTLY VARY**, period after artisan variation, **THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION**.
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER`** for last shipped default in **`ConsultOfferClaimModal.tsx`**. **`AdminMeetingsHub.tsx`** / **`orders/page.tsx`** defaults. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Founder demo: two extra mock wig consult orders (#340, #341) + meetings
+
+**Context (this chat):** User asked for **two more** mock **wig consult** orders on the **admin founder** account to test **custom image generation** and **AI model generation** from **admin dash** and **Account → Orders**.
+
+**Changes:** **`orders/page.tsx`** — **`buildFounderDemoConsultOrder340`** (COMPLETE, gallery/mock inspo, offer thumb **`/assets/gallery-mock.png`**, **`CONSULT-DEMO340`**, NOIR selections), **`buildFounderDemoConsultOrder341`** (COMPLETE, blanco thumb inspo, **`CONSULT-DEMO341`**, BLANCO selections). **`mergeFounderAdminConsultOrder331Demo`** injects any missing **ORDER #331**, **#340**, or **#341** into **past** (not only 331). Shared **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`**; **`kateenaMockPastOrders`** includes 340/341. **`adminMeetingsMock.ts`** — **`adminFounderDemoConsultMeetingOrder340`** / **`341`**; **`listAggregatedAdminMeetingsForClientDetails`** + **`AdminMeetingsHub`** **`mergedMeetings`** merge all three demos. **`motherboard/CORE.md`** — admin demo consults bullet updated for #340/#341 ids and times.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Founder demo consult #340 / #341: PROCESSING, no pre-built quote
+
+**Context (this chat):** User said **#340** and **#341** were wrongly **COMPLETE** with an offer already created; they need **PROCESSING** to test **Send offer** end-to-end.
+
+**Changes:** **`buildFounderDemoConsultOrder340`** / **`341`**: **`PROCESSING`**, no **`consultQuoteId`**, **`consultOfferSnapshot`**, or **`completedAt`**; **`placedAt`** 9–10h ago (past 2h consult gate, under 72h). **`mergeFounderAdminConsultOrder331Demo`**: inject **#331** into **past** only; **#340**/**#341** into **active**; strip stale **COMPLETE** rows with same **`kateena-consult-demo-340`** / **`341`** ids from active/past before inject. **`kateenaMockActiveOrders`**: moved 340/341 here from past mock list. **`motherboard/CORE.md`**: inject behavior clarified.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Wig preview pre-gen: NOIR manifest + fal/Replicate batch script
+
+**Context (this chat):** User asked to start pre-generation (NOIR first), manifest + storage convention, phone setup for fal/Replicate; scaffold in repo.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`**, **`scripts/generate-noir-wig-preview-manifest.mjs`** (presets `sanity` / `medium` / `full`), **`scripts/pregenerate-wig-previews.mjs`** (fal **`fal-ai/nano-banana-pro`** or Replicate + **`REPLICATE_MODEL_VERSION`**, Supabase upload, skip-if-exists, **`DRY_RUN`** without Supabase env). **`docs/WIG_PREVIEW_PREGENERATION.md`**. **`package.json`**: **`wig-preview:manifest:noir`**, **`wig-preview:batch`**, devDependency **`@fal-ai/client`**. **`.gitignore`**: **`.env.wig-preview`**. **`scripts/wig-preview/manifests/noir-sanity-v1.json`** (384 rows). **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Communication preference: plain-language explanations; Windows at home
+
+**Context (this chat):** User said they are **very new** to coding/backend jargon; asked for prior wig-preview / fal setup to be broken down in a **digestible, non-developer** way (analogies: instructions, shopping list, hired artist, photo folder). They confirmed **Windows** at home for laptop steps. They asked to **create a memory** so future agents explain steps **cognizant** that they are not code/developer-savvy yet.
+
+**Changes:** **`motherboard/CORE.md`** — new **Conventions** bullet **“Explanations for this product owner”** (plain language, analogies, Windows-friendly notes, minimal jargon). This **MEMORY** entry records the preference for all agents.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — BAW base fal prompt simplified + fal settings Auto / 2K
+
+**Context (this chat):** User finalized **BAW base mannequin** Step 1 wording (logo clear and legible on chest; high quality; change nothing else). They reported successful fal settings: **aspect ratio Auto** (not forced 9:16) and **resolution 2K**.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`** updated to that short prompt; header comment documents **Auto + 2K**. **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`** — BAW section aligned (Auto, 2K, new prompt text). **`docs/WIG_PREVIEW_PREGENERATION.md`** — short “Manual fal” note: wig consult often **9:16**; BAW base uses **Auto + 2K** to stay closer to ~1002×1625 framing; table row wording for BAW manual prompt. **`src/pages/straight/noir/page.tsx`** — define **`NOIR_2D_ANGLE_DOWNLOADS`** (front/left/right PNGs) so the **2D angle download** links compile (**`npm run build`**).
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Wig consult vs BAW prompts in promptTemplate.mjs
+
+**Context (this chat):** User clarified **wig consult** 3-step fal flow is separate from **BAW selection** bulk images. Consult Step 1: **logo from 2nd reference** on base mannequin; Step 2 / 3 same intent. **Legacy** Step 1 (brick → white/rose + logo from **3rd** ref) kept for later.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP1_PROMPT`**, **`WIG_CONSULT_STEP2_PROMPT`**, **`WIG_CONSULT_STEP3_PROMPT`**, **`WIG_CONSULT_LEGACY_STEP1_PROMPT`**; **`NBP_STEP*`** re-exports; **`buildWigPreviewPrompt`** = BAW batch only. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Shop / BAW nav: wider center, no wrap; admin crumb space before title
+
+**Context (this chat):** User reported **build-a-wig** (and related shop) nav **breadcrumb text still wrapping**, and admin header showed **ADMIN >DASHBOARD** (missing space after `>`). They asked to **widen the container** for nav text.
+
+**Changes:** **`src/components/shop/useShopNavSearchBar.tsx`** — **`NavCenter`**: horizontal padding **96px → 64px** each side (more room for centered crumb), added **`whitespace-nowrap`**. **`src/pages/admin/components/AdminHeader.tsx`** — center strip: same padding + **`whitespace-nowrap`**; breadcrumb row **`gap-1`** (replaces collapsed trailing space before red title); parent label + chevron inside button as **`inline-flex`** with **`gap-1`** so **ADMIN >** spacing is explicit.
+
+**Docs:** This **MEMORY** entry.

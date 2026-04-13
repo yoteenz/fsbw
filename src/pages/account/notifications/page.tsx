@@ -6,6 +6,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
 import {
+  buildConsultViewOfferOrdersHref,
   getNotificationsStorageKeyForUserEmail,
   getOrderReceivedAccountAlerts,
   migrateNotificationsLocalStorageKeys
@@ -28,6 +29,10 @@ interface Notification {
   sortAt?: number;
   isRead: boolean;
   icon: string; // 'f' or 'fc'
+  /** Consult-offer-ready row: black Futura header, gray body, red VIEW OFFER link. */
+  variant?: 'consult_offer_ready';
+  /** Set on migrated Supabase **admin_*** consult rows so they tie-break above **acc_***. */
+  consultOfferReady?: boolean;
 }
 
 const ACCOUNT_NOTIFICATION_PREFIX = 'acc_';
@@ -43,6 +48,86 @@ export function parseAdminSentNotificationText(text: string): { title: string; m
     return { title, message: message || 'VIEW DETAILS.' };
   }
   return { title: 'ALERT', message: t.toUpperCase() || 'VIEW DETAILS.' };
+}
+
+function extractOrderDigitsForConsultAlert(message: string): string {
+  const m = String(message || '').match(/\bORDER\s*#?\s*(\d{1,8})\b/i);
+  if (m) return m[1];
+  const m2 = String(message || '').match(/#\s*(\d{1,8})\b/);
+  return m2 ? m2[1] : '';
+}
+
+/** Upgrades legacy consult-offer rows (old **localStorage** + older **Supabase** payloads). */
+export function migrateConsultYourOrderReadyNotification(n: Notification): Notification {
+  const rawTitle = (n.title || '').trim();
+  const titleU = rawTitle.toUpperCase();
+  const actionU = String(n.actionText || '').trim().toUpperCase();
+  const route = String(n.actionRoute || '').trim();
+  const isReady =
+    titleU === 'YOUR ORDER IS READY!' ||
+    (titleU.includes('YOUR ORDER IS READY') && titleU.includes('CONSULT'));
+  const isTargetAction = actionU === 'VIEW OFFER' || actionU === 'VIEW QUOTE' || actionU === '';
+  if (!isReady || !isTargetAction) return n;
+
+  const digits =
+    extractOrderDigitsForConsultAlert(n.message) ||
+    extractOrderDigitsForConsultAlert(n.title) ||
+    extractOrderDigitsForConsultAlert(route);
+  const orderRef = digits ? `ORDER #${digits}` : '';
+  let actionRoute = n.actionRoute;
+  if (!route.includes('consultOffer=1')) {
+    actionRoute = buildConsultViewOfferOrdersHref(orderRef || n.message, undefined);
+  }
+  const messageU = String(n.message || '').toUpperCase();
+  let message = n.message;
+  if (digits && (!messageU.includes('IS COMPLETE') || messageU.includes('VIEW YOUR') || messageU.includes('CUSTOMIZED'))) {
+    message = `ORDER #${digits} IS COMPLETE.`;
+  } else if (digits && !messageU.includes(`ORDER #${digits}`)) {
+    message = `ORDER #${digits} IS COMPLETE.`;
+  }
+
+  return {
+    ...n,
+    title: 'YOUR ORDER IS READY!',
+    message,
+    actionText: 'VIEW OFFER',
+    actionRoute,
+    variant: 'consult_offer_ready',
+    consultOfferReady: n.id.startsWith(ADMIN_SENT_PREFIX) || n.id.startsWith('consult_offer_sent_'),
+  };
+}
+
+function notificationFromSupabaseAdminItem(
+  it: unknown,
+  today: string
+): Notification {
+  const item = it as {
+    id?: string;
+    text?: string;
+    read?: boolean;
+    createdAt?: string;
+    actionText?: string;
+    actionRoute?: string;
+  };
+  const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
+  const created = item.createdAt || '';
+  const createdMs = created ? new Date(created).getTime() : NaN;
+  const date =
+    created && !Number.isNaN(createdMs)
+      ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
+      : today;
+  const draft: Notification = {
+    id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
+    title,
+    message,
+    date,
+    ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
+    isRead: !!item.read,
+    icon: 'f',
+    actionText: item.actionText,
+    actionRoute: item.actionRoute,
+  };
+  return migrateConsultYourOrderReadyNotification(draft);
 }
 
 /** Vouchers and free gifts are valid for 6 months once credited (keeps inventory moving). Free gifts stay combinable with other checkout offers (see checkout / rewards copy). */
@@ -365,45 +450,46 @@ export function getAccountNotifications(user: { email?: string; [k: string]: any
   return notifs;
 }
 
-/** Parse M-D-YYYY or MM-D-YYYY to local midnight; invalid → 0. */
+/**
+ * Alert **`date`** → local midnight ms for **primary** sort (**newest calendar day at top**).
+ * Accepts **M-D-YYYY**, **MM-DD-YYYY**, **M/D/YYYY**, **MM/DD/YYYY**, or strings **`Date.parse`** handles.
+ */
 function parseNotificationDisplayDateMs(dateStr: string): number {
-  const parts = (dateStr || '').trim().split('-').map(Number);
-  if (parts.length !== 3) return 0;
-  const [month, day, year] = parts;
-  if (!month || !day || !year) return 0;
-  const d = new Date(year, month - 1, day);
-  const t = d.getTime();
-  return Number.isNaN(t) ? 0 : t;
+  const t = (dateStr || '').trim();
+  if (!t) return 0;
+  const dash = t.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (dash) {
+    const ms = new Date(Number(dash[3]), Number(dash[1]) - 1, Number(dash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const slash = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const ms = new Date(Number(slash[3]), Number(slash[1]) - 1, Number(slash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const d = Date.parse(t);
+  return Number.isNaN(d) ? 0 : d;
 }
 
-const ACCOUNT_ALERT_STABLE_ORDER: readonly string[] = [
-  `${ACCOUNT_NOTIFICATION_PREFIX}tier`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}membership`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}shipping_payment`,
-  `${ACCOUNT_NOTIFICATION_PREFIX}settings`,
-];
+/** Within the same **`date`** calendar day, use **`sortAt`** when set; else fall back to day start so **`date`** still wins across days. */
+function notificationWithinDaySortMs(n: Notification, dayMs: number): number {
+  if (typeof n.sortAt === 'number' && !Number.isNaN(n.sortAt)) return n.sortAt;
+  return dayMs;
+}
 
 /**
- * When timestamps tie (same calendar day etc.), lower = closer to top of NEW list.
- * Order-received alerts sort above onboarding acc_* (tier, membership, …) so checkout feels "after" signup.
+ * **Newest alert date first** (parsed **`date`**), then **newest `sortAt`** within the same day.
+ * Previously **`sortAt`** was the primary key, so an old consult (**`sortAt`** last week) could sit above a **today** row that only had **`date: today`**.
+ * Removed per-type tie-break ranks that reordered same-day rows (e.g. consult above order-received).
  */
-function newestFirstTieBreakRank(id: string): number {
-  if (id.startsWith('order_received_')) return 0;
-  const stableIdx = ACCOUNT_ALERT_STABLE_ORDER.indexOf(id);
-  if (stableIdx >= 0) return 1 + stableIdx;
-  if (id.startsWith(ACCOUNT_NOTIFICATION_PREFIX)) return 20;
-  return 50;
-}
-
-/** Newest first: `sortAt` when set, else `date` string; tie-breakers for same-day rows. */
 export function sortNotificationsNewestFirst(list: Notification[]): Notification[] {
   return [...list].sort((a, b) => {
-    const sa = typeof a.sortAt === 'number' && !Number.isNaN(a.sortAt) ? a.sortAt : parseNotificationDisplayDateMs(a.date);
-    const sb = typeof b.sortAt === 'number' && !Number.isNaN(b.sortAt) ? b.sortAt : parseNotificationDisplayDateMs(b.date);
-    if (sb !== sa) return sb - sa;
-    const ra = newestFirstTieBreakRank(a.id);
-    const rb = newestFirstTieBreakRank(b.id);
-    if (ra !== rb) return ra - rb;
+    const da = parseNotificationDisplayDateMs(a.date);
+    const db = parseNotificationDisplayDateMs(b.date);
+    if (db !== da) return db - da;
+    const wa = notificationWithinDaySortMs(a, da);
+    const wb = notificationWithinDaySortMs(b, db);
+    if (wb !== wa) return wb - wa;
     return String(b.id).localeCompare(String(a.id));
   });
 }
@@ -411,12 +497,13 @@ export function sortNotificationsNewestFirst(list: Notification[]): Notification
 /** Merge stored notifications with account notifications (account ones upserted by id). Account + order-received alerts stay in NEW until user archives — do not use stored isRead for them. Exported for account page badge logic. */
 export function mergeAccountNotifications(stored: Notification[], account: Notification[]): Notification[] {
   const byId = new Map<string, Notification>();
-  stored.forEach(n => byId.set(n.id, n));
-  account.forEach(n => {
-    const existing = byId.get(n.id);
+  stored.forEach((n) => byId.set(n.id, migrateConsultYourOrderReadyNotification(n)));
+  account.forEach((n) => {
+    const migrated = migrateConsultYourOrderReadyNotification(n);
+    const existing = byId.get(migrated.id);
     const isManaged =
-      n.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || n.id.startsWith('order_received_');
-    byId.set(n.id, { ...n, isRead: isManaged ? false : (existing?.isRead ?? n.isRead) });
+      migrated.id.startsWith(ACCOUNT_NOTIFICATION_PREFIX) || migrated.id.startsWith('order_received_');
+    byId.set(migrated.id, { ...migrated, isRead: isManaged ? false : (existing?.isRead ?? migrated.isRead) });
   });
   return sortNotificationsNewestFirst(Array.from(byId.values()));
 }
@@ -533,33 +620,7 @@ function NotificationsPage() {
               .eq('user_id', userId)
               .maybeSingle();
             const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it: unknown) => {
-              const item = it as {
-                id?: string;
-                text?: string;
-                read?: boolean;
-                createdAt?: string;
-                actionText?: string;
-                actionRoute?: string;
-              };
-              const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
-              const created = item.createdAt || '';
-              const createdMs = created ? new Date(created).getTime() : NaN;
-              const date = created && !Number.isNaN(createdMs)
-                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
-                : today;
-              return {
-                id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
-                title,
-                message,
-                date,
-                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
-                isRead: !!item.read,
-                icon: 'f',
-                actionText: item.actionText,
-                actionRoute: item.actionRoute,
-              };
-            });
+            const adminNotifs: Notification[] = items.map((it) => notificationFromSupabaseAdminItem(it, today));
             const byId = new Map(merged.map((n) => [n.id, n]));
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
@@ -606,33 +667,7 @@ function NotificationsPage() {
               .eq('user_id', userId)
               .maybeSingle();
             const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it: unknown) => {
-              const item = it as {
-                id?: string;
-                text?: string;
-                read?: boolean;
-                createdAt?: string;
-                actionText?: string;
-                actionRoute?: string;
-              };
-              const { title, message } = parseAdminSentNotificationText((item.text || '').trim());
-              const created = item.createdAt || '';
-              const createdMs = created ? new Date(created).getTime() : NaN;
-              const date = created && !Number.isNaN(createdMs)
-                ? `${new Date(created).getMonth() + 1}-${new Date(created).getDate()}-${new Date(created).getFullYear()}`
-                : today;
-              return {
-                id: ADMIN_SENT_PREFIX + (item.id || crypto.randomUUID()),
-                title,
-                message,
-                date,
-                ...(created && !Number.isNaN(createdMs) ? { sortAt: createdMs } : {}),
-                isRead: !!item.read,
-                icon: 'f',
-                actionText: item.actionText,
-                actionRoute: item.actionRoute,
-              };
-            });
+            const adminNotifs: Notification[] = items.map((it) => notificationFromSupabaseAdminItem(it, today));
             const byId = new Map(merged.map((n) => [n.id, n]));
             adminNotifs.forEach((n) => {
               byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
@@ -1040,7 +1075,8 @@ function NotificationsPage() {
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                        {displayedNotifications.map((notification) => (
+                        {displayedNotifications.map((notification) => {
+                          return (
                           <div
                             key={notification.id}
                             className="flex items-start gap-3 cursor-pointer hover:opacity-80 transition-opacity"
@@ -1076,10 +1112,11 @@ function NotificationsPage() {
                               <div className="flex items-center justify-between gap-2" style={{ marginBottom: '4px' }}>
                                 <p
                                   style={{
-                                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontFamily:
+                                      '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
                                     fontSize: '14px',
                                     fontWeight: 'normal',
-                                    color: 'black',
+                                    color: '#000000',
                                     margin: 0,
                                     lineHeight: '1.2',
                                     flex: 1,
@@ -1198,7 +1235,8 @@ function NotificationsPage() {
                               )}
                             </div>
                           </div>
-                        ))}
+                        );
+                        })}
                       </div>
                     )}
                   </div>

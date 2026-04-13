@@ -7,10 +7,16 @@ export function orderStatusIsCanceled(status: unknown): boolean {
   return s === 'CANCELED' || s === 'CANCELLED';
 }
 
+function orderIsCompleteConsultForArchive(o: { status?: string; bookingFlowType?: string }): boolean {
+  if (String(o.bookingFlowType || '').trim().toLowerCase() !== 'consult') return false;
+  return String(o.status || '').trim().toUpperCase() === 'COMPLETE';
+}
+
 /**
  * Remove CANCELED/CANCELLED from `active`; append each to `past` if not already present (by `id` when set).
+ * **Consult** orders with status **COMPLETE** are also moved to **`past`** (archived card), not left on active.
  */
-export function normalizeUserOrdersBuckets<T extends { id?: string; status?: string }>(
+export function normalizeUserOrdersBuckets<T extends { id?: string; status?: string; bookingFlowType?: string }>(
   active: T[] | undefined,
   past: T[] | undefined
 ): { activeOrders: T[]; pastOrders: T[] } {
@@ -20,7 +26,8 @@ export function normalizeUserOrdersBuckets<T extends { id?: string; status?: str
   const nextActive: T[] = [];
 
   for (const o of active || []) {
-    if (!orderStatusIsCanceled(o.status)) {
+    const moveToPast = orderStatusIsCanceled(o.status) || orderIsCompleteConsultForArchive(o);
+    if (!moveToPast) {
       nextActive.push(o);
       continue;
     }
@@ -60,16 +67,55 @@ export function filterOutPremiumMembershipUpgradeOrders<T>(active: T[], past: T[
   return { activeOrders: active.filter(keep), pastOrders: past.filter(keep) };
 }
 
-/** Parse MM-DD-YYYY (common order `date` field) to epoch ms; 0 if invalid. */
+/**
+ * Parse common order **`date`** strings to epoch ms (local midnight); **0** if invalid.
+ * Supports **MM-DD-YYYY**, **M/D/YYYY**, and ISO-ish strings **`Date.parse`** accepts.
+ */
 function parseOrderDateField(dateStr: unknown): number {
   if (typeof dateStr !== 'string' || !dateStr.trim()) return 0;
-  const m = dateStr.trim().match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-  if (m) {
-    const ms = new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2])).getTime();
+  const t = dateStr.trim();
+  const dash = t.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (dash) {
+    const ms = new Date(Number(dash[3]), Number(dash[1]) - 1, Number(dash[2])).getTime();
     return Number.isNaN(ms) ? 0 : ms;
   }
-  const d = Date.parse(dateStr);
+  const slash = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const ms = new Date(Number(slash[3]), Number(slash[1]) - 1, Number(slash[2])).getTime();
+    return Number.isNaN(ms) ? 0 : ms;
+  }
+  const d = Date.parse(t);
   return Number.isNaN(d) ? 0 : d;
+}
+
+function coerceOrderFieldTimeMs(v: unknown): number | null {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string') {
+    if (/^\d+$/.test(v)) {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+    if (v.includes('T') || v.includes('GMT') || /^\d{4}-\d{2}-\d{2}/.test(v)) {
+      const t = Date.parse(v);
+      if (!Number.isNaN(t)) return t;
+    }
+  }
+  return null;
+}
+
+function orderFieldTimeMs(o: Record<string, unknown>, key: string): number | null {
+  return coerceOrderFieldTimeMs(o[key]);
+}
+
+function firstPositiveTimeMs(
+  o: Record<string, unknown>,
+  keys: readonly string[]
+): number {
+  for (const k of keys) {
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > 0) return t;
+  }
+  return 0;
 }
 
 /**
@@ -88,28 +134,92 @@ export function orderSortTimeMs(o: Record<string, unknown>): number {
     'created_at',
   ] as const;
   for (const k of keys) {
-    const v = o[k];
-    if (typeof v === 'number' && Number.isFinite(v)) return v;
-    if (typeof v === 'string') {
-      if (/^\d+$/.test(v)) {
-        const n = Number(v);
-        if (Number.isFinite(n)) return n;
-      }
-      if (v.includes('T') || v.includes('GMT') || /^\d{4}-\d{2}-\d{2}/.test(v)) {
-        const t = Date.parse(v);
-        if (!Number.isNaN(t)) return t;
-      }
-    }
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > 0) return t;
   }
   return parseOrderDateField(o.date);
 }
 
-export function sortOrdersNewestFirst<T>(orders: T[]): T[] {
+/**
+ * **Archived / past** bucket: **newest order `date`** (calendar) at the top, matching the date shown on the card.
+ * When **`date`** is missing, fall back to terminal timestamps then generic **`orderSortTimeMs`**.
+ */
+export function orderArchivedSortTimeMs(o: Record<string, unknown>): number {
+  const dateMs = parseOrderDateField(o.date);
+  if (dateMs > 0) return dateMs;
+  const st = String(o.status ?? '').toUpperCase();
+  if (orderStatusIsCanceled(st)) {
+    const t = firstPositiveTimeMs(o, ['canceledAt', 'completedAt', 'deliveredAt', 'placedAt']);
+    return t || 0;
+  }
+  if (st === 'COMPLETE') {
+    const t = firstPositiveTimeMs(o, ['completedAt', 'deliveredAt', 'canceledAt', 'placedAt']);
+    return t || 0;
+  }
+  if (st === 'DELIVERED') {
+    const t = firstPositiveTimeMs(o, ['deliveredAt', 'completedAt', 'placedAt']);
+    return t || 0;
+  }
+  const terminal = Math.max(
+    orderFieldTimeMs(o, 'completedAt') ?? 0,
+    orderFieldTimeMs(o, 'deliveredAt') ?? 0,
+    orderFieldTimeMs(o, 'canceledAt') ?? 0
+  );
+  if (terminal > 0) return terminal;
+  return orderSortTimeMs(o);
+}
+
+/**
+ * **Active** bucket + mixed strips: sort by latest **status-related** activity — **not** `placedAt`
+ * (otherwise every row ties to checkout and never re-orders when status advances without new fields).
+ * Falls back to **`placedAt`**, then **`date`**, when no post-placement timestamps exist.
+ */
+export function orderActiveActivitySortTimeMs(o: Record<string, unknown>): number {
+  const statusActivityKeys = [
+    'updatedAt',
+    'updated_at',
+    'consultProcessingStartedAt',
+    'shippedAt',
+    'shipped_at',
+    'deliveredAt',
+    'completedAt',
+    'canceledAt',
+  ] as const;
+  let maxStatus = 0;
+  for (const k of statusActivityKeys) {
+    const t = orderFieldTimeMs(o, k);
+    if (t != null && t > maxStatus) maxStatus = t;
+  }
+  if (maxStatus > 0) return maxStatus;
+  const placed = orderFieldTimeMs(o, 'placedAt');
+  if (placed != null && placed > 0) return placed;
+  const created = Math.max(
+    orderFieldTimeMs(o, 'createdAt') ?? 0,
+    orderFieldTimeMs(o, 'created_at') ?? 0
+  );
+  if (created > 0) return created;
+  return parseOrderDateField(o.date) || 0;
+}
+
+function sortOrdersByKey<T>(orders: T[], keyFn: (o: Record<string, unknown>) => number): T[] {
   return [...orders].sort((a, b) => {
-    const dt = orderSortTimeMs(b as Record<string, unknown>) - orderSortTimeMs(a as Record<string, unknown>);
+    const dt = keyFn(b as Record<string, unknown>) - keyFn(a as Record<string, unknown>);
     if (dt !== 0) return dt;
     const idA = (a as { id?: string }).id ?? '';
     const idB = (b as { id?: string }).id ?? '';
     return String(idB).localeCompare(String(idA));
   });
+}
+
+/** Legacy sort: first non-zero field in `orderSortTimeMs` order (still used where a single key is enough). */
+export function sortOrdersNewestFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderSortTimeMs);
+}
+
+export function sortActiveOrdersByRecentActivityFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderActiveActivitySortTimeMs);
+}
+
+export function sortArchivedOrdersNewestFirst<T>(orders: T[]): T[] {
+  return sortOrdersByKey(orders, orderArchivedSortTimeMs);
 }

@@ -25,6 +25,8 @@ export type StoredNotification = {
   sortAt?: number;
   isRead: boolean;
   icon: string;
+  /** When set, Account → Alerts uses consult-offer row styling (black header / gray body / red link). */
+  variant?: 'consult_offer_ready';
 };
 
 const STANDARD_NOTIFICATION_ICON = 'f';
@@ -106,6 +108,26 @@ function displayOrderNumber(order: AlertOrder): string {
   return stripped || '—';
 }
 
+/** Digits for **orderNumber=** deep link (e.g. **332** from `ORDER #332`). */
+export function consultAlertOrderNumberTokenForUrl(orderNumberDisplay: string): string {
+  const s = String(orderNumberDisplay || '')
+    .trim()
+    .toUpperCase()
+    .replace(/^ORDER\s*#?\s*/i, '')
+    .replace(/^#/, '')
+    .trim();
+  const m = s.match(/\d+/);
+  return m ? m[0] : '';
+}
+
+export function buildConsultViewOfferOrdersHref(orderNumberDisplay: string, matchedOrderId?: string): string {
+  const id = String(matchedOrderId || '').trim();
+  if (id) return `/account/orders?orderId=${encodeURIComponent(id)}&consultOffer=1`;
+  const num = consultAlertOrderNumberTokenForUrl(orderNumberDisplay);
+  if (num) return `/account/orders?orderNumber=${encodeURIComponent(num)}&consultOffer=1`;
+  return '/account/orders?consultOffer=1';
+}
+
 function orderTimestampMs(order: AlertOrder): number | undefined {
   if (typeof order.placedAt === 'number' && !Number.isNaN(order.placedAt)) return order.placedAt;
   const u = order.updatedAt;
@@ -142,6 +164,44 @@ export function buildOrderReceivedAccountAlert(
     isRead: false,
     icon: STANDARD_NOTIFICATION_ICON,
   };
+}
+
+/** After admin sends a consult offer: client Alerts row (local) mirroring order-complete style. */
+export function appendConsultOfferCompleteAccountAlert(
+  clientEmail: string,
+  orderNumberDisplay: string,
+  quoteId: string,
+  options?: { matchedOrderId?: string }
+): void {
+  const email = String(clientEmail || '').trim().toLowerCase();
+  if (!email || typeof window === 'undefined') return;
+  const qid = String(quoteId || '').trim();
+  const id = qid ? `consult_offer_sent_${qid}` : `consult_offer_sent_${Date.now()}`;
+  const orderNum = orderNumberDisplay.replace(/^ORDER\s*#?\s*/i, '').replace(/^#/, '').trim() || '—';
+  const now = Date.now();
+  const item: StoredNotification = {
+    id,
+    title: 'YOUR ORDER IS READY!',
+    message: `ORDER #${orderNum} IS COMPLETE.`,
+    actionText: 'VIEW OFFER',
+    actionRoute: buildConsultViewOfferOrdersHref(orderNumberDisplay, options?.matchedOrderId),
+    date: todayMdy(),
+    sortAt: now,
+    isRead: false,
+    icon: STANDARD_NOTIFICATION_ICON,
+    variant: 'consult_offer_ready',
+  };
+  try {
+    const key = notificationsKey(email);
+    const raw = localStorage.getItem(key);
+    const existing: StoredNotification[] = raw && Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : [];
+    const merged = [item, ...existing.filter((n) => n.id !== id)];
+    localStorage.setItem(key, JSON.stringify(merged));
+    window.dispatchEvent(new CustomEvent('accountCardAlertsViewed'));
+    window.dispatchEvent(new Event('storage'));
+  } catch {
+    /* ignore */
+  }
 }
 
 export function appendOrderReceivedAccountAlert(

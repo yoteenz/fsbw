@@ -11,6 +11,7 @@ import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import {
@@ -36,6 +37,7 @@ interface WigCustomization {
 export default function BuildAWigPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
   const [showPremiumMembershipHubModal, setShowPremiumMembershipHubModal] = useState(false);
@@ -4910,18 +4912,19 @@ export default function BuildAWigPage() {
                   src="/assets/back-button.svg"
                 />
               </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+              <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
                 <img
-                  alt="Search icon"
+                  alt=""
                   width="16"
                   height="15"
                   src="/assets/search-icon.svg"
                 />
-              </button>
+              </SearchTrigger>
                 </>
               )}
             </div>
             
+            <NavCenter showMobileMenu={showMobileMenu}>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
@@ -5005,6 +5008,7 @@ export default function BuildAWigPage() {
                 </>
               )}
             </p>
+            </NavCenter>
             <div className="gap-5 flex absolute" style={{ right: '17px', zIndex: 10 }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
                   <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />

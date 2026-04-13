@@ -31,9 +31,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const selections = body.selections && typeof body.selections === 'object' ? body.selections : {};
   const priceBreakdown = Array.isArray(body.priceBreakdown) ? body.priceBreakdown : [];
   const adminMessage = String(body.adminMessage || body.admin_message || '').trim();
-  const thumbnailSrc = String(body.thumbnailSrc || body.thumbnail_src || '').trim() || null;
+  const rawThumb = String(body.thumbnailSrc || body.thumbnail_src || '').trim();
+  /** `data:` URLs are huge; DB `text` + PostgREST payloads break. Snapshot on the order still stores the image for VIEW OFFER. */
+  const thumbnailSrc =
+    rawThumb && !rawThumb.startsWith('data:') ? (rawThumb.length > 8000 ? rawThumb.slice(0, 8000) : rawThumb) : null;
   const firstName = String(body.clientFirstName || '').trim();
   const lastName = String(body.clientLastName || '').trim();
+  const orderNumberFromCheckout = String(
+    (body as { orderNumberFromCheckout?: string }).orderNumberFromCheckout || ''
+  ).trim();
 
   if (!clientEmail) return res.status(400).json({ error: 'clientEmail required' });
 
@@ -69,21 +75,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         discount_amount_usd: 40,
         expires_at: expiresAt,
       })
-      .select('id, discount_code, expires_at')
+      .select('id, discount_code, expires_at, unit_key, selections, price_breakdown, admin_message, thumbnail_src, discount_amount_usd')
       .single();
 
     if (insErr) return res.status(500).json({ error: insErr.message });
 
     const quoteId = (quote as { id: string }).id;
-    const notifText =
-      '[YOUR ORDER IS READY! · CONSULT] WE\'VE CUSTOMIZED A UNIT JUST FOR YOU.';
+    const orderNumForMsg = orderNumberFromCheckout
+      .replace(/^ORDER\s*#?\s*/i, '')
+      .replace(/^#/, '')
+      .trim();
+    const orderLine =
+      orderNumForMsg && /\d/.test(orderNumForMsg) ? `ORDER #${orderNumForMsg} IS COMPLETE.` : 'YOUR CONSULT ORDER IS COMPLETE.';
+    const notifText = `[YOUR ORDER IS READY!] ${orderLine}`;
+    const orderNumDigits = orderNumForMsg.replace(/\D/g, '');
+    const ordersHref =
+      orderNumDigits
+        ? `/account/orders?orderNumber=${encodeURIComponent(orderNumDigits)}&consultOffer=1`
+        : '/account/orders?consultOffer=1';
     const newItem = {
       id: crypto.randomUUID(),
       text: notifText,
       read: false,
       createdAt: new Date().toISOString(),
-      actionText: 'VIEW QUOTE',
-      actionRoute: `/account/consult-offer?id=${encodeURIComponent(quoteId)}`,
+      actionText: 'VIEW OFFER',
+      actionRoute: ordersHref,
       consultQuoteId: quoteId,
     };
 
@@ -120,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(201).json({
-      quote: quote,
+      quote,
       discountCode,
       message: 'Consult quote sent',
     });

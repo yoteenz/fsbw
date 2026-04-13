@@ -11,10 +11,12 @@ import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 
 function WishlistSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [wishlistItems, setWishlistItems] = useState<any[]>([]);
   const [cartCount, setCartCount] = useState(() => {
     try {
@@ -565,20 +567,21 @@ function WishlistSelection() {
                       src="/assets/back-button.svg"
                     />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
+                  <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                       width="16"
                       height="15"
                       src="/assets/search-icon.svg"
                     />
-                  </button>
+                  </SearchTrigger>
                 </>
               )}
             </div>
 
             {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
                   <span 
@@ -609,6 +612,7 @@ function WishlistSelection() {
                 </>
               )}
             </p>
+            </NavCenter>
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>

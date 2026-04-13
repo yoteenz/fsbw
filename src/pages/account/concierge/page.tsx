@@ -15,8 +15,10 @@ import {
   orderFormEffectiveSignedForPipeline,
 } from '../../../utils/orderTracking';
 import { consultBookingInspoPhotoUrlsFromOrder } from '../../../utils/consultOrderInspoPhotos';
+import type { DigitalFulfillmentOrder } from '../../../utils/digitalOrderFulfillment';
 import {
   consultDigitalOrderTrackingBarFillPct,
+  getDigitalFulfillmentStageIndex,
   orderUsesDigitalFulfillmentTimeline,
 } from '../../../utils/digitalOrderFulfillment';
 import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
@@ -3291,6 +3293,196 @@ function ConciergePage() {
                               const tShift = Number(selectedOrder?.trackingTimelineShiftDays) || 0;
                               const processingTime = selectedOrder?.processingTime || '6-8 WEEKS';
                               const hasCustomization = !processingTime.includes('4'); // Rush (4-6 weeks) = no customization
+
+                              /** Consult orders: only **CONFIRMED** rows (placed → processing → complete copy). */
+                              const isConciergeConsultTrackingOnly =
+                                selectedOrder &&
+                                String(selectedOrder.bookingFlowType || '').trim().toLowerCase() === 'consult';
+
+                              if (isConciergeConsultTrackingOnly) {
+                                const consultRows = [
+                                  {
+                                    key: 'placed',
+                                    description: "WE'VE RECEIVED YOUR ORDER.",
+                                    statusLine: 'STATUS: PLACED',
+                                  },
+                                  {
+                                    key: 'processing',
+                                    description: 'PROCESSING YOUR ORDER.',
+                                    statusLine: 'STATUS: PROCESSING',
+                                  },
+                                  {
+                                    key: 'complete',
+                                    description: 'YOUR ORDER IS COMPLETE.',
+                                    statusLine: 'STATUS: COMPLETE',
+                                  },
+                                ] as const;
+                                const consultStageIdx = getDigitalFulfillmentStageIndex(
+                                  selectedOrder as unknown as DigitalFulfillmentOrder
+                                );
+                                const consultBarPct =
+                                  consultDigitalOrderTrackingBarFillPct(selectedOrder, Date.now()) ?? 0;
+                                return consultRows.map((row, i) => {
+                                  const isCompleted = i < consultStageIdx;
+                                  const isCurrent = i === consultStageIdx;
+                                  const isCanceled = selectedOrder?.status === 'CANCELED';
+                                  const progress = isCompleted ? 100 : isCurrent ? consultBarPct : 0;
+                                  const consultExpandKey = -100 - i;
+                                  const isExpanded =
+                                    expandedStages.has(consultExpandKey) || isCurrent || isCompleted;
+                                  const isExpandable = true;
+                                  return (
+                                    <div
+                                      key={`consult-concierge-track-${row.key}`}
+                                      style={{ position: 'relative', marginBottom: '0' }}
+                                    >
+                                      {i > 0 && (
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '12px',
+                                            top: '-21px',
+                                            width: '2px',
+                                            height: '20px',
+                                            backgroundColor: i - 1 < consultStageIdx ? '#EB1C24' : '#E0E0E0',
+                                            zIndex: 0,
+                                          }}
+                                        />
+                                      )}
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          flexDirection: 'column',
+                                          gap: '0',
+                                          border: isCurrent ? '1.3px solid #EB1C24' : '1.3px solid #000000',
+                                          backgroundColor: 'transparent',
+                                          marginTop: i > 0 ? '12px' : '0',
+                                          marginBottom: '20px',
+                                          position: 'relative',
+                                          zIndex: 1,
+                                          cursor: isExpandable ? 'pointer' : 'default',
+                                        }}
+                                        onClick={() => {
+                                          if (isExpandable) toggleStageExpansion(consultExpandKey);
+                                        }}
+                                      >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px' }}>
+                                          <div
+                                            style={{
+                                              width: '21.6px',
+                                              height: '21.6px',
+                                              borderRadius: '50%',
+                                              backgroundColor: isCompleted || isCurrent ? '#FFFFFF' : '#E0E0E0',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              flexShrink: 0,
+                                              border: isCompleted || isCurrent ? '1px solid #000000' : 'none',
+                                            }}
+                                          >
+                                            {isCompleted ? (
+                                              <img
+                                                src="/assets/premium-check.svg"
+                                                alt=""
+                                                style={{ width: '10.5px', height: '10.5px' }}
+                                              />
+                                            ) : isCurrent && !isCanceled ? (
+                                              <span
+                                                style={{
+                                                  color: '#EB1C24',
+                                                  fontSize: '10px',
+                                                  fontWeight: 'bold',
+                                                  ...(ordersAnimationsEnabled
+                                                    ? { animation: 'pulsate 1s ease-in-out infinite' }
+                                                    : {}),
+                                                  display: 'block',
+                                                  width: '6px',
+                                                  height: '6px',
+                                                  borderRadius: '50%',
+                                                  backgroundColor: '#EB1C24',
+                                                }}
+                                              />
+                                            ) : null}
+                                          </div>
+                                          <div style={{ flex: 1 }}>
+                                            <p
+                                              style={{
+                                                fontFamily: isCurrent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                                                color: isCompleted ? '#000000' : isCurrent ? '#EB1C24' : '#808080',
+                                                fontSize: '10px',
+                                                margin: '0',
+                                                textTransform: 'uppercase',
+                                                fontWeight: isCurrent ? '500' : '400',
+                                              }}
+                                            >
+                                              CONFIRMED
+                                            </p>
+                                            <p
+                                              style={{
+                                                fontFamily: '"Futura PT Book"',
+                                                color: '#808080',
+                                                fontSize: '9px',
+                                                margin: '4px 0 0 0',
+                                                textTransform: 'uppercase',
+                                              }}
+                                            >
+                                              {row.description}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        {isExpanded && isExpandable && (
+                                          <div style={{ padding: '0 12px 12px 12px', marginTop: '0px', paddingTop: '6px' }}>
+                                            <div
+                                              style={{
+                                                width: 'calc(100% - 4px)',
+                                                height: '1px',
+                                                backgroundColor: '#E0E0E0',
+                                                margin: '0 auto 8px auto',
+                                              }}
+                                            />
+                                            {(isCurrent || isCompleted) && (
+                                              <div style={{ marginTop: '3px' }}>
+                                                <div
+                                                  style={{
+                                                    width: '100%',
+                                                    height: '7px',
+                                                    backgroundColor: '#E0E0E0',
+                                                    borderRadius: progress > 0 ? '4px' : '0',
+                                                    overflow: 'hidden',
+                                                    position: 'relative',
+                                                    border: progress === 0 ? '1px solid #808080' : 'none',
+                                                  }}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      width: `${Math.min(100, Math.max(0, progress))}%`,
+                                                      height: '100%',
+                                                      backgroundColor: '#EB1C24',
+                                                      transition: 'width 0.3s ease',
+                                                      borderRadius: progress > 0 ? '4px' : '0',
+                                                    }}
+                                                  />
+                                                </div>
+                                                <p
+                                                  style={{
+                                                    fontFamily: '"Futura PT Book"',
+                                                    color: '#EB1C24',
+                                                    fontSize: '9px',
+                                                    margin: '4px 0 0 0',
+                                                    textTransform: 'uppercase',
+                                                  }}
+                                                >
+                                                  {row.statusLine}
+                                                </p>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                });
+                              }
                               
                               // Filter out customizing stage (index 6) if no customization
                               const filteredStages = trackingStages.map((stage, originalIndex) => ({ stage, originalIndex }))
@@ -4938,7 +5130,7 @@ function ConciergePage() {
                       marginRight: '-10px'
                     }}
                   >
-                    choose which gift you'd like to be included in your next order:
+                    choose which gift you'd like to be included in your order:
                   </p>
                   
                   {/* Gift Selection Options */}

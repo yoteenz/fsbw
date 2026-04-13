@@ -23,6 +23,7 @@ import {
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import {
   consultDigitalOrderTrackingBarFillPct,
   digitalFulfillmentStageLabels,
@@ -69,6 +70,7 @@ function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): nu
 function CheckoutConfirmPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   
   const [cartItems, setCartItems] = useState<any[]>([]);
   const isBookingsOnlyOrder = React.useMemo(
@@ -959,19 +961,20 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         src="/assets/back-button.svg"
                       />
                     </button>
-                    <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                      <img
-                        alt="Search icon"
+                    <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                         width="16"
                         height="15"
                         src="/assets/search-icon.svg"
                       />
-                    </button>
+                    </SearchTrigger>
                   </>
                 )}
               </div>
 
               {/* Text in the middle */}
+              <NavCenter showMobileMenu={showMobileMenu}>
               <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
                 {showMobileMenu ? (
                   <>
@@ -1003,6 +1006,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   </>
                 )}
               </p>
+            </NavCenter>
 
               {/* Right side icons */}
               <div className="gap-5 flex absolute" style={{ right: '17px' }}>

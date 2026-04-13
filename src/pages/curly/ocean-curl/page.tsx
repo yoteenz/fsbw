@@ -13,6 +13,7 @@ import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { clearAppAuth } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
   marbleStripScrollRowStyle,
@@ -34,6 +35,7 @@ import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 function OceanCurlSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
@@ -898,17 +900,18 @@ function OceanCurlSelection() {
                       src="/assets/back-button.svg"
                     />
                   </button>
-                  <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img
-                      alt="Search icon"
+                  <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                       width="16"
                       height="15"
                       src="/assets/search-icon.svg"
                     />
-                  </button>
+                  </SearchTrigger>
                 </>
               )}
             </div>
+            <NavCenter showMobileMenu={showMobileMenu}>
             <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
               {showMobileMenu ? (
                 <>
@@ -940,6 +943,7 @@ function OceanCurlSelection() {
                 </>
               )}
             </p>
+            </NavCenter>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
 <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />

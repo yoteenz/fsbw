@@ -9,6 +9,7 @@ import { ShopMobileMenuShopTab } from './ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from './ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../layouts/menuToggleHeights';
+import { useShopNavSearchBar } from './shop/useShopNavSearchBar';
 
 type BookingCrumb = 'CONSULT' | 'APPOINTMENT';
 
@@ -22,6 +23,7 @@ type Props = {
 export default function BookingFlowLayout({ crumbHighlight, children, belowCard }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
@@ -203,52 +205,54 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
                   >
                     <img alt="Back" width={21} height={15} src="/assets/back-button.svg" />
                   </button>
-                  <button type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search icon" width={16} height={15} src="/assets/search-icon.svg" />
-                  </button>
+                  <SearchTrigger type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img alt="" width={16} height={15} src="/assets/search-icon.svg" />
+                  </SearchTrigger>
                 </>
               )}
             </div>
 
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span
-                    role="link"
-                    tabIndex={0}
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/lobby')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        navigate('/lobby');
-                      }
-                    }}
-                  >
-                    HOME &gt;
-                  </span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
-              ) : (
-                <>
-                  <span
-                    role="link"
-                    tabIndex={0}
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/home/shop')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        navigate('/home/shop');
-                      }
-                    }}
-                  >
-                    BOOKING &gt;
-                  </span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{crumbRedText}</span>
-                </>
-              )}
-            </p>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)', margin: 0 }}>
+                {showMobileMenu ? (
+                  <>
+                    <span
+                      role="link"
+                      tabIndex={0}
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/lobby')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          navigate('/lobby');
+                        }
+                      }}
+                    >
+                      HOME &gt;
+                    </span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                  </>
+                ) : (
+                  <>
+                    <span
+                      role="link"
+                      tabIndex={0}
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/home/shop')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          navigate('/home/shop');
+                        }
+                      }}
+                    >
+                      BOOKING &gt;
+                    </span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{crumbRedText}</span>
+                  </>
+                )}
+              </p>
+            </NavCenter>
 
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>

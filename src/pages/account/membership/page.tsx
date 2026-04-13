@@ -110,16 +110,16 @@ function PremiumChartBenefitRow({
 }
 
 const LOYALTY_REWARDS = [
-  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 5000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '10% OFF UNIT', points: 10000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X HAIRLINE', points: 15000 },
-  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$100 USD', points: 20000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X COLOR', points: 25000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '30% OFF UNIT', points: 30000 },
-  { type: 'voucher' as const, label: 'VOUCHER', detail: '1X STYLING', points: 35000 },
-  { type: 'digital_cash' as const, label: 'DIGITAL CASH', detail: '$200 USD', points: 40000 },
-  { type: 'free_gift' as const, label: 'FREE GIFT', detail: 'WITH PURCHASE', points: 45000 },
-  { type: 'discount' as const, label: 'DISCOUNT CODE', detail: '50% OFF UNIT', points: 50000 }
+  { type: 'free_gift' as const, label: 'free gift', detail: 'WITH PURCHASE', points: 5000 },
+  { type: 'discount' as const, label: 'discount code', detail: '10% OFF UNIT', points: 10000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X HAIRLINE', points: 15000 },
+  { type: 'digital_cash' as const, label: 'digital cash', detail: '$100 USD', points: 20000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X COLOR', points: 25000 },
+  { type: 'discount' as const, label: 'discount code', detail: '30% OFF UNIT', points: 30000 },
+  { type: 'voucher' as const, label: 'voucher', detail: '1X STYLING', points: 35000 },
+  { type: 'digital_cash' as const, label: 'digital cash', detail: '$200 USD', points: 40000 },
+  { type: 'free_gift' as const, label: 'free gift', detail: 'WITH PURCHASE', points: 45000 },
+  { type: 'discount' as const, label: 'discount code', detail: '50% OFF UNIT', points: 50000 }
 ];
 
 const EARN_TASKS = [
@@ -1286,7 +1286,7 @@ function MembershipPage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '16px',
+                              fontSize: '20px',
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400
@@ -1343,11 +1343,32 @@ function MembershipPage() {
                             return (
                               <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < LOYALTY_REWARDS.length - 1 ? '8px 0' : '8px 0 0 0', borderBottom: index < LOYALTY_REWARDS.length - 1 ? '1px solid #E5E5E5' : 'none' }}>
                                 <div>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: labelColor, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
+                                  <p
+                                    style={{
+                                      fontFamily: '"Bohemy", cursive',
+                                      fontSize: '20px',
+                                      color: labelColor,
+                                      margin: '0 0 2px 0',
+                                      textTransform: 'lowercase',
+                                      fontWeight: 400,
+                                    }}
+                                  >
                                     {reward.label}
                                   </p>
                                   <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
-                                    {reward.detail} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
+                                    {reward.detail} AT{' '}
+                                    <span
+                                      style={{
+                                        color:
+                                          reward.type === 'discount' || reward.type === 'digital_cash'
+                                            ? BRAND_GRAY
+                                            : '#EB1C24',
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontWeight: '500',
+                                      }}
+                                    >
+                                      {reward.points.toLocaleString()} PTS
+                                    </span>
                                   </p>
                                 </div>
                                 <button
@@ -1368,7 +1389,7 @@ function MembershipPage() {
                                   disabled={!canRedeem}
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
-                                    fontSize: '16px',
+                                    fontSize: '20px',
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -2087,7 +2108,7 @@ fontFamily: '"Futura PT Book"',
                                 style={{
                                   fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '16px',
+                                  fontSize: '20px',
                                   margin: '0 0 8px 0',
                                   textTransform: 'lowercase',
                                   fontWeight: 400
@@ -2144,12 +2165,33 @@ fontFamily: '"Futura PT Book"',
                                 return (
                                   <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: index < LOYALTY_REWARDS.length - 1 ? '8px 0' : '8px 0 0 0', borderBottom: index < LOYALTY_REWARDS.length - 1 ? '1px solid #E5E5E5' : 'none' }}>
                                     <div>
-                                      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: labelColor, margin: '0 0 2px 0', textTransform: 'uppercase', fontWeight: '500' }}>
+                                      <p
+                                        style={{
+                                          fontFamily: '"Bohemy", cursive',
+                                          fontSize: '20px',
+                                          color: labelColor,
+                                          margin: '0 0 2px 0',
+                                          textTransform: 'lowercase',
+                                          fontWeight: 400,
+                                        }}
+                                      >
                                         {reward.label}
                                       </p>
                                       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000', margin: '0' }}>
-{reward.detail} AT <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>{reward.points.toLocaleString()} PTS</span>
-                                        </p>
+                                        {reward.detail} AT{' '}
+                                        <span
+                                          style={{
+                                            color:
+                                              reward.type === 'discount' || reward.type === 'digital_cash'
+                                                ? BRAND_GRAY
+                                                : '#EB1C24',
+                                            fontFamily: '"Futura PT Medium"',
+                                            fontWeight: '500',
+                                          }}
+                                        >
+                                          {reward.points.toLocaleString()} PTS
+                                        </span>
+                                      </p>
                                     </div>
                                     <button
                                       onClick={() => {
@@ -2169,7 +2211,7 @@ fontFamily: '"Futura PT Book"',
                                       disabled={!canRedeem}
                                       style={{
                                         fontFamily: '"Bohemy", cursive',
-                                        fontSize: '16px',
+                                        fontSize: '20px',
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',

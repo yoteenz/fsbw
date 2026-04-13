@@ -95,8 +95,26 @@ export function formatHeaderDate(dateStr: string): string {
   }
 }
 
-const BOOKING_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Re-install', 'New install'] as const;
-const CONSULT_MEETING_SORT_OPTIONS = ['Most recent', 'A to Z', 'Z to A', 'Premium', 'Standard', 'Wig only', 'Wig + install'] as const;
+const BOOKING_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Re-install',
+  'New install',
+] as const;
+const CONSULT_MEETING_SORT_OPTIONS = [
+  'Most recent',
+  'A to Z',
+  'Z to A',
+  'Archived',
+  'Premium',
+  'Standard',
+  'Wig only',
+  'Wig + install',
+] as const;
 const MEETING_SORT_OPTIONS = [...BOOKING_MEETING_SORT_OPTIONS, ...CONSULT_MEETING_SORT_OPTIONS] as const;
 type MeetingSortOption = (typeof MEETING_SORT_OPTIONS)[number];
 
@@ -269,9 +287,23 @@ function meetingClientStateCode(m: AdminMeeting): string | null {
   return fromAddress;
 }
 
+export function meetingClientNamePlain(m: AdminMeeting): string {
+  return String(m.client || '').trim();
+}
+
 export function meetingClientDisplayNameWithState(m: AdminMeeting): string {
   const state = meetingClientStateCode(m);
-  return state ? `${m.client} (${state})` : m.client;
+  const name = meetingClientNamePlain(m);
+  return state ? `${name} (${state})` : name;
+}
+
+/** Admin → Meetings **view all list**: `NAME · ST · PREMIUM|STANDARD` (no parentheses around state). */
+export function meetingClientViewAllListHeadline(m: AdminMeeting): string {
+  const name = meetingClientNamePlain(m);
+  const st = meetingClientStateCode(m);
+  const tier = tierPremium(m) ? 'PREMIUM' : 'STANDARD';
+  if (st) return `${name} · ${st} · ${tier}`;
+  return `${name} · ${tier}`;
 }
 
 export function normalizeSearchText(raw: unknown): string {
@@ -302,7 +334,9 @@ export function meetingSearchBlob(m: AdminMeeting): string {
       String(meta.hairOption || ''),
       String(meta.consultType || ''),
       String(meta.consultNotes || ''),
-      String(meta.bookingHairOption || '')
+      String(meta.bookingHairOption || ''),
+      String(meta.orderNumber || ''),
+      m.id
     );
   } else {
     baseParts.push(
@@ -331,21 +365,70 @@ export function meetingIsCurrentOrActive(m: AdminMeeting): boolean {
 
 export function meetingSortTimeMs(m: AdminMeeting): number {
   const base = parseISODateLocal(m.date);
-  const timeText = String(m.time || '').trim().toUpperCase();
-  const parsed = timeText.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
-  if (parsed) {
-    let hours = Number(parsed[1]);
-    const mins = Number(parsed[2] || '0');
-    const ampm = parsed[3];
+  const timeText = String(m.time || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // 12h: "2:00 PM", "2 PM", "9:30AM"
+  const parsed12 = timeText.match(/^(\d{1,2})(?::(\d{2}))?(?::\d{2})?\s*(AM|PM)$/);
+  if (parsed12) {
+    let hours = Number(parsed12[1]);
+    const mins = Number(parsed12[2] || '0');
+    const ampm = parsed12[3];
     if (ampm === 'PM' && hours < 12) hours += 12;
     if (ampm === 'AM' && hours === 12) hours = 0;
     base.setHours(hours, mins, 0, 0);
+    return base.getTime();
   }
+
+  // 24h: "14:00", "9:30", "09:15:00"
+  const parsed24 = timeText.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (parsed24) {
+    const hours = Number(parsed24[1]);
+    const mins = Number(parsed24[2]);
+    if (hours >= 0 && hours <= 23 && mins >= 0 && mins <= 59) {
+      base.setHours(hours, mins, 0, 0);
+      return base.getTime();
+    }
+  }
+
   return base.getTime();
+}
+
+function compareMeetingsByClientNameAsc(a: AdminMeeting, b: AdminMeeting): number {
+  const c = meetingClientDisplayNameWithState(a).localeCompare(meetingClientDisplayNameWithState(b), undefined, {
+    sensitivity: 'base',
+  });
+  if (c !== 0) return c;
+  const t = meetingSortTimeMs(b) - meetingSortTimeMs(a);
+  if (t !== 0) return t;
+  return String(a.id || '').localeCompare(String(b.id || ''));
+}
+
+function compareMeetingsByTimeDesc(a: AdminMeeting, b: AdminMeeting): number {
+  const t = meetingSortTimeMs(b) - meetingSortTimeMs(a);
+  if (t !== 0) return t;
+  const c = compareMeetingsByClientNameAsc(a, b);
+  if (c !== 0) return c;
+  return String(a.id || '').localeCompare(String(b.id || ''));
+}
+
+/** Completed / submitted / offer-sent — surfaced via **Archived** sort in view-all. */
+export function meetingIsArchivedForAdminViewAll(m: AdminMeeting): boolean {
+  const st = String(m.status || '').trim().toLowerCase();
+  if (st === 'completed') return true;
+  const meta = m.metadata || {};
+  if (String(meta.consultOfferSent || '').trim().toLowerCase() === 'true') return true;
+  if (String(meta.bookingSubmitted || '').trim().toLowerCase() === 'true') return true;
+  return false;
 }
 
 export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSortOption): AdminMeeting[] {
   const filtered = (() => {
+    if (sortOption === 'Archived') return rows.filter((m) => meetingIsArchivedForAdminViewAll(m));
     if (sortOption === 'Premium') return rows.filter((m) => tierPremium(m));
     if (sortOption === 'Standard') return rows.filter((m) => !tierPremium(m));
     if (sortOption === 'Re-install') {
@@ -379,7 +462,9 @@ export function sortMeetingsByOption(rows: AdminMeeting[], sortOption: MeetingSo
     );
     return sorted;
   }
-  sorted.sort((a, b) => meetingSortTimeMs(b) - meetingSortTimeMs(a));
+
+  /** Premium / Standard / install-type / wig-type filters: same order as "Most recent" (newest first). */
+  sorted.sort(compareMeetingsByTimeDesc);
   return sorted;
 }
 

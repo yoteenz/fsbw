@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -14,7 +14,8 @@ import {
   usStateAbbrevFromAddressLine,
 } from '../../../utils/usAddressStateDisplay';
 
-const REVIEW_TABS = ['ALL', 'SHOP', 'TOOLS'] as const;
+const REVIEW_TABS = ['OVERVIEW', 'SHOP', 'TOOLS'] as const;
+type ReviewTab = (typeof REVIEW_TABS)[number];
 
 const REVIEW_SORT_OPTIONS = ['1 STAR', '2 STAR', '3 STAR', '4 STAR', '5 STAR', 'PHOTOS', 'VIDEOS'] as const;
 type ReviewSortOption = (typeof REVIEW_SORT_OPTIONS)[number];
@@ -205,6 +206,163 @@ function averageRatingForVisible(rows: AdminReviewRow[]): number {
   if (vis.length === 0) return 0;
   const sum = vis.reduce((s, r) => s + (Number(r.rating) || 0), 0);
   return Math.round((sum / vis.length) * 10) / 10;
+}
+
+function starDistribution(rows: AdminReviewRow[]): number[] {
+  const counts = [0, 0, 0, 0, 0];
+  for (const r of rows) {
+    const n = reviewStarCount(r);
+    if (n >= 1 && n <= 5) counts[n - 1] += 1;
+  }
+  return counts;
+}
+
+function pct(part: number, whole: number): string {
+  if (whole <= 0) return '0';
+  return String(Math.round((part / whole) * 100));
+}
+
+type ScopeOverviewMetrics = {
+  label: string;
+  total: number;
+  avg: number;
+  pending: number;
+  published: number;
+  withPhotos: number;
+  withVideos: number;
+  verified: number;
+  stars: number[];
+};
+
+function buildScopeOverviewMetrics(label: string, rows: AdminReviewRow[]): ScopeOverviewMetrics {
+  const total = rows.length;
+  const pending = rows.filter((r) => r.status === 'pending').length;
+  const published = rows.filter((r) => r.status === 'published').length;
+  const withPhotos = rows.filter((r) => r.photos > 0).length;
+  const withVideos = rows.filter((r) => r.videos > 0).length;
+  const verified = rows.filter((r) => r.verifiedPurchase !== false).length;
+  return {
+    label,
+    total,
+    avg: averageRatingForVisible(rows),
+    pending,
+    published,
+    withPhotos,
+    withVideos,
+    verified,
+    stars: starDistribution(rows),
+  };
+}
+
+function OverviewAnalyticsPanel({
+  shop,
+  tools,
+}: {
+  shop: ScopeOverviewMetrics;
+  tools: ScopeOverviewMetrics;
+}) {
+  const cellStyle: CSSProperties = {
+    fontFamily: '"Futura PT Book"',
+    fontSize: '10px',
+    color: '#000',
+    textTransform: 'uppercase',
+    lineHeight: 1.35,
+  };
+  const labelGray: CSSProperties = { ...cellStyle, color: '#808080' };
+  const sectionTitle: CSSProperties = {
+    fontFamily: '"Futura PT Medium"',
+    fontSize: '11px',
+    color: '#EB1C24',
+    margin: '0 0 8px',
+    textTransform: 'uppercase',
+  };
+
+  const renderScopeBlock = (m: ScopeOverviewMetrics) => (
+    <div
+      key={m.label}
+      className="mb-5 pb-4"
+      style={{ borderBottom: '1px solid #e5e7eb' }}
+    >
+      <p style={sectionTitle}>{m.label}</p>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+        <div>
+          <p style={labelGray}>TOTAL REVIEWS</p>
+          <p style={{ ...cellStyle, fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>{m.total}</p>
+        </div>
+        <div>
+          <p style={labelGray}>AVERAGE RATING</p>
+          <p style={{ ...cellStyle, fontFamily: '"Futura PT Medium"', color: '#EB1C24' }}>
+            {m.total === 0 ? '—' : m.avg % 1 === 0 ? m.avg : m.avg.toFixed(1)}
+          </p>
+        </div>
+        <div>
+          <p style={labelGray}>PUBLISHED</p>
+          <p style={cellStyle}>{m.published}</p>
+        </div>
+        <div>
+          <p style={labelGray}>PENDING</p>
+          <p style={cellStyle}>{m.pending}</p>
+        </div>
+        <div>
+          <p style={labelGray}>WITH PHOTOS</p>
+          <p style={cellStyle}>
+            {m.withPhotos} ({pct(m.withPhotos, m.total)}%)
+          </p>
+        </div>
+        <div>
+          <p style={labelGray}>WITH VIDEOS</p>
+          <p style={cellStyle}>
+            {m.withVideos} ({pct(m.withVideos, m.total)}%)
+          </p>
+        </div>
+        <div className="col-span-2">
+          <p style={labelGray}>VERIFIED PURCHASE</p>
+          <p style={cellStyle}>
+            {m.verified} ({pct(m.verified, m.total)}%)
+          </p>
+        </div>
+      </div>
+      <p style={{ ...labelGray, marginTop: '10px', marginBottom: '4px' }}>RATING DISTRIBUTION (STARS)</p>
+      <div className="space-y-1">
+        {[5, 4, 3, 2, 1].map((star) => {
+          const c = m.stars[star - 1] ?? 0;
+          const w = m.total > 0 ? Math.round((c / m.total) * 100) : 0;
+          return (
+            <div key={`${m.label}-${star}`} className="flex items-center gap-2">
+              <span style={{ ...cellStyle, width: '52px', flexShrink: 0 }}>{star}★</span>
+              <div
+                className="flex-1 min-w-0"
+                style={{ height: '6px', background: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}
+              >
+                <div style={{ width: `${w}%`, height: '100%', background: '#EB1C24' }} />
+              </div>
+              <span style={{ ...cellStyle, width: '28px', textAlign: 'right', flexShrink: 0 }}>{c}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-0">
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '10px',
+          color: '#000',
+          margin: '0 0 12px',
+          textTransform: 'uppercase',
+          lineHeight: 1.4,
+        }}
+      >
+        COMBINED ANALYTICS FOR SHOP (UNITS / PDP) AND TOOLS REVIEWS. USE SHOP / TOOLS TABS TO BROWSE INDIVIDUAL
+        REVIEWS.
+      </p>
+      {renderScopeBlock(shop)}
+      {renderScopeBlock(tools)}
+    </div>
+  );
 }
 
 function clientProfilePhotoUrlFromApi(x: Record<string, unknown>): string | undefined {
@@ -410,10 +568,10 @@ function normalizeApiReview(item: unknown, index: number): AdminReviewRow {
 export default function AdminReviews() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = usePersistentQueryState<(typeof REVIEW_TABS)[number]>({
+  const [activeTab, setActiveTab] = usePersistentQueryState<ReviewTab>({
     queryKey: 'tab',
     storageKey: 'adminReviewsActiveTab',
-    defaultValue: 'ALL',
+    defaultValue: 'OVERVIEW',
     allowedValues: REVIEW_TABS,
   });
   const [reviews, setReviews] = useState<AdminReviewRow[]>(() =>
@@ -463,12 +621,21 @@ export default function AdminReviews() {
   const displayTotal =
     activeTab === 'SHOP' ? summaryShopTotal : activeTab === 'TOOLS' ? summaryToolsTotal : summaryAllTotal;
   const totalReviewsLabel =
-    activeTab === 'SHOP' ? 'SHOP REVIEWS' : activeTab === 'TOOLS' ? 'TOOL REVIEWS' : 'TOTAL REVIEWS';
+    activeTab === 'SHOP'
+      ? 'SHOP REVIEWS'
+      : activeTab === 'TOOLS'
+        ? 'TOOL REVIEWS'
+        : 'TOTAL (SHOP + TOOLS)';
 
-  const allVisibleSorted = useMemo(
-    () => sortReviewsByOption(allVisible, reviewSortOption),
-    [allVisible, reviewSortOption]
+  const overviewShopMetrics = useMemo(
+    () => buildScopeOverviewMetrics('SHOP REVIEWS', shopReviews),
+    [shopReviews]
   );
+  const overviewToolsMetrics = useMemo(
+    () => buildScopeOverviewMetrics('TOOLS REVIEWS', toolsReviews),
+    [toolsReviews]
+  );
+
   const shopVisibleSorted = useMemo(
     () => sortReviewsByOption(shopReviews, reviewSortOption),
     [shopReviews, reviewSortOption]
@@ -878,8 +1045,8 @@ export default function AdminReviews() {
                 ))}
               </div>
 
-              {/* Sort lives outside scroll so the menu is never clipped when the list is empty */}
-              {renderSortDropdown()}
+              {/* Sort — shop/tools lists only (overview is analytics-only) */}
+              {activeTab !== 'OVERVIEW' ? renderSortDropdown() : null}
 
               {/* Tab content – padding below scroll viewport (above card bottom) */}
               <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
@@ -891,7 +1058,9 @@ export default function AdminReviews() {
                     boxSizing: 'border-box',
                   }}
                 >
-                {activeTab === 'ALL' && <div className="space-y-0">{allVisibleSorted.map(renderReviewCard)}</div>}
+                {activeTab === 'OVERVIEW' ? (
+                  <OverviewAnalyticsPanel shop={overviewShopMetrics} tools={overviewToolsMetrics} />
+                ) : null}
                 {activeTab === 'SHOP' && (
                   shopReviews.length === 0 ? (
                     <div className="py-6 text-center">

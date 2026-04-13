@@ -13,6 +13,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 
 interface LaceOption {
   id: string;
@@ -25,6 +26,7 @@ interface LaceOption {
 function LaceSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedLace, setSelectedLace] = useState(() => {
     const pathname = window.location.pathname;
@@ -706,18 +708,19 @@ function LaceSelection() {
                     src="/assets/back-button.svg"
                   />
                 </button>
-                <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                  <img
-                    alt="Search icon"
+                <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img
+                  alt=""
                     width="16"
                     height="15"
                     src="/assets/search-icon.svg"
                   />
-                </button>
+                </SearchTrigger>
               </>
             )}
           </div>
-          <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
+          <NavCenter showMobileMenu={showMobileMenu}>
+            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
             {showMobileMenu ? (
               <>
                 <span 
@@ -765,6 +768,7 @@ function LaceSelection() {
               </>
             )}
           </p>
+            </NavCenter>
           <div className="gap-5 flex absolute" style={{ right: '17px' }}>
             <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
               <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />

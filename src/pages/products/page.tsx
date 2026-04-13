@@ -17,10 +17,12 @@ import {
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
 
   /** TEMP: green outlines on home/shop product flex cells — set `false` to hide. */
   const DEBUG_PRODUCT_FLEX_BOUNDS = false;
@@ -218,9 +220,25 @@ function ProductsPage() {
     }
   ]);
 
+  const navSearchQuery = React.useMemo(() => {
+    try {
+      return (new URLSearchParams(location.search).get('q') || '').trim().toLowerCase();
+    } catch {
+      return '';
+    }
+  }, [location.search]);
+
+  const unitsProductsFiltered = React.useMemo(() => {
+    if (!navSearchQuery) return unitsProducts;
+    return unitsProducts.filter((p) => {
+      const blob = `${p.name} ${p.length} ${p.hairOrigin} ${p.route || ''}`.toLowerCase();
+      return blob.includes(navSearchQuery);
+    });
+  }, [unitsProducts, navSearchQuery]);
+
   // UNITS strip: 2 products per “page”; row width = pairCount×100% of viewport; snap step after windowWidth (below)
   const [unitsHomePage, setUnitsHomePage] = useState(0);
-  const unitsPairCount = Math.ceil(unitsProducts.length / 2);
+  const unitsPairCount = Math.ceil(unitsProductsFiltered.length / 2);
   const unitsHomeMaxPage = Math.max(0, unitsPairCount - 1);
 
   const shopTextureStripItems = React.useMemo(
@@ -403,7 +421,7 @@ function ProductsPage() {
 
   useEffect(() => {
     setUnitsHomePage((p) => Math.min(p, unitsHomeMaxPage));
-  }, [unitsHomeMaxPage]);
+  }, [unitsHomeMaxPage, navSearchQuery]);
 
   // BUNDLES / CLOSURES / FRONTALS strips: 2 textures visible, overlapping window (page 0: 0+1, page 1: 1+2)
   const textureStripCount = shopTextureStripItems.length;
@@ -746,50 +764,46 @@ function ProductsPage() {
                   src="/assets/back-button.svg"
                 />
               </button>
-              <button className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                <img
-                  alt="Search icon"
-                  width="16"
-                  height="15"
-                  src="/assets/search-icon.svg"
-                />
-              </button>
+              <SearchTrigger className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                <img alt="" width="16" height="15" src="/assets/search-icon.svg" />
+              </SearchTrigger>
                 </>
               )}
             </div>
 
-            {/* Text in the middle */}
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span 
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/lobby')}
-                  >
-                    HOME &gt;
-                  </span>{' '}
-                  <span
-                    style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-                  >
-                    MENU
-                  </span>
-                </>
-              ) : (
-                <>
-              <span 
-                style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                onClick={() => navigate('/lobby')}
-              >
-                HOME &gt;
-              </span>{' '}
-              <span
-                style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
-              >
-                SHOP
-              </span>
-                </>
-              )}
-            </p>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)', margin: 0 }}>
+                {showMobileMenu ? (
+                  <>
+                    <span 
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/lobby')}
+                    >
+                      HOME &gt;
+                    </span>{' '}
+                    <span
+                      style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                    >
+                      MENU
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span 
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/lobby')}
+                    >
+                      HOME &gt;
+                    </span>{' '}
+                    <span
+                      style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}
+                    >
+                      SHOP
+                    </span>
+                  </>
+                )}
+              </p>
+            </NavCenter>
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
@@ -1041,14 +1055,14 @@ function ProductsPage() {
                           gap: '0',
                           transform: `translateX(${unitsScrollPx}px)`,
                           transition: 'none',
-                          width: unitsProducts.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
+                          width: unitsProductsFiltered.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
                           boxSizing: 'border-box'
                         }}
                       >
-                      {unitsProducts.map((product) => {
+                      {unitsProductsFiltered.map((product) => {
                         const flexBasis =
-                          unitsProducts.length >= 4
-                            ? `calc(100% / ${unitsProducts.length})`
+                          unitsProductsFiltered.length >= 4
+                            ? `calc(100% / ${unitsProductsFiltered.length})`
                             : '50%';
                         return (
                         <div
@@ -1187,14 +1201,14 @@ function ProductsPage() {
                         gap: '0',
                         transform: `translateX(${unitsScrollPx}px)`,
                         transition: 'none',
-                        width: unitsProducts.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
+                        width: unitsProductsFiltered.length >= 4 ? `${unitsPairCount * 100}%` : '100%',
                         boxSizing: 'border-box'
                       }}
                     >
-                      {unitsProducts.map((product, index) => {
+                      {unitsProductsFiltered.map((product, index) => {
                         const flexBasis =
-                          unitsProducts.length >= 4
-                            ? `calc(100% / ${unitsProducts.length})`
+                          unitsProductsFiltered.length >= 4
+                            ? `calc(100% / ${unitsProductsFiltered.length})`
                             : '50%';
                         const isLeftColumn = index % 2 === 0;
                         return (
@@ -1255,7 +1269,7 @@ function ProductsPage() {
                 </div>
               </div>
               </div>
-              {unitsProducts.length >= 4 && (
+              {unitsProductsFiltered.length >= 4 && (
                 <>
                   <button
                     type="button"

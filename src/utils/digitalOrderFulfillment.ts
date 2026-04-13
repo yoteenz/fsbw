@@ -3,6 +3,8 @@
  * Use a 3-stage client timeline (placed → processing → complete) instead of live shipping tracking.
  */
 
+import { CONSULT_PLACED_TO_PROCESSING_MS } from './consultOrderLifecycle';
+
 export type DigitalFulfillmentOrder = {
   digitalFulfillmentOnly?: boolean;
   bookingFlowType?: string;
@@ -60,9 +62,9 @@ function consultOrderTimelineAnchorMs(order: DigitalFulfillmentOrder): number {
 }
 
 /**
- * Consult-only: bar fills **10% → 100%** linearly over **3 days** from **placedAt** (or order **date**).
- * **PLACED**: same curve but **capped below 30%** until status advances.
- * **PROCESSING** (and mapped shipping statuses): **at least 30%**, same curve.
+ * Consult-only: progress from **placedAt** (or order **date**).
+ * **PLACED** (first **2h**): **10% → ~30%** over that window (still below **30%** until **PROCESSING**).
+ * **PROCESSING** (and mapped shipping statuses): **30% → 100%** over the remaining time until **72h** from **placedAt**.
  * **COMPLETE** / **DELIVERED**: **100%**.
  */
 export function consultDigitalOrderTrackingBarFillPct(
@@ -74,14 +76,26 @@ export function consultDigitalOrderTrackingBarFillPct(
   if (st === 'COMPLETE' || st === 'DELIVERED') return 100;
 
   const anchor = consultOrderTimelineAnchorMs(order);
-  const elapsed = Math.max(0, Math.min(nowMs - anchor, CONSULT_ORDER_TRACKING_WINDOW_MS));
-  const linear = 10 + (elapsed / CONSULT_ORDER_TRACKING_WINDOW_MS) * 90;
+  const elapsedRaw = nowMs - anchor;
+  const elapsed = Math.max(0, Math.min(elapsedRaw, CONSULT_ORDER_TRACKING_WINDOW_MS));
+
+  const phase1Ms = CONSULT_PLACED_TO_PROCESSING_MS;
+  const phase2Ms = Math.max(1, CONSULT_ORDER_TRACKING_WINDOW_MS - phase1Ms);
 
   const processingLike =
     st === 'PROCESSING' || st === 'CONFIRMED' || st === 'PREPARING' || st === 'SHIPPED';
-  if (processingLike) return Math.min(100, Math.max(30, linear));
-  if (st === 'PLACED') return Math.min(29.99, linear);
-  return Math.min(100, linear);
+
+  if (processingLike) {
+    const afterPhase1 = Math.max(0, elapsed - phase1Ms);
+    const t = Math.min(1, afterPhase1 / phase2Ms);
+    return Math.min(100, Math.max(30, 30 + t * 70));
+  }
+  if (st === 'PLACED') {
+    const t = Math.min(1, elapsed / phase1Ms);
+    return Math.min(29.99, 10 + t * 19.99);
+  }
+  const t = Math.min(1, elapsed / CONSULT_ORDER_TRACKING_WINDOW_MS);
+  return Math.min(100, 10 + t * 90);
 }
 
 export function digitalFulfillmentStageLabels(): readonly string[] {

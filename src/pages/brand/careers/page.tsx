@@ -11,6 +11,7 @@ import { workerRoleHeaderIconSrc } from '../../../utils/workerRoleHeaderIcon';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 
 const MAX_RESUME_BYTES = 1.5 * 1024 * 1024;
 
@@ -104,6 +105,7 @@ const REQUIRED_EDUCATION_OPTIONS = [
 export default function BrandCareersPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -354,35 +356,37 @@ export default function BrandCareersPage() {
                   >
                     <img alt="Back" width="21" height="15" src="/assets/back-button.svg" />
                   </button>
-                  <button type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
-                    <img alt="Search" width="16" height="15" src="/assets/search-icon.svg" />
-                  </button>
+                  <SearchTrigger type="button" className="cursor-pointer" style={{ transform: 'translateX(-2px)' }}>
+                    <img alt="" width="16" height="15" src="/assets/search-icon.svg" />
+                  </SearchTrigger>
                 </>
               )}
             </div>
-            <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)' }}>
-              {showMobileMenu ? (
-                <>
-                  <span
-                    style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => navigate('/lobby')}
-                  >
-                    HOME &gt;
-                  </span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
-                </>
-              ) : applyJobId ? (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>APPLY</span>
-                </>
-              ) : (
-                <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
-                  <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>CAREERS</span>
-                </>
-              )}
-            </p>
+            <NavCenter showMobileMenu={showMobileMenu}>
+              <p className="text-sm" style={{ fontFamily: '"Futura PT Book"', transform: 'translateY(1px)', margin: 0 }}>
+                {showMobileMenu ? (
+                  <>
+                    <span
+                      style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
+                      onClick={() => navigate('/lobby')}
+                    >
+                      HOME &gt;
+                    </span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>MENU</span>
+                  </>
+                ) : applyJobId ? (
+                  <>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>APPLY</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400' }}>BRAND &gt;</span>{' '}
+                    <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>CAREERS</span>
+                  </>
+                )}
+              </p>
+            </NavCenter>
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
               <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
                 <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
