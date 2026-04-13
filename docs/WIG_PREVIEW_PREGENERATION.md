@@ -58,6 +58,16 @@ npm run wig-preview:manifest:noir
 DRY_RUN=1 node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-sanity-v1.json
 ```
 
+**Windows PowerShell** (same thing — do **not** use `DRY_RUN=1` in front of the command):
+
+```powershell
+$env:DRY_RUN = "1"
+$env:LIMIT = "3"
+node scripts/pregenerate-wig-previews.mjs scripts/wig-preview/manifests/noir-sanity-v1.json
+```
+
+Clear dry run before a real batch: `Remove-Item Env:DRY_RUN -ErrorAction SilentlyContinue`
+
 **3) Real batch with fal** (example):
 
 ```bash
