@@ -13130,3 +13130,22 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`admin/clients/page.tsx`**: **`returnTo=pending`** → back navigates to **`/admin/pending`** (close details + block confirm).
 
 **Changes:** **`AdminReviewStyleCard.tsx`**, **`admin/pending/page.tsx`**, **`mockSignedOrderFormForApproval.ts`**, **`admin/clients/page.tsx`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
+## 2026-04-13 — fal-first laptop steps: not in motherboard; user asked to resend from prior cloud-agent chat
+
+**Context:** User asked to resend **fal-first setup steps for laptop** from a prior **“wig consult nano banana cloud agent”** conversation and to check motherboard memory.
+
+**Topics covered:** Searched **`motherboard/MEMORY.md`**, **`CORE.md`**, and project **`docs/`** for **fal**, **fal-first**, **nano banana**, **FAL_KEY** — no matching entry. Grepped local **agent-transcripts** under this project; only hit was the same user query in this session, not the original steps.
+
+**Decisions / outcomes:** Those steps were **not recoverable** from this repo’s motherboard or cached transcripts. For future retrieval, paste them into a chat and say **“add to motherboard”** or keep a short note in **`docs/`**. Below is a **generic** laptop setup for **fal.ai** (common meaning of “fal-first”), not a verbatim replay of the missing cloud-agent message.
+
+**Generic fal-first on a Windows laptop (PowerShell):**
+
+1. Create an API key at [https://fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) (copy once; it may not be shown again).
+2. In the shell you use for dev: `$env:FAL_KEY="your-key-here"` (session only), or set **User** environment variable **FAL_KEY** in Windows Settings for persistence across terminals.
+3. Install a client for your stack, e.g. **`npm install @fal-ai/client`** (Node) or **`pip install fal-client`** (Python); the client reads **`FAL_KEY`** automatically when set.
+4. Smoke test (replace endpoint with the model your workflow uses), e.g. `curl` to **`https://fal.run/...`** with header **`Authorization: Key $env:FAL_KEY`** and a small JSON body, or run the hello-world from [fal docs — clients / authentication](https://docs.fal.ai/model-apis/clients).
+
+**Changes:** This **`motherboard/MEMORY.md`** entry only (no app code).
