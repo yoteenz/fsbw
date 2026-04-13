@@ -1,0 +1,30 @@
+================================================================================
+WHY YOU MIGHT SEE AN OLD FILE ON YOUR PC
+================================================================================
+This folder was updated on the "preview/mobile" branch. If your file still looks
+short and old, update your project first (Git: pull the latest), then reopen the file.
+
+You do NOT need this file to test fal — you can copy the three prompts below directly.
+
+================================================================================
+MANUAL 3-STEP TEST IN FAL (copy each block, attach images as you already do)
+================================================================================
+
+--- STEP 1 (attach: brick mannequin + white/rose example + logo) ---
+
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- STEP 2 (attach: OUTPUT IMAGE from Step 1 only — change hex if you want another color) ---
+
+Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- STEP 3 (attach: OUTPUT from Step 2 + hair STYLE reference as second image) ---
+
+Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
+
+================================================================================
+AUTOMATED BATCH (many images from the website’s option list) — SEPARATE THING
+================================================================================
+That uses a different prompt inside the code file promptTemplate.mjs — the function
+named buildWigPreviewPrompt at the BOTTOM of that file. You only edit that when you
+want the bulk generator to change. It is NOT the same as the 3 steps above.
