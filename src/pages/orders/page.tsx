@@ -478,94 +478,47 @@ function OrdersPage() {
     },
   });
 
-  /** Demo **ORDER #340** — custom upload / gallery inspo + distinct offer code. */
+  /** Demo **ORDER #340** — **PROCESSING**, no quote yet: test Send offer + custom image path from admin. */
   const buildFounderDemoConsultOrder340 = (): Order => ({
     id: 'kateena-consult-demo-340',
     orderNumber: 'ORDER #340',
     confirmationNumber: 'D3M4C0',
-    date: getDateDaysAgo(1),
-    status: 'COMPLETE',
+    date: getDateDaysAgo(0),
+    status: 'PROCESSING',
     productName: 'WIG CONSULT',
     productImage: '/assets/gallery-mock.png',
     total: 40,
     subtotal: 40,
     items: 1,
-    placedAt: Date.now() - (28 * 60 * 60 * 1000),
-    consultProcessingStartedAt: Date.now() - (5 * 60 * 60 * 1000),
-    completedAt: Date.now() - (1 * 60 * 60 * 1000),
+    /** >2h after place so lifecycle stays PROCESSING (not PLACED); under 72h so it does not auto-COMPLETE. */
+    placedAt: Date.now() - (10 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (8 * 60 * 60 * 1000),
     orderFormSigned: false,
     bookingFlowType: 'consult',
     bookingTier: 'standard',
     bookingHairOption: 'WIG ONLY',
     bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
-    consultQuoteId: '00000000-0000-4000-8000-000000000340',
-    consultOfferSnapshot: {
-      unitKey: 'NOIR',
-      selections: {
-        capSize: 'M',
-        length: '26"',
-        density: '180%',
-        texture: 'SILKY',
-        lace: '13X4',
-        hairline: 'NATURAL',
-        color: 'ESPRESSO',
-        styling: 'BANGS',
-        addOns: [],
-      },
-      priceBreakdown: [
-        { label: 'UNIT', value: 'NOIR +$760 USD' },
-        { label: 'ESTIMATED TOTAL', value: '$760 USD' },
-      ],
-      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
-      thumbnailSrc: '/assets/gallery-mock.png',
-      discountCode: 'CONSULT-DEMO340',
-      expiresAt: new Date(Date.now() + 68 * 60 * 60 * 1000).toISOString(),
-    },
   });
 
-  /** Demo **ORDER #341** — BLANCO + default unit thumb for AI preview path testing. */
+  /** Demo **ORDER #341** — **PROCESSING**, no quote yet: test Send offer + AI preview path from admin. */
   const buildFounderDemoConsultOrder341 = (): Order => ({
     id: 'kateena-consult-demo-341',
     orderNumber: 'ORDER #341',
     confirmationNumber: 'D3M4C1',
-    date: getDateDaysAgo(1),
-    status: 'COMPLETE',
+    date: getDateDaysAgo(0),
+    status: 'PROCESSING',
     productName: 'WIG CONSULT',
     productImage: '/assets/NOIR/blanco-thumb.png',
     total: 40,
     subtotal: 40,
     items: 1,
-    placedAt: Date.now() - (26 * 60 * 60 * 1000),
-    consultProcessingStartedAt: Date.now() - (4 * 60 * 60 * 1000),
-    completedAt: Date.now() - (50 * 60 * 1000),
+    placedAt: Date.now() - (9 * 60 * 60 * 1000),
+    consultProcessingStartedAt: Date.now() - (7 * 60 * 60 * 1000),
     orderFormSigned: false,
     bookingFlowType: 'consult',
     bookingTier: 'standard',
     bookingHairOption: 'WIG ONLY',
     bookingInspoPhotoUrls: ['/assets/NOIR/blanco-thumb.png'],
-    consultQuoteId: '00000000-0000-4000-8000-000000000341',
-    consultOfferSnapshot: {
-      unitKey: 'BLANCO',
-      selections: {
-        capSize: 'M',
-        length: '22"',
-        density: '200%',
-        texture: 'SILKY',
-        lace: '13X6',
-        hairline: 'PEAK',
-        color: 'PLATINUM BLONDE',
-        styling: 'NONE',
-        addOns: [],
-      },
-      priceBreakdown: [
-        { label: 'UNIT', value: 'BLANCO +$820 USD' },
-        { label: 'ESTIMATED TOTAL', value: '$820 USD' },
-      ],
-      adminMessage: FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE,
-      thumbnailSrc: '/assets/NOIR/blanco-thumb.png',
-      discountCode: 'CONSULT-DEMO341',
-      expiresAt: new Date(Date.now() + 66 * 60 * 60 * 1000).toISOString(),
-    },
   });
 
   const mergeFounderAdminConsultOrder331Demo = (
@@ -578,19 +531,30 @@ function OrdersPage() {
     }
     if (isMockProfileChromeActive(user)) return { activeOrders, pastOrders, merged: false };
     if (readFounderAccountViewAsClientFromStorage()) return { activeOrders, pastOrders, merged: false };
+    /** Drop prior **COMPLETE + snapshot** injects for #340/#341 so localStorage upgrades to **PROCESSING** demos. */
+    const stripStaleFounderDemoConsult340341 = (arr: Order[]) =>
+      arr.filter((o) => {
+        const id = String(o.id || '');
+        if (id !== 'kateena-consult-demo-340' && id !== 'kateena-consult-demo-341') return true;
+        if (String(o.status || '').toUpperCase() === 'COMPLETE' && o.consultOfferSnapshot) return false;
+        return true;
+      });
+    activeOrders = stripStaleFounderDemoConsult340341(activeOrders);
+    pastOrders = stripStaleFounderDemoConsult340341(pastOrders);
     const normNum = (s: string) => s.replace(/\s+/g, ' ').trim().toUpperCase();
     const existing = new Set(
       [...activeOrders, ...pastOrders].map((o) => normNum(String(o.orderNumber || '')))
     );
-    const toInject: Order[] = [];
-    if (!existing.has('ORDER #331')) toInject.push(buildFounderDemoConsultOrder331());
-    if (!existing.has('ORDER #340')) toInject.push(buildFounderDemoConsultOrder340());
-    if (!existing.has('ORDER #341')) toInject.push(buildFounderDemoConsultOrder341());
-    if (toInject.length === 0) return { activeOrders, pastOrders, merged: false };
-    /** COMPLETE consult demos belong in **archived** (past), not active. */
+    const toInjectPast: Order[] = [];
+    const toInjectActive: Order[] = [];
+    if (!existing.has('ORDER #331')) toInjectPast.push(buildFounderDemoConsultOrder331());
+    /** #340 / #341 are **PROCESSING** with no snapshot — inject into **active** so Send offer can be tested end-to-end. */
+    if (!existing.has('ORDER #340')) toInjectActive.push(buildFounderDemoConsultOrder340());
+    if (!existing.has('ORDER #341')) toInjectActive.push(buildFounderDemoConsultOrder341());
+    if (toInjectPast.length === 0 && toInjectActive.length === 0) return { activeOrders, pastOrders, merged: false };
     return {
-      activeOrders,
-      pastOrders: [...toInject, ...pastOrders],
+      activeOrders: [...toInjectActive, ...activeOrders],
+      pastOrders: [...toInjectPast, ...pastOrders],
       merged: true,
     };
   };
@@ -1116,13 +1080,13 @@ function OrdersPage() {
       bookingHairOption: 'WIG + INSTALL',
       bookingInspoPhotoUrls: ['/assets/gallery-mock.png', '/assets/mock-image.png'],
     },
+    buildFounderDemoConsultOrder340(),
+    buildFounderDemoConsultOrder341(),
   ];
 
   const kateenaMockPastOrders: Order[] = [
     /** COMPLETE consult demo — archived card (same row as founder inject when mock chrome off). */
     buildFounderDemoConsultOrder331(),
-    buildFounderDemoConsultOrder340(),
-    buildFounderDemoConsultOrder341(),
     {
       id: 'kateena-consult-archived-offer',
       orderNumber: 'ORDER #320',

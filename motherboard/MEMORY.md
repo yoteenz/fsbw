@@ -13976,3 +13976,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`orders/page.tsx`** — **`buildFounderDemoConsultOrder340`** (COMPLETE, gallery/mock inspo, offer thumb **`/assets/gallery-mock.png`**, **`CONSULT-DEMO340`**, NOIR selections), **`buildFounderDemoConsultOrder341`** (COMPLETE, blanco thumb inspo, **`CONSULT-DEMO341`**, BLANCO selections). **`mergeFounderAdminConsultOrder331Demo`** injects any missing **ORDER #331**, **#340**, or **#341** into **past** (not only 331). Shared **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`**; **`kateenaMockPastOrders`** includes 340/341. **`adminMeetingsMock.ts`** — **`adminFounderDemoConsultMeetingOrder340`** / **`341`**; **`listAggregatedAdminMeetingsForClientDetails`** + **`AdminMeetingsHub`** **`mergedMeetings`** merge all three demos. **`motherboard/CORE.md`** — admin demo consults bullet updated for #340/#341 ids and times.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Founder demo consult #340 / #341: PROCESSING, no pre-built quote
+
+**Context (this chat):** User said **#340** and **#341** were wrongly **COMPLETE** with an offer already created; they need **PROCESSING** to test **Send offer** end-to-end.
+
+**Changes:** **`buildFounderDemoConsultOrder340`** / **`341`**: **`PROCESSING`**, no **`consultQuoteId`**, **`consultOfferSnapshot`**, or **`completedAt`**; **`placedAt`** 9–10h ago (past 2h consult gate, under 72h). **`mergeFounderAdminConsultOrder331Demo`**: inject **#331** into **past** only; **#340**/**#341** into **active**; strip stale **COMPLETE** rows with same **`kateena-consult-demo-340`** / **`341`** ids from active/past before inject. **`kateenaMockActiveOrders`**: moved 340/341 here from past mock list. **`motherboard/CORE.md`**: inject behavior clarified.
+
+**Docs:** This **MEMORY** entry.
