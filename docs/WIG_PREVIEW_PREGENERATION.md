@@ -11,6 +11,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
 | BAW base images (NOIR / BLANCO / SOFT_WAVE) | `scripts/generate-baw-base-images.mjs` — `npm run wig-preview:baw-base` (needs `BAW_BACKDROP_IMAGE` path + fal + Supabase) |
 | Example output | `scripts/wig-preview/manifests/noir-sanity-v1.json` (after you run generate) |
+| Resolve upload path for one combo | `npm run wig-preview:resolve-path -- '<JSON>'` → `scripts/wig-preview/resolve-wig-preview-storage-path.mjs` |
 
 **Storage convention**
 
@@ -19,6 +20,25 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 Example: `wig-preview/v1/NOIR/a1b2c3....webp`
 
 Create a **public** (or signed-URL) bucket in Supabase for previews. The examples use **`wig-preview`**; if you named yours something else (e.g. **`live-preview`**), set **`STORAGE_BUCKET=live-preview`** when you run the batch script so uploads go to the right bucket.
+
+### Hand-made images (fal already done — avoid paying again)
+
+The batch script **skips** a row if that **`storagePath`** already exists in the bucket (it tries `download` on the path). So you “add to the total” by **uploading your file to the exact same path** the manifest would use — no extra fal call.
+
+1. **Match the naming convention:** `wig-preview/{PROMPT_VERSION}/NOIR/{32-char-hash}.webp` (same `PROMPT_VERSION` as your manifest, usually **`v1`**). Prefer **WebP**; if your file is PNG/JPEG, convert first so the path still ends in **`.webp`** or the app may not find it later.
+2. **Get the exact path** for one combination (length, density, lace, texture, color, hairline, styling, add-ons must match the manifest **exactly**, including spelling like `OFF BLACK` vs `HONEY`):
+
+```bash
+npm run wig-preview:resolve-path -- '{"unitKey":"NOIR","length":"24\"","density":"200%","lace":"13X6","texture":"SILKY","color":"HONEY","hairline":"NATURAL","styling":"NONE","addOns":[]}'
+```
+
+Or open `scripts/wig-preview/manifests/noir-sanity-v1.json` (or your preset’s manifest) and search for the **`color`** / **`lace`** you care about — each row has **`storagePath`**.
+
+3. **Upload in Supabase:** Dashboard → **Storage** → your bucket → **New folder** is optional; paste the full path as the object name (e.g. `wig-preview/v1/NOIR/f4b7d0e1....webp`) or create folders `wig-preview` → `v1` → `NOIR` and upload the file with the **hash** as the filename.
+
+4. **Later batch run:** `pregenerate-wig-previews.mjs` will **not** regenerate that slot — you keep your hand-picked image.
+
+**“Categorical” folders:** Categories are the **path segments** (`wig-preview` / `v1` / `NOIR` / hash). There is no separate database table in this repo yet — the **hash encodes** the full selection tuple. The **mobile preview site does not yet load these paths** in Build-a-Wig; wiring the UI is a follow-up (compute the same hash client-side or fetch a small index from the API).
 
 **Manual fal (playground) — aspect ratio and resolution**
 

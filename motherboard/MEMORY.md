@@ -14096,3 +14096,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_CATALOG_HAIR_COLOR_HEX`**, **`getBawCatalogHairColor`**, **`wigConsultStep2ForCatalogColor(key)`**; **`WIG_CONSULT_STEP2_PROMPT`** defaults **raspberry / #DA3063**; legacy **`PINK`** alias → raspberry. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Hand uploads to Supabase: same path as manifest = skip fal
+
+**Context (this chat):** User already generated several **NOIR forward-facing color** images in fal and asked how to add them to the total **without** re-paying, and whether Supabase can store them **categorically** so they load/pull correctly.
+
+**Decisions:** Upload to the exact **`storagePath`** the manifest uses (`wig-preview/{version}/NOIR/{hash}.webp`); batch script **skips** if file exists. **Categories** = folder segments; hash encodes full selection until the app wires selection → URL.
+
+**Changes:** **`scripts/wig-preview/selectionStoragePath.mjs`**, **`resolve-wig-preview-storage-path.mjs`**, **`npm run wig-preview:resolve-path`**; manifest generator uses shared hash; **`docs/WIG_PREVIEW_PREGENERATION.md`** — hand-made images subsection.
+
+**Docs:** This **MEMORY** entry.
