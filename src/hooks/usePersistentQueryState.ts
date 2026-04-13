@@ -12,6 +12,18 @@ function normalizeSearch(search: string): string {
   return search.startsWith('?') ? search.slice(1) : search;
 }
 
+/** Stable string so we do not call navigate when only param ordering/encoding differs (avoids replaceState spam). */
+function canonicalQueryString(search: string): string {
+  const raw = normalizeSearch(search);
+  if (!raw) return '';
+  const sp = new URLSearchParams(raw);
+  const entries = [...sp.entries()].sort((a, b) => {
+    const k = a[0].localeCompare(b[0]);
+    return k !== 0 ? k : a[1].localeCompare(b[1]);
+  });
+  return new URLSearchParams(entries).toString();
+}
+
 export function usePersistentQueryState<T extends string>({
   queryKey,
   storageKey,
@@ -73,7 +85,7 @@ export function usePersistentQueryState<T extends string>({
     else sp.set(queryKey, value);
     const nextSearch = sp.toString();
     const currentSearch = normalizeSearch(location.search);
-    if (nextSearch === currentSearch) return;
+    if (canonicalQueryString(nextSearch) === canonicalQueryString(currentSearch)) return;
     navigate(`${location.pathname}${nextSearch ? `?${nextSearch}` : ''}`, { replace: true });
   }, [value, defaultValue, queryKey, location.pathname, location.search, navigate]);
 

@@ -13133,6 +13133,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-08 — Safari replaceState limit + usePersistentQueryState canonical query compare
+
+**Context:** User saw **Component Failed to Load** / **Attempt to use `history.replaceState()` more than 100 times per 10 seconds** on **`fsbw.vercel.app`** (mobile Safari).
+
+**Cause / fix:** **`usePersistentQueryState`** compared **`URLSearchParams.toString()`** to **`location.search`** as raw strings; browser ordering/encoding can differ so the hook kept calling **`navigate(..., { replace: true })`** in a tight loop. Added **`canonicalQueryString()`** (sort key/value pairs) and skip navigate when canonical forms match.
+
+**Changes:** **`src/hooks/usePersistentQueryState.ts`**, **`motherboard/MEMORY.md`**. **`npm run build`**.
+
+---
+
 ## 2026-04-13 — fal-first laptop steps: not in motherboard; user asked to resend from prior cloud-agent chat
 
 **Context:** User asked to resend **fal-first setup steps for laptop** from a prior **“wig consult nano banana cloud agent”** conversation and to check motherboard memory.
@@ -13149,3 +13159,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 4. Smoke test (replace endpoint with the model your workflow uses), e.g. `curl` to **`https://fal.run/...`** with header **`Authorization: Key $env:FAL_KEY`** and a small JSON body, or run the hello-world from [fal docs — clients / authentication](https://docs.fal.ai/model-apis/clients).
 
 **Changes:** This **`motherboard/MEMORY.md`** entry only (no app code).
+
+---
+
+## 2026-04-13 — Merge conflict: MEMORY.md (Safari hook + fal-first entries)
+
+**Context:** User asked to resolve a **git merge conflict** on their branch (vs **`dba3357072f306775467cd85fa9239171b6931ee`**).
+
+**Topics covered:** **`motherboard/MEMORY.md`** had **`<<<<<<< HEAD`** / **`=======`** / **`>>>>>>>`** between two append-only entries: **2026-04-13 fal-first laptop steps** (HEAD) and **2026-04-08 Safari `replaceState` / `usePersistentQueryState`** (incoming).
+
+**Decisions / outcomes:** Removed conflict markers and **kept both entries**: **2026-04-08** first, **2026-04-13** second (chronological within the conflict block; newest still near file end). **`src/hooks/usePersistentQueryState.ts`** already contained **`canonicalQueryString()`** — no further hook edits in this chat.
+
+**Changes:** **`motherboard/MEMORY.md`** only (this resolution + this summary entry).
