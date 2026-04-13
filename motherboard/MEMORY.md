@@ -14198,6 +14198,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-13 — Merge preview/mobile into master (parity)
+
+**Context (this chat):** User asked to **push all mobile preview changes to `master`** so it matches **`preview/mobile`**.
+
+**Decisions / outcomes:** Local **`master`** was fast-forwarded from **`origin/master`**, then **`origin/preview/mobile`** was merged into **`master`** with merge commit **`575a49e`**, and **`master`** was pushed to **`origin/master`**. Branch tips: **`preview/mobile`** at **`0a6caed`** is an ancestor of the merge; **`master`** now includes live NOIR preview API, wig-preview scripts/libs, founder-only 2D downloads on Noir/Blanco/Soft Wave, and related docs/env example updates from that branch.
+
+**Changes:** Git only (merge + push); no app code edits beyond what the merge brought from **`preview/mobile`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
