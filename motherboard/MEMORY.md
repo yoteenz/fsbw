@@ -14062,6 +14062,26 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Step 2 perfected: hair hex + logo legibility; Auto + 2K; BAW reuse
+
+**Context (this chat):** User finalized **Step 2** with same fal settings as Step 1 (**aspect ratio Auto**, **resolution 2K**). New wording: change black hair to target hex; logo must match **reference image** with **FRONTAL SLAYER** fully legible; quality line; change nothing else. They want one prompt shape for **all** base → color (swap hex; later hairline/styling references).
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP2_PROMPT(hairHex)`** updated (hair line uses **match hex code #** + hex for any swatch; logo + quality + unchanged). Comment documents **Auto + 2K** and attachments: Step 1 output + **logo reference**. Export alias **`BAW_SELECTION_COLOR_FROM_BASE_PROMPT`** = same function. **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`** — Step 2 block + attachment order. **`docs/WIG_PREVIEW_PREGENERATION.md`** — prompt table row for Step 2 / BAW alias.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Wig consult Step 1: one base ref only; BAW base generator script
+
+**Context (this chat):** User said **wig consult Step 1** no longer uses a **logo attachment** — only the **base reference** image. They asked to finish the interrupted work: **`generate-baw-base-images.mjs`** for NOIR / BLANCO / SOFT_WAVE base BAW images.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP1_PROMPT`** = single-ref wording (backdrop + logo in **text**); **`WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`** holds old 3-ref string; **`WIG_CONSULT_LEGACY_STEP1_PROMPT`** points to the 3-ref string for backward compatibility. **`NBP_STEP2_PROMPT`** forwards optional `hairColorLabel`. **`scripts/generate-baw-base-images.mjs`** — fal **`nano-banana-pro/edit`**, brick + backdrop uploads, **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`**, Supabase **`baw-base/{PROMPT_VERSION}/{UNIT}.webp`**, env **`BAW_BACKDROP_IMAGE`**, defaults for brick paths, **`UNITS`**, dry-run. **`package.json`** — **`wig-preview:baw-base`**. **`pregenerate-wig-previews.mjs`** — fal defaults **`FAL_ASPECT_RATIO=auto`**, **`FAL_RESOLUTION=2K`**. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** — Step 1 one-ref + baw-base section and env table.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-13 — Wig consult vs BAW prompts in promptTemplate.mjs
 
 **Context (this chat):** User clarified **wig consult** 3-step fal flow is separate from **BAW selection** bulk images. Consult Step 1: **logo from 2nd reference** on base mannequin; Step 2 / 3 same intent. **Legacy** Step 1 (brick → white/rose + logo from **3rd** ref) kept for later.
@@ -14087,5 +14107,101 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Context (this chat):** After the nav crumb fixes, user asked to **push to `master` and the mobile preview branch** (`preview/mobile`).
 
 **Actions:** Committed nav + prior **MEMORY** nav entry on **`preview/mobile`** (`Nav: widen shop/BAW crumb area; fix admin breadcrumb spacing`). **`git push origin preview/mobile`**. Stashed unrelated local edits to **`membership` / `pending` / `reviews` / `products`** pages so **`master`** checkout worked. **`git checkout master`**, **`git merge preview/mobile`** — conflict in **`motherboard/MEMORY.md`** (divergent append-only histories). Resolved by **keeping both sides**: **`master`**-only tail entries (fal-first / merge-conflict note / leaked env) then separator then full **`preview/mobile`** MEMORY continuation through the nav entry. **`git commit`** merge, **`git push origin master`**. Returned to **`preview/mobile`**, **`stash pop`** (working tree clean). Accidental **`git pull origin master`** on **`preview/mobile`** earlier was **`git merge --abort`**ed before push.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Chain edit prompt: Step 2/3 same template; from/to placeholders
+
+**Context (this chat):** User wants **all selection combinations** to use one Step 2 shape: change **\<output from step 1\>** to **\<input for step 2\>**, same logo block and quality lines. Step 3 reuses that template with **\<input from step 2\>** to **\<input for step 3\>**.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`buildWigConsultChainEditPrompt(from, to)`** + alias **`BAW_SELECTION_CHAIN_EDIT_PROMPT`**. **`WIG_CONSULT_STEP2_PROMPT(hex)`** uses **output from step 1** → **{label} hair color (hex #…)**. **`WIG_CONSULT_STEP3_PROMPT(from, to)`** (function); **`WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()`** for style-from-2nd-attachment. **`NBP_STEP3_PROMPT`** now a function. Legacy style-only string → **`WIG_CONSULT_STEP3_PROMPT_LEGACY_STYLE_ATTACHMENT`**. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** table updated.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Step 2 color prompt: slime hex + authentic dyed hair
+
+**Context (this chat):** User asked to update **Step 2 color prompt only** to exact wording: black hair → **slime** hex **#63D54B**, plus clause for **authentically colored/dyed hair** not unrealistic; same logo / quality / unchanged lines.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP2_PROMPT`** builds that string directly; defaults **`63D54B`** / **`slime`**; **`WIG_CONSULT_STEP2_PROMPT(hex, label)`** for other swatches. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Step 2 catalog: raspberry default + full swatch hex map
+
+**Context (this chat):** User renamed **pink** to **raspberry** and listed all catalog colors with hex codes for Step 2 generation (espresso through jet black/off black; **#00000** corrected to **`#000000`** in code).
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_CATALOG_HAIR_COLOR_HEX`**, **`getBawCatalogHairColor`**, **`wigConsultStep2ForCatalogColor(key)`**; **`WIG_CONSULT_STEP2_PROMPT`** defaults **raspberry / #DA3063**; legacy **`PINK`** alias → raspberry. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Hand uploads to Supabase: same path as manifest = skip fal
+
+**Context (this chat):** User already generated several **NOIR forward-facing color** images in fal and asked how to add them to the total **without** re-paying, and whether Supabase can store them **categorically** so they load/pull correctly.
+
+**Decisions:** Upload to the exact **`storagePath`** the manifest uses (`wig-preview/{version}/NOIR/{hash}.webp`); batch script **skips** if file exists. **Categories** = folder segments; hash encodes full selection until the app wires selection → URL.
+
+**Changes:** **`scripts/wig-preview/selectionStoragePath.mjs`**, **`resolve-wig-preview-storage-path.mjs`**, **`npm run wig-preview:resolve-path`**; manifest generator uses shared hash; **`docs/WIG_PREVIEW_PREGENERATION.md`** — hand-made images subsection.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR color preview: Build-a-Wig color page + API + fal
+
+**Context (this chat):** User wanted the **mobile preview** flow: Build-a-wig → select color → **generate 3 angles** for NOIR via **fal** if not already stored, not manual one-by-one uploads only.
+
+**Decisions:** **Admin-only** live endpoint (cost control): **`POST /api/wig-preview/live-noir-color`** with `requireAdmin`. Storage prefix **`wig-preview-live/{v}/NOIR/{manifestHash}/front|left|right.webp`** (separate from batch **`wig-preview/.../{hash}.webp`**). Server skips fal per-angle if object exists. **`@fal-ai/client`** moved to **dependencies** for Vercel.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/wigPreviewSelectionHash.ts`**, **`api/_lib/bawCatalogHairColors.ts`**. **`src/pages/build-a-wig/color/page.tsx`** — admin + NOIR edit/customize color: `postWigPreviewLiveNoirColor`, live hero/thumbs + status line. **`src/utils/api.ts`** — **`postWigPreviewLiveNoirColor`**. **`scripts/generate-noir-wig-preview-manifest.mjs`** uses **`selectionStoragePath.mjs`**. **`package.json`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR fal: single mannequin ref, logo in text only (no logo URL)
+
+**Context (this chat):** User said live generation should **not** depend on a **logo attachment**; their successful prompt did not use a separate logo image.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`** — `image_urls` is **only** the gray-brick mannequin for that angle; logo guidance is **prompt text** (no “reference image” phrasing for logo). Removed **`WIG_PREVIEW_LIVE_LOGO_URL`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW base Step 1 prompt: FRONTAL SLAYER legibility + 3-angle batch note
+
+**Context (this chat):** User updated **BAW base** Step 1 wording (logo with **FRONTAL SLAYER** fully legible) and clarified the image to recreate is the **currently selected / per-angle** mannequin for **3-angle batch** generation.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`**. **`COPY-PASTE-PROMPTS.txt`**, **`scripts/generate-baw-base-images.mjs`** header comment, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Founder-only 2D angle downloads; Blanco & Soft Wave; fix 3D vs 2D file targets
+
+**Context (this chat):** Continuation from prior work on **2D mannequin PNG download links** for product pages. User asked: links **only** for **admin founder** (`kateenaarmstrong@gmail.com`); same pattern on **Blanco** and **Soft Wave**, not only NOIR; downloads felt like **3D** instead of **2D with brick** (product shots carousel uses 3D renders; true 2D brick shots use different asset paths).
+
+**Decisions / outcomes:** Gate **inline “download 2d angles”** and **`ImageViewerModal` `footerDownloads`** on **`isAdminFounderAccount`** (email from `localStorage` `currentUser`), refreshed on `storage` / `focus` / `signInStateChanged`. **2D download hrefs** must match **hero 2D** sources: NOIR → `/assets/NOIR/noir%20{left|front|right}.png` with L/M/R order; Blanco → `/assets/2D%20BLANCO%20{LEFT|FRONT|RIGHT}.png`; Soft Wave → `/assets/2D%20WAVY%20{LEFT|FRONT|RIGHT}.png`. Opening the viewer from **3D** hero or from **product shots** (3D strip) sets **`footerDownloads` to null** so the modal does not offer wrong files.
+
+**Changes:** **`src/pages/straight/noir/page.tsx`**, **`src/pages/straight/blanco/page.tsx`**, **`src/pages/wavy/soft-wave/page.tsx`** — founder gating, constants, under–product-shots links (Blanco/Soft Wave), `viewerModalDownloads` wiring.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — NOIR 2D download links in enlarge modal
+
+**Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
+
+**Changes:** **`ImageViewerModal`** — optional **`footerDownloads`** + export **`ImageViewerDownloadLink`**. **`noir/page.tsx`** — module constants **`NOIR_2D_ANGLE_DOWNLOAD_ROWS`** / **`NOIR_2D_VIEWER_DOWNLOADS`**; set downloads when opening viewer from **2D** hero or product shots; **3D** hero → no footer; modal **`onClose`** clears.
 
 **Docs:** This **MEMORY** entry.

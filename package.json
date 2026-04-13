@@ -10,9 +10,12 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "wig-preview:manifest:noir": "node scripts/generate-noir-wig-preview-manifest.mjs",
-    "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs"
+    "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
+    "wig-preview:baw-base": "node scripts/generate-baw-base-images.mjs",
+    "wig-preview:resolve-path": "node scripts/wig-preview/resolve-wig-preview-storage-path.mjs"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.4.0",
     "@supabase/supabase-js": "^2.45.0",
     "html2canvas": "^1.4.1",
     "jimp": "^1.6.0",
@@ -23,7 +26,6 @@
     "stripe": "^17.7.0"
   },
   "devDependencies": {
-    "@fal-ai/client": "^1.4.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

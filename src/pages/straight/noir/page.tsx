@@ -7,14 +7,14 @@ import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import ImageViewerModal from '../../../components/ImageViewerModal';
+import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
 import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth } from '../../../utils/adminAuth';
+import { clearAppAuth, isAdminFounderAccount } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
@@ -45,6 +45,19 @@ interface DensityOption {
   image: string;
 }
 
+/** 2D NOIR mannequin PNGs (gray brick) — same for under-carousel links and enlarge modal. */
+const NOIR_2D_ANGLE_DOWNLOAD_ROWS: { href: string; label: string; download: string }[] = [
+  { href: '/assets/NOIR/noir%20left.png', label: 'LEFT (L)', download: 'noir-left.png' },
+  { href: '/assets/NOIR/noir%20front.png', label: 'FRONT (M)', download: 'noir-front.png' },
+  { href: '/assets/NOIR/noir%20right.png', label: 'RIGHT (R)', download: 'noir-right.png' },
+];
+
+const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => ({
+  href,
+  label,
+  download,
+}));
+
 function NoirSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,6 +77,9 @@ function NoirSelection() {
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
+  /** When set, enlarged `ImageViewerModal` shows the same 2D NOIR PNG download row as under product shots. */
+  const [viewerModalDownloads, setViewerModalDownloads] = useState<ImageViewerDownloadLink[] | null>(null);
+  const [showAdminFounder2dDownloads, setShowAdminFounder2dDownloads] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -283,6 +299,28 @@ function NoirSelection() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('wishlistUpdated', handleStorageChange);
+    };
+  }, []);
+
+  // Founder-only: 2D angle download links (page + enlarge modal)
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        const email = raw ? (JSON.parse(raw) as { email?: string })?.email : undefined;
+        setShowAdminFounder2dDownloads(isAdminFounderAccount({ email }));
+      } catch {
+        setShowAdminFounder2dDownloads(false);
+      }
+    };
+    refresh();
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('signInStateChanged', refresh as EventListener);
+    return () => {
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('signInStateChanged', refresh as EventListener);
     };
   }, []);
 
@@ -852,13 +890,6 @@ function NoirSelection() {
     '/assets/natural front.png',  // View 1 (default)
     '/assets/natural left.png',  // View 2 (top thumbnail)
     '/assets/natural right.png'  // View 3 (bottom thumbnail)
-  ];
-
-  /** Same PNGs as product shots carousel — filenames match `public/assets/NOIR/`. (m)/(l)/(r) = parting / angle. */
-  const NOIR_2D_ANGLE_DOWNLOADS: { file: string; label: string }[] = [
-    { file: 'noir front.png', label: 'FRONT (M)' },
-    { file: 'noir left.png', label: 'LEFT (L)' },
-    { file: 'noir right.png', label: 'RIGHT (R)' },
   ];
 
   // Get current mannequin images based on selected view
@@ -2294,6 +2325,7 @@ width: 'clamp(200px, 50vw, 320px)',
                         : [currentImages.hero, currentImages.top, currentImages.bottom];
                       setViewerImages(allImages);
                       setViewerCurrentIndex(0);
+                      setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
                       setShowImageViewer(true);
                     }}
                   >
@@ -2322,6 +2354,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                           : [currentImages.hero, currentImages.top, currentImages.bottom];
                         setViewerImages(allImages);
                         setViewerCurrentIndex(0);
+                        setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
                         setShowImageViewer(true);
                       }}
                     />
@@ -2802,6 +2835,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(0);
+                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2819,6 +2853,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(1);
+                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2836,6 +2871,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(2);
+                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2861,7 +2897,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
 
-            {/* 2D mannequin angles — download originals for generation (same files as carousel) */}
+            {/* 2D mannequin angles — founder admin only; same brick-background PNGs as hero 2D view */}
+            {showAdminFounder2dDownloads ? (
             <div
               className="flex flex-col items-center gap-1 px-2"
               style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
@@ -2879,14 +2916,11 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 download 2d angles (png)
               </p>
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-                {NOIR_2D_ANGLE_DOWNLOADS.map(({ file, label }) => {
-                  const href = `/assets/NOIR/${encodeURIComponent(file)}`;
-                  const downloadName = file.replace(/\s+/g, '-');
-                  return (
+                {NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => (
                     <a
-                      key={file}
+                      key={href}
                       href={href}
-                      download={downloadName}
+                      download={download}
                       style={{
                         fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                         fontSize: '10px',
@@ -2897,10 +2931,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     >
                       {label}
                     </a>
-                  );
-                })}
+                ))}
               </div>
             </div>
+            ) : null}
 
               {/* Tabs Section — inside mt-8 mb-6 so translateY(-34px) matches Blanco / Beach Wave */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
@@ -4289,10 +4323,14 @@ width: 'clamp(230px, 57.5vw, 368px)',
       {/* Image Viewer Modal */}
       <ImageViewerModal
         isOpen={showImageViewer}
-        onClose={() => setShowImageViewer(false)}
+        onClose={() => {
+          setShowImageViewer(false);
+          setViewerModalDownloads(null);
+        }}
         images={viewerImages}
         currentIndex={viewerCurrentIndex}
         onNavigate={setViewerCurrentIndex}
+        footerDownloads={viewerModalDownloads ?? undefined}
       />
     </div>
   );

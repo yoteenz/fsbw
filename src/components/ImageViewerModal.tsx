@@ -1,16 +1,25 @@
 import { createPortal } from 'react-dom';
 import { useEffect, useState, useRef } from 'react';
 
+export type ImageViewerDownloadLink = {
+  href: string;
+  label: string;
+  /** Suggested filename for Save As (optional) */
+  download?: string;
+};
+
 interface ImageViewerModalProps {
   isOpen: boolean;
   onClose: () => void;
   images: string[];
   currentIndex: number;
   onNavigate: (index: number) => void;
+  /** Shown below the enlarged strip (e.g. 2D NOIR angle PNGs). Omit when not applicable (e.g. 3D view). */
+  footerDownloads?: ImageViewerDownloadLink[];
 }
 
 // Same logic as product shots on product page: horizontal strip with scrollPosition + touch/mouse drag
-function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }: ImageViewerModalProps) {
+function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate, footerDownloads }: ImageViewerModalProps) {
   const [touchStartedOnBackdrop, setTouchStartedOnBackdrop] = useState(false);
 
   // Strip scroll state (same as product shots: scrollPosition, isDragging, startX, startScrollPosition)
@@ -186,11 +195,24 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
         onTouchEnd={handleTouchEnd}
       >
         <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 0,
+          }}
+        >
+        <div
           className="flex"
           style={{
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
+            flex: '1 1 auto',
+            minHeight: 0,
             height: '100%',
             transform: `translateX(${scrollPosition}px)`,
             transition: isDragging ? 'none' : 'transform 0.3s ease-out',
@@ -274,6 +296,45 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate }:
               )}
             </div>
           ))}
+        </div>
+        {footerDownloads && footerDownloads.length > 0 && (
+          <div
+            className="flex flex-col items-center gap-1 px-2 shrink-0"
+            style={{ paddingBottom: '8px', paddingTop: '4px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '9px',
+                color: '#808080',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                margin: 0,
+              }}
+            >
+              download 2d angles (png)
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
+              {footerDownloads.map((d) => (
+                <a
+                  key={d.href + d.label}
+                  href={d.href}
+                  download={d.download}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '10px',
+                    color: '#EB1C24',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '2px',
+                  }}
+                >
+                  {d.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </div>,

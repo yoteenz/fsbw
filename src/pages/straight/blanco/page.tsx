@@ -4,14 +4,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
-import ImageViewerModal from '../../../components/ImageViewerModal';
+import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { trackActivity } from '../../../utils/activity';
 import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
 import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth } from '../../../utils/adminAuth';
+import { clearAppAuth, isAdminFounderAccount } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
@@ -32,6 +32,18 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 
+/** 2D BLANCO mannequin PNGs (brick background) — not the 3D BLANCO-FRONT renders. */
+const BLANCO_2D_ANGLE_DOWNLOAD_ROWS: { href: string; label: string; download: string }[] = [
+  { href: '/assets/2D%20BLANCO%20LEFT.png', label: 'LEFT (L)', download: '2d-blanco-left.png' },
+  { href: '/assets/2D%20BLANCO%20FRONT.png', label: 'FRONT (M)', download: '2d-blanco-front.png' },
+  { href: '/assets/2D%20BLANCO%20RIGHT.png', label: 'RIGHT (R)', download: '2d-blanco-right.png' },
+];
+const BLANCO_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = BLANCO_2D_ANGLE_DOWNLOAD_ROWS.map((r) => ({
+  href: r.href,
+  label: r.label,
+  download: r.download,
+}));
+
 function BlancoSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,6 +56,8 @@ function BlancoSelection() {
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [viewerImages, setViewerImages] = useState<string[]>([]);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
+  const [viewerModalDownloads, setViewerModalDownloads] = useState<ImageViewerDownloadLink[] | null>(null);
+  const [showAdminFounder2dDownloads, setShowAdminFounder2dDownloads] = useState(false);
   
   // Wishlist state
   const [isInWishlist, setIsInWishlist] = useState(false);
@@ -407,6 +421,27 @@ function BlancoSelection() {
       }
     }
   }, [showMobileMenu, location.pathname]);
+
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        const raw = localStorage.getItem('currentUser');
+        const email = raw ? (JSON.parse(raw) as { email?: string })?.email : undefined;
+        setShowAdminFounder2dDownloads(isAdminFounderAccount({ email }));
+      } catch {
+        setShowAdminFounder2dDownloads(false);
+      }
+    };
+    refresh();
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('signInStateChanged', refresh as EventListener);
+    return () => {
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('signInStateChanged', refresh as EventListener);
+    };
+  }, []);
 
   // Check sign-in status on mount and listen for changes
   useEffect(() => {
@@ -1142,6 +1177,7 @@ function BlancoSelection() {
                           : [currentImages.hero, currentImages.top, currentImages.bottom];
                         setViewerImages(allImages);
                         setViewerCurrentIndex(0);
+                        setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? BLANCO_2D_VIEWER_DOWNLOADS : null);
                         setShowImageViewer(true);
                       }}
                     >
@@ -1170,6 +1206,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                             : [currentImages.hero, currentImages.top, currentImages.bottom];
                           setViewerImages(allImages);
                           setViewerCurrentIndex(0);
+                          setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? BLANCO_2D_VIEWER_DOWNLOADS : null);
                           setShowImageViewer(true);
                         }}
                       />
@@ -1624,6 +1661,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(0);
+                      setViewerModalDownloads(null);
                       setShowImageViewer(true);
                     }}
                   />
@@ -1641,6 +1679,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(1);
+                      setViewerModalDownloads(null);
                       setShowImageViewer(true);
                     }}
                   />
@@ -1658,6 +1697,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                       ];
                       setViewerImages(productShotImages);
                       setViewerCurrentIndex(2);
+                      setViewerModalDownloads(null);
                       setShowImageViewer(true);
                     }}
                   />
@@ -1682,6 +1722,44 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   product shots
                 </div>
               </div>
+
+              {showAdminFounder2dDownloads ? (
+                <div
+                  className="flex flex-col items-center gap-1 px-2"
+                  style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
+                >
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '9px',
+                      color: '#808080',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      margin: 0,
+                    }}
+                  >
+                    download 2d angles (png)
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
+                    {BLANCO_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        download={download}
+                        style={{
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '10px',
+                          color: '#EB1C24',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '2px',
+                        }}
+                      >
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               {/* Tabs Section */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
@@ -2724,10 +2802,14 @@ width: 'clamp(230px, 57.5vw, 368px)',
       {/* Image Viewer Modal */}
       <ImageViewerModal
         isOpen={showImageViewer}
-        onClose={() => setShowImageViewer(false)}
+        onClose={() => {
+          setShowImageViewer(false);
+          setViewerModalDownloads(null);
+        }}
         images={viewerImages}
         currentIndex={viewerCurrentIndex}
         onNavigate={setViewerCurrentIndex}
+        footerDownloads={viewerModalDownloads ?? undefined}
       />
     </div>
   );

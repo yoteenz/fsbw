@@ -11,11 +11,11 @@
  *
  * Output: scripts/wig-preview/manifests/noir-<preset>-<promptVersion>.json
  */
-import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildWigPreviewPrompt } from './wig-preview/promptTemplate.mjs';
+import { wigPreviewSelectionStoragePath } from './wig-preview/selectionStoragePath.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -113,17 +113,6 @@ if (presetName === 'full') {
   );
 }
 
-function canonicalSelections(obj) {
-  const keys = Object.keys(obj).sort();
-  const ordered = {};
-  for (const k of keys) ordered[k] = obj[k];
-  return JSON.stringify(ordered);
-}
-
-function selectionHash(canonicalJson) {
-  return createHash('sha256').update(canonicalJson).digest('hex').slice(0, 32);
-}
-
 function cartesianItems() {
   const items = [];
   for (const length of preset.length) {
@@ -145,21 +134,13 @@ function cartesianItems() {
                     styling,
                     addOns: combo.value.map((x) => String(x).toUpperCase()),
                   };
-                  const canonical = canonicalSelections({
-                    unitKey: UNIT_KEY,
-                    length,
-                    density,
-                    lace,
-                    texture,
-                    color,
-                    hairline,
-                    styling,
-                    addOns: [...selections.addOns].sort().join(','),
-                  });
-                  const hash = selectionHash(canonical);
+                  const { selectionHash: hash, storagePath } = wigPreviewSelectionStoragePath(
+                    selections,
+                    PROMPT_VERSION
+                  );
                   items.push({
                     selectionHash: hash,
-                    storagePath: `wig-preview/${PROMPT_VERSION}/${UNIT_KEY}/${hash}.webp`,
+                    storagePath,
                     selections,
                     prompt: buildWigPreviewPrompt(selections),
                   });

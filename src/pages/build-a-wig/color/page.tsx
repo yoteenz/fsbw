@@ -14,6 +14,9 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { postWigPreviewLiveNoirColor, getAccessToken } from '../../../utils/api';
+import { isAdminEmail } from '../../../utils/adminAuth';
+import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 
 interface ColorOption {
   id: string;
@@ -240,6 +243,12 @@ function ColorSelection() {
   }, [location.pathname]); // Only reload when route changes, NOT when selectedColor changes
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
+
+  /** Admin + NOIR edit/customize color route: live fal → Supabase for 3 angles (skips existing files server-side). */
+  const [adminLiveNoirPreview, setAdminLiveNoirPreview] = useState(false);
+  const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
+  const [livePreviewLoading, setLivePreviewLoading] = useState(false);
+  const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -322,6 +331,32 @@ function ColorSelection() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const p = location.pathname;
+    const noirColor =
+      p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
+    if (!noirColor) {
+      setAdminLiveNoirPreview(false);
+      setLiveWigViews(null);
+      setLivePreviewError(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const token = await getAccessToken();
+      const email = getCurrentUserEmailFromStorage();
+      const ok = Boolean(token && email && isAdminEmail(email));
+      if (!cancelled) setAdminLiveNoirPreview(ok);
+      if (!ok) {
+        setLiveWigViews(null);
+        setLivePreviewError(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
 
   // Initialize with edit mode or customize mode data if available
   useEffect(() => {
@@ -481,7 +516,11 @@ function ColorSelection() {
     setShowMobileMenu(false);
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const wigViews =
+    adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveWigViews
+      : baseWigViews;
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -645,6 +684,64 @@ function ColorSelection() {
     }
   ];
 
+  const readBuildWigSelectionForLivePreview = (pathname: string) => {
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
+    const pick = (editKey: string, custKey: string, mainKey: string, fallback: string) => {
+      if (isOnEditRoute) {
+        return localStorage.getItem(editKey) || localStorage.getItem(mainKey) || fallback;
+      }
+      if (isOnCustomizeRoute) {
+        return localStorage.getItem(custKey) || localStorage.getItem(mainKey) || fallback;
+      }
+      return localStorage.getItem(mainKey) || fallback;
+    };
+    let addOns: string[] = [];
+    try {
+      const raw = pick('editSelectedAddOns', 'customizeSelectedAddOns', 'selectedAddOns', '[]');
+      const parsed = JSON.parse(raw || '[]') as unknown;
+      if (Array.isArray(parsed)) addOns = parsed.map((x) => String(x).toUpperCase());
+    } catch {
+      addOns = [];
+    }
+    return {
+      length: pick('editSelectedLength', 'customizeSelectedLength', 'selectedLength', '24"'),
+      density: pick('editSelectedDensity', 'customizeSelectedDensity', 'selectedDensity', '200%'),
+      lace: pick('editSelectedLace', 'customizeSelectedLace', 'selectedLace', '13X6'),
+      texture: pick('editSelectedTexture', 'customizeSelectedTexture', 'selectedTexture', 'SILKY'),
+      hairline: pick('editSelectedHairline', 'customizeSelectedHairline', 'selectedHairline', 'NATURAL'),
+      styling: pick('editSelectedStyling', 'customizeSelectedStyling', 'selectedStyling', 'NONE'),
+      addOns,
+    };
+  };
+
+  /** Load or refresh live NOIR preview when admin lands on color page or changes color. */
+  useEffect(() => {
+    const pathname = location.pathname;
+    const noir =
+      adminLiveNoirPreview &&
+      (pathname.includes('/build-a-wig/noir/edit/color') || pathname.includes('/build-a-wig/noir/customize/color'));
+    if (!noir) return;
+    setLivePreviewError(null);
+    setLivePreviewLoading(true);
+    const sel = readBuildWigSelectionForLivePreview(pathname);
+    void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
+      .then((res) => {
+        const u = res.publicUrls;
+        if (u.front && u.left && u.right) {
+          const bust = Date.now();
+          setLiveWigViews([`${u.left}?t=${bust}`, `${u.front}?t=${bust}`, `${u.right}?t=${bust}`]);
+        } else {
+          setLiveWigViews(null);
+        }
+      })
+      .catch((e: Error) => {
+        setLiveWigViews(null);
+        setLivePreviewError(e?.message || 'Live preview failed');
+      })
+      .finally(() => setLivePreviewLoading(false));
+  }, [adminLiveNoirPreview, location.pathname, selectedColor]);
+
   const handleColorSelect = (colorId: string) => {
     console.log('Color page - selecting color:', colorId);
     setSelectedColor(colorId);
@@ -660,6 +757,7 @@ function ColorSelection() {
       localStorage.setItem('customizeSelectedColor', colorId);
     }
     localStorage.setItem('selectedColor', colorId);
+    // Live NOIR fal preview: `useEffect` on `selectedColor` + path runs `postWigPreviewLiveNoirColor`.
   };
 
   const handleBack = () => {
@@ -1233,6 +1331,23 @@ function ColorSelection() {
               <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
+              {adminLiveNoirPreview && location.pathname.includes('/build-a-wig/noir/') && (
+                <p
+                  className="text-center mb-2 px-2"
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '9px',
+                    color: livePreviewError ? '#EB1C24' : '#808080',
+                    maxWidth: '280px',
+                  }}
+                >
+                  {livePreviewLoading
+                    ? 'LIVE PREVIEW: generating (fal)…'
+                    : livePreviewError
+                      ? `LIVE PREVIEW: ${livePreviewError}`
+                      : 'LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.'}
+                </p>
+              )}
               <div className="leaf-stack hero-thumb">
                 <div className="leaf-bg" aria-hidden="true"></div>
                 <div
