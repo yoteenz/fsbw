@@ -12,11 +12,12 @@
 // Copy into fal. Step 1: attach base mannequin + logo ref (2nd attachment per your wording).
 // =============================================================================
 
-/** Wig consult Step 1 — logo on chest; background/room comes from YOUR base reference image. */
+/** Wig consult Step 1 — logo on chest; match framing + logo legibility to refs (tweak in fal if needed). */
 export const WIG_CONSULT_STEP1_PROMPT = [
-  'Recreate this exact mannequin image. Use my logo from the 2nd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
-  'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not change anything else about the photo.',
+  'Recreate the first reference image with identical composition: same crop, scale, camera height, and vertical placement of the mannequin in the frame — do not move the subject higher or lower in the picture.',
+  'Place the logo from the 2nd reference attachment flat on the center of the mannequin’s chest: same proportions as the 2nd reference, sharp vector-clean edges, fully legible small text, no blur, no glow, no warping, no extra outline; colors must match the 2nd reference exactly.',
+  'The photo should be extremely high-quality, crisp, and pixel-perfect.',
+  'Do not change anything else about the photo (hair, face form, lighting character, background, or props).',
 ].join(' ');
 
 /**
