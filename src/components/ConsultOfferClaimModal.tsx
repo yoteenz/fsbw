@@ -63,7 +63,12 @@ const DEFAULT_INSPO_DISCLAIMER_P1 =
 
 /** Second paragraph — **gray** in modal. Persisted `admin_message` is P1 + space + P2 (single field). */
 const DEFAULT_INSPO_DISCLAIMER_P2 =
+  '2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
+
+/** Prior gray (2D image + comma before purely) — two-paragraph layout for already-sent offers. */
+const PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2 =
   'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION, THIS IS PURELY FOR BRANDING AND VISUALIZATION.';
+const PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Prior default (in person + visualization only) — two-paragraph layout for already-sent offers. */
 const INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2 =
@@ -144,12 +149,14 @@ export default function ConsultOfferClaimModal({
   const msgU = message.trim().toUpperCase();
   const isDefaultInspoDisclaimer =
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === LEGACY_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const isCurrentDefaultTwoParagraphDisclaimer =
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const defaultDisclaimerGrayParagraph =
@@ -157,7 +164,9 @@ export default function ConsultOfferClaimModal({
       ? PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2
       : msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
         ? INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2
-        : DEFAULT_INSPO_DISCLAIMER_P2;
+        : msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
+          ? PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2
+          : DEFAULT_INSPO_DISCLAIMER_P2;
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
