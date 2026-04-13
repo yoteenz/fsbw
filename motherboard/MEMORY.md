@@ -14036,3 +14036,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/components/shop/useShopNavSearchBar.tsx`** — **`NavCenter`**: horizontal padding **96px → 64px** each side (more room for centered crumb), added **`whitespace-nowrap`**. **`src/pages/admin/components/AdminHeader.tsx`** — center strip: same padding + **`whitespace-nowrap`**; breadcrumb row **`gap-1`** (replaces collapsed trailing space before red title); parent label + chevron inside button as **`inline-flex`** with **`gap-1`** so **ADMIN >** spacing is explicit.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Git: push nav to preview/mobile + merge into master; MEMORY merge resolved
+
+**Context (this chat):** After the nav crumb fixes, user asked to **push to `master` and the mobile preview branch** (`preview/mobile`).
+
+**Actions:** Committed nav + prior **MEMORY** nav entry on **`preview/mobile`** (`Nav: widen shop/BAW crumb area; fix admin breadcrumb spacing`). **`git push origin preview/mobile`**. Stashed unrelated local edits to **`membership` / `pending` / `reviews` / `products`** pages so **`master`** checkout worked. **`git checkout master`**, **`git merge preview/mobile`** — conflict in **`motherboard/MEMORY.md`** (divergent append-only histories). Resolved by **keeping both sides**: **`master`**-only tail entries (fal-first / merge-conflict note / leaked env) then separator then full **`preview/mobile`** MEMORY continuation through the nav entry. **`git commit`** merge, **`git push origin master`**. Returned to **`preview/mobile`**, **`stash pop`** (working tree clean). Accidental **`git pull origin master`** on **`preview/mobile`** earlier was **`git merge --abort`**ed before push.
+
+**Docs:** This **MEMORY** entry.
