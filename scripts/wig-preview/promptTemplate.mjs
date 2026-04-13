@@ -47,13 +47,72 @@ export function buildWigConsultChainEditPrompt(fromDescription, toDescription) {
 export const BAW_SELECTION_CHAIN_EDIT_PROMPT = buildWigConsultChainEditPrompt;
 
 /**
- * Step 2 — hair color only (wig consult + BAW “base → color”). Attach Step 1 output + logo reference; fal **Auto** + **2K**.
- * @param {string} [hairHex='63D54B'] - e.g. `'63D54B'` or `'#63D54B'`
- * @param {string} [hairColorLabel='slime'] - catalog name, e.g. `'slime'`, `'pink'`
+ * Catalog hair colors for Step 2 (label + hex, no `#`). Jet/off black use **000000** (six zeros; corrects typo `#00000`).
+ * Keys are UPPER_SNAKE; aliases: `PINK` → raspberry (legacy).
  */
-export function WIG_CONSULT_STEP2_PROMPT(hairHex = '63D54B', hairColorLabel = 'slime') {
+export const BAW_CATALOG_HAIR_COLOR_HEX = {
+  ESPRESSO: { label: 'espresso', hex: '361504' },
+  CHESTNUT: { label: 'chestnut', hex: '643118' },
+  HONEY: { label: 'honey', hex: 'BB883C' },
+  AUBURN: { label: 'auburn', hex: '925927' },
+  COPPER: { label: 'copper', hex: '763412' },
+  GINGER: { label: 'ginger', hex: 'E35B2A' },
+  SANGRIA: { label: 'sangria', hex: '731921' },
+  CHERRY: { label: 'cherry', hex: 'C52C1F' },
+  RASPBERRY: { label: 'raspberry', hex: 'DA3063' },
+  PLUM: { label: 'plum', hex: '5B177C' },
+  COBALT: { label: 'cobalt', hex: '25067B' },
+  TEAL: { label: 'teal', hex: '7BE7CA' },
+  SLIME: { label: 'slime', hex: '63D54B' },
+  CITRINE: { label: 'citrine', hex: 'E3E851' },
+  JET_BLACK_OFF_BLACK: { label: 'jet black/off black', hex: '000000' },
+};
+
+/** @deprecated Use `RASPBERRY` — same hex/label as raspberry */
+BAW_CATALOG_HAIR_COLOR_HEX.PINK = BAW_CATALOG_HAIR_COLOR_HEX.RASPBERRY;
+
+function normalizeCatalogColorKey(key) {
+  return String(key || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^A-Z0-9_]/g, '_')
+    .replace(/_+/g, '_');
+}
+
+/**
+ * @param {string} catalogKey - e.g. `'RASPBERRY'`, `'SLIME'`, `'JET_BLACK_OFF_BLACK'`
+ * @returns {{ label: string, hex: string } | undefined}
+ */
+export function getBawCatalogHairColor(catalogKey) {
+  const k = normalizeCatalogColorKey(catalogKey);
+  if (k === 'JET_BLACK' || k === 'OFF_BLACK' || k === 'JET_BLACK_OFF_BLACK') {
+    return BAW_CATALOG_HAIR_COLOR_HEX.JET_BLACK_OFF_BLACK;
+  }
+  return BAW_CATALOG_HAIR_COLOR_HEX[k];
+}
+
+/**
+ * Step 2 prompt for a catalog color key (e.g. `wigConsultStep2ForCatalogColor('HONEY')`).
+ */
+export function wigConsultStep2ForCatalogColor(catalogKey) {
+  const row = getBawCatalogHairColor(catalogKey);
+  if (!row) {
+    throw new Error(
+      `Unknown catalog color "${catalogKey}". Use one of: ${Object.keys(BAW_CATALOG_HAIR_COLOR_HEX).filter((x) => x !== 'PINK').join(', ')}`
+    );
+  }
+  return WIG_CONSULT_STEP2_PROMPT(row.hex, row.label);
+}
+
+/**
+ * Step 2 — hair color only (wig consult + BAW “base → color”). Attach Step 1 output + logo reference; fal **Auto** + **2K**.
+ * @param {string} [hairHex='DA3063'] - e.g. `'DA3063'` or `'#DA3063'`
+ * @param {string} [hairColorLabel='raspberry'] - catalog name shown in prompt (e.g. `'raspberry'`, `'slime'`)
+ */
+export function WIG_CONSULT_STEP2_PROMPT(hairHex = 'DA3063', hairColorLabel = 'raspberry') {
   const hex = String(hairHex || '').replace(/^#/, '');
-  const label = String(hairColorLabel || 'slime').trim() || 'slime';
+  const label = String(hairColorLabel || 'raspberry').trim() || 'raspberry';
   return [
     'Recreate this exact mannequin image, but change the black hair color to ' +
       label +
@@ -66,7 +125,7 @@ export function WIG_CONSULT_STEP2_PROMPT(hairHex = '63D54B', hairColorLabel = 's
   ].join(' ');
 }
 
-/** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color”; pass `hairHex` (+ optional label). */
+/** Same as `WIG_CONSULT_STEP2_PROMPT` — BAW “base → color”; pass `hairHex` (+ optional label) or use `wigConsultStep2ForCatalogColor(key)`. */
 export const BAW_SELECTION_COLOR_FROM_BASE_PROMPT = WIG_CONSULT_STEP2_PROMPT;
 
 /**

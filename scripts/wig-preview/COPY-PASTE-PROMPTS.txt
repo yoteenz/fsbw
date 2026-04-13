@@ -21,11 +21,30 @@ Fill in the two blanks. Attach **prior step image** + **logo reference** (logo =
 
 Recreate this exact mannequin image, but change the <output from step 1> to <input for step 2>. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
-**Color (Step 2)** — attach Step 1 output + logo ref. Code: `WIG_CONSULT_STEP2_PROMPT(hex, label)`; no args defaults to **slime / #63D54B**. Example full text:
+**Color (Step 2)** — attach Step 1 output + logo ref. Code: `WIG_CONSULT_STEP2_PROMPT(hex, label)`; no args defaults to **raspberry / #DA3063**. Or **`wigConsultStep2ForCatalogColor('HONEY')`** etc. (`BAW_CATALOG_HAIR_COLOR_HEX` in `promptTemplate.mjs`).
 
-Recreate this exact mannequin image, but change the black hair color to slime hex code #63D54B & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Catalog (replace label + hex in the first sentence):
+- espresso #361504
+- chestnut #643118
+- honey #BB883C
+- auburn #925927
+- copper #763412
+- ginger #E35B2A
+- sangria #731921
+- cherry #C52C1F
+- raspberry #DA3063 (was “pink” in older notes)
+- plum #5B177C
+- cobalt #25067B
+- teal #7BE7CA
+- slime #63D54B
+- citrine #E3E851
+- jet black/off black #000000 (six zeros)
 
-Other swatches: `WIG_CONSULT_STEP2_PROMPT('DA3063', 'pink')`. Alias: `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`.
+Example (default raspberry):
+
+Recreate this exact mannequin image, but change the black hair color to raspberry hex code #DA3063 & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade. The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+Alias: `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`.
 
 --- STEP 3 — reuse Step 2 template; widen “from” / “to” ---
 Attach Step 2 output + style reference (+ logo ref if needed).

@@ -14086,3 +14086,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP2_PROMPT`** builds that string directly; defaults **`63D54B`** / **`slime`**; **`WIG_CONSULT_STEP2_PROMPT(hex, label)`** for other swatches. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Step 2 catalog: raspberry default + full swatch hex map
+
+**Context (this chat):** User renamed **pink** to **raspberry** and listed all catalog colors with hex codes for Step 2 generation (espresso through jet black/off black; **#00000** corrected to **`#000000`** in code).
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`BAW_CATALOG_HAIR_COLOR_HEX`**, **`getBawCatalogHairColor`**, **`wigConsultStep2ForCatalogColor(key)`**; **`WIG_CONSULT_STEP2_PROMPT`** defaults **raspberry / #DA3063**; legacy **`PINK`** alias → raspberry. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.

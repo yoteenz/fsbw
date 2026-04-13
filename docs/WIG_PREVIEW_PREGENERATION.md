@@ -6,7 +6,7 @@ Offline batch: build a **manifest** of selection combos → run a **Node script*
 
 | Piece | Path |
 |--------|------|
-| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (**1** ref), `WIG_CONSULT_STEP2_PROMPT(hex?, label?)` (color + authentic-dyed-hair clause; defaults slime `#63D54B`), `WIG_CONSULT_STEP3_PROMPT(from,to)` or `WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()`. **Chain helper:** `buildWigConsultChainEditPrompt` / `BAW_SELECTION_CHAIN_EDIT_PROMPT`. Legacy Step 1: `WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`. **BAW:** `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`; base batch: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`. **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
+| Prompt template | `scripts/wig-preview/promptTemplate.mjs` — **Wig consult:** `WIG_CONSULT_STEP1_PROMPT` (**1** ref), `WIG_CONSULT_STEP2_PROMPT(hex?, label?)` (defaults raspberry `#DA3063`), `wigConsultStep2ForCatalogColor('HONEY')` / `BAW_CATALOG_HAIR_COLOR_HEX`, `WIG_CONSULT_STEP3_PROMPT(from,to)` or `WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()`. **Chain helper:** `buildWigConsultChainEditPrompt` / `BAW_SELECTION_CHAIN_EDIT_PROMPT`. Legacy Step 1: `WIG_CONSULT_STEP1_PROMPT_THREE_ATTACHMENTS`. **BAW:** `BAW_SELECTION_COLOR_FROM_BASE_PROMPT`; base batch: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS`. **BAW bulk:** `buildWigPreviewPrompt` (bottom) |
 | NOIR manifest generator | `scripts/generate-noir-wig-preview-manifest.mjs` |
 | Batch uploader | `scripts/pregenerate-wig-previews.mjs` |
 | BAW base images (NOIR / BLANCO / SOFT_WAVE) | `scripts/generate-baw-base-images.mjs` — `npm run wig-preview:baw-base` (needs `BAW_BACKDROP_IMAGE` path + fal + Supabase) |
