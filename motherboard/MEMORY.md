@@ -13936,3 +13936,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — two-paragraph disclaimer wrapper: **`maxWidth: calc(100% - 10px)`** + **`marginLeft` / `marginRight: auto`** (centered). **`npm run build`** passes.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult default disclaimer gray paragraph copy tweak
+
+**Context (this chat):** User updated only the **second (gray)** paragraph: removed **AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS**; after artisan variation uses **comma** then **THIS IS PURELY FOR VISUALIZATION** (user-supplied punctuation).
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** / combined default in **`ConsultOfferClaimModal.tsx`**; **`PREVIOUS_DEFAULT_INSPO_DISCLAIMER`** + **`P2`** so offers already stored with the prior paragraph still get **two-paragraph** red/gray layout with old gray text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo **`adminMessage`** updated. **`npm run build`** passes.
+
+**Docs:** This **MEMORY** entry.
