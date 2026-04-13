@@ -63,7 +63,12 @@ const DEFAULT_INSPO_DISCLAIMER_P1 =
 
 /** Second paragraph — **gray** in modal. Persisted `admin_message` is P1 + space + P2 (single field). */
 const DEFAULT_INSPO_DISCLAIMER_P2 =
+  'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION, THIS IS PURELY FOR VISUALIZATION.';
+
+/** Prior second paragraph + full default (pre–2026-04-13 tweak) — two-paragraph red/gray layout for already-sent offers. */
+const PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2 =
   'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
+const PREVIOUS_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Default admin send-offer copy (one string for DB / `isDefaultInspoDisclaimer` match). */
 const DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${DEFAULT_INSPO_DISCLAIMER_P2}`;
@@ -134,9 +139,16 @@ export default function ConsultOfferClaimModal({
   const msgU = message.trim().toUpperCase();
   const isDefaultInspoDisclaimer =
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === LEGACY_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
-  const isCurrentDefaultTwoParagraphDisclaimer = msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase();
+  const isCurrentDefaultTwoParagraphDisclaimer =
+    msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
+  const defaultDisclaimerGrayParagraph =
+    msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
+      ? PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2
+      : DEFAULT_INSPO_DISCLAIMER_P2;
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
@@ -328,7 +340,7 @@ export default function ConsultOfferClaimModal({
                       color: '#808080',
                     }}
                   >
-                    {DEFAULT_INSPO_DISCLAIMER_P2}
+                    {defaultDisclaimerGrayParagraph}
                   </p>
                 </div>
               ) : (
