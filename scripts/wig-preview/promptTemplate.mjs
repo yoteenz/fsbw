@@ -1,43 +1,29 @@
 /**
- * Wig preview prompts
+ * Prompts for two different features — keep them separate:
  *
- * ---------------------------------------------------------------------------
- * WHERE THINGS ARE (you have this file open — use this map)
- * ---------------------------------------------------------------------------
+ * 1) **WIG CONSULT** — manual 3-step chain in fal (base mannequin → color → style). Stored here for copy/paste.
+ * 2) **BAW (Build-a-wig)** — automated batch only: `buildWigPreviewPrompt` at the bottom (catalog combos, different backgrounds later).
  *
- * **A) Automated batch (one fal call per catalog row)** — `npm run` / `node …pregenerate…`
- *    Scroll to **`export function buildWigPreviewPrompt`** (starts ~line 95 below).
- *    Edit only the **array of strings** inside `return [ ... ].join(' ')` to change how
- *    every combo is described. Selections like `${s.color}` are filled in from the manifest.
- *
- * **B) Manual 3-step NBP / fal (your inspo → base → color → style)** — copy/paste into the UI
- *    Use the **`NBP_STEP1_PROMPT`**, **`NBP_STEP2_PROMPT`**, **`NBP_STEP3_PROMPT`** constants
- *    exported below (scroll past `buildWigPreviewPrompt`). Attach refs as you already do:
- *      Step 1: base mannequin (brick) + white/rose ref + logo ref
- *      Step 2: output of Step 1 only
- *      Step 3: output of Step 2 + hair-style ref (waves/layers)
- *    For Step 2, call `NBP_STEP2_PROMPT('#DA3063')` or paste and replace the hex yourself.
- *
- * ---------------------------------------------------------------------------
+ * Step 1 for wig consult can change per feature (consult vs BAW); edit `WIG_CONSULT_STEP1_PROMPT` or add more exports.
  */
 
 // =============================================================================
-// MANUAL 3-STEP NBP — copy each block into fal (attach images as noted above)
+// WIG CONSULT — current 3-step (base mannequin → selections / color → style)
+// Copy into fal. Step 1: attach base mannequin + logo ref (2nd attachment per your wording).
 // =============================================================================
 
-/** Step 1 — scene + branding only (no hair change). */
-export const NBP_STEP1_PROMPT = [
-  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
-  'Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
+/** Wig consult Step 1 — logo on chest; background/room comes from YOUR base reference image. */
+export const WIG_CONSULT_STEP1_PROMPT = [
+  'Recreate this exact mannequin image. Use my logo from the 2nd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
   'Do not change anything else about the photo.',
 ].join(' ');
 
 /**
- * Step 2 — hair color only (use output of Step 1 as the image input).
+ * Wig consult Step 2 — hair color only (attach: output of Step 1).
  * @param {string} hairHex - e.g. '#DA3063' or 'DA3063'
  */
-export function NBP_STEP2_PROMPT(hairHex) {
+export function WIG_CONSULT_STEP2_PROMPT(hairHex) {
   const hex = String(hairHex || '').replace(/^#/, '');
   return [
     'Recreate this exact mannequin image, but change the black hair color to pink hex code #' + hex + '.',
@@ -46,19 +32,43 @@ export function NBP_STEP2_PROMPT(hairHex) {
   ].join(' ');
 }
 
-/** Step 3 — hair silhouette/style only; color stays from Step 2 (attach style ref as 2nd image). */
-export const NBP_STEP3_PROMPT = [
+/** Wig consult Step 3 — hair style only (attach: Step 2 output + style reference). */
+export const WIG_CONSULT_STEP3_PROMPT = [
   'Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY.',
   'Don’t change the color of her hair or anything else in the photo.',
 ].join(' ');
 
 // =============================================================================
-// BATCH (single prompt per selection row) — edit inside `return [ ... ]`
+// WIG CONSULT — legacy Step 1 (white/rose background + logo from 3rd ref) — keep for later
+// =============================================================================
+
+export const WIG_CONSULT_LEGACY_STEP1_PROMPT = [
+  'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image.',
+  'Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the photo.',
+].join(' ');
+
+// =============================================================================
+// Backward-compatible names (same as wig consult; old Step 1 = legacy)
+// =============================================================================
+
+/** @deprecated Use `WIG_CONSULT_LEGACY_STEP1_PROMPT` — kept so old notes still match. */
+export const NBP_STEP1_PROMPT = WIG_CONSULT_LEGACY_STEP1_PROMPT;
+
+export function NBP_STEP2_PROMPT(hairHex) {
+  return WIG_CONSULT_STEP2_PROMPT(hairHex);
+}
+
+export const NBP_STEP3_PROMPT = WIG_CONSULT_STEP3_PROMPT;
+
+// =============================================================================
+// BAW — automated batch (one fal call per manifest row) — NOT wig consult 3-step
 // =============================================================================
 
 /**
- * Single source for T2I prompt text when running `pregenerate-wig-previews.mjs`.
- * Edit here when art direction changes; bump `PROMPT_VERSION` when regenerating the manifest.
+ * Build-a-wig catalog previews — `pregenerate-wig-previews.mjs` only.
+ * Different backgrounds / art direction than wig consult; edit here for bulk NOIR (etc.) runs.
  * @param {{ unitKey: string; length: string; density: string; texture: string; lace: string; hairline: string; color: string; styling: string; addOns: string[] }} s
  */
 export function buildWigPreviewPrompt(s) {

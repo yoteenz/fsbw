@@ -1,30 +1,38 @@
 ================================================================================
-WHY YOU MIGHT SEE AN OLD FILE ON YOUR PC
-================================================================================
-This folder was updated on the "preview/mobile" branch. If your file still looks
-short and old, update your project first (Git: pull the latest), then reopen the file.
-
-You do NOT need this file to test fal — you can copy the three prompts below directly.
-
-================================================================================
-MANUAL 3-STEP TEST IN FAL (copy each block, attach images as you already do)
+TWO DIFFERENT USES (do not mix them up)
 ================================================================================
 
---- STEP 1 (attach: brick mannequin + white/rose example + logo) ---
+WIG CONSULT = 3 steps in fal (base mannequin → hair color → hair style). Prompts below.
+BAW        = many images from the site's option list — uses code in promptTemplate.mjs
+            at the bottom (buildWigPreviewPrompt) + the pregenerate script. NOT these 3 steps.
 
-Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+================================================================================
+WIG CONSULT — CURRENT (Step 1: logo from 2nd attachment; base image sets room/background)
+================================================================================
 
---- STEP 2 (attach: OUTPUT IMAGE from Step 1 only — change hex if you want another color) ---
+--- STEP 1 ---
+
+Recreate this exact mannequin image. Use my logo from the 2nd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+--- STEP 2 (attach: output from Step 1 only; change hex if needed) ---
 
 Recreate this exact mannequin image, but change the black hair color to pink hex code #DA3063. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
---- STEP 3 (attach: OUTPUT from Step 2 + hair STYLE reference as second image) ---
+--- STEP 3 (attach: Step 2 output + hair style reference) ---
 
 Recreate this exact same photo just change the hair to be styled like the second reference attachment ONLY. Don’t change the color of her hair or anything else in the photo.
 
 ================================================================================
-AUTOMATED BATCH (many images from the website’s option list) — SEPARATE THING
+WIG CONSULT — LEGACY STEP 1 (stored for later — brick → white/rose + logo from 3rd ref)
 ================================================================================
-That uses a different prompt inside the code file promptTemplate.mjs — the function
-named buildWigPreviewPrompt at the BOTTOM of that file. You only edit that when you
-want the bulk generator to change. It is NOT the same as the 3 steps above.
+
+Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like the 2nd attachment image. Use my logo from the 3rd reference attachment on the center of the mannequin’s chest for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+(Then use the same STEP 2 and STEP 3 blocks above.)
+
+================================================================================
+WHEN STEP 1 DIFFERS BY FEATURE
+================================================================================
+Edit scripts/wig-preview/promptTemplate.mjs — constants at the top:
+  WIG_CONSULT_STEP1_PROMPT     = current consult / base + logo wording
+  WIG_CONSULT_LEGACY_STEP1_PROMPT = older white/rose + 3rd-ref logo wording
