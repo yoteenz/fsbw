@@ -13906,3 +13906,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ConsultOfferClaimModal.tsx`** — expanded **`DEFAULT_INSPO_DISCLAIMER`** (2D illustrative/marketing, color/style variance, texture/lace/density/length/styling variance, no guarantee vs inspo photo, artisan variation, visualization only). Kept **`LEGACY_DEFAULT_INSPO_DISCLAIMER`** so older stored messages still match **`isDefaultInspoDisclaimer`** (gray styling). **`AdminMeetingsHub.tsx`** — default **`quoteMessage`** matches new copy. **`orders/page.tsx`** — demo **`adminMessage`** snapshots updated for founder consult demos.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-13 — Consult offer disclaimer copy revision (shorter)
+
+**Context (this chat):** User replaced the long default VIEW OFFER / send-offer disclaimer with a **shorter** version: **COLORS AND STYLING** (not “style” only), **finished unit in person**, **INSPO IMAGES** (not “inspiration photo”), dropped texture/lace/density/length/styling sentence.
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — updated **`DEFAULT_INSPO_DISCLAIMER`**; added **`PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER`** so quotes already sent with the prior long paragraph still count as default (**gray**). **`AdminMeetingsHub.tsx`** and **`orders/page.tsx`** demo **`adminMessage`** aligned with new copy.
+
+**Docs:** This **MEMORY** entry.
