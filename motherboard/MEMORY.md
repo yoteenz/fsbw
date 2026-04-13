@@ -14076,3 +14076,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`buildWigConsultChainEditPrompt(from, to)`** + alias **`BAW_SELECTION_CHAIN_EDIT_PROMPT`**. **`WIG_CONSULT_STEP2_PROMPT(hex)`** uses **output from step 1** → **{label} hair color (hex #…)**. **`WIG_CONSULT_STEP3_PROMPT(from, to)`** (function); **`WIG_CONSULT_STEP3_PROMPT_STYLE_REFERENCE()`** for style-from-2nd-attachment. **`NBP_STEP3_PROMPT`** now a function. Legacy style-only string → **`WIG_CONSULT_STEP3_PROMPT_LEGACY_STYLE_ATTACHMENT`**. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`** table updated.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Step 2 color prompt: slime hex + authentic dyed hair
+
+**Context (this chat):** User asked to update **Step 2 color prompt only** to exact wording: black hair → **slime** hex **#63D54B**, plus clause for **authentically colored/dyed hair** not unrealistic; same logo / quality / unchanged lines.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`** — **`WIG_CONSULT_STEP2_PROMPT`** builds that string directly; defaults **`63D54B`** / **`slime`**; **`WIG_CONSULT_STEP2_PROMPT(hex, label)`** for other swatches. **`COPY-PASTE-PROMPTS.txt`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
