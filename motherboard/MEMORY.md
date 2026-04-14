@@ -14232,6 +14232,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — live-noir-color: inline _lib on nested route (Vercel ERR_MODULE_NOT_FOUND)
+
+**Context (this chat):** Production logs showed **`Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/var/task/api/_lib/adminAuth'`** imported from **`/var/task/api/wig-preview/live-noir-color.js`** — Node ESM could not resolve **`../_lib/...`** for the nested **`api/wig-preview/`** deployment bundle.
+
+**Decisions / outcomes:** Inlined **`getAuthUser`**, **`requireAdmin`**, **`getSupabaseAdminServiceRole`**, **`wigPreviewManifestHash`**, **`wigPreviewLiveAnglePaths`**, and **`catalogColorForPrompt`** (and catalog map) **inside** **`api/wig-preview/live-noir-color.ts`** so the function has **no `../_lib` imports**. File header documents **keep-in-sync** with **`api/_lib/*`** or moving the handler to **`api/live-noir-color.ts`** with **`./_lib`** imports later.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
