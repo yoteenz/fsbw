@@ -14458,3 +14458,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW color page: hero brick restored to match thumbnails (live WebP)
+
+**Context (this chat):** User said the **main hero** was not showing the **brick** background while the **three thumbnails below** still showed brick.
+
+**Decisions / outcomes:** The hero used **`useNoirLiveRenders`** (admin + `liveWigViews`) to **remove** inner `leaf-brick-resize`, use **grey fill**, and **`hero-mannequin-img--live-noir`** (`object-fit: cover`). Thumbnails only entered that mode when the same flag was true, so after **confirm** (or whenever `liveWigViews` was null but `wigViews` used committed URLs) the **hero** could show **no brick** while **thumbs** still had brick. **Fix:** remove **`useNoirLiveRenders`** entirely on the color page — **hero always** shows **`.leaf-bg`**, **`leaf-brick-resize`** inner frame, and the **same** hero/thumb **mannequin** classes and positioning as static PNGs (282×387 hero, 63×84 thumbs). Removed unused **`--live-noir`** rules from **`src/index.css`**.
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/index.css`**.
+
+**Git:** **`bcc9778`** on **`preview/mobile`** and **`master`** (merged/pushed).
+
+**Docs:** This MEMORY entry.
