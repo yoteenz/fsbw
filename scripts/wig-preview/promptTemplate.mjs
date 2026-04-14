@@ -180,15 +180,29 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
 
 /**
  * **Two attachments** (live / server fal): (1) colored mannequin from storage, (2) style inspo per angle — public URLs in Vercel: `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_{LEFT|FRONT|RIGHT}_URL`.
- * “This” in the sense of target hair shape = **second image**.
+ * Keep in sync with `api/_lib/bawLiveStylingPrompts.ts` `buildMiddlePartLayersStylePromptTwoImages`.
+ * @param {'front'|'left'|'right'} angle
  */
-export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES = [
-  'Use the **first image** as the base: keep the same mannequin, background, catalog hair color, framing, and chest logo.',
-  'Recreate the **hair from the second image** on that base — same middle part, layer shape, face-framing, volume, and silhouette as the second attachment — but the hair color must read as **jet black #000000**.',
-  'The logo on the center of the mannequin’s chest with FRONTAL SLAYER must remain fully legible for accuracy & consistency.',
-  'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not change anything else about the first image except the hair to match the second reference in black.',
-].join(' ');
+export function buildMiddlePartLayersStylePromptTwoImages(angle) {
+  const angleConstraint =
+    angle === 'left'
+      ? 'The first image is **LEFT 3/4**: when copying hair shape from the second image, keep bulk on the **correct shoulder for a left view** — do **not** mirror into a symmetric “both shoulders” wig unless the second reference clearly shows that.'
+      : angle === 'right'
+        ? 'The first image is **RIGHT 3/4**: when copying hair shape from the second image, keep bulk on the **correct shoulder for a right view** — do **not** mirror into a symmetric “both shoulders” wig unless the second reference clearly shows that.'
+        : 'The first image is **FRONT**: match the second reference’s part and silhouette in black; do not invent a different cut.';
+
+  return [
+    'Use the **first image** as the base: keep the same mannequin, background, catalog hair color, framing, and chest logo.',
+    'Recreate the **hair from the second image** on that base — same middle part, layer shape, face-framing, volume, and silhouette as the second attachment — but the hair color must read as **jet black #000000**.',
+    angleConstraint,
+    'The logo on the center of the mannequin’s chest with FRONTAL SLAYER must remain fully legible for accuracy & consistency.',
+    'The photo should be extremely high-quality, crisp & pixel perfect.',
+    'Do not change anything else about the first image except the hair to match the second reference in black.',
+  ].join(' ');
+}
+
+/** Default string for copy-paste (front angle constraint). */
+export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES = buildMiddlePartLayersStylePromptTwoImages('front');
 
 /** One attachment only (manual fal on the inspo shot alone). */
 export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE = [

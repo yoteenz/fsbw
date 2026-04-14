@@ -27,7 +27,7 @@ import {
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors';
-import { BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES } from './_lib/bawLiveStylingPrompts';
+import { buildMiddlePartLayersStylePromptTwoImages } from './_lib/bawLiveStylingPrompts';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -223,7 +223,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const styleRefUrl = styleRefByAngle[angle];
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {
-          prompt: BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES,
+          prompt: buildMiddlePartLayersStylePromptTwoImages(angle),
           image_urls: [colorPublicUrl, styleRefUrl],
           aspect_ratio: 'auto',
           resolution: falResolution,

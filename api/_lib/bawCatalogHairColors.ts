@@ -34,3 +34,26 @@ export function catalogColorForPrompt(colorId: string): { label: string; hex: st
     null
   );
 }
+
+/**
+ * Single **storage / manifest hash** color key so aliases share the same folder (e.g. OFF BLACK ↔ JET BLACK).
+ * Must match `scripts/wig-preview/selectionStoragePath.mjs` `canonicalWigPreviewColorForHash`.
+ */
+export function canonicalWigPreviewColorForHash(color: string): string {
+  const u = String(color || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+  const aliases: Record<string, string> = {
+    'OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET_BLACK': 'JET_BLACK_OFF_BLACK',
+    'OFF_BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET_BLACK_OFF_BLACK': 'JET_BLACK_OFF_BLACK',
+  };
+  if (aliases[u]) return aliases[u];
+  const underscored = u.replace(/\s+/g, '_');
+  if (aliases[underscored]) return aliases[underscored];
+  return underscored;
+}

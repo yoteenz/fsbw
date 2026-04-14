@@ -2,6 +2,7 @@
  * Matches `scripts/wig-preview/selectionStoragePath.mjs` — keep in sync when changing manifest hashing.
  */
 import { createHash } from 'node:crypto';
+import { canonicalWigPreviewColorForHash } from './bawCatalogHairColors';
 
 export type WigPreviewSelections = {
   unitKey: string;
@@ -36,7 +37,7 @@ export function wigPreviewManifestHash(s: WigPreviewSelections): string {
     density: String(s.density),
     lace: String(s.lace),
     texture: String(s.texture),
-    color: String(s.color),
+    color: canonicalWigPreviewColorForHash(String(s.color)),
     hairline: String(s.hairline),
     styling: String(s.styling),
     addOns: [...addOns].sort().join(','),

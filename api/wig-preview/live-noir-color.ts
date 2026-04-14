@@ -113,6 +113,26 @@ function selectionHash(canonicalJson: string): string {
   return createHash('sha256').update(canonicalJson).digest('hex').slice(0, 32);
 }
 
+/** Keep in sync with `api/_lib/bawCatalogHairColors.ts` `canonicalWigPreviewColorForHash`. */
+function canonicalWigPreviewColorForHash(color: string): string {
+  const u = String(color || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+  const aliases: Record<string, string> = {
+    'OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    JET_BLACK: 'JET_BLACK_OFF_BLACK',
+    OFF_BLACK: 'JET_BLACK_OFF_BLACK',
+    JET_BLACK_OFF_BLACK: 'JET_BLACK_OFF_BLACK',
+  };
+  if (aliases[u]) return aliases[u];
+  const underscored = u.replace(/\s+/g, '_');
+  if (aliases[underscored]) return aliases[underscored];
+  return underscored;
+}
+
 function wigPreviewManifestHash(s: WigPreviewSelections): string {
   const unitKey = String(s.unitKey || 'NOIR').toUpperCase();
   const addOns = Array.isArray(s.addOns) ? s.addOns.map((x) => String(x).toUpperCase()) : [];
@@ -122,7 +142,7 @@ function wigPreviewManifestHash(s: WigPreviewSelections): string {
     density: String(s.density),
     lace: String(s.lace),
     texture: String(s.texture),
-    color: String(s.color),
+    color: canonicalWigPreviewColorForHash(String(s.color)),
     hairline: String(s.hairline),
     styling: String(s.styling),
     addOns: [...addOns].sort().join(','),
@@ -234,13 +254,25 @@ function readFalResolution(): '1K' | '2K' | '4K' {
 }
 
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
-function buildStep2PromptNoLogoAttachment(label: string, hex: string): string {
+function buildStep2PromptNoLogoAttachment(
+  label: string,
+  hex: string,
+  angle: 'front' | 'left' | 'right'
+): string {
+  const angleConstraint =
+    angle === 'left'
+      ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
+      : angle === 'right'
+        ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
+        : 'This is the **FRONT view**: keep a **single** center part and symmetric fall; do **not** change cut, length, or style beyond the color — only recolor the existing black hair.';
+
   return [
     'Recreate this exact mannequin image, but change the black hair color to ' +
       label +
       ' hex code #' +
       hex +
       ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.',
+    angleConstraint,
     'The logo on the center of the mannequin’s chest should be clear & legible — FRONTAL SLAYER fully readable — for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
     'Do not change anything else about the photo.',
@@ -332,7 +364,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex);
   const generated: string[] = [];
   const skipped: string[] = [];
 
@@ -350,6 +381,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
+      const prompt = buildStep2PromptNoLogoAttachment(catalog.label, catalog.hex, angle);
       const mannequinUrl = mannequinByAngle[angle];
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {

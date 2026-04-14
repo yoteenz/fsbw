@@ -54,13 +54,15 @@ The server (per request):
 
 **Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input.
 
+**OFF BLACK / JET BLACK:** The hash uses a **canonical color key** `JET_BLACK_OFF_BLACK` for both **OFF BLACK** and **JET BLACK** so they share the same three WebP paths (same as batch `selectionStoragePath.mjs`). Re-run **regen color** for each angle if old separate folders existed.
+
 ### Live after-color styling — NOIR, middle + layers (admin)
 
 On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **LAYERS** + part **MIDDLE** are selected, the app calls **`POST /api/live-wig-after-color-styling`** (three parallel requests with `angle`, same as color). Fal uses **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES`** and **`image_urls`**: **[1]** public URL of that angle’s **color** WebP, **[2]** your **style inspo** for that angle from **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL`**, **`_LEFT_`**, **`_RIGHT_`** (same idea as the three brick mannequin URLs for color).
 
 **Output paths:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/middle-layers/{left|front|right}.webp`
 
-**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist at the color-tier paths. To fix a bad angle, delete that WebP in Storage (styling or color) and reload the page.
+**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist at the color-tier paths. To fix a bad angle: use **regen color L / M / R** on the color page or **regen style L / M / R** on the styling page (sends **`forceRegenerate: true`** for that angle only), or delete that WebP in Storage and reload.
 
 **Manual fal (playground) — aspect ratio and resolution**
 

@@ -14278,6 +14278,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Admin per-angle regenerate (color + after-color styling)
+
+**Context (this chat):** User asked how to **refine** output for a specific angle when color is fine but hair placement/style is wrong, and wanted to avoid Storage-only workflow.
+
+**Decisions / outcomes:** **`forceRegenerate`** optional body flag on **`POST /api/wig-preview/live-noir-color`** and **`POST /api/live-wig-after-color-styling`** — skips the “file exists → skip” check for the requested angle(s). Client: **`postWigPreviewLiveNoirColorRegenerateAngle`**, **`postLiveWigAfterColorStylingRegenerateAngle`**; exported one-angle helpers. **NOIR color** and **NOIR styling** (middle+layers live) pages show **regen color L/M/R** and **regen style L/M/R** links.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/live-wig-after-color-styling.ts`**, **`src/utils/api.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
