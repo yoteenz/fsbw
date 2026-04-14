@@ -14772,3 +14772,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW hub: match sub-page live previews (not static on /noir landing)
+
+**Context (this chat):** User wanted **main BAW** hero/thumbs to match **sub-pages** (same live WebP framing / triple as length, color, etc.).
+
+**Decisions / outcomes:** **`isNoirBawHubLandingPathname`** previously treated **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** like the global hub and forced **`DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS`** (static naturals), so **`hubLiveNoirWigViews`** was always **`null`** there — wrong vs. sub-pages. **Fix:** landing override **only** **`pathname === '/build-a-wig'`**; NOIR hub routes use **`hubLiveNoirWigViews ?? baseWigViewsForHub`** + same **`BawNoirWigPreviewHeroThumbs`** as before.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
