@@ -40,6 +40,7 @@ import {
   clearBawNoirLiveColorWigViews,
   clearBawNoirLiveStylingWigViews,
   clearPendingBawNoirLiveColorWigViews,
+  SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../../utils/bawNoirLivePreviewStorage';
 
 interface DensityOption {
@@ -3560,6 +3561,11 @@ width: 'clamp(230px, 57.5vw, 368px)',
               clearBawNoirLiveColorWigViews();
               clearBawNoirLiveStylingWigViews();
               clearBawNoirLiveBangsWigViews();
+              try {
+                sessionStorage.setItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE, '1');
+              } catch {
+                /* ignore */
+              }
               
               console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
               

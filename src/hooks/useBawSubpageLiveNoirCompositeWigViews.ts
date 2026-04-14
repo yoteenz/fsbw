@@ -9,6 +9,7 @@ import {
   readBawNoirLiveBangsWigViews,
   readBawNoirLiveColorWigViews,
   readBawNoirLiveStylingWigViewsForPart,
+  shouldUseCommittedBawNoirLiveColorWigViews,
   type BawNoirLiveWigViewsTriple,
 } from '../utils/bawNoirLivePreviewStorage';
 
@@ -37,10 +38,11 @@ export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTri
         return;
       }
       const part = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
+      const fromColor = shouldUseCommittedBawNoirLiveColorWigViews(pathname)
+        ? readBawNoirLiveColorWigViews()
+        : null;
       setViews(
-        readBawNoirLiveStylingWigViewsForPart(part) ??
-          readBawNoirLiveBangsWigViews() ??
-          readBawNoirLiveColorWigViews()
+        readBawNoirLiveStylingWigViewsForPart(part) ?? readBawNoirLiveBangsWigViews() ?? fromColor
       );
     };
 

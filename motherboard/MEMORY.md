@@ -14674,3 +14674,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live color vs OFF BLACK (ginger persistence follow-up)
+
+**Context (this chat):** User reported **nothing changed** after the first fix — **GINGER** fal images still appeared while selections were **OFF BLACK**; hub/sub-page mismatch continued.
+
+**Decisions / outcomes:** Committed **`bawNoirLiveColorWigViews`** could outlive **`selectedColor`** resets. **`shouldUseCommittedBawNoirLiveColorWigViews(pathname)`** + **`readEffectiveNoirBawHairColor`** — composite/hub only reads committed color triple when effective color ≠ **OFF BLACK**. **Color confirm** on noir routes: **OFF BLACK** clears committed + pending live color storage; non–OFF BLACK + admin live still persists fal triple. **Shop → customize:** **`SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE`** + one-shot clear on first **`/build-a-wig/noir/customize`** mount in **`build-a-wig/page.tsx`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/straight/noir/page.tsx`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
