@@ -14472,3 +14472,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Git:** **`bcc9778`** on **`preview/mobile`** and **`master`** (merged/pushed).
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW NOIR color page: fix double brick on hero + all three thumbnails for fal WebPs
+
+**Context (this chat):** User reported after prior hero change that **duplicate brick** still showed and **thumbnails were not fixed** — fal **color** outputs already include the **leaf-brick** scene, so stacking **`leaf-brick-resize.png`** + **`.leaf-bg`** behind them doubled the background.
+
+**Decisions / outcomes:** Added **`isRemoteNoirLiveWigViewSrc`** (http/https after stripping query) and **`hideDuplicateBrickNoirColor`** when on **`/build-a-wig/noir/`** and **any** `wigViews` entry is remote (admin preview **or** committed live triple from storage). Then: **omit** hero **`.leaf-bg`**, remove inner **`leaf-brick-resize`** (neutral **`#f5f5f5`** + **`overflow: hidden`**), hero img uses **`hero-mannequin-img--live-noir`** (262×367, centered **`translate(-50%,-50%)`**). **All three thumbnails:** no **`.leaf-bg`**, no inner brick, same neutral cell; **selected** thumb uses **inline white ring + black box-shadow** to replace the old **`leaf-bg.border-black`** look; thumbs use **`thumbnail-mannequin-img--live-noir`**. Restored CSS rules in **`src/index.css`** for **`--live-noir`** classes. Static **`/assets/`** PNG paths unchanged (single brick layer as before).
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/index.css`**.
+
+**Git:** **`bfaf09a`** on **`preview/mobile`** and **`master`**.
+
+**Docs:** This MEMORY entry.
