@@ -14,6 +14,10 @@ export const config = {
  *   WIG_PREVIEW_STORAGE_BUCKET (default: live-preview or wig-preview)
  *   WIG_PREVIEW_PROMPT_VERSION (default: v1)
  *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
+ *
+ * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
+ *
+ * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `1K` (default), `2K`, or `4K` — lower is faster/cheaper on short timeouts.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth';
@@ -52,6 +56,18 @@ function readStringArray(obj: Record<string, unknown>, key: string): string[] {
   return v.map((x) => String(x).toUpperCase()).filter(Boolean);
 }
 
+function readOptionalAngle(body: Record<string, unknown>): 'front' | 'left' | 'right' | null {
+  const raw = readString(body, 'angle', '').toLowerCase();
+  if (raw === 'front' || raw === 'left' || raw === 'right') return raw;
+  return null;
+}
+
+function readFalResolution(): '1K' | '2K' | '4K' {
+  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '1K').trim().toUpperCase();
+  if (r === '2K' || r === '4K') return r;
+  return '1K';
+}
+
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(label: string, hex: string): string {
   return [
@@ -73,6 +89,7 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
+  try {
   if (req.method !== 'POST') {
     sendJson(res, 405, { error: 'Method not allowed' });
     return;
@@ -109,6 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
 
   const body = parseBody(req);
+  const singleAngle = readOptionalAngle(body);
   const color = readString(body, 'color', '');
   if (!color) {
     sendJson(res, 400, { error: 'color is required' });
@@ -136,7 +154,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const manifestHash = wigPreviewManifestHash(selections);
   const paths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', manifestHash);
   const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
+  const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
   const mannequinByAngle = { front: frontUrl, left: leftUrl, right: rightUrl } as const;
+  const falResolution = readFalResolution();
 
   let supabase;
   try {
@@ -154,7 +174,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
-    for (const angle of angleOrder) {
+    for (const angle of anglesToRun) {
       const path = paths[angle];
       const { error: dlErr } = await supabase.storage.from(bucket).download(path);
       if (!dlErr) {
@@ -168,7 +188,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           prompt,
           image_urls: [mannequinUrl],
           aspect_ratio: 'auto',
-          resolution: '2K',
+          resolution: falResolution,
           output_format: 'webp',
           num_images: 1,
         },
@@ -189,24 +209,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(paths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(paths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(paths.right);
+    const publicUrls = {
+      front: pubFront?.publicUrl ?? null,
+      left: pubLeft?.publicUrl ?? null,
+      right: pubRight?.publicUrl ?? null,
+    };
 
     sendJson(res, 200, {
       ok: true,
       manifestHash,
       bucket,
       paths,
-      publicUrls: {
-        front: pubFront?.publicUrl ?? null,
-        left: pubLeft?.publicUrl ?? null,
-        right: pubRight?.publicUrl ?? null,
-      },
+      publicUrls,
       generated,
       skipped,
       selections,
+      ...(singleAngle ? { singleAngle } : {}),
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error('[wig-preview/live-noir-color]', msg);
     sendJson(res, 500, { error: msg });
+    return;
+  }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[wig-preview/live-noir-color] outer', msg);
+    try {
+      sendJson(res, 500, { error: msg });
+    } catch {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(JSON.stringify({ error: msg }));
+    }
   }
 }

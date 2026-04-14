@@ -14220,6 +14220,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Live NOIR preview: parallel per-angle API calls + default 1K fal (Vercel Hobby timeouts)
+
+**Context (this chat):** User still saw **`FUNCTION_INVOCATION_FAILED`** after making the **`live-preview`** bucket **public** — public bucket only fixes **browser** image URLs, not **serverless duration**. One invocation ran **up to three** Fal **`nano-banana-pro/edit`** jobs **sequentially**, often exceeding **Vercel Hobby**’s short function limit.
+
+**Decisions / outcomes:** **`POST /api/wig-preview/live-noir-color`** accepts optional body **`angle`**: **`left`** \| **`front`** \| **`right`** — only that angle runs Fal/upload in that invocation. **`postWigPreviewLiveNoirColor`** in **`src/utils/api.ts`** calls the route **three times in parallel** with **`Promise.all`** (same payload + different **`angle`**), then merges **`generated`** / **`skipped`**. Default Fal **`resolution`** is **`1K`** via **`WIG_PREVIEW_FAL_RESOLUTION`** (optional **`2K`** / **`4K`**). Outer **`try/catch`** on the handler returns JSON **500** on unexpected throws. **`docs/WIG_PREVIEW_PREGENERATION.md`** and **`.env.example`** updated.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**, **`src/utils/api.ts`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.

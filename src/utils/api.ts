@@ -994,9 +994,8 @@ export type WigPreviewLiveNoirColorResult = {
   selections: Record<string, unknown>;
 };
 
-/** Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles); fal runs only for missing angles. */
-export async function postWigPreviewLiveNoirColor(
-  body: WigPreviewLiveNoirColorPayload
+async function postWigPreviewLiveNoirColorOneAngle(
+  body: WigPreviewLiveNoirColorPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<WigPreviewLiveNoirColorResult> {
   const res = await apiFetch('/api/wig-preview/live-noir-color', { method: 'POST', body });
   const text = await res.text();
@@ -1011,6 +1010,35 @@ export async function postWigPreviewLiveNoirColor(
     throw new Error(msg || 'Live preview failed');
   }
   return JSON.parse(text) as WigPreviewLiveNoirColorResult;
+}
+
+/**
+ * Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles).
+ * Uses **three parallel** API calls (one angle each) so each Vercel function stays within short timeouts (e.g. Hobby ~10s).
+ */
+export async function postWigPreviewLiveNoirColor(
+  body: WigPreviewLiveNoirColorPayload
+): Promise<WigPreviewLiveNoirColorResult> {
+  const angles = ['left', 'front', 'right'] as const;
+  const [ra, rb, rc] = await Promise.all(
+    angles.map((angle) => postWigPreviewLiveNoirColorOneAngle({ ...body, angle }))
+  );
+  const hashes = new Set([ra.manifestHash, rb.manifestHash, rc.manifestHash]);
+  if (hashes.size !== 1) {
+    throw new Error('Live preview mismatch (try again)');
+  }
+  const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
+  const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
+  return {
+    ok: true,
+    manifestHash: ra.manifestHash,
+    bucket: ra.bucket,
+    paths: ra.paths,
+    publicUrls: ra.publicUrls,
+    generated: mergedGenerated,
+    skipped: mergedSkipped,
+    selections: ra.selections,
+  };
 }
 
 /** Admin: notify client about reschedule/cancel request for an appointment. */

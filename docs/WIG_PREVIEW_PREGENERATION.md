@@ -42,13 +42,15 @@ Or open `scripts/wig-preview/manifests/noir-sanity-v1.json` (or your preset’s 
 
 ### Live preview (Build-a-Wig → NOIR → Color) — admin only
 
-On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/customize/color`**, when you are signed in as an **admin** (same emails as `ADMIN_EMAILS` / `VITE_ADMIN_EMAILS`) **and** have a Supabase session, the color page calls **`POST /api/wig-preview/live-noir-color`**. The server:
+On **NOIR** routes **`/build-a-wig/noir/edit/color`** and **`/build-a-wig/noir/customize/color`**, when you are signed in as an **admin** (same emails as `ADMIN_EMAILS` / `VITE_ADMIN_EMAILS`) **and** have a Supabase session, the color page calls **`POST /api/wig-preview/live-noir-color` three times in parallel** (body includes **`angle`**: `"left"` \| `"front"` \| `"right"`), so each serverless invocation only does **one** angle. That avoids **Vercel Hobby** killing one long request that would run **three** fal jobs back-to-back (which shows as **`FUNCTION_INVOCATION_FAILED`**).
+
+The server (per request):
 
 1. Builds the same **manifest hash** from your current length/density/lace/texture/color/hairline/styling/add-ons.
-2. For each angle (**left / front / right**), checks Storage under **`wig-preview-live/{PROMPT_VERSION}/NOIR/{hash}/{angle}.webp`**.
+2. For the requested angle, checks Storage under **`wig-preview-live/{PROMPT_VERSION}/NOIR/{hash}/{angle}.webp`**.
 3. **Skips fal** if the file already exists; otherwise runs **fal `nano-banana-pro/edit`** with **one** `image_url` (that angle’s gray-brick mannequin only). Logo is **only in the prompt text** (no logo attachment), matching your successful manual flow.
 
-**Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Function **`maxDuration`** is set to **120s** (up to ~3 fal calls).
+**Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Optional **`WIG_PREVIEW_FAL_RESOLUTION`**: **`1K`** (default, faster), **`2K`**, or **`4K`**. The API still accepts a request **without** `angle` (all three angles in one invocation) for Pro / long `maxDuration`.
 
 **Manual fal (playground) — aspect ratio and resolution**
 
