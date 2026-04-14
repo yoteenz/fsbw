@@ -37,48 +37,56 @@ export function BawNoirWigPreviewHeroThumbs({
           style={{
             width: '262px',
             height: '367px',
+            overflow: 'visible',
             ...(hideBrick
               ? {
                   backgroundImage: 'none',
                   backgroundColor: '#f5f5f5',
-                  overflow: 'hidden',
                 }
               : {
                   backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'repeat',
-                  overflow: 'visible',
                 }),
           }}
         >
           {heroChildren}
-          <img
-            src={triple[selectedView]}
-            alt="Selected Wig"
-            width={hideBrick ? 262 : 282}
-            height={hideBrick ? 367 : 387}
-            className={
-              hideBrick
-                ? 'absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir'
-                : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img'
-            }
-            style={
-              hideBrick
-                ? ({
+          {hideBrick ? (
+            <div className="absolute left-0 top-0 z-[5] size-full overflow-hidden">
+              <img
+                src={triple[selectedView]}
+                alt="Selected Wig"
+                width={262}
+                height={367}
+                className="absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir"
+                style={
+                  {
                     left: '50%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
                     '--hero-width': '262px',
                     '--hero-height': '367px',
-                  } as CSSProperties)
-                : ({
-                    top: 'calc(50% - 10.601px + 18px)',
-                    '--hero-width': '282px',
-                    '--hero-height': '387px',
-                  } as CSSProperties)
-            }
-          />
+                  } as CSSProperties
+                }
+              />
+            </div>
+          ) : (
+            <img
+              src={triple[selectedView]}
+              alt="Selected Wig"
+              width={282}
+              height={387}
+              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
+              style={
+                {
+                  top: 'calc(50% - 10.601px + 18px)',
+                  '--hero-width': '282px',
+                  '--hero-height': '387px',
+                } as CSSProperties
+              }
+            />
+          )}
         </div>
       </div>
 
