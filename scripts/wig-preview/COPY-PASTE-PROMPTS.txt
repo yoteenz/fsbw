@@ -69,10 +69,10 @@ Recreate this exact mannequin image. The logo on the center of the mannequin’s
 ================================================================================
 BAW — MIDDLE PART / LAYERS STYLE (all 6 units)
 ================================================================================
-**Live / server (two images):** (1) **First** = colored mannequin from your pipeline (e.g. Storage color WebP). (2) **Second** = your **style inspo** for that angle (middle part + layers look) — same three-angle idea as brick refs: put files in Supabase (or CDN), set **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL`**, **`_FRONT_`**, **`_RIGHT_`** on Vercel. fal: **Auto + 2K**.
+**Live / server (two images):** (1) **First** = customer color preview (Storage WebP): full scene + **this hair color stays in the output**. (2) **Second** = **geometry-only** reference per angle (cut, part, layers, silhouette) — public URLs: **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL`**, **`_FRONT_`**, **`_RIGHT_`**. Do **not** treat image 2 as a second “final” to paste (ignore its hair color and background). fal: **Auto + 2K**.
 
-Use the **first image** as the base: keep the same mannequin, background, catalog hair color, framing, and chest logo. Recreate the **hair from the second image** on that base — same middle part, layer shape, face-framing, volume, and silhouette as the second attachment — but the hair color must read as **jet black #000000**. The logo on the center of the mannequin’s chest with FRONTAL SLAYER must remain fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the first image except the hair to match the second reference in black.
+You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo, and **keep the hair color exactly as in image 1**. **IMAGE 2** is a **hair geometry reference only** — copy only cut, layering, and part from image 2 onto the head in image 1; do not use image 2’s hair color or background. Then the angle-specific shoulder/part constraints from `buildMiddlePartLayersStylePromptTwoImages` in code. **FRONTAL SLAYER** logo stays legible as in image 1. High quality; change only the hair mesh shape in image 1.
 
-(Code: `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES` / default `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`.)
+(Code: `buildMiddlePartLayersStylePromptTwoImages` in `api/_lib/bawLiveStylingPrompts.ts` / `promptTemplate.mjs`; exports `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES` = front angle.)
 
 **Manual (one image only):** attach just the inspo shot — `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE` in `promptTemplate.mjs`.
