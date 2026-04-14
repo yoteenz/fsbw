@@ -30,7 +30,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
-import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
+import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 
 export default function StylingSelectionPage() {
@@ -294,7 +294,7 @@ export default function StylingSelectionPage() {
   };
 
   const baseWigViews = getWigViews();
-  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const hasLayersLiveStyling =
     adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
@@ -430,8 +430,8 @@ export default function StylingSelectionPage() {
       ? liveStylingWigViews
       : hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
-        : liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
-          ? liveNoirColorWigViews
+        : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+          ? liveNoirCompositeWigViews
           : baseWigViews;
 
   const showNoirLiveStylingBanner =

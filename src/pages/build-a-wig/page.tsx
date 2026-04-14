@@ -31,6 +31,13 @@ import {
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
+/** Global BAW hub (`/build-a-wig` only): always static default NOIR mannequin — no live color/styling. */
+const DEFAULT_GLOBAL_BAW_HUB_WIG_VIEWS: [string, string, string] = [
+  '/assets/natural left.png',
+  '/assets/natural front.png',
+  '/assets/natural right.png',
+];
+
 interface WigCustomization {
   capSize: string;
   length: string;
@@ -55,18 +62,8 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
 
-  const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
-    try {
-      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
-    } catch {
-      return null;
-    }
-    return (
-      readBawNoirLiveStylingWigViewsForPart(localStorage.getItem('selectedPartSelection') || 'MIDDLE') ??
-      readBawNoirLiveBangsWigViews() ??
-      readBawNoirLiveColorWigViews()
-    );
-  });
+  /** Live NOIR WebPs on product hub only — not used on exact `/build-a-wig` (static default hero there). */
+  const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(null);
   
   // Track current editing item ID to detect when switching between products
   const currentEditingItemIdRef = useRef<string | null>(null);
@@ -3172,6 +3169,7 @@ export default function BuildAWigPage() {
 
   const hubLiveNoirWigViews = useMemo(() => {
     const pathname = location.pathname;
+    if (pathname === '/build-a-wig') return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
     try {
       if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
@@ -3181,10 +3179,21 @@ export default function BuildAWigPage() {
     return liveNoirHubWigViews;
   }, [location.pathname, liveNoirHubWigViews]);
 
-  const wigViews = hubLiveNoirWigViews ?? baseWigViewsForHub;
+  const wigViews =
+    location.pathname === '/build-a-wig' ? DEFAULT_GLOBAL_BAW_HUB_WIG_VIEWS : hubLiveNoirWigViews ?? baseWigViewsForHub;
+
+  useEffect(() => {
+    if (location.pathname === '/build-a-wig') {
+      setLiveNoirHubWigViews(null);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const refresh = () => {
+      if (typeof window !== 'undefined' && window.location.pathname === '/build-a-wig') {
+        setLiveNoirHubWigViews(null);
+        return;
+      }
       try {
         if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) {
           setLiveNoirHubWigViews(null);

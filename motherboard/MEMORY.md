@@ -14648,3 +14648,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW global hub: static default NOIR hero; sub-pages composite live NOIR
+
+**Context (this chat):** User asked for **`/build-a-wig`** main hero + three thumbnails to **always** show the **default NOIR** unit (**no** live color/styling applied), while **sub-pages** update from selections; sub-pages should **stay in sync** with each other; main page **step icons** still reflect choices (unchanged — `localStorage` / `customization`).
+
+**Decisions / outcomes:** **`src/pages/build-a-wig/page.tsx`** — when **`location.pathname === '/build-a-wig'`**, **`wigViews`** forced to **`natural left/front/right`** PNGs; **`hubLiveNoirWigViews`** forced **`null`** on that route (no live WebP overlay). **`liveNoirHubWigViews`** init **`null`**; **`useEffect`** clears live hub state when navigating to **`/build-a-wig`**. Product hubs **`/build-a-wig/noir`** etc. unchanged (live overlay + **`baseWigViewsForHub`** hairline). New **`useBawSubpageLiveNoirCompositeWigViews`** — admin NOIR sub-pages: **styling (part match)** → **bangs** → **color**; listens **`BAW_NOIR_*`**, **`customStorageChange`**, **`storage`**, **`focus`**, **`signInStateChanged`**. Wired on **length, texture, lace, hairline, density, cap-size, addons, color** (committed fallback), **styling** (with existing middle/bangs live state). **`useBawSubpageLiveNoirColorWigViews`** kept for other potential use.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/{length,texture,lace,hairline,density,cap-size,addons,color,styling}/page.tsx`**.
+
+**Docs:** This **MEMORY** entry.

@@ -14,7 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
-import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
+import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 
 interface TextureOption {
@@ -166,10 +166,10 @@ function TextureSelection() {
   };
 
   const baseWigViews = getWigViews();
-  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
-    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
-      ? liveNoirColorWigViews
+    liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirCompositeWigViews
       : baseWigViews;
 
   // Texture options - Updated with correct pricing and options

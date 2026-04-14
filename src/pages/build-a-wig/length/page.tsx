@@ -13,7 +13,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
-import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
+import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 
 interface LengthOption {
@@ -253,10 +253,10 @@ function LengthSelection() {
   };
 
   const baseWigViews = getWigViews();
-  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
-    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
-      ? liveNoirColorWigViews
+    liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirCompositeWigViews
       : baseWigViews;
 
   // Length options - Updated with proper pricing (24" is default, included in base price)

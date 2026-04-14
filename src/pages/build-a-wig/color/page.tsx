@@ -14,7 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
-import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
+import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle, getAccessToken } from '../../../utils/api';
 import { isAdminEmail } from '../../../utils/adminAuth';
@@ -547,12 +547,12 @@ function ColorSelection() {
   };
 
   const baseWigViews = getWigViews();
-  const committedLiveNoirColorViews = useBawSubpageLiveNoirColorWigViews();
+  const liveNoirCompositeCommittedViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
     adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
-      : committedLiveNoirColorViews && location.pathname.includes('/build-a-wig/noir/')
-        ? committedLiveNoirColorViews
+      : liveNoirCompositeCommittedViews && location.pathname.includes('/build-a-wig/noir/')
+        ? liveNoirCompositeCommittedViews
         : baseWigViews;
 
   // Check if we're in blanco route (both customize and edit modes)
