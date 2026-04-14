@@ -14430,3 +14430,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — Live NOIR middle+layers styling: fix FUNCTION_INVOCATION_FAILED (sequential API + merged publicUrls)
+
+**Context (this chat):** User screenshot on NOIR styling showed **LIVE PREVIEW: A server error has occurred** with Vercel **`FUNCTION_INVOCATION_FAILED`** while **LAYERS** + **MIDDLE** live preview was active.
+
+**Decisions / outcomes:** **`postLiveWigAfterColorStyling`** in **`src/utils/api.ts`** used **`Promise.all`** on three **`postLiveWigAfterColorStylingOneAngle`** calls — three concurrent serverless invocations each running fal at **4K**, which overloads the platform (cold starts, concurrency, duration) and surfaces **`FUNCTION_INVOCATION_FAILED`**. **Fix:** run the three angles **sequentially** (left → front → right) in one client flow. **Also:** merged **`publicUrls`** from all three responses (each response only fully populates URLs for angles that ran in that invocation; previously only `ra.publicUrls` was returned and could omit angles). **`docs/WIG_PREVIEW_PREGENERATION.md`** updated to describe sequential styling vs parallel color.
+
+**Changes:** **`src/utils/api.ts`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

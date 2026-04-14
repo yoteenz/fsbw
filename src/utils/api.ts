@@ -1095,14 +1095,14 @@ export async function postLiveWigAfterColorStylingRegenerateAngle(
   return postLiveWigAfterColorStylingOneAngle({ ...body, angle, forceRegenerate: true });
 }
 
-/** Admin: middle + layers after color (3 angles, parallel). Requires color WebPs already in Storage. */
+/** Admin: middle + layers after color (3 angles, **sequential**). Parallel calls often tripped Vercel `FUNCTION_INVOCATION_FAILED` / timeouts because each invocation runs fal. Requires color WebPs already in Storage. */
 export async function postLiveWigAfterColorStyling(
   body: LiveWigAfterColorStylingPayload
 ): Promise<LiveWigAfterColorStylingResult> {
   const angles = ['left', 'front', 'right'] as const;
-  const [ra, rb, rc] = await Promise.all(
-    angles.map((angle) => postLiveWigAfterColorStylingOneAngle({ ...body, angle }))
-  );
+  const ra = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[0] });
+  const rb = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[1] });
+  const rc = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[2] });
   const colorHashes = new Set([ra.colorTierHash, rb.colorTierHash, rc.colorTierHash]);
   if (colorHashes.size !== 1) {
     throw new Error('Live styling mismatch (try again)');
@@ -1116,7 +1116,11 @@ export async function postLiveWigAfterColorStyling(
     bucket: ra.bucket,
     colorPaths: ra.colorPaths,
     outputPaths: ra.outputPaths,
-    publicUrls: ra.publicUrls,
+    publicUrls: {
+      left: ra.publicUrls.left ?? rb.publicUrls.left ?? rc.publicUrls.left,
+      front: ra.publicUrls.front ?? rb.publicUrls.front ?? rc.publicUrls.front,
+      right: ra.publicUrls.right ?? rb.publicUrls.right ?? rc.publicUrls.right,
+    },
     generated: mergedGenerated,
     skipped: mergedSkipped,
     selections: ra.selections,
