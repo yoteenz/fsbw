@@ -14333,3 +14333,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/wig-preview/live-noir-color.ts`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Merge preview/mobile into master; fast-forward preview/mobile to match
+
+**Context (this chat):** User asked to **merge all mobile preview changes to `master`**.
+
+**Decisions / outcomes:** **`origin/master`** already contained all commits from **`origin/preview/mobile`** (preview/mobile was behind master). **`origin/cursor/baw-live-noir-webp-align-3c43`** had three commits ahead of master (BAW live NOIR WebP hub/storage/layout, color regen UI overlap fix, jet/off black near-black fal prompt). **`master`** was **fast-forward merged** from that branch and **pushed** to **`origin/master`** (tip **`8e5d036`**). **`preview/mobile`** was then **fast-forwarded** to the same tip and **pushed** to **`origin/preview/mobile`** so both branches match.
+
+**Changes:** Git only (`master` + `preview/mobile` push).
+
+**Docs:** This **MEMORY** entry.
