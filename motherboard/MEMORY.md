@@ -14502,3 +14502,26 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Git:** **`e11ace7`** on **`preview/mobile`**.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW NOIR live WebP: all sub-pages + hub; customize $120 color; thumb padding; styling API pacing
+
+**Context (this chat):** Continuation of prior BAW work from summary: user still saw **$120 color** missing on the **customize** hub after choosing a live-change color; **LAYERS + MIDDLE** live styling still **`FUNCTION_INVOCATION_FAILED`**; **double brick / shifted** previews on **all** NOIR sub-pages (not only color); **gray band** under the three thumbnails.
+
+**Topics covered (full chat so far):**
+- **Duplicate brick + alignment:** Rolled **`BawNoirWigPreviewHeroThumbs`** out to **hairline, density, lace, cap-size, addons, styling** (texture was already in progress), and the **main BAW hub** preview so committed live color / styling WebPs use the same **hide duplicate brick + cover** framing everywhere on NOIR routes.
+- **Thumbnail gray strip:** **`BawNoirWigPreviewHeroThumbs`** — optional **`thumbRowClassName`** (hub passes **`items-center`**); when **`hideBrick`** (live remote WebPs), thumb wrapper uses **`p-0`** instead of **`p-1`** to drop extra neutral padding below **`object-fit: cover`** thumbs.
+- **Customize color $120:** Root cause — **`calculatePrice`** used **`getPrice('Color', …)`** in customize mode, so a stale **`customizeSelectedColorPrice`** of **`0`** overrode **`calculatedPrices.colorPrice`** (120). **Fix:** treat **color** like edit for this line — use **`calculatedPrices.colorPrice`** whenever **`isCustomizeMode`** (not only **`isEditMode`**). Also **persist** full price set via **`savePricesToLocalStorage`** after customize **`calculatePrice`** (skips when **`comingFromSubPage`** or loading from storage) so **`customizeSelectedColorPrice`** stays aligned with **`selectedColor`**.
+- **Styling API:** Kept **three sequential** one-angle calls; added **~1.2s delay** between calls in **`postLiveWigAfterColorStyling`** to reduce back-to-back cold-start / rate pressure (still client-only mitigation).
+- **Build:** Removed unused **`React`** default import from **`build-a-wig/page.tsx`** after hub refactor (**`tsc`** unused import).
+
+**Decisions / outcomes:** Shared preview component is the single place for NOIR live-WebP vs static PNG framing; customize hub totals trust **derived** color price from current color id; styling client batches invocations slightly apart.
+
+**Changes:** `src/components/buildWig/BawNoirWigPreviewFrames.tsx`, `src/utils/bawNoirLiveWigViewDisplay.ts`, `src/pages/build-a-wig/page.tsx`, `src/pages/build-a-wig/{hairline,density,lace,cap-size,addons,styling,texture}/page.tsx`, `src/utils/api.ts` (and related files in the same commit: color/length if touched by branch state).
+
+**Git:** **`7d34805`** on **`preview/mobile`** (pushed).
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
