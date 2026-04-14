@@ -61,6 +61,22 @@ function readLayersStyleRefUrls(part: LayersPartStyling): {
       right: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim() || '',
     };
   }
+  // LEFT / RIGHT: allow deploys that only set MIDDLE refs — use middle geometry as fallback (part-specific envs optional).
+  if (part !== 'MIDDLE' && (!u.front || !u.left || !u.right)) {
+    const middle = pick('MIDDLE_PART');
+    if (middle.front && middle.left && middle.right) {
+      u = middle;
+    } else {
+      const legacy = {
+        front: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim() || '',
+        left: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim() || '',
+        right: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim() || '',
+      };
+      if (legacy.front && legacy.left && legacy.right) {
+        u = legacy;
+      }
+    }
+  }
   if (!u.front || !u.left || !u.right) {
     return {
       ok: false,

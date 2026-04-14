@@ -14744,3 +14744,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — LAYERS + LEFT/RIGHT: fallback geometry refs to MIDDLE
+
+**Context (this chat):** User saw **Missing public geometry reference URLs for LAYERS + part LEFT** (and R) when choosing **LAYERS** with **LEFT**/**RIGHT** part.
+
+**Decisions / outcomes:** **`readLayersStyleRefUrls`** in **`api/live-wig-after-color-styling.ts`**: for **LEFT**/**RIGHT**, if part-specific triple incomplete, **fall back** to **`MIDDLE_PART`** env triple, then legacy **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`**. **`.env.example`** + **`docs/WIG_PREVIEW_PREGENERATION.md`** — part-specific URLs optional when middle refs exist.
+
+**Changes:** **`api/live-wig-after-color-styling.ts`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
