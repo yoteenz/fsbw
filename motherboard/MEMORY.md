@@ -14386,13 +14386,6 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ## 2026-04-14 — BAW color subpage: live NOIR fal previews — stop brick peek, re-center in frame
 
-**Context (this chat):** User reported **leaf-brick** still **visible behind** admin **generated** (fal) color images on the **Build-a-Wig color** subpage, and images looked **shifted down** / not **centered** vs the static mannequin layout.
-
-**Decisions / outcomes:** Prior revert to “always brick + `.leaf-bg`” fixed **full-screen bleed** from `!important` min sizes but **transparent** fal WebPs still showed **brick through** gaps and **`object-fit: contain`** + hero **`top` nudge** made renders look **low** in the frame. Added **`useNoirLiveRenders`** when admin live preview is active on **NOIR** routes **and** `liveWigViews` is set: **omit** the extra **`.leaf-bg`** underlay (avoids the wrong jfif + z-index peek), replace inner **brick** with **solid `#f5f5f5`** + **`overflow: hidden`**, hero image **centered** (`translate(-50
----
-
-## 2026-04-14 — BAW color subpage: live NOIR fal previews — stop brick peek, re-center in frame
-
 **Context (this chat):** User reported leaf-brick still visible behind admin generated (fal) color images on the Build-a-Wig color subpage, and images looked shifted down / not centered vs the static mannequin layout.
 
 **Decisions / outcomes:** Prior revert to always brick plus `.leaf-bg` fixed full-screen bleed from `!important` min sizes but transparent fal WebPs still showed brick through gaps and `object-fit: contain` plus hero `top` nudge made renders look low in the frame. Added `useNoirLiveRenders` when admin live preview is active on NOIR routes and `liveWigViews` is set: omit the extra `.leaf-bg` underlay (avoids the wrong jfif and z-index peek), replace inner brick with solid `#f5f5f5` and `overflow: hidden`, hero image centered with `translate(-50%,-50%)`, dimensions 262×367 to match the frame, `object-fit: cover` and `object-position: center top` via `.hero-mannequin-img--live-noir`. Thumbnails use the same live path: neutral fill, cover plus top anchor, translateX nudges for M/R to match the main BAW hub thumb strip. Static (non-live) color page behavior unchanged.
@@ -14575,3 +14568,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — Live NOIR BANGS-only after-color (curtain bangs prompt; no new env URLs)
+
+**Context (this chat):** User provided a **master prompt** for **lightly feathered curtain bangs** on the mannequin (logo legible; pixel perfect; do not change rest of hair). They wanted it **wired when choosing BANGS** on Build-a-Wig and asked what to add to **env**.
+
+**Decisions / outcomes:** **`POST /api/live-wig-after-color-styling`** now supports two modes: (1) existing **middle + layers** — `part MIDDLE` + `styling` includes **LAYERS** (optional **BANGS** with LAYERS unchanged); requires **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*_URL`**. (2) **Bangs only** — `styling` includes **BANGS** and **not** **LAYERS** (e.g. only **BANGS**); **single** Fal `image_urls` = color WebP only; prompt **`buildBangsOnlyStylePrompt(angle)`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`buildBangsOnlyStylePrompt`** in **`scripts/wig-preview/promptTemplate.mjs`**). Writes **`.../after-color/bangs-only/{angle}.webp`**. **No new env vars** for bangs-only. **`src/utils/bawNoirLivePreviewStorage.ts`** — **`persistBawNoirLiveBangsWigViews`**, **`readBawNoirLiveBangsWigViews`**, **`BAW_NOIR_LIVE_BANGS_VIEWS_EVENT`**. **`src/pages/build-a-wig/styling/page.tsx`** — parallel live path for bangs-only + regen; separate **`liveBangsLoading`**; **`wigViews`** priority: middle+layers → bangs-only → committed live color → static. **`src/pages/build-a-wig/page.tsx`** — hub reads **styling → bangs → color**. Docs: **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`**.
+
+**Changes:** **`api/live-wig-after-color-styling.ts`**, **`api/_lib/bawLiveStylingPrompts.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`**.
+
+**Docs:** This **MEMORY** entry.

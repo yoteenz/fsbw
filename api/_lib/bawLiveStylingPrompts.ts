@@ -35,3 +35,24 @@ export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE = [
 
 /** @deprecated Use `buildMiddlePartLayersStylePromptTwoImages(angle)`. */
 export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TEXT = BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES;
+
+/**
+ * **Single-image** live API: edit the **color** WebP only — add curtain bangs; no style inspo URL.
+ * Keep in sync with `scripts/wig-preview/promptTemplate.mjs` (`BAW_BANGS_ONLY_STYLE_PROMPT`).
+ */
+export function buildBangsOnlyStylePrompt(angle: 'front' | 'left' | 'right'): string {
+  const angleConstraint =
+    angle === 'left'
+      ? 'This is the **LEFT 3/4 view**: keep hair mass and part direction consistent with the reference; only add bangs — do **not** mirror or restyle the length away from the left view.'
+      : angle === 'right'
+        ? 'This is the **RIGHT 3/4 view**: keep hair mass and part direction consistent with the reference; only add bangs — do **not** mirror or restyle the length away from the right view.'
+        : 'This is the **FRONT view**: add bangs only; keep the rest of the hair layout and part as in the reference.';
+
+  return [
+    'Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
+    angleConstraint,
+    'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
+    'The photo should be extremely high-quality, crisp & pixel perfect.',
+    'Do not change anything else about the photo.',
+  ].join(' ');
+}

@@ -22,8 +22,10 @@ import {
   isActiveBuildWigAppointmentMode
 } from '../../utils/bookingNewInstallUnit';
 import {
+  BAW_NOIR_LIVE_BANGS_VIEWS_EVENT,
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
+  readBawNoirLiveBangsWigViews,
   readBawNoirLiveColorWigViews,
   readBawNoirLiveStylingWigViews,
 } from '../../utils/bawNoirLivePreviewStorage';
@@ -59,7 +61,7 @@ export default function BuildAWigPage() {
     } catch {
       return null;
     }
-    return readBawNoirLiveStylingWigViews() ?? readBawNoirLiveColorWigViews();
+    return readBawNoirLiveStylingWigViews() ?? readBawNoirLiveBangsWigViews() ?? readBawNoirLiveColorWigViews();
   });
   
   // Track current editing item ID to detect when switching between products
@@ -3184,7 +3186,9 @@ export default function BuildAWigPage() {
           setLiveNoirHubWigViews(null);
           return;
         }
-        setLiveNoirHubWigViews(readBawNoirLiveStylingWigViews() ?? readBawNoirLiveColorWigViews());
+        setLiveNoirHubWigViews(
+          readBawNoirLiveStylingWigViews() ?? readBawNoirLiveBangsWigViews() ?? readBawNoirLiveColorWigViews()
+        );
       } catch {
         setLiveNoirHubWigViews(null);
       }
@@ -3192,12 +3196,14 @@ export default function BuildAWigPage() {
     refresh();
     window.addEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
     window.addEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
+    window.addEventListener(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT, refresh);
     window.addEventListener('storage', refresh);
     window.addEventListener('focus', refresh);
     window.addEventListener('signInStateChanged', refresh as EventListener);
     return () => {
       window.removeEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
       window.removeEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
+      window.removeEventListener(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT, refresh);
       window.removeEventListener('storage', refresh);
       window.removeEventListener('focus', refresh);
       window.removeEventListener('signInStateChanged', refresh as EventListener);

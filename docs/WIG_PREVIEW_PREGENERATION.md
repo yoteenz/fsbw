@@ -64,6 +64,8 @@ On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when adm
 
 **Output paths:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/middle-layers/{left|front|right}.webp`
 
+**Bangs only (BANGS without LAYERS):** Same API and body shape; **`styling`** must be **`BANGS`** only (no **`LAYERS`**). Fal uses **one** `image_url` (the color WebP) and the curtain-bangs text prompt — **no** `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*` env required. **Output:** `.../after-color/bangs-only/{angle}.webp`. Hub shows bangs preview after middle+layers in priority order.
+
 **Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist at the color-tier paths. To fix a bad angle: use **regen color L / M / R** on the color page or **regen style L / M / R** on the styling page (sends **`forceRegenerate: true`** for that angle only), or delete that WebP in Storage and reload.
 
 **Manual fal (playground) — aspect ratio and resolution**

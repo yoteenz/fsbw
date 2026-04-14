@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -20,7 +20,9 @@ import {
   readBuildWigLivePreviewColor,
 } from '../../../utils/buildWigLivePreviewSelections';
 import {
+  persistBawNoirLiveBangsWigViews,
   persistBawNoirLiveStylingWigViews,
+  readBawNoirLiveBangsWigViews,
   readBawNoirLiveStylingWigViews,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
@@ -146,10 +148,12 @@ export default function StylingSelectionPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
 
-  /** Admin + NOIR styling route: live fal after-color (middle + layers), 3 angles. */
+  /** Admin + NOIR styling route: live fal after-color (middle + layers or bangs-only), 3 angles. */
   const [adminLiveNoirStylingPreview, setAdminLiveNoirStylingPreview] = useState(false);
   const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
+  const [liveBangsWigViews, setLiveBangsWigViews] = useState<[string, string, string] | null>(null);
   const [liveStylingLoading, setLiveStylingLoading] = useState(false);
+  const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
 
@@ -191,6 +195,7 @@ export default function StylingSelectionPage() {
     if (!noirStyling) {
       setAdminLiveNoirStylingPreview(false);
       setLiveStylingWigViews(null);
+      setLiveBangsWigViews(null);
       setLiveStylingError(null);
       return;
     }
@@ -202,10 +207,15 @@ export default function StylingSelectionPage() {
       if (!cancelled) setAdminLiveNoirStylingPreview(ok);
       if (!ok) {
         setLiveStylingWigViews(null);
+        setLiveBangsWigViews(null);
         setLiveStylingError(null);
       } else {
-        const cached = readBawNoirLiveStylingWigViews();
-        if (cached) setLiveStylingWigViews(cached);
+        const cachedLayers = readBawNoirLiveStylingWigViews();
+        if (cachedLayers) setLiveStylingWigViews(cachedLayers);
+        else setLiveStylingWigViews(null);
+        const cachedBangs = readBawNoirLiveBangsWigViews();
+        if (cachedBangs) setLiveBangsWigViews(cachedBangs);
+        else setLiveBangsWigViews(null);
       }
     })();
     return () => {
@@ -288,6 +298,12 @@ export default function StylingSelectionPage() {
     selectedHairStyling.some((s) => s === 'LAYERS') &&
     selectedPartSelection === 'MIDDLE';
 
+  const hasBangsOnlyLive =
+    adminLiveNoirStylingPreview &&
+    location.pathname.includes('/build-a-wig/noir/') &&
+    selectedHairStyling.some((s) => s === 'BANGS') &&
+    !selectedHairStyling.some((s) => s === 'LAYERS');
+
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
@@ -344,12 +360,76 @@ export default function StylingSelectionPage() {
     hasMiddleLayersLive,
   ]);
 
+  useEffect(() => {
+    const pathname = location.pathname;
+    const noir =
+      adminLiveNoirStylingPreview &&
+      (pathname.includes('/build-a-wig/noir/edit/styling') ||
+        pathname.includes('/build-a-wig/noir/customize/styling'));
+    if (!noir || !hasBangsOnlyLive) {
+      if (!hasBangsOnlyLive) setLiveBangsWigViews(null);
+      return;
+    }
+    const stylingForApi = selectedHairStyling
+      .filter((s) => s && s !== 'NONE')
+      .sort()
+      .join(',');
+    if (stylingForApi !== 'BANGS' || selectedHairStyling.some((s) => s === 'LAYERS')) {
+      setLiveBangsWigViews(null);
+      return;
+    }
+    setLiveStylingError(null);
+    setLiveBangsLoading(true);
+    const sel = readBuildWigLivePreviewSelections(pathname);
+    const color = readBuildWigLivePreviewColor(pathname);
+    void postLiveWigAfterColorStyling({
+      color,
+      ...sel,
+      styling: stylingForApi,
+      partSelection: selectedPartSelection,
+    })
+      .then((res) => {
+        const u = res.publicUrls;
+        if (u.front && u.left && u.right) {
+          const bust = Date.now();
+          const triple: [string, string, string] = [
+            `${u.left}?t=${bust}`,
+            `${u.front}?t=${bust}`,
+            `${u.right}?t=${bust}`,
+          ];
+          setLiveBangsWigViews(triple);
+          persistBawNoirLiveBangsWigViews(triple);
+        } else {
+          setLiveBangsWigViews(null);
+        }
+      })
+      .catch((e: Error) => {
+        setLiveBangsWigViews(null);
+        setLiveStylingError(e?.message || 'Live styling preview failed');
+      })
+      .finally(() => setLiveBangsLoading(false));
+  }, [
+    adminLiveNoirStylingPreview,
+    location.pathname,
+    selectedHairStyling,
+    selectedPartSelection,
+    hasBangsOnlyLive,
+  ]);
+
   const wigViews =
     hasMiddleLayersLive && liveStylingWigViews
       ? liveStylingWigViews
-      : liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
-        ? liveNoirColorWigViews
-        : baseWigViews;
+      : hasBangsOnlyLive && liveBangsWigViews
+        ? liveBangsWigViews
+        : liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+          ? liveNoirColorWigViews
+          : baseWigViews;
+
+  const showNoirLiveStylingBanner =
+    adminLiveNoirStylingPreview &&
+    location.pathname.includes('/build-a-wig/noir/') &&
+    (hasMiddleLayersLive || hasBangsOnlyLive);
+  const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets
   const hairStylingOptions = [
@@ -1264,7 +1344,7 @@ export default function StylingSelectionPage() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {hasMiddleLayersLive && (
+            {showNoirLiveStylingBanner && (
               <p
                 className="text-center mb-2 px-2"
                 style={{
@@ -1276,12 +1356,16 @@ export default function StylingSelectionPage() {
               >
                 {liveStylingLoading
                   ? 'LIVE PREVIEW: middle + layers (after color)…'
-                  : liveStylingError
-                    ? `LIVE PREVIEW: ${liveStylingError}`
-                    : 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Use regen links below to re-run fal for one angle.'}
+                  : liveBangsLoading
+                    ? 'LIVE PREVIEW: curtain bangs (after color)…'
+                    : liveStylingError
+                      ? `LIVE PREVIEW: ${liveStylingError}`
+                      : hasMiddleLayersLive
+                        ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Use regen links below to re-run fal for one angle.'
+                        : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). No extra style inspo URLs. Regen per angle below.'}
               </p>
             )}
-            {hasMiddleLayersLive && !liveStylingLoading && (
+            {showNoirLiveStylingBanner && !liveStylingAnyLoading && (
               <div
                 className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
                 style={{ maxWidth: '280px' }}
@@ -1293,7 +1377,7 @@ export default function StylingSelectionPage() {
                     <button
                       key={ang}
                       type="button"
-                      disabled={Boolean(regenStylingAngle)}
+                      disabled={Boolean(regenStylingAngle) || liveStylingAnyLoading}
                       onClick={() => {
                         const pathname = location.pathname;
                         const sel = readBuildWigLivePreviewSelections(pathname);
@@ -1318,23 +1402,33 @@ export default function StylingSelectionPage() {
                             const L = res.publicUrls.left;
                             const F = res.publicUrls.front;
                             const R = res.publicUrls.right;
-                            setLiveStylingWigViews((prev) => {
-                              const pl = L ? `${L}?t=${bust}` : prev?.[0];
-                              const pf = F ? `${F}?t=${bust}` : prev?.[1];
-                              const pr = R ? `${R}?t=${bust}` : prev?.[2];
-                              if (pl && pf && pr) {
-                                const t: [string, string, string] = [pl, pf, pr];
-                                persistBawNoirLiveStylingWigViews(t);
-                                return t;
-                              }
-                              if (!prev) return prev;
-                              const next: [string, string, string] = [...prev];
-                              const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
-                              const u = ang === 'left' ? L : ang === 'front' ? F : R;
-                              if (u) next[idx] = `${u}?t=${bust}`;
-                              persistBawNoirLiveStylingWigViews(next);
-                              return next;
-                            });
+                            const applyTriple = (
+                              setter: Dispatch<SetStateAction<[string, string, string] | null>>,
+                              persist: (t: [string, string, string]) => void
+                            ) => {
+                              setter((prev) => {
+                                const pl = L ? `${L}?t=${bust}` : prev?.[0];
+                                const pf = F ? `${F}?t=${bust}` : prev?.[1];
+                                const pr = R ? `${R}?t=${bust}` : prev?.[2];
+                                if (pl && pf && pr) {
+                                  const t: [string, string, string] = [pl, pf, pr];
+                                  persist(t);
+                                  return t;
+                                }
+                                if (!prev) return prev;
+                                const next: [string, string, string] = [...prev];
+                                const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
+                                const u = ang === 'left' ? L : ang === 'front' ? F : R;
+                                if (u) next[idx] = `${u}?t=${bust}`;
+                                persist(next);
+                                return next;
+                              });
+                            };
+                            if (hasMiddleLayersLive) {
+                              applyTriple(setLiveStylingWigViews, persistBawNoirLiveStylingWigViews);
+                            } else {
+                              applyTriple(setLiveBangsWigViews, persistBawNoirLiveBangsWigViews);
+                            }
                           })
                           .catch((e: Error) => {
                             setLiveStylingError(e?.message || 'Regenerate failed');
@@ -1372,6 +1466,7 @@ export default function StylingSelectionPage() {
                     whiteSpace: 'nowrap',
                     overflow: 'visible',
                     width: 'max-content',
+                    ...(showNoirLiveStylingBanner ? { pointerEvents: 'none' as const } : {}),
                     fontSize: (() => {
                       const pathname = location.pathname;
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

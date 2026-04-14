@@ -2,11 +2,13 @@
 
 export const BAW_NOIR_LIVE_COLOR_VIEWS_EVENT = 'bawNoirLiveColorWigViewsUpdated';
 export const BAW_NOIR_LIVE_STYLING_VIEWS_EVENT = 'bawNoirLiveStylingWigViewsUpdated';
+export const BAW_NOIR_LIVE_BANGS_VIEWS_EVENT = 'bawNoirLiveBangsWigViewsUpdated';
 
 const COLOR_KEY = 'bawNoirLiveColorWigViews';
 /** In-progress fal previews on the color sub-page only — hub reads `COLOR_KEY` after confirm. */
 const COLOR_PENDING_KEY = 'bawNoirLiveColorWigViewsPending';
 const STYLING_KEY = 'bawNoirLiveStylingWigViews';
+const BANGS_KEY = 'bawNoirLiveBangsWigViews';
 
 export type BawNoirLiveWigViewsTriple = [string, string, string];
 
@@ -108,6 +110,36 @@ export function clearBawNoirLiveStylingWigViews(): void {
   try {
     localStorage.removeItem(STYLING_KEY);
     dispatch(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function persistBawNoirLiveBangsWigViews(views: BawNoirLiveWigViewsTriple): void {
+  try {
+    localStorage.setItem(BANGS_KEY, JSON.stringify(views));
+    dispatch(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function readBawNoirLiveBangsWigViews(): BawNoirLiveWigViewsTriple | null {
+  try {
+    const raw = localStorage.getItem(BANGS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed) || parsed.length !== 3) return null;
+    return [String(parsed[0]), String(parsed[1]), String(parsed[2])];
+  } catch {
+    return null;
+  }
+}
+
+export function clearBawNoirLiveBangsWigViews(): void {
+  try {
+    localStorage.removeItem(BANGS_KEY);
+    dispatch(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT);
   } catch {
     /* ignore */
   }

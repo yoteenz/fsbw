@@ -76,3 +76,10 @@ You get **two images in order**. **IMAGE 1** is the only **output canvas**: same
 (Code: `buildMiddlePartLayersStylePromptTwoImages` in `api/_lib/bawLiveStylingPrompts.ts` / `promptTemplate.mjs`; exports `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES` = front angle.)
 
 **Manual (one image only):** attach just the inspo shot — `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE` in `promptTemplate.mjs`.
+
+================================================================================
+BAW — CURTAIN BANGS ONLY (all 6 units; live: color WebP only, no second URL)
+================================================================================
+Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair. The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+(Code: `buildBangsOnlyStylePrompt(angle)` in `promptTemplate.mjs` and `api/_lib/bawLiveStylingPrompts.ts`. Live API: `POST /api/live-wig-after-color-styling` with `styling: BANGS` only — no `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*` env.)
