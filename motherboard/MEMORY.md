@@ -14321,3 +14321,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR color fal: jet/off black right angle (near-black prompt branch)
+
+**Context (this chat):** After prior BAW live NOIR work, user reported **JET BLACK** / **OFF BLACK** **right** angle still wrong vs other colors’ right 3/4.
+
+**Decisions / outcomes:** **`api/wig-preview/live-noir-color.ts`** — `buildStep2PromptNoLogoAttachment` uses **`isJetBlackOffBlackCatalogColor`** for hex **`#000000`** / **`#00000`** (and jet/off black labels). **Near-black** path: do not say “change **black** hair to **black**”; instead instruct **lock** silhouette/part/volume/shoulder bias and **only** normalize black tone/sheen. **Right** angle constraint extended: true right 3/4, not front, not mirrored left, no head rotate toward camera.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**.
+
+**Docs:** This **MEMORY** entry.

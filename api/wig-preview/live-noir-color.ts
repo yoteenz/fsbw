@@ -253,6 +253,13 @@ function readFalResolution(): '1K' | '2K' | '4K' {
   return '1K';
 }
 
+function isJetBlackOffBlackCatalogColor(label: string, hex: string): boolean {
+  const h = hex.replace(/^#/, '').toUpperCase();
+  if (h === '000000' || h === '00000') return true;
+  const l = label.toLowerCase();
+  return l.includes('jet black') || l.includes('off black');
+}
+
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
   label: string,
@@ -263,15 +270,24 @@ function buildStep2PromptNoLogoAttachment(
     angle === 'left'
       ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
       : angle === 'right'
-        ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
+        ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette. **Keep the same camera angle and framing as the reference** (true right 3/4, not front, not mirrored left); do **not** rotate the head toward camera.'
         : 'This is the **FRONT view**: keep a **single** center part and symmetric fall; do **not** change cut, length, or style beyond the color — only recolor the existing black hair.';
 
-  return [
-    'Recreate this exact mannequin image, but change the black hair color to ' +
+  const nearBlack = isJetBlackOffBlackCatalogColor(label, hex);
+  const recolorLead = nearBlack
+    ? 'Recreate this exact mannequin image. The wig hair is already black in the reference — **do not** apply a “hair dye” fantasy transform. Instead **match and lock** the hair to **' +
+      label +
+      '** at hex **#' +
+      hex +
+      '**: same silhouette, part, length, volume, and shoulder bias as the reference; **only** normalize tone/sheen to a consistent salon black. Do **not** restyle, do **not** change which side the hair falls toward, do **not** invent flyaways or a new part.'
+    : 'Recreate this exact mannequin image, but change the black hair color to ' +
       label +
       ' hex code #' +
       hex +
-      ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.',
+      ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.';
+
+  return [
+    recolorLead,
     angleConstraint,
     'The logo on the center of the mannequin’s chest should be clear & legible — FRONTAL SLAYER fully readable — for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
