@@ -546,9 +546,6 @@ function ColorSelection() {
     adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
       : baseWigViews;
-  const isLiveNoirWebp =
-    Boolean(adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')) &&
-    wigViews.some((src) => src.includes('.webp'));
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -1429,20 +1426,16 @@ function ColorSelection() {
                 </div>
               )}
               <div className="leaf-stack hero-thumb">
-                <div
-                  className="leaf-bg"
-                  aria-hidden="true"
-                  style={isLiveNoirWebp ? { display: 'none' } : undefined}
-                />
+                <div className="leaf-bg" aria-hidden="true" />
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: isLiveNoirWebp ? 'none' : `url('/assets/leaf-brick-resize.png')`,
+                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: isLiveNoirWebp ? 'no-repeat' : 'repeat',
+                    backgroundRepeat: 'repeat',
                     overflow: 'visible',
                   }}
                 >
@@ -1502,16 +1495,6 @@ function ColorSelection() {
                     top: 'calc(50% - 10.601px + 18px)',
                     '--hero-width': '282px',
                     '--hero-height': '387px',
-                    ...(isLiveNoirWebp
-                      ? {
-                          objectFit: 'contain',
-                          objectPosition: 'center center',
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          width: 'auto',
-                          height: 'auto',
-                        }
-                      : {}),
                   } as React.CSSProperties}
                 />
                 </div>
@@ -1526,7 +1509,6 @@ function ColorSelection() {
                         selectedView === index ? 'border-black' : 'border-transparent'
                       }`}
                       aria-hidden="true"
-                      style={isLiveNoirWebp ? { display: 'none' } : undefined}
                     />
                     <div
                       className="border-transparent p-1 cursor-pointer"
@@ -1543,7 +1525,6 @@ function ColorSelection() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          backgroundImage: isLiveNoirWebp ? 'none' : undefined,
                         }}
                       >
                       <img
@@ -1555,17 +1536,7 @@ function ColorSelection() {
                         style={{
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && !isLiveNoirWebp ? { left: 'calc(50% - 6px)' } : {}),
-                          ...(isLiveNoirWebp
-                            ? {
-                                objectFit: 'contain',
-                                objectPosition: 'center center',
-                                maxWidth: '100%',
-                                maxHeight: '100%',
-                                width: 'auto',
-                                height: 'auto',
-                              }
-                            : {}),
+                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
                         } as React.CSSProperties}
                       />
                       </div>

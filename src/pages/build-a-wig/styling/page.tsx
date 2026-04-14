@@ -343,8 +343,6 @@ export default function StylingSelectionPage() {
 
   const wigViews =
     hasMiddleLayersLive && liveStylingWigViews ? liveStylingWigViews : baseWigViews;
-  const isLiveNoirStylingWebp =
-    Boolean(hasMiddleLayersLive && liveStylingWigViews) && wigViews.some((src) => src.includes('.webp'));
 
   // Hair styling options with local assets
   const hairStylingOptions = [
@@ -1355,20 +1353,16 @@ export default function StylingSelectionPage() {
               </div>
             )}
             <div className="leaf-stack hero-thumb">
-              <div
-                className="leaf-bg"
-                aria-hidden="true"
-                style={isLiveNoirStylingWebp ? { display: 'none' } : undefined}
-              />
+              <div className="leaf-bg" aria-hidden="true" />
               <div
                 className="relative bg-cover bg-center flex items-center justify-center"
                 style={{
                   width: '262px',
                   height: '367px',
-                  backgroundImage: isLiveNoirStylingWebp ? 'none' : `url('/assets/leaf-brick-resize.png')`,
+                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  backgroundRepeat: isLiveNoirStylingWebp ? 'no-repeat' : 'repeat',
+                  backgroundRepeat: 'repeat',
                   overflow: 'visible',
                 }}
               >
@@ -1427,16 +1421,6 @@ export default function StylingSelectionPage() {
                     top: 'calc(50% - 10.601px + 18px)',
                     '--hero-width': '282px',
                     '--hero-height': '387px',
-                    ...(isLiveNoirStylingWebp
-                      ? {
-                          objectFit: 'contain',
-                          objectPosition: 'center center',
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          width: 'auto',
-                          height: 'auto',
-                        }
-                      : {}),
                   } as React.CSSProperties}
                 />
               </div>
@@ -1451,7 +1435,6 @@ export default function StylingSelectionPage() {
                       selectedView === index ? 'border-black' : 'border-transparent'
                     }`}
                     aria-hidden="true"
-                    style={isLiveNoirStylingWebp ? { display: 'none' } : undefined}
                   />
                   <div
                     className="border-transparent p-1 cursor-pointer"
@@ -1468,7 +1451,6 @@ export default function StylingSelectionPage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundImage: isLiveNoirStylingWebp ? 'none' : undefined,
                       }}
                     >
                       <img
@@ -1480,17 +1462,7 @@ export default function StylingSelectionPage() {
                         style={{
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && !isLiveNoirStylingWebp ? { left: 'calc(50% - 6px)' } : {}),
-                          ...(isLiveNoirStylingWebp
-                            ? {
-                                objectFit: 'contain',
-                                objectPosition: 'center center',
-                                maxWidth: '100%',
-                                maxHeight: '100%',
-                                width: 'auto',
-                                height: 'auto',
-                              }
-                            : {}),
+                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
                         } as React.CSSProperties}
                       />
                     </div>
