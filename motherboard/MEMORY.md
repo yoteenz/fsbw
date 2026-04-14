@@ -14580,3 +14580,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/live-wig-after-color-styling.ts`**, **`api/_lib/bawLiveStylingPrompts.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Styling “Load failed”: browser fetch timeout vs working images
+
+**Context (this chat):** User said **styling is working** (images appear) but the UI shows **load failed**.
+
+**Decisions / outcomes:** **“Load failed”** is the browser’s generic message when **`fetch()`** never gets a full HTTP response—often **timeout** or **connection closed** while the server is still busy (e.g. Fal at **4K** + three **sequential** styling requests + **1.2s** pauses). The **first** angle(s) may already be in **Supabase**, so previews can **look fine** while a **later** request triggers the client error string. **`src/utils/api.ts`** — wrap **`postLiveWigAfterColorStylingOneAngle`** and **`postWigPreviewLiveNoirColorOneAngle`** `fetch` in **try/catch**; on **Failed to fetch** / **Load failed**, rethrow with a **plain-language** hint: use **regen L/M/R** one at a time, or set **`WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K`** on Vercel. User can also confirm **`VITE_API_BASE`** points at the deployment that hosts **`/api/live-wig-after-color-styling`**.
+
+**Changes:** **`src/utils/api.ts`**.
+
+**Docs:** This **MEMORY** entry.
