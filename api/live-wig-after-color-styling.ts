@@ -15,6 +15,8 @@ export const config = { maxDuration: 120 };
  * Body: same selection fields as live color + optional `angle` (left|front|right) + `color` (required for catalog).
  * Optional **`forceRegenerate`**: `true` — re-run fal for requested angle(s) even if output WebP exists.
  * `partSelection` must be **MIDDLE** and `styling` must include **LAYERS**.
+ *
+ * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: **`4K`** (default), **`2K`**, or **`1K`** — same as live color route.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from './_lib/adminAuth';
@@ -78,9 +80,9 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
 }
 
 function readFalResolution(): '1K' | '2K' | '4K' {
-  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '1K').trim().toUpperCase();
-  if (r === '2K' || r === '4K') return r;
-  return '1K';
+  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '4K').trim().toUpperCase();
+  if (r === '1K' || r === '2K' || r === '4K') return r;
+  return '4K';
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {

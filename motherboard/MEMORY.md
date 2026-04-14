@@ -14369,3 +14369,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — Live NOIR fal default resolution 4K (WIG_PREVIEW_FAL_RESOLUTION)
+
+**Context (this chat):** User upgraded all **reference mannequin angles** to **4K** and asked to **raise** live generation to **4K** so outputs can be **regenerated** at true 4K (refs help consistency but output res is set by Fal **`resolution`**).
+
+**Decisions / outcomes:** **`readFalResolution()`** in **`api/wig-preview/live-noir-color.ts`** and **`api/live-wig-after-color-styling.ts`** now defaults to **`4K`** when **`WIG_PREVIEW_FAL_RESOLUTION`** is unset; accepts **`1K`**, **`2K`**, **`4K`** explicitly; invalid values fall back to **`4K`**. File header comment updated. **`.env.example`** and **`docs/WIG_PREVIEW_PREGENERATION.md`** document default **4K** and when to set **`1K`**/**`2K`** (timeouts/cost). User must **redeploy** Vercel and use **regen** or **`forceRegenerate`** / delete Storage objects to replace existing WebPs; old files are not auto-upscaled.
+
+**Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/live-wig-after-color-styling.ts`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Docs:** This **MEMORY** entry.

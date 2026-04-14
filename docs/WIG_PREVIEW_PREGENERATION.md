@@ -50,7 +50,7 @@ The server (per request):
 2. For the requested angle, checks Storage under **`wig-preview-live/{PROMPT_VERSION}/NOIR/{hash}/{angle}.webp`**.
 3. **Skips fal** if the file already exists; otherwise runs **fal `nano-banana-pro/edit`** with **one** `image_url` (that angle’s gray-brick mannequin only). Logo is **only in the prompt text** (no logo attachment), matching your successful manual flow.
 
-**Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Optional **`WIG_PREVIEW_FAL_RESOLUTION`**: **`1K`** (default, faster), **`2K`**, or **`4K`**. The API still accepts a request **without** `angle` (all three angles in one invocation) for Pro / long `maxDuration`.
+**Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Optional **`WIG_PREVIEW_FAL_RESOLUTION`**: **`4K`** (default), **`2K`**, or **`1K`** (use lower if Vercel Hobby timeouts or you want cheaper/faster runs). The API still accepts a request **without** `angle` (all three angles in one invocation) for Pro / long `maxDuration`.
 
 **Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input.
 

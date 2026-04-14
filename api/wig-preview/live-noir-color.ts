@@ -19,7 +19,7 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  * Optional **`forceRegenerate`**: `true` — run fal for the requested angle(s) even if the WebP already exists (admin “regenerate” without deleting in Storage).
  *
- * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `1K` (default), `2K`, or `4K` — lower is faster/cheaper on short timeouts.
+ * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `4K` (default), `2K`, or `1K` — use **`1K`** / **`2K`** if Vercel timeouts (e.g. Hobby) or fal cost is an issue.
  *
  * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
  * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
@@ -248,9 +248,9 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
 }
 
 function readFalResolution(): '1K' | '2K' | '4K' {
-  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '1K').trim().toUpperCase();
-  if (r === '2K' || r === '4K') return r;
-  return '1K';
+  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '4K').trim().toUpperCase();
+  if (r === '1K' || r === '2K' || r === '4K') return r;
+  return '4K';
 }
 
 function isJetBlackOffBlackCatalogColor(label: string, hex: string): boolean {
