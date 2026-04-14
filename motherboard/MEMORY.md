@@ -14210,6 +14210,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-13 — Vercel API TypeScript: AuditAction, cart PUT body, membership failures, profile PATCH, referrals
+
+**Context (this chat):** User pasted **Vercel build logs** showing `vite build` succeeding while **per-file `tsc` on API routes** reported errors (e.g. `AuditAction`, `api/cart.ts` body self-reference, `membership-payments` fail row typing, `profile` `merged.autoRenewMembership`, `referrals` `trim` on `{}`). Those failures can prevent correct **serverless** compilation and contribute to confusing runtime/API behavior.
+
+**Changes:** **`api/_lib/auditLog.ts`** — extend **`AuditAction`** with consult quote, meeting client alert, pending-queue, and review publish/reject literals. **`api/cart.ts`** — fix **`PUT`** body parse (use `req.body` before `body`). **`api/admin/membership-payments.ts`** — **`ListedPayment`** union includes **`failed`**; **`FailRowRaw`** + **`subscriptionTierFromFailProfiles`** for Supabase nested `profiles` shape. **`api/profile.ts`** — read **`autoRenewMembership`** via **`merged as Record<string, unknown>`**. **`api/admin/referrals.ts`** — coerce referrer email with **`String(...)`** before **`trim`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
