@@ -14486,3 +14486,19 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Git:** **`bfaf09a`** on **`preview/mobile`** and **`master`**.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW color tap: price + hub sync; main hub beach/ocean; styling API sequential again
+
+**Context (this chat):** User flow broken: pick **CITRINE** on color page → hub showed color but **price did not update** → visit another sub-page → return → **color icon reverted** to default; **styling** live preview still **`FUNCTION_INVOCATION_FAILED`**.
+
+**Root causes:** (1) **`handleColorSelect`** only wrote **`selectedColor`** / **`customizeSelectedColor`** / **`editSelectedColor`**, never **`selectedColorPrice`** (or **`customizeSelectedColorPrice`** / **`editSelectedColorPrice`**). Hub **`calculatePrice`** reads **`selectedColorPrice`**, so total stayed at default until back/confirm. **`customization.color`** did not refresh on customize hub until **`comingFromSubPage`** path ran — without that flag, returning from another sub-page could leave stale **`customizeSelectedColor`**. (2) **`isMainPage`** in hub route effect omitted **`/build-a-wig/beach-wave`** and **`/build-a-wig/ocean-curl`**, so returning to those hubs with **`comingFromSubPage`** false **cleared** `localStorage` and reset color. (3) **`postLiveWigAfterColorStyling`** had been changed to **one** serverless call running **three** fal jobs — often exceeds Vercel limits → **`FUNCTION_INVOCATION_FAILED`**.
+
+**Decisions / outcomes:** **`color/page.tsx` `handleColorSelect`**: compute price from same rules as **`getSelectedPrice`** for the tapped id; write **`selectedColorPrice`** and edit/customize price keys; on BAW color edit/customize routes set **`comingFromSubPage`** and dispatch **`customStorageChange`**. **`build-a-wig/page.tsx`**: add **`beach-wave`** and **`ocean-curl`** to **`isMainPage`**. **`api.ts`**: restore **sequential** three **`postLiveWigAfterColorStylingOneAngle`** calls + merged **`publicUrls`**. **`docs/WIG_PREVIEW_PREGENERATION.md`** updated.
+
+**Changes:** `src/pages/build-a-wig/color/page.tsx`, `src/pages/build-a-wig/page.tsx`, `src/utils/api.ts`, `docs/WIG_PREVIEW_PREGENERATION.md`.
+
+**Git:** **`e11ace7`** on **`preview/mobile`**.
+
+**Docs:** This MEMORY entry.
