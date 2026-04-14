@@ -13,15 +13,37 @@ type PayRow = {
   stripe_invoice_id: string;
 };
 
-type FailRow = {
+type FailRowRaw = {
   id: string;
   created_at: string;
   user_email: string | null;
   stripe_invoice_id: string | null;
   stripe_subscription_id: string | null;
   amount_usd: number | string;
-  profiles: { subscription_tier: string | null } | null;
+  /** Supabase may return nested row as object or single-element array */
+  profiles: { subscription_tier: string | null } | { subscription_tier: string | null }[] | null;
 };
+
+type ListedPayment = {
+  id: string;
+  createdAt: string;
+  userEmail: string;
+  subscriptionTier: string;
+  amountUsd: number;
+  autoRenew: boolean;
+  kind: 'initial' | 'renewal' | 'failed';
+  nextBillingAt: string | undefined;
+  externalId: string;
+  source: 'supabase';
+};
+
+function subscriptionTierFromFailProfiles(
+  profiles: FailRowRaw['profiles']
+): string {
+  if (!profiles) return '';
+  if (Array.isArray(profiles)) return profiles[0]?.subscription_tier ?? '';
+  return profiles.subscription_tier ?? '';
+}
 
 /** GET /api/admin/membership-payments — admin session; requires service role for full table read. */
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -75,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
 
     const payRows = (Array.isArray(payData) ? payData : []) as PayRow[];
-    const successPayments = payRows.map((r) => ({
+    const successPayments: ListedPayment[] = payRows.map((r) => ({
       id: r.id,
       createdAt: r.created_at,
       userEmail: r.user_email ?? '',
@@ -88,7 +110,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       source: 'supabase' as const,
     }));
 
-    let failPayments: typeof successPayments = [];
+    let failPayments: ListedPayment[] = [];
     const { data: failData, error: failErr } = await supabase
       .from('membership_payment_failures')
       .select('id,created_at,user_email,stripe_invoice_id,stripe_subscription_id,amount_usd,profiles(subscription_tier)')
@@ -96,16 +118,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       .limit(300);
 
     if (!failErr && Array.isArray(failData)) {
-      failPayments = (failData as FailRow[]).map((r) => ({
+      failPayments = (failData as FailRowRaw[]).map((r) => ({
         id: r.id,
         createdAt: r.created_at,
         userEmail: r.user_email ?? '',
-        subscriptionTier: r.profiles?.subscription_tier ?? '',
+        subscriptionTier: subscriptionTierFromFailProfiles(r.profiles),
         amountUsd: typeof r.amount_usd === 'string' ? parseFloat(r.amount_usd) : Number(r.amount_usd),
         autoRenew: false,
         kind: 'failed' as const,
         nextBillingAt: undefined,
-        externalId: r.stripe_invoice_id ?? undefined,
+        externalId: r.stripe_invoice_id ?? '',
         source: 'supabase' as const,
       }));
     } else if (failErr) {

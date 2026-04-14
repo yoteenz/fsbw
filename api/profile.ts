@@ -296,7 +296,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           (row as Record<string, unknown>)[k] = existingRow[k];
         }
       }
-      if (merged.autoRenewMembership === undefined && existingRow?.auto_renew_membership != null) {
+      const mergedRec = merged as Record<string, unknown>;
+      if (mergedRec.autoRenewMembership === undefined && existingRow?.auto_renew_membership != null) {
         (row as Record<string, unknown>).auto_renew_membership = existingRow.auto_renew_membership;
       }
       if (!existing) {

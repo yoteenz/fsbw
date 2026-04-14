@@ -31,7 +31,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const totalEarned = confirmed.reduce((sum, e) => sum + (e.amount || 0), 0);
     const byReferrer: Record<string, { count: number; earned: number }> = {};
     for (const e of confirmed) {
-      const email = (e.referrerEmail || '').trim().toLowerCase();
+      const email = String(e.referrerEmail ?? '')
+        .trim()
+        .toLowerCase();
       if (!byReferrer[email]) byReferrer[email] = { count: 0, earned: 0 };
       byReferrer[email].count += 1;
       byReferrer[email].earned += e.amount || 0;

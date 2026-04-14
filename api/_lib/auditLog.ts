@@ -9,9 +9,19 @@ export type AuditAction =
   | 'meeting.create'
   | 'meeting.update'
   | 'meeting.delete'
+  | 'meeting.client_alert'
   | 'notification.create'
   | 'app_config.upsert'
-  | 'newsletter.send';
+  | 'newsletter.send'
+  | 'consult_quote.create'
+  | 'pending_order_form.approve'
+  | 'pending_order_form.decline'
+  | 'pending_affiliate.approve'
+  | 'pending_affiliate.decline'
+  | 'pending_review_supplemental.approve'
+  | 'pending_review_supplemental.decline'
+  | 'reviews.publish'
+  | 'reviews.reject';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

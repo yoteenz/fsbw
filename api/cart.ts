@@ -33,7 +33,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'PUT') {
-    const body = typeof req.body === 'object' && body !== null ? body : {};
+    const body =
+      req.body && typeof req.body === 'object' && !Array.isArray(req.body)
+        ? (req.body as Record<string, unknown>)
+        : {};
     const items = Array.isArray((body as { items?: unknown }).items)
       ? (body as { items: unknown[] }).items
       : [];
