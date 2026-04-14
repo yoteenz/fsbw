@@ -174,6 +174,22 @@ export const BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS = [
 export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS;
 
 // =============================================================================
+// BAW — shared styling: **middle part / layers** (all 6 units; same look)
+// Use after color (or on top of catalog color): one mannequin ref; fal Auto + 2K unless you tune.
+// =============================================================================
+
+/** Middle part + layers style — identical wording for NOIR, Blanco, Soft Wave, Soft Curl, Ocean Curl, Beach Wave. */
+export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT = [
+  'Recreate this exact mannequin image, but change the hair to black #000000.',
+  'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the photo.',
+].join(' ');
+
+/** Alias — same string; use whichever name reads clearer in scripts. */
+export const BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT = BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT;
+
+// =============================================================================
 // Backward-compatible names (wig consult)
 // =============================================================================
 

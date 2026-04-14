@@ -65,3 +65,12 @@ Use for **Build-a-wig** base hero, **not** wig consult. In fal: **Aspect ratio: 
 Recreate this exact mannequin image. The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
 
 (In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)
+
+================================================================================
+BAW — MIDDLE PART / LAYERS STYLE (all 6 units; same prompt everywhere)
+================================================================================
+Use when building the **middle part + layers** salon look on any unit (NOIR, Blanco, Soft Wave, Soft Curl, Ocean Curl, Beach Wave). Attach the **current step’s mannequin image** (same chain as color / hairline). fal: **Auto + 2K** unless you standardize otherwise.
+
+Recreate this exact mannequin image, but change the hair to black #000000. The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+
+(Code: `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT` — alias `BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT` — in `promptTemplate.mjs`.)
