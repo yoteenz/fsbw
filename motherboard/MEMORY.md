@@ -14543,3 +14543,19 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — Middle+layers Fal prompt: image1 vs image2 (fix contradictory “jet black”)
+
+**Context (this chat):** User said the styling prompt **calls for a styling reference in a confusing way** — it mixed “keep catalog hair color from the first image” with “recreate hair from the second” and **jet black #000000**, which contradicts the live pipeline (image 1 is already the **customer color** WebP).
+
+**Decisions / outcomes:** Rewrote **`buildMiddlePartLayersStylePromptTwoImages`** so **IMAGE 1** = sole output canvas + **keep hair color from image 1**; **IMAGE 2** = **geometry-only** (part, layers, silhouette) — explicitly **do not** copy image 2’s hair color, background, or paste image 2 as a full composite. Per-angle lines now say “geometry reference” and “camera is LEFT/RIGHT/FRONT”. Removed the **jet black** requirement from this two-image flow.
+
+**Changes:** `api/_lib/bawLiveStylingPrompts.ts`, `scripts/wig-preview/promptTemplate.mjs`, `scripts/wig-preview/COPY-PASTE-PROMPTS.txt`, `docs/WIG_PREVIEW_PREGENERATION.md`.
+
+**Git:** **`ca7a8e7`** on **`preview/mobile`** and **`master`** (merged + pushed).
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
