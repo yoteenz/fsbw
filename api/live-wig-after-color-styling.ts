@@ -20,17 +20,18 @@ export const config = { maxDuration: 120 };
  * (after-color uses **two** images per fal call — heavier than live color; **4K** here often hits Vercel **`FUNCTION_INVOCATION_FAILED`** / timeouts on default plans). Values: **`1K`**, **`2K`**, **`4K`**.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_lib/adminAuth';
-import { getSupabaseAdminServiceRole } from './_lib/supabase';
+// Use `.js` extensions so Node ESM on Vercel resolves compiled `api/_lib/*.js` (see api/wig-preview/live-noir-color.ts bundling note).
+import { requireAdmin } from './_lib/adminAuth.js';
+import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
   wigPreviewManifestHash,
   wigPreviewManifestHashLiveColorTier,
   wigPreviewLiveAnglePaths,
   wigPreviewLiveAfterColorStylingPaths,
   type WigPreviewSelections,
-} from './_lib/wigPreviewSelectionHash';
-import { catalogColorForPrompt } from './_lib/bawCatalogHairColors';
-import { buildMiddlePartLayersStylePromptTwoImages } from './_lib/bawLiveStylingPrompts';
+} from './_lib/wigPreviewSelectionHash.js';
+import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
+import { buildMiddlePartLayersStylePromptTwoImages } from './_lib/bawLiveStylingPrompts.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;

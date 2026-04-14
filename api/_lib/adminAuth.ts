@@ -2,7 +2,7 @@
  * Admin-only API guard. Verifies the request has a valid Supabase session and the user's email is in the admin list.
  */
 import type { VercelRequest } from '@vercel/node';
-import { getAuthUser } from './auth';
+import { getAuthUser } from './auth.js';
 
 const DEFAULT_ADMIN_EMAILS = [
   'admin@frontalslayer.com',
