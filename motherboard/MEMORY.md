@@ -14677,6 +14677,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — NOIR shop → BAW customize: clear stale live previews; edit hub total vs cart shortcut
+
+**Context (this chat):** User reported wrong flow from **NOIR product** → **Customize in Build-a-Wig**: stale **fal/WebP** color previews (e.g. ginger) persisted instead of **default** mannequin; after confirming **color** on the sub-page, **total price** on the main BAW hub did not update.
+
+**Decisions / outcomes:** (1) On **fresh customize** from the noir product page (not in-bag path), clear **`bawNoirLive*`** localStorage (**pending + committed color**, **styling**, **bangs**) before navigating so sub-pages show defaults until the user commits new previews. (2) In **`calculatePrice`**, the **edit-mode** early return that reused **`editingCartItem.price`** when **`!hasChanges`** could skip recalculation after a sub-page return. Only use that shortcut when **localStorage** selections for **color, length, density** still match the cart row; otherwise always recalculate.
+
+**Changes:** **`src/pages/straight/noir/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-14 — NOIR live preview resolver: customize/edit keys + pathname
 
 **Context (this chat):** User reported **no change** after prior hub fix — hero still showed **styling** WebPs.
@@ -14684,6 +14698,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Resolver only read **`selectedStyling`**; **customize/edit** flows clear **`customizeSelectedStyling`** / **`editSelectedStyling`** while **`selectedStyling`** could still say **`LAYERS`**, so styling cache still applied. **`readEffectiveBawSalonStylingCanon(pathname)`** — **`/customize`** → **`customizeSelectedStyling` ?? `selectedStyling`**; **`/edit`** → **`editSelectedStyling` ?? `selectedStyling`**; else **`selectedStyling`**. **`resolveAdminNoirHubLiveWigViewsFromStorage(pathname?)`** uses that for **NONE** early exit, then **union** of canon ids + **`selectedHairStyling`** for **BANGS+LAYERS** combos. Hub and composite hook pass **`location.pathname`**; hub refresh effect also depends on **`location.pathname`**.
 
 **Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live color vs OFF BLACK (ginger persistence follow-up)
+
+**Context (this chat):** User reported **nothing changed** after the first fix — **GINGER** fal images still appeared while selections were **OFF BLACK**; hub/sub-page mismatch continued.
+
+**Decisions / outcomes:** Committed **`bawNoirLiveColorWigViews`** could outlive **`selectedColor`** resets. **`shouldUseCommittedBawNoirLiveColorWigViews(pathname)`** + **`readEffectiveNoirBawHairColor`** — **`resolveAdminNoirHubLiveWigViewsFromStorage`** uses committed color triple only when effective color ≠ **OFF BLACK** (merged with master’s styling/bangs resolver). **Color confirm** on noir routes: **OFF BLACK** clears committed + pending live color storage; non–OFF BLACK + admin live still persists fal triple. **Shop → customize:** **`SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE`** + one-shot clear on first **`/build-a-wig/noir/customize`** mount in **`build-a-wig/page.tsx`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/straight/noir/page.tsx`**.
 
 **Verification:** `npm run build` passes.
 

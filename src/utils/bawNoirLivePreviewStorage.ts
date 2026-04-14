@@ -226,6 +226,48 @@ export function readEffectiveBawSalonStylingCanon(pathname: string): string {
   }
 }
 
+/** Session flag: shop → fresh NOIR customize — hub should clear stale fal triples on first paint. */
+export const SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE = 'bawNoirResetLivePreviewOnCustomize';
+
+/**
+ * Effective NOIR hair color from localStorage for the current BAW route.
+ * Used so committed fal triples are not shown when the user is back on default OFF BLACK.
+ */
+export function readEffectiveNoirBawHairColor(pathname: string): string {
+  try {
+    if (pathname.includes('/build-a-wig/noir/edit')) {
+      return (
+        localStorage.getItem('editSelectedColor') ||
+        localStorage.getItem('selectedColor') ||
+        'OFF BLACK'
+      );
+    }
+    if (pathname.includes('/build-a-wig/noir/customize')) {
+      return (
+        localStorage.getItem('customizeSelectedColor') ||
+        localStorage.getItem('selectedColor') ||
+        'OFF BLACK'
+      );
+    }
+    if (pathname.startsWith('/build-a-wig/noir')) {
+      return localStorage.getItem('selectedColor') || 'OFF BLACK';
+    }
+  } catch {
+    /* ignore */
+  }
+  return 'OFF BLACK';
+}
+
+/** Committed live color WebPs apply only for paid / non-default NOIR colors. */
+export function shouldUseCommittedBawNoirLiveColorWigViews(pathname: string): boolean {
+  const c = (readEffectiveNoirBawHairColor(pathname) || 'OFF BLACK').trim();
+  return c !== '' && c !== 'OFF BLACK';
+}
+
+function committedNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTriple | null {
+  return shouldUseCommittedBawNoirLiveColorWigViews(pathname) ? readBawNoirLiveColorWigViews() : null;
+}
+
 /**
  * Admin NOIR BAW hub: which persisted live triple to show.
  * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
@@ -244,7 +286,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
 
     const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
     if (effectiveCanon === 'NONE' || effectiveCanon === '') {
-      return readBawNoirLiveColorWigViews();
+      return committedNoirColorTripleOrNull(path);
     }
 
     const canonIds = parseStylingCsvToIds(effectiveCanon);
@@ -252,7 +294,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     const ids = [...new Set([...canonIds, ...hairIds])];
 
     if (ids.length === 0) {
-      return readBawNoirLiveColorWigViews();
+      return committedNoirColorTripleOrNull(path);
     }
 
     const hasLayers = ids.includes('LAYERS');
@@ -267,8 +309,14 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
       const fromBangs = readBawNoirLiveBangsWigViews();
       if (fromBangs) return fromBangs;
     }
-    return readBawNoirLiveColorWigViews();
+    return committedNoirColorTripleOrNull(path);
   } catch {
-    return readBawNoirLiveColorWigViews();
+    return committedNoirColorTripleOrNull(
+      typeof pathname === 'string' && pathname.length > 0
+        ? pathname
+        : typeof window !== 'undefined'
+          ? window.location.pathname
+          : ''
+    );
   }
 }

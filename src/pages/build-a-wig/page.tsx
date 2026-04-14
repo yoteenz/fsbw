@@ -25,7 +25,12 @@ import {
   BAW_NOIR_LIVE_BANGS_VIEWS_EVENT,
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
+  clearBawNoirLiveBangsWigViews,
+  clearBawNoirLiveColorWigViews,
+  clearBawNoirLiveStylingWigViews,
+  clearPendingBawNoirLiveColorWigViews,
   resolveAdminNoirHubLiveWigViewsFromStorage,
+  SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
@@ -3186,6 +3191,23 @@ export default function BuildAWigPage() {
     }
   }, [location.pathname]);
 
+  /** Shop → fresh customize: one-shot clear so hub cannot re-read stale triples before noir button's clears propagate. */
+  useEffect(() => {
+    if (!location.pathname.startsWith('/build-a-wig/noir/customize')) return;
+    try {
+      if (sessionStorage.getItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE) !== '1') return;
+      sessionStorage.removeItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE);
+      clearPendingBawNoirLiveColorWigViews();
+      clearBawNoirLiveColorWigViews();
+      clearBawNoirLiveStylingWigViews();
+      clearBawNoirLiveBangsWigViews();
+      setLiveNoirHubWigViews(null);
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    } catch {
+      /* ignore */
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     const refresh = () => {
       if (typeof window !== 'undefined' && window.location.pathname === '/build-a-wig') {
@@ -3409,7 +3431,20 @@ export default function BuildAWigPage() {
         try {
           const item = JSON.parse(editingCartItem);
           editModeCartPrice = typeof item.price === 'number' ? item.price : null;
-          if (!hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
+          const isBlancoEdit = location.pathname.startsWith('/build-a-wig/blanco');
+          const lsColor =
+            localStorage.getItem('editSelectedColor') ||
+            localStorage.getItem('selectedColor') ||
+            (isBlancoEdit ? 'PLATINUM' : 'OFF BLACK');
+          const cartColor = item.color || (isBlancoEdit || item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK');
+          const selectionsDriftedFromCart =
+            lsColor !== cartColor ||
+            (localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength') || '') !==
+              (item.length || '') ||
+            (localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity') || '') !==
+              (item.density || '');
+          // Cart-line shortcut skips recalculation; never use it when hub selections already differ from the cart row.
+          if (!selectionsDriftedFromCart && !hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
             setTotalPrice(editModeCartPrice);
             return;
           }

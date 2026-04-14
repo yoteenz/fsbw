@@ -21,6 +21,7 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
+  clearBawNoirLiveColorWigViews,
   clearPendingBawNoirLiveColorWigViews,
   persistBawNoirLiveColorWigViews,
   persistPendingBawNoirLiveColorWigViews,
@@ -966,13 +967,15 @@ function ColorSelection() {
       localStorage.setItem('customizeSelectedColorPrice', price);
     }
 
-    if (
-      pathname.includes('/build-a-wig/noir/') &&
-      pathname.includes('/color') &&
-      adminLiveNoirPreview &&
-      liveWigViews
-    ) {
-      persistBawNoirLiveColorWigViews(liveWigViews);
+    const onNoirColorSub =
+      pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
+    if (onNoirColorSub && !pathname.includes('/blanco')) {
+      if (selectedColor === 'OFF BLACK') {
+        clearPendingBawNoirLiveColorWigViews();
+        clearBawNoirLiveColorWigViews();
+      } else if (adminLiveNoirPreview && liveWigViews) {
+        persistBawNoirLiveColorWigViews(liveWigViews);
+      }
     }
     
     console.log('Color page - saved to localStorage:', {

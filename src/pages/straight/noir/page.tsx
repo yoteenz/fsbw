@@ -35,6 +35,13 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import {
+  clearBawNoirLiveBangsWigViews,
+  clearBawNoirLiveColorWigViews,
+  clearBawNoirLiveStylingWigViews,
+  clearPendingBawNoirLiveColorWigViews,
+  SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
+} from '../../../utils/bawNoirLivePreviewStorage';
 
 interface DensityOption {
   id: string;
@@ -3548,6 +3555,17 @@ width: 'clamp(230px, 57.5vw, 368px)',
               // Clear any existing editing state
               localStorage.removeItem('editingCartItem');
               localStorage.removeItem('editingCartItemId');
+
+              // Fresh customize from shop: drop stale fal/WebP triples so hero shows default mannequin, not last session color
+              clearPendingBawNoirLiveColorWigViews();
+              clearBawNoirLiveColorWigViews();
+              clearBawNoirLiveStylingWigViews();
+              clearBawNoirLiveBangsWigViews();
+              try {
+                sessionStorage.setItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE, '1');
+              } catch {
+                /* ignore */
+              }
               
               console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
               
