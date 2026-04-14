@@ -14592,3 +14592,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/api.ts`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — LAYERS after-color: LEFT/RIGHT env + per-part storage (merged with BANGS-only route)
+
+**Context (this chat):** User asked to wire **LEFT** and **RIGHT** part for live **LAYERS** after-color using env reference triples; **same** Fal prompt as MIDDLE (`buildMiddlePartLayersStylePromptTwoImages`). Remote had already added **BANGS-only** live mode on the same API route.
+
+**Decisions / outcomes:** **`readLayersStyleRefUrls`**: **`WIG_PREVIEW_NOIR_LAYERS_{MIDDLE|LEFT|RIGHT}_PART_STYLE_{FRONT|LEFT|RIGHT}_URL`**; MIDDLE still accepts legacy **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`**. **`wigPreviewLiveLayersPartFolder`** → **`after-color/layers-{middle|left|right}-part/`**. API: **LAYERS** + any part MIDDLE|LEFT|RIGHT uses two-image path + **`partSelection`** in JSON response; **BANGS-only** unchanged (single image, **`bangs-only`** folder). **`persistBawNoirLiveStylingWigViews(views, part)`** + **`readBawNoirLiveStylingWigViewsForPart`**. Hub: styling for current **`selectedPartSelection`** then bangs then color; **`customStorageChange`** + bangs event. Styling UI: LAYERS live for all three parts; regen wraps **`persistBawNoirLiveStylingWigViews(..., part)`**.
+
+**Git:** **`b5d0d3d`** on **`preview/mobile`** and **`master`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
