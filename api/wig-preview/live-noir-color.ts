@@ -18,12 +18,159 @@ export const config = {
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
  *
  * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `1K` (default), `2K`, or `4K` — lower is faster/cheaper on short timeouts.
+ *
+ * **Bundling:** This file intentionally inlines helpers that normally live under `api/_lib/`.
+ * Vercel’s output for nested `api/wig-preview/*` can fail to resolve `../_lib/*` at runtime (`ERR_MODULE_NOT_FOUND`).
+ * If you change hashing, colors, or admin rules, update **`api/_lib/wigPreviewSelectionHash.ts`**, **`bawCatalogHairColors.ts`**, **`adminAuth.ts`**, **`supabase.ts`** and mirror here — or move this handler to **`api/live-noir-color.ts`** and use `./_lib/...` imports.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdminServiceRole } from '../_lib/supabase';
-import { wigPreviewManifestHash, wigPreviewLiveAnglePaths, type WigPreviewSelections } from '../_lib/wigPreviewSelectionHash';
-import { catalogColorForPrompt } from '../_lib/bawCatalogHairColors';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createHash } from 'node:crypto';
+
+// --- Inlined from api/_lib/auth.ts (keep in sync) ---
+async function getAuthUser(
+  req: VercelRequest
+): Promise<{ id: string; email: string; accessToken: string } | null> {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (!token) return null;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  const supabase = createClient(url, key);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+  if (error || !user) return null;
+  return { id: user.id, email: user.email ?? '', accessToken: token };
+}
+
+// --- Inlined from api/_lib/adminAuth.ts (keep in sync) ---
+const DEFAULT_ADMIN_EMAILS = [
+  'admin@frontalslayer.com',
+  'kateena.armstrong@frontalslayer.com',
+  'kateenaarmstrong@gmail.com',
+];
+
+function getAdminEmails(): string[] {
+  const raw = process.env.ADMIN_EMAILS || '';
+  if (raw.trim()) {
+    return raw.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+  }
+  return DEFAULT_ADMIN_EMAILS;
+}
+
+async function requireAdmin(
+  req: VercelRequest
+): Promise<{ id: string; email: string; accessToken: string } | null> {
+  const user = await getAuthUser(req);
+  if (!user) return null;
+  const adminEmails = getAdminEmails();
+  const emailLower = (user.email || '').trim().toLowerCase();
+  if (!adminEmails.includes(emailLower)) return null;
+  return user;
+}
+
+// --- Inlined from api/_lib/supabase.ts (service role only; keep in sync) ---
+let serviceRoleClient: SupabaseClient | null = null;
+
+function getSupabaseAdminServiceRole(): SupabaseClient {
+  if (!serviceRoleClient) {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+      throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY (required for admin clients list)');
+    }
+    serviceRoleClient = createClient(url, key);
+  }
+  return serviceRoleClient;
+}
+
+// --- Inlined from api/_lib/wigPreviewSelectionHash.ts (keep in sync) ---
+type WigPreviewSelections = {
+  unitKey: string;
+  length: string;
+  density: string;
+  lace: string;
+  texture: string;
+  color: string;
+  hairline: string;
+  styling: string;
+  addOns: string[];
+};
+
+function canonicalSelections(obj: Record<string, string>): string {
+  const keys = Object.keys(obj).sort();
+  const ordered: Record<string, string> = {};
+  for (const k of keys) ordered[k] = obj[k];
+  return JSON.stringify(ordered);
+}
+
+function selectionHash(canonicalJson: string): string {
+  return createHash('sha256').update(canonicalJson).digest('hex').slice(0, 32);
+}
+
+function wigPreviewManifestHash(s: WigPreviewSelections): string {
+  const unitKey = String(s.unitKey || 'NOIR').toUpperCase();
+  const addOns = Array.isArray(s.addOns) ? s.addOns.map((x) => String(x).toUpperCase()) : [];
+  const canonicalJson = canonicalSelections({
+    unitKey,
+    length: String(s.length),
+    density: String(s.density),
+    lace: String(s.lace),
+    texture: String(s.texture),
+    color: String(s.color),
+    hairline: String(s.hairline),
+    styling: String(s.styling),
+    addOns: [...addOns].sort().join(','),
+  });
+  return selectionHash(canonicalJson);
+}
+
+function wigPreviewLiveAnglePaths(
+  promptVersion: string,
+  unitKey: string,
+  manifestHash: string
+): { front: string; left: string; right: string } {
+  const u = unitKey.toUpperCase();
+  const base = `wig-preview-live/${promptVersion}/${u}/${manifestHash}`;
+  return {
+    front: `${base}/front.webp`,
+    left: `${base}/left.webp`,
+    right: `${base}/right.webp`,
+  };
+}
+
+// --- Inlined from api/_lib/bawCatalogHairColors.ts (keep in sync) ---
+const BAW_CATALOG_HAIR_COLOR_HEX: Record<string, { label: string; hex: string }> = {
+  ESPRESSO: { label: 'espresso', hex: '361504' },
+  CHESTNUT: { label: 'chestnut', hex: '643118' },
+  HONEY: { label: 'honey', hex: 'BB883C' },
+  AUBURN: { label: 'auburn', hex: '925927' },
+  COPPER: { label: 'copper', hex: '763412' },
+  GINGER: { label: 'ginger', hex: 'E35B2A' },
+  SANGRIA: { label: 'sangria', hex: '731921' },
+  CHERRY: { label: 'cherry', hex: 'C52C1F' },
+  RASPBERRY: { label: 'raspberry', hex: 'DA3063' },
+  PLUM: { label: 'plum', hex: '5B177C' },
+  COBALT: { label: 'cobalt', hex: '25067B' },
+  TEAL: { label: 'teal', hex: '7BE7CA' },
+  SLIME: { label: 'slime', hex: '63D54B' },
+  CITRINE: { label: 'citrine', hex: 'E3E851' },
+  JET_BLACK: { label: 'jet black/off black', hex: '000000' },
+  OFF_BLACK: { label: 'jet black/off black', hex: '000000' },
+  'JET BLACK': { label: 'jet black/off black', hex: '000000' },
+  'OFF BLACK': { label: 'jet black/off black', hex: '000000' },
+};
+
+function catalogColorForPrompt(colorId: string): { label: string; hex: string } | null {
+  const raw = String(colorId || '').trim().toUpperCase();
+  if (raw === 'PINK') return BAW_CATALOG_HAIR_COLOR_HEX.RASPBERRY;
+  const spaced = raw;
+  const underscored = raw.replace(/\s+/g, '_');
+  return BAW_CATALOG_HAIR_COLOR_HEX[spaced] ?? BAW_CATALOG_HAIR_COLOR_HEX[underscored] ?? null;
+}
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
