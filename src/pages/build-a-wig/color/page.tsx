@@ -36,6 +36,12 @@ interface ColorOption {
   image: string;
 }
 
+/** Fal outputs already include the leaf-brick scene — skip our extra brick layer + `.leaf-bg` to avoid double brick. */
+function isRemoteNoirLiveWigViewSrc(src: string): boolean {
+  const base = (src || '').split(/[?#]/)[0].trim().toLowerCase();
+  return base.startsWith('http://') || base.startsWith('https://');
+}
+
 function ColorSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -553,6 +559,9 @@ function ColorSelection() {
       : committedLiveNoirColorViews && location.pathname.includes('/build-a-wig/noir/')
         ? committedLiveNoirColorViews
         : baseWigViews;
+
+  const hideDuplicateBrickNoirColor =
+    location.pathname.includes('/build-a-wig/noir/') && wigViews.some((v) => isRemoteNoirLiveWigViewSrc(v));
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -1447,17 +1456,25 @@ function ColorSelection() {
                 </div>
               )}
               <div className="leaf-stack hero-thumb">
-                <div className="leaf-bg" aria-hidden="true" />
+                {!hideDuplicateBrickNoirColor && <div className="leaf-bg" aria-hidden="true" />}
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'repeat',
-                    overflow: 'visible',
+                    ...(hideDuplicateBrickNoirColor
+                      ? {
+                          backgroundImage: 'none',
+                          backgroundColor: '#f5f5f5',
+                          overflow: 'hidden',
+                        }
+                      : {
+                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'repeat',
+                          overflow: 'visible',
+                        }),
                   }}
                 >
                   <p
@@ -1509,15 +1526,27 @@ function ColorSelection() {
                 <img
                   src={wigViews[selectedView]}
                   alt="Selected Wig"
-                  width="282"
-                  height="387"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
+                  width={hideDuplicateBrickNoirColor ? 262 : 282}
+                  height={hideDuplicateBrickNoirColor ? 367 : 387}
+                  className={
+                    hideDuplicateBrickNoirColor
+                      ? 'absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir'
+                      : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img'
+                  }
                   style={
-                    {
-                      top: 'calc(50% - 10.601px + 18px)',
-                      '--hero-width': '282px',
-                      '--hero-height': '387px',
-                    } as CSSProperties
+                    hideDuplicateBrickNoirColor
+                      ? ({
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          '--hero-width': '262px',
+                          '--hero-height': '367px',
+                        } as CSSProperties)
+                      : ({
+                          top: 'calc(50% - 10.601px + 18px)',
+                          '--hero-width': '282px',
+                          '--hero-height': '387px',
+                        } as CSSProperties)
                   }
                 />
                 </div>
@@ -1527,12 +1556,14 @@ function ColorSelection() {
               <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
                 {wigViews.map((view, index) => (
                   <div className="leaf-stack thumb" key={index}>
-                    <div
-                      className={`leaf-bg ${
-                        selectedView === index ? 'border-black' : 'border-transparent'
-                      }`}
-                      aria-hidden="true"
-                    />
+                    {!hideDuplicateBrickNoirColor && (
+                      <div
+                        className={`leaf-bg ${
+                          selectedView === index ? 'border-black' : 'border-transparent'
+                        }`}
+                        aria-hidden="true"
+                      />
+                    )}
                     <div
                       className="border-transparent p-1 cursor-pointer"
                       onClick={() => setSelectedView(index)}
@@ -1548,26 +1579,48 @@ function ColorSelection() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
+                          ...(hideDuplicateBrickNoirColor
+                            ? {
+                                overflow: 'hidden',
+                                backgroundImage: 'none',
+                                backgroundColor: '#f5f5f5',
+                                border: selectedView === index ? '3px solid #fff' : undefined,
+                                boxShadow:
+                                  selectedView === index ? '0 0 0 1.1px #000' : undefined,
+                                boxSizing: 'border-box',
+                              }
+                            : {
+                                backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                              }),
                           ...(index === 1 && { transform: 'translateX(-2px)' }),
                           ...(index === 2 && { transform: 'translateX(-4px)' }),
                         }}
                       >
                       <img
                         alt={`Thumbnail ${index + 1}`}
-                        width="63"
-                        height="84"
+                        width={hideDuplicateBrickNoirColor ? 72 : 63}
+                        height={hideDuplicateBrickNoirColor ? 95 : 84}
                         src={view}
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
+                        className={
+                          hideDuplicateBrickNoirColor
+                            ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                            : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
+                        }
                         style={
-                          {
-                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                            top: 'calc(50% - 6.1px + 7.2px)',
-                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                          } as CSSProperties
+                          hideDuplicateBrickNoirColor
+                            ? ({
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)',
+                              } as CSSProperties)
+                            : ({
+                                '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
+                                top: 'calc(50% - 6.1px + 7.2px)',
+                                ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                              } as CSSProperties)
                         }
                       />
                       </div>

@@ -3390,6 +3390,23 @@ img.natural-front-mobile {
   display: block !important;
 }
 
+/* Remote NOIR fal WebPs already include brick — fill frame, avoid double brick */
+img.hero-mannequin-img--live-noir {
+  object-fit: cover !important;
+  object-position: center top !important;
+}
+
+img.thumbnail-mannequin-img--live-noir {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;
