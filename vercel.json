@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/live-wig-after-color-styling.ts": {
+      "maxDuration": 120
+    }
+  },
   "crons": [
     {
       "path": "/api/booking/autopay-final-payment",

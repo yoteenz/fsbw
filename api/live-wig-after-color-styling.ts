@@ -16,7 +16,8 @@ export const config = { maxDuration: 120 };
  * Optional **`forceRegenerate`**: `true` — re-run fal for requested angle(s) even if output WebP exists.
  * `partSelection` must be **MIDDLE** and `styling` must include **LAYERS**.
  *
- * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: **`4K`** (default), **`2K`**, or **`1K`** — same as live color route.
+ * Resolution: **`WIG_PREVIEW_FAL_STYLING_RESOLUTION`** if set, else **`WIG_PREVIEW_FAL_RESOLUTION`**, else default **`2K`**
+ * (after-color uses **two** images per fal call — heavier than live color; **4K** here often hits Vercel **`FUNCTION_INVOCATION_FAILED`** / timeouts on default plans). Values: **`1K`**, **`2K`**, **`4K`**.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from './_lib/adminAuth';
@@ -79,10 +80,12 @@ function readBool(obj: Record<string, unknown>, key: string): boolean {
   return false;
 }
 
-function readFalResolution(): '1K' | '2K' | '4K' {
-  const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '4K').trim().toUpperCase();
+function readFalResolutionForAfterColorStyling(): '1K' | '2K' | '4K' {
+  const primary = process.env.WIG_PREVIEW_FAL_STYLING_RESOLUTION?.trim();
+  const fallback = process.env.WIG_PREVIEW_FAL_RESOLUTION?.trim();
+  const r = (primary || fallback || '2K').toUpperCase();
   if (r === '1K' || r === '2K' || r === '4K') return r;
-  return '4K';
+  return '2K';
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -180,7 +183,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
-    const falResolution = readFalResolution();
+    const falResolution = readFalResolutionForAfterColorStyling();
     const generated: string[] = [];
     const skipped: string[] = [];
 

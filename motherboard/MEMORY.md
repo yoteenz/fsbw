@@ -14444,3 +14444,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — Live middle+layers styling: single API round-trip + 2K default + vercel maxDuration
+
+**Context (this chat):** User still saw **`FUNCTION_INVOCATION_FAILED`** on NOIR styling live preview (LAYERS + MIDDLE) after prior sequential client calls.
+
+**Decisions / outcomes:** Root issue was still **three separate serverless invocations** (cold starts / plan limits). **`postLiveWigAfterColorStyling`** now performs **one** `POST /api/live-wig-after-color-styling` **without** `angle` so the existing server loop runs all angles in **one** function. **`postLiveWigAfterColorStylingRegenerateAngle`** unchanged (single angle + `forceRegenerate`). **`api/live-wig-after-color-styling.ts`**: resolution uses **`WIG_PREVIEW_FAL_STYLING_RESOLUTION`** else **`WIG_PREVIEW_FAL_RESOLUTION`**, else default **`2K`** (dual-image fal is heavier than color-only; avoids OOM/timeouts vs default 4K). **`vercel.json`**: **`functions`** entry sets **`maxDuration: 120`** for this route (belt-and-suspenders with `export const config`). **`.env.example`** and **`docs/WIG_PREVIEW_PREGENERATION.md`** updated.
+
+**Changes:** `src/utils/api.ts`, `api/live-wig-after-color-styling.ts`, `vercel.json`, `.env.example`, `docs/WIG_PREVIEW_PREGENERATION.md`.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
