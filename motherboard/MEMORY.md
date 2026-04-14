@@ -14244,6 +14244,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — BAW middle part / layers style prompt (all 6 units)
+
+**Context (this chat):** User provided exact fal wording for **middle part + layers** styling, to reuse on **all six** BAW units with the same look.
+
+**Decisions / outcomes:** Centralized in **`scripts/wig-preview/promptTemplate.mjs`** as **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`** (alias **`BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT`**). Documented in **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`**.
+
+**Changes:** **`scripts/wig-preview/promptTemplate.mjs`**, **`scripts/wig-preview/COPY-PASTE-PROMPTS.txt`**.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.
