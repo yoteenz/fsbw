@@ -17,6 +17,7 @@ export const config = {
  *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
+ * Optional **`forceRegenerate`**: `true` — run fal for the requested angle(s) even if the WebP already exists (admin “regenerate” without deleting in Storage).
  *
  * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `1K` (default), `2K`, or `4K` — lower is faster/cheaper on short timeouts.
  *
@@ -215,6 +216,17 @@ function readOptionalAngle(body: Record<string, unknown>): 'front' | 'left' | 'r
   return null;
 }
 
+function readBool(obj: Record<string, unknown>, key: string): boolean {
+  const v = obj[key];
+  if (v === true) return true;
+  if (v === false) return false;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes';
+  }
+  return false;
+}
+
 function readFalResolution(): '1K' | '2K' | '4K' {
   const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '1K').trim().toUpperCase();
   if (r === '2K' || r === '4K') return r;
@@ -280,6 +292,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const body = parseBody(req);
   const singleAngle = readOptionalAngle(body);
+  const forceRegenerate = readBool(body, 'forceRegenerate');
   const color = readString(body, 'color', '');
   if (!color) {
     sendJson(res, 400, { error: 'color is required' });
@@ -329,10 +342,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     for (const angle of anglesToRun) {
       const path = paths[angle];
-      const { error: dlErr } = await supabase.storage.from(bucket).download(path);
-      if (!dlErr) {
-        skipped.push(angle);
-        continue;
+      if (!forceRegenerate) {
+        const { error: dlErr } = await supabase.storage.from(bucket).download(path);
+        if (!dlErr) {
+          skipped.push(angle);
+          continue;
+        }
       }
 
       const mannequinUrl = mannequinByAngle[angle];

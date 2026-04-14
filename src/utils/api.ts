@@ -981,6 +981,8 @@ export type WigPreviewLiveNoirColorPayload = {
   hairline?: string;
   styling?: string;
   addOns?: string[];
+  /** When true with a single `angle`, re-runs fal even if that WebP exists (admin regenerate). */
+  forceRegenerate?: boolean;
 };
 
 export type WigPreviewLiveNoirColorResult = {
@@ -994,7 +996,7 @@ export type WigPreviewLiveNoirColorResult = {
   selections: Record<string, unknown>;
 };
 
-async function postWigPreviewLiveNoirColorOneAngle(
+export async function postWigPreviewLiveNoirColorOneAngle(
   body: WigPreviewLiveNoirColorPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<WigPreviewLiveNoirColorResult> {
   const res = await apiFetch('/api/wig-preview/live-noir-color', { method: 'POST', body });
@@ -1010,6 +1012,14 @@ async function postWigPreviewLiveNoirColorOneAngle(
     throw new Error(msg || 'Live preview failed');
   }
   return JSON.parse(text) as WigPreviewLiveNoirColorResult;
+}
+
+/** Admin: regenerate one color angle (fal again even if file exists). */
+export async function postWigPreviewLiveNoirColorRegenerateAngle(
+  body: WigPreviewLiveNoirColorPayload,
+  angle: 'left' | 'front' | 'right'
+): Promise<WigPreviewLiveNoirColorResult> {
+  return postWigPreviewLiveNoirColorOneAngle({ ...body, angle, forceRegenerate: true });
 }
 
 /**
@@ -1043,6 +1053,7 @@ export async function postWigPreviewLiveNoirColor(
 
 export type LiveWigAfterColorStylingPayload = WigPreviewLiveNoirColorPayload & {
   partSelection: string;
+  forceRegenerate?: boolean;
 };
 
 export type LiveWigAfterColorStylingResult = {
@@ -1058,7 +1069,7 @@ export type LiveWigAfterColorStylingResult = {
   selections: Record<string, unknown>;
 };
 
-async function postLiveWigAfterColorStylingOneAngle(
+export async function postLiveWigAfterColorStylingOneAngle(
   body: LiveWigAfterColorStylingPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<LiveWigAfterColorStylingResult> {
   const res = await apiFetch('/api/live-wig-after-color-styling', { method: 'POST', body });
@@ -1074,6 +1085,14 @@ async function postLiveWigAfterColorStylingOneAngle(
     throw new Error(msg || 'Live styling preview failed');
   }
   return JSON.parse(text) as LiveWigAfterColorStylingResult;
+}
+
+/** Admin: regenerate one after-color styling angle. */
+export async function postLiveWigAfterColorStylingRegenerateAngle(
+  body: LiveWigAfterColorStylingPayload,
+  angle: 'left' | 'front' | 'right'
+): Promise<LiveWigAfterColorStylingResult> {
+  return postLiveWigAfterColorStylingOneAngle({ ...body, angle, forceRegenerate: true });
 }
 
 /** Admin: middle + layers after color (3 angles, parallel). Requires color WebPs already in Storage. */

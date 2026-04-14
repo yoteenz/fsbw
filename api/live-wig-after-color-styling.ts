@@ -13,6 +13,7 @@ export const config = { maxDuration: 120 };
  * **Output:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/middle-layers/{angle}.webp`
  *
  * Body: same selection fields as live color + optional `angle` (left|front|right) + `color` (required for catalog).
+ * Optional **`forceRegenerate`**: `true` — re-run fal for requested angle(s) even if output WebP exists.
  * `partSelection` must be **MIDDLE** and `styling` must include **LAYERS**.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -65,6 +66,17 @@ function readOptionalAngle(body: Record<string, unknown>): 'front' | 'left' | 'r
   return null;
 }
 
+function readBool(obj: Record<string, unknown>, key: string): boolean {
+  const v = obj[key];
+  if (v === true) return true;
+  if (v === false) return false;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes';
+  }
+  return false;
+}
+
 function readFalResolution(): '1K' | '2K' | '4K' {
   const r = (process.env.WIG_PREVIEW_FAL_RESOLUTION || '1K').trim().toUpperCase();
   if (r === '2K' || r === '4K') return r;
@@ -115,6 +127,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
     const body = parseBody(req);
     const singleAngle = readOptionalAngle(body);
+    const forceRegenerate = readBool(body, 'forceRegenerate');
     const color = readString(body, 'color', '');
     if (!color) {
       sendJson(res, 400, { error: 'color is required' });
@@ -180,10 +193,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     for (const angle of anglesToRun) {
       const outPath = outPaths[angle];
-      const { error: outDlErr } = await supabase.storage.from(bucket).download(outPath);
-      if (!outDlErr) {
-        skipped.push(angle);
-        continue;
+      if (!forceRegenerate) {
+        const { error: outDlErr } = await supabase.storage.from(bucket).download(outPath);
+        if (!outDlErr) {
+          skipped.push(angle);
+          continue;
+        }
       }
 
       const colorPath = colorPaths[angle];

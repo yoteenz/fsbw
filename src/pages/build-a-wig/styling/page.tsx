@@ -9,7 +9,11 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth, isAdminEmail } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
-import { postLiveWigAfterColorStyling, getAccessToken } from '../../../utils/api';
+import {
+  postLiveWigAfterColorStyling,
+  postLiveWigAfterColorStylingRegenerateAngle,
+  getAccessToken,
+} from '../../../utils/api';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import {
   readBuildWigLivePreviewSelections,
@@ -141,6 +145,7 @@ export default function StylingSelectionPage() {
   const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
   const [liveStylingLoading, setLiveStylingLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
+  const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -1253,8 +1258,81 @@ export default function StylingSelectionPage() {
                   ? 'LIVE PREVIEW: middle + layers (after color)…'
                   : liveStylingError
                     ? `LIVE PREVIEW: ${liveStylingError}`
-                    : 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Delete bad WebPs in Storage to regenerate.'}
+                    : 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Use regen links below to re-run fal for one angle.'}
               </p>
+            )}
+            {hasMiddleLayersLive && !liveStylingLoading && (
+              <div
+                className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
+                style={{ maxWidth: '280px' }}
+              >
+                {(['left', 'front', 'right'] as const).map((ang) => {
+                  const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
+                  const busy = regenStylingAngle === ang;
+                  return (
+                    <button
+                      key={ang}
+                      type="button"
+                      disabled={Boolean(regenStylingAngle)}
+                      onClick={() => {
+                        const pathname = location.pathname;
+                        const sel = readBuildWigLivePreviewSelections(pathname);
+                        const color = readBuildWigLivePreviewColor(pathname);
+                        const stylingForApi = selectedHairStyling
+                          .filter((s) => s && s !== 'NONE')
+                          .sort()
+                          .join(',');
+                        setRegenStylingAngle(ang);
+                        setLiveStylingError(null);
+                        void postLiveWigAfterColorStylingRegenerateAngle(
+                          {
+                            color,
+                            ...sel,
+                            styling: stylingForApi,
+                            partSelection: selectedPartSelection,
+                          },
+                          ang
+                        )
+                          .then((res) => {
+                            const bust = Date.now();
+                            const L = res.publicUrls.left;
+                            const F = res.publicUrls.front;
+                            const R = res.publicUrls.right;
+                            setLiveStylingWigViews((prev) => {
+                              const pl = L ? `${L}?t=${bust}` : prev?.[0];
+                              const pf = F ? `${F}?t=${bust}` : prev?.[1];
+                              const pr = R ? `${R}?t=${bust}` : prev?.[2];
+                              if (pl && pf && pr) return [pl, pf, pr];
+                              if (!prev) return prev;
+                              const next: [string, string, string] = [...prev];
+                              const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
+                              const u = ang === 'left' ? L : ang === 'front' ? F : R;
+                              if (u) next[idx] = `${u}?t=${bust}`;
+                              return next;
+                            });
+                          })
+                          .catch((e: Error) => {
+                            setLiveStylingError(e?.message || 'Regenerate failed');
+                          })
+                          .finally(() => setRegenStylingAngle(null));
+                      }}
+                      style={{
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        fontSize: '9px',
+                        color: busy ? '#808080' : '#EB1C24',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '2px',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        cursor: regenStylingAngle ? 'wait' : 'pointer',
+                      }}
+                    >
+                      {busy ? `regen ${label}…` : `regen style ${label}`}
+                    </button>
+                  );
+                })}
+              </div>
             )}
             <div className="leaf-stack hero-thumb">
               <div className="leaf-bg" aria-hidden="true"></div>

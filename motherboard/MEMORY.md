@@ -14268,6 +14268,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Middle + layers live: two fal images (color base + style inspo URLs)
+
+**Context (this chat):** User clarified **“Recreate this exact mannequin image”** must refer to **style inspo**, not only the stored color WebP — they need **two** references: colored base + **this** target hair look per angle.
+
+**Decisions / outcomes:** **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES`** (and **`SINGLE_IMAGE`** for one-attachment manual) in **`promptTemplate.mjs`** / **`api/_lib/bawLiveStylingPrompts.ts`**. **`POST /api/live-wig-after-color-styling`** passes **`image_urls: [colorPublicUrl, styleRefUrl]`** with env **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL`**, **`_LEFT_`**, **`_RIGHT_`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`COPY-PASTE-PROMPTS.txt`** updated.
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.

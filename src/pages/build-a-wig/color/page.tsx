@@ -14,7 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
-import { postWigPreviewLiveNoirColor, getAccessToken } from '../../../utils/api';
+import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle, getAccessToken } from '../../../utils/api';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
@@ -250,6 +250,7 @@ function ColorSelection() {
   const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
+  const [regenColorAngle, setRegenColorAngle] = useState<'left' | 'front' | 'right' | null>(null);
   
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -1302,21 +1303,86 @@ function ColorSelection() {
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               {adminLiveNoirPreview && location.pathname.includes('/build-a-wig/noir/') && (
-                <p
-                  className="text-center mb-2 px-2"
-                  style={{
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '9px',
-                    color: livePreviewError ? '#EB1C24' : '#808080',
-                    maxWidth: '280px',
-                  }}
-                >
-                  {livePreviewLoading
-                    ? 'LIVE PREVIEW: generating (fal)…'
-                    : livePreviewError
-                      ? `LIVE PREVIEW: ${livePreviewError}`
-                      : 'LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.'}
-                </p>
+                <>
+                  <p
+                    className="text-center mb-2 px-2"
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '9px',
+                      color: livePreviewError ? '#EB1C24' : '#808080',
+                      maxWidth: '280px',
+                    }}
+                  >
+                    {livePreviewLoading
+                      ? 'LIVE PREVIEW: generating (fal)…'
+                      : livePreviewError
+                        ? `LIVE PREVIEW: ${livePreviewError}`
+                        : 'LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.'}
+                  </p>
+                  {!livePreviewLoading && (
+                    <div
+                      className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
+                      style={{ maxWidth: '280px' }}
+                    >
+                      {(['left', 'front', 'right'] as const).map((ang) => {
+                        const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
+                        const busy = regenColorAngle === ang;
+                        return (
+                          <button
+                            key={ang}
+                            type="button"
+                            disabled={Boolean(regenColorAngle)}
+                            onClick={() => {
+                              const pathname = location.pathname;
+                              const sel = readBuildWigLivePreviewSelections(pathname);
+                              setRegenColorAngle(ang);
+                              setLivePreviewError(null);
+                              void postWigPreviewLiveNoirColorRegenerateAngle(
+                                { color: selectedColor, ...sel },
+                                ang
+                              )
+                                .then((res) => {
+                                  const bust = Date.now();
+                                  const L = res.publicUrls.left;
+                                  const F = res.publicUrls.front;
+                                  const R = res.publicUrls.right;
+                                  setLiveWigViews((prev) => {
+                                    const pl = L ? `${L}?t=${bust}` : prev?.[0];
+                                    const pf = F ? `${F}?t=${bust}` : prev?.[1];
+                                    const pr = R ? `${R}?t=${bust}` : prev?.[2];
+                                    if (pl && pf && pr) return [pl, pf, pr];
+                                    if (!prev) return prev;
+                                    const next: [string, string, string] = [...prev];
+                                    const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
+                                    const u = ang === 'left' ? L : ang === 'front' ? F : R;
+                                    if (u) next[idx] = `${u}?t=${bust}`;
+                                    return next;
+                                  });
+                                })
+                                .catch((e: Error) => {
+                                  setLivePreviewError(e?.message || 'Regenerate failed');
+                                })
+                                .finally(() => setRegenColorAngle(null));
+                            }}
+                            style={{
+                              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                              fontSize: '9px',
+                              color: busy ? '#808080' : '#EB1C24',
+                              textDecoration: 'underline',
+                              textUnderlineOffset: '2px',
+                              background: 'none',
+                              border: 'none',
+                              padding: 0,
+                              cursor: regenColorAngle ? 'wait' : 'pointer',
+                            }}
+                          >
+                            {busy ? `regen ${label}…` : `regen color ${label}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
               )}
               <div className="leaf-stack hero-thumb">
                 <div className="leaf-bg" aria-hidden="true"></div>
