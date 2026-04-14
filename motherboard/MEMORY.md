@@ -14786,3 +14786,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Non-Blanco BAW color: unify $120 (remove stale $100 maps)
+
+**Context (this chat):** User said **edit/customize** color should be **$120** not **$100**, and asked for **other color price mismatches**.
+
+**Decisions / outcomes:** **`build-a-wig/page.tsx`** `calculatePricesFromSelections` and **`color/page.tsx`** `getSelectedPrice()` already used **$120** for paid Noir colors; mismatches were **duplicate maps at $100**: **`CartDropdown`** `_getColorPrice` (bag line-item COLOR display), **`straight/noir/page.tsx`** cart update **`colorPrices`**, and **`color/page.tsx`** **`colorOptions[].price`** metadata (was **100**). All non-default Noir dye entries set to **120**. **Blanco** GOLDEN/PLATINUM/ASH unchanged. **Checkout** voucher COLOR logic already **120** for non-Blanco.
+
+**Changes:** **`src/components/CartDropdown.tsx`**, **`src/pages/straight/noir/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

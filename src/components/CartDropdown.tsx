@@ -434,24 +434,24 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       return blancoColorPrices[color] || 0;
     }
     
-    // Other product colors
+    // Other product colors — match BAW edit/customize: flat $120 per non-default dye (OFF BLACK free)
     const colorPrices: { [key: string]: number } = {
-      'JET BLACK': 100,  // Fixed: JET BLACK should be $100, not $0
-      'OFF BLACK': 0,    // Only OFF BLACK is free
-      'ESPRESSO': 100,
-      'CHESTNUT': 100,
-      'HONEY': 100,
-      'AUBURN': 100,
-      'COPPER': 100,
-      'GINGER': 100,
-      'SANGRIA': 100,
-      'CHERRY': 100,
-      'RASPBERRY': 100,
-      'PLUM': 100,
-      'COBALT': 100,
-      'TEAL': 100,
-      'SLIME': 100,
-      'CITRINE': 100
+      'JET BLACK': 120,
+      'OFF BLACK': 0,
+      'ESPRESSO': 120,
+      'CHESTNUT': 120,
+      'HONEY': 120,
+      'AUBURN': 120,
+      'COPPER': 120,
+      'GINGER': 120,
+      'SANGRIA': 120,
+      'CHERRY': 120,
+      'RASPBERRY': 120,
+      'PLUM': 120,
+      'COBALT': 120,
+      'TEAL': 120,
+      'SLIME': 120,
+      'CITRINE': 120
     };
     
     let basePrice = colorPrices[color] || 0;
