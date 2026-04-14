@@ -14381,3 +14381,24 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/wig-preview/live-noir-color.ts`**, **`api/live-wig-after-color-styling.ts`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW color subpage: live NOIR fal previews — stop brick peek, re-center in frame
+
+**Context (this chat):** User reported **leaf-brick** still **visible behind** admin **generated** (fal) color images on the **Build-a-Wig color** subpage, and images looked **shifted down** / not **centered** vs the static mannequin layout.
+
+**Decisions / outcomes:** Prior revert to “always brick + `.leaf-bg`” fixed **full-screen bleed** from `!important` min sizes but **transparent** fal WebPs still showed **brick through** gaps and **`object-fit: contain`** + hero **`top` nudge** made renders look **low** in the frame. Added **`useNoirLiveRenders`** when admin live preview is active on **NOIR** routes **and** `liveWigViews` is set: **omit** the extra **`.leaf-bg`** underlay (avoids the wrong jfif + z-index peek), replace inner **brick** with **solid `#f5f5f5`** + **`overflow: hidden`**, hero image **centered** (`translate(-50
+---
+
+## 2026-04-14 — BAW color subpage: live NOIR fal previews — stop brick peek, re-center in frame
+
+**Context (this chat):** User reported leaf-brick still visible behind admin generated (fal) color images on the Build-a-Wig color subpage, and images looked shifted down / not centered vs the static mannequin layout.
+
+**Decisions / outcomes:** Prior revert to always brick plus `.leaf-bg` fixed full-screen bleed from `!important` min sizes but transparent fal WebPs still showed brick through gaps and `object-fit: contain` plus hero `top` nudge made renders look low in the frame. Added `useNoirLiveRenders` when admin live preview is active on NOIR routes and `liveWigViews` is set: omit the extra `.leaf-bg` underlay (avoids the wrong jfif and z-index peek), replace inner brick with solid `#f5f5f5` and `overflow: hidden`, hero image centered with `translate(-50%,-50%)`, dimensions 262×367 to match the frame, `object-fit: cover` and `object-position: center top` via `.hero-mannequin-img--live-noir`. Thumbnails use the same live path: neutral fill, cover plus top anchor, translateX nudges for M/R to match the main BAW hub thumb strip. Static (non-live) color page behavior unchanged.
+
+**Changes:** `src/pages/build-a-wig/color/page.tsx`, `src/index.css` (new modifier classes).
+
+**Verification:** `npm run build` (tsc + vite) passes.
+
+**Docs:** This MEMORY entry.

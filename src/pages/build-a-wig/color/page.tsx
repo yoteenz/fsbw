@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -546,6 +546,12 @@ function ColorSelection() {
     adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
       : baseWigViews;
+
+  /** Admin fal WebPs include transparency; hide duplicate `.leaf-bg` and fill the frame so brick does not peek through. */
+  const useNoirLiveRenders =
+    adminLiveNoirPreview &&
+    Boolean(liveWigViews) &&
+    location.pathname.includes('/build-a-wig/noir/');
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -1426,17 +1432,25 @@ function ColorSelection() {
                 </div>
               )}
               <div className="leaf-stack hero-thumb">
-                <div className="leaf-bg" aria-hidden="true" />
+                {!useNoirLiveRenders && <div className="leaf-bg" aria-hidden="true" />}
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'repeat',
-                    overflow: 'visible',
+                    ...(useNoirLiveRenders
+                      ? {
+                          backgroundImage: 'none',
+                          backgroundColor: '#f5f5f5',
+                          overflow: 'hidden',
+                        }
+                      : {
+                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'repeat',
+                          overflow: 'visible',
+                        }),
                   }}
                 >
                   <p
@@ -1488,14 +1502,28 @@ function ColorSelection() {
                 <img
                   src={wigViews[selectedView]}
                   alt="Selected Wig"
-                  width="282"
-                  height="387"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                  style={{
-                    top: 'calc(50% - 10.601px + 18px)',
-                    '--hero-width': '282px',
-                    '--hero-height': '387px',
-                  } as React.CSSProperties}
+                  width={useNoirLiveRenders ? 262 : 282}
+                  height={useNoirLiveRenders ? 367 : 387}
+                  className={
+                    useNoirLiveRenders
+                      ? 'absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir'
+                      : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img'
+                  }
+                  style={
+                    useNoirLiveRenders
+                      ? ({
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          '--hero-width': '262px',
+                          '--hero-height': '367px',
+                        } as CSSProperties)
+                      : ({
+                          top: 'calc(50% - 10.601px + 18px)',
+                          '--hero-width': '282px',
+                          '--hero-height': '387px',
+                        } as CSSProperties)
+                  }
                 />
                 </div>
               </div>
@@ -1515,7 +1543,7 @@ function ColorSelection() {
                       onClick={() => setSelectedView(index)}
                     >
                       <div
-                        className="relative bg-cover bg-center"
+                        className="relative bg-cover bg-center flex items-center justify-center"
                         data-thumb-index={index}
                         style={{
                           width: '72px',
@@ -1525,19 +1553,41 @@ function ColorSelection() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          ...(useNoirLiveRenders
+                            ? { overflow: 'hidden', backgroundImage: 'none', backgroundColor: '#f5f5f5' }
+                            : {
+                                backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                              }),
+                          ...(index === 1 && { transform: 'translateX(-2px)' }),
+                          ...(index === 2 && { transform: 'translateX(-4px)' }),
                         }}
                       >
                       <img
                         alt={`Thumbnail ${index + 1}`}
-                        width="63"
-                        height="84"
+                        width={useNoirLiveRenders ? 72 : 63}
+                        height={useNoirLiveRenders ? 95 : 84}
                         src={view}
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                        style={{
-                          '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          top: 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                        } as React.CSSProperties}
+                        className={
+                          useNoirLiveRenders
+                            ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                            : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
+                        }
+                        style={
+                          useNoirLiveRenders
+                            ? ({
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)',
+                              } as CSSProperties)
+                            : ({
+                                '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
+                                top: 'calc(50% - 6.1px + 7.2px)',
+                                ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                              } as CSSProperties)
+                        }
                       />
                       </div>
                     </div>
