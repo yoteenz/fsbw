@@ -14758,3 +14758,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR thumbnails: cover again (remove side gray bars)
+
+**Context (this chat):** User still saw **neutral gray on left and right** of live WebP thumbnails; prior **`object-fit: contain`** letterboxed when aspect ratio ≠ 72×95.
+
+**Decisions / outcomes:** Restored **`object-fit: cover`** + **`object-position: center center`** on **`img.thumbnail-mannequin-img--live-noir`** and combined selector in **`src/index.css`** — fills **72×95** frame (no side/bottom **`#f5f5f5`** bars; slight crop vs. contain).
+
+**Changes:** **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

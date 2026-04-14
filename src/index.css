@@ -3403,8 +3403,8 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  /* contain = full WebP visible (cover was cropping when frame was shortened for gray band) */
-  object-fit: contain !important;
+  /* cover fills 72×95 — no neutral letterboxing on sides/bottom (contain left gray bars when aspect ≠ frame) */
+  object-fit: cover !important;
   object-position: center center !important;
 }
 
@@ -3413,7 +3413,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center center !important;
 }
 
