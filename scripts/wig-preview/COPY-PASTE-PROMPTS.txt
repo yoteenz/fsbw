@@ -67,10 +67,12 @@ Recreate this exact mannequin image. The logo on the center of the mannequin’s
 (In code: `BAW_BASE_MANNEQUIN_PROMPT_TWO_ATTACHMENTS` in promptTemplate.mjs. Old name `WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS` still points to the same string for compatibility.)
 
 ================================================================================
-BAW — MIDDLE PART / LAYERS STYLE (all 6 units; same prompt everywhere)
+BAW — MIDDLE PART / LAYERS STYLE (all 6 units)
 ================================================================================
-Use when building the **middle part + layers** salon look on any unit (NOIR, Blanco, Soft Wave, Soft Curl, Ocean Curl, Beach Wave). Attach the **current step’s mannequin image** (same chain as color / hairline). fal: **Auto + 2K** unless you standardize otherwise.
+**Live / server (two images):** (1) **First** = colored mannequin from your pipeline (e.g. Storage color WebP). (2) **Second** = your **style inspo** for that angle (middle part + layers look) — same three-angle idea as brick refs: put files in Supabase (or CDN), set **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL`**, **`_FRONT_`**, **`_RIGHT_`** on Vercel. fal: **Auto + 2K**.
 
-Recreate this exact mannequin image, but change the hair to black #000000. The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the photo.
+Use the **first image** as the base: keep the same mannequin, background, catalog hair color, framing, and chest logo. Recreate the **hair from the second image** on that base — same middle part, layer shape, face-framing, volume, and silhouette as the second attachment — but the hair color must read as **jet black #000000**. The logo on the center of the mannequin’s chest with FRONTAL SLAYER must remain fully legible for accuracy & consistency. The photo should be extremely high-quality, crisp & pixel perfect. Do not change anything else about the first image except the hair to match the second reference in black.
 
-(Code: `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT` — alias `BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT` — in `promptTemplate.mjs`.)
+(Code: `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES` / default `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`.)
+
+**Manual (one image only):** attach just the inspo shot — `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE` in `promptTemplate.mjs`.

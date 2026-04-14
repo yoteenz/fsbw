@@ -3,8 +3,9 @@ export const config = { maxDuration: 120 };
 /**
  * POST /api/live-wig-after-color-styling
  *
- * Admin-only. **After** live color WebPs exist, runs fal once per angle to apply **middle part + layers**
- * (black hair) using the **color** images as `image_urls` (no new env reference URLs).
+ * Admin-only. **After** live color WebPs exist, runs fal once per angle to apply **middle part + layers**.
+ * Each fal call uses **two** `image_urls`: (1) **color** WebP for that angle, (2) **style inspo** for that angle
+ * from env **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL`**, **`_FRONT_`**, **`_RIGHT_`** (public URLs, same pattern as brick mannequin refs).
  *
  * **Color files live at** `wig-preview-live/{v}/NOIR/{colorTierHash}/{angle}.webp` where `colorTierHash` uses **styling: NONE**
  * so changing salon styling does not move the color folder.
@@ -25,7 +26,7 @@ import {
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors';
-import { BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TEXT } from './_lib/bawLiveStylingPrompts';
+import { BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES } from './_lib/bawLiveStylingPrompts';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -95,6 +96,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
+    const styleFrontUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim();
+    const styleLeftUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim();
+    const styleRightUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim();
+    if (!styleFrontUrl || !styleLeftUrl || !styleRightUrl) {
+      sendJson(res, 503, {
+        error: 'Missing public style-inspo image URLs for middle + layers (one per angle)',
+        missing: {
+          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL: !styleFrontUrl,
+          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL: !styleLeftUrl,
+          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL: !styleRightUrl,
+        },
+      });
+      return;
+    }
+
     const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
     const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
     const body = parseBody(req);
@@ -153,6 +169,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const generated: string[] = [];
     const skipped: string[] = [];
 
+    const styleRefByAngle = {
+      front: styleFrontUrl,
+      left: styleLeftUrl,
+      right: styleRightUrl,
+    } as const;
+
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
@@ -183,10 +205,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         return;
       }
 
+      const styleRefUrl = styleRefByAngle[angle];
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {
-          prompt: BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TEXT,
-          image_urls: [colorPublicUrl],
+          prompt: BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES,
+          image_urls: [colorPublicUrl, styleRefUrl],
           aspect_ratio: 'auto',
           resolution: falResolution,
           output_format: 'webp',

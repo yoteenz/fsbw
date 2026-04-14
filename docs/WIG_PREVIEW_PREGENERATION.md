@@ -56,7 +56,7 @@ The server (per request):
 
 ### Live after-color styling — NOIR, middle + layers (admin)
 
-On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **LAYERS** + part **MIDDLE** are selected, the app calls **`POST /api/live-wig-after-color-styling`** (three parallel requests with `angle`, same as color). Fal uses **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`** text and **`image_urls`** = public URL of each angle’s **color** WebP (no new env reference URLs).
+On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **LAYERS** + part **MIDDLE** are selected, the app calls **`POST /api/live-wig-after-color-styling`** (three parallel requests with `angle`, same as color). Fal uses **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES`** and **`image_urls`**: **[1]** public URL of that angle’s **color** WebP, **[2]** your **style inspo** for that angle from **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL`**, **`_LEFT_`**, **`_RIGHT_`** (same idea as the three brick mannequin URLs for color).
 
 **Output paths:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/middle-layers/{left|front|right}.webp`
 

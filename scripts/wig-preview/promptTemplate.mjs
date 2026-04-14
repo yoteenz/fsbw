@@ -178,17 +178,30 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
 // Use after color (or on top of catalog color): one mannequin ref; fal Auto + 2K unless you tune.
 // =============================================================================
 
-/** Middle part + layers style — identical wording for NOIR, Blanco, Soft Wave, Soft Curl, Ocean Curl, Beach Wave. */
-export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT = [
+/**
+ * **Two attachments** (live / server fal): (1) colored mannequin from storage, (2) style inspo per angle — public URLs in Vercel: `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_{LEFT|FRONT|RIGHT}_URL`.
+ * “This” in the sense of target hair shape = **second image**.
+ */
+export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES = [
+  'Use the **first image** as the base: keep the same mannequin, background, catalog hair color, framing, and chest logo.',
+  'Recreate the **hair from the second image** on that base — same middle part, layer shape, face-framing, volume, and silhouette as the second attachment — but the hair color must read as **jet black #000000**.',
+  'The logo on the center of the mannequin’s chest with FRONTAL SLAYER must remain fully legible for accuracy & consistency.',
+  'The photo should be extremely high-quality, crisp & pixel perfect.',
+  'Do not change anything else about the first image except the hair to match the second reference in black.',
+].join(' ');
+
+/** One attachment only (manual fal on the inspo shot alone). */
+export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE = [
   'Recreate this exact mannequin image, but change the hair to black #000000.',
   'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
   'Do not change anything else about the photo.',
 ].join(' ');
 
-// Server copy: `api/_lib/bawLiveStylingPrompts.ts` — keep text identical.
+/** Default export name: two-image flow for BAW live styling API. */
+export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT = BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES;
 
-/** Alias — same string; use whichever name reads clearer in scripts. */
+/** Alias — same as `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`. */
 export const BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT = BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT;
 
 // =============================================================================
