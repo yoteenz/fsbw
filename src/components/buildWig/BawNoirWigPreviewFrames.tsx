@@ -91,8 +91,10 @@ export function BawNoirWigPreviewHeroThumbs({
       </div>
 
       <div
-        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${thumbRowClassName ? ` ${thumbRowClassName}` : ''}`}
-        style={{ transform: 'translateY(10px)', gap: '2px' }}
+        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
+          thumbRowClassName ? ` ${thumbRowClassName}` : ''
+        }`}
+        style={{ transform: 'translateY(10px)', gap: hideBrick ? '10px' : '2px' }}
       >
         {triple.map((view, index) => (
           <div className="leaf-stack thumb" key={index}>
@@ -111,7 +113,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 data-thumb-index={index}
                 style={{
                   width: '72px',
-                  height: '95px',
+                  height: hideBrick ? '88px' : '95px',
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -132,14 +134,14 @@ export function BawNoirWigPreviewHeroThumbs({
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                       }),
-                  ...(index === 1 && { transform: 'translateX(-2px)' }),
-                  ...(index === 2 && { transform: 'translateX(-4px)' }),
+                  ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
+                  ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
                   width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 95 : 84}
+                  height={hideBrick ? 88 : 84}
                   src={view}
                   className={
                     hideBrick

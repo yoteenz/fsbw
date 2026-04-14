@@ -3407,6 +3407,13 @@ img.thumbnail-mannequin-img--live-noir {
   object-position: center top !important;
 }
 
+/* Live NOIR thumb row: global rules below use translateX(-2px/-4px) !important on [data-thumb-index] — that stacks WebP thumbs. Reset when row is flagged. */
+.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="0"],
+.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="1"],
+.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="2"] {
+  transform: none !important;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

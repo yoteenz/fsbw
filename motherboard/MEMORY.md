@@ -14606,3 +14606,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live thumbnails: bottom gray strip + overlap fix
+
+**Context (this chat):** User reported the **gray band still visible below the three thumbnails** on BAW main and sub-pages (live NOIR WebP mode), and that **thumbnails were overlapping** after prior padding tweaks.
+
+**Decisions / outcomes:** Overlap: global **`src/index.css`** rules on **`div[data-thumb-index="1|2"]`** use **`transform: translateX(-2px/-4px) !important`**, which overrode inline styles and stacked live thumbs. Fix: add **`baw-noir-thumb-row--live-noir`** on the thumb row when **`hideBrick`**, with a **more specific** CSS override **`transform: none !important`** for those cells. Spacing: **`gap: 10px`** in live mode (vs **`2px`** for brick). Gray strip: shorten live thumb **frame** height **95px → 88px** and matching **`img`** height so **`overflow: hidden`** clips the bottom edge.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
