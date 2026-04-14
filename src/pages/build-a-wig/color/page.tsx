@@ -1335,7 +1335,14 @@ function ColorSelection() {
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               {adminLiveNoirPreview && location.pathname.includes('/build-a-wig/noir/') && (
-                <>
+                <div
+                  className="w-full flex flex-col items-center"
+                  style={{
+                    position: 'relative',
+                    zIndex: 30,
+                    transform: 'translateY(-20px)',
+                  }}
+                >
                   <p
                     className="text-center mb-2 px-2"
                     style={{
@@ -1354,7 +1361,7 @@ function ColorSelection() {
                   {!livePreviewLoading && (
                     <div
                       className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
-                      style={{ maxWidth: '280px' }}
+                      style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
                     >
                       {(['left', 'front', 'right'] as const).map((ang) => {
                         const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
@@ -1419,7 +1426,7 @@ function ColorSelection() {
                       })}
                     </div>
                   )}
-                </>
+                </div>
               )}
               <div className="leaf-stack hero-thumb">
                 <div
@@ -1446,6 +1453,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
+                      ...(adminLiveNoirPreview ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

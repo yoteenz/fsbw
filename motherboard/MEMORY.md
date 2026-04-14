@@ -14309,3 +14309,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`** (new), **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW NOIR color live preview: move status/regen up; fix M regen hitting NOIR label
+
+**Context (this chat):** Continues admin **live NOIR color** UI on Build-a-Wig (see prior entry **BAW live NOIR WebP: hide brick underlay…** for storage/hub/contain). User asked to move the **“LIVE PREVIEW: NOIR color (admin)…”** line and **regen color L / M / R** links **up 20px**. They reported that tapping **regen color M** sent them to the **NOIR product page**—the **NOIR** hero label (large, centered, `z-20`, `cursor-pointer`, **`navigate('/straight/noir')`**) overlapped the regen row so the browser hit the label instead of the button.
+
+**Decisions / outcomes:** Wrap the admin live-preview status + regen controls in a **`div`** with **`transform: translateY(-20px)`**, **`position: 'relative'`**, **`zIndex: 30`**, and the regen flex row **`zIndex: 31`** so controls sit above overlapping hero UI. When **`adminLiveNoirPreview`** is true, add **`pointerEvents: 'none'`** on the hero **NOIR** `<p>` so touches pass through to **regen color M** (and L/R) without losing the visible label.
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**.
+
+**Docs:** This **MEMORY** entry.
