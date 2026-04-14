@@ -691,7 +691,9 @@ export default function BuildAWigPage() {
                        location.pathname === '/build-a-wig/noir' ||
                        location.pathname === '/build-a-wig/blanco' ||
                        location.pathname === '/build-a-wig/soft-wave' ||
-                       location.pathname === '/build-a-wig/soft-curl';
+                       location.pathname === '/build-a-wig/soft-curl' ||
+                       location.pathname === '/build-a-wig/beach-wave' ||
+                       location.pathname === '/build-a-wig/ocean-curl';
     const isEditPage = location.pathname === '/build-a-wig/edit' ||
                        location.pathname === '/build-a-wig/noir/edit' ||
                        location.pathname === '/build-a-wig/blanco/edit' ||

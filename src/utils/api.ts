@@ -1096,26 +1096,38 @@ export async function postLiveWigAfterColorStylingRegenerateAngle(
 }
 
 /**
- * Admin: middle + layers after color — **one** API request (server runs front → left → right in a loop).
- * Three parallel or sequential client calls each paid a full serverless cold start and often hit
- * `FUNCTION_INVOCATION_FAILED` on default Vercel plans.
+ * Admin: middle + layers after color — **three sequential** one-angle API calls.
+ * A single invocation that runs three fal jobs often exceeds Vercel limits → `FUNCTION_INVOCATION_FAILED`.
  */
 export async function postLiveWigAfterColorStyling(
   body: LiveWigAfterColorStylingPayload
 ): Promise<LiveWigAfterColorStylingResult> {
-  const res = await apiFetch('/api/live-wig-after-color-styling', { method: 'POST', body });
-  const text = await res.text();
-  if (!res.ok) {
-    let msg = text;
-    try {
-      const j = JSON.parse(text) as { error?: string };
-      if (typeof j?.error === 'string') msg = j.error;
-    } catch {
-      /* ignore */
-    }
-    throw new Error(msg || 'Live styling preview failed');
+  const angles = ['left', 'front', 'right'] as const;
+  const ra = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[0] });
+  const rb = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[1] });
+  const rc = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[2] });
+  const colorHashes = new Set([ra.colorTierHash, rb.colorTierHash, rc.colorTierHash]);
+  if (colorHashes.size !== 1) {
+    throw new Error('Live styling mismatch (try again)');
   }
-  return JSON.parse(text) as LiveWigAfterColorStylingResult;
+  const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
+  const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
+  return {
+    ok: true,
+    colorTierHash: ra.colorTierHash,
+    fullManifestHash: ra.fullManifestHash,
+    bucket: ra.bucket,
+    colorPaths: ra.colorPaths,
+    outputPaths: ra.outputPaths,
+    publicUrls: {
+      left: ra.publicUrls.left ?? rb.publicUrls.left ?? rc.publicUrls.left,
+      front: ra.publicUrls.front ?? rb.publicUrls.front ?? rc.publicUrls.front,
+      right: ra.publicUrls.right ?? rb.publicUrls.right ?? rc.publicUrls.right,
+    },
+    generated: mergedGenerated,
+    skipped: mergedSkipped,
+    selections: ra.selections,
+  };
 }
 
 /** Admin: notify client about reschedule/cancel request for an appointment. */

@@ -765,14 +765,36 @@ function ColorSelection() {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    
+    const onBawColorRoute = pathname.includes('/build-a-wig/') && pathname.includes('/color');
+
+    const priceForChoice = (() => {
+      if (isBlancoRoute) {
+        const opt = colorOptions.find((o) => o.id === colorId);
+        return opt?.price ?? 0;
+      }
+      if (isOnEditRoute || isOnCustomizeRoute) {
+        if (colorId === 'OFF BLACK' || colorId === 'PLATINUM') return 0;
+        return 120;
+      }
+      if (colorId === 'OFF BLACK') return 0;
+      return 120;
+    })();
+    const priceStr = String(priceForChoice);
+
     if (isOnEditRoute) {
       localStorage.setItem('editSelectedColor', colorId);
+      localStorage.setItem('editSelectedColorPrice', priceStr);
     }
     if (isOnCustomizeRoute) {
       localStorage.setItem('customizeSelectedColor', colorId);
+      localStorage.setItem('customizeSelectedColorPrice', priceStr);
     }
     localStorage.setItem('selectedColor', colorId);
+    localStorage.setItem('selectedColorPrice', priceStr);
+    if (onBawColorRoute && (isOnEditRoute || isOnCustomizeRoute)) {
+      sessionStorage.setItem('comingFromSubPage', 'true');
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
     // Live NOIR fal preview: `useEffect` on `selectedColor` + path runs `postWigPreviewLiveNoirColor`.
   };
 
