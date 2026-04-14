@@ -14730,3 +14730,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live BAW thumbnails: stop clipping (contain + full 95px frame)
+
+**Context (this chat):** Three thumbnails on main BAW and sub-pages were **clipped** after gray-strip fixes — not showing the full image.
+
+**Decisions / outcomes:** Live mode used a **shorter** thumb frame (**82px**) and **`object-fit: cover`**, which **crops** WebPs. **Fix:** thumb frame **95px** again (match brick mode); **`object-fit: contain`** + **`object-position: center center`** on **`thumbnail-mannequin-img--live-noir`** so the full WebP is visible (possible thin neutral letterboxing vs. hard crop).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

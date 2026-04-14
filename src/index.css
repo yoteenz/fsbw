@@ -3403,8 +3403,9 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  object-fit: cover !important;
-  object-position: center top !important;
+  /* contain = full WebP visible (cover was cropping when frame was shortened for gray band) */
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
@@ -3412,8 +3413,8 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  object-fit: cover !important;
-  object-position: center top !important;
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
