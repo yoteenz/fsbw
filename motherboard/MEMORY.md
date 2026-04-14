@@ -14716,3 +14716,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — BAW hub: static Noir hero on landing routes; customize color price vs canonical-backup
+
+**Context (this chat):** User asked to **triangulate** why **color price** still did not update on the **main** BAW page and why **sub-page fal color** showed on the main hub — only **default Noir** should show there. Asked to compare edit/customize price logic with **`CANONICAL_BACKUP_2026-03-31`** on parent **BAW CODE** folder.
+
+**Decisions / outcomes:** The **`CANONICAL_BACKUP_2026-03-31`** tree is **not in this repo** (only **`canonical-backup/`** snapshot exists under workspace). Compared **`canonical-backup/src/pages/build-a-wig/page.tsx`**: **`colorPrice`** uses **`getPrice('Color', …)`** whenever **`!isEditMode`** (so **customize** reads **`customizeSelectedColorPrice`**). Current code had **`isEditMode || isCustomizeMode ? calculatedPrices.colorPrice`** which **ignored** stored color line price in customize. **Fix:** **`colorPrice = isEditMode ? calculated … : getPrice('Color', …)`** to match backup. **Hero:** Previously only **`/build-a-wig`** forced static naturals; **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** still used admin **`hubLiveNoirWigViews`** (fal). **`isNoirBawHubLandingPathname`** + **`DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS`** — static naturals on **`/build-a-wig`**, **`/build-a-wig/noir`**, **`/build-a-wig/noir/edit`**, **`/build-a-wig/noir/customize`**; sub-routes (**`/noir/length`** etc.) unchanged. **Debug:** **`?baw_debug=1`** or **`localStorage bawPriceDebug=1`** logs **`[BAW PRICE TRIANGULATION] customize color`** with LS keys + calculated vs used **`colorPrice`**.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
