@@ -14416,3 +14416,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW NOIR sub-pages: show committed live color triple on length/styling/etc.
+
+**Context (this chat):** User asked that the **selected color** preview image appear on **all** Build-a-wig sub-pages, **especially styling**, so styling choices align with the chosen dye.
+
+**Decisions / outcomes:** Added **`useBawSubpageLiveNoirColorWigViews`** (`src/hooks/useBawSubpageLiveNoirColorWigViews.ts`) — for **admin** on **`/build-a-wig/noir*`** routes, reads **`readBawNoirLiveColorWigViews()`** (the **committed** triple after color page confirm, not pending) and refreshes on **`BAW_NOIR_LIVE_COLOR_VIEWS_EVENT`**, **`storage`**, **`focus`**, **`customStorageChange`**, **`signInStateChanged`**. Wired into **length, texture, density, lace, hairline, cap-size, addons, styling**, and **color** page merge: **`wigViews`** = live admin color-in-progress OR committed live triple OR static PNGs. **Styling** page: **live after-color styling** (LAYERS + MIDDLE admin path) still **wins** when active; else committed live color triple; else static.
+
+**Changes:** New hook file; edits to **`color/page.tsx`**, **`styling/page.tsx`**, **`length`**, **`texture`**, **`density`**, **`lace`**, **`hairline`**, **`cap-size`**, **`addons`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

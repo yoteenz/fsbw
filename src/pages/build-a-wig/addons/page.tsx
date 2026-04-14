@@ -13,6 +13,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
 const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
@@ -358,7 +359,12 @@ export default function AddOnsSelectionPage() {
     setShowMobileMenu(false);
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const wigViews =
+    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirColorWigViews
+      : baseWigViews;
 
   // Add-ons options with local assets
   const addOnOptions = [

@@ -14,6 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle, getAccessToken } from '../../../utils/api';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
@@ -545,10 +546,13 @@ function ColorSelection() {
   };
 
   const baseWigViews = getWigViews();
+  const committedLiveNoirColorViews = useBawSubpageLiveNoirColorWigViews();
   const wigViews =
     adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
-      : baseWigViews;
+      : committedLiveNoirColorViews && location.pathname.includes('/build-a-wig/noir/')
+        ? committedLiveNoirColorViews
+        : baseWigViews;
 
   /** Admin fal WebPs include transparency; hide duplicate `.leaf-bg` and fill the frame so brick does not peek through. */
   const useNoirLiveRenders =

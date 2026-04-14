@@ -13,6 +13,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 
 interface CapSizeOption {
   id: string;
@@ -282,7 +283,12 @@ function CapSizeSelection() {
     setShowMobileMenu(false);
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const wigViews =
+    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirColorWigViews
+      : baseWigViews;
 
   // Cap size options - UPDATED to match reference exactly
   const capSizeOptions: CapSizeOption[] = [

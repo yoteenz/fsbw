@@ -14,6 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 
 interface TextureOption {
   id: string;
@@ -163,7 +164,12 @@ function TextureSelection() {
     }
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const wigViews =
+    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirColorWigViews
+      : baseWigViews;
 
   // Texture options - Updated with correct pricing and options
   // Use blanco texture SVG for all blanco routes (main, customize, edit)

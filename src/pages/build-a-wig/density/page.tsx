@@ -13,6 +13,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 
 interface DensityOption {
   id: string;
@@ -133,7 +134,12 @@ function DensitySelection() {
     }
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
+  const wigViews =
+    liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+      ? liveNoirColorWigViews
+      : baseWigViews;
 
   // Density options with correct pricing structure
   // Use location.pathname from React Router to ensure updates on route changes

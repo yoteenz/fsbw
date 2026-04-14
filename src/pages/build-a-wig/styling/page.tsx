@@ -28,6 +28,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -279,6 +280,7 @@ export default function StylingSelectionPage() {
   };
 
   const baseWigViews = getWigViews();
+  const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
   const hasMiddleLayersLive =
     adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
@@ -342,7 +344,11 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    hasMiddleLayersLive && liveStylingWigViews ? liveStylingWigViews : baseWigViews;
+    hasMiddleLayersLive && liveStylingWigViews
+      ? liveStylingWigViews
+      : liveNoirColorWigViews && location.pathname.includes('/build-a-wig/noir/')
+        ? liveNoirColorWigViews
+        : baseWigViews;
 
   // Hair styling options with local assets
   const hairStylingOptions = [
