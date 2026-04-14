@@ -91,7 +91,11 @@ export function BawNoirWigPreviewHeroThumbs({
         className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
           thumbRowClassName ? ` ${thumbRowClassName}` : ''
         }`}
-        style={{ transform: 'translateY(10px)', gap: hideBrick ? '10px' : '2px' }}
+        style={{
+          transform: 'translateY(10px)',
+          gap: hideBrick ? '12px' : '2px',
+          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
+        }}
       >
         {triple.map((view, index) => (
           <div className="leaf-stack thumb" key={index}>
@@ -106,11 +110,11 @@ export function BawNoirWigPreviewHeroThumbs({
               onClick={() => onSelectView(index)}
             >
               <div
-                className="relative bg-cover bg-center flex items-center justify-center"
-                data-thumb-index={index}
+                className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
+                data-baw-thumb-index={index}
                 style={{
                   width: '72px',
-                  height: hideBrick ? '88px' : '95px',
+                  height: hideBrick ? '82px' : '95px',
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -138,7 +142,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 <img
                   alt={`Thumbnail ${index + 1}`}
                   width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 88 : 84}
+                  height={hideBrick ? 82 : 84}
                   src={view}
                   className={
                     hideBrick

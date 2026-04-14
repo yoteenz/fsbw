@@ -3407,10 +3407,19 @@ img.thumbnail-mannequin-img--live-noir {
   object-position: center top !important;
 }
 
-/* Live NOIR thumb row: global rules below use translateX(-2px/-4px) !important on [data-thumb-index] — that stacks WebP thumbs. Reset when row is flagged. */
-.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="0"],
-.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="1"],
-.baw-noir-thumb-row--live-noir div.leaf-stack.thumb div[data-thumb-index="2"] {
+/* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
+img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+}
+
+/* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
+.baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='0'],
+.baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='1'],
+.baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='2'] {
   transform: none !important;
 }
 

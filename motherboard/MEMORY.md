@@ -14634,3 +14634,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live thumbs: gray band + overlap (CSS cascade + data-baw-thumb-index)
+
+**Context (this chat):** User reported **gray band under three thumbnails** and **overlap** still unchanged.
+
+**Decisions / outcomes:** Live thumb images used **`thumbnail-mannequin-img`** + **`thumbnail-mannequin-img--live-noir`**; **`.thumbnail-mannequin-img`** appears **after** the live block in **`index.css`** and forced **`top`** / **`transform`** with **`!important`**, breaking centering and showing **`#f5f5f5`**. Added **`img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir`** to re-center with **`!important`**. **`data-thumb-index`** on the frame matched **end-of-file** **`translateX(-2px/-4px) !important`** rules that sat **after** our reset. Replaced with **`data-baw-thumb-index`** on **`.baw-noir-thumb-frame`** so those globals do not apply; updated **`.baw-noir-thumb-row--live-noir`** reset. Live thumb height **82px**, flex **gap 12px**.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
