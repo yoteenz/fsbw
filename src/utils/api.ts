@@ -36,6 +36,21 @@ async function apiFetch(path: string, options: ApiFetchOptions = {}): Promise<Re
   });
 }
 
+/** Chrome/Safari often surface failed `fetch()` as "Load failed" / "Failed to fetch" with no HTTP body. */
+function isLikelyBrowserFetchNetworkError(message: string): boolean {
+  return /failed to fetch|load failed|networkrequestfailed|request failed|network error/i.test(message);
+}
+
+function rethrowWithNetworkHint(err: unknown, shortLabel: string): never {
+  const raw = err instanceof Error ? err.message : String(err);
+  if (isLikelyBrowserFetchNetworkError(raw)) {
+    throw new Error(
+      `${shortLabel}: connection dropped or timed out before the server answered (browsers often show this as "Load failed"). For styling, try regen L, then M, then R one at a time, or set WIG_PREVIEW_FAL_STYLING_RESOLUTION=2K on Vercel so each request finishes sooner.`
+    );
+  }
+  throw err instanceof Error ? err : new Error(String(err));
+}
+
 export async function getProfile(): Promise<Record<string, unknown> | null> {
   const res = await apiFetch('/api/profile');
   if (res.status === 401) return null;
@@ -999,7 +1014,12 @@ export type WigPreviewLiveNoirColorResult = {
 export async function postWigPreviewLiveNoirColorOneAngle(
   body: WigPreviewLiveNoirColorPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<WigPreviewLiveNoirColorResult> {
-  const res = await apiFetch('/api/wig-preview/live-noir-color', { method: 'POST', body });
+  let res: Response;
+  try {
+    res = await apiFetch('/api/wig-preview/live-noir-color', { method: 'POST', body });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Live color preview');
+  }
   const text = await res.text();
   if (!res.ok) {
     let msg = text;
@@ -1074,7 +1094,12 @@ export type LiveWigAfterColorStylingResult = {
 export async function postLiveWigAfterColorStylingOneAngle(
   body: LiveWigAfterColorStylingPayload & { angle: 'left' | 'front' | 'right' }
 ): Promise<LiveWigAfterColorStylingResult> {
-  const res = await apiFetch('/api/live-wig-after-color-styling', { method: 'POST', body });
+  let res: Response;
+  try {
+    res = await apiFetch('/api/live-wig-after-color-styling', { method: 'POST', body });
+  } catch (e) {
+    rethrowWithNetworkHint(e, 'Live styling preview');
+  }
   const text = await res.text();
   if (!res.ok) {
     let msg = text;
