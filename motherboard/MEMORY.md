@@ -14357,3 +14357,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW color + styling subpages: same live-WebP frame fix as hub
+
+**Context (this chat):** User reported the **color** subpage still showed the **wig angle as a full-screen / background** image; only the **main BAW hub** had been fixed earlier.
+
+**Decisions / outcomes:** Apply the **same** fix as **`src/pages/build-a-wig/page.tsx`** hub revert: remove **`isLiveNoirWebp`** / **`isLiveNoirStylingWebp`** branches that **hid** `.leaf-bg`, removed **`leaf-brick-resize`** `backgroundImage`, and applied **width/height auto + contain** overrides on hero/thumbs for live `.webp` URLs. Those interacted with global **`.hero-mannequin-img`** `!important` min sizes and caused **backdrop bleed**. **Color** (`src/pages/build-a-wig/color/page.tsx`) and **styling** (`src/pages/build-a-wig/styling/page.tsx`) now **always** keep brick + `.leaf-bg` like static previews; live URLs still drive **`src`** only.
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**.
+
+**Docs:** This **MEMORY** entry.
