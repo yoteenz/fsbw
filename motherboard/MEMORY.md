@@ -14345,3 +14345,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** Git only (`master` + `preview/mobile` push).
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW hub: revert live-WebP frame stripping (full-screen wig backdrop bug)
+
+**Context (this chat):** User screenshot showed **Build-a-Wig main** page with the **wig angle image** filling the screen like a **blurred background** behind the card (wrong rendering).
+
+**Decisions / outcomes:** On **`src/pages/build-a-wig/page.tsx`**, the hub had **`isLiveNoirWebpHub`** logic that **hid** `.leaf-bg`, removed inner **`leaf-brick-resize`** `backgroundImage`, and applied **extra** `object-fit` / dimension overrides on hero + thumbs for live `.webp` URLs. That broke stacking with global **`.hero-mannequin-img`** rules (`min-width` / `min-height` **`!important`**) so the hero image could **escape** the intended frame and paint like a page backdrop. **Fix:** remove **`isLiveNoirWebpHub`** entirely on the hub — always show **brick** + **`.leaf-bg`** like static previews; still use **`hubLiveNoirWigViews`** for **`src`** when admin has cached live triples. **Color** / **styling** subpages keep their live-WebP contain / hide-underlay behavior unchanged.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**.
+
+**Docs:** This **MEMORY** entry.

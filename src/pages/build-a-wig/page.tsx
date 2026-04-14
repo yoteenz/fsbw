@@ -3173,7 +3173,6 @@ export default function BuildAWigPage() {
   }, [location.pathname, liveNoirHubWigViews]);
 
   const wigViews = hubLiveNoirWigViews ?? baseWigViewsForHub;
-  const isLiveNoirWebpHub = Boolean(hubLiveNoirWigViews);
 
   useEffect(() => {
     const refresh = () => {
@@ -5232,17 +5231,13 @@ export default function BuildAWigPage() {
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               <div className="leaf-stack hero-thumb">
-                <div
-                  className="leaf-bg"
-                  aria-hidden="true"
-                  style={isLiveNoirWebpHub ? { display: 'none' } : undefined}
-                />
+                <div className="leaf-bg" aria-hidden="true" />
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: isLiveNoirWebpHub ? 'none' : `url('/assets/leaf-brick-resize.png')`,
+                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
@@ -5330,16 +5325,6 @@ export default function BuildAWigPage() {
                       top: 'calc(50% - 10.601px + 18px)',
                       '--hero-width': '282px',
                       '--hero-height': '387px',
-                      ...(isLiveNoirWebpHub
-                        ? {
-                            objectFit: 'contain',
-                            objectPosition: 'center center',
-                            maxWidth: '100%',
-                            maxHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                          }
-                        : {}),
                     } as React.CSSProperties}
                   />
                 </div>
@@ -5354,7 +5339,6 @@ export default function BuildAWigPage() {
                         selectedView === index ? 'border-black' : 'border-transparent'
                       }`}
                       aria-hidden="true"
-                      style={isLiveNoirWebpHub ? { display: 'none' } : undefined}
                     />
                     <div
                       className="border-transparent p-1 cursor-pointer"
@@ -5367,9 +5351,8 @@ export default function BuildAWigPage() {
                           height: '95px',
                           position: 'relative',
                           zIndex: 1,
-                          ...(index === 1 && !isLiveNoirWebpHub ? { transform: 'translateX(-2px)' } : {}),
-                          ...(index === 2 && !isLiveNoirWebpHub ? { transform: 'translateX(-4px)' } : {}),
-                          backgroundImage: isLiveNoirWebpHub ? 'none' : undefined,
+                          ...(index === 1 && { transform: 'translateX(-2px)' }),
+                          ...(index === 2 && { transform: 'translateX(-4px)' }),
                         }}
                       >
                         <img
@@ -5382,17 +5365,7 @@ export default function BuildAWigPage() {
                           style={{
                             '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                             top: 'calc(50% - 6.1px + 7.2px)',
-                            ...(index === 0 && !isLiveNoirWebpHub ? { left: 'calc(50% - 6px)' } : {}),
-                            ...(isLiveNoirWebpHub
-                              ? {
-                                  objectFit: 'contain',
-                                  objectPosition: 'center center',
-                                  maxWidth: '100%',
-                                  maxHeight: '100%',
-                                  width: 'auto',
-                                  height: 'auto',
-                                }
-                              : {}),
+                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
                           } as React.CSSProperties}
                         />
                       </div>
