@@ -3197,7 +3197,7 @@ export default function BuildAWigPage() {
           setLiveNoirHubWigViews(null);
           return;
         }
-        setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage());
+        setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage(location.pathname));
       } catch {
         setLiveNoirHubWigViews(null);
       }
@@ -3219,7 +3219,7 @@ export default function BuildAWigPage() {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('signInStateChanged', refresh as EventListener);
     };
-  }, [customization.styling]);
+  }, [customization.styling, location.pathname]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

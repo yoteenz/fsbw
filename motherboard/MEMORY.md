@@ -14674,3 +14674,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live preview resolver: customize/edit keys + pathname
+
+**Context (this chat):** User reported **no change** after prior hub fix — hero still showed **styling** WebPs.
+
+**Decisions / outcomes:** Resolver only read **`selectedStyling`**; **customize/edit** flows clear **`customizeSelectedStyling`** / **`editSelectedStyling`** while **`selectedStyling`** could still say **`LAYERS`**, so styling cache still applied. **`readEffectiveBawSalonStylingCanon(pathname)`** — **`/customize`** → **`customizeSelectedStyling` ?? `selectedStyling`**; **`/edit`** → **`editSelectedStyling` ?? `selectedStyling`**; else **`selectedStyling`**. **`resolveAdminNoirHubLiveWigViewsFromStorage(pathname?)`** uses that for **NONE** early exit, then **union** of canon ids + **`selectedHairStyling`** for **BANGS+LAYERS** combos. Hub and composite hook pass **`location.pathname`**; hub refresh effect also depends on **`location.pathname`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

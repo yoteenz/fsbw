@@ -196,31 +196,60 @@ export function clearBawNoirLiveBangsWigViews(): void {
   }
 }
 
+function parseStylingCsvToIds(raw: string | null): string[] {
+  if (!raw || !raw.trim()) return [];
+  return raw
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter((s) => s && s !== 'NONE');
+}
+
+/**
+ * Canonical saved salon styling for live preview, route-aware:
+ * customize/edit flows write **customizeSelectedStyling** / **editSelectedStyling**; reading **selectedStyling**
+ * alone misses clears and keeps stale **LAYERS** with **selectedHairStyling**. */
+export function readEffectiveBawSalonStylingCanon(pathname: string): string {
+  try {
+    const p = pathname || '';
+    if (p.includes('/customize')) {
+      const v =
+        localStorage.getItem('customizeSelectedStyling') ?? localStorage.getItem('selectedStyling');
+      return (v || 'NONE').trim().toUpperCase();
+    }
+    if (p.includes('/edit')) {
+      const v = localStorage.getItem('editSelectedStyling') ?? localStorage.getItem('selectedStyling');
+      return (v || 'NONE').trim().toUpperCase();
+    }
+    return (localStorage.getItem('selectedStyling') || 'NONE').trim().toUpperCase();
+  } catch {
+    return 'NONE';
+  }
+}
+
 /**
  * Admin NOIR BAW hub: which persisted live triple to show.
  * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
  * `bawNoirLiveStylingWigViews` after the user returns to base / NONE (e.g. `selectedHairStyling` left over).
+ *
+ * @param pathname — pass `window.location.pathname` (or React `location.pathname`) so customize/edit keys win.
  */
-export function resolveAdminNoirHubLiveWigViewsFromStorage(): BawNoirLiveWigViewsTriple | null {
+export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): BawNoirLiveWigViewsTriple | null {
   try {
-    const canon = (localStorage.getItem('selectedStyling') || 'NONE').trim().toUpperCase();
-    if (canon === 'NONE' || canon === '') {
+    const path =
+      typeof pathname === 'string' && pathname.length > 0
+        ? pathname
+        : typeof window !== 'undefined'
+          ? window.location.pathname
+          : '';
+
+    const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
+    if (effectiveCanon === 'NONE' || effectiveCanon === '') {
       return readBawNoirLiveColorWigViews();
     }
 
-    const hairRaw = localStorage.getItem('selectedHairStyling');
-    let ids: string[];
-    if (hairRaw && hairRaw.trim()) {
-      ids = hairRaw
-        .split(',')
-        .map((s) => s.trim().toUpperCase())
-        .filter((s) => s && s !== 'NONE');
-    } else {
-      ids = canon
-        .split(',')
-        .map((s) => s.trim().toUpperCase())
-        .filter((s) => s && s !== 'NONE');
-    }
+    const canonIds = parseStylingCsvToIds(effectiveCanon);
+    const hairIds = parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+    const ids = [...new Set([...canonIds, ...hairIds])];
 
     if (ids.length === 0) {
       return readBawNoirLiveColorWigViews();

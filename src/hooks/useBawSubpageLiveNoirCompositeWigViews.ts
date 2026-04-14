@@ -34,7 +34,7 @@ export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTri
         setViews(null);
         return;
       }
-      setViews(resolveAdminNoirHubLiveWigViewsFromStorage());
+      setViews(resolveAdminNoirHubLiveWigViewsFromStorage(pathname));
     };
 
     refresh();
