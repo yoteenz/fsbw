@@ -7,6 +7,7 @@ export const config = {
  *
  * Admin-only: ensure NOIR forward mannequin exists in Supabase for **3 angles** at current
  * build selections + chosen color; call fal only for missing angles (saves cost).
+ * Paths use **color-tier** hash (`styling` forced to `NONE` in hash) so salon styling changes do not move color files — see `wigPreviewManifestHashLiveColorTier` in `api/_lib/wigPreviewSelectionHash.ts`.
  *
  * Env (Vercel + local):
  *   FAL_KEY
@@ -126,6 +127,11 @@ function wigPreviewManifestHash(s: WigPreviewSelections): string {
     addOns: [...addOns].sort().join(','),
   });
   return selectionHash(canonicalJson);
+}
+
+/** Live color WebPs: styling forced NONE so after-color styling can find these paths. Keep in sync with `wigPreviewSelectionHash.ts`. */
+function wigPreviewManifestHashLiveColorTier(s: WigPreviewSelections): string {
+  return wigPreviewManifestHash({ ...s, styling: 'NONE' });
 }
 
 function wigPreviewLiveAnglePaths(
@@ -298,7 +304,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     addOns: readStringArray(body, 'addOns'),
   };
 
-  const manifestHash = wigPreviewManifestHash(selections);
+  const manifestHash = wigPreviewManifestHashLiveColorTier(selections);
   const paths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', manifestHash);
   const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
   const anglesToRun = singleAngle ? [singleAngle] : angleOrder;

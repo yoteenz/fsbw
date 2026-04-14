@@ -52,6 +52,16 @@ The server (per request):
 
 **Vercel env (required for live feature):** `FAL_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `WIG_PREVIEW_STORAGE_BUCKET`, plus public **`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`** variables — see `.env.example`. Bucket must allow **public read** (or extend the API to return signed URLs). Optional **`WIG_PREVIEW_FAL_RESOLUTION`**: **`1K`** (default, faster), **`2K`**, or **`4K`**. The API still accepts a request **without** `angle` (all three angles in one invocation) for Pro / long `maxDuration`.
 
+**Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input.
+
+### Live after-color styling — NOIR, middle + layers (admin)
+
+On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **LAYERS** + part **MIDDLE** are selected, the app calls **`POST /api/live-wig-after-color-styling`** (three parallel requests with `angle`, same as color). Fal uses **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT`** text and **`image_urls`** = public URL of each angle’s **color** WebP (no new env reference URLs).
+
+**Output paths:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/middle-layers/{left|front|right}.webp`
+
+**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist at the color-tier paths. To fix a bad angle, delete that WebP in Storage (styling or color) and reload the page.
+
 **Manual fal (playground) — aspect ratio and resolution**
 
 - **Wig consult** Step 1: **one** base image only; Step 2–3 as in `COPY-PASTE-PROMPTS.txt`. Step 1 often **9:16**; you can use **Auto + 2K** to match Step 2.

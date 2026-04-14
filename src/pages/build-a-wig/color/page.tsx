@@ -17,6 +17,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { postWigPreviewLiveNoirColor, getAccessToken } from '../../../utils/api';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 
 interface ColorOption {
   id: string;
@@ -684,37 +685,6 @@ function ColorSelection() {
     }
   ];
 
-  const readBuildWigSelectionForLivePreview = (pathname: string) => {
-    const isOnEditRoute = pathname.includes('/edit');
-    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    const pick = (editKey: string, custKey: string, mainKey: string, fallback: string) => {
-      if (isOnEditRoute) {
-        return localStorage.getItem(editKey) || localStorage.getItem(mainKey) || fallback;
-      }
-      if (isOnCustomizeRoute) {
-        return localStorage.getItem(custKey) || localStorage.getItem(mainKey) || fallback;
-      }
-      return localStorage.getItem(mainKey) || fallback;
-    };
-    let addOns: string[] = [];
-    try {
-      const raw = pick('editSelectedAddOns', 'customizeSelectedAddOns', 'selectedAddOns', '[]');
-      const parsed = JSON.parse(raw || '[]') as unknown;
-      if (Array.isArray(parsed)) addOns = parsed.map((x) => String(x).toUpperCase());
-    } catch {
-      addOns = [];
-    }
-    return {
-      length: pick('editSelectedLength', 'customizeSelectedLength', 'selectedLength', '24"'),
-      density: pick('editSelectedDensity', 'customizeSelectedDensity', 'selectedDensity', '200%'),
-      lace: pick('editSelectedLace', 'customizeSelectedLace', 'selectedLace', '13X6'),
-      texture: pick('editSelectedTexture', 'customizeSelectedTexture', 'selectedTexture', 'SILKY'),
-      hairline: pick('editSelectedHairline', 'customizeSelectedHairline', 'selectedHairline', 'NATURAL'),
-      styling: pick('editSelectedStyling', 'customizeSelectedStyling', 'selectedStyling', 'NONE'),
-      addOns,
-    };
-  };
-
   /** Load or refresh live NOIR preview when admin lands on color page or changes color. */
   useEffect(() => {
     const pathname = location.pathname;
@@ -724,7 +694,7 @@ function ColorSelection() {
     if (!noir) return;
     setLivePreviewError(null);
     setLivePreviewLoading(true);
-    const sel = readBuildWigSelectionForLivePreview(pathname);
+    const sel = readBuildWigLivePreviewSelections(pathname);
     void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
       .then((res) => {
         const u = res.publicUrls;

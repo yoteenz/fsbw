@@ -7,8 +7,14 @@ import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { clearAppAuth } from '../../../utils/adminAuth';
+import { clearAppAuth, isAdminEmail } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { postLiveWigAfterColorStyling, getAccessToken } from '../../../utils/api';
+import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import {
+  readBuildWigLivePreviewSelections,
+  readBuildWigLivePreviewColor,
+} from '../../../utils/buildWigLivePreviewSelections';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
@@ -130,6 +136,12 @@ export default function StylingSelectionPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
 
+  /** Admin + NOIR styling route: live fal after-color (middle + layers), 3 angles. */
+  const [adminLiveNoirStylingPreview, setAdminLiveNoirStylingPreview] = useState(false);
+  const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
+  const [liveStylingLoading, setLiveStylingLoading] = useState(false);
+  const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
+
   // Listen for cart count changes
   useEffect(() => {
     const handleCartCountUpdate = (event: CustomEvent) => {
@@ -160,6 +172,32 @@ export default function StylingSelectionPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const p = location.pathname;
+    const noirStyling =
+      p.includes('/build-a-wig/noir/edit/styling') || p.includes('/build-a-wig/noir/customize/styling');
+    if (!noirStyling) {
+      setAdminLiveNoirStylingPreview(false);
+      setLiveStylingWigViews(null);
+      setLiveStylingError(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const token = await getAccessToken();
+      const email = getCurrentUserEmailFromStorage();
+      const ok = Boolean(token && email && isAdminEmail(email));
+      if (!cancelled) setAdminLiveNoirStylingPreview(ok);
+      if (!ok) {
+        setLiveStylingWigViews(null);
+        setLiveStylingError(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
 
   // CRITICAL: Reset part selection to MIDDLE when no styling is selected
   useEffect(() => {
@@ -228,7 +266,65 @@ export default function StylingSelectionPage() {
     }
   };
 
-  const wigViews = getWigViews();
+  const baseWigViews = getWigViews();
+  const hasMiddleLayersLive =
+    adminLiveNoirStylingPreview &&
+    location.pathname.includes('/build-a-wig/noir/') &&
+    selectedHairStyling.some((s) => s === 'LAYERS') &&
+    selectedPartSelection === 'MIDDLE';
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    const noir =
+      adminLiveNoirStylingPreview &&
+      (pathname.includes('/build-a-wig/noir/edit/styling') ||
+        pathname.includes('/build-a-wig/noir/customize/styling'));
+    if (!noir || !hasMiddleLayersLive) {
+      if (!hasMiddleLayersLive) setLiveStylingWigViews(null);
+      return;
+    }
+    const stylingForApi = selectedHairStyling
+      .filter((s) => s && s !== 'NONE')
+      .sort()
+      .join(',');
+    if (!stylingForApi.includes('LAYERS')) {
+      setLiveStylingWigViews(null);
+      return;
+    }
+    setLiveStylingError(null);
+    setLiveStylingLoading(true);
+    const sel = readBuildWigLivePreviewSelections(pathname);
+    const color = readBuildWigLivePreviewColor(pathname);
+    void postLiveWigAfterColorStyling({
+      color,
+      ...sel,
+      styling: stylingForApi,
+      partSelection: selectedPartSelection,
+    })
+      .then((res) => {
+        const u = res.publicUrls;
+        if (u.front && u.left && u.right) {
+          const bust = Date.now();
+          setLiveStylingWigViews([`${u.left}?t=${bust}`, `${u.front}?t=${bust}`, `${u.right}?t=${bust}`]);
+        } else {
+          setLiveStylingWigViews(null);
+        }
+      })
+      .catch((e: Error) => {
+        setLiveStylingWigViews(null);
+        setLiveStylingError(e?.message || 'Live styling preview failed');
+      })
+      .finally(() => setLiveStylingLoading(false));
+  }, [
+    adminLiveNoirStylingPreview,
+    location.pathname,
+    selectedHairStyling,
+    selectedPartSelection,
+    hasMiddleLayersLive,
+  ]);
+
+  const wigViews =
+    hasMiddleLayersLive && liveStylingWigViews ? liveStylingWigViews : baseWigViews;
 
   // Hair styling options with local assets
   const hairStylingOptions = [
@@ -1143,6 +1239,23 @@ export default function StylingSelectionPage() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
+            {hasMiddleLayersLive && (
+              <p
+                className="text-center mb-2 px-2"
+                style={{
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '9px',
+                  color: liveStylingError ? '#EB1C24' : '#808080',
+                  maxWidth: '280px',
+                }}
+              >
+                {liveStylingLoading
+                  ? 'LIVE PREVIEW: middle + layers (after color)…'
+                  : liveStylingError
+                    ? `LIVE PREVIEW: ${liveStylingError}`
+                    : 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Delete bad WebPs in Storage to regenerate.'}
+              </p>
+            )}
             <div className="leaf-stack hero-thumb">
               <div className="leaf-bg" aria-hidden="true"></div>
               <div

@@ -44,6 +44,15 @@ export function wigPreviewManifestHash(s: WigPreviewSelections): string {
   return selectionHash(canonicalJson);
 }
 
+/**
+ * Hash for **live color** WebPs only: `styling` forced to `NONE` so salon styling (LAYERS, part, etc.)
+ * does not change the storage folder for the three color angles. After-color styling reads these paths
+ * then writes under `wigPreviewLiveAfterColorStylingPaths`.
+ */
+export function wigPreviewManifestHashLiveColorTier(s: WigPreviewSelections): string {
+  return wigPreviewManifestHash({ ...s, styling: 'NONE' });
+}
+
 /** Live 3-angle assets (does not collide with batch `wig-preview/.../{hash}.webp`). */
 export function wigPreviewLiveAnglePaths(
   promptVersion: string,
@@ -52,6 +61,23 @@ export function wigPreviewLiveAnglePaths(
 ): { front: string; left: string; right: string } {
   const u = unitKey.toUpperCase();
   const base = `wig-preview-live/${promptVersion}/${u}/${manifestHash}`;
+  return {
+    front: `${base}/front.webp`,
+    left: `${base}/left.webp`,
+    right: `${base}/right.webp`,
+  };
+}
+
+/** After-color styling (e.g. middle + layers → black); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
+export function wigPreviewLiveAfterColorStylingPaths(
+  promptVersion: string,
+  unitKey: string,
+  colorTierHash: string,
+  stylingKey: string
+): { front: string; left: string; right: string } {
+  const u = unitKey.toUpperCase();
+  const sk = stylingKey.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || 'middle-layers';
+  const base = `wig-preview-live/${promptVersion}/${u}/${colorTierHash}/after-color/${sk}`;
   return {
     front: `${base}/front.webp`,
     left: `${base}/left.webp`,

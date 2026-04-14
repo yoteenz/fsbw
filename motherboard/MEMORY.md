@@ -14256,6 +14256,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — Live NOIR after-color styling (middle + layers) + color-tier hash
+
+**Context (this chat):** User wanted middle part + layers wired **like live color (3 angles)** without confusing env URLs. Clarified: **reference** for styling = the **three color WebPs** already in Supabase, not new Vercel URLs.
+
+**Decisions / outcomes:** Live color paths now hash with **`styling` forced to `NONE`** (`wigPreviewManifestHashLiveColorTier` in **`api/_lib/wigPreviewSelectionHash.ts`**; mirrored in **`api/wig-preview/live-noir-color.ts`**) so changing salon styling does not orphan color files. New **`POST /api/live-wig-after-color-styling`** at **`api/live-wig-after-color-styling.ts`** (root route, `./_lib` imports): admin, **LAYERS** + part **MIDDLE**, reads color WebPs, Fal **`BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TEXT`** from **`api/_lib/bawLiveStylingPrompts.ts`**, writes **`.../after-color/middle-layers/{angle}.webp`**. Client: **`postLiveWigAfterColorStyling`** in **`src/utils/api.ts`** (parallel angles); **`readBuildWigLivePreviewSelections`** + **`readBuildWigLivePreviewColor`** in **`src/utils/buildWigLivePreviewSelections.ts`** shared by color + styling; **NOIR styling page** shows live strip + status when admin + middle + layers.
+
+**Changes:** **`api/_lib/wigPreviewSelectionHash.ts`**, **`api/_lib/bawLiveStylingPrompts.ts`**, **`api/live-wig-after-color-styling.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`src/utils/api.ts`**, **`src/utils/buildWigLivePreviewSelections.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`scripts/wig-preview/promptTemplate.mjs`** (sync comment).
+
+**Docs:** This **MEMORY** entry.
+
+---
+
 ## 2026-04-14 — NOIR 2D download links in enlarge modal
 
 **Context (this chat):** User asked where the 2D mannequin download UI was; it lived **only** under the product shots block on **`noir/page.tsx`** (~lines 2864–2902), not in **`ImageViewerModal`**. They want downloads when enlarging the **hero** mannequin.

@@ -186,6 +186,8 @@ export const BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT = [
   'Do not change anything else about the photo.',
 ].join(' ');
 
+// Server copy: `api/_lib/bawLiveStylingPrompts.ts` — keep text identical.
+
 /** Alias — same string; use whichever name reads clearer in scripts. */
 export const BAW_STYLING_MIDDLE_PART_LAYERS_PROMPT = BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT;
 

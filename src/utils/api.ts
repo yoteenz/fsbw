@@ -1041,6 +1041,69 @@ export async function postWigPreviewLiveNoirColor(
   };
 }
 
+export type LiveWigAfterColorStylingPayload = WigPreviewLiveNoirColorPayload & {
+  partSelection: string;
+};
+
+export type LiveWigAfterColorStylingResult = {
+  ok: boolean;
+  colorTierHash: string;
+  fullManifestHash: string;
+  bucket: string;
+  colorPaths: { front: string; left: string; right: string };
+  outputPaths: { front: string; left: string; right: string };
+  publicUrls: { front: string | null; left: string | null; right: string | null };
+  generated: string[];
+  skipped: string[];
+  selections: Record<string, unknown>;
+};
+
+async function postLiveWigAfterColorStylingOneAngle(
+  body: LiveWigAfterColorStylingPayload & { angle: 'left' | 'front' | 'right' }
+): Promise<LiveWigAfterColorStylingResult> {
+  const res = await apiFetch('/api/live-wig-after-color-styling', { method: 'POST', body });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Live styling preview failed');
+  }
+  return JSON.parse(text) as LiveWigAfterColorStylingResult;
+}
+
+/** Admin: middle + layers after color (3 angles, parallel). Requires color WebPs already in Storage. */
+export async function postLiveWigAfterColorStyling(
+  body: LiveWigAfterColorStylingPayload
+): Promise<LiveWigAfterColorStylingResult> {
+  const angles = ['left', 'front', 'right'] as const;
+  const [ra, rb, rc] = await Promise.all(
+    angles.map((angle) => postLiveWigAfterColorStylingOneAngle({ ...body, angle }))
+  );
+  const colorHashes = new Set([ra.colorTierHash, rb.colorTierHash, rc.colorTierHash]);
+  if (colorHashes.size !== 1) {
+    throw new Error('Live styling mismatch (try again)');
+  }
+  const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
+  const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
+  return {
+    ok: true,
+    colorTierHash: ra.colorTierHash,
+    fullManifestHash: ra.fullManifestHash,
+    bucket: ra.bucket,
+    colorPaths: ra.colorPaths,
+    outputPaths: ra.outputPaths,
+    publicUrls: ra.publicUrls,
+    generated: mergedGenerated,
+    skipped: mergedSkipped,
+    selections: ra.selections,
+  };
+}
+
 /** Admin: notify client about reschedule/cancel request for an appointment. */
 export async function postAdminMeetingClientAlert(body: {
   meetingId: string;
