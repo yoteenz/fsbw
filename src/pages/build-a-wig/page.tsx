@@ -25,9 +25,7 @@ import {
   BAW_NOIR_LIVE_BANGS_VIEWS_EVENT,
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
-  readBawNoirLiveBangsWigViews,
-  readBawNoirLiveColorWigViews,
-  readBawNoirLiveStylingWigViewsForPart,
+  resolveAdminNoirHubLiveWigViewsFromStorage,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
@@ -3199,11 +3197,7 @@ export default function BuildAWigPage() {
           setLiveNoirHubWigViews(null);
           return;
         }
-        setLiveNoirHubWigViews(
-          readBawNoirLiveStylingWigViewsForPart(localStorage.getItem('selectedPartSelection') || 'MIDDLE') ??
-            readBawNoirLiveBangsWigViews() ??
-            readBawNoirLiveColorWigViews()
-        );
+        setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage());
       } catch {
         setLiveNoirHubWigViews(null);
       }
@@ -3225,7 +3219,7 @@ export default function BuildAWigPage() {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('signInStateChanged', refresh as EventListener);
     };
-  }, []);
+  }, [customization.styling]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

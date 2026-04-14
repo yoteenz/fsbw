@@ -195,3 +195,51 @@ export function clearBawNoirLiveBangsWigViews(): void {
     /* ignore */
   }
 }
+
+/**
+ * Admin NOIR BAW hub: which persisted live triple to show.
+ * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
+ * `bawNoirLiveStylingWigViews` after the user returns to base / NONE (e.g. `selectedHairStyling` left over).
+ */
+export function resolveAdminNoirHubLiveWigViewsFromStorage(): BawNoirLiveWigViewsTriple | null {
+  try {
+    const canon = (localStorage.getItem('selectedStyling') || 'NONE').trim().toUpperCase();
+    if (canon === 'NONE' || canon === '') {
+      return readBawNoirLiveColorWigViews();
+    }
+
+    const hairRaw = localStorage.getItem('selectedHairStyling');
+    let ids: string[];
+    if (hairRaw && hairRaw.trim()) {
+      ids = hairRaw
+        .split(',')
+        .map((s) => s.trim().toUpperCase())
+        .filter((s) => s && s !== 'NONE');
+    } else {
+      ids = canon
+        .split(',')
+        .map((s) => s.trim().toUpperCase())
+        .filter((s) => s && s !== 'NONE');
+    }
+
+    if (ids.length === 0) {
+      return readBawNoirLiveColorWigViews();
+    }
+
+    const hasLayers = ids.includes('LAYERS');
+    const bangsOnly = ids.includes('BANGS') && !hasLayers;
+
+    if (hasLayers) {
+      const part = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
+      const fromStyling = readBawNoirLiveStylingWigViewsForPart(part);
+      if (fromStyling) return fromStyling;
+    }
+    if (bangsOnly) {
+      const fromBangs = readBawNoirLiveBangsWigViews();
+      if (fromBangs) return fromBangs;
+    }
+    return readBawNoirLiveColorWigViews();
+  } catch {
+    return readBawNoirLiveColorWigViews();
+  }
+}

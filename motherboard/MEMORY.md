@@ -14660,3 +14660,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/{length,texture,lace,hairline,density,cap-size,addons,color,styling}/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — NOIR BAW hub: styling WebPs vs NONE (refresh persistence)
+
+**Context (this chat):** **`/build-a-wig/noir`** hub hero kept **styling** fal WebPs after refresh/navigation; user wanted **base hairline PNGs** (or committed color) when salon styling is cleared.
+
+**Decisions / outcomes:** Product hub read **styling → bangs → color** unconditionally from **localStorage**, so **`bawNoirLiveStylingWigViews`** overrode base even when **`selectedStyling`** was **`NONE`** (stale **`selectedHairStyling`**). **`resolveAdminNoirHubLiveWigViewsFromStorage()`** in **`bawNoirLivePreviewStorage.ts`**: **`selectedStyling === 'NONE'`** → **color only**; else **LAYERS** → part-matched styling triple; **BANGS-only** → bangs triple; else color. Hub refresh **`useEffect`** depends on **`customization.styling`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`** (sub-page composite hook uses same resolver).
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
