@@ -3415,7 +3415,20 @@ export default function BuildAWigPage() {
         try {
           const item = JSON.parse(editingCartItem);
           editModeCartPrice = typeof item.price === 'number' ? item.price : null;
-          if (!hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
+          const isBlancoEdit = location.pathname.startsWith('/build-a-wig/blanco');
+          const lsColor =
+            localStorage.getItem('editSelectedColor') ||
+            localStorage.getItem('selectedColor') ||
+            (isBlancoEdit ? 'PLATINUM' : 'OFF BLACK');
+          const cartColor = item.color || (isBlancoEdit || item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK');
+          const selectionsDriftedFromCart =
+            lsColor !== cartColor ||
+            (localStorage.getItem('editSelectedLength') || localStorage.getItem('selectedLength') || '') !==
+              (item.length || '') ||
+            (localStorage.getItem('editSelectedDensity') || localStorage.getItem('selectedDensity') || '') !==
+              (item.density || '');
+          // Cart-line shortcut skips recalculation; never use it when hub selections already differ from the cart row.
+          if (!selectionsDriftedFromCart && !hasChanges && editModeCartPrice !== null && editModeCartPrice > 0) {
             setTotalPrice(editModeCartPrice);
             return;
           }

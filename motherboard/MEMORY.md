@@ -14660,3 +14660,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/{length,texture,lace,hairline,density,cap-size,addons,color,styling}/page.tsx`**.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — NOIR shop → BAW customize: clear stale live previews; edit hub total vs cart shortcut
+
+**Context (this chat):** User reported wrong flow from **NOIR product** → **Customize in Build-a-Wig**: stale **fal/WebP** color previews (e.g. ginger) persisted instead of **default** mannequin; after confirming **color** on the sub-page, **total price** on the main BAW hub did not update.
+
+**Decisions / outcomes:** (1) On **fresh customize** from the noir product page (not in-bag path), clear **`bawNoirLive*`** localStorage (**pending + committed color**, **styling**, **bangs**) before navigating so sub-pages show defaults until the user commits new previews. (2) In **`calculatePrice`**, the **edit-mode** early return that reused **`editingCartItem.price`** when **`!hasChanges`** could skip recalculation after a sub-page return. Only use that shortcut when **localStorage** selections for **color, length, density** still match the cart row; otherwise always recalculate.
+
+**Changes:** **`src/pages/straight/noir/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
