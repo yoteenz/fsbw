@@ -19,6 +19,10 @@ import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
 } from '../../../utils/buildWigLivePreviewSelections';
+import {
+  persistBawNoirLiveStylingWigViews,
+  readBawNoirLiveStylingWigViews,
+} from '../../../utils/bawNoirLivePreviewStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWigPremiumMembershipStepGate';
@@ -197,6 +201,9 @@ export default function StylingSelectionPage() {
       if (!ok) {
         setLiveStylingWigViews(null);
         setLiveStylingError(null);
+      } else {
+        const cached = readBawNoirLiveStylingWigViews();
+        if (cached) setLiveStylingWigViews(cached);
       }
     })();
     return () => {
@@ -310,7 +317,13 @@ export default function StylingSelectionPage() {
         const u = res.publicUrls;
         if (u.front && u.left && u.right) {
           const bust = Date.now();
-          setLiveStylingWigViews([`${u.left}?t=${bust}`, `${u.front}?t=${bust}`, `${u.right}?t=${bust}`]);
+          const triple: [string, string, string] = [
+            `${u.left}?t=${bust}`,
+            `${u.front}?t=${bust}`,
+            `${u.right}?t=${bust}`,
+          ];
+          setLiveStylingWigViews(triple);
+          persistBawNoirLiveStylingWigViews(triple);
         } else {
           setLiveStylingWigViews(null);
         }
@@ -330,6 +343,8 @@ export default function StylingSelectionPage() {
 
   const wigViews =
     hasMiddleLayersLive && liveStylingWigViews ? liveStylingWigViews : baseWigViews;
+  const isLiveNoirStylingWebp =
+    Boolean(hasMiddleLayersLive && liveStylingWigViews) && wigViews.some((src) => src.includes('.webp'));
 
   // Hair styling options with local assets
   const hairStylingOptions = [
@@ -1302,12 +1317,17 @@ export default function StylingSelectionPage() {
                               const pl = L ? `${L}?t=${bust}` : prev?.[0];
                               const pf = F ? `${F}?t=${bust}` : prev?.[1];
                               const pr = R ? `${R}?t=${bust}` : prev?.[2];
-                              if (pl && pf && pr) return [pl, pf, pr];
+                              if (pl && pf && pr) {
+                                const t: [string, string, string] = [pl, pf, pr];
+                                persistBawNoirLiveStylingWigViews(t);
+                                return t;
+                              }
                               if (!prev) return prev;
                               const next: [string, string, string] = [...prev];
                               const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
                               const u = ang === 'left' ? L : ang === 'front' ? F : R;
                               if (u) next[idx] = `${u}?t=${bust}`;
+                              persistBawNoirLiveStylingWigViews(next);
                               return next;
                             });
                           })
@@ -1335,17 +1355,21 @@ export default function StylingSelectionPage() {
               </div>
             )}
             <div className="leaf-stack hero-thumb">
-              <div className="leaf-bg" aria-hidden="true"></div>
+              <div
+                className="leaf-bg"
+                aria-hidden="true"
+                style={isLiveNoirStylingWebp ? { display: 'none' } : undefined}
+              />
               <div
                 className="relative bg-cover bg-center flex items-center justify-center"
                 style={{
                   width: '262px',
                   height: '367px',
-                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                  backgroundImage: isLiveNoirStylingWebp ? 'none' : `url('/assets/leaf-brick-resize.png')`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  backgroundRepeat: 'repeat',
-                  overflow: 'visible'
+                  backgroundRepeat: isLiveNoirStylingWebp ? 'no-repeat' : 'repeat',
+                  overflow: 'visible',
                 }}
               >
                   <p
@@ -1399,10 +1423,20 @@ export default function StylingSelectionPage() {
                   width="282"
                   height="387"
                   className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                  style={{ 
+                  style={{
                     top: 'calc(50% - 10.601px + 18px)',
                     '--hero-width': '282px',
-                    '--hero-height': '387px'
+                    '--hero-height': '387px',
+                    ...(isLiveNoirStylingWebp
+                      ? {
+                          objectFit: 'contain',
+                          objectPosition: 'center center',
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          width: 'auto',
+                          height: 'auto',
+                        }
+                      : {}),
                   } as React.CSSProperties}
                 />
               </div>
@@ -1412,12 +1446,13 @@ export default function StylingSelectionPage() {
             <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
               {wigViews.map((view, index) => (
                 <div className="leaf-stack thumb" key={index}>
-                  <div 
+                  <div
                     className={`leaf-bg ${
                       selectedView === index ? 'border-black' : 'border-transparent'
-                    }`} 
+                    }`}
                     aria-hidden="true"
-                  ></div>
+                    style={isLiveNoirStylingWebp ? { display: 'none' } : undefined}
+                  />
                   <div
                     className="border-transparent p-1 cursor-pointer"
                     onClick={() => setSelectedView(index)}
@@ -1432,7 +1467,8 @@ export default function StylingSelectionPage() {
                         zIndex: 1,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        backgroundImage: isLiveNoirStylingWebp ? 'none' : undefined,
                       }}
                     >
                       <img
@@ -1441,9 +1477,20 @@ export default function StylingSelectionPage() {
                         height="84"
                         src={view}
                         className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                        style={{ 
+                        style={{
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' })
+                          top: 'calc(50% - 6.1px + 7.2px)',
+                          ...(index === 0 && !isLiveNoirStylingWebp ? { left: 'calc(50% - 6px)' } : {}),
+                          ...(isLiveNoirStylingWebp
+                            ? {
+                                objectFit: 'contain',
+                                objectPosition: 'center center',
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                              }
+                            : {}),
                         } as React.CSSProperties}
                       />
                     </div>

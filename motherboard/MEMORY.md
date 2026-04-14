@@ -14297,3 +14297,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`ImageViewerModal`** — optional **`footerDownloads`** + export **`ImageViewerDownloadLink`**. **`noir/page.tsx`** — module constants **`NOIR_2D_ANGLE_DOWNLOAD_ROWS`** / **`NOIR_2D_VIEWER_DOWNLOADS`**; set downloads when opening viewer from **2D** hero or product shots; **3D** hero → no footer; modal **`onClose`** clears.
 
 **Docs:** This **MEMORY** entry.
+
+---
+
+## 2026-04-14 — BAW live NOIR WebP: hide brick underlay, align contain, hub sync via localStorage
+
+**Context (this chat):** Continuation from prior work on admin **live fal** NOIR previews on Build-a-Wig **color** and **styling** (middle + layers). User reported **static mannequin / brick still showing under** generated WebPs, **misaligned** hero and thumbnails (shifted), and wanted the **same generated triple** on the **main BAW hub** hero and thumbnails.
+
+**Decisions / outcomes:** New **`src/utils/bawNoirLivePreviewStorage.ts`** — **`persistBawNoirLiveColorWigViews` / `readBawNoirLiveColorWigViews`**, **`persistBawNoirLiveStylingWigViews` / `readBawNoirLiveStylingWigViews`**, custom events **`BAW_NOIR_LIVE_COLOR_VIEWS_EVENT`** and **`BAW_NOIR_LIVE_STYLING_VIEWS_EVENT`** for same-tab updates. **Color** and **styling** pages: when live `.webp` triple is active, hide **`leaf-bg`**, remove inner **`backgroundImage`**, use **`object-fit: contain`** + **`object-position: center`** on hero and thumbs, explicit thumb **`top`**, skip thumb **`left`** nudge for live WebPs; **persist** after successful API (and regen) and **hydrate** cached triple when admin opens NOIR color route. **Hub** (`src/pages/build-a-wig/page.tsx`): admin on **`/build-a-wig/noir*`** reads **styling first, else color** from storage; subscribes to custom events + **`storage`** / **`focus`** / **`signInStateChanged`**; same live WebP layout rules; disables thumb translate nudges when live.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`** (new), **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**.
+
+**Docs:** This **MEMORY** entry.

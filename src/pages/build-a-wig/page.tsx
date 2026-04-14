@@ -6,7 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
-import { clearAppAuth } from '../../utils/adminAuth';
+import { clearAppAuth, isAdminEmail } from '../../utils/adminAuth';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
@@ -21,6 +21,12 @@ import {
   clearBuildWigAppointmentMode,
   isActiveBuildWigAppointmentMode
 } from '../../utils/bookingNewInstallUnit';
+import {
+  BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
+  BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
+  readBawNoirLiveColorWigViews,
+  readBawNoirLiveStylingWigViews,
+} from '../../utils/bawNoirLivePreviewStorage';
 
 interface WigCustomization {
   capSize: string;
@@ -45,6 +51,15 @@ export default function BuildAWigPage() {
   // Track the current route to detect navigation changes
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
+
+  const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
+    try {
+      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
+    } catch {
+      return null;
+    }
+    return readBawNoirLiveStylingWigViews() ?? readBawNoirLiveColorWigViews();
+  });
   
   // Track current editing item ID to detect when switching between products
   const currentEditingItemIdRef = useRef<string | null>(null);
@@ -3079,7 +3094,7 @@ export default function BuildAWigPage() {
 
   // Get wig views based on selected hairline from customization state
   // Use useMemo to recalculate when customization.hairline changes or route changes
-  const wigViews = useMemo(() => {
+  const baseWigViewsForHub = useMemo(() => {
     const pathname = location.pathname;
     
     // Check if we're in product-specific routes (main, customize, edit)
@@ -3145,6 +3160,47 @@ export default function BuildAWigPage() {
       ];
     }
   }, [customization.hairline, location.pathname]);
+
+  const hubLiveNoirWigViews = useMemo(() => {
+    const pathname = location.pathname;
+    if (!pathname.startsWith('/build-a-wig/noir')) return null;
+    try {
+      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
+    } catch {
+      return null;
+    }
+    return liveNoirHubWigViews;
+  }, [location.pathname, liveNoirHubWigViews]);
+
+  const wigViews = hubLiveNoirWigViews ?? baseWigViewsForHub;
+  const isLiveNoirWebpHub = Boolean(hubLiveNoirWigViews);
+
+  useEffect(() => {
+    const refresh = () => {
+      try {
+        if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) {
+          setLiveNoirHubWigViews(null);
+          return;
+        }
+        setLiveNoirHubWigViews(readBawNoirLiveStylingWigViews() ?? readBawNoirLiveColorWigViews());
+      } catch {
+        setLiveNoirHubWigViews(null);
+      }
+    };
+    refresh();
+    window.addEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
+    window.addEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('signInStateChanged', refresh as EventListener);
+    return () => {
+      window.removeEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
+      window.removeEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('signInStateChanged', refresh as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -5176,17 +5232,21 @@ export default function BuildAWigPage() {
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               <div className="leaf-stack hero-thumb">
-                <div className="leaf-bg" aria-hidden="true"></div>
+                <div
+                  className="leaf-bg"
+                  aria-hidden="true"
+                  style={isLiveNoirWebpHub ? { display: 'none' } : undefined}
+                />
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                    backgroundImage: isLiveNoirWebpHub ? 'none' : `url('/assets/leaf-brick-resize.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    overflow: 'visible'
+                    overflow: 'visible',
                   }}
                 >
                   <p
@@ -5266,10 +5326,20 @@ export default function BuildAWigPage() {
                     width="282"
                     height="387"
                     className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                    style={{ 
+                    style={{
                       top: 'calc(50% - 10.601px + 18px)',
                       '--hero-width': '282px',
-                      '--hero-height': '387px'
+                      '--hero-height': '387px',
+                      ...(isLiveNoirWebpHub
+                        ? {
+                            objectFit: 'contain',
+                            objectPosition: 'center center',
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                          }
+                        : {}),
                     } as React.CSSProperties}
                   />
                 </div>
@@ -5279,12 +5349,13 @@ export default function BuildAWigPage() {
               <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
                 {wigViews.map((view, index) => (
                   <div className="leaf-stack thumb" key={index}>
-                    <div 
+                    <div
                       className={`leaf-bg ${
                         selectedView === index ? 'border-black' : 'border-transparent'
-                      }`} 
+                      }`}
                       aria-hidden="true"
-                    ></div>
+                      style={isLiveNoirWebpHub ? { display: 'none' } : undefined}
+                    />
                     <div
                       className="border-transparent p-1 cursor-pointer"
                       onClick={() => setSelectedView(index)}
@@ -5296,8 +5367,9 @@ export default function BuildAWigPage() {
                           height: '95px',
                           position: 'relative',
                           zIndex: 1,
-                          ...(index === 1 && { transform: 'translateX(-2px)' }),
-                          ...(index === 2 && { transform: 'translateX(-4px)' })
+                          ...(index === 1 && !isLiveNoirWebpHub ? { transform: 'translateX(-2px)' } : {}),
+                          ...(index === 2 && !isLiveNoirWebpHub ? { transform: 'translateX(-4px)' } : {}),
+                          backgroundImage: isLiveNoirWebpHub ? 'none' : undefined,
                         }}
                       >
                         <img
@@ -5307,10 +5379,21 @@ export default function BuildAWigPage() {
                           height="84"
                           src={view}
                           className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                          style={{ 
-                          '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' })
-                        } as React.CSSProperties}
+                          style={{
+                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
+                            top: 'calc(50% - 6.1px + 7.2px)',
+                            ...(index === 0 && !isLiveNoirWebpHub ? { left: 'calc(50% - 6px)' } : {}),
+                            ...(isLiveNoirWebpHub
+                              ? {
+                                  objectFit: 'contain',
+                                  objectPosition: 'center center',
+                                  maxWidth: '100%',
+                                  maxHeight: '100%',
+                                  width: 'auto',
+                                  height: 'auto',
+                                }
+                              : {}),
+                          } as React.CSSProperties}
                         />
                       </div>
                     </div>

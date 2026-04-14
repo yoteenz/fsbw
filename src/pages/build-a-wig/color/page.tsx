@@ -18,6 +18,10 @@ import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
+import {
+  persistBawNoirLiveColorWigViews,
+  readBawNoirLiveColorWigViews,
+} from '../../../utils/bawNoirLivePreviewStorage';
 
 interface ColorOption {
   id: string;
@@ -360,6 +364,25 @@ function ColorSelection() {
     };
   }, [location.pathname]);
 
+  useEffect(() => {
+    const p = location.pathname;
+    const noirColor =
+      p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
+    if (!noirColor) return;
+    let cancelled = false;
+    void (async () => {
+      const token = await getAccessToken();
+      const email = getCurrentUserEmailFromStorage();
+      const ok = Boolean(token && email && isAdminEmail(email));
+      if (cancelled || !ok) return;
+      const cached = readBawNoirLiveColorWigViews();
+      if (cached) setLiveWigViews(cached);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
+
   // Initialize with edit mode or customize mode data if available
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -523,6 +546,9 @@ function ColorSelection() {
     adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
       : baseWigViews;
+  const isLiveNoirWebp =
+    Boolean(adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')) &&
+    wigViews.some((src) => src.includes('.webp'));
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -701,7 +727,13 @@ function ColorSelection() {
         const u = res.publicUrls;
         if (u.front && u.left && u.right) {
           const bust = Date.now();
-          setLiveWigViews([`${u.left}?t=${bust}`, `${u.front}?t=${bust}`, `${u.right}?t=${bust}`]);
+          const triple: [string, string, string] = [
+            `${u.left}?t=${bust}`,
+            `${u.front}?t=${bust}`,
+            `${u.right}?t=${bust}`,
+          ];
+          setLiveWigViews(triple);
+          persistBawNoirLiveColorWigViews(triple);
         } else {
           setLiveWigViews(null);
         }
@@ -1350,12 +1382,17 @@ function ColorSelection() {
                                     const pl = L ? `${L}?t=${bust}` : prev?.[0];
                                     const pf = F ? `${F}?t=${bust}` : prev?.[1];
                                     const pr = R ? `${R}?t=${bust}` : prev?.[2];
-                                    if (pl && pf && pr) return [pl, pf, pr];
+                                    if (pl && pf && pr) {
+                                      const t: [string, string, string] = [pl, pf, pr];
+                                      persistBawNoirLiveColorWigViews(t);
+                                      return t;
+                                    }
                                     if (!prev) return prev;
                                     const next: [string, string, string] = [...prev];
                                     const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
                                     const u = ang === 'left' ? L : ang === 'front' ? F : R;
                                     if (u) next[idx] = `${u}?t=${bust}`;
+                                    persistBawNoirLiveColorWigViews(next);
                                     return next;
                                   });
                                 })
@@ -1385,17 +1422,21 @@ function ColorSelection() {
                 </>
               )}
               <div className="leaf-stack hero-thumb">
-                <div className="leaf-bg" aria-hidden="true"></div>
+                <div
+                  className="leaf-bg"
+                  aria-hidden="true"
+                  style={isLiveNoirWebp ? { display: 'none' } : undefined}
+                />
                 <div
                   className="relative bg-cover bg-center flex items-center justify-center"
                   style={{
                     width: '262px',
                     height: '367px',
-                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                    backgroundImage: isLiveNoirWebp ? 'none' : `url('/assets/leaf-brick-resize.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    backgroundRepeat: 'repeat',
-                    overflow: 'visible'
+                    backgroundRepeat: isLiveNoirWebp ? 'no-repeat' : 'repeat',
+                    overflow: 'visible',
                   }}
                 >
                   <p
@@ -1449,10 +1490,20 @@ function ColorSelection() {
                   width="282"
                   height="387"
                   className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                  style={{ 
+                  style={{
                     top: 'calc(50% - 10.601px + 18px)',
                     '--hero-width': '282px',
                     '--hero-height': '387px',
+                    ...(isLiveNoirWebp
+                      ? {
+                          objectFit: 'contain',
+                          objectPosition: 'center center',
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          width: 'auto',
+                          height: 'auto',
+                        }
+                      : {}),
                   } as React.CSSProperties}
                 />
                 </div>
@@ -1462,12 +1513,13 @@ function ColorSelection() {
               <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
                 {wigViews.map((view, index) => (
                   <div className="leaf-stack thumb" key={index}>
-                    <div 
+                    <div
                       className={`leaf-bg ${
                         selectedView === index ? 'border-black' : 'border-transparent'
-                      }`} 
+                      }`}
                       aria-hidden="true"
-                    ></div>
+                      style={isLiveNoirWebp ? { display: 'none' } : undefined}
+                    />
                     <div
                       className="border-transparent p-1 cursor-pointer"
                       onClick={() => setSelectedView(index)}
@@ -1475,15 +1527,16 @@ function ColorSelection() {
                       <div
                         className="relative bg-cover bg-center"
                         data-thumb-index={index}
-                      style={{
-                        width: '72px',
-                        height: '95px',
-                        position: 'relative',
-                        zIndex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
+                        style={{
+                          width: '72px',
+                          height: '95px',
+                          position: 'relative',
+                          zIndex: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundImage: isLiveNoirWebp ? 'none' : undefined,
+                        }}
                       >
                       <img
                         alt={`Thumbnail ${index + 1}`}
@@ -1491,10 +1544,20 @@ function ColorSelection() {
                         height="84"
                         src={view}
                         className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                        style={{ 
+                        style={{
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                          ...(index === 0 && !isLiveNoirWebp ? { left: 'calc(50% - 6px)' } : {}),
+                          ...(isLiveNoirWebp
+                            ? {
+                                objectFit: 'contain',
+                                objectPosition: 'center center',
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                              }
+                            : {}),
                         } as React.CSSProperties}
                       />
                       </div>
