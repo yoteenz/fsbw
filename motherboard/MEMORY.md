@@ -14559,3 +14559,19 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — Vercel `ERR_MODULE_NOT_FOUND` for `api/_lib/adminAuth` (live-wig-after-color-styling)
+
+**Context (this chat):** User shared Vercel logs: **`Cannot find module '/var/task/api/_lib/adminAuth'`** imported from **`live-wig-after-color-styling.js`**, process exit 1 → UI showed **`FUNCTION_INVOCATION_FAILED`**.
+
+**Root cause:** **`package.json` has `"type": "module"`**. Vercel compiles API routes to **ESM** `.js` files. Node’s ESM resolver requires **file extensions** for relative imports; **`import './_lib/adminAuth'`** does not resolve to **`adminAuth.js`** on the serverless filesystem.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`** now imports **`./_lib/*.js`**. Updated **`api/_lib/adminAuth.ts`**, **`wigPreviewSelectionHash.ts`**, and **`auditLog.ts`** to use **`./auth.js`**, **`./bawCatalogHairColors.js`**, **`./supabase.js`** so the chain loads under Node ESM. Documented in **`docs/WIG_PREVIEW_PREGENERATION.md`** (same class of issue as nested **`api/wig-preview/`** + `_lib` note on live-noir-color).
+
+**Git:** **`f46d8de`** on **`preview/mobile`** and **`master`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
