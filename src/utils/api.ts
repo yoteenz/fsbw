@@ -1103,8 +1103,11 @@ export async function postLiveWigAfterColorStyling(
   body: LiveWigAfterColorStylingPayload
 ): Promise<LiveWigAfterColorStylingResult> {
   const angles = ['left', 'front', 'right'] as const;
+  const pauseBetweenAnglesMs = 1200;
   const ra = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[0] });
+  await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
   const rb = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[1] });
+  await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
   const rc = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[2] });
   const colorHashes = new Set([ra.colorTierHash, rb.colorTierHash, rc.colorTierHash]);
   if (colorHashes.size !== 1) {

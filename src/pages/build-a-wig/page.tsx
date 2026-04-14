@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -27,6 +27,7 @@ import {
   readBawNoirLiveColorWigViews,
   readBawNoirLiveStylingWigViews,
 } from '../../utils/bawNoirLivePreviewStorage';
+import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
 interface WigCustomization {
   capSize: string;
@@ -3666,7 +3667,10 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      const colorPrice = isEditMode ? calculatedPrices.colorPrice : getPrice('Color', calculatedPrices.colorPrice);
+      // Customize mode: same bug as edit — stale `customizeSelectedColorPrice` (e.g. "0") must not override
+      // the correct amount when the user picks a paid color on the color sub-page.
+      const colorPrice =
+        isEditMode || isCustomizeMode ? calculatedPrices.colorPrice : getPrice('Color', calculatedPrices.colorPrice);
       const lengthPrice = isEditMode ? calculatedPrices.lengthPrice : getPrice('Length', calculatedPrices.lengthPrice);
       const densityPrice = isEditMode ? calculatedPrices.densityPrice : getPrice('Density', calculatedPrices.densityPrice);
       const lacePrice = isEditMode ? calculatedPrices.lacePrice : getPrice('Lace', calculatedPrices.lacePrice);
@@ -3788,6 +3792,24 @@ export default function BuildAWigPage() {
         }
         
         savePricesToLocalStorage(pricesToSave);
+      }
+
+      // Keep customize* color price in sync with selections (was stuck at "0" and broke cart/other readers).
+      if (isCustomizeMode) {
+        const comingFromSubPage = sessionStorage.getItem('comingFromSubPage') === 'true';
+        if (!comingFromSubPage && !isLoadingFromStorage.current) {
+          savePricesToLocalStorage({
+            capSizePrice,
+            colorPrice,
+            lengthPrice,
+            densityPrice,
+            lacePrice,
+            texturePrice,
+            hairlinePrice,
+            stylingPrice,
+            addOnsPrice,
+          });
+        }
       }
     };
 
@@ -5232,20 +5254,13 @@ export default function BuildAWigPage() {
             <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-              <div className="leaf-stack hero-thumb">
-                <div className="leaf-bg" aria-hidden="true" />
-                <div
-                  className="relative bg-cover bg-center flex items-center justify-center"
-                  style={{
-                    width: '262px',
-                    height: '367px',
-                    backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    overflow: 'visible',
-                  }}
-                >
+              <BawNoirWigPreviewHeroThumbs
+                wigViews={wigViews}
+                selectedView={selectedView}
+                onSelectView={setSelectedView}
+                isNoirRoute={location.pathname.startsWith('/build-a-wig/noir')}
+                thumbRowClassName="items-center"
+                heroChildren={
                   <p
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
                     style={{
@@ -5255,25 +5270,35 @@ export default function BuildAWigPage() {
                       width: 'max-content',
                       fontSize: (() => {
                         const pathname = location.pathname;
-                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/blanco') || pathname.startsWith('/build-a-wig/beach-wave') || pathname.startsWith('/build-a-wig/ocean-curl')) {
-                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO/BEACH WAVE/OCEAN CURL
+                        if (
+                          pathname.startsWith('/build-a-wig/soft-wave') ||
+                          pathname.startsWith('/build-a-wig/soft-curl') ||
+                          pathname.startsWith('/build-a-wig/blanco') ||
+                          pathname.startsWith('/build-a-wig/beach-wave') ||
+                          pathname.startsWith('/build-a-wig/ocean-curl')
+                        ) {
+                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)';
                         }
-                        return undefined; // Default size
+                        return undefined;
                       })(),
                       transform: (() => {
                         const pathname = location.pathname;
                         if (pathname.startsWith('/build-a-wig/blanco')) {
-                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
+                          return 'translate(-50%, 5px)';
                         }
-                        if (pathname.startsWith('/build-a-wig/soft-wave') || pathname.startsWith('/build-a-wig/soft-curl') || pathname.startsWith('/build-a-wig/beach-wave') || pathname.startsWith('/build-a-wig/ocean-curl')) {
-                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL/BEACH WAVE/OCEAN CURL
+                        if (
+                          pathname.startsWith('/build-a-wig/soft-wave') ||
+                          pathname.startsWith('/build-a-wig/soft-curl') ||
+                          pathname.startsWith('/build-a-wig/beach-wave') ||
+                          pathname.startsWith('/build-a-wig/ocean-curl')
+                        ) {
+                          return 'translate(-50%, 2px)';
                         }
-                        return 'translate(-50%, 0)'; // Default position
+                        return 'translate(-50%, 0)';
                       })(),
                     }}
                     onClick={() => {
                       const pathname = location.pathname;
-                      // Check for product-specific routes (main, customize, edit)
                       if (pathname.startsWith('/build-a-wig/blanco')) {
                         navigate('/straight/blanco');
                       } else if (pathname.startsWith('/build-a-wig/soft-wave')) {
@@ -5293,7 +5318,6 @@ export default function BuildAWigPage() {
                   >
                     {(() => {
                       const pathname = location.pathname;
-                      // Check for product-specific routes (main, customize, edit) - order matters!
                       if (pathname.startsWith('/build-a-wig/blanco')) {
                         return 'BLANCO';
                       }
@@ -5312,69 +5336,11 @@ export default function BuildAWigPage() {
                       if (pathname.startsWith('/build-a-wig/noir')) {
                         return 'NOIR';
                       }
-                      // Default fallback
                       return 'NOIR';
                     })()}
                   </p>
-                  <img
-                    key={`hero-${customization.hairline}-${customization.color}-${customization.texture}-${customization.length}-${selectedView}`}
-                    src={wigViews[selectedView]}
-                    alt="Selected Wig"
-                    width="282"
-                    height="387"
-                    className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                    style={{
-                      top: 'calc(50% - 10.601px + 18px)',
-                      '--hero-width': '282px',
-                      '--hero-height': '387px',
-                    } as React.CSSProperties}
-                  />
-                </div>
-              </div>
-
-              {/* THUMBNAILS */}
-              <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
-                {wigViews.map((view, index) => (
-                  <div className="leaf-stack thumb" key={index}>
-                    <div
-                      className={`leaf-bg ${
-                        selectedView === index ? 'border-black' : 'border-transparent'
-                      }`}
-                      aria-hidden="true"
-                    />
-                    <div
-                      className="border-transparent p-1 cursor-pointer"
-                      onClick={() => setSelectedView(index)}
-                    >
-                      <div
-                        className="relative bg-cover bg-center flex items-center justify-center"
-                        style={{
-                          width: '72px',
-                          height: '95px',
-                          position: 'relative',
-                          zIndex: 1,
-                          ...(index === 1 && { transform: 'translateX(-2px)' }),
-                          ...(index === 2 && { transform: 'translateX(-4px)' }),
-                        }}
-                      >
-                        <img
-                          key={`thumb-${index}-${customization.hairline}-${customization.color}-${customization.texture}-${customization.length}`}
-                          alt={`Thumbnail ${index + 1}`}
-                          width="63"
-                          height="84"
-                          src={view}
-                          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                          style={{
-                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                            top: 'calc(50% - 6.1px + 7.2px)',
-                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                          } as React.CSSProperties}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                }
+              />
             </div>
 
             {/* CUSTOMIZATION OPTIONS */}

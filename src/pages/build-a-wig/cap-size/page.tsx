@@ -14,6 +14,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirColorWigViews } from '../../../hooks/useBawSubpageLiveNoirColorWigViews';
+import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 
 interface CapSizeOption {
   id: string;
@@ -947,124 +948,59 @@ function CapSizeSelection() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            <div className="leaf-stack hero-thumb">
-              <div className="leaf-bg" aria-hidden="true"></div>
-              <div
-                className="relative bg-cover bg-center flex items-center justify-center"
-                style={{
-                  width: '262px',
-                  height: '367px',
-                  backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'repeat',
-                  overflow: 'visible'
-                }}
-              >
-                  <p
-                    className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
-                    style={{
-                      color: '#EB1C24',
-                      whiteSpace: 'nowrap',
-                      overflow: 'visible',
-                      width: 'max-content',
-                      fontSize: (() => {
-                        const pathname = location.pathname;
-                        if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
-                          return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)'; // Same size for SOFT WAVE/CURL/BLANCO
-                        }
-                        return undefined; // Default size
-                      })(),
-                      transform: (() => {
-                        const pathname = location.pathname;
-                        if (pathname.includes('/blanco/')) {
-                          return 'translate(-50%, 5px)'; // Move down 5px for BLANCO
-                        }
-                        if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
-                          return 'translate(-50%, 2px)'; // Move down 2px for SOFT WAVE/CURL
-                        }
-                        return 'translate(-50%, 0)'; // Default position
-                      })(),
-                    }}
-                    onClick={() => {
+            <BawNoirWigPreviewHeroThumbs
+              wigViews={wigViews}
+              selectedView={selectedView}
+              onSelectView={setSelectedView}
+              isNoirRoute={location.pathname.includes('/build-a-wig/noir/')}
+              heroChildren={
+                <p
+                  className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"
+                  style={{
+                    color: '#EB1C24',
+                    whiteSpace: 'nowrap',
+                    overflow: 'visible',
+                    width: 'max-content',
+                    fontSize: (() => {
                       const pathname = location.pathname;
-                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
-                      else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
-                      else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
-                      else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
-                      else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
-                      else navigate('/straight/noir');
-                    }}
-                  >
-                    {(() => {
+                      if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
+                        return 'calc(clamp(2rem, 4vw, 2.5rem) + 8px)';
+                      }
+                      return undefined;
+                    })(),
+                    transform: (() => {
                       const pathname = location.pathname;
-                      if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
-                      if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
-                      if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
-                      if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
-                      if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
-                      return 'NOIR';
-                    })()}
-                  </p>
-                <img
-                  src={wigViews[selectedView]}
-                  alt="Selected Wig"
-                  width="282"
-                  height="387"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
-                  style={{ 
-                    top: 'calc(50% - 10.601px + 18px)',
-                    '--hero-width': '282px',
-                    '--hero-height': '387px'
-                  } as React.CSSProperties}
-                />
-              </div>
-            </div>
-
-            {/* THUMBNAILS */}
-            <div className="flex justify-center mb-3 mt-2" style={{ transform: 'translateY(10px)', gap: '2px' }}>
-              {wigViews.map((view, index) => (
-                <div className="leaf-stack thumb" key={index}>
-                  <div 
-                    className={`leaf-bg ${
-                      selectedView === index ? 'border-black' : 'border-transparent'
-                    }`} 
-                    aria-hidden="true"
-                  ></div>
-                  <div
-                    className="border-transparent p-1 cursor-pointer"
-                    onClick={() => setSelectedView(index)}
-                  >
-                    <div
-                      className="relative bg-cover bg-center"
-                      data-thumb-index={index}
-                      style={{
-                        width: '72px',
-                        height: '95px',
-                        position: 'relative',
-                        zIndex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <img
-                        alt={`Thumbnail ${index + 1}`}
-                        width="63"
-                        height="84"
-                        src={view}
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img"
-                        style={{ 
-                          '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' })
-                        } as React.CSSProperties}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
+                      if (pathname.includes('/blanco/')) {
+                        return 'translate(-50%, 5px)';
+                      }
+                      if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/')) {
+                        return 'translate(-50%, 2px)';
+                      }
+                      return 'translate(-50%, 0)';
+                    })(),
+                  }}
+                  onClick={() => {
+                    const pathname = location.pathname;
+                    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) navigate('/straight/blanco');
+                    else if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) navigate('/wavy/soft-wave');
+                    else if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) navigate('/curly/soft-curl');
+                    else if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) navigate('/wavy/beach-wave');
+                    else if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) navigate('/curly/ocean-curl');
+                    else navigate('/straight/noir');
+                  }}
+                >
+                  {(() => {
+                    const pathname = location.pathname;
+                    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) return 'BLANCO';
+                    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit')) return 'SOFT WAVE';
+                    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit')) return 'SOFT CURL';
+                    if (pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) return 'BEACH WAVE';
+                    if (pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) return 'OCEAN CURL';
+                    return 'NOIR';
+                  })()}
+                </p>
+              }
+            />
           </div>
 
           {/* Back Button - Fixed positioning to match hairline page */}
