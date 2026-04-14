@@ -14525,3 +14525,21 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW NOIR hero title clipping + merge to master
+
+**Context (this chat):** User reported the **NOIR** header text above the hero was **clipped** on main and sub BAW pages; asked to **push to `master`** as well as **`preview/mobile`**.
+
+**Topics covered:** Clipping came from **`BawNoirWigPreviewHeroThumbs`**: when live remote WebPs hide duplicate brick, the hero frame used **`overflow: hidden`**, which cut off **`heroChildren`** (title uses **`top: -20px`**). **Fix:** outer hero box always **`overflow: visible`**; only the **image** sits in an inner **`absolute inset-0 overflow-hidden`** wrapper so the WebP still crops cleanly while the title paints above.
+
+**Decisions / outcomes:** **`preview/mobile`** and **`master`** both updated; merge **`preview/mobile` → `master`** then **`git push origin preview/mobile`** and **`git push origin master`**.
+
+**Changes:** `src/components/buildWig/BawNoirWigPreviewFrames.tsx`.
+
+**Git:** **`8bbb464`** on **`preview/mobile`** and **`master`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
