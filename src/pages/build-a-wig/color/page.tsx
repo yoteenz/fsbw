@@ -19,8 +19,11 @@ import { isAdminEmail } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
+  clearPendingBawNoirLiveColorWigViews,
   persistBawNoirLiveColorWigViews,
+  persistPendingBawNoirLiveColorWigViews,
   readBawNoirLiveColorWigViews,
+  readPendingBawNoirLiveColorWigViews,
 } from '../../../utils/bawNoirLivePreviewStorage';
 
 interface ColorOption {
@@ -375,7 +378,7 @@ function ColorSelection() {
       const email = getCurrentUserEmailFromStorage();
       const ok = Boolean(token && email && isAdminEmail(email));
       if (cancelled || !ok) return;
-      const cached = readBawNoirLiveColorWigViews();
+      const cached = readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
       if (cached) setLiveWigViews(cached);
     })();
     return () => {
@@ -736,7 +739,7 @@ function ColorSelection() {
             `${u.right}?t=${bust}`,
           ];
           setLiveWigViews(triple);
-          persistBawNoirLiveColorWigViews(triple);
+          persistPendingBawNoirLiveColorWigViews(triple);
         } else {
           setLiveWigViews(null);
         }
@@ -768,7 +771,12 @@ function ColorSelection() {
 
   const handleBack = () => {
     const pathname = location.pathname;
-    
+    const onNoirColorSub =
+      pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
+    if (onNoirColorSub) {
+      clearPendingBawNoirLiveColorWigViews();
+    }
+
     // CRITICAL: Only save selections when on product-specific edit/customize sub-page routes
     // Check if we're on a product-specific edit or customize sub-page route
     const isOnProductSpecificEditRoute = pathname.startsWith('/build-a-wig/noir/edit/') ||
@@ -935,6 +943,15 @@ function ColorSelection() {
     if (isCustomizeMode) {
       localStorage.setItem('customizeSelectedColor', selectedColor);
       localStorage.setItem('customizeSelectedColorPrice', price);
+    }
+
+    if (
+      pathname.includes('/build-a-wig/noir/') &&
+      pathname.includes('/color') &&
+      adminLiveNoirPreview &&
+      liveWigViews
+    ) {
+      persistBawNoirLiveColorWigViews(liveWigViews);
     }
     
     console.log('Color page - saved to localStorage:', {
@@ -1394,7 +1411,7 @@ function ColorSelection() {
                                     const pr = R ? `${R}?t=${bust}` : prev?.[2];
                                     if (pl && pf && pr) {
                                       const t: [string, string, string] = [pl, pf, pr];
-                                      persistBawNoirLiveColorWigViews(t);
+                                      persistPendingBawNoirLiveColorWigViews(t);
                                       return t;
                                     }
                                     if (!prev) return prev;
@@ -1402,7 +1419,7 @@ function ColorSelection() {
                                     const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
                                     const u = ang === 'left' ? L : ang === 'front' ? F : R;
                                     if (u) next[idx] = `${u}?t=${bust}`;
-                                    persistBawNoirLiveColorWigViews(next);
+                                    persistPendingBawNoirLiveColorWigViews(next);
                                     return next;
                                   });
                                 })

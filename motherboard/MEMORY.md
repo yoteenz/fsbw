@@ -14402,3 +14402,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` (tsc + vite) passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — GINGER live NOIR front + hub hero: prompt fix and staged live WebPs until color confirm
+
+**Context (this chat):** User reported **GINGER** live NOIR **front** generation did not match other colors (hair on **both shoulders** vs reference one-sided sweep), and the **main BAW hub hero** switched to generated images **while only browsing** the color sub-page — they wanted the hub to update **only after confirming** on the color sub-page.
+
+**Decisions / outcomes:** (1) **`api/wig-preview/live-noir-color.ts`** — rewrote the **front** angle constraint: removed the misleading **“symmetric fall”** instruction (could push the model toward mirrored dual-shoulder hair on vivid oranges like ginger) and explicitly required **same part, silhouette, and one-sided shoulder sweep** as the reference, **no** second drape on the opposite shoulder. **Regenerate** GINGER front in admin (forceRegenerate or delete Storage object) for new output. (2) **`src/utils/bawNoirLivePreviewStorage.ts`** — added **`bawNoirLiveColorWigViewsPending`** with **`persistPendingBawNoirLiveColorWigViews`**, **`readPendingBawNoirLiveColorWigViews`**, **`clearPendingBawNoirLiveColorWigViews`**; **`persistBawNoirLiveColorWigViews`** now clears pending then writes the committed key and dispatches the hub event; **`clearBawNoirLiveColorWigViews`** clears both. (3) **`src/pages/build-a-wig/color/page.tsx`** — fal success and regen paths use **pending** only; hydrate preview from **pending ?? committed**; **`handleConfirmSelection`** calls **`persistBawNoirLiveColorWigViews`** for NOIR color routes when admin live preview has triple; **`handleBack`** from NOIR color clears **pending** so in-progress previews are discarded without updating the hub.
+
+**Changes:** `api/wig-preview/live-noir-color.ts`, `src/utils/bawNoirLivePreviewStorage.ts`, `src/pages/build-a-wig/color/page.tsx`.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

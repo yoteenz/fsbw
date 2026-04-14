@@ -271,7 +271,7 @@ function buildStep2PromptNoLogoAttachment(
       ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette.'
       : angle === 'right'
         ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right); do **not** add a second mirrored sweep on the opposite shoulder. Preserve the reference image’s part direction and silhouette. **Keep the same camera angle and framing as the reference** (true right 3/4, not front, not mirrored left); do **not** rotate the head toward camera.'
-        : 'This is the **FRONT view**: keep a **single** center part and symmetric fall; do **not** change cut, length, or style beyond the color — only recolor the existing black hair.';
+        : 'This is the **FRONT view**: keep the **exact** part line, silhouette, and **one-sided shoulder sweep** from the reference (same as the black reference — often more hair on one shoulder). Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” **Only** recolor the existing black hair; do **not** change cut, length, or volume.';
 
   const nearBlack = isJetBlackOffBlackCatalogColor(label, hex);
   const recolorLead = nearBlack

@@ -4,6 +4,8 @@ export const BAW_NOIR_LIVE_COLOR_VIEWS_EVENT = 'bawNoirLiveColorWigViewsUpdated'
 export const BAW_NOIR_LIVE_STYLING_VIEWS_EVENT = 'bawNoirLiveStylingWigViewsUpdated';
 
 const COLOR_KEY = 'bawNoirLiveColorWigViews';
+/** In-progress fal previews on the color sub-page only — hub reads `COLOR_KEY` after confirm. */
+const COLOR_PENDING_KEY = 'bawNoirLiveColorWigViewsPending';
 const STYLING_KEY = 'bawNoirLiveStylingWigViews';
 
 export type BawNoirLiveWigViewsTriple = [string, string, string];
@@ -16,8 +18,46 @@ function dispatch(name: string) {
   }
 }
 
+function parseTriple(raw: string | null): BawNoirLiveWigViewsTriple | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed) || parsed.length !== 3) return null;
+    return [String(parsed[0]), String(parsed[1]), String(parsed[2])];
+  } catch {
+    return null;
+  }
+}
+
+/** Stash WIP live color URLs while browsing the color sub-page — does not update the main BAW hub. */
+export function persistPendingBawNoirLiveColorWigViews(views: BawNoirLiveWigViewsTriple): void {
+  try {
+    localStorage.setItem(COLOR_PENDING_KEY, JSON.stringify(views));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function readPendingBawNoirLiveColorWigViews(): BawNoirLiveWigViewsTriple | null {
+  try {
+    return parseTriple(localStorage.getItem(COLOR_PENDING_KEY));
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingBawNoirLiveColorWigViews(): void {
+  try {
+    localStorage.removeItem(COLOR_PENDING_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Commit live color triple to hub + cross-tab sync (call from color sub-page confirm only). */
 export function persistBawNoirLiveColorWigViews(views: BawNoirLiveWigViewsTriple): void {
   try {
+    clearPendingBawNoirLiveColorWigViews();
     localStorage.setItem(COLOR_KEY, JSON.stringify(views));
     dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
@@ -27,11 +67,7 @@ export function persistBawNoirLiveColorWigViews(views: BawNoirLiveWigViewsTriple
 
 export function readBawNoirLiveColorWigViews(): BawNoirLiveWigViewsTriple | null {
   try {
-    const raw = localStorage.getItem(COLOR_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed) || parsed.length !== 3) return null;
-    return [String(parsed[0]), String(parsed[1]), String(parsed[2])];
+    return parseTriple(localStorage.getItem(COLOR_KEY));
   } catch {
     return null;
   }
@@ -39,6 +75,7 @@ export function readBawNoirLiveColorWigViews(): BawNoirLiveWigViewsTriple | null
 
 export function clearBawNoirLiveColorWigViews(): void {
   try {
+    localStorage.removeItem(COLOR_PENDING_KEY);
     localStorage.removeItem(COLOR_KEY);
     dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
