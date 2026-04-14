@@ -1067,6 +1067,8 @@ export type LiveWigAfterColorStylingResult = {
   generated: string[];
   skipped: string[];
   selections: Record<string, unknown>;
+  partSelection?: 'MIDDLE' | 'LEFT' | 'RIGHT';
+  stylingMode?: 'middle-layers' | 'bangs-only';
 };
 
 export async function postLiveWigAfterColorStylingOneAngle(

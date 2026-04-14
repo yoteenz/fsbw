@@ -69,7 +69,15 @@ export function wigPreviewLiveAnglePaths(
   };
 }
 
-/** After-color styling (e.g. middle + layers → black); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
+/** Folder under `after-color/` for LAYERS live styling — separate cache per part (MIDDLE | LEFT | RIGHT). */
+export function wigPreviewLiveLayersPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'layers-left-part';
+  if (p === 'RIGHT') return 'layers-right-part';
+  return 'layers-middle-part';
+}
+
+/** After-color styling (LAYERS + part); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
 export function wigPreviewLiveAfterColorStylingPaths(
   promptVersion: string,
   unitKey: string,
@@ -77,7 +85,7 @@ export function wigPreviewLiveAfterColorStylingPaths(
   stylingKey: string
 ): { front: string; left: string; right: string } {
   const u = unitKey.toUpperCase();
-  const sk = stylingKey.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || 'middle-layers';
+  const sk = stylingKey.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || 'layers-middle-part';
   const base = `wig-preview-live/${promptVersion}/${u}/${colorTierHash}/after-color/${sk}`;
   return {
     front: `${base}/front.webp`,

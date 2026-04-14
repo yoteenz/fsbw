@@ -27,7 +27,7 @@ import {
   BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
   readBawNoirLiveBangsWigViews,
   readBawNoirLiveColorWigViews,
-  readBawNoirLiveStylingWigViews,
+  readBawNoirLiveStylingWigViewsForPart,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
@@ -61,7 +61,11 @@ export default function BuildAWigPage() {
     } catch {
       return null;
     }
-    return readBawNoirLiveStylingWigViews() ?? readBawNoirLiveBangsWigViews() ?? readBawNoirLiveColorWigViews();
+    return (
+      readBawNoirLiveStylingWigViewsForPart(localStorage.getItem('selectedPartSelection') || 'MIDDLE') ??
+      readBawNoirLiveBangsWigViews() ??
+      readBawNoirLiveColorWigViews()
+    );
   });
   
   // Track current editing item ID to detect when switching between products
@@ -3187,7 +3191,9 @@ export default function BuildAWigPage() {
           return;
         }
         setLiveNoirHubWigViews(
-          readBawNoirLiveStylingWigViews() ?? readBawNoirLiveBangsWigViews() ?? readBawNoirLiveColorWigViews()
+          readBawNoirLiveStylingWigViewsForPart(localStorage.getItem('selectedPartSelection') || 'MIDDLE') ??
+            readBawNoirLiveBangsWigViews() ??
+            readBawNoirLiveColorWigViews()
         );
       } catch {
         setLiveNoirHubWigViews(null);
@@ -3197,6 +3203,7 @@ export default function BuildAWigPage() {
     window.addEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
     window.addEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
     window.addEventListener(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT, refresh);
+    window.addEventListener('customStorageChange', refresh);
     window.addEventListener('storage', refresh);
     window.addEventListener('focus', refresh);
     window.addEventListener('signInStateChanged', refresh as EventListener);
@@ -3204,6 +3211,7 @@ export default function BuildAWigPage() {
       window.removeEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, refresh);
       window.removeEventListener(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT, refresh);
       window.removeEventListener(BAW_NOIR_LIVE_BANGS_VIEWS_EVENT, refresh);
+      window.removeEventListener('customStorageChange', refresh);
       window.removeEventListener('storage', refresh);
       window.removeEventListener('focus', refresh);
       window.removeEventListener('signInStateChanged', refresh as EventListener);

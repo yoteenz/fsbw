@@ -3,26 +3,18 @@ export const config = { maxDuration: 120 };
 /**
  * POST /api/live-wig-after-color-styling
  *
- * Admin-only. **After** live color WebPs exist, runs fal once per angle:
+ * Admin-only. **After** live color WebPs exist, runs fal once per angle.
  *
- * **Middle + layers:** two `image_urls` — color WebP + style inspo from
- * **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_{LEFT|FRONT|RIGHT}_URL`**. Requires **`partSelection`** **MIDDLE** and `styling` includes **LAYERS**.
- * **Output:** `.../after-color/middle-layers/{angle}.webp`
+ * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): two `image_urls` — color WebP + geometry refs from env
+ * (`WIG_PREVIEW_NOIR_LAYERS_{MIDDLE|LEFT|RIGHT}_PART_STYLE_*`; **MIDDLE** also accepts legacy `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`).
+ * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
- * **Bangs only:** single `image_urls` — color WebP only; text prompt adds curtain bangs (**no** extra env URLs).
- * Requires `styling` to include **BANGS** and **not** **LAYERS** (e.g. only **BANGS**). Any **partSelection**.
+ * **BANGS only** (BANGS without LAYERS): single `image_urls` — color WebP; `buildBangsOnlyStylePrompt`.
  * **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
- * **Color files live at** `wig-preview-live/{v}/NOIR/{colorTierHash}/{angle}.webp` (color-tier hash, `styling: NONE`).
- *
- * Body: same selection fields as live color + optional `angle` (left|front|right) + `color` (required for catalog).
- * Optional **`forceRegenerate`**: `true` — re-run fal for requested angle(s) even if output WebP exists.
- *
- * Resolution: **`WIG_PREVIEW_FAL_STYLING_RESOLUTION`** if set, else **`WIG_PREVIEW_FAL_RESOLUTION`**, else default **`2K`**
- * (after-color uses **two** images per fal call — heavier than live color; **4K** here often hits Vercel **`FUNCTION_INVOCATION_FAILED`** / timeouts on default plans). Values: **`1K`**, **`2K`**, **`4K`**.
+ * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-// Use `.js` extensions so Node ESM on Vercel resolves compiled `api/_lib/*.js` (see api/wig-preview/live-noir-color.ts bundling note).
 import { requireAdmin } from './_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
@@ -30,6 +22,7 @@ import {
   wigPreviewManifestHashLiveColorTier,
   wigPreviewLiveAnglePaths,
   wigPreviewLiveAfterColorStylingPaths,
+  wigPreviewLiveLayersPartFolder,
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
@@ -37,6 +30,50 @@ import {
   buildBangsOnlyStylePrompt,
   buildMiddlePartLayersStylePromptTwoImages,
 } from './_lib/bawLiveStylingPrompts.js';
+
+type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
+
+function readLayersPartStyling(body: Record<string, unknown>): LayersPartStyling {
+  const raw = readString(body, 'partSelection', 'MIDDLE').toUpperCase();
+  if (raw === 'LEFT' || raw === 'RIGHT' || raw === 'MIDDLE') return raw;
+  return 'MIDDLE';
+}
+
+function readLayersStyleRefUrls(part: LayersPartStyling): {
+  ok: true;
+  urls: { front: string; left: string; right: string };
+} | {
+  ok: false;
+  missing: Record<string, boolean>;
+  envKeyStem: string;
+} {
+  const pick = (stem: string) => ({
+    front: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_FRONT_URL`]?.trim() || '',
+    left: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_LEFT_URL`]?.trim() || '',
+    right: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_RIGHT_URL`]?.trim() || '',
+  });
+  const stem = part === 'LEFT' ? 'LEFT_PART' : part === 'RIGHT' ? 'RIGHT_PART' : 'MIDDLE_PART';
+  let u = pick(stem);
+  if (part === 'MIDDLE' && (!u.front || !u.left || !u.right)) {
+    u = {
+      front: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim() || '',
+      left: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim() || '',
+      right: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim() || '',
+    };
+  }
+  if (!u.front || !u.left || !u.right) {
+    return {
+      ok: false,
+      missing: {
+        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_FRONT_URL`]: !u.front,
+        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_LEFT_URL`]: !u.left,
+        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_RIGHT_URL`]: !u.right,
+      },
+      envKeyStem: `WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_{FRONT|LEFT|RIGHT}_URL`,
+    };
+  }
+  return { ok: true, urls: u };
+}
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -119,10 +156,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    const styleFrontUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim();
-    const styleLeftUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim();
-    const styleRightUrl = process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim();
-
     const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
     const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
     const body = parseBody(req);
@@ -138,20 +171,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    const partSelection = readString(body, 'partSelection', 'MIDDLE').toUpperCase();
+    const partStyling = readLayersPartStyling(body);
     const stylingRaw = readString(body, 'styling', 'NONE').toUpperCase();
     const hasLayers = stylingRaw.includes('LAYERS');
     const hasBangs = stylingRaw.includes('BANGS');
-    /** BANGS without LAYERS: single-image fal (no style inspo env). BANGS+LAYERS still uses middle+layers path. */
     const bangsOnly = hasBangs && !hasLayers;
-    const middleLayers = hasLayers && partSelection === 'MIDDLE';
+    const middleLayers = hasLayers;
 
     if (!middleLayers && !bangsOnly) {
       sendJson(res, 400, {
         error:
-          'Live styling: either (1) part MIDDLE + styling including LAYERS (middle + layers), or (2) styling BANGS only without LAYERS (add curtain bangs on color WebP).',
+          'Live styling: either (1) styling including LAYERS (layers + part from partSelection), or (2) styling BANGS only without LAYERS.',
       });
       return;
+    }
+
+    let styleRefs: { ok: true; urls: { front: string; left: string; right: string } } | null = null;
+    if (middleLayers) {
+      const r = readLayersStyleRefUrls(partStyling);
+      if (!r.ok) {
+        sendJson(res, 503, {
+          error: `Missing public geometry reference URLs for LAYERS + part ${partStyling}. Set ${r.envKeyStem} (HTTPS, one per camera angle).`,
+          partSelection: partStyling,
+          missing: r.missing,
+        });
+        return;
+      }
+      styleRefs = r;
     }
 
     const selections: WigPreviewSelections = {
@@ -168,13 +214,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const colorTierHash = wigPreviewManifestHashLiveColorTier(selections);
     const colorPaths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', colorTierHash);
-    const stylingFolderKey = middleLayers ? 'middle-layers' : 'bangs-only';
-    const outPaths = wigPreviewLiveAfterColorStylingPaths(
-      promptVersion,
-      'NOIR',
-      colorTierHash,
-      stylingFolderKey
-    );
+    const storageFolderKey = middleLayers ? wigPreviewLiveLayersPartFolder(partStyling) : 'bangs-only';
+    const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
     let supabase;
     try {
@@ -190,26 +231,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const generated: string[] = [];
     const skipped: string[] = [];
 
-    const styleRefByAngle = {
-      front: styleFrontUrl,
-      left: styleLeftUrl,
-      right: styleRightUrl,
-    } as const;
-
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
-
-    if (middleLayers && (!styleFrontUrl || !styleLeftUrl || !styleRightUrl)) {
-      sendJson(res, 503, {
-        error: 'Missing public style-inspo image URLs for middle + layers (one per angle)',
-        missing: {
-          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL: !styleFrontUrl,
-          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL: !styleLeftUrl,
-          WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL: !styleRightUrl,
-        },
-      });
-      return;
-    }
 
     for (const angle of anglesToRun) {
       const outPath = outPaths[angle];
@@ -243,8 +266,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const prompt = middleLayers
         ? buildMiddlePartLayersStylePromptTwoImages(angle)
         : buildBangsOnlyStylePrompt(angle);
-      const imageUrls = middleLayers
-        ? [colorPublicUrl, styleRefByAngle[angle]]
+      const imageUrls = middleLayers && styleRefs
+        ? [colorPublicUrl, styleRefs.urls[angle]]
         : [colorPublicUrl];
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
@@ -290,6 +313,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       skipped,
       selections,
       stylingMode: middleLayers ? 'middle-layers' : 'bangs-only',
+      ...(middleLayers ? { partSelection: partStyling } : {}),
       ...(singleAngle ? { singleAngle } : {}),
     });
   } catch (e) {

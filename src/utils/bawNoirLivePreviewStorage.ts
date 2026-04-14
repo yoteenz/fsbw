@@ -12,6 +12,38 @@ const BANGS_KEY = 'bawNoirLiveBangsWigViews';
 
 export type BawNoirLiveWigViewsTriple = [string, string, string];
 
+export type BawNoirLiveStylingPart = 'MIDDLE' | 'LEFT' | 'RIGHT';
+
+export type BawNoirLiveStylingEnvelope = {
+  part: BawNoirLiveStylingPart;
+  urls: BawNoirLiveWigViewsTriple;
+};
+
+function parseStylingStorageRaw(raw: string | null): BawNoirLiveStylingEnvelope | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed) && parsed.length === 3) {
+      return {
+        part: 'MIDDLE',
+        urls: [String(parsed[0]), String(parsed[1]), String(parsed[2])],
+      };
+    }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+    const o = parsed as Record<string, unknown>;
+    const part = o.part;
+    const urls = o.urls;
+    if (part !== 'MIDDLE' && part !== 'LEFT' && part !== 'RIGHT') return null;
+    if (!Array.isArray(urls) || urls.length !== 3) return null;
+    return {
+      part,
+      urls: [String(urls[0]), String(urls[1]), String(urls[2])],
+    };
+  } catch {
+    return null;
+  }
+}
+
 function dispatch(name: string) {
   try {
     window.dispatchEvent(new CustomEvent(name));
@@ -85,25 +117,44 @@ export function clearBawNoirLiveColorWigViews(): void {
   }
 }
 
-export function persistBawNoirLiveStylingWigViews(views: BawNoirLiveWigViewsTriple): void {
+export function persistBawNoirLiveStylingWigViews(views: BawNoirLiveWigViewsTriple, part: BawNoirLiveStylingPart): void {
   try {
-    localStorage.setItem(STYLING_KEY, JSON.stringify(views));
+    const envelope: BawNoirLiveStylingEnvelope = { part, urls: views };
+    localStorage.setItem(STYLING_KEY, JSON.stringify(envelope));
     dispatch(BAW_NOIR_LIVE_STYLING_VIEWS_EVENT);
   } catch {
     /* ignore */
   }
 }
 
-export function readBawNoirLiveStylingWigViews(): BawNoirLiveWigViewsTriple | null {
+/** Full envelope (any part). */
+export function readBawNoirLiveStylingEnvelope(): BawNoirLiveStylingEnvelope | null {
   try {
-    const raw = localStorage.getItem(STYLING_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed) || parsed.length !== 3) return null;
-    return [String(parsed[0]), String(parsed[1]), String(parsed[2])];
+    return parseStylingStorageRaw(localStorage.getItem(STYLING_KEY));
   } catch {
     return null;
   }
+}
+
+/**
+ * Styling triple only when it matches **expectedPart** (hub: pass `selectedPartSelection`).
+ * Legacy array-only storage is treated as **MIDDLE**.
+ */
+export function readBawNoirLiveStylingWigViewsForPart(expectedPart: string): BawNoirLiveWigViewsTriple | null {
+  try {
+    const env = parseStylingStorageRaw(localStorage.getItem(STYLING_KEY));
+    if (!env) return null;
+    const want = (expectedPart || 'MIDDLE').toUpperCase();
+    if (env.part !== want) return null;
+    return env.urls;
+  } catch {
+    return null;
+  }
+}
+
+/** @deprecated Prefer `readBawNoirLiveStylingWigViewsForPart` or `readBawNoirLiveStylingEnvelope`. */
+export function readBawNoirLiveStylingWigViews(): BawNoirLiveWigViewsTriple | null {
+  return readBawNoirLiveStylingWigViewsForPart('MIDDLE');
 }
 
 export function clearBawNoirLiveStylingWigViews(): void {

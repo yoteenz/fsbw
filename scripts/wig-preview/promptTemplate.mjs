@@ -179,7 +179,7 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
 // =============================================================================
 
 /**
- * **Two attachments** (live / server fal): (1) colored mannequin from Storage, (2) geometry reference per angle — env `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_{LEFT|FRONT|RIGHT}_URL` (shape only; not hair color).
+ * **Two attachments** (live / server fal): (1) colored mannequin from Storage, (2) geometry reference per angle — env per part: `WIG_PREVIEW_NOIR_LAYERS_{MIDDLE|LEFT|RIGHT}_PART_STYLE_{FRONT|LEFT|RIGHT}_URL` (legacy MIDDLE: `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`).
  * Keep in sync with `api/_lib/bawLiveStylingPrompts.ts` `buildMiddlePartLayersStylePromptTwoImages`.
  * @param {'front'|'left'|'right'} angle
  */

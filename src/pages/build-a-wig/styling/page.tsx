@@ -23,7 +23,7 @@ import {
   persistBawNoirLiveBangsWigViews,
   persistBawNoirLiveStylingWigViews,
   readBawNoirLiveBangsWigViews,
-  readBawNoirLiveStylingWigViews,
+  readBawNoirLiveStylingWigViewsForPart,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -210,7 +210,10 @@ export default function StylingSelectionPage() {
         setLiveBangsWigViews(null);
         setLiveStylingError(null);
       } else {
-        const cachedLayers = readBawNoirLiveStylingWigViews();
+        const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
+        const p: 'MIDDLE' | 'LEFT' | 'RIGHT' =
+          rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
+        const cachedLayers = readBawNoirLiveStylingWigViewsForPart(p);
         if (cachedLayers) setLiveStylingWigViews(cachedLayers);
         else setLiveStylingWigViews(null);
         const cachedBangs = readBawNoirLiveBangsWigViews();
@@ -221,7 +224,7 @@ export default function StylingSelectionPage() {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname]);
+  }, [location.pathname, selectedPartSelection, selectedHairStyling]);
 
   // CRITICAL: Reset part selection to MIDDLE when no styling is selected
   useEffect(() => {
@@ -292,11 +295,13 @@ export default function StylingSelectionPage() {
 
   const baseWigViews = getWigViews();
   const liveNoirColorWigViews = useBawSubpageLiveNoirColorWigViews();
-  const hasMiddleLayersLive =
+  const hasLayersLiveStyling =
     adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'LAYERS') &&
-    selectedPartSelection === 'MIDDLE';
+    (selectedPartSelection === 'MIDDLE' ||
+      selectedPartSelection === 'LEFT' ||
+      selectedPartSelection === 'RIGHT');
 
   const hasBangsOnlyLive =
     adminLiveNoirStylingPreview &&
@@ -310,8 +315,8 @@ export default function StylingSelectionPage() {
       adminLiveNoirStylingPreview &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
-    if (!noir || !hasMiddleLayersLive) {
-      if (!hasMiddleLayersLive) setLiveStylingWigViews(null);
+    if (!noir || !hasLayersLiveStyling) {
+      if (!hasLayersLiveStyling) setLiveStylingWigViews(null);
       return;
     }
     const stylingForApi = selectedHairStyling
@@ -324,6 +329,10 @@ export default function StylingSelectionPage() {
     }
     setLiveStylingError(null);
     setLiveStylingLoading(true);
+    const partKey = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
+    const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey);
+    if (cachedForPart) setLiveStylingWigViews(cachedForPart);
+    else setLiveStylingWigViews(null);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
     void postLiveWigAfterColorStyling({
@@ -342,7 +351,7 @@ export default function StylingSelectionPage() {
             `${u.right}?t=${bust}`,
           ];
           setLiveStylingWigViews(triple);
-          persistBawNoirLiveStylingWigViews(triple);
+          persistBawNoirLiveStylingWigViews(triple, selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT');
         } else {
           setLiveStylingWigViews(null);
         }
@@ -357,7 +366,7 @@ export default function StylingSelectionPage() {
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
-    hasMiddleLayersLive,
+    hasLayersLiveStyling,
   ]);
 
   useEffect(() => {
@@ -417,7 +426,7 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    hasMiddleLayersLive && liveStylingWigViews
+    hasLayersLiveStyling && liveStylingWigViews
       ? liveStylingWigViews
       : hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
@@ -428,7 +437,7 @@ export default function StylingSelectionPage() {
   const showNoirLiveStylingBanner =
     adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
-    (hasMiddleLayersLive || hasBangsOnlyLive);
+    (hasLayersLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets
@@ -537,6 +546,12 @@ export default function StylingSelectionPage() {
     // MIDDLE can always be selected, but LEFT and RIGHT require hair styling
     if (partId === 'MIDDLE' || hasStylingSelected) {
       setSelectedPartSelection(partId);
+      try {
+        localStorage.setItem('selectedPartSelection', partId);
+        window.dispatchEvent(new CustomEvent('customStorageChange'));
+      } catch {
+        /* ignore */
+      }
     } else {
       console.log('handlePartSelectionSelect: Blocked selection of', partId, '- no styling selected');
     }
@@ -1355,12 +1370,12 @@ export default function StylingSelectionPage() {
                 }}
               >
                 {liveStylingLoading
-                  ? 'LIVE PREVIEW: middle + layers (after color)…'
+                  ? `LIVE PREVIEW: layers + ${selectedPartSelection} part (after color)…`
                   : liveBangsLoading
                     ? 'LIVE PREVIEW: curtain bangs (after color)…'
                     : liveStylingError
                       ? `LIVE PREVIEW: ${liveStylingError}`
-                      : hasMiddleLayersLive
+                      : hasLayersLiveStyling
                         ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Use regen links below to re-run fal for one angle.'
                         : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). No extra style inspo URLs. Regen per angle below.'}
               </p>
@@ -1424,8 +1439,9 @@ export default function StylingSelectionPage() {
                                 return next;
                               });
                             };
-                            if (hasMiddleLayersLive) {
-                              applyTriple(setLiveStylingWigViews, persistBawNoirLiveStylingWigViews);
+                            if (hasLayersLiveStyling) {
+                              const part = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
+                              applyTriple(setLiveStylingWigViews, (t) => persistBawNoirLiveStylingWigViews(t, part));
                             } else {
                               applyTriple(setLiveBangsWigViews, persistBawNoirLiveBangsWigViews);
                             }
