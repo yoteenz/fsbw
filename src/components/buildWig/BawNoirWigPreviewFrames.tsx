@@ -5,8 +5,6 @@ type Props = {
   wigViews: [string, string, string] | string[];
   selectedView: number;
   onSelectView: (index: number) => void;
-  /** When true (e.g. `/build-a-wig/noir/...`), apply live-WebP framing. */
-  isNoirRoute: boolean;
   /** Optional content above the hero image (e.g. product title). */
   heroChildren?: ReactNode;
   /** Extra classes on the thumbnail row (e.g. hub uses flex center on inner thumb boxes). */
@@ -14,19 +12,18 @@ type Props = {
 };
 
 /**
- * Hero + three thumbnails for BAW sub-pages. When `wigViews` are remote fal WebPs on a NOIR route,
- * drop the extra brick layer and use cover framing so the scene matches the WebP (no double brick).
+ * Hero + three thumbnails for BAW sub-pages. When any `wigViews` URL is remote (live fal WebPs),
+ * drop the extra brick layer and use cover framing so the scene matches the image (no double brick).
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
   selectedView,
   onSelectView,
-  isNoirRoute,
   heroChildren,
   thumbRowClassName,
 }: Props) {
   const triple = wigViews as string[];
-  const hideBrick = isNoirRoute && hideDuplicateBrickForNoirWigViews(triple);
+  const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
 
   return (
     <>

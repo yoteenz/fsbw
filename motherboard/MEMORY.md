@@ -14620,3 +14620,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — BAW preview: hide brick only for remote WebPs (styling, hairline, all sub-pages)
+
+**Context (this chat):** User asked to match the **color page** treatment—no duplicate brick, correct photo alignment, no gray thumbnail band—on **styling** and **hairline** (and future live steps).
+
+**Decisions / outcomes:** **`BawNoirWigPreviewHeroThumbs`** used **`hideBrick = isNoirRoute && hideDuplicateBrickForNoirWigViews(triple)`**. On any **`/build-a-wig/noir/...`** route, **`isNoirRoute`** was always true, so **static `/assets` PNGs** still got **live-WebP framing** (`object-fit: cover`, gray fill, wrong offsets). **Fix:** remove **`isNoirRoute`** prop; set **`hideBrick = hideDuplicateBrickForNoirWigViews(triple)`** only when any view URL is **http(s)**. Styling/hairline/length/etc. now use **brick + legacy positioning** until `wigViews` are remote (committed color, live styling/bangs, or hub composite). Color page unchanged in behavior; dropped unused **`isNoirColorRoute`**.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, all **`BawNoirWigPreviewHeroThumbs`** call sites under **`src/pages/build-a-wig/`** (hub, color, styling, hairline, length, lace, texture, density, cap-size, addons).
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

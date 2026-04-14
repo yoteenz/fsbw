@@ -555,8 +555,6 @@ function ColorSelection() {
         ? committedLiveNoirColorViews
         : baseWigViews;
 
-  const isNoirColorRoute = location.pathname.includes('/build-a-wig/noir/');
-
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
   
@@ -1475,7 +1473,6 @@ function ColorSelection() {
                 wigViews={wigViews}
                 selectedView={selectedView}
                 onSelectView={setSelectedView}
-                isNoirRoute={isNoirColorRoute}
                 heroChildren={
                   <p
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"

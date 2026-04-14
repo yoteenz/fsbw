@@ -5272,7 +5272,6 @@ export default function BuildAWigPage() {
                 wigViews={wigViews}
                 selectedView={selectedView}
                 onSelectView={setSelectedView}
-                isNoirRoute={location.pathname.startsWith('/build-a-wig/noir')}
                 thumbRowClassName="items-center"
                 heroChildren={
                   <p
