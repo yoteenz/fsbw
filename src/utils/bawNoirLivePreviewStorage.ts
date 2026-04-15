@@ -67,6 +67,7 @@ function parseTriple(raw: string | null): BawNoirLiveWigViewsTriple | null {
 export function persistPendingBawNoirLiveColorWigViews(views: BawNoirLiveWigViewsTriple): void {
   try {
     localStorage.setItem(COLOR_PENDING_KEY, JSON.stringify(views));
+    dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
     /* ignore */
   }
@@ -83,6 +84,7 @@ export function readPendingBawNoirLiveColorWigViews(): BawNoirLiveWigViewsTriple
 export function clearPendingBawNoirLiveColorWigViews(): void {
   try {
     localStorage.removeItem(COLOR_PENDING_KEY);
+    dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
     /* ignore */
   }

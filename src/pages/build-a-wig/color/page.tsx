@@ -759,6 +759,7 @@ function ColorSelection() {
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     const onBawColorRoute = pathname.includes('/build-a-wig/') && pathname.includes('/color');
+    const onNoirColorRoute = pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
 
     const priceForChoice = (() => {
       if (isBlancoRoute) {
@@ -784,6 +785,12 @@ function ColorSelection() {
     }
     localStorage.setItem('selectedColor', colorId);
     localStorage.setItem('selectedColorPrice', priceStr);
+    if (onNoirColorRoute) {
+      clearPendingBawNoirLiveColorWigViews();
+      if (colorId === 'OFF BLACK') {
+        clearBawNoirLiveColorWigViews();
+      }
+    }
     if (onBawColorRoute && (isOnEditRoute || isOnCustomizeRoute)) {
       sessionStorage.setItem('comingFromSubPage', 'true');
     }
