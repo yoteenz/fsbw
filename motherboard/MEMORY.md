@@ -15030,3 +15030,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` not re-run after doc-only edits (prior merge build passed).
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW duplicate brick: per-angle live detection + blob:// URLs
+
+**Context (this chat):** User still saw **duplicate brick** under live NOIR thumbnails after prior **`data:`** fix.
+
+**Decisions / outcomes:** **Mismatch:** `hideBrick` was **one boolean for the whole triple**. Mixed triples (e.g. one **https** live angle + **`/assets/` naturals** on others) forced **all** cells into “live” mode — static PNGs got **`object-fit: cover`** on gray without the real brick layer (**wrong**), while **any** URL shape we did not classify as “live” (**`blob:`**, protocol-relative **`//`**) left **brick + baked brick** (**double**). **Fix:** **`isBawNoirLiveWigViewSrc(src)`** per angle — non-`/assets/` and (`data:` | `blob:` | `http(s):` | `//`). **`BawNoirWigPreviewFrames`:** hero uses **`heroLive`** from **selected** angle only; each thumb uses **`thumbLive`** for **`.leaf-bg`**, frame **`leaf-brick-resize`**, and **`thumbnail-mannequin-img--live-noir`**; row class **`baw-noir-thumb-row--live-noir`** when **any** angle is live (spacing). **`hideDuplicateBrickForNoirWigViews`** now delegates to **`isBawNoirLiveWigViewSrc`**.
+
+**Changes:** **`src/utils/bawNoirLiveWigViewDisplay.ts`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

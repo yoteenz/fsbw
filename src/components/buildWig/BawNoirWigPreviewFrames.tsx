@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
+import { isBawNoirLiveWigViewSrc } from '../../utils/bawNoirLiveWigViewDisplay';
 
 type Props = {
   wigViews: [string, string, string] | string[];
@@ -26,19 +26,21 @@ export function BawNoirWigPreviewHeroThumbs({
   thumbRowClassName,
 }: Props) {
   const triple = wigViews as string[];
-  const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
+  /** Per-angle: mixed triples can have live fal on one angle and static /assets PNGs on others — do not use one global flag for all cells. */
+  const heroLive = isBawNoirLiveWigViewSrc(triple[selectedView] ?? '');
+  const rowHasLiveNoir = triple.some((v) => isBawNoirLiveWigViewSrc(v));
 
   return (
     <>
       <div className="leaf-stack hero-thumb">
-        {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
+        {!heroLive && <div className="leaf-bg" aria-hidden="true" />}
         <div
           className="relative bg-cover bg-center flex items-center justify-center"
           style={{
             width: '262px',
             height: '367px',
             overflow: 'visible',
-            ...(hideBrick
+            ...(heroLive
               ? {
                   backgroundImage: 'none',
                   backgroundColor: '#f5f5f5',
@@ -52,7 +54,7 @@ export function BawNoirWigPreviewHeroThumbs({
           }}
         >
           {heroChildren}
-          {hideBrick ? (
+          {heroLive ? (
             <div className="absolute left-0 top-0 z-[5] size-full overflow-hidden">
               <img
                 src={triple[selectedView]}
@@ -93,30 +95,33 @@ export function BawNoirWigPreviewHeroThumbs({
       {belowHeroChildren}
 
       <div
-        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
+        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${rowHasLiveNoir ? ' baw-noir-thumb-row--live-noir' : ''}${
           thumbRowClassName ? ` ${thumbRowClassName}` : ''
         }`}
         style={{
           transform: 'translateY(10px)',
-          gap: hideBrick ? '12px' : '2px',
-          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
+          gap: rowHasLiveNoir ? '12px' : '2px',
+          ...(rowHasLiveNoir ? { columnGap: '12px', rowGap: '12px' } : {}),
         }}
       >
-        {triple.map((view, index) => (
+        {triple.map((view, index) => {
+          const thumbLive = isBawNoirLiveWigViewSrc(view);
+          return (
           <div className="leaf-stack thumb" key={index}>
-            {!hideBrick && (
+            {!thumbLive && (
               <div
                 className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
                 aria-hidden="true"
               />
             )}
             <div
-              className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
+              className={`border-transparent cursor-pointer ${thumbLive ? 'p-0' : 'p-1'}`}
               onClick={() => onSelectView(index)}
             >
               <div
                 className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
                 data-baw-thumb-index={index}
+                data-baw-thumb-live={thumbLive ? '1' : '0'}
                 style={{
                   width: '72px',
                   height: '95px',
@@ -125,7 +130,7 @@ export function BawNoirWigPreviewHeroThumbs({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  ...(hideBrick
+                  ...(thumbLive
                     ? {
                         overflow: 'hidden',
                         backgroundImage: 'none',
@@ -140,22 +145,22 @@ export function BawNoirWigPreviewHeroThumbs({
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                       }),
-                  ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
-                  ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
+                  ...(!thumbLive && index === 1 && { transform: 'translateX(-2px)' }),
+                  ...(!thumbLive && index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
-                  width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 95 : 84}
+                  width={thumbLive ? 72 : 63}
+                  height={thumbLive ? 95 : 84}
                   src={view}
                   className={
-                    hideBrick
+                    thumbLive
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
                       : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
                   }
                   style={
-                    hideBrick
+                    thumbLive
                       ? ({
                           left: '50%',
                           top: '50%',
@@ -171,7 +176,8 @@ export function BawNoirWigPreviewHeroThumbs({
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );
