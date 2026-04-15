@@ -11,7 +11,7 @@ import {
 /**
  * NOIR BAW sub-pages: same live triple resolution as the shared hub/storage resolver —
  * prefer the latest pending/current NOIR color preview first when appropriate, then styling/bangs.
- * Non-NOIR routes get `null`.
+ * Non-NOIR routes and the exact NOIR product hub (`/build-a-wig/noir`) get `null` (resolver).
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {
   const { pathname } = useLocation();

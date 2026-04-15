@@ -15114,3 +15114,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR product hub: static mannequins only; live WebPs on sub-routes
+
+**Context (this chat):** User asked that the **main BAW page** (NOIR product hub) **not** show live photos on thumbnails — **only** original mannequin **`/assets/`** images; live mannequin/thumbnail updates stay on **sub-pages**.
+
+**Decisions / outcomes:** Treat exact **`/build-a-wig/noir`** as the **static** hub: **`hubLiveNoirWigViews`** never applies there (state cleared on that route; **`hubLiveNoirWigViews`** useMemo returns **`null`**). **`resolveAdminNoirHubLiveWigViewsFromStorage`** returns **`null`** for that pathname so **no** caller can show stored WebPs on the hub (including navigation from a sub-page). Exported **`isNoirBawProductHubPathname`** for reuse. Updated **`motherboard/CORE.md`** live-preview bullet.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

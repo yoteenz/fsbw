@@ -31,12 +31,13 @@ import {
   clearPendingBawNoirLiveColorWigViews,
   resolveAdminNoirHubLiveWigViewsFromStorage,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
+  isNoirBawProductHubPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
- * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) still use live composite + hairline from storage when available.
+ * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) use live composite from storage when available; exact **`/build-a-wig/noir`** stays static mannequins.
  */
 const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
   '/assets/natural left.png',
@@ -72,10 +73,11 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
 
-  /** Live NOIR WebPs on product hub only — not used on exact `/build-a-wig` (static default hero there). */
+  /** Live NOIR WebPs on NOIR sub-routes only — not on `/build-a-wig` or `/build-a-wig/noir` hub (static mannequins). */
   const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
     const pathname = location.pathname;
     if (pathname === '/build-a-wig' || !pathname.startsWith('/build-a-wig/noir')) return null;
+    if (isNoirBawProductHubPathname(pathname)) return null;
     return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
   });
   // Track current editing item ID to detect when switching between products
@@ -3184,6 +3186,7 @@ export default function BuildAWigPage() {
     const pathname = location.pathname;
     if (isNoirBawHubLandingPathname(pathname)) return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
+    if (isNoirBawProductHubPathname(pathname)) return null;
     return liveNoirHubWigViews;
   }, [location.pathname, liveNoirHubWigViews]);
 
@@ -3192,7 +3195,7 @@ export default function BuildAWigPage() {
     : hubLiveNoirWigViews ?? baseWigViewsForHub;
 
   useEffect(() => {
-    if (isNoirBawHubLandingPathname(location.pathname)) {
+    if (isNoirBawHubLandingPathname(location.pathname) || isNoirBawProductHubPathname(location.pathname)) {
       setLiveNoirHubWigViews(null);
     }
   }, [location.pathname]);
@@ -3217,7 +3220,7 @@ export default function BuildAWigPage() {
   useEffect(() => {
     const refresh = () => {
       const path = typeof window !== 'undefined' ? window.location.pathname : '';
-      if (path && isNoirBawHubLandingPathname(path)) {
+      if (path && (isNoirBawHubLandingPathname(path) || isNoirBawProductHubPathname(path))) {
         setLiveNoirHubWigViews(null);
         return;
       }

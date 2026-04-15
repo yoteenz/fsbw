@@ -277,6 +277,12 @@ function currentNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTrip
   return readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
 }
 
+/** Exact `/build-a-wig/noir` — static mannequin PNGs only; live WebPs apply on `/build-a-wig/noir/...` sub-routes. */
+export function isNoirBawProductHubPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return p === '/build-a-wig/noir';
+}
+
 /**
  * Admin NOIR BAW hub: which persisted live triple to show.
  * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
@@ -292,6 +298,8 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
         : typeof window !== 'undefined'
           ? window.location.pathname
           : '';
+
+    if (isNoirBawProductHubPathname(path)) return null;
 
     const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
     if (effectiveCanon === 'NONE' || effectiveCanon === '') {
