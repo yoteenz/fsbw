@@ -3403,8 +3403,9 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
+  /* cover fills 72×95 — no neutral letterboxing on sides/bottom (contain left gray bars when aspect ≠ frame) */
   object-fit: cover !important;
-  object-position: center top !important;
+  object-position: center center !important;
 }
 
 /* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
@@ -3413,7 +3414,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
   object-fit: cover !important;
-  object-position: center top !important;
+  object-position: center center !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */

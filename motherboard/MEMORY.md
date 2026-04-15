@@ -14823,6 +14823,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — NOIR BAW hub: styling WebPs vs NONE (refresh persistence)
+
+**Context (this chat):** **`/build-a-wig/noir`** hub hero kept **styling** fal WebPs after refresh/navigation; user wanted **base hairline PNGs** (or committed color) when salon styling is cleared.
+
+**Decisions / outcomes:** Product hub read **styling → bangs → color** unconditionally from **localStorage**, so **`bawNoirLiveStylingWigViews`** overrode base even when **`selectedStyling`** was **`NONE`** (stale **`selectedHairStyling`**). **`resolveAdminNoirHubLiveWigViewsFromStorage()`** in **`bawNoirLivePreviewStorage.ts`**: **`selectedStyling === 'NONE'`** → **color only**; else **LAYERS** → part-matched styling triple; **BANGS-only** → bangs triple; else color. Hub refresh **`useEffect`** depends on **`customization.styling`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`** (sub-page composite hook uses same resolver).
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-14 — NOIR shop → BAW customize: clear stale live previews; edit hub total vs cart shortcut
 
 **Context (this chat):** User reported wrong flow from **NOIR product** → **Customize in Build-a-Wig**: stale **fal/WebP** color previews (e.g. ginger) persisted instead of **default** mannequin; after confirming **color** on the sub-page, **total price** on the main BAW hub did not update.
@@ -14837,14 +14851,168 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-14 — NOIR live preview resolver: customize/edit keys + pathname
+
+**Context (this chat):** User reported **no change** after prior hub fix — hero still showed **styling** WebPs.
+
+**Decisions / outcomes:** Resolver only read **`selectedStyling`**; **customize/edit** flows clear **`customizeSelectedStyling`** / **`editSelectedStyling`** while **`selectedStyling`** could still say **`LAYERS`**, so styling cache still applied. **`readEffectiveBawSalonStylingCanon(pathname)`** — **`/customize`** → **`customizeSelectedStyling` ?? `selectedStyling`**; **`/edit`** → **`editSelectedStyling` ?? `selectedStyling`**; else **`selectedStyling`**. **`resolveAdminNoirHubLiveWigViewsFromStorage(pathname?)`** uses that for **NONE** early exit, then **union** of canon ids + **`selectedHairStyling`** for **BANGS+LAYERS** combos. Hub and composite hook pass **`location.pathname`**; hub refresh effect also depends on **`location.pathname`**.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-14 — NOIR live color vs OFF BLACK (ginger persistence follow-up)
 
 **Context (this chat):** User reported **nothing changed** after the first fix — **GINGER** fal images still appeared while selections were **OFF BLACK**; hub/sub-page mismatch continued.
 
-**Decisions / outcomes:** Committed **`bawNoirLiveColorWigViews`** could outlive **`selectedColor`** resets. **`shouldUseCommittedBawNoirLiveColorWigViews(pathname)`** + **`readEffectiveNoirBawHairColor`** — composite/hub only reads committed color triple when effective color ≠ **OFF BLACK**. **Color confirm** on noir routes: **OFF BLACK** clears committed + pending live color storage; non–OFF BLACK + admin live still persists fal triple. **Shop → customize:** **`SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE`** + one-shot clear on first **`/build-a-wig/noir/customize`** mount in **`build-a-wig/page.tsx`**.
+**Decisions / outcomes:** Committed **`bawNoirLiveColorWigViews`** could outlive **`selectedColor`** resets. **`shouldUseCommittedBawNoirLiveColorWigViews(pathname)`** + **`readEffectiveNoirBawHairColor`** — **`resolveAdminNoirHubLiveWigViewsFromStorage`** uses committed color triple only when effective color ≠ **OFF BLACK** (merged with master’s styling/bangs resolver). **Color confirm** on noir routes: **OFF BLACK** clears committed + pending live color storage; non–OFF BLACK + admin live still persists fal triple. **Shop → customize:** **`SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE`** + one-shot clear on first **`/build-a-wig/noir/customize`** mount in **`build-a-wig/page.tsx`**.
 
 **Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/straight/noir/page.tsx`**.
 
 **Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — BAW hub: static Noir hero on landing routes; customize color price vs canonical-backup
+
+**Context (this chat):** User asked to **triangulate** why **color price** still did not update on the **main** BAW page and why **sub-page fal color** showed on the main hub — only **default Noir** should show there. Asked to compare edit/customize price logic with **`CANONICAL_BACKUP_2026-03-31`** on parent **BAW CODE** folder.
+
+**Decisions / outcomes:** The **`CANONICAL_BACKUP_2026-03-31`** tree is **not in this repo** (only **`canonical-backup/`** snapshot exists under workspace). Compared **`canonical-backup/src/pages/build-a-wig/page.tsx`**: **`colorPrice`** uses **`getPrice('Color', …)`** whenever **`!isEditMode`** (so **customize** reads **`customizeSelectedColorPrice`**). Current code had **`isEditMode || isCustomizeMode ? calculatedPrices.colorPrice`** which **ignored** stored color line price in customize. **Fix:** **`colorPrice = isEditMode ? calculated … : getPrice('Color', …)`** to match backup. **Hero:** Previously only **`/build-a-wig`** forced static naturals; **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** still used admin **`hubLiveNoirWigViews`** (fal). **`isNoirBawHubLandingPathname`** + **`DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS`** — static naturals on **`/build-a-wig`**, **`/build-a-wig/noir`**, **`/build-a-wig/noir/edit`**, **`/build-a-wig/noir/customize`**; sub-routes (**`/noir/length`** etc.) unchanged. **Debug:** **`?baw_debug=1`** or **`localStorage bawPriceDebug=1`** logs **`[BAW PRICE TRIANGULATION] customize color`** with LS keys + calculated vs used **`colorPrice`**.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-14 — NOIR live BAW thumbnails: stop clipping (contain + full 95px frame)
+
+**Context (this chat):** Three thumbnails on main BAW and sub-pages were **clipped** after gray-strip fixes — not showing the full image.
+
+**Decisions / outcomes:** Live mode used a **shorter** thumb frame (**82px**) and **`object-fit: cover`**, which **crops** WebPs. **Fix:** thumb frame **95px** again (match brick mode); **`object-fit: contain`** + **`object-position: center center`** on **`thumbnail-mannequin-img--live-noir`** so the full WebP is visible (possible thin neutral letterboxing vs. hard crop).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — LAYERS + LEFT/RIGHT: fallback geometry refs to MIDDLE
+
+**Context (this chat):** User saw **Missing public geometry reference URLs for LAYERS + part LEFT** (and R) when choosing **LAYERS** with **LEFT**/**RIGHT** part.
+
+**Decisions / outcomes:** **`readLayersStyleRefUrls`** in **`api/live-wig-after-color-styling.ts`**: for **LEFT**/**RIGHT**, if part-specific triple incomplete, **fall back** to **`MIDDLE_PART`** env triple, then legacy **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`**. **`.env.example`** + **`docs/WIG_PREVIEW_PREGENERATION.md`** — part-specific URLs optional when middle refs exist.
+
+**Changes:** **`api/live-wig-after-color-styling.ts`**, **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR thumbnails: cover again (remove side gray bars)
+
+**Context (this chat):** User still saw **neutral gray on left and right** of live WebP thumbnails; prior **`object-fit: contain`** letterboxed when aspect ratio ≠ 72×95.
+
+**Decisions / outcomes:** Restored **`object-fit: cover`** + **`object-position: center center`** on **`img.thumbnail-mannequin-img--live-noir`** and combined selector in **`src/index.css`** — fills **72×95** frame (no side/bottom **`#f5f5f5`** bars; slight crop vs. contain).
+
+**Changes:** **`src/index.css`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW hub: match sub-page live previews (not static on /noir landing)
+
+**Context (this chat):** User wanted **main BAW** hero/thumbs to match **sub-pages** (same live WebP framing / triple as length, color, etc.).
+
+**Decisions / outcomes:** **`isNoirBawHubLandingPathname`** previously treated **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** like the global hub and forced **`DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS`** (static naturals), so **`hubLiveNoirWigViews`** was always **`null`** there — wrong vs. sub-pages. **Fix:** landing override **only** **`pathname === '/build-a-wig'`**; NOIR hub routes use **`hubLiveNoirWigViews ?? baseWigViewsForHub`** + same **`BawNoirWigPreviewHeroThumbs`** as before.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Non-Blanco BAW color: unify $120 (remove stale $100 maps)
+
+**Context (this chat):** User said **edit/customize** color should be **$120** not **$100**, and asked for **other color price mismatches**.
+
+**Decisions / outcomes:** **`build-a-wig/page.tsx`** `calculatePricesFromSelections` and **`color/page.tsx`** `getSelectedPrice()` already used **$120** for paid Noir colors; mismatches were **duplicate maps at $100**: **`CartDropdown`** `_getColorPrice` (bag line-item COLOR display), **`straight/noir/page.tsx`** cart update **`colorPrices`**, and **`color/page.tsx`** **`colorOptions[].price`** metadata (was **100**). All non-default Noir dye entries set to **120**. **Blanco** GOLDEN/PLATINUM/ASH unchanged. **Checkout** voucher COLOR logic already **120** for non-Blanco.
+
+**Changes:** **`src/components/CartDropdown.tsx`**, **`src/pages/straight/noir/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW hub: static naturals on landing; styling live regen + force on selection change
+
+**Context (this chat):** User wanted **regenerate** for **styling** like **color** — preview **stuck on CITRINE** when selection changed. **Main BAW** hero/thumbs should show **default OFF BLACK** (natural PNGs), not committed fal color.
+
+**Decisions / outcomes:** **`isNoirBawHubLandingPathname`** again includes **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** — **`wigViews`** = static **`natural left/front/right`** there; sub-routes unchanged. **Styling:** `postLiveWigAfterColorStyling` accepts optional **`{ forceRegenerate }`**; passes **`forceRegenerate: true`** to each one-angle call when **color|styling|part** signature changes vs prior run (separate refs for **LAYERS** vs **BANGS**). **UI:** **regen L/M/R** visible while loading (disabled); added **“regenerate all angles (fal)”** full triple refresh. **`api.ts`** only.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/utils/api.ts`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR BAW thumbs: enforce 72×95 frame + image (CSS)
+
+**Context (this chat):** User reported **nothing changed** after expecting **live NOIR** thumbnail **frame** and **image** height restored to **95px** (remote fal WebP row on BAW).
+
+**Decisions / outcomes:** **`img.thumbnail-mannequin-img--live-noir`** used **`width/height: 100%`**, so the raster could shrink with the frame if another rule altered the container. **Fix:** set explicit **72px × 95px** on the live thumb images (with **`object-fit: cover`** unchanged). Added **`!important`** rules on **`.baw-noir-thumb-row--live-noir .baw-noir-thumb-frame`** so the gray cell stays **72×95** even if late global thumb/layout overrides win.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR BAW: hide duplicate brick for data: previews (fix doubled thumb)
+
+**Context (this chat):** User clarified the prior **72×95 CSS lock** was wrong in spirit: the issue was a **doubled thumbnail underneath** (extra brick / static layer) that should be **removed**, not cropping the **correct** image on top.
+
+**Decisions / outcomes:** **`hideDuplicateBrickForNoirWigViews`** only treated **`http://` / `https://`** as live fal previews. Previews stored as **`data:image/...`** (e.g. from localStorage) did **not** flip **`hideBrick`**, so **`leaf-bg`** + **`leaf-brick-resize`** on **`.baw-noir-thumb-frame`** still rendered **under** the live **`img`**, looking like a misaligned duplicate. **Fix:** treat **`data:image/`** like remote URLs in **`bawNoirLiveWigViewDisplay.ts`**. **Reverted** the temporary **`index.css`** rules that forced fixed **72×95** on live thumb **`img`** and frame (restore **`width/height: 100%`** on **`img.thumbnail-mannequin-img--live-noir`**; remove **`.baw-noir-thumb-frame`** **!important** size block).
+
+**Changes:** **`src/utils/bawNoirLiveWigViewDisplay.ts`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Push target: merge NOIR thumb fix into `preview/mobile`
+
+**Context (this chat):** User asked whether pushes went to the **correct branch**. Project **`motherboard/CORE.md`** says work should land on **`preview/mobile`** for preview; earlier commits were pushed to **`cursor/restore-live-noir-thumb-95-1701`** (PR workflow).
+
+**Decisions / outcomes:** Merged **`cursor/restore-live-noir-thumb-95-1701`** into **`preview/mobile`**, resolved conflicts (kept **`preview/mobile`** hub **`liveNoirHubWigViews`** init + refresh using **`window.location.pathname`**, fixed **`bawNoirLivePreviewStorage`** comment block, preserved both MEMORY sections). Pushed **`preview/mobile`**.
+
+**Changes:** **`preview/mobile`** merge + conflict resolutions in **`src/pages/build-a-wig/page.tsx`**, **`src/utils/bawNoirLivePreviewStorage.ts`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes after merge.
 
 **Docs:** This MEMORY entry.

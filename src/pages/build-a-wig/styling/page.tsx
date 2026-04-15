@@ -1,5 +1,5 @@
 
-import { useState, useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -156,6 +156,9 @@ export default function StylingSelectionPage() {
   const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
+  /** When hair color / styling / part change, force fal — otherwise server skips and old WebPs persist. */
+  const lastLayersLivePreviewSigRef = useRef<string>('');
+  const lastBangsLivePreviewSigRef = useRef<string>('');
 
   // Listen for cart count changes
   useEffect(() => {
@@ -197,6 +200,8 @@ export default function StylingSelectionPage() {
       setLiveStylingWigViews(null);
       setLiveBangsWigViews(null);
       setLiveStylingError(null);
+      lastLayersLivePreviewSigRef.current = '';
+      lastBangsLivePreviewSigRef.current = '';
       return;
     }
     let cancelled = false;
@@ -335,12 +340,19 @@ export default function StylingSelectionPage() {
     else setLiveStylingWigViews(null);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    void postLiveWigAfterColorStyling({
-      color,
-      ...sel,
-      styling: stylingForApi,
-      partSelection: selectedPartSelection,
-    })
+    const sig = `LAYERS|${color}|${stylingForApi}|${selectedPartSelection}`;
+    const forceRegenerate =
+      lastLayersLivePreviewSigRef.current !== '' && lastLayersLivePreviewSigRef.current !== sig;
+    lastLayersLivePreviewSigRef.current = sig;
+    void postLiveWigAfterColorStyling(
+      {
+        color,
+        ...sel,
+        styling: stylingForApi,
+        partSelection: selectedPartSelection,
+      },
+      { forceRegenerate }
+    )
       .then((res) => {
         const u = res.publicUrls;
         if (u.front && u.left && u.right) {
@@ -391,12 +403,19 @@ export default function StylingSelectionPage() {
     setLiveBangsLoading(true);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    void postLiveWigAfterColorStyling({
-      color,
-      ...sel,
-      styling: stylingForApi,
-      partSelection: selectedPartSelection,
-    })
+    const sig = `BANGS|${color}|${stylingForApi}|${selectedPartSelection}`;
+    const forceRegenerate =
+      lastBangsLivePreviewSigRef.current !== '' && lastBangsLivePreviewSigRef.current !== sig;
+    lastBangsLivePreviewSigRef.current = sig;
+    void postLiveWigAfterColorStyling(
+      {
+        color,
+        ...sel,
+        styling: stylingForApi,
+        partSelection: selectedPartSelection,
+      },
+      { forceRegenerate }
+    )
       .then((res) => {
         const u = res.publicUrls;
         if (u.front && u.left && u.right) {
@@ -1376,8 +1395,8 @@ export default function StylingSelectionPage() {
                     : liveStylingError
                       ? `LIVE PREVIEW: ${liveStylingError}`
                       : hasLayersLiveStyling
-                        ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Use regen links below to re-run fal for one angle.'
-                        : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). No extra style inspo URLs. Regen per angle below.'}
+                        ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong (cached WebPs).'
+                        : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong.'}
               </p>
             )}
             {showNoirLiveStylingBanner && (

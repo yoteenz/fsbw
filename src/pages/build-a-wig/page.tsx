@@ -34,12 +34,19 @@ import {
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
-/** Global BAW hub (`/build-a-wig` only): always static default NOIR mannequin — no live color/styling. */
-const DEFAULT_GLOBAL_BAW_HUB_WIG_VIEWS: [string, string, string] = [
+/**
+ * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
+ * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) still use live composite + hairline when admin.
+ */
+const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
   '/assets/natural left.png',
   '/assets/natural front.png',
   '/assets/natural right.png',
 ];
+
+function isNoirBawHubLandingPathname(pathname: string): boolean {
+  return pathname === '/build-a-wig';
+}
 
 interface WigCustomization {
   capSize: string;
@@ -3180,7 +3187,7 @@ export default function BuildAWigPage() {
 
   const hubLiveNoirWigViews = useMemo(() => {
     const pathname = location.pathname;
-    if (pathname === '/build-a-wig') return null;
+    if (isNoirBawHubLandingPathname(pathname)) return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
     try {
       if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
@@ -3190,11 +3197,12 @@ export default function BuildAWigPage() {
     return liveNoirHubWigViews;
   }, [location.pathname, liveNoirHubWigViews]);
 
-  const wigViews =
-    location.pathname === '/build-a-wig' ? DEFAULT_GLOBAL_BAW_HUB_WIG_VIEWS : hubLiveNoirWigViews ?? baseWigViewsForHub;
+  const wigViews = isNoirBawHubLandingPathname(location.pathname)
+    ? DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS
+    : hubLiveNoirWigViews ?? baseWigViewsForHub;
 
   useEffect(() => {
-    if (location.pathname === '/build-a-wig') {
+    if (isNoirBawHubLandingPathname(location.pathname)) {
       setLiveNoirHubWigViews(null);
     }
   }, [location.pathname]);
@@ -3218,7 +3226,8 @@ export default function BuildAWigPage() {
 
   useEffect(() => {
     const refresh = () => {
-      if (typeof window !== 'undefined' && window.location.pathname === '/build-a-wig') {
+      const path = typeof window !== 'undefined' ? window.location.pathname : '';
+      if (path && isNoirBawHubLandingPathname(path)) {
         setLiveNoirHubWigViews(null);
         return;
       }
@@ -3250,7 +3259,7 @@ export default function BuildAWigPage() {
       window.removeEventListener('focus', refresh);
       window.removeEventListener('signInStateChanged', refresh as EventListener);
     };
-  }, []);
+  }, [customization.styling, location.pathname]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -3728,10 +3737,27 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      // Customize mode: same bug as edit — stale `customizeSelectedColorPrice` (e.g. "0") must not override
-      // the correct amount when the user picks a paid color on the color sub-page.
-      const colorPrice =
-        isEditMode || isCustomizeMode ? calculatedPrices.colorPrice : getPrice('Color', calculatedPrices.colorPrice);
+      // Match in-repo canonical-backup (`canonical-backup/.../build-a-wig/page.tsx`): edit uses calculated
+      // line items; customize/non-edit read per-option prices from localStorage via getPrice so sub-page
+      // `customizeSelectedColorPrice` / `selectedColorPrice` updates the hub total.
+      const colorPrice = isEditMode ? calculatedPrices.colorPrice : getPrice('Color', calculatedPrices.colorPrice);
+      const bawPriceTriangulation =
+        typeof window !== 'undefined' &&
+        (new URLSearchParams(window.location.search).get('baw_debug') === '1' ||
+          localStorage.getItem('bawPriceDebug') === '1');
+      if (bawPriceTriangulation && isCustomizeMode) {
+        console.log('[BAW PRICE TRIANGULATION] customize color', {
+          pathname: location.pathname,
+          prefix,
+          colorFromLs: currentCustomization.color,
+          customizeSelectedColor: localStorage.getItem('customizeSelectedColor'),
+          selectedColor: localStorage.getItem('selectedColor'),
+          customizeSelectedColorPrice: localStorage.getItem('customizeSelectedColorPrice'),
+          selectedColorPrice: localStorage.getItem('selectedColorPrice'),
+          calculatedColorPrice: calculatedPrices.colorPrice,
+          colorPriceUsedInTotal: colorPrice,
+        });
+      }
       const lengthPrice = isEditMode ? calculatedPrices.lengthPrice : getPrice('Length', calculatedPrices.lengthPrice);
       const densityPrice = isEditMode ? calculatedPrices.densityPrice : getPrice('Density', calculatedPrices.densityPrice);
       const lacePrice = isEditMode ? calculatedPrices.lacePrice : getPrice('Lace', calculatedPrices.lacePrice);

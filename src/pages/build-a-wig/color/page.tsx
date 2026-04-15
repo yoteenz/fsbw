@@ -592,7 +592,7 @@ function ColorSelection() {
       id: 'JET BLACK',
       name: 'JET BLACK',
       description: 'Deep black',
-      price: 100,
+      price: 120,
       colorCode: '#000000',
       image: ''
     },
@@ -608,7 +608,7 @@ function ColorSelection() {
       id: 'ESPRESSO',
       name: 'ESPRESSO',
       description: 'Rich dark brown',
-      price: 100,
+      price: 120,
       colorCode: '#3B1301',
       image: ''
     },
@@ -616,7 +616,7 @@ function ColorSelection() {
       id: 'CHESTNUT',
       name: 'CHESTNUT',
       description: 'Medium brown',
-      price: 100,
+      price: 120,
       colorCode: '#6C2D11',
       image: ''
     },
@@ -624,7 +624,7 @@ function ColorSelection() {
       id: 'HONEY',
       name: 'HONEY',
       description: 'Golden brown',
-      price: 100,
+      price: 120,
       colorCode: '#C58628',
       image: ''
     },
@@ -632,7 +632,7 @@ function ColorSelection() {
       id: 'AUBURN',
       name: 'AUBURN',
       description: 'Reddish brown',
-      price: 100,
+      price: 120,
       colorCode: '#9C5617',
       image: ''
     },
@@ -640,7 +640,7 @@ function ColorSelection() {
       id: 'COPPER',
       name: 'COPPER',
       description: 'Copper red',
-      price: 100,
+      price: 120,
       colorCode: '#802F02',
       image: ''
     },
@@ -648,7 +648,7 @@ function ColorSelection() {
       id: 'GINGER',
       name: 'GINGER',
       description: 'Bright orange',
-      price: 100,
+      price: 120,
       colorCode: '#F64F07',
       image: ''
     },
@@ -656,7 +656,7 @@ function ColorSelection() {
       id: 'SANGRIA',
       name: 'SANGRIA',
       description: 'Deep red wine',
-      price: 100,
+      price: 120,
       colorCode: '#7E0A1E',
       image: ''
     },
@@ -664,7 +664,7 @@ function ColorSelection() {
       id: 'CHERRY',
       name: 'CHERRY',
       description: 'Bright cherry red',
-      price: 100,
+      price: 120,
       colorCode: '#D70808',
       image: ''
     },
@@ -672,7 +672,7 @@ function ColorSelection() {
       id: 'RASPBERRY',
       name: 'RASPBERRY',
       description: 'Raspberry pink',
-      price: 100,
+      price: 120,
       colorCode: '#EF0461',
       image: ''
     },
@@ -680,7 +680,7 @@ function ColorSelection() {
       id: 'PLUM',
       name: 'PLUM',
       description: 'Deep plum purple',
-      price: 100,
+      price: 120,
       colorCode: '#640E82',
       image: ''
     },
@@ -688,7 +688,7 @@ function ColorSelection() {
       id: 'COBALT',
       name: 'COBALT',
       description: 'Deep cobalt blue',
-      price: 100,
+      price: 120,
       colorCode: '#290481',
       image: ''
     },
@@ -696,7 +696,7 @@ function ColorSelection() {
       id: 'TEAL',
       name: 'TEAL',
       description: 'Teal green',
-      price: 100,
+      price: 120,
       colorCode: '#46EBCA',
       image: ''
     },
@@ -704,7 +704,7 @@ function ColorSelection() {
       id: 'SLIME',
       name: 'SLIME',
       description: 'Bright lime green',
-      price: 100,
+      price: 120,
       colorCode: '#03D92A',
       image: ''
     },
@@ -712,7 +712,7 @@ function ColorSelection() {
       id: 'CITRINE',
       name: 'CITRINE',
       description: 'Citrine yellow',
-      price: 100,
+      price: 120,
       colorCode: '#E2E91C',
       image: ''
     }
