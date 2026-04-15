@@ -3,6 +3,8 @@ export const config = {
 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   buildGeneratedUnitColorPrompt,
   buildGeneratedUnitSelectionPrompt,
@@ -119,6 +121,33 @@ function buildOptionalImageUrl(
   return new URL(normalizedPath, `${proto}://${host}`).toString();
 }
 
+function resolveLocalPublicAssetPath(assetPath: string): string | null {
+  const normalized = String(assetPath || '').trim();
+  if (!normalized) return null;
+  const relative = normalized.replace(/^\/+/, '');
+  return join(process.cwd(), relative.startsWith('public/') ? relative : join('public', relative));
+}
+
+function mimeForPath(assetPath: string): string {
+  const lower = assetPath.toLowerCase();
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  if (lower.endsWith('.gif')) return 'image/gif';
+  return 'image/png';
+}
+
+async function uploadLocalAssetToFal(assetPath: string): Promise<string> {
+  const { fal } = await import('@fal-ai/client');
+  fal.config({ credentials: process.env.FAL_KEY || '' });
+  const resolved = resolveLocalPublicAssetPath(assetPath);
+  if (!resolved) throw new Error(`Could not resolve asset path: ${assetPath}`);
+  const buffer = readFileSync(resolved);
+  const blob = new Blob([buffer], { type: mimeForPath(assetPath) });
+  const fileName = assetPath.split('/').filter(Boolean).pop() || 'reference-image';
+  const file = new File([blob], fileName, { type: mimeForPath(assetPath) });
+  return fal.storage.upload(file);
+}
+
 async function runFalEdit(prompt: string, imageUrls: string[]): Promise<string> {
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: process.env.FAL_KEY || '' });
@@ -154,11 +183,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const body = parseBody(req);
     const unitKey = readString(body, 'unitKey', 'NOIR');
-    const referenceImageUrl = buildReferenceImageUrl(req, body);
-    const backdropReferenceImageUrl = buildOptionalImageUrl(
+    const referenceImagePath = readString(body, 'referenceImagePath', '');
+    const referenceImageUrl =
+      referenceImagePath && /^\/assets\//i.test(referenceImagePath)
+        ? await uploadLocalAssetToFal(referenceImagePath)
+        : buildReferenceImageUrl(req, body);
+    const backdropReferenceImagePath = readString(body, 'backdropReferenceImagePath', '') || '/assets/new-background.jpg';
+    const backdropReferenceImageUrl =
+      backdropReferenceImagePath && /^\/assets\//i.test(backdropReferenceImagePath)
+        ? await uploadLocalAssetToFal(backdropReferenceImagePath)
+        : buildOptionalImageUrl(
       req,
       readString(body, 'backdropReferenceImageUrl', ''),
-      readString(body, 'backdropReferenceImagePath', ''),
+      backdropReferenceImagePath,
       '/assets/new-background.jpg'
     );
 
