@@ -46,10 +46,7 @@ const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
 ];
 
 function isNoirBawHubLandingPathname(pathname: string): boolean {
-  if (pathname === '/build-a-wig') return true;
-  if (pathname === '/build-a-wig/noir') return true;
-  if (pathname === '/build-a-wig/noir/edit' || pathname === '/build-a-wig/noir/customize') return true;
-  return false;
+  return pathname === '/build-a-wig';
 }
 
 interface WigCustomization {
