@@ -35,9 +35,8 @@ import {
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
 /**
- * Default NOIR mannequin on the **global** BAW entry only (`/build-a-wig` — product picker, not NOIR flow).
- * **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** use the same preview stack as sub-pages:
- * admin **`hubLiveNoirWigViews`** (live WebPs) when set, else **`baseWigViewsForHub`** (hairline PNGs).
+ * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
+ * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) still use live composite + hairline when admin.
  */
 const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
   '/assets/natural left.png',
@@ -46,7 +45,10 @@ const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
 ];
 
 function isNoirBawHubLandingPathname(pathname: string): boolean {
-  return pathname === '/build-a-wig';
+  if (pathname === '/build-a-wig') return true;
+  if (pathname === '/build-a-wig/noir') return true;
+  if (pathname === '/build-a-wig/noir/edit' || pathname === '/build-a-wig/noir/customize') return true;
+  return false;
 }
 
 interface WigCustomization {

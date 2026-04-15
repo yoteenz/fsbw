@@ -14800,3 +14800,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW hub: static naturals on landing; styling live regen + force on selection change
+
+**Context (this chat):** User wanted **regenerate** for **styling** like **color** — preview **stuck on CITRINE** when selection changed. **Main BAW** hero/thumbs should show **default OFF BLACK** (natural PNGs), not committed fal color.
+
+**Decisions / outcomes:** **`isNoirBawHubLandingPathname`** again includes **`/build-a-wig/noir`**, **`/noir/edit`**, **`/noir/customize`** — **`wigViews`** = static **`natural left/front/right`** there; sub-routes unchanged. **Styling:** `postLiveWigAfterColorStyling` accepts optional **`{ forceRegenerate }`**; passes **`forceRegenerate: true`** to each one-angle call when **color|styling|part** signature changes vs prior run (separate refs for **LAYERS** vs **BANGS**). **UI:** **regen L/M/R** visible while loading (disabled); added **“regenerate all angles (fal)”** full triple refresh. **`api.ts`** only.
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/utils/api.ts`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

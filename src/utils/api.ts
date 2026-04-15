@@ -1125,17 +1125,21 @@ export async function postLiveWigAfterColorStylingRegenerateAngle(
 /**
  * Admin: middle + layers after color — **three sequential** one-angle API calls.
  * A single invocation that runs three fal jobs often exceeds Vercel limits → `FUNCTION_INVOCATION_FAILED`.
+ * Pass **`forceRegenerate: true`** on `body` (or in `opts`) to re-run fal when color/styling changed but Storage still has old WebPs.
  */
 export async function postLiveWigAfterColorStyling(
-  body: LiveWigAfterColorStylingPayload
+  body: LiveWigAfterColorStylingPayload,
+  opts?: { forceRegenerate?: boolean }
 ): Promise<LiveWigAfterColorStylingResult> {
   const angles = ['left', 'front', 'right'] as const;
   const pauseBetweenAnglesMs = 1200;
-  const ra = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[0] });
+  const force = Boolean(opts?.forceRegenerate || body.forceRegenerate);
+  const b = force ? { ...body, forceRegenerate: true as const } : body;
+  const ra = await postLiveWigAfterColorStylingOneAngle({ ...b, angle: angles[0] });
   await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
-  const rb = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[1] });
+  const rb = await postLiveWigAfterColorStylingOneAngle({ ...b, angle: angles[1] });
   await new Promise((r) => setTimeout(r, pauseBetweenAnglesMs));
-  const rc = await postLiveWigAfterColorStylingOneAngle({ ...body, angle: angles[2] });
+  const rc = await postLiveWigAfterColorStylingOneAngle({ ...b, angle: angles[2] });
   const colorHashes = new Set([ra.colorTierHash, rb.colorTierHash, rc.colorTierHash]);
   if (colorHashes.size !== 1) {
     throw new Error('Live styling mismatch (try again)');
