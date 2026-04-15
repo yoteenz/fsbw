@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Generate Unit ENOENT: server asset path anchored to wrong root
+
+- **Context:** In the same conversation where the user kept iterating on the admin **Send Offer → Generate Unit** flow, after the earlier **422 / UNPROCESSABLE ENTITY** fix they reported a new server error: **`ENOENT: no such file or directory, open '/var/task/public/assets/natural front.png'`** when clicking the button.
+- **Topics covered:** I inspected **`api/build-a-wig-unit-image.ts`** after the Fal-reference upload fix and traced how the route resolved local asset paths before reading them to upload to Fal storage. The local mannequin/backdrop asset files existed in the repo, but the deployed Vercel runtime error showed the route was anchoring the filesystem lookup incorrectly for serverless execution.
+- **Decisions / outcomes:** The root cause was the helper that turned **`/assets/...`** into a local file path using **`process.cwd()`**, which is not a reliable anchor for bundled serverless file layout. The route now resolves local public assets relative to the **API module directory** (`new URL('../public/...', import.meta.url)`) before calling **`readFileSync`**, so the server can actually open the packaged asset file and upload it to Fal storage. This keeps the earlier “upload refs to Fal first” fix intact while removing the **ENOENT** failure path.
+- **Changes:** **`api/build-a-wig-unit-image.ts`** and this **`motherboard/MEMORY.md`** entry. The same code fix was pushed to **`preview/mobile`** and **`master`**.
+- **Conventions:** For Vercel/serverless file reads in this project, do **not** assume **`process.cwd()`** matches the deployed asset root; prefer resolving packaged files relative to the current module path when reading repo assets on the server.
+
+---
+
 ## 2026-04-15 — Build-a-Wig generate-unit, NOIR preview sync, admin Send Offer generator, and thumbnail restore
 
 - **Context:** In this conversation, the user first asked to add a red **GENERATE UNIT** action near the Build-a-Wig mannequin so the app could generate the mannequin/unit image from current Build-a-Wig selections using the existing **wig consult rose-background prompt**. After that, the user reported several NOIR Build-a-Wig preview problems: the main BAW thumbnails did not match sub-pages, the styling page and then the other NOIR sub-pages were lagging behind the **currently selected** color, and later that the **3 BAW thumbnails** broke again after a subsequent push. The user also said the branch workflow was wrong (no `cursor/*` branch for this repo), asked for the work to be pushed onto **`master`** and **`preview/mobile`**, and later clarified that the **admin Meetings → Send Offer** consult popup needed the generate-unit control, not the main BAW hub. Finally, the user said the generated consult rose background was still off, asked whether a backdrop reference image was being used, and requested a proper button below **SEND OFFER** with **REGENERATE UNIT** confirmation.
