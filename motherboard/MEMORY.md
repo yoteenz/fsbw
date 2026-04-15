@@ -14432,6 +14432,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Build-a-Wig generate-unit also added to Admin Meetings “Send Offer” popup
+
+- **Context:** In this conversation, after the Build-a-Wig **GENERATE UNIT** button and NOIR preview-sync fixes were added, user reported they still did **not** see the red generate-unit text in the **Admin Meetings → Send Offer** consult popup module.
+- **Topics covered:** I traced the admin consult offer UI to **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, confirmed the prior generate-unit work had been wired only on the Build-a-Wig hub (not the admin popup), inspected the popup thumbnail/custom-image state, and reused the existing **`postBuildWigUnitImage`** API flow so the admin modal can generate a mannequin/unit preview from the current quote selections.
+- **Decisions / outcomes:** Added the red **GENERATE UNIT** text directly below the send-offer popup mannequin thumbnail. It now uses the current admin quote state (**unit**, **length**, **density**, **texture**, **lace**, **hairline**, **color**, **styling**, **parting**, **add-ons**) and swaps the popup thumbnail to the generated result, with loading text and inline error feedback. This is separate from the Build-a-Wig hub UI because the admin popup uses its own thumbnail state instead of the shared BAW preview component.
+- **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
+- **Conventions:** When product asks for the same image-generation affordance in another surface (e.g. admin quote tools vs Build-a-Wig hub), wire it explicitly into that surface’s own preview state; it will **not** appear automatically unless that component uses the shared BAW preview UI.
+
+---
+
 ## 2026-04-15 — Build-a-Wig generate-unit action + live preview sync on hub/styling
 
 - **Context:** In this chat, the user first asked for a red **“generate unit”** action below the mannequin on the main Build-a-Wig hub that generates a mannequin/unit image from the current selections using the existing **wig consult rose-background prompt**. After that was added, the user followed up that the **three thumbnails on the main BAW page must match the correct thumbnails used on BAW sub-pages**, and that the **styling page was not synced to the currently selected color** — when no styling was selected it could show an **older/previous color** until a new styling selection forced an update.

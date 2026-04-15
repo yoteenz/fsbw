@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import {
   patchAdminMeeting,
+  postBuildWigUnitImage,
   postAdminConsultQuote,
   postAdminMeetingClientAlert,
 } from '../../../utils/api';
@@ -394,6 +395,8 @@ export default function AdminMeetingsHub() {
   const [consultPhotoPreviewSrc, setConsultPhotoPreviewSrc] = useState<string | null>(null);
   /** Admin-uploaded image for this session (optional); takes precedence over saved-by-selection map. */
   const [quoteManualThumbnailSrc, setQuoteManualThumbnailSrc] = useState<string | null>(null);
+  const [quoteGenerateUnitState, setQuoteGenerateUnitState] = useState<'idle' | 'loading'>('idle');
+  const [quoteGenerateUnitError, setQuoteGenerateUnitError] = useState<string | null>(null);
   /** `selectionKey` → data URL from “SAVE SELECTION” (localStorage-backed). */
   const [quoteSavedThumbnailMap, setQuoteSavedThumbnailMap] = useState<Record<string, string>>(() =>
     typeof window !== 'undefined' ? loadAdminConsultOfferSavedThumbnails() : {}
@@ -435,10 +438,48 @@ export default function AdminMeetingsHub() {
   const quoteOfferThumbnailSrc =
     quoteEffectiveCustomSrc || ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit);
 
+  const handleGenerateQuoteUnitImage = useCallback(async () => {
+    setQuoteGenerateUnitState('loading');
+    setQuoteGenerateUnitError(null);
+    try {
+      const result = await postBuildWigUnitImage({
+        unitKey: quoteUnit,
+        referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
+        length: quoteSelections.length,
+        density: quoteSelections.density,
+        lace: quoteSelections.lace,
+        texture: quoteSelections.texture,
+        color: quoteSelections.color,
+        hairline: quoteSelections.hairline,
+        styling: quoteSelections.styling,
+        addOns: quoteSelections.addOns,
+        partSelection: quoteSelections.partSelection,
+        referenceMatchesHairline: String(quoteUnit || '').trim().toUpperCase() === 'NOIR',
+      });
+      setQuoteManualThumbnailSrc(result.imageUrl);
+    } catch (error) {
+      setQuoteGenerateUnitError(
+        error instanceof Error ? error.message : 'Generate unit image failed.'
+      );
+    } finally {
+      setQuoteGenerateUnitState('idle');
+    }
+  }, [quoteSelections, quoteUnit]);
+
   useEffect(() => {
     if (!quoteMeeting) return;
     setQuoteSavedThumbnailMap(loadAdminConsultOfferSavedThumbnails());
   }, [quoteMeeting]);
+
+  useEffect(() => {
+    if (!quoteMeeting) {
+      setQuoteGenerateUnitError(null);
+      setQuoteGenerateUnitState('idle');
+      return;
+    }
+    setQuoteGenerateUnitError(null);
+    setQuoteGenerateUnitState('idle');
+  }, [quoteMeeting, quoteUnit, quoteSelections]);
 
   useLayoutEffect(() => {
     if (!activePanelDropdown || !panelDropdownAnchorRef.current) {
@@ -2122,6 +2163,49 @@ export default function AdminMeetingsHub() {
                         height={122}
                         style={{ objectFit: 'contain', display: 'block' }}
                       />
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                        marginTop: quoteEffectiveCustomSrc ? '0' : '-12px',
+                        marginBottom: quoteEffectiveCustomSrc ? '12px' : '20px',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => void handleGenerateQuoteUnitImage()}
+                        disabled={quoteGenerateUnitState === 'loading'}
+                        className="uppercase text-[10px]"
+                        style={{
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium"',
+                          border: 'none',
+                          background: 'none',
+                          padding: 0,
+                          cursor: quoteGenerateUnitState === 'loading' ? 'not-allowed' : 'pointer',
+                          opacity: quoteGenerateUnitState === 'loading' ? 0.7 : 1,
+                        }}
+                      >
+                        {quoteGenerateUnitState === 'loading' ? 'GENERATING UNIT...' : 'GENERATE UNIT'}
+                      </button>
+                      {quoteGenerateUnitError ? (
+                        <p
+                          style={{
+                            margin: 0,
+                            textAlign: 'center',
+                            color: '#EB1C24',
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '9px',
+                            lineHeight: 1.35,
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {quoteGenerateUnitError}
+                        </p>
+                      ) : null}
                     </div>
                     {quoteEffectiveCustomSrc ? (
                       <button
