@@ -13,6 +13,8 @@ type BuildWigUnitImageBody = {
   unitKey?: string;
   referenceImagePath?: string;
   referenceImageUrl?: string;
+  backdropReferenceImagePath?: string;
+  backdropReferenceImageUrl?: string;
   length?: string;
   density?: string;
   lace?: string;
@@ -95,6 +97,28 @@ function buildReferenceImageUrl(req: VercelRequest, body: BuildWigUnitImageBody)
   return new URL(normalizedPath, `${proto}://${host}`).toString();
 }
 
+function buildOptionalImageUrl(
+  req: VercelRequest,
+  explicitUrl: string,
+  explicitPath: string,
+  fallbackPath = ''
+): string | null {
+  if (/^https?:\/\//i.test(explicitUrl)) return explicitUrl;
+  const refPath = explicitPath || fallbackPath;
+  if (!refPath) return null;
+  const proto =
+    String(req.headers['x-forwarded-proto'] || 'https')
+      .split(',')[0]
+      .trim() || 'https';
+  const host =
+    String(req.headers['x-forwarded-host'] || req.headers.host || '')
+      .split(',')[0]
+      .trim();
+  if (!host) return null;
+  const normalizedPath = refPath.startsWith('/') ? refPath : `/${refPath}`;
+  return new URL(normalizedPath, `${proto}://${host}`).toString();
+}
+
 async function runFalEdit(prompt: string, imageUrls: string[]): Promise<string> {
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: process.env.FAL_KEY || '' });
@@ -131,6 +155,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const body = parseBody(req);
     const unitKey = readString(body, 'unitKey', 'NOIR');
     const referenceImageUrl = buildReferenceImageUrl(req, body);
+    const backdropReferenceImageUrl = buildOptionalImageUrl(
+      req,
+      readString(body, 'backdropReferenceImageUrl', ''),
+      readString(body, 'backdropReferenceImagePath', ''),
+      '/assets/new-background.jpg'
+    );
 
     const selections = {
       unitKey,
@@ -146,7 +176,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       referenceMatchesHairline: readBool(body, 'referenceMatchesHairline'),
     };
 
-    let currentImageUrl = await runFalEdit(buildRoseBackdropPrompt(), [referenceImageUrl]);
+    const roseBasePrompt = buildRoseBackdropPrompt(Boolean(backdropReferenceImageUrl));
+    let currentImageUrl = await runFalEdit(
+      roseBasePrompt,
+      backdropReferenceImageUrl ? [referenceImageUrl, backdropReferenceImageUrl] : [referenceImageUrl]
+    );
     const stepsRun = ['rose-base'];
 
     const colorPrompt = buildGeneratedUnitColorPrompt(selections);
@@ -166,6 +200,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       imageUrl: currentImageUrl,
       stepsRun,
       referenceImageUrl,
+      backdropReferenceImageUrl,
       selections,
     });
   } catch (error) {
