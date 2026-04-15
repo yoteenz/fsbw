@@ -1164,6 +1164,57 @@ export async function postLiveWigAfterColorStyling(
   };
 }
 
+export type BuildWigUnitImagePayload = {
+  unitKey: string;
+  referenceImagePath?: string;
+  referenceImageUrl?: string;
+  length?: string;
+  density?: string;
+  lace?: string;
+  texture?: string;
+  color?: string;
+  hairline?: string;
+  styling?: string;
+  addOns?: string[];
+  partSelection?: string;
+  referenceMatchesHairline?: boolean;
+};
+
+export type BuildWigUnitImageResult = {
+  ok: boolean;
+  imageUrl: string;
+  stepsRun: string[];
+  referenceImageUrl: string;
+  selections: Record<string, unknown>;
+};
+
+export async function postBuildWigUnitImage(
+  body: BuildWigUnitImagePayload
+): Promise<BuildWigUnitImageResult> {
+  let res: Response;
+  try {
+    res = await apiFetch('/api/build-a-wig-unit-image', { method: 'POST', body });
+  } catch (e) {
+    const raw = e instanceof Error ? e.message : String(e);
+    if (isLikelyBrowserFetchNetworkError(raw)) {
+      throw new Error('Generate unit image failed. Check your connection and try again.');
+    }
+    throw e;
+  }
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string' && j.error.trim()) msg = j.error;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(msg || 'Generate unit image failed');
+  }
+  return JSON.parse(text) as BuildWigUnitImageResult;
+}
+
 /** Admin: notify client about reschedule/cancel request for an appointment. */
 export async function postAdminMeetingClientAlert(body: {
   meetingId: string;
