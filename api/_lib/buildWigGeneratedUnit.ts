@@ -25,10 +25,10 @@ const WIG_CONSULT_STEP1_PROMPT = [
 ].join(' ');
 
 const WIG_CONSULT_STEP1_PROMPT_WITH_BACKDROP_REFERENCE = [
-  'You receive two images in order.',
+  'You receive multiple images in order.',
   'IMAGE 1 is the exact mannequin image to recreate and must remain the output canvas.',
-  'IMAGE 2 is the exact white studio backdrop reference with the correct rose detailing.',
-  'Replace only the gray brick background in IMAGE 1 with the same white backdrop and the same rose detailing placement, amount, scale, and edge treatment shown in IMAGE 2.',
+  'IMAGE 2 and any later images are white studio backdrop references with the correct rose detailing.',
+  'Replace only the gray brick background in IMAGE 1 with the same white backdrop and the same rose detailing placement, amount, scale, and edge treatment shown across the backdrop reference images.',
   'Keep the mannequin, pose, framing, hair, lighting, and overall composition from IMAGE 1 unchanged.',
   'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible - red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',

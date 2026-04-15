@@ -16,6 +16,7 @@ type BuildWigUnitImageBody = {
   referenceImageUrl?: string;
   backdropReferenceImagePath?: string;
   backdropReferenceImageUrl?: string;
+  backdropReferenceImageUrls?: string[];
   length?: string;
   density?: string;
   lace?: string;
@@ -61,6 +62,14 @@ function readStringArray(body: BuildWigUnitImageBody, key: keyof BuildWigUnitIma
   const value = body[key];
   if (!Array.isArray(value)) return [];
   return value.map((item) => String(item).trim().toUpperCase()).filter(Boolean);
+}
+
+function readUrlArray(body: BuildWigUnitImageBody, key: keyof BuildWigUnitImageBody): string[] {
+  const value = body[key];
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => String(item || '').trim())
+    .filter((item) => /^https?:\/\//i.test(item));
 }
 
 function readBool(body: BuildWigUnitImageBody, key: keyof BuildWigUnitImageBody): boolean {
@@ -171,6 +180,13 @@ function buildPublicAssetUrl(req: VercelRequest, assetPath: string): string | nu
 }
 
 async function resolveRoseReferenceUrls(req: VercelRequest, body: BuildWigUnitImageBody): Promise<string[]> {
+  const explicitUrls = readUrlArray(body, 'backdropReferenceImageUrls');
+  if (explicitUrls.length > 0) {
+    return Promise.all(
+      explicitUrls.map((url, index) => uploadAssetUrlToFal(url, `backdrop-reference-${index + 1}`))
+    );
+  }
+
   const explicitUrl = readString(body, 'backdropReferenceImageUrl', '');
   if (/^https?:\/\//i.test(explicitUrl)) {
     return [await uploadAssetUrlToFal(explicitUrl, 'backdrop-reference')];
@@ -182,6 +198,17 @@ async function resolveRoseReferenceUrls(req: VercelRequest, body: BuildWigUnitIm
     if (!publicUrl) throw new Error('Could not resolve backdrop reference image URL');
     return [await uploadAssetUrlToFal(publicUrl, explicitPath)];
   }
+
+  const preferredRemoteUrls = [
+    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG',
+    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo.JPG',
+  ];
+  const uploadedRemoteRefs: string[] = [];
+  for (const remoteUrl of preferredRemoteUrls) {
+    if (!(await urlExists(remoteUrl))) continue;
+    uploadedRemoteRefs.push(await uploadAssetUrlToFal(remoteUrl, remoteUrl));
+  }
+  if (uploadedRemoteRefs.length > 0) return uploadedRemoteRefs;
 
   const preferredAssetCandidates = [
     '/assets/consult inspo.png',
