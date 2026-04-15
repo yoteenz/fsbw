@@ -233,3 +233,66 @@ export function shouldUseCommittedBawNoirLiveColorWigViews(pathname: string): bo
   const c = (readEffectiveNoirBawHairColor(pathname) || 'OFF BLACK').trim();
   return c !== '' && c !== 'OFF BLACK';
 }
+
+/**
+ * Current NOIR color preview for BAW routes.
+ * Prefer the pending triple when the user is still on a sub-page (e.g. color → styling)
+ * so the next route reflects the latest selected color immediately instead of an older committed one.
+ */
+function currentNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTriple | null {
+  if (!shouldUseCommittedBawNoirLiveColorWigViews(pathname)) return null;
+  return readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
+}
+
+/**
+ * Admin NOIR BAW hub: which persisted live triple to show.
+ * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
+ * `bawNoirLiveStylingWigViews` after the user returns to base / NONE (e.g. `selectedHairStyling` left over).
+ *
+ * @param pathname — pass `window.location.pathname` (or React `location.pathname`) so customize/edit keys win.
+ */
+export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): BawNoirLiveWigViewsTriple | null {
+  try {
+    const path =
+      typeof pathname === 'string' && pathname.length > 0
+        ? pathname
+        : typeof window !== 'undefined'
+          ? window.location.pathname
+          : '';
+
+    const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
+    if (effectiveCanon === 'NONE' || effectiveCanon === '') {
+      return currentNoirColorTripleOrNull(path);
+    }
+
+    const canonIds = parseStylingCsvToIds(effectiveCanon);
+    const hairIds = parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+    const ids = [...new Set([...canonIds, ...hairIds])];
+
+    if (ids.length === 0) {
+      return currentNoirColorTripleOrNull(path);
+    }
+
+    const hasLayers = ids.includes('LAYERS');
+    const bangsOnly = ids.includes('BANGS') && !hasLayers;
+
+    if (hasLayers) {
+      const part = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
+      const fromStyling = readBawNoirLiveStylingWigViewsForPart(part);
+      if (fromStyling) return fromStyling;
+    }
+    if (bangsOnly) {
+      const fromBangs = readBawNoirLiveBangsWigViews();
+      if (fromBangs) return fromBangs;
+    }
+    return currentNoirColorTripleOrNull(path);
+  } catch {
+    return currentNoirColorTripleOrNull(
+      typeof pathname === 'string' && pathname.length > 0
+        ? pathname
+        : typeof window !== 'undefined'
+          ? window.location.pathname
+          : ''
+    );
+  }
+}

@@ -3282,14 +3282,7 @@ export default function BuildAWigPage() {
           return;
         }
         const path = window.location.pathname || '';
-        const fromColor = shouldUseCommittedBawNoirLiveColorWigViews(path)
-          ? readBawNoirLiveColorWigViews()
-          : null;
-        setLiveNoirHubWigViews(
-          readBawNoirLiveStylingWigViewsForPart(localStorage.getItem('selectedPartSelection') || 'MIDDLE') ??
-            readBawNoirLiveBangsWigViews() ??
-            fromColor
-        );
+        setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage(path));
       } catch {
         setLiveNoirHubWigViews(null);
       }
