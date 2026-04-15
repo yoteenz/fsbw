@@ -80,10 +80,8 @@ import {
   viewAllListMeetingLabel,
 } from '../../../utils/adminMeetingClientPanels';
 
-const SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URLS = [
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG',
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo.JPG',
-];
+const SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG';
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
 
 const UNIT_OPTIONS = [
@@ -452,7 +450,7 @@ export default function AdminMeetingsHub() {
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
         referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
-        backdropReferenceImageUrls: SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URLS,
+        backdropReferenceImageUrl: SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL,
         length: quoteSelections.length,
         density: quoteSelections.density,
         lace: quoteSelections.lace,
