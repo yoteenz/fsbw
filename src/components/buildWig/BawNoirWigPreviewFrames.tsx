@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { isBawNoirLiveWigViewSrc } from '../../utils/bawNoirLiveWigViewDisplay';
+import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 
 type Props = {
   wigViews: [string, string, string] | string[];
@@ -16,8 +16,8 @@ type Props = {
 /**
  * Hero + three thumbnails for BAW hub + sub-pages.
  * - Shipped **`/assets/`** naturals: one brick layer (`leaf-brick-resize` + optional `.leaf-bg`).
- * - **Live** previews (Supabase `https://…/storage/…`, `blob:`, `data:`, etc.): **no** extra brick — raster already has brick.
- * Live thumb `<img>` uses **`.baw-noir-thumb-img-live`** only (not `.thumbnail-mannequin-img` — global contain breaks the frame).
+ * - **Live** previews (anything not shipped `/assets/`): **no** extra brick — raster already has brick.
+ * Matches **`d902e65`** layout: `hideBrick` when any angle is live → **12px** thumb gap, **82×72** live thumb frames, **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -28,22 +28,19 @@ export function BawNoirWigPreviewHeroThumbs({
   thumbRowClassName,
 }: Props) {
   const triple = wigViews as string[];
-  const heroLive = isBawNoirLiveWigViewSrc(triple[selectedView] ?? '');
-  const rowHasLiveNoir = triple.some((v) => isBawNoirLiveWigViewSrc(v));
+  const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
 
   return (
     <>
-      <div className={`leaf-stack hero-thumb${heroLive ? ' baw-noir-hero--live-noir' : ''}`}>
-        {!heroLive && <div className="leaf-bg" aria-hidden="true" />}
+      <div className="leaf-stack hero-thumb">
+        {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
         <div
-          className={`relative bg-cover bg-center flex items-center justify-center${
-            heroLive ? ' baw-noir-hero-inner--live-noir' : ''
-          }`}
+          className="relative bg-cover bg-center flex items-center justify-center"
           style={{
             width: '262px',
             height: '367px',
-            overflow: heroLive ? 'hidden' : 'visible',
-            ...(heroLive
+            overflow: 'visible',
+            ...(hideBrick
               ? {
                   backgroundImage: 'none',
                   backgroundColor: '#f5f5f5',
@@ -57,16 +54,23 @@ export function BawNoirWigPreviewHeroThumbs({
           }}
         >
           {heroChildren}
-          {heroLive ? (
+          {hideBrick ? (
             <div className="absolute left-0 top-0 z-[5] size-full overflow-hidden">
               <img
                 src={triple[selectedView]}
                 alt="Selected Wig"
                 width={262}
                 height={367}
-                className="absolute inset-0 z-10 size-full max-h-full max-w-full baw-noir-hero-img-live"
-                loading="eager"
-                decoding="async"
+                className="absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir"
+                style={
+                  {
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    '--hero-width': '262px',
+                    '--hero-height': '367px',
+                  } as CSSProperties
+                }
               />
             </div>
           ) : (
@@ -91,84 +95,85 @@ export function BawNoirWigPreviewHeroThumbs({
       {belowHeroChildren}
 
       <div
-        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${rowHasLiveNoir ? ' baw-noir-thumb-row--live-noir' : ''}${
+        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
           thumbRowClassName ? ` ${thumbRowClassName}` : ''
         }`}
         style={{
           transform: 'translateY(10px)',
-          gap: rowHasLiveNoir ? '12px' : '2px',
-          ...(rowHasLiveNoir ? { columnGap: '12px', rowGap: '12px' } : {}),
+          gap: hideBrick ? '12px' : '2px',
+          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
         }}
       >
-        {triple.map((view, index) => {
-          const thumbLive = isBawNoirLiveWigViewSrc(view);
-          return (
-            <div className="leaf-stack thumb" key={index}>
-              {!thumbLive && (
-                <div
-                  className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
-                  aria-hidden="true"
-                />
-              )}
+        {triple.map((view, index) => (
+          <div className="leaf-stack thumb" key={index}>
+            {!hideBrick && (
               <div
-                className={`border-transparent cursor-pointer ${thumbLive ? 'p-0' : 'p-1'}`}
-                onClick={() => onSelectView(index)}
+                className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
+                aria-hidden="true"
+              />
+            )}
+            <div
+              className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
+              onClick={() => onSelectView(index)}
+            >
+              <div
+                className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
+                data-baw-thumb-index={index}
+                style={{
+                  width: '72px',
+                  height: hideBrick ? '82px' : '95px',
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  ...(hideBrick
+                    ? {
+                        overflow: 'hidden',
+                        backgroundImage: 'none',
+                        backgroundColor: '#f5f5f5',
+                        border: selectedView === index ? '3px solid #fff' : undefined,
+                        boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
+                        boxSizing: 'border-box',
+                      }
+                    : {
+                        backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                      }),
+                  ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
+                  ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
+                }}
               >
-                <div
-                  className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
-                  data-baw-thumb-index={index}
-                  style={{
-                    width: '72px',
-                    height: '95px',
-                    position: 'relative',
-                    zIndex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    ...(thumbLive
-                      ? {
-                          overflow: 'hidden',
-                          backgroundImage: 'none',
-                          backgroundColor: '#f5f5f5',
-                          border: selectedView === index ? '3px solid #fff' : undefined,
-                          boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
-                          boxSizing: 'border-box',
-                        }
-                      : {
-                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                        }),
-                    ...(!thumbLive && index === 1 && { transform: 'translateX(-2px)' }),
-                    ...(!thumbLive && index === 2 && { transform: 'translateX(-4px)' }),
-                  }}
-                >
-                  <img
-                    alt={`Thumbnail ${index + 1}`}
-                    width={thumbLive ? 72 : 63}
-                    height={thumbLive ? 95 : 84}
-                    src={view}
-                    className={
-                      thumbLive
-                        ? 'baw-noir-thumb-img-live'
-                        : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
-                    }
-                    style={
-                      thumbLive
-                        ? undefined
-                        : ({
-                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                            top: 'calc(50% - 6.1px + 7.2px)',
-                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                          } as CSSProperties)
-                    }
-                  />
-                </div>
+                <img
+                  alt={`Thumbnail ${index + 1}`}
+                  width={hideBrick ? 72 : 63}
+                  height={hideBrick ? 82 : 84}
+                  src={view}
+                  className={
+                    hideBrick
+                      ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                      : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
+                  }
+                  style={
+                    hideBrick
+                      ? ({
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%, -50%)',
+                        } as CSSProperties)
+                      : ({
+                          '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
+                          top: 'calc(50% - 6.1px + 7.2px)',
+                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                        } as CSSProperties)
+                  }
+                />
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </>
   );

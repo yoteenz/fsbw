@@ -3396,38 +3396,24 @@ img.hero-mannequin-img--live-noir {
   object-position: center top !important;
 }
 
-/* BAW hub/sub-page hero when live: strip ALL brick layers (.leaf-bg + leaf-brick inner bg); fill with cover */
-.baw-noir-hero--live-noir .leaf-bg {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-.baw-noir-hero-inner--live-noir {
-  background-image: none !important;
-  background-color: #f5f5f5 !important;
-}
-
-.baw-noir-hero-img-live {
-  object-fit: cover !important;
-  object-position: center top !important;
-  display: block !important;
-}
-
-/* Live NOIR BAW thumbs: dedicated class — NOT `.thumbnail-mannequin-img` (global contain + max-* breaks the frame). */
-.baw-noir-thumb-img-live {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 10 !important;
-  display: block !important;
+img.thumbnail-mannequin-img--live-noir {
   width: 100% !important;
   height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
   object-fit: cover !important;
-  object-position: center center !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  object-position: center top !important;
+}
+
+/* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
+img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  object-fit: cover !important;
+  object-position: center top !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */

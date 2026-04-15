@@ -6,7 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
-import { clearAppAuth, isAdminEmail } from '../../utils/adminAuth';
+import { clearAppAuth } from '../../utils/adminAuth';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
@@ -36,7 +36,7 @@ import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWi
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
- * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) still use live composite + hairline when admin.
+ * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) still use live composite + hairline from storage when available.
  */
 const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
   '/assets/natural left.png',
@@ -76,11 +76,6 @@ export default function BuildAWigPage() {
   const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
     const pathname = location.pathname;
     if (pathname === '/build-a-wig' || !pathname.startsWith('/build-a-wig/noir')) return null;
-    try {
-      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
-    } catch {
-      return null;
-    }
     return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
   });
   // Track current editing item ID to detect when switching between products
@@ -3189,11 +3184,6 @@ export default function BuildAWigPage() {
     const pathname = location.pathname;
     if (isNoirBawHubLandingPathname(pathname)) return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
-    try {
-      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
-    } catch {
-      return null;
-    }
     return liveNoirHubWigViews;
   }, [location.pathname, liveNoirHubWigViews]);
 
@@ -3232,10 +3222,6 @@ export default function BuildAWigPage() {
         return;
       }
       try {
-        if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) {
-          setLiveNoirHubWigViews(null);
-          return;
-        }
         const path = window.location.pathname || '';
         setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage(path));
       } catch {

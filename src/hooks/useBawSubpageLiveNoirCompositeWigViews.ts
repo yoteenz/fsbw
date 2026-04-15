@@ -1,7 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { isAdminEmail } from '../utils/adminAuth';
-import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
 import {
   BAW_NOIR_LIVE_BANGS_VIEWS_EVENT,
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
@@ -13,32 +11,18 @@ import {
 /**
  * NOIR BAW sub-pages: same live triple resolution as the shared hub/storage resolver —
  * prefer the latest pending/current NOIR color preview first when appropriate, then styling/bangs.
- * Non-admin and non-NOIR routes get `null`.
+ * Non-NOIR routes get `null`.
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {
   const { pathname } = useLocation();
   const [views, setViews] = useState<BawNoirLiveWigViewsTriple | null>(() => {
     if (!pathname.includes('/build-a-wig/noir')) return null;
-    try {
-      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
-    } catch {
-      return null;
-    }
     return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
   });
 
   useLayoutEffect(() => {
     const refresh = () => {
       if (!pathname.includes('/build-a-wig/noir')) {
-        setViews(null);
-        return;
-      }
-      try {
-        if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) {
-          setViews(null);
-          return;
-        }
-      } catch {
         setViews(null);
         return;
       }

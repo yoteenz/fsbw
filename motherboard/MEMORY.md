@@ -15100,3 +15100,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR live previews: stop admin-only hub/subpage gate; restore `d902e65` thumb/hero layout
+
+**Context (this chat):** User said **nothing was changing** and asked to **compare to commit `d902e65`** (spacing between the three thumbnails / live NOIR overlap fix).
+
+**Decisions / outcomes:** **`d902e65`** used **`hideDuplicateBrickForNoirWigViews`** (any non-static URL) + **`hideBrick`** toggling **12px** thumb gap and **82×72** live frames with **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`**. Current code had added **`isAdminEmail`** gates so **`hubLiveNoirWigViews`** and **`useBawSubpageLiveNoirCompositeWigViews`** returned **`null`** for non-admins — UI stayed on **`/assets/`** naturals, so **live brick-strip CSS never ran** (looked like no deploy effect). **Fix:** remove admin checks from hub state + refresh and from **`useBawSubpageLiveNoirCompositeWigViews`**. **Revert** **`BawNoirWigPreviewHeroThumbs`** to the **`d902e65`** structure (single **`hideBrick`**, **`belowHeroChildren`** kept). **Restore** **`img.thumbnail-mannequin-img--live-noir`** rules in **`index.css`** (removed **`baw-noir-hero-*`** / **`baw-noir-thumb-img-live`** blocks tied to the reverted component).
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
