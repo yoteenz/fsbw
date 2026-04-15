@@ -15128,3 +15128,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW thumbs: colored debug outlines per layer
+
+**Context (this chat):** User asked for **colored debugging squares** around assets for the **three thumbnails** to isolate layers to remove.
+
+**Decisions / outcomes:** In **`BawNoirWigPreviewHeroThumbs`**, added **`DEBUG_NOIR_THUMB_LAYER_OUTLINES`** (default **`true`**) with **`outline`** on: outer **`leaf-stack.thumb`** (**red / green / blue** by index 0–2), **`.leaf-bg`** (orange dashed, static brick mode only), click wrapper (slate dotted), **`.baw-noir-thumb-frame`** (violet), **`<img>`** (cyan). Tooltip on outer cell explains the legend. Flip flag to **`false`** to strip all debug lines.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

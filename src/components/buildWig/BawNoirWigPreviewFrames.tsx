@@ -1,6 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 
+/** Set `false` to remove colored debug outlines on NOIR thumb layers (leaf-stack / leaf-bg / frame / img). */
+const DEBUG_NOIR_THUMB_LAYER_OUTLINES = true;
+
+/** One color per thumbnail index (0–2) for the outer `leaf-stack.thumb` cell. */
+const DEBUG_THUMB_STACK_OUTLINE: readonly [string, string, string] = ['#e11d48', '#16a34a', '#2563eb'];
+
 type Props = {
   wigViews: [string, string, string] | string[];
   selectedView: number;
@@ -105,16 +111,42 @@ export function BawNoirWigPreviewHeroThumbs({
         }}
       >
         {triple.map((view, index) => (
-          <div className="leaf-stack thumb" key={index}>
+          <div
+            className="leaf-stack thumb"
+            key={index}
+            title={
+              DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                ? `DEBUG thumb ${index}: red/green/blue = outer cell; orange dash = .leaf-bg; violet = .baw-noir-thumb-frame; cyan = <img>`
+                : undefined
+            }
+            style={
+              DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                ? {
+                    outline: `3px solid ${DEBUG_THUMB_STACK_OUTLINE[index]}`,
+                    outlineOffset: '0px',
+                  }
+                : undefined
+            }
+          >
             {!hideBrick && (
               <div
                 className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
                 aria-hidden="true"
+                style={
+                  DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                    ? { outline: '2px dashed #f97316', outlineOffset: '0px' }
+                    : undefined
+                }
               />
             )}
             <div
               className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
               onClick={() => onSelectView(index)}
+              style={
+                DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                  ? { outline: '2px dotted #64748b', outlineOffset: '0px' }
+                  : undefined
+              }
             >
               <div
                 className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
@@ -144,6 +176,9 @@ export function BawNoirWigPreviewHeroThumbs({
                       }),
                   ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
                   ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
+                  ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                    ? { outline: '2px solid #a855f7', outlineOffset: '0px' }
+                    : {}),
                 }}
               >
                 <img
@@ -151,6 +186,7 @@ export function BawNoirWigPreviewHeroThumbs({
                   width={hideBrick ? 72 : 63}
                   height={hideBrick ? 82 : 84}
                   src={view}
+                  title={DEBUG_NOIR_THUMB_LAYER_OUTLINES ? `DEBUG: <img> asset thumb ${index}` : undefined}
                   className={
                     hideBrick
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
@@ -162,11 +198,17 @@ export function BawNoirWigPreviewHeroThumbs({
                           left: '50%',
                           top: '50%',
                           transform: 'translate(-50%, -50%)',
+                          ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                            ? { outline: '2px solid #06b6d4', outlineOffset: '0px' }
+                            : {}),
                         } as CSSProperties)
                       : ({
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
                           ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                          ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
+                            ? { outline: '2px solid #06b6d4', outlineOffset: '0px' }
+                            : {}),
                         } as CSSProperties)
                   }
                 />
