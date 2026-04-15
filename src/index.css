@@ -3397,10 +3397,10 @@ img.hero-mannequin-img--live-noir {
 }
 
 img.thumbnail-mannequin-img--live-noir {
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
+  width: 72px !important;
+  height: 95px !important;
+  min-width: 72px !important;
+  min-height: 95px !important;
   max-width: none !important;
   max-height: none !important;
   /* cover fills 72×95 — no neutral letterboxing on sides/bottom (contain left gray bars when aspect ≠ frame) */
@@ -3422,6 +3422,15 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='1'],
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='2'] {
   transform: none !important;
+}
+
+/* Live NOIR: lock thumb cell + raster to 72×95 (inline styles can lose to late global thumb rules). */
+.baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame {
+  width: 72px !important;
+  height: 95px !important;
+  min-height: 95px !important;
+  max-height: 95px !important;
+  box-sizing: border-box !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

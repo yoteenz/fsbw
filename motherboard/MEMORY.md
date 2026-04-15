@@ -14963,3 +14963,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR BAW thumbs: enforce 72×95 frame + image (CSS)
+
+**Context (this chat):** User reported **nothing changed** after expecting **live NOIR** thumbnail **frame** and **image** height restored to **95px** (remote fal WebP row on BAW).
+
+**Decisions / outcomes:** **`img.thumbnail-mannequin-img--live-noir`** used **`width/height: 100%`**, so the raster could shrink with the frame if another rule altered the container. **Fix:** set explicit **72px × 95px** on the live thumb images (with **`object-fit: cover`** unchanged). Added **`!important`** rules on **`.baw-noir-thumb-row--live-noir .baw-noir-thumb-frame`** so the gray cell stays **72×95** even if late global thumb/layout overrides win.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
