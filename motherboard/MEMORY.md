@@ -14977,3 +14977,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR BAW: hide duplicate brick for data: previews (fix doubled thumb)
+
+**Context (this chat):** User clarified the prior **72×95 CSS lock** was wrong in spirit: the issue was a **doubled thumbnail underneath** (extra brick / static layer) that should be **removed**, not cropping the **correct** image on top.
+
+**Decisions / outcomes:** **`hideDuplicateBrickForNoirWigViews`** only treated **`http://` / `https://`** as live fal previews. Previews stored as **`data:image/...`** (e.g. from localStorage) did **not** flip **`hideBrick`**, so **`leaf-bg`** + **`leaf-brick-resize`** on **`.baw-noir-thumb-frame`** still rendered **under** the live **`img`**, looking like a misaligned duplicate. **Fix:** treat **`data:image/`** like remote URLs in **`bawNoirLiveWigViewDisplay.ts`**. **Reverted** the temporary **`index.css`** rules that forced fixed **72×95** on live thumb **`img`** and frame (restore **`width/height: 100%`** on **`img.thumbnail-mannequin-img--live-noir`**; remove **`.baw-noir-thumb-frame`** **!important** size block).
+
+**Changes:** **`src/utils/bawNoirLiveWigViewDisplay.ts`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
