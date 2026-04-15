@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 
 /** Set `false` to remove colored debug outlines on NOIR thumb layers (leaf-stack / leaf-bg / frame / img). */
@@ -6,6 +7,23 @@ const DEBUG_NOIR_THUMB_LAYER_OUTLINES = true;
 
 /** One color per thumbnail index (0–2) for the outer `leaf-stack.thumb` cell. */
 const DEBUG_THUMB_STACK_OUTLINE: readonly [string, string, string] = ['#e11d48', '#16a34a', '#2563eb'];
+
+/**
+ * Main BAW product hubs only — show **outer cell** debug outlines, not violet/cyan on frame/img.
+ * Sub-routes (`…/customize/length`, `…/edit/color`, etc.) get the **reverse** (violet + cyan only).
+ */
+function isBawMainHubPathnameForThumbDebug(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (p === '/build-a-wig') return true;
+  return (
+    p === '/build-a-wig/noir' ||
+    p === '/build-a-wig/blanco' ||
+    p === '/build-a-wig/soft-wave' ||
+    p === '/build-a-wig/beach-wave' ||
+    p === '/build-a-wig/soft-curl' ||
+    p === '/build-a-wig/ocean-curl'
+  );
+}
 
 type Props = {
   wigViews: [string, string, string] | string[];
@@ -33,8 +51,13 @@ export function BawNoirWigPreviewHeroThumbs({
   belowHeroChildren,
   thumbRowClassName,
 }: Props) {
+  const { pathname: locationPathname } = useLocation();
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
+  const debug = DEBUG_NOIR_THUMB_LAYER_OUTLINES;
+  const debugMainHubOnly = debug && isBawMainHubPathnameForThumbDebug(locationPathname);
+  /** Sub-routes: violet frame + cyan `<img>` only (no outer / orange / slate). */
+  const debugSubPageInner = debug && !debugMainHubOnly;
 
   return (
     <>
@@ -115,12 +138,14 @@ export function BawNoirWigPreviewHeroThumbs({
             className="leaf-stack thumb"
             key={index}
             title={
-              DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                ? `DEBUG thumb ${index}: red/green/blue = outer cell; orange dash = .leaf-bg; violet = .baw-noir-thumb-frame; cyan = <img>`
+              debug
+                ? debugMainHubOnly
+                  ? `DEBUG thumb ${index} (hub): outer cell only — orange = .leaf-bg; slate = click wrap`
+                  : `DEBUG thumb ${index} (sub): violet = frame; cyan = <img> — no outer cell`
                 : undefined
             }
             style={
-              DEBUG_NOIR_THUMB_LAYER_OUTLINES
+              debug && debugMainHubOnly
                 ? {
                     outline: `3px solid ${DEBUG_THUMB_STACK_OUTLINE[index]}`,
                     outlineOffset: '0px',
@@ -133,9 +158,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
                 aria-hidden="true"
                 style={
-                  DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                    ? { outline: '2px dashed #f97316', outlineOffset: '0px' }
-                    : undefined
+                  debugMainHubOnly ? { outline: '2px dashed #f97316', outlineOffset: '0px' } : undefined
                 }
               />
             )}
@@ -143,9 +166,7 @@ export function BawNoirWigPreviewHeroThumbs({
               className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
               onClick={() => onSelectView(index)}
               style={
-                DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                  ? { outline: '2px dotted #64748b', outlineOffset: '0px' }
-                  : undefined
+                debugMainHubOnly ? { outline: '2px dotted #64748b', outlineOffset: '0px' } : undefined
               }
             >
               <div
@@ -176,9 +197,7 @@ export function BawNoirWigPreviewHeroThumbs({
                       }),
                   ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
                   ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
-                  ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                    ? { outline: '2px solid #a855f7', outlineOffset: '0px' }
-                    : {}),
+                  ...(debugSubPageInner ? { outline: '2px solid #a855f7', outlineOffset: '0px' } : {}),
                 }}
               >
                 <img
@@ -186,7 +205,7 @@ export function BawNoirWigPreviewHeroThumbs({
                   width={hideBrick ? 72 : 63}
                   height={hideBrick ? 82 : 84}
                   src={view}
-                  title={DEBUG_NOIR_THUMB_LAYER_OUTLINES ? `DEBUG: <img> asset thumb ${index}` : undefined}
+                  title={debug && debugSubPageInner ? `DEBUG: <img> asset thumb ${index}` : undefined}
                   className={
                     hideBrick
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
@@ -198,17 +217,13 @@ export function BawNoirWigPreviewHeroThumbs({
                           left: '50%',
                           top: '50%',
                           transform: 'translate(-50%, -50%)',
-                          ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                            ? { outline: '2px solid #06b6d4', outlineOffset: '0px' }
-                            : {}),
+                          ...(debugSubPageInner ? { outline: '2px solid #06b6d4', outlineOffset: '0px' } : {}),
                         } as CSSProperties)
                       : ({
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
                           ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                          ...(DEBUG_NOIR_THUMB_LAYER_OUTLINES
-                            ? { outline: '2px solid #06b6d4', outlineOffset: '0px' }
-                            : {}),
+                          ...(debugSubPageInner ? { outline: '2px solid #06b6d4', outlineOffset: '0px' } : {}),
                         } as CSSProperties)
                   }
                 />

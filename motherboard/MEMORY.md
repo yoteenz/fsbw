@@ -15156,3 +15156,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR thumb debug: hub vs sub-page outline split
+
+**Context (this chat):** User asked to **remove violet & cyan** on the **main BAW page only** and **keep the outer cell**; on **sub-pages** the **reverse** — **remove outer cell**, **keep violet & cyan**.
+
+**Decisions / outcomes:** **`BawNoirWigPreviewHeroThumbs`** uses **`useLocation`**. **`isBawMainHubPathnameForThumbDebug`**: **`/build-a-wig`** + exact product hubs **`/build-a-wig/noir`**, **`blanco`**, **`soft-wave`**, **`beach-wave`**, **`soft-curl`**, **`ocean-curl`**. On those: **outer** red/green/blue + **orange** `.leaf-bg` + **slate** click wrap; **no** violet/cyan on frame/img. **All other paths** (customize/edit sub-routes, legacy **`/build-a-wig/color`**, etc.): **violet** frame + **cyan** `<img>` only (**no** outer/orange/slate).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
