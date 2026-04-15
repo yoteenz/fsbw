@@ -67,6 +67,7 @@ function parseTriple(raw: string | null): BawNoirLiveWigViewsTriple | null {
 export function persistPendingBawNoirLiveColorWigViews(views: BawNoirLiveWigViewsTriple): void {
   try {
     localStorage.setItem(COLOR_PENDING_KEY, JSON.stringify(views));
+    dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
     /* ignore */
   }
@@ -83,6 +84,7 @@ export function readPendingBawNoirLiveColorWigViews(): BawNoirLiveWigViewsTriple
 export function clearPendingBawNoirLiveColorWigViews(): void {
   try {
     localStorage.removeItem(COLOR_PENDING_KEY);
+    dispatch(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT);
   } catch {
     /* ignore */
   }
@@ -264,8 +266,14 @@ export function shouldUseCommittedBawNoirLiveColorWigViews(pathname: string): bo
   return c !== '' && c !== 'OFF BLACK';
 }
 
-function committedNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTriple | null {
-  return shouldUseCommittedBawNoirLiveColorWigViews(pathname) ? readBawNoirLiveColorWigViews() : null;
+/**
+ * Current NOIR color preview for BAW routes.
+ * Prefer the pending triple when the user is still on a sub-page (e.g. color → styling)
+ * so the next route reflects the latest selected color immediately instead of an older committed one.
+ */
+function currentNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTriple | null {
+  if (!shouldUseCommittedBawNoirLiveColorWigViews(pathname)) return null;
+  return readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
 }
 
 /**
@@ -286,7 +294,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
 
     const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
     if (effectiveCanon === 'NONE' || effectiveCanon === '') {
-      return committedNoirColorTripleOrNull(path);
+      return currentNoirColorTripleOrNull(path);
     }
 
     const canonIds = parseStylingCsvToIds(effectiveCanon);
@@ -294,7 +302,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     const ids = [...new Set([...canonIds, ...hairIds])];
 
     if (ids.length === 0) {
-      return committedNoirColorTripleOrNull(path);
+      return currentNoirColorTripleOrNull(path);
     }
 
     const hasLayers = ids.includes('LAYERS');
@@ -309,9 +317,9 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
       const fromBangs = readBawNoirLiveBangsWigViews();
       if (fromBangs) return fromBangs;
     }
-    return committedNoirColorTripleOrNull(path);
+    return currentNoirColorTripleOrNull(path);
   } catch {
-    return committedNoirColorTripleOrNull(
+    return currentNoirColorTripleOrNull(
       typeof pathname === 'string' && pathname.length > 0
         ? pathname
         : typeof window !== 'undefined'

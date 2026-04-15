@@ -33,6 +33,7 @@ import {
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
+import { postBuildWigUnitImage } from '../../utils/api';
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
@@ -45,10 +46,7 @@ const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [
 ];
 
 function isNoirBawHubLandingPathname(pathname: string): boolean {
-  if (pathname === '/build-a-wig') return true;
-  if (pathname === '/build-a-wig/noir') return true;
-  if (pathname === '/build-a-wig/noir/edit' || pathname === '/build-a-wig/noir/customize') return true;
-  return false;
+  return pathname === '/build-a-wig';
 }
 
 interface WigCustomization {
@@ -61,6 +59,27 @@ interface WigCustomization {
   hairline: string;
   styling: string;
   addOns: string[];
+}
+
+type GeneratedUnitViewTriple = [string | null, string | null, string | null];
+
+function emptyGeneratedUnitViewTriple(): GeneratedUnitViewTriple {
+  return [null, null, null];
+}
+
+function buildWigUnitKeyFromPath(pathname: string): string {
+  if (pathname.startsWith('/build-a-wig/blanco')) return 'BLANCO';
+  if (pathname.startsWith('/build-a-wig/soft-wave')) return 'SOFT_WAVE';
+  if (pathname.startsWith('/build-a-wig/soft-curl')) return 'SOFT_CURL';
+  if (pathname.startsWith('/build-a-wig/beach-wave')) return 'BEACH_WAVE';
+  if (pathname.startsWith('/build-a-wig/ocean-curl')) return 'OCEAN_CURL';
+  return 'NOIR';
+}
+
+function buildWigAngleLabel(index: number): 'LEFT' | 'FRONT' | 'RIGHT' {
+  if (index === 0) return 'LEFT';
+  if (index === 2) return 'RIGHT';
+  return 'FRONT';
 }
 
 export default function BuildAWigPage() {
@@ -77,6 +96,9 @@ export default function BuildAWigPage() {
 
   /** Live NOIR WebPs on product hub only — not used on exact `/build-a-wig` (static default hero there). */
   const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(null);
+  const [generatedUnitAngleViews, setGeneratedUnitAngleViews] = useState<GeneratedUnitViewTriple>(emptyGeneratedUnitViewTriple);
+  const [unitImageGenerationState, setUnitImageGenerationState] = useState<'idle' | 'loading'>('idle');
+  const [unitImageGenerationError, setUnitImageGenerationError] = useState('');
   
   // Track current editing item ID to detect when switching between products
   const currentEditingItemIdRef = useRef<string | null>(null);
@@ -3196,6 +3218,40 @@ export default function BuildAWigPage() {
     ? DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS
     : hubLiveNoirWigViews ?? baseWigViewsForHub;
 
+  const currentPartSelection = useMemo(() => {
+    if (typeof window === 'undefined') return 'MIDDLE';
+    try {
+      const raw = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').trim().toUpperCase();
+      if (raw === 'LEFT' || raw === 'RIGHT' || raw === 'MIDDLE') return raw;
+    } catch {
+      /* ignore */
+    }
+    return 'MIDDLE';
+  }, [location.pathname, refreshTrigger, customization.styling]);
+
+  const displayedWigViews = useMemo(
+    () =>
+      wigViews.map((view, index) => generatedUnitAngleViews[index] ?? view) as [string, string, string],
+    [generatedUnitAngleViews, wigViews]
+  );
+
+  useEffect(() => {
+    setGeneratedUnitAngleViews(emptyGeneratedUnitViewTriple());
+    setUnitImageGenerationError('');
+    setUnitImageGenerationState('idle');
+  }, [
+    location.pathname,
+    customization.length,
+    customization.density,
+    customization.lace,
+    customization.texture,
+    customization.color,
+    customization.hairline,
+    customization.styling,
+    customization.addOns.join('|'),
+    currentPartSelection,
+  ]);
+
   useEffect(() => {
     if (isNoirBawHubLandingPathname(location.pathname)) {
       setLiveNoirHubWigViews(null);
@@ -4897,6 +4953,60 @@ export default function BuildAWigPage() {
     setShowMobileMenu(false);
   };
 
+  const handleGenerateUnitImage = useCallback(async () => {
+    const referenceImagePath = baseWigViewsForHub[selectedView];
+    const unitKey = buildWigUnitKeyFromPath(location.pathname);
+    if (!referenceImagePath) {
+      setUnitImageGenerationError('Could not find the mannequin reference image for this view.');
+      return;
+    }
+
+    setUnitImageGenerationState('loading');
+    setUnitImageGenerationError('');
+
+    try {
+      const result = await postBuildWigUnitImage({
+        unitKey,
+        referenceImagePath,
+        length: customization.length,
+        density: customization.density,
+        lace: customization.lace,
+        texture: customization.texture,
+        color: customization.color,
+        hairline: customization.hairline,
+        styling: customization.styling,
+        addOns: customization.addOns,
+        partSelection: currentPartSelection,
+        referenceMatchesHairline: unitKey === 'NOIR',
+      });
+
+      setGeneratedUnitAngleViews((prev) => {
+        const next: GeneratedUnitViewTriple = [prev[0], prev[1], prev[2]];
+        next[selectedView] = result.imageUrl;
+        return next;
+      });
+    } catch (error) {
+      setUnitImageGenerationError(
+        error instanceof Error ? error.message : 'Generate unit image failed.'
+      );
+    } finally {
+      setUnitImageGenerationState('idle');
+    }
+  }, [
+    baseWigViewsForHub,
+    currentPartSelection,
+    customization.addOns,
+    customization.color,
+    customization.density,
+    customization.hairline,
+    customization.lace,
+    customization.length,
+    customization.styling,
+    customization.texture,
+    location.pathname,
+    selectedView,
+  ]);
+
   // Update processing time text when localStorage changes (debounced for performance)
   useEffect(() => {
     // Update processing time when refreshTrigger changes
@@ -5336,7 +5446,7 @@ export default function BuildAWigPage() {
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
               <BawNoirWigPreviewHeroThumbs
-                wigViews={wigViews}
+                wigViews={displayedWigViews}
                 selectedView={selectedView}
                 onSelectView={setSelectedView}
                 thumbRowClassName="items-center"
@@ -5419,6 +5529,40 @@ export default function BuildAWigPage() {
                       return 'NOIR';
                     })()}
                   </p>
+                }
+                belowHeroChildren={
+                  <div className="mt-3 flex flex-col items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={handleGenerateUnitImage}
+                      disabled={unitImageGenerationState === 'loading'}
+                      className="uppercase text-[10px]"
+                      style={{
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        background: 'transparent',
+                        border: 'none',
+                        padding: 0,
+                        cursor: unitImageGenerationState === 'loading' ? 'not-allowed' : 'pointer',
+                        opacity: unitImageGenerationState === 'loading' ? 0.7 : 1,
+                      }}
+                    >
+                      {unitImageGenerationState === 'loading'
+                        ? `GENERATING ${buildWigAngleLabel(selectedView)} VIEW...`
+                        : 'GENERATE UNIT'}
+                    </button>
+                    {unitImageGenerationError ? (
+                      <p
+                        className="w-[230px] text-center text-[9px] uppercase leading-[1.2]"
+                        style={{
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                        }}
+                      >
+                        {unitImageGenerationError}
+                      </p>
+                    ) : null}
+                  </div>
                 }
               />
             </div>
