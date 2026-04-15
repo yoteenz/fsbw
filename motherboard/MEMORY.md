@@ -15131,6 +15131,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW product hub → sub-pages: fix missing `/customize` in navigate URLs
+
+**Context (this chat):** User reported **none of the sub pages are loading** (blank screen).
+
+**Decisions / outcomes:** **`handleOptionSelect`** on **`/build-a-wig/noir`**, **`/build-a-wig/blanco`**, etc. built URLs like **`/build-a-wig/noir/length`**, but **`App.tsx`** only registers **`/build-a-wig/noir/customize/length`** (and **`/edit/…`**). No matching **`<Route>`** → **empty** UI. **Fix:** helper **`isBuildAWigProductHubOnlyPathname`**; when true, use **`navBase = `${baseRoute}/customize`** for option navigations; keep **`sessionStorage.sourceRoute`** as the product hub (**`baseRoute`**) so confirm/back flows still resolve. Generic **`/build-a-wig`** unchanged (**`/build-a-wig/length`** still valid).
+
+**Changes:** **`src/pages/build-a-wig/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-15 — NOIR BAW thumbs: colored debug outlines per layer
 
 **Context (this chat):** User asked for **colored debugging squares** around assets for the **three thumbnails** to isolate layers to remove.

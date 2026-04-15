@@ -49,6 +49,22 @@ function isNoirBawHubLandingPathname(pathname: string): boolean {
   return pathname === '/build-a-wig';
 }
 
+/**
+ * Exact product hub routes (`/build-a-wig/noir`, `/build-a-wig/blanco`, …) — not `/…/customize` or `/…/edit`.
+ * Option sub-pages are registered as `/…/customize/length`, not `/…/length` (see `App.tsx`).
+ */
+function isBuildAWigProductHubOnlyPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return (
+    p === '/build-a-wig/blanco' ||
+    p === '/build-a-wig/soft-wave' ||
+    p === '/build-a-wig/soft-curl' ||
+    p === '/build-a-wig/beach-wave' ||
+    p === '/build-a-wig/ocean-curl' ||
+    p === '/build-a-wig/noir'
+  );
+}
+
 interface WigCustomization {
   capSize: string;
   length: string;
@@ -4028,45 +4044,48 @@ export default function BuildAWigPage() {
     } else if (pathname.startsWith('/build-a-wig/noir')) {
       baseRoute = '/build-a-wig/noir';
     }
-    
+
+    /** Sub-page paths are under `/product/customize/...` or `/product/edit/...`, never `/product/length`. */
+    const navBase = isBuildAWigProductHubOnlyPathname(pathname) ? `${baseRoute}/customize` : baseRoute;
+
     // Store the source route so sub-pages know where to navigate back to
     sessionStorage.setItem('sourceRoute', baseRoute);
     // Don't set comingFromSubPage here - that should only be set when RETURNING from sub-page
-    
+
     if (category === 'capSize') {
-      navigate(`${baseRoute}/cap`);
+      navigate(`${navBase}/cap`);
       return;
     }
     if (category === 'texture') {
-      navigate(`${baseRoute}/texture`);
+      navigate(`${navBase}/texture`);
       return;
     }
     if (category === 'length') {
-      navigate(`${baseRoute}/length`);
+      navigate(`${navBase}/length`);
       return;
     }
     if (category === 'density') {
-      navigate(`${baseRoute}/density`);
+      navigate(`${navBase}/density`);
       return;
     }
     if (category === 'lace') {
-      navigate(`${baseRoute}/lace`);
+      navigate(`${navBase}/lace`);
       return;
     }
     if (category === 'color') {
-      navigate(`${baseRoute}/color`);
+      navigate(`${navBase}/color`);
       return;
     }
     if (category === 'hairline') {
-      navigate(`${baseRoute}/hairline`);
+      navigate(`${navBase}/hairline`);
       return;
     }
     if (category === 'styling') {
-      navigate(`${baseRoute}/styling`);
+      navigate(`${navBase}/styling`);
       return;
     }
     if (category === 'addOns') {
-      navigate(`${baseRoute}/addons`);
+      navigate(`${navBase}/addons`);
       return;
     }
     setCustomization((prev) => ({
