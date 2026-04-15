@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Generate Unit: prefer consult inspo refs by URL; stop relying on local asset files
+
+- **Context:** In this same chat, after the admin **Send Offer → Generate Unit** flow had already been adjusted for the rose backdrop prompt and regenerate button behavior, the user still hit server/runtime errors and asked whether the flow was actually using the **`consult inspo`** and **`consult inspo2`** reference photos they had added under public assets. They also reported another server error: **`ENOENT: no such file or directory, open '/var/task/public/assets/natural front.png'`**.
+- **Topics covered:** I re-checked the current code path from the admin popup to **`/api/build-a-wig-unit-image`**, verified that the code was still hardcoded to **`/assets/new-background.jpg`** from the admin caller, and confirmed that the server route was trying to **read public assets from the serverless filesystem** before uploading them to Fal. I also searched the checked-out repo snapshot and found that files literally matching **`consult inspo`** / **`consult inspo2`** were **not present on these branches**, which meant the deployed code could not have been using them yet.
+- **Decisions / outcomes:** The generate-unit server flow no longer depends on **local file reads** for public asset references. Instead, it now builds **public asset URLs** from the request host, **fetches** those images, and uploads the fetched binaries to **Fal storage** before calling the edit model. The route now **prefers** the expected **`consult inspo` / `consult inspo2`** asset name patterns (common PNG/JPG/JPEG/WEBP variants) when they are actually present on the deployed site, and only falls back to **`/assets/new-background.jpg`** if those preferred assets are not found. The admin popup caller no longer hardcodes **`new-background.jpg`**, so the server can choose the preferred consult inspo assets when they exist. This removes both the **422 / UNPROCESSABLE ENTITY** class of remote-input problems and the **ENOENT** serverless filesystem issue for these backdrop/mannequin references.
+- **Changes:** **`api/build-a-wig-unit-image.ts`** (public URL resolution + fetch/upload to Fal + consult inspo candidate fallback logic), **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** (stop hardcoding `new-background.jpg` in the request payload), and this **`motherboard/MEMORY.md`** entry.
+- **Conventions:** For this admin generated-unit flow, **public asset references should be treated as URL-based fetch/upload inputs**, not direct local filesystem reads inside a Vercel function. When product adds named backdrop/example refs like **`consult inspo`** / **`consult inspo2`**, prefer them first and use older fallback backdrop assets only when those preferred refs are unavailable on the deployed branch.
+
+---
+
 ## 2026-04-15 — Generate Unit ENOENT: server asset path anchored to wrong root
 
 - **Context:** In the same conversation where the user kept iterating on the admin **Send Offer → Generate Unit** flow, after the earlier **422 / UNPROCESSABLE ENTITY** fix they reported a new server error: **`ENOENT: no such file or directory, open '/var/task/public/assets/natural front.png'`** when clicking the button.
