@@ -1168,6 +1168,8 @@ export type BuildWigUnitImagePayload = {
   unitKey: string;
   referenceImagePath?: string;
   referenceImageUrl?: string;
+  backdropReferenceImagePath?: string;
+  backdropReferenceImageUrl?: string;
   length?: string;
   density?: string;
   lace?: string;

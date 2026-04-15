@@ -388,6 +388,7 @@ export default function AdminMeetingsHub() {
   const [quoteSaveSelectionState, setQuoteSaveSelectionState] = useState<'idle' | 'saving' | 'saved'>('idle');
   const quoteSaveSelectionResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showSendQuoteConfirm, setShowSendQuoteConfirm] = useState(false);
+  const [showRegenerateQuoteUnitConfirm, setShowRegenerateQuoteUnitConfirm] = useState(false);
   const [editReason, setEditReason] = useState<string>(EDIT_REASONS[0]);
   const [editMessage, setEditMessage] = useState('');
   const [editSubmitting, setEditSubmitting] = useState(false);
@@ -397,6 +398,7 @@ export default function AdminMeetingsHub() {
   const [quoteManualThumbnailSrc, setQuoteManualThumbnailSrc] = useState<string | null>(null);
   const [quoteGenerateUnitState, setQuoteGenerateUnitState] = useState<'idle' | 'loading'>('idle');
   const [quoteGenerateUnitError, setQuoteGenerateUnitError] = useState<string | null>(null);
+  const [quoteGeneratedSelectionKey, setQuoteGeneratedSelectionKey] = useState<string | null>(null);
   /** `selectionKey` → data URL from “SAVE SELECTION” (localStorage-backed). */
   const [quoteSavedThumbnailMap, setQuoteSavedThumbnailMap] = useState<Record<string, string>>(() =>
     typeof window !== 'undefined' ? loadAdminConsultOfferSavedThumbnails() : {}
@@ -437,14 +439,15 @@ export default function AdminMeetingsHub() {
   const quoteEffectiveCustomSrc = quoteManualThumbnailSrc ?? quoteSavedThumbnailForSelection;
   const quoteOfferThumbnailSrc =
     quoteEffectiveCustomSrc || ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit);
-
   const handleGenerateQuoteUnitImage = useCallback(async () => {
+    setShowRegenerateQuoteUnitConfirm(false);
     setQuoteGenerateUnitState('loading');
     setQuoteGenerateUnitError(null);
     try {
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
         referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
+        backdropReferenceImagePath: '/assets/new-background.jpg',
         length: quoteSelections.length,
         density: quoteSelections.density,
         lace: quoteSelections.lace,
@@ -457,6 +460,7 @@ export default function AdminMeetingsHub() {
         referenceMatchesHairline: String(quoteUnit || '').trim().toUpperCase() === 'NOIR',
       });
       setQuoteManualThumbnailSrc(result.imageUrl);
+      setQuoteGeneratedSelectionKey(quoteSelectionKey);
     } catch (error) {
       setQuoteGenerateUnitError(
         error instanceof Error ? error.message : 'Generate unit image failed.'
@@ -464,7 +468,7 @@ export default function AdminMeetingsHub() {
     } finally {
       setQuoteGenerateUnitState('idle');
     }
-  }, [quoteSelections, quoteUnit]);
+  }, [quoteSelectionKey, quoteSelections, quoteUnit]);
 
   useEffect(() => {
     if (!quoteMeeting) return;
@@ -475,10 +479,13 @@ export default function AdminMeetingsHub() {
     if (!quoteMeeting) {
       setQuoteGenerateUnitError(null);
       setQuoteGenerateUnitState('idle');
+      setQuoteGeneratedSelectionKey(null);
+      setShowRegenerateQuoteUnitConfirm(false);
       return;
     }
     setQuoteGenerateUnitError(null);
     setQuoteGenerateUnitState('idle');
+    setShowRegenerateQuoteUnitConfirm(false);
   }, [quoteMeeting, quoteUnit, quoteSelections]);
 
   useLayoutEffect(() => {
@@ -2164,49 +2171,6 @@ export default function AdminMeetingsHub() {
                         style={{ objectFit: 'contain', display: 'block' }}
                       />
                     </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '4px',
-                        marginTop: quoteEffectiveCustomSrc ? '0' : '-12px',
-                        marginBottom: quoteEffectiveCustomSrc ? '12px' : '20px',
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => void handleGenerateQuoteUnitImage()}
-                        disabled={quoteGenerateUnitState === 'loading'}
-                        className="uppercase text-[10px]"
-                        style={{
-                          color: '#EB1C24',
-                          fontFamily: '"Futura PT Medium"',
-                          border: 'none',
-                          background: 'none',
-                          padding: 0,
-                          cursor: quoteGenerateUnitState === 'loading' ? 'not-allowed' : 'pointer',
-                          opacity: quoteGenerateUnitState === 'loading' ? 0.7 : 1,
-                        }}
-                      >
-                        {quoteGenerateUnitState === 'loading' ? 'GENERATING UNIT...' : 'GENERATE UNIT'}
-                      </button>
-                      {quoteGenerateUnitError ? (
-                        <p
-                          style={{
-                            margin: 0,
-                            textAlign: 'center',
-                            color: '#EB1C24',
-                            fontFamily: '"Futura PT Book"',
-                            fontSize: '9px',
-                            lineHeight: 1.35,
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          {quoteGenerateUnitError}
-                        </p>
-                      ) : null}
-                    </div>
                     {quoteEffectiveCustomSrc ? (
                       <button
                         type="button"
@@ -2611,6 +2575,51 @@ export default function AdminMeetingsHub() {
                     >
                       {quoteSending ? '…' : 'SEND OFFER'}
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (quoteGenerateUnitState === 'loading') return;
+                        if (quoteGeneratedSelectionKey === quoteSelectionKey && quoteManualThumbnailSrc) {
+                          setShowRegenerateQuoteUnitConfirm(true);
+                          return;
+                        }
+                        void handleGenerateQuoteUnitImage();
+                      }}
+                      disabled={quoteGenerateUnitState === 'loading'}
+                      className={`border border-black font-futura w-full text-center py-2 text-[11px] font-semibold ${
+                        quoteGenerateUnitState === 'loading'
+                          ? 'bg-white cursor-not-allowed'
+                          : 'bg-white cursor-pointer hover:bg-gray-50'
+                      }`}
+                      style={{
+                        borderWidth: '1.3px',
+                        color: '#EB1C24',
+                        fontFamily: '"Futura PT Medium"',
+                        backgroundColor: '#FFFFFF',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {quoteGenerateUnitState === 'loading'
+                        ? 'GENERATING UNIT...'
+                        : quoteGeneratedSelectionKey === quoteSelectionKey && quoteManualThumbnailSrc
+                          ? 'REGENERATE UNIT'
+                          : 'GENERATE UNIT'}
+                    </button>
+                    {quoteGenerateUnitError ? (
+                      <p
+                        style={{
+                          margin: 0,
+                          textAlign: 'center',
+                          color: '#EB1C24',
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '9px',
+                          lineHeight: 1.35,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {quoteGenerateUnitError}
+                      </p>
+                    ) : null}
                     {quoteManualThumbnailSrc?.startsWith('data:') ? (
                       <button
                         type="button"
@@ -2715,6 +2724,17 @@ export default function AdminMeetingsHub() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="send-consult-quote-confirm"
+      />
+
+      <ConfirmationModal
+        isOpen={showRegenerateQuoteUnitConfirm}
+        onClose={() => setShowRegenerateQuoteUnitConfirm(false)}
+        onConfirm={() => void handleGenerateQuoteUnitImage()}
+        title="REGENERATE UNIT?"
+        message="THIS WILL GENERATE A NEW UNIT IMAGE FOR THE CURRENT SELECTIONS."
+        confirmText="CONFIRM"
+        cancelText="CANCEL"
+        dataAttribute="regenerate-consult-quote-unit-confirm"
       />
 
       {consultPhotoPreviewSrc && (
