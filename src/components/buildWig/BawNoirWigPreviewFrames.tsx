@@ -33,14 +33,16 @@ export function BawNoirWigPreviewHeroThumbs({
 
   return (
     <>
-      <div className="leaf-stack hero-thumb">
+      <div className={`leaf-stack hero-thumb${heroLive ? ' baw-noir-hero--live-noir' : ''}`}>
         {!heroLive && <div className="leaf-bg" aria-hidden="true" />}
         <div
-          className="relative bg-cover bg-center flex items-center justify-center"
+          className={`relative bg-cover bg-center flex items-center justify-center${
+            heroLive ? ' baw-noir-hero-inner--live-noir' : ''
+          }`}
           style={{
             width: '262px',
             height: '367px',
-            overflow: 'visible',
+            overflow: heroLive ? 'hidden' : 'visible',
             ...(heroLive
               ? {
                   backgroundImage: 'none',
@@ -62,16 +64,9 @@ export function BawNoirWigPreviewHeroThumbs({
                 alt="Selected Wig"
                 width={262}
                 height={367}
-                className="absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir"
-                style={
-                  {
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    '--hero-width': '262px',
-                    '--hero-height': '367px',
-                  } as CSSProperties
-                }
+                className="absolute inset-0 z-10 size-full max-h-full max-w-full baw-noir-hero-img-live"
+                loading="eager"
+                decoding="async"
               />
             </div>
           ) : (

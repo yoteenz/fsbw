@@ -15061,6 +15061,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Live NOIR **hero**: strip both brick layers + drop `hero-mannequin-img` contain on live raster
+
+**Context (this chat):** User said duplicate brick was **hidden on the main hero** but only the **mannequin** was hidden — **leaf brick** still visible; should hide **both** mannequin (static PNG) **and** leaf brick when live fal WebP is shown.
+
+**Decisions / outcomes:** Live hero used **`hero-mannequin-img`** which forces **`object-fit: contain`** — WebP could **letterbox**, exposing gray and looking like “only mannequin hidden.” **Fix:** live hero `<img>` → **`baw-noir-hero-img-live`** (`inset-0`, **`object-fit: cover`**, no `.hero-mannequin-img`). Wrapper **`baw-noir-hero--live-noir`** + CSS **`display:none`** on **`.leaf-bg`** (defensive if ever rendered). Inner **`baw-noir-hero-inner--live-noir`** → **`background-image: none !important`**. Hero inner **`overflow: hidden`** when live.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-15 — Live NOIR thumbs: isolate from `.thumbnail-mannequin-img` (match pre–hub-sync behavior)
 
 **Context (this chat):** User said **nothing changed** — duplicate brick / overflow past white+black frame still on **BAW color** thumbs. Asked to compare to code **before** “match main BAW hub thumbnails to sub-pages” when it worked.
