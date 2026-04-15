@@ -447,7 +447,6 @@ export default function AdminMeetingsHub() {
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
         referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
-        backdropReferenceImagePath: '/assets/new-background.jpg',
         length: quoteSelections.length,
         density: quoteSelections.density,
         lace: quoteSelections.lace,

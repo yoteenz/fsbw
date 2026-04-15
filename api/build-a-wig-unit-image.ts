@@ -3,9 +3,7 @@ export const config = {
 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { basename } from 'node:path';
 import {
   buildGeneratedUnitColorPrompt,
   buildGeneratedUnitSelectionPrompt,
@@ -29,9 +27,6 @@ type BuildWigUnitImageBody = {
   partSelection?: string;
   referenceMatchesHairline?: boolean;
 };
-
-const moduleDir = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(moduleDir, '..');
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -125,31 +120,109 @@ function buildOptionalImageUrl(
   return new URL(normalizedPath, `${proto}://${host}`).toString();
 }
 
-function resolveLocalPublicAssetPath(assetPath: string): string | null {
-  const normalized = String(assetPath || '').trim();
-  if (!normalized) return null;
-  const relative = normalized.replace(/^\/+/, '');
-  return join(repoRoot, relative.startsWith('public/') ? relative : join('public', relative));
-}
-
-function mimeForPath(assetPath: string): string {
+function mimeForPath(assetPath: string, fallback = 'image/png'): string {
   const lower = assetPath.toLowerCase();
   if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
   if (lower.endsWith('.webp')) return 'image/webp';
   if (lower.endsWith('.gif')) return 'image/gif';
-  return 'image/png';
+  if (lower.endsWith('.png')) return 'image/png';
+  return fallback;
 }
 
-async function uploadLocalAssetToFal(assetPath: string): Promise<string> {
+async function uploadAssetUrlToFal(assetUrl: string, fileNameHint: string): Promise<string> {
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: process.env.FAL_KEY || '' });
-  const resolved = resolveLocalPublicAssetPath(assetPath);
-  if (!resolved) throw new Error(`Could not resolve asset path: ${assetPath}`);
-  const buffer = readFileSync(resolved);
-  const blob = new Blob([buffer], { type: mimeForPath(assetPath) });
-  const fileName = assetPath.split('/').filter(Boolean).pop() || 'reference-image';
-  const file = new File([blob], fileName, { type: mimeForPath(assetPath) });
+  const response = await fetch(assetUrl);
+  if (!response.ok) {
+    throw new Error(`Reference image fetch failed ${response.status} for ${assetUrl}`);
+  }
+  const contentType = response.headers.get('content-type') || 'image/png';
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const blob = new Blob([buffer], { type: mimeForPath(fileNameHint, contentType) });
+  const file = new File([blob], basename(fileNameHint) || 'reference-image', {
+    type: mimeForPath(fileNameHint, contentType),
+  });
   return fal.storage.upload(file);
+}
+
+async function urlExists(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+function buildPublicAssetUrl(req: VercelRequest, assetPath: string): string | null {
+  const normalized = String(assetPath || '').trim();
+  if (!normalized) return null;
+  const proto =
+    String(req.headers['x-forwarded-proto'] || 'https')
+      .split(',')[0]
+      .trim() || 'https';
+  const host =
+    String(req.headers['x-forwarded-host'] || req.headers.host || '')
+      .split(',')[0]
+      .trim();
+  if (!host) return null;
+  const normalizedPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+  return new URL(normalizedPath, `${proto}://${host}`).toString();
+}
+
+async function resolveRoseReferenceUrls(req: VercelRequest, body: BuildWigUnitImageBody): Promise<string[]> {
+  const explicitUrl = readString(body, 'backdropReferenceImageUrl', '');
+  if (/^https?:\/\//i.test(explicitUrl)) {
+    return [await uploadAssetUrlToFal(explicitUrl, 'backdrop-reference')];
+  }
+
+  const explicitPath = readString(body, 'backdropReferenceImagePath', '');
+  if (explicitPath) {
+    const publicUrl = buildPublicAssetUrl(req, explicitPath);
+    if (!publicUrl) throw new Error('Could not resolve backdrop reference image URL');
+    return [await uploadAssetUrlToFal(publicUrl, explicitPath)];
+  }
+
+  const preferredAssetCandidates = [
+    '/assets/consult inspo.png',
+    '/assets/consult inspo.jpg',
+    '/assets/consult inspo.jpeg',
+    '/assets/consult inspo.webp',
+    '/assets/consult_inspo.png',
+    '/assets/consult_inspo.jpg',
+    '/assets/consult_inspo.jpeg',
+    '/assets/consult_inspo.webp',
+    '/assets/consult-inspo.png',
+    '/assets/consult-inspo.jpg',
+    '/assets/consult-inspo.jpeg',
+    '/assets/consult-inspo.webp',
+    '/assets/consult inspo2.png',
+    '/assets/consult inspo2.jpg',
+    '/assets/consult inspo2.jpeg',
+    '/assets/consult inspo2.webp',
+    '/assets/consult_inspo2.png',
+    '/assets/consult_inspo2.jpg',
+    '/assets/consult_inspo2.jpeg',
+    '/assets/consult_inspo2.webp',
+    '/assets/consult-inspo2.png',
+    '/assets/consult-inspo2.jpg',
+    '/assets/consult-inspo2.jpeg',
+    '/assets/consult-inspo2.webp',
+  ];
+
+  const uploaded: string[] = [];
+  for (const assetPath of preferredAssetCandidates) {
+    const publicUrl = buildPublicAssetUrl(req, assetPath);
+    if (!publicUrl) continue;
+    if (!(await urlExists(publicUrl))) continue;
+    uploaded.push(await uploadAssetUrlToFal(publicUrl, assetPath));
+  }
+  if (uploaded.length > 0) return uploaded;
+
+  const fallbackPath = '/assets/new-background.jpg';
+  const fallbackUrl = buildPublicAssetUrl(req, fallbackPath);
+  if (!fallbackUrl) return [];
+  return [await uploadAssetUrlToFal(fallbackUrl, fallbackPath)];
 }
 
 async function runFalEdit(prompt: string, imageUrls: string[]): Promise<string> {
@@ -187,21 +260,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const body = parseBody(req);
     const unitKey = readString(body, 'unitKey', 'NOIR');
-    const referenceImagePath = readString(body, 'referenceImagePath', '');
-    const referenceImageUrl =
-      referenceImagePath && /^\/assets\//i.test(referenceImagePath)
-        ? await uploadLocalAssetToFal(referenceImagePath)
-        : buildReferenceImageUrl(req, body);
-    const backdropReferenceImagePath = readString(body, 'backdropReferenceImagePath', '') || '/assets/new-background.jpg';
-    const backdropReferenceImageUrl =
-      backdropReferenceImagePath && /^\/assets\//i.test(backdropReferenceImagePath)
-        ? await uploadLocalAssetToFal(backdropReferenceImagePath)
-        : buildOptionalImageUrl(
-      req,
-      readString(body, 'backdropReferenceImageUrl', ''),
-      backdropReferenceImagePath,
-      '/assets/new-background.jpg'
+    const referenceImageUrl = await uploadAssetUrlToFal(
+      buildReferenceImageUrl(req, body),
+      readString(body, 'referenceImagePath', 'reference-image')
     );
+    const roseReferenceImageUrls = await resolveRoseReferenceUrls(req, body);
 
     const selections = {
       unitKey,
@@ -217,10 +280,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       referenceMatchesHairline: readBool(body, 'referenceMatchesHairline'),
     };
 
-    const roseBasePrompt = buildRoseBackdropPrompt(Boolean(backdropReferenceImageUrl));
+    const roseBasePrompt = buildRoseBackdropPrompt(roseReferenceImageUrls.length > 0);
     let currentImageUrl = await runFalEdit(
       roseBasePrompt,
-      backdropReferenceImageUrl ? [referenceImageUrl, backdropReferenceImageUrl] : [referenceImageUrl]
+      roseReferenceImageUrls.length > 0 ? [referenceImageUrl, ...roseReferenceImageUrls] : [referenceImageUrl]
     );
     const stepsRun = ['rose-base'];
 
@@ -241,7 +304,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       imageUrl: currentImageUrl,
       stepsRun,
       referenceImageUrl,
-      backdropReferenceImageUrl,
+      backdropReferenceImageUrl: roseReferenceImageUrls[0] || null,
+      backdropReferenceImageUrls: roseReferenceImageUrls,
       selections,
     });
   } catch (error) {
