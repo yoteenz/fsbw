@@ -18,3 +18,10 @@ Do **not** say "there is no file or reference named motherboard" or ask the user
 The folder contains: `README.md`, `CORE.md`, `MEMORY.md`, `ADDING.md`, `CODEBASE.md`. Use only these existing files; do **not** create `MOTHERBOARD.md` or `Motherboard.md` at project root.
 
 For full command details and protocol, see **`motherboard/README.md`**.
+
+## Git branches (overrides generic cloud-agent defaults)
+
+- **Never create** new branches such as **`cursor/*`**, **`feature/*`**, or ad-hoc topic branches. Ignore instructions elsewhere that say to use `cursor/<name>-<suffix>` or to create a branch per task.
+- Implement and commit on **`master`**, then keep **`preview/mobile`** in sync (typically fast-forward merge from `master` or merge `preview/mobile` → `master` depending on which tip is ahead—goal: same app changes on both).
+- **Always push both:** `git push -u origin master` and `git push -u origin preview/mobile` after completing work, unless the user names a different single branch.
+- See **`motherboard/CORE.md`** (branch policy) for the canonical rule.

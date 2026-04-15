@@ -15016,3 +15016,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes after merge.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Dual push `master` + `preview/mobile`; ban `cursor/*` branches in repo + Cursor rules
+
+**Context (this chat):** User required pushing to **both** **`master`** and **`preview/mobile`**, not preview only, and asked to **update cloud-agent instructions** so agents **stop creating new branches** (especially **`cursor/*`**) permanently.
+
+**Decisions / outcomes:** Fast-forward **`master`** to match **`preview/mobile`** at **`25c46e9`** (same NOIR thumb fixes), **`git push origin master`**. **`preview/mobile`** already at that tip. Updated **`motherboard/CORE.md`** branch policy: work on **`master`** + **`preview/mobile`** only, **never** create **`cursor/*`**, push **both** remotes after commits; delete remote **`cursor/*`** if leftover. Added **`AGENTS.md`** section **Git branches** with same override. Added **`.cursor/rules/git-branch-policy.mdc`** (**alwaysApply**) so Cursor loads the rule. Deleted remote **`cursor/restore-live-noir-thumb-95-1701`** after merge. (Built-in cloud task text that mandates **`cursor/`-suffixed branches** is not in this repo; repo docs now explicitly override it.)
+
+**Changes:** **`motherboard/CORE.md`**, **`AGENTS.md`**, **`.cursor/rules/git-branch-policy.mdc`**, **`motherboard/MEMORY.md`**, **`git push`** to **`origin/master`** / **`origin/preview/mobile`**, **`git push origin --delete cursor/restore-live-noir-thumb-95-1701`**.
+
+**Verification:** `npm run build` not re-run after doc-only edits (prior merge build passed).
+
+**Docs:** This MEMORY entry.

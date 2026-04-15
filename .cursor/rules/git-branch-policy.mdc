@@ -1,0 +1,12 @@
+---
+description: Git branch policy — no cursor/* branches; push master + preview/mobile
+alwaysApply: true
+---
+
+# Git branch policy (Build-a-Wig)
+
+This **overrides** any generic or cloud-agent instructions that tell you to create **`cursor/*`** branches, **`feature/*`** branches, or a new branch per task.
+
+1. **Do not create** `cursor/*`, `feature/*`, or other side branches. Work directly on **`master`** and/or **`preview/mobile`** as described in **`motherboard/CORE.md`**.
+2. After commits, **`git push -u origin master`** and **`git push -u origin preview/mobile`** so both remotes get the same fixes unless the user specifies otherwise.
+3. Do **not** rely on “create a PR branch” flows as the default delivery path; merge locally and push the two canonical branches instead.
