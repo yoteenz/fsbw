@@ -14412,6 +14412,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Build-a-Wig hub “GENERATE UNIT” rose-background mannequin action
+
+- **Context:** User asked to add red **“generate unit”** text below the mannequin icon on the Build-a-Wig hub so it generates the mannequin image from the current Build-a-Wig selections using the existing wig consult prompt they created, with the **white/rose background**.
+- **Topics covered:** I loaded motherboard context, inspected the Build-a-Wig hub preview component and existing live Fal preview routes, confirmed there was **no existing endpoint** for a full “current selections → rose-background mannequin/unit image” flow, mapped the per-unit base mannequin angle assets, then implemented a new server/client path and UI trigger.
+- **Decisions / outcomes:** Added a new **hub-only Generate Unit action** directly under the preview on **`src/pages/build-a-wig/page.tsx`**. It generates the **currently selected angle** (LEFT / FRONT / RIGHT) from the current unit + selections and swaps only that angle into the preview strip/hero. The server uses the user’s **wig consult Step 1 rose-background prompt** first, then applies a **color** edit only when the chosen color differs from the unit default, then applies a **selection-details** edit (length, density, lace, texture, non-default hairline where needed, styling/parting, add-ons). For **NOIR**, the base reference angle already reflects hairline variants, so the extra chain step skips hairline edits there and only changes the remaining selected details. The button is red, uppercase, lives below the mannequin preview, shows a loading label while Fal runs, and surfaces an inline error message if generation fails.
+- **Changes:** Added **`api/_lib/buildWigGeneratedUnit.ts`** (prompt/selection formatting helpers), **`api/build-a-wig-unit-image.ts`** (new Fal-backed generation endpoint), updated **`src/utils/api.ts`** (client helper for the new route), updated **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`** (optional content between hero and thumbs), updated **`src/pages/build-a-wig/page.tsx`** (new Generate Unit button, angle-specific generated preview state, request payload wiring), and appended this **`motherboard/MEMORY.md`** entry.
+- **Conventions:** The new generated-unit flow is **selection-driven** and **single-angle per tap** from the current hub preview. Use the **wig consult rose-backdrop prompt chain** (rose base → optional color → optional selection detail edits) for future Build-a-Wig mannequin-image generation work unless product asks for a different prompt sequence.
+
+---
+
 ## 2026-04-14 — BAW NOIR sub-pages: show committed live color triple on length/styling/etc.
 
 **Context (this chat):** User asked that the **selected color** preview image appear on **all** Build-a-wig sub-pages, **especially styling**, so styling choices align with the chosen dye.

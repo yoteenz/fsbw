@@ -10,7 +10,7 @@ import {
 } from './_lib/buildWigGeneratedUnit.js';
 
 type BuildWigUnitImageBody = {
-  unitKey: string;
+  unitKey?: string;
   referenceImagePath?: string;
   referenceImageUrl?: string;
   length?: string;
