@@ -3423,6 +3423,12 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
+/* BAW NOIR thumbs: clip mannequin raster inside the frame (static + live); global `.thumbnail-mannequin-img` can spill without this */
+.leaf-stack.thumb .baw-noir-thumb-frame {
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

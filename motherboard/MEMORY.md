@@ -15170,3 +15170,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — NOIR BAW thumbs: clip inside frame border
+
+**Context (this chat):** User asked for thumbnails to be **clipped inside their border**.
+
+**Decisions / outcomes:** Static brick mode frames had **no** `overflow: hidden`, so **`object-fit: contain`** mannequin PNGs could paint past the 72×95 cell. **Fix:** **`overflow: 'hidden'`** + **`boxSizing: 'border-box'`** on the static branch in **`BawNoirWigPreviewFrames`**. **`index.css`:** **`.leaf-stack.thumb .baw-noir-thumb-frame { overflow: hidden !important; isolation: isolate; }`** so all NOIR thumb frames clip consistently (live already had overflow inline).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

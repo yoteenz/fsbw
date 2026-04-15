@@ -190,10 +190,12 @@ export function BawNoirWigPreviewHeroThumbs({
                         boxSizing: 'border-box',
                       }
                     : {
+                        overflow: 'hidden',
                         backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
+                        boxSizing: 'border-box',
                       }),
                   ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
                   ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
