@@ -450,6 +450,7 @@ export default function AdminMeetingsHub() {
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
         referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
+        referenceView: 'FRONT',
         backdropReferenceImageUrl: SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL,
         length: quoteSelections.length,
         density: quoteSelections.density,
@@ -2169,8 +2170,8 @@ export default function AdminMeetingsHub() {
                       <img
                         src={quoteOfferThumbnailSrc}
                         alt=""
-                        width={122}
-                        height={122}
+                        width={153}
+                        height={153}
                         style={{ objectFit: 'contain', display: 'block' }}
                       />
                     </div>
