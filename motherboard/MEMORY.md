@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW thumbnail overlap: restore live NOIR thumb frame from 82px back to 95px
+
+- **Context:** After comparing the current BAW thumbnail code to the state before the “main BAW thumbnails should match sub-pages” request, the user clarified the problem was not the source resolver but the **three thumbnail images below the hero** physically **overlapping the white/black border** around the thumbnail frames.
+- **Topics covered:** I inspected the shared thumbnail component **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, the related CSS in **`src/index.css`**, and the component history. That showed the live NOIR thumbnail frame/image sizing had drifted from the prior known-good size.
+- **Decisions / outcomes:** The concrete layout regression was in **`BawNoirWigPreviewFrames.tsx`**: for **live remote NOIR WebPs** (`hideBrick === true`), the thumbnail frame and image height had been reduced from **95px** to **82px**. That shorter live frame was causing the live thumbnails to sit incorrectly and overlap the surrounding white/black border area. Restored the live thumbnail frame height and image height back to the prior **95px** value so the three thumbnails align inside the border again.
+- **Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, this **`motherboard/MEMORY.md`** entry. Applied on **`preview/mobile`** and verified that the same fix was already present on **`master`**.
+- **Conventions:** For the shared BAW NOIR preview component, keep the **live** thumbnail frame height aligned with the previous stable **95px** sizing unless product explicitly requests a new visual scale; changing only the live frame height can create overlap against the border treatment even when the resolver logic is correct.
+
+---
+
 ## 2026-04-15 — Admin Send Offer generate-unit: +25% preview size + preserve front one-shoulder drape
 
 - **Context:** After the admin Send Offer **Generate Unit** flow was wired up, the user pointed out two missed requirements from an earlier prompt: **(1)** the generated consult image preview in the admin popup should be **25% larger**, and **(2)** the **front** generated image was still wrong because the hair was appearing on **both shoulders** instead of staying on **one shoulder** like the color prompt/reference.
