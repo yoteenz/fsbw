@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Admin Send Offer generate-unit: +25% preview size + preserve front one-shoulder drape
+
+- **Context:** After the admin Send Offer **Generate Unit** flow was wired up, the user pointed out two missed requirements from an earlier prompt: **(1)** the generated consult image preview in the admin popup should be **25% larger**, and **(2)** the **front** generated image was still wrong because the hair was appearing on **both shoulders** instead of staying on **one shoulder** like the color prompt/reference.
+- **Topics covered:** I inspected the current admin popup thumbnail rendering in **`AdminMeetingsHub.tsx`**, confirmed it was still **122 × 122**, and traced the generate-unit prompt/server payload. The front-view preservation hint existed in the prompt helper only after adding a **`referenceView`** field, but the admin caller was not yet sending that information and the server was not inferring it from the reference asset path.
+- **Decisions / outcomes:** Increased the admin Send Offer generated-image preview from **122 × 122** to **153 × 153** (25% larger). Added **`referenceView`** support to the generate-unit payload/server and updated the selection prompt so when the source reference is the **FRONT** view it explicitly preserves the same **front-view hair drape / shoulder placement**, keeping the hair on **one shoulder only** and preventing a mirrored both-shoulders result.
+- **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** (25% larger generated preview + pass **`referenceView: 'FRONT'`**), **`src/utils/api.ts`** (payload type adds **`referenceView`**), **`api/build-a-wig-unit-image.ts`** (server infers/accepts **`referenceView`**), **`api/_lib/buildWigGeneratedUnit.ts`** (front-view prompt constraint), and this **`motherboard/MEMORY.md`** entry.
+- **Conventions:** For admin generated-unit flows, preserve the **camera-view hair drape** from the source mannequin/reference explicitly in the prompt whenever the view matters (especially **FRONT**), and keep popup image-size adjustments in the render layer rather than changing generated image dimensions server-side.
+
+---
+
 ## 2026-04-15 — Send Offer Generate Unit: single consult inspo reference only
 
 - **Context:** After the admin **Send Offer → Generate Unit** flow was updated to use the user’s explicit Supabase rose consult reference links, the user clarified that the flow should use **only one** of those consult inspo images, not both.
