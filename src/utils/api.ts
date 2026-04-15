@@ -1166,6 +1166,7 @@ export type BuildWigUnitImagePayload = {
   referenceImageUrl?: string;
   backdropReferenceImagePath?: string;
   backdropReferenceImageUrl?: string;
+  backdropReferenceImageUrls?: string[];
   length?: string;
   density?: string;
   lace?: string;
