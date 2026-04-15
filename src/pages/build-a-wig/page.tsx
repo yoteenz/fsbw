@@ -73,7 +73,17 @@ export default function BuildAWigPage() {
   const [routeKey, setRouteKey] = useState(location.pathname);
 
   /** Live NOIR WebPs on product hub only — not used on exact `/build-a-wig` (static default hero there). */
-  const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(null);
+  const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
+    try {
+      const path = typeof window !== 'undefined' ? window.location.pathname : location.pathname;
+      if (!path || isNoirBawHubLandingPathname(path)) return null;
+      if (!path.startsWith('/build-a-wig/noir')) return null;
+      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
+      return resolveAdminNoirHubLiveWigViewsFromStorage(path);
+    } catch {
+      return null;
+    }
+  });
   // Track current editing item ID to detect when switching between products
   const currentEditingItemIdRef = useRef<string | null>(null);
   

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isAdminEmail } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
@@ -17,9 +17,17 @@ import {
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {
   const { pathname } = useLocation();
-  const [views, setViews] = useState<BawNoirLiveWigViewsTriple | null>(null);
+  const [views, setViews] = useState<BawNoirLiveWigViewsTriple | null>(() => {
+    if (!pathname.includes('/build-a-wig/noir')) return null;
+    try {
+      if (!isAdminEmail(getCurrentUserEmailFromStorage() || '')) return null;
+    } catch {
+      return null;
+    }
+    return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const refresh = () => {
       if (!pathname.includes('/build-a-wig/noir')) {
         setViews(null);
