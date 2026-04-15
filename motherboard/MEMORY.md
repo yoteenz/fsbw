@@ -14432,6 +14432,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW thumbnails: restore main/subpage live triple before first paint
+
+- **Context:** In this conversation, after earlier Build-a-Wig changes were moved between branches, the user reported the **3 thumbnails on the main BAW page and sub-pages broke again** even though they had been fixed in a prior commit. They asked to find the recent fix and restore it on **both `master` and `preview/mobile`**.
+- **Topics covered:** I compared the current branches against the recent known-good thumbnail-sync commits (**`8606d98` / `a56d968`**), diffed the hub resolver, sub-page composite hook, storage resolver, and styling preview code, and narrowed the regression to **when** live NOIR preview state was hydrated rather than the thumbnail frame component itself.
+- **Decisions / outcomes:** Restored the thumbnail behavior by making the main Build-a-Wig hub and NOIR sub-pages read the current live preview triple **before first paint** instead of waiting for a normal `useEffect` tick. **`src/pages/build-a-wig/page.tsx`** now initializes **`liveNoirHubWigViews`** from **`resolveAdminNoirHubLiveWigViewsFromStorage(location.pathname)`** in the `useState` initializer when the route is a NOIR BAW route for an admin, and **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`** now initializes from the same resolver and refreshes via **`useLayoutEffect`** so the correct triple is present immediately on route paint. This preserves the prior “current pending color first, then styling/bangs” resolver logic while removing the visible wrong-thumbnail flicker/lag that reappeared after branch sync work.
+- **Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`**, and this **`motherboard/MEMORY.md`** entry. The same fix was applied and verified on **both `master` and `preview/mobile`**.
+- **Conventions:** For NOIR BAW preview state that drives the **hero + three thumbnails**, prefer initializing from shared storage **synchronously / pre-paint** when possible, then layer event-driven refreshes after mount. This avoids showing stale/default triples for one frame during route transitions.
+
+---
+
 ## 2026-04-15 — Generate control placement correction: remove from BAW hub, restore styling-page all-angle action
 
 - **Context:** In this conversation, after the Build-a-Wig generate-unit action and preview-sync work, the user clarified that **Generate Unit was never supposed to be on the main BAW pages**. They also said the **generate option on the BAW styling page** had been removed and needed to be put back.
