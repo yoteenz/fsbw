@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Generate Unit now uses explicit Supabase rose consult refs
+
+- **Context:** After the admin **Send Offer → Generate Unit** flow was updated to prefer generic `consult inspo` / `consult inspo2` asset names when present, the user provided the exact **Supabase public URLs** for the intended rose consult backdrop references and asked to hardcode those references directly into the flow.
+- **Topics covered:** I verified the current code was still not explicitly using the user’s two Supabase rose-reference images, only generic name-based preference/fallback logic. Then I updated the admin caller plus the shared server payload/API route to support and send multiple explicit backdrop reference URLs.
+- **Decisions / outcomes:** The admin **Send Offer** Generate Unit flow now passes the exact user-provided Supabase public URLs as **primary** rose backdrop references: **`consult inspo2.JPG`** and **`consult inspo.JPG`**. The API now accepts **`backdropReferenceImageUrls`** as an array, uploads each supplied remote image to Fal storage, and uses those uploaded refs in the first rose-background prompt step before any fallback logic. This means the rose-detail context is no longer inferred from generic asset names or the older `new-background.jpg` fallback when those exact URLs are provided.
+- **Changes:** **`src/utils/api.ts`** (payload type supports **`backdropReferenceImageUrls`**), **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** (admin Send Offer generate call passes the two explicit Supabase rose-reference URLs), **`api/build-a-wig-unit-image.ts`** (server supports array-based explicit backdrop refs and uploads them to Fal), **`api/_lib/buildWigGeneratedUnit.ts`** (prompt helper wording updated to account for one or more backdrop refs), and this **`motherboard/MEMORY.md`** entry.
+- **Conventions:** When product supplies **exact remote rose/backdrop reference URLs**, prefer those explicit references over name-based local asset discovery or generic fallback backgrounds for admin consult unit generation.
+
+---
+
 ## 2026-04-15 — Generate Unit: prefer consult inspo refs by URL; stop relying on local asset files
 
 - **Context:** In this same chat, after the admin **Send Offer → Generate Unit** flow had already been adjusted for the rose backdrop prompt and regenerate button behavior, the user still hit server/runtime errors and asked whether the flow was actually using the **`consult inspo`** and **`consult inspo2`** reference photos they had added under public assets. They also reported another server error: **`ENOENT: no such file or directory, open '/var/task/public/assets/natural front.png'`**.
