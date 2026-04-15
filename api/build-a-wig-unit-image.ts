@@ -182,9 +182,7 @@ function buildPublicAssetUrl(req: VercelRequest, assetPath: string): string | nu
 async function resolveRoseReferenceUrls(req: VercelRequest, body: BuildWigUnitImageBody): Promise<string[]> {
   const explicitUrls = readUrlArray(body, 'backdropReferenceImageUrls');
   if (explicitUrls.length > 0) {
-    return Promise.all(
-      explicitUrls.map((url, index) => uploadAssetUrlToFal(url, `backdrop-reference-${index + 1}`))
-    );
+    return [await uploadAssetUrlToFal(explicitUrls[0], 'backdrop-reference-1')];
   }
 
   const explicitUrl = readString(body, 'backdropReferenceImageUrl', '');
@@ -199,16 +197,11 @@ async function resolveRoseReferenceUrls(req: VercelRequest, body: BuildWigUnitIm
     return [await uploadAssetUrlToFal(publicUrl, explicitPath)];
   }
 
-  const preferredRemoteUrls = [
-    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG',
-    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo.JPG',
-  ];
-  const uploadedRemoteRefs: string[] = [];
-  for (const remoteUrl of preferredRemoteUrls) {
-    if (!(await urlExists(remoteUrl))) continue;
-    uploadedRemoteRefs.push(await uploadAssetUrlToFal(remoteUrl, remoteUrl));
+  const preferredRemoteUrl =
+    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG';
+  if (await urlExists(preferredRemoteUrl)) {
+    return [await uploadAssetUrlToFal(preferredRemoteUrl, preferredRemoteUrl)];
   }
-  if (uploadedRemoteRefs.length > 0) return uploadedRemoteRefs;
 
   const preferredAssetCandidates = [
     '/assets/consult inspo.png',
