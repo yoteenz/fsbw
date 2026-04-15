@@ -17,6 +17,7 @@ type BuildWigUnitImageBody = {
   backdropReferenceImagePath?: string;
   backdropReferenceImageUrl?: string;
   backdropReferenceImageUrls?: string[];
+  referenceView?: string;
   length?: string;
   density?: string;
   lace?: string;
@@ -81,6 +82,17 @@ function readBool(body: BuildWigUnitImageBody, key: keyof BuildWigUnitImageBody)
     return normalized === '1' || normalized === 'true' || normalized === 'yes';
   }
   return false;
+}
+
+function inferReferenceView(body: BuildWigUnitImageBody): string {
+  const explicit = readString(body, 'referenceView', '');
+  if (explicit) return explicit;
+  const source =
+    `${readString(body, 'referenceImagePath', '')} ${readString(body, 'referenceImageUrl', '')}`.toUpperCase();
+  if (source.includes('LEFT')) return 'LEFT';
+  if (source.includes('RIGHT')) return 'RIGHT';
+  if (source.includes('FRONT')) return 'FRONT';
+  return 'FRONT';
 }
 
 function buildReferenceImageUrl(req: VercelRequest, body: BuildWigUnitImageBody): string {
@@ -298,6 +310,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       addOns: readStringArray(body, 'addOns'),
       partSelection: readString(body, 'partSelection', 'MIDDLE'),
       referenceMatchesHairline: readBool(body, 'referenceMatchesHairline'),
+      referenceView: inferReferenceView(body),
     };
 
     const roseBasePrompt = buildRoseBackdropPrompt(roseReferenceImageUrls.length > 0);

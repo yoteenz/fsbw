@@ -10,6 +10,7 @@ type BuildWigGeneratedUnitSelections = {
   addOns: string[];
   partSelection?: string;
   referenceMatchesHairline?: boolean;
+  referenceView?: string;
 };
 
 type ColorSwatch = {
@@ -241,6 +242,12 @@ export function buildGeneratedUnitSelectionPrompt(
   const addOnsText = formatAddOns(selections.addOns);
   if (addOnsText) targetParts.push(`with ${addOnsText}`);
   targetParts.push('while keeping the same hair color as in the previous image');
+  const referenceView = normalizeToken(selections.referenceView || '');
+  if (referenceView === 'FRONT') {
+    targetParts.push(
+      'while keeping the same front-view hair drape and shoulder placement as in the previous image, with hair remaining on one shoulder only and never mirrored across both shoulders'
+    );
+  }
 
   return buildWigConsultChainEditPrompt(
     'wig details in the previous image',
