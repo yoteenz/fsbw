@@ -14442,6 +14442,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Generate Unit “UNPROCESSABLE ENTITY”: Fal reference upload fix
+
+- **Context:** After the admin **Send Offer** popup got the **GENERATE UNIT / REGENERATE UNIT** flow, the user reported the button was failing with **“UNPROCESSABLE ENTITY”**.
+- **Topics covered:** I traced the request path from the admin button through **`src/utils/api.ts`** into **`api/build-a-wig-unit-image.ts`**, checked the current prompt helper and image payload, and verified the local mannequin/backdrop asset files existed. The failing path was still asking Fal to fetch deployment asset URLs directly for the mannequin/background references.
+- **Decisions / outcomes:** The fix was to stop relying on Fal being able to fetch deployment asset URLs for the source refs. **`api/build-a-wig-unit-image.ts`** now detects local **`referenceImagePath`** / **`backdropReferenceImagePath`** values, reads those files from **`public/assets`**, uploads them to **Fal storage**, and then passes the resulting Fal-hosted URLs into **`image_urls`**. The admin **Send Offer** popup continues sending the local asset paths for the unit thumbnail and rose backdrop reference, but the server now converts them into Fal-accessible uploads before generation. This should eliminate the **422 / UNPROCESSABLE ENTITY** failure when Fal rejects or cannot retrieve the raw deployment asset URLs.
+- **Changes:** **`api/build-a-wig-unit-image.ts`** (local reference path resolution + Fal storage upload before `fal-ai/nano-banana-pro/edit`), **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** (send local asset paths for reference + backdrop), and this **`motherboard/MEMORY.md`** entry.
+- **Conventions:** For generated-unit flows that use local repo images as **model reference inputs**, prefer **uploading the local files to Fal storage first** instead of assuming the model can fetch deployment asset URLs directly.
+
+---
+
 ## 2026-04-15 — Admin Send Offer generate-unit: rose backdrop ref + button/regenerate confirm
 
 - **Context:** In the same chat where the user had asked for Build-a-Wig and admin consult offer image-generation improvements, they later reported that the **generated consult rose background prompt was off** and asked whether the prompt was using a **reference photo** for the rose backdrop itself. They also asked for the **GENERATE UNIT** control on the **Admin Meetings → Send Offer** consult popup to be changed from text into a **button** placed **below the SEND OFFER button** with the same styling, and wanted it to become **REGENERATE UNIT** after a generated image exists, protected by a **confirmation popup** to avoid accidental re-runs.
