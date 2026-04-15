@@ -14398,6 +14398,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Send Offer Generate Unit: single consult inspo reference only
+
+- **Context:** After the admin **Send Offer → Generate Unit** flow was updated to use the user’s explicit Supabase rose consult reference links, the user clarified that the flow should use **only one** of those consult inspo images, not both.
+- **Topics covered:** I inspected the admin caller constant in **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** and the server fallback/default reference logic in **`api/build-a-wig-unit-image.ts`** to find every place where multiple consult inspo refs could still be passed into the rose-backdrop generation step.
+- **Decisions / outcomes:** The Generate Unit flow now uses **a single consult inspo reference** by default instead of passing both rose consult images. The admin Send Offer caller now sends only the primary Supabase consult inspo URL, and the server’s preferred remote fallback list was also reduced to a single URL so the first Fal rose-backdrop step uses one mannequin ref plus one rose consult backdrop ref.
+- **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`api/build-a-wig-unit-image.ts`**, **`motherboard/MEMORY.md`**.
+- **Conventions:** For the current admin Send Offer generated-unit flow, use **one** rose consult reference image for the backdrop step unless product explicitly asks for a multi-reference backdrop prompt.
+
+---
+
 ## 2026-04-15 — Generate Unit now uses explicit Supabase rose consult refs
 
 - **Context:** After the admin **Send Offer → Generate Unit** flow was updated to prefer generic `consult inspo` / `consult inspo2` asset names when present, the user provided the exact **Supabase public URLs** for the intended rose consult backdrop references and asked to hardcode those references directly into the flow.
