@@ -11,8 +11,8 @@ import {
 } from '../utils/bawNoirLivePreviewStorage';
 
 /**
- * NOIR BAW sub-pages: same live triple resolution as the product hub —
- * **`resolveAdminNoirHubLiveWigViewsFromStorage`** (NONE → color only; LAYERS / BANGS-only match storage).
+ * NOIR BAW sub-pages: same live triple resolution as the shared hub/storage resolver —
+ * prefer the latest pending/current NOIR color preview first when appropriate, then styling/bangs.
  * Non-admin and non-NOIR routes get `null`.
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {

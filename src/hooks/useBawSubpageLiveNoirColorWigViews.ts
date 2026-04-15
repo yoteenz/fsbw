@@ -4,14 +4,15 @@ import { isAdminEmail } from '../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../utils/perUserStorage';
 import {
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
+  readPendingBawNoirLiveColorWigViews,
   readBawNoirLiveColorWigViews,
   type BawNoirLiveWigViewsTriple,
 } from '../utils/bawNoirLivePreviewStorage';
 
 /**
- * On NOIR build-a-wig sub-pages, surface the admin **committed** live color triple
- * (`bawNoirLiveColorWigViews` after color page confirm) so length/styling/etc. match
- * the selected dye. Non-admin and non-NOIR routes get `null`.
+ * On NOIR build-a-wig sub-pages, surface the latest admin live color triple.
+ * Prefer the pending/current color preview first so other routes do not lag behind
+ * the newest color selection while the user is still moving between sub-pages.
  */
 export function useBawSubpageLiveNoirColorWigViews(): BawNoirLiveWigViewsTriple | null {
   const { pathname } = useLocation();
@@ -32,7 +33,7 @@ export function useBawSubpageLiveNoirColorWigViews(): BawNoirLiveWigViewsTriple 
         setViews(null);
         return;
       }
-      setViews(readBawNoirLiveColorWigViews());
+      setViews(readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews());
     };
 
     refresh();
