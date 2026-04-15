@@ -119,7 +119,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 data-baw-thumb-index={index}
                 style={{
                   width: '72px',
-                  height: hideBrick ? '82px' : '95px',
+                  height: '95px',
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -147,7 +147,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 <img
                   alt={`Thumbnail ${index + 1}`}
                   width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 82 : 84}
+                  height={hideBrick ? 95 : 84}
                   src={view}
                   className={
                     hideBrick
