@@ -7,6 +7,8 @@ type Props = {
   onSelectView: (index: number) => void;
   /** Optional content above the hero image (e.g. product title). */
   heroChildren?: ReactNode;
+  /** Optional content rendered between the hero and the thumbnails. */
+  belowHeroChildren?: ReactNode;
   /** Extra classes on the thumbnail row (e.g. hub uses flex center on inner thumb boxes). */
   thumbRowClassName?: string;
 };
@@ -20,6 +22,7 @@ export function BawNoirWigPreviewHeroThumbs({
   selectedView,
   onSelectView,
   heroChildren,
+  belowHeroChildren,
   thumbRowClassName,
 }: Props) {
   const triple = wigViews as string[];
@@ -86,6 +89,8 @@ export function BawNoirWigPreviewHeroThumbs({
           )}
         </div>
       </div>
+
+      {belowHeroChildren}
 
       <div
         className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
