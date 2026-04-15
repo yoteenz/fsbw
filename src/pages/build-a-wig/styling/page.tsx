@@ -1380,11 +1380,95 @@ export default function StylingSelectionPage() {
                         : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). No extra style inspo URLs. Regen per angle below.'}
               </p>
             )}
-            {showNoirLiveStylingBanner && !liveStylingAnyLoading && (
+            {showNoirLiveStylingBanner && (
               <div
-                className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
+                className="flex flex-col items-center gap-y-2 mb-2 px-2"
                 style={{ maxWidth: '280px' }}
               >
+                <button
+                  type="button"
+                  disabled={Boolean(regenStylingAngle) || liveStylingAnyLoading}
+                  onClick={() => {
+                    const pathname = location.pathname;
+                    const stylingForApi = selectedHairStyling
+                      .filter((s) => s && s !== 'NONE')
+                      .sort()
+                      .join(',');
+                    const sel = readBuildWigLivePreviewSelections(pathname);
+                    const color = readBuildWigLivePreviewColor(pathname);
+                    setLiveStylingError(null);
+                    if (hasLayersLiveStyling) {
+                      setLiveStylingLoading(true);
+                      void postLiveWigAfterColorStyling({
+                        color,
+                        ...sel,
+                        styling: stylingForApi,
+                        partSelection: selectedPartSelection,
+                        forceRegenerate: true,
+                      })
+                        .then((res) => {
+                          const u = res.publicUrls;
+                          if (u.front && u.left && u.right) {
+                            const bust = Date.now();
+                            const triple: [string, string, string] = [
+                              `${u.left}?t=${bust}`,
+                              `${u.front}?t=${bust}`,
+                              `${u.right}?t=${bust}`,
+                            ];
+                            setLiveStylingWigViews(triple);
+                            persistBawNoirLiveStylingWigViews(
+                              triple,
+                              selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT'
+                            );
+                          }
+                        })
+                        .catch((e: Error) => {
+                          setLiveStylingError(e?.message || 'Regenerate all failed');
+                        })
+                        .finally(() => setLiveStylingLoading(false));
+                    } else if (hasBangsOnlyLive) {
+                      setLiveBangsLoading(true);
+                      void postLiveWigAfterColorStyling({
+                        color,
+                        ...sel,
+                        styling: stylingForApi,
+                        partSelection: selectedPartSelection,
+                        forceRegenerate: true,
+                      })
+                        .then((res) => {
+                          const u = res.publicUrls;
+                          if (u.front && u.left && u.right) {
+                            const bust = Date.now();
+                            const triple: [string, string, string] = [
+                              `${u.left}?t=${bust}`,
+                              `${u.front}?t=${bust}`,
+                              `${u.right}?t=${bust}`,
+                            ];
+                            setLiveBangsWigViews(triple);
+                            persistBawNoirLiveBangsWigViews(triple);
+                          }
+                        })
+                        .catch((e: Error) => {
+                          setLiveStylingError(e?.message || 'Regenerate all failed');
+                        })
+                        .finally(() => setLiveBangsLoading(false));
+                    }
+                  }}
+                  style={{
+                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                    fontSize: '9px',
+                    color: liveStylingAnyLoading || regenStylingAngle ? '#808080' : '#EB1C24',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '2px',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: liveStylingAnyLoading || regenStylingAngle ? 'wait' : 'pointer',
+                  }}
+                >
+                  {liveStylingAnyLoading ? 'regenerating all angles…' : 'regenerate all angles (fal)'}
+                </button>
+                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                 {(['left', 'front', 'right'] as const).map((ang) => {
                   const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
                   const busy = regenStylingAngle === ang;
@@ -1467,6 +1551,7 @@ export default function StylingSelectionPage() {
                     </button>
                   );
                 })}
+                </div>
               </div>
             )}
             <BawNoirWigPreviewHeroThumbs
