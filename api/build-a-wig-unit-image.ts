@@ -4,7 +4,8 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   buildGeneratedUnitColorPrompt,
   buildGeneratedUnitSelectionPrompt,
@@ -28,6 +29,9 @@ type BuildWigUnitImageBody = {
   partSelection?: string;
   referenceMatchesHairline?: boolean;
 };
+
+const moduleDir = dirname(fileURLToPath(import.meta.url));
+const repoRoot = join(moduleDir, '..');
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;
@@ -125,7 +129,7 @@ function resolveLocalPublicAssetPath(assetPath: string): string | null {
   const normalized = String(assetPath || '').trim();
   if (!normalized) return null;
   const relative = normalized.replace(/^\/+/, '');
-  return join(process.cwd(), relative.startsWith('public/') ? relative : join('public', relative));
+  return join(repoRoot, relative.startsWith('public/') ? relative : join('public', relative));
 }
 
 function mimeForPath(assetPath: string): string {
