@@ -29,11 +29,8 @@ import {
   clearBawNoirLiveColorWigViews,
   clearBawNoirLiveStylingWigViews,
   clearPendingBawNoirLiveColorWigViews,
-  readBawNoirLiveBangsWigViews,
-  readBawNoirLiveColorWigViews,
-  readBawNoirLiveStylingWigViewsForPart,
+  resolveAdminNoirHubLiveWigViewsFromStorage,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
-  shouldUseCommittedBawNoirLiveColorWigViews,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 import { postBuildWigUnitImage } from '../../utils/api';

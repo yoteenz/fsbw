@@ -198,6 +198,37 @@ export function clearBawNoirLiveBangsWigViews(): void {
   }
 }
 
+function parseStylingCsvToIds(raw: string | null): string[] {
+  if (!raw || !raw.trim()) return [];
+  return raw
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter((s) => s && s !== 'NONE');
+}
+
+/**
+ * Canonical saved salon styling for live preview, route-aware:
+ * customize/edit flows write **customizeSelectedStyling** / **editSelectedStyling**; reading **selectedStyling**
+ * alone misses clears and keeps stale **LAYERS** with **selectedHairStyling**.
+ */
+export function readEffectiveBawSalonStylingCanon(pathname: string): string {
+  try {
+    const p = pathname || '';
+    if (p.includes('/customize')) {
+      const v =
+        localStorage.getItem('customizeSelectedStyling') ?? localStorage.getItem('selectedStyling');
+      return (v || 'NONE').trim().toUpperCase();
+    }
+    if (p.includes('/edit')) {
+      const v = localStorage.getItem('editSelectedStyling') ?? localStorage.getItem('selectedStyling');
+      return (v || 'NONE').trim().toUpperCase();
+    }
+    return (localStorage.getItem('selectedStyling') || 'NONE').trim().toUpperCase();
+  } catch {
+    return 'NONE';
+  }
+}
+
 /** Session flag: shop → fresh NOIR customize — hub should clear stale fal triples on first paint. */
 export const SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE = 'bawNoirResetLivePreviewOnCustomize';
 
