@@ -6,16 +6,13 @@ import {
   BAW_NOIR_LIVE_BANGS_VIEWS_EVENT,
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   BAW_NOIR_LIVE_STYLING_VIEWS_EVENT,
-  readBawNoirLiveBangsWigViews,
-  readBawNoirLiveColorWigViews,
-  readBawNoirLiveStylingWigViewsForPart,
-  shouldUseCommittedBawNoirLiveColorWigViews,
+  resolveAdminNoirHubLiveWigViewsFromStorage,
   type BawNoirLiveWigViewsTriple,
 } from '../utils/bawNoirLivePreviewStorage';
 
 /**
- * NOIR BAW sub-pages: committed live triple with same priority as the former hub —
- * **styling** (for current part) → **bangs** → **color** → `null` (caller uses static PNGs).
+ * NOIR BAW sub-pages: same live triple resolution as the hub/shared storage resolver —
+ * prefer the latest pending/current NOIR color preview first when appropriate, then styling/bangs.
  * Non-admin and non-NOIR routes get `null`.
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {
@@ -37,13 +34,7 @@ export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTri
         setViews(null);
         return;
       }
-      const part = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
-      const fromColor = shouldUseCommittedBawNoirLiveColorWigViews(pathname)
-        ? readBawNoirLiveColorWigViews()
-        : null;
-      setViews(
-        readBawNoirLiveStylingWigViewsForPart(part) ?? readBawNoirLiveBangsWigViews() ?? fromColor
-      );
+      setViews(resolveAdminNoirHubLiveWigViewsFromStorage(pathname));
     };
 
     refresh();
