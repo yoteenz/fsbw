@@ -15072,3 +15072,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live URL detection: invert to “static only `/assets/`” + per-thumb brick again
+
+**Context (this chat):** User reported prior fixes still did not remove **duplicate brick** / border overflow on **BAW color** thumbs.
+
+**Decisions / outcomes:** Prior **`isBawNoirLiveWigViewSrc`** used a **whitelist** (`http`, `data`, `blob`, `//`). **Supabase** and other hosts can use URL shapes we did not list — triple stayed **“static”** → **`leaf-brick-resize`** **stacked on** fal WebPs that **already include brick** (**true duplicate**). **Fix:** **`isStaticShippedNoirWigAssetSrc`** — **only** repo **`/assets/…`** paths (and absolute URLs whose **pathname** is **`/assets/…`**) are static; **everything else** is live → **strip brick** for that cell. **Restore** **`BawNoirWigPreviewFrames`** **per-angle** hero + thumb (mixed triples safe). **`hideDuplicateBrickForNoirWigViews`** = any angle not static-only.
+
+**Changes:** **`src/utils/bawNoirLiveWigViewDisplay.ts`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
