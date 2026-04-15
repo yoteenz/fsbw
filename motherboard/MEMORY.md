@@ -15044,3 +15044,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR thumbs: CSS cascade fix (overflow past white/black frame)
+
+**Context (this chat):** User screenshot on **BAW color** (`fsbw.vercel.app`): three thumbs **ghosted/doubled** and **overflowing** the white inner + black outer frame on the **selected** (middle) cell.
+
+**Decisions / outcomes:** **Root cause:** `.thumbnail-mannequin-img` block **later** in **`index.css`** applies **`object-fit: contain !important`** and **`max-width/max-height: none !important`**. That **overrode** the intended live-thumb **`cover`** sizing so WebPs drew at **intrinsic size** and spilled past the **72×95** clip. **Fix:** new rules **after** `.thumbnail-mannequin-img` targeting **`.baw-noir-thumb-frame[data-baw-thumb-live='1'] img.thumbnail-mannequin-img--live-noir`**: **`inset: 0`**, **`width/height/max-*: 100%`**, **`transform: none`**, **`object-fit: cover`**; frame gets **`overflow: hidden !important`** + **`isolation: isolate`**. **`BawNoirWigPreviewFrames`** already sets **`data-baw-thumb-live`**.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

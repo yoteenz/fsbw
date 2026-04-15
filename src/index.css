@@ -3471,6 +3471,30 @@ img.natural-front-mobile {
   display: block !important;
 }
 
+/*
+ * Live NOIR fal thumbs: MUST follow this block. `.thumbnail-mannequin-img` sets
+ * `object-fit: contain` + unbounded max-* — without these overrides, live WebPs
+ * spill past the white/black frame (see BAW color page thumbnails).
+ */
+.baw-noir-thumb-frame[data-baw-thumb-live='1'] img.thumbnail-mannequin-img--live-noir {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  transform: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+.baw-noir-thumb-frame[data-baw-thumb-live='1'] {
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;
