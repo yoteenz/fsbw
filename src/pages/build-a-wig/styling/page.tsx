@@ -1418,15 +1418,13 @@ export default function StylingSelectionPage() {
                     setLiveStylingError(null);
                     if (hasLayersLiveStyling) {
                       setLiveStylingLoading(true);
-                      void postLiveWigAfterColorStyling(
-                        {
-                          color,
-                          ...sel,
-                          styling: stylingForApi,
-                          partSelection: selectedPartSelection,
-                        },
-                        { forceRegenerate: true }
-                      )
+                      void postLiveWigAfterColorStyling({
+                        color,
+                        ...sel,
+                        styling: stylingForApi,
+                        partSelection: selectedPartSelection,
+                        forceRegenerate: true,
+                      })
                         .then((res) => {
                           const u = res.publicUrls;
                           if (u.front && u.left && u.right) {
@@ -1449,15 +1447,13 @@ export default function StylingSelectionPage() {
                         .finally(() => setLiveStylingLoading(false));
                     } else if (hasBangsOnlyLive) {
                       setLiveBangsLoading(true);
-                      void postLiveWigAfterColorStyling(
-                        {
-                          color,
-                          ...sel,
-                          styling: stylingForApi,
-                          partSelection: selectedPartSelection,
-                        },
-                        { forceRegenerate: true }
-                      )
+                      void postLiveWigAfterColorStyling({
+                        color,
+                        ...sel,
+                        styling: stylingForApi,
+                        partSelection: selectedPartSelection,
+                        forceRegenerate: true,
+                      })
                         .then((res) => {
                           const u = res.publicUrls;
                           if (u.front && u.left && u.right) {

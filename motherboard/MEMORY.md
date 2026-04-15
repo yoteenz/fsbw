@@ -14432,6 +14432,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Generate control placement correction: remove from BAW hub, restore styling-page all-angle action
+
+- **Context:** In this conversation, after the Build-a-Wig generate-unit action and preview-sync work, the user clarified that **Generate Unit was never supposed to be on the main BAW pages**. They also said the **generate option on the BAW styling page** had been removed and needed to be put back.
+- **Topics covered:** I inspected the current `build-a-wig/page.tsx` hub preview and found the misplaced red **GENERATE UNIT** action still rendered below the hero/thumb preview. Then I compared the current styling page controls with earlier styling live-preview revisions and confirmed the intended styling-page action was the red **“regenerate all angles (fal)”** control in the NOIR live styling banner area above the per-angle regen links.
+- **Decisions / outcomes:** Removed the hub-level generate-unit control from **`src/pages/build-a-wig/page.tsx`** entirely (including its now-unused state/API hookup). Restored the styling-page all-angle generate/regenerate action on **`src/pages/build-a-wig/styling/page.tsx`** using the branch’s current `postLiveWigAfterColorStyling` payload shape (`forceRegenerate: true` inside the body rather than a second options arg). Result: no red generate control on the main BAW hub pages, and the styling page again has the intended all-angle generate/regenerate action above the existing per-angle **regen style L / M / R** links.
+- **Changes:** **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`motherboard/MEMORY.md`**.
+- **Conventions:** For this product, **generate-unit UI belongs on the admin Send Offer consult popup and the styling-page live-preview controls**, **not** on the main Build-a-Wig hub page.
+
+---
+
 ## 2026-04-15 — Build-a-Wig generate-unit also added to Admin Meetings “Send Offer” popup
 
 - **Context:** In this conversation, after the Build-a-Wig **GENERATE UNIT** button and NOIR preview-sync fixes were added, user reported they still did **not** see the red generate-unit text in the **Admin Meetings → Send Offer** consult popup module.
