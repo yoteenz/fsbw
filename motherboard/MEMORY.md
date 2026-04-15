@@ -15058,3 +15058,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Live NOIR thumbs: isolate from `.thumbnail-mannequin-img` (match pre–hub-sync behavior)
+
+**Context (this chat):** User said **nothing changed** — duplicate brick / overflow past white+black frame still on **BAW color** thumbs. Asked to compare to code **before** “match main BAW hub thumbnails to sub-pages” when it worked.
+
+**Decisions / outcomes:** Compared **`8606d98`** **`BawNoirWigPreviewFrames`**: same **`hideBrick`** + live thumbs used **`thumbnail-mannequin-img` + `thumbnail-mannequin-img--live-noir`**. **Real bug:** global **`.thumbnail-mannequin-img`** (later in **`index.css`**) applies **`object-fit: contain !important`** + **`max-width/max-height: none !important`** to **any** element with that class. Live thumbs had **both** classes, so the **later** rule **always won** on `object-fit` — post-hoc `!important` overrides were fragile. **Fix:** **remove** `thumbnail-mannequin-img` from **live** thumb `<img>` only; use dedicated **`.baw-noir-thumb-img-live`** (`position:absolute; inset:0; object-fit:cover; max 100%`). **Revert** component to single **`hideBrick`** from **`hideDuplicateBrickForNoirWigViews`** (like **`8606d98`**), drop per-angle **`data-baw-thumb-live`**. Removed obsolete **`img.thumbnail-mannequin-img--live-noir`** CSS blocks superseded by **`.baw-noir-thumb-img-live`**.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.

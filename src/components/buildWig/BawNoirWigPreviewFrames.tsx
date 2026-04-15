@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { isBawNoirLiveWigViewSrc } from '../../utils/bawNoirLiveWigViewDisplay';
+import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 
 type Props = {
   wigViews: [string, string, string] | string[];
@@ -14,8 +14,12 @@ type Props = {
 };
 
 /**
- * Hero + three thumbnails for BAW sub-pages. When any `wigViews` URL is remote (live fal WebPs),
- * drop the extra brick layer and use cover framing so the scene matches the image (no double brick).
+ * Hero + three thumbnails for BAW hub + sub-pages. When any `wigViews` URL is a live fal preview
+ * (https, data:, blob:, etc.), drop the extra brick layer — brick is already in the raster.
+ *
+ * Live thumb `<img>` does NOT use `thumbnail-mannequin-img`: global `.thumbnail-mannequin-img` in
+ * index.css sets `object-fit: contain` + unbounded max-* and runs *after* live-noir overrides,
+ * which caused overflow past the white/black frame (regression after hub/sub-page parity work).
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -26,21 +30,19 @@ export function BawNoirWigPreviewHeroThumbs({
   thumbRowClassName,
 }: Props) {
   const triple = wigViews as string[];
-  /** Per-angle: mixed triples can have live fal on one angle and static /assets PNGs on others — do not use one global flag for all cells. */
-  const heroLive = isBawNoirLiveWigViewSrc(triple[selectedView] ?? '');
-  const rowHasLiveNoir = triple.some((v) => isBawNoirLiveWigViewSrc(v));
+  const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
 
   return (
     <>
       <div className="leaf-stack hero-thumb">
-        {!heroLive && <div className="leaf-bg" aria-hidden="true" />}
+        {!hideBrick && <div className="leaf-bg" aria-hidden="true" />}
         <div
           className="relative bg-cover bg-center flex items-center justify-center"
           style={{
             width: '262px',
             height: '367px',
             overflow: 'visible',
-            ...(heroLive
+            ...(hideBrick
               ? {
                   backgroundImage: 'none',
                   backgroundColor: '#f5f5f5',
@@ -54,7 +56,7 @@ export function BawNoirWigPreviewHeroThumbs({
           }}
         >
           {heroChildren}
-          {heroLive ? (
+          {hideBrick ? (
             <div className="absolute left-0 top-0 z-[5] size-full overflow-hidden">
               <img
                 src={triple[selectedView]}
@@ -95,33 +97,30 @@ export function BawNoirWigPreviewHeroThumbs({
       {belowHeroChildren}
 
       <div
-        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${rowHasLiveNoir ? ' baw-noir-thumb-row--live-noir' : ''}${
+        className={`flex justify-center mb-3 mt-2 baw-noir-thumb-row${hideBrick ? ' baw-noir-thumb-row--live-noir' : ''}${
           thumbRowClassName ? ` ${thumbRowClassName}` : ''
         }`}
         style={{
           transform: 'translateY(10px)',
-          gap: rowHasLiveNoir ? '12px' : '2px',
-          ...(rowHasLiveNoir ? { columnGap: '12px', rowGap: '12px' } : {}),
+          gap: hideBrick ? '12px' : '2px',
+          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
         }}
       >
-        {triple.map((view, index) => {
-          const thumbLive = isBawNoirLiveWigViewSrc(view);
-          return (
+        {triple.map((view, index) => (
           <div className="leaf-stack thumb" key={index}>
-            {!thumbLive && (
+            {!hideBrick && (
               <div
                 className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
                 aria-hidden="true"
               />
             )}
             <div
-              className={`border-transparent cursor-pointer ${thumbLive ? 'p-0' : 'p-1'}`}
+              className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
               onClick={() => onSelectView(index)}
             >
               <div
                 className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
                 data-baw-thumb-index={index}
-                data-baw-thumb-live={thumbLive ? '1' : '0'}
                 style={{
                   width: '72px',
                   height: '95px',
@@ -130,7 +129,7 @@ export function BawNoirWigPreviewHeroThumbs({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  ...(thumbLive
+                  ...(hideBrick
                     ? {
                         overflow: 'hidden',
                         backgroundImage: 'none',
@@ -145,27 +144,23 @@ export function BawNoirWigPreviewHeroThumbs({
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                       }),
-                  ...(!thumbLive && index === 1 && { transform: 'translateX(-2px)' }),
-                  ...(!thumbLive && index === 2 && { transform: 'translateX(-4px)' }),
+                  ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
+                  ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
-                  width={thumbLive ? 72 : 63}
-                  height={thumbLive ? 95 : 84}
+                  width={hideBrick ? 72 : 63}
+                  height={hideBrick ? 95 : 84}
                   src={view}
                   className={
-                    thumbLive
-                      ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                    hideBrick
+                      ? 'baw-noir-thumb-img-live'
                       : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
                   }
                   style={
-                    thumbLive
-                      ? ({
-                          left: '50%',
-                          top: '50%',
-                          transform: 'translate(-50%, -50%)',
-                        } as CSSProperties)
+                    hideBrick
+                      ? undefined
                       : ({
                           '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
                           top: 'calc(50% - 6.1px + 7.2px)',
@@ -176,8 +171,7 @@ export function BawNoirWigPreviewHeroThumbs({
               </div>
             </div>
           </div>
-          );
-        })}
+        ))}
       </div>
     </>
   );

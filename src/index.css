@@ -3396,25 +3396,20 @@ img.hero-mannequin-img--live-noir {
   object-position: center top !important;
 }
 
-img.thumbnail-mannequin-img--live-noir {
+/* Live NOIR BAW thumbs: dedicated class — NOT `.thumbnail-mannequin-img` (global contain + max-* breaks the frame). */
+.baw-noir-thumb-img-live {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 10 !important;
+  display: block !important;
   width: 100% !important;
   height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  max-width: none !important;
-  max-height: none !important;
-  /* cover fills 72×95 — no neutral letterboxing on sides/bottom (contain left gray bars when aspect ≠ frame) */
+  max-width: 100% !important;
+  max-height: 100% !important;
   object-fit: cover !important;
   object-position: center center !important;
-}
-
-/* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
-img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  object-fit: cover !important;
-  object-position: center center !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
@@ -3469,30 +3464,6 @@ img.natural-front-mobile {
   max-height: none !important;
   object-fit: contain !important;
   display: block !important;
-}
-
-/*
- * Live NOIR fal thumbs: MUST follow this block. `.thumbnail-mannequin-img` sets
- * `object-fit: contain` + unbounded max-* — without these overrides, live WebPs
- * spill past the white/black frame (see BAW color page thumbnails).
- */
-.baw-noir-thumb-frame[data-baw-thumb-live='1'] img.thumbnail-mannequin-img--live-noir {
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  transform: none !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-}
-
-.baw-noir-thumb-frame[data-baw-thumb-live='1'] {
-  overflow: hidden !important;
-  isolation: isolate;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */
