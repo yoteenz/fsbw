@@ -359,26 +359,7 @@ function HairlineSelection() {
       // Calculate and save price
       const price = getSelectedPrice().toString();
       const hairlineValue = selectedHairline.length > 0 ? selectedHairline[0] : 'NATURAL';
-      
-      // Always save with 'selected' prefix
-      if (hairlineValue) {
-        localStorage.setItem('selectedHairline', hairlineValue);
-      } else {
-        localStorage.removeItem('selectedHairline');
-      }
-      localStorage.setItem('selectedHairlinePrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        if (hairlineValue) {
-          localStorage.setItem('editSelectedHairline', hairlineValue);
-        } else {
-          localStorage.removeItem('editSelectedHairline');
-        }
-        localStorage.setItem('editSelectedHairlinePrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
+
       if (isOnProductSpecificCustomizeRoute) {
         if (hairlineValue) {
           localStorage.setItem('customizeSelectedHairline', hairlineValue);
@@ -387,10 +368,24 @@ function HairlineSelection() {
         }
         localStorage.setItem('customizeSelectedHairlinePrice', price);
       }
-      
+      if (isOnProductSpecificEditRoute) {
+        if (hairlineValue) {
+          localStorage.setItem('selectedHairline', hairlineValue);
+        } else {
+          localStorage.removeItem('selectedHairline');
+        }
+        localStorage.setItem('selectedHairlinePrice', price);
+        if (hairlineValue) {
+          localStorage.setItem('editSelectedHairline', hairlineValue);
+        } else {
+          localStorage.removeItem('editSelectedHairline');
+        }
+        localStorage.setItem('editSelectedHairlinePrice', price);
+      }
+
       // Set flag to indicate we're returning from a sub-page
       sessionStorage.setItem('comingFromSubPage', 'true');
-      
+
       // Dispatch custom event to notify main page of changes
       window.dispatchEvent(new CustomEvent('customStorageChange'));
     }

@@ -206,6 +206,26 @@ function parseStylingCsvToIds(raw: string | null): string[] {
     .filter((s) => s && s !== 'NONE');
 }
 
+/** NOIR routes: match `readEffectiveBawSalonStylingCanon` — customize draft uses `customizeSelectedHairStyling` on sub-pages. */
+function readEffectiveNoirHairStylingIdsForResolve(path: string): string[] {
+  const p = path.replace(/\/$/, '') || '/';
+  if (p === '/build-a-wig/noir/customize') {
+    return parseStylingCsvToIds(localStorage.getItem('customizeSelectedHairStyling'));
+  }
+  if (path.includes('/build-a-wig/noir/customize/')) {
+    return parseStylingCsvToIds(
+      localStorage.getItem('customizeSelectedHairStyling') || localStorage.getItem('selectedHairStyling')
+    );
+  }
+  if (path.includes('/build-a-wig/noir/edit/')) {
+    return parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+  }
+  if (path.startsWith('/build-a-wig/noir')) {
+    return parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+  }
+  return parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+}
+
 /**
  * Canonical saved salon styling for live preview, route-aware:
  * customize/edit flows write **customizeSelectedStyling** / **editSelectedStyling**; reading **selectedStyling**
@@ -214,6 +234,10 @@ function parseStylingCsvToIds(raw: string | null): string[] {
 export function readEffectiveBawSalonStylingCanon(pathname: string): string {
   try {
     const p = pathname || '';
+    const pNorm = p.replace(/\/$/, '') || '/';
+    if (pNorm === '/build-a-wig/noir/customize') {
+      return (localStorage.getItem('customizeSelectedStyling') || 'NONE').trim().toUpperCase();
+    }
     if (p.includes('/customize')) {
       const v =
         localStorage.getItem('customizeSelectedStyling') ?? localStorage.getItem('selectedStyling');
@@ -246,6 +270,9 @@ export function readEffectiveNoirBawHairColor(pathname: string): string {
       );
     }
     if (pathname.includes('/build-a-wig/noir/customize')) {
+      if (isNoirBawCustomizeHubOnlyPathname(pathname)) {
+        return (localStorage.getItem('customizeSelectedColor') || 'OFF BLACK').trim() || 'OFF BLACK';
+      }
       return (
         localStorage.getItem('customizeSelectedColor') ||
         localStorage.getItem('selectedColor') ||
@@ -284,6 +311,15 @@ export function isNoirBawProductHubPathname(pathname: string): boolean {
 }
 
 /**
+ * Exact `/build-a-wig/noir/customize` (NOIR customize **hub** only — not `/noir/customize/color`, etc.).
+ * Uses **confirmed** `customizeSelected*` for live preview resolution; draft taps stay on sub-pages.
+ */
+export function isNoirBawCustomizeHubOnlyPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return p === '/build-a-wig/noir/customize';
+}
+
+/**
  * Admin NOIR BAW hub: which persisted live triple to show.
  * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
  * `bawNoirLiveStylingWigViews` after the user returns to base / NONE (e.g. `selectedHairStyling` left over).
@@ -307,7 +343,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     }
 
     const canonIds = parseStylingCsvToIds(effectiveCanon);
-    const hairIds = parseStylingCsvToIds(localStorage.getItem('selectedHairStyling'));
+    const hairIds = readEffectiveNoirHairStylingIdsForResolve(path);
     const ids = [...new Set([...canonIds, ...hairIds])];
 
     if (ids.length === 0) {
@@ -318,8 +354,21 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     const bangsOnly = ids.includes('BANGS') && !hasLayers;
 
     if (hasLayers) {
-      const part = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
-      const fromStyling = readBawNoirLiveStylingWigViewsForPart(part);
+      let partRaw: string | null = null;
+      if (isNoirBawCustomizeHubOnlyPathname(path)) {
+        partRaw = localStorage.getItem('customizeSelectedPartSelection');
+      } else if (path.includes('/build-a-wig/noir/customize/')) {
+        partRaw =
+          localStorage.getItem('customizeSelectedPartSelection') ||
+          localStorage.getItem('selectedPartSelection');
+      } else if (path.includes('/build-a-wig/noir/edit/')) {
+        partRaw =
+          localStorage.getItem('editSelectedPartSelection') || localStorage.getItem('selectedPartSelection');
+      } else {
+        partRaw = localStorage.getItem('selectedPartSelection');
+      }
+      const partU = (partRaw || 'MIDDLE').toUpperCase();
+      const fromStyling = readBawNoirLiveStylingWigViewsForPart(partU);
       if (fromStyling) return fromStyling;
     }
     if (bangsOnly) {

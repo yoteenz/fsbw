@@ -32,6 +32,7 @@ import {
   resolveAdminNoirHubLiveWigViewsFromStorage,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
   isNoirBawProductHubPathname,
+  isNoirBawCustomizeHubOnlyPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
@@ -888,7 +889,16 @@ export default function BuildAWigPage() {
         localStorage.setItem('customizeSelectedHairline', updatedCustomization.hairline);
         localStorage.setItem('customizeSelectedStyling', validStyling);
         localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
-        
+        try {
+          const hairCsvExisting = localStorage.getItem('customizeSelectedHairStyling');
+          const hairCsvFallback = localStorage.getItem('selectedHairStyling');
+          if (!hairCsvExisting && hairCsvFallback && hairCsvFallback.trim()) {
+            localStorage.setItem('customizeSelectedHairStyling', hairCsvFallback.trim());
+          }
+        } catch {
+          /* ignore */
+        }
+
         setCustomization(updatedCustomization);
         
         // CRITICAL: Read prices from localStorage (saved by sub-pages) to preserve exact prices
@@ -3237,6 +3247,10 @@ export default function BuildAWigPage() {
     const refresh = () => {
       const path = typeof window !== 'undefined' ? window.location.pathname : '';
       if (path && (isNoirBawHubLandingPathname(path) || isNoirBawProductHubPathname(path))) {
+        setLiveNoirHubWigViews(null);
+        return;
+      }
+      if (path && isNoirBawCustomizeHubOnlyPathname(path)) {
         setLiveNoirHubWigViews(null);
         return;
       }

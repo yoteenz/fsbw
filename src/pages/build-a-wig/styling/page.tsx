@@ -115,7 +115,12 @@ export default function StylingSelectionPage() {
       }
     }
     
-    const storedPartSelection = localStorage.getItem('selectedPartSelection') || 'MIDDLE';
+    const storedPartSelection =
+      (isOnCustomizeRoute
+        ? localStorage.getItem('customizeSelectedPartSelection')
+        : null) ||
+      localStorage.getItem('selectedPartSelection') ||
+      'MIDDLE';
     
     // CRITICAL: If no styling is selected (or styling is NONE), force MIDDLE regardless of what's stored
     if (!hasStyling && storedPartSelection !== 'MIDDLE') {
@@ -243,7 +248,19 @@ export default function StylingSelectionPage() {
     if (!hasStylingSelected && selectedPartSelection !== 'MIDDLE') {
       console.log('Resetting part selection to MIDDLE because no styling is selected. Current styling:', selectedHairStyling, 'Current part:', selectedPartSelection);
       setSelectedPartSelection('MIDDLE');
-      localStorage.setItem('selectedPartSelection', 'MIDDLE');
+      const p = window.location.pathname;
+      const isCustomizeDraft =
+        p.includes('/build-a-wig/noir/customize/') ||
+        p.includes('/build-a-wig/blanco/customize/') ||
+        p.includes('/build-a-wig/soft-wave/customize/') ||
+        p.includes('/build-a-wig/soft-curl/customize/') ||
+        p.includes('/build-a-wig/ocean-curl/customize/') ||
+        p.includes('/build-a-wig/beach-wave/customize/');
+      if (isCustomizeDraft) {
+        localStorage.setItem('customizeSelectedPartSelection', 'MIDDLE');
+      } else {
+        localStorage.setItem('selectedPartSelection', 'MIDDLE');
+      }
     }
   }, [selectedHairStyling, selectedPartSelection]);
 
@@ -567,7 +584,19 @@ export default function StylingSelectionPage() {
     if (partId === 'MIDDLE' || hasStylingSelected) {
       setSelectedPartSelection(partId);
       try {
-        localStorage.setItem('selectedPartSelection', partId);
+        const pathname = window.location.pathname;
+        const isCustomizeDraft =
+          pathname.includes('/build-a-wig/noir/customize/') ||
+          pathname.includes('/build-a-wig/blanco/customize/') ||
+          pathname.includes('/build-a-wig/soft-wave/customize/') ||
+          pathname.includes('/build-a-wig/soft-curl/customize/') ||
+          pathname.includes('/build-a-wig/ocean-curl/customize/') ||
+          pathname.includes('/build-a-wig/beach-wave/customize/');
+        if (isCustomizeDraft) {
+          localStorage.setItem('customizeSelectedPartSelection', partId);
+        } else {
+          localStorage.setItem('selectedPartSelection', partId);
+        }
         window.dispatchEvent(new CustomEvent('customStorageChange'));
       } catch {
         /* ignore */
@@ -838,59 +867,57 @@ export default function StylingSelectionPage() {
       // Calculate and save price
       const price = getTotalStylingPrice().toString();
       const stylingValue = selectedHairStyling.length > 0 ? selectedHairStyling[0] : 'NONE';
-      
-      // Save hair styling (can be empty array if none selected)
-      if (selectedHairStyling.length > 0) {
-        localStorage.setItem('selectedHairStyling', selectedHairStyling.join(','));
-      } else {
-        localStorage.removeItem('selectedHairStyling');
+      const hairCsv = selectedHairStyling.length > 0 ? selectedHairStyling.join(',') : '';
+
+      // Customize draft: only `customizeSelected*` until Confirm — do not overwrite hub `selected*` on back.
+      if (isOnProductSpecificCustomizeRoute) {
+        if (hairCsv) {
+          localStorage.setItem('customizeSelectedHairStyling', hairCsv);
+        } else {
+          localStorage.removeItem('customizeSelectedHairStyling');
+        }
+        localStorage.setItem('customizeSelectedPartSelection', selectedPartSelection);
+        localStorage.setItem('customizeSelectedStyling', stylingValue === 'NONE' ? 'NONE' : stylingValue);
+        localStorage.setItem('customizeSelectedStylingPrice', price);
+        const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
+        const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
+          false,
+          true,
+          styleConfirmed
+        );
+        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOns));
+        localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
       }
-      
-      // Save part selection (always has a value, defaults to MIDDLE)
-      localStorage.setItem('selectedPartSelection', selectedPartSelection);
-      localStorage.setItem('selectedStylingPrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
+
       if (isOnProductSpecificEditRoute) {
+        if (selectedHairStyling.length > 0) {
+          localStorage.setItem('selectedHairStyling', selectedHairStyling.join(','));
+        } else {
+          localStorage.removeItem('selectedHairStyling');
+        }
+        localStorage.setItem('selectedPartSelection', selectedPartSelection);
+        localStorage.setItem('selectedStylingPrice', price);
         if (stylingValue && stylingValue !== 'NONE') {
           localStorage.setItem('editSelectedStyling', stylingValue);
         } else {
           localStorage.removeItem('editSelectedStyling');
         }
         localStorage.setItem('editSelectedStylingPrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
-      if (isOnProductSpecificCustomizeRoute) {
-        if (stylingValue && stylingValue !== 'NONE') {
-          localStorage.setItem('customizeSelectedStyling', stylingValue);
-        } else {
-          localStorage.removeItem('customizeSelectedStyling');
-        }
-        localStorage.setItem('customizeSelectedStylingPrice', price);
-      }
-
-      // Sync add-ons with styling: confirm BLEACH+PLUCK when style is confirmed, deselect when style is NONE (tandem)
-      const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
-      const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
-        isOnProductSpecificEditRoute,
-        isOnProductSpecificCustomizeRoute,
-        styleConfirmed
-      );
-      localStorage.setItem('selectedAddOns', JSON.stringify(syncedAddOns));
-      localStorage.setItem('selectedAddOnsPrice', addOnsPrice.toString());
-      if (isOnProductSpecificEditRoute) {
+        const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
+        const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
+          true,
+          false,
+          styleConfirmed
+        );
+        localStorage.setItem('selectedAddOns', JSON.stringify(syncedAddOns));
+        localStorage.setItem('selectedAddOnsPrice', addOnsPrice.toString());
         localStorage.setItem('editSelectedAddOns', JSON.stringify(syncedAddOns));
         localStorage.setItem('editSelectedAddOnsPrice', addOnsPrice.toString());
       }
-      if (isOnProductSpecificCustomizeRoute) {
-        localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOns));
-        localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
-      }
-      
+
       // Set flag to indicate we're returning from a sub-page
       sessionStorage.setItem('comingFromSubPage', 'true');
-      
+
       // Dispatch custom event to notify main page of changes
       window.dispatchEvent(new CustomEvent('customStorageChange'));
     }
@@ -941,19 +968,6 @@ export default function StylingSelectionPage() {
   };
 
   const handleConfirmSelection = () => {
-    // Save hair styling (can be empty array if none selected)
-    if (selectedHairStyling.length > 0) {
-      localStorage.setItem('selectedHairStyling', selectedHairStyling.join(','));
-    } else {
-      localStorage.removeItem('selectedHairStyling');
-    }
-    
-    // Save part selection (always has a value, defaults to MIDDLE)
-    localStorage.setItem('selectedPartSelection', selectedPartSelection);
-    
-    const price = getTotalStylingPrice().toString();
-    
-    // Check if we're in edit mode or customize mode for ALL products
     const pathname = window.location.pathname;
     const isEditMode = localStorage.getItem('editingCartItem') !== null || 
                        pathname.includes('/noir/edit') ||
@@ -962,9 +976,33 @@ export default function StylingSelectionPage() {
                        pathname.includes('/soft-curl/edit') ||
                        pathname.includes('/ocean-curl/edit') ||
                        pathname.includes('/beach-wave/edit');
-    
-    // Check if we're in customize mode for ALL products
     const isCustomizeMode = isBuildAWigCustomizePath(pathname);
+
+    const hairCsv = selectedHairStyling.length > 0 ? selectedHairStyling.join(',') : '';
+    // Save hair styling (can be empty array if none selected)
+    if (selectedHairStyling.length > 0) {
+      localStorage.setItem('selectedHairStyling', selectedHairStyling.join(','));
+    } else {
+      localStorage.removeItem('selectedHairStyling');
+    }
+    if (isCustomizeMode) {
+      if (hairCsv) {
+        localStorage.setItem('customizeSelectedHairStyling', hairCsv);
+      } else {
+        localStorage.removeItem('customizeSelectedHairStyling');
+      }
+    }
+
+    // Save part selection (always has a value, defaults to MIDDLE)
+    localStorage.setItem('selectedPartSelection', selectedPartSelection);
+    if (isCustomizeMode) {
+      localStorage.setItem('customizeSelectedPartSelection', selectedPartSelection);
+    }
+    if (isEditMode) {
+      localStorage.setItem('editSelectedPartSelection', selectedPartSelection);
+    }
+
+    const price = getTotalStylingPrice().toString();
     
     // Get the source route from sessionStorage (set by main page when navigating to sub-page)
     // Also check if we're in edit or customize mode as fallback

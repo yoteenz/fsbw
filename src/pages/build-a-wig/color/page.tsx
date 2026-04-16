@@ -769,7 +769,6 @@ function ColorSelection() {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    const onBawColorRoute = pathname.includes('/build-a-wig/') && pathname.includes('/color');
     const onNoirColorRoute = pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
 
     const priceForChoice = (() => {
@@ -794,16 +793,15 @@ function ColorSelection() {
       localStorage.setItem('customizeSelectedColor', colorId);
       localStorage.setItem('customizeSelectedColorPrice', priceStr);
     }
-    localStorage.setItem('selectedColor', colorId);
-    localStorage.setItem('selectedColorPrice', priceStr);
+    if (isOnEditRoute || !isOnCustomizeRoute) {
+      localStorage.setItem('selectedColor', colorId);
+      localStorage.setItem('selectedColorPrice', priceStr);
+    }
     if (onNoirColorRoute) {
       clearPendingBawNoirLiveColorWigViews();
       if (colorId === 'OFF BLACK') {
         clearBawNoirLiveColorWigViews();
       }
-    }
-    if (onBawColorRoute && (isOnEditRoute || isOnCustomizeRoute)) {
-      sessionStorage.setItem('comingFromSubPage', 'true');
     }
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     // Live NOIR fal preview: `useEffect` on `selectedColor` + path runs `postWigPreviewLiveNoirColor`.
@@ -838,23 +836,19 @@ function ColorSelection() {
     if (isOnProductSpecificEditRoute || isOnProductSpecificCustomizeRoute) {
       // Calculate and save price
       const price = getSelectedPrice().toString();
-      
-      // Always save with 'selected' prefix
-      localStorage.setItem('selectedColor', selectedColor);
-      localStorage.setItem('selectedColorPrice', price);
-      
-      // Also save with 'editSelected' prefix in edit mode
-      if (isOnProductSpecificEditRoute) {
-        localStorage.setItem('editSelectedColor', selectedColor);
-        localStorage.setItem('editSelectedColorPrice', price);
-      }
-      
-      // Also save with 'customizeSelected' prefix in customize mode
+
+      // Customize draft: `customizeSelected*` only until Confirm — do not overwrite hub `selected*` on back.
       if (isOnProductSpecificCustomizeRoute) {
         localStorage.setItem('customizeSelectedColor', selectedColor);
         localStorage.setItem('customizeSelectedColorPrice', price);
       }
-      
+      if (isOnProductSpecificEditRoute) {
+        localStorage.setItem('selectedColor', selectedColor);
+        localStorage.setItem('selectedColorPrice', price);
+        localStorage.setItem('editSelectedColor', selectedColor);
+        localStorage.setItem('editSelectedColorPrice', price);
+      }
+
       // Set flag to indicate we're returning from a sub-page
       sessionStorage.setItem('comingFromSubPage', 'true');
       

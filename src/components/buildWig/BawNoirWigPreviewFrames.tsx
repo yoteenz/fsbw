@@ -141,7 +141,9 @@ export function BawNoirWigPreviewHeroThumbs({
               onClick={() => onSelectView(index)}
             >
               <div
-                className="relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame"
+                className={`relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame${
+                  subPageStaticSelectionOnFrame && !hideBrick ? ' baw-noir-thumb-frame--static-sub' : ''
+                }`}
                 data-baw-thumb-index={index}
                 style={{
                   width: '72px',
@@ -168,7 +170,7 @@ export function BawNoirWigPreviewHeroThumbs({
                           boxSizing: 'border-box',
                         }
                       : {
-                          overflow: 'hidden',
+                          overflow: 'visible',
                           backgroundImage: `url('/assets/leaf-brick-resize.png')`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',

@@ -15252,3 +15252,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/founderNoirFalTools.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR customize draft vs hub; thumb clip; live preview on customize hub
+
+**Context (this chat):** User reported **thumbnails cut off** on BAW sub-pages; **sub-page selections leaking to the hub** without **Confirm**; **live hero/thumbs on the hub** when they should stay on committed config only.
+
+**Decisions / outcomes:** **Customize draft:** On **`/build-a-wig/noir/customize/*`**, color tap writes **`customizeSelectedColor`** only (not **`selectedColor`** until confirm); removed **`comingFromSubPage`** on color tap. **Back** from color/styling/hairline on customize: only **`customizeSelected*`** (not **`selected*`**). **Styling:** **`customizeSelectedHairStyling`**, **`customizeSelectedPartSelection`**; part taps use customize draft keys; **`handleConfirmSelection`** defines edit/customize mode before localStorage writes. **Hairline back:** customize-only draft keys. **Resolver:** **`isNoirBawCustomizeHubOnlyPathname`**, hub-only effective color/styling; **`readEffectiveNoirHairStylingIdsForResolve`** for LAYERS/BANGS; part keys on sub-routes. **`build-a-wig/page.tsx`:** null live previews on **`/build-a-wig/noir/customize`**; seed **`customizeSelectedHairStyling`** from **`selectedHairStyling`** when missing after confirm. **Thumbs:** **`baw-noir-thumb-frame--static-sub`** + visible overflow for static sub-page brick frames.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
