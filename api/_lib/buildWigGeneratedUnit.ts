@@ -18,11 +18,16 @@ type ColorSwatch = {
   hex: string;
 };
 
+/** Front mannequin refs often show hair split over both shoulders; models mirror this unless told otherwise. */
+const FRONT_SINGLE_SHOULDER_DRAPE =
+  'Front-view hair must drape asymmetrically: long hair falls over exactly ONE shoulder only (pick the shoulder that already carries more hair in the reference and commit). The opposite shoulder stays mostly clear — no matching “curtain” of hair, no mirrored twin drape, no equal lengths hanging on both sides.';
+
 const WIG_CONSULT_STEP1_PROMPT = [
   'Recreate this exact mannequin image, but swap out the gray brick background with a white backdrop background with the same rose detailing on the edge of the background like your standard white/rose studio consult backdrop.',
   'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible - red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
+  FRONT_SINGLE_SHOULDER_DRAPE,
   'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not change anything else about the photo.',
+  'Keep mannequin identity, pose, and framing; only adjust background, brand mark clarity, and long-hair shoulder drape as specified — do not invent a second symmetric hair fall.',
 ].join(' ');
 
 const WIG_CONSULT_STEP1_PROMPT_WITH_BACKDROP_REFERENCE = [
@@ -30,10 +35,11 @@ const WIG_CONSULT_STEP1_PROMPT_WITH_BACKDROP_REFERENCE = [
   'IMAGE 1 is the exact mannequin image to recreate and must remain the output canvas.',
   'IMAGE 2 and any later images are white studio backdrop references with the correct rose detailing.',
   'Replace only the gray brick background in IMAGE 1 with the same white backdrop and the same rose detailing placement, amount, scale, and edge treatment shown across the backdrop reference images.',
-  'Keep the mannequin, pose, framing, hair, lighting, and overall composition from IMAGE 1 unchanged.',
+  'Keep the mannequin identity, pose, framing, and lighting from IMAGE 1.',
+  FRONT_SINGLE_SHOULDER_DRAPE,
   'On the center of the mannequin’s chest, the Frontal Slayer brand mark should be clear and fully legible - red F/S monogram with FRONTAL SLAYER in small red caps, proportional to the chest, stitched-on look, matching brand red.',
   'The photo should be extremely high-quality, crisp & pixel perfect.',
-  'Do not change anything else about the photo.',
+  'Do not mirror hair equally onto both shoulders; do not change anything else about the mannequin beyond background, brand mark, and asymmetric shoulder drape above.',
 ].join(' ');
 
 const COLOR_SWATCHES: Record<string, ColorSwatch> = {
@@ -178,15 +184,40 @@ function formatAddOns(addOns: string[]): string {
   return `${phrases.slice(0, -1).join(', ')}, and ${phrases[phrases.length - 1]}`;
 }
 
-function buildWigConsultChainEditPrompt(fromDescription: string, toDescription: string): string {
+function buildWigConsultChainEditPrompt(
+  fromDescription: string,
+  toDescription: string,
+  options?: { frontHairAsymmetry?: boolean }
+): string {
   const fromD = String(fromDescription || '').trim() || 'previous state';
   const toD = String(toDescription || '').trim() || 'target state';
+  const asym = options?.frontHairAsymmetry ? FRONT_SINGLE_SHOULDER_DRAPE : '';
   return [
     `Recreate this exact mannequin image, but change the ${fromD} to ${toD}.`,
+    asym,
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
-  ].join(' ');
+    asym
+      ? 'Preserve mannequin identity and pose; keep edits to the stated hair changes and asymmetric drape — no symmetric twin drapes on both shoulders.'
+      : 'Do not change anything else about the photo.',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+/** Nudge bulk to the opposite side of the part so the model does not “balance” hair on both shoulders. */
+function partBiasForSingleShoulderDrape(partSelection?: string): string {
+  const part = normalizeToken(partSelection || '');
+  if (part === 'LEFT') {
+    return 'Hair part on the subject’s left: keep most long front hair mass draped toward the viewer’s RIGHT shoulder; viewer’s left shoulder should stay comparatively open.';
+  }
+  if (part === 'RIGHT') {
+    return 'Hair part on the subject’s right: keep most long front hair mass draped toward the viewer’s LEFT shoulder; viewer’s right shoulder should stay comparatively open.';
+  }
+  if (part === 'MIDDLE') {
+    return 'Middle part: still use a single-shoulder cascade (not two equal panels) — one side carries the long drape, the other stays lighter.';
+  }
+  return '';
 }
 
 function hasSelectionEditWork(selections: BuildWigGeneratedUnitSelections): boolean {
@@ -210,7 +241,7 @@ export function buildRoseBackdropPrompt(hasBackdropReference = false): string {
 }
 
 export function buildGeneratedUnitColorPrompt(
-  selections: Pick<BuildWigGeneratedUnitSelections, 'unitKey' | 'color'>
+  selections: Pick<BuildWigGeneratedUnitSelections, 'unitKey' | 'color' | 'partSelection' | 'referenceView'>
 ): string | null {
   const targetColor = String(selections.color || '').trim();
   if (!targetColor) return null;
@@ -219,10 +250,17 @@ export function buildGeneratedUnitColorPrompt(
   const fromSwatch = lookupColorSwatch(defaultColor);
   const toSwatch = lookupColorSwatch(targetColor);
   const fromDescription = fromSwatch ? `${fromSwatch.label} hair color` : `${defaultColor.toLowerCase()} hair color`;
-  const toDescription = toSwatch
-    ? `${toSwatch.label} hair color (hex #${toSwatch.hex}) & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade`
-    : `${targetColor.toLowerCase()} hair color`;
-  return buildWigConsultChainEditPrompt(fromDescription, toDescription);
+  const partBias = partBiasForSingleShoulderDrape(selections.partSelection);
+  const toDescription = [
+    toSwatch
+      ? `${toSwatch.label} hair color (hex #${toSwatch.hex}) & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade`
+      : `${targetColor.toLowerCase()} hair color`,
+    normalizeToken(selections.referenceView || '') === 'FRONT' ? partBias : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const frontAsym = normalizeToken(selections.referenceView || '') === 'FRONT';
+  return buildWigConsultChainEditPrompt(fromDescription, toDescription, { frontHairAsymmetry: frontAsym });
 }
 
 export function buildGeneratedUnitSelectionPrompt(
@@ -244,13 +282,12 @@ export function buildGeneratedUnitSelectionPrompt(
   targetParts.push('while keeping the same hair color as in the previous image');
   const referenceView = normalizeToken(selections.referenceView || '');
   if (referenceView === 'FRONT') {
-    targetParts.push(
-      'while keeping the same front-view hair drape and shoulder placement as in the previous image, with hair remaining on one shoulder only and never mirrored across both shoulders'
-    );
+    const bias = partBiasForSingleShoulderDrape(selections.partSelection);
+    if (bias) targetParts.push(bias);
+    targetParts.push(FRONT_SINGLE_SHOULDER_DRAPE);
   }
 
-  return buildWigConsultChainEditPrompt(
-    'wig details in the previous image',
-    targetParts.join(', ')
-  );
+  return buildWigConsultChainEditPrompt('wig details in the previous image', targetParts.join(', '), {
+    frontHairAsymmetry: referenceView === 'FRONT',
+  });
 }

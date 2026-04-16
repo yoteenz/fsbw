@@ -15300,3 +15300,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/admin/consult-quotes.ts`**, **`api/admin/meeting-client-alert.ts`**, **`api/admin/notifications.ts`**, **`api/booking/autopay-final-payment.ts`**, **`vercel.json`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Generate unit / consult: single-shoulder hair drape prompts
+
+**Context (this chat):** User said generated unit output still showed **hair on both shoulders** instead of **one**; asked to **refine the prompt**.
+
+**Decisions / outcomes:** Step 1 backdrop prompts had **“keep hair unchanged”**, which preserved symmetric reference mannequins. Added **`FRONT_SINGLE_SHOULDER_DRAPE`** (asymmetric one-shoulder cascade, no mirrored twin drape) to **rose step** prompts (with and without backdrop refs). **`buildWigConsultChainEditPrompt`** accepts optional **`frontHairAsymmetry`** to repeat the constraint on **color** and **selection** edits for **FRONT** view. **`partBiasForSingleShoulderDrape`** nudges bulk to the side opposite the part (LEFT/RIGHT/MIDDLE wording). **`buildGeneratedUnitColorPrompt`** now takes **`partSelection`** + **`referenceView`** so recolor steps get the same shoulder logic; **`build-a-wig-unit-image.ts`** passes those fields into the color prompt.
+
+**Changes:** **`api/_lib/buildWigGeneratedUnit.ts`**, **`api/build-a-wig-unit-image.ts`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

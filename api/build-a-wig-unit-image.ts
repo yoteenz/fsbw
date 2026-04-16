@@ -320,7 +320,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     );
     const stepsRun = ['rose-base'];
 
-    const colorPrompt = buildGeneratedUnitColorPrompt(selections);
+    const colorPrompt = buildGeneratedUnitColorPrompt({
+      unitKey: selections.unitKey,
+      color: selections.color,
+      partSelection: selections.partSelection,
+      referenceView: selections.referenceView,
+    });
     if (colorPrompt) {
       currentImageUrl = await runFalEdit(colorPrompt, [currentImageUrl]);
       stepsRun.push('color');
