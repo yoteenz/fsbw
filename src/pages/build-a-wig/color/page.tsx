@@ -16,9 +16,8 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle, getAccessToken } from '../../../utils/api';
-import { isAdminFounderAccount } from '../../../utils/adminAuth';
-import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
+import { canUseFounderNoirFalTools } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
   clearBawNoirLiveColorWigViews,
@@ -355,18 +354,24 @@ function ColorSelection() {
       return;
     }
     let cancelled = false;
-    (async () => {
-      const token = await getAccessToken();
-      const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
+    const refreshFounderTools = async () => {
+      const ok = await canUseFounderNoirFalTools();
       if (!cancelled) setFounderNoirFalRegenTools(ok);
       if (!ok) {
         setLiveWigViews(null);
         setLivePreviewError(null);
       }
-    })();
+    };
+    void refreshFounderTools();
+    const onAuth = () => {
+      void refreshFounderTools();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    window.addEventListener('customStorageChange', onAuth);
     return () => {
       cancelled = true;
+      window.removeEventListener('signInStateChanged', onAuth);
+      window.removeEventListener('customStorageChange', onAuth);
     };
   }, [location.pathname]);
 
@@ -376,16 +381,22 @@ function ColorSelection() {
       p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
     if (!noirColor) return;
     let cancelled = false;
-    void (async () => {
-      const token = await getAccessToken();
-      const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
+    const loadCached = async () => {
+      const ok = await canUseFounderNoirFalTools();
       if (cancelled || !ok) return;
       const cached = readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
       if (cached) setLiveWigViews(cached);
-    })();
+    };
+    void loadCached();
+    const onAuth = () => {
+      void loadCached();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    window.addEventListener('customStorageChange', onAuth);
     return () => {
       cancelled = true;
+      window.removeEventListener('signInStateChanged', onAuth);
+      window.removeEventListener('customStorageChange', onAuth);
     };
   }, [location.pathname]);
 

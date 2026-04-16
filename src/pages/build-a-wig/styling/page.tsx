@@ -7,14 +7,13 @@ import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { clearAppAuth, isAdminFounderAccount } from '../../../utils/adminAuth';
+import { clearAppAuth } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import {
   postLiveWigAfterColorStyling,
   postLiveWigAfterColorStylingRegenerateAngle,
-  getAccessToken,
 } from '../../../utils/api';
-import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
+import { canUseFounderNoirFalTools } from '../../../utils/founderNoirFalTools';
 import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
@@ -205,27 +204,33 @@ export default function StylingSelectionPage() {
       return;
     }
     let cancelled = false;
-    void (async () => {
-      const token = await getAccessToken();
-      const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
+    const refreshFounderTools = async () => {
+      const ok = await canUseFounderNoirFalTools();
       if (!cancelled) setFounderNoirFalStylingTools(ok);
       if (!ok) {
         setLiveStylingError(null);
       } else {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
-        const p: 'MIDDLE' | 'LEFT' | 'RIGHT' =
+        const part: 'MIDDLE' | 'LEFT' | 'RIGHT' =
           rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
-        const cachedLayers = readBawNoirLiveStylingWigViewsForPart(p);
+        const cachedLayers = readBawNoirLiveStylingWigViewsForPart(part);
         if (cachedLayers) setLiveStylingWigViews(cachedLayers);
         else setLiveStylingWigViews(null);
         const cachedBangs = readBawNoirLiveBangsWigViews();
         if (cachedBangs) setLiveBangsWigViews(cachedBangs);
         else setLiveBangsWigViews(null);
       }
-    })();
+    };
+    void refreshFounderTools();
+    const onAuth = () => {
+      void refreshFounderTools();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    window.addEventListener('customStorageChange', onAuth);
     return () => {
       cancelled = true;
+      window.removeEventListener('signInStateChanged', onAuth);
+      window.removeEventListener('customStorageChange', onAuth);
     };
   }, [location.pathname, selectedPartSelection, selectedHairStyling]);
 
@@ -449,10 +454,10 @@ export default function StylingSelectionPage() {
           ? liveNoirCompositeWigViews
           : baseWigViews;
 
-  const showNoirLiveStylingBanner =
-    founderNoirFalStylingTools &&
-    location.pathname.includes('/build-a-wig/noir/') &&
-    (hasLayersLiveStyling || hasBangsOnlyLive);
+  const showNoirFounderFalHint =
+    founderNoirFalStylingTools && location.pathname.includes('/build-a-wig/noir/');
+  const showNoirLiveStylingRegenControls =
+    showNoirFounderFalHint && (hasLayersLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets
@@ -1374,7 +1379,20 @@ export default function StylingSelectionPage() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {showNoirLiveStylingBanner && (
+            {showNoirFounderFalHint && !showNoirLiveStylingRegenControls && (
+              <p
+                className="text-center mb-2 px-2"
+                style={{
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '9px',
+                  color: '#808080',
+                  maxWidth: '280px',
+                }}
+              >
+                Fal regen (LAYERS / BANGS): select LAYERS or BANGS below, or use the NOIR color page for color WebPs.
+              </p>
+            )}
+            {showNoirLiveStylingRegenControls && (
               <p
                 className="text-center mb-2 px-2"
                 style={{
@@ -1395,7 +1413,7 @@ export default function StylingSelectionPage() {
                         : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong.'}
               </p>
             )}
-            {showNoirLiveStylingBanner && (
+            {showNoirLiveStylingRegenControls && (
               <div
                 className="flex flex-col items-center gap-y-2 mb-2 px-2"
                 style={{ maxWidth: '280px' }}
@@ -1581,7 +1599,7 @@ export default function StylingSelectionPage() {
                     whiteSpace: 'nowrap',
                     overflow: 'visible',
                     width: 'max-content',
-                    ...(showNoirLiveStylingBanner ? { pointerEvents: 'none' as const } : {}),
+                    ...(showNoirFounderFalHint ? { pointerEvents: 'none' as const } : {}),
                     fontSize: (() => {
                       const pathname = location.pathname;
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

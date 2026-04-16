@@ -15240,3 +15240,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Founder Fal regen strip: local admin sign-in + styling/hairline hints
+
+**Context (this chat):** User still did not see **regenerate** text above the NOIR hero on **color, styling, and hairline** sub-pages.
+
+**Decisions / outcomes:** Regen UI was gated by **`getAccessToken()` && founder email**, so **local admin password sign-in** (no Supabase session) never showed the strip. Added **`canUseFounderNoirFalTools()`** (`src/utils/founderNoirFalTools.ts`): founder + (**Supabase token** or **`isSignedIn()`**). Color/styling refresh this on **`signInStateChanged`** / **`customStorageChange`**. **Styling:** split **`showNoirFounderFalHint`** (always on NOIR styling for founder) vs **`showNoirLiveStylingRegenControls`** (LAYERS/BANGS only); when LAYERS/BANGS not selected, show a short hint to pick them or use color page. **Hairline:** founder-only hint that live Fal regen is on color/styling (no Fal route for hairline). API unchanged (**Bearer** still required for Fal).
+
+**Changes:** **`src/utils/founderNoirFalTools.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
