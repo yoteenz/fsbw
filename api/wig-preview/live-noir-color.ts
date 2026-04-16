@@ -49,28 +49,16 @@ async function getAuthUser(
 }
 
 // --- Inlined from api/_lib/adminAuth.ts (keep in sync) ---
-const DEFAULT_ADMIN_EMAILS = [
-  'admin@frontalslayer.com',
-  'kateena.armstrong@frontalslayer.com',
-  'kateenaarmstrong@gmail.com',
-];
+/** Fal NOIR live color: founder Gmail only — see `requireAdminFounder` in api/_lib/adminAuth.ts */
+const FOUNDER_PRIVILEGED_ADMIN_EMAIL = 'kateenaarmstrong@gmail.com';
 
-function getAdminEmails(): string[] {
-  const raw = process.env.ADMIN_EMAILS || '';
-  if (raw.trim()) {
-    return raw.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
-  }
-  return DEFAULT_ADMIN_EMAILS;
-}
-
-async function requireAdmin(
+async function requireAdminFounder(
   req: VercelRequest
 ): Promise<{ id: string; email: string; accessToken: string } | null> {
   const user = await getAuthUser(req);
   if (!user) return null;
-  const adminEmails = getAdminEmails();
   const emailLower = (user.email || '').trim().toLowerCase();
-  if (!adminEmails.includes(emailLower)) return null;
+  if (emailLower !== FOUNDER_PRIVILEGED_ADMIN_EMAIL) return null;
   return user;
 }
 
@@ -308,9 +296,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const admin = await requireAdmin(req);
+  const admin = await requireAdminFounder(req);
   if (!admin) {
-    sendJson(res, 403, { error: 'Admin session required' });
+    sendJson(res, 403, { error: 'Founder admin session required' });
     return;
   }
 

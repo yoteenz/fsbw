@@ -15212,3 +15212,19 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Fal NOIR live preview: founder account only (client + API)
+
+**Context (this chat):** User asked to restrict the **Fal “generator”** (NOIR live color/styling preview that calls Fal) to the **admin founder** account (`kateenaarmstrong@gmail.com`), not every address in the broader admin list.
+
+**Topics covered:** Prior work on NOIR BAW thumbnails, hub vs sub-pages, routing, and live preview storage; this turn narrows **who can trigger Fal** and **who sees the admin live preview UI** on NOIR color and styling steps.
+
+**Decisions / outcomes:** **Client:** `adminLiveNoirPreview` (color page) and `adminLiveNoirStylingPreview` (styling page) now enable only when the signed-in user passes **`isAdminFounderAccount({ email })`** (with Supabase token), replacing **`isAdminEmail(email)`**. **Server:** **`POST /api/wig-preview/live-noir-color`** and **`POST /api/live-wig-after-color-styling`** use **`requireAdminFounder`** (valid JWT + founder Gmail only). 403 message: **Founder admin session required**. Inlined guard in `live-noir-color.ts` kept in sync with **`api/_lib/adminAuth.ts`**.
+
+**Changes:** **`api/_lib/adminAuth.ts`** (`requireAdminFounder`, `FOUNDER_PRIVILEGED_ADMIN_EMAIL`), **`api/wig-preview/live-noir-color.ts`**, **`api/live-wig-after-color-styling.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Conventions:** Other admin emails keep `/admin/*` and general admin behavior; only the founder account can run Fal-backed NOIR live preview generation.

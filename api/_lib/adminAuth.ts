@@ -4,6 +4,9 @@
 import type { VercelRequest } from '@vercel/node';
 import { getAuthUser } from './auth.js';
 
+/** Same as `FOUNDER_PRIVILEGED_ADMIN_EMAIL` in `src/utils/adminAuth.ts` — Fal NOIR live preview routes use this only. */
+export const FOUNDER_PRIVILEGED_ADMIN_EMAIL = 'kateenaarmstrong@gmail.com';
+
 const DEFAULT_ADMIN_EMAILS = [
   'admin@frontalslayer.com',
   'kateena.armstrong@frontalslayer.com',
@@ -27,5 +30,16 @@ export async function requireAdmin(
   const adminEmails = getAdminEmails();
   const emailLower = (user.email || '').trim().toLowerCase();
   if (!adminEmails.includes(emailLower)) return null;
+  return user;
+}
+
+/** Valid session + founder Gmail only. Use for expensive Fal NOIR preview endpoints so other admins cannot invoke them. */
+export async function requireAdminFounder(
+  req: VercelRequest
+): Promise<{ id: string; email: string; accessToken: string } | null> {
+  const user = await getAuthUser(req);
+  if (!user) return null;
+  const emailLower = (user.email || '').trim().toLowerCase();
+  if (emailLower !== FOUNDER_PRIVILEGED_ADMIN_EMAIL) return null;
   return user;
 }

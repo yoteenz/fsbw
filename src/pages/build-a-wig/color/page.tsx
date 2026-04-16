@@ -17,7 +17,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle, getAccessToken } from '../../../utils/api';
-import { isAdminEmail } from '../../../utils/adminAuth';
+import { isAdminFounderAccount } from '../../../utils/adminAuth';
 import { getCurrentUserEmailFromStorage } from '../../../utils/perUserStorage';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
@@ -358,7 +358,7 @@ function ColorSelection() {
     (async () => {
       const token = await getAccessToken();
       const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminEmail(email));
+      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
       if (!cancelled) setAdminLiveNoirPreview(ok);
       if (!ok) {
         setLiveWigViews(null);
@@ -379,7 +379,7 @@ function ColorSelection() {
     void (async () => {
       const token = await getAccessToken();
       const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminEmail(email));
+      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
       if (cancelled || !ok) return;
       const cached = readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
       if (cached) setLiveWigViews(cached);

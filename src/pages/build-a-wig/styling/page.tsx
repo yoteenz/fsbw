@@ -7,7 +7,7 @@ import LoadingScreen from '../../../components/base/LoadingScreen';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { clearAppAuth, isAdminEmail } from '../../../utils/adminAuth';
+import { clearAppAuth, isAdminFounderAccount } from '../../../utils/adminAuth';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
 import {
   postLiveWigAfterColorStyling,
@@ -208,7 +208,7 @@ export default function StylingSelectionPage() {
     void (async () => {
       const token = await getAccessToken();
       const email = getCurrentUserEmailFromStorage();
-      const ok = Boolean(token && email && isAdminEmail(email));
+      const ok = Boolean(token && email && isAdminFounderAccount({ email }));
       if (!cancelled) setAdminLiveNoirStylingPreview(ok);
       if (!ok) {
         setLiveStylingWigViews(null);

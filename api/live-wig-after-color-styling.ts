@@ -15,7 +15,7 @@ export const config = { maxDuration: 120 };
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_lib/adminAuth.js';
+import { requireAdminFounder } from './_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
   wigPreviewManifestHash,
@@ -160,9 +160,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    const admin = await requireAdmin(req);
+    const admin = await requireAdminFounder(req);
     if (!admin) {
-      sendJson(res, 403, { error: 'Admin session required' });
+      sendJson(res, 403, { error: 'Founder admin session required' });
       return;
     }
 
