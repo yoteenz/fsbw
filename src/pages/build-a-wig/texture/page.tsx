@@ -16,9 +16,6 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
-
-const BAW_CUSTOM_TEXTURE_PRICE_KEY = 'bawCustomTexturePriceUsd';
 
 interface TextureOption {
   id: string;
@@ -71,10 +68,6 @@ function TextureSelection() {
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
-  const [customTexturePriceUsd, setCustomTexturePriceUsd] = useState(() => {
-    const n = parseInt(localStorage.getItem(BAW_CUSTOM_TEXTURE_PRICE_KEY) || '0', 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -213,9 +206,6 @@ function TextureSelection() {
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     const priceStr = String(priceUsd);
-    if (textureId === BAW_CUSTOM_OPTION_ID) {
-      localStorage.setItem(BAW_CUSTOM_TEXTURE_PRICE_KEY, priceStr);
-    }
     localStorage.setItem('selectedTexture', textureId);
     localStorage.setItem('selectedTexturePrice', priceStr);
     if (isOnEditRoute) {
@@ -231,17 +221,9 @@ function TextureSelection() {
 
   const handleTextureSelect = (textureId: string) => {
     setSelectedTexture(textureId);
-    const priceUsd =
-      textureId === BAW_CUSTOM_OPTION_ID
-        ? Math.max(0, customTexturePriceUsd)
-        : textureOptions.find((o) => o.id === textureId)?.price ?? 0;
+    const priceUsd = textureOptions.find((o) => o.id === textureId)?.price ?? 0;
     persistTextureChoice(textureId, priceUsd);
   };
-
-  useEffect(() => {
-    if (selectedTexture !== BAW_CUSTOM_OPTION_ID) return;
-    persistTextureChoice(BAW_CUSTOM_OPTION_ID, Math.max(0, customTexturePriceUsd));
-  }, [customTexturePriceUsd, selectedTexture, location.pathname]);
 
   const handleBack = () => {
     const pathname = location.pathname;
@@ -519,7 +501,6 @@ function TextureSelection() {
   };
 
   const getSelectedPrice = () => {
-    if (selectedTexture === BAW_CUSTOM_OPTION_ID) return Math.max(0, customTexturePriceUsd);
     const selected = textureOptions.find((option) => option.id === selectedTexture);
     return selected ? selected.price : 0;
   };
@@ -527,10 +508,6 @@ function TextureSelection() {
   // Get dynamic texture note text based on selected texture option
   const getTextureNoteText = () => {
     const currentTexture = selectedTexture;
-
-    if (currentTexture === BAW_CUSTOM_OPTION_ID) {
-      return 'CUSTOM TEXTURE — CONFIRMED AT CHECKOUT. EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.';
-    }
 
     // For silky texture option
     if (currentTexture === 'SILKY') {
@@ -561,12 +538,6 @@ function TextureSelection() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (selectedTexture !== BAW_CUSTOM_OPTION_ID) return;
-    const p = parseInt(localStorage.getItem(BAW_CUSTOM_TEXTURE_PRICE_KEY) || '0', 10);
-    if (Number.isFinite(p) && p >= 0) setCustomTexturePriceUsd(p);
-  }, [selectedTexture]);
 
   return (
     <>
@@ -920,13 +891,6 @@ function TextureSelection() {
 
           {/* TEXTURE OPTIONS - Updated to fit 3 containers per row with centered layout */}
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
-            <BawCustomOptionRow
-              categoryLabel="TEXTURE"
-              isSelected={selectedTexture === BAW_CUSTOM_OPTION_ID}
-              onSelect={() => handleTextureSelect(BAW_CUSTOM_OPTION_ID)}
-              customPriceUsd={customTexturePriceUsd}
-              onCustomPriceUsdChange={setCustomTexturePriceUsd}
-            />
             {textureOptions.map((option) => (
               <ThumbBox
                 key={option.id}

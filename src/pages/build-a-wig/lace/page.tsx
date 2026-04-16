@@ -16,9 +16,6 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
-
-const BAW_CUSTOM_LACE_PRICE_KEY = 'bawCustomLacePriceUsd';
 
 interface LaceOption {
   id: string;
@@ -71,10 +68,6 @@ function LaceSelection() {
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
-  const [customLacePriceUsd, setCustomLacePriceUsd] = useState(() => {
-    const n = parseInt(localStorage.getItem(BAW_CUSTOM_LACE_PRICE_KEY) || '0', 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -261,9 +254,6 @@ function LaceSelection() {
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     const priceStr = String(priceUsd);
-    if (laceId === BAW_CUSTOM_OPTION_ID) {
-      localStorage.setItem(BAW_CUSTOM_LACE_PRICE_KEY, priceStr);
-    }
     localStorage.setItem('selectedLace', laceId);
     localStorage.setItem('selectedLacePrice', priceStr);
     if (isOnEditRoute) {
@@ -279,17 +269,9 @@ function LaceSelection() {
 
   const handleLaceSelect = (laceId: string) => {
     setSelectedLace(laceId);
-    const priceUsd =
-      laceId === BAW_CUSTOM_OPTION_ID
-        ? Math.max(0, customLacePriceUsd)
-        : laceOptions.find((o) => o.id === laceId)?.price ?? 0;
+    const priceUsd = laceOptions.find((o) => o.id === laceId)?.price ?? 0;
     persistLaceChoice(laceId, priceUsd);
   };
-
-  useEffect(() => {
-    if (selectedLace !== BAW_CUSTOM_OPTION_ID) return;
-    persistLaceChoice(BAW_CUSTOM_OPTION_ID, Math.max(0, customLacePriceUsd));
-  }, [customLacePriceUsd, selectedLace, location.pathname]);
 
   const handleBack = () => {
     const pathname = location.pathname;
@@ -561,7 +543,6 @@ function LaceSelection() {
   };
 
   const getSelectedPrice = () => {
-    if (selectedLace === BAW_CUSTOM_OPTION_ID) return Math.max(0, customLacePriceUsd);
     const selected = laceOptions.find((option) => option.id === selectedLace);
     return selected ? selected.price : 0;
   };
@@ -569,15 +550,6 @@ function LaceSelection() {
   // Get dynamic lace note text based on selected lace option
   const getLaceNoteText = () => {
     const currentLace = selectedLace;
-
-    if (currentLace === BAW_CUSTOM_OPTION_ID) {
-      return (
-        <>
-          CUSTOM LACE — CONFIRMED AT CHECKOUT.<br />
-          EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
-        </>
-      );
-    }
 
     // For 2x6 lace option
     if (currentLace === '2X6') {
@@ -693,12 +665,6 @@ function LaceSelection() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (selectedLace !== BAW_CUSTOM_OPTION_ID) return;
-    const p = parseInt(localStorage.getItem(BAW_CUSTOM_LACE_PRICE_KEY) || '0', 10);
-    if (Number.isFinite(p) && p >= 0) setCustomLacePriceUsd(p);
-  }, [selectedLace]);
 
   return (
     <>
@@ -1051,13 +1017,6 @@ function LaceSelection() {
 
           {/* LACE OPTIONS - Updated to fit 4 containers per row with centered layout */}
           <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]">
-            <BawCustomOptionRow
-              categoryLabel="LACE"
-              isSelected={selectedLace === BAW_CUSTOM_OPTION_ID}
-              onSelect={() => handleLaceSelect(BAW_CUSTOM_OPTION_ID)}
-              customPriceUsd={customLacePriceUsd}
-              onCustomPriceUsdChange={setCustomLacePriceUsd}
-            />
             {laceOptions.map((option) => {
               const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
               const imgSize = isBlancoRoute ? 44 : 74; // Match main page edit mode size (44px for BLANCO)

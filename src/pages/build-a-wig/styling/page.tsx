@@ -31,9 +31,6 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
-
-const BAW_CUSTOM_STYLING_PRICE_KEY = 'bawCustomStylingPriceUsd';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -134,10 +131,6 @@ export default function StylingSelectionPage() {
     return storedPartSelection;
   });
   const [showLoading, setShowLoading] = useState(true);
-  const [customStylingPriceUsd, setCustomStylingPriceUsd] = useState(() => {
-    const n = parseInt(localStorage.getItem(BAW_CUSTOM_STYLING_PRICE_KEY) || '0', 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -542,16 +535,6 @@ export default function StylingSelectionPage() {
   const handleHairStylingSelect = (stylingId: string) => {
     const currentSelections = selectedHairStyling;
 
-    if (stylingId === BAW_CUSTOM_OPTION_ID) {
-      setSelectedHairStyling([BAW_CUSTOM_OPTION_ID]);
-      try {
-        localStorage.setItem(BAW_CUSTOM_STYLING_PRICE_KEY, String(Math.max(0, customStylingPriceUsd)));
-      } catch {
-        /* ignore */
-      }
-      return;
-    }
-
     if (currentSelections.includes(stylingId)) {
       // Deselect the styling option
       if (stylingId === 'BANGS') {
@@ -691,9 +674,7 @@ export default function StylingSelectionPage() {
     }
 
     const priceForStylingId = (id: string) =>
-      id === BAW_CUSTOM_OPTION_ID
-        ? Math.max(0, customStylingPriceUsd)
-        : hairStylingOptions.find((opt) => opt.id === id)?.price || 0;
+      hairStylingOptions.find((opt) => opt.id === id)?.price || 0;
     
     const hasBangs = selectedHairStyling.includes('BANGS');
     const otherStyling = selectedHairStyling.find(id => id !== 'BANGS');
@@ -804,7 +785,7 @@ export default function StylingSelectionPage() {
     localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
 
     window.dispatchEvent(new CustomEvent('customStorageChange'));
-  }, [location.pathname, selectedHairStyling, selectedPartSelection, customStylingPriceUsd]);
+  }, [location.pathname, selectedHairStyling, selectedPartSelection]);
 
   // Get dynamic styling note text based on selected styling option
   const getStylingNoteText = () => {
@@ -1748,13 +1729,6 @@ export default function StylingSelectionPage() {
 
             {/* HAIR STYLING OPTIONS */}
             <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '13px' }}>
-              <BawCustomOptionRow
-                categoryLabel="STYLING"
-                isSelected={selectedHairStyling.includes(BAW_CUSTOM_OPTION_ID)}
-                onSelect={() => handleHairStylingSelect(BAW_CUSTOM_OPTION_ID)}
-                customPriceUsd={customStylingPriceUsd}
-                onCustomPriceUsdChange={setCustomStylingPriceUsd}
-              />
               {hairStylingOptions.map((option) => (
                 <ThumbBox
                   key={option.id}

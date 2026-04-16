@@ -26,6 +26,7 @@ import {
   calculateSpecialOfferPriceBreakdown,
   expandStylingBreakdownLineForDisplay,
   type SpecialOfferBreakdownLine,
+  type SpecialOfferOptions,
 } from '../../../utils/specialOfferPrice';
 import {
   adminFounderDemoConsultMeetingOrder331,
@@ -83,6 +84,7 @@ import {
 const SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG';
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
+import { BAW_CUSTOM_SEND_OFFER_OPTION_ID } from '../../../utils/bawCustomSendOfferOption';
 
 const UNIT_OPTIONS = [
   { id: 'NOIR', label: 'NOIR' },
@@ -194,23 +196,23 @@ function createOfferSelectionOptionsForSubPage(unitId: UnitId, subPage: QuoteSub
   const options = getOptionsForUnit(unitId);
   switch (subPage) {
     case 'LENGTH':
-      return options.length;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.length];
     case 'COLOR':
-      return options.color;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.color];
     case 'DENSITY':
-      return options.density;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.density];
     case 'CAP SIZE':
-      return CREATE_OFFER_CAP_SIZE_OPTIONS;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...CREATE_OFFER_CAP_SIZE_OPTIONS];
     case 'HAIRLINE':
-      return options.hairline;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.hairline];
     case 'LACE':
-      return options.lace;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.lace];
     case 'TEXTURE':
-      return options.texture;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.texture];
     case 'STYLING':
-      return options.styling;
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.styling];
     case 'ADD-ONS':
-      return ADDON_COMBO_OPTIONS.map((opt) => opt.label);
+      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...ADDON_COMBO_OPTIONS.map((opt) => opt.label)];
     default:
       return [];
   }
@@ -235,6 +237,7 @@ function createOfferSelectionRawValue(subPage: QuoteSubPage, selections: CreateO
     case 'STYLING':
       return selections.styling;
     case 'ADD-ONS': {
+      if (selections.addOns.length === 1 && selections.addOns[0] === BAW_CUSTOM_SEND_OFFER_OPTION_ID) return BAW_CUSTOM_SEND_OFFER_OPTION_ID;
       const match = ADDON_COMBO_OPTIONS.find(
         (opt) => opt.value.length === selections.addOns.length && opt.value.every((addOn) => selections.addOns.includes(addOn))
       );
@@ -248,6 +251,12 @@ function createOfferSelectionRawValue(subPage: QuoteSubPage, selections: CreateO
 function createOfferSelectionDisplayValue(subPage: QuoteSubPage, selections: CreateOfferSelections): string {
   const raw = createOfferSelectionRawValue(subPage, selections);
   return subPage === 'HAIRLINE' ? hairlineDisplayValue(raw) : raw;
+}
+
+function sendOfferSubPageToBreakdownLineKey(subPage: QuoteSubPage): keyof NonNullable<SpecialOfferOptions['customLineUsd']> {
+  if (subPage === 'CAP SIZE') return 'CAP SIZE';
+  if (subPage === 'ADD-ONS') return 'ADD-ONS';
+  return subPage as keyof NonNullable<SpecialOfferOptions['customLineUsd']>;
 }
 
 function updateCreateOfferSelectionsForSubPage(
@@ -273,6 +282,7 @@ function updateCreateOfferSelectionsForSubPage(
     case 'STYLING':
       return { ...previous, styling: next };
     case 'ADD-ONS': {
+      if (next === BAW_CUSTOM_SEND_OFFER_OPTION_ID) return { ...previous, addOns: [BAW_CUSTOM_SEND_OFFER_OPTION_ID] };
       const match = ADDON_COMBO_OPTIONS.find((opt) => opt.label === next);
       return { ...previous, addOns: match ? [...match.value] : [] };
     }
@@ -383,6 +393,8 @@ export default function AdminMeetingsHub() {
   const [quoteSelections, setQuoteSelections] = useState<CreateOfferSelections>(() =>
     createOfferSelectionsDefaults(quoteUnitIdFromValue(UNIT_OPTIONS[0].id))
   );
+  /** Send offer: **CUSTOM** line item USD per category (only used when that row is `CUSTOM`). */
+  const [offerCustomUsdByLine, setOfferCustomUsdByLine] = useState<Partial<Record<QuoteSubPage, number>>>({});
   const [quoteMessage, setQuoteMessage] = useState(
     'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.'
   );
@@ -537,13 +549,27 @@ export default function AdminMeetingsHub() {
     () => createOfferSelectionDisplayValue(quoteSub, quoteSelections),
     [quoteSelections, quoteSub]
   );
+
+  const computeSpecialOfferInput = useMemo((): SpecialOfferOptions => {
+    const customLineUsd: NonNullable<SpecialOfferOptions['customLineUsd']> = {};
+    for (const sub of SUB_PAGE_OPTIONS) {
+      const raw = createOfferSelectionRawValue(sub, quoteSelections);
+      if (raw !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) continue;
+      const key = sendOfferSubPageToBreakdownLineKey(sub);
+      const usd = Math.max(0, Math.round(offerCustomUsdByLine[sub] ?? 0));
+      customLineUsd[key] = usd;
+    }
+    const hasCustom = Object.keys(customLineUsd).length > 0;
+    return {
+      ...quoteSelections,
+      partSelection: quoteSelections.partSelection,
+      ...(hasCustom ? { customLineUsd } : {}),
+    };
+  }, [quoteSelections, offerCustomUsdByLine]);
+
   const generatedQuoteBreakdown = useMemo(
-    () =>
-      calculateSpecialOfferPriceBreakdown(quoteUnitId, {
-        ...quoteSelections,
-        partSelection: quoteSelections.partSelection,
-      }),
-    [quoteUnitId, quoteSelections]
+    () => calculateSpecialOfferPriceBreakdown(quoteUnitId, computeSpecialOfferInput),
+    [quoteUnitId, computeSpecialOfferInput]
   );
 
   const quoteBreakdownDisplayLines = useMemo(() => {
@@ -627,21 +653,46 @@ export default function AdminMeetingsHub() {
   }, [editMeeting, quoteMeeting]);
 
   useEffect(() => {
+    setOfferCustomUsdByLine({});
+  }, [quoteUnitId]);
+
+  useEffect(() => {
     const options = getOptionsForUnit(quoteUnitId);
     const defaults = createOfferSelectionsDefaults(quoteUnitId);
     setQuoteSelections((previous) => {
       const next: CreateOfferSelections = {
-        capSize: CREATE_OFFER_CAP_SIZE_OPTIONS.includes(previous.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number])
-          ? previous.capSize
-          : defaults.capSize,
-        length: options.length.includes(previous.length) ? previous.length : defaults.length,
-        density: options.density.includes(previous.density) ? previous.density : defaults.density,
-        texture: options.texture.includes(previous.texture) ? previous.texture : defaults.texture,
-        lace: options.lace.includes(previous.lace) ? previous.lace : defaults.lace,
-        hairline: options.hairline.includes(previous.hairline) ? previous.hairline : defaults.hairline,
-        color: options.color.includes(previous.color) ? previous.color : defaults.color,
-        styling: options.styling.includes(previous.styling) ? previous.styling : defaults.styling,
-        addOns: previous.addOns.every((addOn) => options.addOns.includes(addOn)) ? previous.addOns : defaults.addOns,
+        capSize:
+          CREATE_OFFER_CAP_SIZE_OPTIONS.includes(previous.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]) ||
+          previous.capSize === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.capSize
+            : defaults.capSize,
+        length:
+          options.length.includes(previous.length) || previous.length === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.length
+            : defaults.length,
+        density:
+          options.density.includes(previous.density) || previous.density === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.density
+            : defaults.density,
+        texture:
+          options.texture.includes(previous.texture) || previous.texture === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.texture
+            : defaults.texture,
+        lace: options.lace.includes(previous.lace) || previous.lace === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? previous.lace : defaults.lace,
+        hairline:
+          options.hairline.includes(previous.hairline) || previous.hairline === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.hairline
+            : defaults.hairline,
+        color: options.color.includes(previous.color) || previous.color === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? previous.color : defaults.color,
+        styling:
+          options.styling.includes(previous.styling) || previous.styling === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+            ? previous.styling
+            : defaults.styling,
+        addOns:
+          (previous.addOns.length === 1 && previous.addOns[0] === BAW_CUSTOM_SEND_OFFER_OPTION_ID) ||
+          previous.addOns.every((addOn) => options.addOns.includes(addOn))
+            ? previous.addOns
+            : defaults.addOns,
         partSelection: QUOTE_PART_SELECTION_OPTIONS.includes(
           String(previous.partSelection || '').toUpperCase() as (typeof QUOTE_PART_SELECTION_OPTIONS)[number]
         )
@@ -733,6 +784,7 @@ export default function AdminMeetingsHub() {
             quoteUnit,
             quoteSub,
             quoteSelections,
+            offerCustomUsdByLine,
             quoteMessage,
             quoteManualThumbnailDataUrl: quoteManualThumbnailSrc?.startsWith('data:') ? quoteManualThumbnailSrc : undefined,
           })
@@ -742,10 +794,11 @@ export default function AdminMeetingsHub() {
       }
     }, 400);
     return () => window.clearTimeout(id);
-  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, quoteMessage, quoteManualThumbnailSrc]);
+  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, offerCustomUsdByLine, quoteMessage, quoteManualThumbnailSrc]);
 
   useEffect(() => {
     if (!quoteMeeting) {
+      setOfferCustomUsdByLine({});
       setQuoteSaveSelectionState('idle');
       if (quoteSaveSelectionResetTimeoutRef.current) {
         clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
@@ -774,6 +827,7 @@ export default function AdminMeetingsHub() {
     quoteMeetingOpenSeqRef.current += 1;
     const seq = quoteMeetingOpenSeqRef.current;
     const mid = quoteMeeting.id;
+    setOfferCustomUsdByLine({});
     queueMicrotask(() => {
       if (seq !== quoteMeetingOpenSeqRef.current) return;
       try {
@@ -786,6 +840,7 @@ export default function AdminMeetingsHub() {
           quoteUnit?: string;
           quoteSub?: string;
           quoteSelections?: CreateOfferSelections;
+          offerCustomUsdByLine?: Partial<Record<QuoteSubPage, number>>;
           quoteMessage?: string;
           quoteManualThumbnailDataUrl?: string;
         };
@@ -808,27 +863,57 @@ export default function AdminMeetingsHub() {
         const opts = getOptionsForUnit(uid);
         const prev = d.quoteSelections;
         const def = createOfferSelectionsDefaults(uid);
-        setQuoteSelections({
-          capSize: CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prev.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number])
-            ? prev.capSize
-            : def.capSize,
-          length: opts.length.includes(prev.length) ? prev.length : def.length,
-          density: opts.density.includes(prev.density) ? prev.density : def.density,
-          texture: opts.texture.includes(prev.texture) ? prev.texture : def.texture,
-          lace: opts.lace.includes(prev.lace) ? prev.lace : def.lace,
-          hairline: opts.hairline.includes(prev.hairline) ? prev.hairline : def.hairline,
-          color: opts.color.includes(prev.color) ? prev.color : def.color,
-          styling: opts.styling.includes(prev.styling) ? prev.styling : def.styling,
+        const nextSelections: CreateOfferSelections = {
+          capSize:
+            CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prev.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]) ||
+            prev.capSize === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+              ? prev.capSize
+              : def.capSize,
+          length:
+            opts.length.includes(prev.length) || prev.length === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.length : def.length,
+          density:
+            opts.density.includes(prev.density) || prev.density === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+              ? prev.density
+              : def.density,
+          texture:
+            opts.texture.includes(prev.texture) || prev.texture === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+              ? prev.texture
+              : def.texture,
+          lace: opts.lace.includes(prev.lace) || prev.lace === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.lace : def.lace,
+          hairline:
+            opts.hairline.includes(prev.hairline) || prev.hairline === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+              ? prev.hairline
+              : def.hairline,
+          color: opts.color.includes(prev.color) || prev.color === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.color : def.color,
+          styling:
+            opts.styling.includes(prev.styling) || prev.styling === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+              ? prev.styling
+              : def.styling,
           addOns:
-            Array.isArray(prev.addOns) && prev.addOns.length
-              ? prev.addOns.filter((a) => opts.addOns.includes(a))
+            (Array.isArray(prev.addOns) &&
+              prev.addOns.length === 1 &&
+              prev.addOns[0] === BAW_CUSTOM_SEND_OFFER_OPTION_ID) ||
+            (Array.isArray(prev.addOns) && prev.addOns.length && prev.addOns.every((a) => opts.addOns.includes(a)))
+              ? prev.addOns
               : def.addOns,
           partSelection: QUOTE_PART_SELECTION_OPTIONS.includes(
             String((prev as CreateOfferSelections).partSelection || '').toUpperCase() as (typeof QUOTE_PART_SELECTION_OPTIONS)[number]
           )
             ? String((prev as CreateOfferSelections).partSelection || '').toUpperCase()
             : def.partSelection,
-        });
+        };
+        setQuoteSelections(nextSelections);
+        if (d.offerCustomUsdByLine && typeof d.offerCustomUsdByLine === 'object') {
+          const cleaned: Partial<Record<QuoteSubPage, number>> = {};
+          for (const sub of SUB_PAGE_OPTIONS) {
+            const rawSel = createOfferSelectionRawValue(sub, nextSelections);
+            if (rawSel !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) continue;
+            const v = (d.offerCustomUsdByLine as Record<string, unknown>)[sub];
+            const n = typeof v === 'number' ? v : parseInt(String(v), 10);
+            if (Number.isFinite(n) && n >= 0) cleaned[sub] = Math.round(n);
+          }
+          setOfferCustomUsdByLine(cleaned);
+        }
       } catch {
         /* ignore */
       }
@@ -1350,6 +1435,7 @@ export default function AdminMeetingsHub() {
     }
     setActivePanelDropdown(null);
     setPanelDropdownRect(null);
+    setOfferCustomUsdByLine({});
     setQuoteManualThumbnailSrc(null);
     setViewAllMode(null);
     setQuoteMeeting(null);
@@ -2355,9 +2441,35 @@ export default function AdminMeetingsHub() {
                       onChange: (nextDisplay) => {
                         const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
                         setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
+                        if (rawValue !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) {
+                          setOfferCustomUsdByLine((prev) => {
+                            if (prev[quoteSub] === undefined) return prev;
+                            const next = { ...prev };
+                            delete next[quoteSub];
+                            return next;
+                          });
+                        }
                       },
                       portalMaxHeight: 'min(70vh, 520px)',
                     })}
+                    {createOfferSelectionRawValue(quoteSub, quoteSelections) === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? (
+                      <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                        CUSTOM PRICE (USD)
+                        <input
+                          type="number"
+                          min={0}
+                          step={1}
+                          inputMode="numeric"
+                          className="w-full mt-1 p-2 border text-[10px]"
+                          value={Math.max(0, Math.round(offerCustomUsdByLine[quoteSub] ?? 0))}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value, 10);
+                            const usd = Number.isFinite(v) && v >= 0 ? v : 0;
+                            setOfferCustomUsdByLine((prev) => ({ ...prev, [quoteSub]: usd }));
+                          }}
+                        />
+                      </label>
+                    ) : null}
                     {quoteSub === 'STYLING' ? (
                       renderPanelSelectDropdown({
                         dropdownKey: 'quotePartSelection',

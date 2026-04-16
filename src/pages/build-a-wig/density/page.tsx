@@ -15,9 +15,6 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
-
-const BAW_CUSTOM_DENSITY_PRICE_KEY = 'bawCustomDensityPriceUsd';
 
 interface DensityOption {
   id: string;
@@ -41,10 +38,6 @@ function DensitySelection() {
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
-  const [customDensityPriceUsd, setCustomDensityPriceUsd] = useState(() => {
-    const n = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -257,9 +250,6 @@ function DensitySelection() {
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
     const priceStr = String(priceUsd);
-    if (densityId === BAW_CUSTOM_OPTION_ID) {
-      localStorage.setItem(BAW_CUSTOM_DENSITY_PRICE_KEY, priceStr);
-    }
     localStorage.setItem('selectedDensity', densityId);
     localStorage.setItem('selectedDensityPrice', priceStr);
     if (isOnEditRoute) {
@@ -275,17 +265,9 @@ function DensitySelection() {
 
   const handleDensitySelect = (densityId: string) => {
     setSelectedDensity(densityId);
-    const priceUsd =
-      densityId === BAW_CUSTOM_OPTION_ID
-        ? Math.max(0, customDensityPriceUsd)
-        : densityOptions.find((o) => o.id === densityId)?.price ?? 0;
+    const priceUsd = densityOptions.find((o) => o.id === densityId)?.price ?? 0;
     persistDensityChoice(densityId, priceUsd);
   };
-
-  useEffect(() => {
-    if (selectedDensity !== BAW_CUSTOM_OPTION_ID) return;
-    persistDensityChoice(BAW_CUSTOM_OPTION_ID, Math.max(0, customDensityPriceUsd));
-  }, [customDensityPriceUsd, selectedDensity, location.pathname]);
 
   const handleBack = () => {
     const pathname = location.pathname;
@@ -567,7 +549,6 @@ function DensitySelection() {
   };
 
   const getSelectedPrice = () => {
-    if (selectedDensity === BAW_CUSTOM_OPTION_ID) return Math.max(0, customDensityPriceUsd);
     const selected = densityOptions.find(option => option.id === selectedDensity);
     return selected ? selected.price : 0;
   };
@@ -577,15 +558,6 @@ function DensitySelection() {
     const selectedLength = localStorage.getItem('selectedLength') || '24"';
     // Use local state instead of localStorage for live updates
     const currentDensity = selectedDensity;
-
-    if (currentDensity === BAW_CUSTOM_OPTION_ID) {
-      return (
-        <>
-          CUSTOM DENSITY — CONFIRMED AT CHECKOUT.<br />
-          EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
-        </>
-      );
-    }
 
     // For 130% density, show grams based on length
     if (currentDensity === '130%') {
@@ -826,10 +798,6 @@ function DensitySelection() {
       if (editSelectedDensity) {
         console.log('Density page - loading edit mode density from editSelectedDensity:', editSelectedDensity);
         setSelectedDensity(editSelectedDensity);
-        if (editSelectedDensity === BAW_CUSTOM_OPTION_ID) {
-          const p = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-          if (Number.isFinite(p) && p >= 0) setCustomDensityPriceUsd(p);
-        }
         // Also save to selected* for consistency
         localStorage.setItem('selectedDensity', editSelectedDensity);
         return; // Exit early - we're done
@@ -842,10 +810,6 @@ function DensitySelection() {
           console.log('Density page - loading edit mode density from editingCartItem:', item.density);
           if (item.density) {
             setSelectedDensity(item.density);
-            if (item.density === BAW_CUSTOM_OPTION_ID) {
-              const p = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-              if (Number.isFinite(p) && p >= 0) setCustomDensityPriceUsd(p);
-            }
             localStorage.setItem('selectedDensity', item.density);
             // Also save to editSelected* for consistency
             localStorage.setItem('editSelectedDensity', item.density);
@@ -863,10 +827,6 @@ function DensitySelection() {
       if (customizeSelectedDensity) {
         console.log('Density page - loading customize mode density from customizeSelectedDensity:', customizeSelectedDensity);
         setSelectedDensity(customizeSelectedDensity);
-        if (customizeSelectedDensity === BAW_CUSTOM_OPTION_ID) {
-          const p = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-          if (Number.isFinite(p) && p >= 0) setCustomDensityPriceUsd(p);
-        }
         // Also save to selected* for consistency
         localStorage.setItem('selectedDensity', customizeSelectedDensity);
         return; // Exit early - we're done
@@ -890,10 +850,6 @@ function DensitySelection() {
     if (currentDensity) {
       console.log('Density page - Setting density from localStorage:', currentDensity);
       setSelectedDensity(currentDensity);
-      if (currentDensity === BAW_CUSTOM_OPTION_ID) {
-        const p = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-        if (Number.isFinite(p) && p >= 0) setCustomDensityPriceUsd(p);
-      }
     } else {
       // If not in localStorage, use default and save it
       const defaultDensity = '200%'; // Noir defaults to 200%
@@ -934,10 +890,6 @@ function DensitySelection() {
       if (currentDensity) {
         console.log('Density page - Updated from customStorageChange:', currentDensity);
         setSelectedDensity(currentDensity);
-        if (currentDensity === BAW_CUSTOM_OPTION_ID) {
-          const p = parseInt(localStorage.getItem(BAW_CUSTOM_DENSITY_PRICE_KEY) || '0', 10);
-          if (Number.isFinite(p) && p >= 0) setCustomDensityPriceUsd(p);
-        }
       }
     };
     
@@ -1338,13 +1290,6 @@ function DensitySelection() {
 
           {/* DENSITY OPTIONS - Updated to fit 4 containers per row with centered layout */}
           <div className="grid grid-cols-4 gap-4 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '15px' }}>
-            <BawCustomOptionRow
-              categoryLabel="DENSITY"
-              isSelected={selectedDensity === BAW_CUSTOM_OPTION_ID}
-              onSelect={() => handleDensitySelect(BAW_CUSTOM_OPTION_ID)}
-              customPriceUsd={customDensityPriceUsd}
-              onCustomPriceUsdChange={setCustomDensityPriceUsd}
-            />
             {densityOptions.map((option) => {
               // For BLANCO, use larger image but keep container at 60px - image will overflow slightly
               const imgSize = isBlancoRoute ? 80 : 57;

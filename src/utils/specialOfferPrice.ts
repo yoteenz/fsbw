@@ -57,6 +57,11 @@ export type SpecialOfferOptions = {
   /** Parting / install placement (e.g. MIDDLE, LEFT, RIGHT) — $0 in offer breakdown; cart uses separately. */
   partSelection?: string;
   addOns?: string[];
+  /**
+   * Send offer / admin: when a row uses **CUSTOM**, use this USD for that breakdown line
+   * (keys match line **`label`**: LENGTH, COLOR, DENSITY, CAP SIZE, HAIRLINE, LACE, TEXTURE, STYLING, ADD-ONS).
+   */
+  customLineUsd?: Partial<Record<string, number>>;
 };
 
 export type SpecialOfferBreakdownLine = {
@@ -126,6 +131,7 @@ export function expandStylingBreakdownLineForDisplay(
 function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOptions) {
   const base = UNIT_BASE_PRICES[unitId] ?? 740;
   const isBlanco = unitId === 'blanco';
+  const customUsd = options.customLineUsd || {};
 
   const capSize = String(options.capSize || 'M').trim().toUpperCase();
   const length = (options.length || '24"').trim();
@@ -138,16 +144,37 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const partSelection = String(options.partSelection || 'MIDDLE').trim().toUpperCase();
   const addOns = (options.addOns || []).map((addOn) => String(addOn).trim().toUpperCase()).filter(Boolean);
 
-  const capSizePrice = CAP_SIZE_PRICES[capSize] ?? 0;
-  const lengthPrice = LENGTH_PRICES[length] ?? 0;
+  let capSizePrice = CAP_SIZE_PRICES[capSize] ?? 0;
+  if (capSize === 'CUSTOM' && typeof customUsd['CAP SIZE'] === 'number') {
+    capSizePrice = Math.max(0, Math.round(customUsd['CAP SIZE']!));
+  }
+
+  let lengthPrice = LENGTH_PRICES[length] ?? 0;
+  if (length === 'CUSTOM' && typeof customUsd.LENGTH === 'number') {
+    lengthPrice = Math.max(0, Math.round(customUsd.LENGTH));
+  }
+
   const densityTable = isBlanco ? DENSITY_PRICES_BLANCO : DENSITY_PRICES_NOIR;
-  const densityPrice = densityTable[density] ?? 0;
-  const lacePrice = LACE_PRICES[lace] ?? 0;
-  const texturePrice = TEXTURE_PRICES[texture] ?? 0;
+  let densityPrice = densityTable[density] ?? 0;
+  if (density === 'CUSTOM' && typeof customUsd.DENSITY === 'number') {
+    densityPrice = Math.max(0, Math.round(customUsd.DENSITY));
+  }
+
+  let lacePrice = LACE_PRICES[lace] ?? 0;
+  if (lace === 'CUSTOM' && typeof customUsd.LACE === 'number') {
+    lacePrice = Math.max(0, Math.round(customUsd.LACE));
+  }
+
+  let texturePrice = TEXTURE_PRICES[texture] ?? 0;
+  if (texture === 'CUSTOM' && typeof customUsd.TEXTURE === 'number') {
+    texturePrice = Math.max(0, Math.round(customUsd.TEXTURE));
+  }
 
   const defaultColor = isBlanco ? 'PLATINUM' : 'OFF BLACK';
   let colorPrice = 0;
-  if (color && color !== defaultColor) {
+  if (color === 'CUSTOM' && typeof customUsd.COLOR === 'number') {
+    colorPrice = Math.max(0, Math.round(customUsd.COLOR));
+  } else if (color && color !== defaultColor) {
     if (isBlanco) {
       if (color === 'GOLDEN') colorPrice = -20;
       else if (color === 'ASH') colorPrice = 20;
@@ -158,7 +185,9 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   }
 
   let hairlinePrice = 0;
-  if (hairline && hairline !== 'NATURAL') {
+  if (hairline === 'CUSTOM' && typeof customUsd.HAIRLINE === 'number') {
+    hairlinePrice = Math.max(0, Math.round(customUsd.HAIRLINE));
+  } else if (hairline && hairline !== 'NATURAL') {
     const parts = hairline.split(',').map((h) => h.trim().toUpperCase());
     parts.forEach((h) => {
       if (h === 'PEAK') hairlinePrice += 40;
@@ -168,7 +197,9 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   }
 
   let stylingPrice = 0;
-  if (styling && styling !== 'NONE') {
+  if (styling === 'CUSTOM' && typeof customUsd.STYLING === 'number') {
+    stylingPrice = Math.max(0, Math.round(customUsd.STYLING));
+  } else if (styling && styling !== 'NONE') {
     const arr = styling.split(',').map((s) => s.trim());
     const hasBangs = arr.includes('BANGS');
     const other = arr.find((s) => s !== 'BANGS');
@@ -191,11 +222,16 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   }
 
   const discountedLace = ['2X6', '4X4', '5X5', '6X6', '7X7'].includes(lace);
-  const addOnLines = addOns.map((addOn) => {
-    let amountUsd = ADDON_PRICES[addOn] ?? 0;
-    if (discountedLace && (addOn === 'BLEACH' || addOn === 'PLUCK')) amountUsd -= 20;
-    return { label: 'ADD-ON', selection: addOn, amountUsd };
-  });
+  let addOnLines: { label: string; selection: string; amountUsd: number }[];
+  if (addOns.length === 1 && addOns[0] === 'CUSTOM' && typeof customUsd['ADD-ONS'] === 'number') {
+    addOnLines = [{ label: 'ADD-ONS', selection: 'CUSTOM', amountUsd: Math.max(0, Math.round(customUsd['ADD-ONS']!)) }];
+  } else {
+    addOnLines = addOns.map((addOn) => {
+      let amountUsd = ADDON_PRICES[addOn] ?? 0;
+      if (discountedLace && (addOn === 'BLEACH' || addOn === 'PLUCK')) amountUsd -= 20;
+      return { label: 'ADD-ON', selection: addOn, amountUsd };
+    });
+  }
   const addOnsPrice = addOnLines.reduce((sum, line) => sum + line.amountUsd, 0);
 
   let total = base + capSizePrice + lengthPrice + densityPrice + lacePrice + texturePrice + colorPrice + hairlinePrice + stylingPrice + addOnsPrice;

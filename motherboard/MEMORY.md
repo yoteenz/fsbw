@@ -15348,3 +15348,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Remove BAW sub-page CUSTOM option; admin send-offer CUSTOM retained
+
+**Context (this chat):** User asked to **remove the custom coding added to BAW sub-pages** because it was incorrect.
+
+**Decisions / outcomes:** Removed **`BawCustomOptionRow`**, per-step **`bawCustom*PriceUsd`** localStorage wiring, **`CUSTOM`** branches, and related UI from **client** Build-a-Wig sub-pages: **color**, **length**, **density**, **lace**, **texture**, **cap-size**, **styling**, **hairline**, **addons**. **`BAW_CUSTOM_SEND_OFFER_OPTION_ID`** in **`src/utils/bawCustomSendOfferOption.ts`** is for **Admin → Meetings → Send offer** only. **`AdminMeetingsHub`**: **CUSTOM PRICE (USD)** when the category’s selection is **CUSTOM**; **`offerCustomUsdByLine`** in session quote draft; cleared on close / unit change / no meeting; draft restore keeps **CUSTOM** + amounts.
+
+**Changes:** Deleted **`src/components/buildWig/BawCustomOptionRow.tsx`**. New **`src/utils/bawCustomSendOfferOption.ts`**. **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/pages/build-a-wig/{color,length,density,lace,texture,cap-size,styling,hairline,addons}/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

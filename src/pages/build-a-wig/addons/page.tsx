@@ -15,12 +15,9 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
-
-const BAW_CUSTOM_ADDONS_PRICE_KEY = 'bawCustomAddOnsPriceUsd';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
-const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS', BAW_CUSTOM_OPTION_ID];
+const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
 function isStylingValueConfirmed(raw: string | null): boolean {
   if (!raw || typeof raw !== 'string') return false;
   const v = raw.trim();
@@ -35,7 +32,7 @@ export default function AddOnsSelectionPage() {
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const premiumMembershipStepModal = useBuildWigPremiumMembershipStepGate();
   const [selectedView, setSelectedView] = useState(1);
-  const ADDONS_CORRECT_ORDER = ['BLEACH', 'PLUCK', 'BLUNT CUT', BAW_CUSTOM_OPTION_ID];
+  const ADDONS_CORRECT_ORDER = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
 
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>(() => {
     const pathname = window.location.pathname;
@@ -106,11 +103,6 @@ export default function AddOnsSelectionPage() {
     return initial;
   });
   const [showLoading, setShowLoading] = useState(true);
-  const [customAddonPriceUsd, setCustomAddonPriceUsd] = useState(() => {
-    const n = parseInt(localStorage.getItem(BAW_CUSTOM_ADDONS_PRICE_KEY) || '0', 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
-
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
@@ -421,20 +413,6 @@ export default function AddOnsSelectionPage() {
     });
   };
 
-  const handleCustomAddonToggle = () => {
-    handleAddOnToggle(BAW_CUSTOM_OPTION_ID);
-  };
-
-  useEffect(() => {
-    if (!selectedAddOns.includes(BAW_CUSTOM_OPTION_ID)) return;
-    try {
-      localStorage.setItem(BAW_CUSTOM_ADDONS_PRICE_KEY, String(Math.max(0, customAddonPriceUsd)));
-    } catch {
-      /* ignore */
-    }
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
-  }, [customAddonPriceUsd, selectedAddOns]);
-
   const getTotalAddOnPrice = () => {
     // Get selected lace size from localStorage
     const selectedLace = localStorage.getItem('selectedLace') || '';
@@ -442,9 +420,6 @@ export default function AddOnsSelectionPage() {
     const hasLaceDiscount = discountedLaceSizes.includes(selectedLace);
     
     return selectedAddOns.reduce((total, addOnId) => {
-      if (addOnId === BAW_CUSTOM_OPTION_ID) {
-        return total + Math.max(0, customAddonPriceUsd);
-      }
       const addOn = addOnOptions.find(opt => opt.id === addOnId);
       let price = addOn?.price || 0;
       
@@ -1144,13 +1119,6 @@ export default function AddOnsSelectionPage() {
 
             {/* ADDON OPTIONS */}
             <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '13px' }}>
-              <BawCustomOptionRow
-                categoryLabel="ADD-ONS"
-                isSelected={selectedAddOns.includes(BAW_CUSTOM_OPTION_ID)}
-                onSelect={handleCustomAddonToggle}
-                customPriceUsd={customAddonPriceUsd}
-                onCustomPriceUsdChange={setCustomAddonPriceUsd}
-              />
               {addOnOptions.map((option) => {
                 const isLocked = isStylingConfirmed && (option.id === 'BLEACH' || option.id === 'PLUCK');
                 const box = (
