@@ -62,6 +62,11 @@ export type SpecialOfferOptions = {
    * (keys match line **`label`**: LENGTH, COLOR, DENSITY, CAP SIZE, HAIRLINE, LACE, TEXTURE, STYLING, ADD-ONS).
    */
   customLineUsd?: Partial<Record<string, number>>;
+  /**
+   * When **`customLineUsd`** applies to a line, optional **display** text for the breakdown / quote
+   * (e.g. length **`50"`** instead of the internal token).
+   */
+  customLineSelection?: Partial<Record<string, string>>;
 };
 
 export type SpecialOfferBreakdownLine = {
@@ -132,6 +137,7 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const base = UNIT_BASE_PRICES[unitId] ?? 740;
   const isBlanco = unitId === 'blanco';
   const customUsd = options.customLineUsd || {};
+  const customSel = options.customLineSelection || {};
 
   const capSize = String(options.capSize || 'M').trim().toUpperCase();
   const length = (options.length || '24"').trim();
@@ -145,35 +151,53 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const addOns = (options.addOns || []).map((addOn) => String(addOn).trim().toUpperCase()).filter(Boolean);
 
   let capSizePrice = CAP_SIZE_PRICES[capSize] ?? 0;
-  if (capSize === 'CUSTOM' && typeof customUsd['CAP SIZE'] === 'number') {
+  let capSizeDisplay = capSize;
+  if (typeof customUsd['CAP SIZE'] === 'number') {
     capSizePrice = Math.max(0, Math.round(customUsd['CAP SIZE']!));
+    const o = customSel['CAP SIZE'];
+    if (typeof o === 'string' && o.trim()) capSizeDisplay = o.trim();
   }
 
   let lengthPrice = LENGTH_PRICES[length] ?? 0;
-  if (length === 'CUSTOM' && typeof customUsd.LENGTH === 'number') {
+  let lengthDisplay = length;
+  if (typeof customUsd.LENGTH === 'number') {
     lengthPrice = Math.max(0, Math.round(customUsd.LENGTH));
+    const o = customSel.LENGTH;
+    if (typeof o === 'string' && o.trim()) lengthDisplay = o.trim();
   }
 
   const densityTable = isBlanco ? DENSITY_PRICES_BLANCO : DENSITY_PRICES_NOIR;
   let densityPrice = densityTable[density] ?? 0;
-  if (density === 'CUSTOM' && typeof customUsd.DENSITY === 'number') {
+  let densityDisplay = density;
+  if (typeof customUsd.DENSITY === 'number') {
     densityPrice = Math.max(0, Math.round(customUsd.DENSITY));
+    const o = customSel.DENSITY;
+    if (typeof o === 'string' && o.trim()) densityDisplay = o.trim();
   }
 
   let lacePrice = LACE_PRICES[lace] ?? 0;
-  if (lace === 'CUSTOM' && typeof customUsd.LACE === 'number') {
+  let laceDisplay = lace;
+  if (typeof customUsd.LACE === 'number') {
     lacePrice = Math.max(0, Math.round(customUsd.LACE));
+    const o = customSel.LACE;
+    if (typeof o === 'string' && o.trim()) laceDisplay = o.trim().toUpperCase();
   }
 
   let texturePrice = TEXTURE_PRICES[texture] ?? 0;
-  if (texture === 'CUSTOM' && typeof customUsd.TEXTURE === 'number') {
+  let textureDisplay = texture;
+  if (typeof customUsd.TEXTURE === 'number') {
     texturePrice = Math.max(0, Math.round(customUsd.TEXTURE));
+    const o = customSel.TEXTURE;
+    if (typeof o === 'string' && o.trim()) textureDisplay = o.trim().toUpperCase();
   }
 
   const defaultColor = isBlanco ? 'PLATINUM' : 'OFF BLACK';
   let colorPrice = 0;
-  if (color === 'CUSTOM' && typeof customUsd.COLOR === 'number') {
+  let colorDisplay = color;
+  if (typeof customUsd.COLOR === 'number') {
     colorPrice = Math.max(0, Math.round(customUsd.COLOR));
+    const o = customSel.COLOR;
+    if (typeof o === 'string' && o.trim()) colorDisplay = o.trim().toUpperCase();
   } else if (color && color !== defaultColor) {
     if (isBlanco) {
       if (color === 'GOLDEN') colorPrice = -20;
@@ -185,8 +209,11 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   }
 
   let hairlinePrice = 0;
-  if (hairline === 'CUSTOM' && typeof customUsd.HAIRLINE === 'number') {
+  let hairlineDisplay = hairline === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : hairline;
+  if (typeof customUsd.HAIRLINE === 'number') {
     hairlinePrice = Math.max(0, Math.round(customUsd.HAIRLINE));
+    const o = customSel.HAIRLINE;
+    if (typeof o === 'string' && o.trim()) hairlineDisplay = o.trim();
   } else if (hairline && hairline !== 'NATURAL') {
     const parts = hairline.split(',').map((h) => h.trim().toUpperCase());
     parts.forEach((h) => {
@@ -197,8 +224,11 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   }
 
   let stylingPrice = 0;
-  if (styling === 'CUSTOM' && typeof customUsd.STYLING === 'number') {
+  let stylingDisplay = styling;
+  if (typeof customUsd.STYLING === 'number') {
     stylingPrice = Math.max(0, Math.round(customUsd.STYLING));
+    const o = customSel.STYLING;
+    if (typeof o === 'string' && o.trim()) stylingDisplay = o.trim().toUpperCase();
   } else if (styling && styling !== 'NONE') {
     const arr = styling.split(',').map((s) => s.trim());
     const hasBangs = arr.includes('BANGS');
@@ -224,7 +254,13 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
   const discountedLace = ['2X6', '4X4', '5X5', '6X6', '7X7'].includes(lace);
   let addOnLines: { label: string; selection: string; amountUsd: number }[];
   if (addOns.length === 1 && addOns[0] === 'CUSTOM' && typeof customUsd['ADD-ONS'] === 'number') {
-    addOnLines = [{ label: 'ADD-ONS', selection: 'CUSTOM', amountUsd: Math.max(0, Math.round(customUsd['ADD-ONS']!)) }];
+    const addOnDesc =
+      typeof customSel['ADD-ONS'] === 'string' && customSel['ADD-ONS'].trim()
+        ? customSel['ADD-ONS'].trim()
+        : 'CUSTOM';
+    addOnLines = [
+      { label: 'ADD-ONS', selection: addOnDesc, amountUsd: Math.max(0, Math.round(customUsd['ADD-ONS']!)) },
+    ];
   } else {
     addOnLines = addOns.map((addOn) => {
       let amountUsd = ADDON_PRICES[addOn] ?? 0;
@@ -241,14 +277,14 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
     totalUsd: total,
     lines: [
       { label: 'UNIT', selection: unitLabelFromId(unitId), amountUsd: base },
-      { label: 'CAP SIZE', selection: capSize, amountUsd: capSizePrice },
-      { label: 'LENGTH', selection: length, amountUsd: lengthPrice },
-      { label: 'DENSITY', selection: density, amountUsd: densityPrice },
-      { label: 'TEXTURE', selection: texture, amountUsd: texturePrice },
-      { label: 'LACE', selection: lace, amountUsd: lacePrice },
-      { label: 'HAIRLINE', selection: hairline === 'LAGOS, PEAK' ? 'LAGOS + PEAK' : hairline, amountUsd: hairlinePrice },
-      { label: 'COLOR', selection: color, amountUsd: colorPrice },
-      { label: 'STYLING', selection: styling, amountUsd: stylingPrice },
+      { label: 'CAP SIZE', selection: capSizeDisplay, amountUsd: capSizePrice },
+      { label: 'LENGTH', selection: lengthDisplay, amountUsd: lengthPrice },
+      { label: 'DENSITY', selection: densityDisplay, amountUsd: densityPrice },
+      { label: 'TEXTURE', selection: textureDisplay, amountUsd: texturePrice },
+      { label: 'LACE', selection: laceDisplay, amountUsd: lacePrice },
+      { label: 'HAIRLINE', selection: hairlineDisplay, amountUsd: hairlinePrice },
+      { label: 'COLOR', selection: colorDisplay, amountUsd: colorPrice },
+      { label: 'STYLING', selection: stylingDisplay, amountUsd: stylingPrice },
       { label: 'PARTING', selection: partSelection, amountUsd: 0 },
       ...(addOnLines.length > 0 ? addOnLines : [{ label: 'ADD-ONS', selection: 'NONE', amountUsd: 0 }]),
     ],

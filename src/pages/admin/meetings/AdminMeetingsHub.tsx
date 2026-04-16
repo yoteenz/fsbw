@@ -86,6 +86,11 @@ const SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL =
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
 import { BAW_CUSTOM_SEND_OFFER_OPTION_ID } from '../../../utils/bawCustomSendOfferOption';
 
+/** SELECTION dropdown row: choose custom (not listed). Stored value uses sentinel until admin types the real spec. */
+const SEND_OFFER_CUSTOM_MENU_LABEL = 'Custom';
+/** Internal placeholder in `quoteSelections` until the admin enters the real option (e.g. length `50"`). */
+const SEND_OFFER_CUSTOM_PENDING = '__ADMIN_SEND_OFFER_CUSTOM_PENDING__';
+
 const UNIT_OPTIONS = [
   { id: 'NOIR', label: 'NOIR' },
   { id: 'BLANCO', label: 'BLANCO' },
@@ -196,26 +201,89 @@ function createOfferSelectionOptionsForSubPage(unitId: UnitId, subPage: QuoteSub
   const options = getOptionsForUnit(unitId);
   switch (subPage) {
     case 'LENGTH':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.length];
+      return [...options.length, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'COLOR':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.color];
+      return [...options.color, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'DENSITY':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.density];
+      return [...options.density, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'CAP SIZE':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...CREATE_OFFER_CAP_SIZE_OPTIONS];
+      return [...CREATE_OFFER_CAP_SIZE_OPTIONS, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'HAIRLINE':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.hairline];
+      return [...options.hairline, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'LACE':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.lace];
+      return [...options.lace, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'TEXTURE':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.texture];
+      return [...options.texture, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'STYLING':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...options.styling];
+      return [...options.styling, SEND_OFFER_CUSTOM_MENU_LABEL];
     case 'ADD-ONS':
-      return [BAW_CUSTOM_SEND_OFFER_OPTION_ID, ...ADDON_COMBO_OPTIONS.map((opt) => opt.label)];
+      return [...ADDON_COMBO_OPTIONS.map((opt) => opt.label), SEND_OFFER_CUSTOM_MENU_LABEL];
     default:
       return [];
   }
+}
+
+function sendOfferSelectionIsCustom(unitId: UnitId, subPage: QuoteSubPage, selections: CreateOfferSelections): boolean {
+  const opts = getOptionsForUnit(unitId);
+  switch (subPage) {
+    case 'ADD-ONS':
+      return selections.addOns.length === 1 && selections.addOns[0] === BAW_CUSTOM_SEND_OFFER_OPTION_ID;
+    case 'LENGTH': {
+      const v = selections.length.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.length.includes(selections.length));
+    }
+    case 'COLOR': {
+      const v = selections.color.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.color.includes(selections.color));
+    }
+    case 'DENSITY': {
+      const v = selections.density.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.density.includes(selections.density));
+    }
+    case 'CAP SIZE': {
+      const v = selections.capSize.trim();
+      return (
+        v === SEND_OFFER_CUSTOM_PENDING ||
+        (v !== '' &&
+          !CREATE_OFFER_CAP_SIZE_OPTIONS.includes(v as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]))
+      );
+    }
+    case 'HAIRLINE': {
+      const v = selections.hairline.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.hairline.includes(selections.hairline));
+    }
+    case 'LACE': {
+      const v = selections.lace.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.lace.includes(selections.lace));
+    }
+    case 'TEXTURE': {
+      const v = selections.texture.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.texture.includes(selections.texture));
+    }
+    case 'STYLING': {
+      const v = selections.styling.trim();
+      return v === SEND_OFFER_CUSTOM_PENDING || (v !== '' && !opts.styling.includes(selections.styling));
+    }
+    default:
+      return false;
+  }
+}
+
+function createOfferSelectionDropdownButtonLabel(
+  unitId: UnitId,
+  subPage: QuoteSubPage,
+  selections: CreateOfferSelections,
+  specByLine?: Partial<Record<QuoteSubPage, string>>
+): string {
+  if (sendOfferSelectionIsCustom(unitId, subPage, selections)) {
+    if (subPage === 'ADD-ONS') {
+      const s = (specByLine?.['ADD-ONS'] || '').trim();
+      return s || SEND_OFFER_CUSTOM_MENU_LABEL;
+    }
+    const raw = createOfferSelectionRawValue(subPage, selections);
+    if (raw === SEND_OFFER_CUSTOM_PENDING) return SEND_OFFER_CUSTOM_MENU_LABEL;
+  }
+  return createOfferSelectionDisplayValue(subPage, selections);
 }
 
 function createOfferSelectionRawValue(subPage: QuoteSubPage, selections: CreateOfferSelections): string {
@@ -250,7 +318,37 @@ function createOfferSelectionRawValue(subPage: QuoteSubPage, selections: CreateO
 
 function createOfferSelectionDisplayValue(subPage: QuoteSubPage, selections: CreateOfferSelections): string {
   const raw = createOfferSelectionRawValue(subPage, selections);
+  if (subPage !== 'ADD-ONS' && raw === SEND_OFFER_CUSTOM_PENDING) return SEND_OFFER_CUSTOM_MENU_LABEL;
   return subPage === 'HAIRLINE' ? hairlineDisplayValue(raw) : raw;
+}
+
+/** Values sent to the client / API: never expose internal pending sentinel. */
+function mapQuoteSelectionsForClientPayload(
+  unitId: UnitId,
+  selections: CreateOfferSelections,
+  specByLine: Partial<Record<QuoteSubPage, string>>
+): CreateOfferSelections {
+  const def = createOfferSelectionsDefaults(unitId);
+  const opts = getOptionsForUnit(unitId);
+  const capAllowed = CREATE_OFFER_CAP_SIZE_OPTIONS as readonly string[];
+  const resolve = (sub: QuoteSubPage, raw: string, allowed: readonly string[], fallback: string) => {
+    const t = raw.trim();
+    if (t === SEND_OFFER_CUSTOM_PENDING) return (specByLine[sub] || '').trim() || fallback;
+    if (t !== '' && !allowed.includes(raw)) return raw;
+    return raw;
+  };
+  return {
+    capSize: resolve('CAP SIZE', selections.capSize, capAllowed, def.capSize),
+    length: resolve('LENGTH', selections.length, opts.length, def.length),
+    density: resolve('DENSITY', selections.density, opts.density, def.density),
+    texture: resolve('TEXTURE', selections.texture, opts.texture, def.texture),
+    lace: resolve('LACE', selections.lace, opts.lace, def.lace),
+    hairline: resolve('HAIRLINE', selections.hairline, opts.hairline, def.hairline),
+    color: resolve('COLOR', selections.color, opts.color, def.color),
+    styling: resolve('STYLING', selections.styling, opts.styling, def.styling),
+    partSelection: selections.partSelection,
+    addOns: selections.addOns,
+  };
 }
 
 function sendOfferSubPageToBreakdownLineKey(subPage: QuoteSubPage): keyof NonNullable<SpecialOfferOptions['customLineUsd']> {
@@ -266,23 +364,49 @@ function updateCreateOfferSelectionsForSubPage(
 ): CreateOfferSelections {
   switch (subPage) {
     case 'LENGTH':
-      return { ...previous, length: next };
+      return {
+        ...previous,
+        length: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'COLOR':
-      return { ...previous, color: next };
+      return {
+        ...previous,
+        color: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'DENSITY':
-      return { ...previous, density: next };
+      return {
+        ...previous,
+        density: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'CAP SIZE':
-      return { ...previous, capSize: next };
+      return {
+        ...previous,
+        capSize: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'HAIRLINE':
-      return { ...previous, hairline: next };
+      return {
+        ...previous,
+        hairline: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'LACE':
-      return { ...previous, lace: next };
+      return {
+        ...previous,
+        lace: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'TEXTURE':
-      return { ...previous, texture: next };
+      return {
+        ...previous,
+        texture: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'STYLING':
-      return { ...previous, styling: next };
+      return {
+        ...previous,
+        styling: next === SEND_OFFER_CUSTOM_MENU_LABEL ? SEND_OFFER_CUSTOM_PENDING : next,
+      };
     case 'ADD-ONS': {
-      if (next === BAW_CUSTOM_SEND_OFFER_OPTION_ID) return { ...previous, addOns: [BAW_CUSTOM_SEND_OFFER_OPTION_ID] };
+      if (next === SEND_OFFER_CUSTOM_MENU_LABEL || next === BAW_CUSTOM_SEND_OFFER_OPTION_ID) {
+        return { ...previous, addOns: [BAW_CUSTOM_SEND_OFFER_OPTION_ID] };
+      }
       const match = ADDON_COMBO_OPTIONS.find((opt) => opt.label === next);
       return { ...previous, addOns: match ? [...match.value] : [] };
     }
@@ -393,8 +517,10 @@ export default function AdminMeetingsHub() {
   const [quoteSelections, setQuoteSelections] = useState<CreateOfferSelections>(() =>
     createOfferSelectionsDefaults(quoteUnitIdFromValue(UNIT_OPTIONS[0].id))
   );
-  /** Send offer: **CUSTOM** line item USD per category (only used when that row is `CUSTOM`). */
+  /** Send offer: custom line USD per category (when SELECTION is not in the standard list). */
   const [offerCustomUsdByLine, setOfferCustomUsdByLine] = useState<Partial<Record<QuoteSubPage, number>>>({});
+  /** Human-readable spec for that line (e.g. length **`50"`**); shown in breakdown / quote when set. */
+  const [offerCustomSpecByLine, setOfferCustomSpecByLine] = useState<Partial<Record<QuoteSubPage, string>>>({});
   const [quoteMessage, setQuoteMessage] = useState(
     'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.'
   );
@@ -459,18 +585,27 @@ export default function AdminMeetingsHub() {
     setQuoteGenerateUnitState('loading');
     setQuoteGenerateUnitError(null);
     try {
+      const uid = quoteUnitIdFromValue(quoteUnit);
+      const defSel = createOfferSelectionsDefaults(uid);
+      const opts = getOptionsForUnit(uid);
+      const pickForBawApi = (sub: QuoteSubPage, raw: string, list: readonly string[], d: string) => {
+        const t = raw.trim();
+        if (t === SEND_OFFER_CUSTOM_PENDING) return (offerCustomSpecByLine[sub] || '').trim() || d;
+        if (t !== '' && !list.includes(raw)) return t;
+        return raw;
+      };
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
         referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
         referenceView: 'FRONT',
         backdropReferenceImageUrl: SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL,
-        length: quoteSelections.length,
-        density: quoteSelections.density,
-        lace: quoteSelections.lace,
-        texture: quoteSelections.texture,
-        color: quoteSelections.color,
-        hairline: quoteSelections.hairline,
-        styling: quoteSelections.styling,
+        length: pickForBawApi('LENGTH', quoteSelections.length, opts.length, defSel.length),
+        density: pickForBawApi('DENSITY', quoteSelections.density, opts.density, defSel.density),
+        lace: pickForBawApi('LACE', quoteSelections.lace, opts.lace, defSel.lace),
+        texture: pickForBawApi('TEXTURE', quoteSelections.texture, opts.texture, defSel.texture),
+        color: pickForBawApi('COLOR', quoteSelections.color, opts.color, defSel.color),
+        hairline: pickForBawApi('HAIRLINE', quoteSelections.hairline, opts.hairline, defSel.hairline),
+        styling: pickForBawApi('STYLING', quoteSelections.styling, opts.styling, defSel.styling),
         addOns: quoteSelections.addOns,
         partSelection: quoteSelections.partSelection,
         referenceMatchesHairline: String(quoteUnit || '').trim().toUpperCase() === 'NOIR',
@@ -484,7 +619,7 @@ export default function AdminMeetingsHub() {
     } finally {
       setQuoteGenerateUnitState('idle');
     }
-  }, [quoteSelectionKey, quoteSelections, quoteUnit]);
+  }, [quoteSelectionKey, quoteSelections, quoteUnit, offerCustomSpecByLine]);
 
   useEffect(() => {
     if (!quoteMeeting) return;
@@ -546,26 +681,40 @@ export default function AdminMeetingsHub() {
     [quoteUnitId, quoteSub]
   );
   const currentQuoteSubSelectionDisplayValue = useMemo(
-    () => createOfferSelectionDisplayValue(quoteSub, quoteSelections),
-    [quoteSelections, quoteSub]
+    () =>
+      createOfferSelectionDropdownButtonLabel(
+        quoteUnitId,
+        quoteSub,
+        quoteSelections,
+        offerCustomSpecByLine
+      ),
+    [quoteSelections, quoteSub, quoteUnitId, offerCustomSpecByLine]
   );
 
   const computeSpecialOfferInput = useMemo((): SpecialOfferOptions => {
     const customLineUsd: NonNullable<SpecialOfferOptions['customLineUsd']> = {};
+    const customLineSelection: NonNullable<SpecialOfferOptions['customLineSelection']> = {};
     for (const sub of SUB_PAGE_OPTIONS) {
-      const raw = createOfferSelectionRawValue(sub, quoteSelections);
-      if (raw !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) continue;
+      if (!sendOfferSelectionIsCustom(quoteUnitId, sub, quoteSelections)) continue;
       const key = sendOfferSubPageToBreakdownLineKey(sub);
       const usd = Math.max(0, Math.round(offerCustomUsdByLine[sub] ?? 0));
       customLineUsd[key] = usd;
+      const raw = createOfferSelectionRawValue(sub, quoteSelections);
+      const spec = (offerCustomSpecByLine[sub] || '').trim();
+      if (sub === 'ADD-ONS') {
+        customLineSelection[key] = spec || SEND_OFFER_CUSTOM_MENU_LABEL;
+      } else {
+        customLineSelection[key] =
+          spec || (raw === SEND_OFFER_CUSTOM_PENDING ? SEND_OFFER_CUSTOM_MENU_LABEL : raw);
+      }
     }
     const hasCustom = Object.keys(customLineUsd).length > 0;
     return {
       ...quoteSelections,
       partSelection: quoteSelections.partSelection,
-      ...(hasCustom ? { customLineUsd } : {}),
+      ...(hasCustom ? { customLineUsd, customLineSelection } : {}),
     };
-  }, [quoteSelections, offerCustomUsdByLine]);
+  }, [quoteSelections, offerCustomUsdByLine, offerCustomSpecByLine, quoteUnitId]);
 
   const generatedQuoteBreakdown = useMemo(
     () => calculateSpecialOfferPriceBreakdown(quoteUnitId, computeSpecialOfferInput),
@@ -654,6 +803,7 @@ export default function AdminMeetingsHub() {
 
   useEffect(() => {
     setOfferCustomUsdByLine({});
+    setOfferCustomSpecByLine({});
   }, [quoteUnitId]);
 
   useEffect(() => {
@@ -663,29 +813,51 @@ export default function AdminMeetingsHub() {
       const next: CreateOfferSelections = {
         capSize:
           CREATE_OFFER_CAP_SIZE_OPTIONS.includes(previous.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]) ||
-          previous.capSize === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          previous.capSize === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.capSize.trim() !== '' &&
+            !CREATE_OFFER_CAP_SIZE_OPTIONS.includes(previous.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]))
             ? previous.capSize
             : defaults.capSize,
         length:
-          options.length.includes(previous.length) || previous.length === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          options.length.includes(previous.length) ||
+          previous.length === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.length.trim() !== '' && !options.length.includes(previous.length))
             ? previous.length
             : defaults.length,
         density:
-          options.density.includes(previous.density) || previous.density === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          options.density.includes(previous.density) ||
+          previous.density === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.density.trim() !== '' && !options.density.includes(previous.density))
             ? previous.density
             : defaults.density,
         texture:
-          options.texture.includes(previous.texture) || previous.texture === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          options.texture.includes(previous.texture) ||
+          previous.texture === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.texture.trim() !== '' && !options.texture.includes(previous.texture))
             ? previous.texture
             : defaults.texture,
-        lace: options.lace.includes(previous.lace) || previous.lace === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? previous.lace : defaults.lace,
+        lace:
+          options.lace.includes(previous.lace) ||
+          previous.lace === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.lace.trim() !== '' && !options.lace.includes(previous.lace))
+            ? previous.lace
+            : defaults.lace,
         hairline:
-          options.hairline.includes(previous.hairline) || previous.hairline === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          options.hairline.includes(previous.hairline) ||
+          previous.hairline === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.hairline.trim() !== '' && !options.hairline.includes(previous.hairline))
             ? previous.hairline
             : defaults.hairline,
-        color: options.color.includes(previous.color) || previous.color === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? previous.color : defaults.color,
+        color:
+          options.color.includes(previous.color) ||
+          previous.color === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.color.trim() !== '' && !options.color.includes(previous.color))
+            ? previous.color
+            : defaults.color,
         styling:
-          options.styling.includes(previous.styling) || previous.styling === BAW_CUSTOM_SEND_OFFER_OPTION_ID
+          options.styling.includes(previous.styling) ||
+          previous.styling === SEND_OFFER_CUSTOM_PENDING ||
+          (previous.styling.trim() !== '' && !options.styling.includes(previous.styling))
             ? previous.styling
             : defaults.styling,
         addOns:
@@ -785,6 +957,7 @@ export default function AdminMeetingsHub() {
             quoteSub,
             quoteSelections,
             offerCustomUsdByLine,
+            offerCustomSpecByLine,
             quoteMessage,
             quoteManualThumbnailDataUrl: quoteManualThumbnailSrc?.startsWith('data:') ? quoteManualThumbnailSrc : undefined,
           })
@@ -794,11 +967,12 @@ export default function AdminMeetingsHub() {
       }
     }, 400);
     return () => window.clearTimeout(id);
-  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, offerCustomUsdByLine, quoteMessage, quoteManualThumbnailSrc]);
+  }, [quoteMeeting, quoteUnit, quoteSub, quoteSelections, offerCustomUsdByLine, offerCustomSpecByLine, quoteMessage, quoteManualThumbnailSrc]);
 
   useEffect(() => {
     if (!quoteMeeting) {
       setOfferCustomUsdByLine({});
+      setOfferCustomSpecByLine({});
       setQuoteSaveSelectionState('idle');
       if (quoteSaveSelectionResetTimeoutRef.current) {
         clearTimeout(quoteSaveSelectionResetTimeoutRef.current);
@@ -828,6 +1002,7 @@ export default function AdminMeetingsHub() {
     const seq = quoteMeetingOpenSeqRef.current;
     const mid = quoteMeeting.id;
     setOfferCustomUsdByLine({});
+    setOfferCustomSpecByLine({});
     queueMicrotask(() => {
       if (seq !== quoteMeetingOpenSeqRef.current) return;
       try {
@@ -841,6 +1016,7 @@ export default function AdminMeetingsHub() {
           quoteSub?: string;
           quoteSelections?: CreateOfferSelections;
           offerCustomUsdByLine?: Partial<Record<QuoteSubPage, number>>;
+          offerCustomSpecByLine?: Partial<Record<QuoteSubPage, string>>;
           quoteMessage?: string;
           quoteManualThumbnailDataUrl?: string;
         };
@@ -863,31 +1039,68 @@ export default function AdminMeetingsHub() {
         const opts = getOptionsForUnit(uid);
         const prev = d.quoteSelections;
         const def = createOfferSelectionsDefaults(uid);
+        const norm = (v: string, legacyCustom: string) =>
+          v === legacyCustom || v === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? SEND_OFFER_CUSTOM_PENDING : v;
+        const prevN: CreateOfferSelections = {
+          ...prev,
+          capSize: norm(prev.capSize, SEND_OFFER_CUSTOM_PENDING),
+          length: norm(prev.length, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          color: norm(prev.color, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          density: norm(prev.density, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          texture: norm(prev.texture, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          lace: norm(prev.lace, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          hairline: norm(prev.hairline, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+          styling: norm(prev.styling, BAW_CUSTOM_SEND_OFFER_OPTION_ID),
+        };
         const nextSelections: CreateOfferSelections = {
           capSize:
-            CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prev.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]) ||
-            prev.capSize === BAW_CUSTOM_SEND_OFFER_OPTION_ID
-              ? prev.capSize
+            CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prevN.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]) ||
+            prevN.capSize === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.capSize.trim() !== '' &&
+              !CREATE_OFFER_CAP_SIZE_OPTIONS.includes(prevN.capSize as (typeof CREATE_OFFER_CAP_SIZE_OPTIONS)[number]))
+              ? prevN.capSize
               : def.capSize,
           length:
-            opts.length.includes(prev.length) || prev.length === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.length : def.length,
+            opts.length.includes(prevN.length) ||
+            prevN.length === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.length.trim() !== '' && !opts.length.includes(prevN.length))
+              ? prevN.length
+              : def.length,
           density:
-            opts.density.includes(prev.density) || prev.density === BAW_CUSTOM_SEND_OFFER_OPTION_ID
-              ? prev.density
+            opts.density.includes(prevN.density) ||
+            prevN.density === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.density.trim() !== '' && !opts.density.includes(prevN.density))
+              ? prevN.density
               : def.density,
           texture:
-            opts.texture.includes(prev.texture) || prev.texture === BAW_CUSTOM_SEND_OFFER_OPTION_ID
-              ? prev.texture
+            opts.texture.includes(prevN.texture) ||
+            prevN.texture === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.texture.trim() !== '' && !opts.texture.includes(prevN.texture))
+              ? prevN.texture
               : def.texture,
-          lace: opts.lace.includes(prev.lace) || prev.lace === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.lace : def.lace,
+          lace:
+            opts.lace.includes(prevN.lace) ||
+            prevN.lace === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.lace.trim() !== '' && !opts.lace.includes(prevN.lace))
+              ? prevN.lace
+              : def.lace,
           hairline:
-            opts.hairline.includes(prev.hairline) || prev.hairline === BAW_CUSTOM_SEND_OFFER_OPTION_ID
-              ? prev.hairline
+            opts.hairline.includes(prevN.hairline) ||
+            prevN.hairline === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.hairline.trim() !== '' && !opts.hairline.includes(prevN.hairline))
+              ? prevN.hairline
               : def.hairline,
-          color: opts.color.includes(prev.color) || prev.color === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? prev.color : def.color,
+          color:
+            opts.color.includes(prevN.color) ||
+            prevN.color === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.color.trim() !== '' && !opts.color.includes(prevN.color))
+              ? prevN.color
+              : def.color,
           styling:
-            opts.styling.includes(prev.styling) || prev.styling === BAW_CUSTOM_SEND_OFFER_OPTION_ID
-              ? prev.styling
+            opts.styling.includes(prevN.styling) ||
+            prevN.styling === SEND_OFFER_CUSTOM_PENDING ||
+            (prevN.styling.trim() !== '' && !opts.styling.includes(prevN.styling))
+              ? prevN.styling
               : def.styling,
           addOns:
             (Array.isArray(prev.addOns) &&
@@ -906,13 +1119,21 @@ export default function AdminMeetingsHub() {
         if (d.offerCustomUsdByLine && typeof d.offerCustomUsdByLine === 'object') {
           const cleaned: Partial<Record<QuoteSubPage, number>> = {};
           for (const sub of SUB_PAGE_OPTIONS) {
-            const rawSel = createOfferSelectionRawValue(sub, nextSelections);
-            if (rawSel !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) continue;
+            if (!sendOfferSelectionIsCustom(uid, sub, nextSelections)) continue;
             const v = (d.offerCustomUsdByLine as Record<string, unknown>)[sub];
             const n = typeof v === 'number' ? v : parseInt(String(v), 10);
             if (Number.isFinite(n) && n >= 0) cleaned[sub] = Math.round(n);
           }
           setOfferCustomUsdByLine(cleaned);
+        }
+        if (d.offerCustomSpecByLine && typeof d.offerCustomSpecByLine === 'object') {
+          const cleanedSpec: Partial<Record<QuoteSubPage, string>> = {};
+          for (const sub of SUB_PAGE_OPTIONS) {
+            if (!sendOfferSelectionIsCustom(uid, sub, nextSelections)) continue;
+            const s = (d.offerCustomSpecByLine as Record<string, unknown>)[sub];
+            if (typeof s === 'string') cleanedSpec[sub] = s;
+          }
+          setOfferCustomSpecByLine(cleanedSpec);
         }
       } catch {
         /* ignore */
@@ -1065,18 +1286,11 @@ export default function AdminMeetingsHub() {
       label: 'ESTIMATED TOTAL',
       value: `$${Math.round(generatedQuoteBreakdown.totalUsd).toLocaleString('en-US')} USD`,
     });
-    const selectionsForQuote = {
-      capSize: quoteSelections.capSize,
-      length: quoteSelections.length,
-      density: quoteSelections.density,
-      texture: quoteSelections.texture,
-      lace: quoteSelections.lace,
-      hairline: quoteSelections.hairline,
-      color: quoteSelections.color,
-      styling: quoteSelections.styling,
-      partSelection: quoteSelections.partSelection,
-      addOns: quoteSelections.addOns,
-    };
+    const selectionsForQuote = mapQuoteSelectionsForClientPayload(
+      quoteUnitId,
+      quoteSelections,
+      offerCustomSpecByLine
+    );
     const thumbSrc = quoteOfferThumbnailSrc;
     const orderRef = String(
       (quoteMeeting.metadata && typeof quoteMeeting.metadata.orderNumber === 'string'
@@ -1436,6 +1650,7 @@ export default function AdminMeetingsHub() {
     setActivePanelDropdown(null);
     setPanelDropdownRect(null);
     setOfferCustomUsdByLine({});
+    setOfferCustomSpecByLine({});
     setQuoteManualThumbnailSrc(null);
     setViewAllMode(null);
     setQuoteMeeting(null);
@@ -2440,35 +2655,92 @@ export default function AdminMeetingsHub() {
                       ),
                       onChange: (nextDisplay) => {
                         const rawValue = quoteSub === 'HAIRLINE' && nextDisplay === 'LAGOS + PEAK' ? 'LAGOS, PEAK' : nextDisplay;
-                        setQuoteSelections((previous) => updateCreateOfferSelectionsForSubPage(previous, quoteSub, rawValue));
-                        if (rawValue !== BAW_CUSTOM_SEND_OFFER_OPTION_ID) {
+                        const nextSel = updateCreateOfferSelectionsForSubPage(quoteSelections, quoteSub, rawValue);
+                        setQuoteSelections(nextSel);
+                        if (!sendOfferSelectionIsCustom(quoteUnitId, quoteSub, nextSel)) {
                           setOfferCustomUsdByLine((prev) => {
                             if (prev[quoteSub] === undefined) return prev;
-                            const next = { ...prev };
-                            delete next[quoteSub];
-                            return next;
+                            const out = { ...prev };
+                            delete out[quoteSub];
+                            return out;
+                          });
+                          setOfferCustomSpecByLine((prev) => {
+                            if (prev[quoteSub] === undefined) return prev;
+                            const out = { ...prev };
+                            delete out[quoteSub];
+                            return out;
                           });
                         }
                       },
                       portalMaxHeight: 'min(70vh, 520px)',
                     })}
-                    {createOfferSelectionRawValue(quoteSub, quoteSelections) === BAW_CUSTOM_SEND_OFFER_OPTION_ID ? (
-                      <label className="block mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
-                        CUSTOM PRICE (USD)
-                        <input
-                          type="number"
-                          min={0}
-                          step={1}
-                          inputMode="numeric"
-                          className="w-full mt-1 p-2 border text-[10px]"
-                          value={Math.max(0, Math.round(offerCustomUsdByLine[quoteSub] ?? 0))}
-                          onChange={(e) => {
-                            const v = parseInt(e.target.value, 10);
-                            const usd = Number.isFinite(v) && v >= 0 ? v : 0;
-                            setOfferCustomUsdByLine((prev) => ({ ...prev, [quoteSub]: usd }));
-                          }}
-                        />
-                      </label>
+                    {sendOfferSelectionIsCustom(quoteUnitId, quoteSub, quoteSelections) ? (
+                      <div className="mt-2 space-y-2">
+                        {quoteSub === 'ADD-ONS' ? (
+                          <label className="block" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                            CUSTOM ADD-ONS (DESCRIPTION, OPTIONAL)
+                            <input
+                              type="text"
+                              className="w-full mt-1 p-2 border text-[10px] uppercase"
+                              style={{ fontFamily: '"Futura PT Book"' }}
+                              placeholder="E.G. BLEACH + CUSTOM TONER"
+                              value={offerCustomSpecByLine[quoteSub] ?? ''}
+                              onChange={(e) => {
+                                const t = e.target.value;
+                                setOfferCustomSpecByLine((prev) => ({ ...prev, [quoteSub]: t }));
+                              }}
+                            />
+                          </label>
+                        ) : (
+                          <label className="block" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                            CUSTOM {quoteSub} (NOT LISTED)
+                            <input
+                              type="text"
+                              className="w-full mt-1 p-2 border text-[10px] uppercase"
+                              style={{ fontFamily: '"Futura PT Book"' }}
+                              placeholder={quoteSub === 'LENGTH' ? 'E.G. 50"' : 'DESCRIBE THE OPTION'}
+                              value={offerCustomSpecByLine[quoteSub] ?? ''}
+                              onChange={(e) => {
+                                const t = e.target.value;
+                                setOfferCustomSpecByLine((prev) => ({ ...prev, [quoteSub]: t }));
+                                if (quoteSub === 'LENGTH') {
+                                  setQuoteSelections((prev) => ({ ...prev, length: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'COLOR') {
+                                  setQuoteSelections((prev) => ({ ...prev, color: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'DENSITY') {
+                                  setQuoteSelections((prev) => ({ ...prev, density: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'CAP SIZE') {
+                                  setQuoteSelections((prev) => ({ ...prev, capSize: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'HAIRLINE') {
+                                  setQuoteSelections((prev) => ({ ...prev, hairline: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'LACE') {
+                                  setQuoteSelections((prev) => ({ ...prev, lace: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'TEXTURE') {
+                                  setQuoteSelections((prev) => ({ ...prev, texture: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                } else if (quoteSub === 'STYLING') {
+                                  setQuoteSelections((prev) => ({ ...prev, styling: t.trim() ? t : SEND_OFFER_CUSTOM_PENDING }));
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                        <label className="block" style={{ fontFamily: '"Futura PT Book"', fontSize: '9px' }}>
+                          CUSTOM PRICE (USD)
+                          <input
+                            type="number"
+                            min={0}
+                            step={1}
+                            inputMode="numeric"
+                            className="w-full mt-1 p-2 border text-[10px]"
+                            value={Math.max(0, Math.round(offerCustomUsdByLine[quoteSub] ?? 0))}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value, 10);
+                              const usd = Number.isFinite(v) && v >= 0 ? v : 0;
+                              setOfferCustomUsdByLine((prev) => ({ ...prev, [quoteSub]: usd }));
+                            }}
+                          />
+                        </label>
+                      </div>
                     ) : null}
                     {quoteSub === 'STYLING' ? (
                       renderPanelSelectDropdown({

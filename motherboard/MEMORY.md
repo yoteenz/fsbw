@@ -15360,3 +15360,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** Deleted **`src/components/buildWig/BawCustomOptionRow.tsx`**. New **`src/utils/bawCustomSendOfferOption.ts`**. **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/pages/build-a-wig/{color,length,density,lace,texture,cap-size,styling,hairline,addons}/page.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Admin send offer: “Custom” on SELECTION + free-text spec (e.g. length 50")
+
+**Context (this chat):** User clarified **CUSTOM** belongs on the **SELECTION** dropdown (not the category), with the real value typed (e.g. **`50"`** for an unlisted length).
+
+**Decisions / outcomes:** **SELECTION** lists standard options plus **`Custom`**. Choosing **Custom** uses an internal pending sentinel until the admin types the spec; **`quoteSelections`** then store the real string (e.g. **`50"`**). **`offerCustomSpecByLine`** in session draft (add-on description optional). **`computeSpecialOfferInput`** passes **`customLineUsd`** + **`customLineSelection`** for custom lines; **`specialOfferPrice`** applies **`customLineUsd`** whenever set and uses **`customLineSelection`** for breakdown display. **`mapQuoteSelectionsForClientPayload`** strips the sentinel for quote API / snapshot. **Generate unit** uses spec or typed value for non-listed fields.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.
