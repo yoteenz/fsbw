@@ -595,6 +595,25 @@ function HairlineSelection() {
     return total;
   };
 
+  // NOIR customize sub-routes: draft hairline into `customizeSelected*` on every tap so hub previews
+  // do not read stale `selectedHairline` before Confirm.
+  useEffect(() => {
+    const p = location.pathname;
+    if (!p.startsWith('/build-a-wig/noir/customize/')) return;
+
+    const hairlineValue = selectedHairline.length > 0 ? selectedHairline.join(',') : null;
+    const price = getSelectedPrice().toString();
+
+    if (hairlineValue) {
+      localStorage.setItem('customizeSelectedHairline', hairlineValue);
+    } else {
+      localStorage.removeItem('customizeSelectedHairline');
+    }
+    localStorage.setItem('customizeSelectedHairlinePrice', price);
+
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  }, [location.pathname, selectedHairline]);
+
   // Get dynamic hairline note text based on selected hairline option
   const getHairlineNoteText = () => {
     // Check for lagos + peak combination first (before individual checks)

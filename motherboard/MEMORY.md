@@ -15276,3 +15276,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/founderNoirFalTools.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR customize: sync styling/hairline draft keys on every tap
+
+**Context (this chat):** User reported that **nothing changed** except **sub-page thumbnails no longer being cut off** — implying **hub live previews**, **selection leaking without Confirm**, and related NOIR customize behavior still felt broken.
+
+**Decisions / outcomes:** **`readEffectiveBawSalonStylingCanon`** and hairline paths on **`/build-a-wig/noir/customize/*`** prefer **`customizeSelected*`**, but **styling** and **hairline** had only written those keys on **Back** or **Confirm**. Until then, resolvers fell back to **`selectedHairStyling`** / **`selectedHairline`**, so the **customize hub** could show **stale committed** styling/hairline (looked like hub reflected sub-page taps without Confirm). **Fix:** On **`/build-a-wig/noir/customize/*`**, **`useEffect`** syncs **`customizeSelectedHairStyling`**, **`customizeSelectedPartSelection`**, **`customizeSelectedStyling`**, prices, and tandem **`customizeSelectedAddOns`** after every styling/part change; hairline syncs **`customizeSelectedHairline*`** after every hairline change. Dispatches **`customStorageChange`**.
+
+**Changes:** **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

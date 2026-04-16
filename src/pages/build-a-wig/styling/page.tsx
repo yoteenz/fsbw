@@ -755,6 +755,37 @@ export default function StylingSelectionPage() {
     return { addOns, price };
   };
 
+  // NOIR customize sub-routes: persist draft `customizeSelected*` on every tap so live preview + hub
+  // resolution never fall back to stale `selected*` before Confirm.
+  useEffect(() => {
+    const p = location.pathname;
+    if (!p.startsWith('/build-a-wig/noir/customize/')) return;
+
+    const price = getTotalStylingPrice().toString();
+    const stylingValue = selectedHairStyling.length > 0 ? selectedHairStyling[0] : 'NONE';
+    const hairCsv = selectedHairStyling.length > 0 ? selectedHairStyling.join(',') : '';
+
+    if (hairCsv) {
+      localStorage.setItem('customizeSelectedHairStyling', hairCsv);
+    } else {
+      localStorage.removeItem('customizeSelectedHairStyling');
+    }
+    localStorage.setItem('customizeSelectedPartSelection', selectedPartSelection);
+    localStorage.setItem('customizeSelectedStyling', stylingValue === 'NONE' ? 'NONE' : stylingValue);
+    localStorage.setItem('customizeSelectedStylingPrice', price);
+
+    const styleConfirmed = !!(stylingValue && stylingValue !== 'NONE' && stylingValue.trim() !== '');
+    const { addOns: syncedAddOns, price: addOnsPrice } = getAddOnsAndPriceForStylingSync(
+      false,
+      true,
+      styleConfirmed
+    );
+    localStorage.setItem('customizeSelectedAddOns', JSON.stringify(syncedAddOns));
+    localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
+
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  }, [location.pathname, selectedHairStyling, selectedPartSelection]);
+
   // Get dynamic styling note text based on selected styling option
   const getStylingNoteText = () => {
     const hasBangs = selectedHairStyling.includes('BANGS');
