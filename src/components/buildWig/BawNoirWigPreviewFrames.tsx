@@ -1,5 +1,23 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
+
+/**
+ * Main BAW product hub routes only — thumbnails show **outer** `.leaf-bg` only (no inner brick bg + no mannequin `<img>`).
+ * Sub-routes keep inner brick + `<img>` and drop `.leaf-bg` (reverse).
+ */
+function isBawProductHubThumbPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (p === '/build-a-wig') return true;
+  return (
+    p === '/build-a-wig/noir' ||
+    p === '/build-a-wig/blanco' ||
+    p === '/build-a-wig/soft-wave' ||
+    p === '/build-a-wig/beach-wave' ||
+    p === '/build-a-wig/soft-curl' ||
+    p === '/build-a-wig/ocean-curl'
+  );
+}
 
 type Props = {
   wigViews: [string, string, string] | string[];
@@ -27,8 +45,14 @@ export function BawNoirWigPreviewHeroThumbs({
   belowHeroChildren,
   thumbRowClassName,
 }: Props) {
+  const { pathname } = useLocation();
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
+  const hubThumbsOnlyOuter = isBawProductHubThumbPathname(pathname);
+  /** Hub + static mannequin: outer `.leaf-bg` (Readdy) only — no inner brick `<img>`. Sub-pages: inner brick + `<img>`, no `.leaf-bg`. */
+  const thumbOuterLeafBg = !hideBrick && hubThumbsOnlyOuter;
+  /** Sub-page + static: white/black selection ring on `.baw-noir-thumb-frame` (was on `.leaf-bg`). */
+  const subPageStaticSelectionOnFrame = !hideBrick && !hubThumbsOnlyOuter;
 
   return (
     <>
@@ -106,7 +130,7 @@ export function BawNoirWigPreviewHeroThumbs({
       >
         {triple.map((view, index) => (
           <div className="leaf-stack thumb" key={index}>
-            {!hideBrick && (
+            {thumbOuterLeafBg && (
               <div
                 className={`leaf-bg ${selectedView === index ? 'border-black' : 'border-transparent'}`}
                 aria-hidden="true"
@@ -127,51 +151,65 @@ export function BawNoirWigPreviewHeroThumbs({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  ...(hideBrick
+                  ...(hubThumbsOnlyOuter && !hideBrick
                     ? {
                         overflow: 'hidden',
                         backgroundImage: 'none',
                         backgroundColor: '#f5f5f5',
-                        border: selectedView === index ? '3px solid #fff' : undefined,
-                        boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                         boxSizing: 'border-box',
                       }
-                    : {
-                        overflow: 'hidden',
-                        backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        boxSizing: 'border-box',
-                      }),
+                    : hideBrick
+                      ? {
+                          overflow: 'hidden',
+                          backgroundImage: 'none',
+                          backgroundColor: '#f5f5f5',
+                          border: selectedView === index ? '3px solid #fff' : undefined,
+                          boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
+                          boxSizing: 'border-box',
+                        }
+                      : {
+                          overflow: 'hidden',
+                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          boxSizing: 'border-box',
+                          border: subPageStaticSelectionOnFrame && selectedView === index ? '3px solid #fff' : undefined,
+                          boxShadow:
+                            subPageStaticSelectionOnFrame && selectedView === index
+                              ? '0 0 0 1.1px #000'
+                              : undefined,
+                        }),
                   ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
                   ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
-                <img
-                  alt={`Thumbnail ${index + 1}`}
-                  width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 82 : 84}
-                  src={view}
-                  className={
-                    hideBrick
-                      ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
-                      : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
-                  }
-                  style={
-                    hideBrick
-                      ? ({
-                          left: '50%',
-                          top: '50%',
-                          transform: 'translate(-50%, -50%)',
-                        } as CSSProperties)
-                      : ({
-                          '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                          top: 'calc(50% - 6.1px + 7.2px)',
-                          ...(index === 0 && { left: 'calc(50% - 6px)' }),
-                        } as CSSProperties)
-                  }
-                />
+                {!hubThumbsOnlyOuter && (
+                  <img
+                    alt={`Thumbnail ${index + 1}`}
+                    width={hideBrick ? 72 : 63}
+                    height={hideBrick ? 82 : 84}
+                    src={view}
+                    className={
+                      hideBrick
+                        ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                        : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
+                    }
+                    style={
+                      hideBrick
+                        ? ({
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)',
+                          } as CSSProperties)
+                        : ({
+                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
+                            top: 'calc(50% - 6.1px + 7.2px)',
+                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                          } as CSSProperties)
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>

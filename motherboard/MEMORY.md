@@ -15187,6 +15187,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW hub vs sub-page NOIR thumb layers (remove inner brick + mannequin on hub only)
+
+**Context (this chat):** User clarified they wanted **images removed** (not debug outlines): on the **main BAW page** remove what **violet + cyan** represented — **inner `leaf-brick` background** + **mannequin `<img>`** — and **keep the outer cell**; on **sub-pages** the **reverse** — **drop outer** `.leaf-bg` (Readdy) and **keep** inner brick + raster.
+
+**Decisions / outcomes:** **`isBawProductHubThumbPathname`** (`/build-a-wig` + exact product hubs). **Hub + static:** render **`.leaf-bg`** + empty **`.baw-noir-thumb-frame`** (gray, no `backgroundImage`, **no** `<img>`). **Sub-page + static:** **no** `.leaf-bg`; **`leaf-brick-resize`** + `<img>`; selection ring moved from **`.leaf-bg`** to **`.baw-noir-thumb-frame`** when `.leaf-bg` is omitted. **Live** (`hideBrick`) unchanged on both.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
+
+---
+
 ## 2026-04-15 — Remove NOIR thumb debug outlines completely
 
 **Context (this chat):** User said the **debug colored outlines** (violet/cyan and the hub/sub split) **were not removed** and were **still visible**.
