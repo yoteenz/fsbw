@@ -892,24 +892,6 @@ export default function AdminMeetingsHub() {
     [consultMeetings, normalizedClientSearchTokens]
   );
 
-  const completedBookingsCount = useMemo(
-    () =>
-      appointmentMeetings.filter((m) => {
-        const s = String(m.status || '').toLowerCase();
-        return s === 'completed' || s === 'confirmed';
-      }).length,
-    [appointmentMeetings]
-  );
-
-  const completedConsultsCount = useMemo(
-    () =>
-      consultMeetings.filter((m) => {
-        const s = String(m.status || '').toLowerCase();
-        return s === 'completed' || s === 'confirmed';
-      }).length,
-    [consultMeetings]
-  );
-
   const apptDates = useMemo(() => {
     const s = new Set<string>();
     for (const m of filteredAppointmentMeetings) s.add(m.date);
@@ -936,6 +918,18 @@ export default function AdminMeetingsHub() {
         : filteredConsultMeetings.filter((m) => !meetingIsArchivedForAdminViewAll(m));
     return sortMeetingsByOption(base, meetingSortOption);
   }, [filteredConsultMeetings, meetingSortOption]);
+
+  /** Same rows as the Bookings / Consults tabs (search + sort + archive filter). */
+  const newBookingsTabCount = sortedAppointmentsList.length;
+  const newConsultsTabCount = sortedConsultsList.length;
+  const totalBookedExcludingNew = useMemo(
+    () => Math.max(0, appointmentMeetings.length - newBookingsTabCount),
+    [appointmentMeetings.length, newBookingsTabCount]
+  );
+  const totalConsultsExcludingNew = useMemo(
+    () => Math.max(0, consultMeetings.length - newConsultsTabCount),
+    [consultMeetings.length, newConsultsTabCount]
+  );
 
   const openClientAccount = (m: AdminMeeting) => {
     const em = (m.clientEmail || '').trim();
@@ -1675,44 +1669,143 @@ export default function AdminMeetingsHub() {
                   style={{ marginTop: '10px' }}
                 >
                   <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
-                    <div
-                      className="text-center py-3"
-                      style={{
-                        backgroundColor: 'rgba(0,0,0,0.04)',
-                        borderRadius: '4px',
-                        height: '80px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end',
-                        paddingBottom: '10px',
-                      }}
-                    >
-                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
-                        {mainTab === 'overview' ? formatUsd(overviewBookingSales.salesUsd) : completedBookingsCount}
-                      </p>
-                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        {mainTab === 'overview' ? 'BOOKING SALES' : 'TOTAL BOOKED'}
-                      </p>
-                    </div>
-                    <div
-                      className="text-center py-3"
-                      style={{
-                        backgroundColor: 'rgba(0,0,0,0.04)',
-                        borderRadius: '4px',
-                        height: '80px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end',
-                        paddingBottom: '10px',
-                      }}
-                    >
-                      <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
-                        {mainTab === 'overview' ? formatUsd(overviewConsultSales.salesUsd) : completedConsultsCount}
-                      </p>
-                      <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        {mainTab === 'overview' ? 'CONSULT SALES' : 'TOTAL CONSULTS'}
-                      </p>
-                    </div>
+                    {mainTab === 'overview' ? (
+                      <>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {formatUsd(overviewBookingSales.salesUsd)}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            BOOKING SALES
+                          </p>
+                        </div>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {formatUsd(overviewConsultSales.salesUsd)}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            CONSULT SALES
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="grid grid-rows-2 gap-3">
+                          <div
+                            className="text-center py-2"
+                            style={{
+                              backgroundColor: 'rgba(0,0,0,0.04)',
+                              borderRadius: '4px',
+                              minHeight: '76px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-end',
+                              paddingBottom: '8px',
+                            }}
+                          >
+                            <p
+                              className="font-covered-by-your-grace text-xl"
+                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
+                            >
+                              {newBookingsTabCount}
+                            </p>
+                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
+                              NEW BOOKINGS
+                            </p>
+                          </div>
+                          <div
+                            className="text-center py-2"
+                            style={{
+                              backgroundColor: 'rgba(0,0,0,0.04)',
+                              borderRadius: '4px',
+                              minHeight: '76px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-end',
+                              paddingBottom: '8px',
+                            }}
+                          >
+                            <p
+                              className="font-covered-by-your-grace text-xl"
+                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
+                            >
+                              {totalBookedExcludingNew}
+                            </p>
+                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
+                              TOTAL BOOKED
+                            </p>
+                          </div>
+                        </div>
+                        <div className="grid grid-rows-2 gap-3">
+                          <div
+                            className="text-center py-2"
+                            style={{
+                              backgroundColor: 'rgba(0,0,0,0.04)',
+                              borderRadius: '4px',
+                              minHeight: '76px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-end',
+                              paddingBottom: '8px',
+                            }}
+                          >
+                            <p
+                              className="font-covered-by-your-grace text-xl"
+                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
+                            >
+                              {newConsultsTabCount}
+                            </p>
+                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
+                              NEW CONSULTS
+                            </p>
+                          </div>
+                          <div
+                            className="text-center py-2"
+                            style={{
+                              backgroundColor: 'rgba(0,0,0,0.04)',
+                              borderRadius: '4px',
+                              minHeight: '76px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-end',
+                              paddingBottom: '8px',
+                            }}
+                          >
+                            <p
+                              className="font-covered-by-your-grace text-xl"
+                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
+                            >
+                              {totalConsultsExcludingNew}
+                            </p>
+                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
+                              TOTAL CONSULTS
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div
                     style={{

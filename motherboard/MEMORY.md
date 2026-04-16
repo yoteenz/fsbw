@@ -15324,3 +15324,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/components/buildWig/BawCustomOptionRow.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`length`**, **`density`**, **`lace`**, **`texture`**, **`cap-size`**, **`styling`**, **`hairline`**, **`addons`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Admin meetings summary: new vs total (bookings & consults)
+
+**Context (this chat):** User asked to **update the admin meetings summary panels** on **Bookings** / **Consults** (non-Overview): **NEW BOOKINGS** = count matching the **Bookings** tab list; **TOTAL BOOKED** = all bookings **minus** that “new” set; **NEW CONSULTS** / **TOTAL CONSULTS** same for consults.
+
+**Decisions / outcomes:** Replaced the old two-tile counts (**completed/confirmed** totals) with **four stacked tiles** (2×2): left column bookings (**`sortedAppointmentsList.length`** and **`appointmentMeetings.length - new`**), right column consults (**`sortedConsultsList.length`** and **`consultMeetings.length - new`**). **Overview** tab unchanged (**BOOKING SALES** / **CONSULT SALES** USD).
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.
