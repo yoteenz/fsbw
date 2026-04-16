@@ -148,8 +148,8 @@ export default function StylingSelectionPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
 
-  /** Admin + NOIR styling route: live fal after-color (middle + layers or bangs-only), 3 angles. */
-  const [adminLiveNoirStylingPreview, setAdminLiveNoirStylingPreview] = useState(false);
+  /** Founder only: Fal regen UI + calls for after-color styling. Everyone sees saved WebPs via `liveNoirCompositeWigViews`. */
+  const [founderNoirFalStylingTools, setFounderNoirFalStylingTools] = useState(false);
   const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
   const [liveBangsWigViews, setLiveBangsWigViews] = useState<[string, string, string] | null>(null);
   const [liveStylingLoading, setLiveStylingLoading] = useState(false);
@@ -196,7 +196,7 @@ export default function StylingSelectionPage() {
     const noirStyling =
       p.includes('/build-a-wig/noir/edit/styling') || p.includes('/build-a-wig/noir/customize/styling');
     if (!noirStyling) {
-      setAdminLiveNoirStylingPreview(false);
+      setFounderNoirFalStylingTools(false);
       setLiveStylingWigViews(null);
       setLiveBangsWigViews(null);
       setLiveStylingError(null);
@@ -209,10 +209,8 @@ export default function StylingSelectionPage() {
       const token = await getAccessToken();
       const email = getCurrentUserEmailFromStorage();
       const ok = Boolean(token && email && isAdminFounderAccount({ email }));
-      if (!cancelled) setAdminLiveNoirStylingPreview(ok);
+      if (!cancelled) setFounderNoirFalStylingTools(ok);
       if (!ok) {
-        setLiveStylingWigViews(null);
-        setLiveBangsWigViews(null);
         setLiveStylingError(null);
       } else {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
@@ -301,7 +299,6 @@ export default function StylingSelectionPage() {
   const baseWigViews = getWigViews();
   const liveNoirCompositeWigViews = useBawSubpageLiveNoirCompositeWigViews();
   const hasLayersLiveStyling =
-    adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'LAYERS') &&
     (selectedPartSelection === 'MIDDLE' ||
@@ -309,7 +306,6 @@ export default function StylingSelectionPage() {
       selectedPartSelection === 'RIGHT');
 
   const hasBangsOnlyLive =
-    adminLiveNoirStylingPreview &&
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'BANGS') &&
     !selectedHairStyling.some((s) => s === 'LAYERS');
@@ -317,7 +313,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      adminLiveNoirStylingPreview &&
+      founderNoirFalStylingTools &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasLayersLiveStyling) {
@@ -374,7 +370,7 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveStylingLoading(false));
   }, [
-    adminLiveNoirStylingPreview,
+    founderNoirFalStylingTools,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
@@ -384,7 +380,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      adminLiveNoirStylingPreview &&
+      founderNoirFalStylingTools &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasBangsOnlyLive) {
@@ -437,7 +433,7 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveBangsLoading(false));
   }, [
-    adminLiveNoirStylingPreview,
+    founderNoirFalStylingTools,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
@@ -445,16 +441,16 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    hasLayersLiveStyling && liveStylingWigViews
+    founderNoirFalStylingTools && hasLayersLiveStyling && liveStylingWigViews
       ? liveStylingWigViews
-      : hasBangsOnlyLive && liveBangsWigViews
+      : founderNoirFalStylingTools && hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
         : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
           ? liveNoirCompositeWigViews
           : baseWigViews;
 
   const showNoirLiveStylingBanner =
-    adminLiveNoirStylingPreview &&
+    founderNoirFalStylingTools &&
     location.pathname.includes('/build-a-wig/noir/') &&
     (hasLayersLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;

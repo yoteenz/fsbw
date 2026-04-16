@@ -255,8 +255,8 @@ function ColorSelection() {
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
 
-  /** Admin + NOIR edit/customize color route: live fal → Supabase for 3 angles (skips existing files server-side). */
-  const [adminLiveNoirPreview, setAdminLiveNoirPreview] = useState(false);
+  /** Founder only: Fal regen UI + calls to `/api/wig-preview/live-noir-color`. Everyone sees committed live WebPs via `liveNoirCompositeCommittedViews`. */
+  const [founderNoirFalRegenTools, setFounderNoirFalRegenTools] = useState(false);
   const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
@@ -349,7 +349,7 @@ function ColorSelection() {
     const noirColor =
       p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
     if (!noirColor) {
-      setAdminLiveNoirPreview(false);
+      setFounderNoirFalRegenTools(false);
       setLiveWigViews(null);
       setLivePreviewError(null);
       return;
@@ -359,7 +359,7 @@ function ColorSelection() {
       const token = await getAccessToken();
       const email = getCurrentUserEmailFromStorage();
       const ok = Boolean(token && email && isAdminFounderAccount({ email }));
-      if (!cancelled) setAdminLiveNoirPreview(ok);
+      if (!cancelled) setFounderNoirFalRegenTools(ok);
       if (!ok) {
         setLiveWigViews(null);
         setLivePreviewError(null);
@@ -550,7 +550,7 @@ function ColorSelection() {
   const baseWigViews = getWigViews();
   const liveNoirCompositeCommittedViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
-    adminLiveNoirPreview && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
+    founderNoirFalRegenTools && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
       : liveNoirCompositeCommittedViews && location.pathname.includes('/build-a-wig/noir/')
         ? liveNoirCompositeCommittedViews
@@ -722,7 +722,7 @@ function ColorSelection() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      adminLiveNoirPreview &&
+      founderNoirFalRegenTools &&
       (pathname.includes('/build-a-wig/noir/edit/color') || pathname.includes('/build-a-wig/noir/customize/color'));
     if (!noir) return;
     setLivePreviewError(null);
@@ -749,7 +749,7 @@ function ColorSelection() {
         setLivePreviewError(e?.message || 'Live preview failed');
       })
       .finally(() => setLivePreviewLoading(false));
-  }, [adminLiveNoirPreview, location.pathname, selectedColor]);
+  }, [founderNoirFalRegenTools, location.pathname, selectedColor]);
 
   const handleColorSelect = (colorId: string) => {
     console.log('Color page - selecting color:', colorId);
@@ -980,8 +980,8 @@ function ColorSelection() {
       if (selectedColor === 'OFF BLACK') {
         clearPendingBawNoirLiveColorWigViews();
         clearBawNoirLiveColorWigViews();
-      } else if (adminLiveNoirPreview && liveWigViews) {
-        persistBawNoirLiveColorWigViews(liveWigViews);
+      } else if (liveNoirCompositeCommittedViews) {
+        persistBawNoirLiveColorWigViews(liveNoirCompositeCommittedViews);
       }
     }
     
@@ -1385,7 +1385,7 @@ function ColorSelection() {
               <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-              {adminLiveNoirPreview && location.pathname.includes('/build-a-wig/noir/') && (
+              {founderNoirFalRegenTools && location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
                   style={{
@@ -1491,7 +1491,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
-                      ...(adminLiveNoirPreview ? { pointerEvents: 'none' as const } : {}),
+                      ...(founderNoirFalRegenTools ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

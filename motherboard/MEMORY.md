@@ -15228,3 +15228,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Conventions:** Other admin emails keep `/admin/*` and general admin behavior; only the founder account can run Fal-backed NOIR live preview generation.
+
+---
+
+## 2026-04-15 — Clients see live WebPs; founder-only Fal regen (follow-up)
+
+**Context (this chat):** After founder-only Fal APIs, the user clarified: **clients must still see live preview updates** when they tap selections; **only the founder** should use manual Fal **re/generate** controls.
+
+**Decisions / outcomes:** Renamed client flags to **`founderNoirFalRegenTools`** / **`founderNoirFalStylingTools`** — they gate **only** the Fal `useEffect` calls, regen banner/buttons, and (color) the “use in-flight fal triple” branch. **`useBawSubpageLiveNoirCompositeWigViews()`** remains the source of **display** triples for everyone on NOIR sub-routes. **Color** confirm/back: persist committed color triples with **`liveNoirCompositeCommittedViews`** when non–OFF BLACK (not only when founder had just run Fal). **Styling:** **`hasLayersLiveStyling`** / **`hasBangsOnlyLive`** no longer require the founder flag; **`wigViews`** falls through to **`liveNoirCompositeWigViews`** for clients; founder-session **`liveStylingWigViews`** / **`liveBangsWigViews`** override only when **`founderNoirFalStylingTools`** is true (avoids stale state after logout).
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
