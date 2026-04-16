@@ -40,7 +40,7 @@ async function appendClientNotification(
 ): Promise<void> {
   const { data: existing } = await supabase
     .from('notifications')
-    .select('*')
+    .select('items')
     .eq('user_id', userId)
     .maybeSingle();
   const newItem = {

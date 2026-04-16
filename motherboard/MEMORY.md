@@ -15288,3 +15288,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Consult offer send: fix Vercel FUNCTION_INVOCATION_TIMEOUT
+
+**Context (this chat):** User hit **`FUNCTION_INVOCATION_TIMEOUT`** (deployment error) when using the **send consult offer** flow (admin consult quote / client alert).
+
+**Decisions / outcomes:** **`POST /api/admin/consult-quotes`** (and **`meeting-client-alert`**) fetched **`notifications`** with **`select('*')`**, which still pulls the large **`items`** JSON; for heavy users this can exceed the serverless budget. Switched those reads to **`select('items')`** only. Added **`export const config = { maxDuration: 60 }`** on **`consult-quotes`** and **`meeting-client-alert`**, and matching entries in **`vercel.json`**. Same **`select('items')`** optimization for **`api/admin/notifications`** POST append and **`api/booking/autopay-final-payment`** helper.
+
+**Changes:** **`api/admin/consult-quotes.ts`**, **`api/admin/meeting-client-alert.ts`**, **`api/admin/notifications.ts`**, **`api/booking/autopay-final-payment.ts`**, **`vercel.json`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

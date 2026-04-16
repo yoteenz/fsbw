@@ -1,3 +1,5 @@
+export const config = { maxDuration: 60 };
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth';
 import { getSupabaseAdmin } from '../_lib/supabase';
@@ -89,7 +91,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const { data: existing, error: fetchErr } = await supabase
       .from('notifications')
-      .select('*')
+      .select('items')
       .eq('user_id', userId)
       .maybeSingle();
     if (fetchErr) return res.status(500).json({ error: fetchErr.message });

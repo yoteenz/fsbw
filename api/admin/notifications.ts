@@ -41,7 +41,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!userId || !message) return res.status(400).json({ error: 'userId and message required' });
 
     try {
-      const { data: existing, error: fetchErr } = await supabase.from('notifications').select('*').eq('user_id', userId).maybeSingle();
+      const { data: existing, error: fetchErr } = await supabase
+        .from('notifications')
+        .select('items')
+        .eq('user_id', userId)
+        .maybeSingle();
       if (fetchErr) return res.status(500).json({ error: fetchErr.message });
 
       const newItem = { id: crypto.randomUUID(), text: String(message).trim(), read: false, createdAt: new Date().toISOString() };

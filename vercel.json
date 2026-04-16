@@ -2,6 +2,12 @@
   "functions": {
     "api/live-wig-after-color-styling.ts": {
       "maxDuration": 120
+    },
+    "api/admin/consult-quotes.ts": {
+      "maxDuration": 60
+    },
+    "api/admin/meeting-client-alert.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
