@@ -85,6 +85,10 @@ const SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/refs-noir/consult%20inspo2.JPG';
 import { AdminMeetingHubStyleCard } from '../../../utils/AdminMeetingHubStyleCard';
 import { BAW_CUSTOM_SEND_OFFER_OPTION_ID } from '../../../utils/bawCustomSendOfferOption';
+import {
+  bawStaticFrontReferenceMatchesHairlineSelection,
+  bawStaticMannequinFrontReferencePathFromUnitAndHairline,
+} from '../../../utils/bawStaticMannequinReferencePaths';
 
 /** SELECTION dropdown row: choose custom (not listed). Stored value uses sentinel until admin types the real spec. */
 const SEND_OFFER_CUSTOM_MENU_LABEL = 'Custom';
@@ -594,9 +598,11 @@ export default function AdminMeetingsHub() {
         if (t !== '' && !list.includes(raw)) return t;
         return raw;
       };
+      const hairlineForRef = pickForBawApi('HAIRLINE', quoteSelections.hairline, opts.hairline, defSel.hairline);
+      const mannequinFrontPath = bawStaticMannequinFrontReferencePathFromUnitAndHairline(quoteUnit, hairlineForRef);
       const result = await postBuildWigUnitImage({
         unitKey: quoteUnit,
-        referenceImagePath: ordersPageUnitThumbnailSrcFromUnitKey(quoteUnit),
+        referenceImagePath: mannequinFrontPath,
         referenceView: 'FRONT',
         backdropReferenceImageUrl: SEND_OFFER_GENERATE_UNIT_ROSE_REFERENCE_URL,
         length: pickForBawApi('LENGTH', quoteSelections.length, opts.length, defSel.length),
@@ -604,11 +610,15 @@ export default function AdminMeetingsHub() {
         lace: pickForBawApi('LACE', quoteSelections.lace, opts.lace, defSel.lace),
         texture: pickForBawApi('TEXTURE', quoteSelections.texture, opts.texture, defSel.texture),
         color: pickForBawApi('COLOR', quoteSelections.color, opts.color, defSel.color),
-        hairline: pickForBawApi('HAIRLINE', quoteSelections.hairline, opts.hairline, defSel.hairline),
+        hairline: hairlineForRef,
         styling: pickForBawApi('STYLING', quoteSelections.styling, opts.styling, defSel.styling),
         addOns: quoteSelections.addOns,
         partSelection: quoteSelections.partSelection,
-        referenceMatchesHairline: String(quoteUnit || '').trim().toUpperCase() === 'NOIR',
+        referenceMatchesHairline: bawStaticFrontReferenceMatchesHairlineSelection(
+          quoteUnit,
+          hairlineForRef,
+          mannequinFrontPath
+        ),
       });
       setQuoteManualThumbnailSrc(result.imageUrl);
       setQuoteGeneratedSelectionKey(quoteSelectionKey);

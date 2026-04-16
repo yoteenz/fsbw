@@ -15372,3 +15372,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/utils/specialOfferPrice.ts`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Send offer generate unit: same static mannequins as BAW + hairline-aware referenceMatchesHairline
+
+**Context (this chat):** User said **Send offer → Generate unit** used the rose backdrop but **different mannequins** than Build-a-Wig for the same selections — wiring was off.
+
+**Decisions / outcomes:** **`src/utils/bawStaticMannequinReferencePaths.ts`** mirrors BAW **`getWigViews`**: unit + **hairline** triples (**natural** / **peak** / **lagos**, plus **BLANCO** / **wavy** / **curly** 2D sets). **Generate unit** uses the **front** path from that triple as **`referenceImagePath`** (replacing **`ordersPageUnitThumbnailSrcFromUnitKey`**, which always used **`natural front.png`** for NOIR). **`referenceMatchesHairline`** is **true** only when the NOIR front asset already matches the selected hairline.
+
+**Changes:** **`src/utils/bawStaticMannequinReferencePaths.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.
