@@ -15184,3 +15184,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Verification:** `npm run build` passes.
 
 **Docs:** This MEMORY entry.
+
+---
+
+## 2026-04-15 — Remove NOIR thumb debug outlines completely
+
+**Context (this chat):** User said the **debug colored outlines** (violet/cyan and the hub/sub split) **were not removed** and were **still visible**.
+
+**Decisions / outcomes:** **`DEBUG_NOIR_THUMB_LAYER_OUTLINES`** had stayed **`true`**, so outlines still rendered. **Removed** all debug code: constants, **`useLocation`**, **`isBawMainHubPathnameForThumbDebug`**, and every conditional **`outline` / `title`** on outer cell, **`.leaf-bg`**, click wrap, frame, and **`<img>`**. Production thumbs unchanged except no debug UI.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+**Docs:** This MEMORY entry.
