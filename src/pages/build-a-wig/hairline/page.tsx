@@ -17,6 +17,9 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
+
+const BAW_CUSTOM_HAIRLINE_PRICE_KEY = 'bawCustomHairlinePriceUsd';
 
 interface HairlineOption {
   id: string;
@@ -73,6 +76,10 @@ function HairlineSelection() {
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [founderNoirHairlineFalHint, setFounderNoirHairlineFalHint] = useState(false);
+  const [customHairlinePriceUsd, setCustomHairlinePriceUsd] = useState(() => {
+    const n = parseInt(localStorage.getItem(BAW_CUSTOM_HAIRLINE_PRICE_KEY) || '0', 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  });
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -291,6 +298,16 @@ function HairlineSelection() {
 
   const handleHairlineSelect = (hairlineId: string) => {
     const currentSelections = selectedHairline;
+
+    if (hairlineId === BAW_CUSTOM_OPTION_ID) {
+      setSelectedHairline([BAW_CUSTOM_OPTION_ID]);
+      try {
+        localStorage.setItem(BAW_CUSTOM_HAIRLINE_PRICE_KEY, String(Math.max(0, customHairlinePriceUsd)));
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
     
     if (currentSelections.includes(hairlineId)) {
       // Deselect the hairline option
@@ -583,6 +600,9 @@ function HairlineSelection() {
 
   const getSelectedPrice = () => {
     let total = selectedHairline.reduce((sum, hairlineId) => {
+      if (hairlineId === BAW_CUSTOM_OPTION_ID) {
+        return sum + Math.max(0, customHairlinePriceUsd);
+      }
       const selected = hairlineOptions.find(option => option.id === hairlineId);
       return sum + (selected ? selected.price : 0);
     }, 0);
@@ -610,12 +630,19 @@ function HairlineSelection() {
       localStorage.removeItem('customizeSelectedHairline');
     }
     localStorage.setItem('customizeSelectedHairlinePrice', price);
+    if (selectedHairline.includes(BAW_CUSTOM_OPTION_ID)) {
+      localStorage.setItem(BAW_CUSTOM_HAIRLINE_PRICE_KEY, String(Math.max(0, customHairlinePriceUsd)));
+    }
 
     window.dispatchEvent(new CustomEvent('customStorageChange'));
-  }, [location.pathname, selectedHairline]);
+  }, [location.pathname, selectedHairline, customHairlinePriceUsd]);
 
   // Get dynamic hairline note text based on selected hairline option
   const getHairlineNoteText = () => {
+    if (selectedHairline.includes(BAW_CUSTOM_OPTION_ID)) {
+      return 'CUSTOM HAIRLINE — CONFIRMED AT CHECKOUT. EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.';
+    }
+
     // Check for lagos + peak combination first (before individual checks)
     if (selectedHairline.includes('LAGOS') && selectedHairline.includes('PEAK')) {
       return 'HAIRLINE HAS A WIDOW\'S PEAK WITH LOW TEMPLES.';
@@ -1016,6 +1043,13 @@ function HairlineSelection() {
 
           {/* HAIRLINE OPTIONS - Centered 3-column layout */}
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
+            <BawCustomOptionRow
+              categoryLabel="HAIRLINE"
+              isSelected={selectedHairline.includes(BAW_CUSTOM_OPTION_ID)}
+              onSelect={() => handleHairlineSelect(BAW_CUSTOM_OPTION_ID)}
+              customPriceUsd={customHairlinePriceUsd}
+              onCustomPriceUsdChange={setCustomHairlinePriceUsd}
+            />
             {hairlineOptions.map((option) => {
               const isBlancoRoute = window.location.pathname.includes('/blanco/customize') || window.location.pathname.includes('/blanco/edit');
               const imgSize = isBlancoRoute ? 45 : 75; // Match main page edit mode size (45px for BLANCO)

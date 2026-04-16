@@ -15,6 +15,9 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
+
+const BAW_CUSTOM_CAP_SIZE_PRICE_KEY = 'bawCustomCapSizePriceUsd';
 
 interface CapSizeOption {
   id: string;
@@ -99,6 +102,10 @@ function CapSizeSelection() {
   }, [location.pathname]); // Only reload when route changes, not when selectedCapSize changes
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
+  const [customCapSizePriceUsd, setCustomCapSizePriceUsd] = useState(() => {
+    const n = parseInt(localStorage.getItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY) || '0', 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  });
 
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
@@ -355,7 +362,16 @@ function CapSizeSelection() {
     // Use the same logic as getSelectedPrice() but with the capSizeId parameter
     const allOptions = [...capSizeOptions, ...flexibleSizeOptions];
     const selectedOption = allOptions.find(option => option.id === capSizeId);
-    const price = (selectedOption ? selectedOption.price : 0).toString();
+    const priceUsd =
+      capSizeId === BAW_CUSTOM_OPTION_ID
+        ? Math.max(0, customCapSizePriceUsd)
+        : selectedOption
+          ? selectedOption.price
+          : 0;
+    if (capSizeId === BAW_CUSTOM_OPTION_ID) {
+      localStorage.setItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY, String(priceUsd));
+    }
+    const price = String(priceUsd);
     
     // Always save with 'selected' prefix
     localStorage.setItem('selectedCapSize', capSizeId);
@@ -611,10 +627,32 @@ function CapSizeSelection() {
   };
 
   const getSelectedPrice = () => {
+    if (selectedCapSize === BAW_CUSTOM_OPTION_ID) return Math.max(0, customCapSizePriceUsd);
     const allOptions = [...capSizeOptions, ...flexibleSizeOptions];
     const selected = allOptions.find(option => option.id === selectedCapSize);
     return selected ? selected.price : 0;
   };
+
+  useEffect(() => {
+    if (selectedCapSize !== BAW_CUSTOM_OPTION_ID) return;
+    const pathname = window.location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
+    const priceUsd = Math.max(0, customCapSizePriceUsd);
+    const priceStr = String(priceUsd);
+    localStorage.setItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY, priceStr);
+    localStorage.setItem('selectedCapSize', BAW_CUSTOM_OPTION_ID);
+    localStorage.setItem('selectedCapSizePrice', priceStr);
+    if (isOnEditRoute) {
+      localStorage.setItem('editSelectedCapSize', BAW_CUSTOM_OPTION_ID);
+      localStorage.setItem('editSelectedCapSizePrice', priceStr);
+    }
+    if (isOnCustomizeRoute) {
+      localStorage.setItem('customizeSelectedCapSize', BAW_CUSTOM_OPTION_ID);
+      localStorage.setItem('customizeSelectedCapSizePrice', priceStr);
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  }, [customCapSizePriceUsd, selectedCapSize, location.pathname]);
 
   const totalPrice = getSelectedPrice();
 
@@ -638,6 +676,10 @@ function CapSizeSelection() {
       const editSelectedCapSize = localStorage.getItem('editSelectedCapSize');
       if (editSelectedCapSize) {
         setSelectedCapSize(editSelectedCapSize);
+        if (editSelectedCapSize === BAW_CUSTOM_OPTION_ID) {
+          const p = parseInt(localStorage.getItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY) || '0', 10);
+          if (Number.isFinite(p) && p >= 0) setCustomCapSizePriceUsd(p);
+        }
         return;
       }
       // Fallback to editingCartItem
@@ -648,6 +690,10 @@ function CapSizeSelection() {
           console.log('Cap-size page - loading edit mode cap size:', item.capSize);
           if (item.capSize) {
             setSelectedCapSize(item.capSize);
+            if (item.capSize === BAW_CUSTOM_OPTION_ID) {
+              const p = parseInt(localStorage.getItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY) || '0', 10);
+              if (Number.isFinite(p) && p >= 0) setCustomCapSizePriceUsd(p);
+            }
             // Also save to editSelected* for consistency
             localStorage.setItem('editSelectedCapSize', item.capSize);
           }
@@ -662,6 +708,10 @@ function CapSizeSelection() {
       const customizeSelectedCapSize = localStorage.getItem('customizeSelectedCapSize');
       if (customizeSelectedCapSize) {
         setSelectedCapSize(customizeSelectedCapSize);
+        if (customizeSelectedCapSize === BAW_CUSTOM_OPTION_ID) {
+          const p = parseInt(localStorage.getItem(BAW_CUSTOM_CAP_SIZE_PRICE_KEY) || '0', 10);
+          if (Number.isFinite(p) && p >= 0) setCustomCapSizePriceUsd(p);
+        }
       }
     }
   }, []);
@@ -1034,6 +1084,13 @@ function CapSizeSelection() {
             {/* CUSTOM SIZE OPTIONS - Updated to fit 4 containers per row with centered layout */}
             <div className="flex flex-col gap-3 mt-[12px] mx-auto mb-6">
               <div className="grid grid-cols-4 gap-4 mx-auto justify-center max-w-[320px]">
+                <BawCustomOptionRow
+                  categoryLabel="CAP SIZE"
+                  isSelected={selectedCapSize === BAW_CUSTOM_OPTION_ID}
+                  onSelect={() => handleCapSizeSelect(BAW_CUSTOM_OPTION_ID)}
+                  customPriceUsd={customCapSizePriceUsd}
+                  onCustomPriceUsdChange={setCustomCapSizePriceUsd}
+                />
                 {capSizeOptions.map((option) => (
                   <ThumbBox
                     key={option.id}

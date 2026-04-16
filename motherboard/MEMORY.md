@@ -15312,3 +15312,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`api/_lib/buildWigGeneratedUnit.ts`**, **`api/build-a-wig-unit-image.ts`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Admin meetings: TOTAL CONSULTS + BAW CUSTOM option rows
+
+**Context (this chat):** User asked to rename the **total consulted** summary panel on **Admin → Meetings** to **“total consults”**; add **CUSTOM** at the **top** of each **Build-a-Wig sub-page** option grid with a **price input** below for unlisted choices.
+
+**Decisions / outcomes:** **`AdminMeetingsHub`**: non-overview consult count label **`TOTAL CONSULTED` → `TOTAL CONSULTS`**. **BAW:** New **`BawCustomOptionRow`** + **`BAW_CUSTOM_OPTION_ID`** (`CUSTOM`), gray **+** thumb, **CUSTOM PRICE (USD)** number input when selected. Wired on **color** (incl. Blanco **`CUSTOM`** in validation), **length**, **density**, **lace**, **texture**, **cap size**, **styling** (exclusive **`[CUSTOM]`** + price in **`getTotalStylingPrice`** + noir customize sync), **hairline** (exclusive custom + customize sync), **addons** (toggleable line item + sort order includes custom). Persist per-step keys like **`bawCustomColorPriceUsd`**; **color** skips NOIR Fal live preview when **`CUSTOM`**.
+
+**Changes:** **`src/components/buildWig/BawCustomOptionRow.tsx`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`length`**, **`density`**, **`lace`**, **`texture`**, **`cap-size`**, **`styling`**, **`hairline`**, **`addons`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

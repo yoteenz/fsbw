@@ -15,6 +15,9 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
+
+const BAW_CUSTOM_LENGTH_PRICE_KEY = 'bawCustomLengthPriceUsd';
 
 interface LengthOption {
   id: string;
@@ -36,6 +39,10 @@ function LengthSelection() {
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
   const [showLoading, setShowLoading] = useState(true);
+  const [customLengthPriceUsd, setCustomLengthPriceUsd] = useState(() => {
+    const n = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  });
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -100,6 +107,10 @@ function LengthSelection() {
       if (editSelectedLength) {
         console.log('Length page - loading edit mode length from editSelectedLength:', editSelectedLength);
         setSelectedLength(editSelectedLength);
+        if (editSelectedLength === BAW_CUSTOM_OPTION_ID) {
+          const p = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+          if (Number.isFinite(p) && p >= 0) setCustomLengthPriceUsd(p);
+        }
         // Also save to selected* for consistency
         localStorage.setItem('selectedLength', editSelectedLength);
         return; // Exit early - we're done
@@ -113,6 +124,10 @@ function LengthSelection() {
           console.log('Length page - loading edit mode length from editingCartItem:', item.length);
           if (item.length) {
             setSelectedLength(item.length);
+            if (item.length === BAW_CUSTOM_OPTION_ID) {
+              const p = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+              if (Number.isFinite(p) && p >= 0) setCustomLengthPriceUsd(p);
+            }
             localStorage.setItem('selectedLength', item.length);
             // Also save to editSelected* for consistency
             localStorage.setItem('editSelectedLength', item.length);
@@ -130,6 +145,10 @@ function LengthSelection() {
       if (customizeSelectedLength) {
         console.log('Length page - loading customize mode length from customizeSelectedLength:', customizeSelectedLength);
         setSelectedLength(customizeSelectedLength);
+        if (customizeSelectedLength === BAW_CUSTOM_OPTION_ID) {
+          const p = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+          if (Number.isFinite(p) && p >= 0) setCustomLengthPriceUsd(p);
+        }
         // Also save to selected* for consistency
         localStorage.setItem('selectedLength', customizeSelectedLength);
         return; // Exit early - we're done
@@ -144,6 +163,10 @@ function LengthSelection() {
     if (currentLength) {
       console.log('Length page - Setting length from localStorage:', currentLength);
       setSelectedLength(currentLength);
+      if (currentLength === BAW_CUSTOM_OPTION_ID) {
+        const p = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+        if (Number.isFinite(p) && p >= 0) setCustomLengthPriceUsd(p);
+      }
     } else {
       // If not in localStorage, use default and save it
       console.log('Length page - No value in localStorage, using default 24"');
@@ -170,6 +193,10 @@ function LengthSelection() {
       if (currentLength) {
         console.log('Length page - Updated from customStorageChange:', currentLength);
         setSelectedLength(currentLength);
+        if (currentLength === BAW_CUSTOM_OPTION_ID) {
+          const p = parseInt(localStorage.getItem(BAW_CUSTOM_LENGTH_PRICE_KEY) || '0', 10);
+          if (Number.isFinite(p) && p >= 0) setCustomLengthPriceUsd(p);
+        }
       }
     };
     
@@ -359,9 +386,40 @@ function LengthSelection() {
     }
   ];
 
+  const persistLengthChoice = (lengthId: string, priceUsd: number) => {
+    const pathname = window.location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
+    const priceStr = String(priceUsd);
+    if (lengthId === BAW_CUSTOM_OPTION_ID) {
+      localStorage.setItem(BAW_CUSTOM_LENGTH_PRICE_KEY, priceStr);
+    }
+    localStorage.setItem('selectedLength', lengthId);
+    localStorage.setItem('selectedLengthPrice', priceStr);
+    if (isOnEditRoute) {
+      localStorage.setItem('editSelectedLength', lengthId);
+      localStorage.setItem('editSelectedLengthPrice', priceStr);
+    }
+    if (isOnCustomizeRoute) {
+      localStorage.setItem('customizeSelectedLength', lengthId);
+      localStorage.setItem('customizeSelectedLengthPrice', priceStr);
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  };
+
   const handleLengthSelect = (lengthId: string) => {
     setSelectedLength(lengthId);
+    const priceUsd =
+      lengthId === BAW_CUSTOM_OPTION_ID
+        ? Math.max(0, customLengthPriceUsd)
+        : lengthOptions.find((o) => o.id === lengthId)?.price ?? 0;
+    persistLengthChoice(lengthId, priceUsd);
   };
+
+  useEffect(() => {
+    if (selectedLength !== BAW_CUSTOM_OPTION_ID) return;
+    persistLengthChoice(BAW_CUSTOM_OPTION_ID, Math.max(0, customLengthPriceUsd));
+  }, [customLengthPriceUsd, selectedLength]);
 
   const handleBack = () => {
     const pathname = location.pathname;
@@ -648,6 +706,7 @@ function LengthSelection() {
   };
 
   const getSelectedPrice = () => {
+    if (selectedLength === BAW_CUSTOM_OPTION_ID) return Math.max(0, customLengthPriceUsd);
     const selected = lengthOptions.find(option => option.id === selectedLength);
     return selected ? selected.price : 0;
   };
@@ -655,7 +714,16 @@ function LengthSelection() {
   // Get dynamic length note text based on selected length
   const getLengthNoteText = () => {
     const currentLength = selectedLength;
-    
+
+    if (currentLength === BAW_CUSTOM_OPTION_ID) {
+      return (
+        <>
+          CUSTOM LENGTH — CONFIRMED AT CHECKOUT.<br />
+          EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
+        </>
+      );
+    }
+
     // For lengths 30" and above, show additional processing time message
     if (['30"', '32"', '34"', '36"', '40"'].includes(currentLength)) {
       return (
@@ -1037,10 +1105,17 @@ function LengthSelection() {
               HAIR MEASUREMENTS
             </p>
 
-            {/* LENGTH OPTIONS - Updated to fit 4 containers per row with centered layout */}
+            {/* LENGTH OPTIONS - CUSTOM first row */}
             <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '15px' }}>
-              {/* Row 1: 16", 18", 20", 22" - 50% top position */}
-              {lengthOptions.slice(0, 4).map((option) => (
+              <BawCustomOptionRow
+                categoryLabel="LENGTH"
+                isSelected={selectedLength === BAW_CUSTOM_OPTION_ID}
+                onSelect={() => handleLengthSelect(BAW_CUSTOM_OPTION_ID)}
+                customPriceUsd={customLengthPriceUsd}
+                onCustomPriceUsdChange={setCustomLengthPriceUsd}
+              />
+              {/* Row 1: 16", 18", 20" - 50% top position */}
+              {lengthOptions.slice(0, 3).map((option) => (
                 <ThumbBox
                   key={option.id}
                   image={option.image}
@@ -1053,7 +1128,20 @@ function LengthSelection() {
                   topPosition="50%"
                 />
               ))}
-              {/* Row 2: 24", 26", 28", 30" - 58% top position */}
+              {/* Row 2: 22", 24", 26", 28" - mixed thumb assets */}
+              {lengthOptions.slice(3, 4).map((option) => (
+                <ThumbBox
+                  key={option.id}
+                  image={option.image}
+                  title="LENGTH"
+                  label={option.name}
+                  isSelected={selectedLength === option.id}
+                  onClick={() => handleLengthSelect(option.id)}
+                  imgSize={72}
+                  containerSize={60}
+                  topPosition="50%"
+                />
+              ))}
               {lengthOptions.slice(4, 8).map((option) => (
                 <ThumbBox
                   key={option.id}

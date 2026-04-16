@@ -31,6 +31,9 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
+
+const BAW_CUSTOM_STYLING_PRICE_KEY = 'bawCustomStylingPriceUsd';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -131,7 +134,11 @@ export default function StylingSelectionPage() {
     return storedPartSelection;
   });
   const [showLoading, setShowLoading] = useState(true);
-  
+  const [customStylingPriceUsd, setCustomStylingPriceUsd] = useState(() => {
+    const n = parseInt(localStorage.getItem(BAW_CUSTOM_STYLING_PRICE_KEY) || '0', 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  });
+
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
@@ -534,7 +541,17 @@ export default function StylingSelectionPage() {
 
   const handleHairStylingSelect = (stylingId: string) => {
     const currentSelections = selectedHairStyling;
-    
+
+    if (stylingId === BAW_CUSTOM_OPTION_ID) {
+      setSelectedHairStyling([BAW_CUSTOM_OPTION_ID]);
+      try {
+        localStorage.setItem(BAW_CUSTOM_STYLING_PRICE_KEY, String(Math.max(0, customStylingPriceUsd)));
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+
     if (currentSelections.includes(stylingId)) {
       // Deselect the styling option
       if (stylingId === 'BANGS') {
@@ -672,6 +689,11 @@ export default function StylingSelectionPage() {
     if (selectedHairStyling.length === 0) {
       return 0;
     }
+
+    const priceForStylingId = (id: string) =>
+      id === BAW_CUSTOM_OPTION_ID
+        ? Math.max(0, customStylingPriceUsd)
+        : hairStylingOptions.find((opt) => opt.id === id)?.price || 0;
     
     const hasBangs = selectedHairStyling.includes('BANGS');
     const otherStyling = selectedHairStyling.find(id => id !== 'BANGS');
@@ -682,8 +704,7 @@ export default function StylingSelectionPage() {
     
     if (hasBangs && otherStyling) {
       // Bangs + another styling: full price of secondary option + $20 for bangs (reduced from $40)
-      const secondaryStyling = hairStylingOptions.find(opt => opt.id === otherStyling);
-      let secondaryPrice = secondaryStyling?.price || 0;
+      let secondaryPrice = priceForStylingId(otherStyling);
       
       // Add $40 for lengths 30" and above for crimps, flat iron, and layers
       if (isLongLength && (otherStyling === 'CRIMPS' || otherStyling === 'FLAT IRON' || otherStyling === 'LAYERS')) {
@@ -696,8 +717,7 @@ export default function StylingSelectionPage() {
       return 40;
     } else {
       // Other styling only: use original price + length surcharge
-      const styling = hairStylingOptions.find(opt => opt.id === selectedHairStyling[0]);
-      let basePrice = styling?.price || 0;
+      let basePrice = priceForStylingId(selectedHairStyling[0]);
       
       // Add $40 for lengths 30" and above for crimps, flat iron, and layers
       if (isLongLength && (selectedHairStyling[0] === 'CRIMPS' || selectedHairStyling[0] === 'FLAT IRON' || selectedHairStyling[0] === 'LAYERS')) {
@@ -784,7 +804,7 @@ export default function StylingSelectionPage() {
     localStorage.setItem('customizeSelectedAddOnsPrice', addOnsPrice.toString());
 
     window.dispatchEvent(new CustomEvent('customStorageChange'));
-  }, [location.pathname, selectedHairStyling, selectedPartSelection]);
+  }, [location.pathname, selectedHairStyling, selectedPartSelection, customStylingPriceUsd]);
 
   // Get dynamic styling note text based on selected styling option
   const getStylingNoteText = () => {
@@ -1728,6 +1748,13 @@ export default function StylingSelectionPage() {
 
             {/* HAIR STYLING OPTIONS */}
             <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '13px' }}>
+              <BawCustomOptionRow
+                categoryLabel="STYLING"
+                isSelected={selectedHairStyling.includes(BAW_CUSTOM_OPTION_ID)}
+                onSelect={() => handleHairStylingSelect(BAW_CUSTOM_OPTION_ID)}
+                customPriceUsd={customStylingPriceUsd}
+                onCustomPriceUsdChange={setCustomStylingPriceUsd}
+              />
               {hairStylingOptions.map((option) => (
                 <ThumbBox
                   key={option.id}

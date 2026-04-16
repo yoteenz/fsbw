@@ -16,6 +16,7 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { BawCustomOptionRow, BAW_CUSTOM_OPTION_ID } from '../../../components/buildWig/BawCustomOptionRow';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
 import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
@@ -37,6 +38,18 @@ interface ColorOption {
   image: string;
 }
 
+const BAW_CUSTOM_COLOR_PRICE_KEY = 'bawCustomColorPriceUsd';
+
+function readStoredCustomColorPriceUsd(): number {
+  const n = parseInt(localStorage.getItem(BAW_CUSTOM_COLOR_PRICE_KEY) || '0', 10);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
+
+function isValidBlancoColorId(color: string | null | undefined): boolean {
+  if (!color) return false;
+  return ['GOLDEN', 'PLATINUM', 'ASH', BAW_CUSTOM_OPTION_ID].includes(color);
+}
+
 function ColorSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,8 +67,7 @@ function ColorSelection() {
       if (editSelectedColor) {
         // For BLANCO routes, validate color is a valid BLANCO color
         if (isBlancoRoute) {
-          const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-          if (validBlancoColors.includes(editSelectedColor)) {
+          if (isValidBlancoColorId(editSelectedColor)) {
             return editSelectedColor;
           } else {
             // Invalid color for BLANCO, default to PLATINUM
@@ -78,8 +90,7 @@ function ColorSelection() {
           if (item.color) {
             // For BLANCO items, validate color is a valid BLANCO color
             if (isBlancoRoute || item.name === 'BLANCO') {
-              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-              if (validBlancoColors.includes(item.color)) {
+              if (isValidBlancoColorId(item.color)) {
                 return item.color;
               } else {
                 // Invalid color for BLANCO, default to PLATINUM
@@ -116,8 +127,7 @@ function ColorSelection() {
       if (customizeSelectedColor) {
         // For BLANCO routes, validate color is a valid BLANCO color
         if (isBlancoRoute) {
-          const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-          if (validBlancoColors.includes(customizeSelectedColor)) {
+          if (isValidBlancoColorId(customizeSelectedColor)) {
             return customizeSelectedColor;
           } else {
             // Invalid color for BLANCO, default to PLATINUM
@@ -139,8 +149,7 @@ function ColorSelection() {
     if (isBlancoRoute) {
       const selectedColor = localStorage.getItem('selectedColor');
       if (selectedColor) {
-        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-        if (validBlancoColors.includes(selectedColor)) {
+        if (isValidBlancoColorId(selectedColor)) {
           return selectedColor;
         }
         // Invalid color for BLANCO, default to PLATINUM
@@ -173,8 +182,7 @@ function ColorSelection() {
       storedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
       // For BLANCO routes, validate color is a valid BLANCO color
       if (storedColor && isBlancoRoute) {
-        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-        if (!validBlancoColors.includes(storedColor)) {
+        if (!isValidBlancoColorId(storedColor)) {
           // Invalid color for BLANCO, reset to PLATINUM
           storedColor = 'PLATINUM';
           localStorage.setItem('editSelectedColor', 'PLATINUM');
@@ -190,8 +198,7 @@ function ColorSelection() {
             let itemColor = item.color;
             // For BLANCO items, validate color
             if (isBlancoRoute || item.name === 'BLANCO') {
-              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-              if (!itemColor || !validBlancoColors.includes(itemColor)) {
+              if (!itemColor || !isValidBlancoColorId(itemColor)) {
                 itemColor = 'PLATINUM';
               }
             }
@@ -224,8 +231,7 @@ function ColorSelection() {
     if (storedColor && storedColor !== selectedColor) {
       // For BLANCO routes, validate color is valid
       if (isBlancoRoute) {
-        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-        if (validBlancoColors.includes(storedColor)) {
+        if (isValidBlancoColorId(storedColor)) {
           setSelectedColor(storedColor);
         } else {
           // Invalid color for BLANCO, set to PLATINUM
@@ -260,7 +266,8 @@ function ColorSelection() {
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
   const [regenColorAngle, setRegenColorAngle] = useState<'left' | 'front' | 'right' | null>(null);
-  
+  const [customColorPriceUsd, setCustomColorPriceUsd] = useState(() => readStoredCustomColorPriceUsd());
+
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
@@ -736,6 +743,11 @@ function ColorSelection() {
       founderNoirFalRegenTools &&
       (pathname.includes('/build-a-wig/noir/edit/color') || pathname.includes('/build-a-wig/noir/customize/color'));
     if (!noir) return;
+    if (selectedColor === BAW_CUSTOM_OPTION_ID) {
+      setLiveWigViews(null);
+      setLivePreviewLoading(false);
+      return;
+    }
     setLivePreviewError(null);
     setLivePreviewLoading(true);
     const sel = readBuildWigLivePreviewSelections(pathname);
@@ -762,6 +774,26 @@ function ColorSelection() {
       .finally(() => setLivePreviewLoading(false));
   }, [founderNoirFalRegenTools, location.pathname, selectedColor]);
 
+  /** When CUSTOM color price changes, keep localStorage price keys in sync (same paths as tap). */
+  useEffect(() => {
+    if (selectedColor !== BAW_CUSTOM_OPTION_ID) return;
+    const pathname = location.pathname;
+    const isOnEditRoute = pathname.includes('/edit');
+    const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
+    const priceStr = String(customColorPriceUsd);
+    localStorage.setItem(BAW_CUSTOM_COLOR_PRICE_KEY, priceStr);
+    if (isOnEditRoute) {
+      localStorage.setItem('editSelectedColorPrice', priceStr);
+    }
+    if (isOnCustomizeRoute) {
+      localStorage.setItem('customizeSelectedColorPrice', priceStr);
+    }
+    if (isOnEditRoute || !isOnCustomizeRoute) {
+      localStorage.setItem('selectedColorPrice', priceStr);
+    }
+    window.dispatchEvent(new CustomEvent('customStorageChange'));
+  }, [customColorPriceUsd, selectedColor, location.pathname]);
+
   const handleColorSelect = (colorId: string) => {
     console.log('Color page - selecting color:', colorId);
     setSelectedColor(colorId);
@@ -772,6 +804,9 @@ function ColorSelection() {
     const onNoirColorRoute = pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
 
     const priceForChoice = (() => {
+      if (colorId === BAW_CUSTOM_OPTION_ID) {
+        return Math.max(0, customColorPriceUsd);
+      }
       if (isBlancoRoute) {
         const opt = colorOptions.find((o) => o.id === colorId);
         return opt?.price ?? 0;
@@ -799,7 +834,7 @@ function ColorSelection() {
     }
     if (onNoirColorRoute) {
       clearPendingBawNoirLiveColorWigViews();
-      if (colorId === 'OFF BLACK') {
+      if (colorId === 'OFF BLACK' || colorId === BAW_CUSTOM_OPTION_ID) {
         clearBawNoirLiveColorWigViews();
       }
     }
@@ -982,7 +1017,7 @@ function ColorSelection() {
     const onNoirColorSub =
       pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
     if (onNoirColorSub && !pathname.includes('/blanco')) {
-      if (selectedColor === 'OFF BLACK') {
+      if (selectedColor === 'OFF BLACK' || selectedColor === BAW_CUSTOM_OPTION_ID) {
         clearPendingBawNoirLiveColorWigViews();
         clearBawNoirLiveColorWigViews();
       } else if (liveNoirCompositeCommittedViews) {
@@ -1050,7 +1085,11 @@ function ColorSelection() {
     const pathname = location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    
+
+    if (selectedColor === BAW_CUSTOM_OPTION_ID) {
+      return Math.max(0, customColorPriceUsd);
+    }
+
     // For edit and customize modes (excluding blanco routes)
     if ((isOnEditRoute || isOnCustomizeRoute) && !isBlancoRoute) {
       // OFF BLACK and PLATINUM are $0
@@ -1077,7 +1116,16 @@ function ColorSelection() {
   // Get dynamic color note text based on selected color option
   const getColorNoteText = () => {
     const currentColor = selectedColor;
-    
+
+    if (currentColor === BAW_CUSTOM_OPTION_ID) {
+      return (
+        <>
+          CUSTOM COLOR REQUEST — DETAILS CONFIRMED AT CHECKOUT.<br />
+          EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
+        </>
+      );
+    }
+
     // For off black color option
     if (currentColor === 'OFF BLACK') {
       return (
@@ -1558,8 +1606,18 @@ function ColorSelection() {
               SINGLE COLOR DYE
             </p>
 
-            {/* COLOR OPTIONS */}
-            <div className={`grid ${isBlancoRoute ? 'grid-cols-3' : 'grid-cols-4'} gap-3 mx-auto justify-center mb-6 ${isBlancoRoute ? 'max-w-[240px]' : 'max-w-[320px]'}`} style={{ marginTop: '15px' }}>
+            {/* COLOR OPTIONS — CUSTOM first (above listed swatches) */}
+            <div
+              className={`grid ${isBlancoRoute ? 'grid-cols-3' : 'grid-cols-4'} gap-3 mx-auto justify-center mb-6 ${isBlancoRoute ? 'max-w-[240px]' : 'max-w-[320px]'}`}
+              style={{ marginTop: '15px' }}
+            >
+              <BawCustomOptionRow
+                categoryLabel="COLOR"
+                isSelected={selectedColor === BAW_CUSTOM_OPTION_ID}
+                onSelect={() => handleColorSelect(BAW_CUSTOM_OPTION_ID)}
+                customPriceUsd={customColorPriceUsd}
+                onCustomPriceUsdChange={setCustomColorPriceUsd}
+              />
               {colorOptions.map((option) => (
                 <ThumbBox
                   key={option.id}

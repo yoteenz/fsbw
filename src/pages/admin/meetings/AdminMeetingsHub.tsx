@@ -1710,7 +1710,7 @@ export default function AdminMeetingsHub() {
                         {mainTab === 'overview' ? formatUsd(overviewConsultSales.salesUsd) : completedConsultsCount}
                       </p>
                       <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
-                        {mainTab === 'overview' ? 'CONSULT SALES' : 'TOTAL CONSULTED'}
+                        {mainTab === 'overview' ? 'CONSULT SALES' : 'TOTAL CONSULTS'}
                       </p>
                     </div>
                   </div>
