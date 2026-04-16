@@ -15336,3 +15336,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — Admin meetings summary strip: tab-aligned + TOTAL BOOKINGS label
+
+**Context (this chat):** User said **Consults** tab should show only **new & total consults**, **Bookings** only **new & total bookings** — summary was still wrong (e.g. consult tiles while Bookings tab selected).
+
+**Decisions / outcomes:** **`summaryStripMode`**: when **`viewAllMode`** is **`bookings` | `consults`**, use it for the two header tiles (fixes mismatch before URL sync updates **`mainTab`**). Otherwise use **`mainTab`**. Header tiles keyed off **`summaryStripMode`**. **`TOTAL BOOKED` → `TOTAL BOOKINGS`**.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npx tsc --noEmit` passes.

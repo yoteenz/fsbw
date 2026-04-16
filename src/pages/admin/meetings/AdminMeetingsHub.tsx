@@ -509,6 +509,20 @@ export default function AdminMeetingsHub() {
   }, [activePanelDropdown, quoteUnit, quoteSub, quoteSelections, editReason, editMeeting, quoteMeeting]);
 
   const refreshLocal = useCallback(() => setLocalTick((t) => t + 1), []);
+
+  /**
+   * Which pair of summary tiles to show. When **View all** is open, `viewAllMode` can disagree with
+   * `mainTab` until URL sync runs — prefer `viewAllMode` so Bookings vs Consults headers match the list.
+   */
+  const summaryStripMode: 'overview' | 'bookings' | 'consults' =
+    mainTab === 'overview'
+      ? 'overview'
+      : viewAllMode === 'bookings' || viewAllMode === 'consults'
+        ? viewAllMode
+        : mainTab === 'consults'
+          ? 'consults'
+          : 'bookings';
+
   const currentMeetingsSortOptions = useMemo<readonly MeetingSortOption[]>(() => {
     const effectiveTab = viewAllMode ?? mainTab;
     if (effectiveTab === 'consults') return CONSULT_MEETING_SORT_OPTIONS;
@@ -1669,7 +1683,7 @@ export default function AdminMeetingsHub() {
                   style={{ marginTop: '10px' }}
                 >
                   <div className="grid grid-cols-2 gap-4 mb-4" style={{ marginTop: '12px' }}>
-                    {mainTab === 'overview' ? (
+                    {summaryStripMode === 'overview' ? (
                       <>
                         <div
                           className="text-center py-3"
@@ -1710,99 +1724,86 @@ export default function AdminMeetingsHub() {
                           </p>
                         </div>
                       </>
+                    ) : summaryStripMode === 'bookings' ? (
+                      <>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {newBookingsTabCount}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            NEW BOOKINGS
+                          </p>
+                        </div>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {totalBookedExcludingNew}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            TOTAL BOOKINGS
+                          </p>
+                        </div>
+                      </>
                     ) : (
                       <>
-                        <div className="grid grid-rows-2 gap-3">
-                          <div
-                            className="text-center py-2"
-                            style={{
-                              backgroundColor: 'rgba(0,0,0,0.04)',
-                              borderRadius: '4px',
-                              minHeight: '76px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'flex-end',
-                              paddingBottom: '8px',
-                            }}
-                          >
-                            <p
-                              className="font-covered-by-your-grace text-xl"
-                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
-                            >
-                              {newBookingsTabCount}
-                            </p>
-                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
-                              NEW BOOKINGS
-                            </p>
-                          </div>
-                          <div
-                            className="text-center py-2"
-                            style={{
-                              backgroundColor: 'rgba(0,0,0,0.04)',
-                              borderRadius: '4px',
-                              minHeight: '76px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'flex-end',
-                              paddingBottom: '8px',
-                            }}
-                          >
-                            <p
-                              className="font-covered-by-your-grace text-xl"
-                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
-                            >
-                              {totalBookedExcludingNew}
-                            </p>
-                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
-                              TOTAL BOOKED
-                            </p>
-                          </div>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {newConsultsTabCount}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            NEW CONSULTS
+                          </p>
                         </div>
-                        <div className="grid grid-rows-2 gap-3">
-                          <div
-                            className="text-center py-2"
-                            style={{
-                              backgroundColor: 'rgba(0,0,0,0.04)',
-                              borderRadius: '4px',
-                              minHeight: '76px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'flex-end',
-                              paddingBottom: '8px',
-                            }}
-                          >
-                            <p
-                              className="font-covered-by-your-grace text-xl"
-                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
-                            >
-                              {newConsultsTabCount}
-                            </p>
-                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
-                              NEW CONSULTS
-                            </p>
-                          </div>
-                          <div
-                            className="text-center py-2"
-                            style={{
-                              backgroundColor: 'rgba(0,0,0,0.04)',
-                              borderRadius: '4px',
-                              minHeight: '76px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'flex-end',
-                              paddingBottom: '8px',
-                            }}
-                          >
-                            <p
-                              className="font-covered-by-your-grace text-xl"
-                              style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}
-                            >
-                              {totalConsultsExcludingNew}
-                            </p>
-                            <p className="text-[10px] font-futura leading-tight" style={{ color: '#808080', marginTop: '4px' }}>
-                              TOTAL CONSULTS
-                            </p>
-                          </div>
+                        <div
+                          className="text-center py-3"
+                          style={{
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '4px',
+                            height: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'flex-end',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <p className="font-covered-by-your-grace text-xl" style={{ color: '#EB1C24', lineHeight: 1, fontSize: '24px' }}>
+                            {totalConsultsExcludingNew}
+                          </p>
+                          <p className="text-xs font-futura" style={{ color: '#808080', marginTop: '4px' }}>
+                            TOTAL CONSULTS
+                          </p>
                         </div>
                       </>
                     )}
