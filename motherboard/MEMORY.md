@@ -15264,3 +15264,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Fal regen UI: founder Gmail only (sync guard)
+
+**Context (this chat):** Non-founder signed-in users saw **LIVE PREVIEW: NOIR color (admin)** and **regen color L/M/R** on the color page; only the **admin founder** should see that strip. Everyone should still see **generated live WebPs** when selecting color/style/hairline.
+
+**Decisions / outcomes:** **`canUseFounderNoirFalTools()`** now equals **`isFounderNoirFalRegenUiVisible()`** — requires **`isSignedIn()`** and **`currentUser`** email **`isAdminFounderAccount`** (removed “any signed-in + founder email” shortcut). **Color:** regen block and NOIR title **`pointerEvents`** gated with **`isFounderNoirFalRegenUiVisible()`** in JSX. **Styling:** **`founderFalUi`** combines async flag + sync guard for hints/regen and founder-only **`wigViews`** overrides. **Hairline:** hint requires sync guard. Live composite **`wigViews`** unchanged for other users.
+
+**Changes:** **`src/utils/founderNoirFalTools.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

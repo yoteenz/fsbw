@@ -17,7 +17,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
-import { canUseFounderNoirFalTools } from '../../../utils/founderNoirFalTools';
+import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
   clearBawNoirLiveColorWigViews,
@@ -1390,7 +1390,9 @@ function ColorSelection() {
               <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-              {founderNoirFalRegenTools && location.pathname.includes('/build-a-wig/noir/') && (
+              {founderNoirFalRegenTools &&
+                isFounderNoirFalRegenUiVisible() &&
+                location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
                   style={{
@@ -1496,7 +1498,9 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
-                      ...(founderNoirFalRegenTools ? { pointerEvents: 'none' as const } : {}),
+                      ...(founderNoirFalRegenTools && isFounderNoirFalRegenUiVisible()
+                        ? { pointerEvents: 'none' as const }
+                        : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

@@ -8,7 +8,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth } from '../../../utils/adminAuth';
-import { canUseFounderNoirFalTools } from '../../../utils/founderNoirFalTools';
+import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
@@ -916,7 +916,7 @@ function HairlineSelection() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {founderNoirHairlineFalHint && (
+            {founderNoirHairlineFalHint && isFounderNoirFalRegenUiVisible() && (
               <p
                 className="text-center mb-2 px-2"
                 style={{

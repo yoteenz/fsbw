@@ -1,15 +1,17 @@
 /**
- * Founder-only Fal NOIR tools: API requires a Bearer token, but the **regen UI** should show
- * whenever the founder is signed in (including local admin password path without Supabase session).
+ * Founder-only Fal NOIR regen UI: **only** when the current session is the founder Gmail.
+ * (Fal API still requires Bearer; local admin founder without Supabase session won’t call Fal successfully.)
  */
-import { getAccessToken } from './api';
 import { isAdminFounderAccount, isSignedIn } from './adminAuth';
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 
-export async function canUseFounderNoirFalTools(): Promise<boolean> {
+/** Synchronous guard for render — use with async `canUseFounderNoirFalTools` state so non-founder signed-in users never see regen copy. */
+export function isFounderNoirFalRegenUiVisible(): boolean {
+  if (!isSignedIn()) return false;
   const email = getCurrentUserEmailFromStorage();
-  if (!email || !isAdminFounderAccount({ email })) return false;
-  const token = await getAccessToken();
-  if (token) return true;
-  return isSignedIn();
+  return Boolean(email && isAdminFounderAccount({ email }));
+}
+
+export async function canUseFounderNoirFalTools(): Promise<boolean> {
+  return isFounderNoirFalRegenUiVisible();
 }

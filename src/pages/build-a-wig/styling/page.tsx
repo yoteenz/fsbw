@@ -13,7 +13,7 @@ import {
   postLiveWigAfterColorStyling,
   postLiveWigAfterColorStylingRegenerateAngle,
 } from '../../../utils/api';
-import { canUseFounderNoirFalTools } from '../../../utils/founderNoirFalTools';
+import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
@@ -462,17 +462,19 @@ export default function StylingSelectionPage() {
     hasBangsOnlyLive,
   ]);
 
+  const founderFalUi = founderNoirFalStylingTools && isFounderNoirFalRegenUiVisible();
+
   const wigViews =
-    founderNoirFalStylingTools && hasLayersLiveStyling && liveStylingWigViews
+    founderFalUi && hasLayersLiveStyling && liveStylingWigViews
       ? liveStylingWigViews
-      : founderNoirFalStylingTools && hasBangsOnlyLive && liveBangsWigViews
+      : founderFalUi && hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
         : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
           ? liveNoirCompositeWigViews
           : baseWigViews;
 
   const showNoirFounderFalHint =
-    founderNoirFalStylingTools && location.pathname.includes('/build-a-wig/noir/');
+    founderFalUi && location.pathname.includes('/build-a-wig/noir/');
   const showNoirLiveStylingRegenControls =
     showNoirFounderFalHint && (hasLayersLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
