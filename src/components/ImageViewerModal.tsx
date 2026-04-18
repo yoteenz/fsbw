@@ -2,10 +2,13 @@ import { createPortal } from 'react-dom';
 import { useEffect, useState, useRef } from 'react';
 
 export type ImageViewerDownloadLink = {
-  href: string;
+  /** Static asset URL (omit when using `onDownload` for generated files). */
+  href?: string;
   label: string;
   /** Suggested filename for Save As (optional) */
   download?: string;
+  /** Client-generated download (e.g. canvas composite). When set, footer uses a button instead of `<a href>`. */
+  onDownload?: () => void | Promise<void>;
 };
 
 interface ImageViewerModalProps {
@@ -316,22 +319,47 @@ function ImageViewerModal({ isOpen, onClose, images, currentIndex, onNavigate, f
               download 2d angles (png)
             </p>
             <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-              {footerDownloads.map((d) => (
-                <a
-                  key={d.href + d.label}
-                  href={d.href}
-                  download={d.download}
-                  style={{
-                    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                    fontSize: '10px',
-                    color: '#EB1C24',
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '2px',
-                  }}
-                >
-                  {d.label}
-                </a>
-              ))}
+              {footerDownloads.map((d) =>
+                d.onDownload ? (
+                  <button
+                    key={d.label}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      void d.onDownload?.();
+                    }}
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '10px',
+                      color: '#EB1C24',
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '2px',
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {d.label}
+                  </button>
+                ) : (
+                  <a
+                    key={(d.href || '') + d.label}
+                    href={d.href}
+                    download={d.download}
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '10px',
+                      color: '#EB1C24',
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '2px',
+                    }}
+                  >
+                    {d.label}
+                  </a>
+                )
+              )}
             </div>
           </div>
         )}

@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — NOIR product page: 2D angle downloads = composite PNG (mannequin + leaf brick), not 3D `/assets/NOIR/noir *.png`
+
+**Context (this chat):** User reported **“DOWNLOAD 2D ANGLES (PNG)”** under the enlarged 2D images still downloaded **3D** assets instead of **one flattened image**: **2D mannequin + leaf brick** like the on-screen 2D hero.
+
+**Decisions / outcomes:** Hero **2D** uses **`/assets/natural {front|left|right}.png`** over **`/assets/leaf-brick-resize.png`**, but download links pointed to **`/assets/NOIR/noir%20{left|front|right}.png`** (3D product-shot filenames). **Fix:** **`downloadCompositeLeafBrickPng`** in **`src/utils/compositeLeafBrickMannequinPng.ts`** — canvas **cover** brick, draw mannequin centered (400×580 export). **`NOIR_2D_VIEWER_DOWNLOADS`** and the founder row under product shots use **buttons** that trigger download (not static `<a href>`). **`ImageViewerDownloadLink`** supports optional **`onDownload`**; **`ImageViewerModal`** renders a **button** when `onDownload` is set.
+
+**Changes:** **`src/utils/compositeLeafBrickMannequinPng.ts`**, **`src/components/ImageViewerModal.tsx`**, **`src/pages/straight/noir/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW sub-page live NOIR thumbs: contain + transparent frame (no crop / no gray bars)
 
 **Context (this chat):** User reported **three thumbnails cut off** inside the border on BAW sub-pages again.

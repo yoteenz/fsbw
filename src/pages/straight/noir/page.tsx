@@ -33,6 +33,7 @@ import {
 } from '../../../utils/marbleStripStyles';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
+import { downloadCompositeLeafBrickPng } from '../../../utils/compositeLeafBrickMannequinPng';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 import {
@@ -52,17 +53,19 @@ interface DensityOption {
   image: string;
 }
 
-/** 2D NOIR mannequin PNGs (gray brick) — same for under-carousel links and enlarge modal. */
-const NOIR_2D_ANGLE_DOWNLOAD_ROWS: { href: string; label: string; download: string }[] = [
-  { href: '/assets/NOIR/noir%20left.png', label: 'LEFT (L)', download: 'noir-left.png' },
-  { href: '/assets/NOIR/noir%20front.png', label: 'FRONT (M)', download: 'noir-front.png' },
-  { href: '/assets/NOIR/noir%20right.png', label: 'RIGHT (R)', download: 'noir-right.png' },
+/**
+ * 2D downloads: composite **natural** mannequin + leaf brick (same stack as hero 2D), not `/assets/NOIR/noir *.png` (3D product shots).
+ */
+const NOIR_2D_COMPOSITE_DOWNLOAD_SPECS: { mannequinSrc: string; label: string; download: string }[] = [
+  { mannequinSrc: '/assets/natural left.png', label: 'LEFT (L)', download: 'noir-2d-left-leaf-brick.png' },
+  { mannequinSrc: '/assets/natural front.png', label: 'FRONT (M)', download: 'noir-2d-front-leaf-brick.png' },
+  { mannequinSrc: '/assets/natural right.png', label: 'RIGHT (R)', download: 'noir-2d-right-leaf-brick.png' },
 ];
 
-const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => ({
-  href,
-  label,
-  download,
+const NOIR_2D_VIEWER_DOWNLOADS: ImageViewerDownloadLink[] = NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map((s) => ({
+  label: s.label,
+  download: s.download,
+  onDownload: () => downloadCompositeLeafBrickPng(s.mannequinSrc, s.download),
 }));
 
 function NoirSelection() {
@@ -2923,21 +2926,25 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 download 2d angles (png)
               </p>
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-                {NOIR_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => (
-                    <a
-                      key={href}
-                      href={href}
-                      download={download}
-                      style={{
-                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                        fontSize: '10px',
-                        color: '#EB1C24',
-                        textDecoration: 'underline',
-                        textUnderlineOffset: '2px',
-                      }}
-                    >
-                      {label}
-                    </a>
+                {NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map(({ mannequinSrc, label, download }) => (
+                  <button
+                    key={mannequinSrc}
+                    type="button"
+                    onClick={() => void downloadCompositeLeafBrickPng(mannequinSrc, download)}
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '10px',
+                      color: '#EB1C24',
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '2px',
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>
