@@ -15473,6 +15473,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW NOIR thumb +15%: enforce in `index.css` (`!important`)
+
+**Context (this chat):** User reported **no visible change** after the prior +15% thumb scale in **`BawNoirWigPreviewFrames`** (inline widths).
+
+**Decisions / outcomes:** Inline styles should have applied; to beat **cached CSS**, **Tailwind**, or other **!important** rules, added **`index.css`** rules on **`.baw-noir-thumb-row`**: frame **83×109** (static) / **83×94** (live row), static thumb **img** **72×97** — all **`!important`**. Keeps parity with **`BAW_NOIR_THUMB_SCALE`**.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW sub-page NOIR live thumbs: brick behind `contain` letterbox (no gray side panels)
 
 **Context (this chat):** User reported **gray panels left/right** on **three thumbnails** on BAW **sub-pages** while **hub** looked fine.
