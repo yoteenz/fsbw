@@ -15,6 +15,7 @@ import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWig
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
+import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
 import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
@@ -275,7 +276,7 @@ function ColorSelection() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // Listen for cart count changes

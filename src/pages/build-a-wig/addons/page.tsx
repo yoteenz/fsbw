@@ -14,6 +14,7 @@ import { useBuildWigPremiumMembershipStepGate } from '../../../hooks/useBuildWig
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
+import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 
 // Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
@@ -120,7 +121,7 @@ export default function AddOnsSelectionPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // Listen for cart count changes

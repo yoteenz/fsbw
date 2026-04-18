@@ -947,7 +947,7 @@ function SignInPage() {
                   <form
                     id="signin-form"
                     method="post"
-                    action="/account"
+                    action="#"
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleSignInSubmit();
@@ -1118,7 +1118,7 @@ function SignInPage() {
             {/* SIGN IN BUTTON - Outside card */}
             <div className="px-0 md:px-0" style={{ marginTop: '2px', marginBottom: '20px' }}>
                 <button
-                  type="submit"
+                  type="button"
                   form="signin-form"
                   className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                   style={{
@@ -1128,6 +1128,7 @@ function SignInPage() {
                     backgroundColor: '#FFFFFF',
                     textTransform: 'uppercase'
                   }}
+                  onClick={() => void handleSignInSubmit()}
                 >
                   SIGN IN
                 </button>

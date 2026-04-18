@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { clearAppAuth } from '../../utils/adminAuth';
+import { useSignedInFromStorage } from '../../hooks/useSignedInFromStorage';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
@@ -2771,16 +2772,7 @@ export default function BuildAWigPage() {
     return 'SHOP';
   });
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        return localStorage.getItem('isSignedIn') === 'true';
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  });
+  const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   // Currency exchange rates (same as CartDropdown)
@@ -4845,52 +4837,6 @@ export default function BuildAWigPage() {
       }
     }
   }, [showMobileMenu, location.pathname]);
-
-  // Check sign-in status on mount and listen for changes
-  useEffect(() => {
-    const checkSignInStatus = () => {
-      try {
-        const signedIn = localStorage.getItem('isSignedIn') === 'true';
-        setIsSignedIn(prev => {
-          // Only update if value has changed to prevent unnecessary re-renders
-          if (prev !== signedIn) {
-            return signedIn;
-          }
-          return prev;
-        });
-      } catch (e) {
-        setIsSignedIn(prev => {
-          if (prev !== false) {
-            return false;
-          }
-          return prev;
-        });
-      }
-    };
-
-    // Skip initial check since useState already reads from localStorage
-    // Only set up listeners for future changes
-
-    // Listen for storage changes (when user signs in/out in another tab)
-    const handleStorageChange = () => {
-      checkSignInStatus();
-    };
-
-    // Listen for sign-in state changes from sign-in page
-    const handleSignInStateChange = () => {
-      checkSignInStatus();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('focus', handleStorageChange);
-    window.addEventListener('signInStateChanged', handleSignInStateChange as EventListener);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
-      window.removeEventListener('signInStateChanged', handleSignInStateChange as EventListener);
-    };
-  }, []);
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);

@@ -15384,3 +15384,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/bawStaticMannequinReferencePaths.ts`**, **`src/pages/admin/meetings/AdminMeetingsHub.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npx tsc --noEmit` passes.
+
+---
+
+## 2026-04-15 — BAW “signed out” UI + sign-in button reliability
+
+**Context (this chat):** User reported **automatic sign-out when visiting Build-a-Wig** and the **sign-in page SIGN IN button not working**.
+
+**Decisions / outcomes:** **Root cause (BAW):** customize/edit **sub-pages** initialized `isSignedIn` with **`useState(false)`** and never synced from **`localStorage`**, so the nav always showed **SIGN IN** after navigation even when the user was still signed in — felt like a forced sign-out. **Fix:** new **`useSignedInFromStorage`** (`src/hooks/useSignedInFromStorage.ts`) reads **`isSignedIn`** on mount and listens to **`signInStateChanged`**, **`storage`**, and **`focus`**. Applied to **`build-a-wig/page.tsx`** (replaced duplicate effect) and all **BAW sub-pages** that had the bug. **Sign-in page:** set form **`action="#"`** (avoid `/account` POST), made the outer **SIGN IN** **`type="button"`** with **`onClick`** calling **`handleSignInSubmit`** so submit works even when `form` association is flaky in some browsers.
+
+**Changes:** **`src/hooks/useSignedInFromStorage.ts`**, **`src/pages/build-a-wig/{page,addons,cap-size,color,density,hairline,lace,length,styling,texture}/page.tsx`**, **`src/pages/sign-in/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` (`tsc --noEmit && vite build`) passes.
