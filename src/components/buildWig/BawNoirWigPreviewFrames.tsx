@@ -12,9 +12,10 @@ const BAW_PRODUCT_HUB_UNITS = [
 ] as const;
 
 /**
- * Main BAW product hub routes — thumbnails show **outer** `.leaf-bg` only (no inner brick + no mannequin `<img>`).
+ * Main BAW product hub routes — thumbnails use **outer** `.leaf-bg` (Readdy art) **plus** the static mannequin `<img>`
+ * (`/assets/` naturals) so the figure stays visible even if `.leaf-bg` stacks incorrectly. Inner CSS brick stays off on hub.
  * Includes **`/build-a-wig/noir/customize`** and **`.../edit`** hub landing pages (not **`.../customize/color`** etc.).
- * Sub-routes keep inner brick + `<img>` and drop `.leaf-bg` (reverse).
+ * Sub-routes: inner brick + `<img>`, no `.leaf-bg` (reverse).
  */
 function isBawProductHubThumbPathname(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
@@ -56,7 +57,7 @@ export function BawNoirWigPreviewHeroThumbs({
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
   const hubThumbsOnlyOuter = isBawProductHubThumbPathname(pathname);
-  /** Hub + static mannequin: outer `.leaf-bg` (Readdy) only — no inner brick `<img>`. Sub-pages: inner brick + `<img>`, no `.leaf-bg`. */
+  /** Hub + static: outer `.leaf-bg` + mannequin `<img>`. Sub-pages: inner brick + `<img>`, no `.leaf-bg`. */
   const thumbOuterLeafBg = !hideBrick && hubThumbsOnlyOuter;
   /** Sub-page + static: white/black selection ring on `.baw-noir-thumb-frame` (was on `.leaf-bg`). */
   const subPageStaticSelectionOnFrame = !hideBrick && !hubThumbsOnlyOuter;
@@ -195,30 +196,28 @@ export function BawNoirWigPreviewHeroThumbs({
                   ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
-                {!hubThumbsOnlyOuter && (
-                  <img
-                    alt={`Thumbnail ${index + 1}`}
-                    width={hideBrick ? 72 : 63}
-                    height={hideBrick ? 82 : 84}
-                    src={view}
-                    className={
-                      hideBrick
-                        ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
-                        : 'absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img'
-                    }
-                    style={
-                      hideBrick
-                        ? ({
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translate(-50%, -50%)',
-                          } as CSSProperties)
-                        : ({
-                            /* Bottom alignment: see `.baw-noir-thumb-static-img` in index.css (replaces vertical-center nudge) */
-                          } as CSSProperties)
-                    }
-                  />
-                )}
+                <img
+                  alt={`Thumbnail ${index + 1}`}
+                  width={hideBrick ? 72 : 63}
+                  height={hideBrick ? 82 : 84}
+                  src={view}
+                  className={
+                    hideBrick
+                      ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
+                      : 'absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img'
+                  }
+                  style={
+                    hideBrick
+                      ? ({
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%, -50%)',
+                        } as CSSProperties)
+                      : ({
+                          /* Bottom alignment: see `.baw-noir-thumb-static-img` in index.css */
+                        } as CSSProperties)
+                  }
+                />
               </div>
             </div>
           </div>

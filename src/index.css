@@ -3058,6 +3058,12 @@ img.natural-front-mobile {
   position: relative;
 }
 
+/* Thumbnail stacks: contain `.leaf-bg` (z-index: -1) so it paints above the page, not behind it */
+.leaf-stack.thumb {
+  isolation: isolate;
+  z-index: 0;
+}
+
 /* ULTIMATE OVERRIDE for natural front mobile image */
 img.natural-front-mobile {
   width: 460px !important;

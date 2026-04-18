@@ -15545,6 +15545,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW hub thumbnails: restore mannequin `<img>` + fix `.leaf-bg` stacking
+
+**Context (this chat):** User reported **mannequins on thumbnails aren’t showing at all** after prior hub alignment work.
+
+**Decisions / outcomes:** Hub mode had **no** mannequin `<img>` (only outer **`.leaf-bg`**). **`.leaf-bg`** uses **`z-index: -1`**, which can paint **behind the page** so both art and figure looked missing. **Fix:** Always render the static **`thumbnail-mannequin-img`** for **non-live** thumbs (hub + sub-pages); hub keeps **transparent** inner frame + **`.leaf-bg`**. **`index.css`:** **`.leaf-stack.thumb { isolation: isolate; z-index: 0; }`** so negative z-index stays inside the thumb. **`CORE.md`** updated (hub = leaf-bg + mannequin img).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — NOIR product page: 2D angle downloads = composite PNG (mannequin + leaf brick), not 3D `/assets/NOIR/noir *.png`
 
 **Context (this chat):** User reported **“DOWNLOAD 2D ANGLES (PNG)”** under the enlarged 2D images still downloaded **3D** assets instead of **one flattened image**: **2D mannequin + leaf brick** like the on-screen 2D hero.
