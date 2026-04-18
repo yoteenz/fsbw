@@ -15432,3 +15432,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`src/utils/founderNoirFalTools.ts`** (comment), **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW sub-page live NOIR thumbs: contain + transparent frame (no crop / no gray bars)
+
+**Context (this chat):** User reported **three thumbnails cut off** inside the border on BAW sub-pages again.
+
+**Decisions / outcomes:** Live NOIR thumbs used **`object-fit: cover`**, which **crops** the asset. Switched **`thumbnail-mannequin-img--live-noir`** to **`object-fit: contain`** + **`center`**. To avoid **gray letterboxing**, set **live** thumb frame **`backgroundColor: transparent`** (was **`#f5f5f5`**) in **`BawNoirWigPreviewFrames.tsx`** when **`hideBrick`**.
+
+**Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

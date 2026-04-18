@@ -165,7 +165,8 @@ export function BawNoirWigPreviewHeroThumbs({
                       ? {
                           overflow: 'hidden',
                           backgroundImage: 'none',
-                          backgroundColor: '#f5f5f5',
+                          /* Transparent: `contain` on live WebPs needs no gray letterbox bars */
+                          backgroundColor: 'transparent',
                           border: selectedView === index ? '3px solid #fff' : undefined,
                           boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                           boxSizing: 'border-box',

@@ -3403,9 +3403,9 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  /* Fill frame (avoids gray letterboxing on #f5f5f5 thumb cells on BAW sub-pages) */
-  object-fit: cover !important;
-  object-position: center top !important;
+  /* Full WebP visible in frame — `cover` cropped edges; frame bg is transparent on live row */
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
@@ -3413,8 +3413,8 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  object-fit: cover !important;
-  object-position: center top !important;
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
@@ -3424,7 +3424,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: keep raster inside the frame border (pair with `object-fit: contain` on thumbs) */
+/* BAW NOIR thumbs: clip to frame; live/static mannequin imgs use `contain` so nothing is cropped */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;
