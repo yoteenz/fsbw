@@ -20,6 +20,7 @@ import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoi
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
+import { resolveWigPreviewLiveColorTripleIfStored } from '../../../utils/wigPreviewLiveStoragePublicUrls';
 import {
   clearBawNoirLiveColorWigViews,
   clearPendingBawNoirLiveColorWigViews,
@@ -722,7 +723,7 @@ function ColorSelection() {
     }
   ];
 
-  /** Load or refresh live NOIR preview when admin lands on color page or changes color. */
+  /** Load or refresh live NOIR preview when founder lands on color page or changes color. Prefer existing Storage objects (same paths as API) to avoid redundant Fal. */
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
@@ -732,27 +733,46 @@ function ColorSelection() {
     setLivePreviewError(null);
     setLivePreviewLoading(true);
     const sel = readBuildWigLivePreviewSelections(pathname);
-    void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
-      .then((res) => {
-        const u = res.publicUrls;
-        if (u.front && u.left && u.right) {
-          const bust = Date.now();
-          const triple: [string, string, string] = [
-            `${u.left}?t=${bust}`,
-            `${u.front}?t=${bust}`,
-            `${u.right}?t=${bust}`,
-          ];
-          setLiveWigViews(triple);
-          persistPendingBawNoirLiveColorWigViews(triple);
-        } else {
+    const payload = { unitKey: 'NOIR' as const, color: selectedColor, ...sel };
+    let cancelled = false;
+    void (async () => {
+      const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
+      if (cancelled) return;
+      if (fromStorage) {
+        setLiveWigViews(fromStorage);
+        persistPendingBawNoirLiveColorWigViews(fromStorage);
+        setLivePreviewLoading(false);
+        return;
+      }
+      void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
+        .then((res) => {
+          if (cancelled) return;
+          const u = res.publicUrls;
+          if (u.front && u.left && u.right) {
+            const bust = Date.now();
+            const triple: [string, string, string] = [
+              `${u.left}?t=${bust}`,
+              `${u.front}?t=${bust}`,
+              `${u.right}?t=${bust}`,
+            ];
+            setLiveWigViews(triple);
+            persistPendingBawNoirLiveColorWigViews(triple);
+          } else {
+            setLiveWigViews(null);
+          }
+        })
+        .catch((e: Error) => {
+          if (cancelled) return;
           setLiveWigViews(null);
-        }
-      })
-      .catch((e: Error) => {
-        setLiveWigViews(null);
-        setLivePreviewError(e?.message || 'Live preview failed');
-      })
-      .finally(() => setLivePreviewLoading(false));
+          setLivePreviewError(e?.message || 'Live preview failed');
+        })
+        .finally(() => {
+          if (!cancelled) setLivePreviewLoading(false);
+        });
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [founderNoirFalRegenUi, location.pathname, selectedColor]);
 
   const handleColorSelect = (colorId: string) => {

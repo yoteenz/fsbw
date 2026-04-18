@@ -15435,6 +15435,20 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Full conversation: why NOIR color hits Fal vs Storage + client-side skip when live triples exist
+
+**Context (this chat):** User asked **why all color selections regenerate instead of loading pre-generated images from Supabase Storage**.
+
+**Topics / explanation:** **Batch pregeneration** uploads to **`wig-preview/{promptVersion}/NOIR/{manifestHash}.webp`** (one object per manifest row from **`scripts/wig-preview/selectionStoragePath.mjs`**). The **live NOIR color** API stores **three** WebPs per selection under **`wig-preview-live/{promptVersion}/NOIR/{colorTierHash}/left|front|right.webp`**, where **`colorTierHash`** uses **`wigPreviewManifestHashLiveColorTier`** (same as full hash but **`styling` forced to `NONE`** so color files are stable). Objects under the batch prefix **are not** read by **`live-noir-color`**, which only checks the **live** paths; if those files are missing, it runs **Fal** and uploads. So “pregenerated” batch assets **do not** stop regeneration until the **live** triple exists for that hash.
+
+**Decisions / outcomes:** Documented the two-path distinction in **`motherboard/CORE.md`**. Implemented **`resolveWigPreviewLiveColorTripleIfStored`** on the **founder** NOIR color page: compute the same **`colorTierHash`** in the browser (Web Crypto SHA-256, first 32 hex chars, canonical JSON aligned with server), build public Storage URLs from **`VITE_SUPABASE_URL`** and bucket (**`live-preview`** default, optional **`VITE_WIG_PREVIEW_STORAGE_BUCKET`**), prompt version (**`v1`** default, optional **`VITE_WIG_PREVIEW_PROMPT_VERSION`**), **HEAD** then **GET** if needed; if all three angles return **200**, set **`liveWigViews`** from those URLs and **do not** call **`POST /api/wig-preview/live-noir-color`** (avoids redundant server round-trips when Storage already has the triple; Fal still skipped on server when files exist).
+
+**Changes:** **`src/utils/wigPreviewLiveColorTierHash.ts`**, **`src/utils/wigPreviewLiveStoragePublicUrls.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW sub-page live NOIR thumbs: contain + transparent frame (no crop / no gray bars)
 
 **Context (this chat):** User reported **three thumbnails cut off** inside the border on BAW sub-pages again.
