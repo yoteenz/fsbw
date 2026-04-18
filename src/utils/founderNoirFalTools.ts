@@ -5,7 +5,7 @@
 import { isAdminFounderAccount, isSignedIn } from './adminAuth';
 import { getCurrentUserEmailFromStorage } from './perUserStorage';
 
-/** Synchronous guard for render — use with async `canUseFounderNoirFalTools` state so non-founder signed-in users never see regen copy. */
+/** Synchronous guard: regen buttons / Fal-only banners. Live WebPs from storage use `useBawSubpageLiveNoirCompositeWigViews` for everyone. */
 export function isFounderNoirFalRegenUiVisible(): boolean {
   if (!isSignedIn()) return false;
   const email = getCurrentUserEmailFromStorage();

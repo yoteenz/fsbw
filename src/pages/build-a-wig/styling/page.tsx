@@ -13,7 +13,7 @@ import {
   postLiveWigAfterColorStyling,
   postLiveWigAfterColorStylingRegenerateAngle,
 } from '../../../utils/api';
-import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
+import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
@@ -153,8 +153,8 @@ export default function StylingSelectionPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
 
-  /** Founder only: Fal regen UI + calls for after-color styling. Everyone sees saved WebPs via `liveNoirCompositeWigViews`. */
-  const [founderNoirFalStylingTools, setFounderNoirFalStylingTools] = useState(false);
+  /** Founder only: Fal regen UI + API calls for after-color styling. Everyone sees saved WebPs via `liveNoirCompositeWigViews`. */
+  const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
   const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
   const [liveBangsWigViews, setLiveBangsWigViews] = useState<[string, string, string] | null>(null);
   const [liveStylingLoading, setLiveStylingLoading] = useState(false);
@@ -201,7 +201,7 @@ export default function StylingSelectionPage() {
     const noirStyling =
       p.includes('/build-a-wig/noir/edit/styling') || p.includes('/build-a-wig/noir/customize/styling');
     if (!noirStyling) {
-      setFounderNoirFalStylingTools(false);
+      setFounderNoirFalRegenUi(false);
       setLiveStylingWigViews(null);
       setLiveBangsWigViews(null);
       setLiveStylingError(null);
@@ -210,12 +210,10 @@ export default function StylingSelectionPage() {
       return;
     }
     let cancelled = false;
-    const refreshFounderTools = async () => {
-      const ok = await canUseFounderNoirFalTools();
-      if (!cancelled) setFounderNoirFalStylingTools(ok);
-      if (!ok) {
-        setLiveStylingError(null);
-      } else {
+    const refreshFounderTools = () => {
+      const ok = isFounderNoirFalRegenUiVisible();
+      if (!cancelled) setFounderNoirFalRegenUi(ok);
+      if (ok) {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
         const part: 'MIDDLE' | 'LEFT' | 'RIGHT' =
           rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
@@ -227,7 +225,7 @@ export default function StylingSelectionPage() {
         else setLiveBangsWigViews(null);
       }
     };
-    void refreshFounderTools();
+    refreshFounderTools();
     const onAuth = () => {
       void refreshFounderTools();
     };
@@ -336,7 +334,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      founderNoirFalStylingTools &&
+      founderNoirFalRegenUi &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasLayersLiveStyling) {
@@ -393,7 +391,7 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveStylingLoading(false));
   }, [
-    founderNoirFalStylingTools,
+    founderNoirFalRegenUi,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
@@ -403,7 +401,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      founderNoirFalStylingTools &&
+      founderNoirFalRegenUi &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasBangsOnlyLive) {
@@ -456,26 +454,24 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveBangsLoading(false));
   }, [
-    founderNoirFalStylingTools,
+    founderNoirFalRegenUi,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
     hasBangsOnlyLive,
   ]);
 
-  const founderFalUi = founderNoirFalStylingTools && isFounderNoirFalRegenUiVisible();
-
   const wigViews =
-    founderFalUi && hasLayersLiveStyling && liveStylingWigViews
+    founderNoirFalRegenUi && hasLayersLiveStyling && liveStylingWigViews
       ? liveStylingWigViews
-      : founderFalUi && hasBangsOnlyLive && liveBangsWigViews
+      : founderNoirFalRegenUi && hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
         : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
           ? liveNoirCompositeWigViews
           : baseWigViews;
 
   const showNoirFounderFalHint =
-    founderFalUi && location.pathname.includes('/build-a-wig/noir/');
+    isFounderNoirFalRegenUiVisible() && location.pathname.includes('/build-a-wig/noir/');
   const showNoirLiveStylingRegenControls =
     showNoirFounderFalHint && (hasLayersLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;

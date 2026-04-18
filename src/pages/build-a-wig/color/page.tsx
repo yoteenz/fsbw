@@ -18,7 +18,7 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
-import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
+import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
   clearBawNoirLiveColorWigViews,
@@ -253,8 +253,8 @@ function ColorSelection() {
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
 
-  /** Founder only: Fal regen UI + calls to `/api/wig-preview/live-noir-color`. Everyone sees committed live WebPs via `liveNoirCompositeCommittedViews`. */
-  const [founderNoirFalRegenTools, setFounderNoirFalRegenTools] = useState(false);
+  /** Founder only: Fal regen UI + `/api/wig-preview/live-noir-color` fetches. All signed-in users see stored WebPs via `liveNoirCompositeCommittedViews` + hook. */
+  const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
   const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
@@ -346,19 +346,15 @@ function ColorSelection() {
     const noirColor =
       p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
     if (!noirColor) {
-      setFounderNoirFalRegenTools(false);
+      setFounderNoirFalRegenUi(false);
       setLiveWigViews(null);
       setLivePreviewError(null);
       return;
     }
     let cancelled = false;
-    const refreshFounderTools = async () => {
-      const ok = await canUseFounderNoirFalTools();
-      if (!cancelled) setFounderNoirFalRegenTools(ok);
-      if (!ok) {
-        setLiveWigViews(null);
-        setLivePreviewError(null);
-      }
+    const refreshFounderTools = () => {
+      const ok = isFounderNoirFalRegenUiVisible();
+      if (!cancelled) setFounderNoirFalRegenUi(ok);
     };
     void refreshFounderTools();
     const onAuth = () => {
@@ -380,8 +376,7 @@ function ColorSelection() {
     if (!noirColor) return;
     let cancelled = false;
     const loadCached = async () => {
-      const ok = await canUseFounderNoirFalTools();
-      if (cancelled || !ok) return;
+      if (cancelled || !isFounderNoirFalRegenUiVisible()) return;
       const cached = readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
       if (cached) setLiveWigViews(cached);
     };
@@ -559,7 +554,7 @@ function ColorSelection() {
   const baseWigViews = getWigViews();
   const liveNoirCompositeCommittedViews = useBawSubpageLiveNoirCompositeWigViews();
   const wigViews =
-    founderNoirFalRegenTools && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
+    founderNoirFalRegenUi && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
       ? liveWigViews
       : liveNoirCompositeCommittedViews && location.pathname.includes('/build-a-wig/noir/')
         ? liveNoirCompositeCommittedViews
@@ -731,7 +726,7 @@ function ColorSelection() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      founderNoirFalRegenTools &&
+      founderNoirFalRegenUi &&
       (pathname.includes('/build-a-wig/noir/edit/color') || pathname.includes('/build-a-wig/noir/customize/color'));
     if (!noir) return;
     setLivePreviewError(null);
@@ -758,7 +753,7 @@ function ColorSelection() {
         setLivePreviewError(e?.message || 'Live preview failed');
       })
       .finally(() => setLivePreviewLoading(false));
-  }, [founderNoirFalRegenTools, location.pathname, selectedColor]);
+  }, [founderNoirFalRegenUi, location.pathname, selectedColor]);
 
   const handleColorSelect = (colorId: string) => {
     console.log('Color page - selecting color:', colorId);
@@ -1388,9 +1383,7 @@ function ColorSelection() {
               <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-              {founderNoirFalRegenTools &&
-                isFounderNoirFalRegenUiVisible() &&
-                location.pathname.includes('/build-a-wig/noir/') && (
+              {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
                   style={{
@@ -1496,9 +1489,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
-                      ...(founderNoirFalRegenTools && isFounderNoirFalRegenUiVisible()
-                        ? { pointerEvents: 'none' as const }
-                        : {}),
+                      ...(founderNoirFalRegenUi ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

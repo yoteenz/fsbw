@@ -15420,3 +15420,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR BAW: premium non-founder sees stored WebPs; regen UI founder-only
+
+**Context (this chat):** User asked that **premium non-admin founder** accounts still see **live previews from Supabase storage** (Fal-generated) when switching color / styling / hairline, but **must not** see **regen** text (regen color L/M/R etc.) — **only admin founder** can trigger new Fal generations.
+
+**Decisions / outcomes:** **`canUseFounderNoirFalTools()`** had been tied to founder visibility and **gated** `liveWigViews` loading, Fal `useEffect` fetches, and `wigViews` resolution — so non-founder premium users fell back to **static PNGs** instead of **`useBawSubpageLiveNoirCompositeWigViews`**. **Fix:** drive **Fal API + founder state** (`founderNoirFalRegenUi`) from **`isFounderNoirFalRegenUiVisible()`** only; **wigViews** prefers **live composite** for **all** users on NOIR sub-pages when storage has triples. **Styling:** same split — **`founderNoirFalRegenUi`** for Fal fetches only; **`showNoirFounderFalHint`** uses **`isFounderNoirFalRegenUiVisible()`** so hints/regen rows hide for non-founder. **Hairline:** removed async founder gate; hint uses **`isFounderNoirFalRegenUiVisible()`** only.
+
+**Changes:** **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/styling/page.tsx`**, **`src/pages/build-a-wig/hairline/page.tsx`**, **`src/utils/founderNoirFalTools.ts`** (comment), **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

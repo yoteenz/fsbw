@@ -8,7 +8,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { clearAppAuth } from '../../../utils/adminAuth';
-import { canUseFounderNoirFalTools, isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
+import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { getBuildAWigFlowBasePath, isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
@@ -73,8 +73,6 @@ function HairlineSelection() {
     return stored ? [stored] : ['NATURAL']; // Default to NATURAL as single selection
   });
   const [selectedView, setSelectedView] = useState(1); // Changed from 0 to 1 (middle image)
-  const [founderNoirHairlineFalHint, setFounderNoirHairlineFalHint] = useState(false);
-
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
@@ -115,32 +113,6 @@ function HairlineSelection() {
       window.removeEventListener('focus', handleStorageChange);
     };
   }, []);
-
-  useEffect(() => {
-    const p = location.pathname;
-    const noirHairline =
-      p.includes('/build-a-wig/noir/edit/hairline') || p.includes('/build-a-wig/noir/customize/hairline');
-    if (!noirHairline) {
-      setFounderNoirHairlineFalHint(false);
-      return;
-    }
-    let cancelled = false;
-    const refresh = async () => {
-      const ok = await canUseFounderNoirFalTools();
-      if (!cancelled) setFounderNoirHairlineFalHint(ok);
-    };
-    void refresh();
-    const onAuth = () => {
-      void refresh();
-    };
-    window.addEventListener('signInStateChanged', onAuth);
-    window.addEventListener('customStorageChange', onAuth);
-    return () => {
-      cancelled = true;
-      window.removeEventListener('signInStateChanged', onAuth);
-      window.removeEventListener('customStorageChange', onAuth);
-    };
-  }, [location.pathname]);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -936,7 +908,7 @@ function HairlineSelection() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {founderNoirHairlineFalHint && isFounderNoirFalRegenUiVisible() && (
+            {isFounderNoirFalRegenUiVisible() && (
               <p
                 className="text-center mb-2 px-2"
                 style={{
