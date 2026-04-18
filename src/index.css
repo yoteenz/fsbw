@@ -3424,7 +3424,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: clip to frame; live/static mannequin imgs use `contain` so nothing is cropped */
+/* BAW NOIR thumbs: clip to frame; live uses `contain` — live row sets leaf-brick bg on frame so letterbox gutters aren’t flat gray */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;

@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW sub-page NOIR live thumbs: brick behind `contain` letterbox (no gray side panels)
+
+**Context (this chat):** User reported **gray panels left/right** on **three thumbnails** on BAW **sub-pages** while **hub** looked fine.
+
+**Decisions / outcomes:** Sub-page **live** WebPs use **`object-fit: contain`** in a fixed frame with **transparent** fill — aspect mismatch shows **page background** (gray) as side gutters. Hub uses **outer `.leaf-bg`** + transparent inner. **Fix:** For **`hideBrick`** thumb frames in **`BawNoirWigPreviewFrames.tsx`**, set **`backgroundImage`** to **`leaf-brick-resize.png`** (cover) behind the image so gutters match brick, not gray. Does **not** re-enable duplicate brick on the raster (image still paints on top).
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`** (comment), **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — NOIR product page: 2D angle downloads = composite PNG (mannequin + leaf brick), not 3D `/assets/NOIR/noir *.png`
 
 **Context (this chat):** User reported **“DOWNLOAD 2D ANGLES (PNG)”** under the enlarged 2D images still downloaded **3D** assets instead of **one flattened image**: **2D mannequin + leaf brick** like the on-screen 2D hero.
