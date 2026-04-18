@@ -3403,8 +3403,9 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  object-fit: cover !important;
-  object-position: center top !important;
+  /* `cover` cropped mannequins inside the thumb frame; `contain` keeps the full asset inside the border */
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* `.thumbnail-mannequin-img` below sets top/transform with !important — must re-center live NOIR thumbs after that block loads. */
@@ -3412,8 +3413,8 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  object-fit: cover !important;
-  object-position: center top !important;
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
@@ -3423,14 +3424,14 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: clip live WebPs; static sub-page brick+PNG uses visible so mannequin isn’t cropped */
+/* BAW NOIR thumbs: keep raster inside the frame border (pair with `object-fit: contain` on thumbs) */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;
 }
 
 .leaf-stack.thumb .baw-noir-thumb-frame.baw-noir-thumb-frame--static-sub {
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

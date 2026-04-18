@@ -15396,3 +15396,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/hooks/useSignedInFromStorage.ts`**, **`src/pages/build-a-wig/{page,addons,cap-size,color,density,hairline,lace,length,styling,texture}/page.tsx`**, **`src/pages/sign-in/page.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` (`tsc --noEmit && vite build`) passes.
+
+---
+
+## 2026-04-15 — BAW sub-page NOIR thumbnails: stop cropping inside frame
+
+**Context (this chat):** User said the **three thumbnail images on BAW sub-pages** were **cut off inside their container/border**.
+
+**Decisions / outcomes:** Live NOIR thumbs used **`object-fit: cover`** on **`thumbnail-mannequin-img--live-noir`**, which **crops** the asset to fill the box. Switched to **`object-fit: contain`** with **`object-position: center`** so the full mannequin stays visible inside the frame. Sub-page static frames had **`baw-noir-thumb-frame--static-sub { overflow: visible }`**, which let imagery spill past the border; set **`overflow: hidden`** there too so content stays inside the bordered cell.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
