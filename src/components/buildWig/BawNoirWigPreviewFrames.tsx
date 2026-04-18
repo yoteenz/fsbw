@@ -145,7 +145,9 @@ export function BawNoirWigPreviewHeroThumbs({
               />
             )}
             <div
-              className={`border-transparent cursor-pointer ${hideBrick ? 'p-0' : 'p-1'}`}
+              className={`border-transparent cursor-pointer ${
+                hideBrick ? 'p-0' : hubThumbsOnlyOuter ? 'p-0' : 'p-1'
+              }`}
               onClick={() => onSelectView(index)}
             >
               <div

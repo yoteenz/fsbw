@@ -15557,6 +15557,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW hub thumbnails: `p-0` wrapper so mannequin aligns with `.leaf-bg`
+
+**Context (this chat):** User reported hub thumb **mannequins** sat **below** the leaf brick / container border instead of aligning with the **bottom** of the brick art.
+
+**Decisions / outcomes:** The clickable wrapper around **`.baw-noir-thumb-frame`** used **`p-1`** (4px) on all **static** thumbs. **`.thumb .leaf-bg`** is **95px** tall and fills the **`.leaf-stack.thumb`** box; the **inner frame** was **95px** but **offset 4px down** by padding, so **`bottom: 0`** on the mannequin lined up with the **frame** bottom **below** the **`.leaf-bg`** bottom. **Fix:** On **hub** routes (`hubThumbsOnlyOuter`), use **`p-0`** on that wrapper (sub-pages keep **`p-1`**). **`CORE.md`** note on hub **`p-0`**.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — NOIR product page: 2D angle downloads = composite PNG (mannequin + leaf brick), not 3D `/assets/NOIR/noir *.png`
 
 **Context (this chat):** User reported **“DOWNLOAD 2D ANGLES (PNG)”** under the enlarged 2D images still downloaded **3D** assets instead of **one flattened image**: **2D mannequin + leaf brick** like the on-screen 2D hero.
