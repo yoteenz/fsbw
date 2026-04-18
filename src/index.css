@@ -3403,7 +3403,7 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  /* Full WebP visible in frame — `cover` cropped edges; frame bg is transparent on live row */
+  /* Full WebP visible in frame — `cover` cropped edges; live row uses white fill behind `contain` (no second brick layer) */
   object-fit: contain !important;
   object-position: center center !important;
 }
@@ -3424,7 +3424,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: clip to frame; live uses `contain` — live row sets leaf-brick bg on frame so letterbox gutters aren’t flat gray */
+/* BAW NOIR thumbs: clip to frame; live uses `contain`; frame bg white — live raster already has brick (no duplicate leaf-brick underlay) */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;

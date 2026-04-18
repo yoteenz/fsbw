@@ -164,12 +164,9 @@ export function BawNoirWigPreviewHeroThumbs({
                     : hideBrick
                       ? {
                           overflow: 'hidden',
-                          /* Same brick as static hero: fills `contain` letterbox gutters so gaps aren’t flat gray */
-                          backgroundImage: `url('/assets/leaf-brick-resize.png')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundColor: 'transparent',
+                          /* Live WebPs already include brick — do NOT add leaf-brick here or it doubles/misaligns vs `contain` letterboxing */
+                          backgroundImage: 'none',
+                          backgroundColor: '#ffffff',
                           border: selectedView === index ? '3px solid #fff' : undefined,
                           boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                           boxSizing: 'border-box',

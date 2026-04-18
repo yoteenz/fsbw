@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW live NOIR thumbs: remove doubled leaf-brick underlay (white letterbox)
+
+**Context (this chat):** User said **gray panels** were addressed but it looked like **incorrectly doubled background** / **wider container** behind the three thumbnails on **BAW sub-pages**.
+
+**Decisions / outcomes:** For **live** previews (`hideBrick`), the WebP **already includes** the leaf-brick scene. The prior fix added **`leaf-brick-resize.png`** as a **second** CSS layer under **`object-fit: contain`**, which **misaligned** with the raster’s brick and read as **double brick / widened bg**. **Fix:** remove **`backgroundImage`** for live thumb frames; use **`backgroundColor: #ffffff`** only for **`contain`** gutters (no duplicate texture). Updated **`index.css`** comments.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — Revert BAW NOIR thumb +15% (restore 72×95 / 72×82 / 12px gap)
 
 **Context (this chat):** User asked to **undo** the **+15%** thumbnail size change and **restore original sizes**.
