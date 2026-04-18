@@ -157,7 +157,8 @@ export function BawNoirWigPreviewHeroThumbs({
                     ? {
                         overflow: 'hidden',
                         backgroundImage: 'none',
-                        backgroundColor: '#f5f5f5',
+                        /* Transparent so the outer `.leaf-bg` (hub thumb art) is visible — opaque gray hid it */
+                        backgroundColor: 'transparent',
                         boxSizing: 'border-box',
                       }
                     : hideBrick

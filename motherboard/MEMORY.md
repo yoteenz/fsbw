@@ -15408,3 +15408,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW hub thumbs + sub-page gray side panels (follow-up)
+
+**Context (this chat):** User asked to **remove gray panels left/right of the three thumbnails on BAW sub-pages** and reported **BAW hub thumbnails broken**.
+
+**Decisions / outcomes:** **`object-fit: contain`** on live NOIR thumb images plus **`#f5f5f5`** frame fill caused **letterboxing** (gray bars). Restored **`object-fit: cover`** + **`center top`** for **`thumbnail-mannequin-img--live-noir`**. On **product hub** routes, inner **`.baw-noir-thumb-frame`** used opaque **`#f5f5f5`** while thumbnails are **only** the outer **`.leaf-bg`** — the gray **covered** the art; set inner frame **`backgroundColor: transparent`** in **`BawNoirWigPreviewFrames.tsx`** so **`.leaf-bg`** shows through.
+
+**Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
