@@ -31,11 +31,22 @@ type Props = {
   thumbRowClassName?: string;
 };
 
+/** +15% vs base (72×95 static frame, 72×82 live frame, static img 63×84). */
+const BAW_NOIR_THUMB_SCALE = 1.15;
+const THUMB_FRAME_W = `${Math.round(72 * BAW_NOIR_THUMB_SCALE)}px`;
+const THUMB_FRAME_H_STATIC = `${Math.round(95 * BAW_NOIR_THUMB_SCALE)}px`;
+const THUMB_FRAME_H_LIVE = `${Math.round(82 * BAW_NOIR_THUMB_SCALE)}px`;
+const THUMB_IMG_STATIC_W = Math.round(63 * BAW_NOIR_THUMB_SCALE);
+const THUMB_IMG_STATIC_H = Math.round(84 * BAW_NOIR_THUMB_SCALE);
+const THUMB_IMG_LIVE_W = Math.round(72 * BAW_NOIR_THUMB_SCALE);
+const THUMB_IMG_LIVE_H = Math.round(82 * BAW_NOIR_THUMB_SCALE);
+const THUMB_ROW_GAP_LIVE = `${Math.round(12 * BAW_NOIR_THUMB_SCALE)}px`;
+
 /**
  * Hero + three thumbnails for BAW hub + sub-pages.
  * - Shipped **`/assets/`** naturals: one brick layer (`leaf-brick-resize` + optional `.leaf-bg`).
  * - **Live** previews (anything not shipped `/assets/`): **no** extra brick — raster already has brick.
- * Matches **`d902e65`** layout: `hideBrick` when any angle is live → **12px** thumb gap, **82×72** live thumb frames, **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
+ * Thumb sizes scaled together (`BAW_NOIR_THUMB_SCALE`); **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -124,8 +135,8 @@ export function BawNoirWigPreviewHeroThumbs({
         }`}
         style={{
           transform: 'translateY(10px)',
-          gap: hideBrick ? '12px' : '2px',
-          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
+          gap: hideBrick ? THUMB_ROW_GAP_LIVE : '2px',
+          ...(hideBrick ? { columnGap: THUMB_ROW_GAP_LIVE, rowGap: THUMB_ROW_GAP_LIVE } : {}),
         }}
       >
         {triple.map((view, index) => (
@@ -146,8 +157,8 @@ export function BawNoirWigPreviewHeroThumbs({
                 }`}
                 data-baw-thumb-index={index}
                 style={{
-                  width: '72px',
-                  height: hideBrick ? '82px' : '95px',
+                  width: THUMB_FRAME_W,
+                  height: hideBrick ? THUMB_FRAME_H_LIVE : THUMB_FRAME_H_STATIC,
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -194,8 +205,8 @@ export function BawNoirWigPreviewHeroThumbs({
                 {!hubThumbsOnlyOuter && (
                   <img
                     alt={`Thumbnail ${index + 1}`}
-                    width={hideBrick ? 72 : 63}
-                    height={hideBrick ? 82 : 84}
+                    width={hideBrick ? THUMB_IMG_LIVE_W : THUMB_IMG_STATIC_W}
+                    height={hideBrick ? THUMB_IMG_LIVE_H : THUMB_IMG_STATIC_H}
                     src={view}
                     className={
                       hideBrick

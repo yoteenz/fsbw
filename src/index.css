@@ -3263,8 +3263,9 @@ img.natural-front-mobile {
 }
 
 .thumb .leaf-bg {
-  width: 72px;
-  height: 95px;
+  /* Match BAW NOIR thumb frame (+15% vs 72×95) — see BawNoirWigPreviewFrames BAW_NOIR_THUMB_SCALE */
+  width: 83px;
+  height: 109px;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */
@@ -3341,7 +3342,7 @@ img.natural-front-mobile {
 }
 
 .thumb .leaf-bg[style*="height"] {
-  height: var(--leaf-height, 84px) !important;
+  height: var(--leaf-height, 97px) !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

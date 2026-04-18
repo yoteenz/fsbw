@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW NOIR thumbnails +15% (hub + sub-pages)
+
+**Context (this chat):** User asked to **increase the size of the 3 thumbnail images** on the **BAW hub and all sub-pages** by **15%**.
+
+**Decisions / outcomes:** Central scaling in **`BawNoirWigPreviewFrames.tsx`** via **`BAW_NOIR_THUMB_SCALE = 1.15`**: frame **83×109** (static), **83×94** (live), img hints **72×97** / **94** (static) and **83×94** (live); live row **gap** **14px**. **`index.css`** **`.thumb .leaf-bg`** default **83×109** and **`--leaf-height`** fallback **97px** to match hub outer art.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW sub-page NOIR live thumbs: brick behind `contain` letterbox (no gray side panels)
 
 **Context (this chat):** User reported **gray panels left/right** on **three thumbnails** on BAW **sub-pages** while **hub** looked fine.
