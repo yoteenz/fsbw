@@ -2,21 +2,28 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { hideDuplicateBrickForNoirWigViews } from '../../utils/bawNoirLiveWigViewDisplay';
 
+const BAW_PRODUCT_HUB_UNITS = [
+  'noir',
+  'blanco',
+  'soft-wave',
+  'beach-wave',
+  'soft-curl',
+  'ocean-curl',
+] as const;
+
 /**
- * Main BAW product hub routes only — thumbnails show **outer** `.leaf-bg` only (no inner brick bg + no mannequin `<img>`).
+ * Main BAW product hub routes — thumbnails show **outer** `.leaf-bg` only (no inner brick + no mannequin `<img>`).
+ * Includes **`/build-a-wig/noir/customize`** and **`.../edit`** hub landing pages (not **`.../customize/color`** etc.).
  * Sub-routes keep inner brick + `<img>` and drop `.leaf-bg` (reverse).
  */
 function isBawProductHubThumbPathname(pathname: string): boolean {
   const p = pathname.replace(/\/$/, '') || '/';
   if (p === '/build-a-wig') return true;
-  return (
-    p === '/build-a-wig/noir' ||
-    p === '/build-a-wig/blanco' ||
-    p === '/build-a-wig/soft-wave' ||
-    p === '/build-a-wig/beach-wave' ||
-    p === '/build-a-wig/soft-curl' ||
-    p === '/build-a-wig/ocean-curl'
-  );
+  for (const u of BAW_PRODUCT_HUB_UNITS) {
+    const base = `/build-a-wig/${u}`;
+    if (p === base || p === `${base}/customize` || p === `${base}/edit`) return true;
+  }
+  return false;
 }
 
 type Props = {
@@ -197,7 +204,7 @@ export function BawNoirWigPreviewHeroThumbs({
                     className={
                       hideBrick
                         ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
-                        : 'absolute left-1/2 -translate-x-1/2 -translate-y-1/2 thumbnail-mannequin-img'
+                        : 'absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img'
                     }
                     style={
                       hideBrick
@@ -207,9 +214,7 @@ export function BawNoirWigPreviewHeroThumbs({
                             transform: 'translate(-50%, -50%)',
                           } as CSSProperties)
                         : ({
-                            '--thumb-top': 'calc(50% - 6.1px + 7.2px)',
-                            top: 'calc(50% - 6.1px + 7.2px)',
-                            ...(index === 0 && { left: 'calc(50% - 6px)' }),
+                            /* Bottom alignment: see `.baw-noir-thumb-static-img` in index.css (replaces vertical-center nudge) */
                           } as CSSProperties)
                     }
                   />

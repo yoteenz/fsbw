@@ -15533,6 +15533,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW hub thumbnails: bottom-align mannequin + treat `/noir/customize` as hub
+
+**Context (this chat):** User reported the **mannequin** on the **three BAW hub thumbnails** looked **floating above** the **leaf brick** behind it; **bottom edges** should align.
+
+**Decisions / outcomes:** (1) **`isBawProductHubThumbPathname`** in **`BawNoirWigPreviewFrames.tsx`** now treats **`/build-a-wig/{unit}/customize`** and **`.../edit`** as **product hub** paths (same outer **`.leaf-bg`**-only thumb mode as **`/build-a-wig/noir`**) for noir/blanco/soft-wave/beach-wave/soft-curl/ocean-curl — so the customize **landing** page no longer used inner brick + vertically centered `<img>` by mistake. (2) For **static** inner-brick thumbs (sub-pages / any path that still renders the mannequin `<img>`), added **`baw-noir-thumb-static-img`** and **`index.css`** rules: **`bottom: 0`**, **`translateX(-50%)` only**, **`object-position: bottom center`** — replaces the old **50% − translateY(−50%)** centering that made the figure sit high. **`CORE.md`** updated to document hub path list + bottom anchor.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — NOIR product page: 2D angle downloads = composite PNG (mannequin + leaf brick), not 3D `/assets/NOIR/noir *.png`
 
 **Context (this chat):** User reported **“DOWNLOAD 2D ANGLES (PNG)”** under the enlarged 2D images still downloaded **3D** assets instead of **one flattened image**: **2D mannequin + leaf brick** like the on-screen 2D hero.
