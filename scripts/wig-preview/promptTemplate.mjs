@@ -5,6 +5,14 @@
  * 2) **BAW (Build-a-wig)** — (a) **manual fal** base hero: `BAW_BASE_MANNEQUIN_PROMPT_*` below; (b) **bulk script**: `buildWigPreviewPrompt` at the bottom.
  */
 
+/** Keep in sync with `api/_lib/bawFalEditFidelityPrompt.ts` — reduces plastic/waxy drift on edit passes. */
+export const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
+  'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
+  'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
+  'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
+  'Keep the **FRONTAL SLAYER** chest logo **sharp**, same **size** and **placement**, clean edges — **no** smeared, redrawn, or re-typed lettering.',
+].join(' ');
+
 // =============================================================================
 // WIG CONSULT — Step 1 (1 ref only) + Steps 2–3. Not BAW.
 // Step 1 attachment: **gray brick mannequin only** (no logo file, no separate backdrop file). fal **9:16** in playground unless you match Auto + 2K like Step 2.
@@ -37,9 +45,10 @@ export function buildWigConsultChainEditPrompt(fromDescription, toDescription) {
   const toD = String(toDescription || '').trim() || 'target state';
   return [
     'Recreate this exact mannequin image, but change the ' + fromD + ' to ' + toD + '.',
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
+    'Do not change anything else about the photo beyond the stated edit.',
   ].join(' ');
 }
 
@@ -119,9 +128,10 @@ export function WIG_CONSULT_STEP2_PROMPT(hairHex = 'DA3063', hairColorLabel = 'r
       ' hex code #' +
       hex +
       ' & ensure this color looks as closely to authentically colored/dyed hair & not a weird unrealistic shade.',
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
+    'Do not change anything else about the photo except **hair color** as specified.',
   ].join(' ');
 }
 
@@ -195,6 +205,7 @@ export function buildMiddlePartLayersStylePromptTwoImages(angle) {
     'You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo, and **keep the hair color exactly as in image 1** (catalog / customer color).',
     '**IMAGE 2** is a **hair geometry reference only** (middle part, layers, face-framing, volume, silhouette). Copy **only** the **cut, layering, and part** from image 2 onto the head in image 1. **Do not** use image 2’s hair color, **do not** swap in image 2’s background, and **do not** treat image 2 as a full composite to paste over image 1.',
     angleConstraint,
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The **FRONTAL SLAYER** chest logo must stay fully legible, same position as in image 1.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
     'Change **only** the **hair mesh** in image 1 so its **shape** matches the geometry reference; everything else in image 1 stays the same, especially **hair color**.',
@@ -216,9 +227,10 @@ export function buildBangsOnlyStylePrompt(angle) {
   return [
     'Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
     angleConstraint,
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
+    'Do not change anything else about the photo except the bangs as specified.',
   ].join(' ');
 }
 

@@ -1,3 +1,5 @@
+import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
+
 /**
  * **Two-image** middle + layers (live API):
  * - **First** `image_urls` entry = customer color preview (Storage WebP): full scene + **keep this hair color** in the output.
@@ -16,6 +18,7 @@ export function buildMiddlePartLayersStylePromptTwoImages(angle: 'front' | 'left
     'You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo, and **keep the hair color exactly as in image 1** (catalog / customer color).',
     '**IMAGE 2** is a **hair geometry reference only** (middle part, layers, face-framing, volume, silhouette). Copy **only** the **cut, layering, and part** from image 2 onto the head in image 1. **Do not** use image 2’s hair color, **do not** swap in image 2’s background, and **do not** treat image 2 as a full composite to paste over image 1.',
     angleConstraint,
+    bawFalEditPreserveReferenceBlock(),
     'The **FRONTAL SLAYER** chest logo must stay fully legible, same position as in image 1.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
     'Change **only** the **hair mesh** in image 1 so its **shape** matches the geometry reference; everything else in image 1 stays the same, especially **hair color**.',
@@ -51,8 +54,9 @@ export function buildBangsOnlyStylePrompt(angle: 'front' | 'left' | 'right'): st
   return [
     'Recreate this exact mannequin image, but add lightly feathered curtain bangs to the hairstyle only do NOT change the positioning of the rest of the hair.',
     angleConstraint,
+    bawFalEditPreserveReferenceBlock(),
     'The logo on the center of the mannequin’s chest with FRONTAL SLAYER should be fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
+    'Do not change anything else about the photo except the bangs as specified.',
   ].join(' ');
 }

@@ -15449,6 +15449,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Fal NOIR prompts: preserve-reference fidelity block + single-angle test workflow
+
+**Context (this chat):** User asked whether **prompts for color / hairline / styling** can be refined so **nano-banana-pro/edit** outputs are **less degraded** (mannequin material distorted, low quality) and how to **test one color angle** before batch.
+
+**Decisions / outcomes:** Added **`api/_lib/bawFalEditFidelityPrompt.ts`** (`BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES`, `bawFalEditPreserveReferenceBlock()`) — instruct preserve **photo sharpness/grain**, lock **bust/skin/logo/bricks/lighting**, avoid **plastic/waxy CGI**. **Inlined** the same block in **`api/wig-preview/live-noir-color.ts`** (nested route cannot import `_lib`). Wired into **`buildStep2PromptNoLogoAttachment`**, **`api/_lib/bawLiveStylingPrompts.ts`** (layers + bangs), **`api/_lib/buildWigGeneratedUnit.ts`** chain edits. Synced **`scripts/wig-preview/promptTemplate.mjs`** (`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`, `buildWigConsultChainEditPrompt`, Step 2, layers, bangs). **`docs/WIG_PREVIEW_PREGENERATION.md`**: test **one** angle via **regen color L/M/R** or delete Storage object; optional **`WIG_PREVIEW_FAL_RESOLUTION=2K`** if 4K looks over-smoothed. **`motherboard/CORE.md`**: note on fidelity module + live-noir inline duplicate.
+
+**Changes:** **`api/_lib/bawFalEditFidelityPrompt.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/bawLiveStylingPrompts.ts`**, **`api/_lib/buildWigGeneratedUnit.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW sub-page live NOIR thumbs: contain + transparent frame (no crop / no gray bars)
 
 **Context (this chat):** User reported **three thumbnails cut off** inside the border on BAW sub-pages again.

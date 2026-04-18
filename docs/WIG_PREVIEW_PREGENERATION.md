@@ -56,6 +56,10 @@ The server (per request):
 
 **OFF BLACK / JET BLACK:** The hash uses a **canonical color key** `JET_BLACK_OFF_BLACK` for both **OFF BLACK** and **JET BLACK** so they share the same three WebP paths (same as batch `selectionStoragePath.mjs`). Re-run **regen color** for each angle if old separate folders existed.
 
+**Prompt quality / “plastic” mannequin drift:** Shared **fidelity** sentences live in **`api/_lib/bawFalEditFidelityPrompt.ts`** (inlined duplicate in **`api/wig-preview/live-noir-color.ts`** because that route cannot import `_lib` on Vercel). They tell the model to **preserve photograph sharpness**, lock **bust material / face / logo / brick background**, and avoid waxy CGI retexture. **`api/_lib/bawLiveStylingPrompts.ts`** and **`api/_lib/buildWigGeneratedUnit.ts`** (send-offer chain edits) use the same block. **`scripts/wig-preview/promptTemplate.mjs`** exports **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** for fal playground / batch parity.
+
+**Test one color angle before batch:** On NOIR → Color (founder), pick a swatch and use **regen color L**, **M**, or **R** to run **one** angle with `forceRegenerate` (or delete that angle’s WebP in Storage and reload). Compare to the gray-brick reference; iterate prompt text in **`live-noir-color.ts`** / **`bawFalEditFidelityPrompt.ts`** together. If output is soft despite prompts, try **`WIG_PREVIEW_FAL_RESOLUTION=2K`** on Vercel (4K can still look over-processed depending on the model).
+
 ### Live after-color styling — NOIR, LAYERS + part MIDDLE / LEFT / RIGHT (admin)
 
 **Runtime (Vercel Node ESM):** `api/live-wig-after-color-styling.ts` imports **`./_lib/*.js`** (explicit extension) so the serverless bundle resolves `adminAuth` and siblings; extensionless `./_lib/adminAuth` can throw **`ERR_MODULE_NOT_FOUND`** on Vercel.

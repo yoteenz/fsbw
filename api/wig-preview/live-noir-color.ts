@@ -248,6 +248,14 @@ function isJetBlackOffBlackCatalogColor(label: string, hex: string): boolean {
   return l.includes('jet black') || l.includes('off black');
 }
 
+/** Keep in sync with `api/_lib/bawFalEditFidelityPrompt.ts` (this file cannot import `_lib` on Vercel). */
+const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
+  'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
+  'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
+  'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
+  'Keep the **FRONTAL SLAYER** chest logo **sharp**, same **size** and **placement**, clean edges — **no** smeared, redrawn, or re-typed lettering.',
+].join(' ');
+
 /** Step 2 color: one mannequin ref only — logo described in text (no logo file in image_urls). */
 function buildStep2PromptNoLogoAttachment(
   label: string,
@@ -277,9 +285,10 @@ function buildStep2PromptNoLogoAttachment(
   return [
     recolorLead,
     angleConstraint,
+    BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The logo on the center of the mannequin’s chest should be clear & legible — FRONTAL SLAYER fully readable — for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
-    'Do not change anything else about the photo.',
+    'Do not change anything else about the photo except **hair color** as specified.',
   ].join(' ');
 }
 

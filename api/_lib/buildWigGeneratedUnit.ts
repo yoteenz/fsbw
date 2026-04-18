@@ -1,3 +1,5 @@
+import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
+
 type BuildWigGeneratedUnitSelections = {
   unitKey: string;
   length: string;
@@ -195,11 +197,12 @@ function buildWigConsultChainEditPrompt(
   return [
     `Recreate this exact mannequin image, but change the ${fromD} to ${toD}.`,
     asym,
+    bawFalEditPreserveReferenceBlock(),
     'The logo on the center of the mannequin’s chest should look exactly like reference image with FRONTAL SLAYER fully legible for accuracy & consistency.',
     'The photo should be extremely high-quality, crisp & pixel perfect.',
     asym
       ? 'Preserve mannequin identity and pose; keep edits to the stated hair changes and asymmetric drape — no symmetric twin drapes on both shoulders.'
-      : 'Do not change anything else about the photo.',
+      : 'Do not change anything else about the photo beyond the stated edit.',
   ]
     .filter(Boolean)
     .join(' ');
