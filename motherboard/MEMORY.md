@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Revert BAW NOIR thumb +15% (restore 72×95 / 72×82 / 12px gap)
+
+**Context (this chat):** User asked to **undo** the **+15%** thumbnail size change and **restore original sizes**.
+
+**Decisions / outcomes:** Removed **`BAW_NOIR_THUMB_SCALE`** and restored inline dimensions in **`BawNoirWigPreviewFrames.tsx`**: frame **72×95** (static), **72×82** (live), img **63×84** / **72×82**, live row gap **12px**. Restored **`index.css`** **`.thumb .leaf-bg`** to **72×95**, **`--leaf-height`** fallback **84px**, and **deleted** the **`.baw-noir-thumb-row` `!important`** frame/img override block.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW NOIR thumbnails +15% (hub + sub-pages)
 
 **Context (this chat):** User asked to **increase the size of the 3 thumbnail images** on the **BAW hub and all sub-pages** by **15%**.

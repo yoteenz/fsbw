@@ -3263,9 +3263,8 @@ img.natural-front-mobile {
 }
 
 .thumb .leaf-bg {
-  /* Match BAW NOIR thumb frame (+15% vs 72×95) — see BawNoirWigPreviewFrames BAW_NOIR_THUMB_SCALE */
-  width: 83px;
-  height: 109px;
+  width: 72px;
+  height: 95px;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */
@@ -3342,7 +3341,7 @@ img.natural-front-mobile {
 }
 
 .thumb .leaf-bg[style*="height"] {
-  height: var(--leaf-height, 97px) !important;
+  height: var(--leaf-height, 84px) !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */
@@ -3423,33 +3422,6 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='1'],
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='2'] {
   transform: none !important;
-}
-
-/*
- * BAW NOIR thumb **frame** sizes (+15% vs 72×95 static / 72×82 live) — `!important` so cached/old CSS or
- * competing rules cannot keep 72×95. Keep in sync with `BawNoirWigPreviewFrames` BAW_NOIR_THUMB_SCALE.
- */
-.baw-noir-thumb-row .leaf-stack.thumb .baw-noir-thumb-frame {
-  width: 83px !important;
-  min-width: 83px !important;
-  max-width: 83px !important;
-  box-sizing: border-box !important;
-}
-.baw-noir-thumb-row:not(.baw-noir-thumb-row--live-noir) .leaf-stack.thumb .baw-noir-thumb-frame {
-  height: 109px !important;
-  min-height: 109px !important;
-}
-.baw-noir-thumb-row.baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame {
-  height: 94px !important;
-  min-height: 94px !important;
-}
-
-/* Static sub-page thumbs: larger mannequin raster hints (+15% vs 63×84) */
-.baw-noir-thumb-row:not(.baw-noir-thumb-row--live-noir) .leaf-stack.thumb .thumbnail-mannequin-img:not(.thumbnail-mannequin-img--live-noir) {
-  width: 72px !important;
-  height: 97px !important;
-  min-width: 72px !important;
-  min-height: 97px !important;
 }
 
 /* BAW NOIR thumbs: clip to frame; live uses `contain` — live row sets leaf-brick bg on frame so letterbox gutters aren’t flat gray */
