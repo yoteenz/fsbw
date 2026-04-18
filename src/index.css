@@ -3403,7 +3403,7 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  /* Full WebP visible in frame — `cover` cropped edges; live row uses white fill behind `contain` (no second brick layer) */
+  /* Default `contain` — BAW thumb frames override to `cover` below so sub-page live thumbs fill the cell (no side letterbox) */
   object-fit: contain !important;
   object-position: center center !important;
 }
@@ -3417,6 +3417,13 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   object-position: center center !important;
 }
 
+/* BAW hub + sub-page live NOIR thumbs: fill fixed frame — avoids gray/white gutters from `contain` + aspect mismatch */
+.leaf-stack.thumb .baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir,
+.baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
 /* Live row: thumb cells use `data-baw-thumb-index` on `.baw-noir-thumb-frame` (not `data-thumb-index`) so late global translateX nudges do not apply. */
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='0'],
 .baw-noir-thumb-row--live-noir .leaf-stack.thumb .baw-noir-thumb-frame[data-baw-thumb-index='1'],
@@ -3424,7 +3431,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: clip to frame; live uses `contain`; frame bg white — live raster already has brick (no duplicate leaf-brick underlay) */
+/* BAW NOIR thumbs: clip to frame; live uses `cover` on img (see above) — no duplicate leaf-brick underlay */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;

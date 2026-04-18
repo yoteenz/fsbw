@@ -143,7 +143,7 @@ export function BawNoirWigPreviewHeroThumbs({
               <div
                 className={`relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame${
                   subPageStaticSelectionOnFrame && !hideBrick ? ' baw-noir-thumb-frame--static-sub' : ''
-                }`}
+                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}`}
                 data-baw-thumb-index={index}
                 style={{
                   width: '72px',
@@ -164,9 +164,9 @@ export function BawNoirWigPreviewHeroThumbs({
                     : hideBrick
                       ? {
                           overflow: 'hidden',
-                          /* Live WebPs already include brick — do NOT add leaf-brick here or it doubles/misaligns vs `contain` letterboxing */
+                          /* Live WebPs already include brick — no second CSS brick; `cover` on img fills frame (see index.css) */
                           backgroundImage: 'none',
-                          backgroundColor: '#ffffff',
+                          backgroundColor: 'transparent',
                           border: selectedView === index ? '3px solid #fff' : undefined,
                           boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                           boxSizing: 'border-box',

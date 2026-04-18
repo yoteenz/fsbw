@@ -15461,6 +15461,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW sub-page live NOIR thumbs: `object-fit: cover` (visible fix vs `contain`)
+
+**Context (this chat):** User said **nothing changed** on sub-page thumbnails after prior gray/double-brick tweaks.
+
+**Decisions / outcomes:** Sub-pages only use **live** WebPs when `hideDuplicateBrickForNoirWigViews` is true. **White vs transparent** behind **`contain`** letterboxing is barely visible on the card bg, so users saw **no change**. **Fix:** add **`baw-noir-thumb-frame--live-noir`** on live frames; in **`index.css`** set **`object-fit: cover`** for **`img.thumbnail-mannequin-img--live-noir`** inside that frame (higher specificity than generic live-noir rules) so the image **fills 72×82** and **side gutters disappear** (may crop edges slightly). Frame **`backgroundColor: transparent`**.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW live NOIR thumbs: remove doubled leaf-brick underlay (white letterbox)
 
 **Context (this chat):** User said **gray panels** were addressed but it looked like **incorrectly doubled background** / **wider container** behind the three thumbnails on **BAW sub-pages**.
