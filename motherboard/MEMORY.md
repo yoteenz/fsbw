@@ -15980,3 +15980,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** In **`src/pages/build-a-wig/styling/page.tsx`**, founder salon + bangs auto-fetch **no longer** calls **`setLiveStylingWigViews(null)`** / **`setLiveBangsWigViews(null)`** when Storage has no cache for the new part/mode, on **empty** API URLs, or on **catch** — React state keeps the **previous** triple until a successful response updates it. **`refreshFounderTools`** uses functional updates **`(prev) => prev`** when cache is missing so it does not clear state. **`motherboard/CORE.md`** NOIR bullet updated (stale-while-revalidate on styling step).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — MIDDLE + FLAT IRON: second fal ref = hub base NOIR naturals
+
+**Context (this chat):** User asked for **M part flat iron** to use the **base NOIR image angles** (same as hub static mannequins), not only the color-tier WebP framing.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: when **`FLAT IRON`**, **`partSelection === MIDDLE`**, and **not** bangs+salon, **`image_urls`** = **[ color-tier public URL, `WIG_PREVIEW_PUBLIC_APP_ORIGIN`/`SITE_URL`/default `https://fsbw.vercel.app` + `/assets/natural%20{left|front|right}.png` ]**. **`buildFlatIronStylePromptFromColorTierWebp`** gains **`baseNoirGeometrySecondRef`** + two-image prompt blocks (`flatIronMiddlePartBaseNoirGeometryTwoImageBlock`). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.

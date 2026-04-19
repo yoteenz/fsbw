@@ -236,6 +236,25 @@ function falMirrorCompensatedPartForPrompt(partSelection) {
   return 'MIDDLE';
 }
 
+function flatIronMiddlePartBaseNoirGeometryTwoImageBlock(angle, catalog) {
+  const viewLabel = angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+  const hex = String(catalog.hex || '')
+    .replace(/^#/, '')
+    .toUpperCase();
+  const angleWord = angle === 'left' ? 'left' : angle === 'right' ? 'right' : 'front';
+  return (
+    '**TWO REFERENCES (MIDDLE + FLAT IRON):** **Image 1** = live **color-tier** preview — hair already **' +
+    catalog.label +
+    '** at **#' +
+    hex +
+    '** (**keep this exact hair color**). **Image 2** = **NOIR base mannequin** for this **same** camera (**static natural ' +
+    angleWord +
+    '** — same **base** angles as the Build-a-Wig hub static previews). Use **Image 2** only for **geometry**: **head pose, framing, silhouette outline, shoulder line** must match **Image 2**; **ignore** hair color on **Image 2** (black reference). Output = **Image 2** layout + **Image 1** swatch + **flat-ironed straight** + **middle part** — **' +
+    viewLabel +
+    '** view must match the base reference, not a reinvented angle.'
+  );
+}
+
 /** **FLAT IRON** — color WebP + part + straight; keep in sync with `bawLiveStylingPrompts.ts`. */
 export function buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, catalog, options) {
   const hex = String(catalog.hex || '')
@@ -247,6 +266,9 @@ export function buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, 
     '** (target **#' +
     hex +
     '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade.';
+  const includeBangs = Boolean(options && options.includeBangs);
+  const useBaseNoirSecondRef =
+    Boolean(options && options.baseNoirGeometrySecondRef) && partSelection === 'MIDDLE' && !includeBangs;
   const partForPrompt = falMirrorCompensatedPartForPrompt(partSelection);
   const partBlock =
     partForPrompt === 'MIDDLE'
@@ -266,12 +288,18 @@ export function buildFlatIronStylePromptFromColorTierWebp(angle, partSelection, 
     options && options.includeBangs
       ? ' **Also add** lightly feathered **curtain bangs** that **match the part** (center-split for middle, asymmetric for side part) — blended into the straight lengths.'
       : '';
+  const recreateLead = useBaseNoirSecondRef
+    ? '**Edit Image 1** as the **output canvas** — same **mannequin**, **brick background**, **lighting**, **FRONTAL SLAYER** chest logo. **Match Image 2** for **camera angle, head pose, and outer hair silhouette** in this **' +
+      (angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT') +
+      '** view (base NOIR naturals). **Only** edit **hair**: apply **FLAT IRON** styling as below — **bone-straight** + **middle part**; **not** a new wig.'
+    : 'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.';
   return [
     colorLock,
+    ...(useBaseNoirSecondRef ? [flatIronMiddlePartBaseNoirGeometryTwoImageBlock(angle, catalog)] : []),
     salonStyleInvarianceAcrossColorsBlock('FLAT IRON bone-straight + part'),
     salonPartDirectionSemanticsBlock(),
     salonOneShoulderDrapeBlock(),
-    'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.',
+    recreateLead,
     straightLook,
     partBlock,
     angleBlock,

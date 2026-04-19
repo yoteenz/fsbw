@@ -57,13 +57,38 @@ export function buildCrimpsStylePromptFromColorTierWebp(
 }
 
 /**
+ * Second image = **static** NOIR base mannequin (`/assets/natural *.png`) for **MIDDLE + FLAT IRON** only —
+ * locks **geometry / framing** to the same **base** angles as the BAW hub; **Image 1** still supplies **swatch color**.
+ */
+function flatIronMiddlePartBaseNoirGeometryTwoImageBlock(
+  angle: 'front' | 'left' | 'right',
+  catalog: CatalogColorForLayersPrompt
+): string {
+  const viewLabel = angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const angleWord = angle === 'left' ? 'left' : angle === 'right' ? 'right' : 'front';
+  return (
+    '**TWO REFERENCES (MIDDLE + FLAT IRON):** **Image 1** = live **color-tier** preview — hair already **' +
+    catalog.label +
+    '** at **#' +
+    hex +
+    '** (**keep this exact hair color**). **Image 2** = **NOIR base mannequin** for this **same** camera (**static natural ' +
+    angleWord +
+    '** — same **base** angles as the Build-a-Wig hub static previews). Use **Image 2** only for **geometry**: **head pose, framing, silhouette outline, shoulder line** must match **Image 2**; **ignore** hair color on **Image 2** (black reference). Output = **Image 2** layout + **Image 1** swatch + **flat-ironed straight** + **middle part** — **' +
+    viewLabel +
+    '** view must match the base reference, not a reinvented angle.'
+  );
+}
+
+/**
  * **FLAT IRON** live styling: same **color-tier WebP** as other salon modes — treat as the **base** color shot; **only** change **part line** + **sleek bone-straight** hair (no new texture pattern beyond straight).
+ * **MIDDLE** (no bangs): optional **second** `image_urls` entry = static NOIR naturals — see `flatIronMiddlePartBaseNoirGeometryTwoImageBlock`.
  */
 export function buildFlatIronStylePromptFromColorTierWebp(
   angle: 'front' | 'left' | 'right',
   partSelection: NoirLayersPartSelection,
   catalog: CatalogColorForLayersPrompt,
-  options?: { includeBangs?: boolean }
+  options?: { includeBangs?: boolean; baseNoirGeometrySecondRef?: boolean }
 ): string {
   const hex = catalog.hex.replace(/^#/, '').toUpperCase();
   const colorLock =
@@ -72,6 +97,11 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     '** (target **#' +
     hex +
     '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade.';
+
+  const useBaseNoirSecondRef =
+    Boolean(options?.baseNoirGeometrySecondRef) &&
+    partSelection === 'MIDDLE' &&
+    !options?.includeBangs;
 
   const partForPrompt = falMirrorCompensatedPartForPrompt(partSelection);
   const partBlock =
@@ -95,12 +125,19 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     ? ' **Also add** lightly feathered **curtain bangs** that **match the part** (center-split for middle, asymmetric for side part) — blended into the straight lengths.'
     : '';
 
+  const recreateLead = useBaseNoirSecondRef
+    ? '**Edit Image 1** as the **output canvas** — same **mannequin**, **brick background**, **lighting**, **FRONTAL SLAYER** chest logo. **Match Image 2** for **camera angle, head pose, and outer hair silhouette** in this **' +
+      (angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT') +
+      '** view (base NOIR naturals). **Only** edit **hair**: apply **FLAT IRON** styling as below — **bone-straight** + **middle part**; **not** a new wig.'
+    : 'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.';
+
   return [
     colorLock,
+    ...(useBaseNoirSecondRef ? [flatIronMiddlePartBaseNoirGeometryTwoImageBlock(angle, catalog)] : []),
     salonStyleInvarianceAcrossColorsBlock('FLAT IRON bone-straight + part'),
     salonPartDirectionSemanticsBlock(),
     salonOneShoulderDrapeBlock(),
-    'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.',
+    recreateLead,
     straightLook,
     partBlock,
     angleBlock,
