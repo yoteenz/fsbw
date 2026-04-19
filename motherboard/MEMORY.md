@@ -15766,3 +15766,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Rewrote **`crimpsLook`** (**horizontal accordion / waffle**, extra-long, uniform from part through ends, high-gloss frizz-free, explicit **not** spirals/beach waves). **`partWordCrimps`**: **MIDDLE** = precise center part, crimps from crown, **both shoulders**; **LEFT/RIGHT** = **deep side part**, **sleek roots**, **one-sided drape**. Front **angleConstraint** for crimps updated for **MIDDLE** vs **side** to match refs. Color lock reminder: **swatch** not ref colors. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — LAYERS + CRIMPS: one-shoulder FRONT for all part selections
+
+**Context (this chat):** User reported **all part directions** on **LAYERS** and **CRIMPS** still put hair on **both shoulders** instead of **one**.
+
+**Decisions / outcomes:** Removed **symmetric both-shoulders** CRIMPS **MIDDLE** copy; aligned **MIDDLE** with **one-sided drape** (center part at crown, bulk to **one** shoulder). Added **FRONT hero** sentences to **`layersLook`** / **`crimpsLook`**. **`partWordLayers` MIDDLE** one dominant shoulder. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
