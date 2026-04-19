@@ -15920,3 +15920,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** In **`BawNoirWigPreviewHeroThumbs`** (`src/components/buildWig/BawNoirWigPreviewFrames.tsx`), **product hub** routes (`isBawProductHubThumbPathname` + static naturals) now use **12px** flex **gap** like **live** NOIR rows (`hideBrick`), and **skip** the old **translateX(-2px/-4px)** nudges on thumbs 2–3 that tightened hub spacing. Deeper sub-pages with **static-only** `/assets/` thumbs unchanged (**2px** + nudges). **`motherboard/CORE.md`** NOIR bullet updated.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — After-color styling: STYLE LOCK (same style every color)
+
+**Context (this chat):** User reported **different color selections** produce **different styling variation**; they want the **same** style for a given salon mode + part — **only hair color** should change.
+
+**Decisions / outcomes:** Added **`salonStyleInvarianceAcrossColorsBlock()`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): instruct Fal to **ignore** differing length/curl/layering in color-tier WebPs between swatches; output **one** canonical style per mode+part; **length/bulk** follows prompt target not input; **FLAT IRON** `straightLook` updated so it does not preserve per-color shape drift. Fixed **layers/crimps** look lines to reference **DRAPE SIDE** (not obsolete **ONE SHOULDER ONLY**). **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
