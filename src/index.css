@@ -3503,7 +3503,7 @@ img.natural-front-mobile {
 
 /* BAW product hub only: nudge mannequin vs outer `.leaf-bg` brick art */
 .baw-noir-thumb-frame .baw-noir-thumb-static-img--hub.thumbnail-mannequin-img {
-  bottom: 4px !important;
+  bottom: 3px !important;
 }
 
 /* ULTIMATE OVERRIDE for natural front mobile image */

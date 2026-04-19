@@ -15638,3 +15638,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW hub thumbnails: mannequin nudge down 1px more (bottom 4px → 3px)
+
+**Context (this chat):** User asked to move hub thumb mannequins **down 1px more**.
+
+**Decisions / outcomes:** **`bottom: 3px`** on **`.baw-noir-thumb-static-img--hub`** (was **`4px`**).
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
