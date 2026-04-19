@@ -15823,6 +15823,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — NOIR color page: hold last live triple while loading + faster Storage probe
+
+**Context (this chat):** User reported preview **reverting to base/default naturals** until the next image loads, and wanted **faster** loads.
+
+**Decisions / outcomes:** **`src/pages/build-a-wig/color/page.tsx`**: **`heldFounderLiveTriple`** / **`heldCompositeLiveTriple`** so **`wigViews`** uses **previous** live WebPs when `liveWigViews` / hook output is briefly null; **OFF BLACK** clears held + uses naturals. Founder **`useEffect`**: **no** `setLiveWigViews(null)` on API error; **optimistic** URLs via **`wigPreviewLiveColorTriplePublicUrlsForSelections`** before Fal; **gen ref** ignores stale async. **`src/utils/wigPreviewLiveStoragePublicUrls.ts`**: **`resolveWigPreviewLiveColorTripleIfStored`** probes **front.webp** only (one HEAD); **`wigPreviewLiveColorTriplePublicUrlsForSelections`** for fast optimistic URLs. **`handleColorSelect`**: optimistic pending first, then HEAD-verified pending, then events.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — JET BLACK live previews: restore Storage hash `JET_BLACK_OFF_BLACK` (hex still #000000)
 
 **Context (this chat):** User reported **JET BLACK** images **broken** after the OFF BLACK hash split.

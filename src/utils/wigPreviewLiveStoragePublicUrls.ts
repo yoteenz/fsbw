@@ -41,8 +41,22 @@ async function objectExistsAtPublicUrl(url: string): Promise<boolean> {
 }
 
 /**
- * If all three live color WebPs already exist in Supabase (same paths the API uses), return public URLs
- * so the founder color page can **skip** `POST /api/wig-preview/live-noir-color` (no redundant Fal when server would skip too).
+ * Public L/F/R URLs for a selection (hash + cache-bust). **No** Storage probe — use to show
+ * optimistic `<img src>` while verifying or waiting for Fal (browser may 404 until files exist).
+ */
+export async function wigPreviewLiveColorTriplePublicUrlsForSelections(
+  sel: WigPreviewSelectionsForHash
+): Promise<[string, string, string] | null> {
+  const hash = await wigPreviewManifestHashLiveColorTier(sel);
+  const triple = wigPreviewLiveColorTriplePublicUrls(hash);
+  if (!triple) return null;
+  const t = Date.now();
+  return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`];
+}
+
+/**
+ * If live color WebPs already exist in Supabase, return public URLs so the founder color page can **skip** Fal.
+ * Uses **one** `HEAD` on **front.webp** only (same upload batch as L/R — faster than three probes).
  */
 export async function resolveWigPreviewLiveColorTripleIfStored(
   sel: WigPreviewSelectionsForHash
@@ -50,15 +64,9 @@ export async function resolveWigPreviewLiveColorTripleIfStored(
   const hash = await wigPreviewManifestHashLiveColorTier(sel);
   const triple = wigPreviewLiveColorTriplePublicUrls(hash);
   if (!triple) return null;
-  const [left, front, right] = triple;
-  const [okL, okF, okR] = await Promise.all([
-    objectExistsAtPublicUrl(left),
-    objectExistsAtPublicUrl(front),
-    objectExistsAtPublicUrl(right),
-  ]);
-  if (okL && okF && okR) {
-    const t = Date.now();
-    return [`${left}?t=${t}`, `${front}?t=${t}`, `${right}?t=${t}`] as [string, string, string];
-  }
-  return null;
+  const [, front] = triple;
+  const ok = await objectExistsAtPublicUrl(front);
+  if (!ok) return null;
+  const t = Date.now();
+  return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`] as [string, string, string];
 }

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -26,9 +26,8 @@ import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalToo
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import {
   resolveWigPreviewLiveColorTripleIfStored,
-  wigPreviewLiveColorTriplePublicUrls,
+  wigPreviewLiveColorTriplePublicUrlsForSelections,
 } from '../../../utils/wigPreviewLiveStoragePublicUrls';
-import { wigPreviewManifestHashLiveColorTier } from '../../../utils/wigPreviewLiveColorTierHash';
 import {
   clearBawNoirLiveColorWigViews,
   clearPendingBawNoirLiveColorWigViews,
@@ -265,7 +264,13 @@ function ColorSelection() {
   /** Founder only: Fal regen UI + `/api/wig-preview/live-noir-color` fetches. All signed-in users see stored WebPs via `liveNoirCompositeCommittedViews` + hook. */
   const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
   const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
+  /** Last good founder live triple — keep showing while the next color resolves (no flash to naturals). */
+  const [heldFounderLiveTriple, setHeldFounderLiveTriple] = useState<[string, string, string] | null>(null);
+  /** Last good hook-resolved triple for non-founder — survives transient null while pending updates. */
+  const [heldCompositeLiveTriple, setHeldCompositeLiveTriple] = useState<[string, string, string] | null>(null);
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
+  /** Bumps when founder color preview generation starts — ignore stale async results. */
+  const founderColorPreviewGenRef = useRef(0);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
   const [regenColorAngle, setRegenColorAngle] = useState<'left' | 'front' | 'right' | null>(null);
   const [showRegenAllConfirm, setShowRegenAllConfirm] = useState(false);
@@ -564,12 +569,42 @@ function ColorSelection() {
 
   const baseWigViews = getWigViews();
   const liveNoirCompositeCommittedViews = useBawSubpageLiveNoirCompositeWigViews();
+
+  useEffect(() => {
+    if (liveNoirCompositeCommittedViews) {
+      setHeldCompositeLiveTriple(liveNoirCompositeCommittedViews);
+    }
+  }, [liveNoirCompositeCommittedViews]);
+
+  useEffect(() => {
+    if (liveWigViews) {
+      setHeldFounderLiveTriple(liveWigViews);
+    }
+  }, [liveWigViews]);
+
+  useEffect(() => {
+    const p = location.pathname;
+    const noirColor =
+      p.includes('/build-a-wig/noir/') &&
+      (p.includes('/edit/color') || p.includes('/customize/color'));
+    if (noirColor && selectedColor === 'OFF BLACK') {
+      setHeldFounderLiveTriple(null);
+      setHeldCompositeLiveTriple(null);
+    }
+  }, [selectedColor, location.pathname]);
+
+  const noirColorSubPath =
+    location.pathname.includes('/build-a-wig/noir/') &&
+    (location.pathname.includes('/edit/color') || location.pathname.includes('/customize/color'));
+
   const wigViews =
-    founderNoirFalRegenUi && liveWigViews && location.pathname.includes('/build-a-wig/noir/')
-      ? liveWigViews
-      : liveNoirCompositeCommittedViews && location.pathname.includes('/build-a-wig/noir/')
-        ? liveNoirCompositeCommittedViews
-        : baseWigViews;
+    noirColorSubPath && selectedColor === 'OFF BLACK'
+      ? baseWigViews
+      : noirColorSubPath && founderNoirFalRegenUi
+        ? liveWigViews ?? heldFounderLiveTriple ?? baseWigViews
+        : noirColorSubPath
+          ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
+          : baseWigViews;
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -740,6 +775,7 @@ function ColorSelection() {
       founderNoirFalRegenUi &&
       (pathname.includes('/build-a-wig/noir/edit/color') || pathname.includes('/build-a-wig/noir/customize/color'));
     if (!noir) return;
+    const gen = ++founderColorPreviewGenRef.current;
     setLivePreviewError(null);
     setLivePreviewLoading(true);
     const sel = readBuildWigLivePreviewSelections(pathname);
@@ -747,16 +783,22 @@ function ColorSelection() {
     let cancelled = false;
     void (async () => {
       const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
-      if (cancelled) return;
+      if (cancelled || founderColorPreviewGenRef.current !== gen) return;
       if (fromStorage) {
         setLiveWigViews(fromStorage);
         persistPendingBawNoirLiveColorWigViews(fromStorage);
         setLivePreviewLoading(false);
         return;
       }
+      const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
+      if (cancelled || founderColorPreviewGenRef.current !== gen) return;
+      if (optimistic) {
+        setLiveWigViews(optimistic);
+        persistPendingBawNoirLiveColorWigViews(optimistic);
+      }
       void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
         .then((res) => {
-          if (cancelled) return;
+          if (cancelled || founderColorPreviewGenRef.current !== gen) return;
           const u = res.publicUrls;
           if (u.front && u.left && u.right) {
             const bust = Date.now();
@@ -767,17 +809,14 @@ function ColorSelection() {
             ];
             setLiveWigViews(triple);
             persistPendingBawNoirLiveColorWigViews(triple);
-          } else {
-            setLiveWigViews(null);
           }
         })
         .catch((e: Error) => {
-          if (cancelled) return;
-          setLiveWigViews(null);
+          if (cancelled || founderColorPreviewGenRef.current !== gen) return;
           setLivePreviewError(e?.message || 'Live preview failed');
         })
         .finally(() => {
-          if (!cancelled) setLivePreviewLoading(false);
+          if (!cancelled && founderColorPreviewGenRef.current === gen) setLivePreviewLoading(false);
         });
     })();
     return () => {
@@ -825,25 +864,20 @@ function ColorSelection() {
       clearBawNoirLiveColorWigViews();
       window.dispatchEvent(new CustomEvent('customStorageChange'));
     } else if (onNoirColorRoute) {
-      /** Fill pending **before** `customStorageChange` so hub/subpage hooks resolve live WebPs immediately (no static naturals flash). */
+      /** Optimistic hash URLs first (fast), then optional HEAD-verified triple — both before final `customStorageChange`. */
       void (async () => {
         try {
           const sel = readBuildWigLivePreviewSelections(pathname);
           const payload = { unitKey: 'NOIR' as const, color: colorId, ...sel };
+          const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
+          if (optimistic) {
+            persistPendingBawNoirLiveColorWigViews(optimistic);
+            window.dispatchEvent(new CustomEvent('customStorageChange'));
+          }
           const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
           if (fromStorage) {
             persistPendingBawNoirLiveColorWigViews(fromStorage);
-          } else {
-            const hash = await wigPreviewManifestHashLiveColorTier(payload);
-            const triple = wigPreviewLiveColorTriplePublicUrls(hash);
-            if (triple) {
-              const t = Date.now();
-              persistPendingBawNoirLiveColorWigViews([
-                `${triple[0]}?t=${t}`,
-                `${triple[1]}?t=${t}`,
-                `${triple[2]}?t=${t}`,
-              ]);
-            }
+            window.dispatchEvent(new CustomEvent('customStorageChange'));
           }
         } catch {
           /* ignore — founder `useEffect` still resolves via HEAD/API */
