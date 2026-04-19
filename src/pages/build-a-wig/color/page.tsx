@@ -616,7 +616,7 @@ function ColorSelection() {
       name: 'OFF BLACK',
       description: 'Natural black',
       price: 0,
-      colorCode: '#2A2424',
+      colorCode: '#160604',
       image: ''
     },
     {
@@ -680,7 +680,7 @@ function ColorSelection() {
       name: 'CHERRY',
       description: 'Bright cherry red',
       price: 120,
-      colorCode: '#D70808',
+      colorCode: '#FF1400',
       image: ''
     },
     {
@@ -688,7 +688,7 @@ function ColorSelection() {
       name: 'RASPBERRY',
       description: 'Raspberry pink',
       price: 120,
-      colorCode: '#EF0461',
+      colorCode: '#FF2855',
       image: ''
     },
     {

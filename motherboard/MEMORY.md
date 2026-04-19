@@ -15813,6 +15813,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW color hex + OFF BLACK vs JET BLACK Storage hash split
+
+**Context (this chat):** User asked to update **RASPBERRY** swatch to **#FF2855**, **CHERRY** to **#FF1400**, **OFF BLACK** to **#160604**, and to **stop OFF BLACK sharing the same canonical / Storage path as JET BLACK**.
+
+**Decisions / outcomes:** Updated **`BAW_CATALOG_HAIR_COLOR_HEX`** / mirrors (**`api/_lib/bawCatalogHairColors.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/buildWigGeneratedUnit.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**) and UI swatches (**`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**, **`src/utils/bcfProductOptions.ts`**, **`src/pages/account/concierge/page.tsx`**). **`canonicalWigPreviewColorForHash`** now maps **OFF BLACK** → **`OFF_BLACK`**, **JET BLACK** → **`JET_BLACK`** (legacy **JET BLACK OFF BLACK** → **JET_BLACK**) in **`api/_lib/bawCatalogHairColors.ts`**, **`src/utils/wigPreviewLiveColorTierHash.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`scripts/wig-preview/selectionStoragePath.mjs`**. Docs: **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`scripts/generate-hair-colors.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — LAYERS + CRIMPS prompts: stricter MIDDLE & LEFT one-shoulder drape (anti dual-shoulder)
 
 **Context (this chat):** User reported **MIDDLE** and **LEFT** part directions still **generating hair on both shoulders** for **LAYERS** and **CRIMPS** live styling.

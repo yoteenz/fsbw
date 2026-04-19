@@ -55,17 +55,17 @@ const COLOR_SWATCHES: Record<string, ColorSwatch> = {
   COPPER: { label: 'copper', hex: '763412' },
   GINGER: { label: 'ginger', hex: 'E35B2A' },
   SANGRIA: { label: 'sangria', hex: '731921' },
-  CHERRY: { label: 'cherry', hex: 'C52C1F' },
-  RASPBERRY: { label: 'raspberry', hex: 'DA3063' },
+  CHERRY: { label: 'cherry', hex: 'FF1400' },
+  RASPBERRY: { label: 'raspberry', hex: 'FF2855' },
   PLUM: { label: 'plum', hex: '5B177C' },
   COBALT: { label: 'cobalt', hex: '25067B' },
   TEAL: { label: 'teal', hex: '7BE7CA' },
   SLIME: { label: 'slime', hex: '63D54B' },
   CITRINE: { label: 'citrine', hex: 'E3E851' },
-  JET_BLACK: { label: 'jet black/off black', hex: '000000' },
-  OFF_BLACK: { label: 'jet black/off black', hex: '000000' },
-  'JET BLACK': { label: 'jet black/off black', hex: '000000' },
-  'OFF BLACK': { label: 'jet black/off black', hex: '000000' },
+  JET_BLACK: { label: 'jet black', hex: '000000' },
+  OFF_BLACK: { label: 'off black', hex: '160604' },
+  'JET BLACK': { label: 'jet black', hex: '000000' },
+  'OFF BLACK': { label: 'off black', hex: '160604' },
 };
 
 function normalizeToken(value: string): string {

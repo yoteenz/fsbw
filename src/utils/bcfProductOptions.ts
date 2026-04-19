@@ -124,7 +124,7 @@ export interface BcfColorOption {
 /** Noir build-a-wig palette + Blanco trio (GOLDEN / PLATINUM / ASH). */
 export const BCF_COLOR_OPTIONS: BcfColorOption[] = [
   { id: 'JET BLACK', label: 'JET BLACK', price: 80, swatch: '#000000' },
-  { id: 'OFF BLACK', label: 'OFF BLACK', price: 0, swatch: '#2A2424' },
+  { id: 'OFF BLACK', label: 'OFF BLACK', price: 0, swatch: '#160604' },
   { id: 'ESPRESSO', label: 'ESPRESSO', price: 80, swatch: '#3B1301' },
   { id: 'CHESTNUT', label: 'CHESTNUT', price: 80, swatch: '#6C2D11' },
   { id: 'HONEY', label: 'HONEY', price: 80, swatch: '#C58628' },
@@ -132,8 +132,8 @@ export const BCF_COLOR_OPTIONS: BcfColorOption[] = [
   { id: 'COPPER', label: 'COPPER', price: 80, swatch: '#802F02' },
   { id: 'GINGER', label: 'GINGER', price: 80, swatch: '#F64F07' },
   { id: 'SANGRIA', label: 'SANGRIA', price: 80, swatch: '#7E0A1E' },
-  { id: 'CHERRY', label: 'CHERRY', price: 80, swatch: '#D70808' },
-  { id: 'RASPBERRY', label: 'RASPBERRY', price: 80, swatch: '#EF0461' },
+  { id: 'CHERRY', label: 'CHERRY', price: 80, swatch: '#FF1400' },
+  { id: 'RASPBERRY', label: 'RASPBERRY', price: 80, swatch: '#FF2855' },
   { id: 'PLUM', label: 'PLUM', price: 80, swatch: '#640E82' },
   { id: 'COBALT', label: 'COBALT', price: 80, swatch: '#290481' },
   { id: 'TEAL', label: 'TEAL', price: 80, swatch: '#46EBCA' },

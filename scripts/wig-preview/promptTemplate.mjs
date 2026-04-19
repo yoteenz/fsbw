@@ -56,7 +56,7 @@ export function buildWigConsultChainEditPrompt(fromDescription, toDescription) {
 export const BAW_SELECTION_CHAIN_EDIT_PROMPT = buildWigConsultChainEditPrompt;
 
 /**
- * Catalog hair colors for Step 2 (label + hex, no `#`). Jet/off black use **000000** (six zeros; corrects typo `#00000`).
+ * Catalog hair colors for Step 2 (label + hex, no `#`).
  * Keys are UPPER_SNAKE; aliases: `PINK` → raspberry (legacy).
  */
 export const BAW_CATALOG_HAIR_COLOR_HEX = {
@@ -67,14 +67,16 @@ export const BAW_CATALOG_HAIR_COLOR_HEX = {
   COPPER: { label: 'copper', hex: '763412' },
   GINGER: { label: 'ginger', hex: 'E35B2A' },
   SANGRIA: { label: 'sangria', hex: '731921' },
-  CHERRY: { label: 'cherry', hex: 'C52C1F' },
-  RASPBERRY: { label: 'raspberry', hex: 'DA3063' },
+  CHERRY: { label: 'cherry', hex: 'FF1400' },
+  RASPBERRY: { label: 'raspberry', hex: 'FF2855' },
   PLUM: { label: 'plum', hex: '5B177C' },
   COBALT: { label: 'cobalt', hex: '25067B' },
   TEAL: { label: 'teal', hex: '7BE7CA' },
   SLIME: { label: 'slime', hex: '63D54B' },
   CITRINE: { label: 'citrine', hex: 'E3E851' },
-  JET_BLACK_OFF_BLACK: { label: 'jet black/off black', hex: '000000' },
+  JET_BLACK: { label: 'jet black', hex: '000000' },
+  OFF_BLACK: { label: 'off black', hex: '160604' },
+  JET_BLACK_OFF_BLACK: { label: 'jet black', hex: '000000' },
 };
 
 /** @deprecated Use `RASPBERRY` — same hex/label as raspberry */
@@ -95,8 +97,14 @@ function normalizeCatalogColorKey(key) {
  */
 export function getBawCatalogHairColor(catalogKey) {
   const k = normalizeCatalogColorKey(catalogKey);
-  if (k === 'JET_BLACK' || k === 'OFF_BLACK' || k === 'JET_BLACK_OFF_BLACK') {
+  if (k === 'JET_BLACK_OFF_BLACK') {
     return BAW_CATALOG_HAIR_COLOR_HEX.JET_BLACK_OFF_BLACK;
+  }
+  if (k === 'JET_BLACK') {
+    return BAW_CATALOG_HAIR_COLOR_HEX.JET_BLACK;
+  }
+  if (k === 'OFF_BLACK') {
+    return BAW_CATALOG_HAIR_COLOR_HEX.OFF_BLACK;
   }
   return BAW_CATALOG_HAIR_COLOR_HEX[k];
 }

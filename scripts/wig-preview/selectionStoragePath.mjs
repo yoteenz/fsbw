@@ -15,19 +15,19 @@ function selectionHash(canonicalJson) {
   return createHash('sha256').update(canonicalJson).digest('hex').slice(0, 32);
 }
 
-/** Same as `canonicalWigPreviewColorForHash` in `api/_lib/bawCatalogHairColors.ts` — OFF BLACK / JET BLACK share one hash key. */
+/** Same as `canonicalWigPreviewColorForHash` in `api/_lib/bawCatalogHairColors.ts` — OFF BLACK and JET BLACK are distinct hash keys. */
 export function canonicalWigPreviewColorForHash(color) {
   const u = String(color || '')
     .trim()
     .toUpperCase()
     .replace(/\s+/g, ' ');
   const aliases = {
-    'OFF BLACK': 'JET_BLACK_OFF_BLACK',
-    'JET BLACK': 'JET_BLACK_OFF_BLACK',
-    'JET BLACK OFF BLACK': 'JET_BLACK_OFF_BLACK',
-    JET_BLACK: 'JET_BLACK_OFF_BLACK',
-    OFF_BLACK: 'JET_BLACK_OFF_BLACK',
-    JET_BLACK_OFF_BLACK: 'JET_BLACK_OFF_BLACK',
+    'JET BLACK': 'JET_BLACK',
+    'OFF BLACK': 'OFF_BLACK',
+    'JET BLACK OFF BLACK': 'JET_BLACK',
+    JET_BLACK: 'JET_BLACK',
+    OFF_BLACK: 'OFF_BLACK',
+    JET_BLACK_OFF_BLACK: 'JET_BLACK',
   };
   if (aliases[u]) return aliases[u];
   const underscored = u.replace(/\s+/g, '_');

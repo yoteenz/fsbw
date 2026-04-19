@@ -79,7 +79,7 @@ Save your images with this naming pattern:
 | Color Name | Hex Code | Description |
 |------------|----------|-------------|
 | JET BLACK | #000000 | Deep black |
-| OFF BLACK | #2A2424 | Natural black (default) |
+| OFF BLACK | #160604 | Natural black (default) |
 | ESPRESSO | #3B1301 | Rich dark brown |
 | CHESTNUT | #6C2D11 | Medium brown |
 | HONEY | #C58628 | Golden brown |
@@ -87,8 +87,8 @@ Save your images with this naming pattern:
 | COPPER | #802F02 | Copper red |
 | GINGER | #F64F07 | Bright orange |
 | SANGRIA | #7E0A1E | Deep red wine |
-| CHERRY | #D70808 | Bright cherry red |
-| RASPBERRY | #EF0461 | Raspberry pink |
+| CHERRY | #FF1400 | Bright cherry red |
+| RASPBERRY | #FF2855 | Raspberry pink |
 | PLUM | #640E82 | Deep plum purple |
 | COBALT | #290481 | Deep cobalt blue |
 | TEAL | #46EBCA | Teal green |

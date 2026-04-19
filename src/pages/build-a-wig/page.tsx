@@ -3111,7 +3111,7 @@ export default function BuildAWigPage() {
       'ASH': '#E5E3CB',
       // Noir/other colors
       'JET BLACK': '#000000',
-      'OFF BLACK': '#2A2424',
+      'OFF BLACK': '#160604',
       'ESPRESSO': '#3B1301',
       'CHESTNUT': '#6C2D11',
       'HONEY': '#C58628',
@@ -3119,8 +3119,8 @@ export default function BuildAWigPage() {
       'COPPER': '#802F02',
       'GINGER': '#F64F07',
       'SANGRIA': '#7E0A1E',
-      'CHERRY': '#D70808',
-      'RASPBERRY': '#EF0461',
+      'CHERRY': '#FF1400',
+      'RASPBERRY': '#FF2855',
       'PLUM': '#640E82',
       'COBALT': '#290481',
       'TEAL': '#46EBCA',
@@ -3129,7 +3129,7 @@ export default function BuildAWigPage() {
     };
     
     // Default to PLATINUM for blanco routes, OFF BLACK for others
-    return colorMap[selectedColor] || (isBlancoRoute ? '#F6F3D2' : '#2A2424');
+    return colorMap[selectedColor] || (isBlancoRoute ? '#F6F3D2' : '#160604');
   };
 
   // Get wig views based on selected hairline from customization state
