@@ -15900,3 +15900,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Replaced generic one-shoulder copy with fixed **`DRAPE SIDE`** in **`salonOneShoulderDrapeBlock()`**: almost all long hair forward over **viewer’s LEFT** shoulder only; **FORBIDDEN** thick drape on **viewer’s RIGHT** shoulder. **Part line** rules unchanged (**UI L** → part **image RIGHT** scalp, etc.) but **length** routes to **viewer’s LEFT** shoulder (**UI L** = cross-body sweep). Updated **FLAT IRON** `partBlock`, **bangs**, **partWord***, **angleConstraint**; mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — DRAPE SIDE: shoulder visible through hair (not opaque blanket)
+
+**Context (this chat):** User wants the drape over the shoulder **without completely hiding** the bit of shoulder that should **peek through** the hair.
+
+**Decisions / outcomes:** Extended **`salonOneShoulderDrapeBlock()`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): **Shoulder still visible** — gaps/strand separation/semi-sheer fall so **shoulder cap / neck–shoulder** still reads; **FORBIDDEN** solid wall of hair fully hiding that shoulder. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.

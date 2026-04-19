@@ -126,7 +126,7 @@ function salonPartDirectionSemanticsBlock(): string {
 /** Product rule: long hair drapes **only** over the **viewer’s left** shoulder (left side of the image — “facing me”). */
 function salonOneShoulderDrapeBlock(): string {
   return (
-    '**DRAPE SIDE (fixed — all parts):** As you **face** the mannequin in the photo, almost **all** long hair must fall **forward over the viewer’s LEFT shoulder only** — the shoulder on the **left side of the image** (closer to the **left edge**). **FORBIDDEN:** a **thick** forward drape on the **viewer’s RIGHT shoulder** (right side of image). The **right** shoulder may show only a **thin** tuck, **nothing** crossing the collarbone, or hair **behind** the shoulder — **never** a second heavy cascade. **Self-check:** if both shoulders have **matching** thick hair in front → **failed**.'
+    '**DRAPE SIDE (fixed — all parts):** As you **face** the mannequin in the photo, almost **all** long hair must fall **forward over the viewer’s LEFT shoulder only** — the shoulder on the **left side of the image** (closer to the **left edge**). **FORBIDDEN:** a **thick** forward drape on the **viewer’s RIGHT shoulder** (right side of image). The **right** shoulder may show only a **thin** tuck, **nothing** crossing the collarbone, or hair **behind** the shoulder — **never** a second heavy cascade. **Shoulder still visible:** the drape must **not** be an **opaque blanket** — keep **gaps**, **separation between strands**, or **semi-sheer** fall so the **shoulder cap / curve** (and skin at the neck–shoulder) **still reads through** the hair; **FORBIDDEN:** a solid wall of hair that **fully hides** that shoulder. **Self-check:** if both shoulders have **matching** thick hair in front → **failed**.'
   );
 }
 
