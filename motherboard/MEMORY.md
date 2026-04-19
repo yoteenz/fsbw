@@ -15614,3 +15614,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`** (comment), **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW hub thumbnails: mannequin nudge +6px vs leaf brick
+
+**Context (this chat):** User asked to move **mannequin images only** on the **three thumbnails** on the **BAW hub** **up 6px** for better alignment with the **leaf brick** behind.
+
+**Decisions / outcomes:** Hub static thumbs use **`baw-noir-thumb-static-img--hub`** when **`hubThumbsOnlyOuter`**; **`index.css`** sets **`bottom: 6px`** (was **`0`**) on that modifier so the figure shifts **up** without affecting sub-pages.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

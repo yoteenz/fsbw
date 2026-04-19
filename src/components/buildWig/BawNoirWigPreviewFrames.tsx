@@ -208,7 +208,9 @@ export function BawNoirWigPreviewHeroThumbs({
                   className={
                     hideBrick
                       ? 'absolute z-10 thumbnail-mannequin-img thumbnail-mannequin-img--live-noir'
-                      : 'absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img'
+                      : `absolute left-1/2 -translate-x-1/2 thumbnail-mannequin-img baw-noir-thumb-static-img${
+                          hubThumbsOnlyOuter ? ' baw-noir-thumb-static-img--hub' : ''
+                        }`
                   }
                   style={
                     hideBrick
