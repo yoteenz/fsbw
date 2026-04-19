@@ -26,7 +26,7 @@ export function buildLayersStylePromptFromColorTierWebp(
 }
 
 /**
- * **CRIMPS** live styling: same inputs as LAYERS (color-tier WebP + part) but hairstyle = **crimps** (zig-zag / pressed texture), not layered curls.
+ * **CRIMPS** live styling: same inputs as LAYERS (color-tier WebP + part) but hairstyle = **salon crimp-iron** look — deep pressed zig-zag ridges, uniform spacing, glossy (not loose waves).
  */
 export function buildCrimpsStylePromptFromColorTierWebp(
   angle: 'front' | 'left' | 'right',
@@ -86,11 +86,11 @@ function buildLayersStylePromptShared(
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls.';
 
   const crimpsLook =
-    'Target look: **long** hair — extend **past the shoulders** (chest-length or longer), with **distinct crimped texture** (uniform zig-zag / pressed-crimp pattern along the length — **salon crimps**, not loose spiral curls, not beach waves). Crimps should read **even** and **consistent** from root to ends, not mixed with large barrel curls.';
+    'Target look (match **salon crimp-iron reference**): **long** hair past the shoulders. Hair must show **deep, pressed crimps** — continuous **zig-zag ridges** along the length with **even spacing** and **consistent ridge scale** from mid-shaft through ends (like a fresh **crimping iron** pass: sharp, readable pattern). Finish: **smooth, glossy**, ridges stay **defined** — **not** brushed-out, **not** fluffy or frizzy. **Do not** use loose **S-waves**, **beach waves**, **spiral curls**, **barrel curls**, or **straight** hair; the dominant read must be **crimp texture**, not mixed textures. Volume is **full** but the silhouette follows the **part** below — crimped sections should **drape** naturally without turning into undefined bulk.';
 
   const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
 
-  const styleNoun = salon === 'crimps' ? 'crimps' : 'voluminous layered S-waves';
+  const styleNoun = salon === 'crimps' ? 'salon deep-pressed crimps' : 'voluminous layered S-waves';
   const partWordLayers =
     partSelection === 'MIDDLE'
       ? 'Use a **MIDDLE / center part** at the crown. **Face-framing layers** + **layered waves** swept away from the face (soft curtain flow); part line visible at the front hairline.'
@@ -100,21 +100,21 @@ function buildLayersStylePromptShared(
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
-      ? 'Use a **MIDDLE / center part** at the crown. **Crimps** with face-framing flow; part line visible at the front hairline.'
+      ? 'Use a **MIDDLE / center part** at the crown. **Crimped lengths** fall evenly on both sides from that center line; zig-zag ridges stay **parallel to the hair’s fall** on each side. Part line visible at the front hairline.'
       : partSelection === 'LEFT'
-        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Crimps** — sweep and volume follow that part; **do not** apply a center or right part.'
-        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Crimps** — sweep and volume follow that part; **do not** apply a center or left part.';
+        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Crimp pattern and drape** follow that part — more mass on the **heavy** side of the part; **do not** apply a center or right part.'
+        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Crimp pattern and drape** follow that part — more mass on the **heavy** side of the part; **do not** apply a center or left part.';
 
   const partLine = salon === 'crimps' ? partWordCrimps : partWordLayers;
 
   const angleConstraint =
     angle === 'left'
       ? salon === 'crimps'
-        ? 'This is the **LEFT 3/4 view**: keep crimp mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
+        ? 'This is the **LEFT 3/4 view**: keep **crimped** volume biased toward the **viewer’s right** (mannequin’s left); ridges stay **visible** in this angle — do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
         : 'This is the **LEFT 3/4 view**: keep curl mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
       : angle === 'right'
         ? salon === 'crimps'
-          ? 'This is the **RIGHT 3/4 view**: keep crimp mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
+          ? 'This is the **RIGHT 3/4 view**: keep **crimped** volume biased toward the **viewer’s left** (mannequin’s right); ridges stay **visible** — do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
           : 'This is the **RIGHT 3/4 view**: keep curl mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
         : (() => {
             const oneShoulderFrontLayers =
@@ -125,7 +125,7 @@ function buildLayersStylePromptShared(
                   : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.';
             const oneShoulderFrontCrimps =
               partSelection === 'MIDDLE'
-                ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided shoulder sweep only** — **more hair on ONE shoulder**, **not** equal volume on both. Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” For a **middle part**, still keep **asymmetric** bulk: pick **one** dominant shoulder for the longest crimp drape; **never** a perfectly symmetric curtain on left and right.'
+                ? 'This is the **FRONT view** with a **MIDDLE / center part**: **balanced** crimped panels — **zig-zag ridges visible on both sides** of the center part, falling forward over the shoulders; volume may be **slightly** asymmetric but **do not** collapse to **one** bare shoulder or erase crimps on one side. Keep the **part line** clear at the hairline.'
                 : partSelection === 'LEFT'
                   ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest crimps must fall toward the **viewer’s right** (mannequin’s **left** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching mass on both sides.'
                   : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest crimps must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching mass on both sides.';

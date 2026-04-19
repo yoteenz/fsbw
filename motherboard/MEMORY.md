@@ -15746,3 +15746,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`buildLayersStylePromptFromColorTierWebp`** / **`buildCrimpsStylePromptFromColorTierWebp`** optional **`includeBangs`**; **`curtainBangsAddonForSalonPart`** (MIDDLE/LEFT/RIGHT) in **`buildLayersStylePromptShared`**. **`POST /api/live-wig-after-color-styling`**: when **`styling`** includes **BANGS** + **LAYERS** or **CRIMPS**, combined prompt + **`wigPreviewLiveLayersWithBangsPartFolder`** / **`wigPreviewLiveCrimpsWithBangsPartFolder`**. **`BawNoirLiveStylingSalonMode`**: **`LAYERS_BANGS`**, **`CRIMPS_BANGS`**; **`resolveAdminNoirHubLiveWigViewsFromStorage`**; **styling page** **`salonStorageMode`**. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR CRIMPS prompt: salon crimp-iron look + MIDDLE front balanced
+
+**Context (this chat):** User asked to **update/reformat the crimps prompt** to align with **reference images**; **no image files** were attached — wording updated to a typical **salon crimp-iron** reference (deep zig-zag ridges, even spacing, glossy; not waves/curls).
+
+**Decisions / outcomes:** **`crimpsLook`** + **`styleNoun`** **`salon deep-pressed crimps`**; **`partWordCrimps`** (ridges parallel to fall; side-part heavy side). **FRONT + MIDDLE** for crimps: **balanced** crimped panels on both sides of center part. L/R front unchanged (one-sided drape). **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
