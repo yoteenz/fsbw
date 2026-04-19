@@ -15940,3 +15940,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **RASPBERRY** catalog + UI swatch restored from **#FF2855** to **#DA3063** in **`api/_lib/bawCatalogHairColors.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/buildWigGeneratedUnit.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/account/concierge/page.tsx`**, **`src/utils/bcfProductOptions.ts`**, **`scripts/generate-hair-colors.md`**. **CHERRY** (**#FF1400**) and **OFF BLACK** (**#160604**) **unchanged**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW customize: live previews use confirmed color, not last color-page tap
+
+**Context (this chat):** **Styling** and other sub-pages showed the **last tapped** color from the color sub-page instead of the color **CONFIRMED** (hub + `selectedColor`).
+
+**Decisions / outcomes:** On customize routes **except** `.../customize/color`, **`readBuildWigLivePreviewColor`** and **`readEffectiveNoirBawHairColor`** now prefer **`selectedColor`** then **`customizeSelectedColor`** (draft). Color sub-page keeps draft-first. **`currentNoirColorTripleOrNull`** uses **pending** WebPs only on **`/noir/customize/color`**; other steps use **committed** `bawNoirLiveColorWigViews` only. Added **`isBuildAWigColorSubPagePathname`** in **`buildWigLivePreviewSelections.ts`**.
+
+**Verification:** `npm run build` passes.

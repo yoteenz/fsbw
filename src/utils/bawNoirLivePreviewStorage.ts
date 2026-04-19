@@ -302,6 +302,16 @@ export function readEffectiveNoirBawHairColor(pathname: string): string {
       if (isNoirBawCustomizeHubOnlyPathname(pathname)) {
         return (localStorage.getItem('customizeSelectedColor') || 'OFF BLACK').trim() || 'OFF BLACK';
       }
+      // Draft color taps on `.../customize/color` only — other steps use **confirmed** `selectedColor` (hub + Confirm).
+      const p = pathname.replace(/\/$/, '') || '/';
+      const onColorSubPage = p.endsWith('/color');
+      if (!onColorSubPage) {
+        return (
+          localStorage.getItem('selectedColor') ||
+          localStorage.getItem('customizeSelectedColor') ||
+          'OFF BLACK'
+        );
+      }
       return (
         localStorage.getItem('customizeSelectedColor') ||
         localStorage.getItem('selectedColor') ||
@@ -325,12 +335,17 @@ export function shouldUseCommittedBawNoirLiveColorWigViews(pathname: string): bo
 
 /**
  * Current NOIR color preview for BAW routes.
- * Prefer the pending triple when the user is still on a sub-page (e.g. color → styling)
- * so the next route reflects the latest selected color immediately instead of an older committed one.
+ * **Pending** triple applies only on the **color** sub-page (draft taps). After Confirm or on styling/length/etc.,
+ * use **committed** `bawNoirLiveColorWigViews` only so previews match hub-confirmed color, not last in-page tap.
  */
 function currentNoirColorTripleOrNull(pathname: string): BawNoirLiveWigViewsTriple | null {
   if (!shouldUseCommittedBawNoirLiveColorWigViews(pathname)) return null;
-  return readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
+  const p = pathname.replace(/\/$/, '') || '/';
+  const onNoirCustomizeColor = p.includes('/build-a-wig/noir/customize/') && p.endsWith('/color');
+  if (onNoirCustomizeColor) {
+    return readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
+  }
+  return readBawNoirLiveColorWigViews();
 }
 
 /** Exact `/build-a-wig/noir` — static mannequin PNGs only; live WebPs apply on `/build-a-wig/noir/...` sub-routes. */

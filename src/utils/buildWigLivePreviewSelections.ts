@@ -46,6 +46,12 @@ export function readBuildWigLivePreviewSelections(pathname: string): BuildWigLiv
   };
 }
 
+/** True on `.../customize/color` or `.../edit/color` — draft taps live in customize/edit keys; other steps must use hub-confirmed `selectedColor`. */
+export function isBuildAWigColorSubPagePathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return p.endsWith('/color') && (p.includes('/customize/') || p.includes('/edit/'));
+}
+
 /** Swatch id for live preview APIs (same keys as color page). */
 export function readBuildWigLivePreviewColor(pathname: string): string {
   const isOnEditRoute = pathname.includes('/edit');
@@ -58,6 +64,15 @@ export function readBuildWigLivePreviewColor(pathname: string): string {
     );
   }
   if (isOnCustomizeRoute) {
+    // On customize, `customizeSelectedColor` updates on every tap (draft). `selectedColor` is hub + Confirm on color page.
+    // Styling/length/etc. must match the **confirmed** swatch, not the last in-page tap.
+    if (!isBuildAWigColorSubPagePathname(pathname)) {
+      return (
+        localStorage.getItem('selectedColor') ||
+        localStorage.getItem('customizeSelectedColor') ||
+        'OFF BLACK'
+      );
+    }
     return (
       localStorage.getItem('customizeSelectedColor') ||
       localStorage.getItem('selectedColor') ||
