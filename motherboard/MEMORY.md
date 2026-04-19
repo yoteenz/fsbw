@@ -15716,3 +15716,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** LAYERS used **HQ black-brick** env refs + “keep hair color” → model kept **black**. **Fix:** LAYERS now uses **same** Fal input as bangs — **color-tier WebPs** from Storage (`wigPreviewLiveAnglePaths`) + new **`buildLayersStylePromptFromColorTierWebp(angle, part, catalog)`** with explicit **keep tinted hair / do not revert to black**. **`buildLayersStylePromptShared`** + deprecated **`buildLayersStylePromptFromHqMannequinRef`**. **`live-wig-after-color-styling.ts`** unified color download path; removed HQ env gate for LAYERS. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR CRIMPS: Fal prompt + after-color API (mirror LAYERS + part)
+
+**Context (this chat):** User asked to add a **crimps** prompt **mirroring** the **LAYERS** styling option and **part selection**, using **“crimps”** instead of layered curls.
+
+**Decisions / outcomes:** **`buildCrimpsStylePromptFromColorTierWebp`** in **`api/_lib/bawLiveStylingPrompts.ts`** (shared **`buildLayersStylePromptShared`** with **`salon: 'layers' | 'crimps'`**): same color lock + part lines + one-sided front drape as LAYERS, but **crimped texture** (zig-zag / pressed) not spiral curls. **`POST /api/live-wig-after-color-styling`**: accepts **`CRIMPS`** (rejects **LAYERS+CRIMPS** together); writes **`after-color/crimps-{middle|left|right}-part/`** via **`wigPreviewLiveCrimpsPartFolder`**. Response **`stylingMode`**: **`middle-crimps`**. **LocalStorage** styling envelope gains **`salonMode`** **`LAYERS` \| `CRIMPS`**; **`readBawNoirLiveStylingWigViewsForPart(part, salonMode)`**; **`resolveAdminNoirHubLiveWigViewsFromStorage`** resolves **CRIMPS** when **CRIMPS** selected (not **LAYERS**). **Styling page:** **`hasCrimpsLiveStyling`**, founder regen + cache for crimps; BANGS-only excludes **CRIMPS**. **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.

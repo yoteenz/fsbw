@@ -77,6 +77,14 @@ export function wigPreviewLiveLayersPartFolder(partSelection: string): string {
   return 'layers-middle-part';
 }
 
+/** Folder under `after-color/` for CRIMPS live styling — same part split as LAYERS, separate WebP cache. */
+export function wigPreviewLiveCrimpsPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'crimps-left-part';
+  if (p === 'RIGHT') return 'crimps-right-part';
+  return 'crimps-middle-part';
+}
+
 /** After-color styling (LAYERS + part); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
 export function wigPreviewLiveAfterColorStylingPaths(
   promptVersion: string,

@@ -10,7 +10,11 @@ export const config = { maxDuration: 120 };
  * + part while **keeping** that hair color (fixes black output when input was HQ black-brick refs only).
  * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
- * **BANGS only** (BANGS without LAYERS): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
+ * **CRIMPS** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP input as LAYERS; prompt `buildCrimpsStylePromptFromColorTierWebp`
+ * — **crimps** texture + part, keeping swatch hair color.
+ * **Output:** `.../after-color/crimps-{middle|left|right}-part/{angle}.webp`
+ *
+ * **BANGS only** (BANGS without LAYERS/CRIMPS): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
@@ -22,12 +26,14 @@ import {
   wigPreviewManifestHashLiveColorTier,
   wigPreviewLiveAnglePaths,
   wigPreviewLiveAfterColorStylingPaths,
+  wigPreviewLiveCrimpsPartFolder,
   wigPreviewLiveLayersPartFolder,
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   buildBangsOnlyStylePrompt,
+  buildCrimpsStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
 } from './_lib/bawLiveStylingPrompts.js';
 
@@ -139,14 +145,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const partStyling = readLayersPartStyling(body);
     const stylingRaw = readString(body, 'styling', 'NONE').toUpperCase();
     const hasLayers = stylingRaw.includes('LAYERS');
+    const hasCrimps = stylingRaw.includes('CRIMPS');
     const hasBangs = stylingRaw.includes('BANGS');
-    const bangsOnly = hasBangs && !hasLayers;
+    const bangsOnly = hasBangs && !hasLayers && !hasCrimps;
     const middleLayers = hasLayers;
+    const middleCrimps = hasCrimps && !hasLayers;
 
-    if (!middleLayers && !bangsOnly) {
+    if (hasLayers && hasCrimps) {
+      sendJson(res, 400, {
+        error: 'Live styling: pick **LAYERS** or **CRIMPS**, not both in one request.',
+      });
+      return;
+    }
+
+    if (!middleLayers && !middleCrimps && !bangsOnly) {
       sendJson(res, 400, {
         error:
-          'Live styling: either (1) styling including LAYERS (layers + part from partSelection), or (2) styling BANGS only without LAYERS.',
+          'Live styling: either (1) LAYERS or CRIMPS (salon style + part from partSelection), or (2) BANGS only without LAYERS/CRIMPS.',
       });
       return;
     }
@@ -165,7 +180,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const colorTierHash = wigPreviewManifestHashLiveColorTier(selections);
     const colorPaths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', colorTierHash);
-    const storageFolderKey = middleLayers ? wigPreviewLiveLayersPartFolder(partStyling) : 'bangs-only';
+    const storageFolderKey = middleLayers
+      ? wigPreviewLiveLayersPartFolder(partStyling)
+      : middleCrimps
+        ? wigPreviewLiveCrimpsPartFolder(partStyling)
+        : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
     let supabase;
@@ -216,7 +235,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
       const prompt = middleLayers
         ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog)
-        : buildBangsOnlyStylePrompt(angle);
+        : middleCrimps
+          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog)
+          : buildBangsOnlyStylePrompt(angle);
       const imageUrls = [colorPublicUrl];
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
@@ -261,8 +282,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       generated,
       skipped,
       selections,
-      stylingMode: middleLayers ? 'middle-layers' : 'bangs-only',
-      ...(middleLayers ? { partSelection: partStyling } : {}),
+      stylingMode: middleLayers ? 'middle-layers' : middleCrimps ? 'middle-crimps' : 'bangs-only',
+      ...(middleLayers || middleCrimps ? { partSelection: partStyling } : {}),
       ...(singleAngle ? { singleAngle } : {}),
     });
   } catch (e) {

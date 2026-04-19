@@ -21,7 +21,26 @@ export function buildLayersStylePromptFromColorTierWebp(
     hex +
     '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade. Only reshape/style the hair.';
 
-  return buildLayersStylePromptShared(angle, partSelection, colorLock);
+  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers');
+}
+
+/**
+ * **CRIMPS** live styling: same inputs as LAYERS (color-tier WebP + part) but hairstyle = **crimps** (zig-zag / pressed texture), not layered curls.
+ */
+export function buildCrimpsStylePromptFromColorTierWebp(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  catalog: CatalogColorForLayersPrompt
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const colorLock =
+    '**INPUT** is the live NOIR **color preview** image — hair is already tinted to **' +
+    catalog.label +
+    '** (target **#' +
+    hex +
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade. Only reshape/style the hair.';
+
+  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'crimps');
 }
 
 /**
@@ -34,50 +53,85 @@ export function buildLayersStylePromptFromHqMannequinRef(
 ): string {
   const colorLock =
     '**INPUT** is the gray-brick mannequin reference — preserve **catalog hair color** from build (do not output jet black unless the catalog color is black).';
-  return buildLayersStylePromptShared(angle, partSelection, colorLock);
+  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers');
 }
 
 function buildLayersStylePromptShared(
   angle: 'front' | 'left' | 'right',
   partSelection: NoirLayersPartSelection,
-  colorLockBlock: string
+  colorLockBlock: string,
+  salon: 'layers' | 'crimps'
 ): string {
   const layersLook =
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer), with **defined, uniform curls** (consistent spiral/ringlets, same curl size and pattern across the head — **salon-set**, not frizzy, not mixed textures). Layers should read **cohesive**, not stringy or uneven.';
 
-  const angleConstraint =
-    angle === 'left'
-      ? 'This is the **LEFT 3/4 view**: keep curl mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
-      : angle === 'right'
-        ? 'This is the **RIGHT 3/4 view**: keep curl mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
-        : (() => {
-            const oneShoulderFront =
-              partSelection === 'MIDDLE'
-                ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided shoulder sweep only** — **more hair on ONE shoulder**, **not** equal volume on both. Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” For a **middle part**, still keep **asymmetric** bulk: pick **one** dominant shoulder for the longest curl drape; **never** a perfectly symmetric curtain on left and right.'
-                : partSelection === 'LEFT'
-                  ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s right** (mannequin’s **left** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.'
-                  : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.';
-            return oneShoulderFront;
-          })();
+  const crimpsLook =
+    'Target look: **long** hair — extend **past the shoulders** (chest-length or longer), with **distinct crimped texture** (uniform zig-zag / pressed-crimp pattern along the length — **salon crimps**, not loose spiral curls, not beach waves). Crimps should read **even** and **consistent** from root to ends, not mixed with large barrel curls.';
 
-  const partLine =
+  const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
+
+  const styleNoun = salon === 'crimps' ? 'crimps' : 'long layered curls';
+  const partWordLayers =
     partSelection === 'MIDDLE'
       ? 'Use a **MIDDLE / center part** at the crown. **Layered curls** with face-framing layers; part line visible at the front hairline.'
       : partSelection === 'LEFT'
         ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or right part.'
         : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or left part.';
 
+  const partWordCrimps =
+    partSelection === 'MIDDLE'
+      ? 'Use a **MIDDLE / center part** at the crown. **Crimps** with face-framing flow; part line visible at the front hairline.'
+      : partSelection === 'LEFT'
+        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Crimps** — sweep and volume follow that part; **do not** apply a center or right part.'
+        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Crimps** — sweep and volume follow that part; **do not** apply a center or left part.';
+
+  const partLine = salon === 'crimps' ? partWordCrimps : partWordLayers;
+
+  const angleConstraint =
+    angle === 'left'
+      ? salon === 'crimps'
+        ? 'This is the **LEFT 3/4 view**: keep crimp mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
+        : 'This is the **LEFT 3/4 view**: keep curl mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
+      : angle === 'right'
+        ? salon === 'crimps'
+          ? 'This is the **RIGHT 3/4 view**: keep crimp mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
+          : 'This is the **RIGHT 3/4 view**: keep curl mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
+        : (() => {
+            const oneShoulderFrontLayers =
+              partSelection === 'MIDDLE'
+                ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided shoulder sweep only** — **more hair on ONE shoulder**, **not** equal volume on both. Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” For a **middle part**, still keep **asymmetric** bulk: pick **one** dominant shoulder for the longest curl drape; **never** a perfectly symmetric curtain on left and right.'
+                : partSelection === 'LEFT'
+                  ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s right** (mannequin’s **left** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.'
+                  : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.';
+            const oneShoulderFrontCrimps =
+              partSelection === 'MIDDLE'
+                ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided shoulder sweep only** — **more hair on ONE shoulder**, **not** equal volume on both. Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” For a **middle part**, still keep **asymmetric** bulk: pick **one** dominant shoulder for the longest crimp drape; **never** a perfectly symmetric curtain on left and right.'
+                : partSelection === 'LEFT'
+                  ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest crimps must fall toward the **viewer’s right** (mannequin’s **left** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching mass on both sides.'
+                  : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest crimps must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching mass on both sides.';
+            return salon === 'crimps' ? oneShoulderFrontCrimps : oneShoulderFrontLayers;
+          })();
+
+  const lengthNote =
+    salon === 'crimps'
+      ? 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long crimped look.'
+      : 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long-layered-curl look.';
+
   return [
     colorLockBlock,
-    'Recreate this photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',
-    layersLook,
+    'Recreate this photograph. **Only** change the **hairstyle** to **' +
+      styleNoun +
+      '** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',
+    lookBlock,
     partLine,
     angleConstraint,
-    'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long-layered-curl look.',
+    lengthNote,
     bawFalEditPreserveReferenceBlock(),
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
-    'Change **only** the **hair** shape/style to layered curls with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
+    'Change **only** the **hair** shape/style to ' +
+      styleNoun +
+      ' with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
   ].join(' ');
 }
 

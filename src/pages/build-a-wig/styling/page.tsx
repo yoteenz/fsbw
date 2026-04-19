@@ -23,6 +23,7 @@ import {
   persistBawNoirLiveStylingWigViews,
   readBawNoirLiveBangsWigViews,
   readBawNoirLiveStylingWigViewsForPart,
+  type BawNoirLiveStylingSalonMode,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -217,8 +218,14 @@ export default function StylingSelectionPage() {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
         const part: 'MIDDLE' | 'LEFT' | 'RIGHT' =
           rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
-        const cachedLayers = readBawNoirLiveStylingWigViewsForPart(part);
-        if (cachedLayers) setLiveStylingWigViews(cachedLayers);
+        const salonMode: BawNoirLiveStylingSalonMode | null = selectedHairStyling.some((s) => s === 'LAYERS')
+          ? 'LAYERS'
+          : selectedHairStyling.some((s) => s === 'CRIMPS')
+            ? 'CRIMPS'
+            : null;
+        const cachedSalon =
+          salonMode !== null ? readBawNoirLiveStylingWigViewsForPart(part, salonMode) : null;
+        if (cachedSalon) setLiveStylingWigViews(cachedSalon);
         else setLiveStylingWigViews(null);
         const cachedBangs = readBawNoirLiveBangsWigViews();
         if (cachedBangs) setLiveBangsWigViews(cachedBangs);
@@ -326,10 +333,21 @@ export default function StylingSelectionPage() {
       selectedPartSelection === 'LEFT' ||
       selectedPartSelection === 'RIGHT');
 
+  const hasCrimpsLiveStyling =
+    location.pathname.includes('/build-a-wig/noir/') &&
+    selectedHairStyling.some((s) => s === 'CRIMPS') &&
+    !selectedHairStyling.some((s) => s === 'LAYERS') &&
+    (selectedPartSelection === 'MIDDLE' ||
+      selectedPartSelection === 'LEFT' ||
+      selectedPartSelection === 'RIGHT');
+
+  const hasSalonPartLiveStyling = hasLayersLiveStyling || hasCrimpsLiveStyling;
+
   const hasBangsOnlyLive =
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'BANGS') &&
-    !selectedHairStyling.some((s) => s === 'LAYERS');
+    !selectedHairStyling.some((s) => s === 'LAYERS') &&
+    !selectedHairStyling.some((s) => s === 'CRIMPS');
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -337,27 +355,32 @@ export default function StylingSelectionPage() {
       founderNoirFalRegenUi &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
-    if (!noir || !hasLayersLiveStyling) {
-      if (!hasLayersLiveStyling) setLiveStylingWigViews(null);
+    if (!noir || !hasSalonPartLiveStyling) {
+      if (!hasSalonPartLiveStyling) setLiveStylingWigViews(null);
       return;
     }
     const stylingForApi = selectedHairStyling
       .filter((s) => s && s !== 'NONE')
       .sort()
       .join(',');
-    if (!stylingForApi.includes('LAYERS')) {
+    const salonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling ? 'LAYERS' : 'CRIMPS';
+    if (hasLayersLiveStyling && !stylingForApi.includes('LAYERS')) {
+      setLiveStylingWigViews(null);
+      return;
+    }
+    if (hasCrimpsLiveStyling && !stylingForApi.includes('CRIMPS')) {
       setLiveStylingWigViews(null);
       return;
     }
     setLiveStylingError(null);
     setLiveStylingLoading(true);
     const partKey = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
-    const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey);
+    const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey, salonMode);
     if (cachedForPart) setLiveStylingWigViews(cachedForPart);
     else setLiveStylingWigViews(null);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    const sig = `LAYERS|${color}|${stylingForApi}|${selectedPartSelection}`;
+    const sig = `${salonMode}|${color}|${stylingForApi}|${selectedPartSelection}`;
     const forceRegenerate =
       lastLayersLivePreviewSigRef.current !== '' && lastLayersLivePreviewSigRef.current !== sig;
     lastLayersLivePreviewSigRef.current = sig;
@@ -380,7 +403,11 @@ export default function StylingSelectionPage() {
             `${u.right}?t=${bust}`,
           ];
           setLiveStylingWigViews(triple);
-          persistBawNoirLiveStylingWigViews(triple, selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT');
+          persistBawNoirLiveStylingWigViews(
+            triple,
+            selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT',
+            salonMode
+          );
         } else {
           setLiveStylingWigViews(null);
         }
@@ -395,7 +422,9 @@ export default function StylingSelectionPage() {
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
+    hasSalonPartLiveStyling,
     hasLayersLiveStyling,
+    hasCrimpsLiveStyling,
   ]);
 
   useEffect(() => {
@@ -412,7 +441,10 @@ export default function StylingSelectionPage() {
       .filter((s) => s && s !== 'NONE')
       .sort()
       .join(',');
-    if (stylingForApi !== 'BANGS' || selectedHairStyling.some((s) => s === 'LAYERS')) {
+    if (
+      stylingForApi !== 'BANGS' ||
+      selectedHairStyling.some((s) => s === 'LAYERS' || s === 'CRIMPS')
+    ) {
       setLiveBangsWigViews(null);
       return;
     }
@@ -462,7 +494,7 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    founderNoirFalRegenUi && hasLayersLiveStyling && liveStylingWigViews
+    founderNoirFalRegenUi && hasSalonPartLiveStyling && liveStylingWigViews
       ? liveStylingWigViews
       : founderNoirFalRegenUi && hasBangsOnlyLive && liveBangsWigViews
         ? liveBangsWigViews
@@ -473,7 +505,7 @@ export default function StylingSelectionPage() {
   const showNoirFounderFalHint =
     isFounderNoirFalRegenUiVisible() && location.pathname.includes('/build-a-wig/noir/');
   const showNoirLiveStylingRegenControls =
-    showNoirFounderFalHint && (hasLayersLiveStyling || hasBangsOnlyLive);
+    showNoirFounderFalHint && (hasSalonPartLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets
@@ -1458,7 +1490,7 @@ export default function StylingSelectionPage() {
                   maxWidth: '280px',
                 }}
               >
-                Fal regen (LAYERS / BANGS): select LAYERS or BANGS below, or use the NOIR color page for color WebPs.
+                Fal regen (LAYERS / CRIMPS / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
               </p>
             )}
             {showNoirLiveStylingRegenControls && (
@@ -1472,12 +1504,12 @@ export default function StylingSelectionPage() {
                 }}
               >
                 {liveStylingLoading
-                  ? `LIVE PREVIEW: layers + ${selectedPartSelection} part (after color)…`
+                  ? `LIVE PREVIEW: ${hasLayersLiveStyling ? 'layers' : 'crimps'} + ${selectedPartSelection} part (after color)…`
                   : liveBangsLoading
                     ? 'LIVE PREVIEW: curtain bangs (after color)…'
                     : liveStylingError
                       ? `LIVE PREVIEW: ${liveStylingError}`
-                      : hasLayersLiveStyling
+                      : hasSalonPartLiveStyling
                         ? 'LIVE PREVIEW: uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong (cached WebPs).'
                         : 'LIVE PREVIEW: BANGS only — uses your saved color WebPs (NOIR color page first). Regenerate below if the hair color still looks wrong.'}
               </p>
@@ -1499,7 +1531,10 @@ export default function StylingSelectionPage() {
                     const sel = readBuildWigLivePreviewSelections(pathname);
                     const color = readBuildWigLivePreviewColor(pathname);
                     setLiveStylingError(null);
-                    if (hasLayersLiveStyling) {
+                    if (hasSalonPartLiveStyling) {
+                      const regenSalonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
+                        ? 'LAYERS'
+                        : 'CRIMPS';
                       setLiveStylingLoading(true);
                       void postLiveWigAfterColorStyling({
                         color,
@@ -1520,7 +1555,8 @@ export default function StylingSelectionPage() {
                             setLiveStylingWigViews(triple);
                             persistBawNoirLiveStylingWigViews(
                               triple,
-                              selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT'
+                              selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT',
+                              regenSalonMode
                             );
                           }
                         })
@@ -1625,9 +1661,14 @@ export default function StylingSelectionPage() {
                                 return next;
                               });
                             };
-                            if (hasLayersLiveStyling) {
+                            if (hasSalonPartLiveStyling) {
                               const part = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
-                              applyTriple(setLiveStylingWigViews, (t) => persistBawNoirLiveStylingWigViews(t, part));
+                              const regenSalonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
+                                ? 'LAYERS'
+                                : 'CRIMPS';
+                              applyTriple(setLiveStylingWigViews, (t) =>
+                                persistBawNoirLiveStylingWigViews(t, part, regenSalonMode)
+                              );
                             } else {
                               applyTriple(setLiveBangsWigViews, persistBawNoirLiveBangsWigViews);
                             }
