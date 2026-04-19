@@ -218,13 +218,16 @@ export default function StylingSelectionPage() {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
         const part: 'MIDDLE' | 'LEFT' | 'RIGHT' =
           rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
-        const salonMode: BawNoirLiveStylingSalonMode | null = selectedHairStyling.some((s) => s === 'LAYERS')
-          ? 'LAYERS'
+        const sm: BawNoirLiveStylingSalonMode | null = selectedHairStyling.some((s) => s === 'LAYERS')
+          ? selectedHairStyling.includes('BANGS')
+            ? 'LAYERS_BANGS'
+            : 'LAYERS'
           : selectedHairStyling.some((s) => s === 'CRIMPS')
-            ? 'CRIMPS'
+            ? selectedHairStyling.includes('BANGS')
+              ? 'CRIMPS_BANGS'
+              : 'CRIMPS'
             : null;
-        const cachedSalon =
-          salonMode !== null ? readBawNoirLiveStylingWigViewsForPart(part, salonMode) : null;
+        const cachedSalon = sm !== null ? readBawNoirLiveStylingWigViewsForPart(part, sm) : null;
         if (cachedSalon) setLiveStylingWigViews(cachedSalon);
         else setLiveStylingWigViews(null);
         const cachedBangs = readBawNoirLiveBangsWigViews();
@@ -343,6 +346,20 @@ export default function StylingSelectionPage() {
 
   const hasSalonPartLiveStyling = hasLayersLiveStyling || hasCrimpsLiveStyling;
 
+  const hasBangsWithSalon =
+    selectedHairStyling.includes('BANGS') &&
+    (selectedHairStyling.includes('LAYERS') || selectedHairStyling.includes('CRIMPS'));
+
+  const salonStorageMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
+    ? hasBangsWithSalon
+      ? 'LAYERS_BANGS'
+      : 'LAYERS'
+    : hasCrimpsLiveStyling
+      ? hasBangsWithSalon
+        ? 'CRIMPS_BANGS'
+        : 'CRIMPS'
+      : 'LAYERS';
+
   const hasBangsOnlyLive =
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'BANGS') &&
@@ -363,7 +380,6 @@ export default function StylingSelectionPage() {
       .filter((s) => s && s !== 'NONE')
       .sort()
       .join(',');
-    const salonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling ? 'LAYERS' : 'CRIMPS';
     if (hasLayersLiveStyling && !stylingForApi.includes('LAYERS')) {
       setLiveStylingWigViews(null);
       return;
@@ -375,12 +391,12 @@ export default function StylingSelectionPage() {
     setLiveStylingError(null);
     setLiveStylingLoading(true);
     const partKey = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
-    const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey, salonMode);
+    const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey, salonStorageMode);
     if (cachedForPart) setLiveStylingWigViews(cachedForPart);
     else setLiveStylingWigViews(null);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    const sig = `${salonMode}|${color}|${stylingForApi}|${selectedPartSelection}`;
+    const sig = `${salonStorageMode}|${color}|${stylingForApi}|${selectedPartSelection}`;
     const forceRegenerate =
       lastLayersLivePreviewSigRef.current !== '' && lastLayersLivePreviewSigRef.current !== sig;
     lastLayersLivePreviewSigRef.current = sig;
@@ -406,7 +422,7 @@ export default function StylingSelectionPage() {
           persistBawNoirLiveStylingWigViews(
             triple,
             selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT',
-            salonMode
+            salonStorageMode
           );
         } else {
           setLiveStylingWigViews(null);
@@ -425,6 +441,7 @@ export default function StylingSelectionPage() {
     hasSalonPartLiveStyling,
     hasLayersLiveStyling,
     hasCrimpsLiveStyling,
+    salonStorageMode,
   ]);
 
   useEffect(() => {
@@ -1504,7 +1521,7 @@ export default function StylingSelectionPage() {
                 }}
               >
                 {liveStylingLoading
-                  ? `LIVE PREVIEW: ${hasLayersLiveStyling ? 'layers' : 'crimps'} + ${selectedPartSelection} part (after color)…`
+                  ? `LIVE PREVIEW: ${hasLayersLiveStyling ? 'layers' : 'crimps'}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
                   : liveBangsLoading
                     ? 'LIVE PREVIEW: curtain bangs (after color)…'
                     : liveStylingError
@@ -1532,9 +1549,6 @@ export default function StylingSelectionPage() {
                     const color = readBuildWigLivePreviewColor(pathname);
                     setLiveStylingError(null);
                     if (hasSalonPartLiveStyling) {
-                      const regenSalonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
-                        ? 'LAYERS'
-                        : 'CRIMPS';
                       setLiveStylingLoading(true);
                       void postLiveWigAfterColorStyling({
                         color,
@@ -1556,7 +1570,7 @@ export default function StylingSelectionPage() {
                             persistBawNoirLiveStylingWigViews(
                               triple,
                               selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT',
-                              regenSalonMode
+                              salonStorageMode
                             );
                           }
                         })
@@ -1663,11 +1677,8 @@ export default function StylingSelectionPage() {
                             };
                             if (hasSalonPartLiveStyling) {
                               const part = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
-                              const regenSalonMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
-                                ? 'LAYERS'
-                                : 'CRIMPS';
                               applyTriple(setLiveStylingWigViews, (t) =>
-                                persistBawNoirLiveStylingWigViews(t, part, regenSalonMode)
+                                persistBawNoirLiveStylingWigViews(t, part, salonStorageMode)
                               );
                             } else {
                               applyTriple(setLiveBangsWigViews, persistBawNoirLiveBangsWigViews);

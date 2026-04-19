@@ -14,6 +14,8 @@ export const config = { maxDuration: 120 };
  * — **crimps** texture + part, keeping swatch hair color.
  * **Output:** `.../after-color/crimps-{middle|left|right}-part/{angle}.webp`
  *
+ * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
+ *
  * **BANGS only** (BANGS without LAYERS/CRIMPS): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
@@ -27,7 +29,9 @@ import {
   wigPreviewLiveAnglePaths,
   wigPreviewLiveAfterColorStylingPaths,
   wigPreviewLiveCrimpsPartFolder,
+  wigPreviewLiveCrimpsWithBangsPartFolder,
   wigPreviewLiveLayersPartFolder,
+  wigPreviewLiveLayersWithBangsPartFolder,
   type WigPreviewSelections,
 } from './_lib/wigPreviewSelectionHash.js';
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
@@ -150,6 +154,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const bangsOnly = hasBangs && !hasLayers && !hasCrimps;
     const middleLayers = hasLayers;
     const middleCrimps = hasCrimps && !hasLayers;
+    const bangsWithSalon = hasBangs && (middleLayers || middleCrimps);
 
     if (hasLayers && hasCrimps) {
       sendJson(res, 400, {
@@ -181,9 +186,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const colorTierHash = wigPreviewManifestHashLiveColorTier(selections);
     const colorPaths = wigPreviewLiveAnglePaths(promptVersion, 'NOIR', colorTierHash);
     const storageFolderKey = middleLayers
-      ? wigPreviewLiveLayersPartFolder(partStyling)
+      ? hasBangs
+        ? wigPreviewLiveLayersWithBangsPartFolder(partStyling)
+        : wigPreviewLiveLayersPartFolder(partStyling)
       : middleCrimps
-        ? wigPreviewLiveCrimpsPartFolder(partStyling)
+        ? hasBangs
+          ? wigPreviewLiveCrimpsWithBangsPartFolder(partStyling)
+          : wigPreviewLiveCrimpsPartFolder(partStyling)
         : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
@@ -234,9 +243,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       }
 
       const prompt = middleLayers
-        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog)
+        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+            includeBangs: bangsWithSalon,
+          })
         : middleCrimps
-          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog)
+          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+              includeBangs: bangsWithSalon,
+            })
           : buildBangsOnlyStylePrompt(angle);
       const imageUrls = [colorPublicUrl];
 
@@ -282,8 +295,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       generated,
       skipped,
       selections,
-      stylingMode: middleLayers ? 'middle-layers' : middleCrimps ? 'middle-crimps' : 'bangs-only',
-      ...(middleLayers || middleCrimps ? { partSelection: partStyling } : {}),
+      stylingMode: middleLayers
+        ? bangsWithSalon
+          ? 'middle-layers-with-bangs'
+          : 'middle-layers'
+        : middleCrimps
+          ? bangsWithSalon
+            ? 'middle-crimps-with-bangs'
+            : 'middle-crimps'
+          : 'bangs-only',
+      ...(middleLayers || middleCrimps ? { partSelection: partStyling, bangsWithSalon } : {}),
       ...(singleAngle ? { singleAngle } : {}),
     });
   } catch (e) {

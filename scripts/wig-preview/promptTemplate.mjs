@@ -192,7 +192,7 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
  * **Live LAYERS** (`POST /api/live-wig-after-color-styling`): `image_urls` = color-tier WebP from Storage. Keep in sync with `bawLiveStylingPrompts.ts`.
  * @param {{ label: string; hex: string }} catalog
  */
-export function buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog) {
+export function buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog, options) {
   const hex = String(catalog.hex || '')
     .replace(/^#/, '')
     .toUpperCase();
@@ -202,11 +202,12 @@ export function buildLayersStylePromptFromColorTierWebp(angle, partSelection, ca
     '** (target **#' +
     hex +
     '**). **Keep this exact hair color** in the output — do **not** revert to black or a different shade. Only reshape/style the hair.';
-  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers');
+  const includeBangs = Boolean(options && options.includeBangs);
+  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers', includeBangs);
 }
 
 /** **CRIMPS** — same inputs as LAYERS; crimp texture + part. Keep in sync with `bawLiveStylingPrompts.ts`. */
-export function buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, catalog) {
+export function buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, catalog, options) {
   const hex = String(catalog.hex || '')
     .replace(/^#/, '')
     .toUpperCase();
@@ -216,7 +217,24 @@ export function buildCrimpsStylePromptFromColorTierWebp(angle, partSelection, ca
     '** (target **#' +
     hex +
     '**). **Keep this exact hair color** in the output — do **not** revert to black or a different shade. Only reshape/style the hair.';
-  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'crimps');
+  const includeBangs = Boolean(options && options.includeBangs);
+  return buildLayersStylePromptShared(angle, partSelection, colorLock, 'crimps', includeBangs);
+}
+
+function curtainBangsAddonForSalonPart(partSelection) {
+  if (partSelection === 'MIDDLE') {
+    return (
+      '**BANGS (combine with the salon style above):** Add **lightly feathered curtain bangs** that **split from the center** to match the **middle part** — soft, face-framing, blended into the lengths. Bangs must **not** ignore the part: they open from the **same center part line** as the rest of the hair.'
+    );
+  }
+  if (partSelection === 'LEFT') {
+    return (
+      '**BANGS (combine with the salon style above):** Add **lightly feathered curtain bangs** that **follow the LEFT side part** — asymmetric curtain: longer sweep toward the **viewer’s right** (mannequin’s **left** side of the face), shorter toward the opposite side. **Do not** use a center-split bang when the part is left; bangs must **respect the part direction**.'
+    );
+  }
+  return (
+    '**BANGS (combine with the salon style above):** Add **lightly feathered curtain bangs** that **follow the RIGHT side part** — asymmetric curtain: longer sweep toward the **viewer’s left** (mannequin’s **right** side of the face), shorter toward the opposite side. **Do not** use a center-split bang when the part is right; bangs must **respect the part direction**.'
+  );
 }
 
 /** @deprecated Manual HQ black-brick tests only; live API uses color WebPs + `buildLayersStylePromptFromColorTierWebp`. */
@@ -225,12 +243,13 @@ export function buildLayersStylePromptFromHqMannequinRef(angle, partSelection) {
     angle,
     partSelection,
     '**INPUT** is the gray-brick mannequin reference — preserve catalog hair color (do not output jet black unless catalog is black).',
-    'layers'
+    'layers',
+    false
   );
 }
 
 /** @param {'layers'|'crimps'} salon */
-function buildLayersStylePromptShared(angle, partSelection, colorLockBlock, salon) {
+function buildLayersStylePromptShared(angle, partSelection, colorLockBlock, salon, includeBangs) {
   const layersLook =
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls.';
   const crimpsLook =
@@ -284,6 +303,11 @@ function buildLayersStylePromptShared(angle, partSelection, colorLockBlock, salo
       ? 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long crimped look.'
       : 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long layered **wave** look (full-bodied, blended — not stringy).';
 
+  const bangsLine = includeBangs
+    ? curtainBangsAddonForSalonPart(partSelection) +
+      ' Apply **both** the salon wave/crimp style **and** bangs in one coherent hairstyle — do **not** output bangs-only or style-only.'
+    : null;
+
   return [
     colorLockBlock,
     'Recreate this photograph. **Only** change the **hairstyle** to **' +
@@ -293,11 +317,13 @@ function buildLayersStylePromptShared(angle, partSelection, colorLockBlock, salo
     partLine,
     angleConstraint,
     lengthNote,
+    ...(bangsLine ? [bangsLine] : []),
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
     'Change **only** the **hair** shape/style to ' +
       styleNoun +
+      (includeBangs ? ' **with curtain bangs** as specified' : '') +
       ' with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
   ].join(' ');
 }

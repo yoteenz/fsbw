@@ -85,6 +85,22 @@ export function wigPreviewLiveCrimpsPartFolder(partSelection: string): string {
   return 'crimps-middle-part';
 }
 
+/** LAYERS + curtain bangs — distinct cache from LAYERS-only and bangs-only. */
+export function wigPreviewLiveLayersWithBangsPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'layers-with-bangs-left-part';
+  if (p === 'RIGHT') return 'layers-with-bangs-right-part';
+  return 'layers-with-bangs-middle-part';
+}
+
+/** CRIMPS + curtain bangs — distinct cache from CRIMPS-only. */
+export function wigPreviewLiveCrimpsWithBangsPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'crimps-with-bangs-left-part';
+  if (p === 'RIGHT') return 'crimps-with-bangs-right-part';
+  return 'crimps-with-bangs-middle-part';
+}
+
 /** After-color styling (LAYERS + part); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
 export function wigPreviewLiveAfterColorStylingPaths(
   promptVersion: string,

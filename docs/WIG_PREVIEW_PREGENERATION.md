@@ -72,9 +72,11 @@ On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when adm
 
 **Output paths (LAYERS):** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/layers-{middle|left|right}-part/{left|front|right}.webp` (separate folder per part).
 
+**BANGS + LAYERS or BANGS + CRIMPS:** Body **`styling`** includes **`BANGS`** and **`LAYERS`** or **`CRIMPS`** (e.g. `BANGS,LAYERS`). Same salon prompts with **`includeBangs: true`** — **curtain bangs** aligned to **`partSelection`** (center split for MIDDLE; asymmetric for LEFT/RIGHT). **Output:** `.../after-color/layers-with-bangs-{middle|left|right}-part/` or `crimps-with-bangs-{middle|left|right}-part/`. Separate cache from salon-only and from **bangs-only**.
+
 **Bangs only (BANGS without LAYERS/CRIMPS):** Same API and body shape; **`styling`** must be **`BANGS`** only (no **`LAYERS`** or **`CRIMPS`**). Fal uses **one** `image_url` (the **color-tier WebP** from Storage) and **`buildBangsOnlyStylePrompt`**. **Output:** `.../after-color/bangs-only/{angle}.webp`. Hub shows bangs preview after salon+part in priority order.
 
-**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist — required for **LAYERS**, **CRIMPS**, and **BANGS-only**. To fix a bad angle: **regen style L / M / R** (or delete that WebP in Storage and reload).
+**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist — required for **LAYERS**, **CRIMPS**, **combined BANGS+salon**, and **BANGS-only**. To fix a bad angle: **regen style L / M / R** (or delete that WebP in Storage and reload).
 
 **Manual fal (playground) — aspect ratio and resolution**
 

@@ -15736,3 +15736,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Updated **`layersLook`** + **`partWordLayers`** + **`styleNoun`** (layers branch only) in **`buildLayersStylePromptShared`** — **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**: **large soft S-waves**, **brushed-out barrel curls**, **one continuous cohesive flow**, face-framing **swept away from face**, **no** tight ringlets / skinny spirals / clumpy strands. **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BANGS + LAYERS/CRIMPS: combined Fal prompt, storage, hub cache
+
+**Context (this chat):** User reported **BANGS** did not **pair** with **LAYERS** or **CRIMPS** — combined selection should add **curtain bangs** to the salon style following **part direction**.
+
+**Decisions / outcomes:** **`buildLayersStylePromptFromColorTierWebp`** / **`buildCrimpsStylePromptFromColorTierWebp`** optional **`includeBangs`**; **`curtainBangsAddonForSalonPart`** (MIDDLE/LEFT/RIGHT) in **`buildLayersStylePromptShared`**. **`POST /api/live-wig-after-color-styling`**: when **`styling`** includes **BANGS** + **LAYERS** or **CRIMPS**, combined prompt + **`wigPreviewLiveLayersWithBangsPartFolder`** / **`wigPreviewLiveCrimpsWithBangsPartFolder`**. **`BawNoirLiveStylingSalonMode`**: **`LAYERS_BANGS`**, **`CRIMPS_BANGS`**; **`resolveAdminNoirHubLiveWigViewsFromStorage`**; **styling page** **`salonStorageMode`**. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.

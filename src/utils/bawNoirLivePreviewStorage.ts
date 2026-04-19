@@ -14,8 +14,12 @@ export type BawNoirLiveWigViewsTriple = [string, string, string];
 
 export type BawNoirLiveStylingPart = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
-/** Which salon + part live preview is stored (separate cache from LAYERS vs CRIMPS). */
-export type BawNoirLiveStylingSalonMode = 'LAYERS' | 'CRIMPS';
+/** Which salon + part live preview is stored (LAYERS vs CRIMPS; **+ bangs** = BANGS combined with that salon style). */
+export type BawNoirLiveStylingSalonMode =
+  | 'LAYERS'
+  | 'CRIMPS'
+  | 'LAYERS_BANGS'
+  | 'CRIMPS_BANGS';
 
 export type BawNoirLiveStylingEnvelope = {
   part: BawNoirLiveStylingPart;
@@ -42,8 +46,10 @@ function parseStylingStorageRaw(raw: string | null): BawNoirLiveStylingEnvelope 
     const sm = o.salonMode;
     if (part !== 'MIDDLE' && part !== 'LEFT' && part !== 'RIGHT') return null;
     if (!Array.isArray(urls) || urls.length !== 3) return null;
-    const salonMode: BawNoirLiveStylingSalonMode =
-      sm === 'CRIMPS' ? 'CRIMPS' : 'LAYERS';
+    let salonMode: BawNoirLiveStylingSalonMode = 'LAYERS';
+    if (sm === 'CRIMPS') salonMode = 'CRIMPS';
+    else if (sm === 'LAYERS_BANGS') salonMode = 'LAYERS_BANGS';
+    else if (sm === 'CRIMPS_BANGS') salonMode = 'CRIMPS_BANGS';
     return {
       part,
       salonMode,
@@ -381,7 +387,8 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
 
     const hasLayers = ids.includes('LAYERS');
     const hasCrimps = ids.includes('CRIMPS');
-    const bangsOnly = ids.includes('BANGS') && !hasLayers && !hasCrimps;
+    const hasBangs = ids.includes('BANGS');
+    const bangsOnly = hasBangs && !hasLayers && !hasCrimps;
 
     if (hasLayers || hasCrimps) {
       let partRaw: string | null = null;
@@ -398,7 +405,13 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
         partRaw = localStorage.getItem('selectedPartSelection');
       }
       const partU = (partRaw || 'MIDDLE').toUpperCase();
-      const salonMode: BawNoirLiveStylingSalonMode = hasLayers ? 'LAYERS' : 'CRIMPS';
+      const salonMode: BawNoirLiveStylingSalonMode = hasLayers
+        ? hasBangs
+          ? 'LAYERS_BANGS'
+          : 'LAYERS'
+        : hasBangs
+          ? 'CRIMPS_BANGS'
+          : 'CRIMPS';
       const fromStyling = readBawNoirLiveStylingWigViewsForPart(partU, salonMode);
       if (fromStyling) return fromStyling;
     }
