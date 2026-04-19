@@ -15626,3 +15626,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW hub thumbnails: mannequin nudge down 2px (bottom 6px → 4px)
+
+**Context (this chat):** User asked to move hub thumb mannequins **down 2px** vs leaf brick.
+
+**Decisions / outcomes:** **`bottom: 4px`** on **`.baw-noir-thumb-static-img--hub`** (was **`6px`**) — **2px lower** in the frame.
+
+**Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
