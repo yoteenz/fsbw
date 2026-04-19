@@ -9,9 +9,8 @@ import {
 } from '../utils/bawNoirLivePreviewStorage';
 
 /**
- * NOIR BAW sub-pages: same live triple resolution as the shared hub/storage resolver —
- * prefer the latest pending/current NOIR color preview first when appropriate, then styling/bangs.
- * Non-NOIR routes and the exact NOIR product hub (`/build-a-wig/noir`) get `null` (resolver).
+ * NOIR BAW **step** sub-routes (`/noir/customize/<step>`, `/noir/edit/<step>`): live triple from storage.
+ * `/build-a-wig/noir`, `/noir/customize`, `/noir/edit` hubs get `null` (static mannequins on `BuildAWigPage`).
  */
 export function useBawSubpageLiveNoirCompositeWigViews(): BawNoirLiveWigViewsTriple | null {
   const { pathname } = useLocation();

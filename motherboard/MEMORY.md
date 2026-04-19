@@ -15602,3 +15602,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW: live hero/thumbs only on NOIR step routes, not customize/edit hubs
+
+**Context (this chat):** User reported **preview/mobile** correctly shows **live** hero + 3 thumbs **only** on BAW **sub-pages**, with the **hub** static — but **master** showed **live** on **both** hub and sub-pages.
+
+**Decisions / outcomes:** **`resolveAdminNoirHubLiveWigViewsFromStorage`** still ran for **`/build-a-wig/noir/customize`** and **`/build-a-wig/noir/edit`** (same **`BuildAWigPage`** as product hub). **Fix:** **`isNoirBawLivePreviewStepPathname`** in **`bawNoirLivePreviewStorage.ts`** — early **`return null`** unless path is **`/noir/customize/<step>`** or **`/noir/edit/<step>`**. **`BuildAWigPage`** `liveNoirHubWigViews` init, **`hubLiveNoirWigViews`**, storage **`refresh`**, and pathname **`useEffect`** aligned. **`CORE.md`** updated.
+
+**Changes:** **`src/utils/bawNoirLivePreviewStorage.ts`**, **`src/pages/build-a-wig/page.tsx`**, **`src/hooks/useBawSubpageLiveNoirCompositeWigViews.ts`** (comment), **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

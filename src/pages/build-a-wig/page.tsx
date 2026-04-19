@@ -33,7 +33,7 @@ import {
   resolveAdminNoirHubLiveWigViewsFromStorage,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
   isNoirBawProductHubPathname,
-  isNoirBawCustomizeHubOnlyPathname,
+  isNoirBawLivePreviewStepPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 
@@ -91,11 +91,12 @@ export default function BuildAWigPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [routeKey, setRouteKey] = useState(location.pathname);
 
-  /** Live NOIR WebPs on NOIR sub-routes only — not on `/build-a-wig` or `/build-a-wig/noir` hub (static mannequins). */
+  /** Live NOIR WebPs on NOIR **step** routes only (`/noir/customize/<step>`, `/noir/edit/<step>`) — not product/customize/edit hubs. */
   const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
     const pathname = location.pathname;
     if (pathname === '/build-a-wig' || !pathname.startsWith('/build-a-wig/noir')) return null;
     if (isNoirBawProductHubPathname(pathname)) return null;
+    if (!isNoirBawLivePreviewStepPathname(pathname)) return null;
     return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
   });
   // Track current editing item ID to detect when switching between products
@@ -3205,6 +3206,7 @@ export default function BuildAWigPage() {
     if (isNoirBawHubLandingPathname(pathname)) return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
     if (isNoirBawProductHubPathname(pathname)) return null;
+    if (!isNoirBawLivePreviewStepPathname(pathname)) return null;
     return liveNoirHubWigViews;
   }, [location.pathname, liveNoirHubWigViews]);
 
@@ -3213,7 +3215,13 @@ export default function BuildAWigPage() {
     : hubLiveNoirWigViews ?? baseWigViewsForHub;
 
   useEffect(() => {
-    if (isNoirBawHubLandingPathname(location.pathname) || isNoirBawProductHubPathname(location.pathname)) {
+    const path = location.pathname;
+    if (
+      isNoirBawHubLandingPathname(path) ||
+      isNoirBawProductHubPathname(path) ||
+      path.replace(/\/$/, '') === '/build-a-wig/noir/customize' ||
+      path.replace(/\/$/, '') === '/build-a-wig/noir/edit'
+    ) {
       setLiveNoirHubWigViews(null);
     }
   }, [location.pathname]);
@@ -3242,12 +3250,11 @@ export default function BuildAWigPage() {
         setLiveNoirHubWigViews(null);
         return;
       }
-      if (path && isNoirBawCustomizeHubOnlyPathname(path)) {
+      if (!path.startsWith('/build-a-wig/noir') || !isNoirBawLivePreviewStepPathname(path)) {
         setLiveNoirHubWigViews(null);
         return;
       }
       try {
-        const path = window.location.pathname || '';
         setLiveNoirHubWigViews(resolveAdminNoirHubLiveWigViewsFromStorage(path));
       } catch {
         setLiveNoirHubWigViews(null);

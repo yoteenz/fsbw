@@ -320,6 +320,15 @@ export function isNoirBawCustomizeHubOnlyPathname(pathname: string): boolean {
 }
 
 /**
+ * Live WebP hero + thumbnails on NOIR **step** routes only (`/noir/customize/<step>`, `/noir/edit/<step>`).
+ * **Not** on `/build-a-wig/noir`, `/noir/customize`, or `/noir/edit` landing hubs — those stay static `/assets/` mannequins + brick.
+ */
+export function isNoirBawLivePreviewStepPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return p.startsWith('/build-a-wig/noir/customize/') || p.startsWith('/build-a-wig/noir/edit/');
+}
+
+/**
  * Admin NOIR BAW hub: which persisted live triple to show.
  * Styling/bangs WebPs must match the **current** salon selection — do not prefer stale
  * `bawNoirLiveStylingWigViews` after the user returns to base / NONE (e.g. `selectedHairStyling` left over).
@@ -336,6 +345,7 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
           : '';
 
     if (isNoirBawProductHubPathname(path)) return null;
+    if (!isNoirBawLivePreviewStepPathname(path)) return null;
 
     const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
     if (effectiveCanon === 'NONE' || effectiveCanon === '') {
