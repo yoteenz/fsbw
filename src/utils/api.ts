@@ -1043,6 +1043,41 @@ export async function postWigPreviewLiveNoirColorRegenerateAngle(
 }
 
 /**
+ * Admin: batch regenerate all three color angles (fal for L, M, R even if WebPs exist).
+ * Same parallel one-angle strategy as `postWigPreviewLiveNoirColor`, with `forceRegenerate: true`.
+ */
+export async function postWigPreviewLiveNoirColorRegenerateAll(
+  body: WigPreviewLiveNoirColorPayload
+): Promise<WigPreviewLiveNoirColorResult> {
+  const angles = ['left', 'front', 'right'] as const;
+  const [ra, rb, rc] = await Promise.all(
+    angles.map((angle) => postWigPreviewLiveNoirColorOneAngle({ ...body, angle, forceRegenerate: true }))
+  );
+  const hashes = new Set([ra.manifestHash, rb.manifestHash, rc.manifestHash]);
+  if (hashes.size !== 1) {
+    throw new Error('Live preview mismatch (try again)');
+  }
+  const mergedSkipped = [...new Set([...ra.skipped, ...rb.skipped, ...rc.skipped])];
+  const mergedGenerated = [...new Set([...ra.generated, ...rb.generated, ...rc.generated])];
+  /** Each request regenerates one angle — sibling URLs in a response can be stale until siblings finish; merge per angle. */
+  const publicUrls = {
+    left: ra.publicUrls.left,
+    front: rb.publicUrls.front,
+    right: rc.publicUrls.right,
+  };
+  return {
+    ok: true,
+    manifestHash: ra.manifestHash,
+    bucket: ra.bucket,
+    paths: ra.paths,
+    publicUrls,
+    generated: mergedGenerated,
+    skipped: mergedSkipped,
+    selections: ra.selections,
+  };
+}
+
+/**
  * Admin only: ensure NOIR color preview WebPs exist in Storage (3 angles).
  * Uses **three parallel** API calls (one angle each) so each Vercel function stays within short timeouts (e.g. Hobby ~10s).
  */

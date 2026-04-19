@@ -17,7 +17,11 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { postWigPreviewLiveNoirColor, postWigPreviewLiveNoirColorRegenerateAngle } from '../../../utils/api';
+import {
+  postWigPreviewLiveNoirColor,
+  postWigPreviewLiveNoirColorRegenerateAll,
+  postWigPreviewLiveNoirColorRegenerateAngle,
+} from '../../../utils/api';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
 import { resolveWigPreviewLiveColorTripleIfStored } from '../../../utils/wigPreviewLiveStoragePublicUrls';
@@ -260,6 +264,8 @@ function ColorSelection() {
   const [livePreviewLoading, setLivePreviewLoading] = useState(false);
   const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
   const [regenColorAngle, setRegenColorAngle] = useState<'left' | 'front' | 'right' | null>(null);
+  const [showRegenAllConfirm, setShowRegenAllConfirm] = useState(false);
+  const [regenAllBusy, setRegenAllBusy] = useState(false);
   // Cart count state
   const [cartCount, setCartCount] = useState(() => {
     return parseInt(localStorage.getItem('cartCount') || '0');
@@ -1429,9 +1435,28 @@ function ColorSelection() {
                   </p>
                   {!livePreviewLoading && (
                     <div
-                      className="flex flex-wrap justify-center gap-x-3 gap-y-1 mb-2 px-2"
+                      className="flex flex-col items-center gap-2 mb-2 px-2"
                       style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
                     >
+                      <button
+                        type="button"
+                        disabled={Boolean(regenColorAngle) || regenAllBusy}
+                        onClick={() => setShowRegenAllConfirm(true)}
+                        style={{
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '9px',
+                          color: regenColorAngle || regenAllBusy ? '#808080' : '#EB1C24',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '2px',
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: regenColorAngle || regenAllBusy ? 'wait' : 'pointer',
+                        }}
+                      >
+                        {regenAllBusy ? 'regen all…' : 'regen all'}
+                      </button>
+                      <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                       {(['left', 'front', 'right'] as const).map((ang) => {
                         const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
                         const busy = regenColorAngle === ang;
@@ -1439,7 +1464,7 @@ function ColorSelection() {
                           <button
                             key={ang}
                             type="button"
-                            disabled={Boolean(regenColorAngle)}
+                            disabled={Boolean(regenColorAngle) || regenAllBusy}
                             onClick={() => {
                               const pathname = location.pathname;
                               const sel = readBuildWigLivePreviewSelections(pathname);
@@ -1486,13 +1511,14 @@ function ColorSelection() {
                               background: 'none',
                               border: 'none',
                               padding: 0,
-                              cursor: regenColorAngle ? 'wait' : 'pointer',
+                              cursor: regenColorAngle || regenAllBusy ? 'wait' : 'pointer',
                             }}
                           >
                             {busy ? `regen ${label}…` : `regen color ${label}`}
                           </button>
                         );
                       })}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1646,6 +1672,40 @@ function ColorSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+      <ConfirmationModal
+        isOpen={showRegenAllConfirm}
+        onClose={() => setShowRegenAllConfirm(false)}
+        onConfirm={() => {
+          setShowRegenAllConfirm(false);
+          const pathname = location.pathname;
+          const sel = readBuildWigLivePreviewSelections(pathname);
+          setLivePreviewError(null);
+          setRegenAllBusy(true);
+          void postWigPreviewLiveNoirColorRegenerateAll({ color: selectedColor, ...sel })
+            .then((res) => {
+              const bust = Date.now();
+              const u = res.publicUrls;
+              if (u.front && u.left && u.right) {
+                const triple: [string, string, string] = [
+                  `${u.left}?t=${bust}`,
+                  `${u.front}?t=${bust}`,
+                  `${u.right}?t=${bust}`,
+                ];
+                setLiveWigViews(triple);
+                persistPendingBawNoirLiveColorWigViews(triple);
+              }
+            })
+            .catch((e: Error) => {
+              setLivePreviewError(e?.message || 'Regenerate all failed');
+            })
+            .finally(() => setRegenAllBusy(false));
+        }}
+        title="REGENERATE ALL ANGLES"
+        message="REGENERATE LEFT, FRONT, AND RIGHT WITH FAL? THIS MAY TAKE A MINUTE AND REPLACES CACHED WEBPS FOR THIS COLOR TIER."
+        confirmText="REGENERATE"
+        cancelText="CANCEL"
+        dataAttribute="regen-all-noir-color-confirm"
       />
       {premiumMembershipStepModal}
     </>

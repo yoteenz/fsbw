@@ -15650,3 +15650,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR color page: “regen all” + confirmation (batch Fal L/M/R)
+
+**Context (this chat):** User asked for **“regen all”** above per-angle regen links, with **confirmation**, to **batch regenerate** all three angles.
+
+**Decisions / outcomes:** **`postWigPreviewLiveNoirColorRegenerateAll`** in **`src/utils/api.ts`** — three parallel one-angle POSTs with **`forceRegenerate: true`**; **`publicUrls`** merged per angle from each response. **`color/page.tsx`:** **`regen all`** + **`ConfirmationModal`**, **`regenAllBusy`** disables L/M/R during batch.
+
+**Changes:** **`src/utils/api.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
