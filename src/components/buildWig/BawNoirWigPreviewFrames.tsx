@@ -43,7 +43,7 @@ type Props = {
  * Hero + three thumbnails for BAW hub + sub-pages.
  * - Shipped **`/assets/`** naturals: one brick layer (`leaf-brick-resize` + optional `.leaf-bg`).
  * - **Live** previews (anything not shipped `/assets/`): **no** extra brick — raster already has brick.
- * Matches **`d902e65`** layout: `hideBrick` when any angle is live → **12px** thumb gap, **82×72** live thumb frames, **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
+ * Live NOIR sub-pages: **12px** thumb gap, **72×95** thumb frames (same height as hub static thumbs), **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -75,7 +75,8 @@ export function BawNoirWigPreviewHeroThumbs({
             ...(hideBrick
               ? {
                   backgroundImage: 'none',
-                  backgroundColor: '#f5f5f5',
+                  /* Transparent so `contain` on live hero does not show gray letterbox bands */
+                  backgroundColor: 'transparent',
                 }
               : {
                   backgroundImage: `url('/assets/leaf-brick-resize.png')`,
@@ -153,13 +154,11 @@ export function BawNoirWigPreviewHeroThumbs({
               <div
                 className={`relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame${
                   subPageStaticSelectionOnFrame && !hideBrick ? ' baw-noir-thumb-frame--static-sub' : ''
-                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}${
-                  hideBrick && !hubThumbsOnlyOuter ? ' baw-noir-thumb-frame--live-noir-sub' : ''
-                }`}
+                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}`}
                 data-baw-thumb-index={index}
                 style={{
                   width: '72px',
-                  height: hideBrick ? '82px' : '95px',
+                  height: '95px',
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -203,7 +202,7 @@ export function BawNoirWigPreviewHeroThumbs({
                 <img
                   alt={`Thumbnail ${index + 1}`}
                   width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 82 : 84}
+                  height={hideBrick ? 95 : 84}
                   src={view}
                   className={
                     hideBrick

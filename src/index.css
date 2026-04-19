@@ -3409,8 +3409,7 @@ img.thumbnail-mannequin-img--live-noir {
   min-height: 0 !important;
   max-width: none !important;
   max-height: none !important;
-  /* Default `contain` — BAW thumb frames override to `cover` below so sub-page live thumbs fill the cell (no side letterbox) */
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center center !important;
 }
 
@@ -3419,13 +3418,13 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center center !important;
 }
 
-/* Sub-page live NOIR: full WebP visible (`contain`); frame uses white bg for letterbox gutters (not gray brick double) */
-.baw-noir-thumb-frame--live-noir-sub img.thumbnail-mannequin-img--live-noir {
-  object-fit: contain !important;
+/* Live NOIR thumbs (sub-pages): **72×95** frame matches hub static height; `cover` fills cell — no side letterbox like hub outer art */
+.leaf-stack.thumb .baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir {
+  object-fit: cover !important;
   object-position: center center !important;
 }
 
@@ -3436,7 +3435,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   transform: none !important;
 }
 
-/* BAW NOIR thumbs: clip to frame; live uses `cover` on img (see above) — no duplicate leaf-brick underlay */
+/* BAW NOIR thumbs: clip to frame — no duplicate leaf-brick underlay */
 .leaf-stack.thumb .baw-noir-thumb-frame {
   overflow: hidden !important;
   isolation: isolate;

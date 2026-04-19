@@ -15684,3 +15684,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW sub-page live thumbs: match hub container (72×95 + cover)
+
+**Context (this chat):** User reported **white/gray side panels** still on sub-page thumbs; should match **BAW hub** thumb container behavior.
+
+**Decisions / outcomes:** Live thumb frame height **82px → 95px** (hub static). Removed **`baw-noir-thumb-frame--live-noir-sub`**. **`object-fit: cover`** on live thumb imgs. Live hero area **`#f5f5f5` → `transparent`** so **`contain`** on hero does not show gray bands.
+
+**Changes:** **`BawNoirWigPreviewFrames.tsx`**, **`index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
