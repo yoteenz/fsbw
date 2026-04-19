@@ -24,7 +24,11 @@ import {
 } from '../../../utils/api';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
-import { resolveWigPreviewLiveColorTripleIfStored } from '../../../utils/wigPreviewLiveStoragePublicUrls';
+import {
+  resolveWigPreviewLiveColorTripleIfStored,
+  wigPreviewLiveColorTriplePublicUrls,
+} from '../../../utils/wigPreviewLiveStoragePublicUrls';
+import { wigPreviewManifestHashLiveColorTier } from '../../../utils/wigPreviewLiveColorTierHash';
 import {
   clearBawNoirLiveColorWigViews,
   clearPendingBawNoirLiveColorWigViews,
@@ -816,13 +820,39 @@ function ColorSelection() {
       localStorage.setItem('selectedColor', colorId);
       localStorage.setItem('selectedColorPrice', priceStr);
     }
-    if (onNoirColorRoute) {
+    if (onNoirColorRoute && colorId === 'OFF BLACK') {
       clearPendingBawNoirLiveColorWigViews();
-      if (colorId === 'OFF BLACK') {
-        clearBawNoirLiveColorWigViews();
-      }
+      clearBawNoirLiveColorWigViews();
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    } else if (onNoirColorRoute) {
+      /** Fill pending **before** `customStorageChange` so hub/subpage hooks resolve live WebPs immediately (no static naturals flash). */
+      void (async () => {
+        try {
+          const sel = readBuildWigLivePreviewSelections(pathname);
+          const payload = { unitKey: 'NOIR' as const, color: colorId, ...sel };
+          const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
+          if (fromStorage) {
+            persistPendingBawNoirLiveColorWigViews(fromStorage);
+          } else {
+            const hash = await wigPreviewManifestHashLiveColorTier(payload);
+            const triple = wigPreviewLiveColorTriplePublicUrls(hash);
+            if (triple) {
+              const t = Date.now();
+              persistPendingBawNoirLiveColorWigViews([
+                `${triple[0]}?t=${t}`,
+                `${triple[1]}?t=${t}`,
+                `${triple[2]}?t=${t}`,
+              ]);
+            }
+          }
+        } catch {
+          /* ignore — founder `useEffect` still resolves via HEAD/API */
+        }
+        window.dispatchEvent(new CustomEvent('customStorageChange'));
+      })();
+    } else {
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
     }
-    window.dispatchEvent(new CustomEvent('customStorageChange'));
     // Live NOIR fal preview: `useEffect` on `selectedColor` + path runs `postWigPreviewLiveNoirColor`.
   };
 

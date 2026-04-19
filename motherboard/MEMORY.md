@@ -15803,6 +15803,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — NOIR color selection: avoid static naturals flash before Supabase WebPs
+
+**Context (this chat):** User asked whether **pre-generated Supabase** images can load **immediately** on selection instead of a **lag** showing **default base** naturals first.
+
+**Decisions / outcomes:** Root cause was **`handleColorSelect`** calling **`clearPendingBawNoirLiveColorWigViews()`** on every NOIR color tap, which removed **`bawNoirLiveColorWigViewsPending`** before async resolution — **`resolveAdminNoirHubLiveWigViewsFromStorage`** fell back to **static** `/assets/natural*` until **`HEAD`**/API finished. **Fix:** for non–**OFF BLACK** NOIR colors, **await** **`resolveWigPreviewLiveColorTripleIfStored`** (or **hash → `wigPreviewLiveColorTriplePublicUrls`** optimistic pending) **then** dispatch **`customStorageChange`**; **OFF BLACK** still clears pending + committed. **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — LAYERS + CRIMPS prompts: stricter MIDDLE & LEFT one-shoulder drape (anti dual-shoulder)
 
 **Context (this chat):** User reported **MIDDLE** and **LEFT** part directions still **generating hair on both shoulders** for **LAYERS** and **CRIMPS** live styling.
