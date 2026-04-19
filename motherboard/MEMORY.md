@@ -15726,3 +15726,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`buildCrimpsStylePromptFromColorTierWebp`** in **`api/_lib/bawLiveStylingPrompts.ts`** (shared **`buildLayersStylePromptShared`** with **`salon: 'layers' | 'crimps'`**): same color lock + part lines + one-sided front drape as LAYERS, but **crimped texture** (zig-zag / pressed) not spiral curls. **`POST /api/live-wig-after-color-styling`**: accepts **`CRIMPS`** (rejects **LAYERS+CRIMPS** together); writes **`after-color/crimps-{middle|left|right}-part/`** via **`wigPreviewLiveCrimpsPartFolder`**. Response **`stylingMode`**: **`middle-crimps`**. **LocalStorage** styling envelope gains **`salonMode`** **`LAYERS` \| `CRIMPS`**; **`readBawNoirLiveStylingWigViewsForPart(part, salonMode)`**; **`resolveAdminNoirHubLiveWigViewsFromStorage`** resolves **CRIMPS** when **CRIMPS** selected (not **LAYERS**). **Styling page:** **`hasCrimpsLiveStyling`**, founder regen + cache for crimps; BANGS-only excludes **CRIMPS**. **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR LAYERS prompt: voluminous blended S-waves (ref-style)
+
+**Context (this chat):** User provided a **reference** for **LAYERS**: hair should read as **voluminous**, **uniform S-waves** / **brushed-out barrel curls** — **not** separated, piecey, or cord-like strands.
+
+**Decisions / outcomes:** Updated **`layersLook`** + **`partWordLayers`** + **`styleNoun`** (layers branch only) in **`buildLayersStylePromptShared`** — **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**: **large soft S-waves**, **brushed-out barrel curls**, **one continuous cohesive flow**, face-framing **swept away from face**, **no** tight ringlets / skinny spirals / clumpy strands. **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.

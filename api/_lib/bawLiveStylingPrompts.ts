@@ -6,7 +6,7 @@ export type CatalogColorForLayersPrompt = { label: string; hex: string };
 
 /**
  * **LAYERS** live styling: Fal `image_urls` = **color-tier WebP** from Storage (already tinted to the swatch).
- * Keeps **catalog hair color** while restyling to long layered curls + part — fixes black hair when input was HQ black refs.
+ * Keeps **catalog hair color** while restyling to **voluminous layered S-waves** (blended barrel curls, not separated ringlets) + part — fixes black hair when input was HQ black refs.
  */
 export function buildLayersStylePromptFromColorTierWebp(
   angle: 'front' | 'left' | 'right',
@@ -63,20 +63,20 @@ function buildLayersStylePromptShared(
   salon: 'layers' | 'crimps'
 ): string {
   const layersLook =
-    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer), with **defined, uniform curls** (consistent spiral/ringlets, same curl size and pattern across the head — **salon-set**, not frizzy, not mixed textures). Layers should read **cohesive**, not stringy or uneven.';
+    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls.';
 
   const crimpsLook =
     'Target look: **long** hair — extend **past the shoulders** (chest-length or longer), with **distinct crimped texture** (uniform zig-zag / pressed-crimp pattern along the length — **salon crimps**, not loose spiral curls, not beach waves). Crimps should read **even** and **consistent** from root to ends, not mixed with large barrel curls.';
 
   const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
 
-  const styleNoun = salon === 'crimps' ? 'crimps' : 'long layered curls';
+  const styleNoun = salon === 'crimps' ? 'crimps' : 'voluminous layered S-waves';
   const partWordLayers =
     partSelection === 'MIDDLE'
-      ? 'Use a **MIDDLE / center part** at the crown. **Layered curls** with face-framing layers; part line visible at the front hairline.'
+      ? 'Use a **MIDDLE / center part** at the crown. **Face-framing layers** + **layered waves** swept away from the face (soft curtain flow); part line visible at the front hairline.'
       : partSelection === 'LEFT'
-        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or right part.'
-        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or left part.';
+        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Layered waves** — sweep, volume, and wave direction follow that part; **do not** apply a center or right part.'
+        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered waves** — sweep, volume, and wave direction follow that part; **do not** apply a center or left part.';
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
@@ -115,7 +115,7 @@ function buildLayersStylePromptShared(
   const lengthNote =
     salon === 'crimps'
       ? 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long crimped look.'
-      : 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long-layered-curl look.';
+      : 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long layered **wave** look (full-bodied, blended — not stringy).';
 
   return [
     colorLockBlock,
