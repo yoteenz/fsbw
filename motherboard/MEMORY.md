@@ -15910,3 +15910,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Extended **`salonOneShoulderDrapeBlock()`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): **Shoulder still visible** — gaps/strand separation/semi-sheer fall so **shoulder cap / neck–shoulder** still reads; **FORBIDDEN** solid wall of hair fully hiding that shoulder. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW hub: three-thumb spacing matches NOIR sub-pages (live row)
+
+**Context (this chat):** User asked to **adjust spacing between the 3 thumbnail images on the BAW hub** to **match** spacing on **BAW sub pages**.
+
+**Decisions / outcomes:** In **`BawNoirWigPreviewHeroThumbs`** (`src/components/buildWig/BawNoirWigPreviewFrames.tsx`), **product hub** routes (`isBawProductHubThumbPathname` + static naturals) now use **12px** flex **gap** like **live** NOIR rows (`hideBrick`), and **skip** the old **translateX(-2px/-4px)** nudges on thumbs 2–3 that tightened hub spacing. Deeper sub-pages with **static-only** `/assets/` thumbs unchanged (**2px** + nudges). **`motherboard/CORE.md`** NOIR bullet updated.
+
+**Verification:** `npm run build` passes.

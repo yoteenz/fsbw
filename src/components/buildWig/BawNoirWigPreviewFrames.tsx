@@ -44,6 +44,7 @@ type Props = {
  * - Shipped **`/assets/`** naturals: one brick layer (`leaf-brick-resize` + optional `.leaf-bg`).
  * - **Live** previews (anything not shipped `/assets/`): **no** extra brick — raster already has brick.
  * Live NOIR sub-pages: **12px** thumb gap, **72×95** thumb frames (same height as hub static thumbs), **`hero-mannequin-img--live-noir`** / **`thumbnail-mannequin-img--live-noir`** (see `index.css`).
+ * BAW **product hub** static thumbs use the **same 12px** gap (and no per-frame translate nudge) so spacing matches customize sub-pages with live previews; deeper sub-pages with **static** `/assets/` naturals keep **2px** gap + **p-1** + nudges.
  */
 export function BawNoirWigPreviewHeroThumbs({
   wigViews,
@@ -57,6 +58,8 @@ export function BawNoirWigPreviewHeroThumbs({
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
   const hubThumbsOnlyOuter = isBawProductHubThumbPathname(pathname);
+  /** Hub static row: match **12px** gap used on NOIR sub-pages with live WebPs (not 2px + nudges used for static-only sub-pages). */
+  const hubStaticThumbSpacingLikeSubLive = hubThumbsOnlyOuter && !hideBrick;
   /** Hub + static: outer `.leaf-bg` + mannequin `<img>`. Sub-pages: inner brick + `<img>`, no `.leaf-bg`. */
   const thumbOuterLeafBg = !hideBrick && hubThumbsOnlyOuter;
   /** Sub-page + static: white/black selection ring on `.baw-noir-thumb-frame` (was on `.leaf-bg`). */
@@ -133,8 +136,8 @@ export function BawNoirWigPreviewHeroThumbs({
         }`}
         style={{
           transform: 'translateY(10px)',
-          gap: hideBrick ? '12px' : '2px',
-          ...(hideBrick ? { columnGap: '12px', rowGap: '12px' } : {}),
+          gap: hideBrick || hubStaticThumbSpacingLikeSubLive ? '12px' : '2px',
+          ...(hideBrick || hubStaticThumbSpacingLikeSubLive ? { columnGap: '12px', rowGap: '12px' } : {}),
         }}
       >
         {triple.map((view, index) => (
@@ -195,8 +198,12 @@ export function BawNoirWigPreviewHeroThumbs({
                               ? '0 0 0 1.1px #000'
                               : undefined,
                         }),
-                  ...(!hideBrick && index === 1 && { transform: 'translateX(-2px)' }),
-                  ...(!hideBrick && index === 2 && { transform: 'translateX(-4px)' }),
+                  ...(!hideBrick &&
+                    !hubStaticThumbSpacingLikeSubLive &&
+                    index === 1 && { transform: 'translateX(-2px)' }),
+                  ...(!hideBrick &&
+                    !hubStaticThumbSpacingLikeSubLive &&
+                    index === 2 && { transform: 'translateX(-4px)' }),
                 }}
               >
                 <img
