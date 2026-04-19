@@ -15823,6 +15823,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — JET BLACK live previews: restore Storage hash `JET_BLACK_OFF_BLACK` (hex still #000000)
+
+**Context (this chat):** User reported **JET BLACK** images **broken** after the OFF BLACK hash split.
+
+**Decisions / outcomes:** **JET BLACK** catalog / Fal color remains **`000000`** (`BAW_CATALOG_HAIR_COLOR_HEX`). **Root cause:** hash had been **`JET_BLACK`**, so URLs pointed at **new** empty Storage prefixes while assets still live under legacy **`JET_BLACK_OFF_BLACK`**. **Fix:** **`canonicalWigPreviewColorForHash`** maps **JET BLACK** → **`JET_BLACK_OFF_BLACK`** again; **OFF BLACK** stays **`OFF_BLACK`**. Synced **`bawCatalogHairColors.ts`**, **`wigPreviewLiveColorTierHash.ts`**, **`live-noir-color.ts`**, **`selectionStoragePath.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — LAYERS + CRIMPS prompts: stricter MIDDLE & LEFT one-shoulder drape (anti dual-shoulder)
 
 **Context (this chat):** User reported **MIDDLE** and **LEFT** part directions still **generating hair on both shoulders** for **LAYERS** and **CRIMPS** live styling.

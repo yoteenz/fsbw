@@ -54,7 +54,7 @@ The server (per request):
 
 **Color storage hash (important):** Live color WebPs use a **color-tier** hash: selections are hashed with **`styling` forced to `NONE`**, so changing salon styling (e.g. LAYERS) does **not** move the `wig-preview-live/.../{hash}/front.webp` folder. After-color styling reads those three files as Fal input.
 
-**OFF BLACK vs JET BLACK:** The color-tier hash uses **distinct** canonical keys **`OFF_BLACK`** and **`JET_BLACK`** (legacy **JET BLACK OFF BLACK** → **JET_BLACK**). They no longer share the same Storage folder — generate or **regen color** for each as needed.
+**OFF BLACK vs JET BLACK:** **OFF BLACK** hashes to **`OFF_BLACK`** (own folder). **JET BLACK** hashes to **`JET_BLACK_OFF_BLACK`** so it keeps using **existing** Storage WebPs from the long-standing shared jet/off-black path; Fal prompts still use **#000000** for JET BLACK.
 
 **Prompt quality / “plastic” mannequin drift:** Shared **fidelity** sentences live in **`api/_lib/bawFalEditFidelityPrompt.ts`** (inlined duplicate in **`api/wig-preview/live-noir-color.ts`** because that route cannot import `_lib` on Vercel). They tell the model to **preserve photograph sharpness**, lock **bust material / face / logo / brick background**, and avoid waxy CGI retexture. **`api/_lib/bawLiveStylingPrompts.ts`** and **`api/_lib/buildWigGeneratedUnit.ts`** (send-offer chain edits) use the same block. **`scripts/wig-preview/promptTemplate.mjs`** exports **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** for fal playground / batch parity.
 

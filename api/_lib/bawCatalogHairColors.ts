@@ -36,8 +36,10 @@ export function catalogColorForPrompt(colorId: string): { label: string; hex: st
 }
 
 /**
- * Single **storage / manifest hash** color key. **OFF BLACK** and **JET BLACK** are distinct (separate Storage tiers).
- * Legacy **JET BLACK OFF BLACK** maps to **JET_BLACK**. Must match `scripts/wig-preview/selectionStoragePath.mjs`.
+ * Single **storage / manifest hash** color key.
+ * **OFF BLACK** → **`OFF_BLACK`** (its own tier / folder).
+ * **JET BLACK** → **`JET_BLACK_OFF_BLACK`** so live previews resolve **existing** batch + legacy Storage paths (same as before OFF BLACK was split out).
+ * Must match `scripts/wig-preview/selectionStoragePath.mjs`.
  */
 export function canonicalWigPreviewColorForHash(color: string): string {
   const u = String(color || '')
@@ -45,12 +47,12 @@ export function canonicalWigPreviewColorForHash(color: string): string {
     .toUpperCase()
     .replace(/\s+/g, ' ');
   const aliases: Record<string, string> = {
-    'JET BLACK': 'JET_BLACK',
     'OFF BLACK': 'OFF_BLACK',
-    'JET BLACK OFF BLACK': 'JET_BLACK',
-    JET_BLACK: 'JET_BLACK',
     OFF_BLACK: 'OFF_BLACK',
-    JET_BLACK_OFF_BLACK: 'JET_BLACK',
+    'JET BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    JET_BLACK: 'JET_BLACK_OFF_BLACK',
+    JET_BLACK_OFF_BLACK: 'JET_BLACK_OFF_BLACK',
   };
   if (aliases[u]) return aliases[u];
   const underscored = u.replace(/\s+/g, '_');

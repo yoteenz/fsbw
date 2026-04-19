@@ -108,12 +108,12 @@ function canonicalWigPreviewColorForHash(color: string): string {
     .toUpperCase()
     .replace(/\s+/g, ' ');
   const aliases: Record<string, string> = {
-    'JET BLACK': 'JET_BLACK',
     'OFF BLACK': 'OFF_BLACK',
-    'JET BLACK OFF BLACK': 'JET_BLACK',
-    JET_BLACK: 'JET_BLACK',
     OFF_BLACK: 'OFF_BLACK',
-    JET_BLACK_OFF_BLACK: 'JET_BLACK',
+    'JET BLACK': 'JET_BLACK_OFF_BLACK',
+    'JET BLACK OFF BLACK': 'JET_BLACK_OFF_BLACK',
+    JET_BLACK: 'JET_BLACK_OFF_BLACK',
+    JET_BLACK_OFF_BLACK: 'JET_BLACK_OFF_BLACK',
   };
   if (aliases[u]) return aliases[u];
   const underscored = u.replace(/\s+/g, '_');
