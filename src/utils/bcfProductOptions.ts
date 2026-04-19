@@ -133,7 +133,7 @@ export const BCF_COLOR_OPTIONS: BcfColorOption[] = [
   { id: 'GINGER', label: 'GINGER', price: 80, swatch: '#F64F07' },
   { id: 'SANGRIA', label: 'SANGRIA', price: 80, swatch: '#7E0A1E' },
   { id: 'CHERRY', label: 'CHERRY', price: 80, swatch: '#FF1400' },
-  { id: 'RASPBERRY', label: 'RASPBERRY', price: 80, swatch: '#FF2855' },
+  { id: 'RASPBERRY', label: 'RASPBERRY', price: 80, swatch: '#DA3063' },
   { id: 'PLUM', label: 'PLUM', price: 80, swatch: '#640E82' },
   { id: 'COBALT', label: 'COBALT', price: 80, swatch: '#290481' },
   { id: 'TEAL', label: 'TEAL', price: 80, swatch: '#46EBCA' },

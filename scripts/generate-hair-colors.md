@@ -88,7 +88,7 @@ Save your images with this naming pattern:
 | GINGER | #F64F07 | Bright orange |
 | SANGRIA | #7E0A1E | Deep red wine |
 | CHERRY | #FF1400 | Bright cherry red |
-| RASPBERRY | #FF2855 | Raspberry pink |
+| RASPBERRY | #DA3063 | Raspberry pink |
 | PLUM | #640E82 | Deep plum purple |
 | COBALT | #290481 | Deep cobalt blue |
 | TEAL | #46EBCA | Teal green |

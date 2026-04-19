@@ -15930,3 +15930,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Added **`salonStyleInvarianceAcrossColorsBlock()`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): instruct Fal to **ignore** differing length/curl/layering in color-tier WebPs between swatches; output **one** canonical style per mode+part; **length/bulk** follows prompt target not input; **FLAT IRON** `straightLook` updated so it does not preserve per-color shape drift. Fixed **layers/crimps** look lines to reference **DRAPE SIDE** (not obsolete **ONE SHOULDER ONLY**). **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — RASPBERRY hex reverted to #DA3063 (CHERRY/OFF BLACK unchanged)
+
+**Context (this chat):** User asked to **revert the hex code change for the raspberry pink color only**.
+
+**Decisions / outcomes:** **RASPBERRY** catalog + UI swatch restored from **#FF2855** to **#DA3063** in **`api/_lib/bawCatalogHairColors.ts`**, **`api/wig-preview/live-noir-color.ts`**, **`api/_lib/buildWigGeneratedUnit.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, **`src/pages/build-a-wig/color/page.tsx`**, **`src/pages/build-a-wig/page.tsx`**, **`src/pages/account/concierge/page.tsx`**, **`src/utils/bcfProductOptions.ts`**, **`scripts/generate-hair-colors.md`**. **CHERRY** (**#FF1400**) and **OFF BLACK** (**#160604**) **unchanged**.
+
+**Verification:** `npm run build` passes.

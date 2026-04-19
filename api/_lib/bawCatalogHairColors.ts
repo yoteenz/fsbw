@@ -11,7 +11,7 @@ export const BAW_CATALOG_HAIR_COLOR_HEX: Record<
   GINGER: { label: 'ginger', hex: 'E35B2A' },
   SANGRIA: { label: 'sangria', hex: '731921' },
   CHERRY: { label: 'cherry', hex: 'FF1400' },
-  RASPBERRY: { label: 'raspberry', hex: 'FF2855' },
+  RASPBERRY: { label: 'raspberry', hex: 'DA3063' },
   PLUM: { label: 'plum', hex: '5B177C' },
   COBALT: { label: 'cobalt', hex: '25067B' },
   TEAL: { label: 'teal', hex: '7BE7CA' },

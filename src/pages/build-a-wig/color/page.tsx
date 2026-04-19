@@ -723,7 +723,7 @@ function ColorSelection() {
       name: 'RASPBERRY',
       description: 'Raspberry pink',
       price: 120,
-      colorCode: '#FF2855',
+      colorCode: '#DA3063',
       image: ''
     },
     {
