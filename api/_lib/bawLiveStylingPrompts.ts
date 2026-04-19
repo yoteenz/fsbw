@@ -66,8 +66,8 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     partSelection === 'MIDDLE'
       ? 'Apply a **MIDDLE / center part** at the crown — part line visible from hairline through the top. Hair falls **evenly** from the center part (straight panels on **both** sides of the head as seen in the photo).'
       : partSelection === 'LEFT'
-        ? '**LEFT part (subject’s left):** The **part line** must be **visible on the viewer’s right side** of the mannequin’s **head and scalp** (salon left — like a mirror). **Sleek roots** at that part; **main straight length** falls from that side. **Forbidden:** part line on the viewer’s **left** side of the head (that would be **RIGHT** part).'
-        : '**RIGHT part (subject’s right):** The **part line** must be **visible on the viewer’s left side** of the mannequin’s **head and scalp**. **Sleek roots** at that part; **main straight length** from that side. **Forbidden:** part on the viewer’s **right** side of the head (that would be **LEFT** part).';
+        ? '**UI L (LEFT part):** **Straight part line** on **image RIGHT** — on the **right half** of the scalp/forehead in the picture (**closer to the right edge**). **Sleek roots** there; main length from that side. **FORBIDDEN:** part on **image LEFT** scalp (that is UI **R**).'
+        : '**UI R (RIGHT part):** Part line on **image LEFT** (**left half** of scalp in the picture). **FORBIDDEN:** part on **image RIGHT** scalp (that is UI **L**).';
 
   const angleBlock =
     angle === 'left'
@@ -86,6 +86,7 @@ export function buildFlatIronStylePromptFromColorTierWebp(
   return [
     colorLock,
     salonPartDirectionSemanticsBlock(),
+    salonOneShoulderDrapeBlock(),
     'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.',
     straightLook,
     partBlock,
@@ -113,12 +114,19 @@ export function buildLayersStylePromptFromHqMannequinRef(
 }
 
 /**
- * Side parts: describe **where the part line sits on the mannequin’s scalp** in the image (viewer’s left vs right), not abstract “frame” edges.
- * Salon left/right = subject’s sides; facing the mannequin matches a **mirror** (subject’s left reads on the viewer’s right).
+ * Side parts: UI **L** = subject’s left = **right half of the image** (closer to the **right** edge); UI **R** = **left half** / closer to **left** edge.
+ * Repeat in multiple phrasings — Fal often flips or mirrors if only one wording is used.
  */
 function salonPartDirectionSemanticsBlock(): string {
   return (
-    '**PART ON THE HEAD (critical):** Judge by the **mannequin’s scalp and hair** in **this** photo/thumbnail. **LEFT part (UI “L”)** = salon **subject’s left** — the **part line** must show on the **viewer’s right side** of the **head** (roots lift there). **RIGHT part (UI “R”)** = **subject’s right** — part line on the **viewer’s left side** of the **head**. (Facing the mannequin ≈ mirror vs standing behind them.) **Do not** swap sides: **LEFT part** must **not** place the part on the viewer’s **left** side of the head; **RIGHT part** must **not** place it on the viewer’s **right** side of the head.'
+    '**PART LINE — WHERE IT MUST APPEAR (triple-check):** **image LEFT** = toward the **left edge** of the picture; **image RIGHT** = toward the **right edge**. **UI “L” (salon LEFT part)** = subject’s **own left** side of the head — in the photo that is the **right half of the head** (**image RIGHT**, viewer’s right). **UI “R”** = subject’s **own right** side → **image LEFT** (viewer’s left). **WRONG:** UI **L** with the part groove on **image LEFT**; UI **R** with part on **image RIGHT**. **Do not** mirror-flip the hairstyle vs these rules.'
+  );
+}
+
+/** One-sided drape — repeated because models still output symmetric “curtain” hair. */
+function salonOneShoulderDrapeBlock(): string {
+  return (
+    '**ONE SHOULDER ONLY (all parts):** Long hair must **not** hang as **two** thick, even curtains over **both** shoulders. **FORBIDDEN:** similar heavy curl/wave/crimp mass **forward** on **both** sides of the chest; **two** wide panels framing the bust; “balanced” volume left and right. **REQUIRED:** **one** shoulder carries almost all length **forward**; the **other** shoulder is **narrow**, **tucked back**, or **minimal** — **visibly less** hair crossing in front. **Self-check:** if both collarbones have a **thick** matching drape → **failed**.'
   );
 }
 
@@ -131,11 +139,11 @@ function curtainBangsAddonForSalonPart(partSelection: NoirLayersPartSelection): 
   }
   if (partSelection === 'LEFT') {
     return (
-      '**BANGS (combine with the salon style above):** **LEFT part** — bangs open from the part on the **viewer’s right side** of the forehead (**subject’s left**); **longer** sweep on that side. **Do not** put the part on the viewer’s **left** side of the forehead. **Do not** use a center-split bang.'
+      '**BANGS + salon:** **UI L** — bangs split from a part on **image RIGHT** (right side of forehead in the picture); **longer** sweep on **image RIGHT**. **FORBIDDEN:** center part; **FORBIDDEN:** part on **image LEFT** forehead.'
     );
   }
   return (
-    '**BANGS (combine with the salon style above):** **RIGHT part** — bangs open from the part on the **viewer’s left** side of the forehead; **longer** curtain sweep there. **Do not** put the part on the viewer’s **right** side of the forehead. **Do not** use a center-split bang.'
+    '**BANGS + salon:** **UI R** — part on **image LEFT** forehead; **longer** sweep **image LEFT**. **FORBIDDEN:** center part; **FORBIDDEN:** part **image RIGHT** forehead.'
   );
 }
 
@@ -147,27 +155,27 @@ function buildLayersStylePromptShared(
   includeBangs: boolean
 ): string {
   const layersLook =
-    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT camera (hero) — hard rule:** **one-sided shoulder drape only**. **FORBIDDEN:** a **balanced “waterfall”** with heavy curl/wave mass **equally** on **both** shoulders, **mirror-image** left/right panels, or **two** thick cascades (one per shoulder). The **longest** wave mass must sit on **ONE** shoulder only; the **other** shoulder must read **clearly lighter** (narrower strip, tucked back, or minimal forward drape).';
+    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer). Style = **voluminous layered waves** (full-bodied, glam): **large, soft S-shaped waves** and **brushed-out barrel curls** — **not** tight ringlets, **not** skinny spiral curls, **not** separated / clumpy / cord-like strands. Waves must **merge into one continuous, cohesive flow** — same wave scale and direction family across the head (**salon-set**, smooth, glossy). Shorter **face-framing layers** should **sweep away from the face** and blend smoothly into longer lengths. **No** piecey definition between strands; hair reads as **one blended shape**, not individual curls. **FRONT (hero):** **single-shoulder drape** — see **ONE SHOULDER ONLY** block above; **never** equal “waterfall” curls on **both** shoulders.';
 
   const crimpsLook =
-    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing**, and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural**. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT camera (hero) — hard rule:** **one-sided shoulder drape only**. **FORBIDDEN:** **symmetric** crimped panels **draping forward on BOTH shoulders** with **similar** thickness, or **two** competing heavy masses. **One** shoulder carries almost all long crimp length; the **opposite** shoulder stays **visibly slimmer**.';
+    'Target look (match **crimps reference images**): **extra-long** hair (well past shoulders / bust-length or longer). Texture = **salon crimp-iron / deep wave**: **tight horizontal accordion ridges** — **repeating zig-zag** pattern along the shaft (**waffle / crimp-plate** look), **not** spiral curls, **not** loose beach waves, **not** barrel curls. Crimps must be **highly defined**, **uniform spacing**, and **consistent scale** from where the style begins (near roots / part) **through the ends**. Finish: **high-gloss**, **smooth**, **frizz-free**; ridges stay **sharp and structural**. **Hair color** must follow the color lock above — do **not** change to black or another shade unless the swatch says so. **FRONT (hero):** **single-shoulder crimp drape** — see **ONE SHOULDER ONLY**; **never** thick matching crimp panels on **both** shoulders.';
 
   const lookBlock = salon === 'crimps' ? crimpsLook : layersLook;
 
   const styleNoun = salon === 'crimps' ? 'salon deep-pressed crimps' : 'voluminous layered S-waves';
   const partWordLayers =
     partSelection === 'MIDDLE'
-      ? '**MIDDLE part:** **Center part line** at the crown (visible from hairline). **FRONT view — asymmetric drape (fixed):** **longest** layered waves toward the **viewer’s right** shoulder; **viewer’s left** shoulder stays **lighter**. **Forbidden:** equal heavy curls on **both** sides.'
+      ? '**MIDDLE part:** **Center part** at crown (visible from hairline). **FRONT:** long waves **asymmetric** — **heaviest** drape on **image RIGHT** / **viewer’s right** shoulder; **image LEFT** shoulder **much lighter** (no matching heavy cascade). **FORBIDDEN:** symmetric volume on both shoulders.'
       : partSelection === 'LEFT'
-        ? '**LEFT part (UI “L”) — subject’s left:** **Part line** and **widest root lift** on the **viewer’s right side** of the **head** (visible in the thumbnail). **Main** wave mass and drape over the **viewer’s right** shoulder. **Viewer’s left** side of the head = shallow / tucked. **Forbidden:** part or bulk on the viewer’s **left** side of the head (**RIGHT** part).'
-        : '**RIGHT part (UI “R”) — subject’s right:** **Part line** and **widest root lift** on the **viewer’s left side** of the **head**. **Main** wave mass on the **viewer’s left** shoulder. **Viewer’s right** side = shallow / tucked. **Forbidden:** part or bulk on the viewer’s **right** side of the head (**LEFT** part).';
+        ? '**LEFT part (UI “L”):** **Scalp part + root lift on image RIGHT** (right side of the head in the picture). **Heavy long waves** must fall **forward over the viewer’s RIGHT shoulder** (same side as the part). **Image LEFT** side of head: **less** hair; **opposite** shoulder: **no** thick forward drape — tuck or slim. **FORBIDDEN:** part on **image LEFT** scalp (that is UI **R**). **FORBIDDEN:** heavy wave sheet on **both** shoulders.'
+        : '**RIGHT part (UI “R”):** **Scalp part + root lift on image LEFT**. **Heavy long waves** **forward over the viewer’s LEFT shoulder**. **Image RIGHT** side of head slimmer; **opposite** shoulder **no** thick drape. **FORBIDDEN:** part on **image RIGHT** scalp (that is UI **L**). **FORBIDDEN:** heavy waves on **both** shoulders.';
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
-      ? '**MIDDLE part:** **Center part** at crown; crimps start at the part. **FRONT view:** primary crimped mass toward the **viewer’s right** shoulder; **viewer’s left** slimmer. **Forbidden:** symmetric thick panels on both sides.'
+      ? '**MIDDLE part:** Center at crown. **FRONT:** **heaviest** crimp mass toward **image RIGHT** shoulder; **image LEFT** shoulder **slimmer**. **FORBIDDEN:** two thick crimp “curtains” on both shoulders.'
       : partSelection === 'LEFT'
-        ? '**LEFT part:** **Part line** and **sleek roots** on the **viewer’s right side** of the **head** (**subject’s left**). **Long crimped mass** over the **viewer’s right** shoulder. **Viewer’s left** = minimal forward bulk. **Forbidden:** part on the viewer’s **left** side of the head (**RIGHT** part).'
-        : '**RIGHT part:** **Part line** and **sleek roots** on the **viewer’s left side** of the **head** (**subject’s right**). **Long crimped mass** over the **viewer’s left** shoulder. **Viewer’s right** = minimal forward bulk. **Forbidden:** part on the viewer’s **right** side of the head (**LEFT** part).';
+        ? '**LEFT part (UI “L”):** **Part on image RIGHT** scalp. **Heaviest crimps** drape **viewer’s RIGHT shoulder** (same side as part). **Image LEFT** shoulder: **minimal** forward crimps. **FORBIDDEN:** part on **image LEFT** scalp. **FORBIDDEN:** symmetric crimps on both shoulders.'
+        : '**RIGHT part (UI “R”):** **Part on image LEFT** scalp. **Heaviest crimps** **viewer’s LEFT shoulder**. **Image RIGHT** shoulder minimal. **FORBIDDEN:** part on **image RIGHT** scalp. **FORBIDDEN:** symmetric shoulder drapes.';
 
   const partLine = salon === 'crimps' ? partWordCrimps : partWordLayers;
 
@@ -175,40 +183,40 @@ function buildLayersStylePromptShared(
     angle === 'left'
       ? partSelection === 'MIDDLE'
         ? salon === 'crimps'
-          ? '**LEFT 3/4 camera (this file):** **MIDDLE part** — keep center line; **crimp** bulk may read toward the **viewer’s right** shoulder; **forbidden** horizontal flip of the whole hairstyle.'
-          : '**LEFT 3/4 camera:** **MIDDLE part** — asymmetric waves favor the **viewer’s right** shoulder; **forbidden** flip.'
+          ? '**LEFT 3/4 (this file):** **MIDDLE part** — keep center; **heavier** crimps toward **image RIGHT** shoulder; **forbidden** flip the part or swap shoulders vs FRONT.'
+          : '**LEFT 3/4:** **MIDDLE part** — same asymmetric drape as FRONT (**heavier image RIGHT**); **forbidden** flip.'
         : partSelection === 'LEFT'
           ? salon === 'crimps'
-            ? '**LEFT 3/4 camera:** **LEFT part** — part + **heavy crimps** stay on the **viewer’s right side** of the **head** (same as FRONT). **Do not** move the part to the viewer’s **left** side of the head.'
-            : '**LEFT 3/4 camera:** **LEFT part** — part + **main wave mass** on the **viewer’s right** side of the head. **Do not** flip the part to the viewer’s **left** side.'
+            ? '**LEFT 3/4:** **UI L** — scalp part stays **image RIGHT** (same scalp slot as FRONT); **heavy crimps** on **viewer’s right** shoulder; **forbidden** move part to **image LEFT**.'
+            : '**LEFT 3/4:** **UI L** — part **image RIGHT**; **heavy waves** **viewer’s right** shoulder; **forbidden** part **image LEFT**.'
           : salon === 'crimps'
-            ? '**LEFT 3/4 camera:** **RIGHT part** — part + **heavy crimps** on the **viewer’s left** side of the head. **Do not** flip to the viewer’s **right** side.'
-            : '**LEFT 3/4 camera:** **RIGHT part** — part + **main waves** on the **viewer’s left** side of the head. **Do not** flip to the viewer’s **right** side.'
+            ? '**LEFT 3/4:** **UI R** — part **image LEFT**; heavy crimps **viewer’s left** shoulder; **forbidden** part **image RIGHT**.'
+            : '**LEFT 3/4:** **UI R** — part **image LEFT**; heavy waves **viewer’s left** shoulder; **forbidden** part **image RIGHT**.'
       : angle === 'right'
         ? partSelection === 'MIDDLE'
           ? salon === 'crimps'
-            ? '**RIGHT 3/4 camera:** **MIDDLE part** — keep center; **forbidden** hairstyle mirror-flip vs reference.'
-            : '**RIGHT 3/4 camera:** **MIDDLE part** — **forbidden** flip.'
+            ? '**RIGHT 3/4:** **MIDDLE part** — center; **heavier** toward **image RIGHT** shoulder; **forbidden** mirror-flip hairstyle vs reference.'
+            : '**RIGHT 3/4:** **MIDDLE part** — match FRONT asymmetry; **forbidden** flip.'
           : partSelection === 'LEFT'
             ? salon === 'crimps'
-              ? '**RIGHT 3/4 camera:** **LEFT part** — part line stays **viewer’s right side** of the head; bulk matches FRONT.'
-              : '**RIGHT 3/4 camera:** **LEFT part** — part line stays **viewer’s right side** of the head; bulk matches FRONT.'
+              ? '**RIGHT 3/4:** **UI L** — part **image RIGHT** scalp; bulk **viewer’s right** shoulder; **forbidden** part on **image LEFT**.'
+              : '**RIGHT 3/4:** **UI L** — part **image RIGHT**; bulk **viewer’s right** shoulder; **forbidden** part **image LEFT**.'
             : salon === 'crimps'
-              ? '**RIGHT 3/4 camera:** **RIGHT part** — part line **viewer’s left side** of the head; bulk matches FRONT.'
-              : '**RIGHT 3/4 camera:** **RIGHT part** — part line **viewer’s left side** of the head; bulk matches FRONT.'
+              ? '**RIGHT 3/4:** **UI R** — part **image LEFT**; bulk **viewer’s left** shoulder; **forbidden** part **image RIGHT**.'
+              : '**RIGHT 3/4:** **UI R** — part **image LEFT**; bulk **viewer’s left** shoulder; **forbidden** part **image RIGHT**.'
         : (() => {
             const oneShoulderFrontLayers =
               partSelection === 'MIDDLE'
-                ? '**FRONT camera:** **MIDDLE part** — center line; long waves favor the **viewer’s right** shoulder; **viewer’s left** lighter.'
+                ? '**FRONT:** **MIDDLE** — center part; **heaviest** waves **image RIGHT** shoulder; **image LEFT** shoulder clearly lighter. **FORBIDDEN:** two heavy drapes.'
                 : partSelection === 'LEFT'
-                  ? '**FRONT camera:** **LEFT part** — part line on the **viewer’s right side** of the **head**; **longest waves** on the **viewer’s right** shoulder. **FORBIDDEN:** part on the viewer’s **left** side of the head.'
-                  : '**FRONT camera:** **RIGHT part** — part line on the **viewer’s left side** of the **head**; **longest waves** on the **viewer’s left** shoulder. **FORBIDDEN:** part on the viewer’s **right** side of the head.';
+                  ? '**FRONT:** **UI L** — part groove **image RIGHT** half of scalp; **longest waves** **viewer’s RIGHT** shoulder. **FORBIDDEN:** part **image LEFT**; **FORBIDDEN:** both shoulders heavy.'
+                  : '**FRONT:** **UI R** — part **image LEFT** scalp; **longest waves** **viewer’s LEFT** shoulder. **FORBIDDEN:** part **image RIGHT**; **FORBIDDEN:** both shoulders heavy.';
             const oneShoulderFrontCrimps =
               partSelection === 'MIDDLE'
-                ? '**FRONT camera:** **MIDDLE part** — asymmetric crimps toward the **viewer’s right** shoulder.'
+                ? '**FRONT:** **MIDDLE** — asymmetric crimps; **heaviest image RIGHT** shoulder.'
                 : partSelection === 'LEFT'
-                  ? '**FRONT camera:** **LEFT part** — part + crimps on the **viewer’s right side** of the **head** only (**subject’s left**).'
-                  : '**FRONT camera:** **RIGHT part** — part + crimps on the **viewer’s left side** of the **head** only (**subject’s right**).';
+                  ? '**FRONT:** **UI L** — part **image RIGHT**; crimps/heavy mass **viewer’s RIGHT** shoulder only. **FORBIDDEN:** part **image LEFT**.'
+                  : '**FRONT:** **UI R** — part **image LEFT**; heavy crimps **viewer’s LEFT** shoulder. **FORBIDDEN:** part **image RIGHT**.';
             return salon === 'crimps' ? oneShoulderFrontCrimps : oneShoulderFrontLayers;
           })();
 
@@ -225,6 +233,7 @@ function buildLayersStylePromptShared(
   return [
     colorLockBlock,
     salonPartDirectionSemanticsBlock(),
+    salonOneShoulderDrapeBlock(),
     'Recreate this photograph. **Only** change the **hairstyle** to **' +
       styleNoun +
       '** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',

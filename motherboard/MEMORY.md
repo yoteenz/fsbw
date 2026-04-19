@@ -15880,3 +15880,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Rewrote **`salonPartDirectionSemanticsBlock()`**, **`partWordLayers` / `partWordCrimps`**, **`curtainBangsAddonForSalonPart`**, **`angleConstraint`**, and **FLAT IRON `partBlock`** in **`api/_lib/bawLiveStylingPrompts.ts`** to use **viewer’s left/right side of the head, scalp, hairline, forehead, and shoulders** — same mirror rule (**UI LEFT** → part on **viewer’s right** side of the head). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. Updated **`motherboard/CORE.md`** (NOIR bullet) and **`docs/WIG_PREVIEW_PREGENERATION.md`** (LAYERS line) to match.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Styling prompts: image LEFT/RIGHT + ONE SHOULDER ONLY (wrong part + dual drape)
+
+**Summary of this chat (full context):** User reported **parts still on the wrong side** and hair on **both shoulders** (LAYERS/CRIMPS/flat iron live styling).
+
+**Decisions / outcomes:** Strengthened **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): **`salonPartDirectionSemanticsBlock()`** triple-checks **image LEFT** / **image RIGHT** (photo edges) vs UI **L**/**R**; added **`salonOneShoulderDrapeBlock()`** (explicit **FORBIDDEN** two matching chest drapes, self-check); **side-part** lines tie **heavy mass** to **same shoulder as part**; **MIDDLE** stays asymmetric (**heavier image RIGHT** shoulder). Tightened **angle** strings for L/R 3/4. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.
