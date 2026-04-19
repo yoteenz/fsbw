@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -162,9 +162,6 @@ export default function StylingSelectionPage() {
   const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
-  /** When hair color / styling / part change, force fal — otherwise server skips and old WebPs persist. */
-  const lastLayersLivePreviewSigRef = useRef<string>('');
-  const lastBangsLivePreviewSigRef = useRef<string>('');
 
   // Listen for cart count changes
   useEffect(() => {
@@ -206,8 +203,6 @@ export default function StylingSelectionPage() {
       setLiveStylingWigViews(null);
       setLiveBangsWigViews(null);
       setLiveStylingError(null);
-      lastLayersLivePreviewSigRef.current = '';
-      lastBangsLivePreviewSigRef.current = '';
       return;
     }
     let cancelled = false;
@@ -396,18 +391,14 @@ export default function StylingSelectionPage() {
     else setLiveStylingWigViews(null);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    const sig = `${salonStorageMode}|${color}|${stylingForApi}|${selectedPartSelection}`;
-    const forceRegenerate =
-      lastLayersLivePreviewSigRef.current !== '' && lastLayersLivePreviewSigRef.current !== sig;
-    lastLayersLivePreviewSigRef.current = sig;
+    /** No `forceRegenerate` on auto-fetch — server returns cached Storage WebPs when present (avoids re-running Fal on every part tap). Use **regenerate** buttons to force Fal. */
     void postLiveWigAfterColorStyling(
       {
         color,
         ...sel,
         styling: stylingForApi,
         partSelection: selectedPartSelection,
-      },
-      { forceRegenerate }
+      }
     )
       .then((res) => {
         const u = res.publicUrls;
@@ -469,18 +460,13 @@ export default function StylingSelectionPage() {
     setLiveBangsLoading(true);
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
-    const sig = `BANGS|${color}|${stylingForApi}|${selectedPartSelection}`;
-    const forceRegenerate =
-      lastBangsLivePreviewSigRef.current !== '' && lastBangsLivePreviewSigRef.current !== sig;
-    lastBangsLivePreviewSigRef.current = sig;
     void postLiveWigAfterColorStyling(
       {
         color,
         ...sel,
         styling: stylingForApi,
         partSelection: selectedPartSelection,
-      },
-      { forceRegenerate }
+      }
     )
       .then((res) => {
         const u = res.publicUrls;

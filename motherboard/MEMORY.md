@@ -15776,3 +15776,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Removed **symmetric both-shoulders** CRIMPS **MIDDLE** copy; aligned **MIDDLE** with **one-sided drape** (center part at crown, bulk to **one** shoulder). Added **FRONT hero** sentences to **`layersLook`** / **`crimpsLook`**. **`partWordLayers` MIDDLE** one dominant shoulder. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Styling live preview: no auto forceRegenerate on part change (use Storage cache)
+
+**Context (this chat):** User reported **part directions** kept **generating new images** instead of **loading from Storage** when selecting a part that already had WebPs.
+
+**Decisions / outcomes:** Removed **`lastLayersLivePreviewSigRef` / `lastBangsLivePreviewSigRef`** logic that passed **`forceRegenerate: true`** whenever the preview **sig** (including **part**) changed — that **forced Fal** on every part tap. Auto **`postLiveWigAfterColorStyling`** now omits **`forceRegenerate`** so the API **skips** angles that already exist in Storage. **Regenerate** UI still uses **`forceRegenerate: true`**. **`src/pages/build-a-wig/styling/page.tsx`**.
+
+**Verification:** `npm run build` passes.
