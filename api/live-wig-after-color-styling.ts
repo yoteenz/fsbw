@@ -16,7 +16,11 @@ export const config = { maxDuration: 120 };
  *
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
- * **BANGS only** (BANGS without LAYERS/CRIMPS): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
+ * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/`
+ *
+ * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
+ *
+ * **BANGS only** (BANGS without LAYERS/CRIMPS/FLAT IRON): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
@@ -30,6 +34,8 @@ import {
   wigPreviewLiveAfterColorStylingPaths,
   wigPreviewLiveCrimpsPartFolder,
   wigPreviewLiveCrimpsWithBangsPartFolder,
+  wigPreviewLiveFlatIronPartFolder,
+  wigPreviewLiveFlatIronWithBangsPartFolder,
   wigPreviewLiveLayersPartFolder,
   wigPreviewLiveLayersWithBangsPartFolder,
   type WigPreviewSelections,
@@ -38,6 +44,7 @@ import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   buildBangsOnlyStylePrompt,
   buildCrimpsStylePromptFromColorTierWebp,
+  buildFlatIronStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
 } from './_lib/bawLiveStylingPrompts.js';
 
@@ -150,23 +157,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const stylingRaw = readString(body, 'styling', 'NONE').toUpperCase();
     const hasLayers = stylingRaw.includes('LAYERS');
     const hasCrimps = stylingRaw.includes('CRIMPS');
+    const hasFlatIron = stylingRaw.includes('FLAT IRON');
     const hasBangs = stylingRaw.includes('BANGS');
-    const bangsOnly = hasBangs && !hasLayers && !hasCrimps;
-    const middleLayers = hasLayers;
-    const middleCrimps = hasCrimps && !hasLayers;
-    const bangsWithSalon = hasBangs && (middleLayers || middleCrimps);
+    const salonCount = [hasLayers, hasCrimps, hasFlatIron].filter(Boolean).length;
+    const bangsOnly = hasBangs && salonCount === 0;
+    const middleLayers = hasLayers && salonCount === 1;
+    const middleCrimps = hasCrimps && salonCount === 1;
+    const middleFlatIron = hasFlatIron && salonCount === 1;
+    const bangsWithSalon = hasBangs && salonCount === 1 && (middleLayers || middleCrimps || middleFlatIron);
 
-    if (hasLayers && hasCrimps) {
+    if (salonCount > 1) {
       sendJson(res, 400, {
-        error: 'Live styling: pick **LAYERS** or **CRIMPS**, not both in one request.',
+        error: 'Live styling: pick **one** salon style among **LAYERS**, **CRIMPS**, **FLAT IRON** (not multiple).',
       });
       return;
     }
 
-    if (!middleLayers && !middleCrimps && !bangsOnly) {
+    if (!middleLayers && !middleCrimps && !middleFlatIron && !bangsOnly) {
       sendJson(res, 400, {
         error:
-          'Live styling: either (1) LAYERS or CRIMPS (salon style + part from partSelection), or (2) BANGS only without LAYERS/CRIMPS.',
+          'Live styling: either **LAYERS**, **CRIMPS**, or **FLAT IRON** (each with part from partSelection), or **BANGS** only without those salon styles.',
       });
       return;
     }
@@ -193,7 +203,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         ? hasBangs
           ? wigPreviewLiveCrimpsWithBangsPartFolder(partStyling)
           : wigPreviewLiveCrimpsPartFolder(partStyling)
-        : 'bangs-only';
+        : middleFlatIron
+          ? hasBangs
+            ? wigPreviewLiveFlatIronWithBangsPartFolder(partStyling)
+            : wigPreviewLiveFlatIronPartFolder(partStyling)
+          : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
     let supabase;
@@ -250,7 +264,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
               includeBangs: bangsWithSalon,
             })
-          : buildBangsOnlyStylePrompt(angle);
+          : middleFlatIron
+            ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+                includeBangs: bangsWithSalon,
+              })
+            : buildBangsOnlyStylePrompt(angle);
       const imageUrls = [colorPublicUrl];
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
@@ -303,8 +321,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? bangsWithSalon
             ? 'middle-crimps-with-bangs'
             : 'middle-crimps'
-          : 'bangs-only',
-      ...(middleLayers || middleCrimps ? { partSelection: partStyling, bangsWithSalon } : {}),
+          : middleFlatIron
+            ? bangsWithSalon
+              ? 'middle-flat-iron-with-bangs'
+              : 'middle-flat-iron'
+            : 'bangs-only',
+      ...(middleLayers || middleCrimps || middleFlatIron ? { partSelection: partStyling, bangsWithSalon } : {}),
       ...(singleAngle ? { singleAngle } : {}),
     });
   } catch (e) {

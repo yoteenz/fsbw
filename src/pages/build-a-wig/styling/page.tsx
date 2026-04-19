@@ -221,7 +221,11 @@ export default function StylingSelectionPage() {
             ? selectedHairStyling.includes('BANGS')
               ? 'CRIMPS_BANGS'
               : 'CRIMPS'
-            : null;
+            : selectedHairStyling.some((s) => s === 'FLAT IRON')
+              ? selectedHairStyling.includes('BANGS')
+                ? 'FLAT_IRON_BANGS'
+                : 'FLAT_IRON'
+              : null;
         const cachedSalon = sm !== null ? readBawNoirLiveStylingWigViewsForPart(part, sm) : null;
         if (cachedSalon) setLiveStylingWigViews(cachedSalon);
         else setLiveStylingWigViews(null);
@@ -327,6 +331,8 @@ export default function StylingSelectionPage() {
   const hasLayersLiveStyling =
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'LAYERS') &&
+    !selectedHairStyling.some((s) => s === 'CRIMPS') &&
+    !selectedHairStyling.some((s) => s === 'FLAT IRON') &&
     (selectedPartSelection === 'MIDDLE' ||
       selectedPartSelection === 'LEFT' ||
       selectedPartSelection === 'RIGHT');
@@ -335,15 +341,36 @@ export default function StylingSelectionPage() {
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'CRIMPS') &&
     !selectedHairStyling.some((s) => s === 'LAYERS') &&
+    !selectedHairStyling.some((s) => s === 'FLAT IRON') &&
     (selectedPartSelection === 'MIDDLE' ||
       selectedPartSelection === 'LEFT' ||
       selectedPartSelection === 'RIGHT');
 
-  const hasSalonPartLiveStyling = hasLayersLiveStyling || hasCrimpsLiveStyling;
+  const hasFlatIronLiveStyling =
+    location.pathname.includes('/build-a-wig/noir/') &&
+    selectedHairStyling.some((s) => s === 'FLAT IRON') &&
+    !selectedHairStyling.some((s) => s === 'LAYERS') &&
+    !selectedHairStyling.some((s) => s === 'CRIMPS') &&
+    (selectedPartSelection === 'MIDDLE' ||
+      selectedPartSelection === 'LEFT' ||
+      selectedPartSelection === 'RIGHT');
+
+  const hasSalonPartLiveStyling =
+    hasLayersLiveStyling || hasCrimpsLiveStyling || hasFlatIronLiveStyling;
+
+  const salonLivePreviewLabel = hasLayersLiveStyling
+    ? 'layers'
+    : hasCrimpsLiveStyling
+      ? 'crimps'
+      : hasFlatIronLiveStyling
+        ? 'flat iron'
+        : '';
 
   const hasBangsWithSalon =
     selectedHairStyling.includes('BANGS') &&
-    (selectedHairStyling.includes('LAYERS') || selectedHairStyling.includes('CRIMPS'));
+    (selectedHairStyling.includes('LAYERS') ||
+      selectedHairStyling.includes('CRIMPS') ||
+      selectedHairStyling.includes('FLAT IRON'));
 
   const salonStorageMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
     ? hasBangsWithSalon
@@ -353,13 +380,18 @@ export default function StylingSelectionPage() {
       ? hasBangsWithSalon
         ? 'CRIMPS_BANGS'
         : 'CRIMPS'
-      : 'LAYERS';
+      : hasFlatIronLiveStyling
+        ? hasBangsWithSalon
+          ? 'FLAT_IRON_BANGS'
+          : 'FLAT_IRON'
+        : 'LAYERS';
 
   const hasBangsOnlyLive =
     location.pathname.includes('/build-a-wig/noir/') &&
     selectedHairStyling.some((s) => s === 'BANGS') &&
     !selectedHairStyling.some((s) => s === 'LAYERS') &&
-    !selectedHairStyling.some((s) => s === 'CRIMPS');
+    !selectedHairStyling.some((s) => s === 'CRIMPS') &&
+    !selectedHairStyling.some((s) => s === 'FLAT IRON');
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -380,6 +412,10 @@ export default function StylingSelectionPage() {
       return;
     }
     if (hasCrimpsLiveStyling && !stylingForApi.includes('CRIMPS')) {
+      setLiveStylingWigViews(null);
+      return;
+    }
+    if (hasFlatIronLiveStyling && !stylingForApi.includes('FLAT IRON')) {
       setLiveStylingWigViews(null);
       return;
     }
@@ -432,6 +468,7 @@ export default function StylingSelectionPage() {
     hasSalonPartLiveStyling,
     hasLayersLiveStyling,
     hasCrimpsLiveStyling,
+    hasFlatIronLiveStyling,
     salonStorageMode,
   ]);
 
@@ -451,7 +488,7 @@ export default function StylingSelectionPage() {
       .join(',');
     if (
       stylingForApi !== 'BANGS' ||
-      selectedHairStyling.some((s) => s === 'LAYERS' || s === 'CRIMPS')
+      selectedHairStyling.some((s) => s === 'LAYERS' || s === 'CRIMPS' || s === 'FLAT IRON')
     ) {
       setLiveBangsWigViews(null);
       return;
@@ -1493,7 +1530,7 @@ export default function StylingSelectionPage() {
                   maxWidth: '280px',
                 }}
               >
-                Fal regen (LAYERS / CRIMPS / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
+                Fal regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
               </p>
             )}
             {showNoirLiveStylingRegenControls && (
@@ -1507,7 +1544,7 @@ export default function StylingSelectionPage() {
                 }}
               >
                 {liveStylingLoading
-                  ? `LIVE PREVIEW: ${hasLayersLiveStyling ? 'layers' : 'crimps'}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
+                  ? `LIVE PREVIEW: ${salonLivePreviewLabel}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
                   : liveBangsLoading
                     ? 'LIVE PREVIEW: curtain bangs (after color)…'
                     : liveStylingError

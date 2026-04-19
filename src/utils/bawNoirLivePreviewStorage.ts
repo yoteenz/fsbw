@@ -18,8 +18,10 @@ export type BawNoirLiveStylingPart = 'MIDDLE' | 'LEFT' | 'RIGHT';
 export type BawNoirLiveStylingSalonMode =
   | 'LAYERS'
   | 'CRIMPS'
+  | 'FLAT_IRON'
   | 'LAYERS_BANGS'
-  | 'CRIMPS_BANGS';
+  | 'CRIMPS_BANGS'
+  | 'FLAT_IRON_BANGS';
 
 export type BawNoirLiveStylingEnvelope = {
   part: BawNoirLiveStylingPart;
@@ -48,8 +50,10 @@ function parseStylingStorageRaw(raw: string | null): BawNoirLiveStylingEnvelope 
     if (!Array.isArray(urls) || urls.length !== 3) return null;
     let salonMode: BawNoirLiveStylingSalonMode = 'LAYERS';
     if (sm === 'CRIMPS') salonMode = 'CRIMPS';
+    else if (sm === 'FLAT_IRON') salonMode = 'FLAT_IRON';
     else if (sm === 'LAYERS_BANGS') salonMode = 'LAYERS_BANGS';
     else if (sm === 'CRIMPS_BANGS') salonMode = 'CRIMPS_BANGS';
+    else if (sm === 'FLAT_IRON_BANGS') salonMode = 'FLAT_IRON_BANGS';
     return {
       part,
       salonMode,
@@ -387,10 +391,12 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
 
     const hasLayers = ids.includes('LAYERS');
     const hasCrimps = ids.includes('CRIMPS');
+    const hasFlatIron = ids.includes('FLAT IRON');
     const hasBangs = ids.includes('BANGS');
-    const bangsOnly = hasBangs && !hasLayers && !hasCrimps;
+    const salonCount = [hasLayers, hasCrimps, hasFlatIron].filter(Boolean).length;
+    const bangsOnly = hasBangs && salonCount === 0;
 
-    if (hasLayers || hasCrimps) {
+    if (salonCount === 1 && (hasLayers || hasCrimps || hasFlatIron)) {
       let partRaw: string | null = null;
       if (isNoirBawCustomizeHubOnlyPathname(path)) {
         partRaw = localStorage.getItem('customizeSelectedPartSelection');
@@ -409,9 +415,13 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
         ? hasBangs
           ? 'LAYERS_BANGS'
           : 'LAYERS'
-        : hasBangs
-          ? 'CRIMPS_BANGS'
-          : 'CRIMPS';
+        : hasCrimps
+          ? hasBangs
+            ? 'CRIMPS_BANGS'
+            : 'CRIMPS'
+          : hasBangs
+            ? 'FLAT_IRON_BANGS'
+            : 'FLAT_IRON';
       const fromStyling = readBawNoirLiveStylingWigViewsForPart(partU, salonMode);
       if (fromStyling) return fromStyling;
     }

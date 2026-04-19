@@ -15786,3 +15786,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Removed **`lastLayersLivePreviewSigRef` / `lastBangsLivePreviewSigRef`** logic that passed **`forceRegenerate: true`** whenever the preview **sig** (including **part**) changed — that **forced Fal** on every part tap. Auto **`postLiveWigAfterColorStyling`** now omits **`forceRegenerate`** so the API **skips** angles that already exist in Storage. **Regenerate** UI still uses **`forceRegenerate: true`**. **`src/pages/build-a-wig/styling/page.tsx`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR FLAT IRON live styling: color base + part-only straight prompt
+
+**Context (this chat):** User asked that **FLAT IRON** should generate from the **same base** as other live styling — the **color-tier WebPs** — with **only** **part direction** (and sleek straight hair) changing, not a separate “style texture” path like LAYERS/CRIMPS.
+
+**Decisions / outcomes:**
+- **`buildFlatIronStylePromptFromColorTierWebp`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored in **`scripts/wig-preview/promptTemplate.mjs`**) — **bone-straight / flat-ironed**, **no** waves/curls/crimps; **color lock** + **part** (MIDDLE / LEFT / RIGHT) + optional **BANGS** addon.
+- **`POST /api/live-wig-after-color-styling`** accepts **exactly one** salon style among **LAYERS**, **CRIMPS**, **FLAT IRON** (`salonCount`); **FLAT IRON** uses **`wigPreviewLiveFlatIronPartFolder`** / **`wigPreviewLiveFlatIronWithBangsPartFolder`** → Storage **`after-color/flat-iron-*-part/`** and **`flat-iron-with-bangs-*-part/`**.
+- **Client:** **`BawNoirLiveStylingSalonMode`** extended with **`FLAT_IRON`** and **`FLAT_IRON_BANGS`**; **`styling/page.tsx`** **`hasFlatIronLiveStyling`**, hub resolve in **`bawNoirLivePreviewStorage.ts`**, mutual exclusion with LAYERS/CRIMPS for live salon path.
+- **Docs:** **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**.
+
+**Verification:** `npm run build` passes.

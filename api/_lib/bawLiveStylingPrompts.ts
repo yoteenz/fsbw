@@ -46,6 +46,59 @@ export function buildCrimpsStylePromptFromColorTierWebp(
 }
 
 /**
+ * **FLAT IRON** live styling: same **color-tier WebP** as other salon modes — treat as the **base** color shot; **only** change **part line** + **sleek bone-straight** hair (no new texture pattern beyond straight).
+ */
+export function buildFlatIronStylePromptFromColorTierWebp(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  catalog: CatalogColorForLayersPrompt,
+  options?: { includeBangs?: boolean }
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const colorLock =
+    '**INPUT** is the live NOIR **color preview** image — hair is already tinted to **' +
+    catalog.label +
+    '** (target **#' +
+    hex +
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade.';
+
+  const partBlock =
+    partSelection === 'MIDDLE'
+      ? 'Apply a **MIDDLE / center part** at the crown — part line visible from hairline through the top. Hair falls **evenly** from the center part (straight panels left and right).'
+      : partSelection === 'LEFT'
+        ? 'Apply a **LEFT side part** (part line on the viewer’s left / mannequin’s right at the crown). **Roots along the part**: sleek, flat-laid; sweep bulk toward the **heavy** side per a classic side-part straight style.'
+        : 'Apply a **RIGHT side part** (part line on the viewer’s right / mannequin’s left at the crown). **Roots along the part**: sleek, flat-laid; sweep bulk toward the **heavy** side per a classic side-part straight style.';
+
+  const angleBlock =
+    angle === 'left'
+      ? 'This is the **LEFT 3/4 camera angle**: keep framing and head pose — **do not** rotate the head toward camera. Hair mass and part must read correctly for a **left** view.'
+      : angle === 'right'
+        ? 'This is the **RIGHT 3/4 camera angle**: keep framing and head pose — **do not** rotate the head toward camera. Hair mass and part must read correctly for a **right** view.'
+        : 'This is the **FRONT** camera angle: show the **part** and straight fall clearly; **do not** invent a different camera angle.';
+
+  const straightLook =
+    '**FLAT IRON (salon bone-straight):** Restyle hair to **smooth, straight** — **flat-ironed** finish, **sleek**, **high-gloss**, **no** waves, **no** curls, **no** crimps, **no** beach texture. Length and density should match the **reference** as much as possible while changing **only** part + straightening — **do not** cut a new silhouette or add layers unless needed to show the part.';
+
+  const bangsAddon = options?.includeBangs
+    ? ' **Also add** lightly feathered **curtain bangs** that **match the part** (center-split for middle, asymmetric for side part) — blended into the straight lengths.'
+    : '';
+
+  return [
+    colorLock,
+    'Recreate this photograph. **Keep the same scene** — same **mannequin**, **brick background**, **lighting**, **framing**, and **FRONTAL SLAYER** chest logo. **Only** edit **hair**: apply **FLAT IRON** styling as below — this is the **same** base color image with **different part direction** and **straight** hair, **not** a new wig or new color.',
+    straightLook,
+    partBlock,
+    angleBlock,
+    bangsAddon.trim(),
+    bawFalEditPreserveReferenceBlock(),
+    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
+    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ]
+    .filter((s) => s.length > 0)
+    .join(' ');
+}
+
+/**
  * @deprecated Prefer `buildLayersStylePromptFromColorTierWebp` — HQ black refs kept hair black.
  * Kept for script parity / manual tests with gray-brick refs only.
  */

@@ -101,6 +101,21 @@ export function wigPreviewLiveCrimpsWithBangsPartFolder(partSelection: string): 
   return 'crimps-with-bangs-middle-part';
 }
 
+/** FLAT IRON — same color WebP input; **only** part direction + sleek straight hair changes per folder. */
+export function wigPreviewLiveFlatIronPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'flat-iron-left-part';
+  if (p === 'RIGHT') return 'flat-iron-right-part';
+  return 'flat-iron-middle-part';
+}
+
+export function wigPreviewLiveFlatIronWithBangsPartFolder(partSelection: string): string {
+  const p = String(partSelection || 'MIDDLE').toUpperCase();
+  if (p === 'LEFT') return 'flat-iron-with-bangs-left-part';
+  if (p === 'RIGHT') return 'flat-iron-with-bangs-right-part';
+  return 'flat-iron-with-bangs-middle-part';
+}
+
 /** After-color styling (LAYERS + part); keyed by same **color-tier** hash as `wigPreviewLiveAnglePaths`. */
 export function wigPreviewLiveAfterColorStylingPaths(
   promptVersion: string,
