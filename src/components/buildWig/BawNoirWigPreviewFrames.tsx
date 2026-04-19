@@ -153,7 +153,9 @@ export function BawNoirWigPreviewHeroThumbs({
               <div
                 className={`relative bg-cover bg-center flex items-center justify-center baw-noir-thumb-frame${
                   subPageStaticSelectionOnFrame && !hideBrick ? ' baw-noir-thumb-frame--static-sub' : ''
-                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}`}
+                }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}${
+                  hideBrick && !hubThumbsOnlyOuter ? ' baw-noir-thumb-frame--live-noir-sub' : ''
+                }`}
                 data-baw-thumb-index={index}
                 style={{
                   width: '72px',
@@ -174,9 +176,9 @@ export function BawNoirWigPreviewHeroThumbs({
                     : hideBrick
                       ? {
                           overflow: 'hidden',
-                          /* Live WebPs already include brick — no second CSS brick; `cover` on img fills frame (see index.css) */
+                          /* Live WebPs already include brick — no second CSS brick; sub-pages: `contain` on img shows full raster (index.css) */
                           backgroundImage: 'none',
-                          backgroundColor: 'transparent',
+                          backgroundColor: '#ffffff',
                           border: selectedView === index ? '3px solid #fff' : undefined,
                           boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                           boxSizing: 'border-box',

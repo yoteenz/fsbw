@@ -3423,10 +3423,9 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   object-position: center center !important;
 }
 
-/* BAW hub + sub-page live NOIR thumbs: fill fixed frame — avoids gray/white gutters from `contain` + aspect mismatch */
-.leaf-stack.thumb .baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir,
-.baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir {
-  object-fit: cover !important;
+/* Sub-page live NOIR: full WebP visible (`contain`); frame uses white bg for letterbox gutters (not gray brick double) */
+.baw-noir-thumb-frame--live-noir-sub img.thumbnail-mannequin-img--live-noir {
+  object-fit: contain !important;
   object-position: center center !important;
 }
 

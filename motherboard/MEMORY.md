@@ -15590,3 +15590,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW sub-page live NOIR thumbs: full raster (`contain`), drop global `cover` override
+
+**Context (this chat):** User reported sub-page live thumbnails **too zoomed in** — need to show the **entire** image.
+
+**Decisions / outcomes:** A later rule set **`.baw-noir-thumb-frame--live-noir img`** to **`object-fit: cover !important`**, overriding **`contain`** and **cropping** WebPs. **Fix:** **`baw-noir-thumb-frame--live-noir-sub`** on sub-page live frames only (`hideBrick && !hubThumbsOnlyOuter`); CSS **`contain`** on that class. Frame **`backgroundColor: #fff`** for letterboxing. **`CORE.md`** updated.
+
+**Changes:** **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`src/index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
