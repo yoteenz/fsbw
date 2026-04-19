@@ -228,10 +228,10 @@ export default function StylingSelectionPage() {
               : null;
         const cachedSalon = sm !== null ? readBawNoirLiveStylingWigViewsForPart(part, sm) : null;
         if (cachedSalon) setLiveStylingWigViews(cachedSalon);
-        else setLiveStylingWigViews(null);
+        else setLiveStylingWigViews((prev) => prev);
         const cachedBangs = readBawNoirLiveBangsWigViews();
         if (cachedBangs) setLiveBangsWigViews(cachedBangs);
-        else setLiveBangsWigViews(null);
+        else setLiveBangsWigViews((prev) => prev);
       }
     };
     refreshFounderTools();
@@ -424,7 +424,7 @@ export default function StylingSelectionPage() {
     const partKey = selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT';
     const cachedForPart = readBawNoirLiveStylingWigViewsForPart(partKey, salonStorageMode);
     if (cachedForPart) setLiveStylingWigViews(cachedForPart);
-    else setLiveStylingWigViews(null);
+    /** Stale-while-revalidate: keep showing the previous salon triple until this fetch returns. */
     const sel = readBuildWigLivePreviewSelections(pathname);
     const color = readBuildWigLivePreviewColor(pathname);
     /** No `forceRegenerate` on auto-fetch — server returns cached Storage WebPs when present (avoids re-running Fal on every part tap). Use **regenerate** buttons to force Fal. */
@@ -451,12 +451,10 @@ export default function StylingSelectionPage() {
             selectedPartSelection as 'MIDDLE' | 'LEFT' | 'RIGHT',
             salonStorageMode
           );
-        } else {
-          setLiveStylingWigViews(null);
         }
+        /** Else: keep previous triple — do not flash to base/color. */
       })
       .catch((e: Error) => {
-        setLiveStylingWigViews(null);
         setLiveStylingError(e?.message || 'Live styling preview failed');
       })
       .finally(() => setLiveStylingLoading(false));
@@ -516,12 +514,10 @@ export default function StylingSelectionPage() {
           ];
           setLiveBangsWigViews(triple);
           persistBawNoirLiveBangsWigViews(triple);
-        } else {
-          setLiveBangsWigViews(null);
         }
+        /** Else: keep previous triple — do not flash to base/color. */
       })
       .catch((e: Error) => {
-        setLiveBangsWigViews(null);
         setLiveStylingError(e?.message || 'Live styling preview failed');
       })
       .finally(() => setLiveBangsLoading(false));

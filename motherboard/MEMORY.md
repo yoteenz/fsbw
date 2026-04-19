@@ -15950,3 +15950,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** On customize routes **except** `.../customize/color`, **`readBuildWigLivePreviewColor`** and **`readEffectiveNoirBawHairColor`** now prefer **`selectedColor`** then **`customizeSelectedColor`** (draft). Color sub-page keeps draft-first. **`currentNoirColorTripleOrNull`** uses **pending** WebPs only on **`/noir/customize/color`**; other steps use **committed** `bawNoirLiveColorWigViews` only. Added **`isBuildAWigColorSubPagePathname`** in **`buildWigLivePreviewSelections.ts`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Styling page: hold last salon/bangs triple (no flash to base/color)
+
+**Context (this chat):** User asked to **keep the current preview** when changing styling selections until the **next** image loads, instead of **defaulting to base/color** (naturals) during load.
+
+**Decisions / outcomes:** In **`src/pages/build-a-wig/styling/page.tsx`**, founder salon + bangs auto-fetch **no longer** calls **`setLiveStylingWigViews(null)`** / **`setLiveBangsWigViews(null)`** when Storage has no cache for the new part/mode, on **empty** API URLs, or on **catch** — React state keeps the **previous** triple until a successful response updates it. **`refreshFounderTools`** uses functional updates **`(prev) => prev`** when cache is missing so it does not clear state. **`motherboard/CORE.md`** NOIR bullet updated (stale-while-revalidate on styling step).
+
+**Verification:** `npm run build` passes.
