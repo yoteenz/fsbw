@@ -124,6 +124,26 @@ function salonPartDirectionSemanticsBlock(): string {
   );
 }
 
+/**
+ * Extra precision for **LAYERS + UI R**: models often place the part on image RIGHT (UI L). Spell out landmarks + mass direction.
+ */
+function salonLayersRightPartScalpBlock(): string {
+  return (
+    '**LAYERS + UI “R” — SCALP LANDMARKS (do not mirror):** Order = **RIGHT part** = salon **R** → part must sit **only** on **image LEFT** (viewer’s left / nearer the **left edge**). **Draw** a **straight** part line on the **left half** of the **forehead + scalp** — the **deepest groove** and **strongest root direction** stay **left of the midline** (nose bridge), **not** on the **right** half. **More hair mass / root lift** originates **image LEFT** at the part; the side toward **image RIGHT** is the **lighter**, **smaller** side (less bulk at roots). **FORBIDDEN:** a part seam, ridge, or zig-zag on **image RIGHT** forehead or scalp (that is **UI “L”**, not **R**). **FORBIDDEN:** center part. **Self-check:** if the part reads on the **same side as the brick edge on the RIGHT** of the frame → **failed** — move it to **image LEFT**.'
+  );
+}
+
+/** Per-camera reinforcement for LAYERS + UI R — models confuse near vs far temple in 3/4 views. */
+function salonLayersRightPartAngleExtra(angle: 'front' | 'left' | 'right'): string {
+  if (angle === 'front') {
+    return ' **LAYERS + UI R (FRONT):** The **part groove** must sit **left of the face midline** — **left forehead + left crown**; **FORBIDDEN:** a side part on the **right** forehead (**UI L**).';
+  }
+  if (angle === 'left') {
+    return ' **LAYERS + UI R (LEFT 3/4):** The **part seam** stays on **image LEFT** (left edge side of the frame); **FORBIDDEN:** shifting the groove to **image RIGHT** scalp (**UI L**).';
+  }
+  return ' **LAYERS + UI R (RIGHT 3/4):** In this view the **part** is on the **far side** of the head (**toward image LEFT**); **FORBIDDEN:** placing the groove on the **near** temple (**image RIGHT**) — that is **UI L**, not **R**.';
+}
+
 /** Product rule: long hair drapes **only** over the **viewer’s left** shoulder (left side of the image — “facing me”). */
 function salonOneShoulderDrapeBlock(): string {
   return (
@@ -181,7 +201,7 @@ function buildLayersStylePromptShared(
       ? '**MIDDLE part:** **Center part** at crown. **FRONT:** long waves — **all heavy length** forward over **viewer’s LEFT shoulder only** (**DRAPE SIDE**). **Viewer’s RIGHT** shoulder: minimal / tucked. **FORBIDDEN:** symmetric heavy waves on both shoulders.'
       : partSelection === 'LEFT'
         ? '**LEFT part (UI “L”):** **Part + root lift on image RIGHT** scalp. Hair must **sweep** so **all heavy long waves** drape **forward over viewer’s LEFT shoulder only** (cross-body from the part if needed). **FORBIDDEN:** part on **image LEFT** scalp (UI **R**). **FORBIDDEN:** thick forward drape on **viewer’s RIGHT** shoulder.'
-        : '**RIGHT part (UI “R”):** **Part on image LEFT** scalp. **Heavy long waves** forward over **viewer’s LEFT shoulder** (same side as part). **FORBIDDEN:** part on **image RIGHT** scalp (UI **L**). **FORBIDDEN:** thick drape on **viewer’s RIGHT** shoulder.';
+        : '**RIGHT part (UI “R”) — LAYERS:** Part line on **image LEFT** only — **left forehead + left scalp** (see **LAYERS + UI “R” — SCALP LANDMARKS**). **Heaviest** layered waves and root lift **originate image LEFT** at the part; **lighter** toward **image RIGHT**. Sweep **heavy long waves** forward over **viewer’s LEFT shoulder** (**DRAPE SIDE**). **FORBIDDEN:** part groove on **image RIGHT** half of head (that is UI **L**). **FORBIDDEN:** thick drape on **viewer’s RIGHT** shoulder.';
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
@@ -192,7 +212,7 @@ function buildLayersStylePromptShared(
 
   const partLine = salon === 'crimps' ? partWordCrimps : partWordLayers;
 
-  const angleConstraint =
+  const angleConstraintBase =
     angle === 'left'
       ? partSelection === 'MIDDLE'
         ? salon === 'crimps'
@@ -233,6 +253,11 @@ function buildLayersStylePromptShared(
             return salon === 'crimps' ? oneShoulderFrontCrimps : oneShoulderFrontLayers;
           })();
 
+  const angleConstraint =
+    partSelection === 'RIGHT' && salon === 'layers'
+      ? angleConstraintBase + salonLayersRightPartAngleExtra(angle)
+      : angleConstraintBase;
+
   const lengthNote =
     salon === 'crimps'
       ? 'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long crimped look.'
@@ -247,6 +272,7 @@ function buildLayersStylePromptShared(
     colorLockBlock,
     salonStyleInvarianceAcrossColorsBlock(styleNoun + (includeBangs ? ' + curtain bangs' : '')),
     salonPartDirectionSemanticsBlock(),
+    ...(partSelection === 'RIGHT' && salon === 'layers' ? [salonLayersRightPartScalpBlock()] : []),
     salonOneShoulderDrapeBlock(),
     'Recreate this photograph. **Only** change the **hairstyle** to **' +
       styleNoun +

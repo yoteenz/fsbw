@@ -15953,6 +15953,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — LAYERS + R part: tighter scalp prompts (anti mirror)
+
+**Context (this chat):** User reported **R part + LAYERS** still placing the part on the **wrong side** of the scalp (opposite of spec).
+
+**Decisions / outcomes:** In **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): added **`salonLayersRightPartScalpBlock()`** (only for **LAYERS + RIGHT**) — left forehead/left scalp, groove **left of midline**, heavier mass **image LEFT**, **forbidden** part on **image RIGHT**; **`salonLayersRightPartAngleExtra()`** appends FRONT / LEFT 3/4 / RIGHT 3/4 reinforcement. **`partWordLayers`** for **RIGHT** references the scalp block and mass split. **`motherboard/CORE.md`** NOIR bullet updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — Styling page: hold last salon/bangs triple (no flash to base/color)
 
 **Context (this chat):** User asked to **keep the current preview** when changing styling selections until the **next** image loads, instead of **defaulting to base/color** (naturals) during load.
