@@ -15823,6 +15823,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Styling prompts: frame LEFT/RIGHT part direction (fix mirrored L/R)
+
+**Context (this chat):** User reported **LEFT** and **RIGHT** part selections producing the **opposite** part — constant bad regens.
+
+**Decisions / outcomes:** Old copy mixed **viewer’s** vs **mannequin’s** sides and put **heavy hair on the “far” shoulder**, which Fal often mirrored. **Fix:** **`salonPartDirectionSemanticsBlock()`** — **frame LEFT** = left edge of **this photograph**, **no** horizontal flip, **no** opposite part. **LEFT** / **RIGHT** parts: part line + bulk on **same** side as UI (**frame LEFT** vs **frame RIGHT**). Updated **`buildLayersStylePromptShared`**, **`curtainBangsAddonForSalonPart`**, **`buildFlatIronStylePromptFromColorTierWebp`** in **`api/_lib/bawLiveStylingPrompts.ts`**; mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — NOIR color page: hold last live triple while loading + faster Storage probe
 
 **Context (this chat):** User reported preview **reverting to base/default naturals** until the next image loads, and wanted **faster** loads.
