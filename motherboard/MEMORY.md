@@ -15756,3 +15756,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`crimpsLook`** + **`styleNoun`** **`salon deep-pressed crimps`**; **`partWordCrimps`** (ridges parallel to fall; side-part heavy side). **FRONT + MIDDLE** for crimps: **balanced** crimped panels on both sides of center part. L/R front unchanged (one-sided drape). **`scripts/wig-preview/promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR CRIMPS prompt: aligned to user’s 3 ref images (middle + side part)
+
+**Context (this chat):** User provided **three crimps reference images** (descriptions): (1) **middle part**, extra-long black hair, **horizontal tight crimps**, symmetric over both shoulders, glossy; (2) **middle part** mannequin, **burgundy**, same **structured horizontal** crimps, lace front; (3) **deep side part**, **sleek flat roots**, **one-sided shoulder drape**, high-gloss.
+
+**Decisions / outcomes:** Rewrote **`crimpsLook`** (**horizontal accordion / waffle**, extra-long, uniform from part through ends, high-gloss frizz-free, explicit **not** spirals/beach waves). **`partWordCrimps`**: **MIDDLE** = precise center part, crimps from crown, **both shoulders**; **LEFT/RIGHT** = **deep side part**, **sleek roots**, **one-sided drape**. Front **angleConstraint** for crimps updated for **MIDDLE** vs **side** to match refs. Color lock reminder: **swatch** not ref colors. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
