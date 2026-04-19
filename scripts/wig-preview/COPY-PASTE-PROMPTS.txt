@@ -69,11 +69,9 @@ Recreate this exact mannequin image. The logo on the center of the mannequin’s
 ================================================================================
 BAW — MIDDLE PART / LAYERS STYLE (all 6 units)
 ================================================================================
-**Live / server (two images):** (1) **First** = customer color preview (Storage WebP): full scene + **this hair color stays in the output**. (2) **Second** = **geometry-only** reference per angle (cut, part, layers, silhouette) — public URLs: **`WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL`**, **`_FRONT_`**, **`_RIGHT_`**. Do **not** treat image 2 as a second “final” to paste (ignore its hair color and background). fal: **Auto + 2K**.
+**Live / server (LAYERS on `POST /api/live-wig-after-color-styling`):** **One** attachment per angle — same **HQ** gray-brick refs as color: **`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`**, **`_LEFT_URL`**, **`_RIGHT_URL`**. Prompt: **`buildLayersStylePromptFromHqMannequinRef(angle, partSelection)`** — preserve photograph like color; **only** change hairstyle to **layered curls** with **MIDDLE** | **LEFT** | **RIGHT** part (`partSelection` in API body). fal: **Auto + 2K** (or `WIG_PREVIEW_FAL_STYLING_RESOLUTION`).
 
-You get **two images in order**. **IMAGE 1** is the only **output canvas**: same mannequin, brick background, framing, chest logo, and **keep the hair color exactly as in image 1**. **IMAGE 2** is a **hair geometry reference only** — copy only cut, layering, and part from image 2 onto the head in image 1; do not use image 2’s hair color or background. Then the angle-specific shoulder/part constraints from `buildMiddlePartLayersStylePromptTwoImages` in code. **FRONTAL SLAYER** logo stays legible as in image 1. High quality; change only the hair mesh shape in image 1.
-
-(Code: `buildMiddlePartLayersStylePromptTwoImages` in `api/_lib/bawLiveStylingPrompts.ts` / `promptTemplate.mjs`; exports `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_TWO_IMAGES` = front angle.)
+**Deprecated (two-image geometry refs):** `buildMiddlePartLayersStylePromptTwoImages` — kept for scripts / copy-paste; live API no longer uses `WIG_PREVIEW_NOIR_LAYERS_*_STYLE_*` envs.
 
 **Manual (one image only):** attach just the inspo shot — `BAW_MIDDLE_PART_LAYERS_STYLE_PROMPT_SINGLE_IMAGE` in `promptTemplate.mjs`.
 

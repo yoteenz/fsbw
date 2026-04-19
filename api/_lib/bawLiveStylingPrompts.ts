@@ -1,5 +1,42 @@
 import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
 
+export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
+
+/**
+ * **Single HQ mannequin ref** (same URLs as color `WIG_PREVIEW_NOIR_MANNEQUIN_*`): preserve the whole photograph
+ * like the color step — **only** restyle hair to **layered curls** with the chosen **part**; keep catalog hair color.
+ * Replaces the old two-image flow (color WebP + separate LQ geometry refs).
+ */
+export function buildLayersStylePromptFromHqMannequinRef(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection
+): string {
+  const angleConstraint =
+    angle === 'left'
+      ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left) unless the new layered style clearly shifts bulk; do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
+      : angle === 'right'
+        ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right) unless the new layered style clearly shifts bulk; do **not** mirror into a fake left view. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
+        : 'This is the **FRONT view**: match a clear **part line** and outer silhouette for layered curls; do **not** mirror hair onto the wrong side or invent a symmetric “both shoulders” drape unless the part calls for balance.';
+
+  const partLine =
+    partSelection === 'MIDDLE'
+      ? 'Use a **MIDDLE / center part**. Style the hair as **layered curls** with face-framing layers; part at the center.'
+      : partSelection === 'LEFT'
+        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). Style as **layered curls** with volume and sweep consistent with that part — **do not** apply a center or right part.'
+        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). Style as **layered curls** with volume and sweep consistent with that part — **do not** apply a center or left part.';
+
+  return [
+    'Recreate this **exact** mannequin photograph. **Only** change the **hairstyle** to **layered curls** with the **part direction** specified below — same idea as the color step: preserve **mannequin**, **brick background**, **lighting**, **framing**, and **hair color** (catalog / customer color already in the reference).',
+    partLine,
+    angleConstraint,
+    'Do **not** recolor the hair; do **not** change skin, bust, neck seam, or background. Do **not** change cut length category except what layered curls reasonably require for silhouette.',
+    bawFalEditPreserveReferenceBlock(),
+    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
+    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+    'Change **only** the **hair** to layered curls with the specified part; **everything** else must match the reference.',
+  ].join(' ');
+}
+
 /**
  * **Two-image** middle + layers (live API):
  * - **First** `image_urls` entry = customer color preview (Storage WebP): full scene + **keep this hair color** in the output.

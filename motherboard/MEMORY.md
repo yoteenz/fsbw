@@ -15662,3 +15662,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`src/utils/api.ts`**, **`src/pages/build-a-wig/color/page.tsx`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR LAYERS styling: HQ mannequin refs + color-like prompt (single image)
+
+**Context (this chat):** User asked to use the **same HQ NOIR reference images** as the color Fal flow for the **styling** sub-page, and a **color-like** prompt: preserve the image, **only** change **hairstyle** to **layered curls** with **part direction** (vs separate LQ geometry refs).
+
+**Decisions / outcomes:** **`buildLayersStylePromptFromHqMannequinRef`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`promptTemplate.mjs`**). **`api/live-wig-after-color-styling.ts`**: **LAYERS** uses **`WIG_PREVIEW_NOIR_MANNEQUIN_{FRONT|LEFT|RIGHT}_URL`** only; **BANGS-only** unchanged. Removed **`readLayersStyleRefUrls`**. Docs: **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`COPY-PASTE-PROMPTS.txt`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

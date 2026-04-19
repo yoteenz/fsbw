@@ -3,14 +3,15 @@ export const config = { maxDuration: 120 };
 /**
  * POST /api/live-wig-after-color-styling
  *
- * Admin-only. **After** live color WebPs exist, runs fal once per angle.
+ * Admin-only. Runs fal once per angle.
  *
- * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): two `image_urls` — color WebP + geometry refs from env
- * (`WIG_PREVIEW_NOIR_LAYERS_{MIDDLE|LEFT|RIGHT}_PART_STYLE_*`; **MIDDLE** also accepts legacy `WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_*`).
+ * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` — same **HQ** mannequin refs as color
+ * (`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`, `_LEFT_URL`, `_RIGHT_URL`). Prompt: preserve scene like color; **only**
+ * restyle hair to **layered curls** with the chosen **part** (`buildLayersStylePromptFromHqMannequinRef`).
  * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
- * **BANGS only** (BANGS without LAYERS): single `image_urls` — color WebP; `buildBangsOnlyStylePrompt`.
- * **Output:** `.../after-color/bangs-only/{angle}.webp`
+ * **BANGS only** (BANGS without LAYERS): requires **live color WebPs** for this tier — single `image_urls` = color WebP;
+ * `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
@@ -28,7 +29,7 @@ import {
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   buildBangsOnlyStylePrompt,
-  buildMiddlePartLayersStylePromptTwoImages,
+  buildLayersStylePromptFromHqMannequinRef,
 } from './_lib/bawLiveStylingPrompts.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -37,58 +38,6 @@ function readLayersPartStyling(body: Record<string, unknown>): LayersPartStyling
   const raw = readString(body, 'partSelection', 'MIDDLE').toUpperCase();
   if (raw === 'LEFT' || raw === 'RIGHT' || raw === 'MIDDLE') return raw;
   return 'MIDDLE';
-}
-
-function readLayersStyleRefUrls(part: LayersPartStyling): {
-  ok: true;
-  urls: { front: string; left: string; right: string };
-} | {
-  ok: false;
-  missing: Record<string, boolean>;
-  envKeyStem: string;
-} {
-  const pick = (stem: string) => ({
-    front: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_FRONT_URL`]?.trim() || '',
-    left: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_LEFT_URL`]?.trim() || '',
-    right: process.env[`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_RIGHT_URL`]?.trim() || '',
-  });
-  const stem = part === 'LEFT' ? 'LEFT_PART' : part === 'RIGHT' ? 'RIGHT_PART' : 'MIDDLE_PART';
-  let u = pick(stem);
-  if (part === 'MIDDLE' && (!u.front || !u.left || !u.right)) {
-    u = {
-      front: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim() || '',
-      left: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim() || '',
-      right: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim() || '',
-    };
-  }
-  // LEFT / RIGHT: allow deploys that only set MIDDLE refs — use middle geometry as fallback (part-specific envs optional).
-  if (part !== 'MIDDLE' && (!u.front || !u.left || !u.right)) {
-    const middle = pick('MIDDLE_PART');
-    if (middle.front && middle.left && middle.right) {
-      u = middle;
-    } else {
-      const legacy = {
-        front: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_FRONT_URL?.trim() || '',
-        left: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_LEFT_URL?.trim() || '',
-        right: process.env.WIG_PREVIEW_NOIR_MIDDLE_LAYERS_STYLE_RIGHT_URL?.trim() || '',
-      };
-      if (legacy.front && legacy.left && legacy.right) {
-        u = legacy;
-      }
-    }
-  }
-  if (!u.front || !u.left || !u.right) {
-    return {
-      ok: false,
-      missing: {
-        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_FRONT_URL`]: !u.front,
-        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_LEFT_URL`]: !u.left,
-        [`WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_RIGHT_URL`]: !u.right,
-      },
-      envKeyStem: `WIG_PREVIEW_NOIR_LAYERS_${stem}_STYLE_{FRONT|LEFT|RIGHT}_URL`,
-    };
-  }
-  return { ok: true, urls: u };
 }
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
@@ -202,19 +151,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    let styleRefs: { ok: true; urls: { front: string; left: string; right: string } } | null = null;
-    if (middleLayers) {
-      const r = readLayersStyleRefUrls(partStyling);
-      if (!r.ok) {
-        sendJson(res, 503, {
-          error: `Missing public geometry reference URLs for LAYERS + part ${partStyling}. Set ${r.envKeyStem} (HTTPS, one per camera angle).`,
-          partSelection: partStyling,
-          missing: r.missing,
-        });
-        return;
-      }
-      styleRefs = r;
+    const hqFront = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim();
+    const hqLeft = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
+    const hqRight = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
+    if (middleLayers && (!hqFront || !hqLeft || !hqRight)) {
+      sendJson(res, 503, {
+        error:
+          'LAYERS styling uses the same HQ mannequin URLs as color: set WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL, WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL.',
+        missing: {
+          WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL: !hqFront,
+          WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL: !hqLeft,
+          WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL: !hqRight,
+        },
+      });
+      return;
     }
+    const hqMannequinByAngle =
+      hqFront && hqLeft && hqRight
+        ? ({ front: hqFront, left: hqLeft, right: hqRight } as const)
+        : null;
 
     const selections: WigPreviewSelections = {
       unitKey: 'NOIR',
@@ -260,31 +215,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
-      const colorPath = colorPaths[angle];
-      const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-      if (colorDlErr) {
-        sendJson(res, 400, {
-          error:
-            'Color preview files not found for this combo. Open NOIR → Color (admin) first so left/front/right color WebPs exist, then try styling again.',
-          colorTierHash,
-          missingColorPath: colorPath,
-        });
-        return;
-      }
+      let prompt: string;
+      let imageUrls: string[];
 
-      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-      const colorPublicUrl = pubColor?.publicUrl;
-      if (!colorPublicUrl) {
-        sendJson(res, 500, { error: 'Could not build public URL for color layer' });
-        return;
-      }
+      if (middleLayers && hqMannequinByAngle) {
+        const mannequinUrl = hqMannequinByAngle[angle];
+        prompt = buildLayersStylePromptFromHqMannequinRef(angle, partStyling);
+        imageUrls = [mannequinUrl];
+      } else {
+        const colorPath = colorPaths[angle];
+        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
+        if (colorDlErr) {
+          sendJson(res, 400, {
+            error:
+              'Color preview files not found for this combo. Open NOIR → Color (admin) first so left/front/right color WebPs exist, then try bangs styling again.',
+            colorTierHash,
+            missingColorPath: colorPath,
+          });
+          return;
+        }
 
-      const prompt = middleLayers
-        ? buildMiddlePartLayersStylePromptTwoImages(angle)
-        : buildBangsOnlyStylePrompt(angle);
-      const imageUrls = middleLayers && styleRefs
-        ? [colorPublicUrl, styleRefs.urls[angle]]
-        : [colorPublicUrl];
+        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+        const colorPublicUrl = pubColor?.publicUrl;
+        if (!colorPublicUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for color layer' });
+          return;
+        }
+
+        prompt = buildBangsOnlyStylePrompt(angle);
+        imageUrls = [colorPublicUrl];
+      }
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {
