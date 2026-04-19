@@ -3396,10 +3396,10 @@ img.natural-front-mobile {
   display: block !important;
 }
 
-/* Remote NOIR fal WebPs already include brick — fill frame, avoid double brick */
+/* Remote NOIR fal WebPs: show **full** raster in hero box (same idea as static `contain`) — no crop */
 img.hero-mannequin-img--live-noir {
-  object-fit: cover !important;
-  object-position: center top !important;
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 img.thumbnail-mannequin-img--live-noir {

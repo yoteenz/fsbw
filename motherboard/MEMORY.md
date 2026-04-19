@@ -15672,3 +15672,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`buildLayersStylePromptFromHqMannequinRef`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`promptTemplate.mjs`**). **`api/live-wig-after-color-styling.ts`**: **LAYERS** uses **`WIG_PREVIEW_NOIR_MANNEQUIN_{FRONT|LEFT|RIGHT}_URL`** only; **BANGS-only** unchanged. Removed **`readLayersStyleRefUrls`**. Docs: **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`COPY-PASTE-PROMPTS.txt`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — BAW sub-page live NOIR: full hero + no white thumb gutters
+
+**Context (this chat):** User reported **main hero** on BAW **sub-pages** **cut off** in its container, and **three thumbnails** had **thick white borders** left/right.
+
+**Decisions / outcomes:** **`hero-mannequin-img--live-noir`** **`cover`** → **`contain`** + center. Live thumb frame **`#fff`** → **`transparent`** with **`contain`** on img (avoids white letterbox bars).
+
+**Changes:** **`src/index.css`**, **`src/components/buildWig/BawNoirWigPreviewFrames.tsx`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.

@@ -176,9 +176,9 @@ export function BawNoirWigPreviewHeroThumbs({
                     : hideBrick
                       ? {
                           overflow: 'hidden',
-                          /* Live WebPs already include brick — no second CSS brick; sub-pages: `contain` on img shows full raster (index.css) */
+                          /* Live WebPs already include brick — no second CSS brick; transparent frame avoids white side gutters with `contain` */
                           backgroundImage: 'none',
-                          backgroundColor: '#ffffff',
+                          backgroundColor: 'transparent',
                           border: selectedView === index ? '3px solid #fff' : undefined,
                           boxShadow: selectedView === index ? '0 0 0 1.1px #000' : undefined,
                           boxSizing: 'border-box',
