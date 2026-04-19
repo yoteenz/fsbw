@@ -15953,6 +15953,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Fal side-part mirror compensation (L↔R in prompt only)
+
+**Context (this chat):** User reported **R part + LAYERS** (and part direction generally) still **wrong** after prompt-only tightening — **incorrect part direction** persisted.
+
+**Decisions / outcomes:** Root cause treated as **`fal-ai/nano-banana-pro/edit`** systematically **mirroring** side-part instructions vs **image LEFT/RIGHT** framing. Added **`falMirrorCompensatedPartForPrompt`** in **`api/_lib/bawLiveStylingPrompts.ts`**: swaps **LEFT ↔ RIGHT** **only** when building **Fal** prompt strings (`buildLayersStylePromptShared`, **`buildFlatIronStylePromptFromColorTierWebp`**); **API `partSelection`**, Storage paths, and hashes **unchanged**. Removed prior **LAYERS-only R** scalp/angle extra blocks (redundant / could fight the swap). Mirrored in **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`** updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — LAYERS + R part: tighter scalp prompts (anti mirror)
 
 **Context (this chat):** User reported **R part + LAYERS** still placing the part on the **wrong side** of the scalp (opposite of spec).
