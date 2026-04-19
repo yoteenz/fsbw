@@ -15890,3 +15890,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Strengthened **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): **`salonPartDirectionSemanticsBlock()`** triple-checks **image LEFT** / **image RIGHT** (photo edges) vs UI **L**/**R**; added **`salonOneShoulderDrapeBlock()`** (explicit **FORBIDDEN** two matching chest drapes, self-check); **side-part** lines tie **heavy mass** to **same shoulder as part**; **MIDDLE** stays asymmetric (**heavier image RIGHT** shoulder). Tightened **angle** strings for L/R 3/4. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Live styling: drape only viewer’s LEFT shoulder (facing mannequin)
+
+**Summary of this chat (full context):** User asked that hair should **only drape over the left shoulder (facing me)** — **viewer’s left** / **left side of the image**, for all part modes.
+
+**Decisions / outcomes:** Replaced generic one-shoulder copy with fixed **`DRAPE SIDE`** in **`salonOneShoulderDrapeBlock()`**: almost all long hair forward over **viewer’s LEFT** shoulder only; **FORBIDDEN** thick drape on **viewer’s RIGHT** shoulder. **Part line** rules unchanged (**UI L** → part **image RIGHT** scalp, etc.) but **length** routes to **viewer’s LEFT** shoulder (**UI L** = cross-body sweep). Updated **FLAT IRON** `partBlock`, **bangs**, **partWord***, **angleConstraint**; mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.
