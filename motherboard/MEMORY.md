@@ -15800,3 +15800,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **Docs:** **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — LAYERS + CRIMPS prompts: stricter MIDDLE & LEFT one-shoulder drape (anti dual-shoulder)
+
+**Context (this chat):** User reported **MIDDLE** and **LEFT** part directions still **generating hair on both shoulders** for **LAYERS** and **CRIMPS** live styling.
+
+**Decisions / outcomes:** Tightened **`buildLayersStylePromptShared`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): explicit **FORBIDDEN** language (balanced waterfall, mirror panels, two cascades); **MIDDLE** now uses **fixed asymmetric** heavy side (**viewer’s LEFT** / mannequin **RIGHT**) instead of “pick left or right”; **LEFT** part spells **mandatory heavy side** (**viewer’s RIGHT** / mannequin **LEFT**) and **forbidden** second cascade on shallow side; **curtain bangs + MIDDLE** note that lengths below bangs must stay one-sided. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
+
+**Verification:** `npm run build` passes.
