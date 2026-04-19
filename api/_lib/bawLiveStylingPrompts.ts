@@ -11,25 +11,37 @@ export function buildLayersStylePromptFromHqMannequinRef(
   angle: 'front' | 'left' | 'right',
   partSelection: NoirLayersPartSelection
 ): string {
+  const layersLook =
+    'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer), with **defined, uniform curls** (consistent spiral/ringlets, same curl size and pattern across the head — **salon-set**, not frizzy, not mixed textures). Layers should read **cohesive**, not stringy or uneven.';
+
   const angleConstraint =
     angle === 'left'
-      ? 'This is the **LEFT 3/4 view**: keep hair mass biased toward the **viewer’s right** (mannequin’s left) unless the new layered style clearly shifts bulk; do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
+      ? 'This is the **LEFT 3/4 view**: keep curl mass biased toward the **viewer’s right** (mannequin’s left); do **not** add a second mirrored sweep on the opposite shoulder. Preserve camera angle and framing — **do not** rotate the head toward camera.'
       : angle === 'right'
-        ? 'This is the **RIGHT 3/4 view**: keep hair mass biased toward the **viewer’s left** (mannequin’s right) unless the new layered style clearly shifts bulk; do **not** mirror into a fake left view. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
-        : 'This is the **FRONT view**: match a clear **part line** and outer silhouette for layered curls; do **not** mirror hair onto the wrong side or invent a symmetric “both shoulders” drape unless the part calls for balance.';
+        ? 'This is the **RIGHT 3/4 view**: keep curl mass biased toward the **viewer’s left** (mannequin’s right); do **not** mirror into a symmetric “both shoulders” wig. **Keep the same camera angle and framing as the reference** (true right 3/4); do **not** rotate the head toward camera.'
+        : (() => {
+            const oneShoulderFront =
+              partSelection === 'MIDDLE'
+                ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided shoulder sweep only** — **more hair on ONE shoulder**, **not** equal volume on both. Do **not** mirror hair onto the opposite shoulder, do **not** invent a second symmetric drape, and do **not** widen the style to “both shoulders.” For a **middle part**, still keep **asymmetric** bulk: pick **one** dominant shoulder for the longest curl drape; **never** a perfectly symmetric curtain on left and right.'
+                : partSelection === 'LEFT'
+                  ? 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s right** (mannequin’s **left** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.'
+                  : 'This is the **FRONT view** (same rule as NOIR **color** front): **one-sided drape** — bulk and longest curls must fall toward the **viewer’s left** (mannequin’s **right** shoulder); the **opposite** shoulder must stay **lighter** — **no** matching curl mass on both sides.';
+            return oneShoulderFront;
+          })();
 
   const partLine =
     partSelection === 'MIDDLE'
-      ? 'Use a **MIDDLE / center part**. Style the hair as **layered curls** with face-framing layers; part at the center.'
+      ? 'Use a **MIDDLE / center part** at the crown. **Layered curls** with face-framing layers; part line visible at the front hairline.'
       : partSelection === 'LEFT'
-        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). Style as **layered curls** with volume and sweep consistent with that part — **do not** apply a center or right part.'
-        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). Style as **layered curls** with volume and sweep consistent with that part — **do not** apply a center or left part.';
+        ? 'Use a **LEFT side part** (part line on the viewer’s left / mannequin’s right side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or right part.'
+        : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or left part.';
 
   return [
-    'Recreate this **exact** mannequin photograph. **Only** change the **hairstyle** to **layered curls** with the **part direction** specified below — same idea as the color step: preserve **mannequin**, **brick background**, **lighting**, **framing**, and **hair color** (catalog / customer color already in the reference).',
+    'Recreate this **exact** mannequin photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below — same idea as the color step: preserve **mannequin**, **brick background**, **lighting**, **framing**, and **hair color** (catalog / customer color already in the reference).',
+    layersLook,
     partLine,
     angleConstraint,
-    'Do **not** recolor the hair; do **not** change skin, bust, neck seam, or background. Do **not** change cut length category except what layered curls reasonably require for silhouette.',
+    'Do **not** recolor the hair; do **not** change skin, bust, neck seam, or background. Length may increase for the long-layered-curl look.',
     bawFalEditPreserveReferenceBlock(),
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',

@@ -15696,3 +15696,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Changes:** **`BawNoirWigPreviewFrames.tsx`**, **`index.css`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR LAYERS Fal prompt: longer uniform curls + front one-shoulder drape
+
+**Context (this chat):** User wanted **LAYERS** styling with **longer hair** and **more uniform curls**, and **front** angle to stop rendering **hair on both shoulders** — align with **color** sub-page front behavior.
+
+**Decisions / outcomes:** **`buildLayersStylePromptFromHqMannequinRef`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`promptTemplate.mjs`**): added **`layersLook`** (past shoulders, uniform salon-set curls); **front** uses **one-sided shoulder sweep** / asymmetric bulk (MIDDLE/LEFT/RIGHT variants); tightened L/R 3/4 anti-symmetric lines; allow length increase. **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
