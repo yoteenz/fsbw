@@ -15870,3 +15870,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Correction:** The MEMORY entry **“2026-04-15 — Styling prompts: frame LEFT/RIGHT part direction (fix mirrored L/R)”** incorrectly said part + bulk sit on the **“same side as UI”** in frame space. The intended behavior is: **UI LEFT (L)** → **frame RIGHT**; **UI RIGHT (R)** → **frame LEFT**. Existing cached WebPs in Storage still need **regen** to pick up prompt changes.
 
 **Verification:** `npm run build` passes (re-run this session).
+
+---
+
+## 2026-04-15 — Part prompts: scalp/thumbnail wording (not “frame”)
+
+**Summary of this chat (full context):** User clarified they care about **where the part visibly appears on the mannequin’s head** in **thumbnails**, not abstract **“frame LEFT/RIGHT”** photo-edge jargon.
+
+**Decisions / outcomes:** Rewrote **`salonPartDirectionSemanticsBlock()`**, **`partWordLayers` / `partWordCrimps`**, **`curtainBangsAddonForSalonPart`**, **`angleConstraint`**, and **FLAT IRON `partBlock`** in **`api/_lib/bawLiveStylingPrompts.ts`** to use **viewer’s left/right side of the head, scalp, hairline, forehead, and shoulders** — same mirror rule (**UI LEFT** → part on **viewer’s right** side of the head). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. Updated **`motherboard/CORE.md`** (NOIR bullet) and **`docs/WIG_PREVIEW_PREGENERATION.md`** (LAYERS line) to match.
+
+**Verification:** `npm run build` passes.
