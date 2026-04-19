@@ -15860,3 +15860,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Tightened **`buildLayersStylePromptShared`** in **`api/_lib/bawLiveStylingPrompts.ts`** (mirrored **`scripts/wig-preview/promptTemplate.mjs`**): explicit **FORBIDDEN** language (balanced waterfall, mirror panels, two cascades); **MIDDLE** now uses **fixed asymmetric** heavy side (**viewer’s LEFT** / mannequin **RIGHT**) instead of “pick left or right”; **LEFT** part spells **mandatory heavy side** (**viewer’s RIGHT** / mannequin **LEFT**) and **forbidden** second cascade on shallow side; **curtain bangs + MIDDLE** note that lengths below bangs must stay one-sided. Updated **`motherboard/CORE.md`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — Styling L/R mirror semantics: confirm + MEMORY correction
+
+**Summary of this chat (full context):** Continued from a prior session on NOIR BAW live previews (FLAT IRON, one-shoulder LAYERS/CRIMPS, optimistic color loading, hex + OFF BLACK vs JET BLACK paths, held previews). This turn: **confirm** the user’s mental model — **salon LEFT part** = subject’s left = **appears on the viewer’s right** in a front photo (**frame RIGHT**); **salon RIGHT part** = **frame LEFT** — because facing the mannequin is like a **mirror** vs in-person. **Code** already encodes this in **`api/_lib/bawLiveStylingPrompts.ts`**: **`salonPartDirectionSemanticsBlock()`**, **`partWordLayers` / `partWordCrimps`**, **`curtainBangsAddonForSalonPart`**, **`angleConstraint`** (mirrored in **`scripts/wig-preview/promptTemplate.mjs`**). **`motherboard/CORE.md`** (NOIR bullet) already states **frame LEFT / frame RIGHT** for part prompts.
+
+**Correction:** The MEMORY entry **“2026-04-15 — Styling prompts: frame LEFT/RIGHT part direction (fix mirrored L/R)”** incorrectly said part + bulk sit on the **“same side as UI”** in frame space. The intended behavior is: **UI LEFT (L)** → **frame RIGHT**; **UI RIGHT (R)** → **frame LEFT**. Existing cached WebPs in Storage still need **regen** to pick up prompt changes.
+
+**Verification:** `npm run build` passes (re-run this session).

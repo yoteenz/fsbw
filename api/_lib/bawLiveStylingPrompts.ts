@@ -66,8 +66,8 @@ export function buildFlatIronStylePromptFromColorTierWebp(
     partSelection === 'MIDDLE'
       ? 'Apply a **MIDDLE / center part** at the crown — part line visible from hairline through the top. Hair falls **evenly** from the center part (straight panels left and right in the **photograph**).'
       : partSelection === 'LEFT'
-        ? '**LEFT part:** Part line on **frame LEFT** (left side of this **photograph**). **Sleek roots** at the part; **main straight length** drapes from **frame LEFT**. **Forbidden:** part line on **frame RIGHT** (that would be **RIGHT** part).'
-        : '**RIGHT part:** Part line on **frame RIGHT** (right side of this **photograph**). **Sleek roots** at the part; **main straight length** drapes from **frame RIGHT**. **Forbidden:** part line on **frame LEFT** (that would be **LEFT** part).';
+        ? '**LEFT part (subject’s left):** Part line on **frame RIGHT** (viewer’s right / **subject’s left** in a frontal photo). **Sleek roots** at the part; **main straight length** from **frame RIGHT**. **Forbidden:** part on **frame LEFT** (that would be **RIGHT** part).'
+        : '**RIGHT part (subject’s right):** Part line on **frame LEFT** (viewer’s left / **subject’s right**). **Sleek roots** at the part; **main straight length** from **frame LEFT**. **Forbidden:** part on **frame RIGHT** (that would be **LEFT** part).';
 
   const angleBlock =
     angle === 'left'
@@ -112,10 +112,13 @@ export function buildLayersStylePromptFromHqMannequinRef(
   return buildLayersStylePromptShared(angle, partSelection, colorLock, 'layers', false);
 }
 
-/** One paragraph: **frame LEFT** = left edge of the **photograph** (not “stage left”). Prevents mirrored part output. */
+/**
+ * Salon **LEFT** / **RIGHT** = **subject’s** left/right (mirror: facing the mannequin, **subject LEFT** = **viewer’s right** in the photo).
+ * **frame LEFT** / **frame RIGHT** = edges of **this photograph**.
+ */
 function salonPartDirectionSemanticsBlock(): string {
   return (
-    '**PART DIRECTION — IMAGE SPACE (critical):** Use **frame LEFT** = the **left edge of this photograph** and **frame RIGHT** = the **right edge**. **Do not** horizontally mirror the scene. **Do not** output the **opposite** part (if the request is **LEFT part**, the part line must **not** appear on **frame RIGHT**, and vice versa).'
+    '**PART DIRECTION — SALON vs PHOTO (critical):** **LEFT part** = **subject’s left** side of the head — in a **front** photo that appears on the **viewer’s right** (**frame RIGHT**). **RIGHT part** = **subject’s right** — appears on the **viewer’s left** (**frame LEFT**). (Facing the mannequin is like a mirror vs in-person.) **Do not** flip: **LEFT part** must **not** put the part line on **frame LEFT**; **RIGHT part** must **not** put it on **frame RIGHT**.'
   );
 }
 
@@ -128,11 +131,11 @@ function curtainBangsAddonForSalonPart(partSelection: NoirLayersPartSelection): 
   }
   if (partSelection === 'LEFT') {
     return (
-      '**BANGS (combine with the salon style above):** **LEFT part** → bangs open from a part line on **frame LEFT** (see semantics above); **longer** curtain sweep stays on the **frame LEFT** half of the forehead / face-framing — **do not** mirror to **frame RIGHT**. **Do not** use a center-split bang.'
+      '**BANGS (combine with the salon style above):** **LEFT part** → part line on **subject’s left** = **frame RIGHT** in the photo; bangs open from that line — **longer** sweep on the **frame RIGHT** half of the forehead. **Do not** put the part on **frame LEFT**. **Do not** use a center-split bang.'
     );
   }
   return (
-    '**BANGS (combine with the salon style above):** **RIGHT part** → bangs open from a part line on **frame RIGHT**; **longer** curtain sweep on the **frame RIGHT** half — **do not** mirror to **frame LEFT**. **Do not** use a center-split bang.'
+    '**BANGS (combine with the salon style above):** **RIGHT part** → part line on **subject’s right** = **frame LEFT**; **longer** curtain sweep on the **frame LEFT** half. **Do not** put the part on **frame RIGHT**. **Do not** use a center-split bang.'
   );
 }
 
@@ -154,17 +157,17 @@ function buildLayersStylePromptShared(
   const styleNoun = salon === 'crimps' ? 'salon deep-pressed crimps' : 'voluminous layered S-waves';
   const partWordLayers =
     partSelection === 'MIDDLE'
-      ? '**MIDDLE part:** **Center part line** at the crown (visible from hairline). **FRONT view — asymmetric drape (fixed):** the **longest** layered waves fall toward **frame LEFT** and the **left shoulder** in the photo; **frame RIGHT** stays **lighter** (narrower / less forward drape). **Forbidden:** equal heavy curls on **both** sides.'
+      ? '**MIDDLE part:** **Center part line** at the crown (visible from hairline). **FRONT view — asymmetric drape (fixed):** **longest** layered waves toward **frame RIGHT** and **viewer’s right** shoulder; **frame LEFT** stays **lighter**. **Forbidden:** equal heavy curls on **both** sides.'
       : partSelection === 'LEFT'
-        ? '**LEFT part (salon / UI selection):** Place the **part line** and **widest root lift** on **frame LEFT** (left side of the **photograph**). The **main** long wave mass and forward drape must sit on the **left shoulder** in the image (**frame LEFT**). **Frame RIGHT** = shallow / tucked — **no** second heavy cascade. **Forbidden:** mirroring so the part appears on **frame RIGHT** or swapping LEFT↔RIGHT.'
-        : '**RIGHT part (salon / UI selection):** Place the **part line** and **widest root lift** on **frame RIGHT** (right side of the **photograph**). The **main** long wave mass and forward drape must sit on the **right shoulder** in the image (**frame RIGHT**). **Frame LEFT** = shallow / tucked. **Forbidden:** mirroring so the part appears on **frame LEFT** or swapping LEFT↔RIGHT.';
+        ? '**LEFT part (subject’s left — UI “L”):** **Part line** and **widest root lift** on **frame RIGHT** (viewer’s right = **subject’s left** in a frontal photo). **Main** wave mass and drape on the **viewer’s right** / **frame RIGHT** shoulder. **Frame LEFT** = shallow / tucked. **Forbidden:** part or bulk on **frame LEFT** (that is **RIGHT part**).'
+        : '**RIGHT part (subject’s right — UI “R”):** **Part line** and **widest root lift** on **frame LEFT** (viewer’s left = **subject’s right**). **Main** wave mass on **viewer’s left** / **frame LEFT** shoulder. **Frame RIGHT** = shallow / tucked. **Forbidden:** part or bulk on **frame RIGHT** (that is **LEFT part**).';
 
   const partWordCrimps =
     partSelection === 'MIDDLE'
-      ? '**MIDDLE part:** **Center part** at crown; crimps start at the part. **FRONT view:** primary crimped mass toward **frame LEFT** / **left shoulder**; **frame RIGHT** slimmer. **Forbidden:** symmetric thick panels on both sides.'
+      ? '**MIDDLE part:** **Center part** at crown; crimps start at the part. **FRONT view:** primary crimped mass toward **frame RIGHT**; **frame LEFT** slimmer. **Forbidden:** symmetric thick panels on both sides.'
       : partSelection === 'LEFT'
-        ? '**LEFT part:** **Part line** and **sleek roots** on **frame LEFT**. **Long crimped mass** drapes from **frame LEFT** over the **left shoulder** in the photo. **Frame RIGHT** = minimal forward bulk. **Forbidden:** part or heavy mass on **frame RIGHT** (that would be a **RIGHT** part).'
-        : '**RIGHT part:** **Part line** and **sleek roots** on **frame RIGHT**. **Long crimped mass** drapes from **frame RIGHT** over the **right shoulder** in the photo. **Frame LEFT** = minimal forward bulk. **Forbidden:** part or heavy mass on **frame LEFT** (that would be a **LEFT** part).';
+        ? '**LEFT part:** **Part line** and **sleek roots** on **frame RIGHT** (**subject’s left**). **Long crimped mass** over **frame RIGHT** shoulder. **Frame LEFT** = minimal forward bulk. **Forbidden:** part on **frame LEFT** (**RIGHT part**).'
+        : '**RIGHT part:** **Part line** and **sleek roots** on **frame LEFT** (**subject’s right**). **Long crimped mass** over **frame LEFT** shoulder. **Frame RIGHT** = minimal forward bulk. **Forbidden:** part on **frame RIGHT** (**LEFT part**).';
 
   const partLine = salon === 'crimps' ? partWordCrimps : partWordLayers;
 
@@ -172,15 +175,15 @@ function buildLayersStylePromptShared(
     angle === 'left'
       ? partSelection === 'MIDDLE'
         ? salon === 'crimps'
-          ? '**LEFT 3/4 camera (this file):** **MIDDLE part** — keep center line; **crimp** bulk may read toward **frame LEFT**; **forbidden** horizontal flip of the whole hairstyle.'
-          : '**LEFT 3/4 camera:** **MIDDLE part** — asymmetric waves favor **frame LEFT**; **forbidden** flip.'
+          ? '**LEFT 3/4 camera (this file):** **MIDDLE part** — keep center line; **crimp** bulk may read toward **frame RIGHT**; **forbidden** horizontal flip of the whole hairstyle.'
+          : '**LEFT 3/4 camera:** **MIDDLE part** — asymmetric waves favor **frame RIGHT**; **forbidden** flip.'
         : partSelection === 'LEFT'
           ? salon === 'crimps'
-            ? '**LEFT 3/4 camera:** **LEFT part** — part + **heavy crimps** must stay on **frame LEFT** (same side as FRONT). **Do not** move the part to **frame RIGHT**.'
-            : '**LEFT 3/4 camera:** **LEFT part** — part + **main wave mass** on **frame LEFT**. **Do not** flip to **frame RIGHT**.'
+            ? '**LEFT 3/4 camera:** **LEFT part** (subject’s left) — part + **heavy crimps** on **frame RIGHT** (same as FRONT). **Do not** move the part to **frame LEFT**.'
+            : '**LEFT 3/4 camera:** **LEFT part** — part + **main wave mass** on **frame RIGHT**. **Do not** flip to **frame LEFT**.'
           : salon === 'crimps'
-            ? '**LEFT 3/4 camera:** **RIGHT part** — part + **heavy crimps** on **frame RIGHT**. **Do not** flip to **frame LEFT**.'
-            : '**LEFT 3/4 camera:** **RIGHT part** — part + **main waves** on **frame RIGHT**. **Do not** flip to **frame LEFT**.'
+            ? '**LEFT 3/4 camera:** **RIGHT part** — part + **heavy crimps** on **frame LEFT**. **Do not** flip to **frame RIGHT**.'
+            : '**LEFT 3/4 camera:** **RIGHT part** — part + **main waves** on **frame LEFT**. **Do not** flip to **frame RIGHT**.'
       : angle === 'right'
         ? partSelection === 'MIDDLE'
           ? salon === 'crimps'
@@ -188,24 +191,24 @@ function buildLayersStylePromptShared(
             : '**RIGHT 3/4 camera:** **MIDDLE part** — **forbidden** flip.'
           : partSelection === 'LEFT'
             ? salon === 'crimps'
-              ? '**RIGHT 3/4 camera:** **LEFT part** — part + bulk **frame LEFT** only.'
-              : '**RIGHT 3/4 camera:** **LEFT part** — part + bulk **frame LEFT** only.'
+              ? '**RIGHT 3/4 camera:** **LEFT part** — part + bulk **frame RIGHT** only.'
+              : '**RIGHT 3/4 camera:** **LEFT part** — part + bulk **frame RIGHT** only.'
             : salon === 'crimps'
-              ? '**RIGHT 3/4 camera:** **RIGHT part** — part + bulk **frame RIGHT** only.'
-              : '**RIGHT 3/4 camera:** **RIGHT part** — part + bulk **frame RIGHT** only.'
+              ? '**RIGHT 3/4 camera:** **RIGHT part** — part + bulk **frame LEFT** only.'
+              : '**RIGHT 3/4 camera:** **RIGHT part** — part + bulk **frame LEFT** only.'
         : (() => {
             const oneShoulderFrontLayers =
               partSelection === 'MIDDLE'
-                ? '**FRONT camera:** **MIDDLE part** — center line; long waves favor **frame LEFT**; **frame RIGHT** lighter.'
+                ? '**FRONT camera:** **MIDDLE part** — center line; long waves favor **frame RIGHT**; **frame LEFT** lighter.'
                 : partSelection === 'LEFT'
-                  ? '**FRONT camera:** **LEFT part** — part line **frame LEFT**; **longest waves** on **frame LEFT** shoulder. **FORBIDDEN:** part on **frame RIGHT**.'
-                  : '**FRONT camera:** **RIGHT part** — part line **frame RIGHT**; **longest waves** on **frame RIGHT** shoulder. **FORBIDDEN:** part on **frame LEFT**.';
+                  ? '**FRONT camera:** **LEFT part** — part line **frame RIGHT** (subject’s left); **longest waves** on **frame RIGHT** shoulder. **FORBIDDEN:** part on **frame LEFT**.'
+                  : '**FRONT camera:** **RIGHT part** — part line **frame LEFT** (subject’s right); **longest waves** on **frame LEFT** shoulder. **FORBIDDEN:** part on **frame RIGHT**.';
             const oneShoulderFrontCrimps =
               partSelection === 'MIDDLE'
-                ? '**FRONT camera:** **MIDDLE part** — asymmetric crimps toward **frame LEFT**.'
+                ? '**FRONT camera:** **MIDDLE part** — asymmetric crimps toward **frame RIGHT**.'
                 : partSelection === 'LEFT'
-                  ? '**FRONT camera:** **LEFT part** — part + crimps **frame LEFT** only.'
-                  : '**FRONT camera:** **RIGHT part** — part + crimps **frame RIGHT** only.';
+                  ? '**FRONT camera:** **LEFT part** — part + crimps **frame RIGHT** only (**subject’s left**).'
+                  : '**FRONT camera:** **RIGHT part** — part + crimps **frame LEFT** only (**subject’s right**).';
             return salon === 'crimps' ? oneShoulderFrontCrimps : oneShoulderFrontLayers;
           })();
 
