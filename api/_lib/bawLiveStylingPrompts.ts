@@ -2,14 +2,45 @@ import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js'
 
 export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
+export type CatalogColorForLayersPrompt = { label: string; hex: string };
+
 /**
- * **Single HQ mannequin ref** (same URLs as color `WIG_PREVIEW_NOIR_MANNEQUIN_*`): preserve the whole photograph
- * like the color step — **only** restyle hair to **layered curls** with the chosen **part**; keep catalog hair color.
- * Replaces the old two-image flow (color WebP + separate LQ geometry refs).
+ * **LAYERS** live styling: Fal `image_urls` = **color-tier WebP** from Storage (already tinted to the swatch).
+ * Keeps **catalog hair color** while restyling to long layered curls + part — fixes black hair when input was HQ black refs.
+ */
+export function buildLayersStylePromptFromColorTierWebp(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  catalog: CatalogColorForLayersPrompt
+): string {
+  const hex = catalog.hex.replace(/^#/, '').toUpperCase();
+  const colorLock =
+    '**INPUT** is the live NOIR **color preview** image — hair is already tinted to **' +
+    catalog.label +
+    '** (target **#' +
+    hex +
+    '**). **Keep this exact hair color** in the output (same hue, depth, highlights) — do **not** revert to black, off-black, or a different shade. Only reshape/style the hair.';
+
+  return buildLayersStylePromptShared(angle, partSelection, colorLock);
+}
+
+/**
+ * @deprecated Prefer `buildLayersStylePromptFromColorTierWebp` — HQ black refs kept hair black.
+ * Kept for script parity / manual tests with gray-brick refs only.
  */
 export function buildLayersStylePromptFromHqMannequinRef(
   angle: 'front' | 'left' | 'right',
   partSelection: NoirLayersPartSelection
+): string {
+  const colorLock =
+    '**INPUT** is the gray-brick mannequin reference — preserve **catalog hair color** from build (do not output jet black unless the catalog color is black).';
+  return buildLayersStylePromptShared(angle, partSelection, colorLock);
+}
+
+function buildLayersStylePromptShared(
+  angle: 'front' | 'left' | 'right',
+  partSelection: NoirLayersPartSelection,
+  colorLockBlock: string
 ): string {
   const layersLook =
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer), with **defined, uniform curls** (consistent spiral/ringlets, same curl size and pattern across the head — **salon-set**, not frizzy, not mixed textures). Layers should read **cohesive**, not stringy or uneven.';
@@ -37,15 +68,16 @@ export function buildLayersStylePromptFromHqMannequinRef(
         : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or left part.';
 
   return [
-    'Recreate this **exact** mannequin photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below — same idea as the color step: preserve **mannequin**, **brick background**, **lighting**, **framing**, and **hair color** (catalog / customer color already in the reference).',
+    colorLockBlock,
+    'Recreate this photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',
     layersLook,
     partLine,
     angleConstraint,
-    'Do **not** recolor the hair; do **not** change skin, bust, neck seam, or background. Length may increase for the long-layered-curl look.',
+    'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long-layered-curl look.',
     bawFalEditPreserveReferenceBlock(),
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
-    'Change **only** the **hair** to layered curls with the specified part; **everything** else must match the reference.',
+    'Change **only** the **hair** shape/style to layered curls with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
   ].join(' ');
 }
 

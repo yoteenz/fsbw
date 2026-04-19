@@ -66,13 +66,13 @@ The server (per request):
 
 On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **LAYERS** and part **MIDDLE**, **LEFT**, or **RIGHT** are selected, the app calls **`POST /api/live-wig-after-color-styling`** **three times in sequence** with body **`angle`**: `"left"` \| `"front"` \| `"right"` (one fal job per serverless invocation). Body includes **`partSelection`**. A **single** no-`angle` request that runs all three fal steps in one function often hits Vercel **`FUNCTION_INVOCATION_FAILED`** / duration limits. **`forceRegenerate`** on **regen style L/M/R** unchanged. Resolution: **`WIG_PREVIEW_FAL_STYLING_RESOLUTION`** or **`WIG_PREVIEW_FAL_RESOLUTION`**, default **2K** for this route.
 
-**LAYERS mode (current):** **Single** `image_urls` entry per angle — the **same HQ gray-brick mannequin URLs as live color** (`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`, `_LEFT_URL`, `_RIGHT_URL`). Prompt: **`buildLayersStylePromptFromHqMannequinRef`** — **long**, **uniform** layered curls; **front** angle enforces **one-sided shoulder drape** (aligned with NOIR color front wording). **No** separate `WIG_PREVIEW_NOIR_LAYERS_*_STYLE_*` geometry URLs (legacy two-image flow removed from the API).
+**LAYERS mode (current):** **Single** `image_urls` = **color-tier WebP** from Storage (same paths as live color — hair already matches the swatch). Prompt: **`buildLayersStylePromptFromColorTierWebp`** — **long**, **uniform** layered curls; **explicitly keep** the tinted hair color (no black revert); **front** = one-sided drape. **Prerequisite:** color L/F/R WebPs must exist (generate on NOIR → Color first). **No** `WIG_PREVIEW_NOIR_MANNEQUIN_*` requirement for LAYERS.
 
 **Output paths:** `wig-preview-live/{v}/NOIR/{colorTierHash}/after-color/layers-{middle|left|right}-part/{left|front|right}.webp` (separate folder per part).
 
 **Bangs only (BANGS without LAYERS):** Same API and body shape; **`styling`** must be **`BANGS`** only (no **`LAYERS`**). Fal uses **one** `image_url` (the **color-tier WebP** from Storage) and **`buildBangsOnlyStylePrompt`**. **Output:** `.../after-color/bangs-only/{angle}.webp`. Hub shows bangs preview after middle+layers in priority order.
 
-**Prerequisite for BANGS-only:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist. **LAYERS** mode uses HQ mannequin env URLs (same as color) and does **not** require color WebPs to exist first. To fix a bad angle: **regen style L / M / R** (or delete that WebP in Storage and reload).
+**Prerequisite:** Run **NOIR → Color** (admin live preview) first so the three color WebPs exist — required for **both** **LAYERS** and **BANGS-only**. To fix a bad angle: **regen style L / M / R** (or delete that WebP in Storage and reload).
 
 **Manual fal (playground) — aspect ratio and resolution**
 

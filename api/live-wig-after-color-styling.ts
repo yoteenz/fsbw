@@ -5,13 +5,12 @@ export const config = { maxDuration: 120 };
  *
  * Admin-only. Runs fal once per angle.
  *
- * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` — same **HQ** mannequin refs as color
- * (`WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL`, `_LEFT_URL`, `_RIGHT_URL`). Prompt: preserve scene like color; **only**
- * restyle hair to **layered curls** with the chosen **part** (`buildLayersStylePromptFromHqMannequinRef`).
+ * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
+ * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
+ * + part while **keeping** that hair color (fixes black output when input was HQ black-brick refs only).
  * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
- * **BANGS only** (BANGS without LAYERS): requires **live color WebPs** for this tier — single `image_urls` = color WebP;
- * `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
+ * **BANGS only** (BANGS without LAYERS): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
@@ -29,7 +28,7 @@ import {
 import { catalogColorForPrompt } from './_lib/bawCatalogHairColors.js';
 import {
   buildBangsOnlyStylePrompt,
-  buildLayersStylePromptFromHqMannequinRef,
+  buildLayersStylePromptFromColorTierWebp,
 } from './_lib/bawLiveStylingPrompts.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -131,7 +130,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       sendJson(res, 400, { error: 'color is required' });
       return;
     }
-    if (!catalogColorForPrompt(color)) {
+    const catalog = catalogColorForPrompt(color);
+    if (!catalog) {
       sendJson(res, 400, { error: `Unknown color: ${color}` });
       return;
     }
@@ -150,26 +150,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       });
       return;
     }
-
-    const hqFront = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim();
-    const hqLeft = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim();
-    const hqRight = process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim();
-    if (middleLayers && (!hqFront || !hqLeft || !hqRight)) {
-      sendJson(res, 503, {
-        error:
-          'LAYERS styling uses the same HQ mannequin URLs as color: set WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL, WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL.',
-        missing: {
-          WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL: !hqFront,
-          WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL: !hqLeft,
-          WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL: !hqRight,
-        },
-      });
-      return;
-    }
-    const hqMannequinByAngle =
-      hqFront && hqLeft && hqRight
-        ? ({ front: hqFront, left: hqLeft, right: hqRight } as const)
-        : null;
 
     const selections: WigPreviewSelections = {
       unitKey: 'NOIR',
@@ -215,36 +195,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
-      let prompt: string;
-      let imageUrls: string[];
-
-      if (middleLayers && hqMannequinByAngle) {
-        const mannequinUrl = hqMannequinByAngle[angle];
-        prompt = buildLayersStylePromptFromHqMannequinRef(angle, partStyling);
-        imageUrls = [mannequinUrl];
-      } else {
-        const colorPath = colorPaths[angle];
-        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-        if (colorDlErr) {
-          sendJson(res, 400, {
-            error:
-              'Color preview files not found for this combo. Open NOIR → Color (admin) first so left/front/right color WebPs exist, then try bangs styling again.',
-            colorTierHash,
-            missingColorPath: colorPath,
-          });
-          return;
-        }
-
-        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-        const colorPublicUrl = pubColor?.publicUrl;
-        if (!colorPublicUrl) {
-          sendJson(res, 500, { error: 'Could not build public URL for color layer' });
-          return;
-        }
-
-        prompt = buildBangsOnlyStylePrompt(angle);
-        imageUrls = [colorPublicUrl];
+      const colorPath = colorPaths[angle];
+      const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
+      if (colorDlErr) {
+        sendJson(res, 400, {
+          error:
+            'Color preview files not found for this combo. Open NOIR → Color (admin) first so left/front/right color WebPs exist, then try styling again.',
+          colorTierHash,
+          missingColorPath: colorPath,
+        });
+        return;
       }
+
+      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+      const colorPublicUrl = pubColor?.publicUrl;
+      if (!colorPublicUrl) {
+        sendJson(res, 500, { error: 'Could not build public URL for color layer' });
+        return;
+      }
+
+      const prompt = middleLayers
+        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog)
+        : buildBangsOnlyStylePrompt(angle);
+      const imageUrls = [colorPublicUrl];
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {

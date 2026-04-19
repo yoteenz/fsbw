@@ -189,12 +189,32 @@ export const WIG_CONSULT_STEP1_PROMPT_TWO_ATTACHMENTS = BAW_BASE_MANNEQUIN_PROMP
 // =============================================================================
 
 /**
- * **Live LAYERS** (`POST /api/live-wig-after-color-styling`): single HQ mannequin per angle — same env as color
- * (`WIG_PREVIEW_NOIR_MANNEQUIN_*_URL`). Keep in sync with `buildLayersStylePromptFromHqMannequinRef` in `bawLiveStylingPrompts.ts`.
- * @param {'front'|'left'|'right'} angle
- * @param {'MIDDLE'|'LEFT'|'RIGHT'} partSelection
+ * **Live LAYERS** (`POST /api/live-wig-after-color-styling`): `image_urls` = color-tier WebP from Storage. Keep in sync with `bawLiveStylingPrompts.ts`.
+ * @param {{ label: string; hex: string }} catalog
  */
+export function buildLayersStylePromptFromColorTierWebp(angle, partSelection, catalog) {
+  const hex = String(catalog.hex || '')
+    .replace(/^#/, '')
+    .toUpperCase();
+  const colorLock =
+    '**INPUT** is the live NOIR **color preview** image — hair is already tinted to **' +
+    catalog.label +
+    '** (target **#' +
+    hex +
+    '**). **Keep this exact hair color** in the output — do **not** revert to black or a different shade. Only reshape/style the hair.';
+  return buildLayersStylePromptShared(angle, partSelection, colorLock);
+}
+
+/** @deprecated Manual HQ black-brick tests only; live API uses color WebPs + `buildLayersStylePromptFromColorTierWebp`. */
 export function buildLayersStylePromptFromHqMannequinRef(angle, partSelection) {
+  return buildLayersStylePromptShared(
+    angle,
+    partSelection,
+    '**INPUT** is the gray-brick mannequin reference — preserve catalog hair color (do not output jet black unless catalog is black).'
+  );
+}
+
+function buildLayersStylePromptShared(angle, partSelection, colorLockBlock) {
   const layersLook =
     'Target look: **long** layered hair — extend **past the shoulders** (chest-length or longer), with **defined, uniform curls** (consistent spiral/ringlets, same curl size and pattern across the head — **salon-set**, not frizzy, not mixed textures). Layers should read **cohesive**, not stringy or uneven.';
 
@@ -224,20 +244,21 @@ export function buildLayersStylePromptFromHqMannequinRef(angle, partSelection) {
         : 'Use a **RIGHT side part** (part line on the viewer’s right / mannequin’s left side of the crown). **Layered curls** — sweep and volume follow that part; **do not** apply a center or left part.';
 
   return [
-    'Recreate this **exact** mannequin photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below — same idea as the color step: preserve **mannequin**, **brick background**, **lighting**, **framing**, and **hair color** (catalog / customer color already in the reference).',
+    colorLockBlock,
+    'Recreate this photograph. **Only** change the **hairstyle** to **long layered curls** with the **part direction** specified below. Preserve **mannequin**, **brick background**, **lighting**, **framing**, and the **hair color** rules above.',
     layersLook,
     partLine,
     angleConstraint,
-    'Do **not** recolor the hair; do **not** change skin, bust, neck seam, or background. Length may increase for the long-layered-curl look.',
+    'Do **not** change skin, bust, neck seam, or background except as needed for hair silhouette. Length may increase for the long-layered-curl look.',
     BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK,
     'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
     'Output must be extremely high-quality, crisp, and pixel-perfect.',
-    'Change **only** the **hair** to layered curls with the specified part; **everything** else must match the reference.',
+    'Change **only** the **hair** shape/style to layered curls with the specified part; **everything** else must match the reference, including **hair color** per the lock above.',
   ].join(' ');
 }
 
 /**
- * @deprecated Live API now uses `buildLayersStylePromptFromHqMannequinRef` + single `WIG_PREVIEW_NOIR_MANNEQUIN_*` URL per angle.
+ * @deprecated Live API uses color WebPs + `buildLayersStylePromptFromColorTierWebp`.
  * **Two attachments** (legacy): (1) colored mannequin from Storage, (2) geometry reference per angle.
  * @param {'front'|'left'|'right'} angle
  */

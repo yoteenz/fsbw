@@ -15706,3 +15706,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`buildLayersStylePromptFromHqMannequinRef`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`promptTemplate.mjs`**): added **`layersLook`** (past shoulders, uniform salon-set curls); **front** uses **one-sided shoulder sweep** / asymmetric bulk (MIDDLE/LEFT/RIGHT variants); tightened L/R 3/4 anti-symmetric lines; allow length increase. **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-15 — NOIR LAYERS: color-tier WebP input + `buildLayersStylePromptFromColorTierWebp` (hair not stuck black)
+
+**Context (this chat):** User reported **LAYERS** styling stayed **black** regardless of **selected color** — prompt/input disconnected from swatch.
+
+**Decisions / outcomes:** LAYERS used **HQ black-brick** env refs + “keep hair color” → model kept **black**. **Fix:** LAYERS now uses **same** Fal input as bangs — **color-tier WebPs** from Storage (`wigPreviewLiveAnglePaths`) + new **`buildLayersStylePromptFromColorTierWebp(angle, part, catalog)`** with explicit **keep tinted hair / do not revert to black**. **`buildLayersStylePromptShared`** + deprecated **`buildLayersStylePromptFromHqMannequinRef`**. **`live-wig-after-color-styling.ts`** unified color download path; removed HQ env gate for LAYERS. **`promptTemplate.mjs`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`.env.example`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`**.
+
+**Verification:** `npm run build` passes.
