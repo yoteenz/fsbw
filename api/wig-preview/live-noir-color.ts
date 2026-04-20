@@ -6,7 +6,7 @@ export const config = {
  * POST /api/wig-preview/live-noir-color
  *
  * **Signed-in** Supabase session: ensure NOIR forward mannequin exists in Supabase for **3 angles** at current
- * build selections + chosen color; call fal only for missing angles (saves cost). **`forceRegenerate: true`** remains **founder Gmail only**.
+ * build selections + chosen color; call fal only for missing angles (saves cost). **`forceRegenerate: true`** re-runs fal even when WebPs exist (any **signed-in** user).
  * Paths use **color-tier** hash (`styling` forced to `NONE` in hash) so salon styling changes do not move color files — see `wigPreviewManifestHashLiveColorTier` in `api/_lib/wigPreviewSelectionHash.ts`.
  *
  * Env (Vercel + local):
@@ -17,7 +17,7 @@ export const config = {
  *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
- * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist (**founder session only**). Without it, any signed-in user may invoke (missing angles only).
+ * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist. Requires a **signed-in** Supabase session (same as missing-angle generation).
  *
  * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `4K` (default), `2K`, or `1K` — use **`1K`** / **`2K`** if Vercel timeouts (e.g. Hobby) or fal cost is an issue.
  *
@@ -46,20 +46,6 @@ async function getAuthUser(
   } = await supabase.auth.getUser(token);
   if (error || !user) return null;
   return { id: user.id, email: user.email ?? '', accessToken: token };
-}
-
-// --- Inlined from api/_lib/adminAuth.ts (keep in sync) ---
-/** Fal NOIR live color: founder Gmail only — see `requireAdminFounder` in api/_lib/adminAuth.ts */
-const FOUNDER_PRIVILEGED_ADMIN_EMAIL = 'kateenaarmstrong@gmail.com';
-
-async function requireAdminFounder(
-  req: VercelRequest
-): Promise<{ id: string; email: string; accessToken: string } | null> {
-  const user = await getAuthUser(req);
-  if (!user) return null;
-  const emailLower = (user.email || '').trim().toLowerCase();
-  if (emailLower !== FOUNDER_PRIVILEGED_ADMIN_EMAIL) return null;
-  return user;
 }
 
 // --- Inlined from api/_lib/supabase.ts (service role only; keep in sync) ---
@@ -308,18 +294,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const bodyPreview = parseBody(req);
   const forceRegeneratePreview = readBool(bodyPreview, 'forceRegenerate');
 
-  if (forceRegeneratePreview) {
-    const founder = await requireAdminFounder(req);
-    if (!founder) {
-      sendJson(res, 403, { error: 'Founder admin session required for forceRegenerate' });
-      return;
-    }
-  } else {
-    const user = await getAuthUser(req);
-    if (!user) {
-      sendJson(res, 401, { error: 'Sign in required' });
-      return;
-    }
+  const authedUser = await getAuthUser(req);
+  if (!authedUser) {
+    sendJson(res, 401, { error: 'Sign in required' });
+    return;
   }
 
   const falKey = process.env.FAL_KEY?.trim();

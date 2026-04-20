@@ -16114,3 +16114,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/_lib/bawLiveStylingPrompts.ts`** + **`scripts/wig-preview/promptTemplate.mjs`**: added **`salonPartMustOverrideInputReferenceBlock`** for **UI L** / **UI R** (placed **before** **`STYLE LOCK`**); tightened **UI R** / **UI L** part blocks (**left third** / **right third** of forehead); **`STYLE LOCK`** sentence: do **not** copy part-line position from color preview when **PART OVERRIDE** applies. **`motherboard/CORE.md`**: STYLE LOCK bullet notes **PART OVERRIDE** for side parts.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — live-noir-color: remove founder-only `forceRegenerate` block
+
+**Context (this chat):** User asked to remove the founder-only block on **`POST /api/wig-preview/live-noir-color`** so **`forceRegenerate`** is not restricted to the founder Gmail account.
+
+**Decisions / outcomes:** **`api/wig-preview/live-noir-color.ts`**: removed inlined **`requireAdminFounder`**; **`forceRegenerate`** and normal generation both require only **`getAuthUser`** (401 if not signed in). **`motherboard/CORE.md`**: NOIR bullet updated — signed-in users may use **`forceRegenerate`** to re-run Fal when files exist.
+
+**Verification:** `npm run build` passes.
