@@ -16409,3 +16409,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`src/utils/wigPreviewLiveStoragePublicUrls.ts`**: After any non-OK **HEAD**, **GET** the same URL and treat **`g.ok`** as existence (same pattern as “optimistic” image loads). **`src/pages/build-a-wig/styling/page.tsx`**: FLAT IRON + LEFT override **`useEffect`** also listens for **`BAW_NOIR_LIVE_COLOR_VIEWS_EVENT`** so the RIGHT-part URL re-resolves when the color-tier hash / live color views update (parity with middle flat-iron color refresh).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — NOIR styling: founder Fal regen links visible for FLAT IRON + MIDDLE
+
+**Context (this chat):** User: **red regen text isn’t clickable** / can’t **generate**.
+
+**Root cause:** **`showNoirLiveStylingRegenControls`** included **`!flatIronMiddleColorTierOnly`**, so for **FLAT IRON + MIDDLE** (no bangs) the **entire** founder regen block (red **regenerate all** / **regen style L-M-R**) was **not rendered**. That combo uses the **color-tier** triple for the hero (no auto **`postLiveWigAfterColorStyling`**), but founders still need regen to **`forceRegenerate`** and fill **`after-color/flat-iron-middle-part/`** in Storage.
+
+**Decisions / outcomes:** **`src/pages/build-a-wig/styling/page.tsx`**: Removed **`!flatIronMiddleColorTierOnly`** from **`showNoirLiveStylingRegenControls`**. **`motherboard/CORE.md`**: NOIR bullet — **FLAT IRON + MIDDLE** skips auto styling fetch but founder regen stays on.
+
+**Verification:** `npm run build` passes.

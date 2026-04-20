@@ -723,11 +723,11 @@ export default function StylingSelectionPage() {
   const showNoirStylingFalRegenText =
     location.pathname.includes('/build-a-wig/noir/edit/styling') ||
     location.pathname.includes('/build-a-wig/noir/customize/styling');
+  /** Founder Fal regen links — include **FLAT IRON + MIDDLE** (no bangs): hero uses color-tier URLs but regen must still run to populate **`after-color/flat-iron-middle-part/`** in Storage. */
   const showNoirLiveStylingRegenControls =
     founderNoirFalRegenUi &&
     location.pathname.includes('/build-a-wig/noir/') &&
-    (hasSalonPartLiveStyling || hasBangsOnlyLive) &&
-    !flatIronMiddleColorTierOnly;
+    (hasSalonPartLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets
