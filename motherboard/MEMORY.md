@@ -16331,3 +16331,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: After **`getSupabaseAdminServiceRole`**, when **`middleFlatIron && partStyling === 'LEFT'`**, if **`flat-iron-right-part/.../right.webp`** (or **with-bangs** folder) exists in Storage, set **`flatIronLeftRightThumbOverrideUrl`** to its public URL. Both **cache-only** and **post-Fal** JSON responses use **`publicUrls.right = flatIronLeftRightThumbOverrideUrl ?? default`**; **`outputPaths`** unchanged (LEFT-part folder). **`motherboard/CORE.md`**: NOIR bullet — FLAT IRON + UI LEFT note.
 
 **Verification:** `npm run build` passes.
+
+**Superseded (same chat, later):** User prefers **not** wiring two URLs — **replace** the stored **LEFT**-part **`right.webp`** with **RIGHT**-part **`right.webp`** bytes. See MEMORY **2026-04-21 — FLAT IRON UI L: replace stored `right.webp` (not dual URLs)**.
+
+---
+
+## 2026-04-21 — FLAT IRON UI L: replace stored `right.webp` (not dual URLs)
+
+**Context (this chat):** User did **not** want **LEFT** R-thumb **wired** to a second URL / synced response-only behavior; they want the **L-part right camera angle** **replaced** by the **R-part right angle** asset because it looks better.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`publicUrls.right`** override. Added **`overwriteFlatIronLeftRightAngleFromRightPartIfAvailable`**: downloads **`flat-iron-right-part/.../right.webp`** (or **with-bangs**), **`upload`** **`upsert`** to **`outPaths.right`** under the **LEFT**-part folder. Runs after the Fal loop (full triple generated) and on **cache-only** hits (all three files exist). If the RIGHT-part source is missing, LEFT **`right.webp`** stays the Fal output. **`motherboard/CORE.md`**: FLAT IRON + UI LEFT bullet updated (overwrite bytes, single URL path).
+
+**Verification:** `npm run build` passes.

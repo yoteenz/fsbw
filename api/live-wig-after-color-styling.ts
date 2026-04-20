@@ -17,7 +17,7 @@ export const config = { maxDuration: 120 };
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
  * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/`
- * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
+ * **FLAT IRON + UI LEFT:** after Fal (and on cache hits), **overwrite** **`flat-iron-left-part/.../right.webp`** with the bytes from **`flat-iron-right-part/.../right.webp`** when that source exists — product replace of the R camera angle asset (same public URL path as before; no dual-URL wiring).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -118,6 +118,26 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`download ${url}: ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
+}
+
+/** FLAT IRON + UI LEFT: replace stored **left-part** `right.webp` with **right-part** `right.webp` bytes (better asset). */
+async function overwriteFlatIronLeftRightAngleFromRightPartIfAvailable(
+  supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
+  bucket: string,
+  rightPartPaths: { front: string; left: string; right: string } | null,
+  leftPartRightDestPath: string
+): Promise<void> {
+  if (!rightPartPaths) return;
+  const { data: blob, error } = await supabase.storage.from(bucket).download(rightPartPaths.right);
+  if (error || !blob) return;
+  const buf = Buffer.from(await blob.arrayBuffer());
+  const { error: upErr } = await supabase.storage.from(bucket).upload(leftPartRightDestPath, buf, {
+    contentType: 'image/webp',
+    upsert: true,
+  });
+  if (upErr) {
+    console.warn('[live-wig-after-color-styling] flat-iron LEFT←RIGHT right.webp replace:', upErr.message);
+  }
 }
 
 /** Origin fal can fetch for static `/assets/natural *.png` (MIDDLE + FLAT IRON second ref). */
@@ -239,7 +259,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
-    /** FLAT IRON + UI LEFT: **right** camera thumbnail uses the same asset as **RIGHT** part `right.webp` (product request). */
+    /** FLAT IRON + UI LEFT: source paths to copy **`right.webp`** from (RIGHT-part folder). */
     const flatIronRightPartFolderForLeftThumb =
       middleFlatIron && partStyling === 'LEFT'
         ? hasBangs
@@ -281,17 +301,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
-    let flatIronLeftRightThumbOverrideUrl: string | null = null;
-    if (flatIronRightPartOutPathsForLeftThumb) {
-      const pRightPartRightAngle = flatIronRightPartOutPathsForLeftThumb.right;
-      const { error: rightPartRightDlErr } = await supabase.storage.from(bucket).download(pRightPartRightAngle);
-      if (!rightPartRightDlErr) {
-        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(pRightPartRightAngle);
-        flatIronLeftRightThumbOverrideUrl = pubOverride?.publicUrl ?? null;
-      }
-    }
-
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
 
@@ -306,12 +315,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
       if (allOutputsExist) {
+        await overwriteFlatIronLeftRightAngleFromRightPartIfAvailable(
+          supabase,
+          bucket,
+          flatIronRightPartOutPathsForLeftThumb,
+          outPaths.right
+        );
         const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
         const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
         const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
         const skippedAngles = [...anglesToRun];
-        const pubRightOut =
-          flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
         sendJson(res, 200, {
           ok: true,
           colorTierHash,
@@ -322,7 +335,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           publicUrls: {
             front: pubFront?.publicUrl ?? null,
             left: pubLeft?.publicUrl ?? null,
-            right: pubRightOut,
+            right: pubRight?.publicUrl ?? null,
           },
           generated: [] as string[],
           skipped: skippedAngles,
@@ -458,11 +471,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       generated.push(angle);
     }
 
+    await overwriteFlatIronLeftRightAngleFromRightPartIfAvailable(
+      supabase,
+      bucket,
+      flatIronRightPartOutPathsForLeftThumb,
+      outPaths.right
+    );
+
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
-    const pubRightOut =
-      flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
 
     sendJson(res, 200, {
       ok: true,
@@ -474,7 +492,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       publicUrls: {
         front: pubFront?.publicUrl ?? null,
         left: pubLeft?.publicUrl ?? null,
-        right: pubRightOut,
+        right: pubRight?.publicUrl ?? null,
       },
       generated,
       skipped,
