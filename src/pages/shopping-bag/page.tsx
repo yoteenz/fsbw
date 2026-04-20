@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
 import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
@@ -307,6 +308,10 @@ function ShoppingBagPage() {
   const [addToListModalOpen, setAddToListModalOpen] = useState(false);
   const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
   const [bagViewDetailsFor, setBagViewDetailsFor] = useState<string | null>(null);
+  const [bawEditFromBagSignInOpen, setBawEditFromBagSignInOpen] = useState(false);
+  const [bawEditFromBagReturnTo, setBawEditFromBagReturnTo] = useState<{ pathname: string; search?: string }>({
+    pathname: '/build-a-wig/noir/edit',
+  });
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -900,6 +905,8 @@ function ShoppingBagPage() {
 
   const handleEdit = (item: any) => {
     try {
+      const signedIn =
+        typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
       // Match CartDropdown: set both editingCartItem and editingCartItemId so build-a-wig loads correct item
       localStorage.setItem('editingCartItem', JSON.stringify(item));
       localStorage.setItem('editingCartItemId', item.id);
@@ -964,6 +971,11 @@ function ShoppingBagPage() {
         editRoute = '/build-a-wig/ocean-curl/edit';
       }
 
+      if (!signedIn) {
+        setBawEditFromBagReturnTo({ pathname: editRoute });
+        setBawEditFromBagSignInOpen(true);
+        return;
+      }
       navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
@@ -2559,6 +2571,12 @@ function ShoppingBagPage() {
               setAddToListModalItem(null);
             }}
             item={addToListModalItem}
+          />
+
+          <BuildAWigFeatureSignInModal
+            isOpen={bawEditFromBagSignInOpen}
+            onClose={() => setBawEditFromBagSignInOpen(false)}
+            returnTo={bawEditFromBagReturnTo}
           />
         </div>
       </div>

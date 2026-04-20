@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { CartItem } from '../types/cart';
 import ConfirmationModal from './ConfirmationModal';
+import BuildAWigFeatureSignInModal from './BuildAWigFeatureSignInModal';
 import { trackActivity } from '../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../utils/perUserStorage';
 import { getPointsMultiplier } from '../constants/tiers';
@@ -46,6 +47,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [viewingDetailsFor, setViewingDetailsFor] = useState<string | null>(null);
+  const [bawEditFromCartSignInOpen, setBawEditFromCartSignInOpen] = useState(false);
+  const [bawEditFromCartReturnTo, setBawEditFromCartReturnTo] = useState<{ pathname: string; search?: string }>({
+    pathname: '/build-a-wig/noir/edit',
+  });
 
   // Close cart dropdown immediately when route changes (before new page loads)
   useEffect(() => {
@@ -1066,6 +1071,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               lineHeight: '1.1'
                             }}
                           onClick={() => {
+                            const signedIn =
+                              typeof window !== 'undefined' &&
+                              localStorage.getItem('isSignedIn') === 'true';
                             // Store the current item details for editing
                             localStorage.setItem('editingCartItem', JSON.stringify(item));
                             localStorage.setItem('editingCartItemId', item.id);
@@ -1159,8 +1167,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             } else if (item.name === 'OCEAN CURL') {
                               editRoute = '/build-a-wig/ocean-curl/edit';
                             }
-                            
+
                             onClose(); // Close the dropdown first
+                            if (!signedIn) {
+                              setBawEditFromCartReturnTo({ pathname: editRoute });
+                              setBawEditFromCartSignInOpen(true);
+                              return;
+                            }
                             navigate(editRoute); // Navigate to product-specific edit page
                           }}
                         >
@@ -2089,6 +2102,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     <>
       {createPortal(dropdownContent, document.body)}
       {currencyModalContent && createPortal(currencyModalContent, document.body)}
+      <BuildAWigFeatureSignInModal
+        isOpen={bawEditFromCartSignInOpen}
+        onClose={() => setBawEditFromCartSignInOpen(false)}
+        returnTo={bawEditFromCartReturnTo}
+      />
       {createPortal(
         <ConfirmationModal
           isOpen={showRemoveConfirm}

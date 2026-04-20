@@ -16169,6 +16169,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Cart + bag EDIT IN BUILD-A-WIG: sign-in gate (not direct BAW route)
+
+**Context (this chat):** **EDIT IN BUILD-A-WIG** from **cart dropdown** and **shopping bag** navigated signed-out users straight to **`/build-a-wig/.../edit`** instead of the **`BuildAWigFeatureSignInModal`** gate.
+
+**Decisions / outcomes:** **`CartDropdown.tsx`**: after the same localStorage prep as before, if **`isSignedIn` ≠ true** → **`setBawEditFromCartReturnTo({ pathname: editRoute })`** + open **`BuildAWigFeatureSignInModal`**; else **`navigate(editRoute)`**. **`shopping-bag/page.tsx`**: same in **`handleEdit`** + render **`BuildAWigFeatureSignInModal`**. **`motherboard/CORE.md`**: BAW entry bullet mentions cart/bag.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — UI R PART OVERRIDE: shorter prompt block
 
 **Context (this chat):** User asked to simplify only the **UI R** branch of **`PART OVERRIDE`** — keep the headline plus **left third** / **image LEFT** placement and **re-part** the roots, drop extra sentences.
