@@ -16146,3 +16146,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`src/pages/build-a-wig/color/page.tsx`**: Reintroduced **`liveWigViews`**, **`heldFounderLiveTriple`**, **`livePreviewLoading`**, **`livePreviewError`**, regen angle/all state, **`founderNoirFalRegenUi`** (from **`isFounderNoirFalRegenUiVisible`**), **`readPending`/`readBawNoirLiveColorWigViews`** hydration, **`postWigPreviewLiveNoirColorRegenerateAngle`/`RegenerateAll`**, and **`ConfirmationModal`** for regen-all. The regen strip wrapper uses **`display: 'none'`** and **`aria-hidden`**. The main Fal **`useEffect`** is **merged** with the prior premium path: gated on **`noirLiveColorPremiumGate`** + **`getAccessToken`**, sets **`liveWigViews`** (HEAD/storage first, optimistic URLs, then **`postWigPreviewLiveNoirColor`**), dispatches **`customStorageChange`**. **`wigViews`** on NOIR color sub-routes prefers **`liveWigViews`** / **`heldFounderLiveTriple`**, then composite hook triples, then static. **`motherboard/CORE.md`**: NOIR color bullet updated — founder regen strip kept in DOM but hidden.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Menu SIGN OUT: full Supabase sign-out (fix auto re-login)
+
+**Context (this chat):** User reported **SIGN OUT** in the mobile menu toggle cleared UI state but **signed them back in** when navigating — **`localStorage`** was cleared but **`main.tsx`** **`bootstrapAuthBeforeRender`** still found a **Supabase** session and called **`applyMinimalUserToStorage`**.
+
+**Decisions / outcomes:** **`adminAuth.ts`**: new **`signOutAppAndSupabaseSession()`** — **`markManualSignOutInProgress`**, dynamic **`getSupabase().auth.signOut()`**, **`clearAppAuth()`**, **`signInStateChanged`**. Replaced menu **`handleSignOut`** across storefront pages (and **`BookingFlowLayout`**, BAW pages, checkout, orders, etc.) to **`await signOutAppAndSupabaseSession()`**; **`account/page.tsx`** and **`account/settings`** menu path now use the same helper. Removed redundant **`clearAppAuth`** imports where unused.
+
+**Verification:** `npm run build` passes.

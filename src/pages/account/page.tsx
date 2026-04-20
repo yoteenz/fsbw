@@ -9,8 +9,7 @@ import {
   isMockDataAccount,
   isMockProfileChromeActive,
   getEffectiveSubscriptionTier,
-  clearAppAuth,
-  markManualSignOutInProgress,
+  signOutAppAndSupabaseSession,
   FOUNDER_ACCOUNT_VIEW_AS_CLIENT_KEY,
   excludeFounderSeedMockOrders,
 } from '../../utils/adminAuth';
@@ -777,16 +776,8 @@ function AccountPage() {
         if (email) swapCartAndWishlistToUser(email, null);
       }
     } catch (_) {}
-    if (isSupabaseConfigured()) {
-      const supabase = getSupabase();
-      if (supabase) {
-        markManualSignOutInProgress();
-        await supabase.auth.signOut().catch(() => {});
-      }
-    }
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
     navigate(signInHrefWithReturnTo(location));

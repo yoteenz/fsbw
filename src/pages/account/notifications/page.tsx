@@ -4,7 +4,7 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { isAyoteenzAdminAccount, clearAppAuth } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import {
   buildConsultViewOfferOrdersHref,
   getNotificationsStorageKeyForUserEmail,
@@ -751,10 +751,9 @@ function NotificationsPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

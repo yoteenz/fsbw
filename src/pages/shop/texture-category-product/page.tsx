@@ -7,7 +7,7 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth } from '../../../utils/adminAuth';
+import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../../utils/currencyFormat';
 import { formatPriceUsd } from '../../../utils/currencyFormat';
 import {
@@ -521,10 +521,9 @@ export default function ShopTextureCategoryProductPage() {
     if (isSignedIn) setShowSignOutConfirm(true);
     else navigate(signInHrefWithReturnTo(location));
   };
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

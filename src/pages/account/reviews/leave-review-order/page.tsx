@@ -6,7 +6,7 @@ import SocialMenuIcons from '../../../../components/SocialMenuIcons';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { getUserSubmittedReviewsKey, getReviewsNewApprovedKey } from '../../../../constants/reviews';
 import { trackActivity } from '../../../../utils/activity';
-import { clearAppAuth } from '../../../../utils/adminAuth';
+import { signOutAppAndSupabaseSession } from '../../../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../../utils/signInReturnTo';
@@ -181,11 +181,10 @@ function LeaveReviewOrderPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     trackActivity('sign_out');
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
     navigate(signInHrefWithReturnTo(location));

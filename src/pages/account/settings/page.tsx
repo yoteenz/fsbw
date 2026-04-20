@@ -10,7 +10,13 @@ import { deleteAccount } from '../../../utils/api';
 import { patchProfileWithRetryQueue } from '../../../utils/profileSyncQueue';
 import { trackActivity } from '../../../utils/activity';
 import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
-import { clearAppAuth, isAyoteenzAdminAccount, isAdminEmail, isProtectedFromAccountDeletion } from '../../../utils/adminAuth';
+import {
+  clearAppAuth,
+  isAyoteenzAdminAccount,
+  isAdminEmail,
+  isProtectedFromAccountDeletion,
+  signOutAppAndSupabaseSession,
+} from '../../../utils/adminAuth';
 import { profileSocialStorageValue, stripSocialPlatformPrefixes, type SocialPlatform } from '../../../utils/socialLinks';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -610,16 +616,15 @@ function SettingsPage() {
     setMobileMenuExpandedItems(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
   };
   const handleMobileMenuSignInToggle = () => {
-    if (isSignedIn) {
-      if (isSupabaseConfigured()) {
-        const supabase = getSupabase();
-        if (supabase) supabase.auth.signOut().catch(() => {});
-      }
-      clearAppAuth();
-      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
-      setShowMobileMenu(false);
+    if (!isSignedIn) {
+      navigate(signInHrefWithReturnTo(location));
+      return;
     }
-    navigate(signInHrefWithReturnTo(location));
+    void (async () => {
+      await signOutAppAndSupabaseSession();
+      setShowMobileMenu(false);
+      navigate(signInHrefWithReturnTo(location));
+    })();
   };
   const handleBack = () => navigate('/account');
 

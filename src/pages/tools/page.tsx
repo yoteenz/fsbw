@@ -6,7 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
-import { clearAppAuth } from '../../utils/adminAuth';
+import { signOutAppAndSupabaseSession } from '../../utils/adminAuth';
 import type { CurrencyRatesRecord } from '../../utils/currencyFormat';
 import { formatPriceUsd } from '../../utils/currencyFormat';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
@@ -240,11 +240,9 @@ function ToolsPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    // Dispatch custom event to update other pages in same tab
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     // Close mobile menu
     setShowMobileMenu(false);

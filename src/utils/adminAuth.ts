@@ -206,6 +206,28 @@ export function clearAuthBackup(): void {
   } catch (_) {}
 }
 
+/**
+ * Full sign-out: Supabase session (cookies + localStorage) + app backup keys.
+ * Use from mobile menu — paths that only called `clearAppAuth()` left Supabase alive, so `main.tsx`
+ * bootstrap re-signed the user in on the next navigation.
+ */
+export async function signOutAppAndSupabaseSession(): Promise<void> {
+  markManualSignOutInProgress();
+  try {
+    const { getSupabase, isSupabaseConfigured } = await import('./supabase');
+    if (isSupabaseConfigured()) {
+      const supabase = getSupabase();
+      if (supabase) await supabase.auth.signOut().catch(() => {});
+    }
+  } catch {
+    // ignore
+  }
+  clearAppAuth();
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+  }
+}
+
 /** Clear app auth state (isSignedIn, currentUser, backup). Call only on explicit Sign Out or delete account. */
 export function clearAppAuth(): void {
   if (typeof window === 'undefined' || !window.localStorage) return;

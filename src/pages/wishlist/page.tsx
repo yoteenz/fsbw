@@ -5,7 +5,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import AddToListModal from '../../components/AddToListModal';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { isMockDataAccount, clearAppAuth } from '../../utils/adminAuth';
+import { isMockDataAccount, signOutAppAndSupabaseSession } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
@@ -486,10 +486,9 @@ function WishlistSelection() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

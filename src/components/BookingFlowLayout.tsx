@@ -5,7 +5,7 @@ import BrandMenuLinks from './BrandMenuLinks';
 import SocialMenuIcons from './SocialMenuIcons';
 import ConfirmationModal from './ConfirmationModal';
 import BuildAWigFeatureSignInModal from './BuildAWigFeatureSignInModal';
-import { clearAppAuth } from '../utils/adminAuth';
+import { signOutAppAndSupabaseSession } from '../utils/adminAuth';
 import { ShopMobileMenuShopTab } from './ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from './ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
@@ -136,10 +136,9 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
     else navigate(signInHrefWithReturnTo(location));
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

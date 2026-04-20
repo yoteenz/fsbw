@@ -7,7 +7,11 @@ import { createRouteProtection, prepareRouteProtectionData } from '../../utils/r
 import { getPointsMultiplier } from '../../constants/tiers';
 import { getSubscriptionPriceUsd, isSubscriptionTierId } from '../../constants/subscriptionPricing';
 import { recordMembershipPayment } from '../../utils/membershipPayments';
-import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../utils/adminAuth';
+import {
+  getEffectiveSubscriptionTier,
+  getEffectiveTierName,
+  signOutAppAndSupabaseSession,
+} from '../../utils/adminAuth';
 import { validateCheckoutCardInput } from '../../utils/checkoutCardValidation';
 import { hasIdentityAlreadyUsedReferralCode, recordReferralCodeUsedByClient } from '../../utils/blockedClients';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -1664,10 +1668,9 @@ function CheckoutPage() {
     setIsDragging(false);
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

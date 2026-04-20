@@ -3,7 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import { getPointsMultiplier } from '../../../constants/tiers';
-import { getEffectiveSubscriptionTier, getEffectiveTierName, clearAppAuth } from '../../../utils/adminAuth';
+import {
+  getEffectiveSubscriptionTier,
+  getEffectiveTierName,
+  signOutAppAndSupabaseSession,
+} from '../../../utils/adminAuth';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import summaryIcon from '../../../assets/icons/summary-icon.svg?url';
@@ -865,11 +869,9 @@ function CheckoutConfirmPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    // Dispatch custom event to update other pages in same tab
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     // Close mobile menu
     setShowMobileMenu(false);

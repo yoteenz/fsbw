@@ -15,7 +15,7 @@ import { trackActivity } from '../../../utils/activity';
 import { persistProduct3dViewPreference, readProduct3dViewPreference } from '../../../utils/product3dViewPreference';
 import { navigateUnitProductBack } from '../../../utils/navigateBack';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
-import { clearAppAuth, isAdminFounderAccount } from '../../../utils/adminAuth';
+import { isAdminFounderAccount, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
@@ -1124,12 +1124,10 @@ function NoirSelection() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     trackActivity('sign_out');
     setIsSignedIn(false);
-    clearAppAuth();
-    // Dispatch custom event to update other pages in same tab
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     // Close mobile menu
     setShowMobileMenu(false);

@@ -29,7 +29,11 @@ import {
   bookingCartViewDetailsHtml
 } from '../../utils/cartLineRedAndDetails';
 import { getPointsMultiplier } from '../../constants/tiers';
-import { getEffectiveTierName, getEffectiveSubscriptionTier, clearAppAuth } from '../../utils/adminAuth';
+import {
+  getEffectiveTierName,
+  getEffectiveSubscriptionTier,
+  signOutAppAndSupabaseSession,
+} from '../../utils/adminAuth';
 import {
   isPremiumGatedCartLine,
   isPremiumMemberForGatedFeatures,
@@ -1067,10 +1071,9 @@ function ShoppingBagPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
   };

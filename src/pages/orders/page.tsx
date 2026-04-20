@@ -12,9 +12,9 @@ import {
   isMockProfileChromeActive,
   readFounderAccountViewAsClientFromStorage,
   excludeFounderSeedMockOrders,
-  clearAppAuth,
   getEffectiveSubscriptionTier,
   MEMBERSHIP_SUBSCRIPTION_PREVIEW_CHANGED_EVENT,
+  signOutAppAndSupabaseSession,
 } from '../../utils/adminAuth';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../utils/perUserStorage';
 import { formatCountryDisplay } from '../../utils/formatCountry';
@@ -1993,10 +1993,9 @@ function OrdersPage() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsSignedIn(false);
-    clearAppAuth();
-    window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'false' }));
+    await signOutAppAndSupabaseSession();
     setShowSignOutConfirm(false);
     setShowMobileMenu(false);
     navigate(signInHrefWithReturnTo(location));
