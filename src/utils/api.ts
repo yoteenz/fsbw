@@ -8,11 +8,57 @@ import type { MembershipPaymentRecord } from './membershipPayments';
 const API_BASE =
   (import.meta as unknown as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ?? '';
 
+/** Same key Supabase client uses for `sb-<projectRef>-auth-token` (see `sessionRestore.ts`). */
+function getSupabaseAuthStorageKey(): string | null {
+  const url = (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL;
+  if (!url) return null;
+  try {
+    const projectRef = new URL(url).hostname.split('.')[0];
+    return projectRef ? `sb-${projectRef}-auth-token` : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Read Bearer token directly from persisted session JSON when `getSession()` has not hydrated yet. */
+function readAccessTokenFromSupabaseStorage(): string | null {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  const key = getSupabaseAuthStorageKey();
+  if (!key) return null;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { access_token?: string };
+    const t = typeof parsed?.access_token === 'string' ? parsed.access_token.trim() : '';
+    return t || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getAccessToken(): Promise<string | null> {
   const supabase = (await import('./supabase')).getSupabase();
-  if (!supabase) return null;
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token ?? null;
+  const fromLs = readAccessTokenFromSupabaseStorage();
+
+  if (supabase) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) return session.access_token;
+    /** Client session not hydrated yet but localStorage has the Supabase session blob — use it for API calls. */
+    if (fromLs) return fromLs;
+    /** App flag signed in but no token in memory — refresh can repopulate session (admin/local-only edge cases). */
+    try {
+      if (typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true') {
+        await supabase.auth.refreshSession();
+        const { data: { session: s2 } } = await supabase.auth.getSession();
+        if (s2?.access_token) return s2.access_token;
+      }
+    } catch {
+      /* ignore */
+    }
+    return readAccessTokenFromSupabaseStorage();
+  }
+
+  return fromLs;
 }
 
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */

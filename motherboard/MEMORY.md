@@ -16234,6 +16234,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — LIVE PREVIEW “Sign in required” while app shows signed in (`getAccessToken`)
+
+**Context (this chat):** After relaxing **`POST /api/live-wig-after-color-styling`** to **`getAuthUser`**, users who appeared signed in still saw **LIVE PREVIEW: Sign in required** — the API returns **401** when **`Authorization`** is missing.
+
+**Root cause:** **`apiFetch`** only sends **`Bearer`** from **`supabase.auth.getSession()`**. **`isSignedIn`** can be true (local **`currentUser`**) while the Supabase client has not hydrated the in-memory session yet, or **`getSession()`** is briefly empty even though **`sb-*-auth-token`** in **`localStorage`** already holds **`access_token`**.
+
+**Decisions / outcomes:** **`src/utils/api.ts` — `getAccessToken`**: (1) parse **`access_token`** from persisted Supabase session JSON under **`sb-<projectRef>-auth-token`** when **`getSession()`** returns no token; (2) if **`isSignedIn`** and still no token, **`refreshSession()`** then re-read session.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Guest checkout: CommerceRouteGuard allows `/checkout` paths without Supabase
 
 **Context (this chat):** Signed-out users tapping **CHECKOUT** / **PROCEED TO CHECKOUT** from the cart dropdown or shopping bag were sent to **sign-in** instead of checkout.
