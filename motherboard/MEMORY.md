@@ -16040,3 +16040,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** In **`src/pages/build-a-wig/color/page.tsx`**, removed the founder-only strip (status paragraph + regen buttons), the **regenerate all** confirmation modal, and all related state/effects/API imports (`postWigPreviewLiveNoirColor*`, founder preview loading/error, `useEffect` that called live-noir-color on color change). **NOIR color** preview triples now use the same path as everyone else: **`useBawSubpageLiveNoirCompositeWigViews`** + **`heldCompositeLiveTriple`** (no separate founder `liveWigViews` branch). Removed **`pointerEvents: 'none'`** on the hero **NOIR** label that existed only so regen M was tappable. **`motherboard/CORE.md`**: NOIR bullet updated so color step no longer documents Fal regen UI; styling/other regen strips unchanged.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — R part styling prompts: remove L↔R swap, simpler RIGHT = opposite of LEFT
+
+**Context (this chat):** User said **R part** styling prompts were overcomplicated and outputs still looked like **L parts** (wrong side). Asked for **simpler, more direct** wording — use **L part** as reference for where the part goes, and **RIGHT** as the **opposite** side, referencing base color image.
+
+**Decisions / outcomes:** **`falMirrorCompensatedPartForPrompt`** (swap L↔R in Fal prompt text only) was **removed** from **`api/_lib/bawLiveStylingPrompts.ts`** — it made **`partSelection === 'RIGHT'`** use the **LEFT-part** prompt branches, so the model was told **LEFT part** instructions when the customer chose **RIGHT**. Prompts now branch on **`partSelection` directly** (same as API). **RIGHT part** blocks rewritten to: **not** LEFT part; **LEFT part** = part on **image RIGHT**; **RIGHT part** = **opposite** — **image LEFT**; **forbidden** part on **image RIGHT**. Same for **FLAT IRON** `partBlock`, **crimps** `partWordCrimps`, **bangs+UI R**. **`salonPartDirectionSemanticsBlock`** shortened to one simple line (**UI L** / **UI R**). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`** NOIR bullet: dropped **`falMirrorCompensatedPartForPrompt`** mention; states **no L↔R swap in text**.
+
+**Verification:** `npm run build` passes.
