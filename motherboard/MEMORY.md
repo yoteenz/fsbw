@@ -16421,3 +16421,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`src/pages/build-a-wig/styling/page.tsx`**: Removed **`!flatIronMiddleColorTierOnly`** from **`showNoirLiveStylingRegenControls`**. **`motherboard/CORE.md`**: NOIR bullet — **FLAT IRON + MIDDLE** skips auto styling fetch but founder regen stays on.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Restore full **UI R** PART OVERRIDE (pre–MIDDLE-after-color-input)
+
+**Context (this chat):** User asked to **restore prompts before using generated MIDDLE-part styling** as Fal input — **quality** suffered.
+
+**Facts:** **`live-wig-after-color-styling`** already uses **only color-tier WebPs** per angle for **UI R** LAYERS/CRIMPS (middle-part Storage input removed in **`426cabb1`**). What was still shortened vs the **`72127d59`** baseline was the **UI R** branch of **`salonPartMustOverrideInputReferenceBlock`** (**`00e9a545`**).
+
+**Decisions / outcomes:** Restored the **full UI R PART OVERRIDE** paragraph to match **`72127d59`** in **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**.
+
+**Verification:** `npm run build` passes.
