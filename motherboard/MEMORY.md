@@ -16291,3 +16291,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: replace **`requireAdminFounder`** with **`getAuthUser`** — any valid **Bearer** Supabase session may call (aligned with **`POST /api/wig-preview/live-noir-color`** and with **`motherboard/CORE.md`** stating styling **`forceRegenerate`** is not founder-only). Missing auth → **401** `{ error: 'Sign in required' }`. Color-missing message: drop “**(admin)**” from the NOIR Color hint.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-21 — UI R PART OVERRIDE: short block again (only RIGHT branch)
+
+**Context (this chat):** User expected the **simplified** **UI R** **`PART OVERRIDE`** text on Fal; repo still had the **long** reverted string (discard LEFT/UI L / center, success check image RIGHT half).
+
+**Decisions / outcomes:** **`salonPartMustOverrideInputReferenceBlock`** for **`partSelection === 'RIGHT'`** only — replaced with: discard whatever the preview shows; **UI R** = groove **left third** / **image LEFT**, opposite **UI L**; re-part; do not keep reference part line. **UI L** branch unchanged. **`scripts/wig-preview/promptTemplate.mjs`** mirrored.
+
+**Verification:** `npm run build` passes.
