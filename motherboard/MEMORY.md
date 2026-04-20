@@ -16234,6 +16234,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — `live-wig-after-color-styling`: cache-only response without auth (fix persistent “Sign in required”)
+
+**Context (this chat):** User still saw **LIVE PREVIEW: Sign in required** after client **`getAccessToken`** hardening. Styling auto-fetch usually **does not run Fal** when **`after-color/***` WebPs already exist — it only needs public URLs from Storage.
+
+**Root cause:** Requiring **`getAuthUser`** at the **start** of the handler meant **every** request (including “all three angles already skipped”) returned **401** when **`Authorization`** was missing or invalid — even though no Fal and no upload ran. That differed from the old **warm-cache** behavior where the founder session always sent a valid Bearer. App **`isSignedIn`** without a live Supabase JWT (local/admin/bootstrap) still hits **401**.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: After resolving **`outPaths`**, if **`!forceRegenerate`** and **all** objects for **`anglesToRun`** exist in Storage, respond **200** immediately with **`publicUrls`** + **`cacheOnly: true`** — **no** **`getAuthUser`**, **no** **`FAL_KEY`**. Otherwise require **`getAuthUser`** then run the existing Fal loop. Refactored **`stylingMode`** into **`stylingModePayload()`** for the early return.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — LIVE PREVIEW “Sign in required” while app shows signed in (`getAccessToken`)
 
 **Context (this chat):** After relaxing **`POST /api/live-wig-after-color-styling`** to **`getAuthUser`**, users who appeared signed in still saw **LIVE PREVIEW: Sign in required** — the API returns **401** when **`Authorization`** is missing.

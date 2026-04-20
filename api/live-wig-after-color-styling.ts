@@ -134,22 +134,33 @@ function noirBaseNaturalMannequinPublicUrlForAngle(angle: 'front' | 'left' | 'ri
   return `${wigPreviewPublicAppOrigin()}/assets/${file}`;
 }
 
+function stylingModePayload(
+  middleLayers: boolean,
+  middleCrimps: boolean,
+  middleFlatIron: boolean,
+  bangsWithSalon: boolean
+): Record<string, unknown> {
+  return {
+    stylingMode: middleLayers
+      ? bangsWithSalon
+        ? 'middle-layers-with-bangs'
+        : 'middle-layers'
+      : middleCrimps
+        ? bangsWithSalon
+          ? 'middle-crimps-with-bangs'
+          : 'middle-crimps'
+        : middleFlatIron
+          ? bangsWithSalon
+            ? 'middle-flat-iron-with-bangs'
+            : 'middle-flat-iron'
+          : 'bangs-only',
+  };
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   try {
     if (req.method !== 'POST') {
       sendJson(res, 405, { error: 'Method not allowed' });
-      return;
-    }
-
-    const user = await getAuthUser(req);
-    if (!user) {
-      sendJson(res, 401, { error: 'Sign in required' });
-      return;
-    }
-
-    const falKey = process.env.FAL_KEY?.trim();
-    if (!falKey) {
-      sendJson(res, 503, { error: 'FAL_KEY is not configured on the server' });
       return;
     }
 
@@ -236,6 +247,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
+
+    /** All requested outputs already in Storage — skip Fal + skip auth (same UX as before when cache was warm). */
+    if (!forceRegenerate) {
+      let allOutputsExist = true;
+      for (const angle of anglesToRun) {
+        const { error: outDlErr } = await supabase.storage.from(bucket).download(outPaths[angle]);
+        if (outDlErr) {
+          allOutputsExist = false;
+          break;
+        }
+      }
+      if (allOutputsExist) {
+        const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
+        const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
+        const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
+        const skippedAngles = [...anglesToRun];
+        sendJson(res, 200, {
+          ok: true,
+          colorTierHash,
+          fullManifestHash: wigPreviewManifestHash(selections),
+          bucket,
+          colorPaths,
+          outputPaths: outPaths,
+          publicUrls: {
+            front: pubFront?.publicUrl ?? null,
+            left: pubLeft?.publicUrl ?? null,
+            right: pubRight?.publicUrl ?? null,
+          },
+          generated: [] as string[],
+          skipped: skippedAngles,
+          selections,
+          ...stylingModePayload(middleLayers, middleCrimps, middleFlatIron, bangsWithSalon),
+          ...(middleLayers || middleCrimps || middleFlatIron ? { partSelection: partStyling, bangsWithSalon } : {}),
+          ...(singleAngle ? { singleAngle } : {}),
+          cacheOnly: true,
+        });
+        return;
+      }
+    }
+
+    const user = await getAuthUser(req);
+    if (!user) {
+      sendJson(res, 401, { error: 'Sign in required' });
+      return;
+    }
+
+    const falKey = process.env.FAL_KEY?.trim();
+    if (!falKey) {
+      sendJson(res, 503, { error: 'FAL_KEY is not configured on the server' });
+      return;
+    }
+
     const falResolution = readFalResolutionForAfterColorStyling();
     const generated: string[] = [];
     const skipped: string[] = [];
@@ -335,19 +398,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       generated,
       skipped,
       selections,
-      stylingMode: middleLayers
-        ? bangsWithSalon
-          ? 'middle-layers-with-bangs'
-          : 'middle-layers'
-        : middleCrimps
-          ? bangsWithSalon
-            ? 'middle-crimps-with-bangs'
-            : 'middle-crimps'
-          : middleFlatIron
-            ? bangsWithSalon
-              ? 'middle-flat-iron-with-bangs'
-              : 'middle-flat-iron'
-            : 'bangs-only',
+      ...stylingModePayload(middleLayers, middleCrimps, middleFlatIron, bangsWithSalon),
       ...(middleLayers || middleCrimps || middleFlatIron ? { partSelection: partStyling, bangsWithSalon } : {}),
       ...(singleAngle ? { singleAngle } : {}),
     });
