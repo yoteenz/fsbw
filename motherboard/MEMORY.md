@@ -16218,3 +16218,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`salonPartMustOverrideInputReferenceBlock`** for **`RIGHT`** reverted to the full pre-shorten string (see **`641a4bed^`** in git): input may show LEFT/UI L or center → **discard**; **UI R** groove **left third** / **image LEFT**, **opposite** UI L; **re-part**; do not preserve reference side-part; **success check** vs **image RIGHT** half. **UI L** branch unchanged; **`buildLayersStylePromptShared`** and other style/part blocks were not modified.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Shopping bag `+ LIST` sign-in gate + portal BAW modals on `/bag`
+
+**Context (this chat, full arc):** Continuation from prior work on NOIR Fal regen visibility, Build-a-Wig sign-in gates, cart dropdown modal stacking, and CommerceRouteGuard for `/bag`. The pending item was **gating `+ LIST` on the shopping bag** for signed-out users (same **`BuildAWigFeatureSignInModal`** pattern as **EDIT IN BUILD-A-WIG**) and ensuring sign-in overlays are not trapped under page stacking.
+
+**Decisions / outcomes:**
+- **`src/pages/shopping-bag/page.tsx`**: Added **`openAddToListModal(item)`** — if **`localStorage` `isSignedIn`** is not true, sets **`addToListSignInReturnTo`** to **`location.pathname` + `search`** and opens **`addToListSignInOpen`**; otherwise opens **`AddToListModal`** as before. Both **+ LIST** buttons (cart lines and saved-for-later) call **`openAddToListModal`** instead of opening the list modal directly.
+- **`createPortal`** to **`document.body`**: Renders two **`BuildAWigFeatureSignInModal`** instances (BAW edit gate + **`+ LIST`** gate) at the top of the page tree so z-index matches other global overlays. Removed inline **`BuildAWigFeatureSignInModal`** from the scrollable column.
+- **`motherboard/CORE.md`**: Documented **`+ LIST`** gate and portal behavior on **`/bag`**.
+
+**Verification:** `npm run build` passes.

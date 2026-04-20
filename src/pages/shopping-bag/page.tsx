@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -311,6 +312,11 @@ function ShoppingBagPage() {
   const [bawEditFromBagSignInOpen, setBawEditFromBagSignInOpen] = useState(false);
   const [bawEditFromBagReturnTo, setBawEditFromBagReturnTo] = useState<{ pathname: string; search?: string }>({
     pathname: '/build-a-wig/noir/edit',
+  });
+  /** + LIST from bag/saved requires sign-in; saved-for-later moves stay local for signed-out users. */
+  const [addToListSignInOpen, setAddToListSignInOpen] = useState(false);
+  const [addToListSignInReturnTo, setAddToListSignInReturnTo] = useState<{ pathname: string; search?: string }>({
+    pathname: '/bag',
   });
 
   // Currency state - per user
@@ -903,6 +909,22 @@ function ShoppingBagPage() {
     }
   };
 
+  /** Wishlist "+ LIST" requires a signed-in session; saved-for-later stays local without sign-in. */
+  const openAddToListModal = (item: any) => {
+    const signedIn =
+      typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
+    if (!signedIn) {
+      setAddToListSignInReturnTo({
+        pathname: location.pathname,
+        search: location.search || undefined,
+      });
+      setAddToListSignInOpen(true);
+      return;
+    }
+    setAddToListModalItem(item);
+    setAddToListModalOpen(true);
+  };
+
   const handleEdit = (item: any) => {
     try {
       const signedIn =
@@ -1106,6 +1128,22 @@ function ShoppingBagPage() {
           backgroundAttachment: 'fixed'
         }}
       />
+
+      {createPortal(
+        <>
+          <BuildAWigFeatureSignInModal
+            isOpen={bawEditFromBagSignInOpen}
+            onClose={() => setBawEditFromBagSignInOpen(false)}
+            returnTo={bawEditFromBagReturnTo}
+          />
+          <BuildAWigFeatureSignInModal
+            isOpen={addToListSignInOpen}
+            onClose={() => setAddToListSignInOpen(false)}
+            returnTo={addToListSignInReturnTo}
+          />
+        </>,
+        document.body
+      )}
       
       {/* Scrollable Content */}
       <div className="relative z-10">
@@ -1751,10 +1789,7 @@ function ShoppingBagPage() {
                                 <>
                                   <button
                                     type="button"
-                                    onClick={() => {
-                                      setAddToListModalItem(item);
-                                      setAddToListModalOpen(true);
-                                    }}
+                                    onClick={() => openAddToListModal(item)}
                                     style={{
                                       fontFamily: '"Futura PT Medium"',
                                       fontSize: '9px',
@@ -2283,10 +2318,7 @@ function ShoppingBagPage() {
                              <>
                                <button
                                  type="button"
-                                 onClick={() => {
-                                   setAddToListModalItem(item);
-                                   setAddToListModalOpen(true);
-                                 }}
+                                 onClick={() => openAddToListModal(item)}
                                  style={{
                                    fontFamily: '"Futura PT Medium"',
                                    fontSize: '9px',
@@ -2571,12 +2603,6 @@ function ShoppingBagPage() {
               setAddToListModalItem(null);
             }}
             item={addToListModalItem}
-          />
-
-          <BuildAWigFeatureSignInModal
-            isOpen={bawEditFromBagSignInOpen}
-            onClose={() => setBawEditFromBagSignInOpen(false)}
-            returnTo={bawEditFromBagReturnTo}
           />
         </div>
       </div>

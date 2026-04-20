@@ -738,14 +738,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [isOpen, onClose]);
 
-  /** When closed, still mount **BuildAWigFeatureSignInModal** so it survives `onClose()` after EDIT IN BUILD-A-WIG. */
+  /** When closed, still mount **BuildAWigFeatureSignInModal** (portaled) so it survives `onClose()` after EDIT IN BUILD-A-WIG. */
   if (!isOpen) {
-    return (
+    return createPortal(
       <BuildAWigFeatureSignInModal
         isOpen={bawEditFromCartSignInOpen}
         onClose={() => setBawEditFromCartSignInOpen(false)}
         returnTo={bawEditFromCartReturnTo}
-      />
+      />,
+      document.body
     );
   }
 
@@ -2110,11 +2111,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     <>
       {createPortal(dropdownContent, document.body)}
       {currencyModalContent && createPortal(currencyModalContent, document.body)}
-      <BuildAWigFeatureSignInModal
-        isOpen={bawEditFromCartSignInOpen}
-        onClose={() => setBawEditFromCartSignInOpen(false)}
-        returnTo={bawEditFromCartReturnTo}
-      />
+      {createPortal(
+        <BuildAWigFeatureSignInModal
+          isOpen={bawEditFromCartSignInOpen}
+          onClose={() => setBawEditFromCartSignInOpen(false)}
+          returnTo={bawEditFromCartReturnTo}
+        />,
+        document.body
+      )}
       {createPortal(
         <ConfirmationModal
           isOpen={showRemoveConfirm}
