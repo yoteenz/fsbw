@@ -405,6 +405,30 @@ export default function StylingSelectionPage() {
     selectedPartSelection === 'MIDDLE' &&
     !selectedHairStyling.includes('BANGS');
 
+  /** BANGS + LAYERS/CRIMPS/FLAT IRON: only MIDDLE part (L/R disabled in UI). */
+  useEffect(() => {
+    if (!hasBangsWithSalon || selectedPartSelection === 'MIDDLE') return;
+    setSelectedPartSelection('MIDDLE');
+    try {
+      const p = window.location.pathname;
+      const isCustomizeDraft =
+        p.includes('/build-a-wig/noir/customize/') ||
+        p.includes('/build-a-wig/blanco/customize/') ||
+        p.includes('/build-a-wig/soft-wave/customize/') ||
+        p.includes('/build-a-wig/soft-curl/customize/') ||
+        p.includes('/build-a-wig/ocean-curl/customize/') ||
+        p.includes('/build-a-wig/beach-wave/customize/');
+      if (isCustomizeDraft) {
+        localStorage.setItem('customizeSelectedPartSelection', 'MIDDLE');
+      } else {
+        localStorage.setItem('selectedPartSelection', 'MIDDLE');
+      }
+      window.dispatchEvent(new CustomEvent('customStorageChange'));
+    } catch {
+      /* ignore */
+    }
+  }, [hasBangsWithSalon, selectedPartSelection]);
+
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
@@ -658,6 +682,7 @@ export default function StylingSelectionPage() {
         if (currentSelections.includes('BANGS')) {
           // If bangs is already selected, replace the secondary option
           setSelectedHairStyling(['BANGS', stylingId]);
+          setSelectedPartSelection('MIDDLE');
         } else {
           // If bangs is not selected, this replaces the current selection (no combination)
           setSelectedHairStyling([stylingId]);
@@ -667,6 +692,13 @@ export default function StylingSelectionPage() {
   };
 
   const handlePartSelectionSelect = (partId: string) => {
+    const bangsWithSalonCombo =
+      selectedHairStyling.includes('BANGS') &&
+      (selectedHairStyling.includes('LAYERS') ||
+        selectedHairStyling.includes('CRIMPS') ||
+        selectedHairStyling.includes('FLAT IRON'));
+    if (bangsWithSalonCombo && partId !== 'MIDDLE') return;
+
     // CRITICAL: Check if styling is actually selected (not empty and not 'NONE')
     const hasStylingSelected = selectedHairStyling.length > 0 && 
                                selectedHairStyling.some(s => s !== 'NONE' && s.trim() !== '');
@@ -1853,7 +1885,9 @@ export default function StylingSelectionPage() {
                 // CRITICAL: Check if styling is actually selected (not empty and not 'NONE')
                 const hasStylingSelected = selectedHairStyling.length > 0 && 
                                            selectedHairStyling.some(s => s !== 'NONE' && s.trim() !== '');
-                const isDisabled = option.id !== 'MIDDLE' && !hasStylingSelected;
+                const isDisabled =
+                  option.id !== 'MIDDLE' &&
+                  (!hasStylingSelected || hasBangsWithSalon);
                 console.log(`Part selection ${option.id}: isDisabled=${isDisabled}, selectedHairStyling:`, selectedHairStyling, 'hasStylingSelected:', hasStylingSelected);
                 return (
                   <ThumbBox
@@ -1864,10 +1898,12 @@ export default function StylingSelectionPage() {
                     isSelected={selectedPartSelection === option.id}
                     onClick={() => {
                       console.log('Part selection clicked:', option.id, 'selectedHairStyling:', selectedHairStyling, 'hasStylingSelected:', hasStylingSelected);
-                      if (option.id === 'MIDDLE' || hasStylingSelected) {
+                      if (option.id === 'MIDDLE') {
+                        handlePartSelectionSelect(option.id);
+                      } else if (hasStylingSelected && !hasBangsWithSalon) {
                         handlePartSelectionSelect(option.id);
                       } else {
-                        console.log('Selection blocked for:', option.id, '- no styling selected');
+                        console.log('Selection blocked for:', option.id, '- no styling selected or bangs+salon locks MIDDLE');
                       }
                     }}
                     imgSize={75}

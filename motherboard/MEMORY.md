@@ -16050,3 +16050,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`falMirrorCompensatedPartForPrompt`** (swap L↔R in Fal prompt text only) was **removed** from **`api/_lib/bawLiveStylingPrompts.ts`** — it made **`partSelection === 'RIGHT'`** use the **LEFT-part** prompt branches, so the model was told **LEFT part** instructions when the customer chose **RIGHT**. Prompts now branch on **`partSelection` directly** (same as API). **RIGHT part** blocks rewritten to: **not** LEFT part; **LEFT part** = part on **image RIGHT**; **RIGHT part** = **opposite** — **image LEFT**; **forbidden** part on **image RIGHT**. Same for **FLAT IRON** `partBlock`, **crimps** `partWordCrimps`, **bangs+UI R**. **`salonPartDirectionSemanticsBlock`** shortened to one simple line (**UI L** / **UI R**). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`** NOIR bullet: dropped **`falMirrorCompensatedPartForPrompt`** mention; states **no L↔R swap in text**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — BANGS + salon: part selection locked to MIDDLE
+
+**Context (this chat):** User asked that when **BANGS** is selected **with** another style (LAYERS / CRIMPS / FLAT IRON), only **MIDDLE** part should be available — **LEFT** and **RIGHT** disabled.
+
+**Decisions / outcomes:** In **`src/pages/build-a-wig/styling/page.tsx`**: **`hasBangsWithSalon`** already means BANGS + one salon style. **Part row:** `isDisabled` for L/R when `hasBangsWithSalon`; click handler only allows L/R when `hasStylingSelected && !hasBangsWithSalon`. **`handlePartSelectionSelect`** ignores L/R when bangs+salon combo. **`useEffect`** forces **`selectedPartSelection`** to **MIDDLE** + localStorage + `customStorageChange` when combo is active and part was L/R. **`handleHairStylingSelect`**: when adding secondary salon style to existing BANGS, **`setSelectedPartSelection('MIDDLE')`** immediately.
+
+**Verification:** `npm run build` passes.
