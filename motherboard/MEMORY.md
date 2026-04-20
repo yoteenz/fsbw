@@ -16082,3 +16082,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`styling/page.tsx`**: **`bangsLocksPartToMiddle`** = `selectedHairStyling.includes('BANGS')` — used for **`useEffect`** force-MIDDLE, **`isDisabled`** on L/R, click guard, and **`handlePartSelectionSelect`** (block L/R whenever BANGS). Selecting **BANGS** alone now **`setSelectedPartSelection('MIDDLE')`** (same as adding salon to BANGS). **`motherboard/CORE.md`**: styling step bullet now says **BANGS alone or combined** → MIDDLE only.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Restore silent Fal live color: API allows signed-in; color page calls postWigPreviewLiveNoirColor
+
+**Context (this chat):** User asked why Fal live color generation was not restored — removing regen UI also removed the client **`postWigPreviewLiveNoirColor`** effect; **`/api/wig-preview/live-noir-color`** still required **founder** session, so most users could not generate missing WebPs.
+
+**Decisions / outcomes:** **`api/wig-preview/live-noir-color.ts`**: **`forceRegenerate`** still **`requireAdminFounder`**; without it, **`getAuthUser`** — any **signed-in** Supabase session (401 if not). **`src/pages/build-a-wig/color/page.tsx`**: **`useEffect`** on NOIR color routes — **`HEAD`** via **`resolveWigPreviewLiveColorTripleIfStored`** first; else **`postWigPreviewLiveNoirColor`** (silent, no status text), **`persistPendingBawNoirLiveColorWigViews`**, **`customStorageChange`**; gen ref ignores stale responses. **`motherboard/CORE.md`**: documents live-noir-color vs after-color-styling founder rules.
+
+**Verification:** `npm run build` passes.

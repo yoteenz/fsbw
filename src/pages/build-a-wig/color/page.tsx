@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -27,6 +27,7 @@ import {
   persistBawNoirLiveColorWigViews,
   persistPendingBawNoirLiveColorWigViews,
 } from '../../../utils/bawNoirLivePreviewStorage';
+import { getAccessToken, postWigPreviewLiveNoirColor } from '../../../utils/api';
 
 interface ColorOption {
   id: string;
@@ -251,6 +252,8 @@ function ColorSelection() {
   }, [location.pathname]); // Only reload when route changes, NOT when selectedColor changes
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
+  /** Bumps when NOIR color Fal fetch starts — ignore stale async results after rapid swatch changes. */
+  const noirLiveColorFetchGenRef = useRef(0);
 
   /** Last good hook-resolved triple — survives transient null while pending updates. */
   const [heldCompositeLiveTriple, setHeldCompositeLiveTriple] = useState<[string, string, string] | null>(null);
@@ -512,6 +515,50 @@ function ColorSelection() {
     noirColorSubPath
       ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
       : baseWigViews;
+
+  /** Signed-in only: ensure missing color-tier WebPs exist (Fal); no regen UI. Skips API when HEAD finds all three. */
+  useEffect(() => {
+    const pathname = location.pathname;
+    const noirColor =
+      pathname.includes('/build-a-wig/noir/edit/color') ||
+      pathname.includes('/build-a-wig/noir/customize/color');
+    if (!noirColor) return;
+    let cancelled = false;
+    void (async () => {
+      const token = await getAccessToken();
+      if (!token || cancelled) return;
+      const gen = ++noirLiveColorFetchGenRef.current;
+      const sel = readBuildWigLivePreviewSelections(pathname);
+      const payload = { unitKey: 'NOIR' as const, color: selectedColor, ...sel };
+      const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
+      if (cancelled || noirLiveColorFetchGenRef.current !== gen) return;
+      if (fromStorage) {
+        persistPendingBawNoirLiveColorWigViews(fromStorage);
+        window.dispatchEvent(new CustomEvent('customStorageChange'));
+        return;
+      }
+      try {
+        const res = await postWigPreviewLiveNoirColor({ color: selectedColor, ...sel });
+        if (cancelled || noirLiveColorFetchGenRef.current !== gen) return;
+        const u = res.publicUrls;
+        if (u.front && u.left && u.right) {
+          const bust = Date.now();
+          const triple: [string, string, string] = [
+            `${u.left}?t=${bust}`,
+            `${u.front}?t=${bust}`,
+            `${u.right}?t=${bust}`,
+          ];
+          persistPendingBawNoirLiveColorWigViews(triple);
+          window.dispatchEvent(new CustomEvent('customStorageChange'));
+        }
+      } catch {
+        /* ignore — optimistic URLs from handleColorSelect may still display */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname, selectedColor]);
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');

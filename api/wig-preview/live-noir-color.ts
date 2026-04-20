@@ -5,8 +5,8 @@ export const config = {
 /**
  * POST /api/wig-preview/live-noir-color
  *
- * Admin-only: ensure NOIR forward mannequin exists in Supabase for **3 angles** at current
- * build selections + chosen color; call fal only for missing angles (saves cost).
+ * **Signed-in** Supabase session: ensure NOIR forward mannequin exists in Supabase for **3 angles** at current
+ * build selections + chosen color; call fal only for missing angles (saves cost). **`forceRegenerate: true`** remains **founder Gmail only**.
  * Paths use **color-tier** hash (`styling` forced to `NONE` in hash) so salon styling changes do not move color files — see `wigPreviewManifestHashLiveColorTier` in `api/_lib/wigPreviewSelectionHash.ts`.
  *
  * Env (Vercel + local):
@@ -17,7 +17,7 @@ export const config = {
  *   WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL, _LEFT_URL, _RIGHT_URL — public URLs to gray-brick refs (one image per angle; **no** logo attachment — logo in prompt text only, matching your successful fal flow)
  *
  * Optional JSON body field **`angle`**: `"left"` | `"front"` | `"right"` — generate **only** that angle in this invocation (for Vercel Hobby ~10s limit). Omit **`angle`** to process all three in one request (needs Pro / higher `maxDuration`).
- * Optional **`forceRegenerate`**: `true` — run fal for the requested angle(s) even if the WebP already exists (admin “regenerate” without deleting in Storage).
+ * Optional **`forceRegenerate`**: `true` — run fal even if WebPs exist (**founder session only**). Without it, any signed-in user may invoke (missing angles only).
  *
  * Optional env **`WIG_PREVIEW_FAL_RESOLUTION`**: `4K` (default), `2K`, or `1K` — use **`1K`** / **`2K`** if Vercel timeouts (e.g. Hobby) or fal cost is an issue.
  *
@@ -305,10 +305,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const admin = await requireAdminFounder(req);
-  if (!admin) {
-    sendJson(res, 403, { error: 'Founder admin session required' });
-    return;
+  const bodyPreview = parseBody(req);
+  const forceRegeneratePreview = readBool(bodyPreview, 'forceRegenerate');
+
+  if (forceRegeneratePreview) {
+    const founder = await requireAdminFounder(req);
+    if (!founder) {
+      sendJson(res, 403, { error: 'Founder admin session required for forceRegenerate' });
+      return;
+    }
+  } else {
+    const user = await getAuthUser(req);
+    if (!user) {
+      sendJson(res, 401, { error: 'Sign in required' });
+      return;
+    }
   }
 
   const falKey = process.env.FAL_KEY?.trim();
@@ -335,9 +346,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const bucket = process.env.WIG_PREVIEW_STORAGE_BUCKET?.trim() || 'live-preview';
   const promptVersion = process.env.WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
 
-  const body = parseBody(req);
+  const body = bodyPreview;
   const singleAngle = readOptionalAngle(body);
-  const forceRegenerate = readBool(body, 'forceRegenerate');
+  const forceRegenerate = forceRegeneratePreview;
   const color = readString(body, 'color', '');
   if (!color) {
     sendJson(res, 400, { error: 'color is required' });
