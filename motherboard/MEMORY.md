@@ -16231,3 +16231,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 - **`motherboard/CORE.md`**: Documented **`+ LIST`** gate and portal behavior on **`/bag`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — `POST /api/live-wig-after-color-styling`: remove founder-only guard (fix LIVE PREVIEW error)
+
+**Context (this chat):** User saw **LIVE PREVIEW: Founder admin session required** on the NOIR styling step. That string is the API’s **403** body from **`api/live-wig-after-color-styling.ts`**, which still used **`requireAdminFounder`** while **`bawLiveStylingPrompts.ts` / `promptTemplate.mjs`** only hold prompt text — unrelated to auth.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: replace **`requireAdminFounder`** with **`getAuthUser`** — any valid **Bearer** Supabase session may call (aligned with **`POST /api/wig-preview/live-noir-color`** and with **`motherboard/CORE.md`** stating styling **`forceRegenerate`** is not founder-only). Missing auth → **401** `{ error: 'Sign in required' }`. Color-missing message: drop “**(admin)**” from the NOIR Color hint.
+
+**Verification:** `npm run build` passes.

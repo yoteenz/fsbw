@@ -3,7 +3,7 @@ export const config = { maxDuration: 120 };
 /**
  * POST /api/live-wig-after-color-styling
  *
- * Admin-only. Runs fal once per angle.
+ * **Signed-in** Supabase session (Bearer JWT). Runs fal once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
  *
  * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
  * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
@@ -25,7 +25,7 @@ export const config = { maxDuration: 120 };
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdminFounder } from './_lib/adminAuth.js';
+import { getAuthUser } from './_lib/auth.js';
 import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 import {
   wigPreviewManifestHash,
@@ -141,9 +141,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    const admin = await requireAdminFounder(req);
-    if (!admin) {
-      sendJson(res, 403, { error: 'Founder admin session required' });
+    const user = await getAuthUser(req);
+    if (!user) {
+      sendJson(res, 401, { error: 'Sign in required' });
       return;
     }
 
@@ -258,7 +258,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       if (colorDlErr) {
         sendJson(res, 400, {
           error:
-            'Color preview files not found for this combo. Open NOIR → Color (admin) first so left/front/right color WebPs exist, then try styling again.',
+            'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
           colorTierHash,
           missingColorPath: colorPath,
         });
