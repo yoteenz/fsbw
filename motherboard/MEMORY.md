@@ -15993,6 +15993,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — Q: why OFF BLACK thumbnail settings differed?
+
+**Context (this chat):** User asked why **OFF BLACK** thumbnail **settings** differed from other colors; they should be the same.
+
+**Answer / code reality:** Historically OFF BLACK used **static** `/assets/natural*.png` for the **hero/thumb strip** while paid colors used **`wig-preview-live`** WebPs — different **`hideDuplicateBrick`** path (extra CSS brick vs live raster), gap (**2px** + nudges vs **12px**), and image sizing. **Commit `0b9c4ff6`** aligned OFF BLACK with other swatches for **live color** resolution; **`BawNoirWigPreviewHeroThumbs`** no longer has OFF BLACK–only thumb props. **Color picker** swatches (`ThumbBox`) always used the same **`imgSize`/`containerSize`** for every option — only **hex** differs. Updated stale **`thumbSpacingLikeSubLive`** JSDoc in **`BawNoirWigPreviewFrames.tsx`** (removed “OFF BLACK” mention).
+
+**Verification:** comment-only; `npm run build` assumed ok.
+
+---
+
 ## 2026-04-15 — BAW hero width + hub / OFF BLACK thumb sizing
 
 **Context (this chat):** User wanted **main hero width** on BAW **sub-pages** to match the **hub**; **hub** and **OFF BLACK** color thumbs to match **other sub-pages**; **mannequin images** in those thumbs **~15% larger**.

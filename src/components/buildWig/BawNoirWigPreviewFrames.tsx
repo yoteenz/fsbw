@@ -45,8 +45,7 @@ type Props = {
   thumbRowClassName?: string;
   /**
    * Use **12px** thumb gap + no per-frame nudges (same as NOIR customize sub-pages with live WebPs).
-   * Set on BAW **hub** via pathname; optionally on **color** sub-page when showing static naturals (e.g. OFF BLACK)
-   * so thumbnails match live sub-pages.
+   * BAW **product hub** also gets this via pathname (`isBawProductHubThumbPathname`); pass explicitly only if a page needs hub spacing outside those routes.
    */
   thumbSpacingLikeSubLive?: boolean;
 };
