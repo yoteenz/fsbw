@@ -378,6 +378,9 @@ export default function StylingSelectionPage() {
       selectedHairStyling.includes('CRIMPS') ||
       selectedHairStyling.includes('FLAT IRON'));
 
+  /** Any BANGS selection (alone or + salon): part UI is MIDDLE only — L/R disabled (API/prompts use middle for bangs combos). */
+  const bangsLocksPartToMiddle = selectedHairStyling.includes('BANGS');
+
   const salonStorageMode: BawNoirLiveStylingSalonMode = hasLayersLiveStyling
     ? hasBangsWithSalon
       ? 'LAYERS_BANGS'
@@ -405,9 +408,9 @@ export default function StylingSelectionPage() {
     selectedPartSelection === 'MIDDLE' &&
     !selectedHairStyling.includes('BANGS');
 
-  /** BANGS + LAYERS/CRIMPS/FLAT IRON: only MIDDLE part (L/R disabled in UI). */
+  /** BANGS (alone or + salon): only MIDDLE part (L/R disabled in UI). */
   useEffect(() => {
-    if (!hasBangsWithSalon || selectedPartSelection === 'MIDDLE') return;
+    if (!bangsLocksPartToMiddle || selectedPartSelection === 'MIDDLE') return;
     setSelectedPartSelection('MIDDLE');
     try {
       const p = window.location.pathname;
@@ -427,7 +430,7 @@ export default function StylingSelectionPage() {
     } catch {
       /* ignore */
     }
-  }, [hasBangsWithSalon, selectedPartSelection]);
+  }, [bangsLocksPartToMiddle, selectedPartSelection]);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -677,6 +680,7 @@ export default function StylingSelectionPage() {
       if (stylingId === 'BANGS') {
         // If selecting bangs, it becomes the primary selection (replaces current selection)
         setSelectedHairStyling(['BANGS']);
+        setSelectedPartSelection('MIDDLE');
       } else {
         // If selecting non-bangs option
         if (currentSelections.includes('BANGS')) {
@@ -692,12 +696,7 @@ export default function StylingSelectionPage() {
   };
 
   const handlePartSelectionSelect = (partId: string) => {
-    const bangsWithSalonCombo =
-      selectedHairStyling.includes('BANGS') &&
-      (selectedHairStyling.includes('LAYERS') ||
-        selectedHairStyling.includes('CRIMPS') ||
-        selectedHairStyling.includes('FLAT IRON'));
-    if (bangsWithSalonCombo && partId !== 'MIDDLE') return;
+    if (selectedHairStyling.includes('BANGS') && partId !== 'MIDDLE') return;
 
     // CRITICAL: Check if styling is actually selected (not empty and not 'NONE')
     const hasStylingSelected = selectedHairStyling.length > 0 && 
@@ -1887,7 +1886,7 @@ export default function StylingSelectionPage() {
                                            selectedHairStyling.some(s => s !== 'NONE' && s.trim() !== '');
                 const isDisabled =
                   option.id !== 'MIDDLE' &&
-                  (!hasStylingSelected || hasBangsWithSalon);
+                  (!hasStylingSelected || bangsLocksPartToMiddle);
                 console.log(`Part selection ${option.id}: isDisabled=${isDisabled}, selectedHairStyling:`, selectedHairStyling, 'hasStylingSelected:', hasStylingSelected);
                 return (
                   <ThumbBox
@@ -1900,10 +1899,10 @@ export default function StylingSelectionPage() {
                       console.log('Part selection clicked:', option.id, 'selectedHairStyling:', selectedHairStyling, 'hasStylingSelected:', hasStylingSelected);
                       if (option.id === 'MIDDLE') {
                         handlePartSelectionSelect(option.id);
-                      } else if (hasStylingSelected && !hasBangsWithSalon) {
+                      } else if (hasStylingSelected && !bangsLocksPartToMiddle) {
                         handlePartSelectionSelect(option.id);
                       } else {
-                        console.log('Selection blocked for:', option.id, '- no styling selected or bangs+salon locks MIDDLE');
+                        console.log('Selection blocked for:', option.id, '- no styling selected or BANGS locks MIDDLE');
                       }
                     }}
                     imgSize={75}

@@ -16072,3 +16072,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** In **`src/pages/build-a-wig/styling/page.tsx`**: **`hasBangsWithSalon`** already means BANGS + one salon style. **Part row:** `isDisabled` for L/R when `hasBangsWithSalon`; click handler only allows L/R when `hasStylingSelected && !hasBangsWithSalon`. **`handlePartSelectionSelect`** ignores L/R when bangs+salon combo. **`useEffect`** forces **`selectedPartSelection`** to **MIDDLE** + localStorage + `customStorageChange` when combo is active and part was L/R. **`handleHairStylingSelect`**: when adding secondary salon style to existing BANGS, **`setSelectedPartSelection('MIDDLE')`** immediately.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — BANGS-only: also lock PART to MIDDLE (L/R disabled)
+
+**Context (this chat):** User noted **L/R** were disabled for **BANGS + salon** but not when **only BANGS** is selected.
+
+**Decisions / outcomes:** **`styling/page.tsx`**: **`bangsLocksPartToMiddle`** = `selectedHairStyling.includes('BANGS')` — used for **`useEffect`** force-MIDDLE, **`isDisabled`** on L/R, click guard, and **`handlePartSelectionSelect`** (block L/R whenever BANGS). Selecting **BANGS** alone now **`setSelectedPartSelection('MIDDLE')`** (same as adding salon to BANGS). **`motherboard/CORE.md`**: styling step bullet now says **BANGS alone or combined** → MIDDLE only.
+
+**Verification:** `npm run build` passes.
