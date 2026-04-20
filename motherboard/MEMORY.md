@@ -16242,6 +16242,8 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 **Decisions / outcomes:** **`src/utils/api.ts` — `getAccessToken`**: decode JWT **`exp`**; if expired or within **~90s**, **`refreshSession()`** then return new **`access_token`**. Fallback order: **`getSession`** → storage blob → refresh → **`isSignedIn`** refresh retry.
 
+**Follow-up (same issue persisted):** **`refreshSession()`** with no args only works when the Supabase client **already** has a session with **`refresh_token`** in memory. If **`localStorage`** has **`sb-*-auth-token`** but **`getSession()`** is empty/stale, refresh fails silently. **Fix:** **`hydrateSupabaseSessionFromStorageIfNeeded`** calls **`supabase.auth.setSession({ access_token, refresh_token })`** from the storage blob when the in-memory token is missing or expired — **`setSession`** refreshes expired access tokens using the refresh token (per **`@supabase/auth-js`**). Then **`refreshSession({ refresh_token })`** as a fallback.
+
 **Verification:** `npm run build` passes.
 
 ---
