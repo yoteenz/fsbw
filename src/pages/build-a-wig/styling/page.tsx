@@ -19,12 +19,15 @@ import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
 } from '../../../utils/buildWigLivePreviewSelections';
+import { wigPreviewLiveColorTriplePublicUrlsForSelections } from '../../../utils/wigPreviewLiveStoragePublicUrls';
 import {
+  BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   persistBawNoirLiveBangsWigViews,
   persistBawNoirLiveStylingWigViews,
   readBawNoirLiveBangsWigViews,
   readBawNoirLiveStylingWigViewsForPart,
   type BawNoirLiveStylingSalonMode,
+  type BawNoirLiveWigViewsTriple,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -421,6 +424,45 @@ export default function StylingSelectionPage() {
     selectedPartSelection === 'MIDDLE' &&
     !selectedHairStyling.includes('BANGS');
 
+  /**
+   * Color-tier URLs for **current** `readBuildWigLivePreviewColor` + selections (same Storage hash as live color API).
+   * `bawNoirLiveColorWigViews` alone can lag **selectedColor** (e.g. still OFF BLACK after picking a paid swatch) — that made flat-iron middle look wrong.
+   */
+  const [flatIronMiddleColorTierPreview, setFlatIronMiddleColorTierPreview] =
+    useState<BawNoirLiveWigViewsTriple | null>(null);
+
+  useEffect(() => {
+    if (!flatIronMiddleColorTierOnly || !location.pathname.includes('/build-a-wig/noir/')) {
+      setFlatIronMiddleColorTierPreview(null);
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      const pathname = location.pathname;
+      const sel = readBuildWigLivePreviewSelections(pathname);
+      const color = readBuildWigLivePreviewColor(pathname);
+      const triple = await wigPreviewLiveColorTriplePublicUrlsForSelections({
+        unitKey: 'NOIR',
+        color,
+        ...sel,
+      });
+      if (!cancelled) setFlatIronMiddleColorTierPreview(triple);
+    };
+    void load();
+    const onStorage = () => {
+      void load();
+    };
+    window.addEventListener('customStorageChange', onStorage);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, onStorage);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('customStorageChange', onStorage);
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, onStorage);
+    };
+  }, [flatIronMiddleColorTierOnly, location.pathname]);
+
   /** BANGS (alone or + salon): only MIDDLE part (L/R disabled in UI). */
   useEffect(() => {
     if (!bangsLocksPartToMiddle || selectedPartSelection === 'MIDDLE') return;
@@ -591,8 +633,9 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    flatIronMiddleColorTierOnly && liveNoirCompositeWigViews
-      ? liveNoirCompositeWigViews
+    flatIronMiddleColorTierOnly &&
+    (flatIronMiddleColorTierPreview ?? liveNoirCompositeWigViews)
+      ? (flatIronMiddleColorTierPreview ?? liveNoirCompositeWigViews)!
       : noirLiveFalEligible && hasSalonPartLiveStyling && liveStylingWigViews
         ? liveStylingWigViews
         : noirLiveFalEligible && hasBangsOnlyLive && liveBangsWigViews

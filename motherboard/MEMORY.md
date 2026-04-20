@@ -16346,6 +16346,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-22 — FLAT IRON + MIDDLE: hero uses hashed color URLs from current swatch (fix OFF BLACK stuck)
+
+**Context (this chat):** User: **M part flat iron** preview showed **OFF BLACK** instead of the **selected color**.
+
+**Root cause:** **`flatIronMiddleColorTierOnly`** used **`liveNoirCompositeWigViews`** from **`resolveAdminNoirHubLiveWigViewsFromStorage`** → **`bawNoirLiveColorWigViews`** in localStorage. That triple can stay on an **old** color (e.g. OFF BLACK) after **`selectedColor`** / hub keys update until the color page **commits** new WebPs to **`bawNoirLiveColorWigViews`**.
+
+**Decisions / outcomes:** **`src/pages/build-a-wig/styling/page.tsx`**: state **`flatIronMiddleColorTierPreview`** — async **`wigPreviewLiveColorTriplePublicUrlsForSelections({ unitKey: 'NOIR', color: readBuildWigLivePreviewColor(pathname), ...readBuildWigLivePreviewSelections(pathname) })`** when **`flatIronMiddleColorTierOnly`** on NOIR styling routes. **`wigViews`** prefers **`flatIronMiddleColorTierPreview ?? liveNoirCompositeWigViews`**. Listeners: **`customStorageChange`**, **`storage`**, **`BAW_NOIR_LIVE_COLOR_VIEWS_EVENT`**. **`motherboard/CORE.md`**: MIDDLE + FLAT IRON UI bullet updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-22 — Live styling: per-angle color WebP + prompt part direction (no MIDDLE-part input for UI R)
 
 **Context (this chat):** User asked that the **input** be **that camera angle** **and** **part direction** (prompt) for **L & R** parts and angles **for all styles** — i.e. do **not** drive side-angle Fal from **MIDDLE-part** after-color WebPs.
