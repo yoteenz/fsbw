@@ -14,6 +14,7 @@ import {
   postLiveWigAfterColorStylingRegenerateAngle,
 } from '../../../utils/api';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
+import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
@@ -154,8 +155,10 @@ export default function StylingSelectionPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
 
-  /** Founder only: Fal regen UI + API calls for after-color styling. Everyone sees saved WebPs via `liveNoirCompositeWigViews`. */
+  /** Founder only: Fal regen **buttons** (forceRegenerate). */
   const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
+  /** Premium (or BLACK tier): live after-color Fal fetches + composite hero — same gate as BAW premium steps. */
+  const [noirLiveFalEligible, setNoirLiveFalEligible] = useState(() => isPremiumMemberForGatedFeatures());
   const [liveStylingWigViews, setLiveStylingWigViews] = useState<[string, string, string] | null>(null);
   const [liveBangsWigViews, setLiveBangsWigViews] = useState<[string, string, string] | null>(null);
   const [liveStylingLoading, setLiveStylingLoading] = useState(false);
@@ -200,6 +203,7 @@ export default function StylingSelectionPage() {
       p.includes('/build-a-wig/noir/edit/styling') || p.includes('/build-a-wig/noir/customize/styling');
     if (!noirStyling) {
       setFounderNoirFalRegenUi(false);
+      setNoirLiveFalEligible(false);
       setLiveStylingWigViews(null);
       setLiveBangsWigViews(null);
       setLiveStylingError(null);
@@ -207,9 +211,16 @@ export default function StylingSelectionPage() {
     }
     let cancelled = false;
     const refreshFounderTools = () => {
-      const ok = isFounderNoirFalRegenUiVisible();
-      if (!cancelled) setFounderNoirFalRegenUi(ok);
-      if (ok) {
+      const founder = isFounderNoirFalRegenUiVisible();
+      const premium = isPremiumMemberForGatedFeatures();
+      if (!cancelled) {
+        setFounderNoirFalRegenUi(founder);
+        setNoirLiveFalEligible(premium);
+      }
+      if (!premium) {
+        setLiveStylingWigViews(null);
+        setLiveBangsWigViews(null);
+      } else {
         const rawPart = (localStorage.getItem('selectedPartSelection') || 'MIDDLE').toUpperCase();
         const part: 'MIDDLE' | 'LEFT' | 'RIGHT' =
           rawPart === 'LEFT' || rawPart === 'RIGHT' || rawPart === 'MIDDLE' ? rawPart : 'MIDDLE';
@@ -246,10 +257,12 @@ export default function StylingSelectionPage() {
     };
     window.addEventListener('signInStateChanged', onAuth);
     window.addEventListener('customStorageChange', onAuth);
+    window.addEventListener('focus', onAuth);
     return () => {
       cancelled = true;
       window.removeEventListener('signInStateChanged', onAuth);
       window.removeEventListener('customStorageChange', onAuth);
+      window.removeEventListener('focus', onAuth);
     };
   }, [location.pathname, selectedPartSelection, selectedHairStyling]);
 
@@ -435,7 +448,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      founderNoirFalRegenUi &&
+      noirLiveFalEligible &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasSalonPartLiveStyling) {
@@ -507,7 +520,7 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveStylingLoading(false));
   }, [
-    founderNoirFalRegenUi,
+    noirLiveFalEligible,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
@@ -521,7 +534,7 @@ export default function StylingSelectionPage() {
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
-      founderNoirFalRegenUi &&
+      noirLiveFalEligible &&
       (pathname.includes('/build-a-wig/noir/edit/styling') ||
         pathname.includes('/build-a-wig/noir/customize/styling'));
     if (!noir || !hasBangsOnlyLive) {
@@ -570,7 +583,7 @@ export default function StylingSelectionPage() {
       })
       .finally(() => setLiveBangsLoading(false));
   }, [
-    founderNoirFalRegenUi,
+    noirLiveFalEligible,
     location.pathname,
     selectedHairStyling,
     selectedPartSelection,
@@ -580,18 +593,19 @@ export default function StylingSelectionPage() {
   const wigViews =
     flatIronMiddleColorTierOnly && liveNoirCompositeWigViews
       ? liveNoirCompositeWigViews
-      : founderNoirFalRegenUi && hasSalonPartLiveStyling && liveStylingWigViews
+      : noirLiveFalEligible && hasSalonPartLiveStyling && liveStylingWigViews
         ? liveStylingWigViews
-        : founderNoirFalRegenUi && hasBangsOnlyLive && liveBangsWigViews
+        : noirLiveFalEligible && hasBangsOnlyLive && liveBangsWigViews
           ? liveBangsWigViews
           : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
             ? liveNoirCompositeWigViews
             : baseWigViews;
 
-  const showNoirFounderFalHint =
-    isFounderNoirFalRegenUiVisible() && location.pathname.includes('/build-a-wig/noir/');
+  const showNoirFalHintPremium =
+    noirLiveFalEligible && location.pathname.includes('/build-a-wig/noir/');
   const showNoirLiveStylingRegenControls =
-    showNoirFounderFalHint &&
+    founderNoirFalRegenUi &&
+    location.pathname.includes('/build-a-wig/noir/') &&
     (hasSalonPartLiveStyling || hasBangsOnlyLive) &&
     !flatIronMiddleColorTierOnly;
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
@@ -1572,7 +1586,7 @@ export default function StylingSelectionPage() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {showNoirFounderFalHint && !showNoirLiveStylingRegenControls && (
+            {showNoirFalHintPremium && !showNoirLiveStylingRegenControls && (
               <p
                 className="text-center mb-2 px-2"
                 style={{
@@ -1580,7 +1594,9 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: '#808080',
                   maxWidth: '280px',
+                  display: 'none',
                 }}
+                aria-hidden
               >
                 Fal regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
               </p>
@@ -1593,7 +1609,9 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: liveStylingError ? '#EB1C24' : '#808080',
                   maxWidth: '280px',
+                  display: 'none',
                 }}
+                aria-hidden
               >
                 {liveStylingLoading
                   ? `LIVE PREVIEW: ${salonLivePreviewLabel}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
@@ -1609,7 +1627,8 @@ export default function StylingSelectionPage() {
             {showNoirLiveStylingRegenControls && (
               <div
                 className="flex flex-col items-center gap-y-2 mb-2 px-2"
-                style={{ maxWidth: '280px' }}
+                style={{ maxWidth: '280px', display: 'none' }}
+                aria-hidden
               >
                 <button
                   type="button"
@@ -1795,7 +1814,7 @@ export default function StylingSelectionPage() {
                     whiteSpace: 'nowrap',
                     overflow: 'visible',
                     width: 'max-content',
-                    ...(showNoirFounderFalHint ? { pointerEvents: 'none' as const } : {}),
+                    ...(showNoirLiveStylingRegenControls ? { pointerEvents: 'none' as const } : {}),
                     fontSize: (() => {
                       const pathname = location.pathname;
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

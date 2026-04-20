@@ -28,6 +28,7 @@ import {
   persistPendingBawNoirLiveColorWigViews,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { getAccessToken, postWigPreviewLiveNoirColor } from '../../../utils/api';
+import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 
 interface ColorOption {
   id: string;
@@ -254,6 +255,10 @@ function ColorSelection() {
   const [showLoading, setShowLoading] = useState(true);
   /** Bumps when NOIR color Fal fetch starts — ignore stale async results after rapid swatch changes. */
   const noirLiveColorFetchGenRef = useRef(0);
+  /** Re-sync when premium status may change (same gate as other BAW premium steps). */
+  const [noirLiveColorPremiumGate, setNoirLiveColorPremiumGate] = useState(() =>
+    isPremiumMemberForGatedFeatures()
+  );
 
   /** Last good hook-resolved triple — survives transient null while pending updates. */
   const [heldCompositeLiveTriple, setHeldCompositeLiveTriple] = useState<[string, string, string] | null>(null);
@@ -276,6 +281,19 @@ function ColorSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setNoirLiveColorPremiumGate(isPremiumMemberForGatedFeatures());
+    sync();
+    window.addEventListener('focus', sync);
+    window.addEventListener('signInStateChanged', sync as EventListener);
+    window.addEventListener('customStorageChange', sync);
+    return () => {
+      window.removeEventListener('focus', sync);
+      window.removeEventListener('signInStateChanged', sync as EventListener);
+      window.removeEventListener('customStorageChange', sync);
+    };
+  }, []);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -516,13 +534,13 @@ function ColorSelection() {
       ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
       : baseWigViews;
 
-  /** Signed-in only: ensure missing color-tier WebPs exist (Fal); no regen UI. Skips API when HEAD finds all three. */
+  /** Premium + signed-in: ensure missing color-tier WebPs exist (Fal); no regen UI. Skips API when HEAD finds all three. */
   useEffect(() => {
     const pathname = location.pathname;
     const noirColor =
       pathname.includes('/build-a-wig/noir/edit/color') ||
       pathname.includes('/build-a-wig/noir/customize/color');
-    if (!noirColor) return;
+    if (!noirColor || !noirLiveColorPremiumGate) return;
     let cancelled = false;
     void (async () => {
       const token = await getAccessToken();
@@ -558,7 +576,7 @@ function ColorSelection() {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname, selectedColor]);
+  }, [location.pathname, selectedColor, noirLiveColorPremiumGate]);
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -795,7 +813,7 @@ function ColorSelection() {
             window.dispatchEvent(new CustomEvent('customStorageChange'));
           }
         } catch {
-          /* ignore — founder `useEffect` still resolves via HEAD/API */
+          /* ignore — premium silent Fal effect may still resolve via HEAD/API */
         }
         window.dispatchEvent(new CustomEvent('customStorageChange'));
       })();

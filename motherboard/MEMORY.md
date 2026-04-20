@@ -16117,6 +16117,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — NOIR live preview: premium gate for Fal (not founder); hide regen text
+
+**Context (this chat):** User reported live color/styling preview still broken for admin founder signed in; wanted premium gate only, regen **text** hidden (not removed in a way that breaks preview).
+
+**Root cause:** **`styling/page.tsx`** tied **after-color Fal** fetches and **`wigViews`** to **`founderNoirFalRegenUi`** (`isFounderNoirFalRegenUiVisible`) — non-founder premium users never ran **`postLiveWigAfterColorStyling`** or got salon/bangs triples.
+
+**Decisions / outcomes:** **`styling/page.tsx`**: **`noirLiveFalEligible`** = **`isPremiumMemberForGatedFeatures()`** for API/cache/`wigViews`; **`founderNoirFalRegenUi`** only for regen controls; LIVE PREVIEW + regen blocks **`display: none`** + **`aria-hidden`**; hero **`pointerEvents: none`** only when regen strip exists (founder). **`color/page.tsx`**: silent **`postWigPreviewLiveNoirColor`** gated on **premium +** token; sync premium on focus/sign-in/customStorageChange. **`motherboard/CORE.md`**: NOIR bullet updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — live-noir-color: remove founder-only `forceRegenerate` block
 
 **Context (this chat):** User asked to remove the founder-only block on **`POST /api/wig-preview/live-noir-color`** so **`forceRegenerate`** is not restricted to the founder Gmail account.
