@@ -16385,3 +16385,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: For **`middleFlatIron && partStyling === 'LEFT'`**, set **`publicUrls.right`** via **`getPublicUrl(flat-iron-right-part/.../right.webp)`** only — **no** Storage **`download()`** probe (could fail in serverless and skip the override like **6eee1826**’s conditional). **`outputPaths.right`** stays **`flat-iron-left-part/...`**; **no** byte copy. **`motherboard/CORE.md`**: bullet updated.
 
 **Verification:** `npm run build` passes.
+
+**Superseded:** User reported parts still **synced** — **`publicUrls.right`** must **not** point at **RIGHT-part** URLs when **`partSelection === 'LEFT'`**. Removed **`flatIronLeftPartRightCameraDisplayPublicUrl`** / **`flatIronLeftRightThumbDisplayUrl`** entirely; **`publicUrls.*`** = **`getPublicUrl(outPaths.*)`** only. **`motherboard/CORE.md`**: removed **FLAT IRON + UI LEFT** publicUrl override bullet.
+
+---
+
+## 2026-04-22 — FLAT IRON: no LEFT↔RIGHT `publicUrls` linking (fully independent parts)
+
+**Context (this chat):** User: parts still **synced** when they shouldn’t be — **`publicUrls.right`** for **LEFT** was still wired to **RIGHT-part** Storage ( **`getPublicUrl` on `flat-iron-right-part/...`** ).
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed all **`flatIronLeftRightThumbDisplayUrl`** / RIGHT-folder path logic for **UI L**. Response **`publicUrls`** always match **`outPaths`** for the requested **`partSelection`** only. **`motherboard/CORE.md`**: removed **FLAT IRON + UI LEFT** `publicUrls` override sentence.
+
+**Verification:** `npm run build` passes.

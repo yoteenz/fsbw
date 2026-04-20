@@ -14,8 +14,7 @@ export const config = { maxDuration: 120 };
  *
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
- * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/` — Fal **only** writes the current **`partSelection`** folder.
- * **FLAT IRON + UI LEFT (R / right-camera thumb):** **`publicUrls.right`** = public URL for **`flat-iron-right-part/.../right.webp`** (same as **6eee1826** `flatIronLeftRightThumbOverrideUrl` when file existed). **No** Storage download probe — **`getPublicUrl` only**; **no** upload into LEFT folder.
+ * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/` — Fal **only** writes the current **`partSelection`** folder. **`publicUrls`** always match **`outputPaths`** for that part — **no** cross-linking LEFT vs RIGHT Storage folders.
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -115,21 +114,6 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`download ${url}: ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
-}
-
-/**
- * **FLAT IRON + LEFT:** **`publicUrls.right`** (R camera thumb) = **RIGHT-part** folder **`right.webp`** public URL.
- * Same intent as **6eee1826** (`flatIronLeftRightThumbOverrideUrl`), but **no Storage `download()` probe** — serverless
- * download can fail spuriously and skip the override; the client still cache-busts (`?t=`) when persisting the triple.
- * Fal uploads stay under **`flat-iron-left-part/`** only; we do **not** copy bytes into that path.
- */
-function flatIronLeftPartRightCameraDisplayPublicUrl(
-  supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
-  bucket: string,
-  rightPartFolderOutPaths: { front: string; left: string; right: string }
-): string | null {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(rightPartFolderOutPaths.right);
-  return data?.publicUrl ?? null;
 }
 
 /** Origin fal can fetch for static `/assets/natural *.png` (MIDDLE + FLAT IRON second ref). */
@@ -251,23 +235,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
-    /** FLAT IRON + LEFT: optional **display** URL for R thumb = RIGHT-part folder `right.webp` (no upload into LEFT folder). */
-    const flatIronRightPartFolderForLeftThumbDisplay =
-      middleFlatIron && partStyling === 'LEFT'
-        ? hasBangs
-          ? wigPreviewLiveFlatIronWithBangsPartFolder('RIGHT')
-          : wigPreviewLiveFlatIronPartFolder('RIGHT')
-        : null;
-    const flatIronRightPartOutPathsForLeftThumbDisplay =
-      flatIronRightPartFolderForLeftThumbDisplay !== null
-        ? wigPreviewLiveAfterColorStylingPaths(
-            promptVersion,
-            'NOIR',
-            colorTierHash,
-            flatIronRightPartFolderForLeftThumbDisplay
-          )
-        : null;
-
     let supabase;
     try {
       supabase = getSupabaseAdminServiceRole();
@@ -275,15 +242,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       sendJson(res, 503, { error: 'SUPABASE_SERVICE_ROLE_KEY required for Storage upload' });
       return;
     }
-
-    const flatIronLeftRightThumbDisplayUrl =
-      flatIronRightPartOutPathsForLeftThumbDisplay !== null
-        ? flatIronLeftPartRightCameraDisplayPublicUrl(
-            supabase,
-            bucket,
-            flatIronRightPartOutPathsForLeftThumbDisplay
-          )
-        : null;
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
@@ -302,7 +260,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
         const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
         const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
-        const pubRightOut = flatIronLeftRightThumbDisplayUrl ?? pubRight?.publicUrl ?? null;
         const skippedAngles = [...anglesToRun];
         sendJson(res, 200, {
           ok: true,
@@ -314,7 +271,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           publicUrls: {
             front: pubFront?.publicUrl ?? null,
             left: pubLeft?.publicUrl ?? null,
-            right: pubRightOut,
+            right: pubRight?.publicUrl ?? null,
           },
           generated: [] as string[],
           skipped: skippedAngles,
@@ -427,7 +384,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
-    const pubRightOut = flatIronLeftRightThumbDisplayUrl ?? pubRight?.publicUrl ?? null;
 
     sendJson(res, 200, {
       ok: true,
@@ -439,7 +395,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       publicUrls: {
         front: pubFront?.publicUrl ?? null,
         left: pubLeft?.publicUrl ?? null,
-        right: pubRightOut,
+        right: pubRight?.publicUrl ?? null,
       },
       generated,
       skipped,
