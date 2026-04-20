@@ -16433,3 +16433,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Restored the **full UI R PART OVERRIDE** paragraph to match **`72127d59`** in **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — BAW styling vs **`72127d59`**: audit + `promptTemplate.mjs` parity
+
+**Context (this chat):** User asked to **restore BAW styling entirely** to commit **`72127d59`** to **restore generations**, **without** reverting **sign-in, cart**, or other **non-BAW** edits.
+
+**Audit:** **`72127d59`** only touched **`api/_lib/bawLiveStylingPrompts.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**, and **`motherboard/MEMORY.md`** — it **restored the full UI R PART OVERRIDE** string. **`api/_lib/bawLiveStylingPrompts.ts`** on **`master`** already **matches** **`72127d59`**. **`api/live-wig-after-color-styling.ts`** at **`72127d59`** was **admin-founder-only** and **lacked** warm-cache / signed-in-user behavior — **not** restored (would break premium users + cache-only). **`src/pages/build-a-wig/styling/page.tsx`** was **unchanged** in **`72127d59`**; a blind checkout would **drop** FLAT IRON color preview, R-thumb probe, founder regen for MIDDLE, etc.
+
+**Decisions / outcomes:** **`scripts/wig-preview/promptTemplate.mjs`**: **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** = array **`.join(' ')`** as in **`72127d59`** (script parity; fidelity text unchanged).
+
+**Verification:** `npm run build` passes.

@@ -6,14 +6,12 @@
  */
 
 /** Keep in sync with `api/_lib/bawFalEditFidelityPrompt.ts` — reduces plastic/waxy drift on edit passes. */
-export const BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES = [
+export const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
   'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
   'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
   'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
   'Keep the **FRONTAL SLAYER** chest logo **sharp**, same **size** and **placement**, clean edges — **no** smeared, redrawn, or re-typed lettering.',
-];
-
-export const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES.join(' ');
+].join(' ');
 
 // =============================================================================
 // WIG CONSULT — Step 1 (1 ref only) + Steps 2–3. Not BAW.
