@@ -16321,3 +16321,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/_lib/bawLiveStylingPrompts.ts`**: **`buildUiRightSalonFromMiddlePartOutputPrompt`** now opens with one sentence (**Recreate…** left-third groove, no mirror, re-part only), optional short **bangs** line when **`includeBangs`**, then concatenates **`BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES`** with the first line stripped of its old “Treat the input…” prefix and prefixed by **“Do not treat the input as a scene to repaint:”** + body, then **`restFidelity.join`**, then logo legibility + output quality lines. Removed **INPUT**, **styleKeep**, **Camera**, **`salonOneShoulderDrapeBlock`**, and duplicate **`bawFalEditPreserveReferenceBlock()`** from this builder. **`scripts/wig-preview/promptTemplate.mjs`**: **`BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES`** array + same **`buildUiRightSalonFromMiddlePartOutputPrompt`** logic; **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** = **`join(' ')`** of lines. **`motherboard/CORE.md`**: NOIR bullet updated for UI R + LAYERS/CRIMPS prompt shape.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-21 — FLAT IRON UI L: R thumbnail uses RIGHT-part flat-iron `right.webp`
+
+**Context (this chat):** User asked to use the **current R-part flat iron** asset for the **right side thumbnail angle** when **L part** flat iron is selected (triple index **2** / **`publicUrls.right`**).
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: After **`getSupabaseAdminServiceRole`**, when **`middleFlatIron && partStyling === 'LEFT'`**, if **`flat-iron-right-part/.../right.webp`** (or **with-bangs** folder) exists in Storage, set **`flatIronLeftRightThumbOverrideUrl`** to its public URL. Both **cache-only** and **post-Fal** JSON responses use **`publicUrls.right = flatIronLeftRightThumbOverrideUrl ?? default`**; **`outputPaths`** unchanged (LEFT-part folder). **`motherboard/CORE.md`**: NOIR bullet — FLAT IRON + UI LEFT note.
+
+**Verification:** `npm run build` passes.

@@ -17,6 +17,7 @@ export const config = { maxDuration: 120 };
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
  * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/`
+ * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -238,6 +239,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
+    /** FLAT IRON + UI LEFT: **right** camera thumbnail uses the same asset as **RIGHT** part `right.webp` (product request). */
+    const flatIronRightPartFolderForLeftThumb =
+      middleFlatIron && partStyling === 'LEFT'
+        ? hasBangs
+          ? wigPreviewLiveFlatIronWithBangsPartFolder('RIGHT')
+          : wigPreviewLiveFlatIronPartFolder('RIGHT')
+        : null;
+    const flatIronRightPartOutPathsForLeftThumb =
+      flatIronRightPartFolderForLeftThumb !== null
+        ? wigPreviewLiveAfterColorStylingPaths(
+            promptVersion,
+            'NOIR',
+            colorTierHash,
+            flatIronRightPartFolderForLeftThumb
+          )
+        : null;
+
     /** UI R + LAYERS/CRIMPS: use **MIDDLE-part** after-color output as Fal input (not raw color-tier WebP). */
     const useMiddlePartOutputAsUiRightInput =
       partStyling === 'RIGHT' && (middleLayers || middleCrimps);
@@ -263,6 +281,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
+    /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
+    let flatIronLeftRightThumbOverrideUrl: string | null = null;
+    if (flatIronRightPartOutPathsForLeftThumb) {
+      const pRightPartRightAngle = flatIronRightPartOutPathsForLeftThumb.right;
+      const { error: rightPartRightDlErr } = await supabase.storage.from(bucket).download(pRightPartRightAngle);
+      if (!rightPartRightDlErr) {
+        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(pRightPartRightAngle);
+        flatIronLeftRightThumbOverrideUrl = pubOverride?.publicUrl ?? null;
+      }
+    }
+
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
 
@@ -281,6 +310,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
         const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
         const skippedAngles = [...anglesToRun];
+        const pubRightOut =
+          flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
         sendJson(res, 200, {
           ok: true,
           colorTierHash,
@@ -291,7 +322,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           publicUrls: {
             front: pubFront?.publicUrl ?? null,
             left: pubLeft?.publicUrl ?? null,
-            right: pubRight?.publicUrl ?? null,
+            right: pubRightOut,
           },
           generated: [] as string[],
           skipped: skippedAngles,
@@ -430,6 +461,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
+    const pubRightOut =
+      flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
 
     sendJson(res, 200, {
       ok: true,
@@ -441,7 +474,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       publicUrls: {
         front: pubFront?.publicUrl ?? null,
         left: pubLeft?.publicUrl ?? null,
-        right: pubRight?.publicUrl ?? null,
+        right: pubRightOut,
       },
       generated,
       skipped,
