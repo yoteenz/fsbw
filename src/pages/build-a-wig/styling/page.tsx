@@ -1,5 +1,5 @@
 
-import { useState, useEffect, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -19,7 +19,10 @@ import {
   readBuildWigLivePreviewSelections,
   readBuildWigLivePreviewColor,
 } from '../../../utils/buildWigLivePreviewSelections';
-import { wigPreviewLiveColorTriplePublicUrlsForSelections } from '../../../utils/wigPreviewLiveStoragePublicUrls';
+import {
+  wigPreviewFlatIronRightPartRightAngleIfStored,
+  wigPreviewLiveColorTriplePublicUrlsForSelections,
+} from '../../../utils/wigPreviewLiveStoragePublicUrls';
 import {
   BAW_NOIR_LIVE_COLOR_VIEWS_EVENT,
   persistBawNoirLiveBangsWigViews,
@@ -431,6 +434,59 @@ export default function StylingSelectionPage() {
   const [flatIronMiddleColorTierPreview, setFlatIronMiddleColorTierPreview] =
     useState<BawNoirLiveWigViewsTriple | null>(null);
 
+  /**
+   * **FLAT IRON + LEFT:** R camera thumb shows **RIGHT-part** `right.webp` when it exists (client display only).
+   * API stays independent; **`bawNoirLiveStylingWigViews`** still stores the true LEFT-part URLs from **`postLiveWigAfterColorStyling`**.
+   */
+  const [flatIronLeftRightThumbDisplayOverride, setFlatIronLeftRightThumbDisplayOverride] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    const noirStyling =
+      pathname.includes('/build-a-wig/noir/edit/styling') ||
+      pathname.includes('/build-a-wig/noir/customize/styling');
+    if (
+      !liveStylingWigViews ||
+      !noirStyling ||
+      !hasFlatIronLiveStyling ||
+      selectedPartSelection !== 'LEFT'
+    ) {
+      setFlatIronLeftRightThumbDisplayOverride(null);
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      const sel = readBuildWigLivePreviewSelections(pathname);
+      const color = readBuildWigLivePreviewColor(pathname);
+      const url = await wigPreviewFlatIronRightPartRightAngleIfStored(
+        { unitKey: 'NOIR', color, ...sel },
+        hasBangsWithSalon
+      );
+      if (!cancelled) setFlatIronLeftRightThumbDisplayOverride(url);
+    };
+    void load();
+    const onStorage = () => {
+      void load();
+    };
+    window.addEventListener('customStorageChange', onStorage);
+    window.addEventListener('storage', onStorage);
+    window.addEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, onStorage);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('customStorageChange', onStorage);
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener(BAW_NOIR_LIVE_COLOR_VIEWS_EVENT, onStorage);
+    };
+  }, [
+    liveStylingWigViews,
+    hasFlatIronLiveStyling,
+    selectedPartSelection,
+    hasBangsWithSalon,
+    location.pathname,
+  ]);
+
   useEffect(() => {
     if (!flatIronMiddleColorTierOnly || !location.pathname.includes('/build-a-wig/noir/')) {
       setFlatIronMiddleColorTierPreview(null);
@@ -632,12 +688,29 @@ export default function StylingSelectionPage() {
     hasBangsOnlyLive,
   ]);
 
+  const wigViewsForDisplay = useMemo((): BawNoirLiveWigViewsTriple | null => {
+    if (
+      !liveStylingWigViews ||
+      !hasFlatIronLiveStyling ||
+      selectedPartSelection !== 'LEFT' ||
+      !flatIronLeftRightThumbDisplayOverride
+    ) {
+      return liveStylingWigViews;
+    }
+    return [liveStylingWigViews[0], liveStylingWigViews[1], flatIronLeftRightThumbDisplayOverride];
+  }, [
+    liveStylingWigViews,
+    hasFlatIronLiveStyling,
+    selectedPartSelection,
+    flatIronLeftRightThumbDisplayOverride,
+  ]);
+
   const wigViews =
     flatIronMiddleColorTierOnly &&
     (flatIronMiddleColorTierPreview ?? liveNoirCompositeWigViews)
       ? (flatIronMiddleColorTierPreview ?? liveNoirCompositeWigViews)!
-      : noirLiveFalEligible && hasSalonPartLiveStyling && liveStylingWigViews
-        ? liveStylingWigViews
+      : noirLiveFalEligible && hasSalonPartLiveStyling && wigViewsForDisplay
+        ? wigViewsForDisplay
         : noirLiveFalEligible && hasBangsOnlyLive && liveBangsWigViews
           ? liveBangsWigViews
           : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')

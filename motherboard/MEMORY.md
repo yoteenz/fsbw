@@ -16397,3 +16397,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed all **`flatIronLeftRightThumbDisplayUrl`** / RIGHT-folder path logic for **UI L**. Response **`publicUrls`** always match **`outPaths`** for the requested **`partSelection`** only. **`motherboard/CORE.md`**: removed **FLAT IRON + UI LEFT** `publicUrls` override sentence.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — FLAT IRON + LEFT: fix R-thumb display override probe (HEAD 403 → GET)
+
+**Context (this chat):** Continuation from prior work: **FLAT IRON + LEFT** should show the **RIGHT-part** flat-iron **`right.webp`** on the **right thumbnail** only (client display), with API/Storage staying independent. User reported the **same asset** still not appearing — likely the override URL never applied.
+
+**Root cause:** **`objectExistsAtPublicUrl`** in **`wigPreviewLiveStoragePublicUrls.ts`** only ran **GET** when **HEAD** returned **404** or **405**. Many Supabase public object endpoints return **403** (or other non-OK) for **HEAD** while **GET** succeeds, so **`wigPreviewFlatIronRightPartRightAngleIfStored`** returned **null** and **`wigViewsForDisplay`** kept the raw LEFT-part R angle.
+
+**Decisions / outcomes:** **`src/utils/wigPreviewLiveStoragePublicUrls.ts`**: After any non-OK **HEAD**, **GET** the same URL and treat **`g.ok`** as existence (same pattern as “optimistic” image loads). **`src/pages/build-a-wig/styling/page.tsx`**: FLAT IRON + LEFT override **`useEffect`** also listens for **`BAW_NOIR_LIVE_COLOR_VIEWS_EVENT`** so the RIGHT-part URL re-resolves when the color-tier hash / live color views update (parity with middle flat-iron color refresh).
+
+**Verification:** `npm run build` passes.

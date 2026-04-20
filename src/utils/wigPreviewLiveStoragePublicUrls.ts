@@ -7,7 +7,7 @@ function getSupabasePublicStorageBase(): string | null {
   return base.replace(/\/$/, '');
 }
 
-function liveColorAngleBaseUrl(manifestHash: string): string | null {
+function wigPreviewStorageBucketAndPromptVersion(): { supabase: string; bucket: string; pv: string } | null {
   const supabase = getSupabasePublicStorageBase();
   if (!supabase) return null;
   const bucket =
@@ -16,7 +16,13 @@ function liveColorAngleBaseUrl(manifestHash: string): string | null {
   const pv =
     (import.meta as unknown as { env?: { VITE_WIG_PREVIEW_PROMPT_VERSION?: string } }).env
       ?.VITE_WIG_PREVIEW_PROMPT_VERSION?.trim() || 'v1';
-  return `${supabase}/storage/v1/object/public/${bucket}/wig-preview-live/${pv}/NOIR/${manifestHash}`;
+  return { supabase, bucket, pv };
+}
+
+function liveColorAngleBaseUrl(manifestHash: string): string | null {
+  const cfg = wigPreviewStorageBucketAndPromptVersion();
+  if (!cfg) return null;
+  return `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}/wig-preview-live/${cfg.pv}/NOIR/${manifestHash}`;
 }
 
 /** Public URLs for L, F, R — same layout as `wigPreviewLiveAnglePaths` on the server. */
@@ -30,11 +36,9 @@ async function objectExistsAtPublicUrl(url: string): Promise<boolean> {
   try {
     const r = await fetch(url, { method: 'HEAD', mode: 'cors', cache: 'no-store' });
     if (r.ok) return true;
-    if (r.status === 405 || r.status === 404) {
-      const g = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-store' });
-      return g.ok;
-    }
-    return false;
+    // Public buckets often reject HEAD (403/501) while GET still returns the object — do not treat non-OK HEAD as "missing" without trying GET.
+    const g = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-store' });
+    return g.ok;
   } catch {
     return false;
   }
@@ -69,4 +73,30 @@ export async function resolveWigPreviewLiveColorTripleIfStored(
   if (!ok) return null;
   const t = Date.now();
   return [`${triple[0]}?t=${t}`, `${triple[1]}?t=${t}`, `${triple[2]}?t=${t}`] as [string, string, string];
+}
+
+/**
+ * **RIGHT-part** flat-iron **right camera** (`.../after-color/flat-iron-right-part/right.webp`).
+ * Same path layout as server `wigPreviewLiveAfterColorStylingPaths` — for **display-only** swap on UI L (client).
+ */
+export function wigPreviewFlatIronRightPartRightAngleObjectUrl(manifestHash: string, withBangs: boolean): string | null {
+  const cfg = wigPreviewStorageBucketAndPromptVersion();
+  if (!cfg) return null;
+  const sk = withBangs ? 'flat-iron-with-bangs-right-part' : 'flat-iron-right-part';
+  return `${cfg.supabase}/storage/v1/object/public/${cfg.bucket}/wig-preview-live/${cfg.pv}/NOIR/${manifestHash}/after-color/${sk}/right.webp`;
+}
+
+/**
+ * Public URL + cache-bust for RIGHT-part flat-iron R angle **if** the object exists (HEAD/GET probe).
+ */
+export async function wigPreviewFlatIronRightPartRightAngleIfStored(
+  sel: WigPreviewSelectionsForHash,
+  withBangs: boolean
+): Promise<string | null> {
+  const hash = await wigPreviewManifestHashLiveColorTier(sel);
+  const raw = wigPreviewFlatIronRightPartRightAngleObjectUrl(hash, withBangs);
+  if (!raw) return null;
+  const ok = await objectExistsAtPublicUrl(raw);
+  if (!ok) return null;
+  return `${raw}?t=${Date.now()}`;
 }
