@@ -26,8 +26,16 @@ import {
   clearPendingBawNoirLiveColorWigViews,
   persistBawNoirLiveColorWigViews,
   persistPendingBawNoirLiveColorWigViews,
+  readBawNoirLiveColorWigViews,
+  readPendingBawNoirLiveColorWigViews,
 } from '../../../utils/bawNoirLivePreviewStorage';
-import { getAccessToken, postWigPreviewLiveNoirColor } from '../../../utils/api';
+import {
+  getAccessToken,
+  postWigPreviewLiveNoirColor,
+  postWigPreviewLiveNoirColorRegenerateAll,
+  postWigPreviewLiveNoirColorRegenerateAngle,
+} from '../../../utils/api';
+import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 
 interface ColorOption {
@@ -253,12 +261,22 @@ function ColorSelection() {
   }, [location.pathname]); // Only reload when route changes, NOT when selectedColor changes
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
-  /** Bumps when NOIR color Fal fetch starts — ignore stale async results after rapid swatch changes. */
-  const noirLiveColorFetchGenRef = useRef(0);
+  /** Founder-only: Fal regen links (kept in DOM, hidden) + NOIR title click guard. */
+  const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
+  const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
+  /** Last good live triple from Fal path — survives transient null while the next color resolves. */
+  const [heldFounderLiveTriple, setHeldFounderLiveTriple] = useState<[string, string, string] | null>(null);
   /** Re-sync when premium status may change (same gate as other BAW premium steps). */
   const [noirLiveColorPremiumGate, setNoirLiveColorPremiumGate] = useState(() =>
     isPremiumMemberForGatedFeatures()
   );
+  const [livePreviewLoading, setLivePreviewLoading] = useState(false);
+  /** Bumps when NOIR color Fal fetch starts — ignore stale async results after rapid swatch changes. */
+  const founderColorPreviewGenRef = useRef(0);
+  const [livePreviewError, setLivePreviewError] = useState<string | null>(null);
+  const [regenColorAngle, setRegenColorAngle] = useState<'left' | 'front' | 'right' | null>(null);
+  const [showRegenAllConfirm, setShowRegenAllConfirm] = useState(false);
+  const [regenAllBusy, setRegenAllBusy] = useState(false);
 
   /** Last good hook-resolved triple — survives transient null while pending updates. */
   const [heldCompositeLiveTriple, setHeldCompositeLiveTriple] = useState<[string, string, string] | null>(null);
@@ -356,6 +374,58 @@ function ColorSelection() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const p = location.pathname;
+    const noirColor =
+      p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
+    if (!noirColor) {
+      setFounderNoirFalRegenUi(false);
+      setLiveWigViews(null);
+      setLivePreviewError(null);
+      return;
+    }
+    let cancelled = false;
+    const refreshFounderTools = () => {
+      const ok = isFounderNoirFalRegenUiVisible();
+      if (!cancelled) setFounderNoirFalRegenUi(ok);
+    };
+    void refreshFounderTools();
+    const onAuth = () => {
+      void refreshFounderTools();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    window.addEventListener('customStorageChange', onAuth);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('signInStateChanged', onAuth);
+      window.removeEventListener('customStorageChange', onAuth);
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const p = location.pathname;
+    const noirColor =
+      p.includes('/build-a-wig/noir/edit/color') || p.includes('/build-a-wig/noir/customize/color');
+    if (!noirColor) return;
+    let cancelled = false;
+    const loadCached = async () => {
+      if (cancelled || !isFounderNoirFalRegenUiVisible()) return;
+      const cached = readPendingBawNoirLiveColorWigViews() ?? readBawNoirLiveColorWigViews();
+      if (cached) setLiveWigViews(cached);
+    };
+    void loadCached();
+    const onAuth = () => {
+      void loadCached();
+    };
+    window.addEventListener('signInStateChanged', onAuth);
+    window.addEventListener('customStorageChange', onAuth);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('signInStateChanged', onAuth);
+      window.removeEventListener('customStorageChange', onAuth);
+    };
+  }, [location.pathname]);
 
   // Initialize with edit mode or customize mode data if available
   useEffect(() => {
@@ -524,6 +594,12 @@ function ColorSelection() {
     }
   }, [liveNoirCompositeCommittedViews]);
 
+  useEffect(() => {
+    if (liveWigViews) {
+      setHeldFounderLiveTriple(liveWigViews);
+    }
+  }, [liveWigViews]);
+
   const noirColorSubPath =
     location.pathname.includes('/build-a-wig/noir/') &&
     (location.pathname.includes('/edit/color') || location.pathname.includes('/customize/color'));
@@ -531,47 +607,71 @@ function ColorSelection() {
   /** OFF BLACK uses the same live `wig-preview-live` WebPs as other colors (fallback to static naturals until generated). */
   const wigViews =
     noirColorSubPath
-      ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
+      ? liveWigViews ??
+          heldFounderLiveTriple ??
+          liveNoirCompositeCommittedViews ??
+          heldCompositeLiveTriple ??
+          baseWigViews
       : baseWigViews;
 
-  /** Premium + signed-in: ensure missing color-tier WebPs exist (Fal); no regen UI. Skips API when HEAD finds all three. */
+  /** Premium + signed-in: load/refresh live NOIR color WebPs (Fal when missing). Founder path also drives hidden regen UI state. */
   useEffect(() => {
     const pathname = location.pathname;
     const noirColor =
       pathname.includes('/build-a-wig/noir/edit/color') ||
       pathname.includes('/build-a-wig/noir/customize/color');
     if (!noirColor || !noirLiveColorPremiumGate) return;
+    const gen = ++founderColorPreviewGenRef.current;
+    setLivePreviewError(null);
+    setLivePreviewLoading(true);
     let cancelled = false;
     void (async () => {
       const token = await getAccessToken();
-      if (!token || cancelled) return;
-      const gen = ++noirLiveColorFetchGenRef.current;
+      if (!token || cancelled) {
+        if (!cancelled && founderColorPreviewGenRef.current === gen) setLivePreviewLoading(false);
+        return;
+      }
       const sel = readBuildWigLivePreviewSelections(pathname);
       const payload = { unitKey: 'NOIR' as const, color: selectedColor, ...sel };
       const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
-      if (cancelled || noirLiveColorFetchGenRef.current !== gen) return;
+      if (cancelled || founderColorPreviewGenRef.current !== gen) return;
       if (fromStorage) {
+        setLiveWigViews(fromStorage);
         persistPendingBawNoirLiveColorWigViews(fromStorage);
         window.dispatchEvent(new CustomEvent('customStorageChange'));
+        setLivePreviewLoading(false);
         return;
       }
-      try {
-        const res = await postWigPreviewLiveNoirColor({ color: selectedColor, ...sel });
-        if (cancelled || noirLiveColorFetchGenRef.current !== gen) return;
-        const u = res.publicUrls;
-        if (u.front && u.left && u.right) {
-          const bust = Date.now();
-          const triple: [string, string, string] = [
-            `${u.left}?t=${bust}`,
-            `${u.front}?t=${bust}`,
-            `${u.right}?t=${bust}`,
-          ];
-          persistPendingBawNoirLiveColorWigViews(triple);
-          window.dispatchEvent(new CustomEvent('customStorageChange'));
-        }
-      } catch {
-        /* ignore — optimistic URLs from handleColorSelect may still display */
+      const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
+      if (cancelled || founderColorPreviewGenRef.current !== gen) return;
+      if (optimistic) {
+        setLiveWigViews(optimistic);
+        persistPendingBawNoirLiveColorWigViews(optimistic);
+        window.dispatchEvent(new CustomEvent('customStorageChange'));
       }
+      void postWigPreviewLiveNoirColor({ color: selectedColor, ...sel })
+        .then((res) => {
+          if (cancelled || founderColorPreviewGenRef.current !== gen) return;
+          const u = res.publicUrls;
+          if (u.front && u.left && u.right) {
+            const bust = Date.now();
+            const triple: [string, string, string] = [
+              `${u.left}?t=${bust}`,
+              `${u.front}?t=${bust}`,
+              `${u.right}?t=${bust}`,
+            ];
+            setLiveWigViews(triple);
+            persistPendingBawNoirLiveColorWigViews(triple);
+            window.dispatchEvent(new CustomEvent('customStorageChange'));
+          }
+        })
+        .catch((e: Error) => {
+          if (cancelled || founderColorPreviewGenRef.current !== gen) return;
+          setLivePreviewError(e?.message || 'Live preview failed');
+        })
+        .finally(() => {
+          if (!cancelled && founderColorPreviewGenRef.current === gen) setLivePreviewLoading(false);
+        });
     })();
     return () => {
       cancelled = true;
@@ -1400,6 +1500,123 @@ function ColorSelection() {
               <>
             {/* WIG PREVIEW */}
             <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
+              {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
+                <div
+                  className="w-full flex flex-col items-center"
+                  aria-hidden
+                  style={{
+                    position: 'relative',
+                    zIndex: 30,
+                    transform: 'translateY(-20px)',
+                    display: 'none',
+                  }}
+                >
+                  <p
+                    className="text-center mb-2 px-2"
+                    style={{
+                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                      fontSize: '9px',
+                      color: livePreviewError ? '#EB1C24' : '#808080',
+                      maxWidth: '280px',
+                    }}
+                  >
+                    {livePreviewLoading
+                      ? 'LIVE PREVIEW: generating (fal)…'
+                      : livePreviewError
+                        ? `LIVE PREVIEW: ${livePreviewError}`
+                        : 'LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.'}
+                  </p>
+                  {!livePreviewLoading && (
+                    <div
+                      className="flex flex-col items-center gap-2 mb-2 px-2"
+                      style={{ maxWidth: '280px', position: 'relative', zIndex: 31 }}
+                    >
+                      <button
+                        type="button"
+                        disabled={Boolean(regenColorAngle) || regenAllBusy}
+                        onClick={() => setShowRegenAllConfirm(true)}
+                        style={{
+                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                          fontSize: '9px',
+                          color: regenColorAngle || regenAllBusy ? '#808080' : '#EB1C24',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '2px',
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: regenColorAngle || regenAllBusy ? 'wait' : 'pointer',
+                        }}
+                      >
+                        {regenAllBusy ? 'regen all…' : 'regen all'}
+                      </button>
+                      <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                        {(['left', 'front', 'right'] as const).map((ang) => {
+                          const label = ang === 'left' ? 'L' : ang === 'front' ? 'M' : 'R';
+                          const busy = regenColorAngle === ang;
+                          return (
+                            <button
+                              key={ang}
+                              type="button"
+                              disabled={Boolean(regenColorAngle) || regenAllBusy}
+                              onClick={() => {
+                                const pathname = location.pathname;
+                                const sel = readBuildWigLivePreviewSelections(pathname);
+                                setRegenColorAngle(ang);
+                                setLivePreviewError(null);
+                                void postWigPreviewLiveNoirColorRegenerateAngle(
+                                  { color: selectedColor, ...sel },
+                                  ang
+                                )
+                                  .then((res) => {
+                                    const bust = Date.now();
+                                    const L = res.publicUrls.left;
+                                    const F = res.publicUrls.front;
+                                    const R = res.publicUrls.right;
+                                    setLiveWigViews((prev) => {
+                                      const pl = L ? `${L}?t=${bust}` : prev?.[0];
+                                      const pf = F ? `${F}?t=${bust}` : prev?.[1];
+                                      const pr = R ? `${R}?t=${bust}` : prev?.[2];
+                                      if (pl && pf && pr) {
+                                        const t: [string, string, string] = [pl, pf, pr];
+                                        persistPendingBawNoirLiveColorWigViews(t);
+                                        return t;
+                                      }
+                                      if (!prev) return prev;
+                                      const next: [string, string, string] = [...prev];
+                                      const idx = ang === 'left' ? 0 : ang === 'front' ? 1 : 2;
+                                      const u = ang === 'left' ? L : ang === 'front' ? F : R;
+                                      if (u) next[idx] = `${u}?t=${bust}`;
+                                      persistPendingBawNoirLiveColorWigViews(next);
+                                      return next;
+                                    });
+                                    window.dispatchEvent(new CustomEvent('customStorageChange'));
+                                  })
+                                  .catch((e: Error) => {
+                                    setLivePreviewError(e?.message || 'Regenerate failed');
+                                  })
+                                  .finally(() => setRegenColorAngle(null));
+                              }}
+                              style={{
+                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                fontSize: '9px',
+                                color: busy ? '#808080' : '#EB1C24',
+                                textDecoration: 'underline',
+                                textUnderlineOffset: '2px',
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                cursor: regenColorAngle || regenAllBusy ? 'wait' : 'pointer',
+                              }}
+                            >
+                              {busy ? `regen ${label}…` : `regen color ${label}`}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
               <BawNoirWigPreviewHeroThumbs
                 wigViews={wigViews}
                 selectedView={selectedView}
@@ -1412,6 +1629,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
+                      ...(founderNoirFalRegenUi ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
@@ -1548,6 +1766,41 @@ function ColorSelection() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+      <ConfirmationModal
+        isOpen={showRegenAllConfirm}
+        onClose={() => setShowRegenAllConfirm(false)}
+        onConfirm={() => {
+          setShowRegenAllConfirm(false);
+          const pathname = location.pathname;
+          const sel = readBuildWigLivePreviewSelections(pathname);
+          setLivePreviewError(null);
+          setRegenAllBusy(true);
+          void postWigPreviewLiveNoirColorRegenerateAll({ color: selectedColor, ...sel })
+            .then((res) => {
+              const bust = Date.now();
+              const u = res.publicUrls;
+              if (u.front && u.left && u.right) {
+                const triple: [string, string, string] = [
+                  `${u.left}?t=${bust}`,
+                  `${u.front}?t=${bust}`,
+                  `${u.right}?t=${bust}`,
+                ];
+                setLiveWigViews(triple);
+                persistPendingBawNoirLiveColorWigViews(triple);
+                window.dispatchEvent(new CustomEvent('customStorageChange'));
+              }
+            })
+            .catch((e: Error) => {
+              setLivePreviewError(e?.message || 'Regenerate all failed');
+            })
+            .finally(() => setRegenAllBusy(false));
+        }}
+        title="REGENERATE ALL ANGLES"
+        message="REGENERATE LEFT, FRONT, AND RIGHT WITH FAL? THIS MAY TAKE A MINUTE AND REPLACES CACHED WEBPS FOR THIS COLOR TIER."
+        confirmText="REGENERATE"
+        cancelText="CANCEL"
+        dataAttribute="regen-all-noir-color-confirm"
       />
       {premiumMembershipStepModal}
     </>

@@ -16136,3 +16136,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/wig-preview/live-noir-color.ts`**: removed inlined **`requireAdminFounder`**; **`forceRegenerate`** and normal generation both require only **`getAuthUser`** (401 if not signed in). **`motherboard/CORE.md`**: NOIR bullet updated — signed-in users may use **`forceRegenerate`** to re-run Fal when files exist.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — NOIR color page: restore hidden Fal regen DOM + premium `liveWigViews` path
+
+**Context (this chat):** Continuing from prior work: user asked to **add back** the NOIR color **Fal regen** UI that was removed in commit `45a20bf9`, **without** showing the text — **hide** it (`display: none`) so live preview behavior matches the old flow while staying visually clean.
+
+**Decisions / outcomes:** **`src/pages/build-a-wig/color/page.tsx`**: Reintroduced **`liveWigViews`**, **`heldFounderLiveTriple`**, **`livePreviewLoading`**, **`livePreviewError`**, regen angle/all state, **`founderNoirFalRegenUi`** (from **`isFounderNoirFalRegenUiVisible`**), **`readPending`/`readBawNoirLiveColorWigViews`** hydration, **`postWigPreviewLiveNoirColorRegenerateAngle`/`RegenerateAll`**, and **`ConfirmationModal`** for regen-all. The regen strip wrapper uses **`display: 'none'`** and **`aria-hidden`**. The main Fal **`useEffect`** is **merged** with the prior premium path: gated on **`noirLiveColorPremiumGate`** + **`getAccessToken`**, sets **`liveWigViews`** (HEAD/storage first, optimistic URLs, then **`postWigPreviewLiveNoirColor`**), dispatches **`customStorageChange`**. **`wigViews`** on NOIR color sub-routes prefers **`liveWigViews`** / **`heldFounderLiveTriple`**, then composite hook triples, then static. **`motherboard/CORE.md`**: NOIR color bullet updated — founder regen strip kept in DOM but hidden.
+
+**Verification:** `npm run build` passes.
