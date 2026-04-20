@@ -16234,6 +16234,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — `getAccessToken`: refresh expired JWT before Fal (generate vs cache-only)
+
+**Context (this chat):** User: assets load (cache path) but **“Sign in required”** when **generating** (Fal / **`forceRegenerate`**).
+
+**Why:** Cache-only responses **do not** call **`getAuthUser`**. Generation **does** — server **`supabase.auth.getUser(token)`** rejects **expired** JWTs. Client was still sending **`Authorization: Bearer <old access_token>`** from **`localStorage`** without refreshing.
+
+**Decisions / outcomes:** **`src/utils/api.ts` — `getAccessToken`**: decode JWT **`exp`**; if expired or within **~90s**, **`refreshSession()`** then return new **`access_token`**. Fallback order: **`getSession`** → storage blob → refresh → **`isSignedIn`** refresh retry.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — `live-wig-after-color-styling`: cache-only response without auth (fix persistent “Sign in required”)
 
 **Context (this chat):** User still saw **LIVE PREVIEW: Sign in required** after client **`getAccessToken`** hardening. Styling auto-fetch usually **does not run Fal** when **`after-color/***` WebPs already exist — it only needs public URLs from Storage.
