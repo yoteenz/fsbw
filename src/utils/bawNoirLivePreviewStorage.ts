@@ -391,6 +391,15 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
     if (isNoirBawProductHubPathname(path)) return null;
     if (!isNoirBawLivePreviewStepPathname(path)) return null;
 
+    /** Color sub-page: always **color-tier** live WebPs (draft `pending` + committed) — not salon/bangs styling triples, or swatch taps would not update the hero. */
+    const pNorm = path.replace(/\/$/, '') || '/';
+    const isNoirColorSubPage =
+      (pNorm.startsWith('/build-a-wig/noir/customize/') || pNorm.startsWith('/build-a-wig/noir/edit/')) &&
+      pNorm.endsWith('/color');
+    if (isNoirColorSubPage) {
+      return currentNoirColorTripleOrNull(path);
+    }
+
     const effectiveCanon = readEffectiveBawSalonStylingCanon(path);
     if (effectiveCanon === 'NONE' || effectiveCanon === '') {
       return currentNoirColorTripleOrNull(path);

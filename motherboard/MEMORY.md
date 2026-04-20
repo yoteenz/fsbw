@@ -16053,6 +16053,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — NOIR color page: live preview updates again (color-only resolve on `/color`)
+
+**Context (this chat):** User said they only wanted **Fal regen text** removed from the color page, not the **live preview** behavior — **hair color should still change** on swatch selection without regen UI.
+
+**Root cause:** After removing founder-only `postWigPreviewLiveNoirColor` from the color page, **`resolveAdminNoirHubLiveWigViewsFromStorage`** still preferred **salon styling / bangs** WebPs when those were selected in localStorage — so on **`.../noir/customize/color`** the hero kept showing **styling** previews instead of **draft color** triples from `pending` / optimistic URLs.
+
+**Decisions / outcomes:** In **`bawNoirLivePreviewStorage.ts`**, early return on NOIR **`/customize/.../color`** and **`/edit/.../color`** routes: **`currentNoirColorTripleOrNull(path)` only** (skip styling/bangs branch). **`motherboard/CORE.md`**: merged into NOIR bullet (no duplicate “NOIR color sub-page” line).
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — BANGS + salon: part selection locked to MIDDLE
 
 **Context (this chat):** User asked that when **BANGS** is selected **with** another style (LAYERS / CRIMPS / FLAT IRON), only **MIDDLE** part should be available — **LEFT** and **RIGHT** disabled.
