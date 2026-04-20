@@ -20,19 +20,38 @@ function getSupabaseAuthStorageKey(): string | null {
   }
 }
 
-/** Read Bearer token directly from persisted session JSON when `getSession()` has not hydrated yet. */
-function readAccessTokenFromSupabaseStorage(): string | null {
+/** Read persisted Supabase session blob (access + refresh) when `getSession()` lags. */
+function readSupabaseSessionBlobFromStorage(): { access_token?: string } | null {
   if (typeof window === 'undefined' || !window.localStorage) return null;
   const key = getSupabaseAuthStorageKey();
   if (!key) return null;
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as { access_token?: string };
-    const t = typeof parsed?.access_token === 'string' ? parsed.access_token.trim() : '';
-    return t || null;
+    const parsed = JSON.parse(raw) as { access_token?: string; refresh_token?: string };
+    return parsed && typeof parsed === 'object' ? parsed : null;
   } catch {
     return null;
+  }
+}
+
+function readAccessTokenFromSupabaseStorage(): string | null {
+  const blob = readSupabaseSessionBlobFromStorage();
+  const t = typeof blob?.access_token === 'string' ? blob.access_token.trim() : '';
+  return t || null;
+}
+
+/** JWT exp is seconds since epoch; refresh slightly before expiry so API `getUser` does not reject. */
+function isAccessTokenLikelyExpired(token: string, skewSeconds = 90): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return false;
+    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = JSON.parse(atob(payload)) as { exp?: number };
+    if (typeof json.exp !== 'number') return false;
+    return Date.now() / 1000 >= json.exp - skewSeconds;
+  } catch {
+    return false;
   }
 }
 
@@ -40,25 +59,55 @@ export async function getAccessToken(): Promise<string | null> {
   const supabase = (await import('./supabase')).getSupabase();
   const fromLs = readAccessTokenFromSupabaseStorage();
 
-  if (supabase) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.access_token) return session.access_token;
-    /** Client session not hydrated yet but localStorage has the Supabase session blob — use it for API calls. */
-    if (fromLs) return fromLs;
-    /** App flag signed in but no token in memory — refresh can repopulate session (admin/local-only edge cases). */
+  if (!supabase) {
+    return fromLs;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  let token = session?.access_token ?? null;
+  if (!token) {
+    token = fromLs;
+  }
+
+  /** Stale access_token in memory/storage — refresh so Fal/API routes accept Bearer (fixes "Sign in required" on generate). */
+  if (token && isAccessTokenLikelyExpired(token)) {
     try {
-      if (typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true') {
-        await supabase.auth.refreshSession();
-        const { data: { session: s2 } } = await supabase.auth.getSession();
-        if (s2?.access_token) return s2.access_token;
-      }
+      await supabase.auth.refreshSession();
+      const { data: { session: s2 } } = await supabase.auth.getSession();
+      if (s2?.access_token) return s2.access_token;
+    } catch {
+      /* fall through */
+    }
+    token = readAccessTokenFromSupabaseStorage();
+  }
+
+  if (token && !isAccessTokenLikelyExpired(token)) {
+    return token;
+  }
+
+  /** No usable token — try refresh if we still have a refresh_token in storage (session object). */
+  const blob = readSupabaseSessionBlobFromStorage();
+  if (blob && typeof (blob as { refresh_token?: string }).refresh_token === 'string') {
+    try {
+      await supabase.auth.refreshSession();
+      const { data: { session: s3 } } = await supabase.auth.getSession();
+      if (s3?.access_token) return s3.access_token;
     } catch {
       /* ignore */
     }
-    return readAccessTokenFromSupabaseStorage();
   }
 
-  return fromLs;
+  try {
+    if (typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true') {
+      await supabase.auth.refreshSession();
+      const { data: { session: s4 } } = await supabase.auth.getSession();
+      if (s4?.access_token) return s4.access_token;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return readAccessTokenFromSupabaseStorage();
 }
 
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */
