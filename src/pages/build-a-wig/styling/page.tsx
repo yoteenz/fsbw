@@ -226,9 +226,15 @@ export default function StylingSelectionPage() {
                 ? 'FLAT_IRON_BANGS'
                 : 'FLAT_IRON'
               : null;
-        const cachedSalon = sm !== null ? readBawNoirLiveStylingWigViewsForPart(part, sm) : null;
-        if (cachedSalon) setLiveStylingWigViews(cachedSalon);
-        else setLiveStylingWigViews((prev) => prev);
+        const skipFlatIronMiddleCache =
+          sm === 'FLAT_IRON' && part === 'MIDDLE' && !selectedHairStyling.includes('BANGS');
+        if (skipFlatIronMiddleCache) {
+          setLiveStylingWigViews(null);
+        } else {
+          const cachedSalon = sm !== null ? readBawNoirLiveStylingWigViewsForPart(part, sm) : null;
+          if (cachedSalon) setLiveStylingWigViews(cachedSalon);
+          else setLiveStylingWigViews((prev) => prev);
+        }
         const cachedBangs = readBawNoirLiveBangsWigViews();
         if (cachedBangs) setLiveBangsWigViews(cachedBangs);
         else setLiveBangsWigViews((prev) => prev);
@@ -393,6 +399,12 @@ export default function StylingSelectionPage() {
     !selectedHairStyling.some((s) => s === 'CRIMPS') &&
     !selectedHairStyling.some((s) => s === 'FLAT IRON');
 
+  /** FLAT IRON + MIDDLE without BANGS: hero uses **color-tier** triple (same as NOIR color page), not Fal `flat-iron-middle-part` WebPs. */
+  const flatIronMiddleColorTierOnly =
+    hasFlatIronLiveStyling &&
+    selectedPartSelection === 'MIDDLE' &&
+    !selectedHairStyling.includes('BANGS');
+
   useEffect(() => {
     const pathname = location.pathname;
     const noir =
@@ -417,6 +429,15 @@ export default function StylingSelectionPage() {
     }
     if (hasFlatIronLiveStyling && !stylingForApi.includes('FLAT IRON')) {
       setLiveStylingWigViews(null);
+      return;
+    }
+    if (
+      hasFlatIronLiveStyling &&
+      selectedPartSelection === 'MIDDLE' &&
+      !selectedHairStyling.includes('BANGS')
+    ) {
+      setLiveStylingWigViews(null);
+      setLiveStylingLoading(false);
       return;
     }
     setLiveStylingError(null);
@@ -530,18 +551,22 @@ export default function StylingSelectionPage() {
   ]);
 
   const wigViews =
-    founderNoirFalRegenUi && hasSalonPartLiveStyling && liveStylingWigViews
-      ? liveStylingWigViews
-      : founderNoirFalRegenUi && hasBangsOnlyLive && liveBangsWigViews
-        ? liveBangsWigViews
-        : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
-          ? liveNoirCompositeWigViews
-          : baseWigViews;
+    flatIronMiddleColorTierOnly && liveNoirCompositeWigViews
+      ? liveNoirCompositeWigViews
+      : founderNoirFalRegenUi && hasSalonPartLiveStyling && liveStylingWigViews
+        ? liveStylingWigViews
+        : founderNoirFalRegenUi && hasBangsOnlyLive && liveBangsWigViews
+          ? liveBangsWigViews
+          : liveNoirCompositeWigViews && location.pathname.includes('/build-a-wig/noir/')
+            ? liveNoirCompositeWigViews
+            : baseWigViews;
 
   const showNoirFounderFalHint =
     isFounderNoirFalRegenUiVisible() && location.pathname.includes('/build-a-wig/noir/');
   const showNoirLiveStylingRegenControls =
-    showNoirFounderFalHint && (hasSalonPartLiveStyling || hasBangsOnlyLive);
+    showNoirFounderFalHint &&
+    (hasSalonPartLiveStyling || hasBangsOnlyLive) &&
+    !flatIronMiddleColorTierOnly;
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
   // Hair styling options with local assets

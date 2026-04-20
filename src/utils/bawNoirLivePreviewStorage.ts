@@ -426,6 +426,10 @@ export function resolveAdminNoirHubLiveWigViewsFromStorage(pathname?: string): B
         partRaw = localStorage.getItem('selectedPartSelection');
       }
       const partU = (partRaw || 'MIDDLE').toUpperCase();
+      /** FLAT IRON + MIDDLE (no BANGS): preview = **color-tier** WebPs only — same angles as NOIR color step / base live previews, not `after-color/flat-iron-middle-part`. */
+      if (hasFlatIron && !hasLayers && !hasCrimps && partU === 'MIDDLE' && !hasBangs) {
+        return currentNoirColorTripleOrNull(path);
+      }
       const salonMode: BawNoirLiveStylingSalonMode = hasLayers
         ? hasBangs
           ? 'LAYERS_BANGS'

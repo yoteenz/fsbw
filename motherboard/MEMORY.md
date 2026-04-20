@@ -15983,6 +15983,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — M part FLAT IRON: UI shows color-tier triple (not flat-iron Storage)
+
+**Context (this chat):** User said **M part flat iron** was **still showing generated images** (wanted **base NOIR color** angles / not `after-color/flat-iron-middle-part` WebPs).
+
+**Decisions / outcomes:** **`resolveAdminNoirHubLiveWigViewsFromStorage`**: if **FLAT IRON** only, **MIDDLE** part, **no BANGS** → return **`currentNoirColorTripleOrNull`** (skip **`readBawNoirLiveStylingWigViewsForPart`**). **`styling/page.tsx`**: **`flatIronMiddleColorTierOnly`** — **`wigViews`** prefers **`liveNoirCompositeWigViews`** over founder **`liveStylingWigViews`**; **no** auto **`postLiveWigAfterColorStyling`** for that combo; **`refreshFounderTools`** clears **`liveStylingWigViews`** for **FLAT_IRON + MIDDLE**; hide **styling regen** strip. **`motherboard/CORE.md`** NOIR bullet updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — MIDDLE + FLAT IRON: second fal ref = hub base NOIR naturals
 
 **Context (this chat):** User asked for **M part flat iron** to use the **base NOIR image angles** (same as hub static mannequins), not only the color-tier WebP framing.
