@@ -174,7 +174,7 @@ function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartS
     );
   }
   return (
-    '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input often still shows a **LEFT/UI L** part (**image RIGHT** scalp) or a **center** part. **Discard** that. **UI R** needs the **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **opposite** of **UI L**. **Re-part** the roots to match — **do not** preserve the reference’s side-part side. **Success check:** if the groove still sits on the **image RIGHT** half → wrong (that is **UI L**, not **UI R**).'
+    '**PART OVERRIDE (critical — ignore the color preview’s part line):** **UI R** needs the **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**). **Re-part** the roots to match.'
   );
 }
 

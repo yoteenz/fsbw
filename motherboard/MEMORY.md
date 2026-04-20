@@ -16156,3 +16156,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`adminAuth.ts`**: new **`signOutAppAndSupabaseSession()`** — **`markManualSignOutInProgress`**, dynamic **`getSupabase().auth.signOut()`**, **`clearAppAuth()`**, **`signInStateChanged`**. Replaced menu **`handleSignOut`** across storefront pages (and **`BookingFlowLayout`**, BAW pages, checkout, orders, etc.) to **`await signOutAppAndSupabaseSession()`**; **`account/page.tsx`** and **`account/settings`** menu path now use the same helper. Removed redundant **`clearAppAuth`** imports where unused.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — UI R PART OVERRIDE: shorter prompt block
+
+**Context (this chat):** User asked to simplify only the **UI R** branch of **`PART OVERRIDE`** — keep the headline plus **left third** / **image LEFT** placement and **re-part** the roots, drop extra sentences.
+
+**Decisions / outcomes:** **`api/_lib/bawLiveStylingPrompts.ts`** (`salonPartMustOverrideInputReferenceBlock` for **RIGHT**) and **`scripts/wig-preview/promptTemplate.mjs`**: UI R string is now: ignore color preview part line; **UI R** = visible groove **left third** / **closer to image LEFT**; **re-part** roots to match. **UI L** block unchanged.
+
+**Verification:** `npm run build` passes.
