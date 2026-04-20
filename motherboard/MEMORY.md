@@ -16189,6 +16189,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Cart EDIT IN BAW modal + VIEW BAG without Supabase
+
+**Context (this chat):** **EDIT IN BUILD-A-WIG** in the cart dropdown did not show the sign-in modal; **VIEW BAG** sent signed-out users to **`/sign-in`** instead of **`/bag`**.
+
+**Root causes:** **`CartDropdown`** returned **`null`** when closed, unmounting **`BuildAWigFeatureSignInModal`** right after **`onClose()`** from the edit click. **`CommerceRouteGuard`** required a Supabase **`access_token`** for **`/bag`**, redirecting to sign-in when only localStorage had items.
+
+**Decisions / outcomes:** **`CartDropdown.tsx`**: when **`!isOpen`**, return only **`BuildAWigFeatureSignInModal`** (keeps modal mounted after dropdown closes). Full dropdown + remove confirm still render when open. **`CommerceRouteGuard.tsx`**: **`location.pathname === '/bag'`** → **`setAllowed(true)`** immediately (and in **`onAuthStateChange`**), skipping session check for the bag page only. **`motherboard/CORE.md`**: bullets for bag + cart.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — UI R PART OVERRIDE: shorter prompt block
 
 **Context (this chat):** User asked to simplify only the **UI R** branch of **`PART OVERRIDE`** — keep the headline plus **left third** / **image LEFT** placement and **re-part** the roots, drop extra sentences.

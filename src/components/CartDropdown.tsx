@@ -738,7 +738,16 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     }
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  /** When closed, still mount **BuildAWigFeatureSignInModal** so it survives `onClose()` after EDIT IN BUILD-A-WIG. */
+  if (!isOpen) {
+    return (
+      <BuildAWigFeatureSignInModal
+        isOpen={bawEditFromCartSignInOpen}
+        onClose={() => setBawEditFromCartSignInOpen(false)}
+        returnTo={bawEditFromCartReturnTo}
+      />
+    );
+  }
 
   /** 2+ compact rows: maxHeight balances row-2 border vs row-3 peek (284→312→298→296→294). */
   const multiItemCompactList = !viewingDetailsFor && cartItems.length > 1;
@@ -2097,7 +2106,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
     </div>
   );
 
-  // Use portal to render outside normal DOM hierarchy
   return (
     <>
       {createPortal(dropdownContent, document.body)}

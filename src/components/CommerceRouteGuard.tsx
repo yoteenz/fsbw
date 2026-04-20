@@ -6,7 +6,8 @@ import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 
 /**
- * Bag + product checkout require a live Supabase session when Supabase is configured.
+ * **Shopping bag (`/bag`):** always allowed — signed-out users can view the local cart (save-for-later / + LIST still gate elsewhere).
+ * **Checkout** and other commerce routes: require a live Supabase session when Supabase is configured.
  * Anonymous localStorage checkout is blocked for real-money flows.
  *
  * If **`isSignedIn`** is already true (local app auth) but **`getSession()`** has not
@@ -20,6 +21,10 @@ export default function CommerceRouteGuard({ children }: { children: React.React
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      if (location.pathname === '/bag') {
+        if (!cancelled) setAllowed(true);
+        return;
+      }
       if (!isSupabaseConfigured()) {
         if (!cancelled) setAllowed(true);
         return;
@@ -69,6 +74,10 @@ export default function CommerceRouteGuard({ children }: { children: React.React
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
       if (cancelled) return;
       void (async () => {
+        if (location.pathname === '/bag') {
+          setAllowed(true);
+          return;
+        }
         const { data: d } = await supabase.auth.getSession();
         if (cancelled) return;
         if (!d.session?.access_token) {
