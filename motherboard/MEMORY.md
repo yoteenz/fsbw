@@ -16365,3 +16365,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`useMiddlePartOutputAsUiRightInput`**, **`middleOutPathsForUiR`**, and the branch that used **`buildUiRightSalonFromMiddlePartOutputPrompt`** with **MIDDLE-part** Storage. Every angle now uses **`colorPaths[angle]`** (color-tier **`left` / `front` / `right`**) + existing **`buildLayersStylePromptFromColorTierWebp`** / **`buildCrimpsStylePromptFromColorTierWebp`** / **`buildFlatIronStylePromptFromColorTierWebp`**. Removed **`buildUiRightSalonFromMiddlePartOutputPrompt`** from **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`**: Replaced UI R + LAYERS/CRIMPS “MIDDLE-part input” bullet with **UI L / UI R** — per-angle color WebP + prompt-only part direction.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — Remove FLAT IRON LEFT←RIGHT Storage overwrite (independent L/R parts)
+
+**Context (this chat):** User regenerated **R part** flat iron **right angle** and saw **L part** asset reset. The server had been **copying** **`flat-iron-right-part/.../right.webp`** **onto** **`flat-iron-left-part/.../right.webp`** on **LEFT** + flat iron responses (cache hit and post-Fal), so any refetch for LEFT could **clobber** the LEFT triple’s R camera file — **not** isolated to “generate RIGHT only.”
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`overwriteFlatIronLeftRightAngleFromRightPartIfAvailable`** and related path vars; **no** cross-folder writes. **`motherboard/CORE.md`**: removed **FLAT IRON + UI LEFT** overwrite sentence.
+
+**Verification:** `npm run build` passes.
