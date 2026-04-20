@@ -16030,3 +16030,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: when **`FLAT IRON`**, **`partSelection === MIDDLE`**, and **not** bangs+salon, **`image_urls`** = **[ color-tier public URL, `WIG_PREVIEW_PUBLIC_APP_ORIGIN`/`SITE_URL`/default `https://fsbw.vercel.app` + `/assets/natural%20{left|front|right}.png` ]**. **`buildFlatIronStylePromptFromColorTierWebp`** gains **`baseNoirGeometrySecondRef`** + two-image prompt blocks (`flatIronMiddlePartBaseNoirGeometryTwoImageBlock`). Mirrored **`scripts/wig-preview/promptTemplate.mjs`**. **`.env.example`**, **`docs/WIG_PREVIEW_PREGENERATION.md`**, **`motherboard/CORE.md`**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — NOIR color page: remove Fal regen / live-preview admin text
+
+**Context (this chat):** User asked to remove the **text/generation** UI on the **color page only** (not the rest of the UI): the **LIVE PREVIEW: NOIR color (admin) — cached angles skip fal.** line and **regen all** / **regen color L/M/R** links, because live color assets are complete.
+
+**Decisions / outcomes:** In **`src/pages/build-a-wig/color/page.tsx`**, removed the founder-only strip (status paragraph + regen buttons), the **regenerate all** confirmation modal, and all related state/effects/API imports (`postWigPreviewLiveNoirColor*`, founder preview loading/error, `useEffect` that called live-noir-color on color change). **NOIR color** preview triples now use the same path as everyone else: **`useBawSubpageLiveNoirCompositeWigViews`** + **`heldCompositeLiveTriple`** (no separate founder `liveWigViews` branch). Removed **`pointerEvents: 'none'`** on the hero **NOIR** label that existed only so regen M was tappable. **`motherboard/CORE.md`**: NOIR bullet updated so color step no longer documents Fal regen UI; styling/other regen strips unchanged.
+
+**Verification:** `npm run build` passes.
