@@ -16375,3 +16375,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`overwriteFlatIronLeftRightAngleFromRightPartIfAvailable`** and related path vars; **no** cross-folder writes. **`motherboard/CORE.md`**: removed **FLAT IRON + UI LEFT** overwrite sentence.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — FLAT IRON + LEFT: R thumb shows RIGHT-part `right.webp` URL only (no Storage copy)
+
+**Context (this chat):** User still not seeing the **recovered L part right angle** asset (use **R part** **right** camera for the **L part** thumb). Storage **copy** was removed to stop **clobber**; product still wants **display** parity.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: When **`middleFlatIron && partStyling === 'LEFT'`**, if **`flat-iron-right-part/.../right.webp`** exists, set **`publicUrls.right`** to that object’s public URL (**`flatIronLeftRightThumbDisplayUrl`**); else default LEFT **`right.webp`**. **`outputPaths`** unchanged. **No** upload — regenerating **RIGHT** only does **not** touch **LEFT** Storage objects.
+
+**Verification:** `npm run build` passes.
