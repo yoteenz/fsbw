@@ -16092,3 +16092,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/wig-preview/live-noir-color.ts`**: **`forceRegenerate`** still **`requireAdminFounder`**; without it, **`getAuthUser`** — any **signed-in** Supabase session (401 if not). **`src/pages/build-a-wig/color/page.tsx`**: **`useEffect`** on NOIR color routes — **`HEAD`** via **`resolveWigPreviewLiveColorTripleIfStored`** first; else **`postWigPreviewLiveNoirColor`** (silent, no status text), **`persistPendingBawNoirLiveColorWigViews`**, **`customStorageChange`**; gen ref ignores stale responses. **`motherboard/CORE.md`**: documents live-noir-color vs after-color-styling founder rules.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — UI R part stuck on image RIGHT: PART OVERRIDE vs STYLE LOCK + color WebP default part
+
+**Context (this chat):** User reported **RIGHT part** (UI R) still rendering the part on the **image RIGHT** scalp (same as UI L) instead of **image LEFT** (“should render in reverse”).
+
+**Root cause:** Color-tier **`wig-preview-live`** WebPs often encode a **baked-in** part (commonly **image RIGHT** / UI L). **`STYLE LOCK`** + **`bawFalEditPreserveReferenceBlock`** push the model to **keep** reference geometry, so Fal **re-used** that part line for **UI R** requests.
+
+**Decisions / outcomes:** **`api/_lib/bawLiveStylingPrompts.ts`** + **`scripts/wig-preview/promptTemplate.mjs`**: added **`salonPartMustOverrideInputReferenceBlock`** for **UI L** / **UI R** (placed **before** **`STYLE LOCK`**); tightened **UI R** / **UI L** part blocks (**left third** / **right third** of forehead); **`STYLE LOCK`** sentence: do **not** copy part-line position from color preview when **PART OVERRIDE** applies. **`motherboard/CORE.md`**: STYLE LOCK bullet notes **PART OVERRIDE** for side parts.
+
+**Verification:** `npm run build` passes.
