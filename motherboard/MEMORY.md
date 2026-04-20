@@ -16208,3 +16208,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/_lib/bawLiveStylingPrompts.ts`** (`salonPartMustOverrideInputReferenceBlock` for **RIGHT**) and **`scripts/wig-preview/promptTemplate.mjs`**: UI R string is now: ignore color preview part line; **UI R** = visible groove **left third** / **closer to image LEFT**; **re-part** roots to match. **UI L** block unchanged.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Restore full UI R PART OVERRIDE text (revert over-shortening)
+
+**Context (this chat):** User reported the **UI R** **`PART OVERRIDE`** change removed too much context; they intended edits **only** within that subsection, not stripping discard / opposite-UI-L / success-check lines. Restore code + **`promptTemplate.mjs`** parity.
+
+**Decisions / outcomes:** **`salonPartMustOverrideInputReferenceBlock`** for **`RIGHT`** reverted to the full pre-shorten string (see **`641a4bed^`** in git): input may show LEFT/UI L or center → **discard**; **UI R** groove **left third** / **image LEFT**, **opposite** UI L; **re-part**; do not preserve reference side-part; **success check** vs **image RIGHT** half. **UI L** branch unchanged; **`buildLayersStylePromptShared`** and other style/part blocks were not modified.
+
+**Verification:** `npm run build` passes.
