@@ -331,29 +331,6 @@ function salonOneShoulderDrapeBlock() {
   );
 }
 
-/** UI R + LAYERS/CRIMPS: input = MIDDLE-part after-color WebP. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
-export function buildUiRightSalonFromMiddlePartOutputPrompt(_angle, _salon, includeBangs) {
-  const partFirst =
-    '**Recreate this photograph** with the **part on the LEFT side of her scalp** — **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair.';
-  const bangsLine = includeBangs
-    ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
-    : '';
-  const [line0, ...restFidelity] = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES;
-  const line0Body = line0.replace(
-    /^Treat the input as a \*\*photograph to preserve\*\*, not a scene to repaint:\s*/,
-    ''
-  );
-  const fidelityAfterPart =
-    'Do not treat the input as a scene to repaint: ' + line0Body.trim() + ' ' + restFidelity.join(' ');
-  return (
-    partFirst +
-    bangsLine +
-    ' ' +
-    fidelityAfterPart +
-    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.'
-  );
-}
-
 function salonStyleInvarianceAcrossColorsBlock(canonicalStyleLabel) {
   return (
     '**STYLE LOCK — SAME FOR EVERY SWATCH (critical):** The **color preview** image may show **different** current length, curl tightness, frizz, or layering than another color — **ignore that**. Output **one** canonical **' +

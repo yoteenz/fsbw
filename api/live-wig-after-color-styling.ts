@@ -5,9 +5,7 @@ export const config = { maxDuration: 120 };
  *
  * **Signed-in** Supabase session (Bearer JWT). Runs fal once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
  *
- * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
- * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
- * + part while **keeping** that hair color (fixes black output when input was HQ black-brick refs only).
+ * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP for that camera angle** (`left` / `front` / `right` from live color — same paths as color step). **Part direction** is **prompt-only** (PART OVERRIDE + STYLE LOCK), not a separate middle-angle input. Prompt: `buildLayersStylePromptFromColorTierWebp`.
  * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
  * **CRIMPS** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP input as LAYERS; prompt `buildCrimpsStylePromptFromColorTierWebp`
@@ -47,7 +45,6 @@ import {
   buildCrimpsStylePromptFromColorTierWebp,
   buildFlatIronStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
-  buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -276,23 +273,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           )
         : null;
 
-    /** UI R + LAYERS/CRIMPS: use **MIDDLE-part** after-color output as Fal input (not raw color-tier WebP). */
-    const useMiddlePartOutputAsUiRightInput =
-      partStyling === 'RIGHT' && (middleLayers || middleCrimps);
-    const middleFolderKeyForUiR = middleLayers
-      ? hasBangs
-        ? wigPreviewLiveLayersWithBangsPartFolder('MIDDLE')
-        : wigPreviewLiveLayersPartFolder('MIDDLE')
-      : middleCrimps
-        ? hasBangs
-          ? wigPreviewLiveCrimpsWithBangsPartFolder('MIDDLE')
-          : wigPreviewLiveCrimpsPartFolder('MIDDLE')
-        : '';
-    const middleOutPathsForUiR =
-      useMiddlePartOutputAsUiRightInput && middleFolderKeyForUiR
-        ? wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, middleFolderKeyForUiR)
-        : null;
-
     let supabase;
     try {
       supabase = getSupabaseAdminServiceRole();
@@ -382,71 +362,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       let prompt: string;
       let imageUrls: string[];
 
-      if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
-        const middlePath = middleOutPathsForUiR[angle];
-        const { error: midDlErr } = await supabase.storage.from(bucket).download(middlePath);
-        if (midDlErr) {
-          sendJson(res, 400, {
-            error:
-              'RIGHT part needs the **MIDDLE part** version of this style first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **RIGHT** part again.',
-            colorTierHash,
-            missingMiddlePartPath: middlePath,
-          });
-          return;
-        }
-        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middlePath);
-        colorPublicUrl = pubMid?.publicUrl ?? '';
-        if (!colorPublicUrl) {
-          sendJson(res, 500, { error: 'Could not build public URL for middle-part styling layer' });
-          return;
-        }
-        prompt = buildUiRightSalonFromMiddlePartOutputPrompt(
-          angle,
-          middleLayers ? 'layers' : 'crimps',
-          bangsWithSalon
-        );
-        imageUrls = [colorPublicUrl];
-      } else {
-        const colorPath = colorPaths[angle];
-        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-        if (colorDlErr) {
-          sendJson(res, 400, {
-            error:
-              'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
-            colorTierHash,
-            missingColorPath: colorPath,
-          });
-          return;
-        }
+      const colorPath = colorPaths[angle];
+      const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
+      if (colorDlErr) {
+        sendJson(res, 400, {
+          error:
+            'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
+          colorTierHash,
+          missingColorPath: colorPath,
+        });
+        return;
+      }
 
-        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-        colorPublicUrl = pubColor?.publicUrl ?? '';
-        if (!colorPublicUrl) {
-          sendJson(res, 500, { error: 'Could not build public URL for color layer' });
-          return;
-        }
+      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+      colorPublicUrl = pubColor?.publicUrl ?? '';
+      if (!colorPublicUrl) {
+        sendJson(res, 500, { error: 'Could not build public URL for color layer' });
+        return;
+      }
 
-        const flatIronMiddleUsesBaseNoirGeometry =
-          middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
+      const flatIronMiddleUsesBaseNoirGeometry =
+        middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
 
-        prompt = middleLayers
-          ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+      prompt = middleLayers
+        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+            includeBangs: bangsWithSalon,
+          })
+        : middleCrimps
+          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
               includeBangs: bangsWithSalon,
             })
-          : middleCrimps
-            ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+          : middleFlatIron
+            ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
                 includeBangs: bangsWithSalon,
+                baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
               })
-            : middleFlatIron
-              ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-                  includeBangs: bangsWithSalon,
-                  baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
-                })
-              : buildBangsOnlyStylePrompt(angle);
-        imageUrls = flatIronMiddleUsesBaseNoirGeometry
-          ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
-          : [colorPublicUrl];
-      }
+            : buildBangsOnlyStylePrompt(angle);
+      imageUrls = flatIronMiddleUsesBaseNoirGeometry
+        ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
+        : [colorPublicUrl];
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {

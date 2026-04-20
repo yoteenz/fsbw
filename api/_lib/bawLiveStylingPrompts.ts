@@ -1,7 +1,4 @@
-import {
-  bawFalEditPreserveReferenceBlock,
-  BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES,
-} from './bawFalEditFidelityPrompt.js';
+import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
 
 export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -178,36 +175,6 @@ function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartS
   }
   return (
     '**PART OVERRIDE (critical — ignore the color preview’s part line):** Whatever part the preview shows — **discard** it. **UI R** = **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**), **opposite** of **UI L**. **Re-part** the roots to match — **do not** keep the reference part line.'
-  );
-}
-
-/**
- * **UI R only (LAYERS or CRIMPS):** Fal input = **MIDDLE-part** after-color WebP for this angle.
- * Short prompt: **part direction first**, then fidelity (same substance as `BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES` but lead-in stresses re-part, not repaint).
- */
-export function buildUiRightSalonFromMiddlePartOutputPrompt(
-  _angle: 'front' | 'left' | 'right',
-  _salon: 'layers' | 'crimps',
-  includeBangs: boolean
-): string {
-  const partFirst =
-    '**Recreate this photograph** with the **part on the LEFT side of her scalp** — **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair.';
-  const bangsLine = includeBangs
-    ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
-    : '';
-  const [line0, ...restFidelity] = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES;
-  const line0Body = line0.replace(
-    /^Treat the input as a \*\*photograph to preserve\*\*, not a scene to repaint:\s*/,
-    ''
-  );
-  const fidelityAfterPart =
-    'Do not treat the input as a scene to repaint: ' + line0Body.trim() + ' ' + restFidelity.join(' ');
-  return (
-    partFirst +
-    bangsLine +
-    ' ' +
-    fidelityAfterPart +
-    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.'
   );
 }
 

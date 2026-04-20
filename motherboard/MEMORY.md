@@ -16343,3 +16343,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`publicUrls.right`** override. Added **`overwriteFlatIronLeftRightAngleFromRightPartIfAvailable`**: downloads **`flat-iron-right-part/.../right.webp`** (or **with-bangs**), **`upload`** **`upsert`** to **`outPaths.right`** under the **LEFT**-part folder. Runs after the Fal loop (full triple generated) and on **cache-only** hits (all three files exist). If the RIGHT-part source is missing, LEFT **`right.webp`** stays the Fal output. **`motherboard/CORE.md`**: FLAT IRON + UI LEFT bullet updated (overwrite bytes, single URL path).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — Live styling: per-angle color WebP + prompt part direction (no MIDDLE-part input for UI R)
+
+**Context (this chat):** User asked that the **input** be **that camera angle** **and** **part direction** (prompt) for **L & R** parts and angles **for all styles** — i.e. do **not** drive side-angle Fal from **MIDDLE-part** after-color WebPs.
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: Removed **`useMiddlePartOutputAsUiRightInput`**, **`middleOutPathsForUiR`**, and the branch that used **`buildUiRightSalonFromMiddlePartOutputPrompt`** with **MIDDLE-part** Storage. Every angle now uses **`colorPaths[angle]`** (color-tier **`left` / `front` / `right`**) + existing **`buildLayersStylePromptFromColorTierWebp`** / **`buildCrimpsStylePromptFromColorTierWebp`** / **`buildFlatIronStylePromptFromColorTierWebp`**. Removed **`buildUiRightSalonFromMiddlePartOutputPrompt`** from **`api/_lib/bawLiveStylingPrompts.ts`** and **`scripts/wig-preview/promptTemplate.mjs`**. **`motherboard/CORE.md`**: Replaced UI R + LAYERS/CRIMPS “MIDDLE-part input” bullet with **UI L / UI R** — per-angle color WebP + prompt-only part direction.
+
+**Verification:** `npm run build` passes.
