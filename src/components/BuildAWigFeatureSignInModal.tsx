@@ -21,7 +21,7 @@ export default function BuildAWigFeatureSignInModal({ isOpen, onClose, returnTo 
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={() => navigate(signInHrefWithReturnTo(returnTo))}
-      title="SIGN IN REQUIRED"
+      title="FORGOT SOMETHING?"
       message="You must sign in to access this feature."
       confirmText="SIGN IN"
       cancelText="CANCEL"

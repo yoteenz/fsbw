@@ -16159,6 +16159,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Build-a-Wig sign-in modal title: FORGOT SOMETHING?
+
+**Context (this chat):** User asked to change the red **SIGN IN REQUIRED** popup title to **FORGOT SOMETHING?** in uppercase.
+
+**Decisions / outcomes:** **`src/components/BuildAWigFeatureSignInModal.tsx`**: **`title`** from **`SIGN IN REQUIRED`** → **`FORGOT SOMETHING?`** (modal already applies **`textTransform: uppercase`**). **`motherboard/CORE.md`**: Build-a-Wig bullet updated to match.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — UI R PART OVERRIDE: shorter prompt block
 
 **Context (this chat):** User asked to simplify only the **UI R** branch of **`PART OVERRIDE`** — keep the headline plus **left third** / **image LEFT** placement and **re-part** the roots, drop extra sentences.
