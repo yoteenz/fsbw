@@ -4,6 +4,7 @@ import DynamicCartIcon from './DynamicCartIcon';
 import BrandMenuLinks from './BrandMenuLinks';
 import SocialMenuIcons from './SocialMenuIcons';
 import ConfirmationModal from './ConfirmationModal';
+import BuildAWigFeatureSignInModal from './BuildAWigFeatureSignInModal';
 import { clearAppAuth } from '../utils/adminAuth';
 import { ShopMobileMenuShopTab } from './ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from './ShopMobileMenuToolsTab';
@@ -30,6 +31,7 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showBawMenuSignInModal, setShowBawMenuSignInModal] = useState(false);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -108,6 +110,16 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
       window.removeEventListener('signInStateChanged', checkSignInStatus as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    if (location.pathname !== '/build-a-wig/noir') return;
+    const params = new URLSearchParams(location.search);
+    if (params.get('bawMenu') !== '1') return;
+    params.delete('bawMenu');
+    const q = params.toString();
+    navigate(q ? `/build-a-wig/noir?${q}` : '/build-a-wig/noir', { replace: true });
+    setShowMobileMenu(true);
+  }, [location.pathname, location.search, navigate]);
 
   const handleBack = () => navigate(-1);
 
@@ -335,6 +347,8 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
                         buildAWigPath="/build-a-wig/noir"
                         labelTranslateX="7px"
                         arrowImgAlt=""
+                        isSignedInForBuildAWig={isSignedIn}
+                        onBuildAWigRequiresSignIn={() => setShowBawMenuSignInModal(true)}
                       />
                     )}
                   </div>
@@ -399,6 +413,12 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <BuildAWigFeatureSignInModal
+        isOpen={showBawMenuSignInModal}
+        onClose={() => setShowBawMenuSignInModal(false)}
+        returnTo={{ pathname: '/build-a-wig/noir', search: '?bawMenu=1' }}
       />
     </div>
   );

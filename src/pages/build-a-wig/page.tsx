@@ -11,6 +11,7 @@ import { useSignedInFromStorage } from '../../hooks/useSignedInFromStorage';
 import { trackActivity } from '../../utils/activity';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
+import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { isBuildWigPremiumMembershipOptionCategory } from '../../utils/buildWigPremiumOptions';
@@ -2775,6 +2776,19 @@ export default function BuildAWigPage() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showBawMenuSignInModal, setShowBawMenuSignInModal] = useState(false);
+
+  useEffect(() => {
+    const hub = location.pathname === '/build-a-wig' || location.pathname === '/build-a-wig/noir';
+    if (!hub) return;
+    const params = new URLSearchParams(location.search);
+    if (params.get('bawMenu') !== '1') return;
+    params.delete('bawMenu');
+    const q = params.toString();
+    const base = location.pathname === '/build-a-wig/noir' ? '/build-a-wig/noir' : '/build-a-wig';
+    navigate(q ? `${base}?${q}` : base, { replace: true });
+    setShowMobileMenu(true);
+  }, [location.pathname, location.search, navigate]);
 
   // Currency exchange rates (same as CartDropdown)
   const currencyRates = useMemo(() => ({
@@ -5287,6 +5301,8 @@ export default function BuildAWigPage() {
                                             closeSubItemMenu={() => setShowMobileMenu(false)}
                                             labelTranslateX="13px"
                                             duplicateRowClickForStaticLinks
+                                            isSignedInForBuildAWig={isSignedIn}
+                                            onBuildAWigRequiresSignIn={() => setShowBawMenuSignInModal(true)}
                                           />
                   )}
                 </div>
@@ -6028,6 +6044,12 @@ export default function BuildAWigPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <BuildAWigFeatureSignInModal
+        isOpen={showBawMenuSignInModal}
+        onClose={() => setShowBawMenuSignInModal(false)}
+        returnTo={{ pathname: '/build-a-wig', search: '?bawMenu=1' }}
       />
 
       <ConfirmationModal

@@ -33,6 +33,10 @@ export type ShopMobileMenuShopTabProps = {
   closeAfterStaticNav?: () => void;
   /** Default `/build-a-wig`. Booking flow uses `/build-a-wig/noir`. */
   buildAWigPath?: string;
+  /** When set and user is not signed in, BUILD-A-WIG does not navigate — caller shows sign-in modal. */
+  onBuildAWigRequiresSignIn?: () => void;
+  /** Required with `onBuildAWigRequiresSignIn` so the tab knows whether to gate. */
+  isSignedInForBuildAWig?: boolean;
   labelTranslateX?: string;
   /** Matches pages that attach the same handlers to the outer row for BUILD-A-WIG / BCF static links. */
   duplicateRowClickForStaticLinks?: boolean;
@@ -46,6 +50,8 @@ export function ShopMobileMenuShopTab({
   closeSubItemMenu,
   closeAfterStaticNav,
   buildAWigPath = '/build-a-wig',
+  onBuildAWigRequiresSignIn,
+  isSignedInForBuildAWig,
   labelTranslateX = '7px',
   duplicateRowClickForStaticLinks = false,
   arrowImgAlt = 'Arrow'
@@ -58,6 +64,10 @@ export function ShopMobileMenuShopTab({
       } else {
         handleMobileMenuItemToggle(item.label);
       }
+      return;
+    }
+    if (item.label === 'BUILD-A-WIG' && onBuildAWigRequiresSignIn && isSignedInForBuildAWig === false) {
+      onBuildAWigRequiresSignIn();
       return;
     }
     const path = staticNavPath(item.label, buildAWigPath);

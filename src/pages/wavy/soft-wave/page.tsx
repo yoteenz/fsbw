@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import BuildAWigFeatureSignInModal from '../../../components/BuildAWigFeatureSignInModal';
 import ImageViewerModal, { type ImageViewerDownloadLink } from '../../../components/ImageViewerModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
@@ -394,6 +395,11 @@ function SoftWaveSelection() {
     return false;
   });
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [showBawFeatureSignInModal, setShowBawFeatureSignInModal] = useState(false);
+  const [bawSignInReturnTo, setBawSignInReturnTo] = useState(() => ({
+    pathname: location.pathname,
+    search: location.search || '',
+  }));
 
   // Update active tab based on current route
   useEffect(() => {
@@ -1085,6 +1091,16 @@ function SoftWaveSelection() {
                                               closeSubItemMenu={() => setShowMobileMenu(false)}
                                               labelTranslateX="13px"
                                               duplicateRowClickForStaticLinks
+                                              isSignedInForBuildAWig={isSignedIn}
+                                              onBuildAWigRequiresSignIn={() => {
+                                                const p = new URLSearchParams(location.search);
+                                                p.set('bawMenu', '1');
+                                                setBawSignInReturnTo({
+                                                  pathname: location.pathname,
+                                                  search: `?${p.toString()}`,
+                                                });
+                                                setShowBawFeatureSignInModal(true);
+                                              }}
                                             />
                     )}
                   </div>
@@ -1972,6 +1988,11 @@ width: 'clamp(230px, 57.5vw, 368px)',
           <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
             <button
               onClick={() => {
+                if (!isSignedIn) {
+                  setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
+                  setShowBawFeatureSignInModal(true);
+                  return;
+                }
                 // Check if item is in the bag (default configuration)
                 if (addToBagState === 'added') {
                   // Item is in bag - enter edit mode
@@ -2839,6 +2860,12 @@ width: 'clamp(230px, 57.5vw, 368px)',
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="sign-out-confirm"
+      />
+
+      <BuildAWigFeatureSignInModal
+        isOpen={showBawFeatureSignInModal}
+        onClose={() => setShowBawFeatureSignInModal(false)}
+        returnTo={bawSignInReturnTo}
       />
 
       {/* Image Viewer Modal */}

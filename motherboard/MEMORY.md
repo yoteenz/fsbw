@@ -16095,6 +16095,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Sign-in gate: CUSTOMIZE IN BUILD-A-WIG + menu BUILD-A-WIG
+
+**Context (this chat):** User asked for a sign-in popup (“must sign in to access this feature”) for **CUSTOMIZE IN BUILD-A-WIG** on unit product pages and for **BUILD-A-WIG** in the mobile menu so users are forced to sign in.
+
+**Decisions / outcomes:** New **`src/components/BuildAWigFeatureSignInModal.tsx`** (wraps **`ConfirmationModal`**, **`SIGN IN`** → **`signInHrefWithReturnTo`**). **`ShopMobileMenuShopTab`**: optional **`onBuildAWigRequiresSignIn`** + **`isSignedInForBuildAWig`** — when not signed in, **BUILD-A-WIG** row calls the callback instead of **`navigate`**. Unit PDPs (**noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl**): gate customize button; menu gate sets **`returnTo`** with **`?bawMenu=1`** on current path. **`build-a-wig/page.tsx`**: same modal + props on **`ShopMobileMenuShopTab`**; **`useEffect`** on **`/build-a-wig`** or **`/build-a-wig/noir`** strips **`bawMenu`** and opens mobile menu. **`BookingFlowLayout`**: same for booking menu targeting **`/build-a-wig/noir`**. **`motherboard/CORE.md`**: Build-a-Wig entry bullet.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — UI R part stuck on image RIGHT: PART OVERRIDE vs STYLE LOCK + color WebP default part
 
 **Context (this chat):** User reported **RIGHT part** (UI R) still rendering the part on the **image RIGHT** scalp (same as UI L) instead of **image LEFT** (“should render in reverse”).
