@@ -16179,6 +16179,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Fal regen text visible on NOIR hairline + styling sub-pages only
+
+**Context (this chat):** User asked to **show** Fal / LIVE PREVIEW / regen copy on **hairline** and **styling** NOIR sub-pages only (not hidden everywhere).
+
+**Decisions / outcomes:** **`styling/page.tsx`**: **`showNoirStylingFalRegenText`** = pathname is **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`** — Fal hint, LIVE PREVIEW line, regen buttons: visible when true (else **`display: none`** / **`aria-hidden`**). NOIR title **`pointerEvents: none`** only when regen controls show **and** that flag. **`hairline/page.tsx`**: founder hairline paragraph only when pathname is **`.../noir/edit/hairline`** or **`.../noir/customize/hairline`**. **`motherboard/CORE.md`**: NOIR bullet updated.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — UI R PART OVERRIDE: shorter prompt block
 
 **Context (this chat):** User asked to simplify only the **UI R** branch of **`PART OVERRIDE`** — keep the headline plus **left third** / **image LEFT** placement and **re-part** the roots, drop extra sentences.

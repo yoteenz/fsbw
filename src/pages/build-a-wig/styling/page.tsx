@@ -603,6 +603,10 @@ export default function StylingSelectionPage() {
 
   const showNoirFalHintPremium =
     noirLiveFalEligible && location.pathname.includes('/build-a-wig/noir/');
+  /** Show Fal / LIVE PREVIEW / regen copy on NOIR styling step only (not other BAW steps). */
+  const showNoirStylingFalRegenText =
+    location.pathname.includes('/build-a-wig/noir/edit/styling') ||
+    location.pathname.includes('/build-a-wig/noir/customize/styling');
   const showNoirLiveStylingRegenControls =
     founderNoirFalRegenUi &&
     location.pathname.includes('/build-a-wig/noir/') &&
@@ -1593,9 +1597,9 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: '#808080',
                   maxWidth: '280px',
-                  display: 'none',
+                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
                 }}
-                aria-hidden
+                aria-hidden={!showNoirStylingFalRegenText}
               >
                 Fal regen (LAYERS / CRIMPS / FLAT IRON / BANGS): select a salon style + part or BANGS below, or use the NOIR color page for color WebPs.
               </p>
@@ -1608,9 +1612,9 @@ export default function StylingSelectionPage() {
                   fontSize: '9px',
                   color: liveStylingError ? '#EB1C24' : '#808080',
                   maxWidth: '280px',
-                  display: 'none',
+                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
                 }}
-                aria-hidden
+                aria-hidden={!showNoirStylingFalRegenText}
               >
                 {liveStylingLoading
                   ? `LIVE PREVIEW: ${salonLivePreviewLabel}${hasBangsWithSalon ? ' + bangs' : ''} + ${selectedPartSelection} part (after color)…`
@@ -1626,8 +1630,11 @@ export default function StylingSelectionPage() {
             {showNoirLiveStylingRegenControls && (
               <div
                 className="flex flex-col items-center gap-y-2 mb-2 px-2"
-                style={{ maxWidth: '280px', display: 'none' }}
-                aria-hidden
+                style={{
+                  maxWidth: '280px',
+                  ...(showNoirStylingFalRegenText ? {} : { display: 'none' }),
+                }}
+                aria-hidden={!showNoirStylingFalRegenText}
               >
                 <button
                   type="button"
@@ -1813,7 +1820,9 @@ export default function StylingSelectionPage() {
                     whiteSpace: 'nowrap',
                     overflow: 'visible',
                     width: 'max-content',
-                    ...(showNoirLiveStylingRegenControls ? { pointerEvents: 'none' as const } : {}),
+                    ...(showNoirLiveStylingRegenControls && showNoirStylingFalRegenText
+                      ? { pointerEvents: 'none' as const }
+                      : {}),
                     fontSize: (() => {
                       const pathname = location.pathname;
                       if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {

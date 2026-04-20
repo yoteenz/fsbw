@@ -907,7 +907,9 @@ function HairlineSelection() {
             <>
           {/* WIG PREVIEW */}
           <div className="w-full flex items-center flex-col mb-6 md:mb-8" style={{ transform: 'translateY(20px)' }}>
-            {isFounderNoirFalRegenUiVisible() && (
+            {isFounderNoirFalRegenUiVisible() &&
+              (location.pathname.includes('/build-a-wig/noir/edit/hairline') ||
+                location.pathname.includes('/build-a-wig/noir/customize/hairline')) && (
               <p
                 className="text-center mb-2 px-2"
                 style={{
