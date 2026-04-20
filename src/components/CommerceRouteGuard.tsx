@@ -6,14 +6,22 @@ import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 
 /**
- * **Shopping bag (`/bag`):** always allowed — signed-out users can view the local cart (save-for-later / + LIST still gate elsewhere).
- * **Checkout** and other commerce routes: require a live Supabase session when Supabase is configured.
- * Anonymous localStorage checkout is blocked for real-money flows.
+ * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`):
+ * always allowed — guests can view the bag and complete purchase without signing in.
+ * Other commerce routes wrapped by this guard: require a live Supabase session when Supabase is configured.
  *
  * If **`isSignedIn`** is already true (local app auth) but **`getSession()`** has not
  * hydrated yet (race after refresh / tab restore), still allow the route so **VIEW BAG**
  * does not bounce to sign-in incorrectly.
  */
+function isGuestCommerceAllowedPath(pathname: string): boolean {
+  if (pathname === '/bag') return true;
+  if (pathname === '/checkout') return true;
+  if (pathname === '/checkout/bookings') return true;
+  if (pathname === '/checkout/gift-card') return true;
+  return false;
+}
+
 export default function CommerceRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [allowed, setAllowed] = useState<boolean | null>(null);
@@ -21,7 +29,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      if (location.pathname === '/bag') {
+      if (isGuestCommerceAllowedPath(location.pathname)) {
         if (!cancelled) setAllowed(true);
         return;
       }
@@ -74,7 +82,7 @@ export default function CommerceRouteGuard({ children }: { children: React.React
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
       if (cancelled) return;
       void (async () => {
-        if (location.pathname === '/bag') {
+        if (isGuestCommerceAllowedPath(location.pathname)) {
           setAllowed(true);
           return;
         }

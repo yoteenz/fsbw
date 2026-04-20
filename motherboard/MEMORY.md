@@ -16234,6 +16234,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Guest checkout: CommerceRouteGuard allows `/checkout` paths without Supabase
+
+**Context (this chat):** Signed-out users tapping **CHECKOUT** / **PROCEED TO CHECKOUT** from the cart dropdown or shopping bag were sent to **sign-in** instead of checkout.
+
+**Root cause:** **`CommerceRouteGuard`** only exempted **`/bag`** from the “must have Supabase `access_token`” rule; **`/checkout`**, **`/checkout/bookings`**, and **`/checkout/gift-card`** required a session and **`Navigate`**’d to **`signInHrefWithReturnTo`**.
+
+**Decisions / outcomes:** **`src/components/CommerceRouteGuard.tsx`**: added **`isGuestCommerceAllowedPath`** — same immediate **`setAllowed(true)`** as bag for **`/checkout`**, **`/checkout/bookings`**, **`/checkout/gift-card`** (initial effect + **`onAuthStateChange`**). **`motherboard/CORE.md`**: Auth bullet updated — guests can reach checkout without Supabase.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — `POST /api/live-wig-after-color-styling`: remove founder-only guard (fix LIVE PREVIEW error)
 
 **Context (this chat):** User saw **LIVE PREVIEW: Founder admin session required** on the NOIR styling step. That string is the API’s **403** body from **`api/live-wig-after-color-styling.ts`**, which still used **`requireAdminFounder`** while **`bawLiveStylingPrompts.ts` / `promptTemplate.mjs`** only hold prompt text — unrelated to auth.
