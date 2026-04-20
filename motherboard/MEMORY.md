@@ -16301,3 +16301,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`salonPartMustOverrideInputReferenceBlock`** for **`partSelection === 'RIGHT'`** only — replaced with: discard whatever the preview shows; **UI R** = groove **left third** / **image LEFT**, opposite **UI L**; re-part; do not keep reference part line. **UI L** branch unchanged. **`scripts/wig-preview/promptTemplate.mjs`** mirrored.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-21 — UI R LAYERS/CRIMPS: Fal input = MIDDLE-part after-color WebP + short re-part prompt
+
+**Context (this chat):** User asked to stop using the **color-tier** base image for **UI R**; use the **current generated MIDDLE part** styling for that salon mode per angle, with a simple instruction like “recreate with part on the left side of her scalp instead of the middle.”
+
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: when **`partSelection === 'RIGHT'`** and salon is **LAYERS** or **CRIMPS** (with or without bangs), resolve **`middleOutPathsForUiR`** (`after-color/...-middle-part/` or `...-with-bangs-middle-part/`), **`download`** that angle’s WebP; if missing → **400** with message to generate **MIDDLE** first. **`image_urls`** = **one** URL (middle output). **`buildUiRightSalonFromMiddlePartOutputPrompt`** in **`api/_lib/bawLiveStylingPrompts.ts`** (+ **`scripts/wig-preview/promptTemplate.mjs`**) — short recreate + UI R placement + DRAPE + preserve block. **FLAT IRON** / **BANGS-only** / **UI L** / **MIDDLE** unchanged (still color-tier WebP + existing builders). **`motherboard/CORE.md`**: NOIR bullet updated.
+
+**Verification:** `npm run build` passes.

@@ -46,6 +46,7 @@ import {
   buildCrimpsStylePromptFromColorTierWebp,
   buildFlatIronStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
+  buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -237,6 +238,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
+    /** UI R + LAYERS/CRIMPS: use **MIDDLE-part** after-color output as Fal input (not raw color-tier WebP). */
+    const useMiddlePartOutputAsUiRightInput =
+      partStyling === 'RIGHT' && (middleLayers || middleCrimps);
+    const middleFolderKeyForUiR = middleLayers
+      ? hasBangs
+        ? wigPreviewLiveLayersWithBangsPartFolder('MIDDLE')
+        : wigPreviewLiveLayersPartFolder('MIDDLE')
+      : middleCrimps
+        ? hasBangs
+          ? wigPreviewLiveCrimpsWithBangsPartFolder('MIDDLE')
+          : wigPreviewLiveCrimpsPartFolder('MIDDLE')
+        : '';
+    const middleOutPathsForUiR =
+      useMiddlePartOutputAsUiRightInput && middleFolderKeyForUiR
+        ? wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, middleFolderKeyForUiR)
+        : null;
+
     let supabase;
     try {
       supabase = getSupabaseAdminServiceRole();
@@ -316,45 +334,75 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         }
       }
 
-      const colorPath = colorPaths[angle];
-      const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-      if (colorDlErr) {
-        sendJson(res, 400, {
-          error:
-            'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
-          colorTierHash,
-          missingColorPath: colorPath,
-        });
-        return;
-      }
+      let colorPublicUrl: string;
+      let prompt: string;
+      let imageUrls: string[];
 
-      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-      const colorPublicUrl = pubColor?.publicUrl;
-      if (!colorPublicUrl) {
-        sendJson(res, 500, { error: 'Could not build public URL for color layer' });
-        return;
-      }
+      if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
+        const middlePath = middleOutPathsForUiR[angle];
+        const { error: midDlErr } = await supabase.storage.from(bucket).download(middlePath);
+        if (midDlErr) {
+          sendJson(res, 400, {
+            error:
+              'RIGHT part needs the **MIDDLE part** version of this style first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **RIGHT** part again.',
+            colorTierHash,
+            missingMiddlePartPath: middlePath,
+          });
+          return;
+        }
+        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middlePath);
+        colorPublicUrl = pubMid?.publicUrl ?? '';
+        if (!colorPublicUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for middle-part styling layer' });
+          return;
+        }
+        prompt = buildUiRightSalonFromMiddlePartOutputPrompt(
+          angle,
+          middleLayers ? 'layers' : 'crimps',
+          bangsWithSalon
+        );
+        imageUrls = [colorPublicUrl];
+      } else {
+        const colorPath = colorPaths[angle];
+        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
+        if (colorDlErr) {
+          sendJson(res, 400, {
+            error:
+              'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
+            colorTierHash,
+            missingColorPath: colorPath,
+          });
+          return;
+        }
 
-      const flatIronMiddleUsesBaseNoirGeometry =
-        middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
+        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+        colorPublicUrl = pubColor?.publicUrl ?? '';
+        if (!colorPublicUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for color layer' });
+          return;
+        }
 
-      const prompt = middleLayers
-        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-            includeBangs: bangsWithSalon,
-          })
-        : middleCrimps
-          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+        const flatIronMiddleUsesBaseNoirGeometry =
+          middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
+
+        prompt = middleLayers
+          ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
               includeBangs: bangsWithSalon,
             })
-          : middleFlatIron
-            ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+          : middleCrimps
+            ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
                 includeBangs: bangsWithSalon,
-                baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
               })
-            : buildBangsOnlyStylePrompt(angle);
-      const imageUrls = flatIronMiddleUsesBaseNoirGeometry
-        ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
-        : [colorPublicUrl];
+            : middleFlatIron
+              ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+                  includeBangs: bangsWithSalon,
+                  baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
+                })
+              : buildBangsOnlyStylePrompt(angle);
+        imageUrls = flatIronMiddleUsesBaseNoirGeometry
+          ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
+          : [colorPublicUrl];
+      }
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {

@@ -178,6 +178,38 @@ function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartS
   );
 }
 
+/**
+ * **UI R only (LAYERS or CRIMPS):** Fal input = **MIDDLE-part** after-color WebP for this angle (same style/volume/color),
+ * not the raw color-tier preview. Instructs: recreate with part on **image LEFT** scalp (UI R).
+ */
+export function buildUiRightSalonFromMiddlePartOutputPrompt(
+  angle: 'front' | 'left' | 'right',
+  salon: 'layers' | 'crimps',
+  includeBangs: boolean
+): string {
+  const angleLabel = angle === 'left' ? 'LEFT 3/4' : angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+  const styleKeep =
+    salon === 'layers'
+      ? 'Keep the **same voluminous layered S-waves**, volume, length, and color as this image — **only** change where the **part** sits.'
+      : 'Keep the **same crimp texture, scale, length, and color** as this image — **only** change where the **part** sits.';
+  const bangsLine = includeBangs
+    ? ' **Curtain bangs** must **follow the new part** (open from the **left** forehead for UI R, not center-split).'
+    : '';
+  return [
+    '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting, and **hair color**.',
+    '**TASK:** **Recreate this photograph** with the **part on the LEFT side of her scalp** (**UI R / RIGHT part**): **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair.',
+    styleKeep,
+    `**Camera:** **${angleLabel}** — preserve **framing, head pose, brick background, and FRONTAL SLAYER logo**; edit **hair only**.`,
+    salonOneShoulderDrapeBlock(),
+    bangsLine.trim(),
+    bawFalEditPreserveReferenceBlock(),
+    'The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference.',
+    'Output must be extremely high-quality, crisp, and pixel-perfect.',
+  ]
+    .filter((s) => s.length > 0)
+    .join(' ');
+}
+
 /** Product rule: long hair drapes **only** over the **viewer’s left** shoulder (left side of the image — “facing me”). */
 function salonOneShoulderDrapeBlock(): string {
   return (
