@@ -27,6 +27,12 @@ function isBawProductHubThumbPathname(pathname: string): boolean {
   return false;
 }
 
+/** Live NOIR hero + thumb mannequins align with **static** hub framing (same CSS brick cell). */
+const BAW_NOIR_HERO_FRAME_W = 282;
+const BAW_NOIR_HERO_FRAME_H = 387;
+const BAW_NOIR_THUMB_MANNEQUIN_W = 72;
+const BAW_NOIR_THUMB_MANNEQUIN_H = 95;
+
 type Props = {
   wigViews: [string, string, string] | string[];
   selectedView: number;
@@ -37,6 +43,12 @@ type Props = {
   belowHeroChildren?: ReactNode;
   /** Extra classes on the thumbnail row (e.g. hub uses flex center on inner thumb boxes). */
   thumbRowClassName?: string;
+  /**
+   * Use **12px** thumb gap + no per-frame nudges (same as NOIR customize sub-pages with live WebPs).
+   * Set on BAW **hub** via pathname; optionally on **color** sub-page when showing static naturals (e.g. OFF BLACK)
+   * so thumbnails match live sub-pages.
+   */
+  thumbSpacingLikeSubLive?: boolean;
 };
 
 /**
@@ -53,13 +65,15 @@ export function BawNoirWigPreviewHeroThumbs({
   heroChildren,
   belowHeroChildren,
   thumbRowClassName,
+  thumbSpacingLikeSubLive: thumbSpacingLikeSubLiveProp,
 }: Props) {
   const { pathname } = useLocation();
   const triple = wigViews as string[];
   const hideBrick = hideDuplicateBrickForNoirWigViews(triple);
   const hubThumbsOnlyOuter = isBawProductHubThumbPathname(pathname);
-  /** Hub static row: match **12px** gap used on NOIR sub-pages with live WebPs (not 2px + nudges used for static-only sub-pages). */
-  const hubStaticThumbSpacingLikeSubLive = hubThumbsOnlyOuter && !hideBrick;
+  /** Hub static row: match **12px** gap used on NOIR customize sub-pages with live WebPs (not 2px + nudges used for static-only sub-pages). */
+  const hubStaticThumbSpacingLikeSubLive =
+    Boolean(thumbSpacingLikeSubLiveProp) || (hubThumbsOnlyOuter && !hideBrick);
   /** Hub + static: outer `.leaf-bg` + mannequin `<img>`. Sub-pages: inner brick + `<img>`, no `.leaf-bg`. */
   const thumbOuterLeafBg = !hideBrick && hubThumbsOnlyOuter;
   /** Sub-page + static: white/black selection ring on `.baw-noir-thumb-frame` (was on `.leaf-bg`). */
@@ -72,8 +86,8 @@ export function BawNoirWigPreviewHeroThumbs({
         <div
           className="relative bg-cover bg-center flex items-center justify-center"
           style={{
-            width: '262px',
-            height: '367px',
+            width: hideBrick ? `${BAW_NOIR_HERO_FRAME_W}px` : '262px',
+            height: hideBrick ? `${BAW_NOIR_HERO_FRAME_H}px` : '367px',
             overflow: 'visible',
             ...(hideBrick
               ? {
@@ -95,16 +109,16 @@ export function BawNoirWigPreviewHeroThumbs({
               <img
                 src={triple[selectedView]}
                 alt="Selected Wig"
-                width={262}
-                height={367}
+                width={BAW_NOIR_HERO_FRAME_W}
+                height={BAW_NOIR_HERO_FRAME_H}
                 className="absolute z-10 hero-mannequin-img hero-mannequin-img--live-noir"
                 style={
                   {
                     left: '50%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
-                    '--hero-width': '262px',
-                    '--hero-height': '367px',
+                    '--hero-width': `${BAW_NOIR_HERO_FRAME_W}px`,
+                    '--hero-height': `${BAW_NOIR_HERO_FRAME_H}px`,
                   } as CSSProperties
                 }
               />
@@ -113,14 +127,14 @@ export function BawNoirWigPreviewHeroThumbs({
             <img
               src={triple[selectedView]}
               alt="Selected Wig"
-              width={282}
-              height={387}
+              width={BAW_NOIR_HERO_FRAME_W}
+              height={BAW_NOIR_HERO_FRAME_H}
               className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hero-mannequin-img"
               style={
                 {
                   top: 'calc(50% - 10.601px + 18px)',
-                  '--hero-width': '282px',
-                  '--hero-height': '387px',
+                  '--hero-width': `${BAW_NOIR_HERO_FRAME_W}px`,
+                  '--hero-height': `${BAW_NOIR_HERO_FRAME_H}px`,
                 } as CSSProperties
               }
             />
@@ -160,8 +174,8 @@ export function BawNoirWigPreviewHeroThumbs({
                 }${hideBrick ? ' baw-noir-thumb-frame--live-noir' : ''}`}
                 data-baw-thumb-index={index}
                 style={{
-                  width: '72px',
-                  height: '95px',
+                  width: `${BAW_NOIR_THUMB_MANNEQUIN_W}px`,
+                  height: `${BAW_NOIR_THUMB_MANNEQUIN_H}px`,
                   position: 'relative',
                   zIndex: 1,
                   display: 'flex',
@@ -208,8 +222,8 @@ export function BawNoirWigPreviewHeroThumbs({
               >
                 <img
                   alt={`Thumbnail ${index + 1}`}
-                  width={hideBrick ? 72 : 63}
-                  height={hideBrick ? 95 : 84}
+                  width={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_W : BAW_NOIR_THUMB_MANNEQUIN_W}
+                  height={hideBrick ? BAW_NOIR_THUMB_MANNEQUIN_H : BAW_NOIR_THUMB_MANNEQUIN_H}
                   src={view}
                   className={
                     hideBrick

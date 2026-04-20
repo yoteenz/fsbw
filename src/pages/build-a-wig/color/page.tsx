@@ -1591,6 +1591,7 @@ function ColorSelection() {
                 wigViews={wigViews}
                 selectedView={selectedView}
                 onSelectView={setSelectedView}
+                thumbSpacingLikeSubLive={noirColorSubPath && selectedColor === 'OFF BLACK'}
                 heroChildren={
                   <p
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"

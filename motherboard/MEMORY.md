@@ -15983,6 +15983,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — BAW hero width + hub / OFF BLACK thumb sizing
+
+**Context (this chat):** User wanted **main hero width** on BAW **sub-pages** to match the **hub**; **hub** and **OFF BLACK** color thumbs to match **other sub-pages**; **mannequin images** in those thumbs **~15% larger**.
+
+**Decisions / outcomes:** **`BawNoirWigPreviewHeroThumbs`**: live NOIR hero container + **`--hero-width/height`** set to **282×387** (same as static hub); shared constants for thumb **72×95**; static thumb `<img>` **72×95** (was **63×84**). **`thumbSpacingLikeSubLive`** prop — **color** page passes it when **OFF BLACK** on NOIR color route for **12px** gap. **`index.css`** comment. **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — M part FLAT IRON: UI shows color-tier triple (not flat-iron Storage)
 
 **Context (this chat):** User said **M part flat iron** was **still showing generated images** (wanted **base NOIR color** angles / not `after-color/flat-iron-middle-part` WebPs).

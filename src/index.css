@@ -3422,7 +3422,7 @@ img.thumbnail-mannequin-img.thumbnail-mannequin-img--live-noir {
   object-position: center center !important;
 }
 
-/* Live NOIR thumbs (sub-pages): **72×95** frame matches hub static height; `cover` fills cell — no side letterbox like hub outer art */
+/* Live NOIR thumbs (sub-pages): **72×95** frame; static sub-page thumbs use the same cell + **~15%** larger mannequin vs old 63×84 — `cover` fills cell */
 .leaf-stack.thumb .baw-noir-thumb-frame--live-noir img.thumbnail-mannequin-img--live-noir {
   object-fit: cover !important;
   object-position: center center !important;
