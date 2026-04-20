@@ -1,7 +1,4 @@
-import {
-  bawFalEditPreserveReferenceBlock,
-  BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES,
-} from './bawFalEditFidelityPrompt.js';
+import { bawFalEditPreserveReferenceBlock } from './bawFalEditFidelityPrompt.js';
 
 export type NoirLayersPartSelection = 'MIDDLE' | 'LEFT' | 'RIGHT';
 
@@ -182,32 +179,36 @@ function salonPartMustOverrideInputReferenceBlock(partSelection: NoirLayersPartS
 }
 
 /**
- * **UI R only (LAYERS or CRIMPS):** Fal input = **MIDDLE-part** after-color WebP for this angle.
- * Short prompt: **part direction first**, then fidelity (same substance as `BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES` but lead-in stresses re-part, not repaint).
+ * **UI R only (LAYERS or CRIMPS):** Fal input = **MIDDLE-part** after-color WebP for this angle (single `image_urls` entry).
+ * Full structured prompt: INPUT → TASK → style-keep → Camera → DRAPE SIDE → optional bangs → `bawFalEditPreserveReferenceBlock()` + logo legibility + output quality.
  */
 export function buildUiRightSalonFromMiddlePartOutputPrompt(
   _angle: 'front' | 'left' | 'right',
   _salon: 'layers' | 'crimps',
   includeBangs: boolean
 ): string {
-  const partFirst =
-    '**Recreate this photograph** with the **part on the LEFT side of her scalp** — **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair.';
+  const angleLabel = _angle === 'left' ? 'LEFT 3/4' : _angle === 'right' ? 'RIGHT 3/4' : 'FRONT';
+  const styleKeep =
+    _salon === 'layers'
+      ? 'Keep the **same voluminous layered S-waves**, volume, length, and color as this image — **only** change where the **part** sits.'
+      : 'Keep the **same crimp texture, scale, length, and color** as this image — **only** change where the **part** sits.';
   const bangsLine = includeBangs
     ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
     : '';
-  const [line0, ...restFidelity] = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES;
-  const line0Body = line0.replace(
-    /^Treat the input as a \*\*photograph to preserve\*\*, not a scene to repaint:\s*/,
-    ''
-  );
-  const fidelityAfterPart =
-    'Do not treat the input as a scene to repaint: ' + line0Body.trim() + ' ' + restFidelity.join(' ');
+  const fidelity = bawFalEditPreserveReferenceBlock();
+  const tail =
+    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.';
   return (
-    partFirst +
-    bangsLine +
-    ' ' +
-    fidelityAfterPart +
-    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.'
+    '**INPUT:** This image is the **MIDDLE part** (**center part**) version of this hairstyle for this **same** camera angle — **same** mannequin, scene, lighting, and **hair color**. ' +
+      '**TASK:** **Recreate this photograph** with the **part on the LEFT side of her scalp** (**UI R / RIGHT part**): **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair. ' +
+      styleKeep +
+      ' ' +
+      `**Camera:** **${angleLabel}** — preserve **framing, head pose, brick background, and FRONTAL SLAYER logo**; edit **hair only**. ` +
+      salonOneShoulderDrapeBlock() +
+      bangsLine +
+      ' ' +
+      fidelity +
+      tail
   );
 }
 

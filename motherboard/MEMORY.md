@@ -16457,3 +16457,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`scripts/wig-preview/promptTemplate.mjs`**: **`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`** = array **`.join(' ')`** as in **`72127d59`** (script parity; fidelity text unchanged).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — UI R LAYERS/CRIMPS prompt: full INPUT/TASK/DRAPE/fidelity block
+
+**Context (this chat):** Continuing Build-a-Wig NOIR Fal work; user provided a **full reference** prompt for **UI R** (LAYERS/CRIMPS) when the **single** Fal input is the **MIDDLE-part** after-color WebP for that angle — **INPUT**, **TASK**, style-keep, **Camera**, **`DRAPE SIDE`**, optional bangs, and full **`bawFalEditPreserveReferenceBlock()`** fidelity (replacing the shorter part-first + condensed fidelity variant).
+
+**Decisions / outcomes:** **`buildUiRightSalonFromMiddlePartOutputPrompt`** in **`api/_lib/bawLiveStylingPrompts.ts`** now builds that structure (per-angle **Camera** label, **LAYERS** vs **CRIMPS** style-keep, **`salonOneShoulderDrapeBlock()`**, **`bawFalEditPreserveReferenceBlock()`**, logo legibility + pixel-perfect tail). **`scripts/wig-preview/promptTemplate.mjs`** updated to match (**`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`**). **`motherboard/CORE.md`** NOIR bullet for **`buildUiRightSalonFromMiddlePartOutputPrompt`** updated (one **`image_urls`** attachment).
+
+**Verification:** `npm run build` passes.
