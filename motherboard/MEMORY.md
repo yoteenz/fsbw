@@ -16378,10 +16378,10 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
-## 2026-04-22 — FLAT IRON + LEFT: R thumb shows RIGHT-part `right.webp` URL only (no Storage copy)
+## 2026-04-22 — FLAT IRON + LEFT: R thumb = RIGHT-part `right.webp` public URL (align with 6eee1826, no probe)
 
-**Context (this chat):** User still not seeing the **recovered L part right angle** asset (use **R part** **right** camera for the **L part** thumb). Storage **copy** was removed to stop **clobber**; product still wants **display** parity.
+**Context (this chat):** User still not seeing the **recovered L part right angle** / **6eee1826** behavior ( **`publicUrls.right`** = **RIGHT-part** flat-iron **`right.webp`** for **UI L** ).
 
-**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: When **`middleFlatIron && partStyling === 'LEFT'`**, if **`flat-iron-right-part/.../right.webp`** exists, set **`publicUrls.right`** to that object’s public URL (**`flatIronLeftRightThumbDisplayUrl`**); else default LEFT **`right.webp`**. **`outputPaths`** unchanged. **No** upload — regenerating **RIGHT** only does **not** touch **LEFT** Storage objects.
+**Decisions / outcomes:** **`api/live-wig-after-color-styling.ts`**: For **`middleFlatIron && partStyling === 'LEFT'`**, set **`publicUrls.right`** via **`getPublicUrl(flat-iron-right-part/.../right.webp)`** only — **no** Storage **`download()`** probe (could fail in serverless and skip the override like **6eee1826**’s conditional). **`outputPaths.right`** stays **`flat-iron-left-part/...`**; **no** byte copy. **`motherboard/CORE.md`**: bullet updated.
 
 **Verification:** `npm run build` passes.

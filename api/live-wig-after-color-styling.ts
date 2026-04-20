@@ -15,7 +15,7 @@ export const config = { maxDuration: 120 };
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
  * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/` — Fal **only** writes the current **`partSelection`** folder.
- * **FLAT IRON + UI LEFT (R / right-camera thumb only):** response **`publicUrls.right`** may point at **`flat-iron-right-part/.../right.webp`** when that object exists — **display URL only**; **`outputPaths.right`** stays **`flat-iron-left-part/.../right.webp`**. **Does not** upload or overwrite LEFT-part Storage (avoids cross-part clobber).
+ * **FLAT IRON + UI LEFT (R / right-camera thumb):** **`publicUrls.right`** = public URL for **`flat-iron-right-part/.../right.webp`** (same as **6eee1826** `flatIronLeftRightThumbOverrideUrl` when file existed). **No** Storage download probe — **`getPublicUrl` only**; **no** upload into LEFT folder.
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -118,18 +118,17 @@ async function downloadUrlToBuffer(url: string): Promise<Buffer> {
 }
 
 /**
- * **FLAT IRON + LEFT:** use RIGHT-part **`right.webp`** public URL for the **R camera** thumb when that file exists.
- * Fal still stores LEFT outputs under **`flat-iron-left-part/`** only.
+ * **FLAT IRON + LEFT:** **`publicUrls.right`** (R camera thumb) = **RIGHT-part** folder **`right.webp`** public URL.
+ * Same intent as **6eee1826** (`flatIronLeftRightThumbOverrideUrl`), but **no Storage `download()` probe** — serverless
+ * download can fail spuriously and skip the override; the client still cache-busts (`?t=`) when persisting the triple.
+ * Fal uploads stay under **`flat-iron-left-part/`** only; we do **not** copy bytes into that path.
  */
-async function flatIronLeftPartRightCameraDisplayUrl(
+function flatIronLeftPartRightCameraDisplayPublicUrl(
   supabase: ReturnType<typeof getSupabaseAdminServiceRole>,
   bucket: string,
   rightPartFolderOutPaths: { front: string; left: string; right: string }
-): Promise<string | null> {
-  const p = rightPartFolderOutPaths.right;
-  const { error } = await supabase.storage.from(bucket).download(p);
-  if (error) return null;
-  const { data } = supabase.storage.from(bucket).getPublicUrl(p);
+): string | null {
+  const { data } = supabase.storage.from(bucket).getPublicUrl(rightPartFolderOutPaths.right);
   return data?.publicUrl ?? null;
 }
 
@@ -277,14 +276,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
 
-    let flatIronLeftRightThumbDisplayUrl: string | null = null;
-    if (flatIronRightPartOutPathsForLeftThumbDisplay) {
-      flatIronLeftRightThumbDisplayUrl = await flatIronLeftPartRightCameraDisplayUrl(
-        supabase,
-        bucket,
-        flatIronRightPartOutPathsForLeftThumbDisplay
-      );
-    }
+    const flatIronLeftRightThumbDisplayUrl =
+      flatIronRightPartOutPathsForLeftThumbDisplay !== null
+        ? flatIronLeftPartRightCameraDisplayPublicUrl(
+            supabase,
+            bucket,
+            flatIronRightPartOutPathsForLeftThumbDisplay
+          )
+        : null;
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
     const anglesToRun = singleAngle ? [singleAngle] : angleOrder;
