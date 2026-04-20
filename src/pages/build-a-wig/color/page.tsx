@@ -29,7 +29,6 @@ import {
   wigPreviewLiveColorTriplePublicUrlsForSelections,
 } from '../../../utils/wigPreviewLiveStoragePublicUrls';
 import {
-  clearBawNoirLiveColorWigViews,
   clearPendingBawNoirLiveColorWigViews,
   persistBawNoirLiveColorWigViews,
   persistPendingBawNoirLiveColorWigViews,
@@ -582,29 +581,17 @@ function ColorSelection() {
     }
   }, [liveWigViews]);
 
-  useEffect(() => {
-    const p = location.pathname;
-    const noirColor =
-      p.includes('/build-a-wig/noir/') &&
-      (p.includes('/edit/color') || p.includes('/customize/color'));
-    if (noirColor && selectedColor === 'OFF BLACK') {
-      setHeldFounderLiveTriple(null);
-      setHeldCompositeLiveTriple(null);
-    }
-  }, [selectedColor, location.pathname]);
-
   const noirColorSubPath =
     location.pathname.includes('/build-a-wig/noir/') &&
     (location.pathname.includes('/edit/color') || location.pathname.includes('/customize/color'));
 
+  /** OFF BLACK uses the same live `wig-preview-live` WebPs as other colors (fallback to static naturals until generated). */
   const wigViews =
-    noirColorSubPath && selectedColor === 'OFF BLACK'
-      ? baseWigViews
-      : noirColorSubPath && founderNoirFalRegenUi
-        ? liveWigViews ?? heldFounderLiveTriple ?? baseWigViews
-        : noirColorSubPath
-          ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
-          : baseWigViews;
+    noirColorSubPath && founderNoirFalRegenUi
+      ? liveWigViews ?? heldFounderLiveTriple ?? baseWigViews
+      : noirColorSubPath
+        ? liveNoirCompositeCommittedViews ?? heldCompositeLiveTriple ?? baseWigViews
+        : baseWigViews;
 
   // Check if we're in blanco route (both customize and edit modes)
   const isBlancoRoute = location.pathname.includes('/blanco/customize') || location.pathname.includes('/blanco/edit');
@@ -860,9 +847,26 @@ function ColorSelection() {
       localStorage.setItem('selectedColorPrice', priceStr);
     }
     if (onNoirColorRoute && colorId === 'OFF BLACK') {
-      clearPendingBawNoirLiveColorWigViews();
-      clearBawNoirLiveColorWigViews();
-      window.dispatchEvent(new CustomEvent('customStorageChange'));
+      /** Same optimistic live-color resolution as other swatches — do not clear Storage (avoids static vs fal mismatch). */
+      void (async () => {
+        try {
+          const sel = readBuildWigLivePreviewSelections(pathname);
+          const payload = { unitKey: 'NOIR' as const, color: colorId, ...sel };
+          const optimistic = await wigPreviewLiveColorTriplePublicUrlsForSelections(payload);
+          if (optimistic) {
+            persistPendingBawNoirLiveColorWigViews(optimistic);
+            window.dispatchEvent(new CustomEvent('customStorageChange'));
+          }
+          const fromStorage = await resolveWigPreviewLiveColorTripleIfStored(payload);
+          if (fromStorage) {
+            persistPendingBawNoirLiveColorWigViews(fromStorage);
+            window.dispatchEvent(new CustomEvent('customStorageChange'));
+          }
+        } catch {
+          /* ignore */
+        }
+        window.dispatchEvent(new CustomEvent('customStorageChange'));
+      })();
     } else if (onNoirColorRoute) {
       /** Optimistic hash URLs first (fast), then optional HEAD-verified triple — both before final `customStorageChange`. */
       void (async () => {
@@ -1064,13 +1068,8 @@ function ColorSelection() {
 
     const onNoirColorSub =
       pathname.includes('/build-a-wig/noir/') && pathname.includes('/color');
-    if (onNoirColorSub && !pathname.includes('/blanco')) {
-      if (selectedColor === 'OFF BLACK') {
-        clearPendingBawNoirLiveColorWigViews();
-        clearBawNoirLiveColorWigViews();
-      } else if (liveNoirCompositeCommittedViews) {
-        persistBawNoirLiveColorWigViews(liveNoirCompositeCommittedViews);
-      }
+    if (onNoirColorSub && !pathname.includes('/blanco') && liveNoirCompositeCommittedViews) {
+      persistBawNoirLiveColorWigViews(liveNoirCompositeCommittedViews);
     }
     
     console.log('Color page - saved to localStorage:', {
@@ -1591,7 +1590,6 @@ function ColorSelection() {
                 wigViews={wigViews}
                 selectedView={selectedView}
                 onSelectView={setSelectedView}
-                thumbSpacingLikeSubLive={noirColorSubPath && selectedColor === 'OFF BLACK'}
                 heroChildren={
                   <p
                     className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 text-5xl sm:text-6xl z-20 noir-text cursor-pointer"

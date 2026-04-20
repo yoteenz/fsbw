@@ -15983,6 +15983,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-15 — OFF BLACK: same live color WebPs as other swatches (no static naturals)
+
+**Context (this chat):** User asked to **generate OFF BLACK** the same way as other colors — static vs fal assets looked too different.
+
+**Decisions / outcomes:** **`shouldUseCommittedBawNoirLiveColorWigViews`** now returns true for **OFF BLACK** (`bawNoirLivePreviewStorage.ts`). **Color page**: removed OFF BLACK branch that forced **`baseWigViews`** and cleared live Storage; **`handleColorSelect`** for OFF BLACK mirrors other colors (optimistic pending + Storage resolve); **Confirm** no longer clears committed on OFF BLACK. Removed unused **`clearBawNoirLiveColorWigViews`** import; dropped **`thumbSpacingLikeSubLive`** OFF BLACK-only prop. **`motherboard/CORE.md`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-15 — BAW hero width + hub / OFF BLACK thumb sizing
 
 **Context (this chat):** User wanted **main hero width** on BAW **sub-pages** to match the **hub**; **hub** and **OFF BLACK** color thumbs to match **other sub-pages**; **mannequin images** in those thumbs **~15% larger**.

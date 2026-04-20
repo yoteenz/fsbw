@@ -287,7 +287,7 @@ export const SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE = 'bawNoirResetLivePreview
 
 /**
  * Effective NOIR hair color from localStorage for the current BAW route.
- * Used so committed fal triples are not shown when the user is back on default OFF BLACK.
+ * OFF BLACK uses the same live color Storage paths as other swatches when generated.
  */
 export function readEffectiveNoirBawHairColor(pathname: string): string {
   try {
@@ -327,10 +327,10 @@ export function readEffectiveNoirBawHairColor(pathname: string): string {
   return 'OFF BLACK';
 }
 
-/** Committed live color WebPs apply only for paid / non-default NOIR colors. */
+/** Committed/pending live color WebPs apply for **all** NOIR swatches including **OFF BLACK** (same Fal pipeline as other colors). */
 export function shouldUseCommittedBawNoirLiveColorWigViews(pathname: string): boolean {
   const c = (readEffectiveNoirBawHairColor(pathname) || 'OFF BLACK').trim();
-  return c !== '' && c !== 'OFF BLACK';
+  return c !== '';
 }
 
 /**
