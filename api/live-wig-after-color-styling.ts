@@ -5,7 +5,9 @@ export const config = { maxDuration: 120 };
  *
  * **Signed-in** Supabase session (Bearer JWT). Runs fal once per angle when outputs are missing (or all angles when **`forceRegenerate: true`**).
  *
- * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP for that camera angle** (`left` / `front` / `right` from live color — same paths as color step). **Part direction** is **prompt-only** (PART OVERRIDE + STYLE LOCK), not a separate middle-angle input. Prompt: `buildLayersStylePromptFromColorTierWebp`.
+ * **LAYERS** (any part **MIDDLE** | **LEFT** | **RIGHT**): single `image_urls` = **color-tier WebP** from Storage (same paths
+ * as live color — hair already matches selected swatch). Prompt: `buildLayersStylePromptFromColorTierWebp` — long layered curls
+ * + part while **keeping** that hair color (fixes black output when input was HQ black-brick refs only).
  * **Output:** `.../after-color/layers-{middle|left|right}-part/{angle}.webp`
  *
  * **CRIMPS** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP input as LAYERS; prompt `buildCrimpsStylePromptFromColorTierWebp`
@@ -14,7 +16,8 @@ export const config = { maxDuration: 120 };
  *
  * **BANGS + LAYERS** or **BANGS + CRIMPS:** same color WebP; salon prompt + **`includeBangs: true`** (curtain bangs aligned to **part**). **Output:** `.../after-color/layers-with-bangs-*-part/` or `crimps-with-bangs-*-part/`.
  *
- * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/` — Fal **only** writes the current **`partSelection`** folder. **`publicUrls`** always match **`outputPaths`** for that part — **no** cross-linking LEFT vs RIGHT Storage folders.
+ * **FLAT IRON** (any part **MIDDLE** | **LEFT** | **RIGHT**): same color WebP; `buildFlatIronStylePromptFromColorTierWebp` — **bone-straight** + **part only** (same base as color tier). **Output:** `.../after-color/flat-iron-{middle|left|right}-part/`
+ * **FLAT IRON + UI LEFT:** response **`publicUrls.right`** (right camera / **R** thumbnail) uses the **same Storage object** as **RIGHT** part flat-iron **`right.webp`** when that file exists — so the R thumb matches the current R-part asset; **`outputPaths.right`** stays the LEFT-part folder (Fal still generated the LEFT triple).
  *
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
@@ -44,6 +47,7 @@ import {
   buildCrimpsStylePromptFromColorTierWebp,
   buildFlatIronStylePromptFromColorTierWebp,
   buildLayersStylePromptFromColorTierWebp,
+  buildUiRightSalonFromMiddlePartOutputPrompt,
 } from './_lib/bawLiveStylingPrompts.js';
 
 type LayersPartStyling = 'MIDDLE' | 'LEFT' | 'RIGHT';
@@ -235,12 +239,57 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : 'bangs-only';
     const outPaths = wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, storageFolderKey);
 
+    /** FLAT IRON + UI LEFT: **right** camera thumbnail uses the same asset as **RIGHT** part `right.webp` (product request). */
+    const flatIronRightPartFolderForLeftThumb =
+      middleFlatIron && partStyling === 'LEFT'
+        ? hasBangs
+          ? wigPreviewLiveFlatIronWithBangsPartFolder('RIGHT')
+          : wigPreviewLiveFlatIronPartFolder('RIGHT')
+        : null;
+    const flatIronRightPartOutPathsForLeftThumb =
+      flatIronRightPartFolderForLeftThumb !== null
+        ? wigPreviewLiveAfterColorStylingPaths(
+            promptVersion,
+            'NOIR',
+            colorTierHash,
+            flatIronRightPartFolderForLeftThumb
+          )
+        : null;
+
+    /** UI R + LAYERS/CRIMPS: use **MIDDLE-part** after-color output as Fal input (not raw color-tier WebP). */
+    const useMiddlePartOutputAsUiRightInput =
+      partStyling === 'RIGHT' && (middleLayers || middleCrimps);
+    const middleFolderKeyForUiR = middleLayers
+      ? hasBangs
+        ? wigPreviewLiveLayersWithBangsPartFolder('MIDDLE')
+        : wigPreviewLiveLayersPartFolder('MIDDLE')
+      : middleCrimps
+        ? hasBangs
+          ? wigPreviewLiveCrimpsWithBangsPartFolder('MIDDLE')
+          : wigPreviewLiveCrimpsPartFolder('MIDDLE')
+        : '';
+    const middleOutPathsForUiR =
+      useMiddlePartOutputAsUiRightInput && middleFolderKeyForUiR
+        ? wigPreviewLiveAfterColorStylingPaths(promptVersion, 'NOIR', colorTierHash, middleFolderKeyForUiR)
+        : null;
+
     let supabase;
     try {
       supabase = getSupabaseAdminServiceRole();
     } catch {
       sendJson(res, 503, { error: 'SUPABASE_SERVICE_ROLE_KEY required for Storage upload' });
       return;
+    }
+
+    /** When set, **LEFT** flat-iron `publicUrls.right` is the **RIGHT**-part flat-iron `right.webp` (if it exists). */
+    let flatIronLeftRightThumbOverrideUrl: string | null = null;
+    if (flatIronRightPartOutPathsForLeftThumb) {
+      const pRightPartRightAngle = flatIronRightPartOutPathsForLeftThumb.right;
+      const { error: rightPartRightDlErr } = await supabase.storage.from(bucket).download(pRightPartRightAngle);
+      if (!rightPartRightDlErr) {
+        const { data: pubOverride } = supabase.storage.from(bucket).getPublicUrl(pRightPartRightAngle);
+        flatIronLeftRightThumbOverrideUrl = pubOverride?.publicUrl ?? null;
+      }
     }
 
     const angleOrder: Array<'front' | 'left' | 'right'> = ['front', 'left', 'right'];
@@ -261,6 +310,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
         const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
         const skippedAngles = [...anglesToRun];
+        const pubRightOut =
+          flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
         sendJson(res, 200, {
           ok: true,
           colorTierHash,
@@ -271,7 +322,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           publicUrls: {
             front: pubFront?.publicUrl ?? null,
             left: pubLeft?.publicUrl ?? null,
-            right: pubRight?.publicUrl ?? null,
+            right: pubRightOut,
           },
           generated: [] as string[],
           skipped: skippedAngles,
@@ -318,45 +369,71 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       let prompt: string;
       let imageUrls: string[];
 
-      const colorPath = colorPaths[angle];
-      const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
-      if (colorDlErr) {
-        sendJson(res, 400, {
-          error:
-            'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
-          colorTierHash,
-          missingColorPath: colorPath,
-        });
-        return;
-      }
+      if (useMiddlePartOutputAsUiRightInput && middleOutPathsForUiR) {
+        const middlePath = middleOutPathsForUiR[angle];
+        const { error: midDlErr } = await supabase.storage.from(bucket).download(middlePath);
+        if (midDlErr) {
+          sendJson(res, 400, {
+            error:
+              'RIGHT part needs the **MIDDLE part** version of this style first. On NOIR → Styling, select **MIDDLE** part with the same salon style and **regenerate** (or wait for preview), then select **RIGHT** part again.',
+            colorTierHash,
+            missingMiddlePartPath: middlePath,
+          });
+          return;
+        }
+        const { data: pubMid } = supabase.storage.from(bucket).getPublicUrl(middlePath);
+        colorPublicUrl = pubMid?.publicUrl ?? '';
+        if (!colorPublicUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for middle-part styling layer' });
+          return;
+        }
+        prompt = buildUiRightSalonFromMiddlePartOutputPrompt(
+          angle,
+          middleLayers ? 'layers' : 'crimps',
+          bangsWithSalon
+        );
+        imageUrls = [colorPublicUrl];
+      } else {
+        const colorPath = colorPaths[angle];
+        const { error: colorDlErr } = await supabase.storage.from(bucket).download(colorPath);
+        if (colorDlErr) {
+          sendJson(res, 400, {
+            error:
+              'Color preview files not found for this combo. Open NOIR → Color first so left/front/right color WebPs exist, then try styling again.',
+            colorTierHash,
+            missingColorPath: colorPath,
+          });
+          return;
+        }
 
-      const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
-      colorPublicUrl = pubColor?.publicUrl ?? '';
-      if (!colorPublicUrl) {
-        sendJson(res, 500, { error: 'Could not build public URL for color layer' });
-        return;
-      }
+        const { data: pubColor } = supabase.storage.from(bucket).getPublicUrl(colorPath);
+        colorPublicUrl = pubColor?.publicUrl ?? '';
+        if (!colorPublicUrl) {
+          sendJson(res, 500, { error: 'Could not build public URL for color layer' });
+          return;
+        }
 
-      const flatIronMiddleUsesBaseNoirGeometry =
-        middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
+        const flatIronMiddleUsesBaseNoirGeometry =
+          middleFlatIron && partStyling === 'MIDDLE' && !bangsWithSalon;
 
-      prompt = middleLayers
-        ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
-            includeBangs: bangsWithSalon,
-          })
-        : middleCrimps
-          ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+        prompt = middleLayers
+          ? buildLayersStylePromptFromColorTierWebp(angle, partStyling, catalog, {
               includeBangs: bangsWithSalon,
             })
-          : middleFlatIron
-            ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+          : middleCrimps
+            ? buildCrimpsStylePromptFromColorTierWebp(angle, partStyling, catalog, {
                 includeBangs: bangsWithSalon,
-                baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
               })
-            : buildBangsOnlyStylePrompt(angle);
-      imageUrls = flatIronMiddleUsesBaseNoirGeometry
-        ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
-        : [colorPublicUrl];
+            : middleFlatIron
+              ? buildFlatIronStylePromptFromColorTierWebp(angle, partStyling, catalog, {
+                  includeBangs: bangsWithSalon,
+                  baseNoirGeometrySecondRef: flatIronMiddleUsesBaseNoirGeometry,
+                })
+              : buildBangsOnlyStylePrompt(angle);
+        imageUrls = flatIronMiddleUsesBaseNoirGeometry
+          ? [colorPublicUrl, noirBaseNaturalMannequinPublicUrlForAngle(angle)]
+          : [colorPublicUrl];
+      }
 
       const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
         input: {
@@ -384,6 +461,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const { data: pubFront } = supabase.storage.from(bucket).getPublicUrl(outPaths.front);
     const { data: pubLeft } = supabase.storage.from(bucket).getPublicUrl(outPaths.left);
     const { data: pubRight } = supabase.storage.from(bucket).getPublicUrl(outPaths.right);
+    const pubRightOut =
+      flatIronLeftRightThumbOverrideUrl ?? pubRight?.publicUrl ?? null;
 
     sendJson(res, 200, {
       ok: true,
@@ -395,7 +474,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       publicUrls: {
         front: pubFront?.publicUrl ?? null,
         left: pubLeft?.publicUrl ?? null,
-        right: pubRight?.publicUrl ?? null,
+        right: pubRightOut,
       },
       generated,
       skipped,

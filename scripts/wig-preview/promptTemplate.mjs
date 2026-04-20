@@ -6,12 +6,14 @@
  */
 
 /** Keep in sync with `api/_lib/bawFalEditFidelityPrompt.ts` — reduces plastic/waxy drift on edit passes. */
-export const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = [
+export const BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES = [
   'Treat the input as a **photograph to preserve**, not a scene to repaint: keep **the same effective resolution, sharpness, grain, and micro-detail** as the reference — do **not** downscale, blur, soften, over-smooth, or add a plastic / waxy / painterly CGI look.',
   'Lock **mannequin bust material**, **skin tone**, **facial features**, and **neck seam** to the reference — **no** melting, warping, retexturing, or “beauty filter” on the figure.',
   'Lock **background bricks**, **lighting**, **shadows**, and **camera perspective** to the reference unless the prompt explicitly asks to change them.',
   'Keep the **FRONTAL SLAYER** chest logo **sharp**, same **size** and **placement**, clean edges — **no** smeared, redrawn, or re-typed lettering.',
-].join(' ');
+];
+
+export const BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES.join(' ');
 
 // =============================================================================
 // WIG CONSULT — Step 1 (1 ref only) + Steps 2–3. Not BAW.
@@ -313,7 +315,7 @@ function salonPartMustOverrideInputReferenceBlock(partSelection) {
     );
   }
   return (
-    '**PART OVERRIDE (critical — ignore the color preview’s part line):** The input often still shows a **LEFT/UI L** part (**image RIGHT** scalp) or a **center** part. **Discard** that. **UI R** needs the **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **opposite** of **UI L**. **Re-part** the roots to match — **do not** preserve the reference’s side-part side. **Success check:** if the groove still sits on the **image RIGHT** half → wrong (that is **UI L**, not **UI R**).'
+    '**PART OVERRIDE (critical — ignore the color preview’s part line):** Whatever part the preview shows — **discard** it. **UI R** = **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**), **opposite** of **UI L**. **Re-part** the roots to match — **do not** keep the reference part line.'
   );
 }
 
@@ -326,6 +328,29 @@ function salonPartDirectionSemanticsBlock() {
 function salonOneShoulderDrapeBlock() {
   return (
     '**DRAPE SIDE (fixed — all parts):** As you **face** the mannequin in the photo, almost **all** long hair must fall **forward over the viewer’s LEFT shoulder only** — the shoulder on the **left side of the image** (closer to the **left edge**). **FORBIDDEN:** a **thick** forward drape on the **viewer’s RIGHT shoulder** (right side of image). The **right** shoulder may show only a **thin** tuck, **nothing** crossing the collarbone, or hair **behind** the shoulder — **never** a second heavy cascade. **Shoulder still visible:** the drape must **not** be an **opaque blanket** — keep **gaps**, **separation between strands**, or **semi-sheer** fall so the **shoulder cap / curve** (and skin at the neck–shoulder) **still reads through** the hair; **FORBIDDEN:** a solid wall of hair that **fully hides** that shoulder. **Self-check:** if both shoulders have **matching** thick hair in front → **failed**.'
+  );
+}
+
+/** UI R + LAYERS/CRIMPS: input = MIDDLE-part after-color WebP. Keep in sync with `api/_lib/bawLiveStylingPrompts.ts`. */
+export function buildUiRightSalonFromMiddlePartOutputPrompt(_angle, _salon, includeBangs) {
+  const partFirst =
+    '**Recreate this photograph** with the **part on the LEFT side of her scalp** — **visible part groove** in the **left third** of the forehead/top (**closer to the image’s LEFT edge**) — **not** the middle. **Do not** mirror the whole head; **only** re-part the hair.';
+  const bangsLine = includeBangs
+    ? ' **Bangs:** open from the **left** forehead to match this part (not center-split).'
+    : '';
+  const [line0, ...restFidelity] = BAW_FAL_EDIT_PRESERVE_REFERENCE_LINES;
+  const line0Body = line0.replace(
+    /^Treat the input as a \*\*photograph to preserve\*\*, not a scene to repaint:\s*/,
+    ''
+  );
+  const fidelityAfterPart =
+    'Do not treat the input as a scene to repaint: ' + line0Body.trim() + ' ' + restFidelity.join(' ');
+  return (
+    partFirst +
+    bangsLine +
+    ' ' +
+    fidelityAfterPart +
+    ' The **FRONTAL SLAYER** chest logo must stay fully legible — same position and sharpness as the reference. Output must be extremely high-quality, crisp, and pixel-perfect.'
   );
 }
 

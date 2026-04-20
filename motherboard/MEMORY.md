@@ -16436,6 +16436,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Restore **`6eee1826`** live styling stack (API + prompts; CORE bullet)
+
+**Context (this chat):** User asked to **restore the codebase** to commit **`6eee1826`** to **recover generations**, and whether that **restores Supabase assets**.
+
+**Answer on assets:** **No.** Git only tracks **source**. WebPs live in **Supabase Storage**; they are **not** re-created by checking out old code. Restoring code only changes **how URLs are built** and **what Fal runs** next time — existing objects at the same paths are whatever was last **uploaded** there.
+
+**Decisions / outcomes:** Checked out from **`6eee1826`**: **`api/live-wig-after-color-styling.ts`**, **`api/_lib/bawLiveStylingPrompts.ts`**, **`scripts/wig-preview/promptTemplate.mjs`**. Replaced **`motherboard/CORE.md`** last (NOIR) bullet with **`6eee1826`’s** version (FLAT IRON + UI LEFT **`publicUrls.right`** may point at RIGHT-part **`right.webp`**; UI R LAYERS/CRIMPS middle-input + **`buildUiRightSalonFromMiddlePartOutputPrompt`**). **`src/pages/build-a-wig/styling/page.tsx`**: removed **client-only** FLAT IRON + LEFT R-thumb override (**`wigPreviewFlatIronRightPartRightAngleIfStored`** / **`wigViewsForDisplay`**) so behavior matches **server `publicUrls`** from **`6eee1826`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — BAW styling vs **`72127d59`**: audit + `promptTemplate.mjs` parity
 
 **Context (this chat):** User asked to **restore BAW styling entirely** to commit **`72127d59`** to **restore generations**, **without** reverting **sign-in, cart**, or other **non-BAW** edits.
