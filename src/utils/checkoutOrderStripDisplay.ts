@@ -14,6 +14,7 @@ import {
 } from './bookingBadges';
 import { shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
 import { bookingCartRedSubtitle, CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
+import { giftCardStripQuantitySteps, isGiftCardCartLine } from './giftCardCheckout';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -284,4 +285,13 @@ export function orderStripUseDigitalStackLayout(item: any, isSubscriptionUpgrade
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return true;
   if (item.type === 'digital' && isSubscriptionUpgrade) return true;
   return isMembershipTierStripItem(item, isSubscriptionUpgrade);
+}
+
+/**
+ * Quantity to show as **QTY: n** on checkout / confirm horizontal strips (matches cart dropdown semantics).
+ */
+export function orderStripQtyDisplayNumber(item: any): number {
+  if (isGiftCardCartLine(item)) return giftCardStripQuantitySteps(item);
+  if (item?.bcfBundleDeal) return 3;
+  return Math.max(1, Math.floor(Number(item?.quantity) || 1));
 }

@@ -16470,6 +16470,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Checkout + confirm strips: red QTY line per product
+
+**Context (this chat):** User asked for a **red quantity line** like the cart (**QTY: 1**, **QTY: 2**) **below the price** on each product in the **checkout** horizontal strip and on the **order summary** (post-checkout confirm) product list.
+
+**Decisions / outcomes:** **`giftCardStripQuantitySteps`** in **`giftCardCheckout.ts`** (gift lines: step count from total / unit like the bag). **`orderStripQtyDisplayNumber`** in **`checkoutOrderStripDisplay.ts`** — gift → steps; **BCF bundle** → **3**; else **`max(1, floor(quantity))`**. **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`**: after the black price block, added red **`Futura PT Medium` 8px** **`QTY: n`** line. Confirm **CONGRATS!** header count uses **`cartTotalQuantityUnits(cartItems)`** instead of line count.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Section headers: SHOPPING BAG / ORDER SUMMARY count vs qty
 
 **Context (this chat):** User said nothing changed; they meant the **large number beside** **SHOPPING BAG** (bag page main card) and **ORDER SUMMARY** (checkout main content), not only the nav cart icon — it still showed **line count** (`cartItems.length`) instead of **sum of per-line quantity** counters.

@@ -23,7 +23,8 @@ import {
   orderStripThumbMetrics,
   orderStripTitleFontPx,
   orderStripTitleLine,
-  orderStripUseDigitalStackLayout
+  orderStripUseDigitalStackLayout,
+  orderStripQtyDisplayNumber
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -53,6 +54,7 @@ import {
   cartHasAnyLoyaltyEarningLine,
   isMembershipSubscriptionCartLine,
 } from '../../../utils/loyaltyPointsEligibleNet';
+import { cartTotalQuantityUnits } from '../../../utils/cartTotalQuantityUnits';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -1199,7 +1201,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                   style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px' }}
                 >
-                  {cartItems.length}
+                  {cartTotalQuantityUnits(cartItems)}
                 </span>
               </div>
 
@@ -1254,6 +1256,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     const bundleDealListSum = bcfBundleDealResolvedListSubtotal(item);
                     const bundleLineTotalSum = itemPrice * (item.quantity || 1);
                     const titleFontPx = orderStripTitleFontPx(item);
+                    const stripQtyDisplay = orderStripQtyDisplayNumber(item);
 
                     return (
                       <div
@@ -1426,6 +1429,19 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                           dangerouslySetInnerHTML={formatPrice(itemPrice)}
                         />
                         )}
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                            color: '#EB1C24',
+                            margin: '2px 0 0 0',
+                            textTransform: 'uppercase',
+                            textAlign: 'center',
+                            lineHeight: '1.1'
+                          }}
+                        >
+                          QTY: {stripQtyDisplay}
+                        </p>
                         </div>
                       </div>
                     );

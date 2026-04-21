@@ -63,7 +63,8 @@ import {
   orderStripThumbMetrics,
   orderStripTitleFontPx,
   orderStripTitleLine,
-  orderStripUseDigitalStackLayout
+  orderStripUseDigitalStackLayout,
+  orderStripQtyDisplayNumber
 } from '../../utils/checkoutOrderStripDisplay';
 import {
   cartHasAnyLoyaltyEarningLine,
@@ -3343,6 +3344,7 @@ function CheckoutPage() {
                           const bundleLineTotalCheckout = itemPrice * (item.quantity || 1);
 
                           const titleFontPx = orderStripTitleFontPx(item);
+                          const stripQtyDisplay = orderStripQtyDisplayNumber(item);
 
                           return (
                             <div
@@ -3532,6 +3534,19 @@ function CheckoutPage() {
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
                                 )}
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '8px',
+                                    color: '#EB1C24',
+                                    margin: '2px 0 0 0',
+                                    textTransform: 'uppercase',
+                                    textAlign: 'center',
+                                    lineHeight: '1.1'
+                                  }}
+                                >
+                                  QTY: {stripQtyDisplay}
+                                </p>
                               </div>
                               </div>
                             </div>

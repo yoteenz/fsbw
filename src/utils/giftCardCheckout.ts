@@ -15,6 +15,23 @@ export function giftCardLineTotalUsd(item: { price?: number; balance?: number; q
   return Math.round(per * q);
 }
 
+/**
+ * Gift-card **step count** for QTY display (matches shopping bag: total value / unit step).
+ */
+export function giftCardStripQuantitySteps(item: {
+  type?: string;
+  name?: string;
+  giftCardUnitUsd?: number;
+  price?: number;
+  balance?: number;
+}): number {
+  if (!isGiftCardCartLine(item)) return 0;
+  const u = Math.round(Number(item.giftCardUnitUsd) || Number(item.price) || Number(item.balance) || 0);
+  const total = Math.round(Number(item.balance ?? item.price) || 0);
+  if (u <= 0) return total > 0 ? 1 : 0;
+  return Math.max(0, Math.round(total / u));
+}
+
 export function filterGiftCardCartLines<T extends { type?: string; name?: string }>(items: T[]): T[] {
   return (items || []).filter((i) => isGiftCardCartLine(i));
 }
