@@ -16568,6 +16568,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Admin Live View: drop WebGL again (circular grid map) — globe was crashing loads
+
+**Context (this chat):** User reported **page not loading again** — **globe.gl + three.js** add **~1.3MB+ gzip** in **`vendor-globe`**; mobile browsers often **timeout**, hit **memory limits**, or **fail to fetch** that chunk after deploy → **white screen / ChunkLoadError**.
+
+**Decisions / outcomes:** Removed **`globe.gl`** and **`three`** again. **`AdminRevenueLiveGlobe`** is **CSS/SVG**: **circular clip**, **graticule grid** overlay, **equirectangular** map image, **pan (drag)** + **wheel zoom**, **red/green** dot buttons, **click** → same **portal modal**. No WebGL. **`vite.config`** vendor-globe split removed.
+
+---
+
 ## 2026-04-20 — Admin Revenue Live View: 3D globe UI + colors + counters
 
 **Context (this chat):** User asked to **remove summary panels** above the globe, **remove red LIVE VIEW + gray Just now**, use **legend text below** as **“2 visitors, 3 orders”** style counters, **visitor dots brand red (#EB1C24)**, **order dots green (#16a34a)**, and **restore interactive 3D** globe — **grid-like**, **spinnable**, **clickable** for more info (Shopify reference).
