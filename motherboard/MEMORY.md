@@ -16568,6 +16568,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Fix: site load / chunk size after globe (split vendor-globe, defer heartbeat)
+
+**Context (this chat):** User reported **the site isn’t loading** after the admin Live View globe work — likely **oversized single `vendor` chunk** (~3.4MB minified) from **three** + **globe.gl** causing **timeouts / ChunkLoadError** on slow networks or after deploys.
+
+**Decisions / outcomes:** **`vite.config.ts`**: `manualChunks` routes **three**, **globe.gl**, **three-globe**, **three-render-objects** into **`vendor-globe`** so default **`vendor`** stays ~**1.3MB** gzip ~**404kB** (globe chunk loads only when Revenue Overview loads the lazy globe). **`App.tsx`**: **`startLivePresenceHeartbeat`** deferred **`setTimeout(..., 2500)`** so first paint does not compete with geo + analytics fetch.
+
+---
+
 ## 2026-04-20 — Checkout modals: VOUCHER + DIGITAL CASH headers match account history pop-ups
 
 **Context (this chat):** User asked for **VOUCHER** and **DIGITAL CASH** checkout pop-up headers to match **other header text**: **gray border line** under the title, with the **same voucher/history icon** as **account profile** voucher history / digital cash history modals (**`/assets/points-history.svg`**, brand-red filter), **across from** the title.
