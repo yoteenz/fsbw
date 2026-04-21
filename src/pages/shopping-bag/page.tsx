@@ -1416,7 +1416,7 @@ function ShoppingBagPage() {
                      className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                      style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '17px' }}
                    >
-                     {cartItems.length}
+                     {cartTotalQuantityUnits(cartItems)}
                    </span>
                  </div>
 

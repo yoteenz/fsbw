@@ -16470,6 +16470,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Section headers: SHOPPING BAG / ORDER SUMMARY count vs qty
+
+**Context (this chat):** User said nothing changed; they meant the **large number beside** **SHOPPING BAG** (bag page main card) and **ORDER SUMMARY** (checkout main content), not only the nav cart icon — it still showed **line count** (`cartItems.length`) instead of **sum of per-line quantity** counters.
+
+**Decisions / outcomes:** Replaced **`{cartItems.length}`** with **`{cartTotalQuantityUnits(cartItems)}`** in **`src/pages/shopping-bag/page.tsx`** (SHOPPING BAG row) and **`src/pages/checkout/page.tsx`** (ORDER SUMMARY row).
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Cart header badge: total units vs line count
 
 **Context (this chat):** User reported the **header cart count** on **shopping bag** and **checkout** did not update when increasing **quantity** on a unit, while the **cart dropdown** count was correct.
