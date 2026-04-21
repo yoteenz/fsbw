@@ -919,60 +919,42 @@ export default function AdminRevenue() {
                 {activeTab === 'OVERVIEW' && (
                   <>
                     <div className="mb-4 pb-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: 0 }}>
-                          LIVE VIEW
-                        </h3>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
-                          Just now
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 mb-2">
-                        <div
-                          className="text-center py-2 rounded"
-                          style={{ backgroundColor: 'rgba(0,0,0,0.04)', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#0ea5e9' }}
-                        >
-                          <div className="text-lg font-covered-by-your-grace" style={{ color: '#0ea5e9', fontSize: '22px', lineHeight: 1.1 }}>
-                            {liveVisitorsNow}
-                          </div>
-                          <div style={{ color: '#64748b', marginTop: '4px', textTransform: 'uppercase', fontSize: '8px' }}>Visitors right now</div>
-                        </div>
-                        <div
-                          className="text-center py-2 rounded"
-                          style={{ backgroundColor: 'rgba(0,0,0,0.04)', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#a855f7' }}
-                        >
-                          <div className="text-lg font-covered-by-your-grace" style={{ color: '#a855f7', fontSize: '22px', lineHeight: 1.1 }}>
-                            {orderGlobePoints.length}
-                          </div>
-                          <div style={{ color: '#64748b', marginTop: '4px', textTransform: 'uppercase', fontSize: '8px' }}>Order locations</div>
-                        </div>
-                      </div>
                       <Suspense
                         fallback={
                           <div
                             className="w-full flex items-center justify-center rounded-md border border-gray-200 bg-sky-50/50"
-                            style={{ height: 200, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
+                            style={{ height: 240, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
                           >
-                            Loading map…
+                            Loading globe…
                           </div>
                         }
                       >
                         <AdminRevenueLiveGlobe
                           orderPoints={orderGlobePoints}
                           visitorPoints={liveVisitorGlobePoints}
-                          heightPx={200}
+                          heightPx={240}
                         />
                       </Suspense>
-                      <div className="flex flex-wrap items-center justify-center gap-4 mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#64748b', textTransform: 'uppercase' }}>
-                        <span className="inline-flex items-center gap-1">
-                          <span className="inline-block rounded-full" style={{ width: 8, height: 8, background: '#22d3ee' }} aria-hidden />
-                          Visitors
+                      <p
+                        className="text-center mt-2 mb-0"
+                        style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', lineHeight: 1.5 }}
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: '#EB1C24' }} aria-hidden />
+                          <span style={{ color: '#334155' }}>
+                            {liveVisitorsNow} {liveVisitorsNow === 1 ? 'visitor' : 'visitors'}
+                          </span>
                         </span>
-                        <span className="inline-flex items-center gap-1">
-                          <span className="inline-block rounded-full" style={{ width: 8, height: 8, background: '#a855f7' }} aria-hidden />
-                          Orders
+                        <span style={{ margin: '0 8px', color: '#cbd5e1' }} aria-hidden>
+                          ·
                         </span>
-                      </div>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: '#16a34a' }} aria-hidden />
+                          <span style={{ color: '#334155' }}>
+                            {orderGlobePoints.length} {orderGlobePoints.length === 1 ? 'order' : 'orders'}
+                          </span>
+                        </span>
+                      </p>
                       {liveGlobeError && (
                         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '8px 0 0 0', textAlign: 'center', textTransform: 'uppercase' }}>
                           {liveGlobeError} · Heartbeats require Supabase + page_view ingest

@@ -1,6 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import type { GlobeInstance } from 'globe.gl';
 
-type Pt = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
+const BRAND_RED = '#EB1C24';
+const ORDER_GREEN = '#16a34a';
+
+export type LiveGlobePoint = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 
 type Props = {
   orderPoints: Array<{ lat: number; lng: number; label: string }>;
@@ -8,74 +13,167 @@ type Props = {
   heightPx?: number;
 };
 
-/** Equirectangular: lng [-180,180] → x%, lat [-90,90] → y% (WebGL globe removed — keeps bundle small / mobile-safe). */
-function project(lat: number, lng: number): { leftPct: number; topPct: number } {
-  const clampLat = Math.max(-85, Math.min(85, lat));
-  const clampLng = Math.max(-180, Math.min(180, lng));
-  return {
-    leftPct: ((clampLng + 180) / 360) * 100,
-    topPct: ((90 - clampLat) / 180) * 100,
-  };
+function mergeData(
+  visitorPoints: Props['visitorPoints'],
+  orderPoints: Props['orderPoints']
+): LiveGlobePoint[] {
+  return [
+    ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
+    ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
+  ];
 }
 
 /**
- * Shopify Live View–style map: cyan = active visitors (last 5 min heartbeats),
- * purple = order ship-to locations. Pure SVG + CSS (no WebGL / three.js).
+ * Interactive 3D globe (globe.gl): brand-red visitors, green orders, graticule grid,
+ * auto-rotate + orbit controls. Click a dot for details (portal modal).
  */
-export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 220 }: Props) {
-  const points: Pt[] = useMemo(
-    () => [
-      ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
-      ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
-    ],
-    [orderPoints, visitorPoints]
-  );
+export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 260 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<GlobeInstance | null>(null);
+  const dataRef = useRef(mergeData(visitorPoints, orderPoints));
+  dataRef.current = mergeData(visitorPoints, orderPoints);
+
+  const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
+
+  const applyPoints = useCallback(() => {
+    const g = globeRef.current;
+    if (!g) return;
+    const pts = dataRef.current.map((d) => ({
+      ...d,
+      color: d.kind === 'visitor' ? BRAND_RED : ORDER_GREEN,
+    }));
+    g.pointsData(pts);
+  }, []);
+
+  useEffect(() => {
+    applyPoints();
+  }, [visitorPoints, orderPoints, applyPoints]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let cancelled = false;
+
+    void import('globe.gl').then((mod) => {
+      if (cancelled || !containerRef.current) return;
+      const Globe = mod.default;
+      const w = Math.max(280, el.clientWidth);
+      const h = heightPx;
+
+      const globe = new Globe(el)
+        .width(w)
+        .height(h)
+        /** Light “glass” globe — subtle blue marble, grid-forward look */
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundColor('rgba(248, 250, 252, 0.92)')
+        .showAtmosphere(true)
+        .atmosphereColor('#bae6fd')
+        .atmosphereAltitude(0.22)
+        .showGraticules(true)
+        .pointLat('lat')
+        .pointLng('lng')
+        .pointColor('color')
+        .pointAltitude(0.035)
+        .pointRadius(0.55)
+        .pointResolution(18)
+        .pointLabel((d: object) => {
+          const p = d as LiveGlobePoint & { color: string };
+          return `${p.kind === 'visitor' ? 'Visitor' : 'Order'}: ${p.label}`;
+        });
+
+      try {
+        const ctrl = globe.controls();
+        ctrl.autoRotate = true;
+        ctrl.autoRotateSpeed = 0.5;
+        ctrl.enableZoom = true;
+        ctrl.minDistance = 120;
+        ctrl.maxDistance = 500;
+      } catch {
+        // ignore
+      }
+
+      globe.pointOfView({ lat: 22, lng: -40, altitude: 2.35 }, 0);
+
+      globe.onPointClick((obj: object) => {
+        const p = obj as LiveGlobePoint;
+        setSelected(p);
+      });
+
+      globeRef.current = globe;
+      applyPoints();
+    });
+
+    const ro = new ResizeObserver(() => {
+      const g = globeRef.current;
+      const node = containerRef.current;
+      if (!g || !node) return;
+      g.width(Math.max(280, node.clientWidth)).height(heightPx);
+    });
+    ro.observe(el);
+
+    return () => {
+      cancelled = true;
+      ro.disconnect();
+      try {
+        globeRef.current?._destructor();
+      } catch {
+        /* ignore */
+      }
+      globeRef.current = null;
+    };
+  }, [heightPx, applyPoints]);
+
+  const modal =
+    selected &&
+    createPortal(
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Location detail"
+        className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-4"
+        style={{ background: 'rgba(15, 23, 42, 0.45)' }}
+        onClick={() => setSelected(null)}
+      >
+        <div
+          className="w-full max-w-sm rounded border border-black bg-white/95 p-4 shadow-lg backdrop-blur-sm"
+          style={{ borderWidth: '1.3px' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-start gap-2 mb-2">
+            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_RED, textTransform: 'uppercase' }}>
+              {selected.kind === 'visitor' ? 'Visitor' : 'Order'}
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelected(null)}
+              className="shrink-0 p-1"
+              aria-label="Close"
+              style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b' }}
+            >
+              ✕
+            </button>
+          </div>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#334155', lineHeight: 1.45, textTransform: 'none' }}>
+            {selected.label}
+          </p>
+          <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#94a3b8', marginTop: '8px' }}>
+            {selected.lat.toFixed(2)}°, {selected.lng.toFixed(2)}°
+          </p>
+        </div>
+      </div>,
+      document.body
+    );
 
   return (
-    <div
-      className="w-full overflow-hidden rounded-md border border-gray-200 bg-sky-50/80"
-      style={{ height: heightPx, minHeight: heightPx, position: 'relative' }}
-      aria-label="Live map: visitors and orders by location"
-    >
-      {/* Equirectangular world map (static, cacheable) */}
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-90"
-        draggable={false}
-        loading="lazy"
-        decoding="async"
-      />
+    <>
       <div
-        className="absolute inset-0 bg-gradient-to-b from-sky-100/30 to-transparent pointer-events-none"
-        aria-hidden
+        ref={containerRef}
+        className="w-full overflow-hidden rounded-md border border-gray-200"
+        style={{ height: heightPx, minHeight: heightPx, background: 'linear-gradient(180deg, #f0f9ff 0%, #f8fafc 100%)' }}
+        aria-label="Interactive 3D globe: drag to rotate, scroll to zoom, tap a dot for details"
       />
-      <div className="absolute inset-0" style={{ pointerEvents: 'none' }}>
-        {points.map((p, i) => {
-          const { leftPct, topPct } = project(p.lat, p.lng);
-          const color = p.kind === 'visitor' ? '#22d3ee' : '#a855f7';
-          const title = p.label;
-          return (
-            <span
-              key={`${p.kind}-${i}-${leftPct.toFixed(2)}-${topPct.toFixed(2)}`}
-              title={title}
-              style={{
-                position: 'absolute',
-                left: `${leftPct}%`,
-                top: `${topPct}%`,
-                width: 10,
-                height: 10,
-                marginLeft: -5,
-                marginTop: -5,
-                borderRadius: '50%',
-                background: color,
-                boxShadow: '0 0 0 1px rgba(255,255,255,0.85)',
-                pointerEvents: 'auto',
-              }}
-            />
-          );
-        })}
-      </div>
-    </div>
+      {modal}
+    </>
   );
 }
