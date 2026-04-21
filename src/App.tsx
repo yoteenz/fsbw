@@ -252,7 +252,11 @@ function App() {
   // Client activity: cart/wishlist debounced snapshots + bawTrackActivity bridge (admin Activity tab)
   useEffect(() => {
     registerGlobalClientActivityListeners();
-    startLivePresenceHeartbeat();
+    // Defer live-presence heartbeat so it never competes with first paint / critical path
+    const t = window.setTimeout(() => {
+      startLivePresenceHeartbeat();
+    }, 2500);
+    return () => clearTimeout(t);
   }, []);
 
   // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.
