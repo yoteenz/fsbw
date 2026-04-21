@@ -116,15 +116,6 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes('react-router')) {
               return 'vendor-router';
             }
-            if (
-              id.includes('node_modules/three') ||
-              id.includes('/three/') ||
-              id.includes('globe.gl') ||
-              id.includes('three-globe') ||
-              id.includes('three-render-objects')
-            ) {
-              return 'vendor-globe';
-            }
             return 'vendor';
           }
         },

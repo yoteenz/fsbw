@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { GlobeInstance } from 'globe.gl';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -13,116 +12,86 @@ type Props = {
   heightPx?: number;
 };
 
-function mergeData(
-  visitorPoints: Props['visitorPoints'],
-  orderPoints: Props['orderPoints']
-): LiveGlobePoint[] {
+function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): LiveGlobePoint[] {
   return [
     ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
     ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
   ];
 }
 
-/**
- * Interactive 3D globe (globe.gl): brand-red visitors, green orders, graticule grid,
- * auto-rotate + orbit controls. Click a dot for details (portal modal).
- */
-export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 260 }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const globeRef = useRef<GlobeInstance | null>(null);
-  const dataRef = useRef(mergeData(visitorPoints, orderPoints));
-  dataRef.current = mergeData(visitorPoints, orderPoints);
+function project(lat: number, lng: number): { leftPct: number; topPct: number } {
+  const clampLat = Math.max(-85, Math.min(85, lat));
+  const clampLng = Math.max(-180, Math.min(180, lng));
+  return {
+    leftPct: ((clampLng + 180) / 360) * 100,
+    topPct: ((90 - clampLat) / 180) * 100,
+  };
+}
 
+/** No WebGL — avoids multi‑MB three.js chunk load failures on mobile. Circular “globe”, graticule grid, pan + wheel zoom, tap dot for details. */
+export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
+  const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
 
-  const applyPoints = useCallback(() => {
-    const g = globeRef.current;
-    if (!g) return;
-    const pts = dataRef.current.map((d) => ({
-      ...d,
-      color: d.kind === 'visitor' ? BRAND_RED : ORDER_GREEN,
-    }));
-    g.pointsData(pts);
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const drag = useRef<{ active: boolean; startX: number; startY: number; panX: number; panY: number } | null>(null);
+
+  const clampPan = useCallback(
+    (next: { x: number; y: number }, s: number) => {
+      const max = 120 * (s - 1);
+      return {
+        x: Math.max(-max, Math.min(max, next.x)),
+        y: Math.max(-max, Math.min(max, next.y)),
+      };
+    },
+    []
+  );
+
+  const onWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.12 : 0.12;
+      setScale((prev) => {
+        const next = Math.min(3.2, Math.max(1, prev + delta));
+        setPan((p) => clampPan(p, next));
+        return next;
+      });
+    },
+    [clampPan]
+  );
+
+  useEffect(() => {
+    const onUp = () => {
+      drag.current = null;
+    };
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
   }, []);
 
-  useEffect(() => {
-    applyPoints();
-  }, [visitorPoints, orderPoints, applyPoints]);
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    drag.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
+  };
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    let cancelled = false;
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d?.active) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    setPan(clampPan({ x: d.panX + dx, y: d.panY + dy }, scale));
+  };
 
-    void import('globe.gl').then((mod) => {
-      if (cancelled || !containerRef.current) return;
-      const Globe = mod.default;
-      const w = Math.max(280, el.clientWidth);
-      const h = heightPx;
+  const onPointerUp = () => {
+    drag.current = null;
+  };
 
-      const globe = new Globe(el)
-        .width(w)
-        .height(h)
-        /** Light “glass” globe — subtle blue marble, grid-forward look */
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-        .backgroundColor('rgba(248, 250, 252, 0.92)')
-        .showAtmosphere(true)
-        .atmosphereColor('#bae6fd')
-        .atmosphereAltitude(0.22)
-        .showGraticules(true)
-        .pointLat('lat')
-        .pointLng('lng')
-        .pointColor('color')
-        .pointAltitude(0.035)
-        .pointRadius(0.55)
-        .pointResolution(18)
-        .pointLabel((d: object) => {
-          const p = d as LiveGlobePoint & { color: string };
-          return `${p.kind === 'visitor' ? 'Visitor' : 'Order'}: ${p.label}`;
-        });
-
-      try {
-        const ctrl = globe.controls();
-        ctrl.autoRotate = true;
-        ctrl.autoRotateSpeed = 0.5;
-        ctrl.enableZoom = true;
-        ctrl.minDistance = 120;
-        ctrl.maxDistance = 500;
-      } catch {
-        // ignore
-      }
-
-      globe.pointOfView({ lat: 22, lng: -40, altitude: 2.35 }, 0);
-
-      globe.onPointClick((obj: object) => {
-        const p = obj as LiveGlobePoint;
-        setSelected(p);
-      });
-
-      globeRef.current = globe;
-      applyPoints();
-    });
-
-    const ro = new ResizeObserver(() => {
-      const g = globeRef.current;
-      const node = containerRef.current;
-      if (!g || !node) return;
-      g.width(Math.max(280, node.clientWidth)).height(heightPx);
-    });
-    ro.observe(el);
-
-    return () => {
-      cancelled = true;
-      ro.disconnect();
-      try {
-        globeRef.current?._destructor();
-      } catch {
-        /* ignore */
-      }
-      globeRef.current = null;
-    };
-  }, [heightPx, applyPoints]);
+  const size = Math.min(heightPx, 280);
 
   const modal =
     selected &&
@@ -138,19 +107,13 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
         <div
           className="w-full max-w-sm rounded border border-black bg-white/95 p-4 shadow-lg backdrop-blur-sm"
           style={{ borderWidth: '1.3px' }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(ev) => ev.stopPropagation()}
         >
           <div className="flex justify-between items-start gap-2 mb-2">
             <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: BRAND_RED, textTransform: 'uppercase' }}>
               {selected.kind === 'visitor' ? 'Visitor' : 'Order'}
             </span>
-            <button
-              type="button"
-              onClick={() => setSelected(null)}
-              className="shrink-0 p-1"
-              aria-label="Close"
-              style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b' }}
-            >
+            <button type="button" onClick={() => setSelected(null)} className="shrink-0 p-1" aria-label="Close" style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b' }}>
               ✕
             </button>
           </div>
@@ -167,12 +130,99 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
 
   return (
     <>
-      <div
-        ref={containerRef}
-        className="w-full overflow-hidden rounded-md border border-gray-200"
-        style={{ height: heightPx, minHeight: heightPx, background: 'linear-gradient(180deg, #f0f9ff 0%, #f8fafc 100%)' }}
-        aria-label="Interactive 3D globe: drag to rotate, scroll to zoom, tap a dot for details"
-      />
+      <div className="flex justify-center w-full">
+        <div
+          className="relative overflow-hidden select-none touch-none"
+          style={{
+            width: size,
+            height: size,
+            borderRadius: '50%',
+            boxShadow: 'inset 0 0 50px rgba(255,255,255,0.35), inset 0 -20px 40px rgba(14, 165, 233, 0.12), 0 10px 28px rgba(15, 23, 42, 0.18)',
+            touchAction: 'none',
+          }}
+          onWheel={onWheel}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerLeave={onPointerUp}
+          aria-label="Map: drag to pan, scroll to zoom, tap a dot for details"
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
+              transformOrigin: 'center center',
+              willChange: 'transform',
+            }}
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover opacity-85"
+              draggable={false}
+              loading="lazy"
+            />
+            {/* Grid overlay — latitude/longitude lines */}
+            <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 360 180" preserveAspectRatio="none">
+              {[-120, -60, 0, 60, 120].map((lng) => (
+                <line
+                  key={`v-${lng}`}
+                  x1={lng + 180}
+                  y1={0}
+                  x2={lng + 180}
+                  y2={180}
+                  stroke="rgba(14, 165, 233, 0.35)"
+                  strokeWidth={0.8}
+                />
+              ))}
+              {[-60, -30, 0, 30, 60].map((lat) => {
+                const y = 90 - lat;
+                return (
+                  <line
+                    key={`h-${lat}`}
+                    x1={0}
+                    y1={y}
+                    x2={360}
+                    y2={y}
+                    stroke="rgba(14, 165, 233, 0.28)"
+                    strokeWidth={0.7}
+                  />
+                );
+              })}
+            </svg>
+            <div className="absolute inset-0 bg-gradient-to-br from-sky-100/25 via-transparent to-slate-900/10 pointer-events-none" />
+
+            {points.map((p, i) => {
+              const { leftPct, topPct } = project(p.lat, p.lng);
+              const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
+              return (
+                <button
+                  key={`${p.kind}-${i}`}
+                  type="button"
+                  className="absolute rounded-full border-2 border-white/90 shadow-sm cursor-pointer"
+                  style={{
+                    left: `${leftPct}%`,
+                    top: `${topPct}%`,
+                    width: 12,
+                    height: 12,
+                    marginLeft: -6,
+                    marginTop: -6,
+                    background: color,
+                    padding: 0,
+                    zIndex: 2,
+                  }}
+                  title={p.label}
+                  aria-label={p.label}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelected(p);
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
       {modal}
     </>
   );
