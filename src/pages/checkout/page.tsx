@@ -54,7 +54,6 @@ import {
 } from '../../utils/adminBrandCodes';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
-import { bcfBundleDealResolvedListSubtotal } from '../../utils/bcfProductOptions';
 import { cartItemsToQuoteLines, fetchCheckoutQuote, type ServerCheckoutQuote } from '../../utils/checkoutQuote';
 import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import {
@@ -64,7 +63,7 @@ import {
   orderStripTitleFontPx,
   orderStripTitleLine,
   orderStripUseDigitalStackLayout,
-  orderStripQtyDisplayNumber
+  expandCartLinesForOrderStrip
 } from '../../utils/checkoutOrderStripDisplay';
 import {
   cartHasAnyLoyaltyEarningLine,
@@ -252,6 +251,11 @@ function CheckoutPage() {
     const fromLines = cartTotalQuantityUnits(cartItems);
     return cartItems.length > 0 ? fromLines : undefined;
   }, [cartItems, location.pathname]);
+  /** Horizontal strip: one tile per unit (qty &gt; 1 → repeated tiles); no QUANTITY line. */
+  const orderStripExpandedEntries = useMemo(
+    () => expandCartLinesForOrderStrip(cartItems),
+    [cartItems]
+  );
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
@@ -1624,10 +1628,10 @@ function CheckoutPage() {
     
     // Calculate total content width
     let totalContentWidth = paddingRight; // Start with padding
-    cartItems.forEach((item, index) => {
-      const itemWidth = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 165 : 150;
-      totalContentWidth += itemWidth;
-      if (index < cartItems.length - 1) {
+    orderStripExpandedEntries.forEach((entry, index) => {
+      const thumbM = orderStripThumbMetrics(entry.item, isSubscriptionUpgrade, { checkoutStrip: true });
+      totalContentWidth += thumbM.cellWidthPx;
+      if (index < orderStripExpandedEntries.length - 1) {
         totalContentWidth += gap;
       }
     });
@@ -1661,10 +1665,10 @@ function CheckoutPage() {
     
     // Calculate total content width
     let totalContentWidth = paddingRight; // Start with padding
-    cartItems.forEach((item, index) => {
-      const itemWidth = (item.name === 'GIFT CARD' || item.type === 'gift-card') ? 165 : 150;
-      totalContentWidth += itemWidth;
-      if (index < cartItems.length - 1) {
+    orderStripExpandedEntries.forEach((entry, index) => {
+      const thumbM = orderStripThumbMetrics(entry.item, isSubscriptionUpgrade, { checkoutStrip: true });
+      totalContentWidth += thumbM.cellWidthPx;
+      if (index < orderStripExpandedEntries.length - 1) {
         totalContentWidth += gap;
       }
     });
@@ -3312,20 +3316,21 @@ function CheckoutPage() {
                         <div
                           className="flex"
                           style={{
-                            transform: cartItems.length === 1 ? 'none' : `translateX(${scrollPosition}px)`,
+                            transform: orderStripExpandedEntries.length === 1 ? 'none' : `translateX(${scrollPosition}px)`,
                             transition: 'none',
                             gap: '20px',
                             alignItems: 'flex-start',
-                            justifyContent: cartItems.length === 1 ? 'center' : undefined,
+                            justifyContent: orderStripExpandedEntries.length === 1 ? 'center' : undefined,
                             willChange: 'transform',
-                            paddingRight: cartItems.length === 1 ? 0 : '10px',
+                            paddingRight: orderStripExpandedEntries.length === 1 ? 0 : '10px',
                             paddingTop: isSubscriptionUpgrade ? '0px' : '2px',
                             paddingBottom: '4px',
                             boxSizing: 'border-box',
                           }}
                         >
-                          {cartItems.map((item, index) => {
-                          const itemId = item.id || `cart-item-${index}`;
+                          {orderStripExpandedEntries.map((stripEntry) => {
+                          const item = stripEntry.item;
+                          const itemId = stripEntry.stripKey;
                           const thumbM = orderStripThumbMetrics(item, isSubscriptionUpgrade, {
                             checkoutStrip: true
                           });
@@ -3335,16 +3340,12 @@ function CheckoutPage() {
 
                           const itemLength = item.length || '24"';
                           const redSubtitle = orderStripRedSubtitle(item, itemLength);
-                          const isGiftLineStrip = isGiftCardCartLine(item);
-                          const itemPrice = isGiftLineStrip
-                            ? giftCardLineTotalUsd(item)
-                            : item.price || 580;
+                          const itemPrice = stripEntry.displayUnitPriceUsd;
                           const isBcfBundleDeal = Boolean((item as { bcfBundleDeal?: boolean }).bcfBundleDeal);
-                          const bundleDealListCheckout = bcfBundleDealResolvedListSubtotal(item);
-                          const bundleLineTotalCheckout = itemPrice * (item.quantity || 1);
+                          const bundleDealListUnit = stripEntry.bundleDealListUnitUsd;
+                          const bundleLineTotalCheckout = itemPrice;
 
                           const titleFontPx = orderStripTitleFontPx(item);
-                          const stripQtyDisplay = orderStripQtyDisplayNumber(item);
 
                           return (
                             <div
@@ -3496,8 +3497,8 @@ function CheckoutPage() {
                                       textTransform: 'uppercase'
                                     }}
                                   >
-                                    {bundleDealListCheckout != null &&
-                                      bundleDealListCheckout > bundleLineTotalCheckout && (
+                                    {bundleDealListUnit != null &&
+                                      bundleDealListUnit > bundleLineTotalCheckout && (
                                         <span
                                           style={{
                                             fontFamily: '"Futura PT Medium"',
@@ -3507,7 +3508,7 @@ function CheckoutPage() {
                                             textDecoration: 'line-through',
                                             marginRight: '6px'
                                           }}
-                                          dangerouslySetInnerHTML={formatPrice(bundleDealListCheckout)}
+                                          dangerouslySetInnerHTML={formatPrice(bundleDealListUnit)}
                                         />
                                       )}
                                     <span
@@ -3534,19 +3535,6 @@ function CheckoutPage() {
                                   dangerouslySetInnerHTML={formatPrice(itemPrice)}
                                 />
                                 )}
-                                <p
-                                  style={{
-                                    fontFamily: '"Futura PT Medium"',
-                                    fontSize: '8px',
-                                    color: '#EB1C24',
-                                    margin: '2px 0 0 0',
-                                    textTransform: 'uppercase',
-                                    textAlign: 'center',
-                                    lineHeight: '1.1'
-                                  }}
-                                >
-                                  QUANTITY: {stripQtyDisplay}
-                                </p>
                               </div>
                               </div>
                             </div>

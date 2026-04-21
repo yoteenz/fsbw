@@ -16480,6 +16480,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Checkout / confirm strips: repeat tiles instead of QUANTITY line
+
+**Context (this chat):** User asked to **remove** the **QUANTITY** text line on **checkout** and **order summary (confirm)** and instead **show multiple-qty items as separate tiles** (one per unit).
+
+**Decisions / outcomes:** **`expandCartLinesForOrderStrip`** in **`checkoutOrderStripDisplay.ts`** builds **`OrderStripExpandedEntry[]`**: normal lines repeat **`quantity`** times with **`quantity: 1`** clones and **per-unit** `displayUnitPriceUsd`; **BCF bundle** repeats with per-unit list strikethrough when applicable; **gift** lines repeat one tile per **gift step** (value ÷ unit) with cloned line **`quantity: 1`**. **`checkout/page.tsx`** and **`confirm/page.tsx`**: map **`orderStripExpandedEntries`** instead of **`cartItems`**; drop **QUANTITY** `<p>`; **horizontal scroll** width uses expanded tile **`cellWidthPx`**. Removed **`orderStripQtyDisplayNumber`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Checkout + confirm strips: red QTY line per product
 
 **Context (this chat):** User asked for a **red quantity line** like the cart (**QTY: 1**, **QTY: 2**) **below the price** on each product in the **checkout** horizontal strip and on the **order summary** (post-checkout confirm) product list.

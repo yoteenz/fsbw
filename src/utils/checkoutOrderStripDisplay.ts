@@ -12,9 +12,9 @@ import {
   BOOKING_CART_BADGE_IMG_PX,
   isBookingCartBadgeItem
 } from './bookingBadges';
-import { shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
+import { bcfBundleDealResolvedListSubtotal, shopBcfCartLineThumbnailSrc } from './bcfProductOptions';
 import { bookingCartRedSubtitle, CART_RED_LINE_BCF_BOOKING } from './cartLineRedAndDetails';
-import { giftCardStripQuantitySteps, isGiftCardCartLine } from './giftCardCheckout';
+import { giftCardLineTotalUsd, giftCardStripQuantitySteps, isGiftCardCartLine } from './giftCardCheckout';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -288,10 +288,73 @@ export function orderStripUseDigitalStackLayout(item: any, isSubscriptionUpgrade
 }
 
 /**
- * Quantity to show as **QTY: n** on checkout / confirm horizontal strips (matches cart dropdown semantics).
+ * One horizontal-strip tile: same cart line can repeat (qty &gt; 1) with **per-unit** price for display.
+ * Gift cards: one tile per **step** (value / unit), with cloned line `quantity: 1` and per-step `price`/`balance`.
  */
-export function orderStripQtyDisplayNumber(item: any): number {
-  if (isGiftCardCartLine(item)) return giftCardStripQuantitySteps(item);
-  if (item?.bcfBundleDeal) return 3;
-  return Math.max(1, Math.floor(Number(item?.quantity) || 1));
+export type OrderStripExpandedEntry = {
+  item: any;
+  /** Per-unit price for this tile (USD, same currency as stored `price`). */
+  displayUnitPriceUsd: number;
+  /** BCF bundle: optional list (pre-deal) price per unit for strikethrough; null if unknown or N/A. */
+  bundleDealListUnitUsd: number | null;
+  stripKey: string;
+};
+
+export function expandCartLinesForOrderStrip(cartItems: any[] | null | undefined): OrderStripExpandedEntry[] {
+  if (!Array.isArray(cartItems)) return [];
+  const out: OrderStripExpandedEntry[] = [];
+  cartItems.forEach((raw, i) => {
+    const item = raw;
+    const baseId = String(item?.id ?? `cart-item-${i}`);
+
+    if (item?.bcfBundleDeal) {
+      const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
+      const lineTotal = (Number(item.price) || 0) * q;
+      const listTotal = bcfBundleDealResolvedListSubtotal(item);
+      const listPerUnit =
+        listTotal != null && listTotal > lineTotal && q > 0 ? listTotal / q : null;
+      for (let u = 0; u < q; u++) {
+        out.push({
+          item,
+          displayUnitPriceUsd: Number(item.price) || 0,
+          bundleDealListUnitUsd: listPerUnit,
+          stripKey: `${baseId}-bcf-${u}`,
+        });
+      }
+      return;
+    }
+
+    if (isGiftCardCartLine(item)) {
+      const steps = Math.max(1, giftCardStripQuantitySteps(item));
+      const totalUsd = giftCardLineTotalUsd(item);
+      const per = steps > 0 ? Math.round(totalUsd / steps) : totalUsd;
+      for (let u = 0; u < steps; u++) {
+        const tileItem = {
+          ...item,
+          quantity: 1,
+          price: per,
+          balance: per,
+        };
+        out.push({
+          item: tileItem,
+          displayUnitPriceUsd: per,
+          bundleDealListUnitUsd: null,
+          stripKey: `${baseId}-gift-${u}`,
+        });
+      }
+      return;
+    }
+
+    const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
+    const unitPrice = Number(item.price) || 0;
+    for (let u = 0; u < q; u++) {
+      out.push({
+        item: { ...item, quantity: 1 },
+        displayUnitPriceUsd: unitPrice,
+        bundleDealListUnitUsd: null,
+        stripKey: `${baseId}-u${u}`,
+      });
+    }
+  });
+  return out;
 }

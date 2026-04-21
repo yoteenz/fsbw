@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -15,7 +15,6 @@ import { trackActivity } from '../../../utils/activity';
 import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '../../../utils/perUserStorage';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
-import { bcfBundleDealResolvedListSubtotal } from '../../../utils/bcfProductOptions';
 import { stripIneligibleBcfBundleDealLines } from '../../../utils/premiumMemberAccess';
 import {
   orderStripRedSubtitle,
@@ -24,7 +23,7 @@ import {
   orderStripTitleFontPx,
   orderStripTitleLine,
   orderStripUseDigitalStackLayout,
-  orderStripQtyDisplayNumber
+  expandCartLinesForOrderStrip
 } from '../../../utils/checkoutOrderStripDisplay';
 import { isBookingCartLine } from '../../../utils/bookingCheckout';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -45,7 +44,6 @@ import {
   orderShowsDeliveredTrackingLine,
 } from '../../../utils/orderTracking';
 import { cartRequiresOrderAuthorizationForm } from '../../../utils/orderAuthorizationForm';
-import { giftCardLineTotalUsd, isGiftCardCartLine } from '../../../utils/giftCardCheckout';
 import {
   getConfirmPageFallbackProcessingLabel,
   processingTimelineWeekRangeFromLabel,
@@ -270,6 +268,11 @@ function CheckoutConfirmPage() {
   const isPremiumMembershipSummary = React.useMemo(
     () => isPremiumMembershipUpgradeSummary(cartItems, orderData),
     [cartItems, orderData]
+  );
+
+  const orderStripExpandedEntries = useMemo(
+    () => expandCartLinesForOrderStrip(cartItems),
+    [cartItems]
   );
 
   const isOnlyDigitalProductsSummary = React.useMemo(
@@ -759,9 +762,12 @@ function CheckoutConfirmPage() {
     const paddingRight = 10;
     
     // Calculate total content width
-    const totalContentWidth = cartItems.reduce((sum, item) => {
-      return sum + summaryScrollItemWidthPx(item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
-    }, 0) + paddingRight - gap; // Subtract last gap, add padding
+    const totalContentWidth =
+      orderStripExpandedEntries.reduce((sum, entry) => {
+        return sum + summaryScrollItemWidthPx(entry.item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
+      }, 0) +
+      paddingRight -
+      gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
     const minScroll = containerWidth - totalContentWidth;
@@ -791,9 +797,12 @@ function CheckoutConfirmPage() {
     const paddingRight = 10;
     
     // Calculate total content width
-    const totalContentWidth = cartItems.reduce((sum, item) => {
-      return sum + summaryScrollItemWidthPx(item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
-    }, 0) + paddingRight - gap; // Subtract last gap, add padding
+    const totalContentWidth =
+      orderStripExpandedEntries.reduce((sum, entry) => {
+        return sum + summaryScrollItemWidthPx(entry.item, Boolean(orderData?.isSubscriptionUpgrade)) + gap;
+      }, 0) +
+      paddingRight -
+      gap; // Subtract last gap, add padding
     
     const maxScroll = 0;
     const minScroll = containerWidth - totalContentWidth;
@@ -1214,7 +1223,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   cursor: isDragging ? 'grabbing' : 'grab',
                   userSelect: 'none',
                   display: 'flex',
-                  justifyContent: cartItems.length === 1 ? 'center' : 'flex-start',
+                  justifyContent: orderStripExpandedEntries.length === 1 ? 'center' : 'flex-start',
                   alignItems: 'center'
                 }}
                 onMouseDown={handleMouseDown}
@@ -1235,32 +1244,39 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                     alignItems: 'flex-start',
                     willChange: 'transform',
                     paddingRight: '10px',
-                    justifyContent: cartItems.length === 1 ? 'center' : cartItems.length === 2 ? 'center' : 'flex-start',
-                    paddingLeft: cartItems.length >= 3 ? 'calc(50% - 160px)' : undefined,
-                    marginLeft: cartItems.length === 1 ? 0 : cartItems.length >= 2 ? '-10px' : undefined,
+                    justifyContent:
+                      orderStripExpandedEntries.length === 1
+                        ? 'center'
+                        : orderStripExpandedEntries.length === 2
+                          ? 'center'
+                          : 'flex-start',
+                    paddingLeft: orderStripExpandedEntries.length >= 3 ? 'calc(50% - 160px)' : undefined,
+                    marginLeft:
+                      orderStripExpandedEntries.length === 1
+                        ? 0
+                        : orderStripExpandedEntries.length >= 2
+                          ? '-10px'
+                          : undefined,
                   }}
                 >
-                  {cartItems.map((item, index) => {
+                  {orderStripExpandedEntries.map((stripEntry) => {
+                    const item = stripEntry.item;
                     const stripUpgrade = Boolean(orderData?.isSubscriptionUpgrade);
                     const thumbM = orderStripThumbMetrics(item, stripUpgrade, { checkoutStrip: true });
                     const itemImage = orderStripThumbnailSrc(item, stripUpgrade);
                     const displayTitle = orderStripTitleLine(item);
                     const itemLength = item.length || '24"';
                     const redSubtitle = orderStripRedSubtitle(item, itemLength);
-                    const isGiftLineConfirm = isGiftCardCartLine(item);
-                    const itemPrice = isGiftLineConfirm
-                      ? giftCardLineTotalUsd(item)
-                      : item.price || 580;
+                    const itemPrice = stripEntry.displayUnitPriceUsd;
                     const useDigitalStack = orderStripUseDigitalStackLayout(item, stripUpgrade);
                     const isBcfBundleDeal = Boolean(item.bcfBundleDeal);
-                    const bundleDealListSum = bcfBundleDealResolvedListSubtotal(item);
-                    const bundleLineTotalSum = itemPrice * (item.quantity || 1);
+                    const bundleDealListUnit = stripEntry.bundleDealListUnitUsd;
+                    const bundleLineTotalSum = itemPrice;
                     const titleFontPx = orderStripTitleFontPx(item);
-                    const stripQtyDisplay = orderStripQtyDisplayNumber(item);
 
                     return (
                       <div
-                        key={index}
+                        key={stripEntry.stripKey}
                         className="flex-shrink-0"
                         style={{
                           width: `${thumbM.cellWidthPx}px`,
@@ -1392,7 +1408,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                               textTransform: 'uppercase'
                             }}
                           >
-                            {bundleDealListSum != null && bundleDealListSum > bundleLineTotalSum && (
+                            {bundleDealListUnit != null && bundleDealListUnit > bundleLineTotalSum && (
                               <span
                                 style={{
                                   fontFamily: '"Futura PT Medium"',
@@ -1402,7 +1418,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                                   textDecoration: 'line-through',
                                   marginRight: '6px'
                                 }}
-                                dangerouslySetInnerHTML={formatPrice(bundleDealListSum)}
+                                dangerouslySetInnerHTML={formatPrice(bundleDealListUnit)}
                               />
                             )}
                             <span
@@ -1429,19 +1445,6 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                           dangerouslySetInnerHTML={formatPrice(itemPrice)}
                         />
                         )}
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '8px',
-                            color: '#EB1C24',
-                            margin: '2px 0 0 0',
-                            textTransform: 'uppercase',
-                            textAlign: 'center',
-                            lineHeight: '1.1'
-                          }}
-                        >
-                          QUANTITY: {stripQtyDisplay}
-                        </p>
                         </div>
                       </div>
                     );
