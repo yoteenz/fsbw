@@ -16558,6 +16558,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Admin Revenue OVERVIEW: Live View 3D globe (orders + visitors)
+
+**Context (this chat):** User asked for a **Shopify Live View–style** **3D globe** on **Admin → Revenue → Overview**, **above Revenue breakdown**, showing **where orders ship** and **live visitors** with location.
+
+**Decisions / outcomes:** **`globe.gl`** + **`three@0.179`** (peer range). **`AdminRevenueLiveGlobe`** (`src/components/admin/AdminRevenueLiveGlobe.tsx`) — blue-marble texture, atmosphere, graticules, auto-rotate; **cyan** points = visitors, **purple** = orders; lazy-loaded from revenue page. **`orderShippingToGlobePoint`** maps **`shippingAddress`** (city/state/country) to lat/lng with stable jitter (no external geocoder). **Visitors:** **`startLivePresenceHeartbeat`** in **`App`** — ipapi.co geo (session-cached) + **`POST /api/analytics/event`** with **`eventType: page_view`** and **`meta.lat/lng`** etc.; **`api/analytics/event.ts`** extended to accept **`page_view`** (still requires **`social_click`** platform/source for social events). **`GET /api/admin/live-presence`** — last **5 min** **`page_view`** rows, deduped by **`visitor_id`**. **`getAdminLivePresence`** in **`api.ts`**. Revenue overview: **LIVE VIEW** strip with counts + **Suspense** fallback, poll **30s** on OVERVIEW tab. If API/Supabase fails, red helper text about ingest.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Checkout modals: VOUCHER + DIGITAL CASH headers match account history pop-ups
 
 **Context (this chat):** User asked for **VOUCHER** and **DIGITAL CASH** checkout pop-up headers to match **other header text**: **gray border line** under the title, with the **same voucher/history icon** as **account profile** voucher history / digital cash history modals (**`/assets/points-history.svg`**, brand-red filter), **across from** the title.

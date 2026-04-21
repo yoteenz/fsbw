@@ -793,6 +793,26 @@ export async function getAdminAnalytics(): Promise<{
   return await res.json();
 }
 
+/** Admin: live visitors (page_view heartbeats with geo, last ~5 min) for Revenue Live View globe. */
+export async function getAdminLivePresence(): Promise<{
+  visitorsNow: number;
+  visitors: Array<{
+    visitor_id: string;
+    lat: number;
+    lng: number;
+    path: string | null;
+    city?: string;
+    region?: string;
+    country?: string;
+    lastAt: number;
+  }>;
+}> {
+  const res = await apiFetch('/api/admin/live-presence');
+  if (res.status === 403) throw new Error('Forbidden');
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+
 /** Public POST — no auth. Records marketing events (e.g. social clicks) for admin analytics. */
 export async function postAnalyticsEvent(payload: {
   visitorId: string;

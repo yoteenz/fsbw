@@ -5,11 +5,11 @@
  * - Products/Inventory: getDepletedInventory(orders) and Edit Inventory overrides.
  * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { getAdminRevenue, getAdminMembershipPayments } from '../../../utils/api';
+import { getAdminRevenue, getAdminMembershipPayments, getAdminLivePresence } from '../../../utils/api';
 import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -29,6 +29,9 @@ import {
   patchOrderInUserOrders,
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
+import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePoint';
+
+const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/AdminRevenueLiveGlobe'));
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
@@ -604,6 +607,63 @@ export default function AdminRevenue() {
 
   const topProductsBySales = useMemo(() => getProductSalesCounts(orders), [orders]);
 
+  const [liveVisitorsNow, setLiveVisitorsNow] = useState(0);
+  const [liveVisitorGlobePoints, setLiveVisitorGlobePoints] = useState<
+    Array<{ lat: number; lng: number; label: string }>
+  >([]);
+  const [liveGlobeError, setLiveGlobeError] = useState<string | null>(null);
+
+  const orderGlobePoints = useMemo(() => {
+    const out: Array<{ lat: number; lng: number; label: string }> = [];
+    const seen = new Set<string>();
+    for (const o of orders) {
+      const ship = o.shippingAddress;
+      if (!ship || typeof ship !== 'object') continue;
+      const pt = orderShippingToGlobePoint(ship as { city?: string; state?: string; country?: string });
+      if (!pt) continue;
+      const key = `${pt.lat.toFixed(2)}|${pt.lng.toFixed(2)}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const num = (o.orderNumber || o.id || '').toString().replace(/^ORDER\s*#?\s*/i, '');
+      out.push({
+        lat: pt.lat,
+        lng: pt.lng,
+        label: `ORDER #${num || '—'} · ${pt.label}`,
+      });
+      if (out.length >= 80) break;
+    }
+    return out;
+  }, [orders]);
+
+  const fetchLiveGlobe = useCallback(async () => {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
+      if (!u?.email || !isAdminEmail(u.email)) return;
+      const data = await getAdminLivePresence();
+      setLiveVisitorsNow(data.visitorsNow);
+      setLiveGlobeError(null);
+      setLiveVisitorGlobePoints(
+        (data.visitors || []).map((v) => ({
+          lat: v.lat,
+          lng: v.lng,
+          label: `VISITOR · ${[v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE'}${v.path ? ` · ${v.path}` : ''}`,
+        }))
+      );
+    } catch {
+      setLiveGlobeError('LIVE DATA UNAVAILABLE');
+      setLiveVisitorsNow(0);
+      setLiveVisitorGlobePoints([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'OVERVIEW') return;
+    void fetchLiveGlobe();
+    const id = setInterval(() => void fetchLiveGlobe(), 30_000);
+    return () => clearInterval(id);
+  }, [activeTab, fetchLiveGlobe]);
+
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
     try {
@@ -858,6 +918,67 @@ export default function AdminRevenue() {
                 >
                 {activeTab === 'OVERVIEW' && (
                   <>
+                    <div className="mb-4 pb-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: 0 }}>
+                          LIVE VIEW
+                        </h3>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                          Just now
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div
+                          className="text-center py-2 rounded"
+                          style={{ backgroundColor: 'rgba(0,0,0,0.04)', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#0ea5e9' }}
+                        >
+                          <div className="text-lg font-covered-by-your-grace" style={{ color: '#0ea5e9', fontSize: '22px', lineHeight: 1.1 }}>
+                            {liveVisitorsNow}
+                          </div>
+                          <div style={{ color: '#64748b', marginTop: '4px', textTransform: 'uppercase', fontSize: '8px' }}>Visitors right now</div>
+                        </div>
+                        <div
+                          className="text-center py-2 rounded"
+                          style={{ backgroundColor: 'rgba(0,0,0,0.04)', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#a855f7' }}
+                        >
+                          <div className="text-lg font-covered-by-your-grace" style={{ color: '#a855f7', fontSize: '22px', lineHeight: 1.1 }}>
+                            {orderGlobePoints.length}
+                          </div>
+                          <div style={{ color: '#64748b', marginTop: '4px', textTransform: 'uppercase', fontSize: '8px' }}>Order locations</div>
+                        </div>
+                      </div>
+                      <Suspense
+                        fallback={
+                          <div
+                            className="w-full flex items-center justify-center rounded-md border border-gray-200 bg-sky-50/50"
+                            style={{ height: 200, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
+                          >
+                            Loading globe…
+                          </div>
+                        }
+                      >
+                        <AdminRevenueLiveGlobe
+                          orderPoints={orderGlobePoints}
+                          visitorPoints={liveVisitorGlobePoints}
+                          heightPx={200}
+                        />
+                      </Suspense>
+                      <div className="flex flex-wrap items-center justify-center gap-4 mt-2" style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#64748b', textTransform: 'uppercase' }}>
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-block rounded-full" style={{ width: 8, height: 8, background: '#22d3ee' }} aria-hidden />
+                          Visitors
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-block rounded-full" style={{ width: 8, height: 8, background: '#a855f7' }} aria-hidden />
+                          Orders
+                        </span>
+                      </div>
+                      {liveGlobeError && (
+                        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#EB1C24', margin: '8px 0 0 0', textAlign: 'center', textTransform: 'uppercase' }}>
+                          {liveGlobeError} · Heartbeats require Supabase + page_view ingest
+                        </p>
+                      )}
+                    </div>
                     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>REVENUE BREAKDOWN</h3>
                     <div className="space-y-2 mb-4">
                       {breakdown.length > 0

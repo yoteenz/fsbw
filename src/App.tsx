@@ -22,6 +22,7 @@ import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './u
 import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud';
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
 import { registerGlobalClientActivityListeners } from './utils/clientActivityBootstrap';
+import { startLivePresenceHeartbeat } from './utils/livePresenceHeartbeat';
 import { hardReloadOnceForStaleChunks, isDynamicImportChunkFailure } from './utils/chunkLoadRecovery';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
@@ -251,6 +252,7 @@ function App() {
   // Client activity: cart/wishlist debounced snapshots + bawTrackActivity bridge (admin Activity tab)
   useEffect(() => {
     registerGlobalClientActivityListeners();
+    startLivePresenceHeartbeat();
   }, []);
 
   // Auth persistence: restore from backup on every load (survives browser close), then re-persist backup and notify listeners.

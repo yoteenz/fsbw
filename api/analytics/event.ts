@@ -36,15 +36,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const eventType = String(body.eventType ?? body.event_type ?? 'social_click').trim() || 'social_click';
-  if (eventType !== 'social_click') {
-    return res.status(400).json({ error: 'Unsupported eventType' });
-  }
-
-  const platform = String(body.platform ?? '').trim().toLowerCase();
-  const source = String(body.source ?? '').trim().toLowerCase();
-  if (!SOCIAL_PLATFORMS.has(platform) || !SOCIAL_SOURCES.has(source)) {
-    return res.status(400).json({ error: 'Invalid platform or source' });
-  }
 
   const pathRaw = body.path != null ? String(body.path).slice(0, 512) : null;
   const userEmailRaw = body.userEmail ?? body.user_email;
@@ -52,6 +43,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     userEmailRaw != null && String(userEmailRaw).includes('@')
       ? String(userEmailRaw).trim().slice(0, 320)
       : null;
+
+  let platform: string | null = null;
+  let source: string | null = null;
+  let meta: Record<string, unknown> = {};
+
+  if (eventType === 'social_click') {
+    platform = String(body.platform ?? '').trim().toLowerCase();
+    source = String(body.source ?? '').trim().toLowerCase();
+    if (!SOCIAL_PLATFORMS.has(platform) || !SOCIAL_SOURCES.has(source)) {
+      return res.status(400).json({ error: 'Invalid platform or source' });
+    }
+  } else if (eventType === 'page_view') {
+    const rawMeta = body.meta;
+    if (rawMeta != null && typeof rawMeta === 'object' && !Array.isArray(rawMeta)) {
+      meta = { ...(rawMeta as Record<string, unknown>) };
+    }
+    const lat = Number(meta.lat);
+    const lng = Number(meta.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+      return res.status(400).json({ error: 'page_view requires meta.lat and meta.lng' });
+    }
+  } else {
+    return res.status(400).json({ error: 'Unsupported eventType' });
+  }
 
   try {
     const supabase = getSupabaseAdminServiceRole();
@@ -62,7 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       platform,
       source,
       path: pathRaw || null,
-      meta: {},
+      meta,
     });
     if (error) {
       console.error('[analytics/event]', error.message);
