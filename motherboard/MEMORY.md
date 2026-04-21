@@ -16568,6 +16568,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Admin Revenue Live View: 3D globe UI + colors + counters
+
+**Context (this chat):** User asked to **remove summary panels** above the globe, **remove red LIVE VIEW + gray Just now**, use **legend text below** as **“2 visitors, 3 orders”** style counters, **visitor dots brand red (#EB1C24)**, **order dots green (#16a34a)**, and **restore interactive 3D** globe — **grid-like**, **spinnable**, **clickable** for more info (Shopify reference).
+
+**Decisions / outcomes:** Re-added **`globe.gl`** + **`three@0.179`**. **`AdminRevenueLiveGlobe`**: blue-marble + topology bump, **graticules**, **atmosphere**, **auto-rotate** + **orbit controls** (drag/zoom), **red/green** points, **`onPointClick`** → **portal modal** with label + lat/lng. **`vite.config`**: **`vendor-globe`** chunk again. **`src/pages/admin/revenue/page.tsx`**: stripped header/panels/legend row; single line **`{n} visitor(s) · {m} order(s)`** under globe with colored dots. Globe height **240px**.
+
+---
+
 ## 2026-04-20 — Admin Live View: remove WebGL globe (2D map) to fix site not loading
 
 **Context (this chat):** User reported **site still not loading** after chunk-split fix — **three.js + globe.gl** (~2MB+ gzip in a separate chunk) still too heavy / fragile on mobile and some networks.
