@@ -16543,3 +16543,13 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`src/components/CartDropdown.tsx`**: always **`dropdownTop = '86px'`** (removed path-based branch).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Checkout modals: VOUCHER + DIGITAL CASH headers match account history pop-ups
+
+**Context (this chat):** User asked for **VOUCHER** and **DIGITAL CASH** checkout pop-up headers to match **other header text**: **gray border line** under the title, with the **same voucher/history icon** as **account profile** voucher history / digital cash history modals (**`/assets/points-history.svg`**, brand-red filter), **across from** the title.
+
+**Decisions / outcomes:** **`src/pages/checkout/page.tsx`**: replaced centered **`h3`** titles on both modals with the same row pattern as **`src/pages/account/page.tsx`** (**`-mt-1 pb-1 border-b border-gray-200`**, flex space-between, **Futura PT Medium** 12px red uppercase left, **16×16** **`points-history.svg`** right).
+
+**Verification:** `npm run build` passes.

@@ -6892,9 +6892,32 @@ function CheckoutPage() {
             style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', fontWeight: 500, marginBottom: '16px', color: '#EB1C24', textTransform: 'uppercase', textAlign: 'center' }}>
-              DIGITAL CASH
-            </h3>
+            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
+              >
+                DIGITAL CASH
+              </p>
+              <img
+                src="/assets/points-history.svg"
+                alt=""
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  flexShrink: 0,
+                  objectFit: 'contain',
+                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                }}
+              />
+            </div>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '16px', textTransform: 'uppercase' }}>
               Select the amount of digital cash to apply to your order.
             </p>
@@ -6981,9 +7004,32 @@ function CheckoutPage() {
             style={{ width: 'calc(100vw - 32px)', maxWidth: 'none', borderWidth: '1.3px', boxSizing: 'border-box' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', fontWeight: 500, marginBottom: '16px', color: '#EB1C24', textTransform: 'uppercase', textAlign: 'center' }}>
-              VOUCHER
-            </h3>
+            <div className="-mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  color: '#EB1C24',
+                  fontSize: '12px',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
+              >
+                VOUCHER
+              </p>
+              <img
+                src="/assets/points-history.svg"
+                alt=""
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  flexShrink: 0,
+                  objectFit: 'contain',
+                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                }}
+              />
+            </div>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '8px', textTransform: 'uppercase' }}>
               You can only use one service voucher at a time (color, hairline, styling). Those vouchers cannot be combined with each other.
             </p>
