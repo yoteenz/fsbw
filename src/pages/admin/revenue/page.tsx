@@ -953,7 +953,7 @@ export default function AdminRevenue() {
                             className="w-full flex items-center justify-center rounded-md border border-gray-200 bg-sky-50/50"
                             style={{ height: 200, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
                           >
-                            Loading globe…
+                            Loading map…
                           </div>
                         }
                       >

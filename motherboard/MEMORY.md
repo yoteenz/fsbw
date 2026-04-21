@@ -16568,6 +16568,14 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Admin Live View: remove WebGL globe (2D map) to fix site not loading
+
+**Context (this chat):** User reported **site still not loading** after chunk-split fix — **three.js + globe.gl** (~2MB+ gzip in a separate chunk) still too heavy / fragile on mobile and some networks.
+
+**Decisions / outcomes:** Removed **`globe.gl`** and **`three`** from **`package.json`**. **`AdminRevenueLiveGlobe`** rewritten as **SVG/CSS + equirectangular map image** with cyan/purple dots (same data). Reverted **`vite.config.ts`** `vendor-globe` manual chunk. Suspense fallback text **Loading map…**. **`App.tsx`** heartbeat defer kept.
+
+---
+
 ## 2026-04-20 — Fix: site load / chunk size after globe (split vendor-globe, defer heartbeat)
 
 **Context (this chat):** User reported **the site isn’t loading** after the admin Live View globe work — likely **oversized single `vendor` chunk** (~3.4MB minified) from **three** + **globe.gl** causing **timeouts / ChunkLoadError** on slow networks or after deploys.

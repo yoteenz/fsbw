@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
-import type { GlobeInstance } from 'globe.gl';
+import { useMemo } from 'react';
 
-type Point = { lat: number; lng: number; color: string; label: string };
+type Pt = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 
 type Props = {
   orderPoints: Array<{ lat: number; lng: number; label: string }>;
@@ -9,107 +8,74 @@ type Props = {
   heightPx?: number;
 };
 
-function mergePoints(
-  visitorPoints: Array<{ lat: number; lng: number; label: string }>,
-  orderPoints: Array<{ lat: number; lng: number; label: string }>
-): Point[] {
-  return [
-    ...visitorPoints.map((p) => ({ ...p, color: '#22d3ee' })),
-    ...orderPoints.map((p) => ({ ...p, color: '#a855f7' })),
-  ];
+/** Equirectangular: lng [-180,180] → x%, lat [-90,90] → y% (WebGL globe removed — keeps bundle small / mobile-safe). */
+function project(lat: number, lng: number): { leftPct: number; topPct: number } {
+  const clampLat = Math.max(-85, Math.min(85, lat));
+  const clampLng = Math.max(-180, Math.min(180, lng));
+  return {
+    leftPct: ((clampLng + 180) / 360) * 100,
+    topPct: ((90 - clampLat) / 180) * 100,
+  };
 }
 
 /**
- * Shopify Live View–style 3D globe: cyan dots = active visitors (last 5 min heartbeats),
- * purple dots = order ship-to locations (from stored orders).
+ * Shopify Live View–style map: cyan = active visitors (last 5 min heartbeats),
+ * purple = order ship-to locations. Pure SVG + CSS (no WebGL / three.js).
  */
 export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 220 }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const globeRef = useRef<GlobeInstance | null>(null);
-  const orderRef = useRef(orderPoints);
-  const visitorRef = useRef(visitorPoints);
-  orderRef.current = orderPoints;
-  visitorRef.current = visitorPoints;
-
-  const pushPoints = () => {
-    const g = globeRef.current;
-    if (!g) return;
-    g.pointsData(mergePoints(visitorRef.current, orderRef.current));
-  };
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    let cancelled = false;
-
-    void import('globe.gl').then((mod) => {
-      if (cancelled || !containerRef.current) return;
-      const Globe = mod.default;
-      const w = el.clientWidth || 320;
-      const h = heightPx;
-      const globe = new Globe(el)
-        .width(w)
-        .height(h)
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-        .backgroundColor('rgba(255,255,255,0)')
-        .showGraticules(true)
-        .showAtmosphere(true)
-        .atmosphereColor('#7dd3fc')
-        .atmosphereAltitude(0.12);
-
-      try {
-        globe.controls().autoRotate = true;
-        globe.controls().autoRotateSpeed = 0.35;
-        globe.controls().enableZoom = true;
-      } catch {
-        // ignore
-      }
-
-      globe.pointOfView({ lat: 20, lng: -90, altitude: 2.2 }, 0);
-
-      globe
-        .pointLat('lat')
-        .pointLng('lng')
-        .pointColor('color')
-        .pointAltitude(0.02)
-        .pointRadius(0.42)
-        .pointLabel('label');
-
-      globeRef.current = globe;
-      pushPoints();
-    });
-
-    const ro = new ResizeObserver(() => {
-      const g = globeRef.current;
-      const node = containerRef.current;
-      if (!g || !node) return;
-      g.width(node.clientWidth || 320).height(heightPx);
-    });
-    ro.observe(el);
-
-    return () => {
-      cancelled = true;
-      ro.disconnect();
-      try {
-        globeRef.current?._destructor();
-      } catch {
-        // ignore
-      }
-      globeRef.current = null;
-    };
-  }, [heightPx]);
-
-  useEffect(() => {
-    pushPoints();
-  }, [orderPoints, visitorPoints]);
+  const points: Pt[] = useMemo(
+    () => [
+      ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
+      ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
+    ],
+    [orderPoints, visitorPoints]
+  );
 
   return (
     <div
-      ref={containerRef}
-      className="w-full overflow-hidden rounded-md border border-gray-200 bg-gradient-to-b from-sky-50 to-white"
-      style={{ height: heightPx, minHeight: heightPx }}
-      aria-label="Live globe: visitors and orders by location"
-    />
+      className="w-full overflow-hidden rounded-md border border-gray-200 bg-sky-50/80"
+      style={{ height: heightPx, minHeight: heightPx, position: 'relative' }}
+      aria-label="Live map: visitors and orders by location"
+    >
+      {/* Equirectangular world map (static, cacheable) */}
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover opacity-90"
+        draggable={false}
+        loading="lazy"
+        decoding="async"
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-sky-100/30 to-transparent pointer-events-none"
+        aria-hidden
+      />
+      <div className="absolute inset-0" style={{ pointerEvents: 'none' }}>
+        {points.map((p, i) => {
+          const { leftPct, topPct } = project(p.lat, p.lng);
+          const color = p.kind === 'visitor' ? '#22d3ee' : '#a855f7';
+          const title = p.label;
+          return (
+            <span
+              key={`${p.kind}-${i}-${leftPct.toFixed(2)}-${topPct.toFixed(2)}`}
+              title={title}
+              style={{
+                position: 'absolute',
+                left: `${leftPct}%`,
+                top: `${topPct}%`,
+                width: 10,
+                height: 10,
+                marginLeft: -5,
+                marginTop: -5,
+                borderRadius: '50%',
+                background: color,
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.85)',
+                pointerEvents: 'auto',
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 }

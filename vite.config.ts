@@ -116,17 +116,6 @@ export default defineConfig(({ mode, command }) => {
             if (id.includes('react-router')) {
               return 'vendor-router';
             }
-            // Three.js / globe.gl are very large; keep out of the default vendor chunk so the main
-            // bundle stays loadable on slow networks and deploy chunk-cache invalidation is less brittle.
-            if (
-              id.includes('/three/') ||
-              id.includes('node_modules/three') ||
-              id.includes('globe.gl') ||
-              id.includes('three-globe') ||
-              id.includes('three-render-objects')
-            ) {
-              return 'vendor-globe';
-            }
             return 'vendor';
           }
         },
