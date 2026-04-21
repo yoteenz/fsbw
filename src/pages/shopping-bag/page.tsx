@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -52,6 +52,7 @@ import {
   isGiftCardCartLine,
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
+import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -273,6 +274,11 @@ function ShoppingBagPage() {
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [savedForLater, setSavedForLater] = useState<any[]>([]);
+  /** Badge count: derive from loaded lines when we have them so qty changes always match the icon (localStorage `cartCount` can be stale for lines without explicit quantity). */
+  const headerCartCount = useMemo(() => {
+    const fromLines = cartTotalQuantityUnits(cartItems);
+    return cartItems.length > 0 ? fromLines : undefined;
+  }, [cartItems]);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -617,7 +623,7 @@ function ShoppingBagPage() {
         setCartItems(newItems);
         localStorage.setItem('cartItems', JSON.stringify(newItems));
         window.dispatchEvent(new CustomEvent('cartItemsChanged'));
-        const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
+        const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity ?? 1), 0);
         localStorage.setItem('cartCount', newCount.toString());
         setCartCount(newCount);
         window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
@@ -660,7 +666,7 @@ function ShoppingBagPage() {
       window.dispatchEvent(new CustomEvent('cartItemsChanged'));
       
       // Update cart count (treat 0 as 0, not 1)
-      const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
+      const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity ?? 1), 0);
       localStorage.setItem('cartCount', newCount.toString());
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
@@ -1245,8 +1251,8 @@ function ShoppingBagPage() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-<div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-              <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
+<div style={{ transform: `translateX(${(headerCartCount ?? cartCount) === 0 ? 7 : 5}px)` }}>
+              <DynamicCartIcon count={headerCartCount ?? cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg
@@ -2555,7 +2561,7 @@ function ShoppingBagPage() {
                   window.dispatchEvent(new CustomEvent('cartItemsChanged'));
                   
                   // Update cart count
-                  const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 0), 0);
+                  const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity ?? 1), 0);
                   localStorage.setItem('cartCount', newCount.toString());
                   setCartCount(newCount);
                   window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));

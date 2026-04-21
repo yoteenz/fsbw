@@ -16467,3 +16467,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`buildUiRightSalonFromMiddlePartOutputPrompt`** in **`api/_lib/bawLiveStylingPrompts.ts`** now builds that structure (per-angle **Camera** label, **LAYERS** vs **CRIMPS** style-keep, **`salonOneShoulderDrapeBlock()`**, **`bawFalEditPreserveReferenceBlock()`**, logo legibility + pixel-perfect tail). **`scripts/wig-preview/promptTemplate.mjs`** updated to match (**`BAW_FAL_EDIT_PRESERVE_REFERENCE_BLOCK`**). **`motherboard/CORE.md`** NOIR bullet for **`buildUiRightSalonFromMiddlePartOutputPrompt`** updated (one **`image_urls`** attachment).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Cart header badge: total units vs line count
+
+**Context (this chat):** User reported the **header cart count** on **shopping bag** and **checkout** did not update when increasing **quantity** on a unit, while the **cart dropdown** count was correct.
+
+**Cause:** (1) **`shopping-bag`** computed some `cartCount` updates with **`(ci.quantity || 0)`**, so lines **without** an explicit `quantity` field counted as **0** in the total while the UI still showed **1** per line. (2) **`syncFromApi`** and **`swapCartAndWishlistToUser`** set **`cartCount`** to **`cartItems.length`** (distinct lines), not **sum of quantities**. (3) Checkout header could show stale **`localStorage`** until events fired; deriving from loaded **`cartItems`** keeps the badge aligned.
+
+**Decisions / outcomes:** Added **`cartTotalQuantityUnits`** (`src/utils/cartTotalQuantityUnits.ts`) — **`sum((ci.quantity ?? 1))`**. **Shopping bag** + **checkout** header **`DynamicCartIcon`** uses **`headerCartCount ?? cartCount`** where **`headerCartCount`** is **`useMemo`** from loaded lines when non-empty (checkout skips upgrade / bookings / gift-card routes). **Gift-card** quantity paths use **`?? 1`** for totals. **`syncFromApi`** / **`cartWishlistStorage`** persist and dispatch **unit totals** not line counts.
+
+**Verification:** `npm run build` passes.

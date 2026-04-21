@@ -7,6 +7,7 @@
 import { getProfile, getOrders, getCart, getWishlist, getAccessToken } from './api';
 import { persistServerProfileQueuesToLocal } from './clientPendingServerSync';
 import { mergeCartItemsUnion, writeStoredCartVersion } from './cartServerSync';
+import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 import {
   isAdminEmail,
   isAyoteenzAdminAccount,
@@ -311,7 +312,7 @@ export function applyAdminSyncPayload(
 
   const cartItems = Array.isArray(payload.cart?.items) ? payload.cart.items : [];
   localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  localStorage.setItem('cartCount', String(cartItems.length));
+  localStorage.setItem('cartCount', String(cartTotalQuantityUnits(cartItems as { quantity?: number }[])));
   writeStoredCartVersion(null);
 
   const wishlistItems = Array.isArray(payload.wishlist?.items) ? payload.wishlist.items : [];
@@ -320,7 +321,9 @@ export function applyAdminSyncPayload(
   localStorage.setItem('isSignedIn', 'true');
   persistAuthBackup();
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: cartItems.length }));
+    window.dispatchEvent(
+      new CustomEvent('cartCountUpdated', { detail: cartTotalQuantityUnits(cartItems as { quantity?: number }[]) })
+    );
     window.dispatchEvent(new CustomEvent('cartUpdated'));
     window.dispatchEvent(new CustomEvent('wishlistUpdated'));
     window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));

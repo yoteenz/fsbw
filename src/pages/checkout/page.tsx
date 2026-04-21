@@ -81,6 +81,7 @@ import {
   getCheckoutProcessingTimePersistentLabel,
 } from '../../utils/checkoutBcfProcessing';
 import { cartRequiresGiftCardIdentityForm } from '../../utils/giftCardFirstPurchaseForm';
+import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -242,6 +243,14 @@ function CheckoutPage() {
       return 0;
     }
   });
+  /** Header badge: sum line quantities when checkout cart state is loaded (matches bag + dropdown; fixes stale `cartCount` after qty edits). */
+  const headerCartCount = useMemo(() => {
+    const path = location.pathname;
+    if (path === '/checkout/upgrade') return undefined;
+    if (path.includes('/checkout/bookings') || path.includes('/checkout/gift-card')) return undefined;
+    const fromLines = cartTotalQuantityUnits(cartItems);
+    return cartItems.length > 0 ? fromLines : undefined;
+  }, [cartItems, location.pathname]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
@@ -3103,8 +3112,8 @@ function CheckoutPage() {
 
             {/* Right side icons */}
             <div className="gap-5 flex absolute" style={{ right: '17px' }}>
-              <div style={{ transform: `translateX(${cartCount === 0 ? 7 : 5}px)` }}>
-                <DynamicCartIcon count={cartCount} width={22} height={19} variant="nav" />
+              <div style={{ transform: `translateX(${(headerCartCount ?? cartCount) === 0 ? 7 : 5}px)` }}>
+                <DynamicCartIcon count={headerCartCount ?? cartCount} width={22} height={19} variant="nav" />
               </div>
               <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg

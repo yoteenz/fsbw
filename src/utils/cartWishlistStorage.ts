@@ -1,4 +1,5 @@
 import { writeStoredCartVersion } from './cartServerSync';
+import { cartTotalQuantityUnits } from './cartTotalQuantityUnits';
 
 /**
  * Per-user cart, wishlist, and saved lists storage.
@@ -60,7 +61,8 @@ function loadFromUserKeys(email: string | null): void {
       const wishlist = localStorage.getItem(wishlistKey(e));
       const lists = localStorage.getItem(userListsKey(e));
       localStorage.setItem('cartItems', cart || '[]');
-      localStorage.setItem('cartCount', cart ? String((JSON.parse(cart) as unknown[]).length) : '0');
+      const parsed = cart ? (JSON.parse(cart) as { quantity?: number }[]) : [];
+      localStorage.setItem('cartCount', cart ? String(cartTotalQuantityUnits(parsed)) : '0');
       localStorage.setItem('wishlistItems', wishlist || '[]');
       if (lists !== null) localStorage.setItem('userLists', lists);
       else localStorage.removeItem('userLists');
@@ -71,7 +73,11 @@ function loadFromUserKeys(email: string | null): void {
       localStorage.setItem('wishlistItems', '[]');
       localStorage.removeItem('userLists');
     }
-    window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: email ? (JSON.parse(localStorage.getItem('cartItems') || '[]') as unknown[]).length : 0 }));
+    window.dispatchEvent(
+      new CustomEvent('cartCountUpdated', {
+        detail: email ? cartTotalQuantityUnits(JSON.parse(localStorage.getItem('cartItems') || '[]') as { quantity?: number }[]) : 0,
+      })
+    );
     window.dispatchEvent(new CustomEvent('cartUpdated'));
     window.dispatchEvent(new CustomEvent('wishlistUpdated'));
     window.dispatchEvent(new CustomEvent('userListsUpdated'));
