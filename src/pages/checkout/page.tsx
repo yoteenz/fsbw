@@ -3545,7 +3545,7 @@ function CheckoutPage() {
                                     lineHeight: '1.1'
                                   }}
                                 >
-                                  QTY: {stripQtyDisplay}
+                                  QUANTITY: {stripQtyDisplay}
                                 </p>
                               </div>
                               </div>

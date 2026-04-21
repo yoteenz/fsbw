@@ -16470,6 +16470,16 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Checkout / confirm strip label: QUANTITY (spelled out)
+
+**Context (this chat):** User asked to change **`QTY`** to the word **`QUANTITY`** on **checkout** and **order summary (confirm)** product strips only.
+
+**Decisions / outcomes:** **`checkout/page.tsx`** and **`checkout/confirm/page.tsx`**: red line text **`QUANTITY: {n}`** instead of **`QTY: {n}`**.
+
+**Verification:** `npm run build` passes (if run).
+
+---
+
 ## 2026-04-20 — Checkout + confirm strips: red QTY line per product
 
 **Context (this chat):** User asked for a **red quantity line** like the cart (**QTY: 1**, **QTY: 2**) **below the price** on each product in the **checkout** horizontal strip and on the **order summary** (post-checkout confirm) product list.

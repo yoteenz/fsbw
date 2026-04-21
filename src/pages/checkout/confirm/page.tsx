@@ -1440,7 +1440,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                             lineHeight: '1.1'
                           }}
                         >
-                          QTY: {stripQtyDisplay}
+                          QUANTITY: {stripQtyDisplay}
                         </p>
                         </div>
                       </div>
