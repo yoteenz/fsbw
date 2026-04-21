@@ -708,6 +708,16 @@ function CheckoutPage() {
 
   // Check if this is a subscription upgrade
   const [isSubscriptionUpgrade, setIsSubscriptionUpgrade] = useState(false);
+
+  /** Keep label + totals aligned: inventory load sets applied = full `byType` (multiple service rows). Discount only redeems one service voucher — normalize whenever cart or availability changes so refresh does not show phantom rows. */
+  useEffect(() => {
+    if (isSubscriptionUpgrade) return;
+    if (!isSignedIn) return;
+    setAppliedVoucherQuantities((prev) =>
+      normalizeVoucherQuantitiesForModalOpen(prev, availableVouchersByType, cartVoucherApplicability)
+    );
+  }, [availableVouchersByType, cartVoucherApplicability, isSubscriptionUpgrade, isSignedIn]);
+
   const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
   const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
