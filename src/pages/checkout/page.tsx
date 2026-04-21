@@ -98,6 +98,21 @@ function getCardBrandDisplay(fullNumber: string): string {
   return 'CARD';
 }
 
+/** Map account profile `country` strings to checkout shipping-calculator `<select>` values. */
+function countryFullNameToCheckoutCode(country: unknown): string {
+  const s = String(country ?? '')
+    .trim()
+    .toUpperCase();
+  if (!s) return '';
+  if (s === 'US' || s === 'USA') return 'US';
+  if (s === 'UNITED STATES' || s === 'UNITED STATES OF AMERICA') return 'US';
+  if (s === 'CA' || s === 'CANADA') return 'CA';
+  if (s === 'GB' || s === 'UK' || s === 'UNITED KINGDOM') return 'GB';
+  if (s === 'AU' || s === 'AUSTRALIA') return 'AU';
+  if (s === 'OTHER') return 'OTHER';
+  return '';
+}
+
 /** Normalize unit display name so "Blanco" / "BLANCO" / " blanco " all match voucher + rush logic. */
 function normalizeCartUnitName(name: unknown): string {
   return (name || '').toString().toUpperCase().trim();
@@ -328,6 +343,7 @@ function CheckoutPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
+  const [aptSuite, setAptSuite] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
@@ -584,6 +600,8 @@ function CheckoutPage() {
   const cardNumberRef = useRef<HTMLInputElement>(null);
   const expirationDateRef = useRef<HTMLInputElement>(null);
   const cvvRef = useRef<HTMLInputElement>(null);
+  /** When "use default payment" fills card number with last-4 placeholder, validation uses this for `validateCheckoutCardInput`. */
+  const defaultPaymentLast4Ref = useRef<string | null>(null);
   const billingAddressRef = useRef<HTMLInputElement>(null);
   const billingCityRef = useRef<HTMLInputElement>(null);
   const billingStateRef = useRef<HTMLInputElement>(null);
@@ -1218,6 +1236,7 @@ function CheckoutPage() {
       setBillingFirstName(firstName);
       setBillingLastName(lastName);
       setBillingAddress(shippingAddress);
+      setBillingAptSuite(aptSuite);
       setBillingCity(city);
       setBillingState(state);
       setBillingZip(zip);
@@ -1231,7 +1250,7 @@ function CheckoutPage() {
       setBillingZip('');
       setBillingAptSuite('');
     }
-  }, [sameAsBilling, firstName, lastName, shippingAddress, city, state, zip]);
+  }, [sameAsBilling, firstName, lastName, shippingAddress, aptSuite, city, state, zip]);
 
   // Load and apply gift card balance (NOT for subscription upgrades)
   useEffect(() => {
@@ -1326,10 +1345,38 @@ function CheckoutPage() {
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
           const user = JSON.parse(currentUser);
-          // Check if user has a default address saved
+          // Check if user has a default address saved (same shape as account → shipping)
           const defaultAddress = user.defaultAddress || user.shippingAddress;
-          if (defaultAddress) {
-            setEmail(defaultAddress.email || user.email || email);
+          if (defaultAddress && typeof defaultAddress === 'object') {
+            const a = defaultAddress as Record<string, unknown>;
+            setFirstName(
+              typeof a.firstName === 'string' ? a.firstName : String(a.firstName ?? '')
+            );
+            setLastName(typeof a.lastName === 'string' ? a.lastName : String(a.lastName ?? ''));
+            setShippingAddress(
+              typeof a.address === 'string' ? a.address : String(a.address ?? '')
+            );
+            setAptSuite(
+              typeof a.aptSuite === 'string'
+                ? a.aptSuite
+                : a.aptSuite != null
+                  ? String(a.aptSuite)
+                  : ''
+            );
+            setCity(typeof a.city === 'string' ? a.city : String(a.city ?? ''));
+            setState(typeof a.state === 'string' ? a.state : String(a.state ?? ''));
+            setZip(typeof a.zip === 'string' ? a.zip : String(a.zip ?? ''));
+            setPhoneNumber(
+              typeof a.phoneNumber === 'string'
+                ? a.phoneNumber
+                : String(a.phoneNumber ?? user.phoneNumber ?? user.phone ?? '')
+            );
+            setEmail(
+              (typeof a.email === 'string' ? a.email : String(a.email ?? '')).trim() ||
+                (user.email || email || '')
+            );
+            const cc = countryFullNameToCheckoutCode(a.country);
+            if (cc) setSelectedCountry(cc);
           } else if (user.email) {
             setEmail(user.email || email);
           }
@@ -1342,6 +1389,7 @@ function CheckoutPage() {
       setFirstName('');
       setLastName('');
       setShippingAddress('');
+      setAptSuite('');
       setCity('');
       setState('');
       setZip('');
@@ -1365,20 +1413,33 @@ function CheckoutPage() {
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
           const user = JSON.parse(currentUser);
-          // Check if user has a default payment method saved
+          // Check if user has a default payment method saved (same shape as account → payment)
           const defaultPayment = user.defaultPaymentMethod;
-          if (defaultPayment) {
-            setCardholder(defaultPayment.cardholder || '');
-            // Only show last 4 digits, but we'll need to handle this differently
-            // For now, we'll just set the cardholder name
-            setExpirationDate(defaultPayment.expirationDate || '');
-            setBillingZip(defaultPayment.billingZip || '');
+          if (defaultPayment && typeof defaultPayment === 'object') {
+            const p = defaultPayment as Record<string, unknown>;
+            setCardholder(typeof p.cardholder === 'string' ? p.cardholder : String(p.cardholder ?? ''));
+            const last4 = String(p.cardNumber ?? '').replace(/\D/g, '').slice(-4);
+            if (last4.length === 4) {
+              defaultPaymentLast4Ref.current = last4;
+              setCardNumber(last4);
+            } else {
+              defaultPaymentLast4Ref.current = null;
+              setCardNumber('');
+            }
+            setExpirationDate(
+              typeof p.expirationDate === 'string' ? p.expirationDate : String(p.expirationDate ?? '')
+            );
+            setBillingZip(typeof p.billingZip === 'string' ? p.billingZip : String(p.billingZip ?? ''));
+            setCvv('');
+          } else {
+            defaultPaymentLast4Ref.current = null;
           }
         }
       } catch (error) {
         console.error('Error loading default payment method:', error);
       }
     } else if (!useDefaultPaymentMethod) {
+      defaultPaymentLast4Ref.current = null;
       // Clear payment fields when checkbox is unchecked
       setCardholder('');
       setCardNumber('');
@@ -4041,6 +4102,8 @@ function CheckoutPage() {
                       </label>
                       <input
                         type="text"
+                        value={aptSuite}
+                        onChange={(e) => setAptSuite(e.target.value)}
                         disabled={savePaymentMethod}
                         style={{
                           width: '100%',
@@ -4767,8 +4830,16 @@ function CheckoutPage() {
                               type="text"
                         value={cardNumber}
                         onChange={(e) => {
-                          setCardNumber(e.target.value);
-                          if (e.target.value.trim()) {
+                          const v = e.target.value;
+                          setCardNumber(v);
+                          const d = v.replace(/\D/g, '');
+                          if (
+                            defaultPaymentLast4Ref.current &&
+                            d !== defaultPaymentLast4Ref.current
+                          ) {
+                            defaultPaymentLast4Ref.current = null;
+                          }
+                          if (v.trim()) {
                             setInvalidFields(prev => {
                               const next = new Set(prev);
                               next.delete('cardNumber');
@@ -6269,6 +6340,8 @@ function CheckoutPage() {
                     cardNumber,
                     expirationDate,
                     cvv,
+                    savedCardLast4:
+                      useDefaultPaymentMethod ? defaultPaymentLast4Ref.current : null,
                   });
                   if (!cardCheck.ok) {
                     setValidationMessage(cardCheck.message);
@@ -6421,6 +6494,7 @@ function CheckoutPage() {
                           firstName: firstName.trim(),
                           lastName: lastName.trim(),
                           address: shippingAddress.trim(),
+                          ...(aptSuite.trim() ? { aptSuite: aptSuite.trim() } : {}),
                           city: city.trim(),
                           state: state.trim(),
                           zip: zip.trim(),

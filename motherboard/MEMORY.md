@@ -16546,6 +16546,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Checkout “use default” wired to account shipping + payment
+
+**Context (this chat):** User reported **USE DEFAULT ADDRESS** and **USE DEFAULT PAYMENT** at checkout did not populate data saved on **account → shipping** and **account → payment**.
+
+**Cause:** (1) Default-address effect only set **email** from `defaultAddress` / `shippingAddress`, not **firstName, address, city, state, zip, phone** (account stores `address`, not a field named like checkout’s `shippingAddress` state). (2) **APT OR SUITE** input was **uncontrolled** (never bound). (3) Default payment set **cardholder / exp / billing zip** but not **masked card number**, so **Luhn** validation always failed on 4 digits. (4) **Same-as-billing** did not copy **apt** into **billingAptSuite**.
+
+**Decisions / outcomes:** **`countryFullNameToCheckoutCode`** maps profile `country` strings to shipping-calculator codes. **`aptSuite`** state + **`SAVE SHIPPING ADDRESS`** persists optional **`aptSuite`**. **`useDefaultMethod`**: hydrate full address + **`setSelectedCountry`** when mappable. **`useDefaultPaymentMethod`**: set **`cardNumber`** to saved **last 4**, track **`defaultPaymentLast4Ref`**; **`validateCheckoutCardInput`** accepts optional **`savedCardLast4`** — when PAN digits equal that last-4, skip Luhn and require **exp + CVV** only. Card input **`onChange`** clears the ref when user edits to a full number.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — Checkout modals: VOUCHER + DIGITAL CASH headers match account history pop-ups
 
 **Context (this chat):** User asked for **VOUCHER** and **DIGITAL CASH** checkout pop-up headers to match **other header text**: **gray border line** under the title, with the **same voucher/history icon** as **account profile** voucher history / digital cash history modals (**`/assets/points-history.svg`**, brand-red filter), **across from** the title.

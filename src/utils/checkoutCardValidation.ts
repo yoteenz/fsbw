@@ -48,8 +48,22 @@ export function validateCheckoutCardInput(args: {
   cardNumber: string;
   expirationDate: string;
   cvv: string;
+  /** When set, a 4-digit entry matching this (masked card on file) is treated as placeholder — exp/CVV still required. */
+  savedCardLast4?: string | null;
 }): CheckoutCardValidationResult {
   const digits = normalizePan(args.cardNumber);
+  const last4 = (args.savedCardLast4 || '').replace(/\D/g, '');
+  if (last4.length === 4 && digits === last4) {
+    const exp = args.expirationDate.trim();
+    if (!/^\s*(0[1-9]|1[0-2])\s*\/\s*(\d{2}|\d{4})\s*$/.test(exp)) {
+      return { ok: false, message: 'ENTER EXPIRATION AS MM/YY OR MM/YYYY.' };
+    }
+    const cvvDigits = normalizePan(args.cvv);
+    if (cvvDigits.length < 3 || cvvDigits.length > 4) {
+      return { ok: false, message: 'CVV MUST BE 3 OR 4 DIGITS.' };
+    }
+    return { ok: true, usedFounderDummyPan: false };
+  }
   const founderDummyOk =
     canUseFounderDummyCheckout({
       signedInUser: args.signedInUser,
