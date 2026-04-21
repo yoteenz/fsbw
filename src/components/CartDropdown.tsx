@@ -760,19 +760,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   const cartItemsScrollOverflowY: 'auto' | 'visible' =
     multiItemCompactList || viewingDetailsFor ? 'auto' : 'visible';
 
-  // Dropdown 2px higher (86px) on pages with shared header layout for symmetry
-  const path = location.pathname;
-  const useDropdown2pxUp =
-    /^\/(straight|wavy|curly)\//.test(path) ||
-    path.startsWith('/booking') ||
-    path.startsWith('/wishlist') ||
-    path.startsWith('/build-a-wig') ||
-    path.startsWith('/account') ||
-    path.startsWith('/shop') ||
-    path.startsWith('/home') ||
-    path.startsWith('/bag') ||
-    path.startsWith('/checkout');
-  const dropdownTop = useDropdown2pxUp ? '86px' : '88px';
+  /** Same top offset on every route so the panel lines up with the shared nav bar (was 88px on e.g. `/sign-in`, read as lower than 86px routes). */
+  const dropdownTop = '86px';
 
   const dropdownContent = (
     <div 

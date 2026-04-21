@@ -16519,3 +16519,15 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** Added **`cartTotalQuantityUnits`** (`src/utils/cartTotalQuantityUnits.ts`) — **`sum((ci.quantity ?? 1))`**. **Shopping bag** + **checkout** header **`DynamicCartIcon`** uses **`headerCartCount ?? cartCount`** where **`headerCartCount`** is **`useMemo`** from loaded lines when non-empty (checkout skips upgrade / bookings / gift-card routes). **Gift-card** quantity paths use **`?? 1`** for totals. **`syncFromApi`** / **`cartWishlistStorage`** persist and dispatch **unit totals** not line counts.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — CartDropdown: same top offset on all routes (fix sign-in lower panel)
+
+**Context (this chat):** User reported cart **dropdown on sign-in** appeared **lower** than on other pages; wanted **same Y** for **all** cart dropdowns.
+
+**Cause:** **`CartDropdown`** used **`top: 88px`** unless pathname matched a whitelist (shop, bag, checkout, etc.). **`/sign-in`** was **not** included → **2px** lower than **86px** routes.
+
+**Decisions / outcomes:** **`src/components/CartDropdown.tsx`**: always **`dropdownTop = '86px'`** (removed path-based branch).
+
+**Verification:** `npm run build` passes.
