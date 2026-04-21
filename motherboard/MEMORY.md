@@ -16500,6 +16500,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — Checkout VOUCHER line: phantom multi-service rows vs discount
+
+**Context (this chat):** User reported the **VOUCHER** row at checkout showed **multiple** service types (e.g. COLOR + HAIRLINE + STYLING) as if combined, while the **red discount amount** matched **only one** redemption. Opening the voucher modal and tapping **Apply** cleared the extra labels until **refresh**, when the duplicate rows returned.
+
+**Cause:** On sign-in, **`setAppliedVoucherQuantities({ ...byType })`** copied **full inventory** counts. **`voucherDiscount`** already enforces **one service voucher at a time** (first type in **`VOUCHER_TYPE_CONFIG`** with qty &gt; 0). The **label** filtered by **`cartVoucherApplicability`** still listed **every** type the user held inventory for that matched the cart, so UI and math diverged until modal **`normalizeVoucherQuantitiesForModalOpen`** ran.
+
+**Decisions / outcomes:** **`src/pages/checkout/page.tsx`**: after **`isSubscriptionUpgrade`** state exists, a **`useEffect`** runs when **`availableVouchersByType`**, **`cartVoucherApplicability`**, **`isSignedIn`**, or **`isSubscriptionUpgrade`** changes and sets **`appliedVoucherQuantities`** via **`normalizeVoucherQuantitiesForModalOpen(prev, …)`** so applied counts stay aligned with **single-service** rules and **survive refresh** without opening the modal.
+
+**Verification:** `npm run build` passes. Pushed **`2483b069`** to **`master`** and **`preview/mobile`**.
+
+---
+
 ## 2026-04-20 — Section headers: SHOPPING BAG / ORDER SUMMARY count vs qty
 
 **Context (this chat):** User said nothing changed; they meant the **large number beside** **SHOPPING BAG** (bag page main card) and **ORDER SUMMARY** (checkout main content), not only the nav cart icon — it still showed **line count** (`cartItems.length`) instead of **sum of per-line quantity** counters.
