@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/live-wig-after-color-styling.ts": {
-      "maxDuration": 300
+      "maxDuration": 120
     },
     "api/admin/consult-quotes.ts": {
       "maxDuration": 60

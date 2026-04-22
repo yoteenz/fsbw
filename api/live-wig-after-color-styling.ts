@@ -1,5 +1,4 @@
-/** Pro: up to 300s. UI-R salon uses `openai/gpt-image-2/edit` — can exceed 120s per angle on cold queue. */
-export const config = { maxDuration: 300 };
+export const config = { maxDuration: 120 };
 
 /**
  * POST /api/live-wig-after-color-styling
@@ -23,8 +22,6 @@ export const config = { maxDuration: 300 };
  * **BANGS + FLAT IRON:** `.../flat-iron-with-bangs-*-part/`
  *
  * **BANGS only** (BANGS without LAYERS/CRIMPS/FLAT IRON): same color WebP input; `buildBangsOnlyStylePrompt`. **Output:** `.../after-color/bangs-only/{angle}.webp`
- *
- * **UI RIGHT** salon (LAYERS / CRIMPS / FLAT IRON, **RIGHT** part): Fal uses **`openai/gpt-image-2/edit`** for **left / front / right** outputs (product request). All other after-color styling runs use **`fal-ai/nano-banana-pro/edit`**.
  *
  * Body: live color fields + `color` + optional `angle` + optional `forceRegenerate` + `partSelection` + `styling`.
  */
@@ -115,16 +112,6 @@ function readFalResolutionForAfterColorStyling(): '1K' | '2K' | '4K' {
   const r = (primary || fallback || '2K').toUpperCase();
   if (r === '1K' || r === '2K' || r === '4K') return r;
   return '2K';
-}
-
-/** RIGHT-part salon triples: use OpenAI GPT Image 2 on fal (not nano-banana-pro). */
-function useGptImage2EditForUiRightSalon(
-  partStyling: LayersPartStyling,
-  middleLayers: boolean,
-  middleCrimps: boolean,
-  middleFlatIron: boolean
-): boolean {
-  return partStyling === 'RIGHT' && (middleLayers || middleCrimps || middleFlatIron);
 }
 
 async function downloadUrlToBuffer(url: string): Promise<Buffer> {
@@ -362,12 +349,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
 
     const falResolution = readFalResolutionForAfterColorStyling();
-    const useGptImage2 = useGptImage2EditForUiRightSalon(
-      partStyling,
-      middleLayers,
-      middleCrimps,
-      middleFlatIron
-    );
     const generated: string[] = [];
     const skipped: string[] = [];
 
@@ -454,28 +435,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           : [colorPublicUrl];
       }
 
-      const falEndpoint = useGptImage2 ? 'openai/gpt-image-2/edit' : 'fal-ai/nano-banana-pro/edit';
-      const falInput = useGptImage2
-        ? {
-            prompt,
-            image_urls: imageUrls,
-            image_size: 'auto' as const,
-            /** `medium` keeps UI-R triple under Vercel budget more often than `high`. */
-            quality: 'medium' as const,
-            num_images: 1,
-            output_format: 'webp' as const,
-          }
-        : {
-            prompt,
-            image_urls: imageUrls,
-            aspect_ratio: 'auto',
-            resolution: falResolution,
-            output_format: 'webp',
-            num_images: 1,
-          };
-
-      const result = await fal.subscribe(falEndpoint, {
-        input: falInput,
+      const result = await fal.subscribe('fal-ai/nano-banana-pro/edit', {
+        input: {
+          prompt,
+          image_urls: imageUrls,
+          aspect_ratio: 'auto',
+          resolution: falResolution,
+          output_format: 'webp',
+          num_images: 1,
+        },
         logs: false,
       });
       const falUrl = (result as { data?: { images?: { url?: string }[] } })?.data?.images?.[0]?.url;

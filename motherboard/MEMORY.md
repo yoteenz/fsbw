@@ -16727,3 +16727,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/pages/build-a-wig/color/page.tsx`, `motherboard/CORE.md`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — Revert: hide NOIR color Fal regen strip; UI-R styling back to nano-banana-pro
+
+**Context:** User asked to **hide** the Fal regen text on the **color** sub-page again and to run the **three R-part styling angles** on **`fal-ai/nano-banana-pro/edit`** instead of GPT Image 2.
+
+**Change:** **`color/page.tsx`**: removed **`showNoirColorFalRegenText`** / **`useMemo`** / **`isBuildAWigColorSubPagePathname`**; founder regen block **`display: 'none'`**, **`aria-hidden`**, NOIR title **`pointerEvents: 'none'`** when **`founderNoirFalRegenUi`** (prior hidden behavior). **`api/live-wig-after-color-styling.ts`**: all angles use **`fal-ai/nano-banana-pro/edit`** only; dropped GPT Image 2 branch and helper; **`export const config = { maxDuration: 120 }`**. **`vercel.json`**: **`maxDuration: 120`** for that route. **`docs/WIG_PREVIEW_PREGENERATION.md`**: removed UI-R GPT Image 2 / 300s paragraph. **`motherboard/CORE.md`**: NOIR color regen bullet restored to hidden-in-DOM wording.
+
+**Files:** `src/pages/build-a-wig/color/page.tsx`, `api/live-wig-after-color-styling.ts`, `vercel.json`, `docs/WIG_PREVIEW_PREGENERATION.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` passes.
