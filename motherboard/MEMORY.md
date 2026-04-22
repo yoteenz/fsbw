@@ -16661,3 +16661,19 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **Files:** `src/pages/build-a-wig/page.tsx`.
 
 - **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — BAW live preview: merge styling CSV + hub color before draft (fix “nothing changed”)
+
+**Context:** User reported **no change** for **color & styling** logic after prior hub persistence work.
+
+**Root causes:**
+1. **`readBuildWigLivePreviewSelections`** used **`customizeSelectedStyling` before `selectedStyling`** and **ignored `*HairStyling` CSV** — combo styling (e.g. `BANGS,LAYERS`) was dropped for **Fal / wig hash / `wigPreviewLiveColorTriplePublicUrlsForSelections`**, so previews behaved like styling cleared or wrong.
+2. **Color page** (customize, **not** on `…/customize/color`) initialized and synced from **`customizeSelectedColor` first**, so a **stale draft** could beat **`selectedColor`** on **refresh**, diverging from the hub tile and **`readBuildWigLivePreviewColor`** used elsewhere.
+
+**Fix:**
+- **`src/utils/buildWigLivePreviewSelections.ts`:** `styling` is now **`mergeStylingCsvForPreview`** over **`customizeSelectedHairStyling` / `selectedHairStyling`** + single-token fallbacks (aligned with hub merge semantics).
+- **`src/pages/build-a-wig/color/page.tsx`:** On customize **hub + non-color steps**, use **`readBuildWigLivePreviewColor(pathname)`** instead of preferring **`customizeSelectedColor`** alone (sub-page color still uses **`resolveBawCustomizeColorSubPageSwatch`**).
+
+**Verification:** `npm run build` passes.

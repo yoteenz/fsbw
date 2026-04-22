@@ -1,5 +1,23 @@
 import { isBuildAWigCustomizePath } from './buildAWigRoutes';
 
+/** Same merge as `bawCrossStepSummary.mergeStylingForHub` — kept here to avoid circular imports. */
+function mergeStylingCsvForPreview(
+  customizeHairCsv: string | null,
+  selectedHairCsv: string | null,
+  singleToken: string | null,
+  stateFallback: string
+): string {
+  const csv = (customizeHairCsv && customizeHairCsv.trim()) || (selectedHairCsv && selectedHairCsv.trim()) || '';
+  if (csv) return csv;
+  const sf = (stateFallback && stateFallback.trim()) || '';
+  if (sf.includes(',')) return sf;
+  const first = (singleToken || '').split(',')[0]?.trim() ?? '';
+  if (first && !['MIDDLE', 'LEFT', 'RIGHT', 'NONE', ''].includes(first)) return first;
+  const s = (singleToken && singleToken.trim()) || '';
+  if (s && s !== 'NONE' && !['MIDDLE', 'LEFT', 'RIGHT'].includes(s)) return s;
+  return sf || 'NONE';
+}
+
 /** Same keys as live wig-preview APIs (NOIR color + after-color styling). */
 export type BuildWigLivePreviewSelections = {
   length: string;
@@ -35,13 +53,29 @@ export function readBuildWigLivePreviewSelections(pathname: string): BuildWigLiv
   } catch {
     addOns = [];
   }
+  const stylingMerged = isOnEditRoute
+    ? mergeStylingCsvForPreview(
+        localStorage.getItem('editSelectedHairStyling'),
+        localStorage.getItem('selectedHairStyling'),
+        localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling'),
+        'NONE'
+      )
+    : isOnCustomizeRoute
+      ? mergeStylingCsvForPreview(
+          localStorage.getItem('customizeSelectedHairStyling'),
+          localStorage.getItem('selectedHairStyling'),
+          localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling'),
+          'NONE'
+        )
+      : mergeStylingCsvForPreview(null, localStorage.getItem('selectedHairStyling'), localStorage.getItem('selectedStyling'), 'NONE');
+
   return {
     length: pick('editSelectedLength', 'customizeSelectedLength', 'selectedLength', '24"'),
     density: pick('editSelectedDensity', 'customizeSelectedDensity', 'selectedDensity', '200%'),
     lace: pick('editSelectedLace', 'customizeSelectedLace', 'selectedLace', '13X6'),
     texture: pick('editSelectedTexture', 'customizeSelectedTexture', 'selectedTexture', 'SILKY'),
     hairline: pick('editSelectedHairline', 'customizeSelectedHairline', 'selectedHairline', 'NATURAL'),
-    styling: pick('editSelectedStyling', 'customizeSelectedStyling', 'selectedStyling', 'NONE'),
+    styling: stylingMerged,
     addOns,
   };
 }

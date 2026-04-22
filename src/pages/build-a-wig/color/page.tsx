@@ -17,7 +17,10 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import { readBuildWigLivePreviewSelections } from '../../../utils/buildWigLivePreviewSelections';
+import {
+  readBuildWigLivePreviewColor,
+  readBuildWigLivePreviewSelections,
+} from '../../../utils/buildWigLivePreviewSelections';
 import {
   resolveWigPreviewLiveColorTripleIfStored,
   wigPreviewLiveColorTriplePublicUrlsForSelections,
@@ -130,7 +133,8 @@ function ColorSelection() {
       return 'OFF BLACK';
     }
     
-    // CRITICAL: Check customizeSelected* keys when in customize mode
+    // CRITICAL: Customize hub + non-color steps: **confirmed** `selectedColor` first (matches hub tile / refresh).
+    // Color sub-page: session hydration + canonical read (draft taps on the color step still use customize keys).
     if (isOnCustomizeRoute) {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
         const canonical = resolveBawCustomizeColorSubPageSwatch(pathname);
@@ -142,24 +146,15 @@ function ColorSelection() {
         if (blancoOnlyColors.includes(canonical)) return 'OFF BLACK';
         return canonical;
       }
-      const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
-      if (customizeSelectedColor) {
-        // For BLANCO routes, validate color is a valid BLANCO color
+      const hubOrStepColor = readBuildWigLivePreviewColor(pathname);
+      if (hubOrStepColor) {
         if (isBlancoRoute) {
-          if (isValidBlancoColorId(customizeSelectedColor)) {
-            return customizeSelectedColor;
-          } else {
-            // Invalid color for BLANCO, default to PLATINUM
-            return 'PLATINUM';
-          }
+          if (isValidBlancoColorId(hubOrStepColor)) return hubOrStepColor;
+          return 'PLATINUM';
         }
-        // For non-BLANCO routes, validate that color is not a BLANCO-only color
         const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-        if (blancoOnlyColors.includes(customizeSelectedColor)) {
-          // PLATINUM/GOLDEN/ASH is not valid for non-BLANCO products, default to OFF BLACK
-          return 'OFF BLACK';
-        }
-        return customizeSelectedColor;
+        if (blancoOnlyColors.includes(hubOrStepColor)) return 'OFF BLACK';
+        return hubOrStepColor;
       }
     }
     
@@ -231,7 +226,7 @@ function ColorSelection() {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
         storedColor = resolveBawCustomizeColorSubPageSwatch(pathname);
       } else {
-        storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
+        storedColor = readBuildWigLivePreviewColor(pathname);
       }
       // For blanco routes, default to PLATINUM if no color is stored
       if (!storedColor && isBlancoRoute) {
@@ -377,7 +372,7 @@ function ColorSelection() {
         if (isBawCustomizeColorSubPagePathname(pathname)) {
           storedColor = resolveBawCustomizeColorSubPageSwatch(pathname);
         } else {
-          storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
+          storedColor = readBuildWigLivePreviewColor(pathname);
         }
       } else {
         storedColor = localStorage.getItem('selectedColor');
@@ -497,17 +492,16 @@ function ColorSelection() {
       }
     }
     
-    // CRITICAL: Check customizeSelected* keys when in customize mode
+    // Customize hub + non-color steps: confirmed `selectedColor` first (same as `readBuildWigLivePreviewColor`).
     if (isOnCustomizeRoute) {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
         setSelectedColor(resolveBawCustomizeColorSubPageSwatch(pathname));
         return;
       }
-      const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
-      if (customizeSelectedColor) {
-        setSelectedColor(customizeSelectedColor);
+      const c = readBuildWigLivePreviewColor(pathname);
+      if (c) {
+        setSelectedColor(c);
       } else if (isBlancoRoute) {
-        // For blanco routes, set PLATINUM as default if nothing is stored
         setSelectedColor('PLATINUM');
         localStorage.setItem('selectedColor', 'PLATINUM');
         localStorage.setItem('customizeSelectedColor', 'PLATINUM');
