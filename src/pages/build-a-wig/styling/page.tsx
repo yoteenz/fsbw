@@ -37,6 +37,11 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import {
+  markBawNavigateToCustomizeHubFromOtherStep,
+  readBawCrossStepSummary,
+  type BawCrossStepSummary,
+} from '../../../utils/bawCrossStepSummary';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -168,6 +173,20 @@ export default function StylingSelectionPage() {
   const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
+  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
+    readBawCrossStepSummary(location.pathname)
+  );
+
+  useEffect(() => {
+    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
+    sync();
+    window.addEventListener('customStorageChange', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('customStorageChange', sync);
+      window.removeEventListener('focus', sync);
+    };
+  }, [location.pathname]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -322,7 +341,26 @@ export default function StylingSelectionPage() {
       ];
     }
     
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+    const selectedHairline = (() => {
+      const p = pathname;
+      const isEdit = p.includes('/edit');
+      const isCust = isBuildAWigCustomizePath(p);
+      if (isEdit) {
+        return (
+          localStorage.getItem('editSelectedHairline') ||
+          localStorage.getItem('selectedHairline') ||
+          'NATURAL'
+        );
+      }
+      if (isCust) {
+        const onHairline = p.replace(/\/$/, '').endsWith('/hairline');
+        if (onHairline) {
+          return localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
+        }
+        return localStorage.getItem('selectedHairline') || localStorage.getItem('customizeSelectedHairline') || 'NATURAL';
+      }
+      return localStorage.getItem('selectedHairline') || 'NATURAL';
+    })();
     const hasPeak = selectedHairline.includes('PEAK');
     const hasLagos = selectedHairline.includes('LAGOS');
     
@@ -1179,6 +1217,7 @@ export default function StylingSelectionPage() {
       returnRoute = '/build-a-wig/noir';
     }
     
+    markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);
   };
 
@@ -1347,6 +1386,7 @@ export default function StylingSelectionPage() {
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
+    markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);
   };
 
@@ -1919,6 +1959,19 @@ export default function StylingSelectionPage() {
               style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               SALON TREATMENTS
+            </p>
+            <p
+              className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
+              style={{
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '9px',
+                color: '#808080',
+                lineHeight: 1.35,
+                transform: 'translateY(8px)',
+              }}
+            >
+              CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
+              {crossStepSummary.stylingLabel}
             </p>
 
             {/* HAIR STYLING OPTIONS */}

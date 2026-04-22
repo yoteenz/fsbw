@@ -37,6 +37,13 @@ import {
 } from '../../../utils/api';
 import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalTools';
 import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
+import {
+  isBawCustomizeColorSubPagePathname,
+  readBawCrossStepSummary,
+  type BawCrossStepSummary,
+  readHairlineCsvForWigPreviewPath,
+  syncCustomizeColorDraftFromHubConfirmed,
+} from '../../../utils/bawCrossStepSummary';
 
 interface ColorOption {
   id: string;
@@ -125,6 +132,9 @@ function ColorSelection() {
     
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
+      if (isBawCustomizeColorSubPagePathname(pathname)) {
+        syncCustomizeColorDraftFromHubConfirmed(pathname);
+      }
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {
         // For BLANCO routes, validate color is a valid BLANCO color
@@ -211,6 +221,9 @@ function ColorSelection() {
         }
       }
     } else if (isOnCustomizeRoute) {
+      if (isBawCustomizeColorSubPagePathname(pathname)) {
+        syncCustomizeColorDraftFromHubConfirmed(pathname);
+      }
       storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
       // For blanco routes, default to PLATINUM if no color is stored
       if (!storedColor && isBlancoRoute) {
@@ -299,6 +312,20 @@ function ColorSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
+    readBawCrossStepSummary(location.pathname)
+  );
+
+  useEffect(() => {
+    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
+    sync();
+    window.addEventListener('customStorageChange', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('customStorageChange', sync);
+      window.removeEventListener('focus', sync);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     const sync = () => setNoirLiveColorPremiumGate(isPremiumMemberForGatedFeatures());
@@ -339,6 +366,9 @@ function ColorSelection() {
       if (isOnEditRoute) {
         storedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
       } else if (isOnCustomizeRoute) {
+        if (isBawCustomizeColorSubPagePathname(pathname)) {
+          syncCustomizeColorDraftFromHubConfirmed(pathname);
+        }
         storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
       } else {
         storedColor = localStorage.getItem('selectedColor');
@@ -427,7 +457,7 @@ function ColorSelection() {
     };
   }, [location.pathname]);
 
-  // Initialize with edit mode or customize mode data if available
+  // Initialize with edit mode or customize mode data when route changes (re-entering sub-page)
   useEffect(() => {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
@@ -460,6 +490,9 @@ function ColorSelection() {
     
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
+      if (isBawCustomizeColorSubPagePathname(pathname)) {
+        syncCustomizeColorDraftFromHubConfirmed(pathname);
+      }
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {
         setSelectedColor(customizeSelectedColor);
@@ -470,7 +503,7 @@ function ColorSelection() {
         localStorage.setItem('customizeSelectedColor', 'PLATINUM');
       }
     }
-  }, []);
+  }, [location.pathname]);
 
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
@@ -500,7 +533,7 @@ function ColorSelection() {
       ];
     }
     
-    const selectedHairline = localStorage.getItem('selectedHairline') || 'NATURAL';
+    const selectedHairline = readHairlineCsvForWigPreviewPath(pathname);
     const hasPeak = selectedHairline.includes('PEAK');
     const hasLagos = selectedHairline.includes('LAGOS');
     
@@ -874,6 +907,7 @@ function ColorSelection() {
       localStorage.setItem('selectedColor', colorId);
       localStorage.setItem('selectedColorPrice', priceStr);
     }
+    setCrossStepSummary(readBawCrossStepSummary(pathname));
     if (onNoirColorRoute && colorId === 'OFF BLACK') {
       /** Same optimistic live-color resolution as other swatches — do not clear Storage (avoids static vs fal mismatch). */
       void (async () => {
@@ -1684,6 +1718,19 @@ function ColorSelection() {
               style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
             >
               SINGLE COLOR DYE
+            </p>
+            <p
+              className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
+              style={{
+                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                fontSize: '9px',
+                color: '#808080',
+                lineHeight: 1.35,
+                transform: 'translateY(8px)',
+              }}
+            >
+              CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
+              {crossStepSummary.stylingLabel}
             </p>
 
             <div

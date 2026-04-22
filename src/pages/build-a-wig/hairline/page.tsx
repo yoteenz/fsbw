@@ -18,6 +18,11 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import {
+  markBawNavigateToCustomizeHubFromOtherStep,
+  readBawCrossStepSummary,
+  type BawCrossStepSummary,
+} from '../../../utils/bawCrossStepSummary';
 
 interface HairlineOption {
   id: string;
@@ -91,6 +96,20 @@ function HairlineSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
+    readBawCrossStepSummary(location.pathname)
+  );
+
+  useEffect(() => {
+    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
+    sync();
+    window.addEventListener('customStorageChange', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('customStorageChange', sync);
+      window.removeEventListener('focus', sync);
+    };
+  }, [location.pathname]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -404,6 +423,7 @@ function HairlineSelection() {
       returnRoute = '/build-a-wig/noir';
     }
     
+    markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);
   };
 
@@ -550,6 +570,7 @@ function HairlineSelection() {
     // Dispatch custom event to notify main page of changes
     window.dispatchEvent(new CustomEvent('customStorageChange'));
     
+    markBawNavigateToCustomizeHubFromOtherStep(returnRoute);
     navigate(returnRoute);
   };
 
@@ -986,6 +1007,19 @@ function HairlineSelection() {
             style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', color: '#EB1C24', transform: 'translateY(18px)' }}
           >
             VENTILLATION EFFECT
+          </p>
+          <p
+            className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
+            style={{
+              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+              fontSize: '9px',
+              color: '#808080',
+              lineHeight: 1.35,
+              transform: 'translateY(8px)',
+            }}
+          >
+            CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
+            {crossStepSummary.stylingLabel}
           </p>
 
           {/* HAIRLINE OPTIONS - Centered 3-column layout */}

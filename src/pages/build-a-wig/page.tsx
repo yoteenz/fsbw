@@ -37,6 +37,7 @@ import {
   isNoirBawLivePreviewStepPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
+import { BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB } from '../../utils/bawCrossStepSummary';
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
@@ -4100,6 +4101,11 @@ export default function BuildAWigPage() {
       return;
     }
     if (category === 'color') {
+      try {
+        sessionStorage.setItem(BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB, '1');
+      } catch {
+        /* ignore */
+      }
       navigate(`${navBase}/color`);
       return;
     }

@@ -16607,3 +16607,19 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Decisions / outcomes:** **`src/pages/checkout/page.tsx`**: replaced centered **`h3`** titles on both modals with the same row pattern as **`src/pages/account/page.tsx`** (**`-mt-1 pb-1 border-b border-gray-200`**, flex space-between, **Futura PT Medium** 12px red uppercase left, **16×16** **`points-history.svg`** right).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — BAW color / hairline / styling: synced selections + cross-step summary
+
+**Context (this chat):** User reported **edit/customize BAW color** showing the **last in-page swatch tap** after **navigating away and back**, instead of the **hub-confirmed** color, and asked for **color, hairline, and styling** pages to **communicate** and show **current** selections.
+
+**Decisions / outcomes:**
+- **Root cause:** On customize flows, **`customizeSelectedColor`** (draft) was prioritized over **`selectedColor`** (confirmed on hub / Confirm). Returning from **hairline/styling** left a **stale draft** that did not match confirmed hub state.
+- **Fix:** New **`src/utils/bawCrossStepSummary.ts`**: **`syncCustomizeColorDraftFromHubConfirmed`** runs only when **session flags** indicate entry from the **customize hub** (`BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB`, set in **`build-a-wig/page.tsx`** when opening **Color**) or **return from another customize step** (`BAW_SESSION_RETURNING_TO_CUSTOMIZE_HUB`, set via **`markBawNavigateToCustomizeHubFromOtherStep`** on **hairline/styling** Back + Confirm). Sync copies **`selectedColor`** (+ price) into **`customizeSelectedColor`** so the swatch matches confirmed state without breaking **in-session** draft taps (no sync on mere pathname remount).
+- **Color page:** Initializer, pathname **`useEffect`**, storage listener, and **route-change** customize init call **`syncCustomizeColorDraftFromHubConfirmed`**; **`getWigViews`** uses **`readHairlineCsvForWigPreviewPath`** so static mannequins reflect **hub hairline** off the hairline step. **CURRENT:** line shows **COLOR · HAIRLINE · STYLING**; **`handleColorSelect`** updates summary immediately.
+- **Hairline / styling pages:** Same **CURRENT:** line; **`getWigViews`** hairline read aligned with **confirmed** vs **draft** (styling page). **Back/Confirm** to customize hub sets **`markBawNavigateToCustomizeHubFromOtherStep`**.
+
+**Files:** `src/utils/bawCrossStepSummary.ts` (new), `src/pages/build-a-wig/color/page.tsx`, `src/pages/build-a-wig/hairline/page.tsx`, `src/pages/build-a-wig/styling/page.tsx`, `src/pages/build-a-wig/page.tsx`.
+
+**Verification:** `npm run build` passes.
