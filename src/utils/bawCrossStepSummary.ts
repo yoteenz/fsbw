@@ -102,12 +102,48 @@ function isValidBlancoColorId(color: string): boolean {
 /** Set when leaving hairline/styling customize sub-pages toward the customize hub so the color step can re-align draft swatches. */
 export const BAW_SESSION_RETURNING_TO_CUSTOMIZE_HUB = 'bawReturningToCustomizeHub';
 
-/** Set when opening the color sub-page from the customize hub (tile tap) so the first paint matches hub-confirmed `selectedColor`. */
-export const BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB = 'bawOpenedColorFromCustomizeHub';
-
 function isCustomizeHubPath(path: string): boolean {
   const p = path.replace(/\/$/, '') || '/';
   return /\/build-a-wig\/[^/]+\/customize$/.test(p);
+}
+
+/**
+ * Keep `customizeSelected*` in sync with hub `selected*` when the user is still on the **customize hub**
+ * (not a sub-page). The hub UI reads React state, which tracks `customizeSelected*` after returning from
+ * sub-pages; `selected*` can lag until Confirm — without mirroring, opening Color would read stale `selectedColor`
+ * and the color sub-page would show the wrong swatch.
+ */
+export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
+  const keys: [string, string][] = [
+    ['customizeSelectedCapSize', 'selectedCapSize'],
+    ['customizeSelectedLength', 'selectedLength'],
+    ['customizeSelectedDensity', 'selectedDensity'],
+    ['customizeSelectedLace', 'selectedLace'],
+    ['customizeSelectedTexture', 'selectedTexture'],
+    ['customizeSelectedColor', 'selectedColor'],
+    ['customizeSelectedHairline', 'selectedHairline'],
+    ['customizeSelectedStyling', 'selectedStyling'],
+    ['customizeSelectedAddOns', 'selectedAddOns'],
+    ['customizeSelectedCapSizePrice', 'selectedCapSizePrice'],
+    ['customizeSelectedColorPrice', 'selectedColorPrice'],
+    ['customizeSelectedLengthPrice', 'selectedLengthPrice'],
+    ['customizeSelectedDensityPrice', 'selectedDensityPrice'],
+    ['customizeSelectedLacePrice', 'selectedLacePrice'],
+    ['customizeSelectedTexturePrice', 'selectedTexturePrice'],
+    ['customizeSelectedHairlinePrice', 'selectedHairlinePrice'],
+    ['customizeSelectedStylingPrice', 'selectedStylingPrice'],
+    ['customizeSelectedAddOnsPrice', 'selectedAddOnsPrice'],
+  ];
+  for (const [cust, sel] of keys) {
+    const v = localStorage.getItem(sel);
+    if (v != null && v !== '') {
+      localStorage.setItem(cust, v);
+    }
+  }
+  const hairStyling = localStorage.getItem('selectedHairStyling');
+  if (hairStyling != null && hairStyling !== '') {
+    localStorage.setItem('customizeSelectedHairStyling', hairStyling);
+  }
 }
 
 /** Call before `navigate` when landing on the customize hub from hairline or styling (not from the color step). */
@@ -124,26 +160,22 @@ export function markBawNavigateToCustomizeHubFromOtherStep(targetPath: string): 
 /**
  * On customize color sub-page entry, align draft swatch + `customizeSelectedColor` with
  * hub-confirmed `selectedColor` when the user is returning from another customize step (session flag).
+ * Do **not** run on a direct open from the customize hub — hub mirrors `selected*` → `customizeSelected*` in
+ * `handleOptionSelect` so draft matches the tile; copying from stale `selectedColor` would regress the swatch.
  */
 export function syncCustomizeColorDraftFromHubConfirmed(pathname: string): string | null {
   if (!isBawCustomizeColorSubPagePathname(pathname)) return null;
 
   let fromOtherStep = false;
-  let openedFromHub = false;
   try {
     fromOtherStep = sessionStorage.getItem(BAW_SESSION_RETURNING_TO_CUSTOMIZE_HUB) === '1';
     if (fromOtherStep) {
       sessionStorage.removeItem(BAW_SESSION_RETURNING_TO_CUSTOMIZE_HUB);
     }
-    openedFromHub = sessionStorage.getItem(BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB) === '1';
-    if (openedFromHub) {
-      sessionStorage.removeItem(BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB);
-    }
   } catch {
     fromOtherStep = false;
-    openedFromHub = false;
   }
-  if (!fromOtherStep && !openedFromHub) return null;
+  if (!fromOtherStep) return null;
 
   const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
   const confirmedRaw = localStorage.getItem('selectedColor');

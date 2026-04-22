@@ -31,6 +31,12 @@ export function isBuildAWigCustomizePath(pathname: string): boolean {
   return pathname.startsWith('/build-a-wig/') && pathname.includes('/customize');
 }
 
+/** Exact unit customize hub only: `/build-a-wig/{unit}/customize` — not `/…/customize/color` etc. */
+export function isBuildAWigCustomizeHubPathname(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  return /\/build-a-wig\/[^/]+\/customize$/.test(p);
+}
+
 /**
  * Target for the grey "BUILD-A-WIG >" breadcrumb from a sub-page:
  * customize/edit/product main, or /build-a-wig for the generic flow.

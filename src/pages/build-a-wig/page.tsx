@@ -37,7 +37,8 @@ import {
   isNoirBawLivePreviewStepPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
-import { BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB } from '../../utils/bawCrossStepSummary';
+import { mirrorCustomizeDraftKeysFromSelectedHubKeys } from '../../utils/bawCrossStepSummary';
+import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 
 /**
  * Default NOIR mannequin (OFF BLACK / natural PNGs) on **hub landing** routes — no committed fal color on these pages.
@@ -4009,6 +4010,8 @@ export default function BuildAWigPage() {
       return;
     }
 
+    const pathname = location.pathname;
+
     // CRITICAL: Save current customization to localStorage BEFORE navigating
     // This ensures sub-pages see the correct current selections
     localStorage.setItem('selectedCapSize', customization.capSize);
@@ -4025,9 +4028,12 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedStyling', validStyling);
     
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
+
+    if (isBuildAWigCustomizeHubPathname(pathname)) {
+      mirrorCustomizeDraftKeysFromSelectedHubKeys();
+    }
     
     // Determine the base route based on current mode
-    const pathname = location.pathname;
     const isEditMode = pathname === '/build-a-wig/edit' ||
                        pathname.startsWith('/build-a-wig/noir/edit') ||
                        pathname.startsWith('/build-a-wig/blanco/edit') ||
@@ -4101,11 +4107,6 @@ export default function BuildAWigPage() {
       return;
     }
     if (category === 'color') {
-      try {
-        sessionStorage.setItem(BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB, '1');
-      } catch {
-        /* ignore */
-      }
       navigate(`${navBase}/color`);
       return;
     }

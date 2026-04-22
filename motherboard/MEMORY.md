@@ -16610,6 +16610,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — BAW customize hub → color sub-page: mirror `selected*` to `customizeSelected*` (fix wrong swatch)
+
+**Context (this chat):** User reported the **color sub-page** still showed a **different color** than the **customize hub tile** when opening Color from the hub.
+
+**Root cause:** The hub displays **`customization.color`** (React state), which after returning from sub-pages tracks **`customizeSelectedColor`**. **`handleOptionSelect`** only wrote **`selected*`** keys before navigating; **`selectedColor`** could lag **`customizeSelectedColor`**. The prior **`openedFromHub`** sync then copied **stale `selectedColor`** → **`customizeSelectedColor`**, overwriting the correct hub color.
+
+**Fix:** Removed **`BAW_SESSION_OPENED_COLOR_FROM_CUSTOMIZE_HUB`** and **`openedFromHub`** behavior from **`syncCustomizeColorDraftFromHubConfirmed`** (only **`bawReturningToCustomizeHub`** remains). Added **`mirrorCustomizeDraftKeysFromSelectedHubKeys`** and call it from **`handleOptionSelect`** when **`isBuildAWigCustomizeHubPathname`** — after writing **`selected*`**, copy into **`customizeSelected*`** (+ prices, hair styling CSV) so sub-pages read the same values as the hub. **`isBuildAWigCustomizeHubPathname`** in **`buildAWigRoutes.ts`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — BAW color / hairline / styling: synced selections + cross-step summary
 
 **Context (this chat):** User reported **edit/customize BAW color** showing the **last in-page swatch tap** after **navigating away and back**, instead of the **hub-confirmed** color, and asked for **color, hairline, and styling** pages to **communicate** and show **current** selections.
