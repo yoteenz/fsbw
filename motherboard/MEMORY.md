@@ -16684,8 +16684,22 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context:** User asked that the **three R-part styling angles** (left / front / right after-color outputs) use **GPT Image 2** for the Fal output instead of **nano banana pro**.
 
-**Change:** In **`api/live-wig-after-color-styling.ts`**, when **`partSelection === 'RIGHT'`** and the request is **salon** styling (**LAYERS**, **CRIMPS**, or **FLAT IRON** — with or without bangs), each angle’s **`fal.subscribe`** uses **`openai/gpt-image-2/edit`** with input **`prompt`**, **`image_urls`**, **`image_size: 'auto'`**, **`quality: 'high'`**, **`num_images: 1`**, **`output_format: 'webp'`**. All other after-color styling paths still use **`fal-ai/nano-banana-pro/edit`** with the existing **`resolution`** / **`aspect_ratio`** input.
+**Change:** In **`api/live-wig-after-color-styling.ts`**, when **`partSelection === 'RIGHT'`** and the request is **salon** styling (**LAYERS**, **CRIMPS**, or **FLAT IRON** — with or without bangs), each angle’s **`fal.subscribe`** uses **`openai/gpt-image-2/edit`** with input **`prompt`**, **`image_urls`**, **`image_size: 'auto'`**, **`quality: 'medium'`** (later: see timeout entry), **`num_images: 1`**, **`output_format: 'webp'`**. All other after-color styling paths still use **`fal-ai/nano-banana-pro/edit`** with the existing **`resolution`** / **`aspect_ratio`** input.
 
 **Files:** `api/live-wig-after-color-styling.ts`.
+
+**Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — LIVE PREVIEW `FUNCTION_INVOCATION_TIMEOUT` after GPT Image 2 for UI-R styling
+
+**Context:** User saw **`LIVE PREVIEW: An error occurred with your deployment FUNCTION_INVOCATION_TIMEOUT`** (Vercel) after switching **RIGHT-part** salon styling to **`openai/gpt-image-2/edit`**.
+
+**Cause:** GPT Image 2 edit runs can exceed the prior **120s** serverless budget per **`angle`** request (cold queue + upload).
+
+**Fix:** **`api/live-wig-after-color-styling.ts`** and **`vercel.json`**: **`maxDuration: 300`** for this route (needs Vercel **Pro**-tier max; Hobby still caps lower). **`quality: 'medium'`** for GPT Image 2 edit input (faster than **`high`**). **`docs/WIG_PREVIEW_PREGENERATION.md`** note added.
+
+**Files:** `api/live-wig-after-color-styling.ts`, `vercel.json`, `docs/WIG_PREVIEW_PREGENERATION.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` passes.

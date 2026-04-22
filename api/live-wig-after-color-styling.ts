@@ -1,4 +1,5 @@
-export const config = { maxDuration: 120 };
+/** Pro: up to 300s. UI-R salon uses `openai/gpt-image-2/edit` — can exceed 120s per angle on cold queue. */
+export const config = { maxDuration: 300 };
 
 /**
  * POST /api/live-wig-after-color-styling
@@ -459,7 +460,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             prompt,
             image_urls: imageUrls,
             image_size: 'auto' as const,
-            quality: 'high' as const,
+            /** `medium` keeps UI-R triple under Vercel budget more often than `high`. */
+            quality: 'medium' as const,
             num_images: 1,
             output_format: 'webp' as const,
           }
