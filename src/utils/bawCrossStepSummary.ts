@@ -102,6 +102,9 @@ function isValidBlancoColorId(color: string): boolean {
 /** Set when leaving hairline/styling customize sub-pages toward the customize hub so the color step can re-align draft swatches. */
 export const BAW_SESSION_RETURNING_TO_CUSTOMIZE_HUB = 'bawReturningToCustomizeHub';
 
+/** Set when navigating from the customize hub tile to the color sub-page — color page applies `selectedColor` → draft once. */
+export const BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB = 'bawColorStepFromCustomizeHub';
+
 function isCustomizeHubPath(path: string): boolean {
   const p = path.replace(/\/$/, '') || '/';
   return /\/build-a-wig\/[^/]+\/customize$/.test(p);
@@ -144,6 +147,50 @@ export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
   if (hairStyling != null && hairStyling !== '') {
     localStorage.setItem('customizeSelectedHairStyling', hairStyling);
   }
+}
+
+function normalizeColorForProductRoute(color: string, isBlancoRoute: boolean): string {
+  const blancoOnly = ['GOLDEN', 'PLATINUM', 'ASH'];
+  if (isBlancoRoute) {
+    return isValidBlancoColorId(color) ? color : 'PLATINUM';
+  }
+  if (blancoOnly.includes(color)) return 'OFF BLACK';
+  return color;
+}
+
+/**
+ * When opening `/…/customize/color` from the hub tile, copy hub `selectedColor` into `customizeSelected*`
+ * so in-page draft + Fal use the same swatch as the tile (clears stale draft).
+ */
+export function hydrateCustomizeColorDraftFromHubIfFlagged(pathname: string): string | null {
+  if (!isBawCustomizeColorSubPagePathname(pathname)) return null;
+  let flagged = false;
+  try {
+    flagged = sessionStorage.getItem(BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB) === '1';
+    if (flagged) {
+      sessionStorage.removeItem(BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB);
+    }
+  } catch {
+    flagged = false;
+  }
+  if (!flagged) return null;
+
+  const isBlancoRoute = pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit');
+  const raw = localStorage.getItem('selectedColor');
+  if (!raw) return null;
+
+  const color = normalizeColorForProductRoute(raw, isBlancoRoute);
+  const price = localStorage.getItem('selectedColorPrice') || '0';
+  localStorage.setItem('customizeSelectedColor', color);
+  localStorage.setItem('customizeSelectedColorPrice', price);
+  return color;
+}
+
+/** Run hub hydration + return-after-step sync, then read canonical swatch (matches `readBuildWigLivePreviewColor`). */
+export function resolveBawCustomizeColorSubPageSwatch(pathname: string): string {
+  hydrateCustomizeColorDraftFromHubIfFlagged(pathname);
+  syncCustomizeColorDraftFromHubConfirmed(pathname);
+  return readBuildWigLivePreviewColor(pathname);
 }
 
 /** Call before `navigate` when landing on the customize hub from hairline or styling (not from the color step). */

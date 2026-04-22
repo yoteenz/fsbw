@@ -16610,6 +16610,18 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 
 ---
 
+## 2026-04-20 — BAW color sub-page: prefer `selectedColor` over stale `customizeSelectedColor` + hub session hydrate
+
+**Context (this chat):** User reported **nothing changed** — color sub-page still **disagreed with the customize hub tile**; something was **overriding** prior fixes.
+
+**Root cause:** On **`…/customize/color`**, code read **`customizeSelectedColor` before `selectedColor`**. The hub tile is driven by React **`customization.color`** and **`handleOptionSelect`** writes **`selectedColor`** first; **`customizeSelectedColor`** can remain an **older draft** until other flows run. **`readBuildWigLivePreviewColor`** had the same ordering bug for the color sub-page.
+
+**Fix:** **`readBuildWigLivePreviewColor`**: on customize color sub-page, **`selectedColor` first**, then **`customizeSelectedColor`**. **`resolveBawCustomizeColorSubPageSwatch`**: runs **`hydrateCustomizeColorDraftFromHubIfFlagged`** (session **`bawColorStepFromCustomizeHub`**, set when opening Color from the **customize hub** tile) + **`syncCustomizeColorDraftFromHubConfirmed`**, then returns canonical color. **Color page** uses **`resolveBawCustomizeColorSubPageSwatch`** for initializer, pathname effect, storage listener, and route-change effect (customize color only). **`build-a-wig/page.tsx`**: sets session flag when navigating to **`…/customize/color`** from **`isBuildAWigCustomizeHubPathname`**.
+
+**Verification:** `npm run build` passes.
+
+---
+
 ## 2026-04-20 — BAW customize hub → color sub-page: mirror `selected*` to `customizeSelected*` (fix wrong swatch)
 
 **Context (this chat):** User reported the **color sub-page** still showed a **different color** than the **customize hub tile** when opening Color from the hub.

@@ -42,7 +42,7 @@ import {
   readBawCrossStepSummary,
   type BawCrossStepSummary,
   readHairlineCsvForWigPreviewPath,
-  syncCustomizeColorDraftFromHubConfirmed,
+  resolveBawCustomizeColorSubPageSwatch,
 } from '../../../utils/bawCrossStepSummary';
 
 interface ColorOption {
@@ -133,7 +133,14 @@ function ColorSelection() {
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
-        syncCustomizeColorDraftFromHubConfirmed(pathname);
+        const canonical = resolveBawCustomizeColorSubPageSwatch(pathname);
+        if (isBlancoRoute) {
+          if (isValidBlancoColorId(canonical)) return canonical;
+          return 'PLATINUM';
+        }
+        const blancoOnlyColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+        if (blancoOnlyColors.includes(canonical)) return 'OFF BLACK';
+        return canonical;
       }
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {
@@ -222,9 +229,10 @@ function ColorSelection() {
       }
     } else if (isOnCustomizeRoute) {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
-        syncCustomizeColorDraftFromHubConfirmed(pathname);
+        storedColor = resolveBawCustomizeColorSubPageSwatch(pathname);
+      } else {
+        storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
       }
-      storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
       // For blanco routes, default to PLATINUM if no color is stored
       if (!storedColor && isBlancoRoute) {
         storedColor = 'PLATINUM';
@@ -367,9 +375,10 @@ function ColorSelection() {
         storedColor = localStorage.getItem('editSelectedColor') || localStorage.getItem('selectedColor');
       } else if (isOnCustomizeRoute) {
         if (isBawCustomizeColorSubPagePathname(pathname)) {
-          syncCustomizeColorDraftFromHubConfirmed(pathname);
+          storedColor = resolveBawCustomizeColorSubPageSwatch(pathname);
+        } else {
+          storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
         }
-        storedColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor');
       } else {
         storedColor = localStorage.getItem('selectedColor');
       }
@@ -491,7 +500,8 @@ function ColorSelection() {
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
       if (isBawCustomizeColorSubPagePathname(pathname)) {
-        syncCustomizeColorDraftFromHubConfirmed(pathname);
+        setSelectedColor(resolveBawCustomizeColorSubPageSwatch(pathname));
+        return;
       }
       const customizeSelectedColor = localStorage.getItem('customizeSelectedColor');
       if (customizeSelectedColor) {

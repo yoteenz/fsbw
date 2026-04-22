@@ -73,9 +73,11 @@ export function readBuildWigLivePreviewColor(pathname: string): string {
         'OFF BLACK'
       );
     }
+    // On the color sub-page, `handleOptionSelect` + hub sync write **`selectedColor` first**; stale
+    // **`customizeSelectedColor`** must not win (it can lag behind the hub tile).
     return (
-      localStorage.getItem('customizeSelectedColor') ||
       localStorage.getItem('selectedColor') ||
+      localStorage.getItem('customizeSelectedColor') ||
       'OFF BLACK'
     );
   }

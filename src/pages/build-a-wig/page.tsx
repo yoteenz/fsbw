@@ -37,7 +37,10 @@ import {
   isNoirBawLivePreviewStepPathname,
 } from '../../utils/bawNoirLivePreviewStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
-import { mirrorCustomizeDraftKeysFromSelectedHubKeys } from '../../utils/bawCrossStepSummary';
+import {
+  BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB,
+  mirrorCustomizeDraftKeysFromSelectedHubKeys,
+} from '../../utils/bawCrossStepSummary';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 
 /**
@@ -4107,6 +4110,13 @@ export default function BuildAWigPage() {
       return;
     }
     if (category === 'color') {
+      try {
+        if (isBuildAWigCustomizeHubPathname(pathname)) {
+          sessionStorage.setItem(BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB, '1');
+        }
+      } catch {
+        /* ignore */
+      }
       navigate(`${navBase}/color`);
       return;
     }
