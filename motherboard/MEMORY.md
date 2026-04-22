@@ -16677,3 +16677,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`src/pages/build-a-wig/color/page.tsx`:** On customize **hub + non-color steps**, use **`readBuildWigLivePreviewColor(pathname)`** instead of preferring **`customizeSelectedColor`** alone (sub-page color still uses **`resolveBawCustomizeColorSubPageSwatch`**).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — NOIR UI R styling triple: Fal `openai/gpt-image-2/edit` instead of nano-banana-pro
+
+**Context:** User asked that the **three R-part styling angles** (left / front / right after-color outputs) use **GPT Image 2** for the Fal output instead of **nano banana pro**.
+
+**Change:** In **`api/live-wig-after-color-styling.ts`**, when **`partSelection === 'RIGHT'`** and the request is **salon** styling (**LAYERS**, **CRIMPS**, or **FLAT IRON** — with or without bangs), each angle’s **`fal.subscribe`** uses **`openai/gpt-image-2/edit`** with input **`prompt`**, **`image_urls`**, **`image_size: 'auto'`**, **`quality: 'high'`**, **`num_images: 1`**, **`output_format: 'webp'`**. All other after-color styling paths still use **`fal-ai/nano-banana-pro/edit`** with the existing **`resolution`** / **`aspect_ratio`** input.
+
+**Files:** `api/live-wig-after-color-styling.ts`.
+
+**Verification:** `npm run build` passes.
