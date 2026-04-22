@@ -39,7 +39,9 @@ import {
 import { BawNoirWigPreviewHeroThumbs } from '../../components/buildWig/BawNoirWigPreviewFrames';
 import {
   BAW_SESSION_COLOR_STEP_FROM_CUSTOMIZE_HUB,
+  mergeStylingForHub,
   mirrorCustomizeDraftKeysFromSelectedHubKeys,
+  primaryStylingTokenFromHairCsv,
 } from '../../utils/bawCrossStepSummary';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 
@@ -822,7 +824,12 @@ export default function BuildAWigPage() {
         const savedTexture = savedTextureCustomize || savedTextureSelected || customization.texture || defaultTexture;
         const savedColor = savedColorCustomize || savedColorSelected || customization.color || defaultColor;
         const savedHairline = savedHairlineCustomize || savedHairlineSelected || customization.hairline || 'NATURAL';
-        const savedStyling = savedStylingCustomize || savedStylingSelected || customization.styling || 'NONE';
+        const savedStyling = mergeStylingForHub(
+          localStorage.getItem('customizeSelectedHairStyling'),
+          localStorage.getItem('selectedHairStyling'),
+          savedStylingCustomize || savedStylingSelected,
+          customization.styling || 'NONE'
+        );
         const savedAddOns = savedAddOnsCustomize || savedAddOnsSelected || JSON.stringify(customization.addOns) || '[]';
         
         // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
@@ -831,6 +838,7 @@ export default function BuildAWigPage() {
         if (partSelectionOptions.includes(validStyling)) {
           validStyling = 'NONE'; // If styling is a part selection, set to NONE
         }
+        const stylingTokenForLs = primaryStylingTokenFromHairCsv(validStyling);
         
         let updatedCustomization = {
           capSize: savedCapSizeFinal,
@@ -895,17 +903,20 @@ export default function BuildAWigPage() {
         localStorage.setItem('customizeSelectedTexture', updatedCustomization.texture);
         localStorage.setItem('customizeSelectedColor', updatedCustomization.color);
         localStorage.setItem('customizeSelectedHairline', updatedCustomization.hairline);
-        localStorage.setItem('customizeSelectedStyling', validStyling);
+        localStorage.setItem('customizeSelectedStyling', stylingTokenForLs);
         localStorage.setItem('customizeSelectedAddOns', JSON.stringify(updatedCustomization.addOns));
         try {
-          const hairCsvExisting = localStorage.getItem('customizeSelectedHairStyling');
-          const hairCsvFallback = localStorage.getItem('selectedHairStyling');
-          if (!hairCsvExisting && hairCsvFallback && hairCsvFallback.trim()) {
-            localStorage.setItem('customizeSelectedHairStyling', hairCsvFallback.trim());
+          if (validStyling && validStyling !== 'NONE' && validStyling.trim() !== '') {
+            localStorage.setItem('customizeSelectedHairStyling', validStyling.trim());
+            localStorage.setItem('selectedHairStyling', validStyling.trim());
+          } else {
+            localStorage.removeItem('customizeSelectedHairStyling');
+            localStorage.removeItem('selectedHairStyling');
           }
         } catch {
           /* ignore */
         }
+        localStorage.setItem('selectedStyling', stylingTokenForLs);
 
         setCustomization(updatedCustomization);
         
@@ -1007,7 +1018,12 @@ export default function BuildAWigPage() {
           const existingTexture = localStorage.getItem('customizeSelectedTexture') || localStorage.getItem('selectedTexture') || defaultTextureForFirstLoad;
           const existingColor = localStorage.getItem('customizeSelectedColor') || localStorage.getItem('selectedColor') || defaultColorForFirstLoad;
           const existingHairline = localStorage.getItem('customizeSelectedHairline') || localStorage.getItem('selectedHairline') || 'NATURAL';
-          const existingStyling = localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling') || 'NONE';
+          const existingStyling = mergeStylingForHub(
+            localStorage.getItem('customizeSelectedHairStyling'),
+            localStorage.getItem('selectedHairStyling'),
+            localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling'),
+            'NONE'
+          );
           const existingAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns') || '[]';
           
           // Ensure styling is valid
@@ -1016,6 +1032,7 @@ export default function BuildAWigPage() {
           if (partSelectionOptions.includes(validStyling)) {
             validStyling = 'NONE';
           }
+          const stylingTokenForLs = primaryStylingTokenFromHairCsv(validStyling);
           
           let initialCustomization = {
             capSize: savedCapSize,
@@ -1050,7 +1067,7 @@ export default function BuildAWigPage() {
         localStorage.setItem('selectedTexture', initialCustomization.texture);
         localStorage.setItem('selectedColor', initialCustomization.color);
         localStorage.setItem('selectedHairline', initialCustomization.hairline);
-        localStorage.setItem('selectedStyling', validStyling);
+        localStorage.setItem('selectedStyling', stylingTokenForLs);
         localStorage.setItem('selectedAddOns', JSON.stringify(initialCustomization.addOns));
         
         localStorage.setItem('customizeSelectedCapSize', savedCapSize);
@@ -1060,8 +1077,19 @@ export default function BuildAWigPage() {
         localStorage.setItem('customizeSelectedTexture', initialCustomization.texture);
         localStorage.setItem('customizeSelectedColor', initialCustomization.color);
         localStorage.setItem('customizeSelectedHairline', initialCustomization.hairline);
-        localStorage.setItem('customizeSelectedStyling', validStyling);
+        localStorage.setItem('customizeSelectedStyling', stylingTokenForLs);
         localStorage.setItem('customizeSelectedAddOns', JSON.stringify(initialCustomization.addOns));
+        try {
+          if (validStyling && validStyling !== 'NONE' && validStyling.trim() !== '') {
+            localStorage.setItem('selectedHairStyling', validStyling.trim());
+            localStorage.setItem('customizeSelectedHairStyling', validStyling.trim());
+          } else {
+            localStorage.removeItem('selectedHairStyling');
+            localStorage.removeItem('customizeSelectedHairStyling');
+          }
+        } catch {
+          /* ignore */
+        }
         
         // CRITICAL: Load existing prices from localStorage BEFORE calculating new ones
         // This preserves prices saved by sub-pages
@@ -2294,32 +2322,50 @@ export default function BuildAWigPage() {
           savedAddOns = localStorage.getItem('customizeSelectedAddOns') || localStorage.getItem('selectedAddOns');
         }
         
-        // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
-        let validStyling: string = savedStyling !== null ? savedStyling : 'NONE';
-        const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-        if (partSelectionOptions.includes(validStyling)) {
-          validStyling = 'NONE'; // If styling is a part selection, set to NONE
-          // Also update localStorage to fix the incorrect value
-          if (isEditMode) {
-            localStorage.setItem('editSelectedStyling', 'NONE');
-          } else if (isCustomizeMode) {
-            localStorage.setItem('customizeSelectedStyling', 'NONE');
+        setCustomization((prev) => {
+          // Merge CSV combo (BANGS,LAYERS) from *HairStyling — single-token keys alone clear combos on refresh/events.
+          const mergedStyling = isEditMode
+            ? mergeStylingForHub(
+                localStorage.getItem('editSelectedHairStyling'),
+                localStorage.getItem('selectedHairStyling'),
+                localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling'),
+                prev.styling
+              )
+            : isCustomizeMode
+              ? mergeStylingForHub(
+                  localStorage.getItem('customizeSelectedHairStyling'),
+                  localStorage.getItem('selectedHairStyling'),
+                  savedStyling,
+                  prev.styling
+                )
+              : savedStyling ?? prev.styling;
+
+          let validStyling: string =
+            mergedStyling !== null && mergedStyling !== undefined && mergedStyling !== '' ? mergedStyling : 'NONE';
+          const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+          if (partSelectionOptions.includes(validStyling)) {
+            validStyling = 'NONE';
+            if (isEditMode) {
+              localStorage.setItem('editSelectedStyling', 'NONE');
+            } else if (isCustomizeMode) {
+              localStorage.setItem('customizeSelectedStyling', 'NONE');
+            }
+            localStorage.setItem('selectedStyling', 'NONE');
           }
-          localStorage.setItem('selectedStyling', 'NONE');
-        }
-        
-        setCustomization(prev => ({
-          ...prev,
-          capSize: savedCapSize || prev.capSize,
-          length: savedLength || prev.length,
-          density: savedDensity || prev.density,
-          lace: savedLace || prev.lace,
-          texture: savedTexture || prev.texture,
-          color: savedColor || prev.color,
-          hairline: savedHairline || prev.hairline,
-          styling: validStyling,
-          addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
-        }));
+
+          return {
+            ...prev,
+            capSize: savedCapSize || prev.capSize,
+            length: savedLength || prev.length,
+            density: savedDensity || prev.density,
+            lace: savedLace || prev.lace,
+            texture: savedTexture || prev.texture,
+            color: savedColor || prev.color,
+            hairline: savedHairline || prev.hairline,
+            styling: validStyling,
+            addOns: savedAddOns ? JSON.parse(savedAddOns) : prev.addOns,
+          };
+        });
         
         // Trigger price recalculation by updating refreshTrigger
         setRefreshTrigger(prev => prev + 1);
@@ -2482,7 +2528,17 @@ export default function BuildAWigPage() {
     if (isCustomizeMode) {
       // Only sync selected* keys (for sub-pages), NOT customizeSelected* keys (set by sub-pages)
       const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-      const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
+      const rawStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
+      const stylingToken = primaryStylingTokenFromHairCsv(rawStyling);
+      try {
+        if (rawStyling && rawStyling !== 'NONE' && rawStyling.trim() !== '') {
+          localStorage.setItem('selectedHairStyling', rawStyling.trim());
+        } else {
+          localStorage.removeItem('selectedHairStyling');
+        }
+      } catch {
+        /* ignore */
+      }
       
       console.log('[SYNC TO STORAGE] Customize mode - syncing selected* keys (NOT customizeSelected*)', customization);
       localStorage.setItem('selectedCapSize', customization.capSize);
@@ -2492,7 +2548,7 @@ export default function BuildAWigPage() {
       localStorage.setItem('selectedTexture', customization.texture);
       localStorage.setItem('selectedLace', customization.lace);
       localStorage.setItem('selectedHairline', customization.hairline);
-      localStorage.setItem('selectedStyling', validStyling);
+      localStorage.setItem('selectedStyling', stylingToken);
       localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
       
       // DO NOT sync customizeSelected* keys here - they are set by sub-pages and route change effect
@@ -4024,12 +4080,21 @@ export default function BuildAWigPage() {
     localStorage.setItem('selectedTexture', customization.texture);
     localStorage.setItem('selectedLace', customization.lace);
     localStorage.setItem('selectedHairline', customization.hairline);
-    
-    // CRITICAL: Ensure styling is not a part selection (MIDDLE, LEFT, RIGHT) - it should be NONE or a valid styling option
-    const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
-    const validStyling = partSelectionOptions.includes(customization.styling) ? 'NONE' : customization.styling;
+
+    const mergedStylingForNav = mergeStylingForHub(
+      localStorage.getItem('customizeSelectedHairStyling'),
+      localStorage.getItem('selectedHairStyling'),
+      localStorage.getItem('customizeSelectedStyling') || localStorage.getItem('selectedStyling'),
+      customization.styling
+    );
+    const validStyling = primaryStylingTokenFromHairCsv(mergedStylingForNav);
     localStorage.setItem('selectedStyling', validStyling);
-    
+    if (mergedStylingForNav && mergedStylingForNav !== 'NONE' && mergedStylingForNav.trim() !== '') {
+      localStorage.setItem('selectedHairStyling', mergedStylingForNav);
+    } else {
+      localStorage.removeItem('selectedHairStyling');
+    }
+
     localStorage.setItem('selectedAddOns', JSON.stringify(customization.addOns));
 
     if (isBuildAWigCustomizeHubPathname(pathname)) {

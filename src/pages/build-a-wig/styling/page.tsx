@@ -77,8 +77,16 @@ export default function StylingSelectionPage() {
     
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
+      const hairCsv =
+        localStorage.getItem('customizeSelectedHairStyling') || localStorage.getItem('selectedHairStyling') || '';
+      if (hairCsv.trim()) {
+        return hairCsv
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
       const customizeSelectedStyling = localStorage.getItem('customizeSelectedStyling');
-      if (customizeSelectedStyling) {
+      if (customizeSelectedStyling && customizeSelectedStyling !== 'NONE') {
         return [customizeSelectedStyling];
       }
     }
@@ -115,9 +123,15 @@ export default function StylingSelectionPage() {
         }
       }
     } else if (isOnCustomizeRoute) {
-      const customizeSelectedStyling = localStorage.getItem('customizeSelectedStyling');
-      if (customizeSelectedStyling && customizeSelectedStyling !== 'NONE' && customizeSelectedStyling.trim() !== '') {
+      const hairCsv =
+        localStorage.getItem('customizeSelectedHairStyling') || localStorage.getItem('selectedHairStyling') || '';
+      if (hairCsv.trim()) {
         hasStyling = true;
+      } else {
+        const customizeSelectedStyling = localStorage.getItem('customizeSelectedStyling');
+        if (customizeSelectedStyling && customizeSelectedStyling !== 'NONE' && customizeSelectedStyling.trim() !== '') {
+          hasStyling = true;
+        }
       }
     } else {
       const storedStyling = localStorage.getItem('selectedHairStyling');

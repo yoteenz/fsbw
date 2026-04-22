@@ -116,6 +116,40 @@ function isCustomizeHubPath(path: string): boolean {
  * sub-pages; `selected*` can lag until Confirm — without mirroring, opening Color would read stale `selectedColor`
  * and the color sub-page would show the wrong swatch.
  */
+/** First token of hair styling CSV (matches styling sub-page `selectedHairStyling[0]` → `selectedStyling`). */
+export function primaryStylingTokenFromHairCsv(csv: string | null | undefined): string {
+  if (!csv || !csv.trim()) return 'NONE';
+  const first = csv.split(',')[0]?.trim() ?? '';
+  if (!first) return 'NONE';
+  const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+  if (partSelectionOptions.includes(first)) return 'NONE';
+  return first;
+}
+
+/**
+ * Hub `customization.styling` must store the **full** comma-separated combo (e.g. `BANGS,LAYERS`) when present.
+ * Single-token `selectedStyling` / `customizeSelectedStyling` only holds the salon row — use `*HairStyling` CSV first.
+ */
+export function mergeStylingForHub(
+  customizeHairCsv: string | null,
+  selectedHairCsv: string | null,
+  singleToken: string | null,
+  stateFallback: string
+): string {
+  const csv = (customizeHairCsv && customizeHairCsv.trim()) || (selectedHairCsv && selectedHairCsv.trim()) || '';
+  if (csv) return csv;
+  const sf = (stateFallback && stateFallback.trim()) || '';
+  if (sf.includes(',')) return sf;
+  const tok = primaryStylingTokenFromHairCsv(singleToken || '');
+  if (tok && tok !== 'NONE') return tok;
+  const s = (singleToken && singleToken.trim()) || '';
+  if (s && s !== 'NONE') {
+    const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
+    if (!partSelectionOptions.includes(s)) return s;
+  }
+  return sf || 'NONE';
+}
+
 export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
   const keys: [string, string][] = [
     ['customizeSelectedCapSize', 'selectedCapSize'],
@@ -125,7 +159,6 @@ export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
     ['customizeSelectedTexture', 'selectedTexture'],
     ['customizeSelectedColor', 'selectedColor'],
     ['customizeSelectedHairline', 'selectedHairline'],
-    ['customizeSelectedStyling', 'selectedStyling'],
     ['customizeSelectedAddOns', 'selectedAddOns'],
     ['customizeSelectedCapSizePrice', 'selectedCapSizePrice'],
     ['customizeSelectedColorPrice', 'selectedColorPrice'],
@@ -146,6 +179,12 @@ export function mirrorCustomizeDraftKeysFromSelectedHubKeys(): void {
   const hairStyling = localStorage.getItem('selectedHairStyling');
   if (hairStyling != null && hairStyling !== '') {
     localStorage.setItem('customizeSelectedHairStyling', hairStyling);
+    localStorage.setItem('customizeSelectedStyling', primaryStylingTokenFromHairCsv(hairStyling));
+  } else {
+    const selSty = localStorage.getItem('selectedStyling');
+    if (selSty != null && selSty !== '') {
+      localStorage.setItem('customizeSelectedStyling', selSty);
+    }
   }
 }
 

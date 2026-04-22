@@ -16647,3 +16647,17 @@ Run migration in Supabase SQL Editor (or migration pipeline). **`tsc --noEmit`**
 **Files:** `src/utils/bawCrossStepSummary.ts` (new), `src/pages/build-a-wig/color/page.tsx`, `src/pages/build-a-wig/hairline/page.tsx`, `src/pages/build-a-wig/styling/page.tsx`, `src/pages/build-a-wig/page.tsx`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — BAW customize hub: styling combos persist on refresh / customStorageChange
+
+Summary of the **whole conversation so far** in this chat: continued **Build-a-Wig** selection persistence work; the active issue was **styling selections clearing on page refresh**, especially **combo** styling (`BANGS,LAYERS`) stored in **`selectedHairStyling` / `customizeSelectedHairStyling`** vs single-token **`selectedStyling` / `customizeSelectedStyling`**.
+
+- **Root cause:** On the customize hub, **`customStorageChange`** merged styling from **`customizeSelectedStyling` / `selectedStyling` only**, ignoring **`*HairStyling` CSV keys**, so React **`customization.styling`** could drop the full combo. **First-load** and **return-from-subpage** paths also wrote the **full CSV** into **`selectedStyling` / `customizeSelectedStyling`**, breaking the single-token convention. The **customize-mode sync-to-storage** effect updated **`selectedStyling`** but not **`selectedHairStyling`**.
+
+- **Fix:** In **`handleStorageChange`**, resolve styling with **`mergeStylingForHub`** (and edit path uses **`editSelectedHairStyling`** when merging). On customize hub **load** paths, persist **`primaryStylingTokenFromHairCsv`** into **`selectedStyling` / `customizeSelectedStyling`** and the **full CSV** into **`selectedHairStyling` / `customizeSelectedHairStyling`**. In the **customize sync** effect, set **`selectedHairStyling`** from full **`customization.styling`** and **`selectedStyling`** to the **primary token**.
+
+- **Files:** `src/pages/build-a-wig/page.tsx`.
+
+- **Verification:** `npm run build` passes.
