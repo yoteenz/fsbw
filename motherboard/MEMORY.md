@@ -16715,3 +16715,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/pages/build-a-wig/color/page.tsx`, `src/pages/build-a-wig/hairline/page.tsx`, `src/pages/build-a-wig/styling/page.tsx`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — NOIR color sub-page: show founder Fal regen strip again
+
+**Context:** User asked to **unhide** the Fal regen text on the **color** sub-page (it had been **`display: none`** for founder-only DOM parity).
+
+**Change:** **`color/page.tsx`**: **`showNoirColorFalRegenText`** = founder gate + **`isBuildAWigColorSubPagePathname`** on NOIR; regen wrapper uses visible styles + **`aria-hidden={false}`** when true; NOIR title **`pointerEvents: 'none'`** only when that strip is visible (avoids tap-through to product nav). **`motherboard/CORE.md`**: NOIR color bullet updated.
+
+**Files:** `src/pages/build-a-wig/color/page.tsx`, `motherboard/CORE.md`.
+
+**Verification:** `npm run build` passes.

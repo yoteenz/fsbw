@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -18,6 +18,7 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import {
+  isBuildAWigColorSubPagePathname,
   readBuildWigLivePreviewColor,
   readBuildWigLivePreviewSelections,
 } from '../../../utils/buildWigLivePreviewSelections';
@@ -275,8 +276,18 @@ function ColorSelection() {
   }, [location.pathname]); // Only reload when route changes, NOT when selectedColor changes
   const [selectedView, setSelectedView] = useState(1);
   const [showLoading, setShowLoading] = useState(true);
-  /** Founder-only: Fal regen links (kept in DOM, hidden) + NOIR title click guard. */
+  /** Founder-only: Fal regen links + NOIR title click guard when regen strip is visible. */
   const [founderNoirFalRegenUi, setFounderNoirFalRegenUi] = useState(false);
+  /** Visible Fal regen copy on NOIR **color** sub-page only (other NOIR steps keep strip in DOM for parity). */
+  const showNoirColorFalRegenText = useMemo(
+    () =>
+      Boolean(
+        founderNoirFalRegenUi &&
+          location.pathname.includes('/build-a-wig/noir/') &&
+          isBuildAWigColorSubPagePathname(location.pathname)
+      ),
+    [location.pathname, founderNoirFalRegenUi]
+  );
   const [liveWigViews, setLiveWigViews] = useState<[string, string, string] | null>(null);
   /** Last good live triple from Fal path — survives transient null while the next color resolves. */
   const [heldFounderLiveTriple, setHeldFounderLiveTriple] = useState<[string, string, string] | null>(null);
@@ -1523,12 +1534,12 @@ function ColorSelection() {
               {founderNoirFalRegenUi && location.pathname.includes('/build-a-wig/noir/') && (
                 <div
                   className="w-full flex flex-col items-center"
-                  aria-hidden
+                  aria-hidden={!showNoirColorFalRegenText}
                   style={{
                     position: 'relative',
                     zIndex: 30,
                     transform: 'translateY(-20px)',
-                    display: 'none',
+                    ...(showNoirColorFalRegenText ? {} : { display: 'none' }),
                   }}
                 >
                   <p
@@ -1649,7 +1660,7 @@ function ColorSelection() {
                       whiteSpace: 'nowrap',
                       overflow: 'visible',
                       width: 'max-content',
-                      ...(founderNoirFalRegenUi ? { pointerEvents: 'none' as const } : {}),
+                      ...(showNoirColorFalRegenText ? { pointerEvents: 'none' as const } : {}),
                       fontSize: (() => {
                         const pathname = location.pathname;
                         if (pathname.includes('/soft-wave/') || pathname.includes('/soft-curl/') || pathname.includes('/blanco/')) {
