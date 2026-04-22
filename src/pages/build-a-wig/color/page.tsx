@@ -42,8 +42,6 @@ import { isFounderNoirFalRegenUiVisible } from '../../../utils/founderNoirFalToo
 import { isPremiumMemberForGatedFeatures } from '../../../utils/premiumMemberAccess';
 import {
   isBawCustomizeColorSubPagePathname,
-  readBawCrossStepSummary,
-  type BawCrossStepSummary,
   readHairlineCsvForWigPreviewPath,
   resolveBawCustomizeColorSubPageSwatch,
 } from '../../../utils/bawCrossStepSummary';
@@ -315,20 +313,6 @@ function ColorSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
-  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
-    readBawCrossStepSummary(location.pathname)
-  );
-
-  useEffect(() => {
-    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
-    sync();
-    window.addEventListener('customStorageChange', sync);
-    window.addEventListener('focus', sync);
-    return () => {
-      window.removeEventListener('customStorageChange', sync);
-      window.removeEventListener('focus', sync);
-    };
-  }, [location.pathname]);
 
   useEffect(() => {
     const sync = () => setNoirLiveColorPremiumGate(isPremiumMemberForGatedFeatures());
@@ -911,7 +895,6 @@ function ColorSelection() {
       localStorage.setItem('selectedColor', colorId);
       localStorage.setItem('selectedColorPrice', priceStr);
     }
-    setCrossStepSummary(readBawCrossStepSummary(pathname));
     if (onNoirColorRoute && colorId === 'OFF BLACK') {
       /** Same optimistic live-color resolution as other swatches — do not clear Storage (avoids static vs fal mismatch). */
       void (async () => {
@@ -1723,20 +1706,6 @@ function ColorSelection() {
             >
               SINGLE COLOR DYE
             </p>
-            <p
-              className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '9px',
-                color: '#808080',
-                lineHeight: 1.35,
-                transform: 'translateY(8px)',
-              }}
-            >
-              CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
-              {crossStepSummary.stylingLabel}
-            </p>
-
             <div
               className={`grid ${isBlancoRoute ? 'grid-cols-3' : 'grid-cols-4'} gap-3 mx-auto justify-center mb-6 ${isBlancoRoute ? 'max-w-[240px]' : 'max-w-[320px]'}`}
               style={{ marginTop: '15px' }}

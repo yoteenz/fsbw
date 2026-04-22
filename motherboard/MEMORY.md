@@ -16703,3 +16703,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `api/live-wig-after-color-styling.ts`, `vercel.json`, `docs/WIG_PREVIEW_PREGENERATION.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-22 — Remove BAW cross-step “CURRENT: COLOR …” gray line from color / hairline / styling sub-pages
+
+**Context:** User asked to remove the gray summary line (**`CURRENT: COLOR … · HAIRLINE … · STYLING …`**) from **hairline**, **color**, and **styling** customize/edit sub-pages.
+
+**Change:** Removed the `<p>` block and related **`crossStepSummary`** state, **`useEffect`** sync listeners, **`readBawCrossStepSummary`** / **`BawCrossStepSummary`** imports, and **`handleColorSelect`** cross-step update on **`color/page.tsx`**. **`hairline/page.tsx`** and **`styling/page.tsx`**: same removal; kept **`markBawNavigateToCustomizeHubFromOtherStep`** import on hairline/styling.
+
+**Files:** `src/pages/build-a-wig/color/page.tsx`, `src/pages/build-a-wig/hairline/page.tsx`, `src/pages/build-a-wig/styling/page.tsx`.
+
+**Verification:** `npm run build` passes.

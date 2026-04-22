@@ -37,11 +37,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import {
-  markBawNavigateToCustomizeHubFromOtherStep,
-  readBawCrossStepSummary,
-  type BawCrossStepSummary,
-} from '../../../utils/bawCrossStepSummary';
+import { markBawNavigateToCustomizeHubFromOtherStep } from '../../../utils/bawCrossStepSummary';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -187,20 +183,6 @@ export default function StylingSelectionPage() {
   const [liveBangsLoading, setLiveBangsLoading] = useState(false);
   const [liveStylingError, setLiveStylingError] = useState<string | null>(null);
   const [regenStylingAngle, setRegenStylingAngle] = useState<'left' | 'front' | 'right' | null>(null);
-  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
-    readBawCrossStepSummary(location.pathname)
-  );
-
-  useEffect(() => {
-    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
-    sync();
-    window.addEventListener('customStorageChange', sync);
-    window.addEventListener('focus', sync);
-    return () => {
-      window.removeEventListener('customStorageChange', sync);
-      window.removeEventListener('focus', sync);
-    };
-  }, [location.pathname]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -1974,20 +1956,6 @@ export default function StylingSelectionPage() {
             >
               SALON TREATMENTS
             </p>
-            <p
-              className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '9px',
-                color: '#808080',
-                lineHeight: 1.35,
-                transform: 'translateY(8px)',
-              }}
-            >
-              CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
-              {crossStepSummary.stylingLabel}
-            </p>
-
             {/* HAIR STYLING OPTIONS */}
             <div className="grid grid-cols-4 gap-3 mx-auto justify-center mb-6 max-w-[320px]" style={{ marginTop: '13px' }}>
               {hairStylingOptions.map((option) => (

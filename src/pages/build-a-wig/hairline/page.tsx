@@ -18,11 +18,7 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
-import {
-  markBawNavigateToCustomizeHubFromOtherStep,
-  readBawCrossStepSummary,
-  type BawCrossStepSummary,
-} from '../../../utils/bawCrossStepSummary';
+import { markBawNavigateToCustomizeHubFromOtherStep } from '../../../utils/bawCrossStepSummary';
 
 interface HairlineOption {
   id: string;
@@ -96,20 +92,6 @@ function HairlineSelection() {
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useSignedInFromStorage();
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
-  const [crossStepSummary, setCrossStepSummary] = useState<BawCrossStepSummary>(() =>
-    readBawCrossStepSummary(location.pathname)
-  );
-
-  useEffect(() => {
-    const sync = () => setCrossStepSummary(readBawCrossStepSummary(location.pathname));
-    sync();
-    window.addEventListener('customStorageChange', sync);
-    window.addEventListener('focus', sync);
-    return () => {
-      window.removeEventListener('customStorageChange', sync);
-      window.removeEventListener('focus', sync);
-    };
-  }, [location.pathname]);
 
   // Listen for cart count changes
   useEffect(() => {
@@ -1008,20 +990,6 @@ function HairlineSelection() {
           >
             VENTILLATION EFFECT
           </p>
-          <p
-            className="text-center px-2 mb-3 w-full max-w-[320px] mx-auto"
-            style={{
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-              fontSize: '9px',
-              color: '#808080',
-              lineHeight: 1.35,
-              transform: 'translateY(8px)',
-            }}
-          >
-            CURRENT: COLOR {crossStepSummary.colorLabel} · HAIRLINE {crossStepSummary.hairlineLabel} · STYLING{' '}
-            {crossStepSummary.stylingLabel}
-          </p>
-
           {/* HAIRLINE OPTIONS - Centered 3-column layout */}
           <div className="grid grid-cols-3 gap-4 mx-auto justify-center mb-6 max-w-[240px]" style={{ marginTop: '15px' }}>
             {hairlineOptions.map((option) => {
