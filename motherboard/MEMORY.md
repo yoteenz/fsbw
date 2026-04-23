@@ -16823,3 +16823,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/components/admin/AdminRevenueLiveGlobeWebGL.tsx`, `vite.config.ts` (revert `globe-gl` split).
 
 **Verification:** `npm run build` passes; built **`AdminRevenueLiveGlobe`** chunk no longer contains a static **`globe-gl`** import.
+
+---
+
+## 2026-04-23 — Admin Revenue: remove globe.gl + three (crashes persisted)
+
+**Context:** User reported **still crashing** after lazy-chunk and preload fixes.
+
+**Decision:** **Remove `globe.gl` and `three`** from **`package.json`** entirely. **`three` + postprocessing** had been pulled into the main **`vendor`** bundle (~**2.6MB** minified), which is still too heavy for reliable mobile loads even when the globe UI path tried to defer WebGL.
+
+**Replacement:** **`AdminRevenueLiveGlobe.tsx`** is **SVG/CSS only** again: circular frame, **great-circle arc** polylines (hub → orders, capped), graticule, pan/zoom, red visitor / green order dots, same detail modal. Deleted **`AdminRevenueLiveGlobeWebGL.tsx`** and **`globeGlLoader.ts`**.
+
+**Files:** `package.json`, `package-lock.json`, `src/components/admin/AdminRevenueLiveGlobe.tsx`; removed **`AdminRevenueLiveGlobeWebGL.tsx`**, **`globeGlLoader.ts`**.
+
+**Verification:** `npm run build` passes; **`vendor`** minified ~**957 kB** (was ~**2.68MB** with three in vendor).

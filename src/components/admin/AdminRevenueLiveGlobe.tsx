@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 const BRAND_RED = '#EB1C24';
@@ -19,6 +19,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
   ];
 }
 
+/** Equirectangular map space (matches SVG viewBox 360×180). */
 function project(lat: number, lng: number): { leftPct: number; topPct: number } {
   const clampLat = Math.max(-85, Math.min(85, lat));
   const clampLng = Math.max(-180, Math.min(180, lng));
@@ -28,39 +29,81 @@ function project(lat: number, lng: number): { leftPct: number; topPct: number } 
   };
 }
 
-function hasWebGL(): boolean {
-  try {
-    const c = document.createElement('canvas');
-    return !!(c.getContext('webgl') || c.getContext('experimental-webgl'));
-  } catch {
-    return false;
-  }
+function toMapXY(lat: number, lng: number): { x: number; y: number } {
+  const clampLat = Math.max(-85, Math.min(85, lat));
+  const clampLng = Math.max(-180, Math.min(180, lng));
+  return { x: clampLng + 180, y: 90 - clampLat };
 }
 
-const AdminRevenueLiveGlobeWebGL = lazy(() => import('./AdminRevenueLiveGlobeWebGL'));
+/** Degrees → radians */
+const D2R = Math.PI / 180;
 
-class GlobeLazyErrorBoundary extends React.Component<
-  { children: React.ReactNode; fallback: React.ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
+function interpolateGreatCircle(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+  segments: number
+): Array<{ x: number; y: number }> {
+  const φ1 = lat1 * D2R;
+  const λ1 = lng1 * D2R;
+  const φ2 = lat2 * D2R;
+  const λ2 = lng2 * D2R;
+  const d =
+    2 *
+    Math.asin(
+      Math.sqrt(
+        Math.sin((φ2 - φ1) / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin((λ2 - λ1) / 2) ** 2
+      )
+    );
+  if (!Number.isFinite(d) || d < 1e-6) {
+    const a = toMapXY(lat1, lng1);
+    return [a, toMapXY(lat2, lng2)];
   }
-
-  static getDerivedStateFromError(): { hasError: boolean } {
-    return { hasError: true };
+  const out: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i <= segments; i++) {
+    const f = i / segments;
+    const A = Math.sin((1 - f) * d) / Math.sin(d);
+    const B = Math.sin(f * d) / Math.sin(d);
+    const x = A * Math.cos(φ1) * Math.cos(λ1) + B * Math.cos(φ2) * Math.cos(λ2);
+    const y = A * Math.cos(φ1) * Math.sin(λ1) + B * Math.cos(φ2) * Math.sin(λ2);
+    const z = A * Math.sin(φ1) + B * Math.sin(φ2);
+    const φ = Math.atan2(z, Math.sqrt(x * x + y * y));
+    const λ = Math.atan2(y, x);
+    out.push(toMapXY(φ / D2R, λ / D2R));
   }
-
-  render() {
-    if (this.state.hasError) return this.props.fallback;
-    return this.props.children;
-  }
+  return out;
 }
 
-/** 2D fallback — no WebGL / lazy WebGL failure. */
-function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
+function buildArcPaths(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): string[] {
+  if (orderPoints.length === 0) return [];
+  const hub = visitorPoints[0] ?? orderPoints[0];
+  if (!hub) return [];
+  const max = 16;
+  const paths: string[] = [];
+  for (let i = 0; i < Math.min(orderPoints.length, max); i++) {
+    const o = orderPoints[i];
+    if (!o) continue;
+    const pts = interpolateGreatCircle(hub.lat, hub.lng, o.lat, o.lng, 24);
+    if (pts.length < 2) continue;
+    let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
+    for (let j = 1; j < pts.length; j++) {
+      const p = pts[j];
+      d += ` L ${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
+    }
+    paths.push(d);
+  }
+  return paths;
+}
+
+/**
+ * Admin revenue live view: **SVG/CSS only** (no WebGL, no three.js).
+ * Circular clip, graticule, pan/zoom, visitor/order dots, great-circle arcs to orders.
+ * Keeps the page usable on mobile where globe.gl + three reliably caused freezes / tab crashes.
+ */
+export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
+  const arcPaths = useMemo(() => buildArcPaths(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
 
   const [scale, setScale] = useState(1);
@@ -167,15 +210,17 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
             width: size,
             height: size,
             borderRadius: '50%',
-            boxShadow: 'inset 0 0 50px rgba(255,255,255,0.35), inset 0 -20px 40px rgba(14, 165, 233, 0.12), 0 10px 28px rgba(15, 23, 42, 0.18)',
+            boxShadow:
+              'inset 0 0 55px rgba(255,255,255,0.28), inset 0 -24px 48px rgba(56, 189, 248, 0.14), 0 12px 32px rgba(15, 23, 42, 0.22)',
             touchAction: 'none',
+            background: 'radial-gradient(circle at 32% 22%, rgba(45, 212, 191, 0.12), transparent 52%), radial-gradient(circle at 72% 78%, rgba(59, 130, 246, 0.14), transparent 48%), #0b1220',
           }}
           onWheel={onWheel}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerUp}
-          aria-label="Map: drag to pan, scroll to zoom, tap a dot for details"
+          aria-label="Live map: drag to pan, scroll to zoom, tap a dot for details"
         >
           <div
             className="absolute inset-0"
@@ -188,11 +233,23 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
               alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-85"
+              className="absolute inset-0 h-full w-full object-cover opacity-[0.82]"
               draggable={false}
               loading="lazy"
             />
+
             <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 360 180" preserveAspectRatio="none">
+              {arcPaths.map((d, i) => (
+                <path
+                  key={`arc-${i}`}
+                  d={d}
+                  fill="none"
+                  stroke="rgba(22, 163, 74, 0.45)"
+                  strokeWidth={1.1}
+                  strokeLinecap="round"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
               {[-120, -60, 0, 60, 120].map((lng) => (
                 <line
                   key={`v-${lng}`}
@@ -200,8 +257,8 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
                   y1={0}
                   x2={lng + 180}
                   y2={180}
-                  stroke="rgba(14, 165, 233, 0.35)"
-                  strokeWidth={0.8}
+                  stroke="rgba(125, 211, 252, 0.4)"
+                  strokeWidth={0.75}
                 />
               ))}
               {[-60, -30, 0, 30, 60].map((lat) => {
@@ -213,13 +270,20 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
                     y1={y}
                     x2={360}
                     y2={y}
-                    stroke="rgba(14, 165, 233, 0.28)"
-                    strokeWidth={0.7}
+                    stroke="rgba(125, 211, 252, 0.32)"
+                    strokeWidth={0.65}
                   />
                 );
               })}
             </svg>
-            <div className="absolute inset-0 bg-gradient-to-br from-sky-100/25 via-transparent to-slate-900/10 pointer-events-none" />
+
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                boxShadow: 'inset 0 0 0 1px rgba(148, 163, 184, 0.35)',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/15 via-transparent to-slate-900/25 pointer-events-none" />
 
             {points.map((p, i) => {
               const { leftPct, topPct } = project(p.lat, p.lng);
@@ -239,6 +303,7 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
                     background: color,
                     padding: 0,
                     zIndex: 2,
+                    boxShadow: '0 0 10px rgba(0,0,0,0.25)',
                   }}
                   title={p.label}
                   aria-label={p.label}
@@ -254,43 +319,5 @@ function AdminRevenueLiveGlobeMap2D({ orderPoints, visitorPoints, heightPx = 240
       </div>
       {modal}
     </>
-  );
-}
-
-/**
- * Admin revenue live view: WebGL globe when supported, loaded in a **separate** lazy chunk
- * (`AdminRevenueLiveGlobeWebGL`) so ~1.3MB `globe-gl` is not downloaded for the 2D path.
- * Falls back to the 2D map if WebGL is missing or the WebGL lazy boundary errors.
- */
-export default function AdminRevenueLiveGlobe(props: Props) {
-  const [use2d, setUse2d] = useState(!hasWebGL());
-  const onGlobeBroken = useCallback(() => setUse2d(true), []);
-
-  if (use2d) {
-    return <AdminRevenueLiveGlobeMap2D {...props} />;
-  }
-
-  const suspenseFallback = (
-    <div
-      className="w-full flex items-center justify-center rounded-full border border-gray-200 bg-slate-900/40 mx-auto"
-      style={{
-        width: Math.min(props.heightPx ?? 240, 320),
-        height: Math.min(props.heightPx ?? 240, 320),
-        fontFamily: '"Futura PT Book"',
-        fontSize: '10px',
-        color: '#94a3b8',
-        textTransform: 'uppercase',
-      }}
-    >
-      Loading globe…
-    </div>
-  );
-
-  return (
-    <GlobeLazyErrorBoundary fallback={<AdminRevenueLiveGlobeMap2D {...props} />}>
-      <Suspense fallback={suspenseFallback}>
-        <AdminRevenueLiveGlobeWebGL {...props} onBroken={onGlobeBroken} />
-      </Suspense>
-    </GlobeLazyErrorBoundary>
   );
 }
