@@ -16781,3 +16781,19 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/pages/admin/revenue/page.tsx`, `src/utils/api.ts`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Admin Revenue globe: 304 empty body broke `getAdminLivePresence` JSON parse
+
+**Context:** After prior fixes (clear stale **`liveGlobeError`**, parse **`live-presence`** as text), the user still saw **LIVE DATA UNAVAILABLE** while DevTools showed **GET 200 / 304** for **`/api/admin/live-presence`**.
+
+**Cause:** Browsers can return **HTTP 304 Not Modified** with **`response.ok === true`** and an **empty** response body. **`getAdminLivePresence`** called **`JSON.parse(text)`** on that body; **`JSON.parse('')`** throws, and the catch path showed the generic error under the globe.
+
+**Fix:** In **`src/utils/api.ts`**, **`getAdminLivePresence`** now calls **`apiFetch('/api/admin/live-presence', { cache: 'no-store' })`** to reduce revalidation/304 behavior, and treats a **trimmed empty** successful body as **`{ visitorsNow: 0, visitors: [] }`** instead of parsing.
+
+**Files:** `src/utils/api.ts`. Commit **`cd227fd3`**; pushed **`origin/master`** and **`origin/preview/mobile`**.
+
+**Verification:** `npm run build` passes.
+
+**How to confirm after deploy:** Admin → Revenue → Overview; in **Network**, select **`live-presence`** and confirm the **Response** tab shows JSON with **`visitorsNow`** / **`visitors`** (zero visitors is OK and should not show the red line). If **`VITE_API_BASE`** points at a host that does not serve **`/api/*`**, the body may still be HTML — that path throws a different, explicit error from **`getAdminLivePresence`**.
