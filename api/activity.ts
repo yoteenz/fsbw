@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthUser } from './_lib/auth';
-import { getSupabaseUser } from './_lib/supabase';
+import { getAuthUser } from './_lib/auth.js';
+import { getSupabaseUser } from './_lib/supabase.js';
 
 /** POST /api/activity – record a user activity event (authenticated). Body: { eventType, payload? } */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

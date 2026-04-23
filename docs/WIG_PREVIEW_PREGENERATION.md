@@ -62,7 +62,7 @@ The server (per request):
 
 ### Live after-color styling — NOIR, LAYERS / CRIMPS / FLAT IRON + part MIDDLE / LEFT / RIGHT (admin)
 
-**Runtime (Vercel Node ESM):** `api/live-wig-after-color-styling.ts` imports **`./_lib/*.js`** (explicit extension) so the serverless bundle resolves `adminAuth` and siblings; extensionless `./_lib/adminAuth` can throw **`ERR_MODULE_NOT_FOUND`** on Vercel.
+**Runtime (Vercel Node ESM):** `api/live-wig-after-color-styling.ts` imports **`./_lib/*.js`** (explicit extension) so the serverless bundle resolves `adminAuth` and siblings; extensionless `./_lib/adminAuth` can throw **`ERR_MODULE_NOT_FOUND`** on Vercel. The same rule applies to **all** `api/**/*.ts` handlers that import **`api/_lib/*`** (e.g. `profile`, `cart`, `admin/*`): use **`./_lib/foo.js`** or **`../_lib/foo.js`** in source so Node ESM resolves at runtime.
 
 On **`/build-a-wig/noir/edit/styling`** or **`.../customize/styling`**, when admin + Supabase session and **exactly one** salon style among **LAYERS**, **CRIMPS**, **FLAT IRON** and part **MIDDLE**, **LEFT**, or **RIGHT** are selected, the app calls **`POST /api/live-wig-after-color-styling`** **three times in sequence** with body **`angle`**: `"left"` \| `"front"` \| `"right"` (one fal job per serverless invocation). Body includes **`partSelection`**. A **single** no-`angle` request that runs all three fal steps in one function often hits Vercel **`FUNCTION_INVOCATION_FAILED`** / duration limits. **`forceRegenerate`** on **regen style L/M/R** unchanged. Resolution: **`WIG_PREVIEW_FAL_STYLING_RESOLUTION`** or **`WIG_PREVIEW_FAL_RESOLUTION`**, default **2K** for this route.
 

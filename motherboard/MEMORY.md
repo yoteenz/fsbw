@@ -16753,3 +16753,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `api/admin/` (batch).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-23 — `profile` 500: ESM `ERR_MODULE_NOT_FOUND` for `./_lib/auth` (non-admin API routes)
+
+**Context:** Vercel log: **`Cannot find module '/var/task/api/_lib/auth' imported from /var/task/api/profile.js`**.
+
+**Cause:** Same as admin routes: **`api/profile.ts`** and other top-level / nested **`api/*.ts`** handlers still used **`from './_lib/auth'`** / **`from '../_lib/supabase'`** without **`.js`**.
+
+**Fix:** Appended **`.js`** to all **`_lib`** relative imports (and **`import('./_lib/auditLog')`**) across **`api/`** excluding **`api/_lib/`** itself — **`profile`**, **`cart`**, **`orders`**, **`wishlist`**, **`activity`**, **`checkout/*`**, **`booking/*`**, **`client/submissions`**, **`consult-quote`**, **`delete-account`**, **`profile-image`**, **`stripe/*`**, **`analytics/event`**, etc.
+
+**Files:** `api/` (batch, 19 files in script run).
+
+**Verification:** `npm run build` passes.

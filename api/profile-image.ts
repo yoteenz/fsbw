@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthUser } from './_lib/auth';
-import { getSupabaseAdminServiceRole } from './_lib/supabase';
+import { getAuthUser } from './_lib/auth.js';
+import { getSupabaseAdminServiceRole } from './_lib/supabase.js';
 
 const BUCKET = 'profile-images';
 

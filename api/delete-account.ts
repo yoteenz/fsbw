@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthUser } from './_lib/auth';
-import { getSupabaseAdmin, getSupabaseAdminServiceRole, hasSupabaseServiceRole } from './_lib/supabase';
+import { getAuthUser } from './_lib/auth.js';
+import { getSupabaseAdmin, getSupabaseAdminServiceRole, hasSupabaseServiceRole } from './_lib/supabase.js';
 
 /**
  * DELETE /api/delete-account

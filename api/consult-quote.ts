@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthUser } from './_lib/auth';
-import { getSupabaseAdmin } from './_lib/supabase';
+import { getAuthUser } from './_lib/auth.js';
+import { getSupabaseAdmin } from './_lib/supabase.js';
 
 /** GET /api/consult-quote?id= — signed-in user fetches their consult offer. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

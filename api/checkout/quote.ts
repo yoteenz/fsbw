@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote';
+import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;

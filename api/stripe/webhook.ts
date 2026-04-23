@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent';
-import { membershipTierForStripePriceId } from '../_lib/stripeMembership';
+import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent.js';
+import { membershipTierForStripePriceId } from '../_lib/stripeMembership.js';
 
 export const config = { runtime: 'edge' };
 

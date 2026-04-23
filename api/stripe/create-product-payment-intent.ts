@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
-import { getAuthUser } from '../_lib/auth';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote';
+import { getAuthUser } from '../_lib/auth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { resolveCheckoutQuoteLines, type QuoteLineInput } from '../_lib/pricing/resolveQuote.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;

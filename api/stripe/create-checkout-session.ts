@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
-import { getAuthUser } from '../_lib/auth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { getAuthUser } from '../_lib/auth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
 import {
   compareMembershipTierCost,
   isMembershipTierParam,
@@ -10,7 +10,7 @@ import {
   siteUrlFromEnv,
   stripePriceIdForTier,
   membershipStripeConfigured,
-} from '../_lib/stripeMembership';
+} from '../_lib/stripeMembership.js';
 
 function sendJson(res: VercelResponse, status: number, body: unknown): void {
   res.statusCode = status;

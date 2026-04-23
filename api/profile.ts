@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { getAuthUser } from './_lib/auth';
-import { fromProfileRow } from './_lib/profileMapping';
+import { getAuthUser } from './_lib/auth.js';
+import { fromProfileRow } from './_lib/profileMapping.js';
 
 /**
  * Profile API — uses createClient inline + manual JSON (same pattern as special-offer-config / session-restore)
@@ -323,7 +323,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       }
 
       try {
-        const { writeAuditLog } = await import('./_lib/auditLog');
+        const { writeAuditLog } = await import('./_lib/auditLog.js');
         await writeAuditLog({
           actorId: user.id,
           actorEmail: user.email,

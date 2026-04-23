@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase';
+import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
 const SOCIAL_PLATFORMS = new Set(['instagram', 'twitter', 'facebook', 'tiktok']);
 const SOCIAL_SOURCES = new Set(['menu', 'more_ways_to_earn']);

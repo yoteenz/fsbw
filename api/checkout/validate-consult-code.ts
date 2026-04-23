@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthUser } from '../_lib/auth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { getAuthUser } from '../_lib/auth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;
