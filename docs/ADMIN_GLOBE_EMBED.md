@@ -38,6 +38,17 @@ Use the **origin only** (no path required). The revenue page iframe loads that U
 
 Redeploy the main app. **Admin → Revenue → Overview** will use the iframe when this variable is set; otherwise it keeps the **SVG/CSS** globe (no WebGL in `vendor`).
 
+### “I deployed the embed but still see the old / SVG globe”
+
+That almost always means the **main storefront** was not rebuilt with the variable:
+
+1. **`VITE_ADMIN_GLOBE_EMBED_URL` must live on the main app’s Vercel project** (the one that serves `/admin/revenue`), **not** only on the embed project.
+2. **`VITE_*` is inlined at build time** — after adding or changing the variable, trigger a **new deployment** of the **main** app (Redeploy). Changing env without rebuilding leaves the old bundle (no iframe).
+3. Name must be exact: **`VITE_ADMIN_GLOBE_EMBED_URL`** (not `ADMIN_GLOBE_EMBED_URL` alone for the Vite client).
+4. Value should be the **embed origin only**, e.g. `https://your-embed.vercel.app` — no trailing slash required.
+
+**Quick check in the browser:** Inspect the globe area’s parent wrapper. If you see **`data-admin-globe-mode="svg"`**, the main build did not pick up the env. If you see **`data-admin-globe-mode="iframe"`**, the main app is trying to load the embed (then check Network for the iframe document and any blocked requests).
+
 ---
 
 ## 3. Protocol (`postMessage`)

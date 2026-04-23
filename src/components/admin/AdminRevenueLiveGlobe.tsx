@@ -203,7 +203,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
 
   return (
     <>
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center w-full" data-admin-globe-mode="iframe">
         <iframe
           ref={iframeRef}
           title="Admin live globe (WebGL)"
@@ -298,7 +298,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
 
   return (
     <>
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center w-full" data-admin-globe-mode="svg">
         <div
           className="relative overflow-hidden select-none touch-none"
           style={{

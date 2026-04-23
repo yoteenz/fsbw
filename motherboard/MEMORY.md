@@ -16873,3 +16873,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `embed/admin-globe/postcss.config.js`, `docs/ADMIN_GLOBE_EMBED.md`.
 
 **Verification:** **`cd embed/admin-globe && npm run build`** passes.
+
+---
+
+## 2026-04-24 — Admin globe embed: user still saw SVG after embed deploy
+
+**Context:** User deployed the **embed** but still saw the **SVG / “old”** globe.
+
+**Cause:** **`VITE_ADMIN_GLOBE_EMBED_URL`** is read by the **main** Vite app at **build** time and must be set on the **main** Vercel project; deploying only the **second** project does not change the main bundle. Env name must be **`VITE_*`**; main app needs **redeploy** after env change.
+
+**Fix / UX:** **`AdminRevenueLiveGlobe`** wrapper: **`data-admin-globe-mode="iframe"`** vs **`svg`** for DevTools inspection. **`docs/ADMIN_GLOBE_EMBED.md`**: troubleshooting section.
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
