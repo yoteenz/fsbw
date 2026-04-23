@@ -16849,3 +16849,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-24 — Admin WebGL globe: iframe embed + `embed/admin-globe` app
+
+**Context:** User asked **how to implement** full WebGL without it landing in the main **`vendor`** chunk.
+
+**Implementation:** Added **`embed/admin-globe/`** — standalone **Vite** app with **`globe.gl` + `three`** (own **`package.json`**, build **`dist/`**). Main app **`AdminRevenueLiveGlobe`**: if **`VITE_ADMIN_GLOBE_EMBED_URL`** is set → **`<iframe>`** loads that origin; **`postMessage`** protocol **`fsbw-admin-globe-ready`** → then **`fsbw-admin-globe`** with **`points`**; clicks → **`fsbw-admin-globe-point`**. Parent verifies **`event.source`**. Iframe **`sandbox="allow-scripts"`** (opaque cross-origin). Without env → existing **SVG/CSS** globe unchanged. **`docs/ADMIN_GLOBE_EMBED.md`** + **`.env.example`** document deploy (second Vercel project, root **`embed/admin-globe`**).
+
+**Files:** `embed/admin-globe/*`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`, `.env.example`.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
