@@ -13,6 +13,8 @@ This repo includes a **tiny second app** at **`embed/admin-globe/`** that only r
 3. Build: default (`npm run build`) — output is **`dist/`**.
 4. Deploy. Note the URL, e.g. `https://admin-globe-embed.vercel.app`
 
+**Vercel / PostCSS:** This folder includes **`embed/admin-globe/postcss.config.js`** (empty plugins) so Vite does **not** walk up to the repo root and load the main app’s **`postcss.config.js`** (which requires **`tailwindcss`**). Without that local file, the embed build fails on Vercel with “Cannot find module 'tailwindcss'”.
+
 **Local check**
 
 ```bash

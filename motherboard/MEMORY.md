@@ -16861,3 +16861,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `embed/admin-globe/*`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`, `.env.example`.
 
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+---
+
+## 2026-04-24 — embed/admin-globe Vercel build: PostCSS picked root tailwind
+
+**Context:** Vercel build for **`embed/admin-globe`** failed: **`Cannot find module 'tailwindcss'`** loading **`/vercel/path0/postcss.config.js`** (monorepo root).
+
+**Fix:** Added **`embed/admin-globe/postcss.config.js`** with **`plugins: {}`** so Vite resolves PostCSS **inside the embed** and does not use the main app’s Tailwind PostCSS config. Documented in **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Files:** `embed/admin-globe/postcss.config.js`, `docs/ADMIN_GLOBE_EMBED.md`.
+
+**Verification:** **`cd embed/admin-globe && npm run build`** passes.
