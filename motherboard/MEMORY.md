@@ -16809,3 +16809,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `package.json` / `package-lock.json`, `src/components/admin/AdminRevenueLiveGlobe.tsx`. Reverted experimental **`manualChunks`** for globe (caused Rollup **circular chunk** with **`vendor`**); rely on dynamic import splitting.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-23 — Admin Revenue globe crashes: Vite hoisted globe.gl into vendor + static preload
+
+**Context:** User reported the **site still crashing** after adding the 3D globe.
+
+**Causes:** (1) **`import('globe.gl')`** inside the lazy **`AdminRevenueLiveGlobe`** chunk was bundled so the **parent chunk statically imported the same module graph as `vendor`** (~2.6MB parse on mobile when opening revenue). (2) **`manualChunks`** putting **`globe.gl` / `three` in `globe-gl`** made Vite emit **`import "./globe-gl....js"`** in the **parent** chunk for **modulepreload**, so **~1.3MB downloaded even on the 2D WebGL-disabled path** before fallback — enough to freeze / tab-crash Safari.
+
+**Fix:** Split **`AdminRevenueLiveGlobeWebGL`** to **`src/components/admin/AdminRevenueLiveGlobeWebGL.tsx`** and load it with **`React.lazy`** from **`AdminRevenueLiveGlobe.tsx`**; **`globeGlLoader.ts`** remains the only static link to **`globe.gl`**. Removed **`manualChunks`** special-case for **`globe-gl`**. Added **`GlobeLazyErrorBoundary`** so a failed lazy chunk does not white-screen the page (falls back to 2D map). **`antialias: false`** on WebGL renderer. **`use2d`** is now **`!hasWebGL()`** immediately (no prefetch **`import('./globeGlLoader')`** in parent).
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/components/admin/AdminRevenueLiveGlobeWebGL.tsx`, `vite.config.ts` (revert `globe-gl` split).
+
+**Verification:** `npm run build` passes; built **`AdminRevenueLiveGlobe`** chunk no longer contains a static **`globe-gl`** import.
