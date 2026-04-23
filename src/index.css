@@ -4039,3 +4039,22 @@ p.bcf-bundles-pdp-product-name {
   z-index: 1 !important;
   white-space: normal !important;
 }
+
+/* Admin revenue: CSS-only “globe” slow drift (no requestAnimationFrame / WebGL). */
+@keyframes admin-revenue-globe-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-140px);
+  }
+}
+
+.admin-revenue-globe-spin-layer {
+  animation: admin-revenue-globe-drift 72s linear infinite;
+  will-change: transform;
+}
+
+.admin-revenue-globe-spin-layer--paused {
+  animation-play-state: paused;
+}

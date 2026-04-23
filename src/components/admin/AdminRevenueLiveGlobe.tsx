@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 
 const BRAND_RED = '#EB1C24';
@@ -96,18 +96,24 @@ function buildArcPaths(visitorPoints: Props['visitorPoints'], orderPoints: Props
   return paths;
 }
 
+/** Dark earth texture (static CDN image — no three.js / WebGL in the bundle). */
+const EARTH_TEXTURE =
+  'https://cdn.jsdelivr.net/npm/three-globe@2.45.2/example/img/earth-dark.jpg';
+
 /**
- * Admin revenue live view: **SVG/CSS only** (no WebGL, no three.js).
- * Circular clip, graticule, pan/zoom, visitor/order dots, great-circle arcs to orders.
- * Keeps the page usable on mobile where globe.gl + three reliably caused freezes / tab crashes.
+ * Admin revenue live view: **SVG/CSS “globe”** (no WebGL — three/globe.gl crashed mobile).
+ * Dark earth texture, subtle 3D tilt, atmosphere ring, slow drift, graticule, arcs, dots.
  */
 export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
+  const termGradientId = useId().replace(/:/g, '');
+  const size = Math.min(heightPx, 280);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPaths(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
 
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [pointerDown, setPointerDown] = useState(false);
   const drag = useRef<{ active: boolean; startX: number; startY: number; panX: number; panY: number } | null>(null);
 
   const clampPan = useCallback(
@@ -148,6 +154,7 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    setPointerDown(true);
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     drag.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
   };
@@ -162,9 +169,8 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
 
   const onPointerUp = () => {
     drag.current = null;
+    setPointerDown(false);
   };
-
-  const size = Math.min(heightPx, 280);
 
   const modal =
     selected &&
@@ -210,35 +216,50 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
             width: size,
             height: size,
             borderRadius: '50%',
+            perspective: 720,
             boxShadow:
-              'inset 0 0 55px rgba(255,255,255,0.28), inset 0 -24px 48px rgba(56, 189, 248, 0.14), 0 12px 32px rgba(15, 23, 42, 0.22)',
+              '0 0 0 1px rgba(125, 211, 252, 0.35), 0 0 28px rgba(56, 189, 248, 0.22), inset 0 0 70px rgba(2, 6, 23, 0.55), inset 0 -20px 50px rgba(14, 165, 233, 0.12), 0 14px 36px rgba(15, 23, 42, 0.35)',
             touchAction: 'none',
-            background: 'radial-gradient(circle at 32% 22%, rgba(45, 212, 191, 0.12), transparent 52%), radial-gradient(circle at 72% 78%, rgba(59, 130, 246, 0.14), transparent 48%), #0b1220',
+            background: 'radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0) 58%, rgba(2, 6, 23, 0.85) 100%), #020617',
           }}
           onWheel={onWheel}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerUp}
-          aria-label="Live map: drag to pan, scroll to zoom, tap a dot for details"
+          aria-label="Live globe preview: drag to pan, scroll to zoom, tap a dot for details"
         >
           <div
             className="absolute inset-0"
             style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale}) rotateX(6deg) rotateY(-10deg)`,
               transformOrigin: 'center center',
+              transformStyle: 'preserve-3d',
               willChange: 'transform',
             }}
           >
+            <div
+              className={`absolute inset-0 admin-revenue-globe-spin-layer${
+                pointerDown || scale > 1.02 ? ' admin-revenue-globe-spin-layer--paused' : ''
+              }`}
+            >
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
+              src={EARTH_TEXTURE}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-[0.82]"
+              className="absolute inset-0 h-full w-full object-cover opacity-[0.92]"
               draggable={false}
               loading="lazy"
             />
 
             <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 360 180" preserveAspectRatio="none">
+              <defs>
+                <radialGradient id={termGradientId} cx="78%" cy="22%" r="75%">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0.14)" />
+                  <stop offset="45%" stopColor="rgba(255,255,255,0)" />
+                  <stop offset="100%" stopColor="rgba(2,6,23,0.55)" />
+                </radialGradient>
+              </defs>
+              <rect x="0" y="0" width="360" height="180" fill={`url(#${termGradientId})`} />
               {arcPaths.map((d, i) => (
                 <path
                   key={`arc-${i}`}
@@ -280,10 +301,10 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
             <div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{
-                boxShadow: 'inset 0 0 0 1px rgba(148, 163, 184, 0.35)',
+                boxShadow: 'inset 0 0 0 1px rgba(148, 163, 184, 0.25)',
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/15 via-transparent to-slate-900/25 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-sky-400/10 via-transparent to-slate-950/40 pointer-events-none" />
 
             {points.map((p, i) => {
               const { leftPct, topPct } = project(p.lat, p.lng);
@@ -314,6 +335,7 @@ export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heig
                 />
               );
             })}
+            </div>
           </div>
         </div>
       </div>

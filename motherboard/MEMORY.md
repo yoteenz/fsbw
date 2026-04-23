@@ -16837,3 +16837,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `package.json`, `package-lock.json`, `src/components/admin/AdminRevenueLiveGlobe.tsx`; removed **`AdminRevenueLiveGlobeWebGL.tsx`**, **`globeGlLoader.ts`**.
 
 **Verification:** `npm run build` passes; **`vendor`** minified ~**957 kB** (was ~**2.68MB** with three in vendor).
+
+---
+
+## 2026-04-23 — Admin Revenue globe: clarify WebGL removed; restyle CSS “globe”
+
+**Context:** User asked if the **WebGL globe was removed** — site loads but they only saw the **old bright Wikimedia** map.
+
+**Outcomes:** Confirmed **`globe.gl` + `three` stay removed** (stability). **`AdminRevenueLiveGlobe`** now uses the **dark `earth-dark.jpg`** texture from jsDelivr (image only), **3D-ish** `perspective` + slight **`rotateX` / `rotateY`**, **cyan atmosphere ring** shadows, **terminator-style** SVG gradient overlay, **CSS keyframe drift** (paused on drag / when zoomed > 1.02) in **`src/index.css`**. Unique SVG gradient **`id`** via **`useId`** for multiple instances.
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`.
+
+**Verification:** `npm run build` passes.
