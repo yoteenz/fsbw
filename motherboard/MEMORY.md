@@ -16797,3 +16797,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` passes.
 
 **How to confirm after deploy:** Admin → Revenue → Overview; in **Network**, select **`live-presence`** and confirm the **Response** tab shows JSON with **`visitorsNow`** / **`visitors`** (zero visitors is OK and should not show the red line). If **`VITE_API_BASE`** points at a host that does not serve **`/api/*`**, the body may still be HTML — that path throws a different, explicit error from **`getAdminLivePresence`**.
+
+---
+
+## 2026-04-23 — Admin Revenue: WebGL 3D globe (globe.gl) vs flat map fallback
+
+**Context:** User asked for an admin revenue live view that **visually matches** reference globes (Shopify-style 3D, grid, arcs, glow) instead of the **flat circular map**, without **crashing the site** from bundle size.
+
+**Approach:** Added **`globe.gl`** + pinned **`three@0.179.0`** as dependencies. **`AdminRevenueLiveGlobe`** (`src/components/admin/AdminRevenueLiveGlobe.tsx`) now uses **dynamic `import('globe.gl')`** inside the already **lazy** revenue route chunk: **dark earth** textures from jsDelivr (**`three-globe` example** `earth-dark.jpg` + **`earth-topology.png`** bump), **graticules**, **atmosphere**, **auto-rotate** OrbitControls, **visitor** dots (**brand red**) + **order** dots (**green**), **animated dashed arcs** from first visitor (or first order) hub to order points (capped), **tap point** → same detail modal as before. **`rendererConfig`**: **`alpha`**, **`antialias`**, **`powerPreference: 'low-power'`**. **Fallback:** if **no WebGL**, **`import('globe.gl')` fails**, or globe init throws → previous **2D equirectangular** circular map so admin revenue still loads on low-end devices.
+
+**Files:** `package.json` / `package-lock.json`, `src/components/admin/AdminRevenueLiveGlobe.tsx`. Reverted experimental **`manualChunks`** for globe (caused Rollup **circular chunk** with **`vendor`**); rely on dynamic import splitting.
+
+**Verification:** `npm run build` passes.
