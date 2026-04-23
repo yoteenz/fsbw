@@ -49,6 +49,14 @@ That almost always means the **main storefront** was not rebuilt with the variab
 
 **Quick check in the browser:** Inspect the globe area’s parent wrapper. If you see **`data-admin-globe-mode="svg"`**, the main build did not pick up the env. If you see **`data-admin-globe-mode="iframe"`**, the main app is trying to load the embed (then check Network for the iframe document and any blocked requests).
 
+### Black circle inside the iframe (no continents)
+
+Common causes:
+
+1. **Textures 404** — the embed loads **`earth-dark.jpg`** from **raw.githubusercontent.com** (`three-globe` example). If that request is blocked (corporate filter, offline), the globe can stay dark. Check the **iframe** document’s **Network** tab for **`earth-dark.jpg`** / **`earth-topology.png`** (should be **200**).
+2. **Zero-size first frame** — the embed now re-sizes on **`requestAnimationFrame`** after load; redeploy **`embed/admin-globe`** if you had an older build.
+3. **Main app** — the iframe no longer uses **`loading="lazy"`** so the embed starts loading immediately once in view.
+
 ---
 
 ## 3. Protocol (`postMessage`)

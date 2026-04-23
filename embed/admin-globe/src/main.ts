@@ -2,14 +2,17 @@ import Globe from 'globe.gl';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
-const GLOBE_TEXTURE = 'https://cdn.jsdelivr.net/npm/three-globe@2.45.2/example/img/earth-dark.jpg';
-const GLOBE_BUMP = 'https://cdn.jsdelivr.net/npm/three-globe@2.45.2/example/img/earth-topology.png';
+/** Raw GitHub (master) — version tag path 404s in npm package; master hosts example/img. */
+const TEX_BASE = 'https://raw.githubusercontent.com/vasturiano/three-globe/master/example/img';
+const GLOBE_TEXTURE = `${TEX_BASE}/earth-dark.jpg`;
+const GLOBE_BUMP = `${TEX_BASE}/earth-topology.png`;
 
 type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
+const MSG_READY = 'fsbw-admin-globe-ready';
 
 function buildArcs(visitors: PointRow[], orders: PointRow[]): ArcRow[] {
   const orderOnly = orders.filter((p) => p.kind === 'order');
@@ -40,21 +43,29 @@ function splitPoints(rows: PointRow[]): { visitors: PointRow[]; orders: PointRow
   return { visitors, orders };
 }
 
-const root = document.getElementById('root');
-if (!root) throw new Error('#root missing');
+const rootEl = document.getElementById('root');
+if (!rootEl) throw new Error('#root missing');
+const root = rootEl;
+
+function readSize(): { w: number; h: number } {
+  const r = root.getBoundingClientRect();
+  const w = Math.max(120, Math.round(r.width || root.clientWidth || 300));
+  const h = Math.max(120, Math.round(r.height || root.clientHeight || 240));
+  return { w, h };
+}
 
 const globe = new Globe(root, {
-  rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
+  rendererConfig: { alpha: false, antialias: false, powerPreference: 'low-power' },
+  /** Do not block first paint forever if a texture URL is slow or blocked. */
+  waitForGlobeReady: false,
 })
-  .backgroundColor('rgba(2, 6, 23, 0)')
+  .backgroundColor('rgb(2, 6, 23)')
   .globeImageUrl(GLOBE_TEXTURE)
   .bumpImageUrl(GLOBE_BUMP)
   .showGraticules(true)
   .showAtmosphere(true)
   .atmosphereColor('rgba(96, 165, 250, 0.45)')
   .atmosphereAltitude(0.18)
-  .width(root.clientWidth || 300)
-  .height(root.clientHeight || 240)
   .pointLat('lat')
   .pointLng('lng')
   .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
@@ -85,6 +96,16 @@ try {
   /* optional */
 }
 
+function applySize() {
+  const { w, h } = readSize();
+  globe.width(w).height(h);
+}
+applySize();
+requestAnimationFrame(() => {
+  applySize();
+  requestAnimationFrame(applySize);
+});
+
 globe.onPointClick((p: object) => {
   const row = p as PointRow;
   const target = window.parent && window.parent !== window ? window.parent : null;
@@ -108,12 +129,9 @@ function applyPayload(rows: PointRow[]) {
 }
 
 const ro = new ResizeObserver(() => {
-  globe.width(root.clientWidth);
-  globe.height(root.clientHeight);
+  applySize();
 });
 ro.observe(root);
-globe.width(root.clientWidth);
-globe.height(root.clientHeight);
 
 window.addEventListener('message', (event: MessageEvent) => {
   if (event.source !== window.parent) return;
@@ -135,4 +153,8 @@ window.addEventListener('message', (event: MessageEvent) => {
   applyPayload(cleaned);
 });
 
-window.parent.postMessage({ type: 'fsbw-admin-globe-ready' }, '*');
+function notifyReady() {
+  window.parent.postMessage({ type: MSG_READY }, '*');
+}
+notifyReady();
+requestAnimationFrame(() => notifyReady());

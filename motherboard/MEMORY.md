@@ -16885,3 +16885,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Fix / UX:** **`AdminRevenueLiveGlobe`** wrapper: **`data-admin-globe-mode="iframe"`** vs **`svg`** for DevTools inspection. **`docs/ADMIN_GLOBE_EMBED.md`**: troubleshooting section.
 
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-04-24 — Admin globe iframe: black circle (textures / sizing)
+
+**Context:** User redeployed but saw only a **black circle** (iframe WebGL path).
+
+**Causes:** **`cdn.jsdelivr.net/.../three-globe@2.45.2/example/img/earth-dark.jpg`** can **404** (example images are not always on the npm package path). **`globe.gl`** default **`waitForGlobeReady: true`** can stall if textures never load. **`#root`** could report **0×0** briefly in iframe; globe initialized at zero size.
+
+**Fix:** **`embed/admin-globe/src/main.ts`**: textures from **`raw.githubusercontent.com/vasturiano/three-globe/master/example/img`**; **`waitForGlobeReady: false`**; **`alpha: false`** solid background; **`readSize()`** + **rAF** double resize; **`ResizeObserver`** uses same; **`MSG_READY`** constant + double **`postMessage`** to parent. **`index.html`**: **`#root`** **`min-height/min-width 100%`**. **`AdminRevenueLiveGlobe`**: removed iframe **`loading="lazy"`**. **`docs/ADMIN_GLOBE_EMBED.md`**: black circle troubleshooting.
+
+**Files:** `embed/admin-globe/src/main.ts`, `embed/admin-globe/index.html`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`.
+
+**Verification:** **`cd embed/admin-globe && npm run build`** passes.

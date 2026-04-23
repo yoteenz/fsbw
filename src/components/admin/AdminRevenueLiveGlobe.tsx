@@ -218,7 +218,6 @@ function AdminRevenueLiveGlobeIframeEmbed({
             background: '#020617',
           }}
           sandbox="allow-scripts"
-          loading="lazy"
           referrerPolicy="no-referrer"
         />
       </div>
