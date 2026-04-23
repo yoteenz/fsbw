@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdminServiceRole } from '../_lib/supabase';
-import { fromProfileRow } from '../_lib/profileMapping';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdminServiceRole } from '../_lib/supabase.js';
+import { fromProfileRow } from '../_lib/profileMapping.js';
 
 /** Build a minimal app-shape client from auth user (no profile row yet). */
 function authUserToMinimalClient(user: { id: string; email?: string; user_metadata?: Record<string, unknown>; created_at?: string }): Record<string, unknown> {

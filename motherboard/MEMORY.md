@@ -16739,3 +16739,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/pages/build-a-wig/color/page.tsx`, `api/live-wig-after-color-styling.ts`, `vercel.json`, `docs/WIG_PREVIEW_PREGENERATION.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-23 — Admin `live-presence` 500: ESM `ERR_MODULE_NOT_FOUND` for `../_lib/adminAuth`
+
+**Context:** Vercel log: **`Cannot find module '/var/task/api/_lib/adminAuth' imported from /var/task/api/admin/live-presence.js`** — **`GET /api/admin/live-presence`** crashed (**500**).
+
+**Cause:** Node **ESM** on Vercel requires explicit **`.js`** extensions for relative **`_lib`** imports in compiled **`api/admin/*.js`**.
+
+**Fix:** Appended **`.js`** to all **`api/admin/*.ts`** and **`api/admin/export/clients.ts`** relative **`_lib`** imports (`adminAuth`, `supabase`, `auditLog`, `profileMapping`, `pendingQueueHandlers`).
+
+**Files:** `api/admin/` (batch).
+
+**Verification:** `npm run build` passes.

@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { writeAuditLog } from '../_lib/auditLog';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { writeAuditLog } from '../_lib/auditLog.js';
 
 /** GET /api/admin/notifications – list all or ?user_id= (admin only). POST: send notification to user. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

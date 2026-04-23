@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdminServiceRole } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdminServiceRole } from '../_lib/supabase.js';
 
 /** GET /api/admin/deleted-accounts – deleted accounts list (admin only). From public.deleted_accounts, most recent first. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

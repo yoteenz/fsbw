@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
 
 /** GET /api/admin/wishlist?user_id=uuid – get wishlist for a user (admin only). */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
 
 /** GET /api/admin/audit-log – list audit log entries (admin only). ?limit=50&offset=0 */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

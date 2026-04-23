@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
 type Platform = 'instagram' | 'twitter' | 'facebook' | 'tiktok';
 type Source = 'menu' | 'more_ways_to_earn';

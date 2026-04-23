@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { fromProfileRow } from '../_lib/profileMapping';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { fromProfileRow } from '../_lib/profileMapping.js';
 
 type OrderItem = { total?: number; amount?: number; date?: string; createdAt?: string; status?: string; deliveredAt?: unknown; [k: string]: unknown };
 

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
 
 /** GET /api/admin/activity?user_id=uuid – list activity for a user (admin only). Newest first. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

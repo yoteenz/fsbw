@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
 const LIVE_WINDOW_MS = 5 * 60 * 1000;
 

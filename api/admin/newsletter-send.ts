@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { writeAuditLog } from '../_lib/auditLog';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { writeAuditLog } from '../_lib/auditLog.js';
 
 const MAX_RECIPIENTS = 100;
 const RESEND_API = 'https://api.resend.com/emails';

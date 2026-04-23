@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../../_lib/adminAuth';
-import { getSupabaseAdmin } from '../../_lib/supabase';
-import { fromProfileRow } from '../../_lib/profileMapping';
+import { requireAdmin } from '../../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../../_lib/supabase.js';
+import { fromProfileRow } from '../../_lib/profileMapping.js';
 
 /** GET /api/admin/export/clients – CSV of all profiles (admin only). */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

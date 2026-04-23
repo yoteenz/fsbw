@@ -3,9 +3,9 @@
  * PATCH /api/admin/pending-queue — approve/decline by type + id.
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { writeAuditLog } from '../_lib/auditLog';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { writeAuditLog } from '../_lib/auditLog.js';
 import {
   applyAffiliateApprovalFromPayload,
   applyAffiliateDeclineFromPayload,
@@ -14,7 +14,7 @@ import {
   handleOrderFormApproved,
   handleOrderFormDeclined,
   normEmail,
-} from '../_lib/pendingQueueHandlers';
+} from '../_lib/pendingQueueHandlers.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const b = req.body;

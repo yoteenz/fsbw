@@ -1,9 +1,9 @@
 export const config = { maxDuration: 60 };
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { getSupabaseAdmin } from '../_lib/supabase';
-import { writeAuditLog } from '../_lib/auditLog';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { getSupabaseAdmin } from '../_lib/supabase.js';
+import { writeAuditLog } from '../_lib/auditLog.js';
 import { randomInt } from 'node:crypto';
 
 function initialsCode(firstName: string, lastName: string): string {

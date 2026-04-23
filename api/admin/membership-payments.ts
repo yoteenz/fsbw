@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth';
-import { hasSupabaseServiceRole, getSupabaseAdminServiceRole } from '../_lib/supabase';
+import { requireAdmin } from '../_lib/adminAuth.js';
+import { hasSupabaseServiceRole, getSupabaseAdminServiceRole } from '../_lib/supabase.js';
 
 type PayRow = {
   id: string;
