@@ -807,12 +807,17 @@ export async function getAdminLivePresence(): Promise<{
     lastAt: number;
   }>;
 }> {
-  const res = await apiFetch('/api/admin/live-presence');
+  /** Avoid 304 + empty body (browser revalidation): `JSON.parse('')` throws and looked like a hard failure. */
+  const res = await apiFetch('/api/admin/live-presence', { cache: 'no-store' });
   const text = await res.text();
   if (res.status === 403) throw new Error('Forbidden');
   if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
+  const trimmed = text.trim();
+  if (trimmed === '') {
+    return { visitorsNow: 0, visitors: [] };
+  }
   try {
-    return JSON.parse(text) as {
+    return JSON.parse(trimmed) as {
       visitorsNow: number;
       visitors: Array<{
         visitor_id: string;
