@@ -808,9 +808,30 @@ export async function getAdminLivePresence(): Promise<{
   }>;
 }> {
   const res = await apiFetch('/api/admin/live-presence');
+  const text = await res.text();
   if (res.status === 403) throw new Error('Forbidden');
-  if (!res.ok) throw new Error(await res.text());
-  return await res.json();
+  if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
+  try {
+    return JSON.parse(text) as {
+      visitorsNow: number;
+      visitors: Array<{
+        visitor_id: string;
+        lat: number;
+        lng: number;
+        path: string | null;
+        city?: string;
+        region?: string;
+        country?: string;
+        lastAt: number;
+      }>;
+    };
+  } catch {
+    throw new Error(
+      text.trim().startsWith('<')
+        ? 'live-presence returned HTML (not JSON) — redeploy API or check VITE_API_BASE.'
+        : 'live-presence returned invalid JSON'
+    );
+  }
 }
 
 /** Public POST — no auth. Records marketing events (e.g. social clicks) for admin analytics. */

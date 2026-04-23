@@ -636,13 +636,17 @@ export default function AdminRevenue() {
   }, [orders]);
 
   const fetchLiveGlobe = useCallback(async () => {
+    setLiveGlobeError(null);
     try {
       const raw = localStorage.getItem('currentUser');
       const u = raw ? (JSON.parse(raw) as { email?: string }) : null;
-      if (!u?.email || !isAdminEmail(u.email)) return;
+      if (!u?.email || !isAdminEmail(u.email)) {
+        setLiveVisitorsNow(0);
+        setLiveVisitorGlobePoints([]);
+        return;
+      }
       const data = await getAdminLivePresence();
       setLiveVisitorsNow(data.visitorsNow);
-      setLiveGlobeError(null);
       setLiveVisitorGlobePoints(
         (data.visitors || []).map((v) => ({
           lat: v.lat,

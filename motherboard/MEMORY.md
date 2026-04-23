@@ -16767,3 +16767,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `api/` (batch, 19 files in script run).
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-23 — Admin Revenue globe: clear stale “LIVE DATA UNAVAILABLE” after live-presence succeeds
+
+**Context:** User saw **GET 304 / 200** for **`live-presence`** but the red line under the globe stayed: **LIVE DATA UNAVAILABLE · HEARTBEATS…**.
+
+**Causes:** (1) **`fetchLiveGlobe`** returned early when **`currentUser`** was not admin **without** clearing **`liveGlobeError`**, so a prior failed run left the message stuck. (2) **`getAdminLivePresence`** used **`res.json()`** — a **200** with **HTML** (e.g. SPA fallback) throws and re-set the error with no clear reason.
+
+**Fix:** **`revenue/page.tsx`**: **`setLiveGlobeError(null)`** at start of each fetch; on non-admin early return still clear visitors and error. **`api.ts`**: **`getAdminLivePresence`** reads **`res.text()`**, **`JSON.parse`** in try/catch, throws a clearer message if body is HTML or invalid JSON.
+
+**Files:** `src/pages/admin/revenue/page.tsx`, `src/utils/api.ts`.
+
+**Verification:** `npm run build` passes.
