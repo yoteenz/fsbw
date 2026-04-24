@@ -554,10 +554,10 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       d={d}
                       fill="none"
                       stroke={`url(#${borderGradId})`}
-                      strokeWidth={0.55}
+                      strokeWidth={1.35}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      opacity={0.92}
+                      opacity={1}
                     />
                   ))}
                   {hotspots.map((h, i) => (

@@ -178,11 +178,13 @@ const globe = new Globe(root, {
   .pathPoints('points')
   .pathPointLat((p: [number, number]) => p[0])
   .pathPointLng((p: [number, number]) => p[1])
-  .pathPointAlt(0.0085)
-  .pathResolution(0.85)
+  .pathPointAlt(0.0105)
+  .pathResolution(0.55)
   .pathColor((d: object) => (d as BorderPathRow).pathColor)
-  .pathDashLength(0.14)
-  .pathDashGap(0.1)
+  /** Fat lines (`Line2`) — stroke in px for visible country borders */
+  .pathStroke(2.6)
+  .pathDashLength(0.22)
+  .pathDashGap(0.14)
   .pathDashAnimateTime(14_000)
   .onGlobeReady(() => {
     try {
@@ -209,8 +211,9 @@ try {
   c.autoRotateSpeed = 0.3;
   c.enableDamping = true;
   c.dampingFactor = 0.08;
-  c.minDistance = 200;
-  c.maxDistance = 500;
+  /** Allow zooming much closer than default; no hard max zoom-out cap */
+  c.minDistance = 85;
+  c.maxDistance = 1e6;
 } catch {
   /* optional */
 }
@@ -245,7 +248,7 @@ let landHexPoints: Weighted[] = [];
 let borderPaths: BorderPathRow[] = [];
 let lastRows: PointRow[] = [];
 
-const BORDER_GRADIENT: [string, string] = ['rgba(217, 70, 239, 0.92)', 'rgba(124, 58, 237, 0.45)'];
+const BORDER_GRADIENT: [string, string] = ['rgba(232, 121, 249, 0.98)', 'rgba(167, 139, 250, 0.72)'];
 
 function applyPayload(rows: PointRow[]) {
   lastRows = rows;

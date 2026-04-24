@@ -17153,3 +17153,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — **APPOINTMENT** and **CONSULT** analytics cards: inner wrapper **`paddingLeft: 4px`**, **`paddingRight: 4px`** around title + rows + AVG blocks; metric rows **`padding: '12px 0'`** (was **8px**); AVG row top padding **12px**.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-20 — Admin revenue globe: thicker borders + closer zoom (embed + SVG)
+
+**Context:** User asked for **more visible / thicker** state/country boundary lines on the admin revenue live globe and to **remove max zoom** so they can **zoom in closer**.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`pathStroke(2.6)`** (fat lines), **`pathPointAlt 0.0105`**, **`pathResolution 0.55`**, brighter **`BORDER_GRADIENT`**; **`OrbitControls`**: **`minDistance 85`** (was **200**), **`maxDistance 1e6`** (was **500**) so zoom-in is much closer and zoom-out is effectively uncapped. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** (SVG fallback) — border **`strokeWidth 1.35`**, **`opacity 1`**.
+
+**Verification:** Root **`npm run build`** and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **embed/admin-globe** Vercel project and **main** storefront so iframe + cache-bust pick up the new bundle.
