@@ -17165,3 +17165,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** Root **`npm run build`** and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **embed/admin-globe** Vercel project and **main** storefront so iframe + cache-bust pick up the new bundle.
+
+---
+
+## 2026-04-24 — Admin globe: static country/state border lines (no dash crawl)
+
+**Context:** User reported **state/country boundary lines were animated / moving** and should stay **stagnant**.
+
+**Cause:** **`embed/admin-globe/src/main.ts`** used **`pathDashAnimateTime(14_000)`** with short dashes, which **three-globe** documents as animating dash motion along the path (**`0` disables**).
+
+**Changes:** **`pathDashAnimateTime(0)`**, **`pathDashLength(1)`**, **`pathDashGap(0)`** for **solid static** borders (keep **`pathStroke`** / gradient). **`docs/ADMIN_GLOBE_EMBED.md`** — borders described as static solid, not animated dashed.
+
+**Verification:** Root **`npm run build`** and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **embed/admin-globe** (iframe bundle); doc-only change on main if desired.

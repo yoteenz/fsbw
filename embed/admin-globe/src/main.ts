@@ -181,11 +181,11 @@ const globe = new Globe(root, {
   .pathPointAlt(0.0105)
   .pathResolution(0.55)
   .pathColor((d: object) => (d as BorderPathRow).pathColor)
-  /** Fat lines (`Line2`) — stroke in px for visible country borders */
+  /** Fat lines (`Line2`) — stroke in px for visible country borders (static, no dash crawl) */
   .pathStroke(2.6)
-  .pathDashLength(0.22)
-  .pathDashGap(0.14)
-  .pathDashAnimateTime(14_000)
+  .pathDashLength(1)
+  .pathDashGap(0)
+  .pathDashAnimateTime(0)
   .onGlobeReady(() => {
     try {
       const m = globe.globeMaterial() as {
