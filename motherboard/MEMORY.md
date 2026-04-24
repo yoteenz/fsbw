@@ -17103,3 +17103,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** + **embed**.
+
+---
+
+## 2026-04-28 — Admin globe land: fix Fibonacci one-corner clustering
+
+**Context:** User reported land rendering **only in one corner** of the globe.
+
+**Cause:** **First N land hits** along a **Fibonacci spiral** are **spatially consecutive** on the spiral → almost all land dots came from **one contiguous land region**.
+
+**Fix:** **`adminGlobeNe110mLand.ts`** — **`uniformSphereLandSamples`**: **rejection sampling** of **uniform random** unit-sphere directions (deterministic xorshift), keep points on land → **global** spread across continents. **`docs/ADMIN_GLOBE_EMBED.md`** wording updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** + **embed**.

@@ -7,8 +7,6 @@ export type LandSample = { lat: number; lng: number };
 
 type Ring = [number, number][];
 
-const GOLD = Math.PI * (3 - Math.sqrt(5));
-
 function wrapLng(lng: number): number {
   let x = lng;
   while (x > 180) x -= 360;
@@ -78,22 +76,27 @@ function isLandLatLng(lat: number, lng: number, multipolygons: number[][][][][])
 }
 
 /**
- * **Fibonacci sphere** lattice → **uniform spacing** on the globe (reference-style dense hex feel).
- * Lat/lng grids are biased and look sparse at the same `maxDots`; this fills continents evenly.
+ * **Uniform random points on the unit sphere**, keep land → spread across **all** continents.
+ * Taking the first N land hits along a **Fibonacci** walk clusters on one landmass (spiral is local).
  */
-function fibonacciLandSamples(multipolygons: number[][][][][], maxDots: number): LandSample[] {
+function uniformSphereLandSamples(multipolygons: number[][][][][], maxDots: number): LandSample[] {
   const out: LandSample[] = [];
-  /** ~29% of sphere is land → scan enough indices to fill `maxDots`. */
-  const maxI = Math.min(3_500_000, Math.max(200_000, maxDots * 140));
-  const n = maxI;
-  for (let i = 0; i < maxI && out.length < maxDots; i++) {
-    const y = 1 - (i / Math.max(1, n - 1)) * 2;
-    const yr = Math.max(-1, Math.min(1, y));
-    const r = Math.sqrt(Math.max(0, 1 - yr * yr));
-    const theta = GOLD * i;
-    const x = Math.cos(theta) * r;
-    const z = Math.sin(theta) * r;
-    const lat = (Math.asin(yr) * 180) / Math.PI;
+  /** Deterministic PRNG so SVG/embed match across reloads. */
+  let state = 0x6eed_9e37 | (maxDots & 0xffff);
+  const u32 = () => {
+    state = Math.imul(state ^ (state >>> 13), 0x85eb_ca6b);
+    state ^= state >>> 15;
+    return state >>> 0;
+  };
+  const rand01 = () => u32() / 0x1_0000_0000;
+  const maxTries = Math.min(4_000_000, Math.max(200_000, maxDots * 400));
+  for (let t = 0; t < maxTries && out.length < maxDots; t++) {
+    const u = rand01() * 2 - 1;
+    const ang = 2 * Math.PI * rand01();
+    const rr = Math.sqrt(Math.max(0, 1 - u * u));
+    const x = rr * Math.cos(ang);
+    const z = rr * Math.sin(ang);
+    const lat = (Math.asin(u) * 180) / Math.PI;
     const lng = (Math.atan2(z, x) * 180) / Math.PI;
     if (isLandLatLng(lat, lng, multipolygons)) {
       out.push({ lat, lng: wrapLng(lng) });
@@ -103,12 +106,12 @@ function fibonacciLandSamples(multipolygons: number[][][][][], maxDots: number):
 }
 
 /**
- * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples (uniform Fibonacci on sphere).
+ * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples (uniform on land).
  */
 export function landSamplesFromNe110mGeoJson(geo: unknown, maxDots: number): LandSample[] {
   const mp = collectPolygons(geo);
   if (mp.length === 0) return [];
-  return fibonacciLandSamples(mp, maxDots);
+  return uniformSphereLandSamples(mp, maxDots);
 }
 
 const DEFAULT_GEO_PATH = '/ne_110m_land.geojson';
