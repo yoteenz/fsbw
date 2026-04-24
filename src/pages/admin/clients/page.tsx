@@ -3414,6 +3414,7 @@ export default function AdminClients() {
                   </div>
                 ) : (
                   <>
+                <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
                 {/* Summary cards above tabs */}
                 <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                   <div

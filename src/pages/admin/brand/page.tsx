@@ -688,6 +688,7 @@ export default function AdminBrand() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
               {/* Summary above tabs: analytics clicks, alerts usage, or brand score */}
               {activeTab === 'ANALYTICS' ? (
                 <div className="text-center py-4 px-5">

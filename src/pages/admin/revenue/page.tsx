@@ -849,6 +849,8 @@ export default function AdminRevenue() {
               className="bg-white/60 backdrop-blur-sm border border-black overflow-hidden"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100vh * 520 / 745 + 7px)' }}
             >
+              {/* Match Admin → Meetings: spacer + grid margin above summary panels */}
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }} />
               {/* Tab-specific panels – above tabs */}
               <div className="grid grid-cols-2 gap-4 px-5 mb-4" style={{ marginTop: '12px' }}>
                 <div

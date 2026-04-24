@@ -16985,3 +16985,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **both** Vercel projects (main + embed). Hard-refresh once; iframe **`b=`** updates every main deploy automatically.
+
+---
+
+## 2026-04-28 — Admin summary panels: spacing above matches Meetings (Revenue + peers)
+
+**Context:** User asked to confirm **summary panels above the tabs** on admin pages use the **same spacing above** as **Admin → Meetings**; called out **Admin → Revenue** specifically.
+
+**Finding:** **Meetings** uses **`marginTop: '10px'`** on a **`flex-shrink-0 px-5 pb-2`** spacer, then the summary **`grid`** with **`marginTop: '12px'`** (22px from card top to grid). **Revenue** (and **Marketing**, **Referrals**, **Clients** hub) had only the grid’s **`12px`**, so less space above the panels.
+
+**Changes:** Insert the same **10px spacer** before the two-column summary grid on **`src/pages/admin/revenue/page.tsx`**, **`marketing/page.tsx`**, **`referrals/page.tsx`**, **`clients/page.tsx`** (hub summary branch), and **`brand/page.tsx`** (all tabs share the spacer before conditional summaries). **Pending** and **Reviews** already had this pattern.
+
+**Verification:** `npm run build` passes.
