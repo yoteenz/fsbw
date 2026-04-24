@@ -18,7 +18,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/|assets/|ne_110m_land\\.geojson).*)",
+      "source": "/((?!api/|assets/|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson).*)",
       "destination": "/index.html"
     }
   ],

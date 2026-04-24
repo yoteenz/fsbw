@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
+import { loadBoundaryPathsForGlobe } from '../../utils/adminGlobeBoundaryPaths';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -189,6 +190,35 @@ function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } |
   return d ? { px: d.px, py: d.py } : null;
 }
 
+/** Admin boundary polyline → SVG path `d` on orthographic disk (great-circle segments). */
+function boundaryPathToViewBoxD(path: Array<[number, number]>): string | null {
+  if (path.length < 2) return null;
+  const parts: string[] = [];
+  let started = false;
+  for (let i = 0; i < path.length - 1; i++) {
+    const [lat1, lng1] = path[i]!;
+    const [lat2, lng2] = path[i + 1]!;
+    const pts = interpolateGreatCircle(lat1, lng1, lat2, lng2, 8);
+    for (let j = 0; j < pts.length; j++) {
+      const lat = 90 - pts[j]!.y;
+      const lng = pts[j]!.x - 180;
+      const disk = latLngToGlobeDisk(lat, lng);
+      if (!disk) {
+        started = false;
+        continue;
+      }
+      if (!started) {
+        parts.push(`M ${disk.px.toFixed(2)} ${disk.py.toFixed(2)}`);
+        started = true;
+      } else {
+        parts.push(`L ${disk.px.toFixed(2)} ${disk.py.toFixed(2)}`);
+      }
+    }
+  }
+  if (parts.length === 0) return null;
+  return parts.join(' ');
+}
+
 /** Flat-top regular hex path (screen px) for honeycomb-style land (SVG analogue to H3 mesh). */
 function flatHexPathD(cx: number, cy: number, re: number): string {
   const pts: string[] = [];
@@ -345,19 +375,35 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
   const barGradId = useId().replace(/:/g, '');
+  const borderGradId = useId().replace(/:/g, '');
   /** Prior max 300px; +35% to match revenue globe scale. */
   const size = Math.min(heightPx, 405);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [landHexPaths, setLandHexPaths] = useState<Array<{ d: string; fill: string }>>([]);
+  const [borderPaths, setBorderPaths] = useState<string[]>([]);
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const samples = await loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson');
-        if (!cancelled) setLandHexPaths(buildLandHexPathsFromSamples(samples));
+        const [samples, rawBorders] = await Promise.all([
+          loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson'),
+          loadBoundaryPathsForGlobe(280, '/ne_110m_admin_0_boundary_lines_land.geojson'),
+        ]);
+        if (!cancelled) {
+          setLandHexPaths(buildLandHexPathsFromSamples(samples));
+          const ds: string[] = [];
+          for (const p of rawBorders) {
+            const d = boundaryPathToViewBoxD(p);
+            if (d) ds.push(d);
+          }
+          setBorderPaths(ds);
+        }
       } catch {
-        if (!cancelled) setLandHexPaths([]);
+        if (!cancelled) {
+          setLandHexPaths([]);
+          setBorderPaths([]);
+        }
       }
     })();
     return () => {
@@ -490,6 +536,10 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                     <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.55} />
                     <stop offset="100%" stopColor="#475569" stopOpacity={0.65} />
                   </linearGradient>
+                  <linearGradient id={borderGradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(217, 70, 239, 0.95)" />
+                    <stop offset="100%" stopColor="rgba(124, 58, 237, 0.45)" />
+                  </linearGradient>
                 </defs>
 
                 <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
@@ -497,6 +547,18 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 <g clipPath={`url(#${clipId})`}>
                   {landHexPaths.map((h, i) => (
                     <path key={`land-hex-${i}`} d={h.d} fill={h.fill} stroke="rgba(255,255,255,0.12)" strokeWidth={0.15} />
+                  ))}
+                  {borderPaths.map((d, i) => (
+                    <path
+                      key={`border-${i}`}
+                      d={d}
+                      fill="none"
+                      stroke={`url(#${borderGradId})`}
+                      strokeWidth={0.55}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      opacity={0.92}
+                    />
                   ))}
                   {hotspots.map((h, i) => (
                     <rect

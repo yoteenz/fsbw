@@ -17131,3 +17131,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** + **embed**.
+
+---
+
+## 2026-04-28 — Admin globe: country border gradient lines (Natural Earth 110m admin)
+
+**Context:** User asked for **gradient lines** separating **states/countries** like reference (glowing boundary mesh).
+
+**Changes:** **`src/utils/adminGlobeBoundaryPaths.ts`** — parse **`ne_110m_admin_0_boundary_lines_land.geojson`** → **`pathsData`**-ready **`[lat,lng][]`** polylines (cap **maxPaths**). **`public/`** + **`embed/admin-globe/public/`** copy of GeoJSON (~340KB). **`vercel.json`** (root) rewrite excludes **`ne_110m_admin_0_boundary_lines_land.geojson`**; **`embed/admin-globe/vercel.json`** cache header. **Embed:** **`pathsData`** with **`pathColor`** **`[magenta, violet]`**, **`pathDashAnimateTime`**, **`pathResolution`**, **`pathPointAlt`** above land hex. **SVG:** **`loadBoundaryPathsForGlobe`** + **`boundaryPathToViewBoxD`** (great-circle segments + **`latLngToGlobeDisk`**) + **`<linearGradient>`** stroke. **Vite/tsconfig** alias **`@fsbw/adminGlobeBoundaryPaths`**.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** + **embed** (new static GeoJSON).

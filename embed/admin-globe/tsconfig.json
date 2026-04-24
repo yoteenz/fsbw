@@ -8,7 +8,8 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@fsbw/adminGlobeNe110mLand": ["../../src/utils/adminGlobeNe110mLand.ts"]
+      "@fsbw/adminGlobeNe110mLand": ["../../src/utils/adminGlobeNe110mLand.ts"],
+      "@fsbw/adminGlobeBoundaryPaths": ["../../src/utils/adminGlobeBoundaryPaths.ts"]
     },
     "strict": true,
     "noEmit": true,

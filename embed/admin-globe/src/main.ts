@@ -1,5 +1,6 @@
 import Globe from 'globe.gl';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
+import { loadBoundaryPathsForGlobe } from '@fsbw/adminGlobeBoundaryPaths';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -11,6 +12,9 @@ const LAND_HEX_WEIGHT_THRESHOLD = 400;
 type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
+
+/** Natural Earth admin boundary line → `pathsData` row (gradient stroke). */
+type BorderPathRow = { points: Array<[number, number]>; pathColor: [string, string] };
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
@@ -170,6 +174,16 @@ const globe = new Globe(root, {
   .arcDashLength(0.32)
   .arcDashGap(1.6)
   .arcDashAnimateTime(11000)
+  .pathsData([])
+  .pathPoints('points')
+  .pathPointLat((p: [number, number]) => p[0])
+  .pathPointLng((p: [number, number]) => p[1])
+  .pathPointAlt(0.0085)
+  .pathResolution(0.85)
+  .pathColor((d: object) => (d as BorderPathRow).pathColor)
+  .pathDashLength(0.14)
+  .pathDashGap(0.1)
+  .pathDashAnimateTime(14_000)
   .onGlobeReady(() => {
     try {
       const m = globe.globeMaterial() as {
@@ -228,24 +242,39 @@ globe.onPointClick((p: object) => {
 });
 
 let landHexPoints: Weighted[] = [];
+let borderPaths: BorderPathRow[] = [];
 let lastRows: PointRow[] = [];
+
+const BORDER_GRADIENT: [string, string] = ['rgba(217, 70, 239, 0.92)', 'rgba(124, 58, 237, 0.45)'];
 
 function applyPayload(rows: PointRow[]) {
   lastRows = rows;
   const { visitors, orders } = splitPoints(rows);
   const all: PointRow[] = [...visitors, ...orders];
   const hot = buildHotBinJitter(all);
-  globe.hexBinPointsData([...landHexPoints, ...hot]).pointsData(all).arcsData(buildArcs(visitors, orders));
+  globe
+    .hexBinPointsData([...landHexPoints, ...hot])
+    .pathsData(borderPaths)
+    .pointsData(all)
+    .arcsData(buildArcs(visitors, orders));
 }
 
-globe.pointsData([]).hexBinPointsData([]).arcsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const samples = await loadLandSamplesForGlobe(38_000, '/ne_110m_land.geojson');
+    const [samples, rawBorders] = await Promise.all([
+      loadLandSamplesForGlobe(38_000, '/ne_110m_land.geojson'),
+      loadBoundaryPathsForGlobe(420, '/ne_110m_admin_0_boundary_lines_land.geojson'),
+    ]);
     landHexPoints = samples.map((s) => ({ lat: s.lat, lng: s.lng, w: LAND_HEX_WEIGHT }));
+    borderPaths = rawBorders.map((pts) => ({
+      points: pts.map(([lat, lng]) => [lat, lng] as [number, number]),
+      pathColor: BORDER_GRADIENT,
+    }));
   } catch {
     landHexPoints = [];
+    borderPaths = [];
   }
   applyPayload(lastRows);
   notifyReady();
