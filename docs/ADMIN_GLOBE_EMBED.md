@@ -2,7 +2,9 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
-**Look (embed):** Light **background**, **no** graticule, **no** photo texture — **dot-matrix land** as many **small points** (Fibonacci sphere with correct **`lng = atan2(z, x)`**); **mint → sky** gradient by latitude (reference-style). **Hex bins** are used only for **hotspot pillars** (jittered around visitor/order coords), not for full continents. Soft **cyan atmosphere**; brand **red** visitors / **green** orders; **cache-bust** iframe `?v=4`.
+**Look (embed):** Light **background**, **no** graticule, **no** photo texture — **dot-matrix land** from **Natural Earth `ne_110m_land.geojson`** (bundled in **`embed/admin-globe/public/`** and **`/` storefront `public/`** for the SVG fallback): coast + interior samples, **mint → sky** by latitude. **Hex bins** only for **hotspot pillars** (jittered visitor/order coords). Soft **cyan atmosphere**; **red** visitors / **green** orders.
+
+**Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`** or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/ne_110m_land.geojson`.
 
 ---
 
@@ -14,6 +16,8 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 4. Copy the production URL, e.g. `https://admin-globe-embed-xxx.vercel.app`
 
 **PostCSS:** This folder includes `postcss.config.js` (empty plugins) so Vite does not pick up the monorepo root Tailwind PostCSS config.
+
+**Land data:** `public/ne_110m_land.geojson` is [Natural Earth](https://www.naturalearthdata.com/) 110m land (public domain). The embed build resolves shared sampling from `../../src/utils/adminGlobeNe110mLand.ts` via Vite alias `@fsbw/adminGlobeNe110mLand`.
 
 **Local:**
 

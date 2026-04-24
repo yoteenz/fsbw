@@ -6,6 +6,10 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@fsbw/adminGlobeNe110mLand": ["../../src/utils/adminGlobeNe110mLand.ts"]
+    },
     "strict": true,
     "noEmit": true,
     "resolveJsonModule": true,

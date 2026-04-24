@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
+import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -118,30 +119,6 @@ function buildArcPathsViewBox(visitorPoints: Props['visitorPoints'], orderPoints
   return paths;
 }
 
-/** Same rough land boxes as embed (lat min, lat max, lng min, lng max). */
-const LAND_BOXES: Array<[number, number, number, number]> = [
-  [10, 75, -168, -48],
-  [-56, 15, -82, -34],
-  [33, 72, -12, 42],
-  [-35, 38, -20, 52],
-  [-12, 12, 95, 155],
-  [5, 50, 70, 150],
-  [18, 50, 25, 65],
-  [42, 55, -125, -95],
-  [50, 72, 25, 180],
-  [50, 72, -180, -130],
-];
-
-function isLand(lat: number, lng: number): boolean {
-  let x = lng;
-  while (x > 180) x -= 360;
-  while (x < -180) x += 360;
-  for (const [latMin, latMax, lngMin, lngMax] of LAND_BOXES) {
-    if (lat >= latMin && lat <= latMax && x >= lngMin && x <= lngMax) return true;
-  }
-  return false;
-}
-
 function landDotRgb(lat: number): string {
   const t = Math.max(0, Math.min(1, (lat + 10) / 70));
   const mint = { r: 110, g: 231, b: 183 };
@@ -150,49 +127,6 @@ function landDotRgb(lat: number): string {
   const g = Math.round(mint.g + (sky.g - mint.g) * t);
   const b = Math.round(mint.b + (sky.b - mint.b) * t);
   return `rgb(${r},${g},${b})`;
-}
-
-const GOLD = Math.PI * (3 - Math.sqrt(5));
-
-/** Dot-matrix land on sphere projection (no graticule). Fibonacci lng = atan2(z,x), not atan2(sinθ·r,cosθ·r). */
-function buildLandDots(maxDots: number): Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> {
-  const out: Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> = [];
-  const tiltX = 0.18;
-  const tiltY = -0.12;
-  const n = 120000;
-  for (let i = 0; i < n && out.length < maxDots; i++) {
-    const y = 1 - (i / Math.max(1, n - 1)) * 2;
-    const yr = Math.min(1, Math.max(-1, y));
-    const r0 = Math.sqrt(Math.max(0, 1 - yr * yr));
-    const theta = GOLD * i;
-    let x = Math.cos(theta) * r0;
-    let z = Math.sin(theta) * r0;
-    let y3 = yr;
-    const lat = (Math.asin(yr) * 180) / Math.PI;
-    const lng = (Math.atan2(z, x) * 180) / Math.PI;
-    const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
-    const z1 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
-    x = x1;
-    z = z1;
-    const y2 = y3 * Math.cos(tiltX) - z * Math.sin(tiltX);
-    const z2 = y3 * Math.sin(tiltX) + z * Math.cos(tiltX);
-    y3 = y2;
-    z = z2;
-    if (z < -0.06) continue;
-    if (!isLand(lat, lng)) continue;
-    const px = CX + x * (R - 6);
-    const py = CY - y3 * (R - 6);
-    const depth = (z + 1) / 2;
-    const dark = 0.35 + depth * 0.45;
-    out.push({
-      cx: px,
-      cy: py,
-      r: 0.65 + depth * 0.5,
-      fill: landDotRgb(lat),
-      opacity: 0.32 + dark * 0.42,
-    });
-  }
-  return out;
 }
 
 type Hotspot = { cx: number; cy: number; h: number };
@@ -221,7 +155,7 @@ function buildHotspotPillars(
 }
 
 /** Map lat/lng to orthographic disk (same tilt as land dots). */
-function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } | null {
+function latLngToGlobeDisk(lat: number, lng: number): { px: number; py: number; depth: number } | null {
   const φ = lat * D2R;
   const λ = lng * D2R;
   const tiltX = 0.18;
@@ -242,7 +176,32 @@ function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } |
   return {
     px: CX + x * (R - 6),
     py: CY - y * (R - 6),
+    depth: (z + 1) / 2,
   };
+}
+
+function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } | null {
+  const d = latLngToGlobeDisk(lat, lng);
+  return d ? { px: d.px, py: d.py } : null;
+}
+
+function buildLandDotsFromSamples(
+  samples: Array<{ lat: number; lng: number }>
+): Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> {
+  const out: Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> = [];
+  for (const { lat, lng } of samples) {
+    const d = latLngToGlobeDisk(lat, lng);
+    if (!d) continue;
+    const dark = 0.35 + d.depth * 0.45;
+    out.push({
+      cx: d.px,
+      cy: d.py,
+      r: 0.65 + d.depth * 0.5,
+      fill: landDotRgb(lat),
+      opacity: 0.32 + dark * 0.42,
+    });
+  }
+  return out;
 }
 
 function DetailModal({ selected, onClose }: { selected: LiveGlobePoint; onClose: () => void }) {
@@ -331,7 +290,8 @@ function AdminRevenueLiveGlobeIframeEmbed({
     win.postMessage({ type: MSG_IN, points: pointsPayload }, '*');
   }, [embedReady, pointsPayload]);
 
-  const src = embedUrl.includes('?') ? `${embedUrl}&v=4` : `${embedUrl}?v=4`;
+  const bust = typeof __GLOBE_EMBED_BUILD__ === 'string' ? __GLOBE_EMBED_BUILD__ : 'dev';
+  const src = embedUrl.includes('?') ? `${embedUrl}&b=${encodeURIComponent(bust)}` : `${embedUrl}?b=${encodeURIComponent(bust)}`;
 
   return (
     <>
@@ -349,7 +309,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
               '0 0 0 1px rgba(161, 161, 170, 0.5), 0 8px 28px rgba(15, 23, 42, 0.12), 0 14px 40px rgba(148, 163, 184, 0.2)',
             background: OCEAN_BASE,
           }}
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-same-origin"
           referrerPolicy="no-referrer"
         />
       </div>
@@ -367,7 +327,23 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
   const size = Math.min(heightPx, 300);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
-  const landDots = useMemo(() => buildLandDots(2800), []);
+  const [landDots, setLandDots] = useState<Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }>>(
+    []
+  );
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const samples = await loadLandSamplesForGlobe(3200, '/ne_110m_land.geojson');
+        if (!cancelled) setLandDots(buildLandDotsFromSamples(samples));
+      } catch {
+        if (!cancelled) setLandDots([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const hotspots = useMemo(
     () => buildHotspotPillars(points, latLngToGlobePx),
     [points]

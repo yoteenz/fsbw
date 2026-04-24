@@ -89,7 +89,17 @@ export default defineConfig(({ mode, command }) => {
       }
     : undefined
 
+  const globeEmbedBuild =
+    process.env.VERCEL_GIT_COMMIT_SHA ||
+    process.env.GITHUB_SHA ||
+    process.env.CF_PAGES_COMMIT_SHA ||
+    Date.now().toString(36)
+
   return {
+  define: {
+    /** Bust admin globe iframe cache on every production deploy (inlined at build time). */
+    __GLOBE_EMBED_BUILD__: JSON.stringify(globeEmbedBuild),
+  },
   plugins: [
     ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget)] : []),
     apiDevNoProxyGuard(apiTarget),

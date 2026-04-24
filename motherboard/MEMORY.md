@@ -16971,3 +16971,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — both **APPOINTMENT** and **CONSULT** analytics blocks: row **`padding: '8px 0'`**, **`borderBottom: '1px solid #e5e7eb'`**; AVG rows use **`flex-start`** + **`gap: '6px'`**, label **`#EB1C24`** **Futura PT Demi**, value same red **Medium** inline.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-28 — Admin globe: GeoJSON land + deploy cache-bust (user saw no change)
+
+**Context:** User still did not see the globe fix after redeploy instructions (`?v=4` / SVG); wanted real **continent clusters** instead of a **C** blob.
+
+**Cause / fix:** Prior **Fibonacci lng** change was not enough; **rough lat/lng boxes** still merged land into wrong shapes. **Real coastlines:** **`src/utils/adminGlobeNe110mLand.ts`** loads **Natural Earth `ne_110m_land.geojson`**, samples boundary + interior → **`LandSample[]`**. **`public/ne_110m_land.geojson`** in **repo root** (main SVG) and **`embed/admin-globe/public/`** (embed); **`vercel.json`** rewrite excludes **`ne_110m_land.geojson`** so fetch is not **`index.html`**. **Embed** `vite.config.ts` **alias** `@fsbw/adminGlobeNe110mLand` → shared util; **`embed/admin-globe/vercel.json`** caches GeoJSON lightly. **`embed/admin-globe/src/main.ts`** async land load + **`lastRows`** race fix. **Main:** **`vite.config.ts`** **`define __GLOBE_EMBED_BUILD__`** from **`VERCEL_GIT_COMMIT_SHA`** / **`GITHUB_SHA`** / timestamp; iframe **`&b=`** + **`sandbox` includes `allow-same-origin`**. **`AdminRevenueLiveGlobe`** SVG loads same GeoJSON client-side.
+
+**Files:** `src/utils/adminGlobeNe110mLand.ts`, `public/ne_110m_land.geojson`, `embed/admin-globe/public/ne_110m_land.geojson`, `embed/admin-globe/src/main.ts`, `embed/admin-globe/vite.config.ts`, `embed/admin-globe/tsconfig.json`, `embed/admin-globe/vercel.json`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/vite-env.d.ts`, `vite.config.ts`, `vercel.json`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **both** Vercel projects (main + embed). Hard-refresh once; iframe **`b=`** updates every main deploy automatically.

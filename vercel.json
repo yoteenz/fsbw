@@ -18,7 +18,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/|assets/).*)",
+      "source": "/((?!api/|assets/|ne_110m_land\\.geojson).*)",
       "destination": "/index.html"
     }
   ],

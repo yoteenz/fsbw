@@ -1,4 +1,5 @@
 import Globe from 'globe.gl';
+import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -13,60 +14,6 @@ type LandDot = { lat: number; lng: number; _land: true; _lat: number };
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
-
-const GOLD = Math.PI * (3 - Math.sqrt(5));
-
-/** Rough lat/lng boxes (union) — coarse land mask. */
-const LAND_BOXES: Array<[number, number, number, number]> = [
-  [10, 75, -168, -48],
-  [-56, 15, -82, -34],
-  [33, 72, -12, 42],
-  [-35, 38, -20, 52],
-  [-12, 12, 95, 155],
-  [5, 50, 70, 150],
-  [18, 50, 25, 65],
-  [42, 55, -125, -95],
-  [50, 72, 25, 180],
-  [50, 72, -180, -130],
-];
-
-function isLand(lat: number, lng: number): boolean {
-  let x = lng;
-  while (x > 180) x -= 360;
-  while (x < -180) x += 360;
-  for (const [latMin, latMax, lngMin, lngMax] of LAND_BOXES) {
-    if (lat >= latMin && lat <= latMax && x >= lngMin && x <= lngMax) return true;
-  }
-  return false;
-}
-
-/**
- * Fibonacci sphere lattice — lng MUST be atan2(z, x), NOT atan2(sinθ·r, cosθ·r)
- * (the wrong formula collapses longitude to ~±90° and draws a “C” patch).
- */
-function fibonacciLatLng(i: number, n: number): { lat: number; lng: number } {
-  const y = 1 - (i / Math.max(1, n - 1)) * 2;
-  const yr = Math.max(-1, Math.min(1, y));
-  const r = Math.sqrt(Math.max(0, 1 - yr * yr));
-  const theta = GOLD * i;
-  const x = Math.cos(theta) * r;
-  const z = Math.sin(theta) * r;
-  const lat = (Math.asin(yr) * 180) / Math.PI;
-  const lng = (Math.atan2(z, x) * 180) / Math.PI;
-  return { lat, lng };
-}
-
-function generateLandDots(target: number): LandDot[] {
-  const out: LandDot[] = [];
-  const n = 220000;
-  for (let i = 0; i < n && out.length < target; i++) {
-    const { lat, lng } = fibonacciLatLng(i, n);
-    if (isLand(lat, lng)) {
-      out.push({ lat, lng, _land: true, _lat: lat });
-    }
-  }
-  return out;
-}
 
 function landDotColor(lat: number): string {
   const t = Math.max(-1, Math.min(1, (lat + 10) / 70));
@@ -131,8 +78,6 @@ function readSize(): { w: number; h: number } {
   const h = Math.max(120, Math.round(r.height || root.clientHeight || 240));
   return { w, h };
 }
-
-const LAND_STATIC = generateLandDots(7500);
 
 const globe = new Globe(root, {
   rendererConfig: { alpha: false, antialias: false, powerPreference: 'low-power' },
@@ -227,14 +172,31 @@ globe.onPointClick((p: object) => {
   );
 });
 
+let landStatic: LandDot[] = [];
+/** Latest visitor/order rows from parent (re-applied when land finishes loading). */
+let lastRows: PointRow[] = [];
+
 function applyPayload(rows: PointRow[]) {
+  lastRows = rows;
   const { visitors, orders } = splitPoints(rows);
   const all: PointRow[] = [...visitors, ...orders];
   const hot = buildHotBinJitter(all);
-  globe.hexBinPointsData(hot).pointsData([...LAND_STATIC, ...all]).arcsData(buildArcs(visitors, orders));
+  globe.hexBinPointsData(hot).pointsData([...landStatic, ...all]).arcsData(buildArcs(visitors, orders));
 }
 
-globe.pointsData(LAND_STATIC).hexBinPointsData([]).arcsData([]);
+globe.pointsData([]).hexBinPointsData([]).arcsData([]);
+
+void (async () => {
+  try {
+    const samples = await loadLandSamplesForGlobe(7200, '/ne_110m_land.geojson');
+    landStatic = samples.map((s) => ({ lat: s.lat, lng: s.lng, _land: true as const, _lat: s.lat }));
+  } catch {
+    landStatic = [];
+  }
+  applyPayload(lastRows);
+  notifyReady();
+  requestAnimationFrame(() => notifyReady());
+})();
 
 const ro = new ResizeObserver(() => {
   applySize();
@@ -264,5 +226,3 @@ window.addEventListener('message', (event: MessageEvent) => {
 function notifyReady() {
   window.parent.postMessage({ type: MSG_READY }, '*');
 }
-notifyReady();
-requestAnimationFrame(() => notifyReady());
