@@ -17017,3 +17017,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/index.html`** — **`html`**, **`body`**, **`#root`** **`background: transparent`**. **`embed/admin-globe/src/main.ts`** — **`rendererConfig.alpha: true`**, **`backgroundColor('rgba(0,0,0,0)')`**. **`AdminRevenueLiveGlobe`** — wrap **iframe** in **`overflow-hidden` + `borderRadius: 50%`** so transparent corners show parent **marble**. Redeploy **embed** project for iframe content.
 
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+---
+
+## 2026-04-28 — Admin revenue globe: light/dark gray interior tint (SVG + WebGL)
+
+**Context:** User wanted a **light→dark gray gradient** on the **inside** of the globe so land stands out, like the reference’s **light→dark blue** tint.
+
+**SVG:** **`AdminRevenueLiveGlobe`** — stronger **radialGradient** ocean (**`#fafafa` → `#e4e4e7` → `#a1a1aa` → `#71717a`**); **land** dots **charcoal gray** by latitude (**`#525258` → `#1c191a`**).
+
+**Embed:** **`onGlobeReady`** — **Three.js** inner **`SphereGeometry`** with **canvas radial** gray texture; **atmosphere** slate; **hex pillars** slate; **land** same gray ramp; **`@types/three`** devDependency. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.

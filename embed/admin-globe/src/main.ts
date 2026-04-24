@@ -1,4 +1,5 @@
 import Globe from 'globe.gl';
+import * as THREE from 'three';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 
 const BRAND_RED = '#EB1C24';
@@ -15,14 +16,38 @@ const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
+/** Darker neutral land so it reads on the light→dark gray ocean (matches main SVG). */
 function landDotColor(lat: number): string {
-  const t = Math.max(-1, Math.min(1, (lat + 10) / 70));
-  const mint = { r: 110, g: 231, b: 183 };
-  const sky = { r: 125, g: 211, b: 252 };
-  const r = Math.round(mint.r + (sky.r - mint.r) * t);
-  const g = Math.round(mint.g + (sky.g - mint.g) * t);
-  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  const t = Math.max(0, Math.min(1, (lat + 10) / 70));
+  const light = { r: 82, g: 82, b: 88 };
+  const dark = { r: 28, g: 25, b: 26 };
+  const r = Math.round(light.r + (dark.r - light.r) * t);
+  const g = Math.round(light.g + (dark.g - light.g) * t);
+  const b = Math.round(light.b + (dark.b - light.b) * t);
   return `rgb(${r},${g},${b})`;
+}
+
+/** Radial light→dark gray texture on inner sphere (reference-style volume inside the globe). */
+function makeOceanGradientTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  const sz = 512;
+  canvas.width = sz;
+  canvas.height = sz;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('2d context');
+  const cx = sz * 0.34;
+  const cy = sz * 0.3;
+  const g = ctx.createRadialGradient(cx, cy, sz * 0.06, sz * 0.5, sz * 0.5, sz * 0.52);
+  g.addColorStop(0, '#fafafa');
+  g.addColorStop(0.38, '#e4e4e7');
+  g.addColorStop(0.72, '#a1a1aa');
+  g.addColorStop(1, '#71717a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, sz, sz);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
 }
 
 function buildHotBinJitter(rows: PointRow[]): Weighted[] {
@@ -88,21 +113,21 @@ const globe = new Globe(root, {
   .showGlobe(false)
   .showGraticules(false)
   .showAtmosphere(true)
-  .atmosphereColor('rgba(125, 211, 252, 0.45)')
-  .atmosphereAltitude(0.14)
+  .atmosphereColor('rgba(148, 163, 184, 0.38)')
+  .atmosphereAltitude(0.12)
   .hexBinPointsData([])
   .hexBinPointLat('lat')
   .hexBinPointLng('lng')
   .hexBinPointWeight('w')
   .hexBinResolution(2.8)
   .hexMargin(0.08)
-  .hexAltitude((bin) => {
+  .hexAltitude((bin: { sumWeight?: number }) => {
     const w = bin.sumWeight || 0;
     if (w < 3) return 0.001;
     return 0.02 + Math.min(0.16, Math.sqrt(w) * 0.018);
   })
-  .hexTopColor(() => '#1d4ed8')
-  .hexSideColor(() => '#1e3a8a')
+  .hexTopColor(() => '#475569')
+  .hexSideColor(() => '#334155')
   .hexBinMerge(false)
   .hexTransitionDuration(400)
   .pointLat('lat')
@@ -130,7 +155,26 @@ const globe = new Globe(root, {
   .arcStroke(0.38)
   .arcDashLength(0.32)
   .arcDashGap(1.6)
-  .arcDashAnimateTime(11000);
+  .arcDashAnimateTime(11000)
+  .onGlobeReady(() => {
+    try {
+      const scene = globe.scene() as THREE.Scene;
+      const radius = globe.getGlobeRadius() * 0.998;
+      const geo = new THREE.SphereGeometry(radius, 72, 72);
+      const tex = makeOceanGradientTexture();
+      const mat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        opacity: 0.94,
+        depthWrite: true,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.name = 'fsbw-admin-ocean-gradient';
+      scene.add(mesh);
+    } catch {
+      /* optional */
+    }
+  });
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
 try {

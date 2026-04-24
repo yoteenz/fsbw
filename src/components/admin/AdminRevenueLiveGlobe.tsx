@@ -118,13 +118,14 @@ function buildArcPathsViewBox(visitorPoints: Props['visitorPoints'], orderPoints
   return paths;
 }
 
+/** Land dots: darker charcoal so they read on the light→dark gray ocean gradient (reference-style contrast). */
 function landDotRgb(lat: number): string {
   const t = Math.max(0, Math.min(1, (lat + 10) / 70));
-  const mint = { r: 110, g: 231, b: 183 };
-  const sky = { r: 125, g: 211, b: 252 };
-  const r = Math.round(mint.r + (sky.r - mint.r) * t);
-  const g = Math.round(mint.g + (sky.g - mint.g) * t);
-  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  const light = { r: 82, g: 82, b: 88 }; // #525258
+  const dark = { r: 28, g: 25, b: 26 }; // #1c191a
+  const r = Math.round(light.r + (dark.r - light.r) * t);
+  const g = Math.round(light.g + (dark.g - light.g) * t);
+  const b = Math.round(light.b + (dark.b - light.b) * t);
   return `rgb(${r},${g},${b})`;
 }
 
@@ -464,11 +465,12 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                 aria-hidden
               >
                 <defs>
-                  <radialGradient id={gradId} cx="32%" cy="28%" r="78%">
-                    <stop offset="0%" stopColor="#f4f4f5" />
-                    <stop offset="45%" stopColor="#e4e4e7" />
-                    <stop offset="82%" stopColor="#d4d4d8" />
-                    <stop offset="100%" stopColor="#c4c4cc" />
+                  {/** Light center → darker rim (inside disk only); land reads darker on top of this. */}
+                  <radialGradient id={gradId} cx="34%" cy="30%" r="88%">
+                    <stop offset="0%" stopColor="#fafafa" />
+                    <stop offset="38%" stopColor="#e4e4e7" />
+                    <stop offset="72%" stopColor="#a1a1aa" />
+                    <stop offset="100%" stopColor="#71717a" />
                   </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />
