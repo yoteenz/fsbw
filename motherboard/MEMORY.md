@@ -16997,3 +16997,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Insert the same **10px spacer** before the two-column summary grid on **`src/pages/admin/revenue/page.tsx`**, **`marketing/page.tsx`**, **`referrals/page.tsx`**, **`clients/page.tsx`** (hub summary branch), and **`brand/page.tsx`** (all tabs share the spacer before conditional summaries). **Pending** and **Reviews** already had this pattern.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-28 — Admin revenue globe: remove outer white ring and gray border
+
+**Context:** User asked to remove the **outer white circle** and **gray border** around the globe on **Admin → Revenue**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **iframe:** removed **`rounded-full`**, **box-shadow** (gray ring), set **`background: transparent`**. **SVG:** shell **`background` / `boxShadow`** transparent/none; removed **glow** circle behind fill and **rim stroke** circles; removed unused **`glowId`**. **`src/index.css`** — **`.admin-revenue-globe-shell`** no gradient or shadow.
+
+**Verification:** `npm run build` passes.

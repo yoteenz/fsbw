@@ -4,7 +4,6 @@ import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
-const OCEAN_BASE = '#e4e4e7';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -300,14 +299,12 @@ function AdminRevenueLiveGlobeIframeEmbed({
           ref={iframeRef}
           title="Admin live globe (WebGL)"
           src={src}
-          className="rounded-full border-0 mx-auto"
+          className="border-0 mx-auto"
           style={{
             width: size,
             height: size,
             display: 'block',
-            boxShadow:
-              '0 0 0 1px rgba(161, 161, 170, 0.5), 0 8px 28px rgba(15, 23, 42, 0.12), 0 14px 40px rgba(148, 163, 184, 0.2)',
-            background: OCEAN_BASE,
+            background: 'transparent',
           }}
           sandbox="allow-scripts allow-same-origin"
           referrerPolicy="no-referrer"
@@ -322,7 +319,6 @@ function AdminRevenueLiveGlobeIframeEmbed({
 function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
-  const glowId = useId().replace(/:/g, '');
   const barGradId = useId().replace(/:/g, '');
   const size = Math.min(heightPx, 300);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
@@ -421,6 +417,8 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
             height: size,
             borderRadius: '50%',
             touchAction: 'none',
+            background: 'transparent',
+            boxShadow: 'none',
           }}
           onWheel={onWheel}
           onPointerDown={onPointerDown}
@@ -462,10 +460,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                     <stop offset="82%" stopColor="#d4d4d8" />
                     <stop offset="100%" stopColor="#c4c4cc" />
                   </radialGradient>
-                  <radialGradient id={glowId} cx="50%" cy="50%" r="52%">
-                    <stop offset="78%" stopColor="rgba(255,255,255,0)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0.55)" />
-                  </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />
                   </clipPath>
@@ -475,7 +469,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                   </linearGradient>
                 </defs>
 
-                <circle cx={CX} cy={CY} r={R + 2} fill={`url(#${glowId})`} opacity={0.85} />
                 <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
 
                 <g clipPath={`url(#${clipId})`}>
@@ -508,16 +501,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                     />
                   ))}
                 </g>
-
-                <circle
-                  cx={CX}
-                  cy={CY}
-                  r={R}
-                  fill="none"
-                  stroke="rgba(113, 113, 122, 0.45)"
-                  strokeWidth={1}
-                />
-                <circle cx={CX} cy={CY} r={R - 1} fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth={2} opacity={0.5} />
               </svg>
 
               {points.map((p, i) => {
