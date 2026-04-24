@@ -4,32 +4,44 @@ import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
+/** Land cells use this weight so `hexAltitude` / colors can tell land from hotspot bins (weight 1–24). */
+const LAND_HEX_WEIGHT = 800;
+const LAND_HEX_WEIGHT_THRESHOLD = 400;
+
 type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
-
-/** Land dot on sphere (not a visitor/order marker). */
-type LandDot = { lat: number; lng: number; _land: true; _lat: number };
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
-/** Land dots only: translucent mint → sky by latitude (same intent as main SVG). */
-function landDotColor(lat: number): string {
+/** Merged land hex top: translucent mint → sky by latitude (reference-style). */
+function landHexTopRgba(lat: number): string {
   const t = Math.max(0, Math.min(1, (lat + 10) / 70));
   const mint = { r: 110, g: 231, b: 183 };
   const sky = { r: 125, g: 211, b: 252 };
   const r = Math.round(mint.r + (sky.r - mint.r) * t);
   const g = Math.round(mint.g + (sky.g - mint.g) * t);
   const b = Math.round(mint.b + (sky.b - mint.b) * t);
-  const a = 0.52 + t * 0.36;
+  const a = 0.62 + t * 0.28;
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
+}
+
+function landHexSideRgba(lat: number): string {
+  const t = Math.max(0, Math.min(1, (lat + 10) / 70));
+  const mint = { r: 74, g: 200, b: 160 };
+  const sky = { r: 56, g: 170, b: 220 };
+  const r = Math.round(mint.r + (sky.r - mint.r) * t);
+  const g = Math.round(mint.g + (sky.g - mint.g) * t);
+  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  const a = 0.72 + t * 0.2;
   return `rgba(${r},${g},${b},${a.toFixed(3)})`;
 }
 
 /**
  * Uniform **light translucent gray** base sphere (`globeImageUrl`).
- * Mint/sky **gradient** is applied only to **land points**, not the ocean texture.
+ * Continents = **merged H3 hex mesh** (`hexBinMerge`), not scattered points.
  */
 function makeOceanSolidLightGrayDataUrl(): string {
   const canvas = document.createElement('canvas');
@@ -86,6 +98,13 @@ function splitPoints(rows: PointRow[]): { visitors: PointRow[]; orders: PointRow
   return { visitors, orders };
 }
 
+type HexBin = { sumWeight?: number; points?: Array<{ lat?: number }> };
+
+function binCenterLat(bin: HexBin): number {
+  const p = bin.points?.[0];
+  return typeof p?.lat === 'number' ? p.lat : 0;
+}
+
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root missing');
 const root = rootEl;
@@ -100,50 +119,47 @@ function readSize(): { w: number; h: number } {
 const OCEAN_BASE_DATA_URL = makeOceanSolidLightGrayDataUrl();
 
 const globe = new Globe(root, {
-  /** Alpha so the iframe can sit on the storefront marble without a gray rectangle. */
   rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
-  /** Wait for base globe texture so the sphere is not a black placeholder on first paint. */
   waitForGlobeReady: true,
 })
   .backgroundColor('rgba(0,0,0,0)')
-  /** Required: three-globe paints black when `globeImageUrl` is unset. */
   .globeImageUrl(OCEAN_BASE_DATA_URL)
   .showGlobe(true)
   .showGraticules(false)
   .showAtmosphere(true)
-  .atmosphereColor('rgba(148, 163, 184, 0.32)')
-  .atmosphereAltitude(0.11)
+  .atmosphereColor('rgba(148, 163, 184, 0.28)')
+  .atmosphereAltitude(0.1)
+  /** Continent mesh: H3 hex bins merged into one honeycomb surface (reference). */
   .hexBinPointsData([])
   .hexBinPointLat('lat')
   .hexBinPointLng('lng')
   .hexBinPointWeight('w')
-  .hexBinResolution(2.8)
-  .hexMargin(0.08)
-  .hexAltitude((bin: { sumWeight?: number }) => {
+  .hexBinResolution(3.55)
+  .hexMargin(0.04)
+  .hexAltitude((bin: HexBin) => {
     const w = bin.sumWeight || 0;
+    if (w >= LAND_HEX_WEIGHT_THRESHOLD) return 0.0058;
     if (w < 3) return 0.001;
-    return 0.02 + Math.min(0.16, Math.sqrt(w) * 0.018);
+    return 0.022 + Math.min(0.14, Math.sqrt(w) * 0.021);
   })
-  .hexTopColor(() => 'rgba(71, 85, 105, 0.72)')
-  .hexSideColor(() => 'rgba(51, 65, 85, 0.78)')
-  .hexBinMerge(false)
+  .hexTopColor((bin: HexBin) => {
+    const w = bin.sumWeight || 0;
+    if (w >= LAND_HEX_WEIGHT_THRESHOLD) return landHexTopRgba(binCenterLat(bin));
+    return 'rgba(51, 65, 85, 0.78)';
+  })
+  .hexSideColor((bin: HexBin) => {
+    const w = bin.sumWeight || 0;
+    if (w >= LAND_HEX_WEIGHT_THRESHOLD) return landHexSideRgba(binCenterLat(bin));
+    return 'rgba(30, 41, 59, 0.85)';
+  })
+  .hexBinMerge(true)
   .hexTransitionDuration(400)
   .pointLat('lat')
   .pointLng('lng')
-  .pointColor((d: object) => {
-    const o = d as LandDot | PointRow;
-    if ('_land' in o && o._land) return landDotColor((o as LandDot)._lat);
-    return (o as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
-  })
-  .pointAltitude((d: object) => {
-    const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.0045 : 0.038;
-  })
-  .pointRadius((d: object) => {
-    const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.22 : 0.52;
-  })
-  .pointResolution(7)
+  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
+  .pointAltitude(0.038)
+  .pointRadius(0.52)
+  .pointResolution(12)
   .arcStartLat('startLat')
   .arcStartLng('startLng')
   .arcEndLat('endLat')
@@ -196,9 +212,7 @@ requestAnimationFrame(() => {
 });
 
 globe.onPointClick((p: object) => {
-  const row = p as LandDot | PointRow;
-  if ('_land' in row && row._land) return;
-  const pr = row as PointRow;
+  const pr = p as PointRow;
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   target.postMessage(
@@ -213,8 +227,7 @@ globe.onPointClick((p: object) => {
   );
 });
 
-let landStatic: LandDot[] = [];
-/** Latest visitor/order rows from parent (re-applied when land finishes loading). */
+let landHexPoints: Weighted[] = [];
 let lastRows: PointRow[] = [];
 
 function applyPayload(rows: PointRow[]) {
@@ -222,17 +235,17 @@ function applyPayload(rows: PointRow[]) {
   const { visitors, orders } = splitPoints(rows);
   const all: PointRow[] = [...visitors, ...orders];
   const hot = buildHotBinJitter(all);
-  globe.hexBinPointsData(hot).pointsData([...landStatic, ...all]).arcsData(buildArcs(visitors, orders));
+  globe.hexBinPointsData([...landHexPoints, ...hot]).pointsData(all).arcsData(buildArcs(visitors, orders));
 }
 
 globe.pointsData([]).hexBinPointsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const samples = await loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson');
-    landStatic = samples.map((s) => ({ lat: s.lat, lng: s.lng, _land: true as const, _lat: s.lat }));
+    const samples = await loadLandSamplesForGlobe(38_000, '/ne_110m_land.geojson');
+    landHexPoints = samples.map((s) => ({ lat: s.lat, lng: s.lng, w: LAND_HEX_WEIGHT }));
   } catch {
-    landStatic = [];
+    landHexPoints = [];
   }
   applyPayload(lastRows);
   notifyReady();

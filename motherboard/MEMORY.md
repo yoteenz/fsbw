@@ -17117,3 +17117,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** + **embed**.
+
+---
+
+## 2026-04-28 — Admin globe: merged H3 hex continent mesh (WebGL) + flat hex SVG land
+
+**Context:** User wanted **solid continent shapes with hex/mesh overlay** like the 2nd reference, not scattered dots.
+
+**Embed:** **`embed/admin-globe/src/main.ts`** — land only via **`hexBinPointsData`**: each land sample **`w: 800`**, **`hexBinMerge(true)`**, **`hexBinResolution ~3.55`**, **`hexMargin 0.04`** → **single merged H3 honeycomb**; **`hexAltitude` / `hexTopColor` / `hexSideColor`** branch on **`sumWeight >= 400`** (land = flat prism, mint→sky by bin center lat) vs low-weight **hotspot** bins (taller slate). **`pointsData`** = visitors/orders only. **~38k** land samples.
+
+**SVG:** **`AdminRevenueLiveGlobe`** — **`buildLandHexPathsFromSamples`**: **flat-top hex** `<path>` per land point, **22k** samples, light stroke between cells. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** + **embed**.

@@ -189,19 +189,29 @@ function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } |
   return d ? { px: d.px, py: d.py } : null;
 }
 
-function buildLandDotsFromSamples(
+/** Flat-top regular hex path (screen px) for honeycomb-style land (SVG analogue to H3 mesh). */
+function flatHexPathD(cx: number, cy: number, re: number): string {
+  const pts: string[] = [];
+  for (let k = 0; k < 6; k++) {
+    const ang = (k * Math.PI) / 3;
+    const x = cx + re * Math.cos(ang);
+    const y = cy + re * Math.sin(ang);
+    pts.push(`${k === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`);
+  }
+  return `${pts.join(' ')} Z`;
+}
+
+function buildLandHexPathsFromSamples(
   samples: Array<{ lat: number; lng: number }>
-): Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> {
-  const out: Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> = [];
+): Array<{ d: string; fill: string }> {
+  const out: Array<{ d: string; fill: string }> = [];
   for (const { lat, lng } of samples) {
-    const d = latLngToGlobeDisk(lat, lng);
-    if (!d) continue;
+    const disk = latLngToGlobeDisk(lat, lng);
+    if (!disk) continue;
+    const re = 0.62 + disk.depth * 0.42;
     out.push({
-      cx: d.px,
-      cy: d.py,
-      r: 0.85 + d.depth * 0.55,
+      d: flatHexPathD(disk.px, disk.py, re),
       fill: landDotRgba(lat),
-      opacity: 1,
     });
   }
   return out;
@@ -339,17 +349,15 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
   const size = Math.min(heightPx, 405);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
-  const [landDots, setLandDots] = useState<Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }>>(
-    []
-  );
+  const [landHexPaths, setLandHexPaths] = useState<Array<{ d: string; fill: string }>>([]);
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const samples = await loadLandSamplesForGlobe(14_000, '/ne_110m_land.geojson');
-        if (!cancelled) setLandDots(buildLandDotsFromSamples(samples));
+        const samples = await loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson');
+        if (!cancelled) setLandHexPaths(buildLandHexPathsFromSamples(samples));
       } catch {
-        if (!cancelled) setLandDots([]);
+        if (!cancelled) setLandHexPaths([]);
       }
     })();
     return () => {
@@ -487,8 +495,8 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
 
                 <g clipPath={`url(#${clipId})`}>
-                  {landDots.map((d, i) => (
-                    <circle key={`land-${i}`} cx={d.cx} cy={d.cy} r={d.r} fill={d.fill} opacity={d.opacity} />
+                  {landHexPaths.map((h, i) => (
+                    <path key={`land-hex-${i}`} d={h.d} fill={h.fill} stroke="rgba(255,255,255,0.12)" strokeWidth={0.15} />
                   ))}
                   {hotspots.map((h, i) => (
                     <rect
