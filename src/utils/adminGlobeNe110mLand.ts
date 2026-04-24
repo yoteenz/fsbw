@@ -157,8 +157,8 @@ export function landSamplesFromNe110mGeoJson(geo: unknown, maxDots: number): Lan
   const maxCoast = Math.min(2200, Math.max(400, Math.floor(maxDots * 0.14)));
   const interiorBudget = Math.max(0, maxDots - maxCoast);
 
-  /** Dense lat/lng grid over land — fills continent interiors. */
-  const interiorAll = interiorGridSamples(mp, 0.32, 0.42, Math.max(interiorBudget * 12, 80_000));
+  /** Finer lat/lng grid so post-stride dots are closer (was ~0.32°×0.42° — too sparse). */
+  const interiorAll = interiorGridSamples(mp, 0.17, 0.22, Math.max(interiorBudget * 22, 160_000));
   const interior = strideEvery(interiorAll, interiorBudget);
 
   const coastAll = boundarySamples(mp, 24);

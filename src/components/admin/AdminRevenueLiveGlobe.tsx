@@ -199,7 +199,7 @@ function buildLandDotsFromSamples(
     out.push({
       cx: d.px,
       cy: d.py,
-      r: 0.58 + d.depth * 0.42,
+      r: 0.72 + d.depth * 0.48,
       fill: landDotRgba(lat),
       opacity: 1,
     });
@@ -346,7 +346,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
     let cancelled = false;
     void (async () => {
       try {
-        const samples = await loadLandSamplesForGlobe(5200, '/ne_110m_land.geojson');
+        const samples = await loadLandSamplesForGlobe(8200, '/ne_110m_land.geojson');
         if (!cancelled) setLandDots(buildLandDotsFromSamples(samples));
       } catch {
         if (!cancelled) setLandDots([]);
@@ -472,8 +472,8 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 <defs>
                   {/** Uniform translucent light gray ocean — gradient tint lives on land dots only. */}
                   <radialGradient id={gradId} cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="rgba(244, 244, 245, 0.78)" />
-                    <stop offset="100%" stopColor="rgba(228, 228, 231, 0.72)" />
+                    <stop offset="0%" stopColor="rgba(250, 250, 251, 0.38)" />
+                    <stop offset="100%" stopColor="rgba(228, 228, 231, 0.32)" />
                   </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />

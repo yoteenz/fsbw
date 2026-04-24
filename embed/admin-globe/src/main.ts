@@ -38,7 +38,7 @@ function makeOceanSolidLightGrayDataUrl(): string {
   canvas.height = sz;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('2d context');
-  ctx.fillStyle = 'rgba(244, 244, 245, 0.78)';
+  ctx.fillStyle = 'rgba(250, 250, 251, 0.38)';
   ctx.fillRect(0, 0, sz, sz);
   return canvas.toDataURL('image/png');
 }
@@ -137,11 +137,11 @@ const globe = new Globe(root, {
   })
   .pointAltitude((d: object) => {
     const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.0042 : 0.038;
+    return '_land' in o && o._land ? 0.0045 : 0.038;
   })
   .pointRadius((d: object) => {
     const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.14 : 0.52;
+    return '_land' in o && o._land ? 0.18 : 0.52;
   })
   .pointResolution(7)
   .arcStartLat('startLat')
@@ -212,7 +212,7 @@ globe.pointsData([]).hexBinPointsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const samples = await loadLandSamplesForGlobe(11_000, '/ne_110m_land.geojson');
+    const samples = await loadLandSamplesForGlobe(16_000, '/ne_110m_land.geojson');
     landStatic = samples.map((s) => ({ lat: s.lat, lng: s.lng, _land: true as const, _lat: s.lat }));
   } catch {
     landStatic = [];

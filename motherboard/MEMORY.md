@@ -17079,3 +17079,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main** (GeoJSON sampling + SVG).
+
+---
+
+## 2026-04-28 — Admin globe: denser land dots + more transparent ocean base
+
+**Context:** User said **dots too spaced out** and **base should be more translucent/transparent**.
+
+**Changes:** **`adminGlobeNe110mLand.ts`** — interior grid **`0.17° × 0.22°`** (was **0.32 × 0.42**), larger scan pool before stride. **SVG** — ocean stops **`rgba(250,250,251,0.38)` → `rgba(228,228,231,0.32)`**; **8200** land samples; slightly **larger** land dot **r**. **Embed** — **`globeImageUrl`** fill **`rgba(250,250,251,0.38)`**; **16k** land samples; land **pointRadius** **0.18**. **`docs/ADMIN_GLOBE_EMBED.md`** ocean line updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** + **embed**.
