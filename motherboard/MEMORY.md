@@ -16937,3 +16937,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`, `embed/admin-globe/src/main.ts`, `embed/admin-globe/index.html`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+---
+
+## 2026-04-28 — Admin Meetings overview analytics rows layout
+
+**Context:** User asked on **Admin → Meetings → Overview** tab: **gray divider lines** between gray label rows; **remove colons** after labels (e.g. COMPLETED APPOINTMENTS); move **numbers to the right** of the card; **numbers in red** instead of gray.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — **APPOINTMENT ANALYTICS** and **CONSULT ANALYTICS** blocks: each metric is a **flex row** (`space-between`), **`borderBottom: 1px solid #d1d5db`** between rows (not under last count row before avg row), label **left** gray **`#808080`** **Futura PT Book** (counts) / **Demi** (avg lines), value **right** **`#EB1C24`** **Futura PT Medium**; avg rows same layout without colon in label text.
+
+**Verification:** `npm run build` passes.

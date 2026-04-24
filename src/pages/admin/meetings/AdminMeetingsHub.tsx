@@ -2884,19 +2884,65 @@ export default function AdminMeetingsHub() {
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
                             APPOINTMENT ANALYTICS
                           </p>
-                          <div style={{ marginTop: '8px', display: 'grid', rowGap: '5px' }}>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              COMPLETED APPOINTMENTS: {overviewBookingSales.completedAppointments}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              PAID IN FULL APPOINTMENTS: {overviewBookingSales.paidInFullAppointments}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              APPOINTMENTS WITH REMAINING BALANCE: {overviewBookingSales.pendingBalanceAppointments}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', margin: 0, color: '#EB1C24' }}>
-                              AVG BOOKING SALE (PAID IN FULL): {formatUsd(overviewBookingSales.avgPaidInFullUsd)}
-                            </p>
+                          <div style={{ marginTop: '8px' }}>
+                            {[
+                              ['COMPLETED APPOINTMENTS', String(overviewBookingSales.completedAppointments)],
+                              ['PAID IN FULL APPOINTMENTS', String(overviewBookingSales.paidInFullAppointments)],
+                              ['APPOINTMENTS WITH REMAINING BALANCE', String(overviewBookingSales.pendingBalanceAppointments)],
+                            ].map(([label, val], idx, arr) => (
+                              <div
+                                key={label}
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                  padding: '6px 0',
+                                  borderBottom: idx < arr.length - 1 ? '1px solid #d1d5db' : undefined,
+                                }}
+                              >
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                                  {label}
+                                </span>
+                                <span
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '9px',
+                                    color: '#EB1C24',
+                                    flexShrink: 0,
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {val}
+                                </span>
+                              </div>
+                            ))}
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '6px 0 0 0',
+                                marginTop: '2px',
+                              }}
+                            >
+                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                                AVG BOOKING SALE (PAID IN FULL)
+                              </span>
+                              <span
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '9px',
+                                  color: '#EB1C24',
+                                  flexShrink: 0,
+                                  textTransform: 'uppercase',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {formatUsd(overviewBookingSales.avgPaidInFullUsd)}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
@@ -2904,25 +2950,67 @@ export default function AdminMeetingsHub() {
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
                             CONSULT ANALYTICS
                           </p>
-                          <div style={{ marginTop: '8px', display: 'grid', rowGap: '5px' }}>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              TOTAL CONSULT MEETINGS: {overviewConsultSales.totalConsults}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              COMPLETED CONSULTS: {overviewConsultSales.completedConsults}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              WIG ONLY CONSULTS: {overviewConsultSales.wigOnlyConsults}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              WIG + INSTALL CONSULTS: {overviewConsultSales.wigInstallConsults}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', margin: 0, color: '#808080' }}>
-                              REDEEMED CONSULT-OFFER ORDERS: {overviewConsultSales.redeemedOrderCount}
-                            </p>
-                            <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', margin: 0, color: '#EB1C24' }}>
-                              AVG CONSULT SALE (REDEEMED OFFERS): {formatUsd(overviewConsultSales.avgRedeemedOrderUsd)}
-                            </p>
+                          <div style={{ marginTop: '8px' }}>
+                            {[
+                              ['TOTAL CONSULT MEETINGS', String(overviewConsultSales.totalConsults)],
+                              ['COMPLETED CONSULTS', String(overviewConsultSales.completedConsults)],
+                              ['WIG ONLY CONSULTS', String(overviewConsultSales.wigOnlyConsults)],
+                              ['WIG + INSTALL CONSULTS', String(overviewConsultSales.wigInstallConsults)],
+                              ['REDEEMED CONSULT-OFFER ORDERS', String(overviewConsultSales.redeemedOrderCount)],
+                            ].map(([label, val], idx, arr) => (
+                              <div
+                                key={label}
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                  padding: '6px 0',
+                                  borderBottom: idx < arr.length - 1 ? '1px solid #d1d5db' : undefined,
+                                }}
+                              >
+                                <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                                  {label}
+                                </span>
+                                <span
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '9px',
+                                    color: '#EB1C24',
+                                    flexShrink: 0,
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {val}
+                                </span>
+                              </div>
+                            ))}
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '6px 0 0 0',
+                                marginTop: '2px',
+                              }}
+                            >
+                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                                AVG CONSULT SALE (REDEEMED OFFERS)
+                              </span>
+                              <span
+                                style={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '9px',
+                                  color: '#EB1C24',
+                                  flexShrink: 0,
+                                  textTransform: 'uppercase',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {formatUsd(overviewConsultSales.avgRedeemedOrderUsd)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
