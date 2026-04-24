@@ -17053,3 +17053,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **embed** project.
+
+---
+
+## 2026-04-28 — Admin globe WebGL: black sphere fix (`globeImageUrl` data URL)
+
+**Context:** User reported the **globe is black** after the **`globeMaterial(MeshBasicMaterial)`** change.
+
+**Cause:** **three-globe** with **no `globeImageUrl`** sets **`globeMaterial.color` to black**; **`onGlobeReady`** / **`globeMaterial`** swap was **fragile** (order vs internal updates, lighting on **Basic** vs default **Phong**).
+
+**Fix:** **`embed/admin-globe/src/main.ts`** — **`globeImageUrl(canvas.toDataURL('image/png'))`** for the same radial gray art; **`waitForGlobeReady: true`**; removed **`globeMaterial`** / **`three`** import; dropped **`@types/three`** from embed **devDependencies**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`cd embed/admin-globe && npm run build`** passes.
+
+**Deploy:** Redeploy **embed** project.

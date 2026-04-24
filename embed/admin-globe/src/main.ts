@@ -1,5 +1,4 @@
 import Globe from 'globe.gl';
-import * as THREE from 'three';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 
 const BRAND_RED = '#EB1C24';
@@ -27,8 +26,12 @@ function landDotColor(lat: number): string {
   return `rgb(${r},${g},${b})`;
 }
 
-/** Radial light→dark gray texture on inner sphere (reference-style volume inside the globe). */
-function makeOceanGradientTexture(): THREE.CanvasTexture {
+/**
+ * Radial light→dark gray as a data URL for `globeImageUrl`.
+ * three-globe forces **black** when there is **no** `globeImageUrl`; swapping only
+ * `globeMaterial()` in `onGlobeReady` is unreliable. The texture loader path sets map + clears color.
+ */
+function makeOceanGradientImageDataUrl(): string {
   const canvas = document.createElement('canvas');
   const sz = 512;
   canvas.width = sz;
@@ -44,10 +47,7 @@ function makeOceanGradientTexture(): THREE.CanvasTexture {
   g.addColorStop(1, '#5b5b66');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, sz, sz);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.needsUpdate = true;
-  return tex;
+  return canvas.toDataURL('image/png');
 }
 
 function buildHotBinJitter(rows: PointRow[]): Weighted[] {
@@ -104,15 +104,17 @@ function readSize(): { w: number; h: number } {
   return { w, h };
 }
 
-const oceanTex = makeOceanGradientTexture();
+const OCEAN_GRADIENT_DATA_URL = makeOceanGradientImageDataUrl();
 
 const globe = new Globe(root, {
   /** Alpha so the iframe can sit on the storefront marble without a gray rectangle. */
   rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
-  waitForGlobeReady: false,
+  /** Wait for base globe texture so the sphere is not a black placeholder on first paint. */
+  waitForGlobeReady: true,
 })
   .backgroundColor('rgba(0,0,0,0)')
-  /** Base sphere must be visible — `globeMaterial` maps the gray radial “ocean” (showGlobe false hid it before). */
+  /** Required: three-globe paints black when `globeImageUrl` is unset; data URL loads like any map. */
+  .globeImageUrl(OCEAN_GRADIENT_DATA_URL)
   .showGlobe(true)
   .showGraticules(false)
   .showAtmosphere(true)
@@ -158,20 +160,7 @@ const globe = new Globe(root, {
   .arcStroke(0.38)
   .arcDashLength(0.32)
   .arcDashGap(1.6)
-  .arcDashAnimateTime(11000)
-  .onGlobeReady(() => {
-    try {
-      globe.globeMaterial(
-        new THREE.MeshBasicMaterial({
-          map: oceanTex,
-          transparent: false,
-          depthWrite: true,
-        })
-      );
-    } catch {
-      /* optional */
-    }
-  });
+  .arcDashAnimateTime(11000);
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
 try {
