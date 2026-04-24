@@ -16911,3 +16911,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`, `.env.example`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-26 — Admin globe: restore iframe WebGL path for `embed/admin-globe`
+
+**Context:** User has **`admin-globe-embed`** Vercel project in the same repo; asked if **3D WebGL** was applied and how to avoid **`three`** in the main app.
+
+**Outcomes:** **`AdminRevenueLiveGlobe`** branches on **`VITE_ADMIN_GLOBE_EMBED_URL`**: set → **iframe** + **`postMessage`** (protocol matches **`embed/admin-globe/src/main.ts`**); unset → **SVG** fallback. Iframe mode: **no** misaligned HTML dot overlay (WebGL points only; tap → modal via **`fsbw-admin-globe-point`**). **`.env.example`** and **`docs/ADMIN_GLOBE_EMBED.md`** document main vs embed deploy and **redeploy main** after env.
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `.env.example`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` passes.
