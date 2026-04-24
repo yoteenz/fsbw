@@ -15,37 +15,30 @@ const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
-/** Darker neutral land so it reads on the light→dark gray ocean (matches main SVG). */
+/** Land dots only: translucent mint → sky by latitude (same intent as main SVG). */
 function landDotColor(lat: number): string {
   const t = Math.max(0, Math.min(1, (lat + 10) / 70));
-  const light = { r: 82, g: 82, b: 88 };
-  const dark = { r: 28, g: 25, b: 26 };
-  const r = Math.round(light.r + (dark.r - light.r) * t);
-  const g = Math.round(light.g + (dark.g - light.g) * t);
-  const b = Math.round(light.b + (dark.b - light.b) * t);
-  return `rgb(${r},${g},${b})`;
+  const mint = { r: 110, g: 231, b: 183 };
+  const sky = { r: 125, g: 211, b: 252 };
+  const r = Math.round(mint.r + (sky.r - mint.r) * t);
+  const g = Math.round(mint.g + (sky.g - mint.g) * t);
+  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  const a = 0.52 + t * 0.36;
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
 }
 
 /**
- * Radial light→dark gray as a data URL for `globeImageUrl`.
- * three-globe forces **black** when there is **no** `globeImageUrl`; swapping only
- * `globeMaterial()` in `onGlobeReady` is unreliable. The texture loader path sets map + clears color.
+ * Uniform **light translucent gray** base sphere (`globeImageUrl`).
+ * Mint/sky **gradient** is applied only to **land points**, not the ocean texture.
  */
-function makeOceanGradientImageDataUrl(): string {
+function makeOceanSolidLightGrayDataUrl(): string {
   const canvas = document.createElement('canvas');
-  const sz = 512;
+  const sz = 64;
   canvas.width = sz;
   canvas.height = sz;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('2d context');
-  const cx = sz * 0.34;
-  const cy = sz * 0.3;
-  const g = ctx.createRadialGradient(cx, cy, sz * 0.06, sz * 0.5, sz * 0.5, sz * 0.52);
-  g.addColorStop(0, '#e8e8ea');
-  g.addColorStop(0.32, '#d4d4d8');
-  g.addColorStop(0.68, '#90909a');
-  g.addColorStop(1, '#5b5b66');
-  ctx.fillStyle = g;
+  ctx.fillStyle = 'rgba(244, 244, 245, 0.78)';
   ctx.fillRect(0, 0, sz, sz);
   return canvas.toDataURL('image/png');
 }
@@ -104,7 +97,7 @@ function readSize(): { w: number; h: number } {
   return { w, h };
 }
 
-const OCEAN_GRADIENT_DATA_URL = makeOceanGradientImageDataUrl();
+const OCEAN_BASE_DATA_URL = makeOceanSolidLightGrayDataUrl();
 
 const globe = new Globe(root, {
   /** Alpha so the iframe can sit on the storefront marble without a gray rectangle. */
@@ -113,13 +106,13 @@ const globe = new Globe(root, {
   waitForGlobeReady: true,
 })
   .backgroundColor('rgba(0,0,0,0)')
-  /** Required: three-globe paints black when `globeImageUrl` is unset; data URL loads like any map. */
-  .globeImageUrl(OCEAN_GRADIENT_DATA_URL)
+  /** Required: three-globe paints black when `globeImageUrl` is unset. */
+  .globeImageUrl(OCEAN_BASE_DATA_URL)
   .showGlobe(true)
   .showGraticules(false)
   .showAtmosphere(true)
-  .atmosphereColor('rgba(148, 163, 184, 0.42)')
-  .atmosphereAltitude(0.13)
+  .atmosphereColor('rgba(148, 163, 184, 0.32)')
+  .atmosphereAltitude(0.11)
   .hexBinPointsData([])
   .hexBinPointLat('lat')
   .hexBinPointLng('lng')
@@ -131,8 +124,8 @@ const globe = new Globe(root, {
     if (w < 3) return 0.001;
     return 0.02 + Math.min(0.16, Math.sqrt(w) * 0.018);
   })
-  .hexTopColor(() => '#475569')
-  .hexSideColor(() => '#334155')
+  .hexTopColor(() => 'rgba(71, 85, 105, 0.72)')
+  .hexSideColor(() => 'rgba(51, 65, 85, 0.78)')
   .hexBinMerge(false)
   .hexTransitionDuration(400)
   .pointLat('lat')
@@ -144,11 +137,11 @@ const globe = new Globe(root, {
   })
   .pointAltitude((d: object) => {
     const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.0035 : 0.038;
+    return '_land' in o && o._land ? 0.0042 : 0.038;
   })
   .pointRadius((d: object) => {
     const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.1 : 0.52;
+    return '_land' in o && o._land ? 0.14 : 0.52;
   })
   .pointResolution(7)
   .arcStartLat('startLat')
@@ -219,7 +212,7 @@ globe.pointsData([]).hexBinPointsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const samples = await loadLandSamplesForGlobe(7200, '/ne_110m_land.geojson');
+    const samples = await loadLandSamplesForGlobe(11_000, '/ne_110m_land.geojson');
     landStatic = samples.map((s) => ({ lat: s.lat, lng: s.lng, _land: true as const, _lat: s.lat }));
   } catch {
     landStatic = [];

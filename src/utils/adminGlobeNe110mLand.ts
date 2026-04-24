@@ -135,26 +135,38 @@ function interiorGridSamples(
   return out;
 }
 
+function strideEvery<T>(arr: T[], maxKeep: number): T[] {
+  if (arr.length <= maxKeep) return arr;
+  const step = Math.ceil(arr.length / maxKeep);
+  const out: T[] = [];
+  for (let i = 0; i < arr.length && out.length < maxKeep; i += step) {
+    out.push(arr[i]!);
+  }
+  return out;
+}
+
 /**
- * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples (coast + interior).
+ * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples.
+ * **Interior-first** fine grid so continents read as **filled dot fields**, not coast-only rings;
+ * coast samples are capped and appended after interior downsampling.
  */
 export function landSamplesFromNe110mGeoJson(geo: unknown, maxDots: number): LandSample[] {
   const mp = collectPolygons(geo);
   if (mp.length === 0) return [];
 
-  const boundary = boundarySamples(mp, 55);
-  const interiorCap = Math.max(0, maxDots - boundary.length);
-  const interior = interiorGridSamples(mp, 0.9, 1.1, interiorCap);
+  const maxCoast = Math.min(2200, Math.max(400, Math.floor(maxDots * 0.14)));
+  const interiorBudget = Math.max(0, maxDots - maxCoast);
 
-  const merged: LandSample[] = [...boundary, ...interior];
+  /** Dense lat/lng grid over land — fills continent interiors. */
+  const interiorAll = interiorGridSamples(mp, 0.32, 0.42, Math.max(interiorBudget * 12, 80_000));
+  const interior = strideEvery(interiorAll, interiorBudget);
+
+  const coastAll = boundarySamples(mp, 24);
+  const coast = strideEvery(coastAll, maxCoast);
+
+  const merged: LandSample[] = [...interior, ...coast];
   if (merged.length <= maxDots) return merged;
-
-  const step = Math.ceil(merged.length / maxDots);
-  const thinned: LandSample[] = [];
-  for (let i = 0; i < merged.length && thinned.length < maxDots; i += step) {
-    thinned.push(merged[i]!);
-  }
-  return thinned;
+  return merged.slice(0, maxDots);
 }
 
 const DEFAULT_GEO_PATH = '/ne_110m_land.geojson';

@@ -118,15 +118,19 @@ function buildArcPathsViewBox(visitorPoints: Props['visitorPoints'], orderPoints
   return paths;
 }
 
-/** Land dots: darker charcoal so they read on the light→dark gray ocean gradient (reference-style contrast). */
-function landDotRgb(lat: number): string {
+/**
+ * Continent dots only: translucent **mint → sky** by latitude (reference-style tint on land),
+ * not on the ocean base.
+ */
+function landDotRgba(lat: number): string {
   const t = Math.max(0, Math.min(1, (lat + 10) / 70));
-  const light = { r: 82, g: 82, b: 88 }; // #525258
-  const dark = { r: 28, g: 25, b: 26 }; // #1c191a
-  const r = Math.round(light.r + (dark.r - light.r) * t);
-  const g = Math.round(light.g + (dark.g - light.g) * t);
-  const b = Math.round(light.b + (dark.b - light.b) * t);
-  return `rgb(${r},${g},${b})`;
+  const mint = { r: 110, g: 231, b: 183 };
+  const sky = { r: 125, g: 211, b: 252 };
+  const r = Math.round(mint.r + (sky.r - mint.r) * t);
+  const g = Math.round(mint.g + (sky.g - mint.g) * t);
+  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  const a = 0.5 + t * 0.38;
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
 }
 
 type Hotspot = { cx: number; cy: number; h: number };
@@ -192,13 +196,12 @@ function buildLandDotsFromSamples(
   for (const { lat, lng } of samples) {
     const d = latLngToGlobeDisk(lat, lng);
     if (!d) continue;
-    const dark = 0.35 + d.depth * 0.45;
     out.push({
       cx: d.px,
       cy: d.py,
-      r: 0.65 + d.depth * 0.5,
-      fill: landDotRgb(lat),
-      opacity: 0.32 + dark * 0.42,
+      r: 0.58 + d.depth * 0.42,
+      fill: landDotRgba(lat),
+      opacity: 1,
     });
   }
   return out;
@@ -343,7 +346,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
     let cancelled = false;
     void (async () => {
       try {
-        const samples = await loadLandSamplesForGlobe(3200, '/ne_110m_land.geojson');
+        const samples = await loadLandSamplesForGlobe(5200, '/ne_110m_land.geojson');
         if (!cancelled) setLandDots(buildLandDotsFromSamples(samples));
       } catch {
         if (!cancelled) setLandDots([]);
@@ -467,19 +470,17 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 aria-hidden
               >
                 <defs>
-                  {/** Visible light→dark gray volume (center not pure white so ocean reads like reference). */}
-                  <radialGradient id={gradId} cx="34%" cy="30%" r="88%">
-                    <stop offset="0%" stopColor="#e8e8ea" />
-                    <stop offset="32%" stopColor="#d4d4d8" />
-                    <stop offset="68%" stopColor="#90909a" />
-                    <stop offset="100%" stopColor="#5b5b66" />
+                  {/** Uniform translucent light gray ocean — gradient tint lives on land dots only. */}
+                  <radialGradient id={gradId} cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="rgba(244, 244, 245, 0.78)" />
+                    <stop offset="100%" stopColor="rgba(228, 228, 231, 0.72)" />
                   </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />
                   </clipPath>
                   <linearGradient id={barGradId} x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#d4d4d8" stopOpacity={0.95} />
-                    <stop offset="100%" stopColor="#52525b" stopOpacity={0.9} />
+                    <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="#475569" stopOpacity={0.65} />
                   </linearGradient>
                 </defs>
 

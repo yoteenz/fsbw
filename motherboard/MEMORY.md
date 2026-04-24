@@ -17067,3 +17067,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`cd embed/admin-globe && npm run build`** passes.
 
 **Deploy:** Redeploy **embed** project.
+
+---
+
+## 2026-04-28 — Admin globe: translucent gray ocean; gradient only on continent dots (filled interiors)
+
+**Context:** User wanted **base globe = light translucent gray**; **gradient tint on continents only** (filled by **gradient dots**, not outline-only).
+
+**Changes:** **`src/utils/adminGlobeNe110mLand.ts`** — **interior-first** fine **lat/lng grid** (`0.32° × 0.42°`, cap scan) then **stride** to budget; **coast** densified + capped (~14% of dots) so interiors **fill**, not rings. **`AdminRevenueLiveGlobe` (SVG)** — ocean **`radialGradient`** = uniform **`rgba(244,244,245,0.78)` → `rgba(228,228,231,0.72)`**; land **`landDotRgba`** = translucent **mint→sky** by latitude; **5200** samples; hotspot bars slate-translucent. **`embed/admin-globe/src/main.ts`** — **`globeImageUrl`** = **solid** light gray PNG (not gradient); **`landDotColor`** mint→sky **rgba**; **11k** land samples; slightly larger land **pointRadius**; softer atmosphere; translucent slate hex colors. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main** (GeoJSON sampling + SVG).
