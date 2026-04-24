@@ -2,12 +2,9 @@ import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#16a34a';
-
-/** Must match `embed/admin-globe/src/main.ts` */
-const MSG_IN = 'fsbw-admin-globe';
-const MSG_POINT = 'fsbw-admin-globe-point';
-const MSG_READY = 'fsbw-admin-globe-ready';
+const ORDER_GREEN = '#22c55e';
+const CYAN = '#38bdf8';
+const CYAN_DIM = 'rgba(56, 189, 248, 0.14)';
 
 export type LiveGlobePoint = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
 
@@ -17,12 +14,10 @@ type Props = {
   heightPx?: number;
 };
 
-function getAdminGlobeEmbedUrl(): string | null {
-  const raw = (import.meta as unknown as { env?: { VITE_ADMIN_GLOBE_EMBED_URL?: string } }).env
-    ?.VITE_ADMIN_GLOBE_EMBED_URL;
-  const u = typeof raw === 'string' ? raw.trim() : '';
-  return u || null;
-}
+const VIEW = 400;
+const CX = VIEW / 2;
+const CY = VIEW / 2;
+const R = VIEW / 2 - 4;
 
 function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): LiveGlobePoint[] {
   return [
@@ -31,6 +26,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
   ];
 }
 
+/** Equirectangular → % inside map layer (legacy map positions). */
 function project(lat: number, lng: number): { leftPct: number; topPct: number } {
   const clampLat = Math.max(-85, Math.min(85, lat));
   const clampLng = Math.max(-180, Math.min(180, lng));
@@ -85,7 +81,18 @@ function interpolateGreatCircle(
   return out;
 }
 
-function buildArcPaths(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): string[] {
+function mapPathToViewBox(pts: Array<{ x: number; y: number }>): string {
+  const scaleX = VIEW / 360;
+  const scaleY = VIEW / 180;
+  if (pts.length === 0) return '';
+  let d = `M ${pts[0].x * scaleX} ${pts[0].y * scaleY}`;
+  for (let i = 1; i < pts.length; i++) {
+    d += ` L ${pts[i].x * scaleX} ${pts[i].y * scaleY}`;
+  }
+  return d;
+}
+
+function buildArcPathsViewBox(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): string[] {
   if (orderPoints.length === 0) return [];
   const hub = visitorPoints[0] ?? orderPoints[0];
   if (!hub) return [];
@@ -94,28 +101,50 @@ function buildArcPaths(visitorPoints: Props['visitorPoints'], orderPoints: Props
   for (let i = 0; i < Math.min(orderPoints.length, max); i++) {
     const o = orderPoints[i];
     if (!o) continue;
-    const pts = interpolateGreatCircle(hub.lat, hub.lng, o.lat, o.lng, 24);
+    const pts = interpolateGreatCircle(hub.lat, hub.lng, o.lat, o.lng, 28);
     if (pts.length < 2) continue;
-    let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
-    for (let j = 1; j < pts.length; j++) {
-      const p = pts[j];
-      d += ` L ${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
-    }
-    paths.push(d);
+    paths.push(mapPathToViewBox(pts));
   }
   return paths;
 }
 
-const EARTH_TEXTURE =
-  'https://cdn.jsdelivr.net/npm/three-globe@2.45.2/example/img/earth-dark.jpg';
+/** Fibonacci sphere → orthographic (front) + slight tilt for “globe” depth. */
+function buildSphereDots(count: number): Array<{ cx: number; cy: number; r: number; opacity: number }> {
+  const out: Array<{ cx: number; cy: number; r: number; opacity: number }> = [];
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const tiltX = 0.18;
+  const tiltY = -0.12;
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / Math.max(1, count - 1)) * 2;
+    const yr = Math.min(1, Math.max(-1, y));
+    const r0 = Math.sqrt(Math.max(0, 1 - yr * yr));
+    const theta = golden * i;
+    let x = Math.cos(theta) * r0;
+    let z = Math.sin(theta) * r0;
+    let y3 = yr;
+    const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
+    const z1 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
+    x = x1;
+    z = z1;
+    const y2 = y3 * Math.cos(tiltX) - z * Math.sin(tiltX);
+    const z2 = y3 * Math.sin(tiltX) + z * Math.cos(tiltX);
+    y3 = y2;
+    z = z2;
+    if (z < -0.08) continue;
+    const px = CX + x * (R - 6);
+    const py = CY - y3 * (R - 6);
+    const depth = (z + 1) / 2;
+    out.push({
+      cx: px,
+      cy: py,
+      r: 0.55 + depth * 0.85,
+      opacity: 0.08 + depth * 0.35,
+    });
+  }
+  return out;
+}
 
-function DetailModal({
-  selected,
-  onClose,
-}: {
-  selected: LiveGlobePoint;
-  onClose: () => void;
-}) {
+function DetailModal({ selected, onClose }: { selected: LiveGlobePoint; onClose: () => void }) {
   return createPortal(
     <div
       role="dialog"
@@ -150,90 +179,22 @@ function DetailModal({
   );
 }
 
-/** WebGL globe in a **separate origin** — `globe.gl` / `three` never ship in the main app bundle. */
-function AdminRevenueLiveGlobeIframeEmbed({
-  embedUrl,
-  orderPoints,
-  visitorPoints,
-  heightPx = 240,
-}: Props & { embedUrl: string }) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [embedReady, setEmbedReady] = useState(false);
-  const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
-  const size = Math.min(heightPx, 320);
-
-  const pointsPayload = useMemo(() => {
-    const rows: Array<{ lat: number; lng: number; label: string; kind: 'visitor' | 'order' }> = [
-      ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
-      ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
-    ];
-    return rows;
-  }, [visitorPoints, orderPoints]);
-
-  useEffect(() => {
-    const onMsg = (ev: MessageEvent) => {
-      if (ev.source !== iframeRef.current?.contentWindow) return;
-      const d = ev.data;
-      if (!d || typeof d !== 'object') return;
-      if (d.type === MSG_READY) {
-        setEmbedReady(true);
-        return;
-      }
-      if (d.type === MSG_POINT) {
-        const kind = d.kind === 'order' ? 'order' : 'visitor';
-        const lat = Number(d.lat);
-        const lng = Number(d.lng);
-        const label = typeof d.label === 'string' ? d.label : '';
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-        setSelected({ lat, lng, label, kind });
-      }
-    };
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
-  }, []);
-
-  useEffect(() => {
-    if (!embedReady) return;
-    const win = iframeRef.current?.contentWindow;
-    if (!win) return;
-    win.postMessage({ type: MSG_IN, points: pointsPayload }, '*');
-  }, [embedReady, pointsPayload]);
-
-  const src = embedUrl.includes('?') ? `${embedUrl}&v=1` : `${embedUrl}?v=1`;
-
-  return (
-    <>
-      <div className="flex justify-center w-full" data-admin-globe-mode="iframe">
-        <iframe
-          ref={iframeRef}
-          title="Admin live globe (WebGL)"
-          src={src}
-          className="rounded-full border-0 mx-auto"
-          style={{
-            width: size,
-            height: size,
-            display: 'block',
-            boxShadow:
-              '0 0 0 1px rgba(125, 211, 252, 0.35), 0 0 28px rgba(56, 189, 248, 0.22), 0 14px 36px rgba(15, 23, 42, 0.35)',
-            background: '#020617',
-          }}
-          sandbox="allow-scripts"
-          referrerPolicy="no-referrer"
-        />
-      </div>
-      {selected && <DetailModal selected={selected} onClose={() => setSelected(null)} />}
-    </>
-  );
-}
-
-/** SVG/CSS fallback — no WebGL in the main bundle. */
-function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
-  const termGradientId = useId().replace(/:/g, '');
-  const size = Math.min(heightPx, 280);
+/**
+ * Admin revenue “globe”: **SVG + CSS only** (reliable on mobile — no WebGL / iframe).
+ * Dark analytics look: dot sphere, meridian ellipses, glow rings, animated arcs, pan/zoom.
+ */
+export default function AdminRevenueLiveGlobe({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
+  const clipId = useId().replace(/:/g, '');
+  const gradId = useId().replace(/:/g, '');
+  const glowId = useId().replace(/:/g, '');
+  const size = Math.min(heightPx, 300);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
-  const arcPaths = useMemo(() => buildArcPaths(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
-  const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
+  const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
+  const sphereDots = useMemo(() => buildSphereDots(520), []);
+  const meridianAngles = useMemo(() => Array.from({ length: 13 }, (_, i) => i * 15), []);
+  const latitudeRy = useMemo(() => [0.12, 0.22, 0.32, 0.42, 0.52, 0.62, 0.72, 0.82].map((t) => R * t), []);
 
+  const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [pointerDown, setPointerDown] = useState(false);
@@ -241,7 +202,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
 
   const clampPan = useCallback(
     (next: { x: number; y: number }, s: number) => {
-      const max = 120 * (s - 1);
+      const max = 100 * (s - 1);
       return {
         x: Math.max(-max, Math.min(max, next.x)),
         y: Math.max(-max, Math.min(max, next.y)),
@@ -253,9 +214,9 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
   const onWheel = useCallback(
     (e: React.WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.12 : 0.12;
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
       setScale((prev) => {
-        const next = Math.min(3.2, Math.max(1, prev + delta));
+        const next = Math.min(2.8, Math.max(1, prev + delta));
         setPan((p) => clampPan(p, next));
         return next;
       });
@@ -297,132 +258,154 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
 
   return (
     <>
-      <div className="flex justify-center w-full" data-admin-globe-mode="svg">
+      <div className="flex justify-center w-full" data-admin-globe-mode="svg-analytics">
         <div
-          className="relative overflow-hidden select-none touch-none"
+          className="relative overflow-hidden select-none touch-none admin-revenue-globe-shell"
           style={{
             width: size,
             height: size,
             borderRadius: '50%',
-            perspective: 720,
-            boxShadow:
-              '0 0 0 1px rgba(125, 211, 252, 0.35), 0 0 28px rgba(56, 189, 248, 0.22), inset 0 0 70px rgba(2, 6, 23, 0.55), inset 0 -20px 50px rgba(14, 165, 233, 0.12), 0 14px 36px rgba(15, 23, 42, 0.35)',
             touchAction: 'none',
-            background: 'radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0) 58%, rgba(2, 6, 23, 0.85) 100%), #020617',
           }}
           onWheel={onWheel}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerUp}
-          aria-label="Live globe preview: drag to pan, scroll to zoom, tap a dot for details"
+          aria-label="Live globe: drag to pan, scroll to zoom, tap a dot for details"
         >
           <div
             className="absolute inset-0"
             style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale}) rotateX(6deg) rotateY(-10deg)`,
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
               transformOrigin: 'center center',
-              transformStyle: 'preserve-3d',
-              willChange: 'transform',
             }}
           >
             <div
-              className={`absolute inset-0 admin-revenue-globe-spin-layer${
-                pointerDown || scale > 1.02 ? ' admin-revenue-globe-spin-layer--paused' : ''
-              }`}
+              className="absolute inset-0 admin-revenue-globe-spin-slow"
+              style={
+                pointerDown || scale > 1.02 ? { animationPlayState: 'paused' as const } : undefined
+              }
             >
-              <img
-                src={EARTH_TEXTURE}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-[0.92]"
-                draggable={false}
-                loading="lazy"
-              />
+            <svg
+              width={VIEW}
+              height={VIEW}
+              viewBox={`0 0 ${VIEW} ${VIEW}`}
+              className="absolute left-1/2 top-1/2 max-w-none max-h-none pointer-events-none"
+              style={{
+                width: VIEW,
+                height: VIEW,
+                marginLeft: -VIEW / 2,
+                marginTop: -VIEW / 2,
+              }}
+              aria-hidden
+            >
+              <defs>
+                <radialGradient id={gradId} cx="28%" cy="22%" r="75%">
+                  <stop offset="0%" stopColor="rgba(45, 212, 191, 0.35)" />
+                  <stop offset="35%" stopColor="rgba(30, 58, 138, 0.45)" />
+                  <stop offset="70%" stopColor="rgba(15, 23, 42, 0.95)" />
+                  <stop offset="100%" stopColor="#020617" />
+                </radialGradient>
+                <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
+                  <stop offset="70%" stopColor="rgba(56, 189, 248, 0)" />
+                  <stop offset="100%" stopColor="rgba(56, 189, 248, 0.15)" />
+                </radialGradient>
+                <clipPath id={clipId}>
+                  <circle cx={CX} cy={CY} r={R} />
+                </clipPath>
+              </defs>
 
-              <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 360 180" preserveAspectRatio="none">
-                <defs>
-                  <radialGradient id={termGradientId} cx="78%" cy="22%" r="75%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.14)" />
-                    <stop offset="45%" stopColor="rgba(255,255,255,0)" />
-                    <stop offset="100%" stopColor="rgba(2,6,23,0.55)" />
-                  </radialGradient>
-                </defs>
-                <rect x="0" y="0" width="360" height="180" fill={`url(#${termGradientId})`} />
+              <circle cx={CX} cy={CY} r={R + 2} fill={`url(#${glowId})`} opacity={0.9} />
+              <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
+
+              <g clipPath={`url(#${clipId})`}>
+                {latitudeRy.map((ry, i) => (
+                  <ellipse
+                    key={`lat-${i}`}
+                    cx={CX}
+                    cy={CY}
+                    rx={R - 2}
+                    ry={ry}
+                    fill="none"
+                    stroke={CYAN_DIM}
+                    strokeWidth={0.65}
+                  />
+                ))}
+                {meridianAngles.map((deg) => (
+                  <ellipse
+                    key={`mer-${deg}`}
+                    cx={CX}
+                    cy={CY}
+                    rx={R - 2}
+                    ry={R * 0.38}
+                    fill="none"
+                    stroke={CYAN_DIM}
+                    strokeWidth={0.55}
+                    transform={`rotate(${deg} ${CX} ${CY})`}
+                  />
+                ))}
+                {sphereDots.map((d, i) => (
+                  <circle key={`dot-${i}`} cx={d.cx} cy={d.cy} r={d.r} fill={CYAN} opacity={d.opacity} />
+                ))}
                 {arcPaths.map((d, i) => (
                   <path
                     key={`arc-${i}`}
                     d={d}
                     fill="none"
-                    stroke="rgba(22, 163, 74, 0.45)"
-                    strokeWidth={1.1}
+                    stroke={ORDER_GREEN}
+                    strokeWidth={1.2}
                     strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
+                    strokeDasharray="6 10"
+                    className="admin-revenue-globe-arc-dash"
+                    opacity={0.55}
                   />
                 ))}
-                {[-120, -60, 0, 60, 120].map((lng) => (
-                  <line
-                    key={`v-${lng}`}
-                    x1={lng + 180}
-                    y1={0}
-                    x2={lng + 180}
-                    y2={180}
-                    stroke="rgba(125, 211, 252, 0.4)"
-                    strokeWidth={0.75}
-                  />
-                ))}
-                {[-60, -30, 0, 30, 60].map((lat) => {
-                  const y = 90 - lat;
-                  return (
-                    <line
-                      key={`h-${lat}`}
-                      x1={0}
-                      y1={y}
-                      x2={360}
-                      y2={y}
-                      stroke="rgba(125, 211, 252, 0.32)"
-                      strokeWidth={0.65}
-                    />
-                  );
-                })}
-              </svg>
+              </g>
 
-              <div
-                className="absolute inset-0 rounded-full pointer-events-none"
-                style={{
-                  boxShadow: 'inset 0 0 0 1px rgba(148, 163, 184, 0.25)',
-                }}
+              <circle
+                cx={CX}
+                cy={CY}
+                r={R}
+                fill="none"
+                stroke="rgba(148, 163, 184, 0.35)"
+                strokeWidth={1}
               />
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-400/10 via-transparent to-slate-950/40 pointer-events-none" />
+              <circle cx={CX} cy={CY} r={R - 1} fill="none" stroke="rgba(56, 189, 248, 0.12)" strokeWidth={3} opacity={0.6} />
+            </svg>
 
-              {points.map((p, i) => {
-                const { leftPct, topPct } = project(p.lat, p.lng);
-                const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
-                return (
-                  <button
-                    key={`${p.kind}-${i}`}
-                    type="button"
-                    className="absolute rounded-full border-2 border-white/90 shadow-sm cursor-pointer"
-                    style={{
-                      left: `${leftPct}%`,
-                      top: `${topPct}%`,
-                      width: 12,
-                      height: 12,
-                      marginLeft: -6,
-                      marginTop: -6,
-                      background: color,
-                      padding: 0,
-                      zIndex: 2,
-                      boxShadow: '0 0 10px rgba(0,0,0,0.25)',
-                    }}
-                    title={p.label}
-                    aria-label={p.label}
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      setSelected(p);
-                    }}
-                  />
-                );
-              })}
+            {points.map((p, i) => {
+              const { leftPct, topPct } = project(p.lat, p.lng);
+              const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
+              return (
+                <button
+                  key={`${p.kind}-${i}`}
+                  type="button"
+                  className="absolute rounded-full cursor-pointer z-10"
+                  style={{
+                    left: `${leftPct}%`,
+                    top: `${topPct}%`,
+                    width: 11,
+                    height: 11,
+                    marginLeft: -5.5,
+                    marginTop: -5.5,
+                    background: color,
+                    border: '2px solid rgba(255,255,255,0.92)',
+                    padding: 0,
+                    boxShadow:
+                      p.kind === 'visitor'
+                        ? `0 0 0 1px rgba(0,0,0,0.2), 0 0 12px ${BRAND_RED}88`
+                        : `0 0 0 1px rgba(0,0,0,0.2), 0 0 10px ${ORDER_GREEN}66`,
+                  }}
+                  title={p.label}
+                  aria-label={p.label}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelected(p);
+                  }}
+                />
+              );
+            })}
             </div>
           </div>
         </div>
@@ -430,16 +413,4 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
       {selected && <DetailModal selected={selected} onClose={() => setSelected(null)} />}
     </>
   );
-}
-
-/**
- * Admin revenue live map: optional **iframe WebGL** embed when `VITE_ADMIN_GLOBE_EMBED_URL` is set
- * (separate deploy — `globe.gl` never in main `vendor`). Otherwise **SVG/CSS** globe.
- */
-export default function AdminRevenueLiveGlobe(props: Props) {
-  const embedUrl = useMemo(() => getAdminGlobeEmbedUrl(), []);
-  if (embedUrl) {
-    return <AdminRevenueLiveGlobeIframeEmbed {...props} embedUrl={embedUrl} />;
-  }
-  return <AdminRevenueLiveGlobeSvgMap {...props} />;
 }

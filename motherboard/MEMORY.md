@@ -16899,3 +16899,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `embed/admin-globe/src/main.ts`, `embed/admin-globe/index.html`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`.
 
 **Verification:** **`cd embed/admin-globe && npm run build`** passes.
+
+---
+
+## 2026-04-25 — Admin revenue globe: drop iframe WebGL; analytics-style SVG only
+
+**Context:** User reported **globe still failing** and it **did not match** reference / Spotify-style live globes.
+
+**Decision:** **Remove iframe WebGL path** from **`AdminRevenueLiveGlobe`** (no **`VITE_ADMIN_GLOBE_EMBED_URL`**, no **`postMessage`**). One **SVG/CSS** visualization only: **orthographic-style** dot sphere (Fibonacci on sphere + front clip), **latitude ellipses** + **meridian ellipses**, **radial teal/indigo** fill, **outer glow** (cyan/violet), **animated dashed** great-circle **arcs** (hub→orders), **slow `rotateY`** on inner layer (paused on drag / zoom), **pan/zoom** on outer layer, **red visitor / green order** dots + same modal. **`src/index.css`**: **`.admin-revenue-globe-shell`**, spin + arc keyframes; removed old **`admin-revenue-globe-spin-layer`** drift. **`.env.example`**: removed **`VITE_ADMIN_GLOBE_EMBED_URL`**. **`docs/ADMIN_GLOBE_EMBED.md`**: notes embed is **historical / optional** only.
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`, `.env.example`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` passes.
