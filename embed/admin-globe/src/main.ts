@@ -7,11 +7,16 @@ type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'or
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 
+/** Land dot on sphere (not a visitor/order marker). */
+type LandDot = { lat: number; lng: number; _land: true; _lat: number };
+
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
-/** Rough lat/lng boxes (union) → dot “continents” without GeoJSON fetch. */
+const GOLD = Math.PI * (3 - Math.sqrt(5));
+
+/** Rough lat/lng boxes (union) — coarse land mask. */
 const LAND_BOXES: Array<[number, number, number, number]> = [
   [10, 75, -168, -48],
   [-56, 15, -82, -34],
@@ -35,23 +40,56 @@ function isLand(lat: number, lng: number): boolean {
   return false;
 }
 
-function generateLandHexPoints(target: number): Weighted[] {
-  const out: Weighted[] = [];
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  let i = 0;
-  while (out.length < target && i < 200000) {
-    const y = 1 - (i / 120000) * 2;
-    const yr = Math.min(1, Math.max(-1, y));
-    const r = Math.sqrt(Math.max(0, 1 - yr * yr));
-    const θ = golden * i;
-    const lat = (Math.asin(yr) * 180) / Math.PI;
-    const lng = ((Math.atan2(Math.sin(θ) * r, Math.cos(θ) * r) * 180) / Math.PI);
+/**
+ * Fibonacci sphere lattice — lng MUST be atan2(z, x), NOT atan2(sinθ·r, cosθ·r)
+ * (the wrong formula collapses longitude to ~±90° and draws a “C” patch).
+ */
+function fibonacciLatLng(i: number, n: number): { lat: number; lng: number } {
+  const y = 1 - (i / Math.max(1, n - 1)) * 2;
+  const yr = Math.max(-1, Math.min(1, y));
+  const r = Math.sqrt(Math.max(0, 1 - yr * yr));
+  const theta = GOLD * i;
+  const x = Math.cos(theta) * r;
+  const z = Math.sin(theta) * r;
+  const lat = (Math.asin(yr) * 180) / Math.PI;
+  const lng = (Math.atan2(z, x) * 180) / Math.PI;
+  return { lat, lng };
+}
+
+function generateLandDots(target: number): LandDot[] {
+  const out: LandDot[] = [];
+  const n = 220000;
+  for (let i = 0; i < n && out.length < target; i++) {
+    const { lat, lng } = fibonacciLatLng(i, n);
     if (isLand(lat, lng)) {
-      out.push({ lat, lng, w: 1 });
+      out.push({ lat, lng, _land: true, _lat: lat });
     }
-    i++;
   }
   return out;
+}
+
+function landDotColor(lat: number): string {
+  const t = Math.max(-1, Math.min(1, (lat + 10) / 70));
+  const mint = { r: 110, g: 231, b: 183 };
+  const sky = { r: 125, g: 211, b: 252 };
+  const r = Math.round(mint.r + (sky.r - mint.r) * t);
+  const g = Math.round(mint.g + (sky.g - mint.g) * t);
+  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function buildHotBinJitter(rows: PointRow[]): Weighted[] {
+  const pts: Weighted[] = [];
+  for (const r of rows) {
+    for (let k = 0; k < 24; k++) {
+      pts.push({
+        lat: r.lat + (Math.random() - 0.5) * 0.55,
+        lng: r.lng + (Math.random() - 0.5) * 0.55,
+        w: 1,
+      });
+    }
+  }
+  return pts;
 }
 
 function buildArcs(visitors: PointRow[], orders: PointRow[]): ArcRow[] {
@@ -94,54 +132,65 @@ function readSize(): { w: number; h: number } {
   return { w, h };
 }
 
-const landPoints = generateLandHexPoints(3200);
+const LAND_STATIC = generateLandDots(7500);
 
 const globe = new Globe(root, {
   rendererConfig: { alpha: false, antialias: false, powerPreference: 'low-power' },
   waitForGlobeReady: false,
 })
-  .backgroundColor('#e4e4e7')
+  .backgroundColor('#f4f4f5')
   .showGlobe(false)
   .showGraticules(false)
   .showAtmosphere(true)
-  .atmosphereColor('rgba(148, 163, 184, 0.35)')
-  .atmosphereAltitude(0.12)
-  .hexBinPointsData(landPoints)
+  .atmosphereColor('rgba(125, 211, 252, 0.45)')
+  .atmosphereAltitude(0.14)
+  .hexBinPointsData([])
   .hexBinPointLat('lat')
   .hexBinPointLng('lng')
   .hexBinPointWeight('w')
-  .hexBinResolution(3.6)
-  .hexMargin(0.12)
+  .hexBinResolution(2.8)
+  .hexMargin(0.08)
   .hexAltitude((bin) => {
     const w = bin.sumWeight || 0;
-    return 0.018 + Math.min(0.14, Math.sqrt(w) * 0.022);
+    if (w < 3) return 0.001;
+    return 0.02 + Math.min(0.16, Math.sqrt(w) * 0.018);
   })
-  .hexTopColor(() => '#57534e')
-  .hexSideColor(() => '#3f3f46')
-  .hexBinMerge(true)
+  .hexTopColor(() => '#1d4ed8')
+  .hexSideColor(() => '#1e3a8a')
+  .hexBinMerge(false)
   .hexTransitionDuration(400)
   .pointLat('lat')
   .pointLng('lng')
-  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
-  .pointAltitude(0.035)
-  .pointRadius(0.55)
-  .pointResolution(12)
+  .pointColor((d: object) => {
+    const o = d as LandDot | PointRow;
+    if ('_land' in o && o._land) return landDotColor((o as LandDot)._lat);
+    return (o as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
+  })
+  .pointAltitude((d: object) => {
+    const o = d as LandDot | PointRow;
+    return '_land' in o && o._land ? 0.0035 : 0.038;
+  })
+  .pointRadius((d: object) => {
+    const o = d as LandDot | PointRow;
+    return '_land' in o && o._land ? 0.1 : 0.52;
+  })
+  .pointResolution(7)
   .arcStartLat('startLat')
   .arcStartLng('startLng')
   .arcEndLat('endLat')
   .arcEndLng('endLng')
   .arcColor('color')
-  .arcAltitude(0.18)
-  .arcStroke(0.4)
-  .arcDashLength(0.35)
-  .arcDashGap(1.8)
+  .arcAltitude(0.16)
+  .arcStroke(0.38)
+  .arcDashLength(0.32)
+  .arcDashGap(1.6)
   .arcDashAnimateTime(11000);
 
-globe.pointOfView({ lat: 22, lng: -95, altitude: 2.25 }, 0);
+globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
 try {
   const c = globe.controls();
   c.autoRotate = true;
-  c.autoRotateSpeed = 0.32;
+  c.autoRotateSpeed = 0.3;
   c.enableDamping = true;
   c.dampingFactor = 0.08;
   c.minDistance = 200;
@@ -161,31 +210,31 @@ requestAnimationFrame(() => {
 });
 
 globe.onPointClick((p: object) => {
-  const row = p as PointRow;
+  const row = p as LandDot | PointRow;
+  if ('_land' in row && row._land) return;
+  const pr = row as PointRow;
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   target.postMessage(
     {
       type: MSG_POINT,
-      kind: row.kind,
-      label: row.label,
-      lat: row.lat,
-      lng: row.lng,
+      kind: pr.kind,
+      label: pr.label,
+      lat: pr.lat,
+      lng: pr.lng,
     },
     '*'
   );
 });
 
-function combinedHexPoints(rows: PointRow[]): Weighted[] {
-  const extra = rows.map((r) => ({ lat: r.lat, lng: r.lng, w: 12 }));
-  return [...landPoints, ...extra];
-}
-
 function applyPayload(rows: PointRow[]) {
   const { visitors, orders } = splitPoints(rows);
   const all: PointRow[] = [...visitors, ...orders];
-  globe.hexBinPointsData(combinedHexPoints(all)).pointsData(all).arcsData(buildArcs(visitors, orders));
+  const hot = buildHotBinJitter(all);
+  globe.hexBinPointsData(hot).pointsData([...LAND_STATIC, ...all]).arcsData(buildArcs(visitors, orders));
 }
+
+globe.pointsData(LAND_STATIC).hexBinPointsData([]).arcsData([]);
 
 const ro = new ResizeObserver(() => {
   applySize();

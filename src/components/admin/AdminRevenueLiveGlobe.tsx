@@ -4,7 +4,6 @@ import { createPortal } from 'react-dom';
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 const OCEAN_BASE = '#e4e4e7';
-const LAND_DOT = '#57534e';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -143,22 +142,34 @@ function isLand(lat: number, lng: number): boolean {
   return false;
 }
 
-/** Dot-matrix land on sphere projection (no graticule). */
+function landDotRgb(lat: number): string {
+  const t = Math.max(0, Math.min(1, (lat + 10) / 70));
+  const mint = { r: 110, g: 231, b: 183 };
+  const sky = { r: 125, g: 211, b: 252 };
+  const r = Math.round(mint.r + (sky.r - mint.r) * t);
+  const g = Math.round(mint.g + (sky.g - mint.g) * t);
+  const b = Math.round(mint.b + (sky.b - mint.b) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+const GOLD = Math.PI * (3 - Math.sqrt(5));
+
+/** Dot-matrix land on sphere projection (no graticule). Fibonacci lng = atan2(z,x), not atan2(sinθ·r,cosθ·r). */
 function buildLandDots(maxDots: number): Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> {
   const out: Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> = [];
-  const golden = Math.PI * (3 - Math.sqrt(5));
   const tiltX = 0.18;
   const tiltY = -0.12;
-  for (let i = 0; i < 140000 && out.length < maxDots; i++) {
-    const y = 1 - (i / 100000) * 2;
+  const n = 120000;
+  for (let i = 0; i < n && out.length < maxDots; i++) {
+    const y = 1 - (i / Math.max(1, n - 1)) * 2;
     const yr = Math.min(1, Math.max(-1, y));
     const r0 = Math.sqrt(Math.max(0, 1 - yr * yr));
-    const theta = golden * i;
+    const theta = GOLD * i;
     let x = Math.cos(theta) * r0;
     let z = Math.sin(theta) * r0;
     let y3 = yr;
     const lat = (Math.asin(yr) * 180) / Math.PI;
-    const lng = ((Math.atan2(Math.sin(theta) * r0, Math.cos(theta) * r0) * 180) / Math.PI);
+    const lng = (Math.atan2(z, x) * 180) / Math.PI;
     const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
     const z1 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
     x = x1;
@@ -177,8 +188,8 @@ function buildLandDots(maxDots: number): Array<{ cx: number; cy: number; r: numb
       cx: px,
       cy: py,
       r: 0.65 + depth * 0.5,
-      fill: LAND_DOT,
-      opacity: 0.35 + dark * 0.45,
+      fill: landDotRgb(lat),
+      opacity: 0.32 + dark * 0.42,
     });
   }
   return out;
@@ -320,7 +331,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
     win.postMessage({ type: MSG_IN, points: pointsPayload }, '*');
   }, [embedReady, pointsPayload]);
 
-  const src = embedUrl.includes('?') ? `${embedUrl}&v=3` : `${embedUrl}?v=3`;
+  const src = embedUrl.includes('?') ? `${embedUrl}&v=4` : `${embedUrl}?v=4`;
 
   return (
     <>

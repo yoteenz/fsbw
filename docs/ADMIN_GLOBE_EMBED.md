@@ -2,7 +2,7 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
-**Look (embed):** Light gray **ocean** background, **no** graticule, **no** photo texture — **dot-matrix “land”** via **hex bins** on Fibonacci-sampled land points + **taller hex bins** at visitor/order hotspots; soft **atmosphere**; same arcs and point colors as before.
+**Look (embed):** Light **background**, **no** graticule, **no** photo texture — **dot-matrix land** as many **small points** (Fibonacci sphere with correct **`lng = atan2(z, x)`**); **mint → sky** gradient by latitude (reference-style). **Hex bins** are used only for **hotspot pillars** (jittered around visitor/order coords), not for full continents. Soft **cyan atmosphere**; brand **red** visitors / **green** orders; **cache-bust** iframe `?v=4`.
 
 ---
 

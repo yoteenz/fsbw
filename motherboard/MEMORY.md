@@ -16947,3 +16947,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — **APPOINTMENT ANALYTICS** and **CONSULT ANALYTICS** blocks: each metric is a **flex row** (`space-between`), **`borderBottom: 1px solid #d1d5db`** between rows (not under last count row before avg row), label **left** gray **`#808080`** **Futura PT Book** (counts) / **Demi** (avg lines), value **right** **`#EB1C24`** **Futura PT Medium**; avg rows same layout without colon in label text.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-28 — Admin globe “C patch” fix (Fibonacci lng + dot land vs hex continents)
+
+**Context:** User said the globe did not look like Earth — a **“C”-shaped 3D patch** instead of **dot-matrix continents** like reference image 2 (mint/sky land dots, light base, 3D hotspot bars).
+
+**Root cause:** Fibonacci **longitude** used **`atan2(sin(θ)·r, cos(θ)·r)`** (= θ), collapsing **lng** to a narrow band → land points clustered in a **meridional strip**; **hex bin merge** exaggerated the wrong shape.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`lng = atan2(z, x)`** with **`x = cos(θ)·r`**, **`z = sin(θ)·r`**. **Land** = **~7500** **`points`** (small, low altitude), **mint→sky** by latitude; **hex bins** only for **hotspot pillars** (jittered visitor/order weights, **`hexBinMerge(false)`**), blue prism colors. Lighter background **`#f4f4f5`**, cyan atmosphere; land points skip **`postMessage`** on click. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — same **lng** fix in **`buildLandDots`**, **`landDotRgb(lat)`** for SVG land dots; iframe **`?v=4`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **embed** and **main** storefront after merge.
