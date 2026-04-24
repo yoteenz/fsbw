@@ -2,6 +2,8 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
+**Look (embed):** Light gray **ocean** background, **no** graticule, **no** photo texture — **dot-matrix “land”** via **hex bins** on Fibonacci-sampled land points + **taller hex bins** at visitor/order hotspots; soft **atmosphere**; same arcs and point colors as before.
+
 ---
 
 ## 1. Deploy the embed (admin-globe-embed)

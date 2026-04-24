@@ -4040,14 +4040,13 @@ p.bcf-bundles-pdp-product-name {
   white-space: normal !important;
 }
 
-/* Admin revenue: analytics-style SVG globe (no WebGL). */
+/* Admin revenue: light dot-matrix SVG globe shell */
 .admin-revenue-globe-shell {
-  background: radial-gradient(circle at 50% 45%, rgba(15, 23, 42, 0) 0%, rgba(2, 6, 23, 0.9) 62%, #020617 100%);
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.5) 0%, rgba(244, 244, 245, 0.2) 45%, rgba(228, 228, 231, 0.95) 100%);
   box-shadow:
-    0 0 0 1px rgba(56, 189, 248, 0.25),
-    0 0 36px rgba(139, 92, 246, 0.18),
-    0 0 80px rgba(56, 189, 248, 0.08),
-    inset 0 0 60px rgba(2, 6, 23, 0.75);
+    0 0 0 1px rgba(161, 161, 170, 0.45),
+    0 10px 32px rgba(15, 23, 42, 0.08),
+    inset 0 0 48px rgba(255, 255, 255, 0.35);
 }
 
 @keyframes admin-revenue-globe-spin-y {

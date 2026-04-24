@@ -16923,3 +16923,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `.env.example`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-27 — Admin globe: light theme, dot land, no grid, hex pillars (SVG + embed)
+
+**Context:** User wanted **light** globe (**gray base**, **dark gray dot continents**), **no grid lines**, **dot-matrix land** like references, plus **hotspot pillars** (second-screenshot style).
+
+**SVG fallback (`AdminRevenueLiveGlobe`):** Removed latitude/meridian ellipses. **Light radial** ocean (`#e4e4e7`–`#f4f4f5`). **Land** = Fibonacci sphere samples filtered by same **`LAND_BOXES`** rough coasts as embed → **dark gray dots** (`#57534e`). **Hotspots** = stacked coords → **vertical gradient bars** at orthographic positions. **`.admin-revenue-globe-shell`** updated for light shadow in **`index.css`**. Iframe cache bump **`?v=3`**.
+
+**Embed (`embed/admin-globe/src/main.ts`):** **`showGlobe(false)`**, **`showGraticules(false)`**, **`backgroundColor('#e4e4e7')`**, light **atmosphere**. **Hex bin** layer on **~3200** Fibonacci land samples + extra **weight** at visitor/order coords → **pillar height**; **`hexTopColor` / `hexSideColor`** slate grays. **`index.html`** body `#e4e4e7`.
+
+**Files:** `src/components/admin/AdminRevenueLiveGlobe.tsx`, `src/index.css`, `embed/admin-globe/src/main.ts`, `embed/admin-globe/index.html`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.

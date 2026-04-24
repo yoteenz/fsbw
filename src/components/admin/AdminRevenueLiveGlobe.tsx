@@ -2,9 +2,9 @@ import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#22c55e';
-const CYAN = '#38bdf8';
-const CYAN_DIM = 'rgba(56, 189, 248, 0.14)';
+const ORDER_GREEN = '#16a34a';
+const OCEAN_BASE = '#e4e4e7';
+const LAND_DOT = '#57534e';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -119,19 +119,46 @@ function buildArcPathsViewBox(visitorPoints: Props['visitorPoints'], orderPoints
   return paths;
 }
 
-function buildSphereDots(count: number): Array<{ cx: number; cy: number; r: number; opacity: number }> {
-  const out: Array<{ cx: number; cy: number; r: number; opacity: number }> = [];
+/** Same rough land boxes as embed (lat min, lat max, lng min, lng max). */
+const LAND_BOXES: Array<[number, number, number, number]> = [
+  [10, 75, -168, -48],
+  [-56, 15, -82, -34],
+  [33, 72, -12, 42],
+  [-35, 38, -20, 52],
+  [-12, 12, 95, 155],
+  [5, 50, 70, 150],
+  [18, 50, 25, 65],
+  [42, 55, -125, -95],
+  [50, 72, 25, 180],
+  [50, 72, -180, -130],
+];
+
+function isLand(lat: number, lng: number): boolean {
+  let x = lng;
+  while (x > 180) x -= 360;
+  while (x < -180) x += 360;
+  for (const [latMin, latMax, lngMin, lngMax] of LAND_BOXES) {
+    if (lat >= latMin && lat <= latMax && x >= lngMin && x <= lngMax) return true;
+  }
+  return false;
+}
+
+/** Dot-matrix land on sphere projection (no graticule). */
+function buildLandDots(maxDots: number): Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> {
+  const out: Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }> = [];
   const golden = Math.PI * (3 - Math.sqrt(5));
   const tiltX = 0.18;
   const tiltY = -0.12;
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (i / Math.max(1, count - 1)) * 2;
+  for (let i = 0; i < 140000 && out.length < maxDots; i++) {
+    const y = 1 - (i / 100000) * 2;
     const yr = Math.min(1, Math.max(-1, y));
     const r0 = Math.sqrt(Math.max(0, 1 - yr * yr));
     const theta = golden * i;
     let x = Math.cos(theta) * r0;
     let z = Math.sin(theta) * r0;
     let y3 = yr;
+    const lat = (Math.asin(yr) * 180) / Math.PI;
+    const lng = ((Math.atan2(Math.sin(theta) * r0, Math.cos(theta) * r0) * 180) / Math.PI);
     const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
     const z1 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
     x = x1;
@@ -140,18 +167,71 @@ function buildSphereDots(count: number): Array<{ cx: number; cy: number; r: numb
     const z2 = y3 * Math.sin(tiltX) + z * Math.cos(tiltX);
     y3 = y2;
     z = z2;
-    if (z < -0.08) continue;
+    if (z < -0.06) continue;
+    if (!isLand(lat, lng)) continue;
     const px = CX + x * (R - 6);
     const py = CY - y3 * (R - 6);
     const depth = (z + 1) / 2;
+    const dark = 0.35 + depth * 0.45;
     out.push({
       cx: px,
       cy: py,
-      r: 0.55 + depth * 0.85,
-      opacity: 0.08 + depth * 0.35,
+      r: 0.65 + depth * 0.5,
+      fill: LAND_DOT,
+      opacity: 0.35 + dark * 0.45,
     });
   }
   return out;
+}
+
+type Hotspot = { cx: number; cy: number; h: number };
+
+function buildHotspotPillars(
+  points: LiveGlobePoint[],
+  latLngToPx: (lat: number, lng: number) => { px: number; py: number } | null
+): Hotspot[] {
+  const byKey = new Map<string, LiveGlobePoint[]>();
+  for (const p of points) {
+    const k = `${(Math.round(p.lat * 2) / 2).toFixed(1)},${(Math.round(p.lng * 2) / 2).toFixed(1)}`;
+    const arr = byKey.get(k) ?? [];
+    arr.push(p);
+    byKey.set(k, arr);
+  }
+  const out: Hotspot[] = [];
+  for (const [, arr] of byKey) {
+    if (arr.length < 2) continue;
+    const lat = arr.reduce((s, q) => s + q.lat, 0) / arr.length;
+    const lng = arr.reduce((s, q) => s + q.lng, 0) / arr.length;
+    const pos = latLngToPx(lat, lng);
+    if (!pos) continue;
+    out.push({ cx: pos.px, cy: pos.py, h: 8 + Math.min(26, arr.length * 6) });
+  }
+  return out;
+}
+
+/** Map lat/lng to orthographic disk (same tilt as land dots). */
+function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } | null {
+  const φ = lat * D2R;
+  const λ = lng * D2R;
+  const tiltX = 0.18;
+  const tiltY = -0.12;
+  const cosφ = Math.cos(φ);
+  let x = cosφ * Math.cos(λ);
+  let y = Math.sin(φ);
+  let z = cosφ * Math.sin(λ);
+  const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
+  const z1 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
+  x = x1;
+  z = z1;
+  const y2 = y * Math.cos(tiltX) - z * Math.sin(tiltX);
+  const z2 = y * Math.sin(tiltX) + z * Math.cos(tiltX);
+  y = y2;
+  z = z2;
+  if (z < -0.06) return null;
+  return {
+    px: CX + x * (R - 6),
+    py: CY - y * (R - 6),
+  };
 }
 
 function DetailModal({ selected, onClose }: { selected: LiveGlobePoint; onClose: () => void }) {
@@ -240,7 +320,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
     win.postMessage({ type: MSG_IN, points: pointsPayload }, '*');
   }, [embedReady, pointsPayload]);
 
-  const src = embedUrl.includes('?') ? `${embedUrl}&v=2` : `${embedUrl}?v=2`;
+  const src = embedUrl.includes('?') ? `${embedUrl}&v=3` : `${embedUrl}?v=3`;
 
   return (
     <>
@@ -255,8 +335,8 @@ function AdminRevenueLiveGlobeIframeEmbed({
             height: size,
             display: 'block',
             boxShadow:
-              '0 0 0 1px rgba(56, 189, 248, 0.35), 0 0 28px rgba(56, 189, 248, 0.22), 0 14px 36px rgba(15, 23, 42, 0.35)',
-            background: '#020617',
+              '0 0 0 1px rgba(161, 161, 170, 0.5), 0 8px 28px rgba(15, 23, 42, 0.12), 0 14px 40px rgba(148, 163, 184, 0.2)',
+            background: OCEAN_BASE,
           }}
           sandbox="allow-scripts"
           referrerPolicy="no-referrer"
@@ -272,12 +352,15 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
   const glowId = useId().replace(/:/g, '');
+  const barGradId = useId().replace(/:/g, '');
   const size = Math.min(heightPx, 300);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
-  const sphereDots = useMemo(() => buildSphereDots(520), []);
-  const meridianAngles = useMemo(() => Array.from({ length: 13 }, (_, i) => i * 15), []);
-  const latitudeRy = useMemo(() => [0.12, 0.22, 0.32, 0.42, 0.52, 0.62, 0.72, 0.82].map((t) => R * t), []);
+  const landDots = useMemo(() => buildLandDots(2800), []);
+  const hotspots = useMemo(
+    () => buildHotspotPillars(points, latLngToGlobePx),
+    [points]
+  );
 
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
   const [scale, setScale] = useState(1);
@@ -386,52 +469,43 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                 aria-hidden
               >
                 <defs>
-                  <radialGradient id={gradId} cx="28%" cy="22%" r="75%">
-                    <stop offset="0%" stopColor="rgba(45, 212, 191, 0.35)" />
-                    <stop offset="35%" stopColor="rgba(30, 58, 138, 0.45)" />
-                    <stop offset="70%" stopColor="rgba(15, 23, 42, 0.95)" />
-                    <stop offset="100%" stopColor="#020617" />
+                  <radialGradient id={gradId} cx="32%" cy="28%" r="78%">
+                    <stop offset="0%" stopColor="#f4f4f5" />
+                    <stop offset="45%" stopColor="#e4e4e7" />
+                    <stop offset="82%" stopColor="#d4d4d8" />
+                    <stop offset="100%" stopColor="#c4c4cc" />
                   </radialGradient>
-                  <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
-                    <stop offset="70%" stopColor="rgba(56, 189, 248, 0)" />
-                    <stop offset="100%" stopColor="rgba(56, 189, 248, 0.15)" />
+                  <radialGradient id={glowId} cx="50%" cy="50%" r="52%">
+                    <stop offset="78%" stopColor="rgba(255,255,255,0)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.55)" />
                   </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />
                   </clipPath>
+                  <linearGradient id={barGradId} x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#d4d4d8" stopOpacity={0.95} />
+                    <stop offset="100%" stopColor="#52525b" stopOpacity={0.9} />
+                  </linearGradient>
                 </defs>
 
-                <circle cx={CX} cy={CY} r={R + 2} fill={`url(#${glowId})`} opacity={0.9} />
+                <circle cx={CX} cy={CY} r={R + 2} fill={`url(#${glowId})`} opacity={0.85} />
                 <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
 
                 <g clipPath={`url(#${clipId})`}>
-                  {latitudeRy.map((ry, i) => (
-                    <ellipse
-                      key={`lat-${i}`}
-                      cx={CX}
-                      cy={CY}
-                      rx={R - 2}
-                      ry={ry}
-                      fill="none"
-                      stroke={CYAN_DIM}
-                      strokeWidth={0.65}
-                    />
+                  {landDots.map((d, i) => (
+                    <circle key={`land-${i}`} cx={d.cx} cy={d.cy} r={d.r} fill={d.fill} opacity={d.opacity} />
                   ))}
-                  {meridianAngles.map((deg) => (
-                    <ellipse
-                      key={`mer-${deg}`}
-                      cx={CX}
-                      cy={CY}
-                      rx={R - 2}
-                      ry={R * 0.38}
-                      fill="none"
-                      stroke={CYAN_DIM}
-                      strokeWidth={0.55}
-                      transform={`rotate(${deg} ${CX} ${CY})`}
+                  {hotspots.map((h, i) => (
+                    <rect
+                      key={`bar-${i}`}
+                      x={h.cx - 1.8}
+                      y={h.cy - h.h}
+                      width={3.6}
+                      height={h.h}
+                      rx={1}
+                      fill={`url(#${barGradId})`}
+                      opacity={0.5}
                     />
-                  ))}
-                  {sphereDots.map((d, i) => (
-                    <circle key={`dot-${i}`} cx={d.cx} cy={d.cy} r={d.r} fill={CYAN} opacity={d.opacity} />
                   ))}
                   {arcPaths.map((d, i) => (
                     <path
@@ -443,7 +517,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                       strokeLinecap="round"
                       strokeDasharray="6 10"
                       className="admin-revenue-globe-arc-dash"
-                      opacity={0.55}
+                      opacity={0.5}
                     />
                   ))}
                 </g>
@@ -453,10 +527,10 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 24
                   cy={CY}
                   r={R}
                   fill="none"
-                  stroke="rgba(148, 163, 184, 0.35)"
+                  stroke="rgba(113, 113, 122, 0.45)"
                   strokeWidth={1}
                 />
-                <circle cx={CX} cy={CY} r={R - 1} fill="none" stroke="rgba(56, 189, 248, 0.12)" strokeWidth={3} opacity={0.6} />
+                <circle cx={CX} cy={CY} r={R - 1} fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth={2} opacity={0.5} />
               </svg>
 
               {points.map((p, i) => {
