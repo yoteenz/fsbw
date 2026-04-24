@@ -247,12 +247,13 @@ function AdminRevenueLiveGlobeIframeEmbed({
   embedUrl,
   orderPoints,
   visitorPoints,
-  heightPx = 240,
+  heightPx = 324,
 }: Props & { embedUrl: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedReady, setEmbedReady] = useState(false);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
-  const size = Math.min(heightPx, 320);
+  /** Prior max 320px; +35% so larger `heightPx` from revenue is not clamped. */
+  const size = Math.min(heightPx, 432);
 
   const pointsPayload = useMemo(() => {
     return [
@@ -327,11 +328,12 @@ function AdminRevenueLiveGlobeIframeEmbed({
 }
 
 /** Fallback when `VITE_ADMIN_GLOBE_EMBED_URL` is unset — no three.js in main `vendor`. */
-function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 240 }: Props) {
+function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 324 }: Props) {
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
   const barGradId = useId().replace(/:/g, '');
-  const size = Math.min(heightPx, 300);
+  /** Prior max 300px; +35% to match revenue globe scale. */
+  const size = Math.min(heightPx, 405);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [landDots, setLandDots] = useState<Array<{ cx: number; cy: number; r: number; fill: string; opacity: number }>>(

@@ -17029,3 +17029,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Embed:** **`onGlobeReady`** — **Three.js** inner **`SphereGeometry`** with **canvas radial** gray texture; **atmosphere** slate; **hex pillars** slate; **land** same gray ramp; **`@types/three`** devDependency. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
 
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+---
+
+## 2026-04-28 — Admin revenue globe +35% size
+
+**Context:** User asked to **increase globe size by 35%** on admin revenue.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`heightPx={324}`** (was **240**; **240 × 1.35 = 324**), **Suspense** fallback height **324**. **`AdminRevenueLiveGlobe`** — default **`heightPx` 324**; iframe **`Math.min(heightPx, 432)`** (was 320); SVG **`Math.min(heightPx, 405)`** (was 300) so the larger size is not clamped.
+
+**Verification:** `npm run build` passes.

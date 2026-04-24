@@ -929,7 +929,7 @@ export default function AdminRevenue() {
                         fallback={
                           <div
                             className="w-full flex items-center justify-center rounded-md border border-gray-200 bg-sky-50/50"
-                            style={{ height: 240, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
+                            style={{ height: 324, fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase' }}
                           >
                             Loading globe…
                           </div>
@@ -938,7 +938,7 @@ export default function AdminRevenue() {
                         <AdminRevenueLiveGlobe
                           orderPoints={orderGlobePoints}
                           visitorPoints={liveVisitorGlobePoints}
-                          heightPx={240}
+                          heightPx={324}
                         />
                       </Suspense>
                       <p
