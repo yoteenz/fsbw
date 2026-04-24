@@ -16961,3 +16961,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **embed** and **main** storefront after merge.
+
+---
+
+## 2026-04-28 — Admin Meetings overview rows match Revenue overview
+
+**Context:** User asked on **Admin → Meetings → Overview**: divider lines between gray metric rows should match **Admin → Revenue → Overview** (`#e5e7eb` not `#d1d5db`); more vertical spacing above/below those lines like revenue (`py-2` / **8px**); **AVG BOOKING SALE (PAID IN FULL)** and **AVG CONSULT SALE (REDEEMED OFFERS)** labels back to **red** with the **amount next to the label** (not `space-between` / right-aligned).
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — both **APPOINTMENT** and **CONSULT** analytics blocks: row **`padding: '8px 0'`**, **`borderBottom: '1px solid #e5e7eb'`**; AVG rows use **`flex-start`** + **`gap: '6px'`**, label **`#EB1C24`** **Futura PT Demi**, value same red **Medium** inline.
+
+**Verification:** `npm run build` passes.

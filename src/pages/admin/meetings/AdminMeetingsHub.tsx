@@ -2897,8 +2897,8 @@ export default function AdminMeetingsHub() {
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
                                   gap: '10px',
-                                  padding: '6px 0',
-                                  borderBottom: idx < arr.length - 1 ? '1px solid #d1d5db' : undefined,
+                                  padding: '8px 0',
+                                  borderBottom: idx < arr.length - 1 ? '1px solid #e5e7eb' : undefined,
                                 }}
                               >
                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
@@ -2920,14 +2920,16 @@ export default function AdminMeetingsHub() {
                             <div
                               style={{
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                gap: '10px',
-                                padding: '6px 0 0 0',
-                                marginTop: '2px',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignItems: 'baseline',
+                                justifyContent: 'flex-start',
+                                gap: '6px',
+                                padding: '8px 0 0 0',
+                                marginTop: '0',
                               }}
                             >
-                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#EB1C24', textTransform: 'uppercase' }}>
                                 AVG BOOKING SALE (PAID IN FULL)
                               </span>
                               <span
@@ -2965,8 +2967,8 @@ export default function AdminMeetingsHub() {
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
                                   gap: '10px',
-                                  padding: '6px 0',
-                                  borderBottom: idx < arr.length - 1 ? '1px solid #d1d5db' : undefined,
+                                  padding: '8px 0',
+                                  borderBottom: idx < arr.length - 1 ? '1px solid #e5e7eb' : undefined,
                                 }}
                               >
                                 <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
@@ -2988,14 +2990,16 @@ export default function AdminMeetingsHub() {
                             <div
                               style={{
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                gap: '10px',
-                                padding: '6px 0 0 0',
-                                marginTop: '2px',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignItems: 'baseline',
+                                justifyContent: 'flex-start',
+                                gap: '6px',
+                                padding: '8px 0 0 0',
+                                marginTop: '0',
                               }}
                             >
-                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+                              <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '9px', color: '#EB1C24', textTransform: 'uppercase' }}>
                                 AVG CONSULT SALE (REDEEMED OFFERS)
                               </span>
                               <span
