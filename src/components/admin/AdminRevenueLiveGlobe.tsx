@@ -467,12 +467,12 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 aria-hidden
               >
                 <defs>
-                  {/** Light center → darker rim (inside disk only); land reads darker on top of this. */}
+                  {/** Visible light→dark gray volume (center not pure white so ocean reads like reference). */}
                   <radialGradient id={gradId} cx="34%" cy="30%" r="88%">
-                    <stop offset="0%" stopColor="#fafafa" />
-                    <stop offset="38%" stopColor="#e4e4e7" />
-                    <stop offset="72%" stopColor="#a1a1aa" />
-                    <stop offset="100%" stopColor="#71717a" />
+                    <stop offset="0%" stopColor="#e8e8ea" />
+                    <stop offset="32%" stopColor="#d4d4d8" />
+                    <stop offset="68%" stopColor="#90909a" />
+                    <stop offset="100%" stopColor="#5b5b66" />
                   </radialGradient>
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />

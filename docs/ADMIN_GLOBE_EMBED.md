@@ -2,7 +2,7 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
-**Look (embed):** Transparent page/canvas (iframe on marble). **Inner volume:** subtle **light→dark gray radial gradient** on a **just-below-surface** sphere (Three.js), like the reference blue sphere tint. **Land** = dark **neutral gray** dots on **GeoJSON** samples. **Hex bins** = hotspot pillars (**slate** grays). **Atmosphere** = soft **slate** halo (not cyan). **Red** visitors / **green** orders.
+**Look (embed):** Transparent page/canvas (iframe on marble). **Inner volume:** **`showGlobe(true)`** + **`globeMaterial(MeshBasicMaterial)`** with the same **canvas radial light→dark gray** as the SVG (the base sphere from **three-globe** — not a separate mesh on the outer scene, which did not render correctly with **`showGlobe(false)`**). **Land** = dark **neutral gray** dots on **GeoJSON**. **Hex bins** = hotspot pillars (**slate**). **Atmosphere** = soft **slate** halo. **Red** visitors / **green** orders.
 
 **Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`** or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/ne_110m_land.geojson`.
 

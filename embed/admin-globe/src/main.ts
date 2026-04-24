@@ -38,10 +38,10 @@ function makeOceanGradientTexture(): THREE.CanvasTexture {
   const cx = sz * 0.34;
   const cy = sz * 0.3;
   const g = ctx.createRadialGradient(cx, cy, sz * 0.06, sz * 0.5, sz * 0.5, sz * 0.52);
-  g.addColorStop(0, '#fafafa');
-  g.addColorStop(0.38, '#e4e4e7');
-  g.addColorStop(0.72, '#a1a1aa');
-  g.addColorStop(1, '#71717a');
+  g.addColorStop(0, '#e8e8ea');
+  g.addColorStop(0.32, '#d4d4d8');
+  g.addColorStop(0.68, '#90909a');
+  g.addColorStop(1, '#5b5b66');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, sz, sz);
   const tex = new THREE.CanvasTexture(canvas);
@@ -104,17 +104,20 @@ function readSize(): { w: number; h: number } {
   return { w, h };
 }
 
+const oceanTex = makeOceanGradientTexture();
+
 const globe = new Globe(root, {
   /** Alpha so the iframe can sit on the storefront marble without a gray rectangle. */
   rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
   waitForGlobeReady: false,
 })
   .backgroundColor('rgba(0,0,0,0)')
-  .showGlobe(false)
+  /** Base sphere must be visible — `globeMaterial` maps the gray radial “ocean” (showGlobe false hid it before). */
+  .showGlobe(true)
   .showGraticules(false)
   .showAtmosphere(true)
-  .atmosphereColor('rgba(148, 163, 184, 0.38)')
-  .atmosphereAltitude(0.12)
+  .atmosphereColor('rgba(148, 163, 184, 0.42)')
+  .atmosphereAltitude(0.13)
   .hexBinPointsData([])
   .hexBinPointLat('lat')
   .hexBinPointLng('lng')
@@ -158,19 +161,13 @@ const globe = new Globe(root, {
   .arcDashAnimateTime(11000)
   .onGlobeReady(() => {
     try {
-      const scene = globe.scene() as THREE.Scene;
-      const radius = globe.getGlobeRadius() * 0.998;
-      const geo = new THREE.SphereGeometry(radius, 72, 72);
-      const tex = makeOceanGradientTexture();
-      const mat = new THREE.MeshBasicMaterial({
-        map: tex,
-        transparent: true,
-        opacity: 0.94,
-        depthWrite: true,
-      });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.name = 'fsbw-admin-ocean-gradient';
-      scene.add(mesh);
+      globe.globeMaterial(
+        new THREE.MeshBasicMaterial({
+          map: oceanTex,
+          transparent: false,
+          depthWrite: true,
+        })
+      );
     } catch {
       /* optional */
     }

@@ -17039,3 +17039,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — **`heightPx={324}`** (was **240**; **240 × 1.35 = 324**), **Suspense** fallback height **324**. **`AdminRevenueLiveGlobe`** — default **`heightPx` 324**; iframe **`Math.min(heightPx, 432)`** (was 320); SVG **`Math.min(heightPx, 405)`** (was 300) so the larger size is not clamped.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-28 — Admin globe WebGL: fix gray ocean volume (globeMaterial vs hidden base)
+
+**Context:** User reported **inner globe still white** in WebGL — only land dots went gray; prior **`onGlobeReady`** added a **custom sphere** to **`globe.scene()`** (outer **three-render-objects** scene) while **`showGlobe(false)`** hid **three-globe**’s base mesh, so the gradient did not read as sphere interior.
+
+**Fix:** **`embed/admin-globe/src/main.ts`** — **`showGlobe(true)`**; **`onGlobeReady`** → **`globe.globeMaterial(new THREE.MeshBasicMaterial({ map: canvasRadialTexture }))`** on the **library base sphere** (same gray stops as SVG, center **`#e8e8ea` → rim `#5b5b66`**). Removed extra **scene.add** mesh. Slightly stronger **atmosphere** opacity/altitude. **SVG** radial stops aligned with embed (no near-white center).
+
+**Files:** `embed/admin-globe/src/main.ts`, `src/components/admin/AdminRevenueLiveGlobe.tsx`, `docs/ADMIN_GLOBE_EMBED.md`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **embed** project.
