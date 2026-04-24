@@ -80,10 +80,11 @@ function readSize(): { w: number; h: number } {
 }
 
 const globe = new Globe(root, {
-  rendererConfig: { alpha: false, antialias: false, powerPreference: 'low-power' },
+  /** Alpha so the iframe can sit on the storefront marble without a gray rectangle. */
+  rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
   waitForGlobeReady: false,
 })
-  .backgroundColor('#f4f4f5')
+  .backgroundColor('rgba(0,0,0,0)')
   .showGlobe(false)
   .showGraticules(false)
   .showAtmosphere(true)

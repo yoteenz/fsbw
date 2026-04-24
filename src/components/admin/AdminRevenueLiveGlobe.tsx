@@ -295,20 +295,30 @@ function AdminRevenueLiveGlobeIframeEmbed({
   return (
     <>
       <div className="flex justify-center w-full" data-admin-globe-mode="iframe-webgl">
-        <iframe
-          ref={iframeRef}
-          title="Admin live globe (WebGL)"
-          src={src}
-          className="border-0 mx-auto"
+        {/** Clip rectangular iframe/document to a disk so transparent corners show marble, not embed gray. */}
+        <div
+          className="mx-auto overflow-hidden"
           style={{
             width: size,
             height: size,
-            display: 'block',
+            borderRadius: '50%',
             background: 'transparent',
           }}
-          sandbox="allow-scripts allow-same-origin"
-          referrerPolicy="no-referrer"
-        />
+        >
+          <iframe
+            ref={iframeRef}
+            title="Admin live globe (WebGL)"
+            src={src}
+            className="border-0 block"
+            style={{
+              width: size,
+              height: size,
+              background: 'transparent',
+            }}
+            sandbox="allow-scripts allow-same-origin"
+            referrerPolicy="no-referrer"
+          />
+        </div>
       </div>
       {selected && <DetailModal selected={selected} onClose={() => setSelected(null)} />}
     </>

@@ -17007,3 +17007,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **iframe:** removed **`rounded-full`**, **box-shadow** (gray ring), set **`background: transparent`**. **SVG:** shell **`background` / `boxShadow`** transparent/none; removed **glow** circle behind fill and **rim stroke** circles; removed unused **`glowId`**. **`src/index.css`** — **`.admin-revenue-globe-shell`** no gradient or shadow.
 
 **Verification:** `npm run build` passes.
+
+---
+
+## 2026-04-28 — Admin revenue globe: remove gray square behind WebGL iframe
+
+**Context:** After removing the outer ring, user saw a **light gray rectangle** behind the circular globe (iframe is square; embed **`index.html`** / **`#root`** and **`globe.backgroundColor`** were solid grays).
+
+**Changes:** **`embed/admin-globe/index.html`** — **`html`**, **`body`**, **`#root`** **`background: transparent`**. **`embed/admin-globe/src/main.ts`** — **`rendererConfig.alpha: true`**, **`backgroundColor('rgba(0,0,0,0)')`**. **`AdminRevenueLiveGlobe`** — wrap **iframe** in **`overflow-hidden` + `borderRadius: 50%`** so transparent corners show parent **marble**. Redeploy **embed** project for iframe content.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
