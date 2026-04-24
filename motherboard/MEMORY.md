@@ -17091,3 +17091,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** + **embed**.
+
+---
+
+## 2026-04-28 — Admin globe: Fibonacci land fill + see-through base (match reference density)
+
+**Context:** User still saw **sparse scattered** dots and **opaque** base; wanted **reference-like** dense structured continents and **more see-through** globe.
+
+**Changes:** **`adminGlobeNe110mLand.ts`** — replaced lat/lng grid + stride with **Fibonacci sphere** sampling (**`lng = atan2(z,x)`**) filtered by **GeoJSON** land → **uniform spacing** on the sphere (same count reads much denser on continents). **SVG** — **14k** samples; ocean **`rgba(252,252,253,0.12)` → `rgba(226,232,240,0.18)`**; larger land **r**. **Embed** — **22k** samples; land **pointRadius 0.22**; **`globeImageUrl`** **`rgba(252,252,253,0.14)`**; **`onGlobeReady`** **`globeMaterial`**: **`transparent`**, **`opacity 0.28`**, **`depthWrite false`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** + **embed**.

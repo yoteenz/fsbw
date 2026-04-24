@@ -7,6 +7,8 @@ export type LandSample = { lat: number; lng: number };
 
 type Ring = [number, number][];
 
+const GOLD = Math.PI * (3 - Math.sqrt(5));
+
 function wrapLng(lng: number): number {
   let x = lng;
   while (x > 180) x -= 360;
@@ -75,98 +77,38 @@ function isLandLatLng(lat: number, lng: number, multipolygons: number[][][][][])
   return false;
 }
 
-function densifyRing(ring: Ring, maxSegKm: number): LandSample[] {
+/**
+ * **Fibonacci sphere** lattice → **uniform spacing** on the globe (reference-style dense hex feel).
+ * Lat/lng grids are biased and look sparse at the same `maxDots`; this fills continents evenly.
+ */
+function fibonacciLandSamples(multipolygons: number[][][][][], maxDots: number): LandSample[] {
   const out: LandSample[] = [];
-  const R = 6371;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const segLen = (lat1: number, lng1: number, lat2: number, lng2: number) => {
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(wrapLng(lng2 - lng1));
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
-    return R * c;
-  };
-  const m = ring.length;
-  if (m < 2) return out;
-  for (let i = 0; i < m - 1; i++) {
-    const [lng1, lat1] = ring[i]!;
-    const [lng2, lat2] = ring[i + 1]!;
-    const km = segLen(lat1, lng1, lat2, lng2);
-    const steps = Math.max(1, Math.ceil(km / maxSegKm));
-    for (let s = 0; s < steps; s++) {
-      const t = s / steps;
-      out.push({
-        lat: lat1 + (lat2 - lat1) * t,
-        lng: wrapLng(lng1 + wrapLng(lng2 - lng1) * t),
-      });
+  /** ~29% of sphere is land → scan enough indices to fill `maxDots`. */
+  const maxI = Math.min(3_500_000, Math.max(200_000, maxDots * 140));
+  const n = maxI;
+  for (let i = 0; i < maxI && out.length < maxDots; i++) {
+    const y = 1 - (i / Math.max(1, n - 1)) * 2;
+    const yr = Math.max(-1, Math.min(1, y));
+    const r = Math.sqrt(Math.max(0, 1 - yr * yr));
+    const theta = GOLD * i;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r;
+    const lat = (Math.asin(yr) * 180) / Math.PI;
+    const lng = (Math.atan2(z, x) * 180) / Math.PI;
+    if (isLandLatLng(lat, lng, multipolygons)) {
+      out.push({ lat, lng: wrapLng(lng) });
     }
-  }
-  return out;
-}
-
-function boundarySamples(multipolygons: number[][][][][], maxSegKm: number): LandSample[] {
-  const pts: LandSample[] = [];
-  for (const mp of multipolygons) {
-    for (const poly of mp) {
-      const outer = poly[0] as Ring | undefined;
-      if (!outer) continue;
-      pts.push(...densifyRing(outer, maxSegKm));
-    }
-  }
-  return pts;
-}
-
-function interiorGridSamples(
-  multipolygons: number[][][][][],
-  latStep: number,
-  lngStep: number,
-  maxOut: number
-): LandSample[] {
-  const out: LandSample[] = [];
-  for (let lat = -56; lat <= 74 && out.length < maxOut; lat += latStep) {
-    for (let lng = -180; lng < 180 && out.length < maxOut; lng += lngStep) {
-      if (isLandLatLng(lat, lng, multipolygons)) {
-        out.push({ lat, lng: wrapLng(lng) });
-      }
-    }
-  }
-  return out;
-}
-
-function strideEvery<T>(arr: T[], maxKeep: number): T[] {
-  if (arr.length <= maxKeep) return arr;
-  const step = Math.ceil(arr.length / maxKeep);
-  const out: T[] = [];
-  for (let i = 0; i < arr.length && out.length < maxKeep; i += step) {
-    out.push(arr[i]!);
   }
   return out;
 }
 
 /**
- * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples.
- * **Interior-first** fine grid so continents read as **filled dot fields**, not coast-only rings;
- * coast samples are capped and appended after interior downsampling.
+ * Parse ne_110m_land GeoJSON and return up to `maxDots` land samples (uniform Fibonacci on sphere).
  */
 export function landSamplesFromNe110mGeoJson(geo: unknown, maxDots: number): LandSample[] {
   const mp = collectPolygons(geo);
   if (mp.length === 0) return [];
-
-  const maxCoast = Math.min(2200, Math.max(400, Math.floor(maxDots * 0.14)));
-  const interiorBudget = Math.max(0, maxDots - maxCoast);
-
-  /** Finer lat/lng grid so post-stride dots are closer (was ~0.32°×0.42° — too sparse). */
-  const interiorAll = interiorGridSamples(mp, 0.17, 0.22, Math.max(interiorBudget * 22, 160_000));
-  const interior = strideEvery(interiorAll, interiorBudget);
-
-  const coastAll = boundarySamples(mp, 24);
-  const coast = strideEvery(coastAll, maxCoast);
-
-  const merged: LandSample[] = [...interior, ...coast];
-  if (merged.length <= maxDots) return merged;
-  return merged.slice(0, maxDots);
+  return fibonacciLandSamples(mp, maxDots);
 }
 
 const DEFAULT_GEO_PATH = '/ne_110m_land.geojson';

@@ -38,7 +38,7 @@ function makeOceanSolidLightGrayDataUrl(): string {
   canvas.height = sz;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('2d context');
-  ctx.fillStyle = 'rgba(250, 250, 251, 0.38)';
+  ctx.fillStyle = 'rgba(252, 252, 253, 0.14)';
   ctx.fillRect(0, 0, sz, sz);
   return canvas.toDataURL('image/png');
 }
@@ -141,7 +141,7 @@ const globe = new Globe(root, {
   })
   .pointRadius((d: object) => {
     const o = d as LandDot | PointRow;
-    return '_land' in o && o._land ? 0.18 : 0.52;
+    return '_land' in o && o._land ? 0.22 : 0.52;
   })
   .pointResolution(7)
   .arcStartLat('startLat')
@@ -153,7 +153,24 @@ const globe = new Globe(root, {
   .arcStroke(0.38)
   .arcDashLength(0.32)
   .arcDashGap(1.6)
-  .arcDashAnimateTime(11000);
+  .arcDashAnimateTime(11000)
+  .onGlobeReady(() => {
+    try {
+      const m = globe.globeMaterial() as {
+        transparent?: boolean;
+        opacity?: number;
+        depthWrite?: boolean;
+        needsUpdate?: boolean;
+      };
+      if (!m) return;
+      m.transparent = true;
+      m.opacity = 0.28;
+      m.depthWrite = false;
+      m.needsUpdate = true;
+    } catch {
+      /* optional */
+    }
+  });
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
 try {
@@ -212,7 +229,7 @@ globe.pointsData([]).hexBinPointsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const samples = await loadLandSamplesForGlobe(16_000, '/ne_110m_land.geojson');
+    const samples = await loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson');
     landStatic = samples.map((s) => ({ lat: s.lat, lng: s.lng, _land: true as const, _lat: s.lat }));
   } catch {
     landStatic = [];
