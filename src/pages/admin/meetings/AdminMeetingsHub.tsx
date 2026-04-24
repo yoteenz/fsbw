@@ -2881,6 +2881,7 @@ export default function AdminMeetingsHub() {
                     <div style={{ marginTop: '12px' }}>
                       <div className="space-y-3">
                         <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
+                          <div style={{ paddingLeft: '4px', paddingRight: '4px' }}>
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
                             APPOINTMENT ANALYTICS
                           </p>
@@ -2897,7 +2898,7 @@ export default function AdminMeetingsHub() {
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
                                   gap: '10px',
-                                  padding: '8px 0',
+                                  padding: '12px 0',
                                   borderBottom: idx < arr.length - 1 ? '1px solid #e5e7eb' : undefined,
                                 }}
                               >
@@ -2925,7 +2926,7 @@ export default function AdminMeetingsHub() {
                                 alignItems: 'baseline',
                                 justifyContent: 'flex-start',
                                 gap: '6px',
-                                padding: '8px 0 0 0',
+                                padding: '12px 0 0 0',
                                 marginTop: '0',
                               }}
                             >
@@ -2946,9 +2947,11 @@ export default function AdminMeetingsHub() {
                               </span>
                             </div>
                           </div>
+                          </div>
                         </div>
 
                         <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
+                          <div style={{ paddingLeft: '4px', paddingRight: '4px' }}>
                           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>
                             CONSULT ANALYTICS
                           </p>
@@ -2967,7 +2970,7 @@ export default function AdminMeetingsHub() {
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
                                   gap: '10px',
-                                  padding: '8px 0',
+                                  padding: '12px 0',
                                   borderBottom: idx < arr.length - 1 ? '1px solid #e5e7eb' : undefined,
                                 }}
                               >
@@ -2995,7 +2998,7 @@ export default function AdminMeetingsHub() {
                                 alignItems: 'baseline',
                                 justifyContent: 'flex-start',
                                 gap: '6px',
-                                padding: '8px 0 0 0',
+                                padding: '12px 0 0 0',
                                 marginTop: '0',
                               }}
                             >
@@ -3015,6 +3018,7 @@ export default function AdminMeetingsHub() {
                                 {formatUsd(overviewConsultSales.avgRedeemedOrderUsd)}
                               </span>
                             </div>
+                          </div>
                           </div>
                         </div>
                       </div>

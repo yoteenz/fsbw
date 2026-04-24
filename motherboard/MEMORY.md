@@ -17143,3 +17143,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** `npm run build` (root) and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** + **embed** (new static GeoJSON).
+
+---
+
+## 2026-04-28 — Admin Meetings overview analytics cards padding
+
+**Context:** User asked for **4px** extra space on the **left** of black/gray/red text on **booking/consult analytics** cards, **4px** on the **right** of red data values, and **more vertical space** around gray **separator** lines on **Admin → Meetings → Overview**.
+
+**Changes:** **`src/pages/admin/meetings/AdminMeetingsHub.tsx`** — **APPOINTMENT** and **CONSULT** analytics cards: inner wrapper **`paddingLeft: 4px`**, **`paddingRight: 4px`** around title + rows + AVG blocks; metric rows **`padding: '12px 0'`** (was **8px**); AVG row top padding **12px**.
+
+**Verification:** `npm run build` passes.
