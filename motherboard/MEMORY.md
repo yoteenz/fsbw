@@ -17618,3 +17618,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: chip + title row **`items-start` → `items-center`**, removed chip wrapper **`translateY(2px)`**, title **`paddingTop: 0`**; **`min-w-0` / `flex-1`** on title for narrow panel wrap.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Globe cluster panel: wire `customers` into iframe payload (fix empty panel)
+
+**Context:** User saw **14 ORDERS** for New York but **“NO CUSTOMER ROWS FOR THIS CLUSTER”** — expected clients from the same admin revenue **`orders`** list as the Orders tab / client overview.
+
+**Root cause:** **`buildOrderGlobeClustersFromRevenueOrders`** puts per-email rows on **`OrderGlobeClusterPoint.customers`**, but **`AdminRevenueLiveGlobe`** iframe payload only forwarded **`clusterCustomers: p.clusterCustomers`** (always **`undefined`**), so the embed had no customer data and **`MSG_CLUSTER`** sent empty **`customers`**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`clusterCustomers: p.clusterCustomers ?? p.customers`** in **`pointsPayload`** and SVG **`mergeData`**; **`GlobePointInput`** documents **`customers`**.
+
+**Verification:** **`npm run build`**.
+
+**Deploy:** Redeploy **main** (embed unchanged).

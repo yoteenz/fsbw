@@ -62,6 +62,9 @@ type GlobePointInput = {
   /** Pillar height in globe-radius units (embed `pointAltitude`). */
   towerHeight?: number;
   orderTowerHeight?: number;
+  /** Per-email rollup from `buildOrderGlobeClustersFromRevenueOrders` (`OrderGlobeClusterPoint.customers`). */
+  customers?: GlobeClusterCustomerRow[];
+  /** Alias for embed payload only — prefer **`customers`** from cluster builder. */
   clusterCustomers?: GlobeClusterCustomerRow[];
 };
 
@@ -94,6 +97,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
           ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
           : orderPlaceFieldsFromGlobeLabel(p.label);
       const th = p.orderTowerHeight ?? p.towerHeight;
+      const clusterCustomers = p.clusterCustomers ?? p.customers;
       return {
         lat: p.lat,
         lng: p.lng,
@@ -105,7 +109,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         landmarkTitle: p.landmarkTitle,
         landmarkSymbol: p.landmarkSymbol,
         orderTowerHeight: th,
-        clusterCustomers: p.clusterCustomers,
+        clusterCustomers,
       };
     }),
   ];
@@ -550,6 +554,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
             ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
             : orderPlaceFieldsFromGlobeLabel(p.label);
         const th = p.orderTowerHeight ?? p.towerHeight;
+        const clusterCustomers = p.clusterCustomers ?? p.customers;
         return {
           lat: p.lat,
           lng: p.lng,
@@ -561,7 +566,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
           landmarkTitle: p.landmarkTitle,
           landmarkSymbol: p.landmarkSymbol,
           orderTowerHeight: th,
-          clusterCustomers: p.clusterCustomers,
+          clusterCustomers,
         };
       }),
     ];
