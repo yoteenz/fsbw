@@ -40,21 +40,23 @@ type BorderPathRow = {
   z: 'country' | 'state';
 };
 
-/**
- * “Groove” through land: cool **light→slate** (reads as a cut vs ocean base), not a purple overlay.
- * Borders sit **below** merged hex prisms (layer reorder + lower `pathPointAlt` than land `hexAltitude`).
- */
-const BORDER_COUNTRY_GRADIENT: [string, string] = ['rgba(248, 250, 252, 0.55)', 'rgba(148, 163, 184, 0.72)'];
-const BORDER_STATE_GRADIENT: [string, string] = ['rgba(241, 245, 249, 0.42)', 'rgba(100, 116, 139, 0.58)'];
+/** Visible border/region lines on top of land hex (default layer order); high-contrast slate gradient. */
+const BORDER_COUNTRY_GRADIENT: [string, string] = ['rgba(51, 65, 85, 0.92)', 'rgba(148, 163, 184, 0.88)'];
+const BORDER_STATE_GRADIENT: [string, string] = ['rgba(71, 85, 105, 0.88)', 'rgba(100, 116, 139, 0.78)'];
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
-/** When camera `altitude` is at or below this (zoomed in), show **map-style** place labels. */
-const ZOOM_LABEL_MAX_ALTITUDE = 0.42;
-/** Extra-close zoom: slightly larger labels. */
-const ZOOM_LABEL_LARGE_MAX_ALTITUDE = 0.22;
+/**
+ * `globe.pointOfView().altitude` = camera distance / **GLOBE_RADIUS** − 1 (three-globe), but zoom events
+ * do not always refresh it before our handler runs — use **camera distance** for reliable gating.
+ */
+const GLOBE_RADIUS = 100;
+/** Show labels when camera is this close or closer (distance / globeRadius − 1 ≤ threshold). */
+const ZOOM_LABEL_MAX_ALTITUDE = 1.15;
+/** Extra-close zoom: larger label text. */
+const ZOOM_LABEL_LARGE_MAX_ALTITUDE = 0.45;
 
 /** Merged land hex top: translucent mint → sky by latitude (reference-style). */
 function landHexTopRgba(lat: number): string {
@@ -204,37 +206,41 @@ type ThreeSceneLike = {
   add: (o: unknown) => void;
 };
 
-/** three-globe default layer order draws paths **above** hex bins; move paths **under** hex so borders read as grooves through the mesh. */
-function reorderGlobePathsBelowHexBins(): void {
+function cameraAltitudeFromDistance(): number {
+  try {
+    const cam = globe.camera() as { position?: { x: number; y: number; z: number } };
+    const p = cam.position;
+    if (!p) return 999;
+    const dist = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+    return dist / GLOBE_RADIUS - 1;
+  } catch {
+    return 999;
+  }
+}
+
+/** Ensure text labels render after merged hex (some builds / rebinds can change child order). */
+function reorderGlobeLabelsAboveHex(): void {
   try {
     const scene = globe.scene() as unknown as ThreeSceneLike;
     if (!scene?.children?.length) return;
-
-    const findRootForObjType = (objType: string): unknown | null => {
+    const findRoot = (t: string): unknown | null => {
       for (const top of scene.children) {
         let hit = false;
         top.traverse((o) => {
-          if ((o as { __globeObjType?: string }).__globeObjType === objType) hit = true;
+          if ((o as { __globeObjType?: string }).__globeObjType === t) hit = true;
         });
         if (hit) return top;
       }
       return null;
     };
-
-    const pathsRoot = findRootForObjType('path');
-    const hexRoot = findRootForObjType('hexBinPoints');
-    if (!pathsRoot || !hexRoot || pathsRoot === hexRoot) return;
-
+    const hexRoot = findRoot('hexBinPoints');
+    const labelRoot = findRoot('label');
+    if (!hexRoot || !labelRoot || hexRoot === labelRoot) return;
     const ch = [...scene.children] as unknown[];
-    const pi = ch.indexOf(pathsRoot);
-    const hi = ch.indexOf(hexRoot);
-    if (pi < 0 || hi < 0 || pi < hi) return;
-
-    const next = ch.filter((c) => c !== pathsRoot);
+    const next = ch.filter((c) => c !== labelRoot);
     const hexAt = next.indexOf(hexRoot);
     if (hexAt < 0) return;
-    next.splice(hexAt, 0, pathsRoot);
-
+    next.splice(hexAt + 1, 0, labelRoot);
     while (scene.children.length) scene.remove(scene.children[0]);
     for (const c of next) scene.add(c);
   } catch {
@@ -283,14 +289,15 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
     const line = (r.placeLine ?? '').trim();
     if (!line) continue;
     const detail = (r.placeDetail ?? '').trim();
-    const text = detail ? `${line}\n${detail}` : line;
+    /** `TextGeometry` does not render newline — use a single-line separator. */
+    const text = detail ? `${line} · ${detail}` : line;
     out.push({
       lat: r.lat,
       lng: r.lng,
       text,
-      color: '#0f172a',
-      altitude: 0.056,
-      size: largeZoom ? 0.2 : 0.15,
+      color: 'rgba(15, 23, 42, 0.96)',
+      altitude: 0.062,
+      size: largeZoom ? 0.34 : 0.26,
       includeDot: false,
     });
   }
@@ -298,13 +305,7 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
 }
 
 function updateMapLabelsFromCamera() {
-  let alt = 999;
-  try {
-    const pov = globe.pointOfView() as { altitude?: number };
-    if (pov && typeof pov.altitude === 'number' && Number.isFinite(pov.altitude)) alt = pov.altitude;
-  } catch {
-    /* optional */
-  }
+  const alt = cameraAltitudeFromDistance();
   const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
@@ -366,15 +367,11 @@ const globe = new Globe(root, {
   .pathPoints('points')
   .pathPointLat((p: [number, number]) => p[0])
   .pathPointLng((p: [number, number]) => p[1])
-  /**
-   * Slightly **below** land hex tops (`hexAltitude` for land bins ≈ **0.0058**) so lines sit in the “valley”
-   * between cells when viewed through the translucent prism tops.
-   */
-  .pathPointAlt((d: object) => ((d as BorderPathRow).z === 'state' ? 0.00445 : 0.00415))
-  .pathResolution(0.55)
+  /** Slightly **above** land hex tops (`~0.0058`) so borders read in front of the mesh. */
+  .pathPointAlt((d: object) => ((d as BorderPathRow).z === 'state' ? 0.00635 : 0.00605))
+  .pathResolution(0.48)
   .pathColor((d: object) => (d as BorderPathRow).pathColor)
-  /** Small fat line = soft groove width (still thinner than prior heavy purple stroke). */
-  .pathStroke(0.52)
+  .pathStroke(0.95)
   .pathDashLength(1)
   .pathDashGap(0)
   .pathDashAnimateTime(0)
@@ -388,6 +385,7 @@ const globe = new Globe(root, {
   .labelSize('size')
   .labelIncludeDot('includeDot')
   .labelDotOrientation('bottom')
+  .labelResolution(4)
   .labelsTransitionDuration(0)
   .onGlobeReady(() => {
     try {
@@ -405,8 +403,8 @@ const globe = new Globe(root, {
     } catch {
       /* optional */
     }
-    reorderGlobePathsBelowHexBins();
-    requestAnimationFrame(() => reorderGlobePathsBelowHexBins());
+    reorderGlobeLabelsAboveHex();
+    requestAnimationFrame(() => reorderGlobeLabelsAboveHex());
     updateMapLabelsFromCamera();
   });
 
@@ -421,6 +419,7 @@ try {
   c.minDistance = 85;
   c.maxDistance = 1e6;
   c.addEventListener('change', () => {
+    reorderGlobeLabelsAboveHex();
     updateMapLabelsFromCamera();
   });
 } catch {
@@ -495,9 +494,9 @@ void (async () => {
     borderPaths = [];
   }
   applyPayload(lastRows);
-  reorderGlobePathsBelowHexBins();
+  reorderGlobeLabelsAboveHex();
   requestAnimationFrame(() => {
-    reorderGlobePathsBelowHexBins();
+    reorderGlobeLabelsAboveHex();
     notifyReady();
   });
   requestAnimationFrame(() => notifyReady());
@@ -521,6 +520,7 @@ window.addEventListener('message', (event: MessageEvent) => {
     if (row) cleaned.push(row);
   }
   applyPayload(cleaned);
+  reorderGlobeLabelsAboveHex();
 });
 
 function notifyReady() {

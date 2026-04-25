@@ -17241,3 +17241,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminOverviewAnalyticsCard.tsx`** — **`AdminOverviewAnalyticsCard`** + **`AdminOverviewMetricRows`** (same meeting-hub card shell). **`revenue/page.tsx`** — imports shared component (replaces inline duplicates). **`pending/page.tsx`** — **OVERVIEW** uses **`space-y-3`** stack of cards: **PENDING ITEMS**, **REVIEWS · PENDING BY TYPE** (footnote below metrics), **ORDER FORMS**, **TIER UPGRADES**, **AFFILIATE REQUESTS**, **REFUND REQUESTS**, **AFFILIATE QUEUE**; removed **`DataRow`** (overview-only). **`SectionTitle`** kept for modals / other tabs.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-24 — Admin globe embed: fix zoom labels + visible borders
+
+**Context:** User saw **no labels when zooming in** and **no visible** country/state **separation** (“cut out” / lines).
+
+**Causes:** (1) **`globe.pointOfView().altitude`** was often **stale** on `controls` `change` before **`setPointOfView`** ran, so **`alt ≤ 0.42`** rarely fired; max zoom distance is **~215** → **alt ~1.15**, so threshold was too strict. (2) **`TextGeometry`** ignores **`\n`** — two-line label showed blank/wrong. (3) Borders **under** translucent hex + light stroke were **too faint**. (4) Labels could sit **under** hex layer after rebinding.
+
+**Fix (`embed/admin-globe/src/main.ts`):** **`cameraAltitudeFromDistance()`** using **`camera.position.length / 100 - 1`**; show labels when **≤ 1.15** (large text **≤ 0.45**). Label text **`placeLine · placeDetail`**; larger **`labelSize`**, **`labelResolution(4)`**, **`reorderGlobeLabelsAboveHex()`** after hex; run reorder on **controls change**. Borders: **`pathPointAlt ~0.006`**, **`pathStroke 0.95`**, **darker slate gradients**, default draw order (paths on top). **SVG** (`AdminRevenueLiveGlobe.tsx`): borders **after** land hex; thicker strokes; **scale > 1.12** for HTML labels. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`cd embed/admin-globe && npm run build`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

@@ -580,29 +580,32 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                     <stop offset="100%" stopColor="#475569" stopOpacity={0.65} />
                   </linearGradient>
                   <linearGradient id={borderCountryGradId} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(248, 250, 252, 0.55)" />
-                    <stop offset="100%" stopColor="rgba(148, 163, 184, 0.72)" />
+                    <stop offset="0%" stopColor="rgba(51, 65, 85, 0.92)" />
+                    <stop offset="100%" stopColor="rgba(148, 163, 184, 0.88)" />
                   </linearGradient>
                   <linearGradient id={borderStateGradId} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(241, 245, 249, 0.42)" />
-                    <stop offset="100%" stopColor="rgba(100, 116, 139, 0.58)" />
+                    <stop offset="0%" stopColor="rgba(71, 85, 105, 0.88)" />
+                    <stop offset="100%" stopColor="rgba(100, 116, 139, 0.78)" />
                   </linearGradient>
                 </defs>
 
                 <circle cx={CX} cy={CY} r={R} fill={`url(#${gradId})`} />
 
                 <g clipPath={`url(#${clipId})`}>
-                  {/** Borders under land hexes so translucent tops read like grooves over the lines. */}
+                  {landHexPaths.map((h, i) => (
+                    <path key={`land-hex-${i}`} d={h.d} fill={h.fill} stroke="rgba(255,255,255,0.12)" strokeWidth={0.15} />
+                  ))}
+                  {/** Borders on top of land fill so country/state lines read clearly. */}
                   {borderCountryPaths.map((d, i) => (
                     <path
                       key={`border-c-${i}`}
                       d={d}
                       fill="none"
                       stroke={`url(#${borderCountryGradId})`}
-                      strokeWidth={0.75}
+                      strokeWidth={1.05}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      opacity={0.92}
+                      opacity={0.95}
                     />
                   ))}
                   {borderStatePaths.map((d, i) => (
@@ -611,14 +614,11 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       d={d}
                       fill="none"
                       stroke={`url(#${borderStateGradId})`}
-                      strokeWidth={0.5}
+                      strokeWidth={0.72}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      opacity={0.88}
+                      opacity={0.92}
                     />
-                  ))}
-                  {landHexPaths.map((h, i) => (
-                    <path key={`land-hex-${i}`} d={h.d} fill={h.fill} stroke="rgba(255,255,255,0.12)" strokeWidth={0.15} />
                   ))}
                   {hotspots.map((h, i) => (
                     <rect
@@ -648,7 +648,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 </g>
               </svg>
 
-              {scale > 1.38 &&
+              {scale > 1.12 &&
                 points.map((p, i) => {
                   const { leftPct, topPct } = project(p.lat, p.lng);
                   const line = (p.placeLine ?? '').trim();
