@@ -17726,3 +17726,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — while **`parentClusterPanelOpen`**, **`requestAnimationFrame`** loop forces **`autoRotate = false`** + **`autoRotateSpeed = 0`**; **`applySize`**, **`applyPayload`**, and async init also call **`enforceAutoRotateWhenClusterPanelOpen()`**; cancel RAF when panel closes. **`docs/ADMIN_GLOBE_EMBED.md`** — implementation note.
 
 **Deploy:** Redeploy **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Globe: remove zoomed-in place name labels
+
+**Context:** User asked to **remove the location text** that appears on the globe **when zoomed in**.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`updateMapLabelsFromCamera`** always **`globe.labelsData([])`**; removed **`buildMapLabelsFromPoints`**. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — SVG fallback: removed zoomed **`placeLine` / `placeDetail`** overlays. **`docs/ADMIN_GLOBE_EMBED.md`** — updated zoom section.
+
+**Deploy:** Redeploy **main** (SVG) and **embed/admin-globe** (WebGL).

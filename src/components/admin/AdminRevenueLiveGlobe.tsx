@@ -921,52 +921,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 </g>
               </svg>
 
-              {scale > 1.12 &&
-                points.map((p, i) => {
-                  const { leftPct, topPct } = project(p.lat, p.lng);
-                  const line = (p.placeLine ?? '').trim();
-                  if (!line) return null;
-                  const detail = (p.placeDetail ?? '').trim();
-                  return (
-                    <div
-                      key={`map-lbl-${p.kind}-${i}`}
-                      className="absolute z-[5] max-w-[160px] pointer-events-none text-left"
-                      style={{
-                        left: `${leftPct}%`,
-                        top: `${topPct}%`,
-                        transform: 'translate(-50%, 14px)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontFamily: '"Futura PT Demi", "Futura PT", sans-serif',
-                          fontSize: '9px',
-                          lineHeight: 1.25,
-                          color: '#0f172a',
-                          textTransform: 'uppercase',
-                          textShadow: '0 0 4px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.85)',
-                        }}
-                      >
-                        {line}
-                      </div>
-                      {detail ? (
-                        <div
-                          style={{
-                            fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
-                            fontSize: '8px',
-                            lineHeight: 1.2,
-                            color: '#475569',
-                            marginTop: '2px',
-                            textTransform: 'uppercase',
-                            textShadow: '0 0 4px rgba(255,255,255,0.95)',
-                          }}
-                        >
-                          {detail}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
               {points.map((p, i) => {
                 const { leftPct, topPct } = project(p.lat, p.lng);
                 const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;

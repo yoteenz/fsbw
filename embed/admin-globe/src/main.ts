@@ -42,16 +42,6 @@ type PointRow = {
   clusterCustomers?: ClusterCustomer[];
 };
 
-type MapLabelRow = {
-  lat: number;
-  lng: number;
-  text: string;
-  color: string;
-  altitude: number;
-  size: number;
-  includeDot: boolean;
-};
-
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 type HtmlLandmarkRow = { lat: number; lng: number; alt: number; row: PointRow };
@@ -296,7 +286,7 @@ function effectiveCameraAltitude(): number {
   return Math.min(fromCam, fromPov);
 }
 
-/** Ensure **labels** then **HTML landmarks** render after merged hex. */
+/** Ensure **HTML landmarks** render after merged hex (place **TextGeometry** labels disabled). */
 function reorderGlobeLabelsAboveHex(): void {
   try {
     const scene = globe.scene() as unknown as ThreeSceneLike;
@@ -663,27 +653,6 @@ function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmar
   }));
 }
 
-function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabelRow[] {
-  const out: MapLabelRow[] = [];
-  for (const r of rows) {
-    const line = displayUpper(r.placeLine ?? '');
-    if (!line) continue;
-    const detail = displayUpper(r.placeDetail ?? '');
-    /** `TextGeometry` does not render newline — use a single-line separator. */
-    const text = detail ? `${line} · ${detail}` : line;
-    out.push({
-      lat: r.lat,
-      lng: r.lng,
-      text,
-      color: 'rgba(15, 23, 42, 0.96)',
-      altitude: 0.072,
-      size: largeZoom ? 0.48 : 0.38,
-      includeDot: false,
-    });
-  }
-  return out;
-}
-
 let lastClusterPanelZoom = false;
 /** While animating to a cluster after order-dot tap, do not send **`clusterPanel: false`** (would close the panel mid-zoom). */
 let clusterPanelHoldUntilLarge = false;
@@ -715,7 +684,8 @@ function updateMapLabelsFromCamera() {
   const alt = effectiveCameraAltitude();
   const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
-  globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
+  /** No floating **placeLine** / **`TextGeometry`** labels on zoom — product request (dots + landmarks only). */
+  globe.labelsData([]);
   globe.htmlElementsData(htmlLandmarkRowsForCamera(lastRows, show));
   requestAnimationFrame(() => enableCss2dLandmarkPointerHitThrough());
   enforceAutoRotateWhenClusterPanelOpen();
@@ -791,7 +761,7 @@ const globe = new Globe(root, {
   .pathDashLength(1)
   .pathDashGap(0)
   .pathDashAnimateTime(0)
-  /** Map-style place names when zoomed in (camera altitude low). */
+  /** `labelsData` kept empty — no zoomed place-name **`TextGeometry`** (see **`updateMapLabelsFromCamera`**). */
   .labelsData([])
   .labelLat('lat')
   .labelLng('lng')
