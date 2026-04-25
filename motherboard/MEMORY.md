@@ -17314,3 +17314,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`src/pages/admin/revenue/page.tsx`** — removed **`valueRed: false`** for that row so **`AdminOverviewMetricRows`** uses default value color **`#EB1C24`**.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-20 — Admin globe lag with mock data: hex jitter scale + postMessage dedupe
+
+**Context:** User asked why **mock data** makes the **globe lag**.
+
+**Cause:** **`embed/admin-globe`** **`buildHotBinJitter`** used **24** synthetic points per visitor/order for hex hotspot pillars — more mock markers ⇒ **many more hex-bin inputs** and heavier **WebGL** per frame. Parent **`postMessage`** on each **30s** poll **reapplied** the same payload and **rebuilt** the mesh unnecessarily.
+
+**Changes:** **`buildHotBinJitter`** takes **`samplesPerRow`**; **`applyPayload`** sets **`jitterPerRow = clamp(4..14, floor(220 / markerCount))`**. **`AdminRevenueLiveGlobe.tsx`** skips **`postMessage`** when **`JSON.stringify(pointsPayload)`** unchanged. **`docs/ADMIN_GLOBE_EMBED.md`** performance blurb.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

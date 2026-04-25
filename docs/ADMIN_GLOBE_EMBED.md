@@ -8,6 +8,8 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 **Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**).
 
+**Performance (many markers / mocks):** The embed expands each visitor/order into several **hex-bin** jitter samples for the tall “hotspot” pillars; more dots ⇒ more GPU work. Jitter count **scales down** as marker count grows, and the parent skips **`postMessage`** when the serialized payload is unchanged (avoids redundant hex rebuilds every 30s poll).
+
 **Mock globe data (main app):** Merges **`adminGlobeMockPresence.ts`** worldwide **visitor** + **order** dots with real data on Admin → Revenue (globe + Live View card). Enable any one of:
 
 - **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** (or **`true`** / **`yes`**) in **`.env.local`** — rebuild dev / redeploy production.

@@ -107,10 +107,15 @@ function makeOceanSolidLightGrayDataUrl(): string {
   return canvas.toDataURL('image/png');
 }
 
-function buildHotBinJitter(rows: PointRow[]): Weighted[] {
+/**
+ * Scatter points around each visitor/order for tall **hex** hotspot pillars.
+ * Cost is **O(n × samples)** — many markers (e.g. mock globe QA) × 24 was enough to stutter mobile WebGL.
+ */
+function buildHotBinJitter(rows: PointRow[], samplesPerRow: number): Weighted[] {
+  const n = Math.max(2, Math.min(20, Math.round(samplesPerRow)));
   const pts: Weighted[] = [];
   for (const r of rows) {
-    for (let k = 0; k < 24; k++) {
+    for (let k = 0; k < n; k++) {
       pts.push({
         lat: r.lat + (Math.random() - 0.5) * 0.55,
         lng: r.lng + (Math.random() - 0.5) * 0.55,
@@ -531,7 +536,9 @@ function applyPayload(rows: PointRow[]) {
   lastRows = rows;
   const { visitors, orders } = splitPoints(rows);
   const all: PointRow[] = [...visitors, ...orders];
-  const hot = buildHotBinJitter(all);
+  /** Fewer jitter samples per marker when there are many markers (keeps merged hex bin count ~flat). */
+  const jitterPerRow = Math.max(4, Math.min(14, Math.floor(220 / Math.max(1, all.length))));
+  const hot = buildHotBinJitter(all, jitterPerRow);
   globe
     .hexBinPointsData([...landHexPoints, ...hot])
     .pathsData(borderPaths)

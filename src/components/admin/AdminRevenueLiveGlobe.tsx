@@ -315,6 +315,8 @@ function AdminRevenueLiveGlobeIframeEmbed({
   heightPx = 324,
 }: Props & { embedUrl: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  /** Skip duplicate `postMessage` payloads — each one rebuilds hex bins in the iframe (expensive). */
+  const lastPointsJsonRef = useRef<string>('');
   const [embedReady, setEmbedReady] = useState(false);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
   /** Prior max 320px; +35% so larger `heightPx` from revenue is not clamped. */
@@ -365,6 +367,9 @@ function AdminRevenueLiveGlobeIframeEmbed({
     if (!embedReady) return;
     const win = iframeRef.current?.contentWindow;
     if (!win) return;
+    const json = JSON.stringify(pointsPayload);
+    if (json === lastPointsJsonRef.current) return;
+    lastPointsJsonRef.current = json;
     win.postMessage({ type: MSG_IN, points: pointsPayload }, '*');
   }, [embedReady, pointsPayload]);
 
