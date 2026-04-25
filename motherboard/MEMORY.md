@@ -17650,3 +17650,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: age parsing, Futura medium spend line, red top product, circular black avatar
+
+**Context:** User reported **missing age**; wanted **top product** line **brand red**; **spend · orders** line in **Futura PT Medium**; profile **black circular** border (not gray square).
+
+**Changes:** **`adminGlobeClusterClientProfile.ts`** — broader **`registeredUsers`** birth parsing (**`birthMonth`/`birthDay`/`birthYear`**, 6-digit **`MMDDYY`**, 8-digit, slash dates + **`ageFromBirthParts`**). **`AdminRevenueLiveGlobe.tsx`** — styles as requested.
+
+**Deploy:** Redeploy **main**.
