@@ -17487,3 +17487,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** **`npm run build`** passes.
 
 **Deploy:** Redeploy **embed**.
+
+---
+
+## 2026-04-22 — Postcard chips 50% smaller; auto-rotate off while cluster panel open
+
+**Context:** User wanted **emoji postcards ~50% smaller** and **no auto-spin** while the **client / cluster panel** is open.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — postcard **46×38 → 23×19**, scaled borders/shadows; emoji **21px → 11px**; **`parentClusterPanelOpen`** + **`enforceAutoRotateWhenClusterPanelOpen()`** forces **`autoRotate = false`** after **`updateMapLabelsFromCamera`**, **`onZoom`**, and **`controls` `change`**. **`AdminRevenueLiveGlobe.tsx`** — **`MSG_UI_CLUSTER_PANEL` `open: true`** immediately on **`MSG_CLUSTER`**; panel badge **40×34 → 20×17**, font **19 → 10**.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

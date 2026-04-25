@@ -306,16 +306,16 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
       aria-hidden
       className="shrink-0 inline-flex items-center justify-center overflow-hidden"
       style={{
-        width: 40,
-        height: 34,
-        borderRadius: 3,
+        width: 20,
+        height: 17,
+        borderRadius: 2,
         position: 'relative',
         transform: `rotate(${tilt}deg)`,
         background: 'linear-gradient(168deg, #fffef8 0%, #f7f1e8 48%, #ebe3d6 100%)',
-        border: '1.6px solid rgba(92, 72, 52, 0.28)',
-        borderRightWidth: 2.2,
-        borderBottomWidth: 2.4,
-        boxShadow: '2px 3px 0 rgba(55, 42, 30, 0.1), inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -8px 14px rgba(120, 95, 70, 0.07)',
+        border: '0.8px solid rgba(92, 72, 52, 0.28)',
+        borderRightWidth: 1.1,
+        borderBottomWidth: 1.2,
+        boxShadow: '1px 1.5px 0 rgba(55, 42, 30, 0.1), inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -4px 7px rgba(120, 95, 70, 0.07)',
         backdropFilter: 'blur(6px)',
         WebkitBackdropFilter: 'blur(6px)',
       }}
@@ -330,16 +330,16 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
       <span
         className="pointer-events-none absolute"
         style={{
-          inset: 3,
+          inset: 2,
           border: '1px dashed rgba(90, 70, 50, 0.18)',
-          borderRadius: 2,
+          borderRadius: 1,
         }}
       />
       <span
         className="relative z-[1]"
         style={{
           fontFamily: 'ui-rounded, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", cursive',
-          fontSize: 19,
+          fontSize: 10,
           lineHeight: 1,
           letterSpacing: '0.02em',
           opacity: 0.44,
@@ -596,6 +596,14 @@ function AdminRevenueLiveGlobeIframeEmbed({
         };
         setClusterDetail(detail);
         onClusterDetail?.(detail);
+        const winEarly = iframeRef.current?.contentWindow;
+        if (winEarly) {
+          try {
+            winEarly.postMessage({ type: MSG_UI_CLUSTER_PANEL, open: true }, '*');
+          } catch {
+            /* ignore */
+          }
+        }
       }
     };
     window.addEventListener('message', onMsg);

@@ -428,8 +428,11 @@ function recoverOrbitPointerState(): void {
 }
 
 let autoRotateWhenIdle = true;
+/** Parent order-cluster panel is open — keep **`autoRotate` false**; globe.gl can reset it on data/zoom updates. */
+let parentClusterPanelOpen = false;
 
 function setGlobeAutoRotateForClusterPanel(open: boolean): void {
+  parentClusterPanelOpen = open;
   try {
     const c = globe.controls();
     if (open) {
@@ -438,6 +441,15 @@ function setGlobeAutoRotateForClusterPanel(open: boolean): void {
       c.autoRotate = autoRotateWhenIdle;
       recoverOrbitPointerState();
     }
+  } catch {
+    /* optional */
+  }
+}
+
+function enforceAutoRotateWhenClusterPanelOpen(): void {
+  if (!parentClusterPanelOpen) return;
+  try {
+    globe.controls().autoRotate = false;
   } catch {
     /* optional */
   }
@@ -515,17 +527,17 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'display:inline-flex',
       'align-items:center',
       'justify-content:center',
-      'width:46px',
-      'height:38px',
-      'border-radius:3px',
+      'width:23px',
+      'height:19px',
+      'border-radius:2px',
       'position:relative',
       'overflow:hidden',
       'transform:rotate(' + tilt + 'deg)',
       'background:linear-gradient(168deg,#fffef8 0%,#f7f1e8 48%,#ebe3d6 100%)',
-      'border:1.6px solid rgba(92,72,52,0.28)',
-      'border-right-width:2.2px',
-      'border-bottom-width:2.4px',
-      'box-shadow:2px 3px 0 rgba(55,42,30,0.1),inset 0 1px 0 rgba(255,255,255,0.75),inset 0 -8px 14px rgba(120,95,70,0.07)',
+      'border:0.8px solid rgba(92,72,52,0.28)',
+      'border-right-width:1.1px',
+      'border-bottom-width:1.2px',
+      'box-shadow:1px 1.5px 0 rgba(55,42,30,0.1),inset 0 1px 0 rgba(255,255,255,0.75),inset 0 -4px 7px rgba(120,95,70,0.07)',
       'backdrop-filter:blur(6px)',
       '-webkit-backdrop-filter:blur(6px)',
     ].join(';')
@@ -550,7 +562,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     'style',
     [
       'position:absolute',
-      'inset:3px',
+      'inset:2px',
       'pointer-events:none',
       'border:1px dashed rgba(90,70,50,0.18)',
       'border-radius:2px',
@@ -565,7 +577,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'position:relative',
       'z-index:1',
       'font-family:ui-rounded,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",cursive',
-      'font-size:21px',
+      'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
       'opacity:0.44',
@@ -654,6 +666,7 @@ function updateMapLabelsFromCamera() {
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
   globe.htmlElementsData(htmlLandmarkRowsForCamera(lastRows, show));
   requestAnimationFrame(() => enableCss2dLandmarkPointerHitThrough());
+  enforceAutoRotateWhenClusterPanelOpen();
   /** Parent shows order cluster sheet only when zoomed in this close (same band as “large” labels). */
   notifyParentClusterZoom(large);
 }
@@ -764,6 +777,7 @@ const globe = new Globe(root, {
     requestAnimationFrame(() => reorderGlobeLabelsAboveHex());
     enableCss2dLandmarkPointerHitThrough();
     updateMapLabelsFromCamera();
+    enforceAutoRotateWhenClusterPanelOpen();
   });
 
 globe.pointOfView({ lat: HOME_LAT, lng: HOME_LNG, altitude: 2.05 }, 0);
@@ -771,6 +785,7 @@ globe.pointOfView({ lat: HOME_LAT, lng: HOME_LNG, altitude: 2.05 }, 0);
 globe.onZoom(() => {
   reorderGlobeLabelsAboveHex();
   updateMapLabelsFromCamera();
+  enforceAutoRotateWhenClusterPanelOpen();
 });
 
 let lastRecenterAt = 0;
@@ -871,6 +886,7 @@ try {
   c.addEventListener('change', () => {
     reorderGlobeLabelsAboveHex();
     updateMapLabelsFromCamera();
+    enforceAutoRotateWhenClusterPanelOpen();
   });
 } catch {
   /* optional */
