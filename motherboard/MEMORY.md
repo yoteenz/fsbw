@@ -17473,3 +17473,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** **`npm run build`** passes.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-22 — Globe drag stuck after cluster panel: CSS2D overlay + OrbitControls reconnect
+
+**Context:** User reported **dragging glitching / stuck**, especially **after closing the client panel**.
+
+**Root cause:** CSS2D overlay had **`pointer-events: auto`** on the **full layer**, blocking canvas **`pointerdown`** for OrbitControls; **`pointerCapture`** could desync after parent overlay interaction.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — overlay **`none`**; only **`data-fsbw-landmark`** buttons **`auto`**; **`recoverOrbitPointerState()`** **`disconnect`/`connect`** on panel close + rAF after **`MSG_UI_CLUSTER_PANEL` false**. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Verification:** **`embed/admin-globe`** **`npm run build`** passes.
+
+**Deploy:** Redeploy **embed**.

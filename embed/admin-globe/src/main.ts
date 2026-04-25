@@ -383,9 +383,10 @@ function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
 }
 
 /**
- * `three-render-objects` sets the **CSS2DRenderer** overlay to **`pointer-events: none`**, so taps
- * pass through to the WebGL canvas (orbit drag) and **never** reach landmark `<button>`s.
- * Enable hit-testing on the overlay div that sits beside the canvas.
+ * `three-render-objects` sets the **CSS2D** overlay to **`pointer-events: none`** so the canvas gets drags.
+ * We only enable **`pointer-events: auto`** on **landmark buttons** (`[data-fsbw-landmark]`). If the **whole**
+ * overlay is `auto`, it sits above the canvas and **eats pointerdown** — OrbitControls never starts a drag and
+ * can end up **stuck** after the parent cluster panel closes (lost `pointerup` on canvas).
  */
 function enableCss2dLandmarkPointerHitThrough(): void {
   try {
@@ -396,8 +397,31 @@ function enableCss2dLandmarkPointerHitThrough(): void {
       const el = container.children[i] as HTMLElement | undefined;
       if (!el || el === canvas) continue;
       if (el.tagName === 'CANVAS') continue;
-      el.style.pointerEvents = 'auto';
+      el.style.pointerEvents = 'none';
+      el.querySelectorAll<HTMLElement>('[data-fsbw-landmark="1"]').forEach((btn) => {
+        btn.style.pointerEvents = 'auto';
+      });
     }
+  } catch {
+    /* optional */
+  }
+}
+
+type OrbitControlsLike = {
+  enabled?: boolean;
+  disconnect?: () => void;
+  connect?: (el: HTMLElement) => void;
+};
+
+/** After UI overlays (parent cluster panel), OrbitControls can miss **`pointerup`** on the canvas — reconnect. */
+function recoverOrbitPointerState(): void {
+  try {
+    const c = globe.controls() as OrbitControlsLike;
+    const canvas = globe.renderer()?.domElement as HTMLElement | undefined;
+    if (!canvas || typeof c.disconnect !== 'function' || typeof c.connect !== 'function') return;
+    c.disconnect();
+    c.connect(canvas);
+    if (typeof c.enabled === 'boolean') c.enabled = true;
   } catch {
     /* optional */
   }
@@ -412,6 +436,7 @@ function setGlobeAutoRotateForClusterPanel(open: boolean): void {
       c.autoRotate = false;
     } else {
       c.autoRotate = autoRotateWhenIdle;
+      recoverOrbitPointerState();
     }
   } catch {
     /* optional */
@@ -464,6 +489,7 @@ function postcardTiltDeg(seed: string | undefined): number {
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
   wrap.type = 'button';
+  wrap.setAttribute('data-fsbw-landmark', '1');
   const sym = row.landmarkSymbol || '📍';
   const title = row.landmarkTitle || 'Orders';
   const n = row.orderCount ?? 1;
@@ -943,7 +969,14 @@ window.addEventListener('message', (event: MessageEvent) => {
   const d = event.data;
   if (!d || typeof d !== 'object') return;
   if (d.type === MSG_UI_CLUSTER_PANEL) {
-    setGlobeAutoRotateForClusterPanel(Boolean(d.open));
+    const open = Boolean(d.open);
+    setGlobeAutoRotateForClusterPanel(open);
+    if (!open) {
+      requestAnimationFrame(() => {
+        enableCss2dLandmarkPointerHitThrough();
+        recoverOrbitPointerState();
+      });
+    }
     return;
   }
   if (d.type !== MSG_IN) return;
