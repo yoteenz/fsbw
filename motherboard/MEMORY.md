@@ -17526,6 +17526,22 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-20 — Admin globe: fix oval / malformed look on zoom (square viewport)
+
+**Context:** Continuing admin revenue live globe work: user reported that when zooming in, the globe looked **oval / malformed** because the **circular clip container** did not stay a true circle relative to the rendered scene.
+
+**Root cause:** The embed’s **`readSize()`** passed **different width and height** from **`getBoundingClientRect()`** into **`globe.width(w).height(h)`**, so **globe.gl** drew into a **non-square WebGL viewport** — the sphere projects as an **ellipse** when zoomed. The parent iframe could also end up slightly non-square in flex layouts.
+
+**Changes:**
+- **`embed/admin-globe/src/main.ts`** — **`readSize()`** now uses **`side = min(rw, rh)`** and returns **`{ w: side, h: side }`** so the canvas is always **square**.
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — WebGL wrapper: **`aspectRatio: '1 / 1'`**, **`maxWidth: size`**, **`width: '100%'`**, iframe **`width/height: '100%'`**, **`shrink-0`** so the clip stays a **perfect circle** even when the parent flex layout squeezes width.
+
+**Verification:** **`npm run build`** (root) and **`npm run build`** in **`embed/admin-globe`** pass.
+
+**Deploy:** Redeploy **main** and **embed/admin-globe** so production picks up both.
+
+---
+
 ## 2026-04-22 — Cluster panel: +10px down, +10px left
 
 **Context:** User asked to move the order cluster detail panel **down 10px** and **left 10px**.

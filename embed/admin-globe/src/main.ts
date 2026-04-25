@@ -306,9 +306,11 @@ const root = rootEl;
 
 function readSize(): { w: number; h: number } {
   const r = root.getBoundingClientRect();
-  const w = Math.max(120, Math.round(r.width || root.clientWidth || 300));
-  const h = Math.max(120, Math.round(r.height || root.clientHeight || 240));
-  return { w, h };
+  const rw = Math.max(120, Math.round(r.width || root.clientWidth || 300));
+  const rh = Math.max(120, Math.round(r.height || root.clientHeight || 240));
+  /** Globe.gl expects a **square** canvas; unequal w/h makes the sphere look oval when zoomed. */
+  const side = Math.min(rw, rh);
+  return { w: side, h: side };
 }
 
 const OCEAN_BASE_DATA_URL = makeOceanSolidLightGrayDataUrl();

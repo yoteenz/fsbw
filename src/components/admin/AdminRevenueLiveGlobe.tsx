@@ -632,10 +632,12 @@ function AdminRevenueLiveGlobeIframeEmbed({
       <div className="flex justify-center w-full" data-admin-globe-mode="iframe-webgl">
         {/** Clip rectangular iframe/document to a disk so transparent corners show marble, not embed gray. */}
         <div
-          className="mx-auto overflow-hidden"
+          className="mx-auto overflow-hidden shrink-0"
           style={{
-            width: size,
-            height: size,
+            width: '100%',
+            maxWidth: size,
+            aspectRatio: '1 / 1',
+            height: 'auto',
             borderRadius: '50%',
             background: 'transparent',
           }}
@@ -646,8 +648,10 @@ function AdminRevenueLiveGlobeIframeEmbed({
             src={src}
             className="border-0 block"
             style={{
-              width: size,
-              height: size,
+              width: '100%',
+              height: '100%',
+              minWidth: 0,
+              minHeight: 0,
               background: 'transparent',
             }}
             sandbox="allow-scripts allow-same-origin"
