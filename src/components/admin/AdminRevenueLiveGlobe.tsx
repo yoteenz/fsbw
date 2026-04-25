@@ -391,17 +391,18 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               {detail.placeLine}
             </p>
-            <div className="flex items-start gap-2 mt-2">
-              <span className="shrink-0 inline-block" style={{ transform: 'translateY(2px)' }}>
+            <div className="flex items-center gap-2 mt-2 min-w-0">
+              <span className="shrink-0 inline-flex">
                 <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
               </span>
               {detail.landmarkTitle ? (
                 <p
+                  className="min-w-0 flex-1"
                   style={{
                     fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
                     fontSize: '12px',
                     margin: 0,
-                    paddingTop: 2,
+                    paddingTop: 0,
                     lineHeight: 1.25,
                     color: 'rgba(15, 23, 42, 0.92)',
                     textTransform: 'uppercase',

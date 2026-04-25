@@ -17608,3 +17608,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: red **`placeLine`** and red **orders · views** lines **`8px` → `10px`**; landmark title **`14px` → `12px`**.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Cluster panel: align landmark title with postcard chip
+
+**Context:** User screenshot: **STATUE OF LIBERTY** beside the postcard chip looked **misaligned** (not on the same row / not centered next to the chip).
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: chip + title row **`items-start` → `items-center`**, removed chip wrapper **`translateY(2px)`**, title **`paddingTop: 0`**; **`min-w-0` / `flex-1`** on title for narrow panel wrap.
+
+**Deploy:** Redeploy **main**.
