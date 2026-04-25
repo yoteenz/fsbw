@@ -2,9 +2,9 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
-**Look (embed):** Transparent page/canvas (iframe on marble). **Ocean base:** **`globeImageUrl`** = very light PNG + **`onGlobeReady`** sets **`globeMaterial()`** **`transparent`**, **`opacity ~0.28`**, **`depthWrite: false`** so marble shows through. **Continents:** **~38k** land samples with **weight `800`** → **H3 `hexBinMerge(true)`** = one **merged honeycomb mesh** (flat prism tops, mint→sky by bin center lat); **hotspot** bins use **weight 1** and **`sumWeight < 400`** for **taller** slate pillars. **Borders:** **`pathsData`** from **`ne_110m_admin_0_boundary_lines_land.geojson`** (~420 lines) — **static solid** strokes with **magenta → violet** gradient (`pathColor` array); **`pathDashAnimateTime(0)`** so borders do not crawl. **No** land scattered **`points`** layer. **Atmosphere** = soft slate. **Red** visitors / **green** orders.
+**Look (embed):** Transparent page/canvas (iframe on marble). **Ocean base:** **`globeImageUrl`** = very light PNG + **`onGlobeReady`** sets **`globeMaterial()`** **`transparent`**, **`opacity ~0.28`**, **`depthWrite: false`** so marble shows through. **Continents:** **~38k** land samples with **weight `800`** → **H3 `hexBinMerge(true)`** = one **merged honeycomb mesh** (flat prism tops, mint→sky by bin center lat); **hotspot** bins use **weight 1** and **`sumWeight < 400`** for **taller** slate pillars. **Borders:** **`pathsData`** from **`ne_110m_admin_0_boundary_lines_land.geojson`** (countries) + **`ne_110m_admin_1_states_provinces_lines.geojson`** (states/provinces). Polylines are split into **short two-point segments** so each segment gets a **magenta → violet vertex gradient** (requires **`pathStroke(null)`** = 1px `THREE.Line`; fat `Line2` flattens multi-color to one). **States** draw slightly **above** countries (`pathPointAlt`). **`pathDashAnimateTime(0)`** — borders do not crawl. **No** land scattered **`points`** layer. **Atmosphere** = soft slate. **Red** visitors / **green** orders.
 
-**Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`** or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/ne_110m_land.geojson`.
+**Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`**, boundary utils, or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/*.geojson` (including **`ne_110m_admin_1_states_provinces_lines.geojson`**).
 
 ---
 
@@ -17,7 +17,7 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 **PostCSS:** This folder includes `postcss.config.js` (empty plugins) so Vite does not pick up the monorepo root Tailwind PostCSS config.
 
-**Land data:** `public/ne_110m_land.geojson` is [Natural Earth](https://www.naturalearthdata.com/) 110m land (public domain). **`public/ne_110m_admin_0_boundary_lines_land.geojson`** = 110m admin **boundary lines** (country borders on land). Shared utils: **`@fsbw/adminGlobeNe110mLand`**, **`@fsbw/adminGlobeBoundaryPaths`**.
+**Land data:** `public/ne_110m_land.geojson` is [Natural Earth](https://www.naturalearthdata.com/) 110m land (public domain). **`public/ne_110m_admin_0_boundary_lines_land.geojson`** = international boundaries on land; **`public/ne_110m_admin_1_states_provinces_lines.geojson`** = internal state/province lines. Shared utils: **`@fsbw/adminGlobeNe110mLand`**, **`@fsbw/adminGlobeBoundaryPaths`**.
 
 **Local:**
 

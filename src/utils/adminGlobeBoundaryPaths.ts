@@ -1,13 +1,17 @@
 /**
- * Country / land international boundary polylines from Natural Earth 110m admin lines GeoJSON.
+ * Country / state boundary polylines from Natural Earth 110m admin line GeoJSON.
  * Used for globe.gl `pathsData` (gradient strokes) and optionally SVG.
  */
 
 export type LatLngPair = [number, number];
 
-const CDN_PATH =
+const ADMIN_0_CDN_PATH =
   'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_0_boundary_lines_land.geojson';
-const LOCAL_PATH = '/ne_110m_admin_0_boundary_lines_land.geojson';
+const ADMIN_0_LOCAL_PATH = '/ne_110m_admin_0_boundary_lines_land.geojson';
+
+const ADMIN_1_CDN_PATH =
+  'https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@master/geojson/ne_110m_admin_1_states_provinces_lines.geojson';
+const ADMIN_1_LOCAL_PATH = '/ne_110m_admin_1_states_provinces_lines.geojson';
 
 function wrapLng(lng: number): number {
   let x = lng;
@@ -65,20 +69,57 @@ export function boundaryPathsFromAdminGeoJson(geo: unknown, maxPaths = 450): Lat
   return paths;
 }
 
-export async function fetchAdminBoundaryLinesGeoJson(basePath = LOCAL_PATH): Promise<unknown> {
+export async function fetchNaturalEarthGeoJson(localPath: string, cdnFallbackPath: string): Promise<unknown> {
   const tryFetch = async (url: string) => {
     const res = await fetch(url, { cache: 'force-cache' });
     if (!res.ok) throw new Error(String(res.status));
     return res.json() as Promise<unknown>;
   };
   try {
-    return await tryFetch(basePath);
+    return await tryFetch(localPath);
   } catch {
-    return tryFetch(CDN_PATH);
+    return tryFetch(cdnFallbackPath);
   }
 }
 
-export async function loadBoundaryPathsForGlobe(maxPaths = 450, basePath = LOCAL_PATH): Promise<LatLngPair[][]> {
-  const geo = await fetchAdminBoundaryLinesGeoJson(basePath);
+/** @deprecated Use `fetchNaturalEarthGeoJson` with explicit paths. */
+export async function fetchAdminBoundaryLinesGeoJson(basePath = ADMIN_0_LOCAL_PATH): Promise<unknown> {
+  return fetchNaturalEarthGeoJson(basePath, ADMIN_0_CDN_PATH);
+}
+
+export async function loadBoundaryPathsForGeoJsonUrl(
+  maxPaths: number,
+  localPath: string,
+  cdnPath: string
+): Promise<LatLngPair[][]> {
+  const geo = await fetchNaturalEarthGeoJson(localPath, cdnPath);
   return boundaryPathsFromAdminGeoJson(geo, maxPaths);
+}
+
+/** International (admin-0) boundaries only — legacy single-layer load. */
+export async function loadBoundaryPathsForGlobe(maxPaths = 450, basePath = ADMIN_0_LOCAL_PATH): Promise<LatLngPair[][]> {
+  const cdn = basePath === ADMIN_1_LOCAL_PATH ? ADMIN_1_CDN_PATH : ADMIN_0_CDN_PATH;
+  return loadBoundaryPathsForGeoJsonUrl(maxPaths, basePath, cdn);
+}
+
+export type AdminGlobeBoundarySplit = { countries: LatLngPair[][]; states: LatLngPair[][] };
+
+/** Country (admin-0) + state/province (admin-1) in one list — countries first for draw order. */
+export async function loadCountryAndStateBoundaryPathsForGlobe(
+  maxCountryPaths = 320,
+  maxStatePaths = 1200
+): Promise<LatLngPair[][]> {
+  const { countries, states } = await loadCountryAndStateBoundaryPathsSplit(maxCountryPaths, maxStatePaths);
+  return [...countries, ...states];
+}
+
+export async function loadCountryAndStateBoundaryPathsSplit(
+  maxCountryPaths = 320,
+  maxStatePaths = 1200
+): Promise<AdminGlobeBoundarySplit> {
+  const [countries, states] = await Promise.all([
+    loadBoundaryPathsForGeoJsonUrl(maxCountryPaths, ADMIN_0_LOCAL_PATH, ADMIN_0_CDN_PATH),
+    loadBoundaryPathsForGeoJsonUrl(maxStatePaths, ADMIN_1_LOCAL_PATH, ADMIN_1_CDN_PATH),
+  ]);
+  return { countries, states };
 }

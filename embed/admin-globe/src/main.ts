@@ -1,6 +1,6 @@
 import Globe from 'globe.gl';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
-import { loadBoundaryPathsForGlobe } from '@fsbw/adminGlobeBoundaryPaths';
+import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -13,8 +13,17 @@ type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'or
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 
-/** Natural Earth admin boundary line → `pathsData` row (gradient stroke). */
-type BorderPathRow = { points: Array<[number, number]>; pathColor: [string, string] };
+/** Natural Earth boundary segment → `pathsData` row (per-segment vertex gradient; `pathStroke: null` = 1px Line). */
+type BorderPathRow = {
+  points: Array<[number, number]>;
+  pathColor: [string, string];
+  /** Draw order / slight altitude offset: states above countries. */
+  z: 'country' | 'state';
+};
+
+/** Magenta → violet along each short segment (three-globe vertexColors on `Line`, not solid fat-line). */
+const BORDER_COUNTRY_GRADIENT: [string, string] = ['rgba(236, 72, 153, 0.92)', 'rgba(167, 139, 250, 0.78)'];
+const BORDER_STATE_GRADIENT: [string, string] = ['rgba(244, 114, 182, 0.78)', 'rgba(196, 181, 253, 0.62)'];
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
@@ -109,6 +118,59 @@ function binCenterLat(bin: HexBin): number {
   return typeof p?.lat === 'number' ? p.lat : 0;
 }
 
+function segmentLengthDeg(a: LatLngPair, b: LatLngPair): number {
+  return Math.hypot(b[0] - a[0], b[1] - a[1]);
+}
+
+/**
+ * Split a polyline into many two-point rows so each segment gets its own **vertex gradient**
+ * (three-globe only interpolates colors along segment count when `pathStroke` is null).
+ */
+function polylineToGradientSegmentRows(
+  pts: LatLngPair[],
+  maxSegDeg: number,
+  pathColor: [string, string],
+  z: BorderPathRow['z']
+): BorderPathRow[] {
+  if (pts.length < 2) return [];
+  const rows: BorderPathRow[] = [];
+  let prev = pts[0];
+  if (!prev) return [];
+  for (let i = 1; i < pts.length; i++) {
+    const cur = pts[i];
+    if (!cur) continue;
+    const d = segmentLengthDeg(prev, cur);
+    if (d <= maxSegDeg + 1e-9) {
+      rows.push({ points: [prev, cur], pathColor, z });
+      prev = cur;
+      continue;
+    }
+    const n = Math.max(1, Math.ceil(d / maxSegDeg));
+    let p0 = prev;
+    for (let k = 1; k <= n; k++) {
+      const t = k / n;
+      const p1: LatLngPair = [prev[0] + (cur[0] - prev[0]) * t, prev[1] + (cur[1] - prev[1]) * t];
+      rows.push({ points: [p0, p1], pathColor, z });
+      p0 = p1;
+    }
+    prev = cur;
+  }
+  return rows;
+}
+
+function pathsToBorderRows(
+  paths: LatLngPair[][],
+  maxSegDeg: number,
+  pathColor: [string, string],
+  z: BorderPathRow['z']
+): BorderPathRow[] {
+  const out: BorderPathRow[] = [];
+  for (const p of paths) {
+    out.push(...polylineToGradientSegmentRows(p, maxSegDeg, pathColor, z));
+  }
+  return out;
+}
+
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root missing');
 const root = rootEl;
@@ -178,11 +240,12 @@ const globe = new Globe(root, {
   .pathPoints('points')
   .pathPointLat((p: [number, number]) => p[0])
   .pathPointLng((p: [number, number]) => p[1])
-  .pathPointAlt(0.0105)
+  /** Country lines slightly below state lines so internal borders read on top. */
+  .pathPointAlt((d: object) => ((d as BorderPathRow).z === 'state' ? 0.0113 : 0.0106))
   .pathResolution(0.55)
   .pathColor((d: object) => (d as BorderPathRow).pathColor)
-  /** Fat lines (`Line2`) — stroke in px for visible country borders (static, no dash crawl) */
-  .pathStroke(2.6)
+  /** `null` = Three.js `Line` (1px) + per-vertex gradient; fat lines flatten multi-stop colors to one. */
+  .pathStroke(null)
   .pathDashLength(1)
   .pathDashGap(0)
   .pathDashAnimateTime(0)
@@ -248,7 +311,8 @@ let landHexPoints: Weighted[] = [];
 let borderPaths: BorderPathRow[] = [];
 let lastRows: PointRow[] = [];
 
-const BORDER_GRADIENT: [string, string] = ['rgba(232, 121, 249, 0.98)', 'rgba(167, 139, 250, 0.72)'];
+/** Hard cap — each row is one `Line`; large counts hurt mobile WebGL. */
+const MAX_BORDER_PATH_ROWS = 10_500;
 
 function applyPayload(rows: PointRow[]) {
   lastRows = rows;
@@ -266,15 +330,19 @@ globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]);
 
 void (async () => {
   try {
-    const [samples, rawBorders] = await Promise.all([
+    const [samples, split] = await Promise.all([
       loadLandSamplesForGlobe(38_000, '/ne_110m_land.geojson'),
-      loadBoundaryPathsForGlobe(420, '/ne_110m_admin_0_boundary_lines_land.geojson'),
+      loadCountryAndStateBoundaryPathsSplit(380, 1200),
     ]);
     landHexPoints = samples.map((s) => ({ lat: s.lat, lng: s.lng, w: LAND_HEX_WEIGHT }));
-    borderPaths = rawBorders.map((pts) => ({
-      points: pts.map(([lat, lng]) => [lat, lng] as [number, number]),
-      pathColor: BORDER_GRADIENT,
-    }));
+    const countryRows = pathsToBorderRows(split.countries, 1.15, BORDER_COUNTRY_GRADIENT, 'country');
+    const stateRows = pathsToBorderRows(split.states, 0.82, BORDER_STATE_GRADIENT, 'state');
+    /** Prefer keeping internal state/province segments if we must cap (WebGL budget). */
+    const stateCap = Math.min(stateRows.length, Math.floor(MAX_BORDER_PATH_ROWS * 0.62));
+    const statesTrimmed = stateRows.slice(0, stateCap);
+    const countryBudget = MAX_BORDER_PATH_ROWS - statesTrimmed.length;
+    const countriesTrimmed = countryRows.slice(0, Math.max(0, countryBudget));
+    borderPaths = [...countriesTrimmed, ...statesTrimmed];
   } catch {
     landHexPoints = [];
     borderPaths = [];

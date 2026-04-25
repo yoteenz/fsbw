@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
-import { loadBoundaryPathsForGlobe } from '../../utils/adminGlobeBoundaryPaths';
+import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBoundaryPaths';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -375,34 +375,43 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
   const barGradId = useId().replace(/:/g, '');
-  const borderGradId = useId().replace(/:/g, '');
+  const borderCountryGradId = useId().replace(/:/g, '');
+  const borderStateGradId = useId().replace(/:/g, '');
   /** Prior max 300px; +35% to match revenue globe scale. */
   const size = Math.min(heightPx, 405);
   const points = useMemo(() => mergeData(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const arcPaths = useMemo(() => buildArcPathsViewBox(visitorPoints, orderPoints), [visitorPoints, orderPoints]);
   const [landHexPaths, setLandHexPaths] = useState<Array<{ d: string; fill: string }>>([]);
-  const [borderPaths, setBorderPaths] = useState<string[]>([]);
+  const [borderCountryPaths, setBorderCountryPaths] = useState<string[]>([]);
+  const [borderStatePaths, setBorderStatePaths] = useState<string[]>([]);
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const [samples, rawBorders] = await Promise.all([
+        const [samples, split] = await Promise.all([
           loadLandSamplesForGlobe(22_000, '/ne_110m_land.geojson'),
-          loadBoundaryPathsForGlobe(280, '/ne_110m_admin_0_boundary_lines_land.geojson'),
+          loadCountryAndStateBoundaryPathsSplit(240, 520),
         ]);
         if (!cancelled) {
           setLandHexPaths(buildLandHexPathsFromSamples(samples));
-          const ds: string[] = [];
-          for (const p of rawBorders) {
+          const countryD: string[] = [];
+          for (const p of split.countries) {
             const d = boundaryPathToViewBoxD(p);
-            if (d) ds.push(d);
+            if (d) countryD.push(d);
           }
-          setBorderPaths(ds);
+          const stateD: string[] = [];
+          for (const p of split.states) {
+            const d = boundaryPathToViewBoxD(p);
+            if (d) stateD.push(d);
+          }
+          setBorderCountryPaths(countryD);
+          setBorderStatePaths(stateD);
         }
       } catch {
         if (!cancelled) {
           setLandHexPaths([]);
-          setBorderPaths([]);
+          setBorderCountryPaths([]);
+          setBorderStatePaths([]);
         }
       }
     })();
@@ -536,9 +545,13 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                     <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.55} />
                     <stop offset="100%" stopColor="#475569" stopOpacity={0.65} />
                   </linearGradient>
-                  <linearGradient id={borderGradId} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(217, 70, 239, 0.95)" />
-                    <stop offset="100%" stopColor="rgba(124, 58, 237, 0.45)" />
+                  <linearGradient id={borderCountryGradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(236, 72, 153, 0.9)" />
+                    <stop offset="100%" stopColor="rgba(167, 139, 250, 0.72)" />
+                  </linearGradient>
+                  <linearGradient id={borderStateGradId} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(244, 114, 182, 0.75)" />
+                    <stop offset="100%" stopColor="rgba(196, 181, 253, 0.58)" />
                   </linearGradient>
                 </defs>
 
@@ -548,16 +561,28 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                   {landHexPaths.map((h, i) => (
                     <path key={`land-hex-${i}`} d={h.d} fill={h.fill} stroke="rgba(255,255,255,0.12)" strokeWidth={0.15} />
                   ))}
-                  {borderPaths.map((d, i) => (
+                  {borderCountryPaths.map((d, i) => (
                     <path
-                      key={`border-${i}`}
+                      key={`border-c-${i}`}
                       d={d}
                       fill="none"
-                      stroke={`url(#${borderGradId})`}
-                      strokeWidth={1.35}
+                      stroke={`url(#${borderCountryGradId})`}
+                      strokeWidth={0.9}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      opacity={1}
+                      opacity={0.94}
+                    />
+                  ))}
+                  {borderStatePaths.map((d, i) => (
+                    <path
+                      key={`border-s-${i}`}
+                      d={d}
+                      fill="none"
+                      stroke={`url(#${borderStateGradId})`}
+                      strokeWidth={0.55}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      opacity={0.9}
                     />
                   ))}
                   {hotspots.map((h, i) => (

@@ -17179,3 +17179,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** Root **`npm run build`** and **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **embed/admin-globe** (iframe bundle); doc-only change on main if desired.
+
+---
+
+## 2026-04-24 — Admin globe: state borders + real gradient + thinner lines
+
+**Context:** User wanted **gradient** borders (not solid purple), **thinner** strokes, and **state** outlines — previously only **country** (admin-0) lines showed.
+
+**Changes:** Added **`public/`** + **`embed/admin-globe/public/`** **`ne_110m_admin_1_states_provinces_lines.geojson`** (Natural Earth 110m admin-1, ~117KB). **`adminGlobeBoundaryPaths.ts`** — **`fetchNaturalEarthGeoJson`**, **`loadBoundaryPathsForGeoJsonUrl`**, **`loadCountryAndStateBoundaryPathsSplit`** / **`loadCountryAndStateBoundaryPathsForGlobe`**. **`vercel.json`** (root + embed) — SPA rewrite / cache exclude for admin-1 file. **`embed/admin-globe/src/main.ts`** — loads **countries + states**, splits polylines into **short two-point `pathsData` rows** so **`pathColor: [magenta, violet]`** uses **vertex colors** on **`THREE.Line`**; **`pathStroke(null)`** (fat `Line2` was collapsing gradient to one color); **`pathPointAlt`** higher for **states** than countries; cap **`MAX_BORDER_PATH_ROWS`** with **priority to state segments**. **`AdminRevenueLiveGlobe.tsx` (SVG)** — two layers (country then state), two gradients, thinner **`strokeWidth`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`npm run build`** (root) + **`cd embed/admin-globe && npm run build`** pass.
+
+**Deploy:** Redeploy **main** (new static GeoJSON + SVG) and **embed/admin-globe**.
