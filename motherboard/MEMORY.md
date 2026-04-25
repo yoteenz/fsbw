@@ -17419,3 +17419,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** **`npm run build`** passes.
 
 **Deploy:** Redeploy **embed** (main unchanged for this fix unless bundling docs only).
+
+---
+
+## 2026-04-21 — Globe zoom “snaps back”: pinch mistaken for double-tap home
+
+**Context:** User reported **zooming in then the view auto zooming back out** on its own.
+
+**Root cause:** **`pointerup`** double-tap detection on **`#root`** counted **two touch releases** within **`DOUBLE_TAP_MS`** as “double-tap home” → **`recenterOnTennessee()`**. **Pinch-to-zoom** ends with **two `pointerup`s** in that window, so finishing a pinch triggered **home recenter** (felt like undoing zoom).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — track **`activeTouchPointerIds`**; if **`pointerdown`** ever sees **>1** concurrent touch, set **`multiTouchGestureActive`** and **ignore** tap counting until **all** pointers are up; **`pointercancel`** clears state. **`docs/ADMIN_GLOBE_EMBED.md`** — recenter note.
+
+**Verification:** **`embed/admin-globe`** **`npm run build`** passes.
+
+**Deploy:** Redeploy **embed**.

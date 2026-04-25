@@ -8,7 +8,7 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 **Map labels (zoomed in):** When the orbit camera is **close** (distance / **`GLOBE_RADIUS`** − 1 ≤ **~1.15**), **`labelsData`** shows **`placeLine · placeDetail`** (single-line `TextGeometry` — no newline) from the iframe **`postMessage`** payload; **`reorderGlobeLabelsAboveHex()`** keeps **labels** then **HTML** after **hex** so text and landmark chips are not buried. Zoom gating uses **`camera.position.length`** (reliable) not only **`pointOfView()`** timing.
 
-**Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**).
+**Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly with **one finger** (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**). **Pinch-zoom** is ignored for double-tap detection (two `pointerup`s in quick succession no longer trigger home — that used to feel like “auto zoom out” after zooming in).
 
 **Performance (many markers / mocks):** Hex-bin jitter applies to **visitors** only; jitter count **scales down** with visitor count. The parent skips **`postMessage`** when the serialized payload is unchanged (avoids redundant hex rebuilds every 30s poll).
 

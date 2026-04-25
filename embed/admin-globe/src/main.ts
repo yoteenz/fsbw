@@ -716,13 +716,41 @@ function recenterOnTennessee() {
   }
 }
 
-/** Touch: two quick taps on the globe surface. Mouse: double-click. */
+/**
+ * Touch double-tap → home (TN). **Must not** treat **pinch-zoom** (two `pointerup`s in a row) as a double-tap —
+ * that was firing **`recenterOnTennessee`** and animating the camera back out after zoom-in.
+ */
+const activeTouchPointerIds = new Set<number>();
+let multiTouchGestureActive = false;
 let touchTapCount = 0;
 let touchTapTimer: ReturnType<typeof setTimeout> | null = null;
+
+root.addEventListener(
+  'pointerdown',
+  (e: PointerEvent) => {
+    if (e.pointerType !== 'touch') return;
+    activeTouchPointerIds.add(e.pointerId);
+    if (activeTouchPointerIds.size > 1) multiTouchGestureActive = true;
+  },
+  { passive: true }
+);
+
 root.addEventListener(
   'pointerup',
   (e: PointerEvent) => {
     if (e.pointerType !== 'touch') return;
+    activeTouchPointerIds.delete(e.pointerId);
+    if (multiTouchGestureActive) {
+      if (activeTouchPointerIds.size === 0) {
+        multiTouchGestureActive = false;
+        touchTapCount = 0;
+        if (touchTapTimer) {
+          clearTimeout(touchTapTimer);
+          touchTapTimer = null;
+        }
+      }
+      return;
+    }
     touchTapCount += 1;
     if (touchTapCount === 1) {
       if (touchTapTimer) clearTimeout(touchTapTimer);
@@ -735,6 +763,23 @@ root.addEventListener(
       touchTapTimer = null;
       touchTapCount = 0;
       recenterOnTennessee();
+    }
+  },
+  { passive: true }
+);
+
+root.addEventListener(
+  'pointercancel',
+  (e: PointerEvent) => {
+    if (e.pointerType !== 'touch') return;
+    activeTouchPointerIds.delete(e.pointerId);
+    if (activeTouchPointerIds.size === 0) {
+      multiTouchGestureActive = false;
+      touchTapCount = 0;
+      if (touchTapTimer) {
+        clearTimeout(touchTapTimer);
+        touchTapTimer = null;
+      }
     }
   },
   { passive: true }
