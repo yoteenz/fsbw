@@ -48,15 +48,25 @@ const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
+/** Double-tap / double-click recenters on **Tennessee, USA** (Nashville area). */
+const HOME_LAT = 36.165;
+const HOME_LNG = -86.783;
+const HOME_ALTITUDE = 1.35;
+const RECENTER_MS = 900;
+const DOUBLE_TAP_MS = 420;
+
 /**
  * `globe.pointOfView().altitude` = camera distance / **GLOBE_RADIUS** − 1 (three-globe), but zoom events
  * do not always refresh it before our handler runs — use **camera distance** for reliable gating.
  */
 const GLOBE_RADIUS = 100;
-/** Show labels when camera is this close or closer (distance / globeRadius − 1 ≤ threshold). */
-const ZOOM_LABEL_MAX_ALTITUDE = 1.15;
+/**
+ * Show labels when “zoomed in” (globe.gl `altitude` = camera distance / globeRadius − 1).
+ * Use **min(camera, pointOfView)** — some builds lag one of the two on `controls` `change`.
+ */
+const ZOOM_LABEL_MAX_ALTITUDE = 2.65;
 /** Extra-close zoom: larger label text. */
-const ZOOM_LABEL_LARGE_MAX_ALTITUDE = 0.45;
+const ZOOM_LABEL_LARGE_MAX_ALTITUDE = 1.12;
 
 /** Merged land hex top: translucent mint → sky by latitude (reference-style). */
 function landHexTopRgba(lat: number): string {
@@ -218,6 +228,19 @@ function cameraAltitudeFromDistance(): number {
   }
 }
 
+function effectiveCameraAltitude(): number {
+  const fromCam = cameraAltitudeFromDistance();
+  let fromPov = 999;
+  try {
+    const pov = globe.pointOfView();
+    const a = pov?.altitude;
+    if (typeof a === 'number' && Number.isFinite(a)) fromPov = a;
+  } catch {
+    /* optional */
+  }
+  return Math.min(fromCam, fromPov);
+}
+
 /** Ensure text labels render after merged hex (some builds / rebinds can change child order). */
 function reorderGlobeLabelsAboveHex(): void {
   try {
@@ -296,8 +319,8 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
       lng: r.lng,
       text,
       color: 'rgba(15, 23, 42, 0.96)',
-      altitude: 0.062,
-      size: largeZoom ? 0.34 : 0.26,
+      altitude: 0.072,
+      size: largeZoom ? 0.48 : 0.38,
       includeDot: false,
     });
   }
@@ -305,7 +328,7 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
 }
 
 function updateMapLabelsFromCamera() {
-  const alt = cameraAltitudeFromDistance();
+  const alt = effectiveCameraAltitude();
   const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
@@ -385,7 +408,7 @@ const globe = new Globe(root, {
   .labelSize('size')
   .labelIncludeDot('includeDot')
   .labelDotOrientation('bottom')
-  .labelResolution(4)
+  .labelResolution(6)
   .labelsTransitionDuration(0)
   .onGlobeReady(() => {
     try {
@@ -409,6 +432,51 @@ const globe = new Globe(root, {
   });
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
+
+globe.onZoom(() => {
+  reorderGlobeLabelsAboveHex();
+  updateMapLabelsFromCamera();
+});
+
+let lastRecenterAt = 0;
+function recenterOnTennessee() {
+  const now = Date.now();
+  if (now - lastRecenterAt < 650) return;
+  lastRecenterAt = now;
+  try {
+    globe.pointOfView({ lat: HOME_LAT, lng: HOME_LNG, altitude: HOME_ALTITUDE }, RECENTER_MS);
+  } catch {
+    /* optional */
+  }
+}
+
+/** Touch: two quick taps on the globe surface. Mouse: double-click. */
+let touchTapCount = 0;
+let touchTapTimer: ReturnType<typeof setTimeout> | null = null;
+root.addEventListener(
+  'pointerup',
+  (e: PointerEvent) => {
+    if (e.pointerType !== 'touch') return;
+    touchTapCount += 1;
+    if (touchTapCount === 1) {
+      if (touchTapTimer) clearTimeout(touchTapTimer);
+      touchTapTimer = setTimeout(() => {
+        touchTapCount = 0;
+        touchTapTimer = null;
+      }, DOUBLE_TAP_MS);
+    } else if (touchTapCount >= 2) {
+      if (touchTapTimer) clearTimeout(touchTapTimer);
+      touchTapTimer = null;
+      touchTapCount = 0;
+      recenterOnTennessee();
+    }
+  },
+  { passive: true }
+);
+root.addEventListener('dblclick', () => {
+  recenterOnTennessee();
+});
+
 try {
   const c = globe.controls();
   c.autoRotate = true;

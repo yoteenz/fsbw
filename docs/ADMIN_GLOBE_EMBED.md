@@ -6,6 +6,10 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 **Map labels (zoomed in):** When the orbit camera is **close** (distance / **`GLOBE_RADIUS`** − 1 ≤ **~1.15**), **`labelsData`** shows **`placeLine · placeDetail`** (single-line `TextGeometry` — no newline) from the iframe **`postMessage`** payload; **`reorderGlobeLabelsAboveHex()`** keeps the **labels** layer after **hex** so text is not buried. Zoom gating uses **`camera.position.length`** (reliable) not only **`pointOfView()`** timing.
 
+**Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**).
+
+**Mock globe data (main app):** Set **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** in **`.env.local`** (rebuild) **or** in the browser console: **`localStorage.setItem('adminGlobeMockData','1')`** then refresh. Merges **`adminGlobeMockPresence.ts`** worldwide **visitor** + **order** dots and presence rows with real API data for Admin → Revenue globe + Live View card (counts include mocks).
+
 **Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`**, boundary utils, or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/*.geojson` (including **`ne_110m_admin_1_states_provinces_lines.geojson`**).
 
 ---

@@ -32,6 +32,12 @@ import {
 import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePoint';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 import {
+  adminGlobeMockDataEnabled,
+  mergeMockOrderGlobePoints,
+  mergeMockPresenceRows,
+  mergeMockVisitorGlobePoints,
+} from '../../../utils/adminGlobeMockPresence';
+import {
   AdminOverviewAnalyticsCard,
   AdminOverviewMetricRows,
 } from '../../../components/admin/AdminOverviewAnalyticsCard';
@@ -683,7 +689,7 @@ export default function AdminRevenue() {
       });
       if (out.length >= 80) break;
     }
-    return out;
+    return mergeMockOrderGlobePoints(out);
   }, [orders]);
 
   const fetchLiveGlobe = useCallback(async () => {
@@ -698,27 +704,52 @@ export default function AdminRevenue() {
         return;
       }
       const data = await getAdminLivePresence();
-      setLiveVisitorsNow(data.visitorsNow);
-      setLivePresenceVisitors(data.visitors || []);
+      const mergedPresence = mergeMockPresenceRows(data.visitors || []);
+      setLiveVisitorsNow(mergedPresence.length);
+      setLivePresenceVisitors(mergedPresence);
       setLiveVisitorGlobePoints(
-        (data.visitors || []).map((v) => {
-          const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
-          const fullLabel = `VISITOR · ${geo}${v.path ? ` · ${v.path}` : ''}`;
-          const place = visitorPlaceFieldsFromHeartbeatLabel(fullLabel);
-          return {
-            lat: v.lat,
-            lng: v.lng,
-            label: fullLabel,
-            placeLine: place.placeLine,
-            placeDetail: place.placeDetail,
-          };
-        })
+        mergeMockVisitorGlobePoints(
+          mergedPresence.map((v) => {
+            const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
+            const fullLabel = `VISITOR · ${geo}${v.path ? ` · ${v.path}` : ''}`;
+            const place = visitorPlaceFieldsFromHeartbeatLabel(fullLabel);
+            return {
+              lat: v.lat,
+              lng: v.lng,
+              label: fullLabel,
+              placeLine: place.placeLine,
+              placeDetail: place.placeDetail,
+            };
+          })
+        )
       );
     } catch {
       setLiveGlobeError('LIVE DATA UNAVAILABLE');
-      setLiveVisitorsNow(0);
-      setLiveVisitorGlobePoints([]);
-      setLivePresenceVisitors([]);
+      if (adminGlobeMockDataEnabled()) {
+        const mergedPresence = mergeMockPresenceRows([]);
+        setLiveVisitorsNow(mergedPresence.length);
+        setLivePresenceVisitors(mergedPresence);
+        setLiveVisitorGlobePoints(
+          mergeMockVisitorGlobePoints(
+            mergedPresence.map((v) => {
+              const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
+              const fullLabel = `VISITOR · ${geo}${v.path ? ` · ${v.path}` : ''}`;
+              const place = visitorPlaceFieldsFromHeartbeatLabel(fullLabel);
+              return {
+                lat: v.lat,
+                lng: v.lng,
+                label: fullLabel,
+                placeLine: place.placeLine,
+                placeDetail: place.placeDetail,
+              };
+            })
+          )
+        );
+      } else {
+        setLiveVisitorsNow(0);
+        setLiveVisitorGlobePoints([]);
+        setLivePresenceVisitors([]);
+      }
     }
   }, []);
 
