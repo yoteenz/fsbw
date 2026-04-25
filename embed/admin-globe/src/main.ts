@@ -63,9 +63,9 @@ const MSG_READY = 'fsbw-admin-globe-ready';
 /** Parent → iframe: pause globe auto-rotate while order cluster panel is open. */
 const MSG_UI_CLUSTER_PANEL = 'fsbw-admin-globe-ui-cluster-panel';
 
-/** Double-tap / double-click recenters on **Tennessee, USA** (Nashville area). */
-const HOME_LAT = 36.165;
-const HOME_LNG = -86.783;
+/** Double-tap / double-click + initial view: **Memphis, TN, USA**. */
+const HOME_LAT = 35.1495;
+const HOME_LNG = -90.049;
 const HOME_ALTITUDE = 1.35;
 const RECENTER_MS = 900;
 const DOUBLE_TAP_MS = 420;
@@ -740,7 +740,7 @@ const globe = new Globe(root, {
     updateMapLabelsFromCamera();
   });
 
-globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
+globe.pointOfView({ lat: HOME_LAT, lng: HOME_LNG, altitude: 2.05 }, 0);
 
 globe.onZoom(() => {
   reorderGlobeLabelsAboveHex();
@@ -748,7 +748,7 @@ globe.onZoom(() => {
 });
 
 let lastRecenterAt = 0;
-function recenterOnTennessee() {
+function recenterOnMemphis() {
   const now = Date.now();
   if (now - lastRecenterAt < 650) return;
   lastRecenterAt = now;
@@ -762,7 +762,7 @@ function recenterOnTennessee() {
 
 /**
  * Touch double-tap → home (TN). **Must not** treat **pinch-zoom** (two `pointerup`s in a row) as a double-tap —
- * that was firing **`recenterOnTennessee`** and animating the camera back out after zoom-in.
+ * that was firing **`recenterOnMemphis`** and animating the camera back out after zoom-in.
  */
 const activeTouchPointerIds = new Set<number>();
 let multiTouchGestureActive = false;
@@ -806,7 +806,7 @@ root.addEventListener(
       if (touchTapTimer) clearTimeout(touchTapTimer);
       touchTapTimer = null;
       touchTapCount = 0;
-      recenterOnTennessee();
+      recenterOnMemphis();
     }
   },
   { passive: true }
@@ -829,7 +829,7 @@ root.addEventListener(
   { passive: true }
 );
 root.addEventListener('dblclick', () => {
-  recenterOnTennessee();
+  recenterOnMemphis();
 });
 
 try {

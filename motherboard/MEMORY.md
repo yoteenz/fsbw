@@ -17461,3 +17461,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-21 — Globe home: Memphis, TN (initial + double-tap)
+
+**Context:** User asked for the globe on **page load** and on **double-tap** to always center on **Memphis, TN, USA** (was Nashville-area coords).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`HOME_LAT` / `HOME_LNG`** → **~35.1495, -90.049** (Memphis); initial **`globe.pointOfView`** uses **`HOME_*`** with altitude **2.05**; **`recenterOnTennessee`** renamed **`recenterOnMemphis`**. **`docs/ADMIN_GLOBE_EMBED.md`** — home / recenter docs. **`src/utils/adminGlobeMockPresence.ts`** — TN mock visitor → **Memphis** lat/lng.
+
+**Verification:** **`embed/admin-globe`** **`npm run build`** passes.
+
+**Deploy:** Redeploy **embed** + **main**.

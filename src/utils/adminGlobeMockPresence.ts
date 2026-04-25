@@ -38,7 +38,7 @@ export type MockPresenceVisitorRow = {
 
 /** ~12 visitors across regions (paths for Live View card). */
 export const ADMIN_GLOBE_MOCK_PRESENCE_ROWS: MockPresenceVisitorRow[] = [
-  { visitor_id: 'mock-globe-tn', lat: 36.16, lng: -86.78, path: '/home/shop', city: 'Nashville', region: 'Tennessee', country: 'United States' },
+  { visitor_id: 'mock-globe-tn', lat: 35.15, lng: -90.05, path: '/home/shop', city: 'Memphis', region: 'Tennessee', country: 'United States' },
   { visitor_id: 'mock-globe-ny', lat: 40.71, lng: -74.01, path: '/shop/units', city: 'New York', region: 'New York', country: 'United States' },
   { visitor_id: 'mock-globe-br', lat: -22.91, lng: -43.17, path: '/bag', city: 'Rio de Janeiro', region: 'RJ', country: 'Brazil' },
   { visitor_id: 'mock-globe-jp', lat: 35.68, lng: 139.76, path: '/build-a-wig', city: 'Tokyo', region: 'Tokyo', country: 'Japan' },
