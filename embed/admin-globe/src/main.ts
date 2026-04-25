@@ -13,17 +13,20 @@ type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'or
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 
-/** Natural Earth boundary segment → `pathsData` row (per-segment vertex gradient; `pathStroke: null` = 1px Line). */
+/** Natural Earth boundary segment → `pathsData` row (`pathStroke` = thin fat line for soft groove width). */
 type BorderPathRow = {
   points: Array<[number, number]>;
   pathColor: [string, string];
-  /** Draw order / slight altitude offset: states above countries. */
+  /** Slight altitude offset: states above countries (both still under land hex tops). */
   z: 'country' | 'state';
 };
 
-/** Magenta → violet along each short segment (three-globe vertexColors on `Line`, not solid fat-line). */
-const BORDER_COUNTRY_GRADIENT: [string, string] = ['rgba(236, 72, 153, 0.92)', 'rgba(167, 139, 250, 0.78)'];
-const BORDER_STATE_GRADIENT: [string, string] = ['rgba(244, 114, 182, 0.78)', 'rgba(196, 181, 253, 0.62)'];
+/**
+ * “Groove” through land: cool **light→slate** (reads as a cut vs ocean base), not a purple overlay.
+ * Borders sit **below** merged hex prisms (layer reorder + lower `pathPointAlt` than land `hexAltitude`).
+ */
+const BORDER_COUNTRY_GRADIENT: [string, string] = ['rgba(248, 250, 252, 0.55)', 'rgba(148, 163, 184, 0.72)'];
+const BORDER_STATE_GRADIENT: [string, string] = ['rgba(241, 245, 249, 0.42)', 'rgba(100, 116, 139, 0.58)'];
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
@@ -171,6 +174,50 @@ function pathsToBorderRows(
   return out;
 }
 
+type ThreeSceneLike = {
+  children: Array<{ traverse: (cb: (o: { __globeObjType?: string }) => void) => void }>;
+  remove: (o: unknown) => void;
+  add: (o: unknown) => void;
+};
+
+/** three-globe default layer order draws paths **above** hex bins; move paths **under** hex so borders read as grooves through the mesh. */
+function reorderGlobePathsBelowHexBins(): void {
+  try {
+    const scene = globe.scene() as unknown as ThreeSceneLike;
+    if (!scene?.children?.length) return;
+
+    const findRootForObjType = (objType: string): unknown | null => {
+      for (const top of scene.children) {
+        let hit = false;
+        top.traverse((o) => {
+          if ((o as { __globeObjType?: string }).__globeObjType === objType) hit = true;
+        });
+        if (hit) return top;
+      }
+      return null;
+    };
+
+    const pathsRoot = findRootForObjType('path');
+    const hexRoot = findRootForObjType('hexBinPoints');
+    if (!pathsRoot || !hexRoot || pathsRoot === hexRoot) return;
+
+    const ch = [...scene.children] as unknown[];
+    const pi = ch.indexOf(pathsRoot);
+    const hi = ch.indexOf(hexRoot);
+    if (pi < 0 || hi < 0 || pi < hi) return;
+
+    const next = ch.filter((c) => c !== pathsRoot);
+    const hexAt = next.indexOf(hexRoot);
+    if (hexAt < 0) return;
+    next.splice(hexAt, 0, pathsRoot);
+
+    while (scene.children.length) scene.remove(scene.children[0]);
+    for (const c of next) scene.add(c);
+  } catch {
+    /* optional */
+  }
+}
+
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root missing');
 const root = rootEl;
@@ -240,12 +287,15 @@ const globe = new Globe(root, {
   .pathPoints('points')
   .pathPointLat((p: [number, number]) => p[0])
   .pathPointLng((p: [number, number]) => p[1])
-  /** Country lines slightly below state lines so internal borders read on top. */
-  .pathPointAlt((d: object) => ((d as BorderPathRow).z === 'state' ? 0.0113 : 0.0106))
+  /**
+   * Slightly **below** land hex tops (`hexAltitude` for land bins ≈ **0.0058**) so lines sit in the “valley”
+   * between cells when viewed through the translucent prism tops.
+   */
+  .pathPointAlt((d: object) => ((d as BorderPathRow).z === 'state' ? 0.00445 : 0.00415))
   .pathResolution(0.55)
   .pathColor((d: object) => (d as BorderPathRow).pathColor)
-  /** `null` = Three.js `Line` (1px) + per-vertex gradient; fat lines flatten multi-stop colors to one. */
-  .pathStroke(null)
+  /** Small fat line = soft groove width (still thinner than prior heavy purple stroke). */
+  .pathStroke(0.52)
   .pathDashLength(1)
   .pathDashGap(0)
   .pathDashAnimateTime(0)
@@ -265,6 +315,8 @@ const globe = new Globe(root, {
     } catch {
       /* optional */
     }
+    reorderGlobePathsBelowHexBins();
+    requestAnimationFrame(() => reorderGlobePathsBelowHexBins());
   });
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
@@ -348,7 +400,11 @@ void (async () => {
     borderPaths = [];
   }
   applyPayload(lastRows);
-  notifyReady();
+  reorderGlobePathsBelowHexBins();
+  requestAnimationFrame(() => {
+    reorderGlobePathsBelowHexBins();
+    notifyReady();
+  });
   requestAnimationFrame(() => notifyReady());
 })();
 

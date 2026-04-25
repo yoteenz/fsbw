@@ -17182,6 +17182,22 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-24 — Admin globe: border “grooves” through hex (not purple on top)
+
+**Context:** User wanted state/country lines to **cut through** the **hex land mesh** instead of reading as **solid purple** on top.
+
+**Embed (`embed/admin-globe/src/main.ts`):** **`reorderGlobePathsBelowHexBins()`** — finds three-globe layer groups by **`__globeObjType`** (`path` vs `hexBinPoints`) and **reorders** scene children so **paths render before** (under) the merged hex layer. **`pathPointAlt`** lowered to **~0.00415 / 0.00445** (below land **`hexAltitude ~0.0058`**). Border colors → **slate / light** gradient “groove” look; **`pathStroke(0.52)`** thin fat line. Re-run reorder after **`applyPayload`** + rAF after **`onGlobeReady`**.
+
+**SVG (`AdminRevenueLiveGlobe.tsx`):** Draw **country + state border paths first**, then **land hex paths** on top; same **slate–light** gradients.
+
+**Docs:** **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** Root + embed **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.
+
+---
+
 ## 2026-04-24 — Admin globe: state borders + real gradient + thinner lines
 
 **Context:** User wanted **gradient** borders (not solid purple), **thinner** strokes, and **state** outlines — previously only **country** (admin-0) lines showed.
