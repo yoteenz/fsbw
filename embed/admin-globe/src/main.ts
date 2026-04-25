@@ -66,7 +66,7 @@ const HOME_LNG = -86.783;
 const HOME_ALTITUDE = 1.35;
 const RECENTER_MS = 900;
 const DOUBLE_TAP_MS = 420;
-/** After tapping a **landmark**, animate here so labels + holographic panel band is active (`large` zoom). */
+/** After tapping an **order cluster** dot, animate here so labels + holographic panel band is active (`large` zoom). */
 const CLUSTER_FOCUS_ALTITUDE = 0.38;
 
 /**
@@ -389,7 +389,7 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
 }
 
 let lastClusterPanelZoom = false;
-/** While animating to a cluster after landmark tap, do not send **`clusterPanel: false`** (would close the panel mid-zoom). */
+/** While animating to a cluster after order-dot tap, do not send **`clusterPanel: false`** (would close the panel mid-zoom). */
 let clusterPanelHoldUntilLarge = false;
 let clusterPanelHoldTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -445,9 +445,9 @@ const globe = new Globe(root, {
   .hexMargin(0.04)
   .hexAltitude((bin: HexBin) => {
     const w = bin.sumWeight || 0;
+    /** Land + visitor hotspot bins share one **flat** prism height — no extruded “pillars”. */
     if (w >= LAND_HEX_WEIGHT_THRESHOLD) return 0.0058;
-    if (w < 3) return 0.001;
-    return 0.022 + Math.min(0.14, Math.sqrt(w) * 0.021);
+    return 0.00565;
   })
   .hexTopColor((bin: HexBin) => {
     const w = bin.sumWeight || 0;

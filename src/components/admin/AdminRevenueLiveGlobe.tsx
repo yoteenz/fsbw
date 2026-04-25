@@ -208,31 +208,6 @@ function landDotRgba(lat: number): string {
   return `rgba(${r},${g},${b},${a.toFixed(3)})`;
 }
 
-type Hotspot = { cx: number; cy: number; h: number };
-
-function buildHotspotPillars(
-  points: LiveGlobePoint[],
-  latLngToPx: (lat: number, lng: number) => { px: number; py: number } | null
-): Hotspot[] {
-  const byKey = new Map<string, LiveGlobePoint[]>();
-  for (const p of points) {
-    const k = `${(Math.round(p.lat * 2) / 2).toFixed(1)},${(Math.round(p.lng * 2) / 2).toFixed(1)}`;
-    const arr = byKey.get(k) ?? [];
-    arr.push(p);
-    byKey.set(k, arr);
-  }
-  const out: Hotspot[] = [];
-  for (const [, arr] of byKey) {
-    if (arr.length < 2) continue;
-    const lat = arr.reduce((s, q) => s + q.lat, 0) / arr.length;
-    const lng = arr.reduce((s, q) => s + q.lng, 0) / arr.length;
-    const pos = latLngToPx(lat, lng);
-    if (!pos) continue;
-    out.push({ cx: pos.px, cy: pos.py, h: 8 + Math.min(26, arr.length * 6) });
-  }
-  return out;
-}
-
 /** Map lat/lng to orthographic disk (same tilt as land dots). */
 function latLngToGlobeDisk(lat: number, lng: number): { px: number; py: number; depth: number } | null {
   const φ = lat * D2R;
@@ -257,11 +232,6 @@ function latLngToGlobeDisk(lat: number, lng: number): { px: number; py: number; 
     py: CY - y * (R - 6),
     depth: (z + 1) / 2,
   };
-}
-
-function latLngToGlobePx(lat: number, lng: number): { px: number; py: number } | null {
-  const d = latLngToGlobeDisk(lat, lng);
-  return d ? { px: d.px, py: d.py } : null;
 }
 
 /** Admin boundary polyline → SVG path `d` on orthographic disk (great-circle segments). */
@@ -352,10 +322,11 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               Orders · {detail.placeLine}
             </p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '20px', margin: '4px 0 0 0', lineHeight: 1.1 }}>
-              <span aria-hidden>{detail.landmarkSymbol}</span>{' '}
-              <span style={{ color: '#0f172a', textTransform: 'none' }}>{detail.landmarkTitle}</span>
-            </p>
+            {detail.landmarkTitle ? (
+              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', margin: '6px 0 0 0', lineHeight: 1.2, color: '#0f172a', textTransform: 'none' }}>
+                {detail.landmarkTitle}
+              </p>
+            ) : null}
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#64748b', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
               {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} at this ship-to · top spenders first
             </p>
@@ -604,7 +575,6 @@ function AdminRevenueLiveGlobeIframeEmbed({
 function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 324 }: Props) {
   const clipId = useId().replace(/:/g, '');
   const gradId = useId().replace(/:/g, '');
-  const barGradId = useId().replace(/:/g, '');
   const borderCountryGradId = useId().replace(/:/g, '');
   const borderStateGradId = useId().replace(/:/g, '');
   /** Prior max 300px; +35% to match revenue globe scale. */
@@ -649,11 +619,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
       cancelled = true;
     };
   }, []);
-  const hotspots = useMemo(
-    () => buildHotspotPillars(points, latLngToGlobePx),
-    [points]
-  );
-
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -771,10 +736,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                   <clipPath id={clipId}>
                     <circle cx={CX} cy={CY} r={R} />
                   </clipPath>
-                  <linearGradient id={barGradId} x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.55} />
-                    <stop offset="100%" stopColor="#475569" stopOpacity={0.65} />
-                  </linearGradient>
                   <linearGradient id={borderCountryGradId} x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="rgba(51, 65, 85, 0.92)" />
                     <stop offset="100%" stopColor="rgba(148, 163, 184, 0.88)" />
@@ -814,18 +775,6 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       opacity={0.92}
-                    />
-                  ))}
-                  {hotspots.map((h, i) => (
-                    <rect
-                      key={`bar-${i}`}
-                      x={h.cx - 1.8}
-                      y={h.cy - h.h}
-                      width={3.6}
-                      height={h.h}
-                      rx={1}
-                      fill={`url(#${barGradId})`}
-                      opacity={0.5}
                     />
                   ))}
                   {arcPaths.map((d, i) => (

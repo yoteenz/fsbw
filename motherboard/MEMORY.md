@@ -17379,3 +17379,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** and root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-20 — Admin globe: pillars still visible (hex extrusion + SVG bars) + remove landmark emoji in panel
+
+**Context (continuation):** User still saw **tall pillars** and **landmark emoji** (“photos”) on the globe / cluster UI.
+
+**Root cause:** **`hexAltitude`** still scaled hotspot bin height by **`sqrt(sumWeight)`** (visitor jitter → tall merged hex). **SVG fallback** drew **`buildHotspotPillars`** vertical rects. **`ClusterDetailPanel`** showed **`landmarkSymbol`** next to the title.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — non-land bins use **flat `hexAltitude`** (~same as land). **`AdminRevenueLiveGlobe.tsx`** — removed **`buildHotspotPillars`**, **`hotspots` rects**, and **`barGradId`**; cluster panel shows **`landmarkTitle`** text only (no emoji). **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.
