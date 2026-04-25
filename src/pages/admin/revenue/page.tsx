@@ -1155,7 +1155,7 @@ export default function AdminRevenue() {
                           rows={[
                             { label: 'CURRENT VISITORS (LAST 5 MIN)', value: String(liveVisitorsNow) },
                             { label: 'ACTIVE ORDER LOCATIONS ON GLOBE', value: String(orderGlobePoints.length) },
-                            { label: 'TOP LOCATIONS (VISITORS + ORDERS)', value: liveViewCardMetrics.topPlacesLine, valueRed: false },
+                            { label: 'TOP LOCATIONS (VISITORS + ORDERS)', value: liveViewCardMetrics.topPlacesLine },
                             { label: 'TOP VISITOR LOCATIONS', value: liveViewCardMetrics.topVisitorLine, valueRed: false },
                             { label: 'TOP ORDER SHIP LOCATIONS', value: liveViewCardMetrics.topOrderLine, valueRed: false },
                             { label: 'TOP COUNTRIES (VISITORS)', value: liveViewCardMetrics.topCountriesLine, valueRed: false },

@@ -17304,3 +17304,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`globeMockFlagInBrowserLocation`** + **`persistGlobeMockFromBrowserLocation`**; **`enable` / `disable` mock session** helpers; **GLOBE QA** link buttons on Revenue overview; **`globeMockUiRev`** to refresh **`orderGlobePoints`**; **`location.hash`** in overview effect deps; **`fetchLiveGlobe`** starts with **`persistGlobeMockFromBrowserLocation()`**. Docs updated.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-20 — Live View card: TOP LOCATIONS value in brand red
+
+**Context:** User wanted **TOP LOCATIONS (VISITORS + ORDERS)** right-column text (e.g. Nashville, New York, …) in **red**, not black/slate.
+
+**Change:** **`src/pages/admin/revenue/page.tsx`** — removed **`valueRed: false`** for that row so **`AdminOverviewMetricRows`** uses default value color **`#EB1C24`**.
+
+**Verification:** **`npm run build`** passes.
