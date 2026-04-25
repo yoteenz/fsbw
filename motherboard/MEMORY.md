@@ -17768,3 +17768,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`**: removed slate **`background-clip: text`**; native emoji with **`opacity: 0.88`** + light **`saturate`/`contrast`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
 
 **Deploy:** Redeploy **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: client name uppercase; spend line red; top product gray medium
+
+**Context:** User asked: **spent · orders** line **red**; **top purchased product** **gray Futura PT Medium**; **all client names uppercase** on the panel.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** customer rows.
+
+**Deploy:** Redeploy **main**.
