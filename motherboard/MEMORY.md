@@ -17632,3 +17632,21 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`**.
 
 **Deploy:** Redeploy **main** (embed unchanged).
+
+---
+
+## 2026-04-25 — Cluster panel: client photo, name + age, spend/orders, top product
+
+**Context:** User wanted cluster panel **customer rows** structured like admin client overview: **profile photo**, **name in black** to the right with **comma + age**, next line **total spent · order count** (middle dot), third line **top product**.
+
+**Changes:**
+- **`src/utils/adminGlobeClusterClientProfile.ts`** — **`enrichOrderGlobeClusterCustomers`**: match **`registeredUsers`** by email → **`displayName`** (first/last), **`profileImageUrl`**, **`age`** from **`birthYear`** or **`birthday`** (MM/DD/YYYY or MMDDYYYY); default avatar **`/assets/profile-thumb.png`**.
+- **`src/pages/admin/revenue/page.tsx`** — after **`mergeMockOrderGlobeClusters`**, map clusters with enriched **`customers`**.
+- **`src/utils/adminOrderGlobeClusters.ts`** — **`OrderGlobeClusterCustomer`** optional **`displayName`**, **`profileImageUrl`**, **`age`**.
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** new row layout; **`normalizeClusterCustomersFromPayload`** + enrich on **`MSG_CLUSTER`**; **`pointsPayload`** runs **`enrichOrderGlobeClusterCustomers`** on **`clusterCustomers`**.
+- **`embed/admin-globe/src/main.ts`** — **`ClusterCustomer`** + **`normalizeIncomingPoint`** pass through optional profile fields; **`MSG_CLUSTER`** forwards them.
+- **`docs/ADMIN_GLOBE_EMBED.md`** — payload docs for optional customer fields.
+
+**Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
+
+**Deploy:** Redeploy **main** and **embed/admin-globe**.

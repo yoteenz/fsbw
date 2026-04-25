@@ -94,7 +94,10 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
     landmarkTitle?: string;
     landmarkSymbol?: string;
     orderTowerHeight?: number;
-    clusterCustomers?: Array<{ email: string; orderCount: number; totalSpent: number; topProduct: string }>;
+    clusterCustomers?: Array<{
+      email: string; orderCount: number; totalSpent: number; topProduct: string;
+      displayName?: string; profileImageUrl?: string; age?: number | null;
+    }>;
   }>;
 }
 ```
@@ -114,7 +117,11 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
   /** Visitor dots within ~100 km of the cluster (same `points` payload as the globe). */
   viewCount: number,
   landmarkTitle, landmarkSymbol,
-  customers: Array<{ email, orderCount, totalSpent, topProduct }>,
+  customers: Array<{
+    email, orderCount, totalSpent, topProduct,
+    /** Optional — from main app `registeredUsers` merge for cluster panel UI */
+    displayName?: string; profileImageUrl?: string; age?: number | null;
+  }>,
 }
 ```
 

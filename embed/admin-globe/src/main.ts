@@ -15,7 +15,15 @@ function displayUpper(s: string): string {
 const LAND_HEX_WEIGHT = 800;
 const LAND_HEX_WEIGHT_THRESHOLD = 400;
 
-type ClusterCustomer = { email: string; orderCount: number; totalSpent: number; topProduct: string };
+type ClusterCustomer = {
+  email: string;
+  orderCount: number;
+  totalSpent: number;
+  topProduct: string;
+  displayName?: string;
+  profileImageUrl?: string;
+  age?: number | null;
+};
 
 type PointRow = {
   lat: number;
@@ -380,12 +388,24 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
       const oc = Number(r.orderCount);
       const ts = Number(r.totalSpent);
       const tp = typeof r.topProduct === 'string' ? r.topProduct.trim() : '—';
+      const dn = typeof r.displayName === 'string' ? r.displayName.trim() : '';
+      const pi = typeof r.profileImageUrl === 'string' ? r.profileImageUrl.trim() : '';
+      const ageRaw = r.age;
+      const ageParsed =
+        typeof ageRaw === 'number' && Number.isFinite(ageRaw)
+          ? ageRaw
+          : typeof ageRaw === 'string' && String(ageRaw).trim()
+            ? parseInt(String(ageRaw), 10)
+            : NaN;
       if (!email) continue;
       rows.push({
         email,
         orderCount: Number.isFinite(oc) ? oc : 0,
         totalSpent: Number.isFinite(ts) ? ts : 0,
         topProduct: tp || '—',
+        ...(dn ? { displayName: dn } : {}),
+        ...(pi ? { profileImageUrl: pi } : {}),
+        ...(Number.isFinite(ageParsed) ? { age: ageParsed } : {}),
       });
     }
     if (rows.length) clusterCustomers = rows;

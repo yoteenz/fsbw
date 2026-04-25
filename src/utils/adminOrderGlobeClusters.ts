@@ -22,6 +22,10 @@ export type OrderGlobeClusterCustomer = {
   orderCount: number;
   totalSpent: number;
   topProduct: string;
+  /** Filled by `enrichOrderGlobeClusterCustomers` from `registeredUsers` when available. */
+  displayName?: string;
+  profileImageUrl?: string;
+  age?: number | null;
 };
 
 export type OrderGlobeClusterPoint = {

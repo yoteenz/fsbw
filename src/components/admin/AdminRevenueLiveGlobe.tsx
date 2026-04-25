@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../utils/adminGlobePlaceLabel';
+import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterClientProfile';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -21,6 +22,9 @@ export type GlobeClusterCustomerRow = {
   orderCount: number;
   totalSpent: number;
   topProduct: string;
+  displayName?: string;
+  profileImageUrl?: string;
+  age?: number | null;
 };
 
 export type LiveGlobePoint = {
@@ -80,6 +84,35 @@ function getAdminGlobeEmbedUrl(): string | null {
     ?.VITE_ADMIN_GLOBE_EMBED_URL;
   const u = typeof raw === 'string' ? raw.trim().replace(/\/$/, '') : '';
   return u || null;
+}
+
+/** Parse + merge `registeredUsers` profile fields for iframe / MSG_CLUSTER customer rows. */
+function normalizeClusterCustomersFromPayload(raw: unknown): GlobeClusterCustomerRow[] {
+  const out: GlobeClusterCustomerRow[] = [];
+  if (!Array.isArray(raw)) return enrichOrderGlobeClusterCustomers(out);
+  for (const c of raw) {
+    if (!c || typeof c !== 'object') continue;
+    const o = c as Record<string, unknown>;
+    const email = typeof o.email === 'string' ? o.email.trim() : '';
+    if (!email) continue;
+    const ageRaw = o.age;
+    const ageParsed =
+      typeof ageRaw === 'number' && Number.isFinite(ageRaw)
+        ? ageRaw
+        : typeof ageRaw === 'string' && ageRaw.trim()
+          ? parseInt(ageRaw, 10)
+          : NaN;
+    out.push({
+      email,
+      orderCount: Number(o.orderCount) || 0,
+      totalSpent: Number(o.totalSpent) || 0,
+      topProduct: typeof o.topProduct === 'string' ? o.topProduct : '—',
+      displayName: typeof o.displayName === 'string' ? o.displayName : undefined,
+      profileImageUrl: typeof o.profileImageUrl === 'string' ? o.profileImageUrl : undefined,
+      age: Number.isFinite(ageParsed) ? ageParsed : null,
+    });
+  }
+  return enrichOrderGlobeClusterCustomers(out);
 }
 
 function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): LiveGlobePoint[] {
@@ -359,6 +392,8 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
   );
 }
 
+const CLUSTER_CLIENT_AVATAR_FALLBACK = '/assets/profile-thumb.png';
+
 function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
   const money = (n: number) =>
     n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -454,20 +489,68 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
               No customer rows for this cluster.
             </p>
           ) : (
-            detail.customers.map((c) => (
-              <div
-                key={c.email}
-                className="border px-2 py-2"
-                style={{ background: 'rgba(255,255,255,0.35)', borderColor: '#e5e7eb', borderRadius: 0 }}
-              >
-                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#0f172a', margin: 0, wordBreak: 'break-all', textTransform: 'uppercase' }}>
-                  {c.email}
-                </p>
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#475569', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
-                  spent {money(c.totalSpent)} · {c.orderCount} order{c.orderCount === 1 ? '' : 's'} · top {c.topProduct}
-                </p>
-              </div>
-            ))
+            detail.customers.map((c) => {
+              const avatar = (c.profileImageUrl && String(c.profileImageUrl).trim()) || CLUSTER_CLIENT_AVATAR_FALLBACK;
+              const name = (c.displayName && String(c.displayName).trim()) || c.email;
+              const agePart = typeof c.age === 'number' && Number.isFinite(c.age) ? `, ${c.age}` : '';
+              return (
+                <div
+                  key={c.email}
+                  className="border px-2 py-2 flex gap-2 min-w-0"
+                  style={{ background: 'rgba(255,255,255,0.35)', borderColor: '#e5e7eb', borderRadius: 0 }}
+                >
+                  <img
+                    src={avatar}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="shrink-0 object-cover rounded-sm"
+                    style={{ width: 40, height: 40, border: '1px solid #e5e7eb' }}
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
+                        fontSize: '11px',
+                        color: '#000000',
+                        margin: 0,
+                        lineHeight: 1.3,
+                        textTransform: 'none',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {name}
+                      {agePart}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
+                        fontSize: '9px',
+                        color: '#475569',
+                        margin: '5px 0 0 0',
+                        lineHeight: 1.35,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {money(c.totalSpent)} · {c.orderCount} order{c.orderCount === 1 ? '' : 's'}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
+                        fontSize: '9px',
+                        color: '#334155',
+                        margin: '4px 0 0 0',
+                        lineHeight: 1.35,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {c.topProduct && c.topProduct !== '—' ? c.topProduct : '—'}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </div>
@@ -554,7 +637,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
             ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
             : orderPlaceFieldsFromGlobeLabel(p.label);
         const th = p.orderTowerHeight ?? p.towerHeight;
-        const clusterCustomers = p.clusterCustomers ?? p.customers;
+        const clusterCustomers = enrichOrderGlobeClusterCustomers(p.clusterCustomers ?? p.customers ?? []);
         return {
           lat: p.lat,
           lng: p.lng,
@@ -613,22 +696,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
         const viewCount = Number(d.viewCount) || 0;
         const landmarkTitle = typeof d.landmarkTitle === 'string' ? d.landmarkTitle : '';
         const landmarkSymbol = typeof d.landmarkSymbol === 'string' ? d.landmarkSymbol : '📍';
-        const raw = d.customers;
-        const customers: GlobeClusterCustomerRow[] = [];
-        if (Array.isArray(raw)) {
-          for (const c of raw) {
-            if (!c || typeof c !== 'object') continue;
-            const o = c as Record<string, unknown>;
-            const email = typeof o.email === 'string' ? o.email : '';
-            if (!email) continue;
-            customers.push({
-              email,
-              orderCount: Number(o.orderCount) || 0,
-              totalSpent: Number(o.totalSpent) || 0,
-              topProduct: typeof o.topProduct === 'string' ? o.topProduct : '—',
-            });
-          }
-        }
+        const customers = normalizeClusterCustomersFromPayload(d.customers);
         const detail: GlobeOrderClusterDetail = {
           clusterKey,
           placeLine,

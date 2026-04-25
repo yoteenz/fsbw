@@ -31,6 +31,7 @@ import {
 } from '../../../utils/orderTracking';
 import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
+import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile';
 import {
   adminGlobeMockDataEnabled,
   disableAdminGlobeMockDataSession,
@@ -675,7 +676,11 @@ export default function AdminRevenue() {
 
   const orderGlobePoints = useMemo(() => {
     const clusters = buildOrderGlobeClustersFromRevenueOrders(orders);
-    return mergeMockOrderGlobeClusters(clusters);
+    const merged = mergeMockOrderGlobeClusters(clusters);
+    return merged.map((c) => ({
+      ...c,
+      customers: enrichOrderGlobeClusterCustomers(c.customers),
+    }));
   }, [orders, globeMockUiRev]);
 
   const orderGlobeOrderTotal = useMemo(
