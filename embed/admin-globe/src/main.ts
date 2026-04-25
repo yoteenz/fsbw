@@ -10,6 +10,8 @@ const ORDER_GREEN = '#16a34a';
 const LAND_HEX_WEIGHT = 800;
 const LAND_HEX_WEIGHT_THRESHOLD = 400;
 
+type ClusterCustomer = { email: string; orderCount: number; totalSpent: number; topProduct: string };
+
 type PointRow = {
   lat: number;
   lng: number;
@@ -18,6 +20,13 @@ type PointRow = {
   /** Map line when zoomed in (city, region, country). */
   placeLine?: string;
   placeDetail?: string;
+  /** Order cluster: stable key + landmark + tower height + customers (from parent JSON). */
+  clusterKey?: string;
+  orderCount?: number;
+  landmarkTitle?: string;
+  landmarkSymbol?: string;
+  orderTowerHeight?: number;
+  clusterCustomers?: ClusterCustomer[];
 };
 
 type MapLabelRow = {
@@ -29,6 +38,8 @@ type MapLabelRow = {
   size: number;
   includeDot: boolean;
 };
+
+type HtmlLandmarkRow = { lat: number; lng: number; alt: number; row: PointRow };
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 
@@ -46,6 +57,8 @@ const BORDER_STATE_GRADIENT: [string, string] = ['rgba(71, 85, 105, 0.88)', 'rgb
 
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
+const MSG_CLUSTER = 'fsbw-admin-globe-cluster';
+const MSG_POV = 'fsbw-admin-globe-pov';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
 /** Double-tap / double-click recenters on **Tennessee, USA** (Nashville area). */
@@ -246,7 +259,7 @@ function effectiveCameraAltitude(): number {
   return Math.min(fromCam, fromPov);
 }
 
-/** Ensure text labels render after merged hex (some builds / rebinds can change child order). */
+/** Ensure **labels** then **HTML landmarks** render after merged hex (some builds / rebinds reorder children). */
 function reorderGlobeLabelsAboveHex(): void {
   try {
     const scene = globe.scene() as unknown as ThreeSceneLike;
@@ -263,17 +276,37 @@ function reorderGlobeLabelsAboveHex(): void {
     };
     const hexRoot = findRoot('hexBinPoints');
     const labelRoot = findRoot('label');
-    if (!hexRoot || !labelRoot || hexRoot === labelRoot) return;
+    const htmlRoot = findRoot('html');
+    if (!hexRoot) return;
     const ch = [...scene.children] as unknown[];
-    const next = ch.filter((c) => c !== labelRoot);
+    let next = ch.filter((c) => c !== labelRoot && c !== htmlRoot);
     const hexAt = next.indexOf(hexRoot);
     if (hexAt < 0) return;
-    next.splice(hexAt + 1, 0, labelRoot);
+    let insertAt = hexAt + 1;
+    if (labelRoot) {
+      next.splice(insertAt, 0, labelRoot);
+      insertAt += 1;
+    }
+    if (htmlRoot) {
+      next.splice(insertAt, 0, htmlRoot);
+    }
     while (scene.children.length) scene.remove(scene.children[0]);
     for (const c of next) scene.add(c);
   } catch {
     /* optional */
   }
+}
+
+function orderPointAltitude(d: object): number {
+  const r = d as PointRow;
+  if (r.kind === 'order' && typeof r.orderTowerHeight === 'number' && Number.isFinite(r.orderTowerHeight)) {
+    return r.orderTowerHeight;
+  }
+  return 0.038;
+}
+
+function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
+  return rows.filter((r) => r.kind === 'order' && r.clusterKey && (r.landmarkSymbol || (r.orderCount ?? 0) > 0));
 }
 
 const rootEl = document.getElementById('root');
@@ -308,7 +341,97 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
       placeDetail = placeDetail || (v.placeDetail ?? '');
     }
   }
-  return { lat, lng, label, kind, placeLine, placeDetail };
+  const clusterKey = typeof o.clusterKey === 'string' ? o.clusterKey.trim() : undefined;
+  const orderCount = typeof o.orderCount === 'number' && Number.isFinite(o.orderCount) ? o.orderCount : undefined;
+  const landmarkTitle = typeof o.landmarkTitle === 'string' ? o.landmarkTitle.trim() : undefined;
+  const landmarkSymbol = typeof o.landmarkSymbol === 'string' ? o.landmarkSymbol.trim() : undefined;
+  const orderTowerHeight =
+    typeof o.orderTowerHeight === 'number' && Number.isFinite(o.orderTowerHeight)
+      ? o.orderTowerHeight
+      : typeof o.towerHeight === 'number' && Number.isFinite(o.towerHeight)
+        ? o.towerHeight
+        : undefined;
+  let clusterCustomers: ClusterCustomer[] | undefined;
+  if (Array.isArray(o.clusterCustomers)) {
+    const rows: ClusterCustomer[] = [];
+    for (const c of o.clusterCustomers) {
+      if (!c || typeof c !== 'object') continue;
+      const r = c as Record<string, unknown>;
+      const email = typeof r.email === 'string' ? r.email.trim() : '';
+      const oc = Number(r.orderCount);
+      const ts = Number(r.totalSpent);
+      const tp = typeof r.topProduct === 'string' ? r.topProduct.trim() : '—';
+      if (!email) continue;
+      rows.push({
+        email,
+        orderCount: Number.isFinite(oc) ? oc : 0,
+        totalSpent: Number.isFinite(ts) ? ts : 0,
+        topProduct: tp || '—',
+      });
+    }
+    if (rows.length) clusterCustomers = rows;
+  }
+  return {
+    lat,
+    lng,
+    label,
+    kind,
+    placeLine,
+    placeDetail,
+    clusterKey,
+    orderCount,
+    landmarkTitle,
+    landmarkSymbol,
+    orderTowerHeight,
+    clusterCustomers,
+  };
+}
+
+function buildLandmarkHtml(row: PointRow): HTMLElement {
+  const wrap = document.createElement('button');
+  wrap.type = 'button';
+  const sym = row.landmarkSymbol || '📍';
+  const title = row.landmarkTitle || 'Orders';
+  const n = row.orderCount ?? 1;
+  wrap.textContent = sym;
+  wrap.title = `${title} · ${n} order${n === 1 ? '' : 's'} — tap for breakdown`;
+  wrap.setAttribute(
+    'style',
+    [
+      'pointer-events:auto',
+      'cursor:pointer',
+      'border:none',
+      'padding:0',
+      'margin:0',
+      'background:rgba(255,255,255,0.06)',
+      'border-radius:999px',
+      'line-height:1',
+      'font-size:22px',
+      'filter:drop-shadow(0 0 6px rgba(59,130,246,0.55))',
+      'backdrop-filter:blur(4px)',
+      '-webkit-backdrop-filter:blur(4px)',
+      'box-shadow:0 0 0 1px rgba(148,163,184,0.35)',
+    ].join(';')
+  );
+  wrap.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const target = window.parent && window.parent !== window ? window.parent : null;
+    if (!target) return;
+    target.postMessage(
+      {
+        type: MSG_CLUSTER,
+        clusterKey: row.clusterKey ?? '',
+        placeLine: row.placeLine ?? '',
+        orderCount: row.orderCount ?? 0,
+        landmarkTitle: row.landmarkTitle ?? '',
+        landmarkSymbol: row.landmarkSymbol ?? '',
+        customers: row.clusterCustomers ?? [],
+      },
+      '*'
+    );
+  });
+  return wrap;
 }
 
 function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabelRow[] {
@@ -332,11 +455,38 @@ function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabe
   return out;
 }
 
+function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmarkRow[] {
+  if (!show) return [];
+  return orderRowsForLandmarkHtml(rows).map((row) => ({
+    lat: row.lat,
+    lng: row.lng,
+    /** Float emoji just above the order pillar tip. */
+    alt: (row.orderTowerHeight ?? 0.038) + 0.014,
+    row,
+  }));
+}
+
+let lastClusterPanelZoom = false;
+function notifyParentClusterZoom(clusterPanel: boolean): void {
+  if (clusterPanel === lastClusterPanelZoom) return;
+  lastClusterPanelZoom = clusterPanel;
+  const target = window.parent && window.parent !== window ? window.parent : null;
+  if (!target) return;
+  try {
+    target.postMessage({ type: MSG_POV, clusterPanel }, '*');
+  } catch {
+    /* optional */
+  }
+}
+
 function updateMapLabelsFromCamera() {
   const alt = effectiveCameraAltitude();
   const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
+  globe.htmlElementsData(htmlLandmarkRowsForCamera(lastRows, show));
+  /** Parent shows order cluster sheet only when zoomed in this close (same band as “large” labels). */
+  notifyParentClusterZoom(large);
 }
 
 const globe = new Globe(root, {
@@ -378,7 +528,7 @@ const globe = new Globe(root, {
   .pointLat('lat')
   .pointLng('lng')
   .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
-  .pointAltitude(0.038)
+  .pointAltitude((d: object) => orderPointAltitude(d))
   .pointRadius(0.52)
   .pointResolution(12)
   .arcStartLat('startLat')
@@ -415,6 +565,12 @@ const globe = new Globe(root, {
   .labelDotOrientation('bottom')
   .labelResolution(6)
   .labelsTransitionDuration(0)
+  .htmlElementsData([])
+  .htmlLat('lat')
+  .htmlLng('lng')
+  .htmlAltitude('alt')
+  .htmlElement((d: object) => buildLandmarkHtml((d as HtmlLandmarkRow).row))
+  .htmlTransitionDuration(0)
   .onGlobeReady(() => {
     try {
       const m = globe.globeMaterial() as {
@@ -511,6 +667,7 @@ requestAnimationFrame(() => {
 
 globe.onPointClick((p: object) => {
   const pr = p as PointRow;
+  if (pr.kind === 'order' && pr.clusterKey) return;
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   target.postMessage(
@@ -547,7 +704,7 @@ function applyPayload(rows: PointRow[]) {
   updateMapLabelsFromCamera();
 }
 
-globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]);
 
 void (async () => {
   try {

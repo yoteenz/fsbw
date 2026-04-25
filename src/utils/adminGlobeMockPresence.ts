@@ -7,6 +7,9 @@
  * - URL on Admin Revenue: **`?globe_mock=1`** (or **`true`**) — no persistence; works on production without env changes.
  */
 
+import type { OrderGlobeClusterPoint } from './adminOrderGlobeClusters';
+import { landmarkForShipKey } from './adminOrderGlobeClusters';
+
 export type MockGlobeVisitorPoint = {
   lat: number;
   lng: number;
@@ -138,6 +141,54 @@ export const ADMIN_GLOBE_MOCK_ORDER_POINTS: MockGlobeOrderPoint[] = [
   },
 ];
 
+function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPoint {
+  const key = p.placeLine.toUpperCase().replace(/\s+/g, ' ');
+  const lm = landmarkForShipKey(key, p.placeLine);
+  return {
+    lat: p.lat,
+    lng: p.lng,
+    label: p.label,
+    placeLine: p.placeLine,
+    placeDetail: p.placeDetail ?? 'ORDER',
+    clusterKey: `MOCK|${key}`,
+    orderCount: 1,
+    landmarkTitle: lm.title,
+    landmarkSymbol: lm.symbol,
+    towerHeight: 0.038,
+    customers: [
+      {
+        email: 'mock.customer@example.com',
+        orderCount: 1,
+        totalSpent: 899,
+        topProduct: 'NOIR',
+      },
+    ],
+  };
+}
+
+/** Heavy NYC cluster for QA: tall tower + multi-customer breakdown. */
+function mockNycOrderCluster(): OrderGlobeClusterPoint {
+  const placeLine = 'New York, NY, US';
+  const lm = landmarkForShipKey('NEW YORK|NY|US', placeLine);
+  return {
+    lat: 40.7128,
+    lng: -74.006,
+    label: 'ORDER CLUSTER · 14 @ New York, NY, US',
+    placeLine,
+    placeDetail: '14 ORDERS',
+    clusterKey: 'MOCK|NEW YORK|NY|US',
+    orderCount: 14,
+    landmarkTitle: lm.title,
+    landmarkSymbol: lm.symbol,
+    towerHeight: 0.042 + Math.min(0.14, 13 * 0.012),
+    customers: [
+      { email: 'vip.nyc@example.com', orderCount: 6, totalSpent: 12540, topProduct: 'NOIR' },
+      { email: 'repeat.nyc@example.com', orderCount: 5, totalSpent: 4820, topProduct: 'BLANCO' },
+      { email: 'new.nyc@example.com', orderCount: 3, totalSpent: 2199, topProduct: 'SOFT CURL' },
+    ],
+  };
+}
+
 function isTruthyMockFlag(val: string | null | undefined): boolean {
   const s = String(val ?? '').trim().toLowerCase();
   return s === '1' || s === 'true' || s === 'yes' || s === 'on';
@@ -223,6 +274,20 @@ export function disableAdminGlobeMockDataSession(): void {
   }
 }
 
+/** Mock order **clusters** merged with real clusters when mock mode is on. */
+export function mergeMockOrderGlobeClusters(real: OrderGlobeClusterPoint[]): OrderGlobeClusterPoint[] {
+  if (!adminGlobeMockDataEnabled()) return real;
+  const seen = new Set(real.map((c) => c.clusterKey));
+  const singles = ADMIN_GLOBE_MOCK_ORDER_POINTS.map(mockClusterFromSingleOrder).filter((c) => {
+    if (seen.has(c.clusterKey)) return false;
+    seen.add(c.clusterKey);
+    return true;
+  });
+  const nyc = mockNycOrderCluster();
+  const extra = seen.has(nyc.clusterKey) ? [] : [nyc];
+  return [...extra, ...singles, ...real];
+}
+
 export function mergeMockPresenceRows(real: MockPresenceVisitorRow[]): MockPresenceVisitorRow[] {
   if (!adminGlobeMockDataEnabled()) return real;
   const seen = new Set(real.map((r) => String(r.visitor_id ?? '').trim()).filter(Boolean));
@@ -242,14 +307,3 @@ export function mergeMockVisitorGlobePoints(real: MockGlobeVisitorPoint[]): Mock
   return [...extra, ...real];
 }
 
-export function mergeMockOrderGlobePoints(real: MockGlobeOrderPoint[]): MockGlobeOrderPoint[] {
-  if (!adminGlobeMockDataEnabled()) return real;
-  const seen = new Set(real.map((p) => `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`));
-  const extra = ADMIN_GLOBE_MOCK_ORDER_POINTS.filter((p) => {
-    const k = `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
-  return [...extra, ...real];
-}

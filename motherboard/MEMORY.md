@@ -17328,3 +17328,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-21 — Admin revenue globe: order clusters, landmark markers, zoom cluster panel
+
+**Context:** User asked for **multi-order locations** to read as **3D landmarks** (e.g. NYC → Statue of Liberty) and, when **zoomed in**, a **holographic-style panel to the right** with **all customers**, **spend**, **order counts**, **top product**, **top spenders first**.
+
+**What shipped:** **`adminOrderGlobeClusters.ts`** clusters **`userOrders_*`** by ship-to; per-cluster customer rollups + **`landmarkForShipKey`** (emoji + title) + **`towerHeight`**. **`revenue/page.tsx`** feeds clusters to the globe; mock mode adds **NYC heavy cluster** + singles. **Embed** uses **`pointAltitude`** for taller pillars, **`htmlElementsData`** landmark buttons when zoomed in, **`fsbw-admin-globe-cluster`** + **`fsbw-admin-globe-pov`** messages. **Parent** **`ClusterDetailPanel`** (frosted, right-fixed). **`docs/ADMIN_GLOBE_EMBED.md`** protocol updated.
+
+**Note:** Not true **3D landmark meshes** — emoji + label + taller pillar; extend **`landmarkForShipKey`** for more cities.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

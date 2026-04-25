@@ -10,7 +10,16 @@ const ORDER_GREEN = '#16a34a';
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
+const MSG_CLUSTER = 'fsbw-admin-globe-cluster';
+const MSG_POV = 'fsbw-admin-globe-pov';
 const MSG_READY = 'fsbw-admin-globe-ready';
+
+export type GlobeClusterCustomerRow = {
+  email: string;
+  orderCount: number;
+  totalSpent: number;
+  topProduct: string;
+};
 
 export type LiveGlobePoint = {
   lat: number;
@@ -19,14 +28,44 @@ export type LiveGlobePoint = {
   kind: 'visitor' | 'order';
   placeLine?: string;
   placeDetail?: string;
+  clusterKey?: string;
+  orderCount?: number;
+  landmarkTitle?: string;
+  landmarkSymbol?: string;
+  orderTowerHeight?: number;
+  clusterCustomers?: GlobeClusterCustomerRow[];
 };
 
-type GlobePointInput = { lat: number; lng: number; label: string; placeLine?: string; placeDetail?: string };
+export type GlobeOrderClusterDetail = {
+  clusterKey: string;
+  placeLine: string;
+  orderCount: number;
+  landmarkTitle: string;
+  landmarkSymbol: string;
+  customers: GlobeClusterCustomerRow[];
+};
+
+type GlobePointInput = {
+  lat: number;
+  lng: number;
+  label: string;
+  placeLine?: string;
+  placeDetail?: string;
+  clusterKey?: string;
+  orderCount?: number;
+  landmarkTitle?: string;
+  landmarkSymbol?: string;
+  /** Pillar height in globe-radius units (embed `pointAltitude`). */
+  towerHeight?: number;
+  orderTowerHeight?: number;
+  clusterCustomers?: GlobeClusterCustomerRow[];
+};
 
 type Props = {
   orderPoints: GlobePointInput[];
   visitorPoints: GlobePointInput[];
   heightPx?: number;
+  onClusterDetail?: (detail: GlobeOrderClusterDetail | null) => void;
 };
 
 function getAdminGlobeEmbedUrl(): string | null {
@@ -50,7 +89,20 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         p.placeLine && p.placeLine.trim()
           ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
           : orderPlaceFieldsFromGlobeLabel(p.label);
-      return { ...p, ...place, kind: 'order' as const };
+      const th = p.orderTowerHeight ?? p.towerHeight;
+      return {
+        lat: p.lat,
+        lng: p.lng,
+        label: p.label,
+        ...place,
+        kind: 'order' as const,
+        clusterKey: p.clusterKey,
+        orderCount: p.orderCount,
+        landmarkTitle: p.landmarkTitle,
+        landmarkSymbol: p.landmarkSymbol,
+        orderTowerHeight: th,
+        clusterCustomers: p.clusterCustomers,
+      };
     }),
   ];
 }
@@ -269,6 +321,78 @@ function buildLandHexPathsFromSamples(
   return out;
 }
 
+function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
+  const money = (n: number) =>
+    n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Order location breakdown"
+      className="fixed inset-0 z-[99998] pointer-events-none"
+      onClick={onClose}
+    >
+      <div
+        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 w-[min(92vw,320px)] max-h-[min(78vh,420px)] overflow-y-auto rounded border border-slate-400/60 p-3 shadow-2xl"
+        style={{
+          right: 'max(12px, env(safe-area-inset-right))',
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          borderWidth: '1.3px',
+          boxShadow: '0 8px 32px rgba(15,23,42,0.25), inset 0 1px 0 rgba(255,255,255,0.35)',
+        }}
+        onClick={(ev) => ev.stopPropagation()}
+      >
+        <div className="flex justify-between items-start gap-2 mb-2">
+          <div>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
+              Orders · {detail.placeLine}
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '20px', margin: '4px 0 0 0', lineHeight: 1.1 }}>
+              <span aria-hidden>{detail.landmarkSymbol}</span>{' '}
+              <span style={{ color: '#0f172a', textTransform: 'none' }}>{detail.landmarkTitle}</span>
+            </p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#64748b', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
+              {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} at this ship-to · top spenders first
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 p-1"
+            aria-label="Close"
+            style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            ✕
+          </button>
+        </div>
+        <div className="space-y-2 mt-2">
+          {detail.customers.length === 0 ? (
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', margin: 0 }}>No customer rows for this cluster.</p>
+          ) : (
+            detail.customers.map((c) => (
+              <div
+                key={c.email}
+                className="rounded border border-slate-300/50 px-2 py-2"
+                style={{ background: 'rgba(255,255,255,0.35)' }}
+              >
+                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#0f172a', margin: 0, wordBreak: 'break-all', textTransform: 'none' }}>
+                  {c.email}
+                </p>
+                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#475569', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
+                  spent {money(c.totalSpent)} · {c.orderCount} order{c.orderCount === 1 ? '' : 's'} · top {c.topProduct}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function DetailModal({ selected, onClose }: { selected: LiveGlobePoint; onClose: () => void }) {
   return createPortal(
     <div
@@ -313,12 +437,14 @@ function AdminRevenueLiveGlobeIframeEmbed({
   orderPoints,
   visitorPoints,
   heightPx = 324,
+  onClusterDetail,
 }: Props & { embedUrl: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   /** Skip duplicate `postMessage` payloads — each one rebuilds hex bins in the iframe (expensive). */
   const lastPointsJsonRef = useRef<string>('');
   const [embedReady, setEmbedReady] = useState(false);
   const [selected, setSelected] = useState<LiveGlobePoint | null>(null);
+  const [clusterDetail, setClusterDetail] = useState<GlobeOrderClusterDetail | null>(null);
   /** Prior max 320px; +35% so larger `heightPx` from revenue is not clamped. */
   const size = Math.min(heightPx, 432);
 
@@ -336,7 +462,20 @@ function AdminRevenueLiveGlobeIframeEmbed({
           p.placeLine && p.placeLine.trim()
             ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
             : orderPlaceFieldsFromGlobeLabel(p.label);
-        return { ...p, ...place, kind: 'order' as const };
+        const th = p.orderTowerHeight ?? p.towerHeight;
+        return {
+          lat: p.lat,
+          lng: p.lng,
+          label: p.label,
+          ...place,
+          kind: 'order' as const,
+          clusterKey: p.clusterKey,
+          orderCount: p.orderCount,
+          landmarkTitle: p.landmarkTitle,
+          landmarkSymbol: p.landmarkSymbol,
+          orderTowerHeight: th,
+          clusterCustomers: p.clusterCustomers,
+        };
       }),
     ];
   }, [visitorPoints, orderPoints]);
@@ -358,10 +497,50 @@ function AdminRevenueLiveGlobeIframeEmbed({
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
         setSelected({ lat, lng, label, kind });
       }
+      if (d.type === MSG_POV) {
+        const clusterPanel = Boolean(d.clusterPanel);
+        if (!clusterPanel) {
+          setClusterDetail(null);
+          onClusterDetail?.(null);
+        }
+      }
+      if (d.type === MSG_CLUSTER) {
+        const clusterKey = typeof d.clusterKey === 'string' ? d.clusterKey : '';
+        const placeLine = typeof d.placeLine === 'string' ? d.placeLine : '';
+        const orderCount = Number(d.orderCount) || 0;
+        const landmarkTitle = typeof d.landmarkTitle === 'string' ? d.landmarkTitle : '';
+        const landmarkSymbol = typeof d.landmarkSymbol === 'string' ? d.landmarkSymbol : '📍';
+        const raw = d.customers;
+        const customers: GlobeClusterCustomerRow[] = [];
+        if (Array.isArray(raw)) {
+          for (const c of raw) {
+            if (!c || typeof c !== 'object') continue;
+            const o = c as Record<string, unknown>;
+            const email = typeof o.email === 'string' ? o.email : '';
+            if (!email) continue;
+            customers.push({
+              email,
+              orderCount: Number(o.orderCount) || 0,
+              totalSpent: Number(o.totalSpent) || 0,
+              topProduct: typeof o.topProduct === 'string' ? o.topProduct : '—',
+            });
+          }
+        }
+        const detail: GlobeOrderClusterDetail = {
+          clusterKey,
+          placeLine,
+          orderCount,
+          landmarkTitle,
+          landmarkSymbol,
+          customers,
+        };
+        setClusterDetail(detail);
+        onClusterDetail?.(detail);
+      }
     };
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
-  }, []);
+  }, [onClusterDetail]);
 
   useEffect(() => {
     if (!embedReady) return;
@@ -405,6 +584,15 @@ function AdminRevenueLiveGlobeIframeEmbed({
         </div>
       </div>
       {selected && <DetailModal selected={selected} onClose={() => setSelected(null)} />}
+      {clusterDetail && (
+        <ClusterDetailPanel
+          detail={clusterDetail}
+          onClose={() => {
+            setClusterDetail(null);
+            onClusterDetail?.(null);
+          }}
+        />
+      )}
     </>
   );
 }

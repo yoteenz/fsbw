@@ -71,13 +71,46 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 **Parent → iframe** (after ready):
 
 ```ts
-{ type: 'fsbw-admin-globe', points: Array<{ lat, lng, label, kind: 'visitor' | 'order' }> }
+{
+  type: 'fsbw-admin-globe',
+  points: Array<{
+    lat: number;
+    lng: number;
+    label: string;
+    kind: 'visitor' | 'order';
+    placeLine?: string;
+    placeDetail?: string;
+    /** Order clusters only — ship-to key + landmark + pillar height + per-email rollup */
+    clusterKey?: string;
+    orderCount?: number;
+    landmarkTitle?: string;
+    landmarkSymbol?: string;
+    orderTowerHeight?: number;
+    clusterCustomers?: Array<{ email: string; orderCount: number; totalSpent: number; topProduct: string }>;
+  }>;
+}
 ```
 
-**Iframe → parent** (user tapped a point on the WebGL globe):
+**Iframe → parent** (user tapped a **visitor** dot — order clusters use the landmark button instead):
 
 ```ts
 { type: 'fsbw-admin-globe-point', kind, label, lat, lng }
+```
+
+**Iframe → parent** (user tapped a **landmark** on an order cluster when zoomed in):
+
+```ts
+{
+  type: 'fsbw-admin-globe-cluster',
+  clusterKey, placeLine, orderCount, landmarkTitle, landmarkSymbol,
+  customers: Array<{ email, orderCount, totalSpent, topProduct }>,
+}
+```
+
+**Iframe → parent** (camera zoom — parent may clear cluster UI when zooming out):
+
+```ts
+{ type: 'fsbw-admin-globe-pov', clusterPanel: boolean }
 ```
 
 The parent only accepts messages where `event.source` is the iframe’s `contentWindow`.

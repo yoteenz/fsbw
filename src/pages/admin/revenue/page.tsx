@@ -29,13 +29,13 @@ import {
   patchOrderInUserOrders,
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
-import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePoint';
-import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
+import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
+import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
 import {
   adminGlobeMockDataEnabled,
   disableAdminGlobeMockDataSession,
   enableAdminGlobeMockDataSession,
-  mergeMockOrderGlobePoints,
+  mergeMockOrderGlobeClusters,
   mergeMockPresenceRows,
   mergeMockVisitorGlobePoints,
   persistGlobeMockFromBrowserLocation,
@@ -674,30 +674,14 @@ export default function AdminRevenue() {
   const [globeMockUiRev, setGlobeMockUiRev] = useState(0);
 
   const orderGlobePoints = useMemo(() => {
-    const out: Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }> = [];
-    const seen = new Set<string>();
-    for (const o of orders) {
-      const ship = o.shippingAddress;
-      if (!ship || typeof ship !== 'object') continue;
-      const pt = orderShippingToGlobePoint(ship as { city?: string; state?: string; country?: string });
-      if (!pt) continue;
-      const key = `${pt.lat.toFixed(2)}|${pt.lng.toFixed(2)}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      const num = (o.orderNumber || o.id || '').toString().replace(/^ORDER\s*#?\s*/i, '');
-      const fullLabel = `ORDER #${num || '—'} · ${pt.label}`;
-      const place = orderPlaceFieldsFromGlobeLabel(fullLabel);
-      out.push({
-        lat: pt.lat,
-        lng: pt.lng,
-        label: fullLabel,
-        placeLine: place.placeLine,
-        placeDetail: place.placeDetail,
-      });
-      if (out.length >= 80) break;
-    }
-    return mergeMockOrderGlobePoints(out);
+    const clusters = buildOrderGlobeClustersFromRevenueOrders(orders);
+    return mergeMockOrderGlobeClusters(clusters);
   }, [orders, globeMockUiRev]);
+
+  const orderGlobeOrderTotal = useMemo(
+    () => orderGlobePoints.reduce((sum, p) => sum + (p.orderCount ?? 1), 0),
+    [orderGlobePoints]
+  );
 
   const fetchLiveGlobe = useCallback(async () => {
     persistGlobeMockFromBrowserLocation();
@@ -1138,7 +1122,7 @@ export default function AdminRevenue() {
                         <span className="inline-flex items-center gap-1.5">
                           <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: '#16a34a' }} aria-hidden />
                           <span style={{ color: '#334155' }}>
-                            {orderGlobePoints.length} {orderGlobePoints.length === 1 ? 'order' : 'orders'}
+                            {orderGlobeOrderTotal} {orderGlobeOrderTotal === 1 ? 'order' : 'orders'}
                           </span>
                         </span>
                       </p>
