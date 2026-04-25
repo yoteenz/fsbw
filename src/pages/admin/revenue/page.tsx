@@ -36,6 +36,7 @@ import {
   mergeMockOrderGlobePoints,
   mergeMockPresenceRows,
   mergeMockVisitorGlobePoints,
+  persistGlobeMockFromSearchParams,
 } from '../../../utils/adminGlobeMockPresence';
 import {
   AdminOverviewAnalyticsCard,
@@ -724,8 +725,8 @@ export default function AdminRevenue() {
         )
       );
     } catch {
-      setLiveGlobeError('LIVE DATA UNAVAILABLE');
       if (adminGlobeMockDataEnabled()) {
+        setLiveGlobeError(null);
         const mergedPresence = mergeMockPresenceRows([]);
         setLiveVisitorsNow(mergedPresence.length);
         setLivePresenceVisitors(mergedPresence);
@@ -746,12 +747,19 @@ export default function AdminRevenue() {
           )
         );
       } else {
+        setLiveGlobeError('LIVE DATA UNAVAILABLE');
         setLiveVisitorsNow(0);
         setLiveVisitorGlobePoints([]);
         setLivePresenceVisitors([]);
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'OVERVIEW') return;
+    if (!persistGlobeMockFromSearchParams(searchParams)) return;
+    void fetchLiveGlobe();
+  }, [searchParams, activeTab, fetchLiveGlobe]);
 
   const liveViewCardMetrics = useMemo(() => {
     const visitors = livePresenceVisitors;

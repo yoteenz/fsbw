@@ -1,6 +1,10 @@
 /**
  * Optional **worldwide mock** visitors + orders for Admin Revenue globe / Live View QA.
- * Enable with **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** in `.env.local` **or** `localStorage.setItem('adminGlobeMockData','1')` (then refresh).
+ *
+ * Enable any one of:
+ * - **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** (or `true` / `yes`) in `.env.local` — rebuild dev / redeploy production.
+ * - **`localStorage`** or **`sessionStorage`** key **`adminGlobeMockData`** = **`1`**, **`true`**, **`yes`**, or **`on`** (refresh).
+ * - URL on Admin Revenue: **`?globe_mock=1`** (or **`true`**) — no persistence; works on production without env changes.
  */
 
 export type MockGlobeVisitorPoint = {
@@ -134,15 +138,38 @@ export const ADMIN_GLOBE_MOCK_ORDER_POINTS: MockGlobeOrderPoint[] = [
   },
 ];
 
+function isTruthyMockFlag(val: string | null | undefined): boolean {
+  const s = String(val ?? '').trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes' || s === 'on';
+}
+
+/**
+ * If `searchParams` includes **`globe_mock`** (truthy), persist **`sessionStorage.adminGlobeMockData=1`**
+ * so mock globe data works without `.env` or `localStorage`. Call from Admin Revenue when the query is present.
+ */
+export function persistGlobeMockFromSearchParams(searchParams: { get: (k: string) => string | null }): boolean {
+  if (!isTruthyMockFlag(searchParams.get('globe_mock'))) return false;
+  try {
+    if (typeof window !== 'undefined') window.sessionStorage.setItem('adminGlobeMockData', '1');
+  } catch {
+    /* ignore */
+  }
+  return true;
+}
+
 export function adminGlobeMockDataEnabled(): boolean {
   try {
     const env = (import.meta as unknown as { env?: { VITE_ADMIN_GLOBE_MOCK_DATA?: string } }).env?.VITE_ADMIN_GLOBE_MOCK_DATA;
-    if (String(env ?? '').trim() === '1') return true;
+    if (isTruthyMockFlag(String(env ?? '').trim())) return true;
   } catch {
     /* ignore */
   }
   try {
-    if (typeof window !== 'undefined' && window.localStorage?.getItem('adminGlobeMockData') === '1') return true;
+    if (typeof window === 'undefined') return false;
+    if (isTruthyMockFlag(window.localStorage?.getItem('adminGlobeMockData'))) return true;
+    if (isTruthyMockFlag(window.sessionStorage?.getItem('adminGlobeMockData'))) return true;
+    const q = new URLSearchParams(window.location.search).get('globe_mock');
+    if (isTruthyMockFlag(q)) return true;
   } catch {
     /* ignore */
   }

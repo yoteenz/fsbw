@@ -17279,3 +17279,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`cd embed/admin-globe && npm run build`** and root **`npm run build`** pass.
 
 **Deploy:** Redeploy **`embed/admin-globe`** and the **main storefront** so the iframe loads the new bundle.
+
+---
+
+## 2026-04-20 — Admin globe mock data: easier enable + URL toggle
+
+**Context:** User did **not see mock live data** on the globe — mock merge only ran when **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** or **`localStorage.adminGlobeMockData === '1'`** exactly; easy to miss on production; **`?globe_mock=1`** did nothing; **`catch`** path set error before checking mock so red banner could show even when mocks filled visitors.
+
+**Changes:**
+- **`src/utils/adminGlobeMockPresence.ts`:** **`adminGlobeMockDataEnabled()`** accepts env **`1` / `true` / `yes`**, **`localStorage` + `sessionStorage`** same values + **`on`**, and URL **`globe_mock`** query (same truthy set). Added **`persistGlobeMockFromSearchParams()`** — when **`globe_mock`** is truthy, sets **`sessionStorage.adminGlobeMockData=1`**.
+- **`src/pages/admin/revenue/page.tsx`:** On **OVERVIEW**, **`useEffect`** calls **`persistGlobeMockFromSearchParams`** then **`fetchLiveGlobe()`** when query applies. **`catch`**: if mock enabled, **`setLiveGlobeError(null)`** then load mock presence; else set unavailable error.
+- **`.env.example`**, **`docs/ADMIN_GLOBE_EMBED.md`** — document URL + sessionStorage + truthy env.
+
+**How to test:** Open **`/admin/revenue?tab=OVERVIEW&globe_mock=1`** (adjust tab query if your state hook uses different key) while signed in as admin — should show ~12 mock visitors + merged mock order dots without redeploying env.
+
+**Verification:** **`npm run build`** passes.

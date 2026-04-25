@@ -8,7 +8,11 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 **Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**).
 
-**Mock globe data (main app):** Set **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** in **`.env.local`** (rebuild) **or** in the browser console: **`localStorage.setItem('adminGlobeMockData','1')`** then refresh. Merges **`adminGlobeMockPresence.ts`** worldwide **visitor** + **order** dots and presence rows with real API data for Admin → Revenue globe + Live View card (counts include mocks).
+**Mock globe data (main app):** Merges **`adminGlobeMockPresence.ts`** worldwide **visitor** + **order** dots with real data on Admin → Revenue (globe + Live View card). Enable any one of:
+
+- **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** (or **`true`** / **`yes`**) in **`.env.local`** — rebuild dev / redeploy production.
+- **`localStorage`** or **`sessionStorage`** key **`adminGlobeMockData`** = **`1`**, **`true`**, **`yes`**, or **`on`** — refresh.
+- Open **Admin → Revenue** with **`?globe_mock=1`** (or **`true`**) in the URL — persists **`sessionStorage.adminGlobeMockData=1`** for that tab session (no env change; good for production QA).
 
 **Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`**, boundary utils, or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/*.geojson` (including **`ne_110m_admin_1_states_provinces_lines.geojson`**).
 
