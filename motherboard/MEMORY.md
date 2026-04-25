@@ -17588,3 +17588,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: empty-state typography; remove ship-to helper line
+
+**Context:** User asked to **reduce “NO CUSTOMER ROWS FOR THIS CLUSTER” by 2px**, make it **black** (not gray), and **remove** the gray line **“N order(s) at this ship-to · top spenders first”**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: empty-state **`fontSize` 10px → 8px**, **`color` `#000000`**; removed the **`9px` `#64748b`** ship-to / top spenders paragraph.
+
+**Deploy:** Redeploy **main**.

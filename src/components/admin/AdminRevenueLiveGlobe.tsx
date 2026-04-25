@@ -424,9 +424,6 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
               {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} · {detail.viewCount}{' '}
               view{detail.viewCount === 1 ? '' : 's'}
             </p>
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#64748b', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
-              {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} at this ship-to · top spenders first
-            </p>
           </div>
           <button
             type="button"
@@ -448,7 +445,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         </div>
         <div className="space-y-2 mt-2">
           {detail.customers.length === 0 ? (
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', margin: 0, textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#000000', margin: 0, textTransform: 'uppercase' }}>
               No customer rows for this cluster.
             </p>
           ) : (
