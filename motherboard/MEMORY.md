@@ -17672,3 +17672,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: orders/views under location (black); landmark title gray
+
+**Context:** User asked to move **`N ORDERS · M VIEWS`** **below** the red **location** line, make that line **black** (not red), and set the **landmark title** beside the postcard chip to **gray** (not black).
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: reordered blocks; orders/views **`color: #000000`**; landmark title **`#64748b`**.
+
+**Deploy:** Redeploy **main**.

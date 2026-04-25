@@ -432,6 +432,19 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               {detail.placeLine}
             </p>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#000000',
+                margin: '5px 0 0 0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} · {detail.viewCount}{' '}
+              view{detail.viewCount === 1 ? '' : 's'}
+            </p>
             <div className="flex items-center gap-2 mt-2 min-w-0">
               <span className="shrink-0 inline-flex">
                 <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
@@ -445,7 +458,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                     margin: 0,
                     paddingTop: 0,
                     lineHeight: 1.25,
-                    color: 'rgba(15, 23, 42, 0.92)',
+                    color: '#64748b',
                     textTransform: 'uppercase',
                   }}
                 >
@@ -453,19 +466,6 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                 </p>
               ) : null}
             </div>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '10px',
-                color: '#EB1C24',
-                margin: '6px 0 0 0',
-                textTransform: 'uppercase',
-                letterSpacing: '0.02em',
-              }}
-            >
-              {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} · {detail.viewCount}{' '}
-              view{detail.viewCount === 1 ? '' : 's'}
-            </p>
           </div>
           <button
             type="button"
