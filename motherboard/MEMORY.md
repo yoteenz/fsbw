@@ -17364,3 +17364,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** **`npm run build`** passes.
 
 **Deploy:** Redeploy **embed** project.
+
+---
+
+## 2026-04-20 — Admin globe: flat order dots + square cluster panel
+
+**Context (this chat):** User asked to replace **raised pillars** with a **single clickable dot** that **expands** (opens the breakdown), and to make the **holographic client panel** **square** by **reducing width**.
+
+**Changes:**
+- **`embed/admin-globe/src/main.ts`:** Orders use **fixed `pointAltitude`** (no tower height from payload). **Hex-bin jitter** for hotspot pillars uses **visitors only** so orders do not spawn extra merged-hex geometry. **Order clusters** open via **`onPointClick`** when **`clusterKey`** is set (same **`MSG_CLUSTER`** + recenter + **`clusterPanelHoldUntilLarge`** as before). Removed the **HTML landmark** overlay; **`reorderGlobeLabelsAboveHex`** only reorders **labels** above hex. Slightly **larger `pointRadius`** for clustered order dots.
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`:** **`ClusterDetailPanel`** is **`min(92vw, 260px)`** wide and tall (**square**), **`overflow-y: auto`** for long lists.
+- **`docs/ADMIN_GLOBE_EMBED.md`:** Describes flat order dots, visitor-only jitter, cluster from **point** tap.
+
+**Verification:** **`embed/admin-globe`** and root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

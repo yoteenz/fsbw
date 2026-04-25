@@ -2,13 +2,13 @@
 
 The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`**. It is deployed as a **second Vercel project** (same repo, root directory `embed/admin-globe`). The **main storefront** loads it in an **`<iframe>`** on **Admin → Revenue** only — **`three` never ships in the main app `vendor` bundle`**.
 
-**Look (embed):** Transparent page/canvas (iframe on marble). **Ocean base:** **`globeImageUrl`** = very light PNG + **`onGlobeReady`** sets **`globeMaterial()`** **`transparent`**, **`opacity ~0.28`**, **`depthWrite: false`** so marble shows through. **Continents:** **~38k** land samples with **weight `800`** → **H3 `hexBinMerge(true)`** = one **merged honeycomb mesh** (flat prism tops, mint→sky by bin center lat); **hotspot** bins use **weight 1** and **`sumWeight < 400`** for **taller** slate pillars. **Borders:** **`pathsData`** from **`ne_110m_admin_0_boundary_lines_land.geojson`** (countries) + **`ne_110m_admin_1_states_provinces_lines.geojson`** (states/provinces). Polylines are split into **short two-point rows**. **Visual:** borders sit **above** the merged land hex (**`pathPointAlt`** slightly higher than land **`hexAltitude`**, thicker **`pathStroke`**, high-contrast **slate gradient**) so country/state lines read clearly on top of the mesh. **`pathDashAnimateTime(0)`** — borders do not crawl. **No** land scattered **`points`** layer. **Atmosphere** = soft slate. **Red** visitors / **green** orders.
+**Look (embed):** Transparent page/canvas (iframe on marble). **Ocean base:** **`globeImageUrl`** = very light PNG + **`onGlobeReady`** sets **`globeMaterial()`** **`transparent`**, **`opacity ~0.28`**, **`depthWrite: false`** so marble shows through. **Continents:** **~38k** land samples with **weight `800`** → **H3 `hexBinMerge(true)`** = one **merged honeycomb mesh** (flat prism tops, mint→sky by bin center lat); **visitor** hotspots add **weight-1** jitter around **visitor dots only** (subtle slate pillars). **Order clusters** are **flat green dots** (same **`pointAltitude`** as visitors, slightly larger radius) — **no** extra hex jitter so they do not read as “raised pillars.” **Borders:** **`pathsData`** from **`ne_110m_admin_0_boundary_lines_land.geojson`** (countries) + **`ne_110m_admin_1_states_provinces_lines.geojson`** (states/provinces). Polylines are split into **short two-point rows**. **Visual:** borders sit **above** the merged land hex (**`pathPointAlt`** slightly higher than land **`hexAltitude`**, thicker **`pathStroke`**, high-contrast **slate gradient**) so country/state lines read clearly on top of the mesh. **`pathDashAnimateTime(0)`** — borders do not crawl. **Atmosphere** = soft slate. **Red** visitors / **green** orders.
 
 **Map labels (zoomed in):** When the orbit camera is **close** (distance / **`GLOBE_RADIUS`** − 1 ≤ **~1.15**), **`labelsData`** shows **`placeLine · placeDetail`** (single-line `TextGeometry` — no newline) from the iframe **`postMessage`** payload; **`reorderGlobeLabelsAboveHex()`** keeps the **labels** layer after **hex** so text is not buried. Zoom gating uses **`camera.position.length`** (reliable) not only **`pointOfView()`** timing.
 
 **Recenter (Tennessee, USA):** **Double-click** the globe (desktop) or **double-tap** quickly (mobile) → animates **`pointOfView`** to **~Nashville, TN** (`lat ~36.165`, `lng ~-86.783`, `altitude ~1.35` over **~900ms**).
 
-**Performance (many markers / mocks):** The embed expands each visitor/order into several **hex-bin** jitter samples for the tall “hotspot” pillars; more dots ⇒ more GPU work. Jitter count **scales down** as marker count grows, and the parent skips **`postMessage`** when the serialized payload is unchanged (avoids redundant hex rebuilds every 30s poll).
+**Performance (many markers / mocks):** Hex-bin jitter applies to **visitors** only; jitter count **scales down** with visitor count. The parent skips **`postMessage`** when the serialized payload is unchanged (avoids redundant hex rebuilds every 30s poll).
 
 **Mock globe data (main app):** Merges **`adminGlobeMockPresence.ts`** worldwide **visitor** + **order** dots with real data on Admin → Revenue (globe + Live View card). Enable any one of:
 
@@ -91,13 +91,13 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 }
 ```
 
-**Iframe → parent** (user tapped a **visitor** dot — order clusters use the landmark button instead):
+**Iframe → parent** (user tapped a **visitor** dot):
 
 ```ts
 { type: 'fsbw-admin-globe-point', kind, label, lat, lng }
 ```
 
-**Iframe → parent** (user tapped a **landmark** on an order cluster — **from any zoom**):
+**Iframe → parent** (user tapped an **order cluster dot** — **from any zoom**):
 
 ```ts
 {

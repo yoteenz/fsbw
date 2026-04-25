@@ -333,9 +333,12 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
       onClick={onClose}
     >
       <div
-        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 w-[min(92vw,320px)] max-h-[min(78vh,420px)] overflow-y-auto rounded border border-slate-400/60 p-3 shadow-2xl"
+        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 overflow-y-auto rounded border border-slate-400/60 p-3 shadow-2xl"
         style={{
           right: 'max(12px, env(safe-area-inset-right))',
+          width: 'min(92vw, 260px)',
+          height: 'min(92vw, 260px)',
+          maxHeight: 'min(92vw, 260px)',
           background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
