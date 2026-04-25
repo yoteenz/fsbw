@@ -70,7 +70,13 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 { type: 'fsbw-admin-globe-ready' }
 ```
 
-**Parent → iframe** (after ready):
+**Parent → iframe** (after ready) — **pause auto-rotate** while the order cluster panel is open (keeps the view steady on the tapped location):
+
+```ts
+{ type: 'fsbw-admin-globe-ui-cluster-panel', open: boolean }
+```
+
+**Parent → iframe** (after ready) — **points payload**:
 
 ```ts
 {

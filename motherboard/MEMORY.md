@@ -17433,3 +17433,19 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** **`npm run build`** passes.
 
 **Deploy:** Redeploy **embed**.
+
+---
+
+## 2026-04-21 — Cluster panel: pause globe spin, smaller panel, richer mock customers
+
+**Context:** User wanted the globe to **stay fixed** on the cluster location while the **client panel** is open (no **auto-rotate** until close); **shrink panel ~30%**; add **mock clients** to each mock cluster panel from existing mock data for realistic QA.
+
+**Changes:**
+- **`embed/admin-globe/src/main.ts`:** **`MSG_UI_CLUSTER_PANEL`** (`open: boolean`) from parent → iframe; **`setGlobeAutoRotateForClusterPanel`** sets **`controls().autoRotate = false`** when open and restores **`autoRotateWhenIdle`** when closed; **`activateOrderCluster`** also pauses spin immediately on tap. **`MSG_IN`** handler branches on message type.
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`:** **`useEffect`** posts **`MSG_UI_CLUSTER_PANEL`** when **`clusterDetail`** / **`embedReady`** changes; **`ClusterDetailPanel`** size **260 → 182px** (~30% smaller); badge scaled slightly.
+- **`src/utils/adminGlobeMockPresence.ts`:** **`ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL`** from **`ADMIN_GLOBE_MOCK_PRESENCE_ROWS`**; **`augmentMockClusterCustomers`** merges **4–6** spenders per mock cluster, sorts by spend, adjusts top row **`orderCount`** so totals match **`orderCount`** for single-order mocks.
+- **`docs/ADMIN_GLOBE_EMBED.md`:** Parent → iframe **`fsbw-admin-globe-ui-cluster-panel`** documented.
+
+**Verification:** Root + **`embed/admin-globe`** **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main** (both changed).

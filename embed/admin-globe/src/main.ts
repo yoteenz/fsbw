@@ -60,6 +60,8 @@ const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_CLUSTER = 'fsbw-admin-globe-cluster';
 const MSG_POV = 'fsbw-admin-globe-pov';
 const MSG_READY = 'fsbw-admin-globe-ready';
+/** Parent → iframe: pause globe auto-rotate while order cluster panel is open. */
+const MSG_UI_CLUSTER_PANEL = 'fsbw-admin-globe-ui-cluster-panel';
 
 /** Double-tap / double-click recenters on **Tennessee, USA** (Nashville area). */
 const HOME_LAT = 36.165;
@@ -401,9 +403,25 @@ function enableCss2dLandmarkPointerHitThrough(): void {
   }
 }
 
+let autoRotateWhenIdle = true;
+
+function setGlobeAutoRotateForClusterPanel(open: boolean): void {
+  try {
+    const c = globe.controls();
+    if (open) {
+      c.autoRotate = false;
+    } else {
+      c.autoRotate = autoRotateWhenIdle;
+    }
+  } catch {
+    /* optional */
+  }
+}
+
 function activateOrderCluster(row: PointRow): void {
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
+  setGlobeAutoRotateForClusterPanel(true);
   target.postMessage(
     {
       type: MSG_CLUSTER,
@@ -790,6 +808,7 @@ root.addEventListener('dblclick', () => {
 
 try {
   const c = globe.controls();
+  autoRotateWhenIdle = true;
   c.autoRotate = true;
   c.autoRotateSpeed = 0.3;
   c.enableDamping = true;
@@ -896,7 +915,12 @@ ro.observe(root);
 window.addEventListener('message', (event: MessageEvent) => {
   if (event.source !== window.parent) return;
   const d = event.data;
-  if (!d || typeof d !== 'object' || d.type !== MSG_IN) return;
+  if (!d || typeof d !== 'object') return;
+  if (d.type === MSG_UI_CLUSTER_PANEL) {
+    setGlobeAutoRotateForClusterPanel(Boolean(d.open));
+    return;
+  }
+  if (d.type !== MSG_IN) return;
   const rows = d.points as unknown;
   if (!Array.isArray(rows)) return;
   const cleaned: PointRow[] = [];

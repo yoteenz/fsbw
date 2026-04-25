@@ -7,7 +7,7 @@
  * - URL on Admin Revenue: **`?globe_mock=1`** (or **`true`**) — no persistence; works on production without env changes.
  */
 
-import type { OrderGlobeClusterPoint } from './adminOrderGlobeClusters';
+import type { OrderGlobeClusterCustomer, OrderGlobeClusterPoint } from './adminOrderGlobeClusters';
 import { landmarkForShipKey } from './adminOrderGlobeClusters';
 
 export type MockGlobeVisitorPoint = {
@@ -66,6 +66,60 @@ function visitorPointFromRow(v: MockPresenceVisitorRow): MockGlobeVisitorPoint {
 
 export const ADMIN_GLOBE_MOCK_VISITOR_POINTS: MockGlobeVisitorPoint[] =
   ADMIN_GLOBE_MOCK_PRESENCE_ROWS.map(visitorPointFromRow);
+
+/**
+ * Shared mock **spenders** for order-cluster panels (derived from mock presence cities so QA looks realistic).
+ * Merged into each mock cluster when **`adminGlobeMockDataEnabled()`**.
+ */
+export const ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL: OrderGlobeClusterCustomer[] = ADMIN_GLOBE_MOCK_PRESENCE_ROWS.map(
+  (row, i) => ({
+    email: `shopper.${String(row.city ?? 'global')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '')}.${i}@mock.globe`,
+    orderCount: 1 + (i % 4),
+    totalSpent: 520 + i * 240 + (i % 3) * 110,
+    topProduct: (['NOIR', 'BLANCO', 'SOFT CURL', 'OCEAN CURL', 'BEACH WAVE', 'NATURAL STRAIGHT'] as const)[i % 6]!,
+  })
+);
+
+function augmentMockClusterCustomers(
+  placeLine: string,
+  orderCount: number,
+  existing: OrderGlobeClusterCustomer[]
+): OrderGlobeClusterCustomer[] {
+  const slug = placeLine
+    .replace(/[^a-z0-9]+/gi, '-')
+    .toLowerCase()
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 28);
+  const merged: OrderGlobeClusterCustomer[] = existing.map((c) => ({ ...c }));
+  const seen = new Set(merged.map((c) => c.email.toLowerCase()));
+  let pi = 0;
+  const target = Math.max(4, Math.min(6, merged.length + 3));
+  while (merged.length < target && pi < ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL.length) {
+    const p = ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL[pi]!;
+    pi += 1;
+    const email = `${slug || 'cluster'}.${p.email}`;
+    if (seen.has(email.toLowerCase())) continue;
+    merged.push({
+      ...p,
+      email,
+      orderCount: Math.max(1, p.orderCount),
+      totalSpent: Math.max(199, p.totalSpent - pi * 17),
+    });
+    seen.add(email.toLowerCase());
+  }
+  merged.sort((a, b) => b.totalSpent - a.totalSpent);
+  if (orderCount > 0 && merged[0]) {
+    const head = merged[0];
+    const rest = merged.slice(1);
+    const sumRest = rest.reduce((s, c) => s + c.orderCount, 0);
+    const headOrders = Math.max(1, orderCount - sumRest);
+    merged.length = 0;
+    merged.push({ ...head, orderCount: headOrders }, ...rest);
+  }
+  return merged;
+}
 
 /** ~10 mock order ship locations (distinct from visitor cities where possible). */
 export const ADMIN_GLOBE_MOCK_ORDER_POINTS: MockGlobeOrderPoint[] = [
@@ -144,6 +198,14 @@ export const ADMIN_GLOBE_MOCK_ORDER_POINTS: MockGlobeOrderPoint[] = [
 function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPoint {
   const key = p.placeLine.toUpperCase().replace(/\s+/g, ' ');
   const lm = landmarkForShipKey(key, p.placeLine);
+  const base: OrderGlobeClusterCustomer[] = [
+    {
+      email: 'mock.customer@example.com',
+      orderCount: 1,
+      totalSpent: 899,
+      topProduct: 'NOIR',
+    },
+  ];
   return {
     lat: p.lat,
     lng: p.lng,
@@ -155,14 +217,7 @@ function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPo
     landmarkTitle: lm.title,
     landmarkSymbol: lm.symbol,
     towerHeight: 0.038,
-    customers: [
-      {
-        email: 'mock.customer@example.com',
-        orderCount: 1,
-        totalSpent: 899,
-        topProduct: 'NOIR',
-      },
-    ],
+    customers: augmentMockClusterCustomers(p.placeLine, 1, base),
   };
 }
 
@@ -181,11 +236,11 @@ function mockNycOrderCluster(): OrderGlobeClusterPoint {
     landmarkTitle: lm.title,
     landmarkSymbol: lm.symbol,
     towerHeight: 0.042 + Math.min(0.14, 13 * 0.012),
-    customers: [
+    customers: augmentMockClusterCustomers(placeLine, 14, [
       { email: 'vip.nyc@example.com', orderCount: 6, totalSpent: 12540, topProduct: 'NOIR' },
       { email: 'repeat.nyc@example.com', orderCount: 5, totalSpent: 4820, topProduct: 'BLANCO' },
       { email: 'new.nyc@example.com', orderCount: 3, totalSpent: 2199, topProduct: 'SOFT CURL' },
-    ],
+    ]),
   };
 }
 

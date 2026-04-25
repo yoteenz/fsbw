@@ -13,6 +13,8 @@ const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_CLUSTER = 'fsbw-admin-globe-cluster';
 const MSG_POV = 'fsbw-admin-globe-pov';
 const MSG_READY = 'fsbw-admin-globe-ready';
+/** Parent → iframe: pause auto-rotate while cluster panel is open. */
+const MSG_UI_CLUSTER_PANEL = 'fsbw-admin-globe-ui-cluster-panel';
 
 export type GlobeClusterCustomerRow = {
   email: string;
@@ -297,8 +299,8 @@ function ClusterLandmarkMeshBadge({ symbol }: { symbol: string }) {
       aria-hidden
       className="shrink-0 inline-flex items-center justify-center overflow-hidden rounded-[11px]"
       style={{
-        width: 40,
-        height: 40,
+        width: 34,
+        height: 34,
         background: 'linear-gradient(145deg, rgba(110,231,183,0.28) 0%, rgba(125,211,252,0.22) 45%, rgba(148,163,184,0.18) 100%)',
         border: '1.2px solid rgba(255,255,255,0.45)',
         boxShadow: '0 0 0 1px rgba(15,23,42,0.06) inset, 0 1px 0 rgba(255,255,255,0.4) inset, 0 6px 16px rgba(15,23,42,0.12)',
@@ -320,7 +322,7 @@ function ClusterLandmarkMeshBadge({ symbol }: { symbol: string }) {
       <span
         className="relative z-[1]"
         style={{
-          fontSize: 22,
+          fontSize: 19,
           lineHeight: 1,
           opacity: 0.9,
           filter: 'saturate(1.12) contrast(1.06) brightness(1.04) drop-shadow(0 0 8px rgba(56,189,248,0.45)) drop-shadow(0 2px 3px rgba(15,23,42,0.25))',
@@ -349,9 +351,9 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         className="pointer-events-auto absolute top-1/2 -translate-y-1/2 overflow-y-auto rounded border border-slate-400/60 p-3 shadow-2xl"
         style={{
           right: 'max(12px, env(safe-area-inset-right))',
-          width: 'min(92vw, 260px)',
-          height: 'min(92vw, 260px)',
-          maxHeight: 'min(92vw, 260px)',
+          width: 'min(92vw, 182px)',
+          height: 'min(92vw, 182px)',
+          maxHeight: 'min(92vw, 182px)',
           background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -509,6 +511,16 @@ function AdminRevenueLiveGlobeIframeEmbed({
       }),
     ];
   }, [visitorPoints, orderPoints]);
+
+  useEffect(() => {
+    const win = iframeRef.current?.contentWindow;
+    if (!win || !embedReady) return;
+    try {
+      win.postMessage({ type: MSG_UI_CLUSTER_PANEL, open: Boolean(clusterDetail) }, '*');
+    } catch {
+      /* ignore */
+    }
+  }, [clusterDetail, embedReady]);
 
   useEffect(() => {
     const onMsg = (ev: MessageEvent) => {
