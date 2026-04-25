@@ -67,6 +67,8 @@ const HOME_LNG = -86.783;
 const HOME_ALTITUDE = 1.35;
 const RECENTER_MS = 900;
 const DOUBLE_TAP_MS = 420;
+/** After tapping a **landmark**, animate here so labels + holographic panel band is active (`large` zoom). */
+const CLUSTER_FOCUS_ALTITUDE = 0.38;
 
 /**
  * `globe.pointOfView().altitude` = camera distance / **GLOBE_RADIUS** − 1 (three-globe), but zoom events
@@ -418,6 +420,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     ev.preventDefault();
     const target = window.parent && window.parent !== window ? window.parent : null;
     if (!target) return;
+    /** Open panel immediately, then recenter so user sees city + breakdown together. */
     target.postMessage(
       {
         type: MSG_CLUSTER,
@@ -430,6 +433,22 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       },
       '*'
     );
+    lastClusterPanelZoom = true;
+    clusterPanelHoldUntilLarge = true;
+    if (clusterPanelHoldTimer) clearTimeout(clusterPanelHoldTimer);
+    clusterPanelHoldTimer = setTimeout(() => {
+      clusterPanelHoldTimer = null;
+      clusterPanelHoldUntilLarge = false;
+    }, 3200);
+    try {
+      globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
+    } catch {
+      /* optional */
+    }
+    requestAnimationFrame(() => {
+      updateMapLabelsFromCamera();
+      reorderGlobeLabelsAboveHex();
+    });
   });
   return wrap;
 }
@@ -467,7 +486,21 @@ function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmar
 }
 
 let lastClusterPanelZoom = false;
+/** While animating to a cluster after landmark tap, do not send **`clusterPanel: false`** (would close the panel mid-zoom). */
+let clusterPanelHoldUntilLarge = false;
+let clusterPanelHoldTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearClusterPanelHold(): void {
+  clusterPanelHoldUntilLarge = false;
+  if (clusterPanelHoldTimer) {
+    clearTimeout(clusterPanelHoldTimer);
+    clusterPanelHoldTimer = null;
+  }
+}
+
 function notifyParentClusterZoom(clusterPanel: boolean): void {
+  if (!clusterPanel && clusterPanelHoldUntilLarge) return;
+  if (clusterPanel && clusterPanelHoldUntilLarge) clearClusterPanelHold();
   if (clusterPanel === lastClusterPanelZoom) return;
   lastClusterPanelZoom = clusterPanel;
   const target = window.parent && window.parent !== window ? window.parent : null;
@@ -604,6 +637,7 @@ function recenterOnTennessee() {
   const now = Date.now();
   if (now - lastRecenterAt < 650) return;
   lastRecenterAt = now;
+  clearClusterPanelHold();
   try {
     globe.pointOfView({ lat: HOME_LAT, lng: HOME_LNG, altitude: HOME_ALTITUDE }, RECENTER_MS);
   } catch {

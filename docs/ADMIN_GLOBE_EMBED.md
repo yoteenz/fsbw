@@ -97,7 +97,7 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 { type: 'fsbw-admin-globe-point', kind, label, lat, lng }
 ```
 
-**Iframe → parent** (user tapped a **landmark** on an order cluster when zoomed in):
+**Iframe → parent** (user tapped a **landmark** on an order cluster — **from any zoom**):
 
 ```ts
 {
@@ -106,6 +106,8 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
   customers: Array<{ email, orderCount, totalSpent, topProduct }>,
 }
 ```
+
+The embed then **animates `pointOfView`** to that cluster’s **lat/lng** at a **close altitude** (~`0.38`) so the city is centered and the holographic panel (parent) stays open while zooming. While that animation runs, **`fsbw-admin-globe-pov` with `clusterPanel: false`** is **suppressed** briefly so the parent does not clear the panel mid-flight.
 
 **Iframe → parent** (camera zoom — parent may clear cluster UI when zooming out):
 

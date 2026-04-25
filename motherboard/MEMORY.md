@@ -17352,3 +17352,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`src/pages/admin/revenue/page.tsx`** — dropped **`valueRed: false`** on those four **`AdminOverviewMetricRows`** entries.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-21 — Landmark tap: recenter on cluster + panel stays open during zoom
+
+**Context:** Tapping a **landmark** should **recenter on that city** with the **holographic client panel** already showing; mid-zoom **`MSG_POV` false** was closing the panel.
+
+**Change:** **`embed/admin-globe/src/main.ts`** — on landmark click: **`MSG_CLUSTER`** then **`pointOfView({ lat, lng, altitude: 0.38 }, RECENTER_MS)`**; **`clusterPanelHoldUntilLarge`** suppresses **`notifyParentClusterZoom(false)`** until close zoom or **3.2s** timeout; **double-tap home** clears hold. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`embed/admin-globe`** **`npm run build`** passes.
+
+**Deploy:** Redeploy **embed** project.
