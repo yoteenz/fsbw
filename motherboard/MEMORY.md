@@ -17255,3 +17255,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`cd embed/admin-globe && npm run build`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-24 — Admin Reviews overview: shop/tools analytics cards
+
+**Context:** User asked to **structure** Admin → **Reviews** **OVERVIEW** **shop/tools** data like **Pending**, **Revenue**, and **Meetings** overview tabs.
+
+**Changes:** **`src/pages/admin/reviews/page.tsx`** — import **`AdminOverviewAnalyticsCard`** + **`AdminOverviewMetricRows`**; **`scopeOverviewMetricRows()`** maps **`ScopeOverviewMetrics`** to row list (totals, published/pending, photos/videos %, verified %, then **5 STAR** … **1 STAR** with count + %); **`OverviewAnalyticsPanel`** renders **`space-y-3`**: intro line (Futura Book gray) + **SHOP REVIEWS** card + **TOOLS REVIEWS** card (replaces grid + bar chart UI). Removed unused **`CSSProperties`** import.
+
+**Verification:** **`npm run build`** passes.
