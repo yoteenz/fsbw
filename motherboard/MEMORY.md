@@ -17559,3 +17559,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: panel **`transform`** from **`translateY(calc(-50% + 10px))`** to **`translateY(calc(-50% + 8px))`** (−2px); close button **`transform: translateY(-5px)`** (does not affect **`DetailModal`**).
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Admin globe/cluster UI: uppercase copy + smaller red orders line
+
+**Context:** User asked to **reduce the red “ORDERS · …” cluster header by 2px**, make **landmark title next to the postcard** and **“No customer rows…”** **uppercase**, and align **lowercase globe-related UI** with project **uppercase label** guidelines.
+
+**Changes:**
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: red header **`fontSize` 10px → 8px**; landmark title **`textTransform: 'uppercase'`**; empty state + **customer email** uppercase; **`DetailModal`** label + coords uppercase; **SVG fallback** map label primary line uppercase.
+- **`embed/admin-globe/src/main.ts`** — **`displayUpper()`** (`toLocaleUpperCase('en-US')`) for **3D map labels**, **landmark `title`**, **`MSG_CLUSTER`** **`placeLine` / `landmarkTitle`** + **`topProduct`** on customers, **`MSG_POINT`** **`label`**.
+
+**Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
+
+**Deploy:** Redeploy **main** and **embed/admin-globe**.

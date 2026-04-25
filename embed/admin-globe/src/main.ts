@@ -6,6 +6,11 @@ import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
+/** Admin UI copy: match storefront uppercase label style (Futura + all-caps). */
+function displayUpper(s: string): string {
+  return s.trim().toLocaleUpperCase('en-US');
+}
+
 /** Land cells use this weight so `hexAltitude` / colors can tell land from hotspot bins (weight 1–24). */
 const LAND_HEX_WEIGHT = 800;
 const LAND_HEX_WEIGHT_THRESHOLD = 400;
@@ -461,15 +466,19 @@ function activateOrderCluster(row: PointRow): void {
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   setGlobeAutoRotateForClusterPanel(true);
+  const customersUpper = (row.clusterCustomers ?? []).map((c) => ({
+    ...c,
+    topProduct: displayUpper(c.topProduct || '—'),
+  }));
   target.postMessage(
     {
       type: MSG_CLUSTER,
       clusterKey: row.clusterKey ?? '',
-      placeLine: row.placeLine ?? '',
+      placeLine: displayUpper(row.placeLine ?? ''),
       orderCount: row.orderCount ?? 0,
-      landmarkTitle: row.landmarkTitle ?? '',
+      landmarkTitle: displayUpper(row.landmarkTitle ?? ''),
       landmarkSymbol: row.landmarkSymbol ?? '',
-      customers: row.clusterCustomers ?? [],
+      customers: customersUpper,
     },
     '*'
   );
@@ -505,10 +514,10 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   wrap.type = 'button';
   wrap.setAttribute('data-fsbw-landmark', '1');
   const sym = row.landmarkSymbol || '📍';
-  const title = row.landmarkTitle || 'Orders';
+  const title = displayUpper(row.landmarkTitle || 'ORDERS');
   const n = row.orderCount ?? 1;
   const tilt = postcardTiltDeg(row.clusterKey);
-  wrap.title = `${title} · ${n} order${n === 1 ? '' : 's'} — tap for breakdown`;
+  wrap.title = `${title} · ${n} ORDER${n === 1 ? '' : 'S'} — TAP FOR BREAKDOWN`;
   wrap.setAttribute(
     'style',
     [
@@ -616,9 +625,9 @@ function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmar
 function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabelRow[] {
   const out: MapLabelRow[] = [];
   for (const r of rows) {
-    const line = (r.placeLine ?? '').trim();
+    const line = displayUpper(r.placeLine ?? '');
     if (!line) continue;
-    const detail = (r.placeDetail ?? '').trim();
+    const detail = displayUpper(r.placeDetail ?? '');
     /** `TextGeometry` does not render newline — use a single-line separator. */
     const text = detail ? `${line} · ${detail}` : line;
     out.push({
@@ -917,7 +926,7 @@ globe.onPointClick((p: object) => {
     {
       type: MSG_POINT,
       kind: pr.kind,
-      label: pr.label,
+      label: displayUpper(pr.label),
       lat: pr.lat,
       lng: pr.lng,
     },

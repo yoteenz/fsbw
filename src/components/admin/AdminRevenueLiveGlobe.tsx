@@ -386,7 +386,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
       >
         <div className="flex justify-between items-start gap-2 mb-2">
           <div>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               Orders · {detail.placeLine}
             </p>
             <div className="flex items-start gap-2 mt-2">
@@ -400,7 +400,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                     paddingTop: 2,
                     lineHeight: 1.25,
                     color: 'rgba(15, 23, 42, 0.92)',
-                    textTransform: 'none',
+                    textTransform: 'uppercase',
                   }}
                 >
                   {detail.landmarkTitle}
@@ -431,7 +431,9 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         </div>
         <div className="space-y-2 mt-2">
           {detail.customers.length === 0 ? (
-            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', margin: 0 }}>No customer rows for this cluster.</p>
+            <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', margin: 0, textTransform: 'uppercase' }}>
+              No customer rows for this cluster.
+            </p>
           ) : (
             detail.customers.map((c) => (
               <div
@@ -439,7 +441,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                 className="border px-2 py-2"
                 style={{ background: 'rgba(255,255,255,0.35)', borderColor: '#e5e7eb', borderRadius: 0 }}
               >
-                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#0f172a', margin: 0, wordBreak: 'break-all', textTransform: 'none' }}>
+                <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#0f172a', margin: 0, wordBreak: 'break-all', textTransform: 'uppercase' }}>
                   {c.email}
                 </p>
                 <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#475569', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
@@ -478,10 +480,18 @@ function DetailModal({ selected, onClose }: { selected: LiveGlobePoint; onClose:
             ✕
           </button>
         </div>
-        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#334155', lineHeight: 1.45, textTransform: 'none' }}>
+        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#334155', lineHeight: 1.45, textTransform: 'uppercase' }}>
           {selected.label}
         </p>
-        <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#94a3b8', marginTop: '8px' }}>
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '9px',
+            color: '#94a3b8',
+            marginTop: '8px',
+            textTransform: 'uppercase',
+          }}
+        >
           {selected.lat.toFixed(2)}°, {selected.lng.toFixed(2)}°
         </p>
       </div>
@@ -925,7 +935,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                           fontSize: '9px',
                           lineHeight: 1.25,
                           color: '#0f172a',
-                          textTransform: 'none',
+                          textTransform: 'uppercase',
                           textShadow: '0 0 4px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.85)',
                         }}
                       >
