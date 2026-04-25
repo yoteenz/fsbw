@@ -17405,3 +17405,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-21 — Landmark emoji taps fixed (CSS2D overlay pointer-events)
+
+**Context:** User reported **tapping landmark emojis did nothing** — no recenter, no client panel.
+
+**Root cause:** **`three-render-objects`** appends the **CSS2DRenderer** `domElement` with **`style.pointerEvents = 'none'`**, so pointer events hit the **WebGL canvas** (orbit controls) instead of the landmark **HTML** layer.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`enableCss2dLandmarkPointerHitThrough()`** sets the CSS2D overlay sibling to **`pointer-events: auto`** after **`onGlobeReady`**, **`applySize`**, and **`updateMapLabelsFromCamera`**; **`activateOrderCluster(row)`** centralizes **`MSG_CLUSTER`** + hold + **`pointOfView`**; landmark uses **`pointerup`** (left button); **`onPointClick`** on **green order dots** calls **`activateOrderCluster`** again as fallback. **`docs/ADMIN_GLOBE_EMBED.md`** note.
+
+**Verification:** **`embed/admin-globe`** **`npm run build`** passes.
+
+**Deploy:** Redeploy **embed** (main unchanged for this fix unless bundling docs only).

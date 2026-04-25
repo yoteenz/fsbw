@@ -380,6 +380,60 @@ function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
   return rows.filter((r) => r.kind === 'order' && r.clusterKey && (r.landmarkSymbol || (r.orderCount ?? 0) > 0));
 }
 
+/**
+ * `three-render-objects` sets the **CSS2DRenderer** overlay to **`pointer-events: none`**, so taps
+ * pass through to the WebGL canvas (orbit drag) and **never** reach landmark `<button>`s.
+ * Enable hit-testing on the overlay div that sits beside the canvas.
+ */
+function enableCss2dLandmarkPointerHitThrough(): void {
+  try {
+    const canvas = globe.renderer()?.domElement as HTMLElement | undefined;
+    const container = canvas?.parentElement;
+    if (!canvas || !container) return;
+    for (let i = 0; i < container.children.length; i++) {
+      const el = container.children[i] as HTMLElement | undefined;
+      if (!el || el === canvas) continue;
+      if (el.tagName === 'CANVAS') continue;
+      el.style.pointerEvents = 'auto';
+    }
+  } catch {
+    /* optional */
+  }
+}
+
+function activateOrderCluster(row: PointRow): void {
+  const target = window.parent && window.parent !== window ? window.parent : null;
+  if (!target) return;
+  target.postMessage(
+    {
+      type: MSG_CLUSTER,
+      clusterKey: row.clusterKey ?? '',
+      placeLine: row.placeLine ?? '',
+      orderCount: row.orderCount ?? 0,
+      landmarkTitle: row.landmarkTitle ?? '',
+      landmarkSymbol: row.landmarkSymbol ?? '',
+      customers: row.clusterCustomers ?? [],
+    },
+    '*'
+  );
+  lastClusterPanelZoom = true;
+  clusterPanelHoldUntilLarge = true;
+  if (clusterPanelHoldTimer) clearTimeout(clusterPanelHoldTimer);
+  clusterPanelHoldTimer = setTimeout(() => {
+    clusterPanelHoldTimer = null;
+    clusterPanelHoldUntilLarge = false;
+  }, 3200);
+  try {
+    globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
+  } catch {
+    /* optional */
+  }
+  requestAnimationFrame(() => {
+    updateMapLabelsFromCamera();
+    reorderGlobeLabelsAboveHex();
+  });
+}
+
 /** Holographic mesh-style landmark chip (not flat “photo” emoji). */
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
@@ -455,39 +509,11 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   shell.appendChild(face);
   wrap.appendChild(shell);
 
-  wrap.addEventListener('click', (ev) => {
+  wrap.addEventListener('pointerup', (ev: PointerEvent) => {
+    if (ev.button !== 0) return;
     ev.stopPropagation();
     ev.preventDefault();
-    const target = window.parent && window.parent !== window ? window.parent : null;
-    if (!target) return;
-    target.postMessage(
-      {
-        type: MSG_CLUSTER,
-        clusterKey: row.clusterKey ?? '',
-        placeLine: row.placeLine ?? '',
-        orderCount: row.orderCount ?? 0,
-        landmarkTitle: row.landmarkTitle ?? '',
-        landmarkSymbol: row.landmarkSymbol ?? '',
-        customers: row.clusterCustomers ?? [],
-      },
-      '*'
-    );
-    lastClusterPanelZoom = true;
-    clusterPanelHoldUntilLarge = true;
-    if (clusterPanelHoldTimer) clearTimeout(clusterPanelHoldTimer);
-    clusterPanelHoldTimer = setTimeout(() => {
-      clusterPanelHoldTimer = null;
-      clusterPanelHoldUntilLarge = false;
-    }, 3200);
-    try {
-      globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
-    } catch {
-      /* optional */
-    }
-    requestAnimationFrame(() => {
-      updateMapLabelsFromCamera();
-      reorderGlobeLabelsAboveHex();
-    });
+    activateOrderCluster(row);
   });
   return wrap;
 }
@@ -557,6 +583,7 @@ function updateMapLabelsFromCamera() {
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
   globe.htmlElementsData(htmlLandmarkRowsForCamera(lastRows, show));
+  requestAnimationFrame(() => enableCss2dLandmarkPointerHitThrough());
   /** Parent shows order cluster sheet only when zoomed in this close (same band as “large” labels). */
   notifyParentClusterZoom(large);
 }
@@ -665,6 +692,7 @@ const globe = new Globe(root, {
     }
     reorderGlobeLabelsAboveHex();
     requestAnimationFrame(() => reorderGlobeLabelsAboveHex());
+    enableCss2dLandmarkPointerHitThrough();
     updateMapLabelsFromCamera();
   });
 
@@ -735,6 +763,7 @@ try {
 function applySize() {
   const { w, h } = readSize();
   globe.width(w).height(h);
+  requestAnimationFrame(() => enableCss2dLandmarkPointerHitThrough());
 }
 applySize();
 requestAnimationFrame(() => {
@@ -744,8 +773,10 @@ requestAnimationFrame(() => {
 
 globe.onPointClick((p: object) => {
   const pr = p as PointRow;
-  /** HTML landmark chip handles order-cluster tap + recenter. */
-  if (pr.kind === 'order' && pr.clusterKey) return;
+  if (pr.kind === 'order' && pr.clusterKey) {
+    activateOrderCluster(pr);
+    return;
+  }
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   target.postMessage(
