@@ -36,6 +36,96 @@ const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/Admin
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
+/** Same shell as Admin → Meetings overview analytics cards (`AdminMeetingsHub`). */
+function AdminRevenueOverviewCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
+      <div style={{ paddingLeft: '4px', paddingRight: '4px' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>{title}</p>
+        <div style={{ marginTop: '8px' }}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function AdminRevenueMetricRows({
+  rows,
+}: {
+  rows: Array<{ label: string; value: string; valueRed?: boolean }>;
+}) {
+  return (
+    <>
+      {rows.map((row, idx) => (
+        <div
+          key={row.label}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '12px 0',
+            borderBottom: idx < rows.length - 1 ? '1px solid #e5e7eb' : undefined,
+          }}
+        >
+          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+            {row.label}
+          </span>
+          <span
+            style={{
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '9px',
+              color: row.valueRed === false ? '#334155' : '#EB1C24',
+              flexShrink: 0,
+              textTransform: 'uppercase',
+              textAlign: 'right',
+              maxWidth: '58%',
+              wordBreak: 'break-word',
+            }}
+          >
+            {row.value}
+          </span>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function segmentVisitorPath(path: string | null | undefined): string {
+  const p = String(path ?? '').trim();
+  if (!p) return '—';
+  try {
+    if (p.startsWith('http://') || p.startsWith('https://')) {
+      const u = new URL(p);
+      const seg = (u.pathname || '/').replace(/\/$/, '') || '/';
+      return seg.length > 44 ? `${seg.slice(0, 44)}…` : seg;
+    }
+  } catch {
+    /* ignore */
+  }
+  return p.length > 48 ? `${p.slice(0, 48)}…` : p;
+}
+
+function topCounts(
+  items: string[],
+  max: number
+): Array<{ label: string; count: number }> {
+  const m = new Map<string, number>();
+  for (const raw of items) {
+    const k = String(raw ?? '').trim() || '—';
+    m.set(k, (m.get(k) ?? 0) + 1);
+  }
+  return [...m.entries()]
+    .map(([label, count]) => ({ label, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, max);
+}
+
 function getProductImage(productName: string): string {
   switch ((productName || '').toUpperCase()) {
     case 'BLANCO': return '/assets/2D BLANCO FRONT.png';
@@ -612,6 +702,18 @@ export default function AdminRevenue() {
   const [liveVisitorGlobePoints, setLiveVisitorGlobePoints] = useState<
     Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }>
   >([]);
+  /** Raw rows for Live View card (paths, geo aggregation). */
+  const [livePresenceVisitors, setLivePresenceVisitors] = useState<
+    Array<{
+      visitor_id: string;
+      lat: number;
+      lng: number;
+      path: string | null;
+      city?: string;
+      region?: string;
+      country?: string;
+    }>
+  >([]);
   const [liveGlobeError, setLiveGlobeError] = useState<string | null>(null);
 
   const orderGlobePoints = useMemo(() => {
@@ -648,10 +750,12 @@ export default function AdminRevenue() {
       if (!u?.email || !isAdminEmail(u.email)) {
         setLiveVisitorsNow(0);
         setLiveVisitorGlobePoints([]);
+        setLivePresenceVisitors([]);
         return;
       }
       const data = await getAdminLivePresence();
       setLiveVisitorsNow(data.visitorsNow);
+      setLivePresenceVisitors(data.visitors || []);
       setLiveVisitorGlobePoints(
         (data.visitors || []).map((v) => {
           const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
@@ -670,8 +774,37 @@ export default function AdminRevenue() {
       setLiveGlobeError('LIVE DATA UNAVAILABLE');
       setLiveVisitorsNow(0);
       setLiveVisitorGlobePoints([]);
+      setLivePresenceVisitors([]);
     }
   }, []);
+
+  const liveViewCardMetrics = useMemo(() => {
+    const visitors = livePresenceVisitors;
+    const orderLocKeys = orderGlobePoints.map((p) => (p.placeLine || '').trim()).filter(Boolean);
+    const visitorLocKeys = liveVisitorGlobePoints.map((p) => (p.placeLine || '').trim()).filter(Boolean);
+    const pathSegs = visitors.map((v) => segmentVisitorPath(v.path));
+    const topPaths = topCounts(pathSegs, 4);
+    const topPlacesMerged = topCounts([...visitorLocKeys, ...orderLocKeys], 5);
+    const topCountries = topCounts(
+      visitors.map((v) => String(v.country ?? '').trim()).filter(Boolean),
+      4
+    );
+    const topVisitorPlaces = topCounts(visitorLocKeys, 4);
+    const topOrderPlaces = topCounts(orderLocKeys, 4);
+    const fmtTop = (arr: Array<{ label: string; count: number }>, maxLen: number) => {
+      if (arr.length === 0) return '—';
+      const s = arr.map(({ label, count }) => `${label} (${count})`).join(' · ');
+      return s.length <= maxLen ? s : `${s.slice(0, maxLen - 1)}…`;
+    };
+
+    return {
+      topPlacesLine: fmtTop(topPlacesMerged, 220),
+      topVisitorLine: fmtTop(topVisitorPlaces, 180),
+      topOrderLine: fmtTop(topOrderPlaces, 180),
+      topPathsLine: fmtTop(topPaths, 200),
+      topCountriesLine: fmtTop(topCountries, 180),
+    };
+  }, [livePresenceVisitors, orderGlobePoints, liveVisitorGlobePoints]);
 
   useEffect(() => {
     if (activeTab !== 'OVERVIEW') return;
@@ -979,76 +1112,80 @@ export default function AdminRevenue() {
                         </p>
                       )}
                     </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>REVENUE BREAKDOWN</h3>
-                    <div className="space-y-2 mb-4">
-                      {breakdown.length > 0
-                        ? breakdown.slice(0, 4).map((row) => (
-                        <div key={row.month} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.month}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>${row.value.toLocaleString()}</span>
-                        </div>
-                      ))
-                        : [
-                        { label: 'THIS MONTH', value: revenueFormatted },
-                        { label: 'LAST MONTH', value: '$0' },
-                        { label: 'THIS YEAR', value: revenueFormatted },
-                        { label: 'GROWTH RATE', value: '—' },
-                      ].map((row) => (
-                        <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginBottom: '8px' }}>QUARTERLY</h3>
-                    <div className="flex justify-between gap-4 py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>Q1</span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>$89K</span>
-                    </div>
-                    <div className="flex justify-between gap-4 py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>Q2</span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>$95K</span>
-                    </div>
-                    <div className="flex justify-between gap-4 py-2">
-                      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>Q3</span>
-                      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>$112K</span>
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '16px', marginBottom: '8px' }}>FINANCIAL HEALTH</h3>
-                    <div className="space-y-2 mb-4">
-                      {[
-                        { label: 'PROFIT MARGIN', value: '35%' },
-                        { label: 'CASH FLOW', value: 'Positive' },
-                        { label: 'DEBT RATIO', value: 'Low' },
-                        { label: 'INVESTMENT RETURN', value: '18%' },
-                      ].map((row) => (
-                        <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '16px', marginBottom: '8px' }}>TOP PRODUCTS</h3>
-                    <div className="space-y-2 mb-4">
-                      {topProductsBySales.map((row) => (
-                        <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.count}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', marginTop: '16px', marginBottom: '8px' }}>MONTHLY BREAKDOWN</h3>
-                    <div className="space-y-2">
-                      {[
-                        { label: 'JANUARY', value: '$42,300' },
-                        { label: 'FEBRUARY', value: '$38,900' },
-                        { label: 'MARCH', value: '$45,600' },
-                        { label: 'APRIL', value: '$41,200' },
-                      ].map((row) => (
-                        <div key={row.label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{row.label}</span>
-                          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{row.value}</span>
-                        </div>
-                      ))}
+
+                    <div className="space-y-3" style={{ marginTop: '12px' }}>
+                      <AdminRevenueOverviewCard title="LIVE VIEW DATA">
+                        <AdminRevenueMetricRows
+                          rows={[
+                            { label: 'CURRENT VISITORS (LAST 5 MIN)', value: String(liveVisitorsNow) },
+                            { label: 'ACTIVE ORDER LOCATIONS ON GLOBE', value: String(orderGlobePoints.length) },
+                            { label: 'TOP LOCATIONS (VISITORS + ORDERS)', value: liveViewCardMetrics.topPlacesLine, valueRed: false },
+                            { label: 'TOP VISITOR LOCATIONS', value: liveViewCardMetrics.topVisitorLine, valueRed: false },
+                            { label: 'TOP ORDER SHIP LOCATIONS', value: liveViewCardMetrics.topOrderLine, valueRed: false },
+                            { label: 'TOP COUNTRIES (VISITORS)', value: liveViewCardMetrics.topCountriesLine, valueRed: false },
+                            { label: 'TOP PAGE PATHS (VISITORS)', value: liveViewCardMetrics.topPathsLine, valueRed: false },
+                          ]}
+                        />
+                      </AdminRevenueOverviewCard>
+
+                      <AdminRevenueOverviewCard title="REVENUE BREAKDOWN">
+                        <AdminRevenueMetricRows
+                          rows={
+                            breakdown.length > 0
+                              ? breakdown.slice(0, 4).map((row) => ({
+                                  label: row.month,
+                                  value: `$${row.value.toLocaleString('en-US')}`,
+                                }))
+                              : [
+                                  { label: 'THIS MONTH', value: revenueFormatted },
+                                  { label: 'LAST MONTH', value: '$0' },
+                                  { label: 'THIS YEAR', value: revenueFormatted },
+                                  { label: 'GROWTH RATE', value: '—', valueRed: false },
+                                ]
+                          }
+                        />
+                      </AdminRevenueOverviewCard>
+
+                      <AdminRevenueOverviewCard title="QUARTERLY">
+                        <AdminRevenueMetricRows
+                          rows={[
+                            { label: 'Q1', value: '$89K' },
+                            { label: 'Q2', value: '$95K' },
+                            { label: 'Q3', value: '$112K' },
+                          ]}
+                        />
+                      </AdminRevenueOverviewCard>
+
+                      <AdminRevenueOverviewCard title="FINANCIAL HEALTH">
+                        <AdminRevenueMetricRows
+                          rows={[
+                            { label: 'PROFIT MARGIN', value: '35%' },
+                            { label: 'CASH FLOW', value: 'POSITIVE', valueRed: false },
+                            { label: 'DEBT RATIO', value: 'LOW', valueRed: false },
+                            { label: 'INVESTMENT RETURN', value: '18%' },
+                          ]}
+                        />
+                      </AdminRevenueOverviewCard>
+
+                      <AdminRevenueOverviewCard title="TOP PRODUCTS">
+                        <AdminRevenueMetricRows
+                          rows={topProductsBySales.map((row) => ({
+                            label: row.label,
+                            value: String(row.count),
+                          }))}
+                        />
+                      </AdminRevenueOverviewCard>
+
+                      <AdminRevenueOverviewCard title="MONTHLY BREAKDOWN">
+                        <AdminRevenueMetricRows
+                          rows={[
+                            { label: 'JANUARY', value: '$42,300' },
+                            { label: 'FEBRUARY', value: '$38,900' },
+                            { label: 'MARCH', value: '$45,600' },
+                            { label: 'APRIL', value: '$41,200' },
+                          ]}
+                        />
+                      </AdminRevenueOverviewCard>
                     </div>
                   </>
                 )}

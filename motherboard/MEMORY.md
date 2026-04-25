@@ -17221,3 +17221,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Deploy:** Redeploy **embed** + **main**.
 
 **Limits:** Labels only for **live visitor/order dots** (data we have: ipapi **city/region/country** for visitors; **shipping city/state/country** for orders). **No** full worldwide city database / tile map.
+
+---
+
+## 2026-04-24 — Admin Revenue overview: meeting-style cards + Live View data card
+
+**Context:** User asked to **structure** Admin → Revenue **OVERVIEW** data (breakdown, quarterly, etc.) in **cards** like **Admin → Meetings** booking/consult analytics, and add a **“Live View”** data **card above** revenue breakdown with **globe-related** stats (visitors, top locations, customer-style data).
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`AdminRevenueOverviewCard`** + **`AdminRevenueMetricRows`** (white bg, **`1px solid #d1d5db`**, inner **`4px`** padding, gray label left / red or slate value right, **`12px`** row padding, **`#e5e7eb`** separators — matches **`AdminMeetingsHub`** appointment/consult blocks). **`livePresenceVisitors`** state stores raw **`getAdminLivePresence`** rows for aggregation; **`liveViewCardMetrics`** **`useMemo`** builds **top location / country / path** strings (**`topCounts`**, **`segmentVisitorPath`**). **LIVE VIEW DATA** card (first below globe): current visitors, order locations on globe, merged top places, visitor-only, order-only, countries, page paths. Then cards: **REVENUE BREAKDOWN**, **QUARTERLY**, **FINANCIAL HEALTH**, **TOP PRODUCTS**, **MONTHLY BREAKDOWN**. Globe + dot legend unchanged above cards.
+
+**Verification:** **`npm run build`** (root) passes.
