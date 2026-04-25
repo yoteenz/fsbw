@@ -31,70 +31,14 @@ import {
 } from '../../../utils/orderTracking';
 import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePoint';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
+import {
+  AdminOverviewAnalyticsCard,
+  AdminOverviewMetricRows,
+} from '../../../components/admin/AdminOverviewAnalyticsCard';
 
 const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/AdminRevenueLiveGlobe'));
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
-
-/** Same shell as Admin → Meetings overview analytics cards (`AdminMeetingsHub`). */
-function AdminRevenueOverviewCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div style={{ background: '#fff', border: '1px solid #d1d5db', borderRadius: '0', padding: '10px' }}>
-      <div style={{ paddingLeft: '4px', paddingRight: '4px' }}>
-        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000', margin: 0 }}>{title}</p>
-        <div style={{ marginTop: '8px' }}>{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function AdminRevenueMetricRows({
-  rows,
-}: {
-  rows: Array<{ label: string; value: string; valueRed?: boolean }>;
-}) {
-  return (
-    <>
-      {rows.map((row, idx) => (
-        <div
-          key={row.label}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '12px 0',
-            borderBottom: idx < rows.length - 1 ? '1px solid #e5e7eb' : undefined,
-          }}
-        >
-          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
-            {row.label}
-          </span>
-          <span
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '9px',
-              color: row.valueRed === false ? '#334155' : '#EB1C24',
-              flexShrink: 0,
-              textTransform: 'uppercase',
-              textAlign: 'right',
-              maxWidth: '58%',
-              wordBreak: 'break-word',
-            }}
-          >
-            {row.value}
-          </span>
-        </div>
-      ))}
-    </>
-  );
-}
 
 function segmentVisitorPath(path: string | null | undefined): string {
   const p = String(path ?? '').trim();
@@ -1114,8 +1058,8 @@ export default function AdminRevenue() {
                     </div>
 
                     <div className="space-y-3" style={{ marginTop: '12px' }}>
-                      <AdminRevenueOverviewCard title="LIVE VIEW DATA">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="LIVE VIEW DATA">
+                        <AdminOverviewMetricRows
                           rows={[
                             { label: 'CURRENT VISITORS (LAST 5 MIN)', value: String(liveVisitorsNow) },
                             { label: 'ACTIVE ORDER LOCATIONS ON GLOBE', value: String(orderGlobePoints.length) },
@@ -1126,10 +1070,10 @@ export default function AdminRevenue() {
                             { label: 'TOP PAGE PATHS (VISITORS)', value: liveViewCardMetrics.topPathsLine, valueRed: false },
                           ]}
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
 
-                      <AdminRevenueOverviewCard title="REVENUE BREAKDOWN">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="REVENUE BREAKDOWN">
+                        <AdminOverviewMetricRows
                           rows={
                             breakdown.length > 0
                               ? breakdown.slice(0, 4).map((row) => ({
@@ -1144,20 +1088,20 @@ export default function AdminRevenue() {
                                 ]
                           }
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
 
-                      <AdminRevenueOverviewCard title="QUARTERLY">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="QUARTERLY">
+                        <AdminOverviewMetricRows
                           rows={[
                             { label: 'Q1', value: '$89K' },
                             { label: 'Q2', value: '$95K' },
                             { label: 'Q3', value: '$112K' },
                           ]}
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
 
-                      <AdminRevenueOverviewCard title="FINANCIAL HEALTH">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="FINANCIAL HEALTH">
+                        <AdminOverviewMetricRows
                           rows={[
                             { label: 'PROFIT MARGIN', value: '35%' },
                             { label: 'CASH FLOW', value: 'POSITIVE', valueRed: false },
@@ -1165,19 +1109,19 @@ export default function AdminRevenue() {
                             { label: 'INVESTMENT RETURN', value: '18%' },
                           ]}
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
 
-                      <AdminRevenueOverviewCard title="TOP PRODUCTS">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="TOP PRODUCTS">
+                        <AdminOverviewMetricRows
                           rows={topProductsBySales.map((row) => ({
                             label: row.label,
                             value: String(row.count),
                           }))}
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
 
-                      <AdminRevenueOverviewCard title="MONTHLY BREAKDOWN">
-                        <AdminRevenueMetricRows
+                      <AdminOverviewAnalyticsCard title="MONTHLY BREAKDOWN">
+                        <AdminOverviewMetricRows
                           rows={[
                             { label: 'JANUARY', value: '$42,300' },
                             { label: 'FEBRUARY', value: '$38,900' },
@@ -1185,7 +1129,7 @@ export default function AdminRevenue() {
                             { label: 'APRIL', value: '$41,200' },
                           ]}
                         />
-                      </AdminRevenueOverviewCard>
+                      </AdminOverviewAnalyticsCard>
                     </div>
                   </>
                 )}

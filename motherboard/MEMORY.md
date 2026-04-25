@@ -17231,3 +17231,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — **`AdminRevenueOverviewCard`** + **`AdminRevenueMetricRows`** (white bg, **`1px solid #d1d5db`**, inner **`4px`** padding, gray label left / red or slate value right, **`12px`** row padding, **`#e5e7eb`** separators — matches **`AdminMeetingsHub`** appointment/consult blocks). **`livePresenceVisitors`** state stores raw **`getAdminLivePresence`** rows for aggregation; **`liveViewCardMetrics`** **`useMemo`** builds **top location / country / path** strings (**`topCounts`**, **`segmentVisitorPath`**). **LIVE VIEW DATA** card (first below globe): current visitors, order locations on globe, merged top places, visitor-only, order-only, countries, page paths. Then cards: **REVENUE BREAKDOWN**, **QUARTERLY**, **FINANCIAL HEALTH**, **TOP PRODUCTS**, **MONTHLY BREAKDOWN**. Globe + dot legend unchanged above cards.
 
 **Verification:** **`npm run build`** (root) passes.
+
+---
+
+## 2026-04-24 — Shared admin overview analytics card + Pending overview match
+
+**Context:** User asked to **structure** Admin → **Pending** **OVERVIEW** like **Revenue** & **Meetings** overview tabs.
+
+**Changes:** **`src/components/admin/AdminOverviewAnalyticsCard.tsx`** — **`AdminOverviewAnalyticsCard`** + **`AdminOverviewMetricRows`** (same meeting-hub card shell). **`revenue/page.tsx`** — imports shared component (replaces inline duplicates). **`pending/page.tsx`** — **OVERVIEW** uses **`space-y-3`** stack of cards: **PENDING ITEMS**, **REVIEWS · PENDING BY TYPE** (footnote below metrics), **ORDER FORMS**, **TIER UPGRADES**, **AFFILIATE REQUESTS**, **REFUND REQUESTS**, **AFFILIATE QUEUE**; removed **`DataRow`** (overview-only). **`SectionTitle`** kept for modals / other tabs.
+
+**Verification:** **`npm run build`** passes.

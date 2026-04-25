@@ -53,6 +53,10 @@ import {
   accountReviewThumbnailFromProductTitle,
   formatReviewSubmittedDateTimeLine,
 } from '../../../utils/accountReviewProductThumbnail';
+import {
+  AdminOverviewAnalyticsCard,
+  AdminOverviewMetricRows,
+} from '../../../components/admin/AdminOverviewAnalyticsCard';
 
 const PENDING_TABS = ['OVERVIEW', 'REVIEWS', 'FORMS', 'AFFILIATE'] as const;
 
@@ -380,15 +384,6 @@ function FormPendingClientAvatar({
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <h3 style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '11px', margin: '16px 0 8px' }}>{children}</h3>
-  );
-}
-
-function DataRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between items-center py-2" style={rowStyle}>
-      <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>{label}</span>
-      <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>{value}</span>
-    </div>
   );
 }
 
@@ -1202,60 +1197,63 @@ export default function AdminPending() {
                   }}
                 >
                   {activeTab === 'OVERVIEW' && (
-                    <>
-                      <SectionTitle>PENDING ITEMS</SectionTitle>
-                      <div className="space-y-0">
-                        {displayItems.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
+                    <div className="space-y-3" style={{ marginTop: '12px' }}>
+                      <AdminOverviewAnalyticsCard title="PENDING ITEMS">
+                        <AdminOverviewMetricRows
+                          rows={displayItems.map((row) => ({
+                            label: row.label,
+                            value: row.value,
+                          }))}
+                        />
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>REVIEWS · PENDING BY TYPE</SectionTitle>
-                      <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', margin: '0 0 8px', lineHeight: 1.35 }}>
-                        ALIGNS WITH <span style={{ color: '#000' }}>ADMIN → REVIEWS</span> &amp; <span style={{ color: '#000' }}>CLIENT → REVIEWS</span> WHEN API DATA LOADS.
-                      </p>
-                      <div className="space-y-0">
-                        <DataRow label="PENDING (ALL)" value={String(serverQueues ? reviewsTabCount : reviewBreakdown.total + mockReviewsPendingCount)} />
-                        <DataRow label="WITH PHOTOS" value={String(reviewBreakdown.withPhotos)} />
-                        <DataRow label="WITH VIDEOS" value={String(reviewBreakdown.withVideos)} />
-                        <DataRow label="TEXT ONLY" value={String(reviewBreakdown.textOnly)} />
-                      </div>
+                      <AdminOverviewAnalyticsCard title="REVIEWS · PENDING BY TYPE">
+                        <AdminOverviewMetricRows
+                          rows={[
+                            {
+                              label: 'PENDING (ALL)',
+                              value: String(serverQueues ? reviewsTabCount : reviewBreakdown.total + mockReviewsPendingCount),
+                            },
+                            { label: 'WITH PHOTOS', value: String(reviewBreakdown.withPhotos) },
+                            { label: 'WITH VIDEOS', value: String(reviewBreakdown.withVideos) },
+                            { label: 'TEXT ONLY', value: String(reviewBreakdown.textOnly) },
+                          ]}
+                        />
+                        <p
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '9px',
+                            color: '#808080',
+                            margin: '10px 0 0',
+                            lineHeight: 1.35,
+                            textTransform: 'none',
+                          }}
+                        >
+                          ALIGNS WITH <span style={{ color: '#000' }}>ADMIN → REVIEWS</span> &amp;{' '}
+                          <span style={{ color: '#000' }}>CLIENT → REVIEWS</span> WHEN API DATA LOADS.
+                        </p>
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>ORDER FORMS</SectionTitle>
-                      <div className="space-y-0">
-                        {formsRows.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
+                      <AdminOverviewAnalyticsCard title="ORDER FORMS">
+                        <AdminOverviewMetricRows rows={formsRows.map((row) => ({ label: row.label, value: row.value }))} />
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>TIER UPGRADES</SectionTitle>
-                      <div className="space-y-0">
-                        {tierRows.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
+                      <AdminOverviewAnalyticsCard title="TIER UPGRADES">
+                        <AdminOverviewMetricRows rows={tierRows.map((row) => ({ label: row.label, value: row.value }))} />
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>AFFILIATE REQUESTS</SectionTitle>
-                      <div className="space-y-0">
-                        {affiliateReqRows.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
+                      <AdminOverviewAnalyticsCard title="AFFILIATE REQUESTS">
+                        <AdminOverviewMetricRows rows={affiliateReqRows.map((row) => ({ label: row.label, value: row.value }))} />
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>REFUND REQUESTS</SectionTitle>
-                      <div className="space-y-0">
-                        {refundRows.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
+                      <AdminOverviewAnalyticsCard title="REFUND REQUESTS">
+                        <AdminOverviewMetricRows rows={refundRows.map((row) => ({ label: row.label, value: row.value }))} />
+                      </AdminOverviewAnalyticsCard>
 
-                      <SectionTitle>AFFILIATE QUEUE</SectionTitle>
-                      <div className="space-y-0">
-                        {affiliateQueueRows.map((row) => (
-                          <DataRow key={row.label} label={row.label} value={row.value} />
-                        ))}
-                      </div>
-                    </>
+                      <AdminOverviewAnalyticsCard title="AFFILIATE QUEUE">
+                        <AdminOverviewMetricRows rows={affiliateQueueRows.map((row) => ({ label: row.label, value: row.value }))} />
+                      </AdminOverviewAnalyticsCard>
+                    </div>
                   )}
 
                   {activeTab === 'REVIEWS' && (
