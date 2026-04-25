@@ -366,10 +366,12 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
       onClick={onClose}
     >
       <div
-        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 overflow-y-auto p-3 shadow-2xl"
+        className="pointer-events-auto absolute overflow-y-auto p-3 shadow-2xl"
         style={{
-          /** +20px vs prior edge — shifts panel **left** by 20px. Border **#e5e7eb** matches Admin Revenue overview dividers (`border-gray-200`). */
-          right: 'calc(max(12px, env(safe-area-inset-right)) + 20px)',
+          top: '50%',
+          transform: 'translateY(calc(-50% + 10px))',
+          /** Larger `right` nudges the panel **left** (cumulative +30px vs base inset). */
+          right: 'calc(max(12px, env(safe-area-inset-right)) + 30px)',
           width: 'min(92vw, 182px)',
           height: 'min(92vw, 182px)',
           maxHeight: 'min(92vw, 182px)',

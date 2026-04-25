@@ -17523,3 +17523,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** passes.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-22 — Cluster panel: +10px down, +10px left
+
+**Context:** User asked to move the order cluster detail panel **down 10px** and **left 10px**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: **`top: 50%`** + **`transform: translateY(calc(-50% + 10px))`**; **`right`** calc uses **`+ 30px`** (10px further left than prior **`+ 20px`**).
+
+**Deploy:** Redeploy **main**.
