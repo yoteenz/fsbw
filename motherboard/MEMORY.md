@@ -17790,3 +17790,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/utils/adminGlobeMockPresence.ts`** — **`reconcileMockCustomerOrderCountsToCluster`** distributes **`clusterOrderCount`** across all rows (integer split); **`target`** capped by **`orderCount`**; removed old head-only adjustment.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Postcard chip opacity; cluster panel name/spend spacing
+
+**Context:** User asked to **lower postcard chip opacity** further; **cluster panel only**: black **name + age** text **−2px**; **−1px** vertical spacing around the red **`$… · N ORDER`** line per customer row.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — landmark glyph **`opacity` 0.88 → 0.62**. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — customer name **`11px → 9px`**; red spend line **`marginTop` 5 → 4**; gray top-product **`marginTop` 4 → 3**. **`docs/ADMIN_GLOBE_EMBED.md`** — opacity note.
+
+**Deploy:** Redeploy **main** + **embed/admin-globe**.

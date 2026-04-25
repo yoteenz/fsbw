@@ -430,7 +430,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                     <p
                       style={{
                         fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
-                        fontSize: '11px',
+                        fontSize: '9px',
                         color: '#000000',
                         margin: 0,
                         lineHeight: 1.3,
@@ -446,7 +446,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                         fontFamily: '"Futura PT Medium", "Futura PT", sans-serif',
                         fontSize: '9px',
                         color: '#EB1C24',
-                        margin: '5px 0 0 0',
+                        margin: '4px 0 0 0',
                         lineHeight: 1.35,
                         textTransform: 'uppercase',
                       }}
@@ -458,7 +458,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                         fontFamily: '"Futura PT Medium", "Futura PT", sans-serif',
                         fontSize: '9px',
                         color: '#64748b',
-                        margin: '4px 0 0 0',
+                        margin: '3px 0 0 0',
                         lineHeight: 1.35,
                         textTransform: 'uppercase',
                       }}

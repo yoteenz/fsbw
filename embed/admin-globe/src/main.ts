@@ -622,8 +622,8 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      /** Full-color emoji (not `background-clip:text` tint); opacity ≈ prior translucent slate look. */
-      'opacity:0.88',
+      /** Full-color emoji (not `background-clip:text` tint); keep faint over globe mesh. */
+      'opacity:0.62',
       'filter:saturate(1.12) contrast(1.04)',
       'text-shadow:0 0.5px 1px rgba(15,23,42,0.12)',
     ].join(';')
