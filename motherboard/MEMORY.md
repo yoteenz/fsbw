@@ -17573,3 +17573,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: postcard nudge, orders/views line, location header without “orders”
+
+**Context:** User asked to move **postcard chips on the cluster panel only** **down 2px**; add a **red** line under the chip like **`6 ORDERS · 7 VIEWS`** for that location; remove **“ORDERS ·”** from the red location line so it shows **place only** (e.g. **`BUENOS AIRES, ARGENTINA`**).
+
+**Changes:**
+- **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`GlobeOrderClusterDetail`**: **`viewCount`**; **`ClusterDetailPanel`**: wrap **`ClusterLandmarkMeshBadge`** in **`translateY(2px)`**; red header is **`placeLine` only**; new red **`8px`** line **`{orderCount} order(s) · {viewCount} view(s)`** (CSS uppercase); **`MSG_CLUSTER`** handler reads **`viewCount`**.
+- **`embed/admin-globe/src/main.ts`** — **`haversineKm`** + **`countVisitorViewsNear`** (~**100 km** of cluster from current visitor **`lastRows`**); **`MSG_CLUSTER`** includes **`viewCount`**.
+- **`docs/ADMIN_GLOBE_EMBED.md`** — documents **`viewCount`** on cluster message.
+
+**Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
+
+**Deploy:** Redeploy **main** and **embed/admin-globe**.

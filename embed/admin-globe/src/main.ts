@@ -176,6 +176,27 @@ function splitPoints(rows: PointRow[]): { visitors: PointRow[]; orders: PointRow
   return { visitors, orders };
 }
 
+/** Great-circle distance in km (for “views near this cluster” counts). */
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+/** Visitor dots within **maxKm** of the order cluster (same payload as the globe). */
+function countVisitorViewsNear(visitors: PointRow[], lat: number, lng: number, maxKm = 100): number {
+  let n = 0;
+  for (const v of visitors) {
+    if (haversineKm(lat, lng, v.lat, v.lng) <= maxKm) n += 1;
+  }
+  return n;
+}
+
 type HexBin = { sumWeight?: number; points?: Array<{ lat?: number }> };
 
 function binCenterLat(bin: HexBin): number {
@@ -466,6 +487,8 @@ function activateOrderCluster(row: PointRow): void {
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   setGlobeAutoRotateForClusterPanel(true);
+  const { visitors } = splitPoints(lastRows);
+  const viewCount = countVisitorViewsNear(visitors, row.lat, row.lng);
   const customersUpper = (row.clusterCustomers ?? []).map((c) => ({
     ...c,
     topProduct: displayUpper(c.topProduct || '—'),
@@ -476,6 +499,7 @@ function activateOrderCluster(row: PointRow): void {
       clusterKey: row.clusterKey ?? '',
       placeLine: displayUpper(row.placeLine ?? ''),
       orderCount: row.orderCount ?? 0,
+      viewCount,
       landmarkTitle: displayUpper(row.landmarkTitle ?? ''),
       landmarkSymbol: row.landmarkSymbol ?? '',
       customers: customersUpper,

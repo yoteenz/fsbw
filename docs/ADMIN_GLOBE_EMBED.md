@@ -110,7 +110,10 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 ```ts
 {
   type: 'fsbw-admin-globe-cluster',
-  clusterKey, placeLine, orderCount, landmarkTitle, landmarkSymbol,
+  clusterKey, placeLine, orderCount,
+  /** Visitor dots within ~100 km of the cluster (same `points` payload as the globe). */
+  viewCount: number,
+  landmarkTitle, landmarkSymbol,
   customers: Array<{ email, orderCount, totalSpent, topProduct }>,
 }
 ```

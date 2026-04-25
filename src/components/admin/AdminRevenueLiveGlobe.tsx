@@ -42,6 +42,8 @@ export type GlobeOrderClusterDetail = {
   clusterKey: string;
   placeLine: string;
   orderCount: number;
+  /** Live visitors counted near this cluster on the globe (embed: within ~100km of cluster lat/lng). */
+  viewCount: number;
   landmarkTitle: string;
   landmarkSymbol: string;
   customers: GlobeClusterCustomerRow[];
@@ -387,10 +389,12 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         <div className="flex justify-between items-start gap-2 mb-2">
           <div>
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
-              Orders · {detail.placeLine}
+              {detail.placeLine}
             </p>
             <div className="flex items-start gap-2 mt-2">
-              <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
+              <span className="shrink-0 inline-block" style={{ transform: 'translateY(2px)' }}>
+                <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
+              </span>
               {detail.landmarkTitle ? (
                 <p
                   style={{
@@ -407,6 +411,19 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                 </p>
               ) : null}
             </div>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '8px',
+                color: '#EB1C24',
+                margin: '6px 0 0 0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} · {detail.viewCount}{' '}
+              view{detail.viewCount === 1 ? '' : 's'}
+            </p>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#64748b', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
               {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} at this ship-to · top spenders first
             </p>
@@ -590,6 +607,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
         const clusterKey = typeof d.clusterKey === 'string' ? d.clusterKey : '';
         const placeLine = typeof d.placeLine === 'string' ? d.placeLine : '';
         const orderCount = Number(d.orderCount) || 0;
+        const viewCount = Number(d.viewCount) || 0;
         const landmarkTitle = typeof d.landmarkTitle === 'string' ? d.landmarkTitle : '';
         const landmarkSymbol = typeof d.landmarkSymbol === 'string' ? d.landmarkSymbol : '📍';
         const raw = d.customers;
@@ -612,6 +630,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
           clusterKey,
           placeLine,
           orderCount,
+          viewCount,
           landmarkTitle,
           landmarkSymbol,
           customers,
