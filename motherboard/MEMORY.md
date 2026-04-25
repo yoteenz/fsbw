@@ -17342,3 +17342,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-21 — Admin revenue Live View: all LIVE VIEW DATA values red
+
+**Context:** User wanted every **LIVE VIEW DATA** right-side value in **brand red**; **TOP VISITOR LOCATIONS**, **TOP ORDER SHIP LOCATIONS**, **TOP COUNTRIES (VISITORS)**, **TOP PAGE PATHS** stayed **#334155** due to **`valueRed: false`**.
+
+**Change:** **`src/pages/admin/revenue/page.tsx`** — dropped **`valueRed: false`** on those four **`AdminOverviewMetricRows`** entries.
+
+**Verification:** **`npm run build`** passes.
