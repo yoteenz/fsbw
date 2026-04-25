@@ -17265,3 +17265,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/reviews/page.tsx`** — import **`AdminOverviewAnalyticsCard`** + **`AdminOverviewMetricRows`**; **`scopeOverviewMetricRows()`** maps **`ScopeOverviewMetrics`** to row list (totals, published/pending, photos/videos %, verified %, then **5 STAR** … **1 STAR** with count + %); **`OverviewAnalyticsPanel`** renders **`space-y-3`**: intro line (Futura Book gray) + **SHOP REVIEWS** card + **TOOLS REVIEWS** card (replaces grid + bar chart UI). Removed unused **`CSSProperties`** import.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-20 — Admin globe WebGL: reliable zoom labels + commit globe QA bundle
+
+**Context:** Continuing admin **Revenue** **3D globe** work (**`embed/admin-globe`** iframe): labels still missing or unreliable when zooming; prior thread also covered **double-tap/double-click recenter to Tennessee**, **optional worldwide mock visitors/orders**, and **country/state lines** (drawn on top of hex mesh, not a true cut-out).
+
+**This chat / fixes:**
+- **`embed/admin-globe/src/main.ts`:** **`effectiveCameraAltitude()`** = **`min(camera distance altitude, pointOfView().altitude)`** so label visibility does not depend on a single signal that can lag on **`controls` `change`**. **`globe.onZoom`** also calls **`reorderGlobeLabelsAboveHex()`** + **`updateMapLabelsFromCamera()`**. Relaxed **`ZOOM_LABEL_*`** thresholds; larger label **`size`**, slightly higher **`labelAltitude`**, **`labelResolution(6)`**.
+- **Committed and pushed** **`master`** and fast-forwarded **`preview/mobile`**: includes **`src/utils/adminGlobeMockPresence.ts`**, **`revenue/page.tsx`** mock merge, **`.env.example`** / **`docs/ADMIN_GLOBE_EMBED.md`** for **`VITE_ADMIN_GLOBE_MOCK_DATA`**, and embed **`main.ts`** updates.
+
+**Verification:** **`cd embed/admin-globe && npm run build`** and root **`npm run build`** pass.
+
+**Deploy:** Redeploy **`embed/admin-globe`** and the **main storefront** so the iframe loads the new bundle.
