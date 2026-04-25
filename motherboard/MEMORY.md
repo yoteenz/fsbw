@@ -17689,7 +17689,7 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context:** User said the **postcard chip background** was still showing the **blue–green gradient**; they want **no fill color** on the chip (transparent like the cluster panel) and the **gradient only on the landmark icon** itself.
 
-**Changes:** **`ClusterLandmarkMeshBadge`** + **`buildLandmarkHtml`**: shell **`background: transparent`**, keep **`backdrop-filter: blur(14px)`** + light border (glass, no white gradient fill); emoji uses **`background-clip: text`** + **`color: transparent`** so mint→sky applies **only to the glyph**.
+**Changes:** **`ClusterLandmarkMeshBadge`** + **`buildLandmarkHtml`**: shell **`background: transparent`** (later: **no** shell **`backdrop-filter`** on globe — see next MEMORY entry — blur tinted the hex behind); emoji uses **`background-clip: text`** + **`color: transparent`** so mint→sky applies **only to the glyph**.
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
 
@@ -17702,3 +17702,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: removed **`ClusterLandmarkMeshBadge`** row + **`landmarkTitle`**; deleted unused **`ClusterLandmarkMeshBadge`**, constants, and **`postcardTiltFromClusterKey`**.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Globe landmark chip shell: no backdrop blur (removes mint/sky tint)
+
+**Context:** User reported **globe postcard chips** still had a **tinted / colored background**; should be **clear transparent** like the cluster panel.
+
+**Cause:** **`backdrop-filter: blur()`** on the chip **shell** blurs the **colored land hex** behind it, so the composited layer picks up **mint/sky** and looks like a **frosted colored tile**.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`**: removed **`backdrop-filter`** / **`-webkit-backdrop-filter`**, inset highlight, dashed inner frame; shell stays **`transparent`** with a subtle white hairline only. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Deploy:** Redeploy **embed/admin-globe**.

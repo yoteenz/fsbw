@@ -575,6 +575,10 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     ].join(';')
   );
 
+  /**
+   * **No** `backdrop-filter` on the shell: blurring the mint/sky hex behind reads as a **tinted frosted tile**.
+   * Truly clear chip: **transparent** fill + optional hairline only; mint→sky stays on the glyph (`face`) via `background-clip:text`.
+   */
   const shell = document.createElement('span');
   shell.setAttribute(
     'style',
@@ -586,26 +590,11 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'height:19px',
       'border-radius:2px',
       'position:relative',
-      'overflow:hidden',
+      'overflow:visible',
       'transform:rotate(' + tilt + 'deg)',
       'background:transparent',
-      'border:1px solid rgba(229,231,235,0.85)',
-      'box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)',
-      'backdrop-filter:blur(14px)',
-      '-webkit-backdrop-filter:blur(14px)',
-    ].join(';')
-  );
-
-  const stampEdge = document.createElement('span');
-  stampEdge.setAttribute('aria-hidden', 'true');
-  stampEdge.setAttribute(
-    'style',
-    [
-      'position:absolute',
-      'inset:2px',
-      'pointer-events:none',
-      'border:1px dashed rgba(203,213,225,0.65)',
-      'border-radius:2px',
+      'border:1px solid rgba(255,255,255,0.22)',
+      'box-shadow:none',
     ].join(';')
   );
 
@@ -629,7 +618,6 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     ].join(';')
   );
 
-  shell.appendChild(stampEdge);
   shell.appendChild(face);
   wrap.appendChild(shell);
 
