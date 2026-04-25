@@ -622,7 +622,8 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      'background:linear-gradient(168deg,rgba(110,231,183,0.92) 0%,rgba(125,211,252,0.92) 100%)',
+      /** Dark slate, translucent — product asked to drop mint/sky on the glyph. */
+      'background:linear-gradient(168deg,rgba(30,41,59,0.72) 0%,rgba(71,85,105,0.58) 100%)',
       '-webkit-background-clip:text',
       'background-clip:text',
       '-webkit-text-fill-color:transparent',

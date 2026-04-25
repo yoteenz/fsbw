@@ -17736,3 +17736,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — **`updateMapLabelsFromCamera`** always **`globe.labelsData([])`**; removed **`buildMapLabelsFromPoints`**. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — SVG fallback: removed zoomed **`placeLine` / `placeDetail`** overlays. **`docs/ADMIN_GLOBE_EMBED.md`** — updated zoom section.
 
 **Deploy:** Redeploy **main** (SVG) and **embed/admin-globe** (WebGL).
+
+---
+
+## 2026-04-25 — Globe landmark glyph: dark gray transparent (not mint–sky)
+
+**Context:** User asked to change **postcard chip icons** above the globe from **blue–green transparent** to **dark gray transparent**.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`** **`face`** span: **`linear-gradient(168deg, rgba(30,41,59,0.72), rgba(71,85,105,0.58))`** with **`background-clip: text`**. **`docs/ADMIN_GLOBE_EMBED.md`** — copy updated.
+
+**Deploy:** Redeploy **embed/admin-globe**.
