@@ -17549,3 +17549,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: **`top: 50%`** + **`transform: translateY(calc(-50% + 10px))`**; **`right`** calc uses **`+ 30px`** (10px further left than prior **`+ 20px`**).
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Cluster panel: nudge up 2px; close ✕ up 5px
+
+**Context:** User asked to move the **cluster panel** **up 2px** and move the **✕ close control only** on that panel **up 5px**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: panel **`transform`** from **`translateY(calc(-50% + 10px))`** to **`translateY(calc(-50% + 8px))`** (−2px); close button **`transform: translateY(-5px)`** (does not affect **`DetailModal`**).
+
+**Deploy:** Redeploy **main**.

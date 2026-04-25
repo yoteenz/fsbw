@@ -369,7 +369,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         className="pointer-events-auto absolute overflow-y-auto p-3 shadow-2xl"
         style={{
           top: '50%',
-          transform: 'translateY(calc(-50% + 10px))',
+          transform: 'translateY(calc(-50% + 8px))',
           /** Larger `right` nudges the panel **left** (cumulative +30px vs base inset). */
           right: 'calc(max(12px, env(safe-area-inset-right)) + 30px)',
           width: 'min(92vw, 182px)',
@@ -416,7 +416,15 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             onClick={onClose}
             className="shrink-0 p-1"
             aria-label="Close"
-            style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', background: 'none', border: 'none', cursor: 'pointer' }}
+            style={{
+              fontFamily: '"Futura PT Book"',
+              fontSize: '10px',
+              color: '#64748b',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              transform: 'translateY(-5px)',
+            }}
           >
             ✕
           </button>
