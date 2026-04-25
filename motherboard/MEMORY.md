@@ -17758,3 +17758,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/utils/adminGlobeMockPresence.ts`** — **`MOCK_GLOBE_CLUSTER_IDENTITIES`** (12 **`displayName` + `age`** pairs); **`ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL`** uses **`globe.mock.{i}@client.test`** + explicit **`displayName`/`age`**; **`augmentMockClusterCustomers`** uses short unique **`m{n}.{slug}@mock.globe`** emails; NYC + single-order mocks get named **`displayName`/`age`** too.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Globe landmark chips: multi-color emoji, same translucency
+
+**Context:** User asked for **postcard chips** back to **multi-colored / photo-realistic** emoji while keeping **same/current transparency**.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`**: removed slate **`background-clip: text`**; native emoji with **`opacity: 0.88`** + light **`saturate`/`contrast`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Deploy:** Redeploy **embed/admin-globe**.

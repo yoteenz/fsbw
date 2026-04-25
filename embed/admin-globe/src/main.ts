@@ -589,7 +589,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
 
   /**
    * **No** `backdrop-filter` on the shell: blurring the mint/sky hex behind reads as a **tinted frosted tile**.
-   * Truly clear chip: **transparent** fill + optional hairline only; mint→sky stays on the glyph (`face`) via `background-clip:text`.
+   * Truly clear chip: **transparent** fill + optional hairline only. Glyph: **native multi-color emoji** at ~same alpha as prior slate mask (~**0.88**).
    */
   const shell = document.createElement('span');
   shell.setAttribute(
@@ -622,12 +622,10 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      /** Dark slate, translucent — product asked to drop mint/sky on the glyph. */
-      'background:linear-gradient(168deg,rgba(30,41,59,0.72) 0%,rgba(71,85,105,0.58) 100%)',
-      '-webkit-background-clip:text',
-      'background-clip:text',
-      '-webkit-text-fill-color:transparent',
-      'color:transparent',
+      /** Full-color emoji (not `background-clip:text` tint); opacity ≈ prior translucent slate look. */
+      'opacity:0.88',
+      'filter:saturate(1.12) contrast(1.04)',
+      'text-shadow:0 0.5px 1px rgba(15,23,42,0.12)',
     ].join(';')
   );
 
