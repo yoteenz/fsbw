@@ -388,7 +388,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
       >
         <div className="flex justify-between items-start gap-2 mb-2">
           <div>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               {detail.placeLine}
             </p>
             <div className="flex items-start gap-2 mt-2">
@@ -399,7 +399,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                 <p
                   style={{
                     fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
-                    fontSize: '14px',
+                    fontSize: '12px',
                     margin: 0,
                     paddingTop: 2,
                     lineHeight: 1.25,
@@ -414,7 +414,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p
               style={{
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '8px',
+                fontSize: '10px',
                 color: '#EB1C24',
                 margin: '6px 0 0 0',
                 textTransform: 'uppercase',

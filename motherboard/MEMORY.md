@@ -17598,3 +17598,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: empty-state **`fontSize` 10px → 8px**, **`color` `#000000`**; removed the **`9px` `#64748b`** ship-to / top spenders paragraph.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Cluster panel: larger red lines, smaller landmark title
+
+**Context:** User asked to **increase both red cluster panel text lines by 2px** and **decrease the black landmark title** beside the postcard (e.g. **STATUE OF LIBERTY**) **by 2px**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: red **`placeLine`** and red **orders · views** lines **`8px` → `10px`**; landmark title **`14px` → `12px`**.
+
+**Deploy:** Redeploy **main**.
