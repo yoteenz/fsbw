@@ -1031,12 +1031,10 @@ export default function AdminRevenue() {
                 ))}
               </div>
 
-              {/* Tab content – outer scroll; inner padded wrapper so content never touches card border */}
-              <div className="overflow-y-auto" style={{ maxHeight: '380px' }}>
-                <div
-                  className="admin-revenue-tab-content"
-                  style={{ paddingTop: '2px', paddingRight: '20px', paddingBottom: '24px', paddingLeft: '20px', boxSizing: 'border-box' }}
-                >
+              {/* Tab content – match Admin Meetings: bottom padding on wrapper; scroll + scroll-padding on inner */}
+              <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
+                <div className="overflow-y-auto admin-hub-tab-scroll" style={{ maxHeight: '380px', paddingTop: '2px', boxSizing: 'border-box' }}>
+                <div className="admin-revenue-tab-content">
                 {activeTab === 'OVERVIEW' && (
                   <>
                     <div className="mb-4 pb-3" style={{ borderBottom: '1px solid #e5e7eb' }}>
@@ -1348,6 +1346,7 @@ export default function AdminRevenue() {
                   </>
                 )}
                 </div>
+                </div>
               </div>
             </div>
 
@@ -1392,7 +1391,7 @@ export default function AdminRevenue() {
                   </div>
                 </div>
                 <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
-                <div className="overflow-y-auto" style={{ maxHeight: '280px' }}>
+                <div className="overflow-y-auto admin-hub-tab-scroll" style={{ maxHeight: '280px', paddingTop: '2px', boxSizing: 'border-box' }}>
                   <div style={{ paddingTop: '12px', paddingRight: '20px', paddingLeft: '20px', boxSizing: 'border-box' }}>
                   {pendingOrders.length === 0 ? (
                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080', margin: 0, textTransform: 'uppercase' }}>NO PENDING ORDERS.</p>

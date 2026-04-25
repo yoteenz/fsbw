@@ -186,7 +186,7 @@ export default function AdminReferralsPage() {
               ) : (
                 <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
                   <div
-                    className="overflow-y-auto"
+                    className="overflow-y-auto admin-hub-tab-scroll"
                     style={{
                       maxHeight: '380px',
                       paddingTop: '2px',

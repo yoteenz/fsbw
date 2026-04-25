@@ -57,7 +57,17 @@ img.natural-front-mobile {
   }
 }
 
-/* Admin Revenue tab content – inner padded wrapper so content never touches card border when scrolling; bottom gap via spacer in DOM */
+/**
+ * Admin hub tab bodies (Revenue, Pending, Reviews, Referrals, Clients list, Meetings):
+ * use an **outer** wrapper with **`paddingBottom: 24px`** and an inner **`.admin-hub-tab-scroll`**
+ * **`overflow-y-auto`** so the last pixels of content clear the card bottom when scrolled.
+ */
+.admin-hub-tab-scroll {
+  scroll-padding-bottom: 24px;
+  box-sizing: border-box;
+}
+
+/* Admin Revenue tab content – inner horizontal padding; vertical padding comes from scroll + meetings-style wrapper */
 .admin-revenue-tab-content {
   padding-top: 12px !important;
   padding-right: 20px !important;

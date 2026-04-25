@@ -17511,3 +17511,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** passes.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-22 — Admin hub tab scroll: meetings-style bottom gap + scroll-padding
+
+**Context:** User wanted the **same bottom spacing and scroll padding** as **Admin Meetings** on **Admin Revenue** tabs and **other admin tabs** that were missing it.
+
+**Changes:** **`src/index.css`** — **`.admin-hub-tab-scroll`** with **`scroll-padding-bottom: 24px`**. **Revenue** main tab block: outer wrapper **`paddingLeft/Right/Bottom: 20px/24px`** + inner **`overflow-y-auto admin-hub-tab-scroll`** (matches Meetings / Pending pattern); removed duplicate horizontal padding on inner **`admin-revenue-tab-content`**. **Pending, Reviews, Referrals, Clients** list scroll: added **`admin-hub-tab-scroll`** to existing **`paddingBottom: 24px`** wrappers. **Meetings** hub scroll div: same class.
+
+**Verification:** **`npm run build`** passes.
+
+**Deploy:** Redeploy **main**.

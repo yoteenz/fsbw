@@ -3580,7 +3580,7 @@ export default function AdminClients() {
                 <div style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}>
                   <div
                     ref={clientsListScrollElRef}
-                    className="overflow-y-auto overflow-x-hidden min-w-0"
+                    className="overflow-y-auto overflow-x-hidden min-w-0 admin-hub-tab-scroll"
                     style={{
                       maxHeight: '380px',
                       paddingTop: '2px',

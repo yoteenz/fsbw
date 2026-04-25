@@ -2209,7 +2209,7 @@ export default function AdminMeetingsHub() {
                 style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
               >
                 <div
-                  className="overflow-y-auto"
+                  className="overflow-y-auto admin-hub-tab-scroll"
                   style={{
                     maxHeight: quoteMeeting ? 'calc(100dvh - 200px)' : 'calc(100dvh - 240px)',
                     paddingTop: '2px',
