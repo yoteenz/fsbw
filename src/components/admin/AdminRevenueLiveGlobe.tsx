@@ -291,9 +291,52 @@ function buildLandHexPathsFromSamples(
   return out;
 }
 
+function ClusterLandmarkMeshBadge({ symbol }: { symbol: string }) {
+  return (
+    <span
+      aria-hidden
+      className="shrink-0 inline-flex items-center justify-center overflow-hidden rounded-[11px]"
+      style={{
+        width: 40,
+        height: 40,
+        background: 'linear-gradient(145deg, rgba(110,231,183,0.28) 0%, rgba(125,211,252,0.22) 45%, rgba(148,163,184,0.18) 100%)',
+        border: '1.2px solid rgba(255,255,255,0.45)',
+        boxShadow: '0 0 0 1px rgba(15,23,42,0.06) inset, 0 1px 0 rgba(255,255,255,0.4) inset, 0 6px 16px rgba(15,23,42,0.12)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        position: 'relative',
+      }}
+    >
+      <span
+        className="pointer-events-none absolute inset-0"
+        style={{
+          opacity: 0.2,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+          backgroundSize: '7px 7px',
+          mixBlendMode: 'overlay',
+        }}
+      />
+      <span
+        className="relative z-[1]"
+        style={{
+          fontSize: 22,
+          lineHeight: 1,
+          opacity: 0.9,
+          filter: 'saturate(1.12) contrast(1.06) brightness(1.04) drop-shadow(0 0 8px rgba(56,189,248,0.45)) drop-shadow(0 2px 3px rgba(15,23,42,0.25))',
+          mixBlendMode: 'soft-light',
+        }}
+      >
+        {symbol}
+      </span>
+    </span>
+  );
+}
+
 function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
   const money = (n: number) =>
     n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const sym = (detail.landmarkSymbol || '📍').trim() || '📍';
   return createPortal(
     <div
       role="dialog"
@@ -322,11 +365,24 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
               Orders · {detail.placeLine}
             </p>
-            {detail.landmarkTitle ? (
-              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '14px', margin: '6px 0 0 0', lineHeight: 1.2, color: '#0f172a', textTransform: 'none' }}>
-                {detail.landmarkTitle}
-              </p>
-            ) : null}
+            <div className="flex items-start gap-2 mt-2">
+              <ClusterLandmarkMeshBadge symbol={sym} />
+              {detail.landmarkTitle ? (
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
+                    fontSize: '14px',
+                    margin: 0,
+                    paddingTop: 2,
+                    lineHeight: 1.25,
+                    color: 'rgba(15, 23, 42, 0.92)',
+                    textTransform: 'none',
+                  }}
+                >
+                  {detail.landmarkTitle}
+                </p>
+              ) : null}
+            </div>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#64748b', margin: '6px 0 0 0', textTransform: 'uppercase' }}>
               {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} at this ship-to · top spenders first
             </p>

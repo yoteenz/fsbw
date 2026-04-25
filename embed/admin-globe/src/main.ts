@@ -41,6 +41,7 @@ type MapLabelRow = {
 
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
+type HtmlLandmarkRow = { lat: number; lng: number; alt: number; row: PointRow };
 
 /** Natural Earth boundary segment → `pathsData` row (`pathStroke` = thin fat line for soft groove width). */
 type BorderPathRow = {
@@ -259,7 +260,7 @@ function effectiveCameraAltitude(): number {
   return Math.min(fromCam, fromPov);
 }
 
-/** Ensure **labels** render after merged hex (some builds / rebinds reorder children). */
+/** Ensure **labels** then **HTML landmarks** render after merged hex. */
 function reorderGlobeLabelsAboveHex(): void {
   try {
     const scene = globe.scene() as unknown as ThreeSceneLike;
@@ -276,12 +277,20 @@ function reorderGlobeLabelsAboveHex(): void {
     };
     const hexRoot = findRoot('hexBinPoints');
     const labelRoot = findRoot('label');
-    if (!hexRoot || !labelRoot || hexRoot === labelRoot) return;
+    const htmlRoot = findRoot('html');
+    if (!hexRoot) return;
     const ch = [...scene.children] as unknown[];
-    const next = ch.filter((c) => c !== labelRoot);
+    let next = ch.filter((c) => c !== labelRoot && c !== htmlRoot);
     const hexAt = next.indexOf(hexRoot);
     if (hexAt < 0) return;
-    next.splice(hexAt + 1, 0, labelRoot);
+    let insertAt = hexAt + 1;
+    if (labelRoot) {
+      next.splice(insertAt, 0, labelRoot);
+      insertAt += 1;
+    }
+    if (htmlRoot) {
+      next.splice(insertAt, 0, htmlRoot);
+    }
     while (scene.children.length) scene.remove(scene.children[0]);
     for (const c of next) scene.add(c);
   } catch {
@@ -367,6 +376,133 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
   };
 }
 
+function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
+  return rows.filter((r) => r.kind === 'order' && r.clusterKey && (r.landmarkSymbol || (r.orderCount ?? 0) > 0));
+}
+
+/** Holographic mesh-style landmark chip (not flat “photo” emoji). */
+function buildLandmarkHtml(row: PointRow): HTMLElement {
+  const wrap = document.createElement('button');
+  wrap.type = 'button';
+  const sym = row.landmarkSymbol || '📍';
+  const title = row.landmarkTitle || 'Orders';
+  const n = row.orderCount ?? 1;
+  wrap.title = `${title} · ${n} order${n === 1 ? '' : 's'} — tap for breakdown`;
+  wrap.setAttribute(
+    'style',
+    [
+      'pointer-events:auto',
+      'cursor:pointer',
+      'border:none',
+      'padding:0',
+      'margin:0',
+      'line-height:0',
+      'background:transparent',
+    ].join(';')
+  );
+
+  const shell = document.createElement('span');
+  shell.setAttribute(
+    'style',
+    [
+      'display:inline-flex',
+      'align-items:center',
+      'justify-content:center',
+      'width:40px',
+      'height:40px',
+      'border-radius:12px',
+      'position:relative',
+      'overflow:hidden',
+      'background:linear-gradient(145deg, rgba(110,231,183,0.22) 0%, rgba(125,211,252,0.18) 45%, rgba(148,163,184,0.14) 100%)',
+      'border:1.2px solid rgba(255,255,255,0.42)',
+      'box-shadow:0 0 0 1px rgba(15,23,42,0.06) inset,0 1px 0 rgba(255,255,255,0.35) inset,0 6px 18px rgba(15,23,42,0.18)',
+      'backdrop-filter:blur(10px)',
+      '-webkit-backdrop-filter:blur(10px)',
+    ].join(';')
+  );
+
+  const grid = document.createElement('span');
+  grid.setAttribute('aria-hidden', 'true');
+  grid.setAttribute(
+    'style',
+    [
+      'position:absolute',
+      'inset:0',
+      'opacity:0.22',
+      'background-image:linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.45) 1px, transparent 1px)',
+      'background-size:7px 7px',
+      'mix-blend-mode:overlay',
+      'pointer-events:none',
+    ].join(';')
+  );
+
+  const face = document.createElement('span');
+  face.textContent = sym;
+  face.setAttribute(
+    'style',
+    [
+      'position:relative',
+      'z-index:1',
+      'font-size:22px',
+      'line-height:1',
+      'opacity:0.88',
+      'filter:saturate(1.15) contrast(1.08) brightness(1.05) drop-shadow(0 0 10px rgba(56,189,248,0.55)) drop-shadow(0 2px 4px rgba(15,23,42,0.35))',
+      'mix-blend-mode:soft-light',
+    ].join(';')
+  );
+
+  shell.appendChild(grid);
+  shell.appendChild(face);
+  wrap.appendChild(shell);
+
+  wrap.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const target = window.parent && window.parent !== window ? window.parent : null;
+    if (!target) return;
+    target.postMessage(
+      {
+        type: MSG_CLUSTER,
+        clusterKey: row.clusterKey ?? '',
+        placeLine: row.placeLine ?? '',
+        orderCount: row.orderCount ?? 0,
+        landmarkTitle: row.landmarkTitle ?? '',
+        landmarkSymbol: row.landmarkSymbol ?? '',
+        customers: row.clusterCustomers ?? [],
+      },
+      '*'
+    );
+    lastClusterPanelZoom = true;
+    clusterPanelHoldUntilLarge = true;
+    if (clusterPanelHoldTimer) clearTimeout(clusterPanelHoldTimer);
+    clusterPanelHoldTimer = setTimeout(() => {
+      clusterPanelHoldTimer = null;
+      clusterPanelHoldUntilLarge = false;
+    }, 3200);
+    try {
+      globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
+    } catch {
+      /* optional */
+    }
+    requestAnimationFrame(() => {
+      updateMapLabelsFromCamera();
+      reorderGlobeLabelsAboveHex();
+    });
+  });
+  return wrap;
+}
+
+function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmarkRow[] {
+  if (!show) return [];
+  return orderRowsForLandmarkHtml(rows).map((r) => ({
+    lat: r.lat,
+    lng: r.lng,
+    /** Float above order dot / hex surface. */
+    alt: 0.054,
+    row: r,
+  }));
+}
+
 function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabelRow[] {
   const out: MapLabelRow[] = [];
   for (const r of rows) {
@@ -420,7 +556,7 @@ function updateMapLabelsFromCamera() {
   const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
   const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
   globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
-  globe.htmlElementsData([]);
+  globe.htmlElementsData(htmlLandmarkRowsForCamera(lastRows, show));
   /** Parent shows order cluster sheet only when zoomed in this close (same band as “large” labels). */
   notifyParentClusterZoom(large);
 }
@@ -505,6 +641,12 @@ const globe = new Globe(root, {
   .labelDotOrientation('bottom')
   .labelResolution(6)
   .labelsTransitionDuration(0)
+  .htmlElementsData([])
+  .htmlLat('lat')
+  .htmlLng('lng')
+  .htmlAltitude('alt')
+  .htmlElement((d: object) => buildLandmarkHtml((d as HtmlLandmarkRow).row))
+  .htmlTransitionDuration(0)
   .onGlobeReady(() => {
     try {
       const m = globe.globeMaterial() as {
@@ -602,39 +744,10 @@ requestAnimationFrame(() => {
 
 globe.onPointClick((p: object) => {
   const pr = p as PointRow;
+  /** HTML landmark chip handles order-cluster tap + recenter. */
+  if (pr.kind === 'order' && pr.clusterKey) return;
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
-  if (pr.kind === 'order' && pr.clusterKey) {
-    target.postMessage(
-      {
-        type: MSG_CLUSTER,
-        clusterKey: pr.clusterKey ?? '',
-        placeLine: pr.placeLine ?? '',
-        orderCount: pr.orderCount ?? 0,
-        landmarkTitle: pr.landmarkTitle ?? '',
-        landmarkSymbol: pr.landmarkSymbol ?? '',
-        customers: pr.clusterCustomers ?? [],
-      },
-      '*'
-    );
-    lastClusterPanelZoom = true;
-    clusterPanelHoldUntilLarge = true;
-    if (clusterPanelHoldTimer) clearTimeout(clusterPanelHoldTimer);
-    clusterPanelHoldTimer = setTimeout(() => {
-      clusterPanelHoldTimer = null;
-      clusterPanelHoldUntilLarge = false;
-    }, 3200);
-    try {
-      globe.pointOfView({ lat: pr.lat, lng: pr.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
-    } catch {
-      /* optional */
-    }
-    requestAnimationFrame(() => {
-      updateMapLabelsFromCamera();
-      reorderGlobeLabelsAboveHex();
-    });
-    return;
-  }
   target.postMessage(
     {
       type: MSG_POINT,
@@ -669,7 +782,7 @@ function applyPayload(rows: PointRow[]) {
   updateMapLabelsFromCamera();
 }
 
-globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]);
 
 void (async () => {
   try {

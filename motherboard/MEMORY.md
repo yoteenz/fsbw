@@ -17393,3 +17393,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-21 — Landmark emojis: holographic mesh styling (globe + panel)
+
+**Context:** User wanted **landmark emojis back**, redrawn to match the **transparent 3D globe** (not photo-realistic — **colored translucent / mesh** look).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — restored **`htmlElementsData`** for order clusters when zoomed in: **`buildLandmarkHtml`** wraps the emoji in a **mint→sky glass chip** with **grid overlay**, **blur**, **inset highlight**, **soft-light** blend + cyan glow; **`reorderGlobeLabelsAboveHex`** places **HTML** after labels; **`onPointClick`** ignores order clusters so the **chip** handles tap + **`MSG_CLUSTER`**. **`AdminRevenueLiveGlobe.tsx`** — **`ClusterLandmarkMeshBadge`** mirrors the same aesthetic beside **`landmarkTitle`** in **`ClusterDetailPanel`**. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.
