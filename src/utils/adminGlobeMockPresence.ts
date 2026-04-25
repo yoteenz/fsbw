@@ -143,9 +143,39 @@ function isTruthyMockFlag(val: string | null | undefined): boolean {
   return s === '1' || s === 'true' || s === 'yes' || s === 'on';
 }
 
+/** `globe_mock` in normal query or after `#` (some hosts / bookmarks put params only in the hash). */
+export function globeMockFlagInBrowserLocation(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    if (isTruthyMockFlag(new URLSearchParams(window.location.search).get('globe_mock'))) return true;
+    const h = window.location.hash;
+    const qi = h.indexOf('?');
+    if (qi >= 0) {
+      const hp = new URLSearchParams(h.slice(qi + 1));
+      if (isTruthyMockFlag(hp.get('globe_mock'))) return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
 /**
- * If `searchParams` includes **`globe_mock`** (truthy), persist **`sessionStorage.adminGlobeMockData=1`**
- * so mock globe data works without `.env` or `localStorage`. Call from Admin Revenue when the query is present.
+ * If the URL (search **or** hash query) includes **`globe_mock`** (truthy), persist **`sessionStorage.adminGlobeMockData=1`**
+ * so the flag survives tab navigations. Returns whether the flag was found.
+ */
+export function persistGlobeMockFromBrowserLocation(): boolean {
+  if (!globeMockFlagInBrowserLocation()) return false;
+  try {
+    if (typeof window !== 'undefined') window.sessionStorage.setItem('adminGlobeMockData', '1');
+  } catch {
+    /* ignore */
+  }
+  return true;
+}
+
+/**
+ * If React Router `searchParams` includes **`globe_mock`** (truthy), persist session flag (same as location).
  */
 export function persistGlobeMockFromSearchParams(searchParams: { get: (k: string) => string | null }): boolean {
   if (!isTruthyMockFlag(searchParams.get('globe_mock'))) return false;
@@ -168,12 +198,29 @@ export function adminGlobeMockDataEnabled(): boolean {
     if (typeof window === 'undefined') return false;
     if (isTruthyMockFlag(window.localStorage?.getItem('adminGlobeMockData'))) return true;
     if (isTruthyMockFlag(window.sessionStorage?.getItem('adminGlobeMockData'))) return true;
-    const q = new URLSearchParams(window.location.search).get('globe_mock');
-    if (isTruthyMockFlag(q)) return true;
+    if (globeMockFlagInBrowserLocation()) return true;
   } catch {
     /* ignore */
   }
   return false;
+}
+
+/** Turn on mock globe data for this browser (session) and return true. */
+export function enableAdminGlobeMockDataSession(): void {
+  try {
+    if (typeof window !== 'undefined') window.sessionStorage.setItem('adminGlobeMockData', '1');
+  } catch {
+    /* ignore */
+  }
+}
+
+export function disableAdminGlobeMockDataSession(): void {
+  try {
+    window.sessionStorage?.removeItem('adminGlobeMockData');
+    window.localStorage?.removeItem('adminGlobeMockData');
+  } catch {
+    /* ignore */
+  }
 }
 
 export function mergeMockPresenceRows(real: MockPresenceVisitorRow[]): MockPresenceVisitorRow[] {

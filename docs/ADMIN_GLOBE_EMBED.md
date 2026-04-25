@@ -12,7 +12,8 @@ The **3D globe** (`globe.gl` + `three.js`) lives only in **`embed/admin-globe/`*
 
 - **`VITE_ADMIN_GLOBE_MOCK_DATA=1`** (or **`true`** / **`yes`**) in **`.env.local`** — rebuild dev / redeploy production.
 - **`localStorage`** or **`sessionStorage`** key **`adminGlobeMockData`** = **`1`**, **`true`**, **`yes`**, or **`on`** — refresh.
-- Open **Admin → Revenue** with **`?globe_mock=1`** (or **`true`**) in the URL — persists **`sessionStorage.adminGlobeMockData=1`** for that tab session (no env change; good for production QA).
+- Open **Admin → Revenue** with **`?globe_mock=1`** (or **`true`**) in the URL — persists **`sessionStorage.adminGlobeMockData=1`** for that tab session (no env change; good for production QA). Params in the **hash** (e.g. `#?globe_mock=1`) are also read.
+- On **Admin → Revenue → Overview**, use **LOAD MOCK GLOBE DATA** under the globe (no URL or console needed); **CLEAR MOCK DATA** turns session mocks off.
 
 **Cache / deploy:** The main app iframe URL appends **`b=<git sha or timestamp>`** from **`__GLOBE_EMBED_BUILD__`** (Vite `define` on each deploy) so you do **not** rely on manually bumping `?v=`. Redeploy **embed** when **`src/utils/adminGlobeNe110mLand.ts`**, boundary utils, or embed code changes; redeploy **main** for iframe URL / SPA rewrite / `public/*.geojson` (including **`ne_110m_admin_1_states_provinces_lines.geojson`**).
 

@@ -6,7 +6,7 @@
  * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminRevenue, getAdminMembershipPayments, getAdminLivePresence } from '../../../utils/api';
@@ -33,9 +33,12 @@ import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePo
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 import {
   adminGlobeMockDataEnabled,
+  disableAdminGlobeMockDataSession,
+  enableAdminGlobeMockDataSession,
   mergeMockOrderGlobePoints,
   mergeMockPresenceRows,
   mergeMockVisitorGlobePoints,
+  persistGlobeMockFromBrowserLocation,
   persistGlobeMockFromSearchParams,
 } from '../../../utils/adminGlobeMockPresence';
 import {
@@ -454,6 +457,7 @@ function AdminRevenueOrdersTab({
 export default function AdminRevenue() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const searchQuery = (searchParams.get('q') || '').trim().toUpperCase();
   const [activeTab, setActiveTab] = usePersistentQueryState<typeof REVENUE_TABS[number]>({
@@ -666,6 +670,8 @@ export default function AdminRevenue() {
     }>
   >([]);
   const [liveGlobeError, setLiveGlobeError] = useState<string | null>(null);
+  /** Bumps when mock mode is toggled so `orderGlobePoints` and live fetches re-run (storage is outside React state). */
+  const [globeMockUiRev, setGlobeMockUiRev] = useState(0);
 
   const orderGlobePoints = useMemo(() => {
     const out: Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }> = [];
@@ -691,9 +697,10 @@ export default function AdminRevenue() {
       if (out.length >= 80) break;
     }
     return mergeMockOrderGlobePoints(out);
-  }, [orders]);
+  }, [orders, globeMockUiRev]);
 
   const fetchLiveGlobe = useCallback(async () => {
+    persistGlobeMockFromBrowserLocation();
     setLiveGlobeError(null);
     try {
       const raw = localStorage.getItem('currentUser');
@@ -705,7 +712,7 @@ export default function AdminRevenue() {
         return;
       }
       const data = await getAdminLivePresence();
-      const mergedPresence = mergeMockPresenceRows(data.visitors || []);
+      const mergedPresence = mergeMockPresenceRows(Array.isArray(data.visitors) ? data.visitors : []);
       setLiveVisitorsNow(mergedPresence.length);
       setLivePresenceVisitors(mergedPresence);
       setLiveVisitorGlobePoints(
@@ -753,13 +760,7 @@ export default function AdminRevenue() {
         setLivePresenceVisitors([]);
       }
     }
-  }, []);
-
-  useEffect(() => {
-    if (activeTab !== 'OVERVIEW') return;
-    if (!persistGlobeMockFromSearchParams(searchParams)) return;
-    void fetchLiveGlobe();
-  }, [searchParams, activeTab, fetchLiveGlobe]);
+  }, [globeMockUiRev]);
 
   const liveViewCardMetrics = useMemo(() => {
     const visitors = livePresenceVisitors;
@@ -791,10 +792,12 @@ export default function AdminRevenue() {
 
   useEffect(() => {
     if (activeTab !== 'OVERVIEW') return;
+    persistGlobeMockFromSearchParams(searchParams);
+    persistGlobeMockFromBrowserLocation();
     void fetchLiveGlobe();
     const id = setInterval(() => void fetchLiveGlobe(), 30_000);
     return () => clearInterval(id);
-  }, [activeTab, fetchLiveGlobe]);
+  }, [activeTab, fetchLiveGlobe, globeMockUiRev, searchParams, location.hash]);
 
   useEffect(() => {
     let currentUser: { email?: string } | null = null;
@@ -1069,6 +1072,56 @@ export default function AdminRevenue() {
                           heightPx={324}
                         />
                       </Suspense>
+                      <div className="flex flex-wrap items-center justify-center gap-2 mt-2 mb-1 px-1">
+                        <span
+                          style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#94a3b8', textTransform: 'uppercase' }}
+                        >
+                          Globe QA
+                        </span>
+                        {adminGlobeMockDataEnabled() ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              disableAdminGlobeMockDataSession();
+                              setGlobeMockUiRev((n) => n + 1);
+                            }}
+                            className="underline-offset-2"
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '9px',
+                              color: '#64748b',
+                              textTransform: 'uppercase',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            Clear mock data
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              enableAdminGlobeMockDataSession();
+                              setGlobeMockUiRev((n) => n + 1);
+                            }}
+                            className="underline-offset-2"
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              fontSize: '9px',
+                              color: '#EB1C24',
+                              textTransform: 'uppercase',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            Load mock globe data
+                          </button>
+                        )}
+                      </div>
                       <p
                         className="text-center mt-2 mb-0"
                         style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#64748b', lineHeight: 1.5 }}

@@ -17294,3 +17294,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **How to test:** Open **`/admin/revenue?tab=OVERVIEW&globe_mock=1`** (adjust tab query if your state hook uses different key) while signed in as admin — should show ~12 mock visitors + merged mock order dots without redeploying env.
 
 **Verification:** **`npm run build`** passes.
+
+---
+
+## 2026-04-20 — Admin globe mocks still 0: in-page toggle + hash URL + order memo refresh
+
+**Context:** User still saw **0 visitors** and **0 orders** — **`globe_mock` in hash only** was ignored; **`orderGlobePoints`** did not recompute after enabling mocks in **`sessionStorage`** (memo depended only on **`orders`**); **`fetchLiveGlobe`** did not sync from full browser URL before each fetch.
+
+**Changes:** **`globeMockFlagInBrowserLocation`** + **`persistGlobeMockFromBrowserLocation`**; **`enable` / `disable` mock session** helpers; **GLOBE QA** link buttons on Revenue overview; **`globeMockUiRev`** to refresh **`orderGlobePoints`**; **`location.hash`** in overview effect deps; **`fetchLiveGlobe`** starts with **`persistGlobeMockFromBrowserLocation()`**. Docs updated.
+
+**Verification:** **`npm run build`** passes.
