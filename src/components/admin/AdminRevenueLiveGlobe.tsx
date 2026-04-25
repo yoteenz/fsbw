@@ -366,16 +366,18 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
       onClick={onClose}
     >
       <div
-        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 overflow-y-auto rounded border border-slate-400/60 p-3 shadow-2xl"
+        className="pointer-events-auto absolute top-1/2 -translate-y-1/2 overflow-y-auto p-3 shadow-2xl"
         style={{
-          right: 'max(12px, env(safe-area-inset-right))',
+          /** +20px vs prior edge — shifts panel **left** by 20px. Border **#e5e7eb** matches Admin Revenue overview dividers (`border-gray-200`). */
+          right: 'calc(max(12px, env(safe-area-inset-right)) + 20px)',
           width: 'min(92vw, 182px)',
           height: 'min(92vw, 182px)',
           maxHeight: 'min(92vw, 182px)',
+          borderRadius: 0,
+          border: '1px solid #e5e7eb',
           background: 'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
-          borderWidth: '1.3px',
           boxShadow: '0 8px 32px rgba(15,23,42,0.25), inset 0 1px 0 rgba(255,255,255,0.35)',
         }}
         onClick={(ev) => ev.stopPropagation()}
@@ -424,8 +426,8 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             detail.customers.map((c) => (
               <div
                 key={c.email}
-                className="rounded border border-slate-300/50 px-2 py-2"
-                style={{ background: 'rgba(255,255,255,0.35)' }}
+                className="border px-2 py-2"
+                style={{ background: 'rgba(255,255,255,0.35)', borderColor: '#e5e7eb', borderRadius: 0 }}
               >
                 <p style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', color: '#0f172a', margin: 0, wordBreak: 'break-all', textTransform: 'none' }}>
                   {c.email}

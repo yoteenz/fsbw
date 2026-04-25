@@ -17499,3 +17499,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main**.
+
+---
+
+## 2026-04-22 — Cluster detail panel: tab gray border, square corners, shift left 20px
+
+**Context:** User asked for cluster panel border to match **Overview / Orders** etc. tab area gray, **square corners**, and **20px further left**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: **`border-radius: 0`**, **`1px solid #e5e7eb`** (same as revenue **`border-gray-200`** dividers); **`right: calc(max(12px, env(safe-area-inset-right)) + 20px)`**; customer row borders **`#e5e7eb`**, square.
+
+**Verification:** **`npm run build`** passes.
+
+**Deploy:** Redeploy **main**.
