@@ -17692,3 +17692,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`ClusterLandmarkMeshBadge`** + **`buildLandmarkHtml`**: shell **`background: transparent`**, keep **`backdrop-filter: blur(14px)`** + light border (glass, no white gradient fill); emoji uses **`background-clip: text`** + **`color: transparent`** so mint→sky applies **only to the glyph**.
 
 **Deploy:** Redeploy **main** and **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: remove postcard chip and landmark title row
+
+**Context:** User asked to **remove the postcard chip** and the **text to the right of it** on the **cluster panel only** (globe embed landmark chips unchanged).
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: removed **`ClusterLandmarkMeshBadge`** row + **`landmarkTitle`**; deleted unused **`ClusterLandmarkMeshBadge`**, constants, and **`postcardTiltFromClusterKey`**.
+
+**Deploy:** Redeploy **main**.

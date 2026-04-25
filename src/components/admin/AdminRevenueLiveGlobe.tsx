@@ -8,12 +8,6 @@ import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterC
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
-/** Postcard shell: clear glass like the cluster panel — **no** tinted fill (blur only). */
-const POSTCARD_CHIP_SHELL_BG = 'transparent';
-/** Mint → sky like globe land hex; applied to **glyph only** via `background-clip: text`. */
-const GLOBE_LANDMARK_GLYPH_GRAD =
-  'linear-gradient(168deg, rgba(110,231,183,0.92) 0%, rgba(125,211,252,0.92) 100%)';
-
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
@@ -338,65 +332,11 @@ function buildLandHexPathsFromSamples(
   return out;
 }
 
-function postcardTiltFromClusterKey(key: string): number {
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h + key.charCodeAt(i) * (i + 1)) % 997;
-  return ((h % 11) - 5) * 0.55;
-}
-
-function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clusterKey: string }) {
-  const tilt = postcardTiltFromClusterKey(clusterKey || symbol);
-  return (
-    <span
-      aria-hidden
-      className="shrink-0 inline-flex items-center justify-center overflow-hidden"
-      style={{
-        width: 20,
-        height: 17,
-        borderRadius: 2,
-        position: 'relative',
-        transform: `rotate(${tilt}deg)`,
-        background: POSTCARD_CHIP_SHELL_BG,
-        border: '1px solid rgba(229, 231, 235, 0.85)',
-        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)',
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-      }}
-    >
-      <span
-        className="pointer-events-none absolute"
-        style={{
-          inset: 2,
-          border: '1px dashed rgba(203, 213, 225, 0.65)',
-          borderRadius: 1,
-        }}
-      />
-      <span
-        className="relative z-[1] inline-block"
-        style={{
-          fontFamily: 'ui-rounded, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", cursive',
-          fontSize: 10,
-          lineHeight: 1,
-          letterSpacing: '0.02em',
-          background: GLOBE_LANDMARK_GLYPH_GRAD,
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-          color: 'transparent',
-          WebkitTextFillColor: 'transparent',
-        }}
-      >
-        {symbol}
-      </span>
-    </span>
-  );
-}
-
 const CLUSTER_CLIENT_AVATAR_FALLBACK = '/assets/profile-thumb.png';
 
 function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
   const money = (n: number) =>
     n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-  const sym = (detail.landmarkSymbol || '📍').trim() || '📍';
   return createPortal(
     <div
       role="dialog"
@@ -442,27 +382,6 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
               {detail.orderCount} order{detail.orderCount === 1 ? '' : 's'} · {detail.viewCount}{' '}
               view{detail.viewCount === 1 ? '' : 's'}
             </p>
-            <div className="flex items-center gap-2 mt-2 min-w-0">
-              <span className="shrink-0 inline-flex">
-                <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
-              </span>
-              {detail.landmarkTitle ? (
-                <p
-                  className="min-w-0 flex-1"
-                  style={{
-                    fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
-                    fontSize: '12px',
-                    margin: 0,
-                    paddingTop: 0,
-                    lineHeight: 1.25,
-                    color: '#64748b',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {detail.landmarkTitle}
-                </p>
-              ) : null}
-            </div>
           </div>
           <button
             type="button"
