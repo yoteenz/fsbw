@@ -8,6 +8,13 @@ import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterC
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
+/** Match **`ClusterDetailPanel`** frosted card (postcard chip shell only). */
+const CLUSTER_PANEL_GLASS_BG =
+  'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)';
+/** Mint → sky like **`embed/admin-globe`** `landHexTopRgba` (transparent gradient behind landmark glyph only). */
+const GLOBE_LANDMARK_FACE_GRAD =
+  'linear-gradient(168deg, rgba(110,231,183,0.58) 0%, rgba(125,211,252,0.58) 100%)';
+
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
@@ -350,40 +357,35 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
         borderRadius: 2,
         position: 'relative',
         transform: `rotate(${tilt}deg)`,
-        background: 'linear-gradient(168deg, #fffef8 0%, #f7f1e8 48%, #ebe3d6 100%)',
-        border: '0.8px solid rgba(92, 72, 52, 0.28)',
-        borderRightWidth: 1.1,
-        borderBottomWidth: 1.2,
-        boxShadow: '1px 1.5px 0 rgba(55, 42, 30, 0.1), inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -4px 7px rgba(120, 95, 70, 0.07)',
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)',
+        background: CLUSTER_PANEL_GLASS_BG,
+        border: '1px solid rgba(229, 231, 235, 0.85)',
+        boxShadow: '0 8px 32px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.35)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
       }}
     >
-      <span
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: 0.14,
-          backgroundImage: 'repeating-linear-gradient(-18deg, transparent, transparent 2px, rgba(90, 70, 50, 0.06) 2px, rgba(90, 70, 50, 0.06) 3px)',
-        }}
-      />
       <span
         className="pointer-events-none absolute"
         style={{
           inset: 2,
-          border: '1px dashed rgba(90, 70, 50, 0.18)',
+          border: '1px dashed rgba(203, 213, 225, 0.65)',
           borderRadius: 1,
         }}
       />
       <span
-        className="relative z-[1]"
+        className="relative z-[1] inline-flex items-center justify-center"
         style={{
+          margin: 1,
+          padding: '0 1px',
+          borderRadius: 1,
+          background: GLOBE_LANDMARK_FACE_GRAD,
           fontFamily: 'ui-rounded, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", cursive',
           fontSize: 10,
           lineHeight: 1,
           letterSpacing: '0.02em',
-          opacity: 0.44,
-          filter: 'sepia(28%) saturate(78%) contrast(0.92) brightness(1.03)',
-          textShadow: '0.6px 0.7px 0 rgba(72, 52, 38, 0.12), -0.4px 0.5px 0 rgba(255, 252, 246, 0.55)',
+          opacity: 0.92,
+          filter: 'saturate(1.05) contrast(0.98)',
+          textShadow: '0 0 1px rgba(255,255,255,0.5)',
         }}
       >
         {symbol}

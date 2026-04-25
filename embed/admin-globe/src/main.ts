@@ -588,26 +588,11 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'position:relative',
       'overflow:hidden',
       'transform:rotate(' + tilt + 'deg)',
-      'background:linear-gradient(168deg,#fffef8 0%,#f7f1e8 48%,#ebe3d6 100%)',
-      'border:0.8px solid rgba(92,72,52,0.28)',
-      'border-right-width:1.1px',
-      'border-bottom-width:1.2px',
-      'box-shadow:1px 1.5px 0 rgba(55,42,30,0.1),inset 0 1px 0 rgba(255,255,255,0.75),inset 0 -4px 7px rgba(120,95,70,0.07)',
-      'backdrop-filter:blur(6px)',
-      '-webkit-backdrop-filter:blur(6px)',
-    ].join(';')
-  );
-
-  const fibers = document.createElement('span');
-  fibers.setAttribute('aria-hidden', 'true');
-  fibers.setAttribute(
-    'style',
-    [
-      'position:absolute',
-      'inset:0',
-      'opacity:0.14',
-      'pointer-events:none',
-      'background-image:repeating-linear-gradient(-18deg,transparent,transparent 2px,rgba(90,70,50,0.06) 2px,rgba(90,70,50,0.06) 3px)',
+      'background:linear-gradient(135deg,rgba(255,255,255,0.22) 0%,rgba(241,245,249,0.14) 100%)',
+      'border:1px solid rgba(229,231,235,0.85)',
+      'box-shadow:0 8px 32px rgba(15,23,42,0.12),inset 0 1px 0 rgba(255,255,255,0.35)',
+      'backdrop-filter:blur(14px)',
+      '-webkit-backdrop-filter:blur(14px)',
     ].join(';')
   );
 
@@ -619,7 +604,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'position:absolute',
       'inset:2px',
       'pointer-events:none',
-      'border:1px dashed rgba(90,70,50,0.18)',
+      'border:1px dashed rgba(203,213,225,0.65)',
       'border-radius:2px',
     ].join(';')
   );
@@ -631,17 +616,23 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     [
       'position:relative',
       'z-index:1',
+      'display:inline-flex',
+      'align-items:center',
+      'justify-content:center',
+      'margin:1px',
+      'padding:0 1px',
+      'border-radius:1px',
+      'background:linear-gradient(168deg,rgba(110,231,183,0.58) 0%,rgba(125,211,252,0.58) 100%)',
       'font-family:ui-rounded,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",cursive',
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      'opacity:0.44',
-      'filter:sepia(28%) saturate(78%) contrast(0.92) brightness(1.03)',
-      'text-shadow:0.6px 0.7px 0 rgba(72,52,38,0.12),-0.4px 0.5px 0 rgba(255,252,246,0.55)',
+      'opacity:0.92',
+      'filter:saturate(1.05) contrast(0.98)',
+      'text-shadow:0 0 1px rgba(255,255,255,0.5)',
     ].join(';')
   );
 
-  shell.appendChild(fibers);
   shell.appendChild(stampEdge);
   shell.appendChild(face);
   wrap.appendChild(shell);

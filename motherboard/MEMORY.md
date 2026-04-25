@@ -17660,3 +17660,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`adminGlobeClusterClientProfile.ts`** — broader **`registeredUsers`** birth parsing (**`birthMonth`/`birthDay`/`birthYear`**, 6-digit **`MMDDYY`**, 8-digit, slash dates + **`ageFromBirthParts`**). **`AdminRevenueLiveGlobe.tsx`** — styles as requested.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Postcard landmark chips: cluster glass shell + globe mint–sky glyph
+
+**Context:** User asked for **postcard chip background only** to match the **cluster panel** transparent frosted background, and the **landmark emoji area only** to use the same **mint → sky transparent gradient** as the globe land hex.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterLandmarkMeshBadge`**: shell uses same **`linear-gradient(135deg, …)`** + **`blur(14px)`** as **`ClusterDetailPanel`**; inner glyph span **`linear-gradient(168deg, rgba(110,231,183,0.58), rgba(125,211,252,0.58))`** (aligned with embed **`landHexTopRgba`** stops); removed paper fiber overlay; lighter dashed inner border. **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`** mirrored.
+
+**Verification:** **`npm run build`** (root + **`embed/admin-globe`**).
+
+**Deploy:** Redeploy **main** and **embed/admin-globe**.
