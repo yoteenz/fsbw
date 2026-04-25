@@ -76,6 +76,8 @@ Without this variable, Admin → Revenue uses the **SVG/CSS** fallback only.
 { type: 'fsbw-admin-globe-ui-cluster-panel', open: boolean }
 ```
 
+Implementation note: **globe.gl** often **re-enables** `OrbitControls.autoRotate` after **`width`/`height`**, **`hexBinPointsData` / `pointsData`**, **`pointOfView`**, etc. The embed therefore **re-asserts `autoRotate = false` every animation frame** while `open: true`, and calls **`enforceAutoRotateWhenClusterPanelOpen()`** after **`applySize`** / **`applyPayload`** as well.
+
 **Parent → iframe** (after ready) — **points payload**:
 
 ```ts

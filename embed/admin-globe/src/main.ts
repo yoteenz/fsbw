@@ -479,13 +479,22 @@ let autoRotateWhenIdle = true;
 /** Parent order-cluster panel is open — keep **`autoRotate` false**; globe.gl can reset it on data/zoom updates. */
 let parentClusterPanelOpen = false;
 
+let autoRotateRafId: number | null = null;
+
 function setGlobeAutoRotateForClusterPanel(open: boolean): void {
   parentClusterPanelOpen = open;
+  if (autoRotateRafId != null) {
+    cancelAnimationFrame(autoRotateRafId);
+    autoRotateRafId = null;
+  }
   try {
     const c = globe.controls();
     if (open) {
       c.autoRotate = false;
+      c.autoRotateSpeed = 0;
+      autoRotateRafId = requestAnimationFrame(armAutoRotateOffWhileClusterPanelOpen);
     } else {
+      c.autoRotateSpeed = 0.3;
       c.autoRotate = autoRotateWhenIdle;
       recoverOrbitPointerState();
     }
@@ -497,10 +506,23 @@ function setGlobeAutoRotateForClusterPanel(open: boolean): void {
 function enforceAutoRotateWhenClusterPanelOpen(): void {
   if (!parentClusterPanelOpen) return;
   try {
-    globe.controls().autoRotate = false;
+    const c = globe.controls();
+    c.autoRotate = false;
+    /** globe.gl / three often reset **`autoRotate`** after **`width`/`height`**, **`pointOfView`**, or layer rebuilds — re-assert each frame while panel open. */
+    c.autoRotateSpeed = 0;
   } catch {
     /* optional */
   }
+}
+
+/** While the parent cluster panel is open, keep forcing **`autoRotate` off** (globe.gl overwrites it). */
+function armAutoRotateOffWhileClusterPanelOpen(): void {
+  if (!parentClusterPanelOpen) {
+    autoRotateRafId = null;
+    return;
+  }
+  enforceAutoRotateWhenClusterPanelOpen();
+  autoRotateRafId = requestAnimationFrame(armAutoRotateOffWhileClusterPanelOpen);
 }
 
 function activateOrderCluster(row: PointRow): void {
@@ -926,6 +948,7 @@ function applySize() {
   const { w, h } = readSize();
   globe.width(w).height(h);
   requestAnimationFrame(() => enableCss2dLandmarkPointerHitThrough());
+  enforceAutoRotateWhenClusterPanelOpen();
 }
 applySize();
 requestAnimationFrame(() => {
@@ -973,6 +996,7 @@ function applyPayload(rows: PointRow[]) {
     .pointsData(all)
     .arcsData(buildArcs(visitors, orders));
   updateMapLabelsFromCamera();
+  enforceAutoRotateWhenClusterPanelOpen();
 }
 
 globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]);
@@ -998,6 +1022,7 @@ void (async () => {
   }
   applyPayload(lastRows);
   reorderGlobeLabelsAboveHex();
+  enforceAutoRotateWhenClusterPanelOpen();
   requestAnimationFrame(() => {
     reorderGlobeLabelsAboveHex();
     notifyReady();

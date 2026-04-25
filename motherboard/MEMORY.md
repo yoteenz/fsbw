@@ -17714,3 +17714,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`**: removed **`backdrop-filter`** / **`-webkit-backdrop-filter`**, inset highlight, dashed inner frame; shell stays **`transparent`** with a subtle white hairline only. **`docs/ADMIN_GLOBE_EMBED.md`** updated.
 
 **Deploy:** Redeploy **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Globe auto-rotate: keep stopped while cluster panel open (globe.gl overwrites)
+
+**Context:** User reported the globe **resumed spinning** after the **cluster panel** opened and centered; **`MSG_UI_CLUSTER_PANEL`** was not reliably keeping rotation off.
+
+**Cause:** **globe.gl** / **OrbitControls** often **reset `autoRotate` to true** after **`globe.width()`/`height()`**, **`hexBinPointsData`/`pointsData`**, **`pointOfView`**, and other layer updates — **`enforceAutoRotate`** only ran from some listeners, so rotation could come back mid-animation.
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — while **`parentClusterPanelOpen`**, **`requestAnimationFrame`** loop forces **`autoRotate = false`** + **`autoRotateSpeed = 0`**; **`applySize`**, **`applyPayload`**, and async init also call **`enforceAutoRotateWhenClusterPanelOpen()`**; cancel RAF when panel closes. **`docs/ADMIN_GLOBE_EMBED.md`** — implementation note.
+
+**Deploy:** Redeploy **embed/admin-globe**.
