@@ -98,6 +98,31 @@ export const ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL: OrderGlobeClusterCustomer[]
   })
 );
 
+/**
+ * After merging mock pool rows, **`sum(customer.orderCount)`** must equal **`clusterOrderCount`**
+ * so the cluster header (`N ORDERS · …`) matches the panel rows (fixes prior bug: head-only adjust left extras at 2–4 each).
+ */
+function reconcileMockCustomerOrderCountsToCluster(
+  customers: OrderGlobeClusterCustomer[],
+  clusterOrderCount: number
+): OrderGlobeClusterCustomer[] {
+  if (clusterOrderCount <= 0 || customers.length === 0) return customers;
+  const out = customers.map((c) => ({ ...c }));
+  const n = out.length;
+  if (clusterOrderCount >= n) {
+    const base = Math.floor(clusterOrderCount / n);
+    let rem = clusterOrderCount % n;
+    for (let i = 0; i < n; i++) {
+      out[i]!.orderCount = base + (i < rem ? 1 : 0);
+    }
+  } else {
+    for (let i = 0; i < n; i++) {
+      out[i]!.orderCount = i < clusterOrderCount ? 1 : 0;
+    }
+  }
+  return out;
+}
+
 function augmentMockClusterCustomers(
   placeLine: string,
   orderCount: number,
@@ -111,7 +136,9 @@ function augmentMockClusterCustomers(
   const merged: OrderGlobeClusterCustomer[] = existing.map((c) => ({ ...c }));
   const seen = new Set(merged.map((c) => c.email.toLowerCase()));
   let pi = 0;
-  const target = Math.max(4, Math.min(6, merged.length + 3));
+  /** Do not fabricate more **rows** than **`orderCount`** can support (avoids four “0 order” rows for a 1-order cluster). */
+  const rawTarget = Math.max(4, Math.min(6, merged.length + 3));
+  const target = Math.min(rawTarget, Math.max(merged.length, orderCount));
   while (merged.length < target && pi < ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL.length) {
     const p = ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL[pi]!;
     pi += 1;
@@ -127,15 +154,7 @@ function augmentMockClusterCustomers(
     seen.add(email.toLowerCase());
   }
   merged.sort((a, b) => b.totalSpent - a.totalSpent);
-  if (orderCount > 0 && merged[0]) {
-    const head = merged[0];
-    const rest = merged.slice(1);
-    const sumRest = rest.reduce((s, c) => s + c.orderCount, 0);
-    const headOrders = Math.max(1, orderCount - sumRest);
-    merged.length = 0;
-    merged.push({ ...head, orderCount: headOrders }, ...rest);
-  }
-  return merged;
+  return reconcileMockCustomerOrderCountsToCluster(merged, orderCount);
 }
 
 /** ~10 mock order ship locations (distinct from visitor cities where possible). */

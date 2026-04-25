@@ -17778,3 +17778,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** customer rows.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Mock globe cluster: order counts match header vs. rows
+
+**Context:** Cluster panel showed **`1 ORDER`** in the red summary but **four** customer rows each with orders — **totals disconnected**.
+
+**Cause:** **`augmentMockClusterCustomers`** only rewrote the **top** customer’s **`orderCount`** to **`orderCount - sum(rest)`** but left **pool** rows at **2–4** each, so **`sum(rows)`** could **exceed** the cluster **`orderCount`**. Also **`target`** forced **4+** mock rows even when **`orderCount === 1`**.
+
+**Changes:** **`src/utils/adminGlobeMockPresence.ts`** — **`reconcileMockCustomerOrderCountsToCluster`** distributes **`clusterOrderCount`** across all rows (integer split); **`target`** capped by **`orderCount`**; removed old head-only adjustment.
+
+**Deploy:** Redeploy **main**.
