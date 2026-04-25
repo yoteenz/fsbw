@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback, useRef, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom';
 import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBoundaryPaths';
+import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../utils/adminGlobePlaceLabel';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -11,11 +12,20 @@ const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
 
-export type LiveGlobePoint = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
+export type LiveGlobePoint = {
+  lat: number;
+  lng: number;
+  label: string;
+  kind: 'visitor' | 'order';
+  placeLine?: string;
+  placeDetail?: string;
+};
+
+type GlobePointInput = { lat: number; lng: number; label: string; placeLine?: string; placeDetail?: string };
 
 type Props = {
-  orderPoints: Array<{ lat: number; lng: number; label: string }>;
-  visitorPoints: Array<{ lat: number; lng: number; label: string }>;
+  orderPoints: GlobePointInput[];
+  visitorPoints: GlobePointInput[];
   heightPx?: number;
 };
 
@@ -28,8 +38,20 @@ function getAdminGlobeEmbedUrl(): string | null {
 
 function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['orderPoints']): LiveGlobePoint[] {
   return [
-    ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
-    ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
+    ...visitorPoints.map((p) => {
+      const place =
+        p.placeLine && p.placeLine.trim()
+          ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
+          : visitorPlaceFieldsFromHeartbeatLabel(p.label);
+      return { ...p, ...place, kind: 'visitor' as const };
+    }),
+    ...orderPoints.map((p) => {
+      const place =
+        p.placeLine && p.placeLine.trim()
+          ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
+          : orderPlaceFieldsFromGlobeLabel(p.label);
+      return { ...p, ...place, kind: 'order' as const };
+    }),
   ];
 }
 
@@ -300,8 +322,20 @@ function AdminRevenueLiveGlobeIframeEmbed({
 
   const pointsPayload = useMemo(() => {
     return [
-      ...visitorPoints.map((p) => ({ ...p, kind: 'visitor' as const })),
-      ...orderPoints.map((p) => ({ ...p, kind: 'order' as const })),
+      ...visitorPoints.map((p) => {
+        const place =
+          p.placeLine && p.placeLine.trim()
+            ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
+            : visitorPlaceFieldsFromHeartbeatLabel(p.label);
+        return { ...p, ...place, kind: 'visitor' as const };
+      }),
+      ...orderPoints.map((p) => {
+        const place =
+          p.placeLine && p.placeLine.trim()
+            ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
+            : orderPlaceFieldsFromGlobeLabel(p.label);
+        return { ...p, ...place, kind: 'order' as const };
+      }),
     ];
   }, [visitorPoints, orderPoints]);
 
@@ -614,6 +648,52 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                 </g>
               </svg>
 
+              {scale > 1.38 &&
+                points.map((p, i) => {
+                  const { leftPct, topPct } = project(p.lat, p.lng);
+                  const line = (p.placeLine ?? '').trim();
+                  if (!line) return null;
+                  const detail = (p.placeDetail ?? '').trim();
+                  return (
+                    <div
+                      key={`map-lbl-${p.kind}-${i}`}
+                      className="absolute z-[5] max-w-[160px] pointer-events-none text-left"
+                      style={{
+                        left: `${leftPct}%`,
+                        top: `${topPct}%`,
+                        transform: 'translate(-50%, 14px)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: '"Futura PT Demi", "Futura PT", sans-serif',
+                          fontSize: '9px',
+                          lineHeight: 1.25,
+                          color: '#0f172a',
+                          textTransform: 'none',
+                          textShadow: '0 0 4px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.85)',
+                        }}
+                      >
+                        {line}
+                      </div>
+                      {detail ? (
+                        <div
+                          style={{
+                            fontFamily: '"Futura PT Book", "Futura PT", sans-serif',
+                            fontSize: '8px',
+                            lineHeight: 1.2,
+                            color: '#475569',
+                            marginTop: '2px',
+                            textTransform: 'uppercase',
+                            textShadow: '0 0 4px rgba(255,255,255,0.95)',
+                          }}
+                        >
+                          {detail}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               {points.map((p, i) => {
                 const { leftPct, topPct } = project(p.lat, p.lng);
                 const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;

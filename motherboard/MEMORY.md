@@ -17207,3 +17207,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** **`npm run build`** (root) + **`cd embed/admin-globe && npm run build`** pass.
 
 **Deploy:** Redeploy **main** (new static GeoJSON + SVG) and **embed/admin-globe**.
+
+---
+
+## 2026-04-24 — Admin globe: map-style city labels when zoomed in
+
+**Context:** User wanted **city, state, country** style labels when **zoomed all the way in**, like a real map.
+
+**Changes:** **`src/utils/adminGlobePlaceLabel.ts`** — **`visitorPlaceFieldsFromHeartbeatLabel`**, **`orderPlaceFieldsFromGlobeLabel`** (strip **`VISITOR ·`** / path suffix; split **`ORDER #… ·`** from geo line). **`revenue/page.tsx`** — visitor + order globe points include **`placeLine`** / **`placeDetail`**. **`AdminRevenueLiveGlobe.tsx`** — **`LiveGlobePoint`** + iframe **`postMessage`** payload includes those fields; SVG fallback shows **HTML labels** under dots when **`scale > 1.38`**. **`embed/admin-globe/src/main.ts`** — **`labelsData`** layer; **`updateMapLabelsFromCamera()`** on **`controls` `change`** when **`pointOfView().altitude ≤ 0.42`** (larger text if **≤ 0.22**); label text **`placeLine\nplaceDetail`**, **`labelIncludeDot(false)`**. **`embed/admin-globe/vite.config.ts`** + **`tsconfig.json`** alias **`@fsbw/adminGlobePlaceLabel`**. **`docs/ADMIN_GLOBE_EMBED.md`** note.
+
+**Verification:** Root + embed **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.
+
+**Limits:** Labels only for **live visitor/order dots** (data we have: ipapi **city/region/country** for visitors; **shipping city/state/country** for orders). **No** full worldwide city database / tile map.

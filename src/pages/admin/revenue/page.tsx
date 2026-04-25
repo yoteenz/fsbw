@@ -30,6 +30,7 @@ import {
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
 import { orderShippingToGlobePoint } from '../../../utils/orderShippingToGlobePoint';
+import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 
 const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/AdminRevenueLiveGlobe'));
 
@@ -609,12 +610,12 @@ export default function AdminRevenue() {
 
   const [liveVisitorsNow, setLiveVisitorsNow] = useState(0);
   const [liveVisitorGlobePoints, setLiveVisitorGlobePoints] = useState<
-    Array<{ lat: number; lng: number; label: string }>
+    Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }>
   >([]);
   const [liveGlobeError, setLiveGlobeError] = useState<string | null>(null);
 
   const orderGlobePoints = useMemo(() => {
-    const out: Array<{ lat: number; lng: number; label: string }> = [];
+    const out: Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }> = [];
     const seen = new Set<string>();
     for (const o of orders) {
       const ship = o.shippingAddress;
@@ -625,10 +626,14 @@ export default function AdminRevenue() {
       if (seen.has(key)) continue;
       seen.add(key);
       const num = (o.orderNumber || o.id || '').toString().replace(/^ORDER\s*#?\s*/i, '');
+      const fullLabel = `ORDER #${num || '—'} · ${pt.label}`;
+      const place = orderPlaceFieldsFromGlobeLabel(fullLabel);
       out.push({
         lat: pt.lat,
         lng: pt.lng,
-        label: `ORDER #${num || '—'} · ${pt.label}`,
+        label: fullLabel,
+        placeLine: place.placeLine,
+        placeDetail: place.placeDetail,
       });
       if (out.length >= 80) break;
     }
@@ -648,11 +653,18 @@ export default function AdminRevenue() {
       const data = await getAdminLivePresence();
       setLiveVisitorsNow(data.visitorsNow);
       setLiveVisitorGlobePoints(
-        (data.visitors || []).map((v) => ({
-          lat: v.lat,
-          lng: v.lng,
-          label: `VISITOR · ${[v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE'}${v.path ? ` · ${v.path}` : ''}`,
-        }))
+        (data.visitors || []).map((v) => {
+          const geo = [v.city, v.region, v.country].filter(Boolean).join(', ') || 'ACTIVE';
+          const fullLabel = `VISITOR · ${geo}${v.path ? ` · ${v.path}` : ''}`;
+          const place = visitorPlaceFieldsFromHeartbeatLabel(fullLabel);
+          return {
+            lat: v.lat,
+            lng: v.lng,
+            label: fullLabel,
+            placeLine: place.placeLine,
+            placeDetail: place.placeDetail,
+          };
+        })
       );
     } catch {
       setLiveGlobeError('LIVE DATA UNAVAILABLE');

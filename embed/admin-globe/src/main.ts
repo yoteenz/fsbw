@@ -1,6 +1,7 @@
 import Globe from 'globe.gl';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
+import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '@fsbw/adminGlobePlaceLabel';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -9,7 +10,25 @@ const ORDER_GREEN = '#16a34a';
 const LAND_HEX_WEIGHT = 800;
 const LAND_HEX_WEIGHT_THRESHOLD = 400;
 
-type PointRow = { lat: number; lng: number; label: string; kind: 'visitor' | 'order' };
+type PointRow = {
+  lat: number;
+  lng: number;
+  label: string;
+  kind: 'visitor' | 'order';
+  /** Map line when zoomed in (city, region, country). */
+  placeLine?: string;
+  placeDetail?: string;
+};
+
+type MapLabelRow = {
+  lat: number;
+  lng: number;
+  text: string;
+  color: string;
+  altitude: number;
+  size: number;
+  includeDot: boolean;
+};
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
 type Weighted = { lat: number; lng: number; w: number };
 
@@ -31,6 +50,11 @@ const BORDER_STATE_GRADIENT: [string, string] = ['rgba(241, 245, 249, 0.42)', 'r
 const MSG_IN = 'fsbw-admin-globe';
 const MSG_POINT = 'fsbw-admin-globe-point';
 const MSG_READY = 'fsbw-admin-globe-ready';
+
+/** When camera `altitude` is at or below this (zoomed in), show **map-style** place labels. */
+const ZOOM_LABEL_MAX_ALTITUDE = 0.42;
+/** Extra-close zoom: slightly larger labels. */
+const ZOOM_LABEL_LARGE_MAX_ALTITUDE = 0.22;
 
 /** Merged land hex top: translucent mint → sky by latitude (reference-style). */
 function landHexTopRgba(lat: number): string {
@@ -231,6 +255,61 @@ function readSize(): { w: number; h: number } {
 
 const OCEAN_BASE_DATA_URL = makeOceanSolidLightGrayDataUrl();
 
+function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
+  const lat = Number(o.lat);
+  const lng = Number(o.lng);
+  const label = typeof o.label === 'string' ? o.label : '';
+  const kind = o.kind === 'order' ? 'order' : 'visitor';
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  let placeLine = typeof o.placeLine === 'string' ? o.placeLine.trim() : '';
+  let placeDetail = typeof o.placeDetail === 'string' ? o.placeDetail.trim() : '';
+  if (!placeLine) {
+    if (kind === 'visitor') {
+      const v = visitorPlaceFieldsFromHeartbeatLabel(label);
+      placeLine = v.placeLine;
+      placeDetail = placeDetail || (v.placeDetail ?? '');
+    } else {
+      const v = orderPlaceFieldsFromGlobeLabel(label);
+      placeLine = v.placeLine;
+      placeDetail = placeDetail || (v.placeDetail ?? '');
+    }
+  }
+  return { lat, lng, label, kind, placeLine, placeDetail };
+}
+
+function buildMapLabelsFromPoints(rows: PointRow[], largeZoom: boolean): MapLabelRow[] {
+  const out: MapLabelRow[] = [];
+  for (const r of rows) {
+    const line = (r.placeLine ?? '').trim();
+    if (!line) continue;
+    const detail = (r.placeDetail ?? '').trim();
+    const text = detail ? `${line}\n${detail}` : line;
+    out.push({
+      lat: r.lat,
+      lng: r.lng,
+      text,
+      color: '#0f172a',
+      altitude: 0.056,
+      size: largeZoom ? 0.2 : 0.15,
+      includeDot: false,
+    });
+  }
+  return out;
+}
+
+function updateMapLabelsFromCamera() {
+  let alt = 999;
+  try {
+    const pov = globe.pointOfView() as { altitude?: number };
+    if (pov && typeof pov.altitude === 'number' && Number.isFinite(pov.altitude)) alt = pov.altitude;
+  } catch {
+    /* optional */
+  }
+  const show = alt <= ZOOM_LABEL_MAX_ALTITUDE;
+  const large = alt <= ZOOM_LABEL_LARGE_MAX_ALTITUDE;
+  globe.labelsData(show ? buildMapLabelsFromPoints(lastRows, large) : []);
+}
+
 const globe = new Globe(root, {
   rendererConfig: { alpha: true, antialias: false, powerPreference: 'low-power' },
   waitForGlobeReady: true,
@@ -299,6 +378,17 @@ const globe = new Globe(root, {
   .pathDashLength(1)
   .pathDashGap(0)
   .pathDashAnimateTime(0)
+  /** Map-style place names when zoomed in (camera altitude low). */
+  .labelsData([])
+  .labelLat('lat')
+  .labelLng('lng')
+  .labelText('text')
+  .labelColor('color')
+  .labelAltitude('altitude')
+  .labelSize('size')
+  .labelIncludeDot('includeDot')
+  .labelDotOrientation('bottom')
+  .labelsTransitionDuration(0)
   .onGlobeReady(() => {
     try {
       const m = globe.globeMaterial() as {
@@ -317,6 +407,7 @@ const globe = new Globe(root, {
     }
     reorderGlobePathsBelowHexBins();
     requestAnimationFrame(() => reorderGlobePathsBelowHexBins());
+    updateMapLabelsFromCamera();
   });
 
 globe.pointOfView({ lat: 22, lng: -95, altitude: 2.2 }, 0);
@@ -329,6 +420,9 @@ try {
   /** Allow zooming much closer than default; no hard max zoom-out cap */
   c.minDistance = 85;
   c.maxDistance = 1e6;
+  c.addEventListener('change', () => {
+    updateMapLabelsFromCamera();
+  });
 } catch {
   /* optional */
 }
@@ -376,9 +470,10 @@ function applyPayload(rows: PointRow[]) {
     .pathsData(borderPaths)
     .pointsData(all)
     .arcsData(buildArcs(visitors, orders));
+  updateMapLabelsFromCamera();
 }
 
-globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]);
 
 void (async () => {
   try {
@@ -422,13 +517,8 @@ window.addEventListener('message', (event: MessageEvent) => {
   const cleaned: PointRow[] = [];
   for (const r of rows) {
     if (!r || typeof r !== 'object') continue;
-    const o = r as Record<string, unknown>;
-    const lat = Number(o.lat);
-    const lng = Number(o.lng);
-    const label = typeof o.label === 'string' ? o.label : '';
-    const kind = o.kind === 'order' ? 'order' : 'visitor';
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
-    cleaned.push({ lat, lng, label, kind });
+    const row = normalizeIncomingPoint(r as Record<string, unknown>);
+    if (row) cleaned.push(row);
   }
   applyPayload(cleaned);
 });

@@ -11,6 +11,7 @@ export default defineConfig({
       /** Shared with main app — same land sampling for SVG + WebGL. */
       '@fsbw/adminGlobeNe110mLand': path.resolve(__dirname, '../../src/utils/adminGlobeNe110mLand.ts'),
       '@fsbw/adminGlobeBoundaryPaths': path.resolve(__dirname, '../../src/utils/adminGlobeBoundaryPaths.ts'),
+      '@fsbw/adminGlobePlaceLabel': path.resolve(__dirname, '../../src/utils/adminGlobePlaceLabel.ts'),
     },
   },
   base: '/',
