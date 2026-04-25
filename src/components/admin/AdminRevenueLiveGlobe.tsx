@@ -8,12 +8,11 @@ import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterC
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
-/** Match **`ClusterDetailPanel`** frosted card (postcard chip shell only). */
-const CLUSTER_PANEL_GLASS_BG =
-  'linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(241,245,249,0.14) 100%)';
-/** Mint → sky like **`embed/admin-globe`** `landHexTopRgba` (transparent gradient behind landmark glyph only). */
-const GLOBE_LANDMARK_FACE_GRAD =
-  'linear-gradient(168deg, rgba(110,231,183,0.58) 0%, rgba(125,211,252,0.58) 100%)';
+/** Postcard shell: clear glass like the cluster panel — **no** tinted fill (blur only). */
+const POSTCARD_CHIP_SHELL_BG = 'transparent';
+/** Mint → sky like globe land hex; applied to **glyph only** via `background-clip: text`. */
+const GLOBE_LANDMARK_GLYPH_GRAD =
+  'linear-gradient(168deg, rgba(110,231,183,0.92) 0%, rgba(125,211,252,0.92) 100%)';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -357,9 +356,9 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
         borderRadius: 2,
         position: 'relative',
         transform: `rotate(${tilt}deg)`,
-        background: CLUSTER_PANEL_GLASS_BG,
+        background: POSTCARD_CHIP_SHELL_BG,
         border: '1px solid rgba(229, 231, 235, 0.85)',
-        boxShadow: '0 8px 32px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.35)',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
       }}
@@ -373,19 +372,17 @@ function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clus
         }}
       />
       <span
-        className="relative z-[1] inline-flex items-center justify-center"
+        className="relative z-[1] inline-block"
         style={{
-          margin: 1,
-          padding: '0 1px',
-          borderRadius: 1,
-          background: GLOBE_LANDMARK_FACE_GRAD,
           fontFamily: 'ui-rounded, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", cursive',
           fontSize: 10,
           lineHeight: 1,
           letterSpacing: '0.02em',
-          opacity: 0.92,
-          filter: 'saturate(1.05) contrast(0.98)',
-          textShadow: '0 0 1px rgba(255,255,255,0.5)',
+          background: GLOBE_LANDMARK_GLYPH_GRAD,
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          WebkitTextFillColor: 'transparent',
         }}
       >
         {symbol}

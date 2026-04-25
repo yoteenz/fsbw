@@ -17682,3 +17682,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: reordered blocks; orders/views **`color: #000000`**; landmark title **`#64748b`**.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-25 — Postcard chip: transparent shell; mint–sky only on emoji glyph
+
+**Context:** User said the **postcard chip background** was still showing the **blue–green gradient**; they want **no fill color** on the chip (transparent like the cluster panel) and the **gradient only on the landmark icon** itself.
+
+**Changes:** **`ClusterLandmarkMeshBadge`** + **`buildLandmarkHtml`**: shell **`background: transparent`**, keep **`backdrop-filter: blur(14px)`** + light border (glass, no white gradient fill); emoji uses **`background-clip: text`** + **`color: transparent`** so mint→sky applies **only to the glyph**.
+
+**Deploy:** Redeploy **main** and **embed/admin-globe**.

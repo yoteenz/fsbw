@@ -588,9 +588,9 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'position:relative',
       'overflow:hidden',
       'transform:rotate(' + tilt + 'deg)',
-      'background:linear-gradient(135deg,rgba(255,255,255,0.22) 0%,rgba(241,245,249,0.14) 100%)',
+      'background:transparent',
       'border:1px solid rgba(229,231,235,0.85)',
-      'box-shadow:0 8px 32px rgba(15,23,42,0.12),inset 0 1px 0 rgba(255,255,255,0.35)',
+      'box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)',
       'backdrop-filter:blur(14px)',
       '-webkit-backdrop-filter:blur(14px)',
     ].join(';')
@@ -616,20 +616,16 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     [
       'position:relative',
       'z-index:1',
-      'display:inline-flex',
-      'align-items:center',
-      'justify-content:center',
-      'margin:1px',
-      'padding:0 1px',
-      'border-radius:1px',
-      'background:linear-gradient(168deg,rgba(110,231,183,0.58) 0%,rgba(125,211,252,0.58) 100%)',
+      'display:inline-block',
       'font-family:ui-rounded,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",cursive',
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      'opacity:0.92',
-      'filter:saturate(1.05) contrast(0.98)',
-      'text-shadow:0 0 1px rgba(255,255,255,0.5)',
+      'background:linear-gradient(168deg,rgba(110,231,183,0.92) 0%,rgba(125,211,252,0.92) 100%)',
+      '-webkit-background-clip:text',
+      'background-clip:text',
+      '-webkit-text-fill-color:transparent',
+      'color:transparent',
     ].join(';')
   );
 
