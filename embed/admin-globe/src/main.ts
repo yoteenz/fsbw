@@ -452,13 +452,22 @@ function activateOrderCluster(row: PointRow): void {
   });
 }
 
-/** Holographic mesh-style landmark chip (not flat “photo” emoji). */
+/** Slight tilt per cluster so chips feel like scattered postcards (stable from `clusterKey`). */
+function postcardTiltDeg(seed: string | undefined): number {
+  let h = 0;
+  const s = seed ?? '';
+  for (let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i) * (i + 1)) % 997;
+  return ((h % 11) - 5) * 0.55;
+}
+
+/** Postcard / hand-stamp landmark chip — soft paper, not glossy emoji tile. */
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
   wrap.type = 'button';
   const sym = row.landmarkSymbol || '📍';
   const title = row.landmarkTitle || 'Orders';
   const n = row.orderCount ?? 1;
+  const tilt = postcardTiltDeg(row.clusterKey);
   wrap.title = `${title} · ${n} order${n === 1 ? '' : 's'} — tap for breakdown`;
   wrap.setAttribute(
     'style',
@@ -480,31 +489,45 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'display:inline-flex',
       'align-items:center',
       'justify-content:center',
-      'width:40px',
-      'height:40px',
-      'border-radius:12px',
+      'width:46px',
+      'height:38px',
+      'border-radius:3px',
       'position:relative',
       'overflow:hidden',
-      'background:linear-gradient(145deg, rgba(110,231,183,0.22) 0%, rgba(125,211,252,0.18) 45%, rgba(148,163,184,0.14) 100%)',
-      'border:1.2px solid rgba(255,255,255,0.42)',
-      'box-shadow:0 0 0 1px rgba(15,23,42,0.06) inset,0 1px 0 rgba(255,255,255,0.35) inset,0 6px 18px rgba(15,23,42,0.18)',
-      'backdrop-filter:blur(10px)',
-      '-webkit-backdrop-filter:blur(10px)',
+      'transform:rotate(' + tilt + 'deg)',
+      'background:linear-gradient(168deg,#fffef8 0%,#f7f1e8 48%,#ebe3d6 100%)',
+      'border:1.6px solid rgba(92,72,52,0.28)',
+      'border-right-width:2.2px',
+      'border-bottom-width:2.4px',
+      'box-shadow:2px 3px 0 rgba(55,42,30,0.1),inset 0 1px 0 rgba(255,255,255,0.75),inset 0 -8px 14px rgba(120,95,70,0.07)',
+      'backdrop-filter:blur(6px)',
+      '-webkit-backdrop-filter:blur(6px)',
     ].join(';')
   );
 
-  const grid = document.createElement('span');
-  grid.setAttribute('aria-hidden', 'true');
-  grid.setAttribute(
+  const fibers = document.createElement('span');
+  fibers.setAttribute('aria-hidden', 'true');
+  fibers.setAttribute(
     'style',
     [
       'position:absolute',
       'inset:0',
-      'opacity:0.22',
-      'background-image:linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.45) 1px, transparent 1px)',
-      'background-size:7px 7px',
-      'mix-blend-mode:overlay',
+      'opacity:0.14',
       'pointer-events:none',
+      'background-image:repeating-linear-gradient(-18deg,transparent,transparent 2px,rgba(90,70,50,0.06) 2px,rgba(90,70,50,0.06) 3px)',
+    ].join(';')
+  );
+
+  const stampEdge = document.createElement('span');
+  stampEdge.setAttribute('aria-hidden', 'true');
+  stampEdge.setAttribute(
+    'style',
+    [
+      'position:absolute',
+      'inset:3px',
+      'pointer-events:none',
+      'border:1px dashed rgba(90,70,50,0.18)',
+      'border-radius:2px',
     ].join(';')
   );
 
@@ -515,15 +538,18 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     [
       'position:relative',
       'z-index:1',
-      'font-size:22px',
+      'font-family:ui-rounded,"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",cursive',
+      'font-size:21px',
       'line-height:1',
-      'opacity:0.88',
-      'filter:saturate(1.15) contrast(1.08) brightness(1.05) drop-shadow(0 0 10px rgba(56,189,248,0.55)) drop-shadow(0 2px 4px rgba(15,23,42,0.35))',
-      'mix-blend-mode:soft-light',
+      'letter-spacing:0.02em',
+      'opacity:0.44',
+      'filter:sepia(28%) saturate(78%) contrast(0.92) brightness(1.03)',
+      'text-shadow:0.6px 0.7px 0 rgba(72,52,38,0.12),-0.4px 0.5px 0 rgba(255,252,246,0.55)',
     ].join(';')
   );
 
-  shell.appendChild(grid);
+  shell.appendChild(fibers);
+  shell.appendChild(stampEdge);
   shell.appendChild(face);
   wrap.appendChild(shell);
 

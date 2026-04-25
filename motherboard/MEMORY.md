@@ -17449,3 +17449,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Verification:** Root + **`embed/admin-globe`** **`npm run build`** pass.
 
 **Deploy:** Redeploy **embed** + **main** (both changed).
+
+---
+
+## 2026-04-21 — Landmark chips: postcard / hand-stamp look, more transparent glyphs
+
+**Context:** User wanted landmark **emojis** to feel **hand-drawn** with a **postcard** vibe instead of glossy emoji/photo tiles, and the **glyphs more transparent** (less opaque).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`**: cream **postcard** panel (168° paper gradient), **thicker bottom/right edge**, **paper fiber** stripes, **dashed stamp** inner frame, **`postcardTiltDeg(clusterKey)`** stable slight rotation; emoji **`opacity ~0.44`**, **`sepia` + lower saturate/contrast**, light **text-shadow** (no cyan mesh/glow). **`AdminRevenueLiveGlobe.tsx`** — **`ClusterLandmarkMeshBadge`** matches + **`clusterKey`** for same tilt; **`docs/ADMIN_GLOBE_EMBED.md`** updated.
+
+**Verification:** **`embed/admin-globe`** + root **`npm run build`** pass.
+
+**Deploy:** Redeploy **embed** + **main**.

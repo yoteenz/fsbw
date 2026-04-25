@@ -293,40 +293,58 @@ function buildLandHexPathsFromSamples(
   return out;
 }
 
-function ClusterLandmarkMeshBadge({ symbol }: { symbol: string }) {
+function postcardTiltFromClusterKey(key: string): number {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h + key.charCodeAt(i) * (i + 1)) % 997;
+  return ((h % 11) - 5) * 0.55;
+}
+
+function ClusterLandmarkMeshBadge({ symbol, clusterKey }: { symbol: string; clusterKey: string }) {
+  const tilt = postcardTiltFromClusterKey(clusterKey || symbol);
   return (
     <span
       aria-hidden
-      className="shrink-0 inline-flex items-center justify-center overflow-hidden rounded-[11px]"
+      className="shrink-0 inline-flex items-center justify-center overflow-hidden"
       style={{
-        width: 34,
+        width: 40,
         height: 34,
-        background: 'linear-gradient(145deg, rgba(110,231,183,0.28) 0%, rgba(125,211,252,0.22) 45%, rgba(148,163,184,0.18) 100%)',
-        border: '1.2px solid rgba(255,255,255,0.45)',
-        boxShadow: '0 0 0 1px rgba(15,23,42,0.06) inset, 0 1px 0 rgba(255,255,255,0.4) inset, 0 6px 16px rgba(15,23,42,0.12)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        borderRadius: 3,
         position: 'relative',
+        transform: `rotate(${tilt}deg)`,
+        background: 'linear-gradient(168deg, #fffef8 0%, #f7f1e8 48%, #ebe3d6 100%)',
+        border: '1.6px solid rgba(92, 72, 52, 0.28)',
+        borderRightWidth: 2.2,
+        borderBottomWidth: 2.4,
+        boxShadow: '2px 3px 0 rgba(55, 42, 30, 0.1), inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -8px 14px rgba(120, 95, 70, 0.07)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
       }}
     >
       <span
         className="pointer-events-none absolute inset-0"
         style={{
-          opacity: 0.2,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-          backgroundSize: '7px 7px',
-          mixBlendMode: 'overlay',
+          opacity: 0.14,
+          backgroundImage: 'repeating-linear-gradient(-18deg, transparent, transparent 2px, rgba(90, 70, 50, 0.06) 2px, rgba(90, 70, 50, 0.06) 3px)',
+        }}
+      />
+      <span
+        className="pointer-events-none absolute"
+        style={{
+          inset: 3,
+          border: '1px dashed rgba(90, 70, 50, 0.18)',
+          borderRadius: 2,
         }}
       />
       <span
         className="relative z-[1]"
         style={{
+          fontFamily: 'ui-rounded, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", cursive',
           fontSize: 19,
           lineHeight: 1,
-          opacity: 0.9,
-          filter: 'saturate(1.12) contrast(1.06) brightness(1.04) drop-shadow(0 0 8px rgba(56,189,248,0.45)) drop-shadow(0 2px 3px rgba(15,23,42,0.25))',
-          mixBlendMode: 'soft-light',
+          letterSpacing: '0.02em',
+          opacity: 0.44,
+          filter: 'sepia(28%) saturate(78%) contrast(0.92) brightness(1.03)',
+          textShadow: '0.6px 0.7px 0 rgba(72, 52, 38, 0.12), -0.4px 0.5px 0 rgba(255, 252, 246, 0.55)',
         }}
       >
         {symbol}
@@ -368,7 +386,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
               Orders · {detail.placeLine}
             </p>
             <div className="flex items-start gap-2 mt-2">
-              <ClusterLandmarkMeshBadge symbol={sym} />
+              <ClusterLandmarkMeshBadge symbol={sym} clusterKey={detail.clusterKey} />
               {detail.landmarkTitle ? (
                 <p
                   style={{
