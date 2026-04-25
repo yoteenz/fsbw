@@ -67,15 +67,31 @@ function visitorPointFromRow(v: MockPresenceVisitorRow): MockGlobeVisitorPoint {
 export const ADMIN_GLOBE_MOCK_VISITOR_POINTS: MockGlobeVisitorPoint[] =
   ADMIN_GLOBE_MOCK_PRESENCE_ROWS.map(visitorPointFromRow);
 
+/** First + last + age for mock globe cluster rows (cluster panel / QA). */
+const MOCK_GLOBE_CLUSTER_IDENTITIES: Array<{ displayName: string; age: number }> = [
+  { displayName: 'Jennifer Lowe', age: 39 },
+  { displayName: 'Marcus Webb', age: 44 },
+  { displayName: 'Elena Park', age: 31 },
+  { displayName: 'David Okonkwo', age: 52 },
+  { displayName: 'Sofia Reyes', age: 28 },
+  { displayName: 'James Chen', age: 36 },
+  { displayName: 'Amara Singh', age: 41 },
+  { displayName: 'Oliver Hart', age: 33 },
+  { displayName: 'Nina Volkov', age: 47 },
+  { displayName: 'Tyler Brooks', age: 29 },
+  { displayName: 'Priya Nair', age: 35 },
+  { displayName: 'Daniel Frost', age: 50 },
+];
+
 /**
- * Shared mock **spenders** for order-cluster panels (derived from mock presence cities so QA looks realistic).
- * Merged into each mock cluster when **`adminGlobeMockDataEnabled()`**.
+ * Shared mock **spenders** for order-cluster panels when **`adminGlobeMockDataEnabled()`**.
+ * Uses **real-style names + ages** (not city slug emails) so the cluster panel matches **`Jennifer Lowe, 39`**-style QA.
  */
-export const ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL: OrderGlobeClusterCustomer[] = ADMIN_GLOBE_MOCK_PRESENCE_ROWS.map(
-  (row, i) => ({
-    email: `shopper.${String(row.city ?? 'global')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '')}.${i}@mock.globe`,
+export const ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL: OrderGlobeClusterCustomer[] = MOCK_GLOBE_CLUSTER_IDENTITIES.map(
+  (id, i) => ({
+    email: `globe.mock.${i}@client.test`,
+    displayName: id.displayName,
+    age: id.age,
     orderCount: 1 + (i % 4),
     totalSpent: 520 + i * 240 + (i % 3) * 110,
     topProduct: (['NOIR', 'BLANCO', 'SOFT CURL', 'OCEAN CURL', 'BEACH WAVE', 'NATURAL STRAIGHT'] as const)[i % 6]!,
@@ -99,7 +115,8 @@ function augmentMockClusterCustomers(
   while (merged.length < target && pi < ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL.length) {
     const p = ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL[pi]!;
     pi += 1;
-    const email = `${slug || 'cluster'}.${p.email}`;
+    /** Short unique email — **`displayName`** / **`age`** carry the human-readable identity (avoid slug-prefixed locals). */
+    const email = `m${merged.length}.${(slug || 'c').slice(0, 10)}.${pi}@mock.globe`;
     if (seen.has(email.toLowerCase())) continue;
     merged.push({
       ...p,
@@ -200,7 +217,9 @@ function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPo
   const lm = landmarkForShipKey(key, p.placeLine);
   const base: OrderGlobeClusterCustomer[] = [
     {
-      email: 'mock.customer@example.com',
+      email: 'globe.mock.single@client.test',
+      displayName: 'Jordan Blake',
+      age: 34,
       orderCount: 1,
       totalSpent: 899,
       topProduct: 'NOIR',
@@ -237,9 +256,30 @@ function mockNycOrderCluster(): OrderGlobeClusterPoint {
     landmarkSymbol: lm.symbol,
     towerHeight: 0.042 + Math.min(0.14, 13 * 0.012),
     customers: augmentMockClusterCustomers(placeLine, 14, [
-      { email: 'vip.nyc@example.com', orderCount: 6, totalSpent: 12540, topProduct: 'NOIR' },
-      { email: 'repeat.nyc@example.com', orderCount: 5, totalSpent: 4820, topProduct: 'BLANCO' },
-      { email: 'new.nyc@example.com', orderCount: 3, totalSpent: 2199, topProduct: 'SOFT CURL' },
+      {
+        email: 'globe.mock.nyc1@client.test',
+        displayName: 'Victoria Lang',
+        age: 42,
+        orderCount: 6,
+        totalSpent: 12540,
+        topProduct: 'NOIR',
+      },
+      {
+        email: 'globe.mock.nyc2@client.test',
+        displayName: 'Ryan Mercer',
+        age: 37,
+        orderCount: 5,
+        totalSpent: 4820,
+        topProduct: 'BLANCO',
+      },
+      {
+        email: 'globe.mock.nyc3@client.test',
+        displayName: 'Hannah Cole',
+        age: 29,
+        orderCount: 3,
+        totalSpent: 2199,
+        topProduct: 'SOFT CURL',
+      },
     ]),
   };
 }

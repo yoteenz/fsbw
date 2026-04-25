@@ -17746,3 +17746,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — **`buildLandmarkHtml`** **`face`** span: **`linear-gradient(168deg, rgba(30,41,59,0.72), rgba(71,85,105,0.58))`** with **`background-clip: text`**. **`docs/ADMIN_GLOBE_EMBED.md`** — copy updated.
 
 **Deploy:** Redeploy **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Mock globe cluster customers: real first/last + age
+
+**Context:** User saw cluster panel names like **`Los Angeles Ca Us Shopper Memphis 0`** from mock globe data; wanted **`Jennifer Lowe, 39`**-style names.
+
+**Cause:** **`augmentMockClusterCustomers`** prefixed long **`placeLine`** slugs to **`shopper.{city}.{i}@mock.globe`** emails; without **`registeredUsers`**, **`displayNameFromEmailOnly`** turned that local part into a title-cased “name”.
+
+**Changes:** **`src/utils/adminGlobeMockPresence.ts`** — **`MOCK_GLOBE_CLUSTER_IDENTITIES`** (12 **`displayName` + `age`** pairs); **`ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL`** uses **`globe.mock.{i}@client.test`** + explicit **`displayName`/`age`**; **`augmentMockClusterCustomers`** uses short unique **`m{n}.{slug}@mock.globe`** emails; NYC + single-order mocks get named **`displayName`/`age`** too.
+
+**Deploy:** Redeploy **main**.
