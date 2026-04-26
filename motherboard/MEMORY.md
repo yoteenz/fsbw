@@ -17800,3 +17800,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`embed/admin-globe/src/main.ts`** — landmark glyph **`opacity` 0.88 → 0.62**. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — customer name **`11px → 9px`**; red spend line **`marginTop` 5 → 4**; gray top-product **`marginTop` 4 → 3**. **`docs/ADMIN_GLOBE_EMBED.md`** — opacity note.
 
 **Deploy:** Redeploy **main** + **embed/admin-globe**.
+
+---
+
+## 2026-04-25 — Cluster panel: orders/views margin, avatar border, top product black Book
+
+**Context:** User asked **cluster panel only**: **−2px** space **above** **`1 ORDER · 0 VIEWS`**; profile photo border **−0.02px**; **top product** line **black Futura PT Book** (not gray Medium).
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — summary **`orders · views`** **`marginTop` 5 → 3**; avatar border **`1.3px → 1.28px`**; top product **`Futura PT Book`** + **`#000000`**.
+
+**Deploy:** Redeploy **main**.
