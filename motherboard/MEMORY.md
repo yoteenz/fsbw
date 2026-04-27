@@ -17832,3 +17832,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: avatar border **`0.98px → 1.08px`**; vertical position **`translateY(calc(-50% + 8px))` → `translateY(calc(-50% + 6px))`** (2px up).
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-27 — Admin Revenue globe: remove “Globe QA” label; center mock controls
+
+**Context:** User asked to remove the **“Globe QA”** text to the left of **Load mock globe data** / **Clear mock data** and center that control text.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — removed the **`Globe QA`** span; added **`w-full`** on the flex row so the single button stays **horizontally centered** under the globe.
+
+**Deploy:** Redeploy **main**.

@@ -1059,12 +1059,7 @@ export default function AdminRevenue() {
                           heightPx={324}
                         />
                       </Suspense>
-                      <div className="flex flex-wrap items-center justify-center gap-2 mt-2 mb-1 px-1">
-                        <span
-                          style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#94a3b8', textTransform: 'uppercase' }}
-                        >
-                          Globe QA
-                        </span>
+                      <div className="flex flex-wrap items-center justify-center gap-2 mt-2 mb-1 px-1 w-full">
                         {adminGlobeMockDataEnabled() ? (
                           <button
                             type="button"
