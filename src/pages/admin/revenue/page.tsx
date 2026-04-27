@@ -14,7 +14,15 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { isAdminEmail } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
-import { buildRevenueOrdersList, getDepletedInventory, getOrdersStats, getProductSalesCounts, getTotalStartingInventoryUnits } from '../../../utils/adminRevenueStats';
+import {
+  buildRevenueOrdersList,
+  countGiftCardsSoldFromOrders,
+  getDepletedInventory,
+  getOrdersStats,
+  getProductSalesCounts,
+  getTotalStartingInventoryUnits,
+  STARTING_INVENTORY,
+} from '../../../utils/adminRevenueStats';
 import {
   buildMembershipPaymentsList,
   membershipPaymentsTotalUsd,
@@ -705,6 +713,8 @@ export default function AdminRevenue() {
   };
 
   const depletedInventory = useMemo(() => getDepletedInventory(orders), [orders]);
+  const giftCardsSoldCount = useMemo(() => countGiftCardsSoldFromOrders(orders), [orders]);
+  const giftCardInventoryCap = STARTING_INVENTORY.giftCards;
   const ordersStats = useMemo(() => getOrdersStats(orders, totalRevenue), [orders, totalRevenue]);
   const inventoryTotal = depletedInventory.totalUnits;
 
@@ -1362,10 +1372,12 @@ export default function AdminRevenue() {
                     )}
                     {/** Invisible separator — same vertical rhythm as prior “Tools” / “Packaging” label rows. */}
                     <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                         <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>GIFT CARDS</span>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>—</span>
+                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>
+                          {giftCardsSoldCount} / {giftCardInventoryCap}
+                        </span>
                       </div>
                     </div>
                     <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />

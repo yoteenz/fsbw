@@ -22,6 +22,11 @@ const PRODUCT_NAMES = ['NOIR', 'BLANCO', 'SOFT WAVE', 'BEACH WAVE', 'SOFT CURL',
 /** Starting inventory: products (10 each), packaging counts. */
 export const STARTING_INVENTORY = {
   products: Object.fromEntries(PRODUCT_NAMES.map((p) => [p, 10])) as Record<string, number>,
+  /**
+   * Sellable **digital** gift-card “slots” for admin Products tab (**sold / inventory**).
+   * (Not decreased by `getDepletedInventory` — wigs only.)
+   */
+  giftCards: 500,
   packaging: {
     'MAILER BOXES': 250,
     'DUST BAGS': 500,
@@ -39,7 +44,52 @@ export const STARTING_INVENTORY = {
     'GLUE SPREADER': 249,
     'MELT BANDS': 250,
   } as Record<string, number>,
-};
+} as const;
+
+function isGiftCardLineItem(line: { type?: string; productName?: string; name?: string }): boolean {
+  const t = String(line.type || '').toLowerCase();
+  if (t === 'gift-card') return true;
+  const n = String(line.name || line.productName || '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  return n === 'GIFT CARD' || n.includes('GIFT CARD');
+}
+
+function orderLinesForStats(order: RevenueOrderForStats): Array<{
+  type?: string;
+  productName?: string;
+  name?: string;
+  quantity?: number;
+}> {
+  if (order.lineItems && order.lineItems.length > 0) {
+    return order.lineItems as Array<{
+      type?: string;
+      productName?: string;
+      name?: string;
+      quantity?: number;
+    }>;
+  }
+  if (order.productName) {
+    const q = Math.max(1, Math.floor(Number(order.items) || 1));
+    return [{ productName: order.productName, name: String(order.productName), quantity: q, type: (order as { type?: string }).type }];
+  }
+  return [];
+}
+
+/** Count **gift card** line items across non-canceled orders (same `userOrders_*` source as revenue). */
+export function countGiftCardsSoldFromOrders(orders: RevenueOrderForStats[]): number {
+  let total = 0;
+  for (const order of orders) {
+    if (orderInventoryCanceled(order)) continue;
+    for (const line of orderLinesForStats(order)) {
+      if (!isGiftCardLineItem(line)) continue;
+      const q = Math.max(1, Math.floor(Number(line.quantity) || 1));
+      total += q;
+    }
+  }
+  return total;
+}
 
 function orderInventoryCanceled(order: RevenueOrderForStats): boolean {
   const s = String(order.status || '').toUpperCase();

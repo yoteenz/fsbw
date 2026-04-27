@@ -17895,6 +17895,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin Products: gift cards **sold / inventory** count
+
+**Context:** User asked **GIFT CARDS** on **Admin → Revenue → Products** to show **how many sold vs inventory**.
+
+**Changes:** **`src/utils/adminRevenueStats.ts`** — `STARTING_INVENTORY.giftCards: 500` (admin sellable cap); **`countGiftCardsSoldFromOrders`** (non-canceled orders, lines **`type: gift-card`** or name **`GIFT CARD`**). **`src/pages/admin/revenue/page.tsx`** — display **`{sold} / {cap}`** instead of **—**.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-28 — Cluster panel: red place line single line; Products tab: remove Tools/Packaging labels
 
 **Context:** User asked: **red** location line on **cluster panel** (e.g. `DUBAI, UNITED ARAB EMIRATES`) should not wrap; **do not** move the **✕**; remove gray **Tools** & **Packaging** on **Admin → Revenue → Products** but keep **spacing** as section separators.
