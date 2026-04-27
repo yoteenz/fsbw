@@ -16,7 +16,14 @@ export function AdminOverviewAnalyticsCard({ title, children }: { title: string;
   );
 }
 
-export type AdminOverviewMetricRow = { label: string; value: string; valueRed?: boolean };
+export type AdminOverviewMetricRow = {
+  label: string;
+  value: string;
+  valueRed?: boolean;
+  /** Wider value column (e.g. long city lists). Label column stays min-content; default `58%`. */
+  valueMaxWidth?: string;
+  valueWhiteSpace?: 'normal' | 'nowrap';
+};
 
 export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow[] }) {
   return (
@@ -33,7 +40,15 @@ export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow
             borderBottom: idx < rows.length - 1 ? '1px solid #e5e7eb' : undefined,
           }}
         >
-          <span style={{ fontFamily: '"Futura PT Book"', fontSize: '9px', color: '#808080', textTransform: 'uppercase' }}>
+          <span
+            style={{
+              fontFamily: '"Futura PT Book"',
+              fontSize: '9px',
+              color: '#808080',
+              textTransform: 'uppercase',
+              flexShrink: 0,
+            }}
+          >
             {row.label}
           </span>
           <span
@@ -44,8 +59,9 @@ export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow
               flexShrink: 0,
               textTransform: 'uppercase',
               textAlign: 'right',
-              maxWidth: '58%',
+              maxWidth: row.valueMaxWidth ?? '58%',
               wordBreak: 'break-word',
+              whiteSpace: row.valueWhiteSpace ?? 'normal',
             }}
           >
             {row.value}

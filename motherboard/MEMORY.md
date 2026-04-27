@@ -17895,6 +17895,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Live View: TOP PAGE PATHS (top 3, HOME/SHOP style); wider TOP VISITORS
+
+**Context:** User asked: rename to **TOP PAGE PATHS**; simplified top **3** like **`HOME/SHOP · SHOP/UNITS · BAG`**; widen **TOP VISITORS** value so it doesn’t wrap, without moving the label.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — path keys for counting; **`formatTopPagePathsSimplified`**. **`src/components/admin/AdminOverviewAnalyticsCard.tsx`** — optional **`valueMaxWidth`**, **`valueWhiteSpace`**, label **`flexShrink: 0`**.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.

@@ -51,19 +51,45 @@ const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/Admin
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
-function segmentVisitorPath(path: string | null | undefined): string {
+/**
+ * Full path key for **top page paths** (no ellipsis — display builds `HOME/SHOP`-style lines).
+ * URLs → pathname; relative paths as-is.
+ */
+function pathKeyForTopPaths(path: string | null | undefined): string {
   const p = String(path ?? '').trim();
   if (!p) return '—';
   try {
     if (p.startsWith('http://') || p.startsWith('https://')) {
       const u = new URL(p);
-      const seg = (u.pathname || '/').replace(/\/$/, '') || '/';
-      return seg.length > 44 ? `${seg.slice(0, 44)}…` : seg;
+      return (u.pathname || '/').replace(/\/$/, '') || '/';
     }
   } catch {
     /* ignore */
   }
-  return p.length > 48 ? `${p.slice(0, 48)}…` : p;
+  return p;
+}
+
+const toPathToken = (s: string) => s.toLocaleUpperCase('en-US').replace(/[^A-Z0-9-]/g, '');
+
+/**
+ * Top paths display: e.g. **`HOME/SHOP · SHOP/UNITS · BAG`** — uppercase, slashes, no counts.
+ * **`/home/shop` → `HOME/SHOP`**, **`/shop/units` → `SHOP/UNITS`**, **`/bag` → `BAG`**, **`/` → `HOME`**.
+ */
+function formatTopPagePathsSimplified(path: string | null | undefined): string {
+  const key = pathKeyForTopPaths(path);
+  if (!key || key === '—') return '';
+  const raw = key.replace(/^\/+/, '') || 'HOME';
+  if (!raw || raw === '/') return 'HOME';
+  const segs = raw
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (segs.length === 0) return 'HOME';
+  if (segs[0]!.toLowerCase() === 'home') {
+    if (segs.length === 1) return 'HOME';
+    return ['HOME', ...segs.slice(1).map((s) => toPathToken(s))].filter(Boolean).join('/');
+  }
+  return segs.map((s) => toPathToken(s)).filter(Boolean).join('/');
 }
 
 function topCounts(
@@ -824,8 +850,11 @@ export default function AdminRevenue() {
     const visitors = livePresenceVisitors;
     const orderLocKeys = orderGlobePoints.map((p) => (p.placeLine || '').trim()).filter(Boolean);
     const visitorLocKeys = liveVisitorGlobePoints.map((p) => (p.placeLine || '').trim()).filter(Boolean);
-    const pathSegs = visitors.map((v) => segmentVisitorPath(v.path));
-    const topPaths = topCounts(pathSegs, 4);
+    const pathKeys = visitors.map((v) => pathKeyForTopPaths(v.path));
+    const topPathKeys = topCounts(
+      pathKeys.map((k) => (k && k !== '—' ? k : '')).filter(Boolean),
+      3
+    );
     const topCountries = topCounts(
       visitors.map((v) => String(v.country ?? '').trim()).filter(Boolean),
       3
@@ -842,11 +871,6 @@ export default function AdminRevenue() {
       orderLocKeys.map((k) => cityFromPlaceLine(k)).filter((c) => c && c !== '—'),
       3
     );
-    const fmtTop = (arr: Array<{ label: string; count: number }>, maxLen: number) => {
-      if (arr.length === 0) return '—';
-      const s = arr.map(({ label, count }) => `${label} (${count})`).join(' · ');
-      return s.length <= maxLen ? s : `${s.slice(0, maxLen - 1)}…`;
-    };
     const fmtTop3Labels = (arr: Array<{ label: string; count: number }>) => {
       if (arr.length === 0) return '—';
       return arr
@@ -860,7 +884,13 @@ export default function AdminRevenue() {
       topVisitorLine: fmtTop3Labels(topVisitorCities),
       topVisitorStatesLine: fmtTop3Labels(topVisitorStates),
       topOrderLine: fmtTop3Labels(topOrderCities),
-      topPathsLine: fmtTop(topPaths, 200),
+      topPathsLine:
+        topPathKeys.length === 0
+          ? '—'
+          : topPathKeys
+              .map(({ label }) => formatTopPagePathsSimplified(label))
+              .filter((s) => s.length > 0)
+              .join(' · ') || '—',
       topCountriesLine: fmtTop3Labels(topCountries),
     };
   }, [livePresenceVisitors, orderGlobePoints, liveVisitorGlobePoints, orders]);
@@ -1225,11 +1255,16 @@ export default function AdminRevenue() {
                             { label: 'CURRENT VISITORS', value: String(liveVisitorsNow) },
                             { label: 'ACTIVE GLOBE ORDERS', value: String(orderGlobePoints.length) },
                             { label: 'TOP BUYER', value: liveViewCardMetrics.topBuyersLine },
-                            { label: 'TOP VISITORS', value: liveViewCardMetrics.topVisitorLine },
+                            {
+                              label: 'TOP VISITORS',
+                              value: liveViewCardMetrics.topVisitorLine,
+                              valueMaxWidth: '72%',
+                              valueWhiteSpace: 'nowrap',
+                            },
                             { label: 'TOP STATES', value: liveViewCardMetrics.topVisitorStatesLine },
                             { label: 'TOP ORDERS', value: liveViewCardMetrics.topOrderLine },
                             { label: 'TOP COUNTRIES', value: liveViewCardMetrics.topCountriesLine },
-                            { label: 'TOP PAGE PATHS (VISITORS)', value: liveViewCardMetrics.topPathsLine },
+                            { label: 'TOP PAGE PATHS', value: liveViewCardMetrics.topPathsLine },
                           ]}
                         />
                       </AdminOverviewAnalyticsCard>
