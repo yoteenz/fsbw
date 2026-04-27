@@ -687,7 +687,11 @@ export default function AdminRevenue() {
     (email: string) => {
       const e = (email || '').trim();
       if (!e) return;
-      navigate(`/admin/clients?${new URLSearchParams({ email: e }).toString()}`);
+      /** Client details toggle reads `?email=` on **overview**; `/admin/clients` redirects without preserving search. */
+      navigate({
+        pathname: '/admin/clients/overview',
+        search: new URLSearchParams({ email: e }).toString(),
+      });
     },
     [navigate]
   );

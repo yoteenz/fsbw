@@ -17859,6 +17859,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context:** User asked to show the **most recent** unit product/size **ordered or delivered** (not top-spend frequency) on the black line, and **tapping the profile photo** should open **client details**.
 
-**Changes:** **`src/utils/adminOrderGlobeClusters.ts`** — per customer: **`recentUnitName` + `recentUnitCapSize`** from the **last line** of the **latest** order with status **delivered/shipped/fulfilled/complete** (else **latest** order by **`date`**). **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`formatRecentUnitLine`**, optional **`onOpenClusterClientByEmail`**: avatar is a **button** that calls it. **`src/pages/admin/revenue/page.tsx`** — **`navigate('/admin/clients?email=…')`**. **`embed/admin-globe/src/main.ts`** — payload uses **`recentUnitName` / `recentUnitCapSize`** (fallback **`topProduct`**). **`src/utils/adminGlobeMockPresence.ts`** — mock rows use **`recentUnit*`** fields.
+**Changes:** **`src/utils/adminOrderGlobeClusters.ts`** — per customer: **`recentUnitName` + `recentUnitCapSize`** from the **last line** of the **latest** order with status **delivered/shipped/fulfilled/complete** (else **latest** order by **`date`**). **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`formatRecentUnitLine`**, optional **`onOpenClusterClientByEmail`**: avatar is a **button** that calls it. **`src/pages/admin/revenue/page.tsx`** — navigate to **client details**: **`/admin/clients/overview?email=`** (not **`/admin/clients?email=`** — that redirect **drops** query and the details toggle never opens). **`embed/admin-globe/src/main.ts`** — payload uses **`recentUnitName` / `recentUnitCapSize`** (fallback **`topProduct`**). **`src/utils/adminGlobeMockPresence.ts`** — mock rows use **`recentUnit*`** fields.
 
 **Deploy:** Redeploy **main** + **embed/admin-globe**.
+
+---
+
+## 2026-04-27 — Fix globe cluster → client details: use `/admin/clients/overview?email=`
+
+**Context:** User reiterated cluster panel: **most recent** unit line + profile opens **client details**; the prior **`/admin/clients?email=`** link failed because **`/admin/clients` → `overview` redirect** (see `App.tsx`) does **not** pass **`search`**, so **`?email=`** was lost and the **details view did not toggle**.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`openGlobeClusterClient`**: **`navigate({ pathname: '/admin/clients/overview', search: 'email=…' })`**.
+
+**Deploy:** Redeploy **main**.
