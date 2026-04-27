@@ -17872,3 +17872,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — **`openGlobeClusterClient`**: **`navigate({ pathname: '/admin/clients/overview', search: 'email=…' })`**.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-27 — Cluster panel close: smaller ✕, brand red
+
+**Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** close button: **`fontSize` 10px → 9px** (−10%), **`color` → `BRAND_RED` (`#EB1C24`)**; **DetailModal** and other UIs unchanged.
+
+**Deploy:** Redeploy **main**.

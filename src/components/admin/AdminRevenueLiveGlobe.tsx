@@ -435,8 +435,8 @@ function ClusterDetailPanel({
             aria-label="Close"
             style={{
               fontFamily: '"Futura PT Book"',
-              fontSize: '10px',
-              color: '#64748b',
+              fontSize: '9px',
+              color: BRAND_RED,
               background: 'none',
               border: 'none',
               cursor: 'pointer',
