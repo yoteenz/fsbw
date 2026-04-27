@@ -17810,3 +17810,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — summary **`orders · views`** **`marginTop` 5 → 3**; avatar border **`1.3px → 1.28px`**; top product **`Futura PT Book`** + **`#000000`**.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-27 — Cluster panel: smaller orders/views line; avatar border 0.3px thinner
+
+**Context:** User asked to reduce the **black** `1 ORDER · 0 VIEWS` line by **1px** (text only), and to reduce the **profile photo border** by **0.3px**; they also asked why the border had not seemed to shrink before.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: black summary line **`fontSize` 10px → 9px**; avatar **`border` 1.28px → 0.98px** (net −0.3px).
+
+**Note:** **Subpixel borders** are rounded to **whole device pixels**; very small changes (e.g. 0.02px) often **look unchanged** on many screens. **`box-sizing: border-box`** also draws the border **inside** the 40×40 image box, so the visible ring can look stable compared to changing the image size.
+
+**Deploy:** Redeploy **main**.

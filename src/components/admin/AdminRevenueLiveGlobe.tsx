@@ -372,7 +372,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
             <p
               style={{
                 fontFamily: '"Futura PT Medium"',
-                fontSize: '10px',
+                fontSize: '9px',
                 color: '#000000',
                 margin: '3px 0 0 0',
                 textTransform: 'uppercase',
@@ -423,7 +423,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                     width={40}
                     height={40}
                     className="shrink-0 object-cover rounded-full"
-                    style={{ width: 40, height: 40, border: '1.28px solid #000000', boxSizing: 'border-box' }}
+                    style={{ width: 40, height: 40, border: '0.98px solid #000000', boxSizing: 'border-box' }}
                     referrerPolicy="no-referrer"
                   />
                   <div className="min-w-0 flex-1">
