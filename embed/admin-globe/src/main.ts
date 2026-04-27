@@ -6,6 +6,11 @@ import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
+/** Base globe.gl point altitude (single order / bottom of stack). */
+const POINT_BASE_ALT = 0.038;
+/** Extra altitude per **stacked** order or visitor (one marker = one count). */
+const POINT_STACK_STEP = 0.0028;
+
 /** Admin UI copy: match storefront uppercase label style (Futura + all-caps). */
 function displayUpper(s: string): string {
   return s.trim().toLocaleUpperCase('en-US');
@@ -45,6 +50,11 @@ type PointRow = {
   landmarkSymbol?: string;
   orderTowerHeight?: number;
   clusterCustomers?: ClusterCustomer[];
+  /**
+   * Per-marker altitude (globe radius units) for **stacked** order/visitor points.
+   * Filled in **`applyPayload`**; `pointAltitude` reads this field.
+   */
+  alt?: number;
 };
 
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
@@ -133,21 +143,13 @@ function makeOceanSolidLightGrayDataUrl(): string {
 }
 
 /**
- * Scatter points around **visitors** only for subtle hex hotspots (orders stay flat dots).
+ * Legacy: random jitter for hex **hot** bins. Not used for visitor counts (see **stacked** markers in **`applyPayload`**).
  */
-function buildHotBinJitter(rows: PointRow[], samplesPerRow: number): Weighted[] {
-  const n = Math.max(2, Math.min(20, Math.round(samplesPerRow)));
-  const pts: Weighted[] = [];
-  for (const r of rows) {
-    for (let k = 0; k < n; k++) {
-      pts.push({
-        lat: r.lat + (Math.random() - 0.5) * 0.55,
-        lng: r.lng + (Math.random() - 0.5) * 0.55,
-        w: 1,
-      });
-    }
-  }
-  return pts;
+/**
+ * **Hot** hex bins: legacy; visitor volume is now **stacked** markers, not extra bins here.
+ */
+function buildHotBinJitterForHexBins(_rows: PointRow[], _samplesPerRow: number): Weighted[] {
+  return [];
 }
 
 function buildArcs(visitors: PointRow[], orders: PointRow[]): ArcRow[] {
@@ -532,13 +534,26 @@ function armAutoRotateOffWhileClusterPanelOpen(): void {
   autoRotateRafId = requestAnimationFrame(armAutoRotateOffWhileClusterPanelOpen);
 }
 
+function orderClusterBaseRowFromPayload(clusterKey: string | undefined): PointRow | null {
+  if (!clusterKey) return null;
+  const o = splitPoints(lastRows).orders.find((p) => p.clusterKey && p.clusterKey === clusterKey);
+  return o ?? null;
+}
+
+function resolveClusterSourceRow(p: PointRow): PointRow {
+  if (p.kind === 'order' && p.clusterKey) return p;
+  return orderClusterBaseRowFromPayload(p.clusterKey) || p;
+}
+
 function activateOrderCluster(row: PointRow): void {
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   setGlobeAutoRotateForClusterPanel(true);
   const { visitors } = splitPoints(lastRows);
-  const viewCount = countVisitorViewsNear(visitors, row.lat, row.lng);
-  const customersUpper = (row.clusterCustomers ?? []).map((c) => ({
+  const base = orderClusterBaseRowFromPayload(row.clusterKey) || row;
+  const viewCount = countVisitorViewsNear(visitors, base.lat, base.lng);
+  const totalOrders = Math.max(0, Math.floor(Number(base.orderCount) || 0));
+  const customersUpper = (base.clusterCustomers ?? []).map((c) => ({
     ...c,
     recentUnitName: displayUpper(c.recentUnitName || c.topProduct || '—'),
     ...(c.recentUnitCapSize
@@ -550,12 +565,12 @@ function activateOrderCluster(row: PointRow): void {
   target.postMessage(
     {
       type: MSG_CLUSTER,
-      clusterKey: row.clusterKey ?? '',
-      placeLine: displayUpper(row.placeLine ?? ''),
-      orderCount: row.orderCount ?? 0,
+      clusterKey: base.clusterKey ?? '',
+      placeLine: displayUpper(base.placeLine ?? ''),
+      orderCount: totalOrders,
       viewCount,
-      landmarkTitle: displayUpper(row.landmarkTitle ?? ''),
-      landmarkSymbol: row.landmarkSymbol ?? '',
+      landmarkTitle: displayUpper(base.landmarkTitle ?? ''),
+      landmarkSymbol: base.landmarkSymbol ?? '',
       customers: customersUpper,
     },
     '*'
@@ -568,7 +583,7 @@ function activateOrderCluster(row: PointRow): void {
     clusterPanelHoldUntilLarge = false;
   }, 3200);
   try {
-    globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
+    globe.pointOfView({ lat: base.lat, lng: base.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
   } catch {
     /* optional */
   }
@@ -752,8 +767,12 @@ const globe = new Globe(root, {
   .hexTransitionDuration(400)
   .pointLat('lat')
   .pointLng('lng')
-  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
-  .pointAltitude(0.038)
+  .pointColor((d: object) => {
+    const p = d as PointRow;
+    if (p.placeDetail === 'VIEW' || p.kind === 'visitor') return BRAND_RED;
+    return ORDER_GREEN;
+  })
+  .pointAltitude((d: object) => (d as PointRow).alt ?? POINT_BASE_ALT)
   .pointRadius((d: object) => {
     const r = d as PointRow;
     if (r.kind === 'order' && r.clusterKey) return 0.62;
@@ -949,8 +968,8 @@ requestAnimationFrame(() => {
 
 globe.onPointClick((p: object) => {
   const pr = p as PointRow;
-  if (pr.kind === 'order' && pr.clusterKey) {
-    activateOrderCluster(pr);
+  if (pr.clusterKey && (pr.kind === 'order' || pr.placeDetail === 'VIEW')) {
+    activateOrderCluster(resolveClusterSourceRow(pr));
     return;
   }
   const target = window.parent && window.parent !== window ? window.parent : null;
@@ -977,15 +996,65 @@ const MAX_BORDER_PATH_ROWS = 10_500;
 function applyPayload(rows: PointRow[]) {
   lastRows = rows;
   const { visitors, orders } = splitPoints(rows);
-  const all: PointRow[] = [...visitors, ...orders];
-  /** Hotspot jitter **visitors only** — orders are flat clickable dots (no raised pillars). */
-  const jitterPerRow = Math.max(4, Math.min(14, Math.floor(220 / Math.max(1, visitors.length || 1))));
-  const hot = buildHotBinJitter(visitors, jitterPerRow);
+
+  /** One row per **order** cluster (same `clusterKey` can be duplicated in payload). */
+  const byCluster = new Map<string, PointRow>();
+  for (const o of orders) {
+    if (o.kind === 'order' && o.clusterKey) {
+      const k = o.clusterKey.trim();
+      if (!k) continue;
+      if (!byCluster.has(k)) byCluster.set(k, o);
+    }
+  }
+  const clusterList = [...byCluster.values()];
+
+  const isNearOrderCluster = (lat: number, lng: number, maxKm: number) => {
+    for (const c of clusterList) {
+      if (haversineKm(lat, lng, c.lat, c.lng) <= maxKm) return true;
+    }
+    return false;
+  };
+
+  const nextOrders: PointRow[] = [];
+  for (const c of clusterList) {
+    const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
+    for (let i = 0; i < oCount; i++) {
+      const alt = POINT_BASE_ALT + i * POINT_STACK_STEP;
+      nextOrders.push({ ...c, orderCount: oCount, orderTowerHeight: alt, alt });
+    }
+    const viewN = countVisitorViewsNear(visitors, c.lat, c.lng, 100);
+    const vCount = Math.max(0, Math.floor(viewN));
+    for (let j = 0; j < vCount; j++) {
+      const alt = POINT_BASE_ALT + (oCount + j) * POINT_STACK_STEP;
+      nextOrders.push({
+        ...c,
+        kind: 'visitor' as const,
+        label: `VIEW · ${(c.placeLine || c.label).slice(0, 64)}`,
+        placeDetail: 'VIEW',
+        orderCount: 0,
+        orderTowerHeight: alt,
+        alt,
+      });
+    }
+  }
+  for (const o of orders) {
+    if (o.kind === 'order' && o.clusterKey) continue;
+    nextOrders.push({ ...o, alt: POINT_BASE_ALT, orderTowerHeight: POINT_BASE_ALT });
+  }
+
+  const nextVisitors: PointRow[] = [];
+  for (const v of visitors) {
+    if (isNearOrderCluster(v.lat, v.lng, 5)) continue;
+    nextVisitors.push({ ...v, alt: POINT_BASE_ALT, orderTowerHeight: POINT_BASE_ALT });
+  }
+
+  const all: PointRow[] = [...nextVisitors, ...nextOrders];
+  /** Land mesh only; orders/views = **stacked** `pointsData` markers. */
   globe
-    .hexBinPointsData([...landHexPoints, ...hot])
+    .hexBinPointsData([...landHexPoints, ...buildHotBinJitterForHexBins(visitors, 0)])
     .pathsData(borderPaths)
     .pointsData(all)
-    .arcsData(buildArcs(visitors, orders));
+    .arcsData(buildArcs(nextVisitors, clusterList));
   updateMapLabelsFromCamera();
   enforceAutoRotateWhenClusterPanelOpen();
 }

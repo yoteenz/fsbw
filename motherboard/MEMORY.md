@@ -17935,6 +17935,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe embed: stacked order/view markers (1 = 1 count)
+
+**Context:** User said the red/green **order vs view** “pillars” were wrong: **one** layer should be **one** order or **one** view (e.g. **10** orders at a location → **10** green stack steps, same for views).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — Deduplicate order rows by `clusterKey`; for each cluster emit `orderCount` **green** `pointsData` rows and `viewCount` **red** rows (100 km, same as cluster panel) with per-row **`alt`** = `POINT_BASE_ALT + n * POINT_STACK_STEP`; `pointAltitude` uses **`alt`**; `activateOrderCluster` resolves full order row from `lastRows` for synthetic “VIEW” points; arcs use deduped clusters + stand-alone visitors. **Hot hex jitter** removed. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **embed/admin-globe**; **main** if **docs** matter for that build.
+
+---
+
 ## 2026-04-28 — Live View: TOP ORDERS after TOP BUYERS; label **TOP BUYERS**
 
 **Context:** User asked to move **TOP ORDERS** above **TOP VISITORS** and below **TOP BUYER**; rename **TOP BUYER** → **TOP BUYERS**.
