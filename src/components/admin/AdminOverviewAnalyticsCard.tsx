@@ -20,6 +20,8 @@ export type AdminOverviewMetricRow = {
   label: string;
   value: string;
   valueRed?: boolean;
+  /** When set, overrides `valueRed` / default value color (e.g. **FINANCIAL HEALTH** cash/debt). */
+  valueColor?: string;
   /** Wider value column (e.g. long city lists). Label column stays min-content; default `58%`. */
   valueMaxWidth?: string;
   valueWhiteSpace?: 'normal' | 'nowrap';
@@ -33,6 +35,8 @@ export function AdminOverviewMetricRows({
   /** Value column uses remaining width + **nowrap** (ellipsis if still too long) — e.g. Admin Revenue **LIVE VIEW DATA**. */
   valueSingleLine?: boolean;
 }) {
+  const valueColor = (row: AdminOverviewMetricRow) =>
+    row.valueColor ?? (row.valueRed === false ? '#334155' : '#EB1C24');
   return (
     <>
       {rows.map((row, idx) => (
@@ -65,7 +69,7 @@ export function AdminOverviewMetricRows({
                 ? {
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '9px',
-                    color: row.valueRed === false ? '#334155' : '#EB1C24',
+                    color: valueColor(row),
                     flex: '1 1 0',
                     minWidth: 0,
                     textTransform: 'uppercase',
@@ -77,7 +81,7 @@ export function AdminOverviewMetricRows({
                 : {
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '9px',
-                    color: row.valueRed === false ? '#334155' : '#EB1C24',
+                    color: valueColor(row),
                     flexShrink: 0,
                     textTransform: 'uppercase',
                     textAlign: 'right',

@@ -57,6 +57,17 @@ import {
 
 const AdminRevenueLiveGlobe = lazy(() => import('../../../components/admin/AdminRevenueLiveGlobe'));
 
+/** Cash flow / debt ratio value colors in **FINANCIAL HEALTH** (admin overview). */
+const FINANCIAL_CASH_FLOW_COLOR: Record<string, string> = {
+  POSITIVE: '#15803d',
+  NEGATIVE: '#EB1C24',
+};
+const FINANCIAL_DEBT_RATIO_COLOR: Record<string, string> = {
+  LOW: '#15803d',
+  MEDIUM: '#ea580c',
+  HIGH: '#EB1C24',
+};
+
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
 /**
@@ -1307,8 +1318,16 @@ export default function AdminRevenue() {
                         <AdminOverviewMetricRows
                           rows={[
                             { label: 'PROFIT MARGIN', value: '35%' },
-                            { label: 'CASH FLOW', value: 'POSITIVE', valueRed: false },
-                            { label: 'DEBT RATIO', value: 'LOW', valueRed: false },
+                            {
+                              label: 'CASH FLOW',
+                              value: 'POSITIVE',
+                              valueColor: FINANCIAL_CASH_FLOW_COLOR.POSITIVE,
+                            },
+                            {
+                              label: 'DEBT RATIO',
+                              value: 'LOW',
+                              valueColor: FINANCIAL_DEBT_RATIO_COLOR.LOW,
+                            },
                             { label: 'INVESTMENT RETURN', value: '18%' },
                           ]}
                         />

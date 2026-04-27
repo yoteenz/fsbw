@@ -17925,6 +17925,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin Revenue FINANCIAL HEALTH: cash/debt value colors
+
+**Context:** User asked **CASH FLOW** / **DEBT RATIO** values: **green** for **POSITIVE** / **LOW**; **red** for **NEGATIVE** / **high**; **MEDIUM** debt = **orange**.
+
+**Changes:** **`src/components/admin/AdminOverviewAnalyticsCard.tsx`** — optional **`valueColor`** on metric rows. **`src/pages/admin/revenue/page.tsx`** — maps + **`POSITIVE`/`LOW`** use **`#15803d`**; **`#ea580c`** for **MEDIUM**; maps document **NEGATIVE**/**HIGH** for future **`#EB1C24`**.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-28 — Live View: TOP ORDERS after TOP BUYERS; label **TOP BUYERS**
 
 **Context:** User asked to move **TOP ORDERS** above **TOP VISITORS** and below **TOP BUYER**; rename **TOP BUYER** → **TOP BUYERS**.
