@@ -17925,6 +17925,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Live View: TOP ORDERS after TOP BUYERS; label **TOP BUYERS**
+
+**Context:** User asked to move **TOP ORDERS** above **TOP VISITORS** and below **TOP BUYER**; rename **TOP BUYER** → **TOP BUYERS**.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **LIVE VIEW DATA** row order: … **TOP BUYERS** → **TOP ORDERS** → **TOP VISITORS** → **TOP STATES** → …
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-28 — Live View: TOP PAGE PATHS (top 3, HOME/SHOP style); wider TOP VISITORS
 
 **Context:** User asked: rename to **TOP PAGE PATHS**; simplified top **3** like **`HOME/SHOP · SHOP/UNITS · BAG`**; widen **TOP VISITORS** value so it doesn’t wrap, without moving the label.
