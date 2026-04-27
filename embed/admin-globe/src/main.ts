@@ -20,6 +20,7 @@ type ClusterCustomer = {
   orderCount: number;
   totalSpent: number;
   topProduct: string;
+  topProductCapSize?: string;
   displayName?: string;
   profileImageUrl?: string;
   age?: number | null;
@@ -378,6 +379,10 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
       const oc = Number(r.orderCount);
       const ts = Number(r.totalSpent);
       const tp = typeof r.topProduct === 'string' ? r.topProduct.trim() : '—';
+      const tpc =
+        typeof r.topProductCapSize === 'string' && r.topProductCapSize.trim()
+          ? r.topProductCapSize.trim()
+          : undefined;
       const dn = typeof r.displayName === 'string' ? r.displayName.trim() : '';
       const pi = typeof r.profileImageUrl === 'string' ? r.profileImageUrl.trim() : '';
       const ageRaw = r.age;
@@ -393,6 +398,7 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
         orderCount: Number.isFinite(oc) ? oc : 0,
         totalSpent: Number.isFinite(ts) ? ts : 0,
         topProduct: tp || '—',
+        ...(tpc ? { topProductCapSize: tpc } : {}),
         ...(dn ? { displayName: dn } : {}),
         ...(pi ? { profileImageUrl: pi } : {}),
         ...(Number.isFinite(ageParsed) ? { age: ageParsed } : {}),

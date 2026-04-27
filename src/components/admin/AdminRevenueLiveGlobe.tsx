@@ -22,6 +22,8 @@ export type GlobeClusterCustomerRow = {
   orderCount: number;
   totalSpent: number;
   topProduct: string;
+  /** Cap size for `topProduct` (from line options), e.g. `XS` — shown as `NOIR · XS`. */
+  topProductCapSize?: string;
   displayName?: string;
   profileImageUrl?: string;
   age?: number | null;
@@ -102,11 +104,16 @@ function normalizeClusterCustomersFromPayload(raw: unknown): GlobeClusterCustome
         : typeof ageRaw === 'string' && ageRaw.trim()
           ? parseInt(ageRaw, 10)
           : NaN;
+    const topCap =
+      typeof o.topProductCapSize === 'string' && o.topProductCapSize.trim()
+        ? o.topProductCapSize.trim()
+        : undefined;
     out.push({
       email,
       orderCount: Number(o.orderCount) || 0,
       totalSpent: Number(o.totalSpent) || 0,
       topProduct: typeof o.topProduct === 'string' ? o.topProduct : '—',
+      ...(topCap ? { topProductCapSize: topCap } : {}),
       displayName: typeof o.displayName === 'string' ? o.displayName : undefined,
       profileImageUrl: typeof o.profileImageUrl === 'string' ? o.profileImageUrl : undefined,
       age: Number.isFinite(ageParsed) ? ageParsed : null,
@@ -334,6 +341,15 @@ function buildLandHexPathsFromSamples(
 
 const CLUSTER_CLIENT_AVATAR_FALLBACK = '/assets/profile-thumb.png';
 
+function formatTopSpendProductLine(c: GlobeClusterCustomerRow): string {
+  const unit = String(c.topProduct ?? '').trim();
+  if (!unit || unit === '—') return '—';
+  const cap = String(c.topProductCapSize ?? '').trim();
+  const u = unit.toLocaleUpperCase('en-US');
+  if (!cap) return u;
+  return `${u} · ${cap.toLocaleUpperCase('en-US')}`;
+}
+
 function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
   const money = (n: number) =>
     n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -463,7 +479,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                         textTransform: 'uppercase',
                       }}
                     >
-                      {c.topProduct && c.topProduct !== '—' ? c.topProduct : '—'}
+                      {formatTopSpendProductLine(c)}
                     </p>
                   </div>
                 </div>

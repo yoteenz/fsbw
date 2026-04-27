@@ -13,7 +13,7 @@ export type RevenueOrderLike = {
   total?: number;
   amount?: number;
   shippingAddress?: ShippingLike | null;
-  lineItems?: Array<{ productName?: string }>;
+  lineItems?: Array<{ productName?: string; subtotal?: number; options?: Record<string, string> }>;
   productName?: string;
 };
 
@@ -22,6 +22,11 @@ export type OrderGlobeClusterCustomer = {
   orderCount: number;
   totalSpent: number;
   topProduct: string;
+  /**
+   * Cap size for the **top product** (highest line-count unit), e.g. `XS`, for **`UNIT · CAP`** in the cluster panel.
+   * From line-item options (`CAP SIZE`) when present.
+   */
+  topProductCapSize?: string;
   /** Filled by `enrichOrderGlobeClusterCustomers` from `registeredUsers` when available. */
   displayName?: string;
   profileImageUrl?: string;
@@ -62,6 +67,63 @@ function primaryProductName(o: RevenueOrderLike): string {
   if (li && String(li).trim()) return String(li).trim().toUpperCase();
   if (o.productName && String(o.productName).trim()) return String(o.productName).trim().toUpperCase();
   return 'ORDER';
+}
+
+function capSizeFromLineItemOptions(options?: Record<string, string> | null): string | null {
+  if (!options || typeof options !== 'object') return null;
+  const raw =
+    (options['CAP SIZE'] as string | undefined) ||
+    (options['Cap size'] as string | undefined) ||
+    (options['cap size'] as string | undefined) ||
+    (options.capSize as string | undefined);
+  const s = String(raw ?? '')
+    .trim()
+    .toUpperCase();
+  return s || null;
+}
+
+type LineItemLike = { productName?: string; subtotal?: number; options?: Record<string, string> };
+
+/**
+ * Cap size for **`topProduct`**: prefer the **highest-subtotal** line that matches the unit name across the customer’s orders.
+ */
+function capSizeForTopProduct(orders: RevenueOrderLike[], topProduct: string): string | null {
+  const t = (topProduct || '—').trim().toUpperCase();
+  if (!t || t === '—' || t === 'ORDER') return null;
+
+  const bySpendDesc = [...orders].sort(
+    (a, b) => (Number(b.total ?? b.amount) || 0) - (Number(a.total ?? a.amount) || 0)
+  );
+
+  for (const o of bySpendDesc) {
+    const lines: LineItemLike[] = o.lineItems?.length
+      ? o.lineItems
+      : [{ productName: o.productName, subtotal: o.total ?? o.amount }];
+    const scored: Array<{ line: LineItemLike; sub: number }> = [];
+    for (const li of lines) {
+      const n = String(li?.productName ?? '').trim().toUpperCase();
+      if (!n) continue;
+      if (n === t || n.includes(t) || t.includes(n)) {
+        scored.push({ line: li, sub: Number(li.subtotal) || 0 });
+      }
+    }
+    if (scored.length) {
+      scored.sort((a, b) => b.sub - a.sub);
+      const cap = capSizeFromLineItemOptions(scored[0]!.line.options);
+      if (cap) return cap;
+    }
+  }
+
+  for (const o of bySpendDesc) {
+    const lines: LineItemLike[] = o.lineItems?.length
+      ? o.lineItems
+      : [{ productName: o.productName, subtotal: o.total ?? o.amount }];
+    for (const li of lines) {
+      const cap = capSizeFromLineItemOptions(li.options);
+      if (cap) return cap;
+    }
+  }
+  return null;
 }
 
 /** Recognizable landmark label + emoji by common English city names (best-effort, no external API). */
@@ -168,6 +230,7 @@ export function buildOrderGlobeClustersFromRevenueOrders(orders: RevenueOrderLik
         orderCount: g.orders.length,
         totalSpent,
         topProduct,
+        topProductCapSize: capSizeForTopProduct(g.orders, topProduct) ?? undefined,
       };
     });
     customers.sort((a, b) => b.totalSpent - a.totalSpent);

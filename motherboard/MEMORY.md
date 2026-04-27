@@ -17842,3 +17842,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — removed the **`Globe QA`** span; added **`w-full`** on the flex row so the single button stays **horizontally centered** under the globe.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-27 — Cluster panel top line: `UNIT · CAP` (e.g. NOIR · XS)
+
+**Context:** User asked to format the **top spend** product line like **`NOIR · XS`**, with **cap size** for the top-spend unit.
+
+**Changes:** **`src/utils/adminOrderGlobeClusters.ts`** — `RevenueOrderLike.lineItems` may include **`options`**; per customer, compute **`topProductCapSize`** from line-item **`CAP SIZE`** for the top product (match by product name, prefer higher **`subtotal`** line, fallback to any line with cap). **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`formatTopSpendProductLine`**, **`topProductCapSize`** on customer rows; **`normalizeClusterCustomersFromPayload`** reads embed field. **`src/utils/adminGlobeMockPresence.ts`** — mock customers include sample cap sizes. **`embed/admin-globe/src/main.ts`** — **`topProductCapSize`** on cluster customer payload for WebGL path.
+
+**Deploy:** Redeploy **main** + **embed/admin-globe** (iframe protocol).
