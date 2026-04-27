@@ -2,7 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireAdmin } from '../_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
-const LIVE_WINDOW_MS = 5 * 60 * 1000;
+/** Page_view heartbeats in this window (deduped per visitor = latest point). */
+const LIVE_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 type VisitorRow = {
   visitor_id: string;

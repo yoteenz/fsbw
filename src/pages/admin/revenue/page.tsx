@@ -81,6 +81,62 @@ function topCounts(
     .slice(0, max);
 }
 
+/** First comma-separated segment, e.g. "Los Angeles, CA, US" → "Los Angeles" (for city-only rollups). */
+function cityFromPlaceLine(placeLine: string): string {
+  const t = String(placeLine ?? '')
+    .trim();
+  if (!t) return '';
+  const i = t.indexOf(',');
+  return (i < 0 ? t : t.slice(0, i)).trim() || t;
+}
+
+function firstNameForRegisteredEmailNorm(emailLower: string): string {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('registeredUsers') : null;
+    if (raw) {
+      const arr = JSON.parse(raw) as Array<Record<string, unknown>>;
+      for (const u of arr) {
+        const e = String(u.email ?? '')
+          .trim()
+          .toLowerCase();
+        if (e && e === emailLower) {
+          const fn = String(u.firstName ?? u.first_name ?? '')
+            .trim();
+          if (fn) {
+            return fn.split(/\s+/)[0]!.trim() || fn;
+          }
+        }
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  const at = emailLower.indexOf('@');
+  const local = at > 0 ? emailLower.slice(0, at) : emailLower;
+  const part = (local.split(/[._-]+/)[0] || local).trim();
+  if (!part) return '—';
+  return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+}
+
+/** Top 3 buyers by lifetime gross in `orders`, first name only, uppercase, joined with · */
+function topBuyerFirstNamesLine(orders: RevenueOrder[]): string {
+  const byEmail = new Map<string, number>();
+  for (const o of orders) {
+    const em = String(o.userEmail ?? '')
+      .trim()
+      .toLowerCase();
+    if (!em) continue;
+    byEmail.set(em, (byEmail.get(em) ?? 0) + (Number(o.total ?? o.amount) || 0));
+  }
+  const top3 = [...byEmail.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+  if (top3.length === 0) return '—';
+  return top3
+    .map(([email]) => firstNameForRegisteredEmailNorm(email).toLocaleUpperCase('en-US'))
+    .join(' · ');
+}
+
 function getProductImage(productName: string): string {
   switch ((productName || '').toUpperCase()) {
     case 'BLANCO': return '/assets/2D BLANCO FRONT.png';
@@ -770,27 +826,44 @@ export default function AdminRevenue() {
     const visitorLocKeys = liveVisitorGlobePoints.map((p) => (p.placeLine || '').trim()).filter(Boolean);
     const pathSegs = visitors.map((v) => segmentVisitorPath(v.path));
     const topPaths = topCounts(pathSegs, 4);
-    const topPlacesMerged = topCounts([...visitorLocKeys, ...orderLocKeys], 5);
     const topCountries = topCounts(
       visitors.map((v) => String(v.country ?? '').trim()).filter(Boolean),
-      4
+      3
     );
-    const topVisitorPlaces = topCounts(visitorLocKeys, 4);
-    const topOrderPlaces = topCounts(orderLocKeys, 4);
+    const topVisitorCities = topCounts(
+      visitorLocKeys.map((k) => cityFromPlaceLine(k)).filter((c) => c && c !== '—'),
+      3
+    );
+    const topVisitorStates = topCounts(
+      visitors.map((v) => String(v.region ?? '').trim()).filter((r) => r.length > 0),
+      3
+    );
+    const topOrderCities = topCounts(
+      orderLocKeys.map((k) => cityFromPlaceLine(k)).filter((c) => c && c !== '—'),
+      3
+    );
     const fmtTop = (arr: Array<{ label: string; count: number }>, maxLen: number) => {
       if (arr.length === 0) return '—';
       const s = arr.map(({ label, count }) => `${label} (${count})`).join(' · ');
       return s.length <= maxLen ? s : `${s.slice(0, maxLen - 1)}…`;
     };
+    const fmtTop3Labels = (arr: Array<{ label: string; count: number }>) => {
+      if (arr.length === 0) return '—';
+      return arr
+        .map(({ label }) => String(label).toLocaleUpperCase('en-US'))
+        .filter(Boolean)
+        .join(' · ');
+    };
 
     return {
-      topPlacesLine: fmtTop(topPlacesMerged, 220),
-      topVisitorLine: fmtTop(topVisitorPlaces, 180),
-      topOrderLine: fmtTop(topOrderPlaces, 180),
+      topBuyersLine: topBuyerFirstNamesLine(orders),
+      topVisitorLine: fmtTop3Labels(topVisitorCities),
+      topVisitorStatesLine: fmtTop3Labels(topVisitorStates),
+      topOrderLine: fmtTop3Labels(topOrderCities),
       topPathsLine: fmtTop(topPaths, 200),
-      topCountriesLine: fmtTop(topCountries, 180),
+      topCountriesLine: fmtTop3Labels(topCountries),
     };
-  }, [livePresenceVisitors, orderGlobePoints, liveVisitorGlobePoints]);
+  }, [livePresenceVisitors, orderGlobePoints, liveVisitorGlobePoints, orders]);
 
   useEffect(() => {
     if (activeTab !== 'OVERVIEW') return;
@@ -1149,12 +1222,13 @@ export default function AdminRevenue() {
                       <AdminOverviewAnalyticsCard title="LIVE VIEW DATA">
                         <AdminOverviewMetricRows
                           rows={[
-                            { label: 'CURRENT VISITORS (LAST 5 MIN)', value: String(liveVisitorsNow) },
-                            { label: 'ACTIVE ORDER LOCATIONS ON GLOBE', value: String(orderGlobePoints.length) },
-                            { label: 'TOP LOCATIONS (VISITORS + ORDERS)', value: liveViewCardMetrics.topPlacesLine },
-                            { label: 'TOP VISITOR LOCATIONS', value: liveViewCardMetrics.topVisitorLine },
-                            { label: 'TOP ORDER SHIP LOCATIONS', value: liveViewCardMetrics.topOrderLine },
-                            { label: 'TOP COUNTRIES (VISITORS)', value: liveViewCardMetrics.topCountriesLine },
+                            { label: 'CURRENT VISITORS', value: String(liveVisitorsNow) },
+                            { label: 'ACTIVE GLOBE ORDERS', value: String(orderGlobePoints.length) },
+                            { label: 'TOP BUYER', value: liveViewCardMetrics.topBuyersLine },
+                            { label: 'TOP VISITORS', value: liveViewCardMetrics.topVisitorLine },
+                            { label: 'TOP STATES', value: liveViewCardMetrics.topVisitorStatesLine },
+                            { label: 'TOP ORDERS', value: liveViewCardMetrics.topOrderLine },
+                            { label: 'TOP COUNTRIES', value: liveViewCardMetrics.topCountriesLine },
                             { label: 'TOP PAGE PATHS (VISITORS)', value: liveViewCardMetrics.topPathsLine },
                           ]}
                         />

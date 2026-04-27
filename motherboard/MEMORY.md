@@ -17875,6 +17875,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin Revenue Live View: labels, 24h visitors, top buyer/cities/states/orders
+
+**Context:** User asked to rename **LIVE VIEW DATA** lines and change logic: **current visitors = last 24h** (not 5 min); **active globe** label; **TOP BUYER** = first names of top 3 by spend; **TOP VISITORS** = city only top 3; new **TOP STATES**; **TOP ORDERS** = city top 3 ship-to; **TOP COUNTRIES** = country only top 3; etc.
+
+**Changes:** **`api/admin/live-presence.ts`** — `LIVE_WINDOW_MS` **5 min → 24h**. **`src/utils/api.ts`** — comment. **`src/pages/admin/revenue/page.tsx`** — metrics: **`topBuyerFirstNamesLine(orders)`** from `registeredUsers` + email local part; **visitor/order cities** = first segment of `placeLine`; **states** from `region` on `livePresenceVisitors`; `topCounts(..., 3)` for those; new row **TOP STATES**; table labels/values as requested.
+
+**Deploy:** Redeploy **main** (API **and** Vercel for live-presence).
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.

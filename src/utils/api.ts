@@ -793,7 +793,7 @@ export async function getAdminAnalytics(): Promise<{
   return await res.json();
 }
 
-/** Admin: live visitors (page_view heartbeats with geo, last ~5 min) for Revenue Live View globe. */
+/** Admin: live visitors (page_view heartbeats with geo, last ~24h, deduped per visitor) for Revenue Live View globe. */
 export async function getAdminLivePresence(): Promise<{
   visitorsNow: number;
   visitors: Array<{
