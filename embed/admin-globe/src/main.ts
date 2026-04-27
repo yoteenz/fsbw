@@ -19,7 +19,11 @@ type ClusterCustomer = {
   email: string;
   orderCount: number;
   totalSpent: number;
-  topProduct: string;
+  /** Most recent unit (see main app `adminOrderGlobeClusters`). */
+  recentUnitName: string;
+  recentUnitCapSize?: string;
+  /** @deprecated — use `recentUnitName` */
+  topProduct?: string;
   topProductCapSize?: string;
   displayName?: string;
   profileImageUrl?: string;
@@ -378,11 +382,18 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
       const email = typeof r.email === 'string' ? r.email.trim() : '';
       const oc = Number(r.orderCount);
       const ts = Number(r.totalSpent);
-      const tp = typeof r.topProduct === 'string' ? r.topProduct.trim() : '—';
+      const rName =
+        typeof r.recentUnitName === 'string' && r.recentUnitName.trim()
+          ? r.recentUnitName.trim()
+          : typeof r.topProduct === 'string' && r.topProduct.trim()
+            ? r.topProduct.trim()
+            : '—';
       const tpc =
-        typeof r.topProductCapSize === 'string' && r.topProductCapSize.trim()
-          ? r.topProductCapSize.trim()
-          : undefined;
+        typeof r.recentUnitCapSize === 'string' && r.recentUnitCapSize.trim()
+          ? r.recentUnitCapSize.trim()
+          : typeof r.topProductCapSize === 'string' && r.topProductCapSize.trim()
+            ? r.topProductCapSize.trim()
+            : undefined;
       const dn = typeof r.displayName === 'string' ? r.displayName.trim() : '';
       const pi = typeof r.profileImageUrl === 'string' ? r.profileImageUrl.trim() : '';
       const ageRaw = r.age;
@@ -397,8 +408,8 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
         email,
         orderCount: Number.isFinite(oc) ? oc : 0,
         totalSpent: Number.isFinite(ts) ? ts : 0,
-        topProduct: tp || '—',
-        ...(tpc ? { topProductCapSize: tpc } : {}),
+        recentUnitName: rName || '—',
+        ...(tpc ? { recentUnitCapSize: tpc } : {}),
         ...(dn ? { displayName: dn } : {}),
         ...(pi ? { profileImageUrl: pi } : {}),
         ...(Number.isFinite(ageParsed) ? { age: ageParsed } : {}),
@@ -529,7 +540,12 @@ function activateOrderCluster(row: PointRow): void {
   const viewCount = countVisitorViewsNear(visitors, row.lat, row.lng);
   const customersUpper = (row.clusterCustomers ?? []).map((c) => ({
     ...c,
-    topProduct: displayUpper(c.topProduct || '—'),
+    recentUnitName: displayUpper(c.recentUnitName || c.topProduct || '—'),
+    ...(c.recentUnitCapSize
+      ? { recentUnitCapSize: displayUpper(c.recentUnitCapSize) }
+      : c.topProductCapSize
+        ? { topProductCapSize: displayUpper(c.topProductCapSize) }
+        : {}),
   }));
   target.postMessage(
     {

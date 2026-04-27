@@ -12,6 +12,9 @@ export type RevenueOrderLike = {
   userEmail?: string;
   total?: number;
   amount?: number;
+  /** Order date (ISO or parseable) — used for "most recent" unit. */
+  date?: string;
+  status?: string;
   shippingAddress?: ShippingLike | null;
   lineItems?: Array<{ productName?: string; subtotal?: number; options?: Record<string, string> }>;
   productName?: string;
@@ -21,12 +24,20 @@ export type OrderGlobeClusterCustomer = {
   email: string;
   orderCount: number;
   totalSpent: number;
-  topProduct: string;
   /**
-   * Cap size for the **top product** (highest line-count unit), e.g. `XS`, for **`UNIT · CAP`** in the cluster panel.
-   * From line-item options (`CAP SIZE`) when present.
+   * Most **recent** unit in **`UNIT · CAP`** (was `topProduct` — by frequency / spend).
+   * @deprecated Use **`recentUnitName`**. Kept for older embeds / JSON.
    */
+  topProduct?: string;
+  /** @deprecated See **`recentUnitCapSize`**. */
   topProductCapSize?: string;
+  /**
+   * Unit from the **most recent** relevant order: prefers latest **delivered / shipped / fulfilled** order, else latest order;
+   * product is the **last line** on that order.
+   */
+  recentUnitName: string;
+  /** Cap size for **`recentUnitName`** from that line’s options. */
+  recentUnitCapSize?: string;
   /** Filled by `enrichOrderGlobeClusterCustomers` from `registeredUsers` when available. */
   displayName?: string;
   profileImageUrl?: string;
@@ -62,13 +73,6 @@ function normShipKey(ship: ShippingLike): string {
   return `${city}|${state}|${country}` || 'UNKNOWN';
 }
 
-function primaryProductName(o: RevenueOrderLike): string {
-  const li = o.lineItems?.[0]?.productName;
-  if (li && String(li).trim()) return String(li).trim().toUpperCase();
-  if (o.productName && String(o.productName).trim()) return String(o.productName).trim().toUpperCase();
-  return 'ORDER';
-}
-
 function capSizeFromLineItemOptions(options?: Record<string, string> | null): string | null {
   if (!options || typeof options !== 'object') return null;
   const raw =
@@ -84,46 +88,54 @@ function capSizeFromLineItemOptions(options?: Record<string, string> | null): st
 
 type LineItemLike = { productName?: string; subtotal?: number; options?: Record<string, string> };
 
-/**
- * Cap size for **`topProduct`**: prefer the **highest-subtotal** line that matches the unit name across the customer’s orders.
- */
-function capSizeForTopProduct(orders: RevenueOrderLike[], topProduct: string): string | null {
-  const t = (topProduct || '—').trim().toUpperCase();
-  if (!t || t === '—' || t === 'ORDER') return null;
+function orderDateMs(o: RevenueOrderLike): number {
+  const t = new Date(String(o.date ?? '')).getTime();
+  return Number.isFinite(t) ? t : 0;
+}
 
-  const bySpendDesc = [...orders].sort(
-    (a, b) => (Number(b.total ?? b.amount) || 0) - (Number(a.total ?? a.amount) || 0)
+/** Delivered / shipped / fulfilled — "ordered/delivered" as requested. */
+function isTerminalFulfilmentStatus(o: RevenueOrderLike): boolean {
+  const s = String(o.status ?? '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!s) return false;
+  return (
+    s === 'DELIVERED' ||
+    s === 'SHIPPED' ||
+    s === 'FULFILLED' ||
+    s === 'COMPLETE' ||
+    s === 'COMPLETED'
   );
+}
 
-  for (const o of bySpendDesc) {
-    const lines: LineItemLike[] = o.lineItems?.length
-      ? o.lineItems
-      : [{ productName: o.productName, subtotal: o.total ?? o.amount }];
-    const scored: Array<{ line: LineItemLike; sub: number }> = [];
-    for (const li of lines) {
-      const n = String(li?.productName ?? '').trim().toUpperCase();
-      if (!n) continue;
-      if (n === t || n.includes(t) || t.includes(n)) {
-        scored.push({ line: li, sub: Number(li.subtotal) || 0 });
-      }
-    }
-    if (scored.length) {
-      scored.sort((a, b) => b.sub - a.sub);
-      const cap = capSizeFromLineItemOptions(scored[0]!.line.options);
-      if (cap) return cap;
-    }
+function lineItemsForOrder(o: RevenueOrderLike): LineItemLike[] {
+  if (o.lineItems?.length) return o.lineItems;
+  if (o.productName && String(o.productName).trim()) {
+    return [{ productName: o.productName, subtotal: o.total ?? o.amount, options: undefined }];
   }
+  return [];
+}
 
-  for (const o of bySpendDesc) {
-    const lines: LineItemLike[] = o.lineItems?.length
-      ? o.lineItems
-      : [{ productName: o.productName, subtotal: o.total ?? o.amount }];
-    for (const li of lines) {
-      const cap = capSizeFromLineItemOptions(li.options);
-      if (cap) return cap;
-    }
-  }
-  return null;
+/**
+ * **Most recent** line item: last line on the latest relevant order
+ * (prefer most recent with terminal status; else most recent by date).
+ */
+function mostRecentLineItem(orders: RevenueOrderLike[]): { name: string; cap: string | null } | null {
+  if (orders.length === 0) return null;
+  const withDate = orders.filter((o) => orderDateMs(o) > 0);
+  const pool = withDate.length ? withDate : orders;
+  const terminal = pool.filter(isTerminalFulfilmentStatus);
+  const chosen =
+    terminal.length > 0
+      ? terminal.reduce((a, b) => (orderDateMs(b) > orderDateMs(a) ? b : a))
+      : pool.reduce((a, b) => (orderDateMs(b) >= orderDateMs(a) ? b : a));
+  const lines = lineItemsForOrder(chosen);
+  if (!lines.length) return null;
+  const li = lines[lines.length - 1]!;
+  const name = String(li.productName ?? '').trim().toUpperCase();
+  if (!name) return null;
+  return { name, cap: capSizeFromLineItemOptions(li.options) };
 }
 
 /** Recognizable landmark label + emoji by common English city names (best-effort, no external API). */
@@ -203,34 +215,26 @@ export function buildOrderGlobeClustersFromRevenueOrders(orders: RevenueOrderLik
 
   const rows: OrderGlobeClusterPoint[] = [];
   for (const [shipKey, b] of buckets) {
-    const byEmail = new Map<string, { orders: RevenueOrderLike[]; products: Map<string, number> }>();
+    const byEmail = new Map<string, { orders: RevenueOrderLike[] }>();
     for (const o of b.orders) {
       const email = String(o.userEmail ?? 'unknown').trim() || 'unknown';
       let g = byEmail.get(email);
       if (!g) {
-        g = { orders: [], products: new Map() };
+        g = { orders: [] };
         byEmail.set(email, g);
       }
       g.orders.push(o);
-      const pname = primaryProductName(o);
-      g.products.set(pname, (g.products.get(pname) ?? 0) + 1);
     }
     const customers: OrderGlobeClusterCustomer[] = [...byEmail.entries()].map(([email, g]) => {
       const totalSpent = g.orders.reduce((s, x) => s + (Number(x.total ?? x.amount) || 0), 0);
-      let topProduct = '—';
-      let topN = 0;
-      for (const [name, c] of g.products) {
-        if (c > topN) {
-          topN = c;
-          topProduct = name;
-        }
-      }
+      const recent = mostRecentLineItem(g.orders);
+      const recentUnitName = recent?.name ?? '—';
       return {
         email,
         orderCount: g.orders.length,
         totalSpent,
-        topProduct,
-        topProductCapSize: capSizeForTopProduct(g.orders, topProduct) ?? undefined,
+        recentUnitName,
+        recentUnitCapSize: recent?.cap ?? undefined,
       };
     });
     customers.sort((a, b) => b.totalSpent - a.totalSpent);

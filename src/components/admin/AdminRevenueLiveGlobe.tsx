@@ -21,8 +21,13 @@ export type GlobeClusterCustomerRow = {
   email: string;
   orderCount: number;
   totalSpent: number;
-  topProduct: string;
-  /** Cap size for `topProduct` (from line options), e.g. `XS` — shown as `NOIR · XS`. */
+  /**
+   * Most **recent** unit (last line, latest terminal or latest order). Legacy: **`topProduct`**
+   * from the embed.
+   */
+  recentUnitName: string;
+  recentUnitCapSize?: string;
+  topProduct?: string;
   topProductCapSize?: string;
   displayName?: string;
   profileImageUrl?: string;
@@ -79,6 +84,11 @@ type Props = {
   visitorPoints: GlobePointInput[];
   heightPx?: number;
   onClusterDetail?: (detail: GlobeOrderClusterDetail | null) => void;
+  /**
+   * Cluster panel: tap profile photo → e.g. **`/admin/clients?email=`** (encodeURIComponent).
+   * Omitted: avatar is not clickable.
+   */
+  onOpenClusterClientByEmail?: (email: string) => void;
 };
 
 function getAdminGlobeEmbedUrl(): string | null {
@@ -105,15 +115,23 @@ function normalizeClusterCustomersFromPayload(raw: unknown): GlobeClusterCustome
           ? parseInt(ageRaw, 10)
           : NaN;
     const topCap =
-      typeof o.topProductCapSize === 'string' && o.topProductCapSize.trim()
-        ? o.topProductCapSize.trim()
-        : undefined;
+      typeof o.recentUnitCapSize === 'string' && o.recentUnitCapSize.trim()
+        ? o.recentUnitCapSize.trim()
+        : typeof o.topProductCapSize === 'string' && o.topProductCapSize.trim()
+          ? o.topProductCapSize.trim()
+          : undefined;
+    const recentName =
+      typeof o.recentUnitName === 'string' && o.recentUnitName.trim()
+        ? o.recentUnitName
+        : typeof o.topProduct === 'string' && o.topProduct.trim()
+          ? o.topProduct
+          : '—';
     out.push({
       email,
       orderCount: Number(o.orderCount) || 0,
       totalSpent: Number(o.totalSpent) || 0,
-      topProduct: typeof o.topProduct === 'string' ? o.topProduct : '—',
-      ...(topCap ? { topProductCapSize: topCap } : {}),
+      recentUnitName: recentName,
+      ...(topCap ? { recentUnitCapSize: topCap } : {}),
       displayName: typeof o.displayName === 'string' ? o.displayName : undefined,
       profileImageUrl: typeof o.profileImageUrl === 'string' ? o.profileImageUrl : undefined,
       age: Number.isFinite(ageParsed) ? ageParsed : null,
@@ -341,16 +359,27 @@ function buildLandHexPathsFromSamples(
 
 const CLUSTER_CLIENT_AVATAR_FALLBACK = '/assets/profile-thumb.png';
 
-function formatTopSpendProductLine(c: GlobeClusterCustomerRow): string {
-  const unit = String(c.topProduct ?? '').trim();
+function formatRecentUnitLine(c: GlobeClusterCustomerRow): string {
+  const unit = String(
+    c.recentUnitName ?? c.topProduct ?? ''
+  )
+    .trim();
   if (!unit || unit === '—') return '—';
-  const cap = String(c.topProductCapSize ?? '').trim();
+  const cap = String(c.recentUnitCapSize ?? c.topProductCapSize ?? '').trim();
   const u = unit.toLocaleUpperCase('en-US');
   if (!cap) return u;
   return `${u} · ${cap.toLocaleUpperCase('en-US')}`;
 }
 
-function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDetail; onClose: () => void }) {
+function ClusterDetailPanel({
+  detail,
+  onClose,
+  onOpenClientByEmail,
+}: {
+  detail: GlobeOrderClusterDetail;
+  onClose: () => void;
+  onOpenClientByEmail?: (email: string) => void;
+}) {
   const money = (n: number) =>
     n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   return createPortal(
@@ -433,15 +462,35 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                   className="border px-2 py-2 flex gap-2 min-w-0"
                   style={{ background: 'rgba(255,255,255,0.35)', borderColor: '#e5e7eb', borderRadius: 0 }}
                 >
-                  <img
-                    src={avatar}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="shrink-0 object-cover rounded-full"
-                    style={{ width: 40, height: 40, border: '1.08px solid #000000', boxSizing: 'border-box' }}
-                    referrerPolicy="no-referrer"
-                  />
+                  {onOpenClientByEmail && c.email && c.email !== 'unknown' ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenClientByEmail(c.email)}
+                      className="shrink-0 p-0 border-0 bg-transparent cursor-pointer rounded-full"
+                      aria-label={`Open client details for ${name}`}
+                      style={{ lineHeight: 0 }}
+                    >
+                      <img
+                        src={avatar}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="shrink-0 object-cover rounded-full"
+                        style={{ width: 40, height: 40, border: '1.08px solid #000000', boxSizing: 'border-box' }}
+                        referrerPolicy="no-referrer"
+                      />
+                    </button>
+                  ) : (
+                    <img
+                      src={avatar}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="shrink-0 object-cover rounded-full"
+                      style={{ width: 40, height: 40, border: '1.08px solid #000000', boxSizing: 'border-box' }}
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p
                       style={{
@@ -479,7 +528,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                         textTransform: 'uppercase',
                       }}
                     >
-                      {formatTopSpendProductLine(c)}
+                      {formatRecentUnitLine(c)}
                     </p>
                   </div>
                 </div>
@@ -546,6 +595,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
   visitorPoints,
   heightPx = 324,
   onClusterDetail,
+  onOpenClusterClientByEmail,
 }: Props & { embedUrl: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   /** Skip duplicate `postMessage` payloads — each one rebuilds hex bins in the iframe (expensive). */
@@ -705,6 +755,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
       {clusterDetail && (
         <ClusterDetailPanel
           detail={clusterDetail}
+          onOpenClientByEmail={onOpenClusterClientByEmail}
           onClose={() => {
             setClusterDetail(null);
             onClusterDetail?.(null);

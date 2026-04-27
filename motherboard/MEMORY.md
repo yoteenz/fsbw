@@ -17852,3 +17852,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/utils/adminOrderGlobeClusters.ts`** — `RevenueOrderLike.lineItems` may include **`options`**; per customer, compute **`topProductCapSize`** from line-item **`CAP SIZE`** for the top product (match by product name, prefer higher **`subtotal`** line, fallback to any line with cap). **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`formatTopSpendProductLine`**, **`topProductCapSize`** on customer rows; **`normalizeClusterCustomersFromPayload`** reads embed field. **`src/utils/adminGlobeMockPresence.ts`** — mock customers include sample cap sizes. **`embed/admin-globe/src/main.ts`** — **`topProductCapSize`** on cluster customer payload for WebGL path.
 
 **Deploy:** Redeploy **main** + **embed/admin-globe** (iframe protocol).
+
+---
+
+## 2026-04-27 — Cluster panel: most recent unit · cap; avatar → Admin Clients
+
+**Context:** User asked to show the **most recent** unit product/size **ordered or delivered** (not top-spend frequency) on the black line, and **tapping the profile photo** should open **client details**.
+
+**Changes:** **`src/utils/adminOrderGlobeClusters.ts`** — per customer: **`recentUnitName` + `recentUnitCapSize`** from the **last line** of the **latest** order with status **delivered/shipped/fulfilled/complete** (else **latest** order by **`date`**). **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`formatRecentUnitLine`**, optional **`onOpenClusterClientByEmail`**: avatar is a **button** that calls it. **`src/pages/admin/revenue/page.tsx`** — **`navigate('/admin/clients?email=…')`**. **`embed/admin-globe/src/main.ts`** — payload uses **`recentUnitName` / `recentUnitCapSize`** (fallback **`topProduct`**). **`src/utils/adminGlobeMockPresence.ts`** — mock rows use **`recentUnit*`** fields.
+
+**Deploy:** Redeploy **main** + **embed/admin-globe**.

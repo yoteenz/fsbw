@@ -94,8 +94,8 @@ export const ADMIN_GLOBE_MOCK_CLUSTER_CUSTOMER_POOL: OrderGlobeClusterCustomer[]
     age: id.age,
     orderCount: 1 + (i % 4),
     totalSpent: 520 + i * 240 + (i % 3) * 110,
-    topProduct: (['NOIR', 'BLANCO', 'SOFT CURL', 'OCEAN CURL', 'BEACH WAVE', 'NATURAL STRAIGHT'] as const)[i % 6]!,
-    topProductCapSize: (['XS', 'S', 'M', 'L', 'S/M/L'] as const)[i % 5]!,
+    recentUnitName: (['NOIR', 'BLANCO', 'SOFT CURL', 'OCEAN CURL', 'BEACH WAVE', 'NATURAL STRAIGHT'] as const)[i % 6]!,
+    recentUnitCapSize: (['XS', 'S', 'M', 'L', 'S/M/L'] as const)[i % 5]!,
   })
 );
 
@@ -242,8 +242,8 @@ function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPo
       age: 34,
       orderCount: 1,
       totalSpent: 899,
-      topProduct: 'NOIR',
-      topProductCapSize: 'M',
+      recentUnitName: 'NOIR',
+      recentUnitCapSize: 'M',
     },
   ];
   return {
@@ -283,8 +283,8 @@ function mockNycOrderCluster(): OrderGlobeClusterPoint {
         age: 42,
         orderCount: 6,
         totalSpent: 12540,
-        topProduct: 'NOIR',
-        topProductCapSize: 'XS',
+        recentUnitName: 'NOIR',
+        recentUnitCapSize: 'XS',
       },
       {
         email: 'globe.mock.nyc2@client.test',
@@ -292,8 +292,8 @@ function mockNycOrderCluster(): OrderGlobeClusterPoint {
         age: 37,
         orderCount: 5,
         totalSpent: 4820,
-        topProduct: 'BLANCO',
-        topProductCapSize: 'S',
+        recentUnitName: 'BLANCO',
+        recentUnitCapSize: 'S',
       },
       {
         email: 'globe.mock.nyc3@client.test',
@@ -301,8 +301,8 @@ function mockNycOrderCluster(): OrderGlobeClusterPoint {
         age: 29,
         orderCount: 3,
         totalSpent: 2199,
-        topProduct: 'SOFT CURL',
-        topProductCapSize: 'L',
+        recentUnitName: 'SOFT CURL',
+        recentUnitCapSize: 'L',
       },
     ]),
   };

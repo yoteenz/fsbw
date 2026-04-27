@@ -683,6 +683,15 @@ export default function AdminRevenue() {
     }));
   }, [orders, globeMockUiRev]);
 
+  const openGlobeClusterClient = useCallback(
+    (email: string) => {
+      const e = (email || '').trim();
+      if (!e) return;
+      navigate(`/admin/clients?${new URLSearchParams({ email: e }).toString()}`);
+    },
+    [navigate]
+  );
+
   const orderGlobeOrderTotal = useMemo(
     () => orderGlobePoints.reduce((sum, p) => sum + (p.orderCount ?? 1), 0),
     [orderGlobePoints]
@@ -1057,6 +1066,7 @@ export default function AdminRevenue() {
                           orderPoints={orderGlobePoints}
                           visitorPoints={liveVisitorGlobePoints}
                           heightPx={324}
+                          onOpenClusterClientByEmail={openGlobeClusterClient}
                         />
                       </Suspense>
                       <div className="flex flex-wrap items-center justify-center gap-2 mt-2 mb-1 px-1 w-full">
