@@ -440,7 +440,7 @@ function ClusterDetailPanel({
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              transform: 'translateY(-5px)',
+              transform: 'translateY(-3px)',
             }}
           >
             ✕

@@ -25,7 +25,14 @@ export type AdminOverviewMetricRow = {
   valueWhiteSpace?: 'normal' | 'nowrap';
 };
 
-export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow[] }) {
+export function AdminOverviewMetricRows({
+  rows,
+  valueSingleLine = false,
+}: {
+  rows: AdminOverviewMetricRow[];
+  /** Value column uses remaining width + **nowrap** (ellipsis if still too long) — e.g. Admin Revenue **LIVE VIEW DATA**. */
+  valueSingleLine?: boolean;
+}) {
   return (
     <>
       {rows.map((row, idx) => (
@@ -38,6 +45,7 @@ export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow
             gap: '10px',
             padding: '12px 0',
             borderBottom: idx < rows.length - 1 ? '1px solid #e5e7eb' : undefined,
+            minWidth: 0,
           }}
         >
           <span
@@ -52,17 +60,32 @@ export function AdminOverviewMetricRows({ rows }: { rows: AdminOverviewMetricRow
             {row.label}
           </span>
           <span
-            style={{
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '9px',
-              color: row.valueRed === false ? '#334155' : '#EB1C24',
-              flexShrink: 0,
-              textTransform: 'uppercase',
-              textAlign: 'right',
-              maxWidth: row.valueMaxWidth ?? '58%',
-              wordBreak: 'break-word',
-              whiteSpace: row.valueWhiteSpace ?? 'normal',
-            }}
+            style={
+              valueSingleLine
+                ? {
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '9px',
+                    color: row.valueRed === false ? '#334155' : '#EB1C24',
+                    flex: '1 1 0',
+                    minWidth: 0,
+                    textTransform: 'uppercase',
+                    textAlign: 'right',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }
+                : {
+                    fontFamily: '"Futura PT Medium"',
+                    fontSize: '9px',
+                    color: row.valueRed === false ? '#334155' : '#EB1C24',
+                    flexShrink: 0,
+                    textTransform: 'uppercase',
+                    textAlign: 'right',
+                    maxWidth: row.valueMaxWidth ?? '58%',
+                    wordBreak: 'break-word',
+                    whiteSpace: row.valueWhiteSpace ?? 'normal',
+                  }
+            }
           >
             {row.value}
           </span>

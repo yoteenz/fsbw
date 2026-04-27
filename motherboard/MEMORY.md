@@ -17895,6 +17895,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Live View: single-line values; cluster close X +2px down
+
+**Context:** User asked all **LIVE VIEW DATA** rows wide enough so values don’t wrap to two lines; **cluster panel** red **✕** only, move **down 2px**.
+
+**Changes:** **`src/components/admin/AdminOverviewAnalyticsCard.tsx`** — **`AdminOverviewMetricRows`** optional **`valueSingleLine`**: value uses **`flex: 1`**, **`minWidth: 0`**, **`nowrap`**, **`ellipsis`**. **`src/pages/admin/revenue/page.tsx`** — **LIVE VIEW DATA** uses **`valueSingleLine`**; removed per-row **TOP VISITORS** width overrides. **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — cluster close **`translateY` −5px → −3px** (2px down).
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-28 — Live View: TOP PAGE PATHS (top 3, HOME/SHOP style); wider TOP VISITORS
 
 **Context:** User asked: rename to **TOP PAGE PATHS**; simplified top **3** like **`HOME/SHOP · SHOP/UNITS · BAG`**; widen **TOP VISITORS** value so it doesn’t wrap, without moving the label.
