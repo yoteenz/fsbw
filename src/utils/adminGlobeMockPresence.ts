@@ -232,18 +232,26 @@ export const ADMIN_GLOBE_MOCK_ORDER_POINTS: MockGlobeOrderPoint[] = [
   },
 ];
 
-function mockClusterFromSingleOrder(p: MockGlobeOrderPoint): OrderGlobeClusterPoint {
+/**
+ * One **synthetic** buyer per admin ship-to demo location — stable email + name so it can align
+ * with Admin → Orders / Clients QA (`orders.demo.{n}@client.test`); index rotates through identities.
+ */
+function mockClusterFromSingleOrder(p: MockGlobeOrderPoint, index: number): OrderGlobeClusterPoint {
   const key = p.placeLine.toUpperCase().replace(/\s+/g, ' ');
   const lm = landmarkForShipKey(key, p.placeLine);
+  const id = MOCK_GLOBE_CLUSTER_IDENTITIES[index % MOCK_GLOBE_CLUSTER_IDENTITIES.length]!;
+  const n = index + 1;
   const base: OrderGlobeClusterCustomer[] = [
     {
-      email: 'globe.mock.single@client.test',
-      displayName: 'Jordan Blake',
-      age: 34,
+      email: `orders.demo.location${n}@client.test`,
+      displayName: id.displayName,
+      age: id.age,
       orderCount: 1,
-      totalSpent: 899,
-      recentUnitName: 'NOIR',
-      recentUnitCapSize: 'M',
+      totalSpent: 480 + (index % 5) * 90 + (index % 3) * 200,
+      recentUnitName: (['NOIR', 'BLANCO', 'SOFT CURL', 'OCEAN CURL', 'BEACH WAVE', 'NATURAL STRAIGHT'] as const)[
+        index % 6
+      ]!,
+      recentUnitCapSize: (['XS', 'S', 'M', 'L', 'S/M/L'] as const)[index % 5]!,
     },
   ];
   return {
@@ -397,7 +405,7 @@ export function disableAdminGlobeMockDataSession(): void {
 export function mergeMockOrderGlobeClusters(real: OrderGlobeClusterPoint[]): OrderGlobeClusterPoint[] {
   if (!adminGlobeMockDataEnabled()) return real;
   const seen = new Set(real.map((c) => c.clusterKey));
-  const singles = ADMIN_GLOBE_MOCK_ORDER_POINTS.map(mockClusterFromSingleOrder).filter((c) => {
+  const singles = ADMIN_GLOBE_MOCK_ORDER_POINTS.map((pt, i) => mockClusterFromSingleOrder(pt, i)).filter((c) => {
     if (seen.has(c.clusterKey)) return false;
     seen.add(c.clusterKey);
     return true;

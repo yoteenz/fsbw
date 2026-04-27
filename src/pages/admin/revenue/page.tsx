@@ -1158,7 +1158,7 @@ export default function AdminRevenue() {
                             style={{
                               fontFamily: '"Futura PT Medium"',
                               fontSize: '9px',
-                              color: '#64748b',
+                              color: '#808080',
                               textTransform: 'uppercase',
                               background: 'none',
                               border: 'none',

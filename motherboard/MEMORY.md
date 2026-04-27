@@ -17885,6 +17885,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Globe mock: brand gray Clear; per-location demo buyers (not one name)
+
+**Context:** User asked **Clear mock data** in **brand gray**; **every** single-order mock cluster showed **Jordan Blake** because **`mockClusterFromSingleOrder`** used the same hard-coded row for all **~10** locations.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **Clear mock data** button **`color: #808080`**. **`src/utils/adminGlobeMockPresence.ts`** — **`mockClusterFromSingleOrder(p, index)`** picks **`MOCK_GLOBE_CLUSTER_IDENTITIES[index % 12]`**; email **`orders.demo.location{n}@client.test`**; spend + unit/cap vary by index; **NYC** multi-customer cluster unchanged.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.
