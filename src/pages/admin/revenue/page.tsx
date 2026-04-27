@@ -759,7 +759,16 @@ export default function AdminRevenue() {
 
   const [liveVisitorsNow, setLiveVisitorsNow] = useState(0);
   const [liveVisitorGlobePoints, setLiveVisitorGlobePoints] = useState<
-    Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }>
+    Array<{
+      lat: number;
+      lng: number;
+      label: string;
+      placeLine: string;
+      placeDetail?: string;
+      landmarkTitle?: string;
+      landmarkSymbol?: string;
+      postcardKey?: string;
+    }>
   >([]);
   /** Raw rows for Live View card (paths, geo aggregation). */
   const [livePresenceVisitors, setLivePresenceVisitors] = useState<

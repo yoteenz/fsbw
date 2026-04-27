@@ -2,6 +2,7 @@ import Globe from 'globe.gl';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '@fsbw/adminGlobePlaceLabel';
+import { landmarkForGeographicText } from '@fsbw/adminGlobeGeographicLandmark';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -10,6 +11,8 @@ const ORDER_GREEN = '#16a34a';
 const POINT_BASE_ALT = 0.038;
 /** Extra altitude per **stacked** order or visitor (one marker = one count). */
 const POINT_STACK_STEP = 0.0028;
+/** Postcard float above the **top** of the red/green pillar stack. */
+const POSTCARD_ABOVE_STACK = 0.0062;
 
 /** Admin UI copy: match storefront uppercase label style (Futura + all-caps). */
 function displayUpper(s: string): string {
@@ -35,6 +38,8 @@ type ClusterCustomer = {
   age?: number | null;
 };
 
+type PostcardMode = 'order' | 'visitor';
+
 type PointRow = {
   lat: number;
   lng: number;
@@ -43,9 +48,10 @@ type PointRow = {
   /** Map line when zoomed in (city, region, country). */
   placeLine?: string;
   placeDetail?: string;
-  /** Order cluster: stable key + landmark + tower height + customers (from parent JSON). */
+  /** Order cluster: stable key + customers (from parent JSON). */
   clusterKey?: string;
   orderCount?: number;
+  /** Postcard: known-for title + symbol (order clusters + standalone visitors from parent). */
   landmarkTitle?: string;
   landmarkSymbol?: string;
   orderTowerHeight?: number;
@@ -55,6 +61,10 @@ type PointRow = {
    * Filled in **`applyPayload`**; `pointAltitude` reads this field.
    */
   alt?: number;
+  /** One HTML postcard per city for standalone visitors (dedupe). */
+  postcardKey?: string;
+  /** Green (orders) vs red (visitors) postcard accent. */
+  postcardMode?: PostcardMode;
 };
 
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
@@ -419,6 +429,8 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
     }
     if (rows.length) clusterCustomers = rows;
   }
+  const postcardKey = typeof o.postcardKey === 'string' ? o.postcardKey.trim() : undefined;
+  const pm = o.postcardMode === 'visitor' ? 'visitor' : o.postcardMode === 'order' ? 'order' : undefined;
   return {
     lat,
     lng,
@@ -432,11 +444,82 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
     landmarkSymbol,
     orderTowerHeight,
     clusterCustomers,
+    ...(postcardKey ? { postcardKey } : {}),
+    ...(pm ? { postcardMode: pm } : {}),
   };
 }
 
-function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
-  return rows.filter((r) => r.kind === 'order' && r.clusterKey && (r.landmarkSymbol || (r.orderCount ?? 0) > 0));
+/**
+ * Reconstruct **one** order-cluster row (embed expands payload to one point per order/view).
+ * Used for postcard + **`activateOrderCluster`**.
+ */
+function clusterOrderRowsFromRaw(raw: PointRow[]): PointRow[] {
+  const m = new Map<string, PointRow>();
+  for (const r of raw) {
+    if (r.kind !== 'order' || !r.clusterKey) continue;
+    if (!m.has(r.clusterKey)) m.set(r.clusterKey, { ...r });
+  }
+  return [...m.values()];
+}
+
+function landmarkFromRow(r: PointRow, mode: PostcardMode): { title: string; symbol: string } {
+  const t = typeof r.landmarkTitle === 'string' ? r.landmarkTitle.trim() : '';
+  const s = typeof r.landmarkSymbol === 'string' ? r.landmarkSymbol.trim() : '';
+  if (t && s) return { title: t, symbol: s };
+  const blob = [r.clusterKey, r.placeLine, r.label].filter(Boolean).join(' ');
+  return landmarkForGeographicText(blob, mode);
+}
+
+/**
+ * **One** postcard per order cluster (green) and per **standalone-visitor** site (red), **above** the pillar stack.
+ */
+function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
+  const v = splitPoints(raw).visitors;
+  const clusterBases = clusterOrderRowsFromRaw(raw);
+  const out: HtmlLandmarkRow[] = [];
+  for (const c of clusterBases) {
+    const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
+    const vCount = Math.max(0, Math.floor(countVisitorViewsNear(v, c.lat, c.lng, 100)));
+    const stackH = oCount + vCount;
+    const topAlt =
+      stackH > 0 ? POINT_BASE_ALT + (stackH - 1) * POINT_STACK_STEP : POINT_BASE_ALT;
+    const { title, symbol } = landmarkFromRow(c, 'order');
+    out.push({
+      lat: c.lat,
+      lng: c.lng,
+      alt: topAlt + POSTCARD_ABOVE_STACK,
+      row: {
+        ...c,
+        kind: 'order',
+        landmarkTitle: title,
+        landmarkSymbol: symbol,
+        postcardMode: 'order',
+      },
+    });
+  }
+  const byStandKey = new Map<string, PointRow>();
+  for (const p of v) {
+    if (p.clusterKey) continue;
+    const k = (p.postcardKey && p.postcardKey.trim()) || `${p.lat.toFixed(2)}|${p.lng.toFixed(2)}`;
+    if (!byStandKey.has(k)) byStandKey.set(k, p);
+  }
+  for (const p of byStandKey.values()) {
+    const { title, symbol } = landmarkFromRow(p, 'visitor');
+    out.push({
+      lat: p.lat,
+      lng: p.lng,
+      alt: (p.alt ?? POINT_BASE_ALT) + POSTCARD_ABOVE_STACK,
+      row: {
+        ...p,
+        kind: 'visitor',
+        landmarkTitle: title,
+        landmarkSymbol: symbol,
+        postcardMode: 'visitor',
+        placeDetail: p.placeDetail,
+      },
+    });
+  }
+  return out;
 }
 
 /**
@@ -536,8 +619,10 @@ function armAutoRotateOffWhileClusterPanelOpen(): void {
 
 function orderClusterBaseRowFromPayload(clusterKey: string | undefined): PointRow | null {
   if (!clusterKey) return null;
-  const o = splitPoints(lastRows).orders.find((p) => p.clusterKey && p.clusterKey === clusterKey);
-  return o ?? null;
+  for (const p of lastRows) {
+    if (p.clusterKey === clusterKey && p.kind === 'order') return p;
+  }
+  return null;
 }
 
 function resolveClusterSourceRow(p: PointRow): PointRow {
@@ -601,16 +686,23 @@ function postcardTiltDeg(seed: string | undefined): number {
   return ((h % 11) - 5) * 0.55;
 }
 
-/** Postcard / hand-stamp landmark chip — soft paper, not glossy emoji tile. */
+/** Postcard / hand-stamp — border matches **green** (orders) or **red** (visitors) pillar color. */
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
   wrap.type = 'button';
   wrap.setAttribute('data-fsbw-landmark', '1');
+  const isVisitor = row.postcardMode === 'visitor';
   const sym = row.landmarkSymbol || '📍';
-  const title = displayUpper(row.landmarkTitle || 'ORDERS');
-  const n = row.orderCount ?? 1;
-  const tilt = postcardTiltDeg(row.clusterKey);
-  wrap.title = `${title} · ${n} ORDER${n === 1 ? '' : 'S'} — TAP FOR BREAKDOWN`;
+  const lmTitle = row.landmarkTitle || (isVisitor ? 'Local views' : 'Orders hub');
+  const titleU = displayUpper(lmTitle);
+  const n = row.orderCount ?? 0;
+  const tilt = postcardTiltDeg(isVisitor ? (row.postcardKey ?? row.placeLine) : row.clusterKey);
+  const edge = isVisitor ? 'rgba(235,28,36,0.78)' : 'rgba(22,163,74,0.78)';
+  if (isVisitor) {
+    wrap.title = `${titleU} — LIVE VIEWS`;
+  } else {
+    wrap.title = `${titleU} · ${n} ORDER${n === 1 ? '' : 'S'} — TAP FOR BREAKDOWN`;
+  }
   wrap.setAttribute(
     'style',
     [
@@ -625,8 +717,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   );
 
   /**
-   * **No** `backdrop-filter` on the shell: blurring the mint/sky hex behind reads as a **tinted frosted tile**.
-   * Truly clear chip: **transparent** fill + optional hairline only. Glyph: **native multi-color emoji** at ~same alpha as prior slate mask (~**0.88**).
+   * **No** `backdrop-filter` on the shell. Border tint = same semantic as the pillar (green / red).
    */
   const shell = document.createElement('span');
   shell.setAttribute(
@@ -642,7 +733,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'overflow:visible',
       'transform:rotate(' + tilt + 'deg)',
       'background:transparent',
-      'border:1px solid rgba(255,255,255,0.22)',
+      'border:1.5px solid ' + edge,
       'box-shadow:none',
     ].join(';')
   );
@@ -659,8 +750,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      /** Full-color emoji (not `background-clip:text` tint); keep faint over globe mesh. */
-      'opacity:0.62',
+      'opacity:0.72',
       'filter:saturate(1.12) contrast(1.04)',
       'text-shadow:0 0.5px 1px rgba(15,23,42,0.12)',
     ].join(';')
@@ -673,20 +763,30 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     if (ev.button !== 0) return;
     ev.stopPropagation();
     ev.preventDefault();
-    activateOrderCluster(row);
+    if (isVisitor) {
+      const target = window.parent && window.parent !== window ? window.parent : null;
+      if (target) {
+        target.postMessage(
+          {
+            type: MSG_POINT,
+            kind: 'visitor' as const,
+            label: displayUpper(row.label),
+            lat: row.lat,
+            lng: row.lng,
+          },
+          '*'
+        );
+      }
+    } else {
+      activateOrderCluster(row);
+    }
   });
   return wrap;
 }
 
-function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmarkRow[] {
+function htmlLandmarkRowsForCamera(rawRows: PointRow[], show: boolean): HtmlLandmarkRow[] {
   if (!show) return [];
-  return orderRowsForLandmarkHtml(rows).map((r) => ({
-    lat: r.lat,
-    lng: r.lng,
-    /** Float above order dot / hex surface. */
-    alt: 0.054,
-    row: r,
-  }));
+  return postcardRowsForCamera(rawRows);
 }
 
 let lastClusterPanelZoom = false;

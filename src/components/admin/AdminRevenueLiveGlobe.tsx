@@ -4,6 +4,7 @@ import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../utils/adminGlobePlaceLabel';
 import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterClientProfile';
+import { landmarkForGeographicText } from '../../utils/adminGlobeGeographicLandmark';
 
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
@@ -47,6 +48,8 @@ export type LiveGlobePoint = {
   landmarkSymbol?: string;
   orderTowerHeight?: number;
   clusterCustomers?: GlobeClusterCustomerRow[];
+  /** Dedupe **standalone** visitor postcards in the embed (city + country). */
+  postcardKey?: string;
 };
 
 export type GlobeOrderClusterDetail = {
@@ -77,6 +80,8 @@ type GlobePointInput = {
   customers?: GlobeClusterCustomerRow[];
   /** Alias for embed payload only — prefer **`customers`** from cluster builder. */
   clusterCustomers?: GlobeClusterCustomerRow[];
+  /** Standalone-visitor postcard dedupe (set from **`mergeData`** if omitted). */
+  postcardKey?: string;
 };
 
 type Props = {
@@ -147,7 +152,16 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         p.placeLine && p.placeLine.trim()
           ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
           : visitorPlaceFieldsFromHeartbeatLabel(p.label);
-      return { ...p, ...place, kind: 'visitor' as const };
+      const pl = (place.placeLine && place.placeLine.trim()) || p.placeLine || '';
+      const { title, symbol } =
+        p.landmarkTitle && p.landmarkSymbol
+          ? { title: p.landmarkTitle, symbol: p.landmarkSymbol }
+          : landmarkForGeographicText(`${pl} ${p.postcardKey || ''}`.trim(), 'visitor');
+      const parts = pl.split(/\s*,\s*/);
+      const city = (parts[0] || '').replace(/\d+$/, '').trim() || 'SITE';
+      const ctry = (parts[2] || parts[1] || 'ZZ').toUpperCase().replace(/\d+$/, '').trim();
+      const postcardKey = p.postcardKey && p.postcardKey.trim() ? p.postcardKey : `${city}|${ctry}`;
+      return { ...p, ...place, kind: 'visitor' as const, landmarkTitle: title, landmarkSymbol: symbol, postcardKey };
     }),
     ...orderPoints.map((p) => {
       const place =
@@ -168,6 +182,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         landmarkSymbol: p.landmarkSymbol,
         orderTowerHeight: th,
         clusterCustomers,
+        postcardKey: p.postcardKey,
       };
     }),
   ];
@@ -624,7 +639,23 @@ function AdminRevenueLiveGlobeIframeEmbed({
           p.placeLine && p.placeLine.trim()
             ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
             : visitorPlaceFieldsFromHeartbeatLabel(p.label);
-        return { ...p, ...place, kind: 'visitor' as const };
+        const pl = (place.placeLine && place.placeLine.trim()) || p.placeLine || '';
+        const { title, symbol } =
+          p.landmarkTitle && p.landmarkSymbol
+            ? { title: p.landmarkTitle, symbol: p.landmarkSymbol }
+            : landmarkForGeographicText(`${pl} ${p.postcardKey || ''}`.trim(), 'visitor');
+        const parts = pl.split(/\s*,\s*/);
+        const city = (parts[0] || '').replace(/\d+$/, '').trim() || 'SITE';
+        const ctry = (parts[2] || parts[1] || 'ZZ').toUpperCase().replace(/\d+$/, '').trim();
+        const postcardKey = p.postcardKey && p.postcardKey.trim() ? p.postcardKey : `${city}|${ctry}`;
+        return {
+          ...p,
+          ...place,
+          kind: 'visitor' as const,
+          landmarkTitle: title,
+          landmarkSymbol: symbol,
+          postcardKey,
+        };
       }),
       ...orderPoints.map((p) => {
         const place =
@@ -645,6 +676,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
           landmarkSymbol: p.landmarkSymbol,
           orderTowerHeight: th,
           clusterCustomers,
+          postcardKey: p.postcardKey,
         };
       }),
     ];

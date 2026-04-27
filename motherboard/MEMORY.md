@@ -17945,6 +17945,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe: postcard per order + per visitor site; green/red with pillars
+
+**Context:** User wanted **each** order/view **location** to have its own **postcard** (attraction / known-for) and a **red or green** pillar for that location.
+
+**Changes:** **`src/utils/adminGlobeGeographicLandmark.ts`** — shared **`landmarkForGeographicText`**; **`src/utils/adminOrderGlobeClusters.ts`** — **`landmarkForShipKey`** wraps it. **`src/utils/adminGlobeMockPresence.ts`** / **`src/components/admin/AdminRevenueLiveGlobe.tsx`** / **`src/pages/admin/revenue/page.tsx`** — visitor points get **`landmarkTitle`**, **`landmarkSymbol`**, **`postcardKey`** (city|country). **`embed/admin-globe`**: **`postcardRowsForCamera`** (one HTML chip per order cluster + per standalone visitor, **above** stack, green vs red border), **`buildLandmarkHtml`**, payload fields; Vite + tsconfig alias **`@fsbw/adminGlobeGeographicLandmark`**. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **main** + **embed**.
+
+---
+
 ## 2026-04-28 — Live View: TOP ORDERS after TOP BUYERS; label **TOP BUYERS**
 
 **Context:** User asked to move **TOP ORDERS** above **TOP VISITORS** and below **TOP BUYER**; rename **TOP BUYER** → **TOP BUYERS**.
