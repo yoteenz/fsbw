@@ -1360,14 +1360,15 @@ export default function AdminRevenue() {
                         NO PRODUCTS MATCH YOUR SEARCH.
                       </p>
                     )}
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px' }}>Tools</p>
+                    {/** Invisible separator — same vertical rhythm as prior “Tools” / “Packaging” label rows. */}
+                    <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>
                         <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: '#808080' }}>GIFT CARDS</span>
                         <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#EB1C24' }}>—</span>
                       </div>
                     </div>
-                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', marginBottom: '8px' }}>Packaging</p>
+                    <div aria-hidden style={{ height: '10px', marginBottom: '8px' }} />
                     <div className="space-y-2 mb-4">
                       {Object.entries(depletedInventory.packaging).map(([label, value]) => (
                         <div key={label} className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid #e5e7eb' }}>

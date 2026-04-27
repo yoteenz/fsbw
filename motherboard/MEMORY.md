@@ -17895,6 +17895,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Cluster panel: red place line single line; Products tab: remove Tools/Packaging labels
+
+**Context:** User asked: **red** location line on **cluster panel** (e.g. `DUBAI, UNITED ARAB EMIRATES`) should not wrap; **do not** move the **✕**; remove gray **Tools** & **Packaging** on **Admin → Revenue → Products** but keep **spacing** as section separators.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — header row **`min-w-0`**; place line column **`maxWidth: calc(100% - 28px)`**, **`nowrap` + ellipsis**; close button unchanged **`translateY(-3px)`** + **`self-start`**. **`src/pages/admin/revenue/page.tsx`** — **`Tools`/`Packaging` `<p>`** replaced with **`aria-hidden` spacer** divs (10px + 8px margin ≈ same rhythm).
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-28 — Live View: single-line values; cluster close X +2px down
 
 **Context:** User asked all **LIVE VIEW DATA** rows wide enough so values don’t wrap to two lines; **cluster panel** red **✕** only, move **down 2px**.

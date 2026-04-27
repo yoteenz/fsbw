@@ -409,9 +409,20 @@ function ClusterDetailPanel({
         }}
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="flex justify-between items-start gap-2 mb-2">
-          <div>
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>
+        <div className="flex justify-between items-start gap-2 mb-2 min-w-0">
+          <div className="min-w-0 flex-1 pr-1" style={{ maxWidth: 'calc(100% - 28px)' }}>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '10px',
+                color: '#EB1C24',
+                margin: 0,
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
               {detail.placeLine}
             </p>
             <p
@@ -431,7 +442,7 @@ function ClusterDetailPanel({
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 p-1"
+            className="shrink-0 p-1 self-start"
             aria-label="Close"
             style={{
               fontFamily: '"Futura PT Book"',
