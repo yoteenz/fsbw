@@ -17822,3 +17822,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Note:** **Subpixel borders** are rounded to **whole device pixels**; very small changes (e.g. 0.02px) often **look unchanged** on many screens. **`box-sizing: border-box`** also draws the border **inside** the 40×40 image box, so the visible ring can look stable compared to changing the image size.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-04-27 — Cluster panel: +0.1px avatar border; panel 2px higher
+
+**Context:** User asked to **increase** the profile photo border by **0.1px** and move the **cluster panel** **2px upward** on the globe.
+
+**Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`**: avatar border **`0.98px → 1.08px`**; vertical position **`translateY(calc(-50% + 8px))` → `translateY(calc(-50% + 6px))`** (2px up).
+
+**Deploy:** Redeploy **main**.

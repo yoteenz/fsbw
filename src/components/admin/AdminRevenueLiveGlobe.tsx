@@ -349,7 +349,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
         className="pointer-events-auto absolute overflow-y-auto p-3 shadow-2xl"
         style={{
           top: '50%',
-          transform: 'translateY(calc(-50% + 8px))',
+          transform: 'translateY(calc(-50% + 6px))',
           /** Larger `right` nudges the panel **left** (cumulative +30px vs base inset). */
           right: 'calc(max(12px, env(safe-area-inset-right)) + 30px)',
           width: 'min(92vw, 182px)',
@@ -423,7 +423,7 @@ function ClusterDetailPanel({ detail, onClose }: { detail: GlobeOrderClusterDeta
                     width={40}
                     height={40}
                     className="shrink-0 object-cover rounded-full"
-                    style={{ width: 40, height: 40, border: '0.98px solid #000000', boxSizing: 'border-box' }}
+                    style={{ width: 40, height: 40, border: '1.08px solid #000000', boxSizing: 'border-box' }}
                     referrerPolicy="no-referrer"
                   />
                   <div className="min-w-0 flex-1">
