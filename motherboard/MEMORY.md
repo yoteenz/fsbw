@@ -17985,6 +17985,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe prisms: hexMargin + H3 center snap (merge with land cells)
+
+**Context:** User said many markers still not **hex-shaped** / not **merged** on globe hexes — prisms used full **`cellToBoundary`** without land **`hexMargin`**, and stacks used raw ship lat/lng (off cell center); GeoJSON duplicate closing vertex could skew caps.
+
+**Changes:** **`embed/admin-globe/src/orderPrismLayer.ts`** — **`ORDER_PRISM_HEX_MARGIN`** (0.04) lerp to center like three-globe; **`stripClosingDuplicate`**; **`snapLatLngToH3Cell`**; **`buildHexPrismMesh`** takes margin. **`main.ts`** — prism rows + postcards + arc cluster ends use snap; **`updateCustomPrismMesh`** passes margin. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **embed**; **main** if docs.
+
+---
+
 ## 2026-04-28 — Admin Revenue globe caption: order swatch matches blue pillars
 
 **Context:** Legend dot under the iframe still **green** after prisms went blue.

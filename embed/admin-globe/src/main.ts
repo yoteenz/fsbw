@@ -4,7 +4,7 @@ import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '@fsbw/adminGlobePlaceLabel';
 import { landmarkForGeographicText } from '@fsbw/adminGlobeGeographicLandmark';
-import { buildHexPrismMesh, ORDER_PRISM_H3_RES } from './orderPrismLayer';
+import { buildHexPrismMesh, ORDER_PRISM_H3_RES, ORDER_PRISM_HEX_MARGIN, snapLatLngToH3Cell } from './orderPrismLayer';
 
 const BRAND_RED = '#EB1C24';
 
@@ -482,13 +482,14 @@ function landmarkFromRow(r: PointRow, mode: PostcardMode): { title: string; symb
 }
 
 /**
- * **One** postcard per order cluster (green) and per **standalone-visitor** site (red), **above** the pillar stack.
+ * **One** postcard per order cluster and per **standalone-visitor** site, **above** the pillar stack.
  */
 function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
   const v = splitPoints(raw).visitors;
   const clusterBases = clusterOrderRowsFromRaw(raw);
   const out: HtmlLandmarkRow[] = [];
   for (const c of clusterBases) {
+    const [snapLat, snapLng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
     const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
     const vCount = Math.max(0, Math.floor(countVisitorViewsNear(v, c.lat, c.lng, 100)));
     const stackH = oCount + vCount;
@@ -496,8 +497,8 @@ function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
       stackH > 0 ? STACK_SURFACE_ALT + (stackH - 1) * POINT_STACK_STEP : STACK_SURFACE_ALT;
     const { title, symbol } = landmarkFromRow(c, 'order');
     out.push({
-      lat: c.lat,
-      lng: c.lng,
+      lat: snapLat,
+      lng: snapLng,
       alt: topAlt + POSTCARD_ABOVE_STACK,
       row: {
         ...c,
@@ -515,10 +516,11 @@ function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
     if (!byStandKey.has(k)) byStandKey.set(k, p);
   }
   for (const p of byStandKey.values()) {
+    const [slat, slng] = snapLatLngToH3Cell(p.lat, p.lng, ORDER_PRISM_H3_RES);
     const { title, symbol } = landmarkFromRow(p, 'visitor');
     out.push({
-      lat: p.lat,
-      lng: p.lng,
+      lat: slat,
+      lng: slng,
       alt: (p.alt ?? STACK_SURFACE_ALT) + POSTCARD_ABOVE_STACK,
       row: {
         ...p,
@@ -1142,6 +1144,7 @@ function updateCustomPrismMesh(obj: import('three').Object3D, d: object, globeR?
     row.sliceTopAlt,
     R,
     ORDER_PRISM_H3_RES,
+    ORDER_PRISM_HEX_MARGIN,
     row.placeDetail === 'VIEW' || row.kind === 'visitor'
   );
   mesh.userData.pointRow = row;
@@ -1179,12 +1182,15 @@ function applyPayload(rows: PointRow[]) {
 
   const prismSlices: PointRow[] = [];
   for (const c of clusterList) {
+    const [snapLat, snapLng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
     const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
     for (let i = 0; i < oCount; i++) {
       const bottom = STACK_SURFACE_ALT + i * POINT_STACK_STEP;
       const top = bottom + POINT_STACK_STEP;
       prismSlices.push({
         ...c,
+        lat: snapLat,
+        lng: snapLng,
         orderCount: oCount,
         orderTowerHeight: bottom,
         alt: bottom,
@@ -1199,6 +1205,8 @@ function applyPayload(rows: PointRow[]) {
       const top = bottom + POINT_STACK_STEP;
       prismSlices.push({
         ...c,
+        lat: snapLat,
+        lng: snapLng,
         kind: 'visitor' as const,
         label: `VIEW · ${(c.placeLine || c.label).slice(0, 64)}`,
         placeDetail: 'VIEW',
@@ -1211,6 +1219,10 @@ function applyPayload(rows: PointRow[]) {
     }
   }
 
+  const clusterArcRows = clusterList.map((c) => {
+    const [slat, slng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
+    return { ...c, lat: slat, lng: slng };
+  });
   const standaloneVisitors: PointRow[] = [];
   for (const v of visitors) {
     if (isNearOrderCluster(v.lat, v.lng, 5)) continue;
@@ -1223,7 +1235,7 @@ function applyPayload(rows: PointRow[]) {
     .hexBinPointsData([...landHexPoints, ...buildHotBinJitterForHexBins(visitors, 0)])
     .pathsData(borderPaths)
     .pointsData(standaloneVisitors)
-    .arcsData(buildArcs(standaloneVisitors, clusterList));
+    .arcsData(buildArcs(standaloneVisitors, clusterArcRows));
   updateMapLabelsFromCamera();
   enforceAutoRotateWhenClusterPanelOpen();
 }
