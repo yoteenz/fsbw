@@ -5,9 +5,9 @@ import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBou
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../utils/adminGlobePlaceLabel';
 import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterClientProfile';
 import { landmarkForGeographicText } from '../../utils/adminGlobeGeographicLandmark';
+import { ADMIN_GLOBE_ORDER_PILLAR_RGBA } from '../../utils/adminGlobeOrderPillarColor';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#16a34a';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -1020,7 +1020,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       key={`arc-${i}`}
                       d={d}
                       fill="none"
-                      stroke={ORDER_GREEN}
+                      stroke={ADMIN_GLOBE_ORDER_PILLAR_RGBA}
                       strokeWidth={1.2}
                       strokeLinecap="round"
                       strokeDasharray="6 10"
@@ -1033,7 +1033,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
 
               {points.map((p, i) => {
                 const { leftPct, topPct } = project(p.lat, p.lng);
-                const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
+                const color = p.kind === 'visitor' ? BRAND_RED : ADMIN_GLOBE_ORDER_PILLAR_RGBA;
                 return (
                   <button
                     key={`${p.kind}-${i}`}
@@ -1052,7 +1052,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       boxShadow:
                         p.kind === 'visitor'
                           ? `0 0 0 1px rgba(0,0,0,0.2), 0 0 12px ${BRAND_RED}88`
-                          : `0 0 0 1px rgba(0,0,0,0.2), 0 0 10px ${ORDER_GREEN}66`,
+                          : `0 0 0 1px rgba(0,0,0,0.2), 0 0 10px rgba(28,62,108,0.35)`,
                     }}
                     title={p.label}
                     aria-label={p.label}

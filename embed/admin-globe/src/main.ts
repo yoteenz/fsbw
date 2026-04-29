@@ -1,11 +1,12 @@
 import Globe from 'globe.gl';
+import { Group, type Mesh } from 'three';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '@fsbw/adminGlobePlaceLabel';
 import { landmarkForGeographicText } from '@fsbw/adminGlobeGeographicLandmark';
+import { buildHexPrismMesh, ORDER_PRISM_H3_RES } from './orderPrismLayer';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#16a34a';
 
 /**
  * Bottom of the order/view stack sits on the **same** band as land H3 tops (`hexAltitude` ~0.0058)
@@ -66,8 +67,10 @@ type PointRow = {
   alt?: number;
   /** One HTML postcard per city for standalone visitors (dedupe). */
   postcardKey?: string;
-  /** Green (orders) vs red (visitors) postcard accent. */
   postcardMode?: PostcardMode;
+  /** Per-layer prism: bottom/top relative altitude (globe radius units). */
+  sliceBottomAlt?: number;
+  sliceTopAlt?: number;
 };
 
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
@@ -322,6 +325,7 @@ function reorderGlobeLabelsAboveHex(): void {
       return null;
     };
     const hexRoot = findRoot('hexBinPoints');
+    const customRoot = findRoot('custom');
     const labelRoot = findRoot('label');
     const htmlRoot = findRoot('html');
     if (!hexRoot) return;
@@ -330,6 +334,10 @@ function reorderGlobeLabelsAboveHex(): void {
     const hexAt = next.indexOf(hexRoot);
     if (hexAt < 0) return;
     let insertAt = hexAt + 1;
+    if (customRoot && !next.includes(customRoot)) {
+      next.splice(insertAt, 0, customRoot);
+      insertAt += 1;
+    }
     if (labelRoot) {
       next.splice(insertAt, 0, labelRoot);
       insertAt += 1;
@@ -869,18 +877,17 @@ const globe = new Globe(root, {
   .hexTransitionDuration(400)
   .pointLat('lat')
   .pointLng('lng')
-  .pointColor((d: object) => {
-    const p = d as PointRow;
-    if (p.placeDetail === 'VIEW' || p.kind === 'visitor') return BRAND_RED;
-    return ORDER_GREEN;
-  })
+  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : 'rgba(0,0,0,0)'))
   .pointAltitude((d: object) => (d as PointRow).alt ?? STACK_SURFACE_ALT)
   .pointRadius((d: object) => {
     const r = d as PointRow;
-    if (r.kind === 'order' && r.clusterKey) return 0.62;
-    return 0.52;
+    if (r.kind === 'visitor' && !r.clusterKey) return 0.52;
+    return 0;
   })
   .pointResolution(12)
+  .customLayerData([])
+  .customThreeObject(() => new Group())
+  .customThreeObjectUpdate(updateCustomPrismMesh)
   .arcStartLat('startLat')
   .arcStartLng('startLng')
   .arcEndLat('endLat')
@@ -1088,6 +1095,59 @@ globe.onPointClick((p: object) => {
   );
 });
 
+globe.onCustomLayerClick((obj: object) => {
+  const g = obj as Group & { children?: Mesh[] };
+  const mesh = g.children?.[0] as Mesh | undefined;
+  const row = mesh?.userData?.pointRow as PointRow | undefined;
+  if (!row) return;
+  if (row.clusterKey && (row.kind === 'order' || row.placeDetail === 'VIEW')) {
+    activateOrderCluster(resolveClusterSourceRow(row));
+  }
+});
+
+type CustomPrismRow = PointRow & { sliceBottomAlt: number; sliceTopAlt: number };
+
+let customPrismRows: CustomPrismRow[] = [];
+
+function updateOrderPrismsFromSlices(slices: PointRow[]): void {
+  const rows: CustomPrismRow[] = [];
+  for (const p of slices) {
+    const b = p.sliceBottomAlt;
+    const t = p.sliceTopAlt;
+    if (typeof b !== 'number' || typeof t !== 'number' || !Number.isFinite(b) || !Number.isFinite(t)) continue;
+    if (t <= b) continue;
+    rows.push({ ...p, sliceBottomAlt: b, sliceTopAlt: t });
+  }
+  customPrismRows = rows;
+  try {
+    globe.customLayerData([...customPrismRows]);
+  } catch {
+    /* optional */
+  }
+}
+
+function updateCustomPrismMesh(obj: import('three').Object3D, d: object, globeR?: number): void {
+  const row = d as CustomPrismRow;
+  const g = obj as Group;
+  const R = typeof globeR === 'number' && Number.isFinite(globeR) ? globeR : 100;
+  while (g.children.length) {
+    const ch = g.children[0] as Mesh;
+    ch.geometry?.dispose();
+    g.remove(ch);
+  }
+  const mesh = buildHexPrismMesh(
+    row.lat,
+    row.lng,
+    row.sliceBottomAlt,
+    row.sliceTopAlt,
+    R,
+    ORDER_PRISM_H3_RES,
+    row.placeDetail === 'VIEW' || row.kind === 'visitor'
+  );
+  mesh.userData.pointRow = row;
+  g.add(mesh);
+}
+
 let landHexPoints: Weighted[] = [];
 let borderPaths: BorderPathRow[] = [];
 let lastRows: PointRow[] = [];
@@ -1117,51 +1177,58 @@ function applyPayload(rows: PointRow[]) {
     return false;
   };
 
-  const nextOrders: PointRow[] = [];
+  const prismSlices: PointRow[] = [];
   for (const c of clusterList) {
     const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
     for (let i = 0; i < oCount; i++) {
-      const alt = STACK_SURFACE_ALT + i * POINT_STACK_STEP;
-      nextOrders.push({ ...c, orderCount: oCount, orderTowerHeight: alt, alt });
+      const bottom = STACK_SURFACE_ALT + i * POINT_STACK_STEP;
+      const top = bottom + POINT_STACK_STEP;
+      prismSlices.push({
+        ...c,
+        orderCount: oCount,
+        orderTowerHeight: bottom,
+        alt: bottom,
+        sliceBottomAlt: bottom,
+        sliceTopAlt: top,
+      });
     }
     const viewN = countVisitorViewsNear(visitors, c.lat, c.lng, 100);
     const vCount = Math.max(0, Math.floor(viewN));
     for (let j = 0; j < vCount; j++) {
-      const alt = STACK_SURFACE_ALT + (oCount + j) * POINT_STACK_STEP;
-      nextOrders.push({
+      const bottom = STACK_SURFACE_ALT + (oCount + j) * POINT_STACK_STEP;
+      const top = bottom + POINT_STACK_STEP;
+      prismSlices.push({
         ...c,
         kind: 'visitor' as const,
         label: `VIEW · ${(c.placeLine || c.label).slice(0, 64)}`,
         placeDetail: 'VIEW',
         orderCount: 0,
-        orderTowerHeight: alt,
-        alt,
+        orderTowerHeight: bottom,
+        alt: bottom,
+        sliceBottomAlt: bottom,
+        sliceTopAlt: top,
       });
     }
   }
-  for (const o of orders) {
-    if (o.kind === 'order' && o.clusterKey) continue;
-    nextOrders.push({ ...o, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
-  }
 
-  const nextVisitors: PointRow[] = [];
+  const standaloneVisitors: PointRow[] = [];
   for (const v of visitors) {
     if (isNearOrderCluster(v.lat, v.lng, 5)) continue;
-    nextVisitors.push({ ...v, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
+    standaloneVisitors.push({ ...v, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
   }
 
-  const all: PointRow[] = [...nextVisitors, ...nextOrders];
-  /** Land mesh only; orders/views = **stacked** `pointsData` markers. */
+  updateOrderPrismsFromSlices(prismSlices);
+  /** Land mesh; **H3 hex prisms** for orders/views; red dots for standalone visitors only. */
   globe
     .hexBinPointsData([...landHexPoints, ...buildHotBinJitterForHexBins(visitors, 0)])
     .pathsData(borderPaths)
-    .pointsData(all)
-    .arcsData(buildArcs(nextVisitors, clusterList));
+    .pointsData(standaloneVisitors)
+    .arcsData(buildArcs(standaloneVisitors, clusterList));
   updateMapLabelsFromCamera();
   enforceAutoRotateWhenClusterPanelOpen();
 }
 
-globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]).customLayerData([]);
 
 void (async () => {
   try {

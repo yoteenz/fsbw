@@ -17975,6 +17975,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe: H3-aligned order prisms (blue); SVG fallback matches
+
+**Context:** User wanted order markers shaped like the **land H3 hex** (not cylinders), centered in the cell, and **dark translucent blue** instead of green.
+
+**Changes:** **`embed/admin-globe`** — **`orderPrismLayer.ts`**, **`customLayerData`** + **`customThreeObjectUpdate`** using **`h3-js`** `cellToBoundary` (res **3**, same as **`hexBinResolution(3.55)`**); **`applyPayload`** per-count prism slices; **`onCustomLayerClick`**; **`reorderGlobeLabelsAboveHex`** inserts **custom** after **hexBinPoints**; **`h3-js`** in **`package.json`**; **`vite-env.d.ts`** **`three`** shim. **`src/utils/adminGlobeOrderPillarColor.ts`**; **`AdminRevenueLiveGlobe.tsx`** SVG uses same blue; Vite/tsconfig alias **`@fsbw/adminGlobeOrderPillarColor`**. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **main** + **embed**.
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.

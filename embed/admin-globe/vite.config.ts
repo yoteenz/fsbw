@@ -13,6 +13,7 @@ export default defineConfig({
       '@fsbw/adminGlobeBoundaryPaths': path.resolve(__dirname, '../../src/utils/adminGlobeBoundaryPaths.ts'),
       '@fsbw/adminGlobePlaceLabel': path.resolve(__dirname, '../../src/utils/adminGlobePlaceLabel.ts'),
       '@fsbw/adminGlobeGeographicLandmark': path.resolve(__dirname, '../../src/utils/adminGlobeGeographicLandmark.ts'),
+      '@fsbw/adminGlobeOrderPillarColor': path.resolve(__dirname, '../../src/utils/adminGlobeOrderPillarColor.ts'),
     },
   },
   base: '/',
