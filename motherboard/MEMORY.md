@@ -17939,7 +17939,7 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context:** User said the red/green **order vs view** “pillars” were wrong: **one** layer should be **one** order or **one** view (e.g. **10** orders at a location → **10** green stack steps, same for views).
 
-**Changes:** **`embed/admin-globe/src/main.ts`** — Deduplicate order rows by `clusterKey`; for each cluster emit `orderCount` **green** `pointsData` rows and `viewCount` **red** rows (100 km, same as cluster panel) with per-row **`alt`** = `POINT_BASE_ALT + n * POINT_STACK_STEP`; `pointAltitude` uses **`alt`**; `activateOrderCluster` resolves full order row from `lastRows` for synthetic “VIEW” points; arcs use deduped clusters + stand-alone visitors. **Hot hex jitter** removed. **`docs/ADMIN_GLOBE_EMBED.md`**.
+**Changes:** **`embed/admin-globe/src/main.ts`** — Deduplicate order rows by `clusterKey`; for each cluster emit `orderCount` **green** `pointsData` rows and `viewCount` **red** rows (100 km, same as cluster panel) with per-row **`alt`** = **`STACK_SURFACE_ALT` + n × `POINT_STACK_STEP`** (first layer at land-surface altitude; each extra order/view stacks); `pointAltitude` uses **`alt`**; `activateOrderCluster` resolves full order row from `lastRows` for synthetic “VIEW” points; arcs use deduped clusters + stand-alone visitors. **Hot hex jitter** removed. **`docs/ADMIN_GLOBE_EMBED.md`**.
 
 **Deploy:** Redeploy **embed/admin-globe**; **main** if **docs** matter for that build.
 
@@ -17949,7 +17949,7 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context:** User wanted **each** order/view **location** to have its own **postcard** (attraction / known-for) and a **red or green** pillar for that location.
 
-**Changes:** **`src/utils/adminGlobeGeographicLandmark.ts`** — shared **`landmarkForGeographicText`**; **`src/utils/adminOrderGlobeClusters.ts`** — **`landmarkForShipKey`** wraps it. **`src/utils/adminGlobeMockPresence.ts`** / **`src/components/admin/AdminRevenueLiveGlobe.tsx`** / **`src/pages/admin/revenue/page.tsx`** — visitor points get **`landmarkTitle`**, **`landmarkSymbol`**, **`postcardKey`** (city|country). **`embed/admin-globe`**: **`postcardRowsForCamera`** (one HTML chip per order cluster + per standalone visitor, **above** stack, green vs red border), **`buildLandmarkHtml`**, payload fields; Vite + tsconfig alias **`@fsbw/adminGlobeGeographicLandmark`**. **`docs/ADMIN_GLOBE_EMBED.md`**.
+**Changes:** **`src/utils/adminGlobeGeographicLandmark.ts`** — shared **`landmarkForGeographicText`**; **`src/utils/adminOrderGlobeClusters.ts`** — **`landmarkForShipKey`** wraps it. **`src/utils/adminGlobeMockPresence.ts`** / **`src/components/admin/AdminRevenueLiveGlobe.tsx`** / **`src/pages/admin/revenue/page.tsx`** — visitor points get **`landmarkTitle`**, **`landmarkSymbol`**, **`postcardKey`** (city|country). **`embed/admin-globe`**: **`postcardRowsForCamera`**, **`buildLandmarkHtml`**, payload fields; Vite + tsconfig alias **`@fsbw/adminGlobeGeographicLandmark`**. Postcard chip borders are **neutral** only (no red/green frame on the postcard).
 
 **Deploy:** Redeploy **main** + **embed**.
 

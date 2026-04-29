@@ -7,12 +7,15 @@ import { landmarkForGeographicText } from '@fsbw/adminGlobeGeographicLandmark';
 const BRAND_RED = '#EB1C24';
 const ORDER_GREEN = '#16a34a';
 
-/** Base globe.gl point altitude (single order / bottom of stack). */
-const POINT_BASE_ALT = 0.038;
-/** Extra altitude per **stacked** order or visitor (one marker = one count). */
-const POINT_STACK_STEP = 0.0028;
-/** Postcard float above the **top** of the red/green pillar stack. */
-const POSTCARD_ABOVE_STACK = 0.0062;
+/**
+ * Bottom of the order/view stack sits on the **same** band as land H3 tops (`hexAltitude` ~0.0058)
+ * so **one** order is a **flat** colored disk on the surface; each extra count adds **`POINT_STACK_STEP`**.
+ */
+const STACK_SURFACE_ALT = 0.00585;
+/** One “pill” layer per order or per view stacked above **`STACK_SURFACE_ALT`**. */
+const POINT_STACK_STEP = 0.00135;
+/** Postcard floats slightly above the top stack layer. */
+const POSTCARD_ABOVE_STACK = 0.0038;
 
 /** Admin UI copy: match storefront uppercase label style (Futura + all-caps). */
 function displayUpper(s: string): string {
@@ -482,7 +485,7 @@ function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
     const vCount = Math.max(0, Math.floor(countVisitorViewsNear(v, c.lat, c.lng, 100)));
     const stackH = oCount + vCount;
     const topAlt =
-      stackH > 0 ? POINT_BASE_ALT + (stackH - 1) * POINT_STACK_STEP : POINT_BASE_ALT;
+      stackH > 0 ? STACK_SURFACE_ALT + (stackH - 1) * POINT_STACK_STEP : STACK_SURFACE_ALT;
     const { title, symbol } = landmarkFromRow(c, 'order');
     out.push({
       lat: c.lat,
@@ -508,7 +511,7 @@ function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
     out.push({
       lat: p.lat,
       lng: p.lng,
-      alt: (p.alt ?? POINT_BASE_ALT) + POSTCARD_ABOVE_STACK,
+      alt: (p.alt ?? STACK_SURFACE_ALT) + POSTCARD_ABOVE_STACK,
       row: {
         ...p,
         kind: 'visitor',
@@ -686,7 +689,7 @@ function postcardTiltDeg(seed: string | undefined): number {
   return ((h % 11) - 5) * 0.55;
 }
 
-/** Postcard / hand-stamp — border matches **green** (orders) or **red** (visitors) pillar color. */
+/** Postcard / hand-stamp — neutral hairline (pillar color stays on the markers only). */
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
   wrap.type = 'button';
@@ -697,7 +700,6 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   const titleU = displayUpper(lmTitle);
   const n = row.orderCount ?? 0;
   const tilt = postcardTiltDeg(isVisitor ? (row.postcardKey ?? row.placeLine) : row.clusterKey);
-  const edge = isVisitor ? 'rgba(235,28,36,0.78)' : 'rgba(22,163,74,0.78)';
   if (isVisitor) {
     wrap.title = `${titleU} — LIVE VIEWS`;
   } else {
@@ -717,7 +719,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   );
 
   /**
-   * **No** `backdrop-filter` on the shell. Border tint = same semantic as the pillar (green / red).
+   * **No** `backdrop-filter` on the shell — subtle neutral border only.
    */
   const shell = document.createElement('span');
   shell.setAttribute(
@@ -733,7 +735,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'overflow:visible',
       'transform:rotate(' + tilt + 'deg)',
       'background:transparent',
-      'border:1.5px solid ' + edge,
+      'border:1px solid rgba(255,255,255,0.22)',
       'box-shadow:none',
     ].join(';')
   );
@@ -872,7 +874,7 @@ const globe = new Globe(root, {
     if (p.placeDetail === 'VIEW' || p.kind === 'visitor') return BRAND_RED;
     return ORDER_GREEN;
   })
-  .pointAltitude((d: object) => (d as PointRow).alt ?? POINT_BASE_ALT)
+  .pointAltitude((d: object) => (d as PointRow).alt ?? STACK_SURFACE_ALT)
   .pointRadius((d: object) => {
     const r = d as PointRow;
     if (r.kind === 'order' && r.clusterKey) return 0.62;
@@ -1119,13 +1121,13 @@ function applyPayload(rows: PointRow[]) {
   for (const c of clusterList) {
     const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
     for (let i = 0; i < oCount; i++) {
-      const alt = POINT_BASE_ALT + i * POINT_STACK_STEP;
+      const alt = STACK_SURFACE_ALT + i * POINT_STACK_STEP;
       nextOrders.push({ ...c, orderCount: oCount, orderTowerHeight: alt, alt });
     }
     const viewN = countVisitorViewsNear(visitors, c.lat, c.lng, 100);
     const vCount = Math.max(0, Math.floor(viewN));
     for (let j = 0; j < vCount; j++) {
-      const alt = POINT_BASE_ALT + (oCount + j) * POINT_STACK_STEP;
+      const alt = STACK_SURFACE_ALT + (oCount + j) * POINT_STACK_STEP;
       nextOrders.push({
         ...c,
         kind: 'visitor' as const,
@@ -1139,13 +1141,13 @@ function applyPayload(rows: PointRow[]) {
   }
   for (const o of orders) {
     if (o.kind === 'order' && o.clusterKey) continue;
-    nextOrders.push({ ...o, alt: POINT_BASE_ALT, orderTowerHeight: POINT_BASE_ALT });
+    nextOrders.push({ ...o, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
   }
 
   const nextVisitors: PointRow[] = [];
   for (const v of visitors) {
     if (isNearOrderCluster(v.lat, v.lng, 5)) continue;
-    nextVisitors.push({ ...v, alt: POINT_BASE_ALT, orderTowerHeight: POINT_BASE_ALT });
+    nextVisitors.push({ ...v, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
   }
 
   const all: PointRow[] = [...nextVisitors, ...nextOrders];
