@@ -17985,6 +17985,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin Revenue globe caption: order swatch matches blue pillars
+
+**Context:** Legend dot under the iframe still **green** after prisms went blue.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`ADMIN_GLOBE_ORDER_PILLAR_RGBA`**.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.
