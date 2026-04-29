@@ -39,7 +39,7 @@ import {
 } from '../../../utils/orderTracking';
 import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
 import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
-import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile';
+import { ADMIN_GLOBE_ORDER_PILLAR_RGBA } from '../../../utils/adminGlobeOrderPillarColor';
 import {
   adminGlobeMockDataEnabled,
   disableAdminGlobeMockDataSession,
@@ -1265,7 +1265,7 @@ export default function AdminRevenue() {
                           ·
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: '#16a34a' }} aria-hidden />
+                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: ADMIN_GLOBE_ORDER_PILLAR_RGBA }} aria-hidden />
                           <span style={{ color: '#334155' }}>
                             {orderGlobeOrderTotal} {orderGlobeOrderTotal === 1 ? 'order' : 'orders'}
                           </span>
