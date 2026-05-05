@@ -18012,3 +18012,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** close button: **`fontSize` 10px → 9px** (−10%), **`color` → `BRAND_RED` (`#EB1C24`)**; **DetailModal** and other UIs unchanged.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-05-05 — Supabase load + Admin Revenue live-globe refresh interval
+
+**Context:** User asked how to track Supabase Disk IO / Query Performance; simplified UI guidance (Total Time vs Calls filter, Indexes tab). User wanted a code change to reduce load from the Admin Revenue **live globe** (previously ~30s polling of `GET /api/admin/live-presence` → `site_analytics_events`).
+
+**Topics covered:** Query Performance; mapping `service_role` + `meta` + `page_view` reads to Admin Revenue OVERVIEW; permanent reduction via slower polling.
+
+**Decisions / outcomes:** Default live-globe refresh set to **2 minutes** to cut API/DB calls while OVERVIEW is open.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`LIVE_GLOBE_REFRESH_MS = 120_000`**; **`setInterval`** uses it (was **`30_000`**). File header notes globe polling + DB impact.
+
+**Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`** if aligned with **master**.

@@ -2,6 +2,7 @@
  * Admin Revenue page. All tabs use the same data source as the client overview:
  * - Orders: buildRevenueOrdersList() = localStorage userOrders_* (same keys as client overview).
  * - Overview totals/breakdown: getAdminRevenue() when Supabase is configured (else derived from orders).
+ * - Overview live globe: polls GET /api/admin/live-presence on LIVE_GLOBE_REFRESH_MS (not every few seconds — reduces DB load).
  * - Products/Inventory: getDepletedInventory(orders) and Edit Inventory overrides.
  * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
@@ -69,6 +70,9 @@ const FINANCIAL_DEBT_RATIO_COLOR: Record<string, string> = {
 };
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
+
+/** Live globe polls GET /api/admin/live-presence; keep this conservative to limit Supabase reads while OVERVIEW is open. */
+const LIVE_GLOBE_REFRESH_MS = 120_000;
 
 /**
  * Full path key for **top page paths** (no ellipsis — display builds `HOME/SHOP`-style lines).
@@ -930,7 +934,7 @@ export default function AdminRevenue() {
     persistGlobeMockFromSearchParams(searchParams);
     persistGlobeMockFromBrowserLocation();
     void fetchLiveGlobe();
-    const id = setInterval(() => void fetchLiveGlobe(), 30_000);
+    const id = setInterval(() => void fetchLiveGlobe(), LIVE_GLOBE_REFRESH_MS);
     return () => clearInterval(id);
   }, [activeTab, fetchLiveGlobe, globeMockUiRev, searchParams, location.hash]);
 
