@@ -71,8 +71,8 @@ const FINANCIAL_DEBT_RATIO_COLOR: Record<string, string> = {
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
 
-/** Live globe polls GET /api/admin/live-presence; keep this conservative to limit Supabase reads while OVERVIEW is open. */
-const LIVE_GLOBE_REFRESH_MS = 120_000;
+/** Live globe polls GET /api/admin/live-presence; balance freshness vs Supabase reads while OVERVIEW is open (was 30s; 90s ≈ middle vs 2m). */
+const LIVE_GLOBE_REFRESH_MS = 90_000;
 
 /**
  * Full path key for **top page paths** (no ellipsis — display builds `HOME/SHOP`-style lines).

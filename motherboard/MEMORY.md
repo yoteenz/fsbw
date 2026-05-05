@@ -18026,3 +18026,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — **`LIVE_GLOBE_REFRESH_MS = 120_000`**; **`setInterval`** uses it (was **`30_000`**). File header notes globe polling + DB impact.
 
 **Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`** if aligned with **master**.
+
+---
+
+## 2026-05-05 — Admin Revenue live-globe: 90s refresh (middle ground)
+
+**Context:** User asked for a **middle ground** between original **30s** polling and the **120s** change.
+
+**Decisions / outcomes:** **`LIVE_GLOBE_REFRESH_MS = 90_000`** (1.5 minutes).
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — constant + comment updated.
+
+**Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`**.
