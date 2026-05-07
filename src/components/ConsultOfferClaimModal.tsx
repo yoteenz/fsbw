@@ -507,7 +507,7 @@ export default function ConsultOfferClaimModal({
                 lineHeight: 1.4,
               }}
             >
-              $40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.
+              $40 DISCOUNT ONLY APPLIES WHILE OFFER IS ACTIVE.
             </p>
             <div style={{ marginTop: '0', marginBottom: '4px' }}>
               <div

@@ -18088,3 +18088,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`DEFAULT_INSPO_DISCLAIMER`** in **`ConsultOfferClaimModal.tsx`**; **`DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR`** + **`PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER`** so quotes already stored with the prior closing still match **`isDefaultInspoDisclaimer`** / two-paragraph layout and show the stored text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo message updated.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult offer modal: $40 discount line copy
+
+**Context (full chat):** Consult offer **`ConsultOfferClaimModal`** copy thread (layout, colors, disclaimer P1/P2, etc.). User changed the red notice line from **"$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE."** to **"$40 DISCOUNT ONLY APPLIES WHILE OFFER IS ACTIVE."**
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — one string only.
+
+**Verify:** **`npm run build`** succeeds.
