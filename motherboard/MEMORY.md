@@ -18078,3 +18078,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — inline styles only; JSDoc for P2 updated to gray.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult default P2: “BRANDING AND YOUR VISUALIZATION”
+
+**Context (full chat):** Same consult-offer copy thread. User updated the **2D MODEL** gray paragraph closing to **“…BRANDING AND YOUR VISUALIZATION.”** (add **YOUR** before **VISUALIZATION**).
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`DEFAULT_INSPO_DISCLAIMER`** in **`ConsultOfferClaimModal.tsx`**; **`DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR`** + **`PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER`** so quotes already stored with the prior closing still match **`isDefaultInspoDisclaimer`** / two-paragraph layout and show the stored text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo message updated.
+
+**Verify:** **`npm run build`** succeeds.
