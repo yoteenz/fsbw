@@ -64,7 +64,7 @@ const PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER =
 const DEFAULT_INSPO_DISCLAIMER_P1 =
   'BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
 
-/** Second paragraph — **red**, shown below price breakdown in claim modal. Persisted `admin_message` is P1 + space + P2 (single field). */
+/** Second paragraph — **gray**, shown below price breakdown in claim modal. Persisted `admin_message` is P1 + space + P2 (single field). */
 const DEFAULT_INSPO_DISCLAIMER_P2 =
   '2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
 
@@ -476,7 +476,7 @@ export default function ConsultOfferClaimModal({
                   maxWidth: 'calc(100% - 10px)',
                   lineHeight: 1.5,
                   textTransform: 'uppercase',
-                  color: '#EB1C24',
+                  color: '#808080',
                   textAlign: 'center',
                 }}
               >
@@ -488,7 +488,7 @@ export default function ConsultOfferClaimModal({
               style={{
                 fontFamily: '"Futura PT Medium"',
                 fontSize: '9px',
-                color: '#808080',
+                color: '#EB1C24',
                 marginTop: '22px',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
@@ -534,7 +534,7 @@ export default function ConsultOfferClaimModal({
                 style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '9px',
-                  color: '#EB1C24',
+                  color: '#808080',
                   margin: 0,
                   textTransform: 'uppercase',
                   flex: '1 1 auto',

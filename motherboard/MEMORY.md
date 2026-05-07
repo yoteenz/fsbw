@@ -18068,3 +18068,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P1`**; **`DEFAULT_INSPO_DISCLAIMER_P1_LEGACY`** + rebuilt **`PREVIOUS_*`** match strings so older **`admin_message`** rows still match; **`defaultDisclaimerP1Display`** so legacy quotes show the legacy opening in the modal. **`AdminMeetingsHub.tsx`** initial **`quoteMessage`** and **`orders/page.tsx`** **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`** use the new full default string.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult offer modal: gray 2D paragraph, red $40 line, gray status
+
+**Context (full chat):** Consult offer UI thread (modal layout, copy, revenue import fix, default disclaimer wording). User asked to revert the **2D model** second-paragraph color to **gray** (`#808080`), set **"$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE."** to **red** (`#EB1C24`), and **STATUS: ACTIVE** / **INACTIVE** to **gray** (`#808080`).
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — inline styles only; JSDoc for P2 updated to gray.
+
+**Verify:** **`npm run build`** succeeds.
