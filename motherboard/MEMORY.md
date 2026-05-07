@@ -18038,3 +18038,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — constant + comment updated.
 
 **Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`**.
+
+---
+
+## 2026-05-07 — Consult offer claim modal: disclaimer placement, colors, order header
+
+**Context:** User wanted the **Account → Orders** consult **VIEW OFFER** modal (**`ConsultOfferClaimModal`**) adjusted: move the long **2D MODEL / illustrative purposes** default disclaimer paragraph **below** the price breakdown; render that paragraph in **brand red** instead of gray; show **ORDER #…** header in **black** on this modal only (not red).
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — for default two-paragraph admin disclaimers, only the first paragraph stays above the breakdown; second paragraph renders after the breakdown box with **`#EB1C24`**; title **`#000000`**; renamed internal **`defaultDisclaimerGrayParagraph`** → **`defaultDisclaimerP2Text`**; JSDoc/prop comment updated.
+
+**Verify:** **`npm run build`** still hits a **pre-existing** TS error in **`src/pages/admin/revenue/page.tsx`** (`enrichOrderGlobeClusterCustomers`); modal file lint clean.

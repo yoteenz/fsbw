@@ -20,7 +20,7 @@ type Props = {
   loading?: boolean;
   error?: string | null;
   locationForSignIn: { pathname: string; search?: string };
-  /** Shown in red header (e.g. ORDER #331); falls back if omitted. */
+  /** Shown in black header (e.g. ORDER #331); falls back if omitted. */
   orderNumberDisplay?: string;
 };
 
@@ -61,7 +61,7 @@ const PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER =
 const DEFAULT_INSPO_DISCLAIMER_P1 =
   'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
 
-/** Second paragraph — **gray** in modal. Persisted `admin_message` is P1 + space + P2 (single field). */
+/** Second paragraph — **red**, shown below price breakdown in claim modal. Persisted `admin_message` is P1 + space + P2 (single field). */
 const DEFAULT_INSPO_DISCLAIMER_P2 =
   '2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
 
@@ -159,7 +159,7 @@ export default function ConsultOfferClaimModal({
     msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
-  const defaultDisclaimerGrayParagraph =
+  const defaultDisclaimerP2Text =
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
       ? PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2
       : msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
@@ -292,7 +292,7 @@ export default function ConsultOfferClaimModal({
             id="consult-offer-title"
             style={{
               fontFamily: '"Futura PT Medium"',
-              color: '#EB1C24',
+              color: '#000000',
               fontSize: '12px',
               margin: 0,
               textTransform: 'uppercase',
@@ -347,18 +347,6 @@ export default function ConsultOfferClaimModal({
                     }}
                   >
                     {DEFAULT_INSPO_DISCLAIMER_P1}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '9px',
-                      margin: '8px 0 0',
-                      lineHeight: 1.5,
-                      textTransform: 'uppercase',
-                      color: '#808080',
-                    }}
-                  >
-                    {defaultDisclaimerGrayParagraph}
                   </p>
                 </div>
               ) : (
@@ -471,6 +459,23 @@ export default function ConsultOfferClaimModal({
                 </div>
               </div>
             </div>
+
+            {isCurrentDefaultTwoParagraphDisclaimer ? (
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '9px',
+                  margin: '12px auto 10px',
+                  maxWidth: 'calc(100% - 10px)',
+                  lineHeight: 1.5,
+                  textTransform: 'uppercase',
+                  color: '#EB1C24',
+                  textAlign: 'center',
+                }}
+              >
+                {defaultDisclaimerP2Text}
+              </p>
+            ) : null}
 
             <p
               style={{
