@@ -18091,6 +18091,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-07 — Consult offer modal: countdown shows EXPIRED + unified clock
+
+**Context (full chat):** Consult **`ConsultOfferClaimModal`** polish. User wanted the black countdown (e.g. **2D 21H LEFT**) to read **EXPIRED** after **`expires_at`**, and confidence the timer advances (not stuck).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — **`offerCountdownText`** returns **`EXPIRED`** when past expiry; right column renders whenever **`expires_at`** is present (was hidden when expired). Replaced tick counter with **`offerClockMs`** state updated every **1s** while modal open + on open / quote change so **`expired`**, **`offerLeftMs`**, countdown label, and tracking bar share one clock (**`consultDigitalOrderTrackingBarFillPct(..., offerClockMs)`**).
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
 ## 2026-05-07 — Consult offer modal: $40 discount line copy
 
 **Context (full chat):** Consult offer **`ConsultOfferClaimModal`** copy thread (layout, colors, disclaimer P1/P2, etc.). User changed the red notice line from **"$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE."** to **"$40 DISCOUNT ONLY APPLIES WHILE OFFER IS ACTIVE."**

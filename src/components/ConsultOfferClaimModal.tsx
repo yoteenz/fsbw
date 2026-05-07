@@ -113,14 +113,21 @@ export default function ConsultOfferClaimModal({
   orderNumberDisplay,
 }: Props) {
   const navigate = useNavigate();
-  const [tick, setTick] = useState(0);
+  /** Single clock for countdown / expiry / tracking bar so UI stays in sync and advances every second while open. */
+  const [offerClockMs, setOfferClockMs] = useState(() => Date.now());
   const [claimUiTick, setClaimUiTick] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
-    const t = setInterval(() => setTick((x) => x + 1), 1000);
+    setOfferClockMs(Date.now());
+    const t = setInterval(() => setOfferClockMs(Date.now()), 1000);
     return () => clearInterval(t);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !quote) return;
+    setOfferClockMs(Date.now());
+  }, [isOpen, quote?.expires_at, quote?.id]);
 
   useEffect(() => {
     const bump = () => setClaimUiTick((x) => x + 1);
@@ -139,18 +146,18 @@ export default function ConsultOfferClaimModal({
     return Number.isFinite(ms) ? ms : null;
   }, [quote]);
 
-  const expired = expiresMs != null && expiresMs <= Date.now();
+  const expired = expiresMs != null && expiresMs <= offerClockMs;
 
   const offerLeftMs = useMemo(() => {
     if (expiresMs == null) return 0;
-    return Math.max(0, expiresMs - Date.now());
-  }, [expiresMs, tick]);
+    return Math.max(0, expiresMs - offerClockMs);
+  }, [expiresMs, offerClockMs]);
 
   const offerCountdownText = useMemo(() => {
     if (expiresMs == null) return '—';
-    if (expired) return '';
+    if (expired) return 'EXPIRED';
     return formatOfferTimeLeftLabel(offerLeftMs);
-  }, [expiresMs, expired, offerLeftMs, tick]);
+  }, [expiresMs, expired, offerLeftMs]);
   const thumb =
     typeof quote?.thumbnail_src === 'string' && quote.thumbnail_src.trim()
       ? quote.thumbnail_src.trim()
@@ -241,8 +248,8 @@ export default function ConsultOfferClaimModal({
       status: 'PROCESSING',
       placedAt: anchor,
     };
-    return consultDigitalOrderTrackingBarFillPct(sym, Date.now()) ?? 0;
-  }, [quote, expired, tick]);
+    return consultDigitalOrderTrackingBarFillPct(sym, offerClockMs) ?? 0;
+  }, [quote, expired, offerClockMs]);
 
   const handleClaim = async () => {
     if (!quote) return;
@@ -554,7 +561,7 @@ export default function ConsultOfferClaimModal({
               >
                 STATUS: {expired ? 'INACTIVE' : 'ACTIVE'}
               </p>
-              {!expired && expiresMs != null ? (
+              {expiresMs != null ? (
                 <p
                   style={{
                     fontFamily: '"Futura PT Medium"',
