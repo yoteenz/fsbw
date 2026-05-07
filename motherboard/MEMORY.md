@@ -18058,3 +18058,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/admin/revenue/page.tsx`** — added **`import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile'`** (function already implemented in **`adminGlobeClusterClientProfile.ts`** and used from **`AdminRevenueLiveGlobe.tsx`**).
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult default disclaimer: opening sentence copy
+
+**Context (full chat):** Continuation of consult-offer / admin meetings work above. User asked to replace the first sentence of the default consult offer message with: **"BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK."**
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P1`**; **`DEFAULT_INSPO_DISCLAIMER_P1_LEGACY`** + rebuilt **`PREVIOUS_*`** match strings so older **`admin_message`** rows still match; **`defaultDisclaimerP1Display`** so legacy quotes show the legacy opening in the modal. **`AdminMeetingsHub.tsx`** initial **`quoteMessage`** and **`orders/page.tsx`** **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`** use the new full default string.
+
+**Verify:** **`npm run build`** succeeds.
