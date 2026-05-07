@@ -39,6 +39,7 @@ import {
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
 import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
+import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile';
 import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
 import { ADMIN_GLOBE_ORDER_PILLAR_RGBA } from '../../../utils/adminGlobeOrderPillarColor';
 import {

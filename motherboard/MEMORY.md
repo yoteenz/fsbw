@@ -18047,4 +18047,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — for default two-paragraph admin disclaimers, only the first paragraph stays above the breakdown; second paragraph renders after the breakdown box with **`#EB1C24`**; title **`#000000`**; renamed internal **`defaultDisclaimerGrayParagraph`** → **`defaultDisclaimerP2Text`**; JSDoc/prop comment updated.
 
-**Verify:** **`npm run build`** still hits a **pre-existing** TS error in **`src/pages/admin/revenue/page.tsx`** (`enrichOrderGlobeClusterCustomers`); modal file lint clean.
+**Verify:** Modal file lint clean. (**`npm run build`:** revenue page missing import fixed in follow-up entry same day.)
+
+---
+
+## 2026-05-07 — Vercel build: import `enrichOrderGlobeClusterCustomers` on Admin Revenue page
+
+**Context (full chat):** Earlier in this chat, **consult VIEW OFFER** modal (**`ConsultOfferClaimModal`**) was updated (disclaimer P2 below price breakdown, red P2, black **ORDER #** header). User then shared **Vercel** **`preview/mobile`** build failure: **`TS2304: Cannot find name 'enrichOrderGlobeClusterCustomers'`** at **`src/pages/admin/revenue/page.tsx`** line 798.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — added **`import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile'`** (function already implemented in **`adminGlobeClusterClientProfile.ts`** and used from **`AdminRevenueLiveGlobe.tsx`**).
+
+**Verify:** **`npm run build`** succeeds.
