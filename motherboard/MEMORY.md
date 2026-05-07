@@ -18108,3 +18108,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — one string only.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Account Orders: ORDER # headers black (list + expanded card bar)
+
+**Context (full chat):** Consult modal / orders polish thread. User wanted **ORDER #555**-style headers **black** instead of red on **Account → Orders** for the **order toggle / list** only (not global consult modal header).
+
+**Changes:** **`src/pages/orders/page.tsx`** — clickable **`order.orderNumber`** lines in active and archived lists: **`#000000`**. Expanded card top title when an order is open (active or archived): **`#000000`** + neutral hover classes (**`ACTIVE ORDERS` / `ARCHIVED ORDERS`** section titles unchanged red).
+
+**Verify:** **`npm run build`** succeeds.

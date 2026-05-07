@@ -2304,8 +2304,8 @@ function OrdersPage() {
                   {expandedOrderId ? (
                     <>
                       <button
-                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                        className="font-bold text-lg tracking-wider truncate transition-colors text-left uppercase text-black hover:text-gray-800"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', fontWeight: '500' }}
                       >
                         {(activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId))?.orderNumber || 'ORDER'}
                       </button>
@@ -2951,7 +2951,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            <p 
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
                            >
                              {order.orderNumber}
                            </p>
@@ -3255,8 +3255,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
                     <>
                       <button
-                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                        className="font-bold text-lg tracking-wider truncate transition-colors text-left uppercase text-black hover:text-gray-800"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', fontWeight: '500' }}
                       >
                         {pastOrders.find(o => o.id === expandedOrderId)?.orderNumber || 'ORDER'}
                       </button>
@@ -3894,7 +3894,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            <p 
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
                            >
                              {order.orderNumber}
                            </p>
