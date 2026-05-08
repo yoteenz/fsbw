@@ -2951,7 +2951,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            <p 
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
                            >
                              {order.orderNumber}
                            </p>
@@ -3894,7 +3894,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                            </p>
                            <p 
                              onClick={() => setExpandedOrderId(order.id === expandedOrderId ? null : order.id)}
-                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#000000', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
+                             style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '10px', color: '#EB1C24', margin: 0, lineHeight: '1.2', cursor: 'pointer' }}
                            >
                              {order.orderNumber}
                            </p>

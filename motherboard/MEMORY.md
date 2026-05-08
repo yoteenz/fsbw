@@ -18111,10 +18111,10 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
-## 2026-05-07 — Account Orders: ORDER # headers black (list + expanded card bar)
+## 2026-05-07 — Account Orders: revert list ORDER # to red (header stays black)
 
-**Context (full chat):** Consult modal / orders polish thread. User wanted **ORDER #555**-style headers **black** instead of red on **Account → Orders** for the **order toggle / list** only (not global consult modal header).
+**Context (full chat):** Prior change set **ORDER #** in the active/archived **list rows** to black; user clarified only the **card header** when an order is expanded (order “toggle” title bar) should be black; **ORDER #** under the date in the list should stay **brand red** (`#EB1C24`).
 
-**Changes:** **`src/pages/orders/page.tsx`** — clickable **`order.orderNumber`** lines in active and archived lists: **`#000000`**. Expanded card top title when an order is open (active or archived): **`#000000`** + neutral hover classes (**`ACTIVE ORDERS` / `ARCHIVED ORDERS`** section titles unchanged red).
+**Changes:** **`src/pages/orders/page.tsx`** — restored red on the two clickable **`order.orderNumber`** lines (active + archived lists). Expanded top bar **`ORDER #…`** buttons remain **`#000000`**.
 
 **Verify:** **`npm run build`** succeeds.
