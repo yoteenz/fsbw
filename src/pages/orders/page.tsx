@@ -3033,7 +3033,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </a>
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                   TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
+                                   TRACK VIA DOMESTIC/INTERNATIONAL SHIPPING
                                  </p>
                                </div>
                              ) : order.status === 'CONFIRMED' ? (
@@ -3976,7 +3976,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </a>
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                   TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
+                                   TRACK VIA DOMESTIC/INTERNATIONAL SHIPPING
                                  </p>
                                </div>
                              ) : order.status === 'CONFIRMED' ? (

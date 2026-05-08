@@ -18111,7 +18111,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
-## 2026-05-07 — Account Orders: revert list ORDER # to red (header stays black)
+## 2026-05-07 — Account Orders: tracking caption “…SHIPPING”
+
+**Context (full chat):** Orders UI copy. User wanted the gray line under the tracking number on active/archived order cards to read **TRACK VIA DOMESTIC/INTERNATIONAL SHIPPING** (replacing dynamic **TRACK VIA DOMESTIC** / **INTERNATIONAL**).
+
+**Changes:** **`src/pages/orders/page.tsx`** — two identical gray **`<p>`** captions (active list + archived list).
+
+**Verify:** **`npm run build`** succeeds.
+
 
 **Context (full chat):** Prior change set **ORDER #** in the active/archived **list rows** to black; user clarified only the **card header** when an order is expanded (order “toggle” title bar) should be black; **ORDER #** under the date in the list should stay **brand red** (`#EB1C24`).
 
