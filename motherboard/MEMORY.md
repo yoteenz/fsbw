@@ -18111,14 +18111,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
-## 2026-05-07 — Account Orders: tracking caption “…SHIPPING”
+## 2026-05-07 — Account Orders: tracking caption DOMESTIC vs INTERNATIONAL SHIPPING
 
-**Context (full chat):** Orders UI copy. User wanted the gray line under the tracking number on active/archived order cards to read **TRACK VIA DOMESTIC/INTERNATIONAL SHIPPING** (replacing dynamic **TRACK VIA DOMESTIC** / **INTERNATIONAL**).
+**Context (full chat):** Orders gray line under tracking # on active/archived cards. User first asked for **SHIPPING** wording; then corrected: show **TRACK VIA DOMESTIC SHIPPING** *or* **TRACK VIA INTERNATIONAL SHIPPING** from profile shipping country (US vs non-US), not a combined **DOMESTIC/INTERNATIONAL** string.
 
-**Changes:** **`src/pages/orders/page.tsx`** — two identical gray **`<p>`** captions (active list + archived list).
+**Changes:** **`src/pages/orders/page.tsx`** — same ternary as before static experiment; labels **`DOMESTIC SHIPPING`** / **`INTERNATIONAL SHIPPING`** after **TRACK VIA** (active + archived list blocks).
 
 **Verify:** **`npm run build`** succeeds.
 
+---
+
+## 2026-05-07 — Account Orders: revert list ORDER # to red (header stays black)
 
 **Context (full chat):** Prior change set **ORDER #** in the active/archived **list rows** to black; user clarified only the **card header** when an order is expanded (order “toggle” title bar) should be black; **ORDER #** under the date in the list should stay **brand red** (`#EB1C24`).
 
