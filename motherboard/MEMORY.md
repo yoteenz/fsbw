@@ -18128,3 +18128,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/pages/orders/page.tsx`** — restored red on the two clickable **`order.orderNumber`** lines (active + archived lists). Expanded top bar **`ORDER #…`** buttons remain **`#000000`**.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — NOIR color live preview: swatch highlight stuck on one ThumbBox
+
+**Context (this chat):** User reported that on the NOIR **color** step with **live** preview, tapping different color **ThumbBox** swatches did not move the red highlight — it stayed on one “thumbnail color box” while the live hero could change.
+
+**Root cause:** **`handleColorSelect`** on customize routes writes **`customizeSelectedColor`** (draft) but not **`selectedColor`** until **Confirm**. **`readBuildWigLivePreviewColor`** on **`.../customize/color`** preferred **`selectedColor`** first. Each **`customStorageChange`** from live preview fetches re-ran **`resolveBawCustomizeColorSubPageSwatch`** → old hub-confirmed color → **`setSelectedColor`** overwrote the tap.
+
+**Fix:** On the color sub-page only, **`readBuildWigLivePreviewColor`** now prefers **`customizeSelectedColor`** then **`selectedColor`** (matches CORE: WIP draft on color step). Non-color customize steps unchanged (**`selectedColor`** first).
+
+**Changes:** **`src/utils/buildWigLivePreviewSelections.ts`**. Pushed **`master`** and **`preview/mobile`**.
+
+**Verify:** **`npm run build`** succeeds.
