@@ -107,11 +107,11 @@ export function readBuildWigLivePreviewColor(pathname: string): string {
         'OFF BLACK'
       );
     }
-    // On the color sub-page, `handleOptionSelect` + hub sync write **`selectedColor` first**; stale
-    // **`customizeSelectedColor`** must not win (it can lag behind the hub tile).
+    // On the color sub-page, in-page taps write **`customizeSelectedColor`** (draft); hub **`selectedColor`**
+    // updates on Confirm. Prefer draft here so live preview + ThumbBox highlight follow swatch taps.
     return (
-      localStorage.getItem('selectedColor') ||
       localStorage.getItem('customizeSelectedColor') ||
+      localStorage.getItem('selectedColor') ||
       'OFF BLACK'
     );
   }
