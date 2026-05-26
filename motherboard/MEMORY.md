@@ -18131,6 +18131,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Wishlist lists page: header count 1 vs empty card
+
+**Context (this chat):** User asked why **LISTS** header count showed **1** but the card said **YOU DON'T HAVE ANY LISTS YET.**
+
+**Root cause:** **`headerCount`** = **`lists.length + (wishlistCount > 0 ? 1 : 0)`** (default **WISHLIST** counts as a list). Empty UI used **`lists.length === 0`** only, so saved **wishlistItems** with no user-created lists showed count **1** and empty copy.
+
+**Fix:** Empty state + centered layout only when **`lists.length === 0 && wishlistCount === 0`**; show **WISHLIST** row when **`wishlistCount > 0`** even with no custom lists.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**. Pushed **`master`** and **`preview/mobile`**.
+
+---
+
 ## 2026-05-21 — NOIR color live preview: swatch highlight stuck on one ThumbBox
 
 **Context (this chat):** User reported that on the NOIR **color** step with **live** preview, tapping different color **ThumbBox** swatches did not move the red highlight — it stayed on one “thumbnail color box” while the live hero could change.
