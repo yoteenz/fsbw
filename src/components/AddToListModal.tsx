@@ -2,6 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const USER_LISTS_KEY = 'userLists';
 
+/** Max characters for a user-created list name (wishlist lists page + add-to-list create). */
+export const USER_LIST_NAME_MAX_LENGTH = 10;
+
+export function clampUserListNameInput(value: string): string {
+  return value.slice(0, USER_LIST_NAME_MAX_LENGTH);
+}
+
 export interface UserList {
   id: string;
   name: string;
@@ -98,6 +105,11 @@ export default function AddToListModal({
   const handleCreateNewListSubmit = () => {
     const trimmed = newListName.trim();
     if (!trimmed) return;
+    if (trimmed.length > USER_LIST_NAME_MAX_LENGTH) {
+      setSaveErrorMessage('LIST NAME MUST BE 10 CHARACTERS OR FEWER.');
+      return;
+    }
+    setSaveErrorMessage('');
     const newList: UserList = {
       id: `list-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       name: trimmed,
@@ -199,7 +211,11 @@ export default function AddToListModal({
               ref={newListInputRef}
               type="text"
               value={newListName}
-              onChange={(e) => setNewListName(e.target.value)}
+              onChange={(e) => {
+                setNewListName(clampUserListNameInput(e.target.value));
+                setSaveErrorMessage('');
+              }}
+              maxLength={USER_LIST_NAME_MAX_LENGTH}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleCreateNewListSubmit();
                 if (e.key === 'Escape') {
