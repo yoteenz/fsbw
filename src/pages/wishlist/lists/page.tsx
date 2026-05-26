@@ -374,8 +374,25 @@ export default function ViewListsPage() {
                       if (nextItems.length === 0) setExpandedListId(null);
                     };
                     return (
-                      <div style={{ paddingTop: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '2px', marginBottom: '16px' }}>
+                      <div
+                        style={{
+                          paddingTop: '8px',
+                          flex: 1,
+                          minHeight: 0,
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            marginTop: '2px',
+                            marginBottom: expandedItems.length === 0 ? 0 : '16px',
+                            flexShrink: 0,
+                          }}
+                        >
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'line' ? '#EB1C24' : '#000' }} aria-label="Line view">
                               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
@@ -393,7 +410,29 @@ export default function ViewListsPage() {
                           </div>
                         </div>
                         {expandedItems.length === 0 ? (
-                          <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textAlign: 'center', padding: '24px 0', textTransform: 'uppercase', margin: '0' }}>THERE ARE NO ITEMS IN THIS LIST.</p>
+                          <div
+                            style={{
+                              flex: 1,
+                              minHeight: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <p
+                              style={{
+                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                fontSize: '11px',
+                                color: '#808080',
+                                textAlign: 'center',
+                                textTransform: 'uppercase',
+                                margin: 0,
+                                padding: '0 20px',
+                              }}
+                            >
+                              THERE ARE NO ITEMS IN THIS LIST.
+                            </p>
+                          </div>
                         ) : expandedViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                             {expandedItems.map((item: any, index: number) => {
