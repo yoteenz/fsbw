@@ -576,7 +576,7 @@ export default function ViewListsPage() {
         isOpen={showDeleteListConfirm}
         onClose={() => { setShowDeleteListConfirm(false); setListToDelete(null); }}
         onConfirm={handleDeleteList}
-        title="DELETE LIST?"
+        title="DELETE LIST"
         message="ARE YOU SURE YOU WANT TO DELETE THIS LIST?"
         confirmText="CONFIRM"
         cancelText="CANCEL"
