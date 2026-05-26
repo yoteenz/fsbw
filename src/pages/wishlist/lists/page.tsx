@@ -57,6 +57,14 @@ function getHairOrigin(productName: string): string {
   }
 }
 
+/**
+ * LISTS header count on the overview (not expanded into a single list).
+ * Must match visible rows: each `userLists` entry + default WISHLIST when wishlist has items.
+ */
+function wishlistListsOverviewCount(userListCount: number, wishlistItemCount: number): number {
+  return userListCount + (wishlistItemCount > 0 ? 1 : 0);
+}
+
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,6 +112,9 @@ export default function ViewListsPage() {
       setWishlistCount(0);
     }
   };
+
+  /** Same formula as the LISTS header — tied to `userLists` + optional WISHLIST row. */
+  const listsOverviewCount = wishlistListsOverviewCount(lists.length, wishlistCount);
 
   const handleMobileMenuToggle = () => setShowMobileMenu((m) => !m);
   const handleMobileMenuTabClick = (tab: 'SHOP' | 'TOOLS' | 'BRAND') => setMobileMenuActiveTab(tab);
@@ -348,7 +359,8 @@ export default function ViewListsPage() {
                   const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
                   const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
-                  const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + (wishlistCount > 0 ? 1 : 0);
+                  const headerCount =
+                    expandedListId && expandedList ? expandedItemCount : listsOverviewCount;
                   return (
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                       <span
@@ -476,12 +488,12 @@ export default function ViewListsPage() {
                     flexDirection: 'column',
                     gap: 0,
                     paddingTop: '20.8px',
-                    ...(lists.length === 0 && wishlistCount === 0
+                    ...(listsOverviewCount === 0
                       ? { flex: 1, alignItems: 'center', justifyContent: 'center' }
                       : {}),
                   }}
                 >
-                  {lists.length === 0 && wishlistCount === 0 && !showCreateListModal ? (
+                  {listsOverviewCount === 0 && !showCreateListModal ? (
                     <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                       <p
                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
