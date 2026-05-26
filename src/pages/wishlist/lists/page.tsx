@@ -497,8 +497,9 @@ export default function ViewListsPage() {
                     <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                       <p
                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
-                        dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY LISTS YET.<br>CREATE A NEW ONE BELOW!" }}
-                      />
+                      >
+                        YOU DON&apos;T HAVE ANY LISTS YET.
+                      </p>
                     </div>
                   ) : (
                   <>
