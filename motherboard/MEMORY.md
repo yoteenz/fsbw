@@ -18131,6 +18131,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Page actions below card: 2px top spacing (wishlist parity)
+
+**Context (this chat):** User asked to adjust spacing above **CREATE NEW LIST** on **`/wishlist/lists`** so it matches buttons on the main **wishlist** page (**VIEW LISTS** / **EMPTY WISHLIST**).
+
+**Fix:** **`PageActionsBelowCard`** first-button **`marginTop`** **14px → 2px** (matches **`PAGE_LAYOUT.md`** and **`wishlist/page.tsx`** inline wrappers). Second+ buttons stay **10px** via **`PageActionsBelowCard.Spacer`**.
+
+**Changes:** **`src/layouts/PageActionsBelowCard.tsx`**.
+
+---
+
 ## 2026-05-21 — Wishlist lists page: header count 1 vs empty card
 
 **Context (this chat):** User asked why **LISTS** header count showed **1** but the card said **YOU DON'T HAVE ANY LISTS YET.**
