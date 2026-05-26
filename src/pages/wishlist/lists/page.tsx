@@ -57,19 +57,10 @@ function getHairOrigin(productName: string): string {
   }
 }
 
-/**
- * LISTS header count on the overview (not expanded into a single list).
- * Must match visible rows: each `userLists` entry + default WISHLIST when wishlist has items.
- */
-function wishlistListsOverviewCount(userListCount: number, wishlistItemCount: number): number {
-  return userListCount + (wishlistItemCount > 0 ? 1 : 0);
-}
-
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [lists, setLists] = useState<UserList[]>([]);
-  const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -103,19 +94,6 @@ export default function ViewListsPage() {
     setLists(loadUserLists());
   };
 
-  const refreshWishlistCount = () => {
-    try {
-      const raw = localStorage.getItem('wishlistItems');
-      const arr = raw ? JSON.parse(raw) : [];
-      setWishlistCount(Array.isArray(arr) ? arr.length : 0);
-    } catch {
-      setWishlistCount(0);
-    }
-  };
-
-  /** Same formula as the LISTS header — tied to `userLists` + optional WISHLIST row. */
-  const listsOverviewCount = wishlistListsOverviewCount(lists.length, wishlistCount);
-
   const handleMobileMenuToggle = () => setShowMobileMenu((m) => !m);
   const handleMobileMenuTabClick = (tab: 'SHOP' | 'TOOLS' | 'BRAND') => setMobileMenuActiveTab(tab);
   const handleMobileMenuItemToggle = (label: string) => {
@@ -140,20 +118,20 @@ export default function ViewListsPage() {
 
   useEffect(() => {
     refreshLists();
-    refreshWishlistCount();
-    const handleUpdate = () => {
-      refreshLists();
-      refreshWishlistCount();
-    };
+    const handleUpdate = () => refreshLists();
     window.addEventListener('userListsUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
-    window.addEventListener('wishlistUpdated', handleUpdate);
     return () => {
       window.removeEventListener('userListsUpdated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
-      window.removeEventListener('wishlistUpdated', handleUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    if (expandedListId && !lists.some((l) => l.id === expandedListId)) {
+      setExpandedListId(null);
+    }
+  }, [expandedListId, lists]);
 
   useEffect(() => {
     const handleCartCountUpdate = (e: CustomEvent) => setCartCount(e.detail);
@@ -360,7 +338,7 @@ export default function ViewListsPage() {
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
                   const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
                   const headerCount =
-                    expandedListId && expandedList ? expandedItemCount : listsOverviewCount;
+                    expandedListId && expandedList ? expandedItemCount : lists.length;
                   return (
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                       <span
@@ -383,27 +361,17 @@ export default function ViewListsPage() {
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
                 {expandedListId ? (
                   (() => {
-                    const isWishlist = expandedListId === 'wishlist';
-                    const expandedList = isWishlist ? null : lists.find((l) => l.id === expandedListId);
-                    const expandedItems: any[] = isWishlist
-                      ? (() => { try { return JSON.parse(localStorage.getItem('wishlistItems') || '[]'); } catch { return []; } })()
-                      : (expandedList?.items ?? []);
+                    const expandedList = lists.find((l) => l.id === expandedListId);
+                    if (!expandedList) return null;
+                    const expandedItems: any[] = expandedList.items ?? [];
                     const removeFromList = (item: any) => {
-                      if (isWishlist) {
-                        const raw = localStorage.getItem('wishlistItems');
-                        const arr = raw ? JSON.parse(raw) : [];
-                        const next = Array.isArray(arr) ? arr.filter((i: any) => i.id !== item.id) : [];
-                        localStorage.setItem('wishlistItems', JSON.stringify(next));
-                        window.dispatchEvent(new CustomEvent('wishlistUpdated'));
-                        refreshWishlistCount();
-                        if (next.length === 0) setExpandedListId(null);
-                      } else if (expandedList) {
-                        const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
-                        const nextLists = lists.map((l) => l.id === expandedList.id ? { ...l, items: nextItems } : l);
-                        saveUserLists(nextLists);
-                        setLists(nextLists);
-                        if (nextItems.length === 0) setExpandedListId(null);
-                      }
+                      const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
+                      const nextLists = lists.map((l) =>
+                        l.id === expandedList.id ? { ...l, items: nextItems } : l
+                      );
+                      saveUserLists(nextLists);
+                      setLists(nextLists);
+                      if (nextItems.length === 0) setExpandedListId(null);
                     };
                     return (
                       <div style={{ paddingTop: '8px' }}>
@@ -481,19 +449,19 @@ export default function ViewListsPage() {
                   })()
                 ) : (
                 <>
-                {/* List rows: empty only when no user lists and no wishlist items; WISHLIST row counts in header */}
+                {/* List rows: user-created lists only (main wishlist lives on /wishlist) */}
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 0,
                     paddingTop: '20.8px',
-                    ...(listsOverviewCount === 0
+                    ...(lists.length === 0
                       ? { flex: 1, alignItems: 'center', justifyContent: 'center' }
                       : {}),
                   }}
                 >
-                  {listsOverviewCount === 0 && !showCreateListModal ? (
+                  {lists.length === 0 && !showCreateListModal ? (
                     <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                       <p
                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
@@ -502,65 +470,6 @@ export default function ViewListsPage() {
                       </p>
                     </div>
                   ) : (
-                  <>
-                  {/* Primary list: WISHLIST (when wishlist has items — including when no user-created lists yet) */}
-                  {wishlistCount > 0 && (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => navigate('/wishlist')}
-                    onKeyDown={(e) => e.key === 'Enter' && navigate('/wishlist')}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '16px',
-                      cursor: 'pointer',
-                      paddingBottom: '16px'
-                    }}
-                  >
-                    <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateX(-2px)' }}>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => { e.stopPropagation(); navigate('/wishlist'); }}
-                        onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); navigate('/wishlist'); } }}
-                        className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                        style={{
-                          width: '88px',
-                          height: '110px',
-                          backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                          border: '1.3px solid #000',
-                          boxShadow: 'inset 0 0 0 3px #fff',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        {(() => {
-                          try {
-                            const wi = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-                            const first = wi[0];
-                            const src = first ? getLeafBrickFrontImage(first) : '/assets/natural front.png';
-                            return <img src={src} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />;
-                          } catch {
-                            return <img src="/assets/natural front.png" alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />;
-                          }
-                        })()}
-                      </div>
-                      <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
-                        {wishlistCount} {wishlistCount === 1 ? 'ITEM' : 'ITEMS'}
-                      </span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, paddingTop: '4px', transform: 'translateX(-2px)' }}>
-                      <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>WISHLIST</span>
-                      <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#EB1C24', margin: '2px 0 0 0', textTransform: 'uppercase' }}>DEFAULT</p>
-                    </div>
-                  </div>
-                  )}
-
-                  {/* Secondary lists (user-created) with delete */}
-                  {lists.length === 0 ? null : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       {lists.map((list) => {
                         const firstItem = list.items?.[0];
@@ -617,9 +526,6 @@ export default function ViewListsPage() {
                       })}
                     </div>
                   )}
-
-                  </>
-                  )}
                 </div>
                 </>
                 )}
@@ -632,7 +538,7 @@ export default function ViewListsPage() {
           {/* PAGE ACTIONS: below card only (PAGE_LAYOUT.md) */}
           {!showMobileMenu && (
             <PageActionsBelowCard>
-              {expandedListId && expandedListId !== 'wishlist' ? (
+              {expandedListId ? (
                 <>
                   <button
                     type="button"
