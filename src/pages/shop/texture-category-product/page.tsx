@@ -2529,7 +2529,7 @@ export default function ShopTextureCategoryProductPage() {
         isOpen={showBcfColorUpgradeModal}
         onClose={handleBcfColorUpgradeClose}
         onConfirm={handleBcfColorUpgradeConfirm}
-        title="UPGRADE YOUR SUBSCRIPTION?"
+        title="UPGRADE YOUR SUBSCRIPTION"
         message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
         confirmText="UPGRADE"
         cancelText="CANCEL"

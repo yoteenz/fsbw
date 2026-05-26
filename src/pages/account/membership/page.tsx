@@ -2802,7 +2802,7 @@ fontFamily: '"Futura PT Book"',
         isOpen={showCancelConfirmModal}
         onClose={() => setShowCancelConfirmModal(false)}
         onConfirm={confirmCancelSubscription}
-        title="CANCEL SUBSCRIPTION?"
+        title="CANCEL SUBSCRIPTION"
         message={`YOUR ${getSubscriptionTierName()} SUBSCRIPTION WILL END ON ${getSubscriptionEndDate()}.`}
         confirmText="CONFIRM"
         cancelText="CANCEL"

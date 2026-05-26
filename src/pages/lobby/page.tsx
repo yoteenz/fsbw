@@ -815,7 +815,7 @@ const LobbyApp: React.FC = () => {
         isOpen={showUpgradeModal}
         onClose={handleCancel}
         onConfirm={handleUpgrade}
-        title="UPGRADE YOUR SUBSCRIPTION?"
+        title="UPGRADE YOUR SUBSCRIPTION"
         message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
         confirmText="UPGRADE"
         cancelText="CANCEL"

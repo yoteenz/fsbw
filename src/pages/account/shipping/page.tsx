@@ -1055,7 +1055,7 @@ function ShippingPage() {
             setAddressToRemove(null);
           }
         }}
-        title="REMOVE ADDRESS?"
+        title="REMOVE ADDRESS"
         message={<>ARE YOU SURE YOU WANT TO REMOVE THIS ADDRESS?<br />YOU CAN ADD IT AGAIN LATER.</>}
         confirmText="CONFIRM"
         cancelText="CANCEL"

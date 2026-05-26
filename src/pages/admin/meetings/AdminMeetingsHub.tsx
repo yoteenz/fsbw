@@ -3307,7 +3307,7 @@ export default function AdminMeetingsHub() {
         isOpen={showSendQuoteConfirm}
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
-        title="SEND OFFER?"
+        title="SEND OFFER"
         message="CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER."
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -3318,7 +3318,7 @@ export default function AdminMeetingsHub() {
         isOpen={showRegenerateQuoteUnitConfirm}
         onClose={() => setShowRegenerateQuoteUnitConfirm(false)}
         onConfirm={() => void handleGenerateQuoteUnitImage()}
-        title="REGENERATE UNIT?"
+        title="REGENERATE UNIT"
         message="THIS WILL GENERATE A NEW UNIT IMAGE FOR THE CURRENT SELECTIONS."
         confirmText="CONFIRM"
         cancelText="CANCEL"

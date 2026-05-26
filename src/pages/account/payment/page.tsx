@@ -806,7 +806,7 @@ function PaymentPage() {
             setPaymentToRemove(null);
           }
         }}
-        title="REMOVE CARD?"
+        title="REMOVE CARD"
         message={<>ARE YOU SURE YOU WANT TO REMOVE THIS CARD?<br />YOU CAN ADD IT AGAIN LATER.</>}
         confirmText="CONFIRM"
         cancelText="CANCEL"

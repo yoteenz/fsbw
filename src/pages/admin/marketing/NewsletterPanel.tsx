@@ -428,7 +428,7 @@ const NewsletterPanel = forwardRef<NewsletterPanelHandle, NewsletterPanelProps>(
         isOpen={showSendConfirm}
         onClose={() => !sending && setShowSendConfirm(false)}
         onConfirm={() => void runSend()}
-        title="SEND NEWSLETTER?"
+        title="SEND NEWSLETTER"
         message={`Send this email to ${selected.size} recipient(s)? This cannot be undone.`}
         confirmText={sending ? 'SENDING…' : 'SEND'}
         cancelText="CANCEL"

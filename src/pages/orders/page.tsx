@@ -4136,7 +4136,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
         isOpen={showSignOutConfirm}
         onClose={() => setShowSignOutConfirm(false)}
         onConfirm={handleSignOut}
-        title="SIGN OUT?"
+        title="SIGN OUT"
         message="ARE YOU SURE YOU WANT TO SIGN OUT?"
         confirmText="SIGN OUT"
         cancelText="CANCEL"

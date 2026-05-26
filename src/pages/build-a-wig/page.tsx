@@ -6141,7 +6141,7 @@ export default function BuildAWigPage() {
           prepareMembershipUpgradeNavigation();
           navigate('/account/rewards');
         }}
-        title="UPGRADE YOUR SUBSCRIPTION?"
+        title="UPGRADE YOUR SUBSCRIPTION"
         message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
         confirmText="UPGRADE"
         cancelText="CANCEL"

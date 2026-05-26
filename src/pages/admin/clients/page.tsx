@@ -3805,7 +3805,7 @@ export default function AdminClients() {
             else if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
-        title="BLOCK CLIENT?"
+        title="BLOCK CLIENT"
         message="YOU WILL BAN THIS CLIENT AND ANY SIMILAR ACCOUNTS."
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -3845,7 +3845,7 @@ export default function AdminClients() {
           setExpandedOrderId(null);
           setShowCancelOrderConfirm(false);
         }}
-        title="CANCEL ORDER?"
+        title="CANCEL ORDER"
         message="THIS ORDER WILL BE MARKED AS CANCELLED AND REFUNDED."
         confirmText="CONFIRM"
         cancelText="CANCEL"

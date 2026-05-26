@@ -73,7 +73,7 @@ export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
       isOpen={showUpgradeModal}
       onClose={handleCancel}
       onConfirm={handleUpgrade}
-      title="UPGRADE YOUR SUBSCRIPTION?"
+      title="UPGRADE YOUR SUBSCRIPTION"
       message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
       confirmText="UPGRADE"
       cancelText="CANCEL"

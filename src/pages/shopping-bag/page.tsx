@@ -2518,7 +2518,7 @@ function ShoppingBagPage() {
             isOpen={showClearConfirm}
             onClose={() => setShowClearConfirm(false)}
             onConfirm={confirmClearSavedItems}
-            title="DELETE SAVED ITEMS?"
+            title="DELETE SAVED ITEMS"
             message="ARE YOU SURE YOU WANT TO REMOVE ALL SAVED ITEMS?"
             confirmText="CONFIRM"
             cancelText="CANCEL"
@@ -2530,7 +2530,7 @@ function ShoppingBagPage() {
             isOpen={showEmptyBagConfirm}
             onClose={() => setShowEmptyBagConfirm(false)}
             onConfirm={confirmEmptyBag}
-            title="EMPTY BAG?"
+            title="EMPTY BAG"
             message="ARE YOU SURE YOU WANT TO REMOVE ALL ITEMS FROM YOUR BAG?"
             confirmText="CONFIRM"
             cancelText="CANCEL"
@@ -2582,7 +2582,7 @@ function ShoppingBagPage() {
               setDeleteItemConfirm(null);
             }}
             onConfirm={confirmDeleteItem}
-            title="REMOVE ITEM?"
+            title="REMOVE ITEM"
             message={deleteItemConfirm?.type === 'cart' ? "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM YOUR BAG?" : "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM SAVED?"}
             confirmText="CONFIRM"
             cancelText="CANCEL"

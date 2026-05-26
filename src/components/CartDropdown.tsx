@@ -2116,7 +2116,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             setItemToRemove(null);
           }}
           onConfirm={confirmRemoveItem}
-          title="DISCARD ITEM?"
+          title="DISCARD ITEM"
           message="ARE YOU SURE YOU WANT TO REMOVE THIS ITEM?"
           confirmText="CONFIRM"
           cancelText="CANCEL"

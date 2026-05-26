@@ -1279,7 +1279,7 @@ function NotificationsPage() {
           setShowArchiveConfirm(false);
           setNotificationToArchive(null);
         }}
-        title="ARCHIVE ALERT?"
+        title="ARCHIVE ALERT"
         message="ARE YOU SURE YOU WANT TO ARCHIVE THIS NOTIFICATION?"
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -1302,7 +1302,7 @@ function NotificationsPage() {
           setShowDeleteConfirm(false);
           setNotificationToDelete(null);
         }}
-        title="REMOVE ALERT?"
+        title="REMOVE ALERT"
         message="ARE YOU SURE YOU WANT TO DELETE THIS NOTIFICATION?"
         confirmText="CONFIRM"
         cancelText="CANCEL"
