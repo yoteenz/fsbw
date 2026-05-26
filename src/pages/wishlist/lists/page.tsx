@@ -469,10 +469,19 @@ export default function ViewListsPage() {
                   })()
                 ) : (
                 <>
-                {/* List rows: when no user lists created, show only message (no default WISHLIST row); otherwise WISHLIST row + user lists */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '20.8px', ...(lists.length === 0 ? { flex: 1, alignItems: 'center', justifyContent: 'center' } : {}) }}>
-                  {/* When no lists created: only show message (no default WISHLIST row) */}
-                  {lists.length === 0 && !showCreateListModal ? (
+                {/* List rows: empty only when no user lists and no wishlist items; WISHLIST row counts in header */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 0,
+                    paddingTop: '20.8px',
+                    ...(lists.length === 0 && wishlistCount === 0
+                      ? { flex: 1, alignItems: 'center', justifyContent: 'center' }
+                      : {}),
+                  }}
+                >
+                  {lists.length === 0 && wishlistCount === 0 && !showCreateListModal ? (
                     <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                       <p
                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
@@ -481,7 +490,7 @@ export default function ViewListsPage() {
                     </div>
                   ) : (
                   <>
-                  {/* Primary list: WISHLIST (only when wishlist has items and there are user lists) */}
+                  {/* Primary list: WISHLIST (when wishlist has items — including when no user-created lists yet) */}
                   {wishlistCount > 0 && (
                   <div
                     role="button"
