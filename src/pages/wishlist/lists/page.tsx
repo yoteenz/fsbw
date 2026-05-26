@@ -542,19 +542,19 @@ export default function ViewListsPage() {
                 <>
                   <button
                     type="button"
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    SHARE LIST
+                  </button>
+                  <PageActionsBelowCard.Spacer />
+                  <button
+                    type="button"
                     onClick={() => { setListToDelete(expandedListId); setShowDeleteListConfirm(true); }}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={pageActionButtonStyle}
                   >
                     DELETE LIST
-                  </button>
-                  <PageActionsBelowCard.Spacer />
-                  <button
-                    type="button"
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={pageActionButtonStyle}
-                  >
-                    SHARE LIST
                   </button>
                 </>
               ) : (
