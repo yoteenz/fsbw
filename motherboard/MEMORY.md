@@ -18208,3 +18208,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Decisions / outcomes:** Divider experiment **removed**; overview rows show thumb then item count with no extra rule between them.
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`** — removed **`LIST_THUMB_COUNT_DIVIDER_COLOR`**, **`listShowsThumbCountDividerTest`**, and conditional divider JSX.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown placeholder copy
+
+**Context (full chat):** Wishlist lists UI (empty thumb, share link, divider test removed per user). User wanted **Add to list** popup list **dropdown** default label to **not** repeat **ADD TO LIST** (modal **`h3`** already says that).
+
+**Decisions / outcomes:** When user has existing lists, closed dropdown shows **CREATE A LIST** as placeholder (`value=""`). Empty-state placeholder stays **SELECT A LIST**; **`CREATE A LIST`** option in menu unchanged.
+
+**Changes:** **`src/components/AddToListModal.tsx`** — placeholder option text **`ADD TO LIST` → `CREATE A LIST`** when **`lists.length > 0`**.
