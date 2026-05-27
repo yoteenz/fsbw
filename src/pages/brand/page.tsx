@@ -14,6 +14,9 @@ import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 import BrandContactSection from '../../components/brand/BrandContactSection';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
+import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
+import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
+import { isMockDataAccount } from '../../utils/adminAuth';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
@@ -45,6 +48,39 @@ function BrandPage() {
   });
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [showContactSuccessModal, setShowContactSuccessModal] = useState(false);
+
+  const memberHasPremiumSubscription = (() => {
+    if (!isSignedIn) return false;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return false;
+      const user = JSON.parse(currentUser);
+      return (
+        (Boolean(user?.subscriptionTier) && user?.membershipType === 'PREMIUM') ||
+        (isMockDataAccount(user) && (user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium'))
+      );
+    } catch {
+      return false;
+    }
+  })();
+
+  const memberPremium = usePremiumSubscriptionUpgrade({
+    hasPremiumSubscription: memberHasPremiumSubscription,
+  });
+
+  useEffect(() => {
+    if (slug !== 'member' && memberPremium.showPremiumChart) {
+      memberPremium.closePremiumChart();
+    }
+  }, [slug, memberPremium.showPremiumChart, memberPremium.closePremiumChart]);
+
+  const handleMemberUpgradeClick = () => {
+    if (!isSignedIn) {
+      navigate(signInHrefWithReturnTo(location));
+      return;
+    }
+    memberPremium.handleUpgradeAction();
+  };
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
   const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
@@ -284,7 +320,21 @@ function BrandPage() {
                       ))}
                     </div>
                   ) : slug === 'member' ? (
-                    <BrandMemberSection />
+                    memberPremium.showPremiumChart ? (
+                      <PremiumSubscriptionUpgradeChart
+                        embedded
+                        onClose={memberPremium.closePremiumChart}
+                        hasPremiumSubscription={memberHasPremiumSubscription}
+                        selectedTier={memberPremium.selectedTier}
+                        setSelectedTier={memberPremium.setSelectedTier}
+                        showAllBenefits={memberPremium.showAllBenefits}
+                        setShowAllBenefits={memberPremium.setShowAllBenefits}
+                        formatPrice={memberPremium.formatPrice}
+                        subscriptionTiers={memberPremium.subscriptionTiers}
+                      />
+                    ) : (
+                      <BrandMemberSection />
+                    )
                   ) : slug === 'contact' ? (
                     <BrandContactSection
                       formId="brand-contact-form"
@@ -308,6 +358,28 @@ function BrandPage() {
                 </button>
               </PageActionsBelowCard>
             ) : null}
+            {slug === 'member' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={handleMemberUpgradeClick}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  {memberPremium.showPremiumChart ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE YOUR SUBSCRIPTION'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            <ConfirmationModal
+              isOpen={memberPremium.showValidationModal}
+              onClose={() => memberPremium.setShowValidationModal(false)}
+              onConfirm={() => memberPremium.setShowValidationModal(false)}
+              title="FORGETTING SOMETHING?"
+              message="PLEASE SELECT A SUBSCRIPTION TIER TO CONTINUE."
+              confirmText="OK"
+              cancelText=""
+              dataAttribute="subscription-validation"
+            />
             <ConfirmationModal
               isOpen={showContactSuccessModal}
               onClose={() => setShowContactSuccessModal(false)}

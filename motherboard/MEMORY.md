@@ -18407,3 +18407,25 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/constants/brandAboutCopy.ts` — added uppercase paragraphs on experience/customization, community platform/perks, and consultation/closing.
 
 **Conventions:** New About Us copy goes in `brandAboutCopy.ts` in reading order; page renders all entries centered in the scrollable card.
+
+---
+
+## 2026-05-27 — Become a Member: premium upgrade chart toggle
+
+**Context:** User asked for an **UPGRADE YOUR SUBSCRIPTION** button on **Become a Member** (`/brand/member`) that toggles the same premium comparison chart as Account → Rewards, routing unsigned users to sign-in.
+
+**Topics covered:**
+- Prior chat handoff: brand About/Contact/Member pages, contact form, menu labels; this turn implemented the member upgrade flow.
+- Extracted shared premium upgrade UI from `src/pages/account/membership/page.tsx` so brand and account use one chart.
+
+**Decisions / outcomes:**
+- **Signed out:** button navigates via `signInHrefWithReturnTo(location)`.
+- **Signed in:** button toggles chart inside the member card (`embedded` chart); label becomes **CONFIRM SUBSCRIPTION** when open; confirm proceeds to `/checkout/upgrade` with same localStorage keys as membership.
+- Chart close (X) returns to member copy; leaving `/brand/member` closes chart.
+
+**Changes:**
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`, `premiumChartTable.tsx`, `src/constants/premiumBenefitsByTier.ts`, `src/hooks/usePremiumSubscriptionUpgrade.ts` (new).
+- `src/pages/brand/page.tsx` — member actions below card + validation modal.
+- `src/pages/account/membership/page.tsx` — uses shared chart component (removed duplicate inline chart).
+
+**Conventions:** Reuse `PageActionsBelowCard` / `pageActionButtonStyle` for brand page actions below the main card.
