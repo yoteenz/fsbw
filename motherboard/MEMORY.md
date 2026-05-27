@@ -18236,3 +18236,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context (full chat):** Lists overview (empty thumb, share, divider removed), add-to-list dropdown placeholder/order fixes. User asked on **expanded list** (created list) page: **+4px** above line/grid view icons; red **page header** should show **PRIVATE** / **SHARED** (**`getUserListVisibilityLabel`**) not list name (breadcrumb still shows list name in red).
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`** — view-toggle row **`marginTop` 2px → 6px**; **`headerLabel`** uses visibility label when expanded.
+
+---
+
+## 2026-05-21 — Wishlist list line view: ADD TO BAG under thumb
+
+**Context (full chat):** Lists expanded view (PRIVATE/SHARED header, view toggle spacing), add-to-list dropdown fixes. User wanted **line view only** red **ADD TO BAG** / **REMOVE FROM BAG** under thumbnail (CartDropdown **EDIT IN BUILD-A-WIG** placement: Futura Book 8px **`#EB1C24`**, 4px below thumb) that adds/removes list item via **`cartItems`** / **`cartCount`** localStorage.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`handleAddToBag`**, **`handleRemoveFromBag`**, **`cartSyncVersion`** + **`cartItems`** memo; line-view thumb column only (grid unchanged); **OUT OF STOCK** gray when applicable.
