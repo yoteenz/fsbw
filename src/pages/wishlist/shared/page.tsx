@@ -28,6 +28,9 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
+/** Matches unit PDPs (Noir, Blanco, etc.). */
+const UNIT_STAR_RATING_LABEL = '4.97 OUT OF 5 STARS';
+
 const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Book"',
   color: '#EB1C24',
@@ -39,6 +42,11 @@ const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   textAlign: 'center',
   cursor: 'pointer',
   width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
+};
+
+const LIST_LINE_BAG_REMOVE_LINK_STYLE: React.CSSProperties = {
+  ...LIST_LINE_BAG_LINK_STYLE,
+  color: '#808080',
 };
 
 function readCartItems(): any[] {
@@ -247,24 +255,9 @@ export default function SharedWishlistListPage() {
       />
       <div className="relative z-10 flex flex-col py-5 px-4">
         <div
-          className="border border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
+          className="border border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm"
           style={{ borderWidth: '1.3px' }}
         >
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="absolute left-4 cursor-pointer"
-            style={{
-              height: '15px',
-              width: '21px',
-              padding: 0,
-              border: 'none',
-              background: 'none',
-            }}
-            aria-label="Go back"
-          >
-            <img alt="Back" width={21} height={15} src="/assets/back-button.svg" />
-          </button>
           <span
             style={{
               fontFamily: '"Futura PT Medium"',
@@ -398,7 +391,7 @@ export default function SharedWishlistListPage() {
                             ) : inBag ? (
                               <p
                                 className="font-bold hover:opacity-80 transition-opacity"
-                                style={LIST_LINE_BAG_LINK_STYLE}
+                                style={LIST_LINE_BAG_REMOVE_LINK_STYLE}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleRemoveFromBag(item, index);
@@ -464,7 +457,7 @@ export default function SharedWishlistListPage() {
                                 />
                               ))}
                             </div>
-                            <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>4.9 OUT OF 5 STARS</p>
+                            <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{UNIT_STAR_RATING_LABEL}</p>
                           </div>
                         </div>
                       );
@@ -485,7 +478,7 @@ export default function SharedWishlistListPage() {
               className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               style={pageActionButtonStyle}
             >
-              ADD TO BAG
+              ADD ITEMS TO BAG
             </button>
           </PageActionsBelowCard>
         )}
