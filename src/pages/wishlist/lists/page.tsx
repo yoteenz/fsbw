@@ -57,7 +57,7 @@ const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
 const EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE: React.CSSProperties = {
-  transform: 'translate(2px, -10px)',
+  transform: 'translateY(-8px)',
 };
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_RATING_FONT_PX = 9;
@@ -88,7 +88,7 @@ const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
 };
 
 /** Red link under list line thumb — matches CartDropdown EDIT IN BUILD-A-WIG placement. */
-const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
+const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#EB1C24',
   textTransform: 'uppercase',
@@ -99,6 +99,11 @@ const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   textAlign: 'center',
   cursor: 'pointer',
   width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
+};
+
+const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
+  ...LIST_LINE_BAG_ADD_STYLE,
+  color: '#999999',
 };
 
 function readCartItems(): any[] {
@@ -666,7 +671,7 @@ export default function ViewListsPage() {
                                     {isOutOfStock ? (
                                       <p
                                         style={{
-                                          ...LIST_LINE_BAG_LINK_STYLE,
+                                          ...LIST_LINE_BAG_ADD_STYLE,
                                           color: '#808080',
                                           cursor: 'default',
                                         }}
@@ -676,7 +681,7 @@ export default function ViewListsPage() {
                                     ) : isInBag ? (
                                       <p
                                         className="font-bold hover:opacity-80 transition-opacity"
-                                        style={LIST_LINE_BAG_LINK_STYLE}
+                                        style={LIST_LINE_BAG_REMOVE_STYLE}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleRemoveFromBag(item);
@@ -695,7 +700,7 @@ export default function ViewListsPage() {
                                     ) : (
                                       <p
                                         className="font-bold hover:opacity-80 transition-opacity"
-                                        style={LIST_LINE_BAG_LINK_STYLE}
+                                        style={LIST_LINE_BAG_ADD_STYLE}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleAddToBag(item);
@@ -714,9 +719,9 @@ export default function ViewListsPage() {
                                     )}
                                   </div>
                                   <div style={{ flex: 1, minWidth: 0, ...EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`, color: '#000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`, color: '#000', margin: 0, textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 5px 0' }}>{itemLength} RAW {itemHairOrigin}</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '5px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}>
                                       {[...Array(5)].map((_, idx) => (
                                         <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
                                       ))}
@@ -738,9 +743,9 @@ export default function ViewListsPage() {
                                   <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '8px 0 0 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
-                                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '5px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '6px' }}>
                                     {[...Array(5)].map((_, idx) => (
                                       <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
                                     ))}
