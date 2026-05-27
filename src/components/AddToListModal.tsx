@@ -65,6 +65,8 @@ const LIST_DROPDOWN_FIELD_STYLE: React.CSSProperties = {
 };
 
 const LIST_MENU_MAX_HEIGHT_PX = 220;
+/** Space between closed field and open list menu (portaled panel). */
+const LIST_MENU_TRIGGER_GAP_PX = 8;
 /** Above modal overlay so portaled list menu is not clipped. */
 const LIST_MENU_PORTAL_Z_INDEX = 10000000000;
 
@@ -137,13 +139,14 @@ export default function AddToListModal({
     }
     const rect = el.getBoundingClientRect();
     const viewportPad = 16;
-    const spaceBelow = window.innerHeight - rect.bottom - viewportPad;
-    const spaceAbove = rect.top - viewportPad;
+    const gap = LIST_MENU_TRIGGER_GAP_PX;
+    const spaceBelow = window.innerHeight - rect.bottom - viewportPad - gap;
+    const spaceAbove = rect.top - viewportPad - gap;
     let maxHeight = Math.min(LIST_MENU_MAX_HEIGHT_PX, Math.max(80, spaceBelow));
-    let top = rect.bottom;
+    let top = rect.bottom + gap;
     if (spaceBelow < 100 && spaceAbove > spaceBelow) {
       maxHeight = Math.min(LIST_MENU_MAX_HEIGHT_PX, Math.max(80, spaceAbove));
-      top = Math.max(viewportPad, rect.top - maxHeight);
+      top = Math.max(viewportPad, rect.top - gap - maxHeight);
     }
     setListMenuLayout({
       top,
