@@ -48,9 +48,23 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
-/** Gray rule between list rows on overview (matches expanded line-item dividers). */
-const LIST_OVERVIEW_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
-const LIST_OVERVIEW_ROW_GAP_BELOW_DIVIDER_PX = 18;
+/** Text column sits this many px higher than the thumb (thumb column gets matching marginTop). */
+const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
+/** Gray rule + spacing between overview list rows and expanded line items. */
+const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
+const LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
+
+function listRowDividerStyles(index: number, total: number, options?: { insetBelowDivider?: boolean }): React.CSSProperties {
+  const isLast = index >= total - 1;
+  return {
+    paddingBottom: '16px',
+    ...(options?.insetBelowDivider && index > 0
+      ? { paddingTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px` }
+      : {}),
+    marginBottom: isLast ? '16px' : `${LIST_ROW_GAP_BELOW_DIVIDER_PX}px`,
+    borderBottom: isLast ? 'none' : LIST_ROW_DIVIDER_BORDER,
+  };
+}
 
 /** Expanded created-list item thumbs (line/grid); 20% larger than 88×110 overview size. */
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
@@ -59,12 +73,8 @@ const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
-/** Text column sits this many px higher than the thumb (thumb column gets matching marginTop). */
-const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
 /** Gap between script product name and red RAW line. */
 const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
-/** Space between row border and the next row’s thumb (was 16px margin only). */
-const EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX = 18;
 
 const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
@@ -737,12 +747,7 @@ export default function ViewListsPage() {
                                     alignItems: 'flex-start',
                                     gap: '16px',
                                     paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
-                                    paddingBottom: '16px',
-                                    marginBottom:
-                                      index < expandedItems.length - 1
-                                        ? `${EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX}px`
-                                        : '16px',
-                                    borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none',
+                                    ...listRowDividerStyles(index, expandedItems.length),
                                   }}
                                 >
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
@@ -873,11 +878,7 @@ export default function ViewListsPage() {
                               alignItems: 'flex-start',
                               gap: '16px',
                               paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
-                              paddingBottom: '16px',
-                              marginBottom:
-                                index < lists.length - 1 ? `${LIST_OVERVIEW_ROW_GAP_BELOW_DIVIDER_PX}px` : 0,
-                              borderBottom:
-                                index < lists.length - 1 ? LIST_OVERVIEW_ROW_DIVIDER_STYLE : 'none',
+                              ...listRowDividerStyles(index, lists.length, { insetBelowDivider: true }),
                               cursor: 'pointer',
                             }}
                           >
