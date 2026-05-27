@@ -18228,3 +18228,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Decisions / outcomes:** **`value=""`** → **ADD TO LIST** when lists exist; **`__create__`** option first, then named lists; no second **CREATE A LIST** at end.
 
 **Changes:** **`src/components/AddToListModal.tsx`** — reordered options when **`lists.length > 0`**.
+
+---
+
+## 2026-05-21 — Wishlist list detail: header label + view toggle spacing
+
+**Context (full chat):** Lists overview (empty thumb, share, divider removed), add-to-list dropdown placeholder/order fixes. User asked on **expanded list** (created list) page: **+4px** above line/grid view icons; red **page header** should show **PRIVATE** / **SHARED** (**`getUserListVisibilityLabel`**) not list name (breadcrumb still shows list name in red).
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — view-toggle row **`marginTop` 2px → 6px**; **`headerLabel`** uses visibility label when expanded.
