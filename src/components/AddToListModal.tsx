@@ -67,6 +67,8 @@ const LIST_DROPDOWN_FIELD_STYLE: React.CSSProperties = {
 const LIST_MENU_MAX_HEIGHT_PX = 220;
 /** Space between closed field and open list menu (portaled panel). */
 const LIST_MENU_TRIGGER_GAP_PX = 8;
+/** List rows under dropdown (was 14px; −15%). */
+const LIST_ROW_CHECKBOX_PX = 14 * 0.85;
 /** Above modal overlay so portaled list menu is not clipped. */
 const LIST_MENU_PORTAL_Z_INDEX = 10000000000;
 
@@ -457,8 +459,8 @@ export default function AddToListModal({
                     >
                       <div
                         style={{
-                          width: '14px',
-                          height: '14px',
+                          width: `${LIST_ROW_CHECKBOX_PX}px`,
+                          height: `${LIST_ROW_CHECKBOX_PX}px`,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -473,7 +475,11 @@ export default function AddToListModal({
                           <img
                             src="/assets/checkbox.svg"
                             alt="checked"
-                            style={{ width: '14px', height: '14px', position: 'absolute' }}
+                            style={{
+                              width: `${LIST_ROW_CHECKBOX_PX}px`,
+                              height: `${LIST_ROW_CHECKBOX_PX}px`,
+                              position: 'absolute',
+                            }}
                           />
                         )}
                       </div>
