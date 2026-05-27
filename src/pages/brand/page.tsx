@@ -4,7 +4,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { BRAND_MENU_ITEMS } from '../../constants/brandMenu';
+import { getBrandCardHeaderTitle, getBrandNavTitle } from '../../constants/brandMenu';
 import { clearAppAuth } from '../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
@@ -47,14 +47,8 @@ function BrandPage() {
   const [showContactSuccessModal, setShowContactSuccessModal] = useState(false);
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
-  const navTitle = validSlug
-    ? (['about', 'member', 'terms'].includes(slug)
-        ? slug.toUpperCase()
-        : (BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`)?.label ?? slug.toUpperCase()))
-    : 'ABOUT';
-  const cardHeaderTitle = validSlug
-    ? (BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`)?.label ?? slug.toUpperCase())
-    : 'ABOUT US';
+  const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
+  const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'ABOUT US';
 
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
