@@ -18285,6 +18285,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Lists expanded: line default + grid REMOVE confirm
+
+**Context (full chat):** Lists path URLs, remove confirm on line **X**. User wanted gray grid **REMOVE** to use same **ConfirmationModal**; **line view** default when opening a created list.
+
+**Changes:** **`expandedViewMode`** initial **`'line'`**; grid **REMOVE** → **`requestRemoveListItemConfirm`**.
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
