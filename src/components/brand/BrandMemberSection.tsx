@@ -75,19 +75,7 @@ function PremiumMembershipSection({
     >
       {showIncludedMembership ? (
         <>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: '"Futura PT Medium"',
-              color: '#EB1C24',
-              fontSize: '12px',
-              textTransform: 'uppercase',
-              fontWeight: 500,
-              lineHeight: 1.35,
-            }}
-          >
-            INCLUDED IN YOUR MEMBERSHIP
-          </p>
+          <p style={scriptHeadlineStyle}>INCLUDED IN YOUR MEMBERSHIP</p>
           <div
             style={{
               display: 'flex',
