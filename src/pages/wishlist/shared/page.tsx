@@ -83,7 +83,7 @@ function ExpandedListItemNoReviewStars() {
 }
 
 const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8.5px',
