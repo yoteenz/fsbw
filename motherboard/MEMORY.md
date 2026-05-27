@@ -18538,3 +18538,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `lists/page.tsx` — grid `rowGap` 28px (20px base + 8px extra), `columnGap` 16px; constants `EXPANDED_LIST_GRID_ROW_GAP_*` / `EXPANDED_LIST_GRID_COL_GAP_PX`. Line view unchanged.
 
 **Conventions:** Grid-only layout tweaks use explicit `rowGap`/`columnGap` on the expanded-items grid container.
+
+---
+
+## 2026-05-21 — Expanded wishlist grid: price replaces no-reviews, gray REMOVE
+
+**Context:** Grid view follow-up on `/wishlist/lists/:listId`.
+
+**Changes:** `lists/page.tsx` grid only — **NO REVIEWS SUBMITTED** line → gray Futura Medium price (`EXPANDED_LIST_GRID_PRICE_STYLE`, same formatting as line view). Stars unchanged. **REMOVE** restored to Futura Demi `#999999` (from red Medium).
+
+**Conventions:** Line view still shows no-reviews + price + VIEW DETAILS; grid shows stars + price + gray REMOVE.
