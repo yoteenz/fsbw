@@ -16,7 +16,7 @@ const QUESTION_STYLE = {
 const ANSWER_STYLE = {
   fontFamily: '"Futura PT Book"',
   fontSize: '10px',
-  color: '#000000',
+  color: '#EB1C24',
   fontWeight: 400,
   margin: 0,
   lineHeight: 1.45,
@@ -27,7 +27,7 @@ const ANSWER_STYLE = {
 const SECTION_TITLE_STYLE = {
   fontFamily: '"Futura PT Medium"',
   fontSize: '11px',
-  color: '#EB1C24',
+  color: '#808080',
   fontWeight: 500,
   margin: '0 0 8px 0',
   textTransform: 'uppercase' as const,
