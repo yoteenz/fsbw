@@ -1,5 +1,13 @@
-import { useState, type CSSProperties } from 'react';
-import { BRAND_CONTACT_INTRO_PARAGRAPHS } from '../../constants/brandContactCopy';
+import { useState, type CSSProperties, type FormEvent } from 'react';
+import {
+  BRAND_CONTACT_EMAIL,
+  BRAND_CONTACT_INTRO_HOURS,
+  BRAND_CONTACT_INTRO_LINE_1_PREFIX,
+  BRAND_CONTACT_INTRO_LINE_2_PREFIX,
+  BRAND_CONTACT_INTRO_LINE_2_SUFFIX,
+} from '../../constants/brandContactCopy';
+import { postBrandContactSubmit } from '../../utils/api';
+import { appendBrandContactInquiryLocal } from '../../utils/brandContactInquiries';
 
 const fieldLabelStyle: CSSProperties = {
   fontFamily: '"Futura PT Book"',
@@ -35,6 +43,15 @@ const fieldTextareaStyle: CSSProperties = {
   lineHeight: 1.45,
 };
 
+const introTextStyle: CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  margin: 0,
+  lineHeight: 1.45,
+  textTransform: 'uppercase',
+};
+
 const requiredMarkStyle: CSSProperties = { color: '#EB1C24' };
 
 function YesNoToggle({
@@ -48,7 +65,7 @@ function YesNoToggle({
     <div style={{ display: 'flex', gap: '12px' }}>
       {(['yes', 'no'] as const).map((option) => (
         <button
-          key={option.toUpperCase()}
+          key={option}
           type="button"
           onClick={() => onChange(option)}
           style={{
@@ -71,12 +88,60 @@ function YesNoToggle({
   );
 }
 
-export default function BrandContactSection() {
+type BrandContactSectionProps = {
+  formId?: string;
+  onSubmitted?: () => void;
+  onSubmittingChange?: (submitting: boolean) => void;
+};
+
+export default function BrandContactSection({
+  formId = 'brand-contact-form',
+  onSubmitted,
+  onSubmittingChange,
+}: BrandContactSectionProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isOrderRelated, setIsOrderRelated] = useState<'yes' | 'no'>('no');
   const [orderNumber, setOrderNumber] = useState('');
   const [message, setMessage] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setSubmitError(null);
+    onSubmittingChange?.(true);
+    try {
+      const payload = {
+        name: name.trim(),
+        email: email.trim(),
+        isOrderRelated,
+        orderNumber: orderNumber.trim(),
+        message: message.trim(),
+      };
+      const result = await postBrandContactSubmit(payload);
+      const inquiryId = result.inquiryId || `contact-${Date.now()}`;
+      appendBrandContactInquiryLocal({
+        id: inquiryId,
+        name: payload.name.toUpperCase(),
+        email: payload.email.toLowerCase(),
+        isOrderRelated: payload.isOrderRelated,
+        orderNumber: payload.orderNumber.toUpperCase(),
+        message: payload.message.toUpperCase(),
+        timestamp: new Date().toISOString(),
+        status: 'new',
+      });
+      setName('');
+      setEmail('');
+      setIsOrderRelated('no');
+      setOrderNumber('');
+      setMessage('');
+      onSubmitted?.();
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message.toUpperCase() : 'COULD NOT SEND MESSAGE');
+    } finally {
+      onSubmittingChange?.(false);
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -88,28 +153,31 @@ export default function BrandContactSection() {
           textAlign: 'center',
         }}
       >
-        {BRAND_CONTACT_INTRO_PARAGRAPHS.map((paragraph) => (
-          <p
-            key={paragraph}
-            style={{
-              fontFamily: '"Futura PT Book"',
-              fontSize: '10px',
-              color: '#000000',
-              margin: 0,
-              lineHeight: 1.45,
-              textTransform: 'uppercase',
-            }}
-          >
-            {paragraph}
-          </p>
-        ))}
+        <p style={introTextStyle}>
+          {BRAND_CONTACT_INTRO_LINE_1_PREFIX}
+          <span style={{ color: '#EB1C24' }}>{BRAND_CONTACT_EMAIL}</span>
+        </p>
+        <p style={introTextStyle}>
+          {BRAND_CONTACT_INTRO_LINE_2_PREFIX}
+          <span style={{ color: '#EB1C24' }}>{BRAND_CONTACT_INTRO_HOURS}</span>
+          {BRAND_CONTACT_INTRO_LINE_2_SUFFIX}
+        </p>
       </div>
 
-      <form
-        className="flex flex-col"
-        style={{ gap: '12px' }}
-        onSubmit={(e) => e.preventDefault()}
-      >
+      {submitError ? (
+        <p
+          style={{
+            ...introTextStyle,
+            color: '#EB1C24',
+            textAlign: 'center',
+            fontFamily: '"Futura PT Medium"',
+          }}
+        >
+          {submitError}
+        </p>
+      ) : null}
+
+      <form id={formId} className="flex flex-col" style={{ gap: '12px' }} onSubmit={handleSubmit}>
         <div>
           <label style={fieldLabelStyle}>
             NAME<span style={requiredMarkStyle}>*</span>

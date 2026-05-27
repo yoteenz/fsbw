@@ -69,9 +69,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       /* reviews table missing or RLS — keep zeros */
     }
 
+    let contactInquiries = 0;
+    try {
+      const { count, error: contactErr } = await supabase
+        .from('brand_contact_inquiries')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'new');
+      if (!contactErr && typeof count === 'number') contactInquiries = count;
+    } catch {
+      /* table may not exist yet */
+    }
+
     return res.status(200).json({
       pendingReviews,
       orderForms,
+      contactInquiries,
       pendingReviewBreakdown: {
         total: pendingReviews,
         withPhotos: pendingWithPhotos,
@@ -81,6 +93,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       pendingItems: [
         { label: 'PENDING REVIEWS', value: String(pendingReviews) },
         { label: 'ORDER FORMS', value: String(orderForms) },
+        { label: 'CONTACT INQUIRIES', value: String(contactInquiries) },
         { label: 'TIER UPGRADES', value: '0' },
         { label: 'AFFILIATE REQUESTS', value: '0' },
         { label: 'REFUND REQUESTS', value: '0' },

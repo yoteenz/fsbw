@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -11,6 +12,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 import BrandContactSection from '../../components/brand/BrandContactSection';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import { BRAND_MEMBER_PARAGRAPHS } from '../../constants/brandMemberCopy';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
@@ -41,6 +43,8 @@ function BrandPage() {
       return false;
     }
   });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [showContactSuccessModal, setShowContactSuccessModal] = useState(false);
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
   const navTitle = validSlug
@@ -234,6 +238,7 @@ function BrandPage() {
               </div>
             </div>
           ) : (
+            <>
             <div className="flex flex-col gap-4 mb-5">
               <div
                 className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
@@ -285,11 +290,38 @@ function BrandPage() {
                       ))}
                     </div>
                   ) : slug === 'contact' ? (
-                    <BrandContactSection />
+                    <BrandContactSection
+                      formId="brand-contact-form"
+                      onSubmittingChange={setContactSubmitting}
+                      onSubmitted={() => setShowContactSuccessModal(true)}
+                    />
                   ) : null}
                 </div>
               </div>
             </div>
+            {slug === 'contact' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="submit"
+                  form="brand-contact-form"
+                  disabled={contactSubmitting}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
+                  style={pageActionButtonStyle}
+                >
+                  {contactSubmitting ? 'SUBMITTING…' : 'SUBMIT MESSAGE'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            <ConfirmationModal
+              isOpen={showContactSuccessModal}
+              onClose={() => setShowContactSuccessModal(false)}
+              onConfirm={() => setShowContactSuccessModal(false)}
+              title="MESSAGE SENT"
+              message="YOUR MESSAGE HAS BEEN SUBMITTED. PLEASE ALLOW AT LEAST 72 HOURS FOR A RESPONSE."
+              confirmText="OK"
+              cancelText=""
+            />
+            </>
           )}
         </div>
       </div>
