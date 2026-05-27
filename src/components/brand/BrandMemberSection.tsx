@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import { BRAND_MEMBER_BLOCKS } from '../../constants/brandMemberCopy';
 
 const BODY_FONT_SIZE_PX = 10;
-const HEADLINE_FONT_SIZE_PX = BODY_FONT_SIZE_PX + 8;
+const HEADLINE_FONT_SIZE_PX = BODY_FONT_SIZE_PX;
 
 function blockStyle(variant: 'headline' | 'body' | 'accent'): CSSProperties {
   const base: CSSProperties = {
@@ -24,9 +24,10 @@ function blockStyle(variant: 'headline' | 'body' | 'accent'): CSSProperties {
   if (variant === 'accent') {
     return {
       ...base,
-      fontFamily: '"Futura PT Book"',
+      fontFamily: '"Futura PT Medium"',
       fontSize: `${BODY_FONT_SIZE_PX}px`,
       color: '#EB1C24',
+      fontWeight: 500,
     };
   }
 
