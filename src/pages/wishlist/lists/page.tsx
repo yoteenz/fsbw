@@ -52,7 +52,7 @@ const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_THUMB_FRAME_INSET_PX = 3;
 
 /** Empty-list thumb art sits low in frame; nudge up inside the inner art area. */
-const EMPTY_LIST_THUMB_OFFSET_UP_PX = 10;
+const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
 /** Empty-list thumb scale (1 − 12% = 88%). */
 const EMPTY_LIST_THUMB_SCALE = 0.88;
 
