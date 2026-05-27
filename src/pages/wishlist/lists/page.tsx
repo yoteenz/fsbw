@@ -77,6 +77,11 @@ function listRowDividerStyles(index: number, total: number, options?: { insetBel
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
+/** Extra vertical gap between grid rows (added above row 2+; symmetrical between all rows). */
+const EXPANDED_LIST_GRID_ROW_GAP_BASE_PX = 20;
+const EXPANDED_LIST_GRID_ROW_GAP_EXTRA_PX = 8;
+const EXPANDED_LIST_GRID_ROW_GAP_PX = EXPANDED_LIST_GRID_ROW_GAP_BASE_PX + EXPANDED_LIST_GRID_ROW_GAP_EXTRA_PX;
+const EXPANDED_LIST_GRID_COL_GAP_PX = 16;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
@@ -897,7 +902,16 @@ export default function ViewListsPage() {
                             })}
                           </div>
                         ) : (
-                          <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${EXPANDED_LIST_GRID_MIN_COL_PX}px, 1fr))`, gap: '20px 16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingTop: '10px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: `repeat(auto-fill, minmax(${EXPANDED_LIST_GRID_MIN_COL_PX}px, 1fr))`,
+                              rowGap: `${EXPANDED_LIST_GRID_ROW_GAP_PX}px`,
+                              columnGap: `${EXPANDED_LIST_GRID_COL_GAP_PX}px`,
+                              paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
+                              paddingTop: '10px',
+                            }}
+                          >
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
