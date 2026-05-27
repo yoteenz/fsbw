@@ -264,7 +264,7 @@ export default function AddToListModal({
                 backgroundSize: '7.2px'
               }}
             >
-              <option value="">
+              <option value="" disabled hidden>
                 {lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST'}
               </option>
               {lists.length === 0 ? (
