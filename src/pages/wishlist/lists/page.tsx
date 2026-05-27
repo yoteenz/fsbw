@@ -33,6 +33,9 @@ function getLeafBrickFrontImage(item: any): string {
 /** Thumbnail when a user list has no items (lists overview row only). */
 const EMPTY_LIST_THUMB_SRC = '/assets/empty-list-thumb.jpeg';
 
+/** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
+const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
+
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
@@ -443,7 +446,7 @@ export default function ViewListsPage() {
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               return (
-                                <div key={item.id || index} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '16px', marginBottom: '16px', borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none' }}>
+                                <div key={item.id || index} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingBottom: '16px', marginBottom: '16px', borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none' }}>
                                   <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer flex-shrink-0" style={{ width: '88px', height: '110px', backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
@@ -465,7 +468,7 @@ export default function ViewListsPage() {
                             })}
                           </div>
                         ) : (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px 16px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px 16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               return (
@@ -528,11 +531,12 @@ export default function ViewListsPage() {
                               display: 'flex',
                               alignItems: 'flex-start',
                               gap: '16px',
+                              paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
                               paddingBottom: '16px',
                               cursor: 'pointer'
                             }}
                           >
-                            <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateX(-2px)' }}>
+                            <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                               <div
                                 role="button"
                                 tabIndex={0}
@@ -569,7 +573,7 @@ export default function ViewListsPage() {
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}
                               </span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px', transform: 'translateX(-2px)' }} onClick={() => setExpandedListId(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}>
+                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => setExpandedListId(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
                               <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{list.hasBeenShared ? 'SHARED' : 'PRIVATE'}</p>
                             </div>
