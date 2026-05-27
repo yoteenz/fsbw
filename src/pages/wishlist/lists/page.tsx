@@ -175,16 +175,21 @@ const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
+const EXPANDED_LIST_LINE_PRICE_FONT_PX = 12;
+
 const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-  fontSize: '10px',
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontSize: `${EXPANDED_LIST_LINE_PRICE_FONT_PX}px`,
   color: '#808080',
   textTransform: 'uppercase',
   margin: '4px 0 0 0',
 };
 
 const EXPANDED_LIST_GRID_PRICE_STYLE: React.CSSProperties = {
-  ...EXPANDED_LIST_LINE_PRICE_STYLE,
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: '10px',
+  color: '#808080',
+  textTransform: 'uppercase',
   margin: '0 0 2px 0',
   textAlign: 'center',
 };
@@ -205,7 +210,7 @@ const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
   fontSize: '8px',
   color: '#EB1C24',
   textTransform: 'uppercase',
-  marginTop: '7px',
+  marginTop: '4px',
   cursor: 'pointer',
   display: 'inline-block',
 };

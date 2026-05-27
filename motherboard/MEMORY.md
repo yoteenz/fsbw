@@ -18548,3 +18548,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `lists/page.tsx` grid only — **NO REVIEWS SUBMITTED** line → gray Futura Medium price (`EXPANDED_LIST_GRID_PRICE_STYLE`, same formatting as line view). Stars unchanged. **REMOVE** restored to Futura Demi `#999999` (from red Medium).
 
 **Conventions:** Line view still shows no-reviews + price + VIEW DETAILS; grid shows stars + price + gray REMOVE.
+
+---
+
+## 2026-05-21 — Expanded wishlist list line: price/details typography
+
+**Context:** List-view polish on `/wishlist/lists/:listId` (grid unchanged except prior grid price).
+
+**Changes:** Line gray price → Futura Demi **12px** (was Medium 10px). VIEW/CLOSE DETAILS `marginTop` **4px** (was 7px). `wishlistListItemDetails.ts` `formatDetailPrice` → middle dot (` · `) + red `#EB1C24` +/- amounts (Demi), matching list modal dot pattern.
+
+**Conventions:** Grid price stays Medium 10px; detail price HTML only via `formatDetailPrice` in wishlist util.

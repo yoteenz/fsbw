@@ -34,7 +34,11 @@ export function formatWishlistListItemPrice(price: number): string {
 function formatDetailPrice(price: number): string {
   if (price === 0 || Number.isNaN(price)) return '';
   const sign = price > 0 ? '+' : '-';
-  return ` <span style="color: #000000;">${sign}$${Math.abs(price).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>`;
+  const amount = `$${Math.abs(price).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  return (
+    '<span style="color: #000000; font-family: &quot;Futura PT Demi&quot;, Futura, sans-serif;"> · </span>' +
+    `<span style="color: #EB1C24; font-family: &quot;Futura PT Demi&quot;, Futura, sans-serif;">${sign}${amount}</span>`
+  );
 }
 
 function getDensityPrice(density: string, productName?: string): number {
