@@ -30,8 +30,12 @@ function getLeafBrickFrontImage(item: any): string {
   return '/assets/natural front.png';
 }
 
-/** Thumbnail when a user list has no items (lists overview row only). */
-const EMPTY_LIST_THUMB_SRC = '/assets/empty-list-thumb.jpeg';
+/**
+ * Thumbnail when a user list has no items (lists overview row only).
+ * Canonical source: Supabase live-preview (do not use regenerated assets).
+ */
+const EMPTY_LIST_THUMB_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/6KLNd6QdTtVWqfXcnpOsc_cChNXN8z.jpeg';
 
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
