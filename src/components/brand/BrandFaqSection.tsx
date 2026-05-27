@@ -25,12 +25,12 @@ const ANSWER_STYLE = {
 };
 
 const SECTION_TITLE_STYLE = {
-  fontFamily: '"Futura PT Medium"',
-  fontSize: '11px',
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '16px',
   color: '#808080',
-  fontWeight: 500,
+  fontWeight: 400,
   margin: '0 0 8px 0',
-  textTransform: 'uppercase' as const,
+  textTransform: 'lowercase' as const,
   textAlign: 'left' as const,
 };
 
