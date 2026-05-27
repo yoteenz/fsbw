@@ -426,7 +426,7 @@ function BrandPage() {
                   className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
                   style={pageActionButtonStyle}
                 >
-                  {contactSubmitting ? 'SUBMITTING…' : 'SUBMIT MESSAGE'}
+                  {contactSubmitting ? 'SENDING…' : 'SEND MESSAGE'}
                 </button>
               </PageActionsBelowCard>
             ) : null}
