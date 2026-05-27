@@ -319,7 +319,7 @@ export default function SharedWishlistListPage() {
               textTransform: 'uppercase',
             }}
           >
-            SHARED LIST
+            SHARED WISHLIST
           </span>
         </div>
 

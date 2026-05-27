@@ -179,7 +179,7 @@ const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
 
 const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
   ...LIST_LINE_BAG_ADD_STYLE,
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#999999',
 };
 
