@@ -18218,3 +18218,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Decisions / outcomes:** When user has existing lists, closed dropdown shows **CREATE A LIST** as placeholder (`value=""`). Empty-state placeholder stays **SELECT A LIST**; **`CREATE A LIST`** option in menu unchanged.
 
 **Changes:** **`src/components/AddToListModal.tsx`** — placeholder option text **`ADD TO LIST` → `CREATE A LIST`** when **`lists.length > 0`**.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown order (CREATE A LIST at top)
+
+**Context (full chat):** Lists UI, divider removed, add-to-list modal copy. User clarified: closed dropdown placeholder stays **ADD TO LIST**; when opened, **CREATE A LIST** should be the **first** menu item (not the placeholder); remove duplicate **CREATE A LIST** at bottom of list.
+
+**Decisions / outcomes:** **`value=""`** → **ADD TO LIST** when lists exist; **`__create__`** option first, then named lists; no second **CREATE A LIST** at end.
+
+**Changes:** **`src/components/AddToListModal.tsx`** — reordered options when **`lists.length > 0`**.
