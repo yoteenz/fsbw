@@ -31,7 +31,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
       textTransform: 'none',
       fontFamily: '"Bohemy", cursive',
       fontSize: '16px',
-      color: BRAND_GRAY,
+      color: '#EB1C24',
       fontWeight: 400,
     };
   }
