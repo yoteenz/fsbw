@@ -393,7 +393,7 @@ function BrandPage() {
                         subscriptionTiers={memberPremium.subscriptionTiers}
                       />
                     ) : (
-                      <BrandMemberSection showUnlockPremiumRewards={!memberHasPremiumSubscription} />
+                      <BrandMemberSection />
                     )
                   ) : slug === 'contact' ? (
                     <BrandContactSection
