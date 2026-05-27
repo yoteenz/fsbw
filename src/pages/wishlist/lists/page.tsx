@@ -56,10 +56,10 @@ const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
-/** Pull product text column up beside the thumb (margin, not transform — survives flex centering). */
+/** Text column sits this many px higher than the thumb (thumb column gets matching marginTop). */
 const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
-/** Tighten gap between script name and red RAW line (font metrics leave extra space at margin 0). */
-const EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX = 2;
+/** Gap between script product name and red RAW line. */
+const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
 /** Space between row border and the next row’s thumb (was 16px margin only). */
 const EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX = 18;
 
@@ -67,7 +67,7 @@ const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
   fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
   color: '#000',
-  margin: 0,
+  margin: `0 0 ${EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX}px 0`,
   padding: 0,
   lineHeight: 1,
   textTransform: 'uppercase',
@@ -76,11 +76,18 @@ const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
 const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
   flex: 1,
   minWidth: 0,
-  marginTop: `-${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
+};
+
+const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
 };
 
 const EXPANDED_LIST_LINE_RAW_MARGIN_STYLE: React.CSSProperties = {
-  margin: `-${EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX}px 0 5px 0`,
+  margin: '0 0 5px 0',
 };
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_RATING_FONT_PX = 9;
@@ -690,7 +697,7 @@ export default function ViewListsPage() {
                                   key={item.id || index}
                                   style={{
                                     display: 'flex',
-                                    alignItems: 'center',
+                                    alignItems: 'flex-start',
                                     gap: '16px',
                                     paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
                                     paddingBottom: '16px',
@@ -701,7 +708,7 @@ export default function ViewListsPage() {
                                     borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none',
                                   }}
                                 >
-                                  <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                  <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
                                     <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                       <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                     </div>
