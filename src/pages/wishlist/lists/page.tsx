@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { trackActivity } from '../../../utils/activity';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -113,21 +113,29 @@ function getHairOrigin(productName: string): string {
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  /** From `?list=` so browser Back returns to lists overview, not /wishlist. */
-  const expandedListId = searchParams.get('list');
+  const [legacySearchParams] = useSearchParams();
+  /** Path segment `/wishlist/lists/:listId` — pushes history so browser Back returns to overview. */
+  const { listId: expandedListId } = useParams<{ listId?: string }>();
 
   const openExpandedList = (listId: string) => {
-    setSearchParams({ list: listId });
+    navigate(`/wishlist/lists/${encodeURIComponent(listId)}`);
   };
 
   const closeExpandedList = (options?: { replace?: boolean }) => {
-    if (options?.replace || !searchParams.has('list')) {
-      setSearchParams({}, { replace: true });
+    if (options?.replace || !expandedListId) {
+      navigate('/wishlist/lists', { replace: true });
       return;
     }
     navigate(-1);
   };
+
+  /** Migrate old `?list=` bookmarks to path-based URLs without an extra back step. */
+  useEffect(() => {
+    const legacyListId = legacySearchParams.get('list');
+    if (legacyListId && !expandedListId) {
+      navigate(`/wishlist/lists/${encodeURIComponent(legacyListId)}`, { replace: true });
+    }
+  }, [legacySearchParams, expandedListId, navigate]);
   const [lists, setLists] = useState<UserList[]>([]);
   const [cartCount, setCartCount] = useState(() => {
     try {

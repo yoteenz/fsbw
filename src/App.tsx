@@ -803,6 +803,13 @@ function App() {
             </Suspense>
           </AccountRouteGuard>
         } />
+        <Route path="/wishlist/lists/:listId" element={
+          <AccountRouteGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <ViewListsPage />
+            </Suspense>
+          </AccountRouteGuard>
+        } />
         <Route path="/wishlist/lists" element={
           <AccountRouteGuard>
             <Suspense fallback={<LoadingScreen />}>
