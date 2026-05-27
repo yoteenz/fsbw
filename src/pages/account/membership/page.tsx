@@ -31,7 +31,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
-import { BRAND_RED_HEADER_ICON_FILTER } from '../../../components/RoleCardSectionHeader';
+import RewardsHeaderIcon from '../../../components/icons/RewardsHeaderIcon';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -1236,16 +1236,7 @@ function MembershipPage() {
                           LOYALTY POINTS
                     </h2>
                     <div className="flex items-center gap-2">
-                        <img
-                          src="/assets/rewards-icon.svg"
-                          alt=""
-                          style={{
-                            width: '19.76px',
-                            height: '19.76px',
-                            objectFit: 'contain',
-                            filter: BRAND_RED_HEADER_ICON_FILTER,
-                          }}
-                        />
+                        <RewardsHeaderIcon sizePx={19.76} />
                         <img
                           src="/assets/close-icon.svg"
                           alt="Close"
@@ -2067,16 +2058,7 @@ function MembershipPage() {
                     >
                       LOYALTY POINTS
                     </h2>
-                    <img
-                      src="/assets/rewards-icon.svg"
-                      alt=""
-                      style={{
-                        width: '19.76px',
-                        height: '19.76px',
-                        objectFit: 'contain',
-                        filter: BRAND_RED_HEADER_ICON_FILTER,
-                      }}
-                    />
+                    <RewardsHeaderIcon sizePx={19.76} />
                   </div>
 
                   {/* Balance + discount codes (no inner border) */}
