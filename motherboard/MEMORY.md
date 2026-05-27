@@ -18502,3 +18502,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `brandMemberCopy.ts` — new `bohemy` variant; three lines lowercased. `BrandMemberSection.tsx` — Bohemy 16px gray, no uppercase transform.
 
 **Conventions:** Member callouts that should match About Bohemy: `variant: 'bohemy'` in `BRAND_MEMBER_BLOCKS`.
+---
+
+## 2026-05-27 — Brand card headers: ABOUT FS / CONTACT FS
+
+**Context:** User wanted red main-card headers on `/brand/about` and `/brand/contact` to read **about fs** and **contact fs** (not ABOUT US / CONTACT US).
+
+**Changes:** `brandMenu.ts` — removed `cardTitle` overrides so `getBrandCardHeaderTitle` uses labels **ABOUT FS** / **CONTACT FS**. `brand/page.tsx` — About height measurer + fallback updated to **ABOUT FS**.
+
+**Conventions:** Brand red card title: `cardTitle` in `BRAND_MENU_ITEMS` or defaults to `label`.
