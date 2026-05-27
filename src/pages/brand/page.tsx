@@ -13,6 +13,9 @@ import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
+/** Match menu-toggle card height on brand pages (scroll inside content area). */
+const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
+
 function BrandPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -167,7 +170,7 @@ function BrandPage() {
           {showMobileMenu ? (
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 80px)', height: 'calc(100dvh - 80px)' }}
+              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT, height: BRAND_PAGE_MAIN_CARD_HEIGHT }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
@@ -231,8 +234,13 @@ function BrandPage() {
           ) : (
             <div className="flex flex-col gap-4 mb-5">
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
-                style={{ borderWidth: '1.3px', minHeight: '280px' }}
+                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
+                style={{
+                  borderWidth: '1.3px',
+                  minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
+                  height: BRAND_PAGE_MAIN_CARD_HEIGHT,
+                  overflow: 'hidden',
+                }}
               >
                 <p
                   style={{
@@ -241,31 +249,41 @@ function BrandPage() {
                     color: '#EB1C24',
                     margin: '0 0 8px 0',
                     textTransform: 'uppercase',
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    flexShrink: 0,
                   }}
                 >
                   {cardHeaderTitle}
                 </p>
-                <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px' }} />
-                {slug === 'about' ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => (
-                      <p
-                        key={paragraph}
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '10px',
-                          color: '#000000',
-                          margin: 0,
-                          lineHeight: 1.45,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                ) : null}
+                <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+                  {slug === 'about' ? (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => (
+                        <p
+                          key={paragraph}
+                          style={{
+                            fontFamily: '"Futura PT Book"',
+                            fontSize: '10px',
+                            color: '#000000',
+                            margin: 0,
+                            lineHeight: 1.45,
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
           )}
