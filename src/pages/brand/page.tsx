@@ -16,7 +16,8 @@ import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageA
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
 import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
-import { isMockDataAccount } from '../../utils/adminAuth';
+import { getEffectiveSubscriptionTier, isMockDataAccount } from '../../utils/adminAuth';
+import { PREMIUM_BENEFITS_BY_TIER } from '../../constants/premiumBenefitsByTier';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
@@ -61,6 +62,25 @@ function BrandPage() {
       );
     } catch {
       return false;
+    }
+  })();
+
+  const memberIncludedBenefits = (() => {
+    if (!isSignedIn) return [] as string[];
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return [];
+      const user = JSON.parse(currentUser);
+      const tier = getEffectiveSubscriptionTier(user);
+      if (tier && PREMIUM_BENEFITS_BY_TIER[tier]) {
+        return PREMIUM_BENEFITS_BY_TIER[tier];
+      }
+      if (memberHasPremiumSubscription) {
+        return PREMIUM_BENEFITS_BY_TIER['12months'];
+      }
+      return [];
+    } catch {
+      return [];
     }
   })();
 
@@ -346,7 +366,7 @@ function BrandPage() {
                         subscriptionTiers={memberPremium.subscriptionTiers}
                       />
                     ) : (
-                      <BrandMemberSection />
+                      <BrandMemberSection includedMembershipBenefits={memberIncludedBenefits} />
                     )
                   ) : slug === 'contact' ? (
                     <BrandContactSection
