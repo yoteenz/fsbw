@@ -384,12 +384,15 @@ export default function ViewListsPage() {
               </div>
             ) : (
               <>
-                {/* Page-specific header: list name when expanded (e.g. VACATION), otherwise LISTS */}
+                {/* Page-specific header: PRIVATE/SHARED when expanded, otherwise LISTS */}
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
                 {(() => {
                   const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
-                  const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
+                  const headerLabel =
+                    expandedListId && expandedList
+                      ? getUserListVisibilityLabel(expandedList)
+                      : 'LISTS';
                   const headerCount =
                     expandedListId && expandedList ? expandedItemCount : lists.length;
                   return (
@@ -447,7 +450,7 @@ export default function ViewListsPage() {
                             display: 'flex',
                             justifyContent: 'flex-end',
                             alignItems: 'center',
-                            marginTop: '2px',
+                            marginTop: '6px',
                             marginBottom: expandedItems.length === 0 ? 0 : '16px',
                             flexShrink: 0,
                           }}
