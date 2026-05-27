@@ -18484,3 +18484,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/constants/brandAboutCopy.ts` — (2) seamless/convenient comma removed before AND; (3) CUSTOMIZING INSTALLS, CEO CREATED FRONTAL SLAYER; (6) SEPARATES US FROM (not APART FROM); (7) LOYALTY POINTS; Bohemy closing `no gimmicks, just pressure.` Mindset, education, and consultation paragraphs unchanged.
 
 **Conventions:** Edit About Us in `brandAboutCopy.ts` only; `BrandAboutUsBody` renders on page and FAQ/Reviews/Terms height measurer.
+---
+
+## 2026-05-27 — About Us mindset line: Bohemy lowercase
+
+**Context:** User asked to style **BECAUSE FRONTAL SLAYER ISN'T JUST A NAME… IT'S A MINDSET.** like the closing tagline (lowercase Bohemy, gray).
+
+**Changes:** `src/constants/brandAboutCopy.ts` — mindset string lowercased; moved from `BRAND_ABOUT_ACCENT_PARAGRAPHS` to `BRAND_ABOUT_BOHEMY_PARAGRAPHS` (16px Bohemy, `#808080`, no uppercase transform). Accent set now empty.
+
+**Conventions:** Bohemy About lines: lowercase in copy + membership in `BRAND_ABOUT_BOHEMY_PARAGRAPHS`.
