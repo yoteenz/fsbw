@@ -561,7 +561,7 @@ export default function ViewListsPage() {
                                   style={
                                     firstItem
                                       ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }
-                                      : { position: 'absolute', inset: 3, width: 'auto', height: 'auto', maxWidth: 'none', objectFit: 'cover', objectPosition: 'center', zIndex: 1 }
+                                      : { position: 'absolute', top: 3, left: 3, right: 3, bottom: 3, objectFit: 'cover', objectPosition: 'center', zIndex: 1 }
                                   }
                                 />
                               </div>
