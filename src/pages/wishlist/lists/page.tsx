@@ -549,7 +549,7 @@ export default function ViewListsPage() {
                                         backgroundPosition: 'center',
                                         backgroundRepeat: 'no-repeat',
                                       }
-                                    : { backgroundColor: '#000' }),
+                                    : {}),
                                   border: '1.3px solid #000',
                                   boxShadow: firstItem ? 'inset 0 0 0 3px #fff' : undefined,
                                   overflow: 'hidden'
