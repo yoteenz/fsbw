@@ -18257,6 +18257,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Add to list modal: portaled dropdown (no clip)
+
+**Context (full chat):** Custom list picker; user reported open menu clipped by modal **`overflow: auto`**.
+
+**Fix:** Menu **`createPortal`** to **`document.body`** with **`position: fixed`** from trigger **`getBoundingClientRect`**; **`overflowY: auto`** on menu (up to 220px, flips above if needed). Modal body scrolls checklist only (**`overflow: hidden`** shell + inner scroll).
+
+---
+
 ## 2026-05-21 — Lists expanded view: thumb/bag/remove spacing
 
 **Context (full chat):** List line view bag links, add-to-list dropdown placeholder fix. User asked on created list **line/grid** view: **10px** above thumbnails; **+2px** above **ADD TO BAG** / **REMOVE FROM BAG** ( **`marginTop` 4→6** ); list-view remove **X** **black** not red.
