@@ -83,12 +83,12 @@ function PremiumMembershipSection({
         flexDirection: 'column',
         gap: '12px',
         textAlign: showIncludedMembership ? 'left' : 'center',
-        ...(showIncludedMembership ? { marginTop: '12px', width: '100%' } : {}),
+        ...(showIncludedMembership ? { marginTop: '10px', marginBottom: '6px', width: '100%' } : {}),
       }}
     >
       {showIncludedMembership ? (
         <>
-          <p style={blockStyle('bohemy')}>included in your membership</p>
+          <p style={{ ...blockStyle('bohemy'), fontSize: '18px' }}>included in your membership:</p>
           <div
             style={{
               display: 'flex',
