@@ -438,7 +438,7 @@ function BrandPage() {
                   className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
                   style={pageActionButtonStyle}
                 >
-                  {memberPremium.showPremiumChart ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE YOUR SUBSCRIPTION'}
+                  {memberPremium.showPremiumChart ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
                 </button>
               </PageActionsBelowCard>
             ) : null}

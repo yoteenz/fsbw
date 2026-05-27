@@ -53,7 +53,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
 
 /** Become a Member marketing copy only — no included-benefits or unlock-rewards blocks on `/brand/member`. */
 export default function BrandMemberSection() {
-  const bodyBlocks = BRAND_MEMBER_BLOCKS.filter((block) => block.id !== 'headline');
+  const bodyBlocks = BRAND_MEMBER_BLOCKS;
 
   return (
     <div
@@ -64,13 +64,6 @@ export default function BrandMemberSection() {
         textAlign: 'center',
       }}
     >
-      {(() => {
-        const headlineBlock = BRAND_MEMBER_BLOCKS.find((block) => block.id === 'headline');
-        return headlineBlock ? (
-          <p style={blockStyle('bohemy')}>{headlineBlock.text}</p>
-        ) : null;
-      })()}
-
       {bodyBlocks.map((block) => {
         const variant =
           block.variant === 'bohemy'
