@@ -34,7 +34,7 @@ import {
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
-import { cartCapSizeLineMarginTop } from '../utils/cartCapSizeLineMargin';
+import { cartCapSizeLineMarginTop, cartLinePriceMarginTop } from '../utils/cartCapSizeLineMargin';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1556,20 +1556,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {(item as CartItem).bcfBundleDeal ? (
                           <div
                             style={{
-                              marginTop: (() => {
-                                const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
-                                const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
-                                const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
-                                const hasSpecs =
-                                  (item.density && item.density !== '200%') ||
-                                  (item.lace && item.lace !== '13X6') ||
-                                  (item.texture && item.texture !== defaultTexture) ||
-                                  (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-                                  (item.hairline && item.hairline !== 'NATURAL') ||
-                                  (item.styling && item.styling !== 'NONE') ||
-                                  (item.addOns && item.addOns.length > 0);
-                                return hasSpecs ? '2px' : '1px';
-                              })(),
+                              marginTop: cartLinePriceMarginTop(item),
                               marginBottom: '0',
                               width: '100%',
                               display: 'flex',
@@ -1631,20 +1618,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                   textTransform: 'uppercase',
                                   fontSize: '12px',
                                   fontWeight: '600',
-                                  marginTop: (() => {
-                                    const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
-                                    const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
-                                    const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
-                                    const hasSpecs =
-                                      (item.density && item.density !== '200%') ||
-                                      (item.lace && item.lace !== '13X6') ||
-                                      (item.texture && item.texture !== defaultTexture) ||
-                                      (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) ||
-                                      (item.hairline && item.hairline !== 'NATURAL') ||
-                                      (item.styling && item.styling !== 'NONE') ||
-                                      (item.addOns && item.addOns.length > 0);
-                                    return hasSpecs ? '2px' : '1px';
-                                  })(),
+                                  marginTop: cartLinePriceMarginTop(item),
                                   marginBottom: '0',
                                   display: 'flex',
                                   flexDirection: 'column',
@@ -1674,21 +1648,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             textTransform: 'uppercase',
                             fontSize: '12px',
                             fontWeight: '600',
-                            marginTop: (() => {
-                              // Check if there's black detail text (specifications)
-                              // Determine default texture based on product type
-                              const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
-                              const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
-                              const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
-                              const hasSpecs = (item.density && item.density !== '200%') || 
-                                             (item.lace && item.lace !== '13X6') || 
-                                             (item.texture && item.texture !== defaultTexture) || 
-                                             (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                             (item.hairline && item.hairline !== 'NATURAL') || 
-                                             (item.styling && item.styling !== 'NONE') || 
-                                             (item.addOns && item.addOns.length > 0);
-                              return hasSpecs ? '2px' : '1px';
-                            })(),
+                            marginTop: cartLinePriceMarginTop(item),
                             marginBottom: '0',
                             marginLeft: '0',
                             marginRight: '0'
