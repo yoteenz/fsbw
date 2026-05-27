@@ -15,8 +15,17 @@ import {
 } from '../../../utils/wishlistListItemDetails';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
-const SHARED_LIST_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
-const SHARED_LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
+const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
+const LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
+
+function listRowDividerStyles(index: number, total: number): React.CSSProperties {
+  const isLast = index >= total - 1;
+  return {
+    paddingBottom: '16px',
+    marginBottom: isLast ? '16px' : `${LIST_ROW_GAP_BELOW_DIVIDER_PX}px`,
+    borderBottom: isLast ? 'none' : LIST_ROW_DIVIDER_BORDER,
+  };
+}
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
@@ -73,11 +82,11 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
 const EXPANDED_LIST_LINE_PRICE_FONT_PX = 12;
 
 const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
   fontSize: `${EXPANDED_LIST_LINE_PRICE_FONT_PX}px`,
   color: '#808080',
   textTransform: 'uppercase',
-  margin: '4px 0 0 0',
+  margin: '3px 0 0 0',
 };
 
 const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
@@ -96,7 +105,7 @@ const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
   fontSize: '8px',
   color: '#EB1C24',
   textTransform: 'uppercase',
-  marginTop: '4px',
+  marginTop: '-3px',
   cursor: 'pointer',
   display: 'inline-block',
 };
@@ -126,7 +135,7 @@ function ExpandedListItemNoReviewStars() {
 }
 
 const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8.5px',
@@ -140,7 +149,7 @@ const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
 
 const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
   ...LIST_LINE_BAG_ADD_STYLE,
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#999999',
 };
 
@@ -474,11 +483,7 @@ export default function SharedWishlistListPage() {
                             alignItems: 'flex-start',
                             gap: '16px',
                             paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
-                            paddingBottom: '16px',
-                            marginBottom:
-                              index < items.length - 1 ? `${SHARED_LIST_ROW_GAP_BELOW_DIVIDER_PX}px` : 0,
-                            borderBottom:
-                              index < items.length - 1 ? SHARED_LIST_ROW_DIVIDER_STYLE : 'none',
+                            ...listRowDividerStyles(index, items.length),
                           }}
                         >
                           <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
@@ -522,7 +527,7 @@ export default function SharedWishlistListPage() {
                               </p>
                             ) : inBag ? (
                               <p
-                                className="hover:opacity-80 transition-opacity"
+                                className="font-bold hover:opacity-80 transition-opacity"
                                 style={LIST_LINE_BAG_REMOVE_STYLE}
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -541,7 +546,7 @@ export default function SharedWishlistListPage() {
                               </p>
                             ) : (
                               <p
-                                className="hover:opacity-80 transition-opacity"
+                                className="font-bold hover:opacity-80 transition-opacity"
                                 style={LIST_LINE_BAG_ADD_STYLE}
                                 onClick={(e) => {
                                   e.stopPropagation();

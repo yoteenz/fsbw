@@ -211,7 +211,7 @@ const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
   fontSize: '8px',
   color: '#EB1C24',
   textTransform: 'uppercase',
-  marginTop: '1px',
+  marginTop: '-3px',
   cursor: 'pointer',
   display: 'inline-block',
 };
