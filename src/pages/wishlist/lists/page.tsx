@@ -876,9 +876,11 @@ export default function ViewListsPage() {
                                         <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
                                       </>
                                     )}
-                                    <p className={WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} style={EXPANDED_LIST_LINE_PRICE_STYLE}>
-                                      {itemPriceLabel}
-                                    </p>
+                                    {!isViewingDetails && (
+                                      <p className={WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} style={EXPANDED_LIST_LINE_PRICE_STYLE}>
+                                        {itemPriceLabel}
+                                      </p>
+                                    )}
                                     {showViewDetailsLink && (
                                       <span
                                         role="button"
