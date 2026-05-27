@@ -161,7 +161,7 @@ export default function BrandContactSection({
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
-          textAlign: 'center',
+          textAlign: 'left',
         }}
       >
         <p style={introTextStyle}>
@@ -180,7 +180,7 @@ export default function BrandContactSection({
           style={{
             ...introTextStyle,
             color: '#EB1C24',
-            textAlign: 'center',
+            textAlign: 'left',
             fontFamily: '"Futura PT Medium"',
           }}
         >

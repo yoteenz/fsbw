@@ -12,7 +12,7 @@ export default function BrandAboutUsBody() {
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        textAlign: 'center',
+        textAlign: 'left',
       }}
     >
       {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => {
