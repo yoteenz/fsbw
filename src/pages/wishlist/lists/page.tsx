@@ -40,6 +40,9 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 
+/** Empty-list thumb art sits low in frame; nudge up inside the brick slot. */
+const EMPTY_LIST_THUMB_OFFSET_UP_PX = 20;
+
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
