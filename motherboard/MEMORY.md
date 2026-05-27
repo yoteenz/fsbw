@@ -18628,3 +18628,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** `BrandMemberSection.tsx` — invite block `marginBottom` `8px` → `6px` (`block.id === 'invite'`).
 
 **Conventions:** Member copy blocks live in `brandMemberCopy.ts`; per-block spacing overrides stay in `BrandMemberSection.tsx`.
+
+---
+
+## 2026-05-27 — Brand reviews page empty state
+
+**Context:** User asked for vertically centered gray copy on `/brand/reviews`: "UNFORTUNATELY, NO REVIEWS HAVE BEEN SUBMITTED YET." / "PLEASE CHECK BACK SOON." (line break).
+
+**Changes:**
+- `BrandReviewsEmptyState.tsx` — Futura PT Medium 11px `#808080`, flex-centered in card (matches account reviews empty pattern).
+- `brand/page.tsx` — render on `slug === 'reviews'`; content wrapper `flex: 1` so text centers in About-matched card height.
+
+**Conventions:** Use `dangerouslySetInnerHTML` with `<br>` for two-line brand empty copy; keep FAQ/terms shells empty until copy is specified.
