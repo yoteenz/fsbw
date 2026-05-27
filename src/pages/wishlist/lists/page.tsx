@@ -549,7 +549,7 @@ export default function ViewListsPage() {
                                         backgroundPosition: 'center',
                                         backgroundRepeat: 'no-repeat',
                                       }
-                                    : {}),
+                                    : { backgroundColor: '#fff' }),
                                   border: '1.3px solid #000',
                                   boxShadow: 'inset 0 0 0 3px #fff',
                                   overflow: 'hidden'
@@ -561,7 +561,7 @@ export default function ViewListsPage() {
                                   style={
                                     firstItem
                                       ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }
-                                      : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: 1 }
+                                      : { position: 'absolute', inset: 3, width: 'auto', height: 'auto', maxWidth: 'none', objectFit: 'cover', objectPosition: 'center', zIndex: 1 }
                                   }
                                 />
                               </div>
