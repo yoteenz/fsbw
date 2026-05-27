@@ -244,7 +244,9 @@ export default function AddToListModal({
             onClick={() => handlePickList(list.id)}
           >
             {list.name.toUpperCase()}
-            {list.items.length > 0 ? ` (${list.items.length})` : ''}
+            {list.items.length > 0 ? (
+              <span style={{ color: '#EB1C24' }}>{` (${list.items.length})`}</span>
+            ) : null}
           </button>
         ))}
       </div>,
@@ -357,7 +359,7 @@ export default function AddToListModal({
         </h3>
 
         {/* List dropdown or create-new-list text field (same box styling) */}
-        <div style={{ marginBottom: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+        <div style={{ marginTop: '2px', marginBottom: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
           {isCreatingNewList ? (
             <input
               ref={newListInputRef}
