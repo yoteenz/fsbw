@@ -4083,3 +4083,25 @@ p.bcf-bundles-pdp-product-name {
 .admin-revenue-globe-arc-dash {
   animation: admin-revenue-globe-arc-shift 14s linear infinite;
 }
+
+/* Wishlist expanded + shared list line — price / VIEW DETAILS (inline margin gets overridden) */
+.wishlist-expanded-list-line-price {
+  margin-top: 3px !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+}
+
+.wishlist-expanded-list-view-details-toggle {
+  font-family: 'Futura PT Medium', Futura, sans-serif !important;
+  font-size: 8px !important;
+  color: #eb1c24 !important;
+  text-transform: uppercase !important;
+  display: inline-block !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  position: relative !important;
+  top: -4px !important;
+}
