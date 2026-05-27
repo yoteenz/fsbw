@@ -48,6 +48,9 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
+/** Gray rule between list rows on overview (matches expanded line-item dividers). */
+const LIST_OVERVIEW_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
+const LIST_OVERVIEW_ROW_GAP_BELOW_DIVIDER_PX = 18;
 
 /** Expanded created-list item thumbs (line/grid); 20% larger than 88×110 overview size. */
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
@@ -852,8 +855,8 @@ export default function ViewListsPage() {
                       </p>
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                      {lists.map((list) => {
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                      {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
@@ -870,7 +873,11 @@ export default function ViewListsPage() {
                               gap: '16px',
                               paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
                               paddingBottom: '16px',
-                              cursor: 'pointer'
+                              marginBottom:
+                                index < lists.length - 1 ? `${LIST_OVERVIEW_ROW_GAP_BELOW_DIVIDER_PX}px` : 0,
+                              borderBottom:
+                                index < lists.length - 1 ? LIST_OVERVIEW_ROW_DIVIDER_STYLE : 'none',
+                              cursor: 'pointer',
                             }}
                           >
                             <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
