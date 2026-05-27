@@ -535,6 +535,15 @@ export async function getWishlist(): Promise<{ items: unknown[] }> {
   return { items: Array.isArray(data.items) ? data.items : [] };
 }
 
+/** Admin-sent alert rows stored on the user's notifications row in Supabase. */
+export async function getNotifications(): Promise<{ items: unknown[] }> {
+  const res = await apiFetch('/api/notifications');
+  if (res.status === 401) return { items: [] };
+  if (!res.ok) throw new Error(await res.text());
+  const data = (await res.json()) as { items?: unknown };
+  return { items: Array.isArray(data.items) ? data.items : [] };
+}
+
 export async function putWishlist(items: unknown[]): Promise<{ items: unknown[] }> {
   const res = await apiFetch('/api/wishlist', { method: 'PUT', body: { items } });
   if (!res.ok) throw new Error(await res.text());

@@ -4,14 +4,15 @@ import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
-import { isAyoteenzAdminAccount, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
+import { isAyoteenzAdminAccount, isSignedIn as isUserSignedIn, signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
+import { getNotifications } from '../../../utils/api';
 import {
   buildConsultViewOfferOrdersHref,
   getNotificationsStorageKeyForUserEmail,
   getOrderReceivedAccountAlerts,
   migrateNotificationsLocalStorageKeys
 } from '../../../utils/orderAccountAlerts';
-import { getSupabase, isSupabaseConfigured } from '../../../utils/supabase';
+import { isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -508,6 +509,21 @@ export function mergeAccountNotifications(stored: Notification[], account: Notif
   return sortNotificationsNewestFirst(Array.from(byId.values()));
 }
 
+/** Admin-sent rows from Supabase via GET /api/notifications (not direct PostgREST from the client). */
+async function mergeAdminNotificationsFromApi(merged: Notification[], today: string): Promise<Notification[]> {
+  try {
+    const { items } = await getNotifications();
+    const adminNotifs: Notification[] = items.map((it) => notificationFromSupabaseAdminItem(it, today));
+    const byId = new Map(merged.map((n) => [n.id, n]));
+    adminNotifs.forEach((n) => {
+      byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
+    });
+    return sortNotificationsNewestFirst(Array.from(byId.values()));
+  } catch {
+    return merged;
+  }
+}
+
 function NotificationsPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -609,24 +625,8 @@ function NotificationsPage() {
         const account = getAccountNotifications(user);
         let merged = mergeAccountNotifications(stored, account);
 
-        if (isSupabaseConfigured()) {
-          const supabase = getSupabase();
-          const { data: sessionData } = await supabase?.auth.getSession() ?? {};
-          const userId = sessionData?.session?.user?.id;
-          if (userId && supabase) {
-            const { data: row } = await supabase
-              .from('notifications')
-              .select('items')
-              .eq('user_id', userId)
-              .maybeSingle();
-            const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it) => notificationFromSupabaseAdminItem(it, today));
-            const byId = new Map(merged.map((n) => [n.id, n]));
-            adminNotifs.forEach((n) => {
-              byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
-            });
-            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
-          }
+        if (isSupabaseConfigured() && isUserSignedIn()) {
+          merged = await mergeAdminNotificationsFromApi(merged, today);
         }
 
         localStorage.setItem(key, JSON.stringify(merged));
@@ -656,24 +656,8 @@ function NotificationsPage() {
         const account = getAccountNotifications(user);
         let merged = mergeAccountNotifications(stored, account);
 
-        if (isSupabaseConfigured()) {
-          const supabase = getSupabase();
-          const { data: sessionData } = await supabase?.auth.getSession() ?? {};
-          const userId = sessionData?.session?.user?.id;
-          if (userId && supabase) {
-            const { data: row } = await supabase
-              .from('notifications')
-              .select('items')
-              .eq('user_id', userId)
-              .maybeSingle();
-            const items: unknown[] = Array.isArray((row as { items?: unknown[] } | null)?.items) ? (row as { items: unknown[] }).items : [];
-            const adminNotifs: Notification[] = items.map((it) => notificationFromSupabaseAdminItem(it, today));
-            const byId = new Map(merged.map((n) => [n.id, n]));
-            adminNotifs.forEach((n) => {
-              byId.set(n.id, { ...n, isRead: byId.get(n.id)?.isRead ?? n.isRead });
-            });
-            merged = sortNotificationsNewestFirst(Array.from(byId.values()));
-          }
+        if (isSupabaseConfigured() && isUserSignedIn()) {
+          merged = await mergeAdminNotificationsFromApi(merged, today);
         }
 
         setNotifications(merged);
