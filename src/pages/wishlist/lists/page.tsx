@@ -59,14 +59,6 @@ const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
 /** Empty-list thumb scale (10% smaller than prior 0.88 → 0.792). */
 const EMPTY_LIST_THUMB_SCALE = 0.792;
 
-/** Test-only: rule under thumb, above item count (vacay/vacation lists). */
-const LIST_THUMB_COUNT_DIVIDER_COLOR = '#EB1C24';
-
-function listShowsThumbCountDividerTest(listName: string | undefined): boolean {
-  const n = (listName || '').trim().toLowerCase();
-  return n === 'vacay' || n === 'vacation' || n.includes('vacay');
-}
-
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
@@ -581,7 +573,6 @@ export default function ViewListsPage() {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
-                        const showThumbCountDivider = listShowsThumbCountDividerTest(list.name);
                         return (
                           <div
                             key={list.id}
@@ -696,17 +687,6 @@ export default function ViewListsPage() {
                                   </>
                                 )}
                               </div>
-                              {showThumbCountDivider ? (
-                                <div
-                                  aria-hidden
-                                  style={{
-                                    width: '88px',
-                                    borderBottom: `1px solid ${LIST_THUMB_COUNT_DIVIDER_COLOR}`,
-                                    marginTop: '6px',
-                                    flexShrink: 0,
-                                  }}
-                                />
-                              ) : null}
                               <span
                                 style={{
                                   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
