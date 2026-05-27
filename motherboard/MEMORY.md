@@ -18581,3 +18581,25 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Expanded list **line view** (`lists/page.tsx`) — gray price Futura Medium 12px, `marginTop` 3px (was 4px Demi). VIEW/CLOSE DETAILS `marginTop` 1px (tighter under price). `buildWishlistItemDetailsHtml` — labels only (e.g. `200% DENSITY`), no middle dot or +/- price suffixes.
 
 **Conventions:** Grid/shared line price styles unchanged unless explicitly requested; wishlist detail HTML is label-only.
+
+---
+
+## 2026-05-27 — Brand Contact FS: SUBMISSION FORM header and SEND MESSAGE button
+
+**Context:** User asked to rename the Contact FS red card header to "submission form" and the footer action to "send message" (site pattern: uppercase in UI).
+
+**Topics covered (entire conversation so far):**
+- Continuation from prior brand-page work (About MISSION STATEMENT header, member card copy, red icon filters, FAQ/reviews/terms card height parity).
+- Contact FS card header should read **SUBMISSION FORM** via `cardTitle` while menu label stays **CONTACT FS** and nav breadcrumb stays **CONTACT**.
+- Contact page below-card submit control should read **SEND MESSAGE** with loading **SENDING…** (was SUBMIT MESSAGE / SUBMITTING…).
+
+**Decisions / outcomes:**
+- `brandMenu.ts`: `cardTitle: 'SUBMISSION FORM'` on `/brand/contact`.
+- `brand/page.tsx`: contact `PageActionsBelowCard` button labels updated.
+- Committed on `master` (`965f7429`); merged to `preview/mobile`; both branches pushed.
+
+**Changes:**
+- `src/constants/brandMenu.ts`
+- `src/pages/brand/page.tsx`
+
+**Conventions:** Brand card headers use `cardTitle` in `BRAND_MENU_ITEMS` when they differ from menu `label`; contact nav title remains `navTitle: 'CONTACT'`.
