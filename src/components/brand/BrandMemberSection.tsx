@@ -82,18 +82,20 @@ function PremiumMembershipSection({
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        textAlign: 'center',
+        textAlign: showIncludedMembership ? 'left' : 'center',
+        ...(showIncludedMembership ? { marginTop: '12px', width: '100%' } : {}),
       }}
     >
       {showIncludedMembership ? (
         <>
-          <p style={scriptHeadlineStyle}>INCLUDED IN YOUR MEMBERSHIP</p>
+          <p style={blockStyle('bohemy')}>included in your membership</p>
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               gap: '8px',
-              alignItems: 'center',
+              alignItems: 'flex-start',
+              width: '100%',
             }}
           >
             {includedMembershipBenefits.map((label) => (
