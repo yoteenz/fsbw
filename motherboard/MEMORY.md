@@ -18301,6 +18301,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Add to list modal: dropdown spacing + dot count label
+
+**Context (full chat):** Add-to-list picker polish. User asked **+6px** more above dropdown (**8px** total **`marginTop`**); menu rows **`VACAY · 1`** (middle dot, red count) not **`(1)`** — checkbox list unchanged.
+
+**Changes:** **`AddToListModal.tsx`**
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
