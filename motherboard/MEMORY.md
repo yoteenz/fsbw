@@ -18528,3 +18528,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `lists/page.tsx` — `viewingDetailsItemKey` state (reset on list change); line UI block; grid `EXPANDED_LIST_GRID_REMOVE_STYLE`. New `wishlistListItemDetails.ts`.
 
 **Conventions:** List-line VIEW DETAILS logic must stay aligned with cart; use util rather than duplicating `hasSpecs` in the page.
+
+---
+
+## 2026-05-21 — Expanded wishlist list grid row spacing
+
+**Context:** Follow-up on expanded list grid view (`/wishlist/lists/:listId`).
+
+**Changes:** `lists/page.tsx` — grid `rowGap` 28px (20px base + 8px extra), `columnGap` 16px; constants `EXPANDED_LIST_GRID_ROW_GAP_*` / `EXPANDED_LIST_GRID_COL_GAP_PX`. Line view unchanged.
+
+**Conventions:** Grid-only layout tweaks use explicit `rowGap`/`columnGap` on the expanded-items grid container.
