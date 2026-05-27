@@ -265,19 +265,19 @@ export default function AddToListModal({
               }}
             >
               <option value="">
-                {lists.length === 0 ? 'SELECT A LIST' : 'CREATE A LIST'}
+                {lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST'}
               </option>
               {lists.length === 0 ? (
                 <option value="__create__">CREATE A LIST</option>
               ) : (
                 <>
+                  <option value="__create__">CREATE A LIST</option>
                   {lists.map((list) => (
                     <option key={list.id} value={list.id}>
                       {list.name.toUpperCase()}
                       {list.items.length > 0 ? ` (${list.items.length})` : ''}
                     </option>
                   ))}
-                  <option value="__create__">CREATE A LIST</option>
                 </>
               )}
             </select>
