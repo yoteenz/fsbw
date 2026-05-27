@@ -13,6 +13,8 @@ export interface UserList {
   id: string;
   name: string;
   items: any[];
+  /** Stable token for `/wishlist/shared/:token` links. */
+  shareToken?: string;
   /** If true, show "SHARED" on view lists page; otherwise "PRIVATE" */
   hasBeenShared?: boolean;
 }

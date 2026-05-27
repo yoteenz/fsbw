@@ -6,6 +6,14 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { loadUserLists, saveUserLists, type UserList } from '../../../components/AddToListModal';
 import CreateNewListModal from '../../../components/CreateNewListModal';
+import ShareListLinkModal from '../../../components/ShareListLinkModal';
+import { getCurrentUser } from '../../../utils/adminAuth';
+import {
+  getUserListVisibilityLabel,
+  prepareListForShare,
+  publishSharedListSnapshot,
+  syncUserListsSharedStatus,
+} from '../../../utils/wishlistListShare';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
@@ -107,9 +115,14 @@ export default function ViewListsPage() {
   /** list.id = expanded list; null = show list of lists */
   const [expandedListId, setExpandedListId] = useState<string | null>(null);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('grid');
+  const [showShareListModal, setShowShareListModal] = useState(false);
+  const [shareListUrl, setShareListUrl] = useState('');
 
   const refreshLists = () => {
-    setLists(loadUserLists());
+    const loaded = loadUserLists();
+    const synced = syncUserListsSharedStatus(loaded);
+    if (synced !== loaded) saveUserLists(synced);
+    setLists(synced);
   };
 
   const handleMobileMenuToggle = () => setShowMobileMenu((m) => !m);
@@ -134,13 +147,32 @@ export default function ViewListsPage() {
     }
   };
 
+  const handleShareListClick = () => {
+    if (!expandedListId) return;
+    const list = lists.find((l) => l.id === expandedListId);
+    if (!list) return;
+    const ownerEmail = getCurrentUser()?.email;
+    if (!ownerEmail) {
+      navigate(signInHrefWithReturnTo(location));
+      return;
+    }
+    const { list: updated, shareUrl } = prepareListForShare(list, ownerEmail);
+    const next = lists.map((l) => (l.id === updated.id ? updated : l));
+    saveUserLists(next);
+    setLists(next);
+    setShareListUrl(shareUrl);
+    setShowShareListModal(true);
+  };
+
   useEffect(() => {
     refreshLists();
     const handleUpdate = () => refreshLists();
     window.addEventListener('userListsUpdated', handleUpdate);
+    window.addEventListener('wishlistSharedRegistryUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
     return () => {
       window.removeEventListener('userListsUpdated', handleUpdate);
+      window.removeEventListener('wishlistSharedRegistryUpdated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, []);
@@ -384,9 +416,15 @@ export default function ViewListsPage() {
                     const expandedItems: any[] = expandedList.items ?? [];
                     const removeFromList = (item: any) => {
                       const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
-                      const nextLists = lists.map((l) =>
-                        l.id === expandedList.id ? { ...l, items: nextItems } : l
-                      );
+                      const ownerEmail = getCurrentUser()?.email;
+                      const nextLists = lists.map((l) => {
+                        if (l.id !== expandedList.id) return l;
+                        let updated: UserList = { ...l, items: nextItems };
+                        if (updated.shareToken && ownerEmail) {
+                          updated = publishSharedListSnapshot(updated, ownerEmail);
+                        }
+                        return updated;
+                      });
                       saveUserLists(nextLists);
                       setLists(nextLists);
                       if (nextItems.length === 0) setExpandedListId(null);
@@ -621,7 +659,7 @@ export default function ViewListsPage() {
                             </div>
                             <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => setExpandedListId(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
-                              <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{list.hasBeenShared ? 'SHARED' : 'PRIVATE'}</p>
+                              <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{getUserListVisibilityLabel(list)}</p>
                             </div>
                           </div>
                         );
@@ -644,6 +682,7 @@ export default function ViewListsPage() {
                 <>
                   <button
                     type="button"
+                    onClick={handleShareListClick}
                     className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
                     style={pageActionButtonStyle}
                   >
@@ -688,6 +727,12 @@ export default function ViewListsPage() {
         isOpen={showCreateListModal}
         onClose={() => setShowCreateListModal(false)}
         onCreated={() => { refreshLists(); setShowCreateListModal(false); }}
+      />
+      <ShareListLinkModal
+        isOpen={showShareListModal}
+        onClose={() => setShowShareListModal(false)}
+        shareUrl={shareListUrl}
+        listName={lists.find((l) => l.id === expandedListId)?.name}
       />
     </div>
   );

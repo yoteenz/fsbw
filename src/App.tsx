@@ -95,6 +95,10 @@ const OceanCurlUnitPage = lazyWithRetry(() => import('./pages/curly/ocean-curl/p
 const BeachWaveUnitPage = lazyWithRetry(() => import('./pages/wavy/beach-wave/page'), 'BeachWaveUnitPage');
 const WishlistPage = lazyWithRetry(() => import('./pages/wishlist/page'), 'WishlistPage');
 const ViewListsPage = lazyWithRetry(() => import('./pages/wishlist/lists/page'), 'ViewListsPage');
+const SharedWishlistListPage = lazyWithRetry(
+  () => import('./pages/wishlist/shared/page'),
+  'SharedWishlistListPage'
+);
 const AccountPage = lazyWithRetry(() => import('./pages/account/page'), 'AccountPage');
 const ConciergePage = lazyWithRetry(() => import('./pages/account/concierge/page'), 'ConciergePage');
 const RewardsPage = lazyWithRetry(() => import('./pages/account/rewards/page'), 'RewardsPage');
@@ -805,6 +809,11 @@ function App() {
               <ViewListsPage />
             </Suspense>
           </AccountRouteGuard>
+        } />
+        <Route path="/wishlist/shared/:token" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <SharedWishlistListPage />
+          </Suspense>
         } />
         <Route path="/account" element={
           <AccountRouteGuard>
