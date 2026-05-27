@@ -382,6 +382,18 @@ function BrandPage() {
                 </div>
               </div>
             </div>
+            {slug === 'about' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={() => navigate('/lobby')}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  HOME
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
             {slug === 'contact' ? (
               <PageActionsBelowCard>
                 <button
