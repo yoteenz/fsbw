@@ -18397,3 +18397,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/pages/brand/page.tsx`
 
 **Conventions:** Brand content cards use menu-matched viewport height with scroll inside the body region below the red title divider.
+
+---
+
+## 2026-05-27 — About Us: three additional paragraphs
+
+**Context:** User requested three new About Us paragraphs inserted after the education/slay-your-own-hair paragraph and before the “LUXURY HAIR…” tagline.
+
+**Changes:** `src/constants/brandAboutCopy.ts` — added uppercase paragraphs on experience/customization, community platform/perks, and consultation/closing.
+
+**Conventions:** New About Us copy goes in `brandAboutCopy.ts` in reading order; page renders all entries centered in the scrollable card.
