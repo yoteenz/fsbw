@@ -872,10 +872,7 @@ export default function ViewListsPage() {
                                         }}
                                       />
                                     ) : (
-                                      <>
-                                        <ExpandedListItemNoReviewStars />
-                                        <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
-                                      </>
+                                      <ExpandedListItemNoReviewStars />
                                     )}
                                     {!isViewingDetails && (
                                       <p
