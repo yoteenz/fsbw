@@ -265,7 +265,7 @@ export default function AddToListModal({
               }}
             >
               <option value="">
-                {lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST'}
+                {lists.length === 0 ? 'SELECT A LIST' : 'CREATE A LIST'}
               </option>
               {lists.length === 0 ? (
                 <option value="__create__">CREATE A LIST</option>
