@@ -13,10 +13,6 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 
-/** Gray rule between wishlist rows (matches lists overview / expanded items). */
-const WISHLIST_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
-const WISHLIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
-
 function WishlistSelection() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -891,16 +887,8 @@ function WishlistSelection() {
                   return (
                     <div
                       key={itemId}
-                      className="bg-white w-full"
-                      style={{
-                        boxSizing: 'border-box',
-                        padding: '8px',
-                        paddingBottom: '16px',
-                        marginBottom:
-                          index < wishlistItems.length - 1 ? `${WISHLIST_ROW_GAP_BELOW_DIVIDER_PX}px` : 0,
-                        borderBottom:
-                          index < wishlistItems.length - 1 ? WISHLIST_ROW_DIVIDER_STYLE : 'none',
-                      }}
+                      className="bg-white border border-gray-200 p-2 mb-2 w-full"
+                      style={{ boxSizing: 'border-box' }}
                     >
                       <div
                         className="flex items-center justify-start space-x-3"
