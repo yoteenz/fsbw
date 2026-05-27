@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { trackActivity } from '../../../utils/activity';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -47,6 +48,29 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
+
+/** Red link under list line thumb — matches CartDropdown EDIT IN BUILD-A-WIG placement. */
+const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Book"',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+  fontSize: '8px',
+  marginTop: '4px',
+  marginBottom: 0,
+  lineHeight: '1.1',
+  textAlign: 'center',
+  cursor: 'pointer',
+  width: '88px',
+};
+
+function readCartItems(): any[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 /** Inset white ring + inner art area (non-empty list thumbs). */
 const LIST_THUMB_FRAME_INSET_PX = 3;
@@ -97,6 +121,8 @@ export default function ViewListsPage() {
       return 0;
     }
   });
+  const [cartSyncVersion, setCartSyncVersion] = useState(0);
+  const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
     const pathname = window.location.pathname;
@@ -150,6 +176,52 @@ export default function ViewListsPage() {
     }
   };
 
+  const handleAddToBag = (item: any) => {
+    try {
+      const existing = cartItems.find((ci: any) => ci.id === item.id);
+      let updatedItems;
+      if (existing) {
+        updatedItems = cartItems.map((ci: any) =>
+          ci.id === item.id ? { ...ci, quantity: (ci.quantity || 1) + (item.quantity || 1) } : ci
+        );
+      } else {
+        updatedItems = [{ ...item, quantity: item.quantity || 1 }, ...cartItems];
+      }
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      setCartSyncVersion((v) => v + 1);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      const pname = (item?.name || item?.productName || '').toString();
+      trackActivity('add_to_cart', { source: 'wishlist_list', productName: pname || undefined });
+    } catch (e) {
+      console.error('Error adding to bag:', e);
+    }
+  };
+
+  const handleRemoveFromBag = (item: any) => {
+    try {
+      const pname = (item?.name || item?.productName || '').toString().trim();
+      const updatedItems = cartItems.filter((ci: any) => ci.id !== item.id);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      setCartSyncVersion((v) => v + 1);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('remove_from_cart', {
+        source: 'wishlist_list',
+        change: 'removed_line',
+        productName: pname || undefined,
+      });
+    } catch (e) {
+      console.error('Error removing from bag:', e);
+    }
+  };
+
   const handleShareListClick = () => {
     if (!expandedListId) return;
     const list = lists.find((l) => l.id === expandedListId);
@@ -187,13 +259,17 @@ export default function ViewListsPage() {
   }, [expandedListId, lists]);
 
   useEffect(() => {
-    const handleCartCountUpdate = (e: CustomEvent) => setCartCount(e.detail);
+    const handleCartCountUpdate = (e: CustomEvent) => {
+      setCartCount(e.detail);
+      setCartSyncVersion((v) => v + 1);
+    };
     const handleStorage = () => {
       try {
         setCartCount(parseInt(localStorage.getItem('cartCount') || '0', 10));
       } catch {
         setCartCount(0);
       }
+      setCartSyncVersion((v) => v + 1);
     };
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorage);
@@ -501,10 +577,63 @@ export default function ViewListsPage() {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const isInBag = cartItems.some((ci: any) => ci.id === item.id);
+                              const isOutOfStock = (item.stockStatus || 'in_stock') === 'out_of_stock';
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingBottom: '16px', marginBottom: '16px', borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer flex-shrink-0" style={{ width: '88px', height: '110px', backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
-                                    <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                  <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: '88px', height: '110px', backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                      <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                    </div>
+                                    {isOutOfStock ? (
+                                      <p
+                                        style={{
+                                          ...LIST_LINE_BAG_LINK_STYLE,
+                                          color: '#808080',
+                                          cursor: 'default',
+                                        }}
+                                      >
+                                        OUT OF STOCK
+                                      </p>
+                                    ) : isInBag ? (
+                                      <p
+                                        className="font-bold hover:opacity-80 transition-opacity"
+                                        style={LIST_LINE_BAG_LINK_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRemoveFromBag(item);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            e.stopPropagation();
+                                            handleRemoveFromBag(item);
+                                          }
+                                        }}
+                                      >
+                                        REMOVE FROM BAG
+                                      </p>
+                                    ) : (
+                                      <p
+                                        className="font-bold hover:opacity-80 transition-opacity"
+                                        style={LIST_LINE_BAG_LINK_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleAddToBag(item);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            e.stopPropagation();
+                                            handleAddToBag(item);
+                                          }
+                                        }}
+                                      >
+                                        ADD TO BAG
+                                      </p>
+                                    )}
                                   </div>
                                   <div style={{ flex: 1, minWidth: 0 }}>
                                     <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
