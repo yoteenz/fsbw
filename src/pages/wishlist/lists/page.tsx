@@ -73,11 +73,43 @@ const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
+const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
+
 const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
   flex: 1,
   minWidth: 0,
-  marginTop: '12px',
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX}px`,
 };
+
+const EXPANDED_LIST_NO_REVIEWS_LABEL = 'NO REVIEWS SUBMITTED';
+const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
+
+function ExpandedListItemNoReviewStars({ centered }: { centered?: boolean }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '2px',
+        marginBottom: '6px',
+        ...(centered ? { justifyContent: 'center' } : {}),
+      }}
+    >
+      {[...Array(5)].map((_, idx) => (
+        <img
+          key={idx}
+          src="/assets/NOIR/star-symbol.png"
+          alt=""
+          style={{
+            width: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            height: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            filter: EXPANDED_LIST_STAR_STROKE_FILTER,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
   flexShrink: 0,
@@ -766,12 +798,8 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>{itemLength} RAW {itemHairOrigin}</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}>
-                                      {[...Array(5)].map((_, idx) => (
-                                        <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
-                                      ))}
-                                    </div>
-                                    <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>4.9 OUT OF 5 STARS</p>
+                                    <ExpandedListItemNoReviewStars />
+                                    <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
                                   </div>
                                 </div>
                               );
@@ -790,12 +818,8 @@ export default function ViewListsPage() {
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
-                                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '6px' }}>
-                                    {[...Array(5)].map((_, idx) => (
-                                      <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
-                                    ))}
-                                  </div>
-                                  <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>4.9 OUT OF 5 STARS</p>
+                                  <ExpandedListItemNoReviewStars centered />
+                                  <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
                                   <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={EXPANDED_LIST_GRID_REMOVE_STYLE}>REMOVE</button>
                                 </div>
                               );
