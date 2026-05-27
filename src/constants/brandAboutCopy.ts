@@ -12,10 +12,11 @@ export const BRAND_ABOUT_US_PARAGRAPHS = [
 ] as const;
 
 /** Red accent lines on About Us — Futura PT Medium. */
-export const BRAND_ABOUT_ACCENT_PARAGRAPHS: ReadonlySet<string> = new Set();
-
-/** Gray Futura PT Medium lines on About Us (mindset + closing tagline). */
-export const BRAND_ABOUT_GRAY_MEDIUM_PARAGRAPHS: ReadonlySet<string> = new Set([
+export const BRAND_ABOUT_ACCENT_PARAGRAPHS: ReadonlySet<string> = new Set([
   "BECAUSE FRONTAL SLAYER ISN'T JUST A NAME… IT'S A MINDSET.",
+]);
+
+/** Futura PT Demi lines on About Us. */
+export const BRAND_ABOUT_DEMI_PARAGRAPHS: ReadonlySet<string> = new Set([
   'LUXURY HAIR. REAL EDUCATION. NO GIMMICKS, JUST PRESSURE.',
 ]);
