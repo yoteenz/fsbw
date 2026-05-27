@@ -31,7 +31,7 @@ function getLeafBrickFrontImage(item: any): string {
 }
 
 /** Thumbnail when a user list has no items (lists overview row only). */
-const EMPTY_LIST_THUMB_SRC = '/assets/empty-list-thumb.png';
+const EMPTY_LIST_THUMB_SRC = '/assets/empty-list-thumb.jpeg';
 
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
@@ -542,10 +542,14 @@ export default function ViewListsPage() {
                                 style={{
                                   width: '88px',
                                   height: '110px',
-                                  backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                                  backgroundSize: 'cover',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat',
+                                  ...(firstItem
+                                    ? {
+                                        backgroundImage: "url('/assets/leaf-brick-resize.png')",
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        backgroundRepeat: 'no-repeat',
+                                      }
+                                    : { backgroundColor: '#fff' }),
                                   border: '1.3px solid #000',
                                   boxShadow: 'inset 0 0 0 3px #fff',
                                   overflow: 'hidden'
@@ -557,7 +561,7 @@ export default function ViewListsPage() {
                                   style={
                                     firstItem
                                       ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }
-                                      : { position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '88%', height: '88%', objectFit: 'contain', objectPosition: 'center', zIndex: 1 }
+                                      : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', zIndex: 1 }
                                   }
                                 />
                               </div>
