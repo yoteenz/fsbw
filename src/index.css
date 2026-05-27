@@ -4084,7 +4084,7 @@ p.bcf-bundles-pdp-product-name {
   animation: admin-revenue-globe-arc-shift 14s linear infinite;
 }
 
-/* Wishlist expanded + shared list line — price / VIEW DETAILS (inline margin gets overridden) */
+/* Wishlist expanded list line (lists page + shared) — price / VIEW DETAILS */
 .wishlist-expanded-list-line-price {
   margin-top: 3px !important;
   margin-bottom: 0 !important;

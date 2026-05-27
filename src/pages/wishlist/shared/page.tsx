@@ -15,6 +15,7 @@ import {
 } from '../../../utils/wishlistListItemDetails';
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 
@@ -37,8 +38,6 @@ const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
 const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
 const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
-const EXPANDED_LIST_RATING_FONT_PX = 9;
-const EXPANDED_LIST_NO_REVIEWS_LABEL = 'NO REVIEWS SUBMITTED';
 const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
 
 const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
@@ -73,13 +72,6 @@ const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '10px',
   color: '#EB1C24',
-  textTransform: 'uppercase',
-};
-
-const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: `${EXPANDED_LIST_RATING_FONT_PX}px`,
-  color: '#000000',
   textTransform: 'uppercase',
 };
 
@@ -400,19 +392,20 @@ export default function SharedWishlistListPage() {
             </p>
           ) : (
             <>
-              <div className="flex items-center justify-between pb-1 border-b border-gray-200">
+              <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                 <span
+                  className="text-red-500 font-bold text-lg tracking-wider truncate text-left uppercase"
                   style={{
                     fontFamily: '"Futura PT Medium"',
                     color: '#EB1C24',
                     fontSize: '12px',
-                    fontWeight: 500,
-                    textTransform: 'uppercase',
+                    fontWeight: '500',
                   }}
                 >
                   {(snapshot.name || 'LIST').toUpperCase()}
                 </span>
                 <span
+                  className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                   style={{
                     fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
                     fontSize: '17px',
@@ -423,7 +416,7 @@ export default function SharedWishlistListPage() {
               </div>
               <div
                 style={{
-                  paddingTop: '10px',
+                  paddingTop: '8px',
                   flex: 1,
                   minHeight: 0,
                   overflowY: 'auto',
@@ -456,7 +449,7 @@ export default function SharedWishlistListPage() {
                     </p>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                     {items.map((item: any, index: number) => {
                       const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                       const itemLength = item.length || '24"';
@@ -567,17 +560,21 @@ export default function SharedWishlistListPage() {
                             {isViewingDetails ? (
                               <p
                                 style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
-                                dangerouslySetInnerHTML={{ __html: buildWishlistItemDetailsHtml(item) }}
+                                dangerouslySetInnerHTML={{
+                                  __html: buildWishlistItemDetailsHtml(item, { omitLength: true }),
+                                }}
                               />
                             ) : (
-                              <>
-                                <ExpandedListItemNoReviewStars />
-                                <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
-                              </>
+                              <ExpandedListItemNoReviewStars />
                             )}
-                            <p className={WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} style={EXPANDED_LIST_LINE_PRICE_STYLE}>
-                              {itemPriceLabel}
-                            </p>
+                            {!isViewingDetails && (
+                              <p
+                                className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
+                                style={EXPANDED_LIST_LINE_PRICE_STYLE}
+                              >
+                                {itemPriceLabel}
+                              </p>
+                            )}
                             {showViewDetailsLink && (
                               <span
                                 role="button"
