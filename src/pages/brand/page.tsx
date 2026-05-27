@@ -13,7 +13,7 @@ import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 import BrandContactSection from '../../components/brand/BrandContactSection';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
-import { BRAND_MEMBER_PARAGRAPHS } from '../../constants/brandMemberCopy';
+import BrandMemberSection from '../../components/brand/BrandMemberSection';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
@@ -264,7 +264,7 @@ function BrandPage() {
                 </p>
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-                  {slug === 'about' || slug === 'member' ? (
+                  {slug === 'about' ? (
                     <div
                       style={{
                         display: 'flex',
@@ -273,7 +273,7 @@ function BrandPage() {
                         textAlign: 'center',
                       }}
                     >
-                      {(slug === 'about' ? BRAND_ABOUT_US_PARAGRAPHS : BRAND_MEMBER_PARAGRAPHS).map((paragraph) => (
+                      {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => (
                         <p
                           key={paragraph}
                           style={{
@@ -289,6 +289,8 @@ function BrandPage() {
                         </p>
                       ))}
                     </div>
+                  ) : slug === 'member' ? (
+                    <BrandMemberSection />
                   ) : slug === 'contact' ? (
                     <BrandContactSection
                       formId="brand-contact-form"
