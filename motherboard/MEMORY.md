@@ -18603,3 +18603,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `src/pages/brand/page.tsx`
 
 **Conventions:** Brand card headers use `cardTitle` in `BRAND_MENU_ITEMS` when they differ from menu `label`; contact nav title remains `navTitle: 'CONTACT'`.
+
+---
+
+## 2026-05-27 — Brand menu: ABOUT US and CONTACT US (not FS)
+
+**Context:** User asked to change About FS and Contact FS on the menu toggle back to ABOUT US and CONTACT US.
+
+**Topics covered (entire conversation so far):**
+- Prior: Contact card header SUBMISSION FORM, button SEND MESSAGE; About card MISSION STATEMENT.
+- Menu BRAND tab labels only: `ABOUT FS` → `ABOUT US`, `CONTACT FS` → `CONTACT US` in `brandMenu.ts`.
+- Card headers unchanged (`cardTitle`: MISSION STATEMENT, SUBMISSION FORM); contact `navTitle` stays CONTACT.
+
+**Changes:** `src/constants/brandMenu.ts` — `label` fields only.
+
+**Conventions:** `label` = mobile menu text; `cardTitle` = red in-card header when different.
