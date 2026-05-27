@@ -1,5 +1,5 @@
 /** Become a Member body copy for `/brand/member` — displayed in uppercase on the page. */
-export type BrandMemberBlockVariant = 'headline' | 'body' | 'accent' | 'demiGray' | 'bohemy';
+export type BrandMemberBlockVariant = 'body' | 'accent' | 'demiGray' | 'bohemy';
 
 export type BrandMemberBlock = {
   id: string;
@@ -8,11 +8,6 @@ export type BrandMemberBlock = {
 };
 
 export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
-  {
-    id: 'headline',
-    text: 'join the slay society',
-    variant: 'bohemy',
-  },
   {
     id: 'vip-experience',
     text: "CREATING AN ACCOUNT WITH FRONTAL SLAYER UNLOCKS MORE THAN JUST A FASTER CHECKOUT, IT GIVES YOU ACCESS TO THE FULL VIP EXPERIENCE AND THEN SOME. YOU'RE ABLE TO KEEP TRACK OF YOUR ORDER HISTORY, SAVE YOUR FAVORITE PRODUCTS TO YOUR WISHLIST AND CART, RECEIVE EXCLUSIVE NOTIFICATIONS ON NEW DROPS, RESTOCKS, SALES, GIVEAWAYS, AND BRAND RELATED UPDATES BEFORE THE PUBLIC DOES.",
