@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { trackActivity } from '../../../utils/activity';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -113,6 +113,21 @@ function getHairOrigin(productName: string): string {
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  /** From `?list=` so browser Back returns to lists overview, not /wishlist. */
+  const expandedListId = searchParams.get('list');
+
+  const openExpandedList = (listId: string) => {
+    setSearchParams({ list: listId });
+  };
+
+  const closeExpandedList = (options?: { replace?: boolean }) => {
+    if (options?.replace || !searchParams.has('list')) {
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    navigate(-1);
+  };
   const [lists, setLists] = useState<UserList[]>([]);
   const [cartCount, setCartCount] = useState(() => {
     try {
@@ -141,8 +156,6 @@ export default function ViewListsPage() {
   const [showDeleteListConfirm, setShowDeleteListConfirm] = useState(false);
   const [listToDelete, setListToDelete] = useState<string | null>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
-  /** list.id = expanded list; null = show list of lists */
-  const [expandedListId, setExpandedListId] = useState<string | null>(null);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('grid');
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
@@ -172,7 +185,7 @@ export default function ViewListsPage() {
       setLists(next);
       setListToDelete(null);
       setShowDeleteListConfirm(false);
-      if (expandedListId === listToDelete) setExpandedListId(null);
+      if (expandedListId === listToDelete) closeExpandedList({ replace: true });
     }
   };
 
@@ -253,9 +266,10 @@ export default function ViewListsPage() {
   }, []);
 
   useEffect(() => {
-    if (expandedListId && !lists.some((l) => l.id === expandedListId)) {
-      setExpandedListId(null);
+    if (expandedListId && lists.length > 0 && !lists.some((l) => l.id === expandedListId)) {
+      closeExpandedList({ replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to URL/list data mismatch
   }, [expandedListId, lists]);
 
   useEffect(() => {
@@ -320,7 +334,7 @@ export default function ViewListsPage() {
                 </>
               ) : (
                 <button
-                  onClick={() => (expandedListId ? setExpandedListId(null) : navigate('/wishlist'))}
+                  onClick={() => (expandedListId ? closeExpandedList() : navigate('/wishlist'))}
                   className="cursor-pointer"
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                 >
@@ -338,7 +352,7 @@ export default function ViewListsPage() {
                 </>
               ) : expandedListId ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => setExpandedListId(null)}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => closeExpandedList()}>
                     LISTS &gt;
                   </span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
@@ -509,7 +523,7 @@ export default function ViewListsPage() {
                       });
                       saveUserLists(nextLists);
                       setLists(nextLists);
-                      if (nextItems.length === 0) setExpandedListId(null);
+                      if (nextItems.length === 0) closeExpandedList({ replace: true });
                     };
                     return (
                       <div
@@ -710,8 +724,8 @@ export default function ViewListsPage() {
                             key={list.id}
                             role="button"
                             tabIndex={0}
-                            onClick={() => setExpandedListId(list.id)}
-                            onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}
+                            onClick={() => openExpandedList(list.id)}
+                            onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}
                             style={{
                               display: 'flex',
                               alignItems: 'flex-start',
@@ -725,8 +739,8 @@ export default function ViewListsPage() {
                               <div
                                 role="button"
                                 tabIndex={0}
-                                onClick={(e) => { e.stopPropagation(); setExpandedListId(list.id); }}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setExpandedListId(list.id); } }}
+                                onClick={(e) => { e.stopPropagation(); openExpandedList(list.id); }}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openExpandedList(list.id); } }}
                                 className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                                 style={{
                                   width: '88px',
@@ -831,7 +845,7 @@ export default function ViewListsPage() {
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}
                               </span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => setExpandedListId(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}>
+                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => openExpandedList(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
                               <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{getUserListVisibilityLabel(list)}</p>
                             </div>
