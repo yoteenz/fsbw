@@ -18325,6 +18325,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Add to list: revert mistaken title/field spacing
+
+**Context:** User asked to undo incorrect spacing (title **`paddingBottom`** + wrapper **`paddingTop: 14px`** / **`marginTop`** attempts).
+
+**Reverted:** Title **`marginBottom: 16px`** only; wrapper no extra top padding. **Kept:** field→menu **`LIST_MENU_TRIGGER_GAP_PX`**, dot menu labels, portaled menu, cart **`SHOPPING BAG · n`**.
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
