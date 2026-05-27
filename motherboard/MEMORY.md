@@ -18640,3 +18640,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `brand/page.tsx` — render on `slug === 'reviews'`; content wrapper `flex: 1` so text centers in About-matched card height.
 
 **Conventions:** Use `dangerouslySetInnerHTML` with `<br>` for two-line brand empty copy; keep FAQ/terms shells empty until copy is specified.
+
+---
+
+## 2026-05-27 — Brand reviews: SUBMIT REVIEW button
+
+**Context:** User wanted a below-card **SUBMIT REVIEW** button on `/brand/reviews` with same `PageActionsBelowCard` spacing as other brand pages.
+
+**Behavior:** Signed in → `/account/orders`; not signed in → `/sign-in?returnTo=/account/orders`.
+
+**Changes:** `brand/page.tsx` — `handleBrandSubmitReviewClick`, reviews slug `PageActionsBelowCard` button.
