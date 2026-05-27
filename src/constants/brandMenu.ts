@@ -9,7 +9,7 @@ export type BrandMenuItem = {
 };
 
 export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
-  { label: 'ABOUT FS', route: '/brand/about' },
+  { label: 'ABOUT FS', route: '/brand/about', cardTitle: 'MISSION STATEMENT' },
   { label: 'CONTACT FS', route: '/brand/contact', navTitle: 'CONTACT' },
   { label: 'BECOME A MEMBER', route: '/brand/member', navTitle: 'MEMBERSHIP' },
   { label: 'REVIEWS', route: '/brand/reviews' },

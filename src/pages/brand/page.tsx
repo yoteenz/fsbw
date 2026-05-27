@@ -88,7 +88,7 @@ function BrandPage() {
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
   const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
-  const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'ABOUT FS';
+  const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'MISSION STATEMENT';
 
   /** Tall content only: cap card height and scroll inside; short pages hug content (no viewport gap). */
   const brandMainCardScrollable =
@@ -213,7 +213,7 @@ function BrandPage() {
                 flexShrink: 0,
               }}
             >
-              ABOUT FS
+              MISSION STATEMENT
             </p>
             <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
             <BrandAboutUsBody />
