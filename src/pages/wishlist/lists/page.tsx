@@ -55,7 +55,7 @@ const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8px',
-  marginTop: '4px',
+  marginTop: '6px',
   marginBottom: 0,
   lineHeight: '1.1',
   textAlign: 'center',
@@ -572,7 +572,7 @@ export default function ViewListsPage() {
                             </p>
                           </div>
                         ) : expandedViewMode === 'line' ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
@@ -646,14 +646,14 @@ export default function ViewListsPage() {
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
                                   <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
-                                    <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                                    <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0)' }} />
                                   </button>
                                 </div>
                               );
                             })}
                           </div>
                         ) : (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px 16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px 16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               return (
