@@ -18383,62 +18383,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
-## 2026-05-27 — Brand page main card height + centered About Us text
+## 2026-05-21 — Expanded list: line/grid spacing + gray REMOVE FROM BAG
 
-**Context:** User wanted About Us body copy centered and all brand main cards the same height as the menu toggle card with internal scroll.
+**Context:** User follow-up on **`/wishlist/lists/:listId`** expanded item typography; prior pass left **REMOVE FROM BAG** red and spacing offset wrong.
 
-**Topics covered (entire conversation so far in this thread):**
-- Added About Us uppercase copy (`brandAboutCopy.ts`, `/brand/about`).
-- Fixed missing `BRAND_ABOUT_US_PARAGRAPHS` import for Vercel build.
-- **`BRAND_PAGE_MAIN_CARD_HEIGHT`** = `calc(100dvh - 80px)` shared by menu card and content main cards.
-- Main card: flex column, fixed height, `overflow: hidden`; scrollable body (`flex: 1`, `overflowY: auto`).
-- About Us paragraphs: `textAlign: 'center'`.
+**List view:** Name→RAW gap **0** (−2px); stars→rating **6px** (+1); text column **`translateY(-8px)`**; **REMOVE FROM BAG** only → gray **`#999999`** (**`LIST_LINE_BAG_REMOVE_STYLE`**); **ADD TO BAG** stays red (**`LIST_LINE_BAG_ADD_STYLE`**).
 
-**Changes:** `src/pages/brand/page.tsx`
+**Grid view:** Space above NOIR **6px** (−2 from 8); name→RAW **−2px** bottom on name; stars→rating **6px** (+1).
 
-**Conventions:** Brand content cards use menu-matched viewport height with scroll inside the body region below the red title divider.
-
----
-
-## 2026-05-27 — About Us: three additional paragraphs
-
-**Context:** User requested three new About Us paragraphs inserted after the education/slay-your-own-hair paragraph and before the “LUXURY HAIR…” tagline.
-
-**Changes:** `src/constants/brandAboutCopy.ts` — added uppercase paragraphs on experience/customization, community platform/perks, and consultation/closing.
-
-**Conventions:** New About Us copy goes in `brandAboutCopy.ts` in reading order; page renders all entries centered in the scrollable card.
-
----
-
-## 2026-05-27 — Become a Member: premium upgrade chart toggle
-
-**Context:** User asked for an **UPGRADE YOUR SUBSCRIPTION** button on **Become a Member** (`/brand/member`) that toggles the same premium comparison chart as Account → Rewards, routing unsigned users to sign-in.
-
-**Topics covered:**
-- Prior chat handoff: brand About/Contact/Member pages, contact form, menu labels; this turn implemented the member upgrade flow.
-- Extracted shared premium upgrade UI from `src/pages/account/membership/page.tsx` so brand and account use one chart.
-
-**Decisions / outcomes:**
-- **Signed out:** button navigates via `signInHrefWithReturnTo(location)`.
-- **Signed in:** button toggles chart inside the member card (`embedded` chart); label becomes **CONFIRM SUBSCRIPTION** when open; confirm proceeds to `/checkout/upgrade` with same localStorage keys as membership.
-- Chart close (X) returns to member copy; leaving `/brand/member` closes chart.
-
-**Changes:**
-- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`, `premiumChartTable.tsx`, `src/constants/premiumBenefitsByTier.ts`, `src/hooks/usePremiumSubscriptionUpgrade.ts` (new).
-- `src/pages/brand/page.tsx` — member actions below card + validation modal.
-- `src/pages/account/membership/page.tsx` — uses shared chart component (removed duplicate inline chart).
-
-**Conventions:** Reuse `PageActionsBelowCard` / `pageActionButtonStyle` for brand page actions below the main card.
-
----
-
-## 2026-05-27 — Brand pages: stop main card viewport gap
-
-**Context:** User reported brand main card auto-expanding to full viewport on all slugs, leaving a large empty gap at the bottom; contact message field should stay 120px tall (not stretch in tall card) but remain vertically resizable.
-
-**Decisions / outcomes:**
-- Main brand card no longer uses fixed `height`/`minHeight: calc(100dvh - 80px)` on every slug — short pages (about, member copy, etc.) hug content.
-- Scroll cap only when needed: **contact** form and **member** premium chart use `maxHeight` + inner `overflowY: auto`.
-- Contact textarea: `height`/`minHeight` 120px, `flexShrink: 0`, form `flex: 0 0 auto`; `resize: vertical` kept (no maxHeight lock).
-
-**Changes:** `src/pages/brand/page.tsx`, `src/components/brand/BrandContactSection.tsx`.
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**.
