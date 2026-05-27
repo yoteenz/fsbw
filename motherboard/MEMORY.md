@@ -18171,6 +18171,6 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context (full chat):** Continuation of wishlist **lists** page work (header count, WISHLIST removal, spacing, modals, empty copy, etc.). User asked to use an attached ornate red/silver **heart** image as the list-row thumbnail **only when a user list has no items**; lists with items keep **`getLeafBrickFrontImage(firstItem)`**.
 
-**Changes:** Added **`public/assets/empty-list-thumb.jpeg`** (canonical asset from Supabase live-preview URL; not a regenerated image). **`src/pages/wishlist/lists/page.tsx`** — **`EMPTY_LIST_THUMB_SRC`**; empty rows omit **leaf-brick** background; empty thumb uses **`object-fit: cover`** (no side letterboxing) and no inset white shadow; filled lists unchanged (leaf-brick + bottom-aligned wig front).
+**Changes:** Added **`public/assets/empty-list-thumb.jpeg`** (canonical Supabase live-preview asset; updated 2026-05-26 to **`6KLNd6QdTtVWqfXcnpOsc_cChNXN8z.jpeg`**; not a regenerated image). **`src/pages/wishlist/lists/page.tsx`** — **`EMPTY_LIST_THUMB_SRC`**; empty rows omit **leaf-brick** background; empty thumb uses **`object-fit: cover`** (no side letterboxing) and no inset white shadow; filled lists unchanged (leaf-brick + bottom-aligned wig front).
 
 **Verify:** **`npm run build`** succeeds.
