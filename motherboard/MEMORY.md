@@ -18707,3 +18707,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`docs/CHECKOUT_SERVER_QUOTE.md`** — Notes checkout UI no longer shows server quote rows; `POST /api/checkout/quote` remains for future Stripe wiring.
 
 **Conventions:** Legitimate gray UI (loyalty points, CAP SIZE, discount code labels, voucher helper copy) stays; only dev/parity/engineering messages are removed from client-facing pages.
+
+---
+
+## 2026-05-21 — Cart bag vs dropdown: shared price margin above line total
+
+**Context:** User noticed Blanco price sat closer to CAP SIZE on shopping bag than in cart dropdown; asked why, then to align.
+
+**Cause:** Bag used `marginTop: BLANCO ? 0px : 2px` on price; dropdown used inline `hasSpecs` with density compared to `200%` (so default Blanco 250% got 2px). CAP SIZE margin shared `cartCapSizeLineMarginTop` but still treated 250% as non-default.
+
+**Changes:** **`src/utils/cartCapSizeLineMargin.ts`** — `cartItemHasNonDefaultSpecs` (Blanco default density `250%`), `cartLinePriceMarginTop` (Blanco `0px`, else `2px`); CAP SIZE helper uses shared spec check. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** — price blocks use `cartLinePriceMarginTop`.
