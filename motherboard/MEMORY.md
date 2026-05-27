@@ -18663,3 +18663,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `brand/page.tsx` — render FAQ; `brandMainCardScrollable` includes `faq`; removed `faq` from about-height shell set.
 
 **Conventions:** FAQ copy in constants; policy numbers should match checkout/contact/member copy when updated.
+
+---
+
+## 2026-05-27 — Brand FAQ: submit question form
+
+**Context:** User wanted a section below FAQ accordion for clients to submit questions (name, email, question) with **SEND QUESTION** button below main card (`PageActionsBelowCard` spacing).
+
+**Implementation:**
+- `BrandFaqPageContent` — FAQ accordion + `BrandFaqQuestionSection` form inside scrollable card.
+- `brand/page.tsx` — submit button via `form="brand-faq-question-form"`; success modal **QUESTION SENT**.
+- `postBrandFaqQuestionSubmit` + `/api/brand/faq-question-submit`; `brandFaqQuestions.ts` localStorage fallback; admin email via `sendBrandFaqQuestionNotifyEmail`.
+
+**Conventions:** Match `BrandContactSection` field styles; optional Supabase `brand_faq_questions` table (graceful if missing).
