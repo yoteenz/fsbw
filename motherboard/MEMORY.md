@@ -18694,3 +18694,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** Checkout `showTermsModal` now renders shared `BrandTermsBody` (from `brandTermsCopy.ts`) instead of two hardcoded paragraphs — stays aligned with `/brand/terms` when copy updates.
 
 **File:** `src/pages/checkout/page.tsx`
+
+---
+
+## 2026-05-21 — Hide dev-only gray checkout lines from clients
+
+**Context:** User confirmed they want **all** gray developer/coding lines hidden from shoppers (not just explained), including the checkout **SERVER LIST (USD, VERIFIED LINES)** row and the warning about BCF/custom builds / display-only settlement. Prior chat also covered wishlist line/grid parity, shared list sync, cart CAP SIZE margin, and cart dropdown subtotal alignment.
+
+**Changes:**
+- **`src/pages/checkout/page.tsx`** — Removed `serverQuote` state, `fetchCheckoutQuote` effect, **SERVER LIST** row, and server-pricing warning paragraph. Removed gray Stripe setup copy (secret key / price IDs / SEE DOCS), Supabase local-only sign-in hint, recurring-billing dev note, and booking autopay gray helper under the checkbox. Dropped unused `stripeAvailabilityLoaded` state.
+- **`src/pages/account/consult-offer/page.tsx`** — Replaced `CHECKOUT HOOK TBD` gray line with customer copy: $40 off within 72 hours.
+- **`docs/CHECKOUT_SERVER_QUOTE.md`** — Notes checkout UI no longer shows server quote rows; `POST /api/checkout/quote` remains for future Stripe wiring.
+
+**Conventions:** Legitimate gray UI (loyalty points, CAP SIZE, discount code labels, voucher helper copy) stays; only dev/parity/engineering messages are removed from client-facing pages.
