@@ -18475,3 +18475,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Conventions:**
 - Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. For new brand text pages that should match About card size before content exists, add slug to `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT` or give them comparable content height.
+---
+
+## 2026-05-27 — About Us copy updates (curated, founder, experience, closing)
+
+**Context (entire chat):** Continued brand/wishlist/checkout work; user supplied revised About Us paragraphs and closing tagline for `/brand/about`.
+
+**Changes:** `src/constants/brandAboutCopy.ts` — (2) seamless/convenient comma removed before AND; (3) CUSTOMIZING INSTALLS, CEO CREATED FRONTAL SLAYER; (6) SEPARATES US FROM (not APART FROM); (7) LOYALTY POINTS; Bohemy closing `no gimmicks, just pressure.` Mindset, education, and consultation paragraphs unchanged.
+
+**Conventions:** Edit About Us in `brandAboutCopy.ts` only; `BrandAboutUsBody` renders on page and FAQ/Reviews/Terms height measurer.
