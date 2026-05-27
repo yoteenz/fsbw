@@ -155,6 +155,8 @@ export default function ViewListsPage() {
   });
   const [showDeleteListConfirm, setShowDeleteListConfirm] = useState(false);
   const [listToDelete, setListToDelete] = useState<string | null>(null);
+  const [showRemoveListItemConfirm, setShowRemoveListItemConfirm] = useState(false);
+  const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('grid');
   const [showShareListModal, setShowShareListModal] = useState(false);
@@ -233,6 +235,37 @@ export default function ViewListsPage() {
     } catch (e) {
       console.error('Error removing from bag:', e);
     }
+  };
+
+  const removeItemFromExpandedList = (item: any) => {
+    if (!expandedListId) return;
+    const expandedList = lists.find((l) => l.id === expandedListId);
+    if (!expandedList) return;
+    const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
+    const ownerEmail = getCurrentUser()?.email;
+    const nextLists = lists.map((l) => {
+      if (l.id !== expandedList.id) return l;
+      let updated: UserList = { ...l, items: nextItems };
+      if (updated.shareToken && ownerEmail) {
+        updated = publishSharedListSnapshot(updated, ownerEmail);
+      }
+      return updated;
+    });
+    saveUserLists(nextLists);
+    setLists(nextLists);
+    if (nextItems.length === 0) closeExpandedList({ replace: true });
+  };
+
+  const handleConfirmRemoveListItem = () => {
+    if (!listItemToRemove) return;
+    removeItemFromExpandedList(listItemToRemove);
+    setShowRemoveListItemConfirm(false);
+    setListItemToRemove(null);
+  };
+
+  const requestRemoveListItemConfirm = (item: any) => {
+    setListItemToRemove(item);
+    setShowRemoveListItemConfirm(true);
   };
 
   const handleShareListClick = () => {
@@ -510,21 +543,6 @@ export default function ViewListsPage() {
                     const expandedList = lists.find((l) => l.id === expandedListId);
                     if (!expandedList) return null;
                     const expandedItems: any[] = expandedList.items ?? [];
-                    const removeFromList = (item: any) => {
-                      const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
-                      const ownerEmail = getCurrentUser()?.email;
-                      const nextLists = lists.map((l) => {
-                        if (l.id !== expandedList.id) return l;
-                        let updated: UserList = { ...l, items: nextItems };
-                        if (updated.shareToken && ownerEmail) {
-                          updated = publishSharedListSnapshot(updated, ownerEmail);
-                        }
-                        return updated;
-                      });
-                      saveUserLists(nextLists);
-                      setLists(nextLists);
-                      if (nextItems.length === 0) closeExpandedList({ replace: true });
-                    };
                     return (
                       <div
                         style={{
@@ -659,7 +677,7 @@ export default function ViewListsPage() {
                                     </div>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
+                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
                                     <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0)' }} />
                                   </button>
                                 </div>
@@ -682,7 +700,7 @@ export default function ViewListsPage() {
                                     ))}
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
+                                  <button type="button" onClick={() => removeItemFromExpandedList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
                               );
                             })}
@@ -910,6 +928,16 @@ export default function ViewListsPage() {
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="delete-list-confirm"
+      />
+      <ConfirmationModal
+        isOpen={showRemoveListItemConfirm}
+        onClose={() => { setShowRemoveListItemConfirm(false); setListItemToRemove(null); }}
+        onConfirm={handleConfirmRemoveListItem}
+        title="REMOVE FROM LIST"
+        message="REMOVE THIS ITEM FROM YOUR LIST?"
+        confirmText="REMOVE"
+        cancelText="CANCEL"
+        dataAttribute="remove-list-item-confirm"
       />
       <CreateNewListModal
         isOpen={showCreateListModal}
