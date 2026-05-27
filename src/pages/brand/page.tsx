@@ -16,6 +16,7 @@ import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageA
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
 import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
 import BrandFaqPageContent from '../../components/brand/BrandFaqPageContent';
+import BrandTermsBody from '../../components/brand/BrandTermsBody';
 import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
 import { isMockDataAccount } from '../../utils/adminAuth';
@@ -26,7 +27,7 @@ const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', '
 const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
 
 /** Empty FAQ / Reviews / Terms shells use the same main card height as About Us. */
-const BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT = new Set(['reviews', 'terms']);
+const BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT = new Set(['reviews']);
 
 function BrandPage() {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ function BrandPage() {
 
   /** Tall content only: cap card height and scroll inside; short pages hug content (no viewport gap). */
   const brandMainCardScrollable =
-    slug === 'contact' || slug === 'faq' || (slug === 'member' && memberPremium.showPremiumChart);
+    slug === 'contact' || slug === 'faq' || slug === 'terms' || (slug === 'member' && memberPremium.showPremiumChart);
 
   const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
 
@@ -423,6 +424,8 @@ function BrandPage() {
                       onSubmittingChange={setFaqQuestionSubmitting}
                       onSubmitted={() => setShowFaqQuestionSuccessModal(true)}
                     />
+                  ) : slug === 'terms' ? (
+                    <BrandTermsBody />
                   ) : null}
                 </div>
               </div>
