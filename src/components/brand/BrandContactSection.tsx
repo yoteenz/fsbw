@@ -168,7 +168,7 @@ export default function BrandContactSection({
           {BRAND_CONTACT_INTRO_LINE_1_PREFIX}
           <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: 500 }}>{BRAND_CONTACT_EMAIL}</span>
         </p>
-        <p style={{ ...introTextStyle, marginBottom: '10px' }}>
+        <p style={{ ...introTextStyle, marginBottom: '12px' }}>
           {BRAND_CONTACT_INTRO_LINE_2_PREFIX}
           {BRAND_CONTACT_INTRO_HOURS}
           {BRAND_CONTACT_INTRO_LINE_2_SUFFIX}
