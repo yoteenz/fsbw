@@ -91,8 +91,8 @@ export default function ShareListLinkModal({
           }}
         >
           {listName
-            ? `COPY THE LINK BELOW TO SHOWCASE "${listName.toUpperCase()}"`
-            : 'COPY THE LINK BELOW TO SHOWCASE THIS LIST'}
+            ? `COPY THE LINK BELOW TO SHOWCASE "${listName.toUpperCase()}" TO OTHERS.`
+            : 'COPY THE LINK BELOW TO SHOWCASE THIS LIST TO OTHERS.'}
         </p>
         <input
           type="text"
