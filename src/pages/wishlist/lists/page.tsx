@@ -30,6 +30,9 @@ function getLeafBrickFrontImage(item: any): string {
   return '/assets/natural front.png';
 }
 
+/** Thumbnail when a user list has no items (lists overview row only). */
+const EMPTY_LIST_THUMB_SRC = '/assets/empty-list-thumb.png';
+
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
@@ -512,9 +515,7 @@ export default function ViewListsPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       {lists.map((list) => {
                         const firstItem = list.items?.[0];
-                        const isVacation = list.name?.toLowerCase() === 'vacation';
-                        const emptyThumb = isVacation ? '/assets/2D WAVY FRONT.png' : '/assets/natural front.png';
-                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : emptyThumb;
+                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
                         return (
                           <div
@@ -550,7 +551,15 @@ export default function ViewListsPage() {
                                   overflow: 'hidden'
                                 }}
                               >
-                                <img src={thumbSrc} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                <img
+                                  src={thumbSrc}
+                                  alt=""
+                                  style={
+                                    firstItem
+                                      ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }
+                                      : { position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '88%', height: '88%', objectFit: 'contain', objectPosition: 'center', zIndex: 1 }
+                                  }
+                                />
                               </div>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}

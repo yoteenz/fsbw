@@ -18164,3 +18164,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/utils/buildWigLivePreviewSelections.ts`**. Pushed **`master`** and **`preview/mobile`**.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — Wishlist lists: empty-list row thumbnail (ornate heart)
+
+**Context (full chat):** Continuation of wishlist **lists** page work (header count, WISHLIST removal, spacing, modals, empty copy, etc.). User asked to use an attached ornate red/silver **heart** image as the list-row thumbnail **only when a user list has no items**; lists with items keep **`getLeafBrickFrontImage(firstItem)`**.
+
+**Changes:** Added **`public/assets/empty-list-thumb.png`**. **`src/pages/wishlist/lists/page.tsx`** — **`EMPTY_LIST_THUMB_SRC`**; removed vacation/natural mannequin empty fallbacks; empty thumbs centered in the leaf-brick frame (filled lists unchanged, bottom-aligned wig front).
+
+**Verify:** **`npm run build`** succeeds.
