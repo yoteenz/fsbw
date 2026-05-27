@@ -18558,3 +18558,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Line gray price → Futura Demi **12px** (was Medium 10px). VIEW/CLOSE DETAILS `marginTop` **4px** (was 7px). `wishlistListItemDetails.ts` `formatDetailPrice` → middle dot (` · `) + red `#EB1C24` +/- amounts (Demi), matching list modal dot pattern.
 
 **Conventions:** Grid price stays Medium 10px; detail price HTML only via `formatDetailPrice` in wishlist util.
+
+---
+
+## 2026-05-21 — Shared wishlist link sync + line UI parity
+
+**Context:** User reported `/wishlist/shared/:token` stale after list edits (no price / VIEW DETAILS on refresh).
+
+**Root cause:** Snapshot in `wishlistSharedListsByToken` only updated on Share click or remove-item; `shared/page.tsx` UI lagged expanded list line view.
+
+**Changes:**
+- `wishlistListShare.ts` — `republishSharedSnapshotsForLists` on every `saveUserLists` + lists `refreshLists`; `resolveSharedListForViewer` merges **live owner list** when owner opens own link and refreshes registry.
+- `shared/page.tsx` — line parity: Demi 12px price, VIEW/CLOSE DETAILS, red dot detail deltas; listens to `userListsUpdated`.
+- `AddToListModal.saveUserLists` triggers republish when signed in.
+
+**Conventions:** Any list with `shareToken` must republish on item changes; shared page uses `resolveSharedListForViewer`, not raw registry only. Snapshots remain localStorage (same browser / owner preview).
