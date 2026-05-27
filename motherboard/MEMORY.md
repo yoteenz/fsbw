@@ -18650,3 +18650,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Behavior:** Signed in → `/account/orders`; not signed in → `/sign-in?returnTo=/account/orders`.
 
 **Changes:** `brand/page.tsx` — `handleBrandSubmitReviewClick`, reviews slug `PageActionsBelowCard` button.
+
+---
+
+## 2026-05-27 — Brand FAQ page content (expandable sections)
+
+**Context:** User supplied stock FAQ Q&A; agent built full `/brand/faq` aligned with site policies (checkout terms, contact 72h/10–6 CST, custom unit 6–8 / 10 / 4–6 week processing, Affirm/Klarna, all sales final, 48h wrong-item window, member referral $20 + $10 newsletter, order form 24h).
+
+**Implementation:**
+- `brandFaqCopy.ts` — 6 sections, 24 items (user 20 + order form, build-a-wig, terms link, account, submit review).
+- `BrandFaqSection.tsx` — red `+`/`−` accordion, left-aligned Futura 10px uppercase.
+- `brand/page.tsx` — render FAQ; `brandMainCardScrollable` includes `faq`; removed `faq` from about-height shell set.
+
+**Conventions:** FAQ copy in constants; policy numbers should match checkout/contact/member copy when updated.
