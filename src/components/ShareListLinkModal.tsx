@@ -87,25 +87,12 @@ export default function ShareListLinkModal({
             color: '#000000',
             textTransform: 'uppercase',
             textAlign: 'center',
-            margin: '0 0 12px 0',
+            margin: '0 0 16px 0',
           }}
         >
           {listName
-            ? `COPY THE LINK BELOW TO SHARE "${listName.toUpperCase()}".`
-            : 'COPY THE LINK BELOW TO SHARE THIS LIST.'}
-        </p>
-        <p
-          style={{
-            fontFamily: '"Futura PT Book"',
-            fontSize: '9px',
-            color: '#808080',
-            textTransform: 'uppercase',
-            textAlign: 'center',
-            margin: '0 0 12px 0',
-            lineHeight: 1.4,
-          }}
-        >
-          THE LIST SHOWS AS SHARED AFTER SOMEONE OPENS THIS LINK (NOT WHEN YOU VIEW IT).
+            ? `COPY THE LINK BELOW TO SHOW OFF "${listName.toUpperCase()}"`
+            : 'COPY THE LINK BELOW TO SHOW OFF THIS LIST'}
         </p>
         <input
           type="text"
