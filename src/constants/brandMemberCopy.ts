@@ -51,6 +51,6 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   {
     id: 'invite',
     text: 'THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE.',
-    variant: 'demiGray',
+    variant: 'accent',
   },
 ];

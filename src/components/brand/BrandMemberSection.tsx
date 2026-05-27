@@ -173,16 +173,21 @@ export default function BrandMemberSection({
     >
       <p style={scriptHeadlineStyle}>JOIN THE SLAY SOCIETY!</p>
 
-      {bodyBlocks.map((block) => (
-        <p
-          key={block.id}
-          style={blockStyle(
-            block.variant === 'accent' ? 'accent' : block.variant === 'demiGray' ? 'demiGray' : 'body'
-          )}
-        >
-          {block.text}
-        </p>
-      ))}
+      {bodyBlocks.map((block) => {
+        const variant =
+          block.variant === 'accent' ? 'accent' : block.variant === 'demiGray' ? 'demiGray' : 'body';
+        return (
+          <p
+            key={block.id}
+            style={{
+              ...blockStyle(variant),
+              ...(block.id === 'invite' ? { marginBottom: '12px' } : {}),
+            }}
+          >
+            {block.text}
+          </p>
+        );
+      })}
 
       <PremiumMembershipSection
         showIncludedMembership={showIncludedMembership}
