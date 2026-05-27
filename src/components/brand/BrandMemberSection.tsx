@@ -61,7 +61,7 @@ export default function BrandMemberSection() {
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        textAlign: 'center',
+        textAlign: 'left',
       }}
     >
       {bodyBlocks.map((block) => {
