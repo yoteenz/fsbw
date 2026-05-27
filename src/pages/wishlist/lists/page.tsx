@@ -48,8 +48,11 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 
-/** Inset white ring + inner art area (matches non-empty thumb frame). */
+/** Inset white ring + inner art area (non-empty list thumbs). */
 const LIST_THUMB_FRAME_INSET_PX = 3;
+
+/** Empty list thumb white ring (thinner than non-empty). */
+const EMPTY_LIST_THUMB_FRAME_INSET_PX = 1;
 
 /** Empty-list thumb art sits low in frame; nudge up inside the inner art area. */
 const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
