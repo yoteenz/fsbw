@@ -18415,3 +18415,19 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Conventions:**
 - Shared list rows match expanded list line view; use `back-button.svg` for header back.
+
+---
+
+## 2026-05-27 — Checkout upgrade spacing (DIGITAL ONLY + confirm button)
+
+**Context:** User asked for 2px below the red DIGITAL ONLY line on `/checkout/upgrade` order strip, and to fix spacing above CONFIRM ORDER after the gray Supabase sign-in hint above Stripe was removed (commit `538767e4`).
+
+**Topics covered (entire conversation so far):**
+- Prior chat: shared wishlist UI, brand/member/checkout work; this turn is checkout spacing only.
+- Order strip red subtitle (`DIGITAL ONLY` for `type: 'digital'` membership lines): `marginBottom` `0` → `2px` when `redSubtitle === 'DIGITAL ONLY'`.
+- CONFIRM ORDER wrapper: `marginTop` `2px` → `10px` on `isSubscriptionUpgrade` to replace lost ~8px from removed sign-in paragraph.
+- Stripe billing block below card: only render when there is content (`!stripeMembershipAvailable` error **or** signed-in Stripe subscribe UI); avoids empty 20px gap when unsigned with Stripe available.
+
+**Changes:** `src/pages/checkout/page.tsx`
+
+**Conventions:** After removing helper copy above primary CTAs, bump the next control’s top margin by the removed block’s bottom margin (~8px) on that route.
