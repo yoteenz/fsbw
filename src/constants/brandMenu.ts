@@ -9,8 +9,8 @@ export type BrandMenuItem = {
 };
 
 export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
-  { label: 'ABOUT FS', route: '/brand/about', cardTitle: 'MISSION STATEMENT' },
-  { label: 'CONTACT FS', route: '/brand/contact', cardTitle: 'SUBMISSION FORM', navTitle: 'CONTACT' },
+  { label: 'ABOUT US', route: '/brand/about', cardTitle: 'MISSION STATEMENT' },
+  { label: 'CONTACT US', route: '/brand/contact', cardTitle: 'SUBMISSION FORM', navTitle: 'CONTACT' },
   { label: 'BECOME A MEMBER', route: '/brand/member', navTitle: 'MEMBERSHIP' },
   { label: 'REVIEWS', route: '/brand/reviews' },
   { label: 'CAREERS', route: '/brand/careers' },
