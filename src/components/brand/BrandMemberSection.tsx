@@ -78,7 +78,7 @@ export default function BrandMemberSection() {
             key={block.id}
             style={{
               ...blockStyle(variant),
-              ...(block.id === 'invite' ? { marginBottom: '12px' } : {}),
+              ...(block.id === 'invite' ? { marginBottom: '8px' } : {}),
             }}
           >
             {block.text}
