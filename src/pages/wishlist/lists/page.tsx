@@ -599,19 +599,22 @@ export default function ViewListsPage() {
                                 style={{
                                   width: '88px',
                                   height: '110px',
+                                  position: 'relative',
+                                  boxSizing: 'border-box',
                                   ...(firstItem
                                     ? {
                                         backgroundImage: "url('/assets/leaf-brick-resize.png')",
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                         backgroundRepeat: 'no-repeat',
+                                        border: '1.3px solid #000',
+                                        boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                                        overflow: 'hidden',
                                       }
-                                    : { backgroundColor: '#fff' }),
-                                  border: '1.3px solid #000',
-                                  boxShadow: firstItem
-                                    ? `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`
-                                    : `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
-                                  overflow: 'hidden'
+                                    : {
+                                        border: '1.3px solid #000',
+                                        overflow: 'hidden',
+                                      }),
                                 }}
                               >
                                 {firstItem ? (
@@ -632,30 +635,56 @@ export default function ViewListsPage() {
                                     }}
                                   />
                                 ) : (
-                                  <div
-                                    style={{
-                                      position: 'absolute',
-                                      top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                      left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                      right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                      bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                      overflow: 'hidden',
-                                    }}
-                                  >
-                                    <img
-                                      src={thumbSrc}
-                                      alt=""
+                                  <>
+                                    <div
+                                      aria-hidden
                                       style={{
-                                        display: 'block',
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        objectPosition: 'center',
-                                        transform: `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px) scale(${EMPTY_LIST_THUMB_SCALE})`,
-                                        transformOrigin: 'center center',
+                                        position: 'absolute',
+                                        inset: 0,
+                                        boxShadow: `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                                        pointerEvents: 'none',
+                                        zIndex: 2,
                                       }}
                                     />
-                                  </div>
+                                    <div
+                                      style={{
+                                        position: 'absolute',
+                                        top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        overflow: 'hidden',
+                                        zIndex: 1,
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          width: '100%',
+                                          height: '100%',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          overflow: 'hidden',
+                                        }}
+                                      >
+                                        <img
+                                          src={thumbSrc}
+                                          alt=""
+                                          style={{
+                                            display: 'block',
+                                            width: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                                            height: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                                            objectFit: 'cover',
+                                            objectPosition: 'center',
+                                            transform: EMPTY_LIST_THUMB_OFFSET_UP_PX
+                                              ? `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px)`
+                                              : undefined,
+                                            flexShrink: 0,
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </>
                                 )}
                               </div>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
