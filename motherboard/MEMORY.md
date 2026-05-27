@@ -18573,3 +18573,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `AddToListModal.saveUserLists` triggers republish when signed in.
 
 **Conventions:** Any list with `shareToken` must republish on item changes; shared page uses `resolveSharedListForViewer`, not raw registry only. Snapshots remain localStorage (same browser / owner preview).
+
+---
+
+## 2026-05-21 — List line price/details typography tweak
+
+**Changes:** Expanded list **line view** (`lists/page.tsx`) — gray price Futura Medium 12px, `marginTop` 3px (was 4px Demi). VIEW/CLOSE DETAILS `marginTop` 1px (tighter under price). `buildWishlistItemDetailsHtml` — labels only (e.g. `200% DENSITY`), no middle dot or +/- price suffixes.
+
+**Conventions:** Grid/shared line price styles unchanged unless explicitly requested; wishlist detail HTML is label-only.
