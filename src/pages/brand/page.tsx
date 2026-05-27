@@ -239,9 +239,9 @@ function BrandPage() {
             </div>
           ) : (
             <>
-            <div className="flex flex-col gap-4 mb-5">
+            <div className="flex flex-col gap-4">
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
+                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
                 style={{
                   borderWidth: '1.3px',
                   minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,

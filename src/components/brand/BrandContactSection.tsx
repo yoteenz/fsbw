@@ -35,12 +35,22 @@ const fieldInputStyle: CSSProperties = {
 };
 
 const fieldTextareaStyle: CSSProperties = {
-  ...fieldInputStyle,
-  height: 'auto',
-  minHeight: '120px',
-  resize: 'vertical',
+  width: '100%',
+  height: '120px',
   padding: '12px',
+  border: '1.3px solid #000000',
+  fontFamily: '"Futura PT Book"',
+  fontSize: '11px',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  boxSizing: 'border-box',
+  borderRadius: '0',
+  outline: 'none',
+  textTransform: 'uppercase',
   lineHeight: 1.45,
+  resize: 'vertical',
+  display: 'block',
+  flexShrink: 0,
 };
 
 const introTextStyle: CSSProperties = {
@@ -144,7 +154,7 @@ export default function BrandContactSection({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <div
         style={{
           display: 'flex',
@@ -159,7 +169,7 @@ export default function BrandContactSection({
         </p>
         <p style={introTextStyle}>
           {BRAND_CONTACT_INTRO_LINE_2_PREFIX}
-          <span style={{ color: '#EB1C24' }}>{BRAND_CONTACT_INTRO_HOURS}</span>
+          {BRAND_CONTACT_INTRO_HOURS}
           {BRAND_CONTACT_INTRO_LINE_2_SUFFIX}
         </p>
       </div>
@@ -221,14 +231,13 @@ export default function BrandContactSection({
           />
         </div>
 
-        <div>
+        <div style={{ flexShrink: 0 }}>
           <label style={fieldLabelStyle}>
             MESSAGE<span style={requiredMarkStyle}>*</span>
           </label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value.toUpperCase())}
-            rows={6}
             style={fieldTextareaStyle}
             required
           />
