@@ -18346,3 +18346,25 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
 
 **Changes:** **`ConfirmationModal`** — **REMOVE FROM LIST** / **REMOVE THIS ITEM FROM YOUR LIST?**; **`requestRemoveListItemConfirm`** on X; grid **REMOVE** still immediate.
+
+---
+
+## 2026-05-27 — About Us brand page copy (uppercase)
+
+**Context:** User asked to update the About Us brand page (`/brand/about`) with provided welcome/mission copy, rendered in all uppercase.
+
+**Topics covered (entire conversation so far):**
+- Located storefront brand shell at `src/pages/brand/page.tsx` (main card was empty placeholder).
+- Added `src/constants/brandAboutCopy.ts` with six paragraphs of About Us body copy (stored in uppercase).
+- Rendered paragraphs when `slug === 'about'`: Futura PT Book 10px, black, `textTransform: 'uppercase'`, 12px gap between blocks.
+- Committed on `master` and synced to `preview/mobile`.
+
+**Decisions / outcomes:**
+- `/brand/about` now shows the full About Us narrative; other brand slugs remain without body copy until added later.
+
+**Changes:**
+- `src/constants/brandAboutCopy.ts` (new)
+- `src/pages/brand/page.tsx`
+
+**Conventions:**
+- Brand About Us copy lives in `brandAboutCopy.ts`; page applies uppercase styling even though source strings are uppercase.
