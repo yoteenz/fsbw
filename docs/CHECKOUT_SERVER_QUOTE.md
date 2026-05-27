@@ -13,8 +13,8 @@ This project historically totals carts **in the browser**. The following adds a 
    - **Not fully resolved yet:** `bcfBundleDeal` lines, build-a-wig custom lines, gift cards, membership — these return `resolved: false` and warnings.
 
 3. **Checkout UI** — `src/pages/checkout/page.tsx`  
-   - Fetches the quote when the cart changes and shows **SERVER LIST (USD, VERIFIED LINES)** when the server total is &gt; 0.  
-   - **Order amount / subtotal** on the page still use the existing client pipeline (taxes, shipping, vouchers, etc.). The server line is a **parity / verification** row until you wire payment to Stripe.
+   - Does **not** show server quote rows or dev warnings to shoppers (API remains for future Stripe wiring).  
+   - **Order amount / subtotal** use the existing client pipeline (taxes, shipping, vouchers, etc.).
 
 4. **`POST /api/stripe/create-product-payment-intent`** (requires Supabase **Bearer** token)  
    - Recomputes the total from `lines` (same as quote).  

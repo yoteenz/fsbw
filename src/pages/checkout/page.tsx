@@ -55,7 +55,6 @@ import {
 } from '../../utils/adminBrandCodes';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
-import { cartItemsToQuoteLines, fetchCheckoutQuote, type ServerCheckoutQuote } from '../../utils/checkoutQuote';
 import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import {
   orderStripRedSubtitle,
@@ -251,7 +250,6 @@ function CheckoutPage() {
     consultClaimBootstrapDoneRef.current = false;
   }, [location.pathname]);
   const [cartItems, setCartItems] = useState<any[]>([]);
-  const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -740,7 +738,6 @@ function CheckoutPage() {
   const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
   const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
-  const [stripeAvailabilityLoaded, setStripeAvailabilityLoaded] = useState(false);
 
   // Load cart items from localStorage
   const loadCartItems = () => {
@@ -881,12 +878,10 @@ function CheckoutPage() {
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
       setStripeMembershipAvailable(false);
-      setStripeAvailabilityLoaded(false);
       setHasSupabaseSession(false);
       return;
     }
     let cancelled = false;
-    setStripeAvailabilityLoaded(false);
     void (async () => {
       try {
         const [avail, token] = await Promise.all([fetchStripeMembershipAvailable(), getAccessToken()]);
@@ -894,8 +889,11 @@ function CheckoutPage() {
           setStripeMembershipAvailable(avail);
           setHasSupabaseSession(Boolean(token));
         }
-      } finally {
-        if (!cancelled) setStripeAvailabilityLoaded(true);
+      } catch {
+        if (!cancelled) {
+          setStripeMembershipAvailable(false);
+          setHasSupabaseSession(false);
+        }
       }
     })();
     return () => {
@@ -977,28 +975,6 @@ function CheckoutPage() {
       window.removeEventListener('focus', refreshSession);
     };
   }, [isSubscriptionUpgrade]);
-
-  useEffect(() => {
-    if (isSubscriptionUpgrade) {
-      setServerQuote(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      if (!cartItems.length) {
-        if (!cancelled) setServerQuote(null);
-        return;
-      }
-      const lines = cartItemsToQuoteLines(cartItems);
-      const result = await fetchCheckoutQuote(lines);
-      if (cancelled) return;
-      if (result.ok) setServerQuote(result.quote);
-      else setServerQuote(null);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [cartItems, isSubscriptionUpgrade]);
 
   useEffect(() => {
     if (location.pathname !== '/checkout/upgrade') return;
@@ -5091,22 +5067,6 @@ function CheckoutPage() {
                         </label>
                       </div>
                     )}
-                    {hasBookingAppointmentItems && (
-                      <p
-                        style={{
-                          margin: '-4px 0 0 24px',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '8px',
-                          color: bookingAutopayStripeReady ? '#808080' : '#EB1C24',
-                          textTransform: 'uppercase',
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        {bookingAutopayStripeReady
-                          ? 'AUTO-DRAFT READY USING YOUR SAVED STRIPE CARD ON FILE.'
-                          : 'AUTO-DRAFT REQUIRES A SUPABASE SIGN-IN WITH A SAVED STRIPE CARD ON FILE.'}
-                      </p>
-                    )}
                   </div>
                 </div>
 
@@ -5738,30 +5698,6 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(orderAmount)}></span>
                     </div>
-                    {serverQuote && serverQuote.totalCents > 0 && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', lineHeight: 1.35 }}>
-                          SERVER LIST (USD, VERIFIED LINES):
-                        </span>
-                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000', textAlign: 'right' }}>
-                          ${(serverQuote.totalCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
-                          USD
-                        </span>
-                      </div>
-                    )}
-                    {serverQuote && !serverQuote.fullyResolved && serverQuote.warnings.length > 0 && (
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '9px',
-                          color: '#808080',
-                          margin: '4px 0 0',
-                          lineHeight: 1.35
-                        }}
-                      >
-                        Some items (e.g. BCF bundle deals or custom builds) are not fully priced on the server yet. This page total still uses your cart. Currency selector remains display-only for settlement.
-                      </p>
-                    )}
                     {!checkoutSkipsShipping && (
                       <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -6171,36 +6107,6 @@ function CheckoutPage() {
           {/* Stripe Billing — only on subscription upgrade checkout (`/checkout/upgrade`) */}
           {!showMobileMenu && isSubscriptionUpgrade && (
             <div className="px-0 md:px-0" style={{ marginTop: '8px', marginBottom: '12px' }}>
-              {stripeAvailabilityLoaded && !stripeMembershipAvailable && (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    color: '#808080',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
-                </p>
-              )}
-              {stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    color: '#808080',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  TO PAY WITH CARD VIA STRIPE, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
-                </p>
-              )}
               {stripeMembershipAvailable && hasSupabaseSession && (
                 <>
                   <button
@@ -6217,19 +6123,6 @@ function CheckoutPage() {
                   >
                     {stripeCheckoutLoading ? 'REDIRECTING…' : 'SUBSCRIBE WITH CARD (STRIPE)'}
                   </button>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '8px',
-                      color: '#808080',
-                      margin: '6px 0 0 0',
-                      textTransform: 'uppercase',
-                      textAlign: 'center',
-                      lineHeight: 1.35,
-                    }}
-                  >
-                    RECURRING BILLING — SAME TIERS AS CHART. IN-APP FORM BELOW STILL AVAILABLE.
-                  </p>
                 </>
               )}
             </div>
