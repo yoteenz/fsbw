@@ -1,6 +1,3 @@
-/** Red section header above the FAQ question submission form. */
-export const BRAND_FAQ_SUBMIT_SECTION_TITLE = 'SUBMIT YOUR QUESTION';
-
 /** FAQ sections for `/brand/faq` — displayed in uppercase on the page. */
 export type BrandFaqItem = {
   id: string;
@@ -15,7 +12,7 @@ export type BrandFaqSection = {
   items: BrandFaqItem[];
 };
 
-export const BRAND_FAQ_SECTIONS: BrandFaqSection[] = [
+const BRAND_FAQ_SECTIONS_LIST: BrandFaqSection[] = [
   {
     id: 'ordering-processing',
     title: 'ORDERING + PROCESSING',
@@ -236,3 +233,21 @@ export const BRAND_FAQ_SECTIONS: BrandFaqSection[] = [
     ],
   },
 ];
+
+/** Display order for FAQ accordion sections on `/brand/faq`. */
+export const BRAND_FAQ_SECTION_DISPLAY_ORDER = [
+  'general',
+  'ordering-processing',
+  'membership-rewards',
+  'hair-quality',
+  'wigs-customization',
+  'returns-policies',
+] as const;
+
+export const BRAND_FAQ_SECTIONS: BrandFaqSection[] = BRAND_FAQ_SECTION_DISPLAY_ORDER.map(
+  (sectionId) => {
+    const section = BRAND_FAQ_SECTIONS_LIST.find((s) => s.id === sectionId);
+    if (!section) throw new Error(`Missing FAQ section: ${sectionId}`);
+    return section;
+  },
+);

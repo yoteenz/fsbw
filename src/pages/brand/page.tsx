@@ -488,7 +488,7 @@ function BrandPage() {
                   className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
                   style={pageActionButtonStyle}
                 >
-                  {faqQuestionSubmitting ? 'SENDING…' : 'SEND QUESTION'}
+                  {faqQuestionSubmitting ? 'SUBMITTING…' : 'SUBMIT'}
                 </button>
               </PageActionsBelowCard>
             ) : null}
