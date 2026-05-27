@@ -1,5 +1,4 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
-import { BRAND_FAQ_SUBMIT_SECTION_TITLE } from '../../constants/brandFaqCopy';
 import { postBrandFaqQuestionSubmit } from '../../utils/api';
 import { appendBrandFaqQuestionLocal } from '../../utils/brandFaqQuestions';
 
@@ -48,15 +47,6 @@ const fieldTextareaStyle: CSSProperties = {
   flexShrink: 0,
 };
 
-const sectionTitleStyle: CSSProperties = {
-  fontFamily: '"Futura PT Medium"',
-  fontSize: '11px',
-  color: '#EB1C24',
-  fontWeight: 500,
-  margin: '0 0 12px 0',
-  textTransform: 'uppercase',
-  textAlign: 'left',
-};
 
 const errorTextStyle: CSSProperties = {
   fontFamily: '"Futura PT Medium"',
@@ -120,9 +110,7 @@ export default function BrandFaqQuestionSection({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
-        <p style={sectionTitleStyle}>{BRAND_FAQ_SUBMIT_SECTION_TITLE}</p>
-      </div>
+      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '16px' }} />
 
       {submitError ? <p style={errorTextStyle}>{submitError}</p> : null}
 
