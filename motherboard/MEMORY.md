@@ -18493,3 +18493,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/constants/brandAboutCopy.ts` — mindset string lowercased; moved from `BRAND_ABOUT_ACCENT_PARAGRAPHS` to `BRAND_ABOUT_BOHEMY_PARAGRAPHS` (16px Bohemy, `#808080`, no uppercase transform). Accent set now empty.
 
 **Conventions:** Bohemy About lines: lowercase in copy + membership in `BRAND_ABOUT_BOHEMY_PARAGRAPHS`.
+---
+
+## 2026-05-27 — Become a Member: red accent lines → lowercase Bohemy
+
+**Context:** User asked for three former red Futura accent lines on `/brand/member` to use lowercase Bohemy like About Us (loyalty rewarded, perks continue, official invite).
+
+**Changes:** `brandMemberCopy.ts` — new `bohemy` variant; three lines lowercased. `BrandMemberSection.tsx` — Bohemy 16px gray, no uppercase transform.
+
+**Conventions:** Member callouts that should match About Bohemy: `variant: 'bohemy'` in `BRAND_MEMBER_BLOCKS`.
