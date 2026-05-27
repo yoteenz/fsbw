@@ -18443,3 +18443,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/pages/checkout/page.tsx`
 
 **Conventions:** After removing helper copy above primary CTAs, bump the next control’s top margin by the removed block’s bottom margin (~8px) on that route.
+
+---
+
+## 2026-05-27 — About Us opening paragraph copy
+
+**Context:** User supplied replacement text for the first About Us paragraph on `/brand/about`.
+
+**Change:** `src/constants/brandAboutCopy.ts` — first `BRAND_ABOUT_US_PARAGRAPHS` entry now reads: thank-you line; **THIS WEBSITE** (not OUR); **HERE AT FRONTAL SLAYER WE ARE DETERMINED**; **VIRTUAL 3D HAIR SALON THAT OFFERS** (not VIRTUAL SALON). Page still renders copy uppercase via existing brand page mapping.
+
+**Conventions:** About Us body lives in `brandAboutCopy.ts`; edit paragraphs there, not inline in `brand/page.tsx`.
