@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 
 const USER_LISTS_KEY = 'userLists';
 
@@ -63,6 +64,12 @@ const LIST_DROPDOWN_FIELD_STYLE: React.CSSProperties = {
   textAlign: 'left',
 };
 
+const LIST_MENU_MAX_HEIGHT_PX = 220;
+/** Above modal overlay so portaled list menu is not clipped. */
+const LIST_MENU_PORTAL_Z_INDEX = 10000000000;
+
+type ListMenuLayout = { top: number; left: number; width: number; maxHeight: number };
+
 const LIST_DROPDOWN_MENU_ITEM_STYLE: React.CSSProperties = {
   display: 'block',
   width: '100%',
@@ -92,6 +99,9 @@ export default function AddToListModal({
   const [newListName, setNewListName] = useState('');
   const newListInputRef = useRef<HTMLInputElement>(null);
   const listMenuRef = useRef<HTMLDivElement>(null);
+  const listMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const listMenuPanelRef = useRef<HTMLDivElement>(null);
+  const [listMenuLayout, setListMenuLayout] = useState<ListMenuLayout | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -119,10 +129,50 @@ export default function AddToListModal({
     }
   }, [isCreatingNewList]);
 
+  const updateListMenuLayout = useCallback(() => {
+    const el = listMenuTriggerRef.current;
+    if (!el || typeof window === 'undefined') {
+      setListMenuLayout(null);
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const viewportPad = 16;
+    const spaceBelow = window.innerHeight - rect.bottom - viewportPad;
+    const spaceAbove = rect.top - viewportPad;
+    let maxHeight = Math.min(LIST_MENU_MAX_HEIGHT_PX, Math.max(80, spaceBelow));
+    let top = rect.bottom;
+    if (spaceBelow < 100 && spaceAbove > spaceBelow) {
+      maxHeight = Math.min(LIST_MENU_MAX_HEIGHT_PX, Math.max(80, spaceAbove));
+      top = Math.max(viewportPad, rect.top - maxHeight);
+    }
+    setListMenuLayout({
+      top,
+      left: rect.left,
+      width: rect.width,
+      maxHeight,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!listMenuOpen) {
+      setListMenuLayout(null);
+      return;
+    }
+    updateListMenuLayout();
+    const onReposition = () => updateListMenuLayout();
+    window.addEventListener('resize', onReposition);
+    window.addEventListener('scroll', onReposition, true);
+    return () => {
+      window.removeEventListener('resize', onReposition);
+      window.removeEventListener('scroll', onReposition, true);
+    };
+  }, [listMenuOpen, lists.length, updateListMenuLayout]);
+
   useEffect(() => {
     if (!listMenuOpen) return;
     const handlePointerDown = (e: MouseEvent) => {
       if (listMenuRef.current?.contains(e.target as Node)) return;
+      if (listMenuPanelRef.current?.contains(e.target as Node)) return;
       setListMenuOpen(false);
     };
     document.addEventListener('mousedown', handlePointerDown);
@@ -153,6 +203,53 @@ export default function AddToListModal({
   };
 
   const listDropdownClosedLabel = lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST';
+
+  const listMenuPortal =
+    listMenuOpen &&
+    listMenuLayout &&
+    typeof document !== 'undefined' &&
+    createPortal(
+      <div
+        ref={listMenuPanelRef}
+        role="listbox"
+        data-attribute="add-to-list-modal-menu"
+        style={{
+          position: 'fixed',
+          top: listMenuLayout.top,
+          left: listMenuLayout.left,
+          width: listMenuLayout.width,
+          zIndex: LIST_MENU_PORTAL_Z_INDEX,
+          border: '1.3px solid #000000',
+          backgroundColor: '#FFFFFF',
+          maxHeight: listMenuLayout.maxHeight,
+          overflowY: 'auto',
+          boxSizing: 'border-box',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <button
+          type="button"
+          role="option"
+          style={LIST_DROPDOWN_MENU_ITEM_STYLE}
+          onClick={handlePickCreateList}
+        >
+          CREATE A LIST
+        </button>
+        {lists.map((list) => (
+          <button
+            key={list.id}
+            type="button"
+            role="option"
+            style={LIST_DROPDOWN_MENU_ITEM_STYLE}
+            onClick={() => handlePickList(list.id)}
+          >
+            {list.name.toUpperCase()}
+            {list.items.length > 0 ? ` (${list.items.length})` : ''}
+          </button>
+        ))}
+      </div>,
+      document.body
+    );
 
   const handleCreateNewListSubmit = () => {
     const trimmed = newListName.trim();
@@ -231,7 +328,9 @@ export default function AddToListModal({
           maxWidth: '400px',
           width: '90%',
           maxHeight: '85vh',
-          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           border: '1.3px solid black',
           borderRadius: 0,
           transform: 'translateY(-6px)',
@@ -250,14 +349,15 @@ export default function AddToListModal({
             marginBottom: '16px',
             textTransform: 'uppercase',
             textAlign: 'center',
-            color: '#EB1C24'
+            color: '#EB1C24',
+            flexShrink: 0,
           }}
         >
           ADD TO LIST
         </h3>
 
         {/* List dropdown or create-new-list text field (same box styling) */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
           {isCreatingNewList ? (
             <input
               ref={newListInputRef}
@@ -292,6 +392,7 @@ export default function AddToListModal({
           ) : (
             <div ref={listMenuRef} style={{ position: 'relative', width: '100%' }}>
               <button
+                ref={listMenuTriggerRef}
                 type="button"
                 className="add-to-list-modal-select"
                 aria-haspopup="listbox"
@@ -301,50 +402,21 @@ export default function AddToListModal({
               >
                 {listDropdownClosedLabel}
               </button>
-              {listMenuOpen ? (
-                <div
-                  role="listbox"
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    right: 0,
-                    zIndex: 2,
-                    border: '1.3px solid #000000',
-                    borderTop: 'none',
-                    backgroundColor: '#FFFFFF',
-                    maxHeight: '220px',
-                    overflowY: 'auto',
-                  }}
-                >
-                  <button
-                    type="button"
-                    role="option"
-                    style={LIST_DROPDOWN_MENU_ITEM_STYLE}
-                    onClick={handlePickCreateList}
-                  >
-                    CREATE A LIST
-                  </button>
-                  {lists.map((list) => (
-                    <button
-                      key={list.id}
-                      type="button"
-                      role="option"
-                      style={LIST_DROPDOWN_MENU_ITEM_STYLE}
-                      onClick={() => handlePickList(list.id)}
-                    >
-                      {list.name.toUpperCase()}
-                      {list.items.length > 0 ? ` (${list.items.length})` : ''}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
             </div>
           )}
         </div>
+        {listMenuPortal}
 
         {/* Lists (below add-to-list input) */}
-        <div style={{ marginBottom: '20px' }}>
+        <div
+          style={{
+            marginBottom: '20px',
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           {lists.length === 0 && !isCreatingNewList ? (
             <p
               style={{
@@ -418,6 +490,7 @@ export default function AddToListModal({
           ) : null}
         </div>
 
+        <div style={{ flexShrink: 0 }}>
         {/* Invalid selection message */}
         {saveErrorMessage && (
           <p
@@ -471,6 +544,7 @@ export default function AddToListModal({
           >
             Cancel
           </button>
+        </div>
         </div>
       </div>
     </div>
