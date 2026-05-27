@@ -69,6 +69,8 @@ const LIST_MENU_MAX_HEIGHT_PX = 220;
 const LIST_MENU_TRIGGER_GAP_PX = 8;
 /** List rows under dropdown (was 14px; −15%). */
 const LIST_ROW_CHECKBOX_PX = 14 * 0.85;
+/** Checkbox row label + dot count (was 12px; −1px). */
+const LIST_ROW_LABEL_FONT_PX = 11;
 /** Above modal overlay so portaled list menu is not clipped. */
 const LIST_MENU_PORTAL_Z_INDEX = 10000000000;
 
@@ -486,7 +488,7 @@ export default function AddToListModal({
                       <span
                         style={{
                           fontFamily: '"Futura PT Medium"',
-                          fontSize: '12px',
+                          fontSize: `${LIST_ROW_LABEL_FONT_PX}px`,
                           color: '#000000',
                           textTransform: 'uppercase'
                         }}
@@ -494,11 +496,11 @@ export default function AddToListModal({
                         {(list.name || '').toUpperCase()}
                         {list.items.length > 0 ? (
                           <>
-                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '12px' }}>{' · '}</span>
+                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: `${LIST_ROW_LABEL_FONT_PX}px` }}>{' · '}</span>
                             <span
                               style={{
                                 color: '#EB1C24',
-                                fontSize: '12px',
+                                fontSize: `${LIST_ROW_LABEL_FONT_PX}px`,
                                 fontFamily: '"Futura PT Demi"',
                               }}
                             >
