@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import BrandTermsBody from '../../components/brand/BrandTermsBody';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
@@ -7307,7 +7308,6 @@ function CheckoutPage() {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Terms of Service Section */}
           <h3
             style={{
               fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -7321,52 +7321,8 @@ function CheckoutPage() {
           >
             TERMS OF SERVICE
           </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 6px)' }}>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
-                color: '#000000',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                transform: 'translateY(-1px)',
-                margin: 0
-              }}
-            >
-              BY PURCHASING, YOU ARE IN AGREEMENT TO THE FOLLOWING TERMS AND CONDITIONS: YOU HAVE READ + UNDERSTAND THE PRODUCT DETAILS AND CONSENT TO RECEIVING THE PRODUCT. YOU UNDERSTAND AND AGREE TO OUR RETURNS + REFUND POLICY. YOU HAVE VERIFIED YOUR SHIPPING ADDRESS BEFORE SUBMITTING YOUR ORDER & COMPLETED THE ORDER AUTHORIZATION FORM WITHIN 24 HOURS, POST PAYMENT. YOU UNDERSTAND THAT FRONTAL SLAYER IS NOT LIABLE FOR ANY DAMAGES THAT MAY OCCUR DURING SHIPMENT AND WHILE YOUR PRODUCT IS IN TRANSIT. YOU UNDERSTAND THAT ONCE AN ORDER IS SUBMITTED & CONFIRMED, CHANGES OR CANCELLATIONS CAN NOT BE MADE. THIS INCLUDES ITEM & SHIPPING ADDRESS CHANGES.
-            </p>
-          </div>
-
-          {/* Refund + Return Policy Section */}
-          <h3
-            style={{
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-              fontSize: '14px',
-              fontWeight: '500',
-              marginBottom: '16px',
-              marginTop: '20px',
-              textAlign: 'center',
-              color: '#EB1C24',
-              textTransform: 'uppercase'
-            }}
-          >
-            REFUND + RETURN POLICY
-          </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 8px)' }}>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
-                color: '#000000',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                transform: 'translateY(-1px)',
-                margin: 0
-              }}
-            >
-              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO THE BESPOKE NATURE OF OUR PRODUCTS & FOR SANITARY REASONS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span><br />
-              ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE ALL CONCERNS THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
-            </p>
+          <div style={{ marginBottom: '20px', width: '100%' }}>
+            <BrandTermsBody />
           </div>
 
           {/* Buttons — primary left, dismiss right */}
