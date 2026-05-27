@@ -18198,3 +18198,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`api/notifications.ts`** (GET signed-in user's **`items`**). **`getNotifications()`** in **`api.ts`**. **`account/notifications/page.tsx`** merges admin-sent alerts via API. Same alerts UX; no feature removed.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — Wishlist lists: remove thumb–count divider (vacay test)
+
+**Context (full chat):** Lists overview work (empty-list heart thumb, share list / SHARED label, notifications API hardening, etc.). A **test-only** horizontal rule was added under the list thumbnail and above the item count for lists named **vacay** / **vacation** (gray, then brand red **`#EB1C24`**). User disliked the red line and asked to remove it.
+
+**Decisions / outcomes:** Divider experiment **removed**; overview rows show thumb then item count with no extra rule between them.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — removed **`LIST_THUMB_COUNT_DIVIDER_COLOR`**, **`listShowsThumbCountDividerTest`**, and conditional divider JSX.
