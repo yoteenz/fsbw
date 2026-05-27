@@ -72,8 +72,13 @@ export function wishlistItemHasViewDetails(item: any): boolean {
   );
 }
 
+export type WishlistItemDetailsHtmlOptions = {
+  /** Omit length ADDED/REMOVED lines (RAW line already shows inches). List view only. */
+  omitLength?: boolean;
+};
+
 /** HTML detail lines for expanded wishlist list line view (labels only, no price deltas). */
-export function buildWishlistItemDetailsHtml(item: any): string {
+export function buildWishlistItemDetailsHtml(item: any, options?: WishlistItemDetailsHtmlOptions): string {
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
     return bookingCartViewDetailsHtml(item);
   }
@@ -87,7 +92,9 @@ export function buildWishlistItemDetailsHtml(item: any): string {
   if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
     items.push({ type: 'capSize', value: item.capSize });
   }
-  if (item.length && item.length !== '24"') items.push({ type: 'length', value: item.length });
+  if (item.length && item.length !== '24"' && !options?.omitLength) {
+    items.push({ type: 'length', value: item.length });
+  }
   const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
   if (item.density && item.density !== defaultDensity) items.push({ type: 'density', value: item.density });
   if (item.lace && item.lace !== '13X6') items.push({ type: 'lace', value: item.lace });
