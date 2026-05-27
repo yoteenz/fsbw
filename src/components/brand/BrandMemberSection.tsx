@@ -83,7 +83,7 @@ function PremiumMembershipSection({
         flexDirection: 'column',
         gap: '12px',
         textAlign: showIncludedMembership ? 'left' : 'center',
-        ...(showIncludedMembership ? { marginTop: '10px', marginBottom: '6px', width: '100%' } : {}),
+        ...(showIncludedMembership ? { marginTop: '6px', marginBottom: '6px', width: '100%' } : {}),
       }}
     >
       {showIncludedMembership ? (
