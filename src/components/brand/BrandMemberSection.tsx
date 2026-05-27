@@ -65,115 +65,59 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
 }
 
 type BrandMemberSectionProps = {
-  /** When set, show INCLUDED IN YOUR MEMBERSHIP instead of unlock marketing list. */
-  includedMembershipBenefits?: string[];
+  /** When false, hide UNLOCK PREMIUM REWARDS (e.g. user already has premium). */
+  showUnlockPremiumRewards?: boolean;
 };
 
-function PremiumMembershipSection({
-  showIncludedMembership,
-  includedMembershipBenefits,
-}: {
-  showIncludedMembership: boolean;
-  includedMembershipBenefits: string[];
-}) {
+function UnlockPremiumRewardsSection() {
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        textAlign: showIncludedMembership ? 'left' : 'center',
-        ...(showIncludedMembership ? { marginTop: '6px', marginBottom: '6px', width: '100%' } : {}),
+        textAlign: 'center',
       }}
     >
-      {showIncludedMembership ? (
-        <>
-          <p style={{ ...blockStyle('bohemy'), fontSize: '18px' }}>included in your membership:</p>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              alignItems: 'flex-start',
-              width: '100%',
-            }}
-          >
-            {includedMembershipBenefits.map((label) => (
-              <div
-                key={label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '8px',
-                  maxWidth: '100%',
-                  textAlign: 'left',
-                }}
-              >
-                <img
-                  src="/assets/premium-check.svg"
-                  alt=""
-                  style={{ width: '8.4px', height: '8.4px', marginTop: '4px', flexShrink: 0 }}
-                />
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '10px',
-                    color: '#000000',
-                    margin: 0,
-                    textTransform: 'uppercase',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {label}
-                </p>
-              </div>
-            ))}
+      <p style={scriptHeadlineStyle}>UNLOCK PREMIUM REWARDS</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {BRAND_UNLOCK_PREMIUM_REWARD_ITEMS.map((item) => (
+          <div key={item.id}>
+            <p
+              style={{
+                fontFamily: COVERED_BY_YOUR_GRACE,
+                fontSize: '14px',
+                color: '#000000',
+                margin: '0 0 4px 0',
+                textTransform: 'uppercase',
+                lineHeight: 1.35,
+              }}
+            >
+              {item.title}
+            </p>
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontWeight: 500,
+                fontSize: '10px',
+                color: BRAND_GRAY,
+                margin: 0,
+                textTransform: 'uppercase',
+                lineHeight: 1.45,
+              }}
+            >
+              {item.subtitle}
+            </p>
           </div>
-        </>
-      ) : (
-        <>
-          <p style={scriptHeadlineStyle}>UNLOCK PREMIUM REWARDS</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {BRAND_UNLOCK_PREMIUM_REWARD_ITEMS.map((item) => (
-              <div key={item.id}>
-                <p
-                  style={{
-                    fontFamily: COVERED_BY_YOUR_GRACE,
-                    fontSize: '14px',
-                    color: '#000000',
-                    margin: '0 0 4px 0',
-                    textTransform: 'uppercase',
-                    lineHeight: 1.35,
-                  }}
-                >
-                  {item.title}
-                </p>
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontWeight: 500,
-                    fontSize: '10px',
-                    color: BRAND_GRAY,
-                    margin: 0,
-                    textTransform: 'uppercase',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {item.subtitle}
-                </p>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
 
 export default function BrandMemberSection({
-  includedMembershipBenefits = [],
+  showUnlockPremiumRewards = true,
 }: BrandMemberSectionProps) {
-  const showIncludedMembership = includedMembershipBenefits.length > 0;
   const bodyBlocks = BRAND_MEMBER_BLOCKS.filter((block) => block.id !== 'headline');
 
   return (
@@ -214,10 +158,7 @@ export default function BrandMemberSection({
         );
       })}
 
-      <PremiumMembershipSection
-        showIncludedMembership={showIncludedMembership}
-        includedMembershipBenefits={includedMembershipBenefits}
-      />
+      {showUnlockPremiumRewards ? <UnlockPremiumRewardsSection /> : null}
     </div>
   );
 }
