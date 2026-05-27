@@ -18380,3 +18380,20 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Grid view:** NOIR name **22px** (+4); name bottom margin **0** (−2 above RAW); stars→rating **5px** (+1); gray **REMOVE** → **Futura PT Demi 9px** (was Medium 10px).
 
 **Changes:** Constants **`EXPANDED_LIST_LINE_NAME_FONT_PX`**, **`EXPANDED_LIST_GRID_NAME_FONT_PX`**, **`LIST_LINE_BAG_LINK_STYLE`**, **`EXPANDED_LIST_GRID_REMOVE_STYLE`**, inline margins on line/grid blocks.
+
+---
+
+## 2026-05-27 — Brand page main card height + centered About Us text
+
+**Context:** User wanted About Us body copy centered and all brand main cards the same height as the menu toggle card with internal scroll.
+
+**Topics covered (entire conversation so far in this thread):**
+- Added About Us uppercase copy (`brandAboutCopy.ts`, `/brand/about`).
+- Fixed missing `BRAND_ABOUT_US_PARAGRAPHS` import for Vercel build.
+- **`BRAND_PAGE_MAIN_CARD_HEIGHT`** = `calc(100dvh - 80px)` shared by menu card and content main cards.
+- Main card: flex column, fixed height, `overflow: hidden`; scrollable body (`flex: 1`, `overflowY: auto`).
+- About Us paragraphs: `textAlign: 'center'`.
+
+**Changes:** `src/pages/brand/page.tsx`
+
+**Conventions:** Brand content cards use menu-matched viewport height with scroll inside the body region below the red title divider.
