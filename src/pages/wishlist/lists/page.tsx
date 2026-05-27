@@ -207,7 +207,7 @@ const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
 };
 
 const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '8px',
   color: '#EB1C24',
   textTransform: 'uppercase',
@@ -881,7 +881,9 @@ export default function ViewListsPage() {
                                     {isViewingDetails ? (
                                       <p
                                         style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
-                                        dangerouslySetInnerHTML={{ __html: buildWishlistItemDetailsHtml(item) }}
+                                        dangerouslySetInnerHTML={{
+                                          __html: buildWishlistItemDetailsHtml(item, { omitLength: true }),
+                                        }}
                                       />
                                     ) : (
                                       <>
