@@ -4092,6 +4092,10 @@ p.bcf-bundles-pdp-product-name {
   line-height: 1.1 !important;
 }
 
+.wishlist-expanded-list-line-price--list {
+  margin-top: 4px !important;
+}
+
 .wishlist-expanded-list-view-details-toggle {
   font-family: 'Futura PT Medium', 'Futura PT Demi', Futura, sans-serif !important;
   font-weight: 500 !important;

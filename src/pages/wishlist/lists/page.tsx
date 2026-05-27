@@ -29,6 +29,7 @@ import {
 } from '../../../utils/wishlistListItemDetails';
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 
@@ -877,7 +878,10 @@ export default function ViewListsPage() {
                                       </>
                                     )}
                                     {!isViewingDetails && (
-                                      <p className={WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} style={EXPANDED_LIST_LINE_PRICE_STYLE}>
+                                      <p
+                                        className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
+                                        style={EXPANDED_LIST_LINE_PRICE_STYLE}
+                                      >
                                         {itemPriceLabel}
                                       </p>
                                     )}
