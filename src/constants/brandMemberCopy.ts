@@ -1,5 +1,5 @@
 /** Become a Member body copy for `/brand/member` — displayed in uppercase on the page. */
-export type BrandMemberBlockVariant = 'headline' | 'body' | 'accent';
+export type BrandMemberBlockVariant = 'headline' | 'body' | 'accent' | 'demiGray';
 
 export type BrandMemberBlock = {
   id: string;
@@ -51,6 +51,6 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   {
     id: 'invite',
     text: 'THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE.',
-    variant: 'accent',
+    variant: 'demiGray',
   },
 ];

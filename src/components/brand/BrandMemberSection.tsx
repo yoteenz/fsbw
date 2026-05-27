@@ -17,7 +17,7 @@ const scriptHeadlineStyle: CSSProperties = {
   color: BRAND_GRAY,
 };
 
-function blockStyle(variant: 'body' | 'accent'): CSSProperties {
+function blockStyle(variant: 'body' | 'accent' | 'demiGray'): CSSProperties {
   const base: CSSProperties = {
     margin: 0,
     lineHeight: 1.45,
@@ -30,6 +30,16 @@ function blockStyle(variant: 'body' | 'accent'): CSSProperties {
       fontFamily: '"Futura PT Medium"',
       fontSize: `${BODY_FONT_SIZE_PX}px`,
       color: '#EB1C24',
+      fontWeight: 500,
+    };
+  }
+
+  if (variant === 'demiGray') {
+    return {
+      ...base,
+      fontFamily: '"Futura PT Demi"',
+      fontSize: `${BODY_FONT_SIZE_PX}px`,
+      color: BRAND_GRAY,
       fontWeight: 500,
     };
   }
@@ -166,7 +176,7 @@ export default function BrandMemberSection({
       </div>
 
       {bodyBlocks.map((block) => (
-        <p key={block.id} style={blockStyle(block.variant === 'accent' ? 'accent' : 'body')}>
+        <p key={block.id} style={blockStyle(block.variant === 'accent' ? 'accent' : block.variant === 'demiGray' ? 'demiGray' : 'body')}>
           {block.text}
         </p>
       ))}
