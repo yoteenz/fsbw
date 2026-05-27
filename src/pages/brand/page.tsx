@@ -9,6 +9,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
