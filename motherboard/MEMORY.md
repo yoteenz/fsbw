@@ -18244,3 +18244,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context (full chat):** Lists expanded view (PRIVATE/SHARED header, view toggle spacing), add-to-list dropdown fixes. User wanted **line view only** red **ADD TO BAG** / **REMOVE FROM BAG** under thumbnail (CartDropdown **EDIT IN BUILD-A-WIG** placement: Futura Book 8px **`#EB1C24`**, 4px below thumb) that adds/removes list item via **`cartItems`** / **`cartCount`** localStorage.
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`handleAddToBag`**, **`handleRemoveFromBag`**, **`cartSyncVersion`** + **`cartItems`** memo; line-view thumb column only (grid unchanged); **OUT OF STOCK** gray when applicable.
+
+---
+
+## 2026-05-21 — Add to list modal: placeholder hidden in open menu
+
+**Context (full chat):** Lists/bag UX; dropdown should show **ADD TO LIST** when closed but open menu starts with **CREATE A LIST** only. Native `<select>` was listing the placeholder **ADD TO LIST** as first open item.
+
+**Fix:** Placeholder `<option value="">` uses **`disabled hidden`**.
+
+**Changes:** **`src/components/AddToListModal.tsx`**
