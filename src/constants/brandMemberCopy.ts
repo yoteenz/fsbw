@@ -1,5 +1,5 @@
 /** Become a Member body copy for `/brand/member` — displayed in uppercase on the page. */
-export type BrandMemberBlockVariant = 'headline' | 'body' | 'accent' | 'demiGray';
+export type BrandMemberBlockVariant = 'headline' | 'body' | 'accent' | 'demiGray' | 'bohemy';
 
 export type BrandMemberBlock = {
   id: string;
@@ -20,8 +20,8 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'loyalty-rewarded',
-    text: 'AND YES… WE BELIEVE LOYALTY SHOULD ACTUALLY BE REWARDED.',
-    variant: 'accent',
+    text: 'and yes… we believe loyalty should actually be rewarded.',
+    variant: 'bohemy',
   },
   {
     id: 'rewards-program',
@@ -35,8 +35,8 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'perks-continue',
-    text: "BUT THE PERKS DON'T STOP THERE…",
-    variant: 'accent',
+    text: "but the perks don't stop there…",
+    variant: 'bohemy',
   },
   {
     id: 'affiliate',
@@ -50,7 +50,7 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'invite',
-    text: 'THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE.',
-    variant: 'accent',
+    text: 'this is your official invite. welcome to the inner circle.',
+    variant: 'bohemy',
   },
 ];

@@ -17,12 +17,24 @@ const scriptHeadlineStyle: CSSProperties = {
   color: BRAND_GRAY,
 };
 
-function blockStyle(variant: 'body' | 'accent' | 'demiGray'): CSSProperties {
+function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProperties {
   const base: CSSProperties = {
     margin: 0,
     lineHeight: 1.45,
     textTransform: 'uppercase',
   };
+
+  if (variant === 'bohemy') {
+    return {
+      margin: 0,
+      lineHeight: 1.45,
+      textTransform: 'none',
+      fontFamily: '"Bohemy", cursive',
+      fontSize: '16px',
+      color: BRAND_GRAY,
+      fontWeight: 400,
+    };
+  }
 
   if (variant === 'accent') {
     return {
@@ -175,7 +187,13 @@ export default function BrandMemberSection({
 
       {bodyBlocks.map((block) => {
         const variant =
-          block.variant === 'accent' ? 'accent' : block.variant === 'demiGray' ? 'demiGray' : 'body';
+          block.variant === 'bohemy'
+            ? 'bohemy'
+            : block.variant === 'accent'
+              ? 'accent'
+              : block.variant === 'demiGray'
+                ? 'demiGray'
+                : 'body';
         return (
           <p
             key={block.id}
