@@ -18247,13 +18247,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
-## 2026-05-21 — Add to list modal: placeholder hidden in open menu
+## 2026-05-21 — Add to list modal: custom list picker (not native select)
 
-**Context (full chat):** Lists/bag UX; dropdown should show **ADD TO LIST** when closed but open menu starts with **CREATE A LIST** only. Native `<select>` was listing the placeholder **ADD TO LIST** as first open item.
+**Context (full chat):** Dropdown should show **ADD TO LIST** when closed, **CREATE A LIST** first when open (no duplicate). **`disabled hidden`** on `<option>` still showed gray **ADD TO LIST** in open menu (browser limitation).
 
-**Fix:** Placeholder `<option value="">` uses **`disabled hidden`**.
+**Fix:** Replaced native `<select>` with button + menu: closed label is display-only; menu items are **CREATE A LIST** then list names only.
 
-**Changes:** **`src/components/AddToListModal.tsx`**
+**Changes:** **`src/components/AddToListModal.tsx`** — **`listMenuOpen`**, outside-click close, same field styling as before.
 
 ---
 
