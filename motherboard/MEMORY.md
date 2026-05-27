@@ -18511,3 +18511,20 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `brandMenu.ts` — removed `cardTitle` overrides so `getBrandCardHeaderTitle` uses labels **ABOUT FS** / **CONTACT FS**. `brand/page.tsx` — About height measurer + fallback updated to **ABOUT FS**.
 
 **Conventions:** Brand red card title: `cardTitle` in `BRAND_MENU_ITEMS` or defaults to `label`.
+
+---
+
+## 2026-05-21 — Expanded wishlist list line: price, VIEW DETAILS, grid REMOVE red
+
+**Context (entire chat):** Wishlist lists UX polish—typography, bag links, dividers, no-review stars, shared list parity; final ask on expanded list **line** and **grid** views in `src/pages/wishlist/lists/page.tsx`.
+
+**Topics covered:** Line view stars/rating; bag ADD/REMOVE Futura weights; price placement; VIEW DETAILS toggle (cart rules); grid REMOVE color.
+
+**Decisions / outcomes:**
+- **Line view:** Gray Futura Medium price (`#808080`, 10px) below **NO REVIEWS SUBMITTED**. Red **VIEW DETAILS** below price when `wishlistItemHasViewDetails(item)` (same rules as `CartDropdown`); toggles details HTML in place of stars + review line; **CLOSE DETAILS** restores stars/reviews. Price stays visible in both states.
+- **Grid view:** **REMOVE** → Futura Medium red `#EB1C24` (was gray Demi).
+- Shared util `src/utils/wishlistListItemDetails.ts`: price helpers, `wishlistItemHasViewDetails`, `buildWishlistItemDetailsHtml` (reuses `bookingCartViewDetailsHtml` / `bcfCartViewDetailsHtml`).
+
+**Changes:** `lists/page.tsx` — `viewingDetailsItemKey` state (reset on list change); line UI block; grid `EXPANDED_LIST_GRID_REMOVE_STYLE`. New `wishlistListItemDetails.ts`.
+
+**Conventions:** List-line VIEW DETAILS logic must stay aligned with cart; use util rather than duplicating `hasSpecs` in the page.
