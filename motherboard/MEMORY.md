@@ -18254,3 +18254,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Fix:** Placeholder `<option value="">` uses **`disabled hidden`**.
 
 **Changes:** **`src/components/AddToListModal.tsx`**
+
+---
+
+## 2026-05-21 — Lists expanded view: thumb/bag/remove spacing
+
+**Context (full chat):** List line view bag links, add-to-list dropdown placeholder fix. User asked on created list **line/grid** view: **10px** above thumbnails; **+2px** above **ADD TO BAG** / **REMOVE FROM BAG** ( **`marginTop` 4→6** ); list-view remove **X** **black** not red.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`paddingTop: 10px`** on line + grid item containers; close icon **`filter: brightness(0)`**.
