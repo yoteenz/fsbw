@@ -1,21 +1,8 @@
 import type { CSSProperties } from 'react';
 import { BRAND_MEMBER_BLOCKS } from '../../constants/brandMemberCopy';
-import { BRAND_UNLOCK_PREMIUM_REWARD_ITEMS } from '../../constants/brandMemberPremiumRewards';
 
 const BODY_FONT_SIZE_PX = 10;
-const SCRIPT_HEADLINE_FONT_SIZE_PX = BODY_FONT_SIZE_PX + 6;
-const COVERED_BY_YOUR_GRACE =
-  '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif';
 const BRAND_GRAY = '#808080';
-
-const scriptHeadlineStyle: CSSProperties = {
-  margin: 0,
-  lineHeight: 1.35,
-  textTransform: 'uppercase',
-  fontFamily: COVERED_BY_YOUR_GRACE,
-  fontSize: `${SCRIPT_HEADLINE_FONT_SIZE_PX}px`,
-  color: BRAND_GRAY,
-};
 
 function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProperties {
   const base: CSSProperties = {
@@ -64,60 +51,8 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
   };
 }
 
-type BrandMemberSectionProps = {
-  /** When false, hide UNLOCK PREMIUM REWARDS (e.g. user already has premium). */
-  showUnlockPremiumRewards?: boolean;
-};
-
-function UnlockPremiumRewardsSection() {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        textAlign: 'center',
-      }}
-    >
-      <p style={scriptHeadlineStyle}>UNLOCK PREMIUM REWARDS</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {BRAND_UNLOCK_PREMIUM_REWARD_ITEMS.map((item) => (
-          <div key={item.id}>
-            <p
-              style={{
-                fontFamily: COVERED_BY_YOUR_GRACE,
-                fontSize: '14px',
-                color: '#000000',
-                margin: '0 0 4px 0',
-                textTransform: 'uppercase',
-                lineHeight: 1.35,
-              }}
-            >
-              {item.title}
-            </p>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontWeight: 500,
-                fontSize: '10px',
-                color: BRAND_GRAY,
-                margin: 0,
-                textTransform: 'uppercase',
-                lineHeight: 1.45,
-              }}
-            >
-              {item.subtitle}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default function BrandMemberSection({
-  showUnlockPremiumRewards = true,
-}: BrandMemberSectionProps) {
+/** Become a Member marketing copy only — no included-benefits or unlock-rewards blocks on `/brand/member`. */
+export default function BrandMemberSection() {
   const bodyBlocks = BRAND_MEMBER_BLOCKS.filter((block) => block.id !== 'headline');
 
   return (
@@ -157,8 +92,6 @@ export default function BrandMemberSection({
           </p>
         );
       })}
-
-      {showUnlockPremiumRewards ? <UnlockPremiumRewardsSection /> : null}
     </div>
   );
 }
