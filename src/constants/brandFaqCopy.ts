@@ -1,3 +1,6 @@
+/** Red section header above the FAQ question submission form. */
+export const BRAND_FAQ_SUBMIT_SECTION_TITLE = 'SUBMIT YOUR QUESTION';
+
 /** FAQ sections for `/brand/faq` — displayed in uppercase on the page. */
 export type BrandFaqItem = {
   id: string;

@@ -77,3 +77,55 @@ export async function sendBrandContactNotifyEmail(payload: {
     return { sent: false, error: e instanceof Error ? e.message : 'Send failed' };
   }
 }
+
+export async function sendBrandFaqQuestionNotifyEmail(payload: {
+  name: string;
+  email: string;
+  question: string;
+  questionId: string;
+}): Promise<{ sent: boolean; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    return { sent: false, error: 'RESEND_API_KEY not configured' };
+  }
+
+  const from =
+    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
+    'Frontal Slayer <onboarding@resend.dev>';
+
+  const to = resolveContactNotifyRecipients();
+  const subject = `BRAND FAQ QUESTION: ${payload.name}`.slice(0, 300);
+  const lines = [
+    'NEW FAQ QUESTION SUBMISSION',
+    '',
+    `ID: ${payload.questionId}`,
+    `NAME: ${payload.name}`,
+    `EMAIL: ${payload.email}`,
+    '',
+    'QUESTION:',
+    payload.question,
+  ];
+  const text = lines.join('\n');
+  const html = `<pre style="font-family:monospace;font-size:13px;white-space:pre-wrap">${text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')}</pre>`;
+
+  try {
+    const r = await fetch(RESEND_API, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ from, to, subject, text, html }),
+    });
+    if (!r.ok) {
+      const errText = await r.text();
+      return { sent: false, error: errText.slice(0, 500) };
+    }
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: e instanceof Error ? e.message : 'Send failed' };
+  }
+}
