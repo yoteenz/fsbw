@@ -53,6 +53,7 @@ import {
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
+import { cartCapSizeLineMarginTop, cartLinePriceMarginTop } from '../../utils/cartCapSizeLineMargin';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -1644,28 +1645,7 @@ function ShoppingBagPage() {
                                     color: '#808080',
                                     textTransform: 'uppercase',
                                     fontSize: '10px',
-                                    marginTop: (() => {
-                                      // Check if there's black detail text (specifications)
-                                      const hasSpecs = (item.density && item.density !== '200%') || 
-                                                     (item.lace && item.lace !== '13X6') || 
-                                                     (item.texture && item.texture !== 'SILKY') || 
-                                                     (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                     (item.hairline && item.hairline !== 'NATURAL') || 
-                                                     (item.styling && item.styling !== 'NONE') || 
-                                                     (item.addOns && item.addOns.length > 0);
-                                      const baseMargin = hasSpecs ? '2px' : '0px';
-                                      // Add 2px for SOFT WAVE and SOFT CURL only
-                                      if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                        const numValue = parseInt(baseMargin);
-                                        return `${numValue + 2}px`;
-                                      }
-                                      // Add 2px for OCEAN CURL only
-                                      if (item.name === 'OCEAN CURL') {
-                                        const numValue = parseInt(baseMargin);
-                                        return `${numValue + 2}px`;
-                                      }
-                                      return baseMargin;
-                                    })(),
+                                    marginTop: cartCapSizeLineMarginTop(item),
                                     marginBottom: '0',
                                     lineHeight: '1.1'
                                   }}
@@ -1679,7 +1659,7 @@ function ShoppingBagPage() {
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                    marginTop: cartLinePriceMarginTop(item),
                                     marginBottom: '0',
                                     fontWeight: '600',
                                     textAlign: 'left',
@@ -1711,7 +1691,7 @@ function ShoppingBagPage() {
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                    marginTop: cartLinePriceMarginTop(item),
                                     marginBottom: '0',
                                     fontWeight: '600',
                                     display: 'flex',
@@ -1738,7 +1718,7 @@ function ShoppingBagPage() {
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
                                   fontSize: '12px',
-                                  marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                  marginTop: cartLinePriceMarginTop(item),
                                   marginBottom: '0',
                                   marginLeft: '0',
                                   marginRight: '0',
@@ -2228,28 +2208,7 @@ function ShoppingBagPage() {
                                  color: '#808080',
                                  textTransform: 'uppercase',
                                  fontSize: '10px',
-                                 marginTop: (() => {
-                                   // Check if there's black detail text (specifications)
-                                   const hasSpecs = (item.density && item.density !== '200%') || 
-                                                  (item.lace && item.lace !== '13X6') || 
-                                                  (item.texture && item.texture !== 'SILKY') || 
-                                                  (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                  (item.hairline && item.hairline !== 'NATURAL') || 
-                                                  (item.styling && item.styling !== 'NONE') || 
-                                                  (item.addOns && item.addOns.length > 0);
-                                   const baseMargin = hasSpecs ? '2px' : '0px';
-                                   // Add 2px for SOFT WAVE and SOFT CURL only
-                                   if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                     const numValue = parseInt(baseMargin);
-                                     return `${numValue + 2}px`;
-                                   }
-                                   // Add 2px for OCEAN CURL only
-                                   if (item.name === 'OCEAN CURL') {
-                                     const numValue = parseInt(baseMargin);
-                                     return `${numValue + 2}px`;
-                                   }
-                                   return baseMargin;
-                                 })(),
+                                 marginTop: cartCapSizeLineMarginTop(item),
                                  marginBottom: '0',
                                  lineHeight: '1.1'
                                }}
@@ -2263,7 +2222,7 @@ function ShoppingBagPage() {
                                  fontFamily: '"Futura PT Book"',
                                  color: '#000000',
                                  fontSize: '12px',
-                                 marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                                 marginTop: cartLinePriceMarginTop(item),
                                  marginBottom: '0',
                                  fontWeight: '600',
                                  display: 'flex',
@@ -2292,7 +2251,7 @@ function ShoppingBagPage() {
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',
                                fontSize: '12px',
-                               marginTop: item.name === 'BLANCO' ? '0px' : '2px',
+                               marginTop: cartLinePriceMarginTop(item),
                                marginBottom: '0',
                                marginLeft: '0',
                                marginRight: '0',
@@ -2518,7 +2477,7 @@ function ShoppingBagPage() {
             isOpen={showClearConfirm}
             onClose={() => setShowClearConfirm(false)}
             onConfirm={confirmClearSavedItems}
-            title="DELETE SAVED ITEMS?"
+            title="DELETE SAVED ITEMS"
             message="ARE YOU SURE YOU WANT TO REMOVE ALL SAVED ITEMS?"
             confirmText="CONFIRM"
             cancelText="CANCEL"
@@ -2530,7 +2489,7 @@ function ShoppingBagPage() {
             isOpen={showEmptyBagConfirm}
             onClose={() => setShowEmptyBagConfirm(false)}
             onConfirm={confirmEmptyBag}
-            title="EMPTY BAG?"
+            title="EMPTY BAG"
             message="ARE YOU SURE YOU WANT TO REMOVE ALL ITEMS FROM YOUR BAG?"
             confirmText="CONFIRM"
             cancelText="CANCEL"
@@ -2582,7 +2541,7 @@ function ShoppingBagPage() {
               setDeleteItemConfirm(null);
             }}
             onConfirm={confirmDeleteItem}
-            title="REMOVE ITEM?"
+            title="REMOVE ITEM"
             message={deleteItemConfirm?.type === 'cart' ? "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM YOUR BAG?" : "ARE YOU SURE YOU WANT TO REMOVE THIS ITEM FROM SAVED?"}
             confirmText="CONFIRM"
             cancelText="CANCEL"

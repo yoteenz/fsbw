@@ -429,7 +429,7 @@ function OrdersPage() {
   };
 
   const FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE =
-    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
+    'BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND YOUR VISUALIZATION.';
 
   /** Demo consult COMPLETE + offer snapshot — same row as Kateena mock chrome; injected for founder admin when not using mock chrome. */
   const buildFounderDemoConsultOrder331 = (): Order => ({
@@ -2304,8 +2304,8 @@ function OrdersPage() {
                   {expandedOrderId ? (
                     <>
                       <button
-                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                        className="font-bold text-lg tracking-wider truncate transition-colors text-left uppercase text-black hover:text-gray-800"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', fontWeight: '500' }}
                       >
                         {(activeOrders.find(o => o.id === expandedOrderId) || pastOrders.find(o => o.id === expandedOrderId))?.orderNumber || 'ORDER'}
                       </button>
@@ -2328,7 +2328,7 @@ function OrdersPage() {
                           style={{
                             width: '16px',
                             height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                       </button>
@@ -2868,7 +2868,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -3033,7 +3033,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </a>
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                   TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
+                                   TRACK VIA{' '}
+                                   {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim())
+                                     ? 'DOMESTIC SHIPPING'
+                                     : 'INTERNATIONAL SHIPPING'}
                                  </p>
                                </div>
                              ) : order.status === 'CONFIRMED' ? (
@@ -3255,8 +3258,8 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                   {expandedOrderId && pastOrders.find(o => o.id === expandedOrderId) ? (
                     <>
                       <button
-                        className="text-red-500 font-bold text-lg tracking-wider truncate hover:text-red-600 transition-colors text-left uppercase"
-                        style={{ fontFamily: '"Futura PT Medium"', color: '#EB1C24', fontSize: '12px', fontWeight: '500' }}
+                        className="font-bold text-lg tracking-wider truncate transition-colors text-left uppercase text-black hover:text-gray-800"
+                        style={{ fontFamily: '"Futura PT Medium"', color: '#000000', fontSize: '12px', fontWeight: '500' }}
                       >
                         {pastOrders.find(o => o.id === expandedOrderId)?.orderNumber || 'ORDER'}
                       </button>
@@ -3279,7 +3282,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           style={{
                             width: '16px',
                             height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                       </button>
@@ -3819,7 +3822,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -3976,7 +3979,10 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    </a>
                                  </p>
                                  <p style={{ fontFamily: '"Futura PT Demi", futuristic-pt, Futura, Inter, sans-serif', fontSize: '9px', color: '#808080', margin: 0, lineHeight: '1.2', transform: 'translateY(3px)' }}>
-                                   TRACK VIA {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim()) ? 'DOMESTIC' : 'INTERNATIONAL'}
+                                   TRACK VIA{' '}
+                                   {currentUser && /^US$|^USA$|^UNITED\s*STATES$/i.test(String(currentUser.defaultAddress?.country || currentUser.shippingAddress?.country || 'US').trim())
+                                     ? 'DOMESTIC SHIPPING'
+                                     : 'INTERNATIONAL SHIPPING'}
                                  </p>
                                </div>
                              ) : order.status === 'CONFIRMED' ? (
@@ -4130,7 +4136,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
         isOpen={showSignOutConfirm}
         onClose={() => setShowSignOutConfirm(false)}
         onConfirm={handleSignOut}
-        title="SIGN OUT?"
+        title="SIGN OUT"
         message="ARE YOU SURE YOU WANT TO SIGN OUT?"
         confirmText="SIGN OUT"
         cancelText="CANCEL"

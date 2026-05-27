@@ -2,6 +2,7 @@
  * Admin Revenue page. All tabs use the same data source as the client overview:
  * - Orders: buildRevenueOrdersList() = localStorage userOrders_* (same keys as client overview).
  * - Overview totals/breakdown: getAdminRevenue() when Supabase is configured (else derived from orders).
+ * - Overview live globe: polls GET /api/admin/live-presence on LIVE_GLOBE_REFRESH_MS (not every few seconds — reduces DB load).
  * - Products/Inventory: getDepletedInventory(orders) and Edit Inventory overrides.
  * - Payments: local membership rows + Supabase `membership_payments` (Stripe webhooks) when admin + API; fraud analysis runs on the order list.
  */
@@ -38,8 +39,9 @@ import {
   appendOrderTrackingClientNotification,
 } from '../../../utils/orderTracking';
 import { visitorPlaceFieldsFromHeartbeatLabel } from '../../../utils/adminGlobePlaceLabel';
-import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
 import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile';
+import { buildOrderGlobeClustersFromRevenueOrders } from '../../../utils/adminOrderGlobeClusters';
+import { ADMIN_GLOBE_ORDER_PILLAR_RGBA } from '../../../utils/adminGlobeOrderPillarColor';
 import {
   adminGlobeMockDataEnabled,
   disableAdminGlobeMockDataSession,
@@ -69,6 +71,9 @@ const FINANCIAL_DEBT_RATIO_COLOR: Record<string, string> = {
 };
 
 const REVENUE_TABS = ['OVERVIEW', 'ORDERS', 'PRODUCTS', 'PAYMENTS'] as const;
+
+/** Live globe polls GET /api/admin/live-presence; balance freshness vs Supabase reads while OVERVIEW is open (was 30s; 90s ≈ middle vs 2m). */
+const LIVE_GLOBE_REFRESH_MS = 90_000;
 
 /**
  * Full path key for **top page paths** (no ellipsis — display builds `HOME/SHOP`-style lines).
@@ -339,7 +344,7 @@ function AdminRevenueOrdersTab({
                   ORDER #{(order.orderNumber || order.id || '').toString().replace(/^ORDER\s*#?\s*/i, '') || '—'}
                 </h3>
                 <button type="button" onClick={onCloseExpanded} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} aria-label="Close">
-                  <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                  <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                 </button>
               </div>
               {editTrackingMode ? (
@@ -759,7 +764,16 @@ export default function AdminRevenue() {
 
   const [liveVisitorsNow, setLiveVisitorsNow] = useState(0);
   const [liveVisitorGlobePoints, setLiveVisitorGlobePoints] = useState<
-    Array<{ lat: number; lng: number; label: string; placeLine: string; placeDetail?: string }>
+    Array<{
+      lat: number;
+      lng: number;
+      label: string;
+      placeLine: string;
+      placeDetail?: string;
+      landmarkTitle?: string;
+      landmarkSymbol?: string;
+      postcardKey?: string;
+    }>
   >([]);
   /** Raw rows for Live View card (paths, geo aggregation). */
   const [livePresenceVisitors, setLivePresenceVisitors] = useState<
@@ -921,7 +935,7 @@ export default function AdminRevenue() {
     persistGlobeMockFromSearchParams(searchParams);
     persistGlobeMockFromBrowserLocation();
     void fetchLiveGlobe();
-    const id = setInterval(() => void fetchLiveGlobe(), 30_000);
+    const id = setInterval(() => void fetchLiveGlobe(), LIVE_GLOBE_REFRESH_MS);
     return () => clearInterval(id);
   }, [activeTab, fetchLiveGlobe, globeMockUiRev, searchParams, location.hash]);
 
@@ -1256,7 +1270,7 @@ export default function AdminRevenue() {
                           ·
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: '#16a34a' }} aria-hidden />
+                          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: ADMIN_GLOBE_ORDER_PILLAR_RGBA }} aria-hidden />
                           <span style={{ color: '#334155' }}>
                             {orderGlobeOrderTotal} {orderGlobeOrderTotal === 1 ? 'order' : 'orders'}
                           </span>

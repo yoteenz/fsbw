@@ -743,7 +743,7 @@ export default function AdminDashboard() {
       ? pendingData!.pendingItems.map((p) => ({
           label: p.label,
           value: p.value,
-          color: (p.label.includes('ORDER FORMS') || p.label.includes('REVIEWS')) ? ('text-red-500' as const) : ('text-gray-500' as const),
+          color: (p.label.includes('ORDER FORMS') || p.label.includes('REVIEWS') || p.label.includes('CONTACT INQUIRIES')) ? ('text-red-500' as const) : ('text-gray-500' as const),
         }))
       : [
           { label: 'REVIEWS', value: String(pendingReviewsCount), color: 'text-gray-500' as const },

@@ -460,7 +460,7 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
 
 /** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
-  'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
+  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
 const SESSION_QUOTE_MEETING_ID = 'adminMeetingsQuoteMeetingId';
 const sessionQuoteDraftKey = (meetingId: string) => `adminMeetingsQuoteDraft_${meetingId}`;
@@ -526,7 +526,7 @@ export default function AdminMeetingsHub() {
   /** Human-readable spec for that line (e.g. length **`50"`**); shown in breakdown / quote when set. */
   const [offerCustomSpecByLine, setOfferCustomSpecByLine] = useState<Partial<Record<QuoteSubPage, string>>>({});
   const [quoteMessage, setQuoteMessage] = useState(
-    'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.'
+    'BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. 2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND YOUR VISUALIZATION.'
   );
   const [quoteSending, setQuoteSending] = useState(false);
   /** SAVE SELECTION: same UX pattern as shop **ADD TO BAG** (adding → success, then reset). */
@@ -3307,7 +3307,7 @@ export default function AdminMeetingsHub() {
         isOpen={showSendQuoteConfirm}
         onClose={() => setShowSendQuoteConfirm(false)}
         onConfirm={() => void handleConfirmSendQuote()}
-        title="SEND OFFER?"
+        title="SEND OFFER"
         message="CLIENT WILL RECEIVE AN ALERT FOR THIS OFFER."
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -3318,7 +3318,7 @@ export default function AdminMeetingsHub() {
         isOpen={showRegenerateQuoteUnitConfirm}
         onClose={() => setShowRegenerateQuoteUnitConfirm(false)}
         onConfirm={() => void handleGenerateQuoteUnitImage()}
-        title="REGENERATE UNIT?"
+        title="REGENERATE UNIT"
         message="THIS WILL GENERATE A NEW UNIT IMAGE FOR THE CURRENT SELECTIONS."
         confirmText="CONFIRM"
         cancelText="CANCEL"

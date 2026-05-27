@@ -31,6 +31,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import RewardsHeaderIcon from '../../../components/icons/RewardsHeaderIcon';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -121,6 +122,9 @@ const LOYALTY_REWARDS = [
   { type: 'free_gift' as const, label: 'free gift', detail: 'WITH PURCHASE', points: 45000 },
   { type: 'discount' as const, label: 'discount code', detail: '50% OFF UNIT', points: 50000 }
 ];
+
+/** Bohemy on loyalty rewards view only (red + gray labels, disclaimer, redeem). */
+const LOYALTY_BOHEMY_FONT_PX = 18;
 
 const EARN_TASKS = [
   { id: 'newsletter_signup', action: 'NEWSLETTER SIGN UP', points: 50 },
@@ -1232,16 +1236,7 @@ function MembershipPage() {
                           LOYALTY POINTS
                     </h2>
                     <div className="flex items-center gap-2">
-                        <img
-                          src="/assets/rewards-icon.svg"
-                          alt=""
-                          style={{
-                            width: '19.76px',
-                            height: '19.76px',
-                            objectFit: 'contain',
-                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                          }}
-                        />
+                        <RewardsHeaderIcon sizePx={19.76} />
                         <img
                           src="/assets/close-icon.svg"
                           alt="Close"
@@ -1250,7 +1245,7 @@ function MembershipPage() {
                             width: '16px',
                             height: '16px',
                             cursor: 'pointer',
-                            filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                     </div>
@@ -1286,7 +1281,7 @@ function MembershipPage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#EB1C24',
-                              fontSize: '20px',
+                              fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400
@@ -1346,7 +1341,7 @@ function MembershipPage() {
                                   <p
                                     style={{
                                       fontFamily: '"Bohemy", cursive',
-                                      fontSize: '20px',
+                                      fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                                       color: labelColor,
                                       margin: '0 0 2px 0',
                                       textTransform: 'lowercase',
@@ -1389,7 +1384,7 @@ function MembershipPage() {
                                   disabled={!canRedeem}
                                   style={{
                                     fontFamily: '"Bohemy", cursive',
-                                    fontSize: '20px',
+                                    fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                                     color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                     backgroundColor: 'transparent',
                                     border: '1.3px solid',
@@ -1465,7 +1460,7 @@ function MembershipPage() {
                               height: '16px',
                               objectFit: 'contain',
                               filter:
-                                'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                                'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                             }}
                           />
                         </button>
@@ -2025,7 +2020,7 @@ function MembershipPage() {
                           width: '16px',
                           height: '16px',
                           cursor: 'pointer',
-                          filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                          filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                         }}
                       />
                     </div>
@@ -2063,16 +2058,7 @@ function MembershipPage() {
                     >
                       LOYALTY POINTS
                     </h2>
-                    <img
-                      src="/assets/rewards-icon.svg"
-                      alt=""
-                      style={{
-                        width: '19.76px',
-                        height: '19.76px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                      }}
-                    />
+                    <RewardsHeaderIcon sizePx={19.76} />
                   </div>
 
                   {/* Balance + discount codes (no inner border) */}
@@ -2108,7 +2094,7 @@ fontFamily: '"Futura PT Book"',
                                 style={{
                                   fontFamily: '"Bohemy", cursive',
                                   color: '#EB1C24',
-                                  fontSize: '20px',
+                                  fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                                   margin: '0 0 8px 0',
                                   textTransform: 'lowercase',
                                   fontWeight: 400
@@ -2168,7 +2154,7 @@ fontFamily: '"Futura PT Book"',
                                       <p
                                         style={{
                                           fontFamily: '"Bohemy", cursive',
-                                          fontSize: '20px',
+                                          fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                                           color: labelColor,
                                           margin: '0 0 2px 0',
                                           textTransform: 'lowercase',
@@ -2211,7 +2197,7 @@ fontFamily: '"Futura PT Book"',
                                       disabled={!canRedeem}
                                       style={{
                                         fontFamily: '"Bohemy", cursive',
-                                        fontSize: '20px',
+                                        fontSize: `${LOYALTY_BOHEMY_FONT_PX}px`,
                                         color: canRedeem ? '#EB1C24' : BRAND_GRAY,
                                         backgroundColor: 'transparent',
                                         border: '1.3px solid',
@@ -2802,7 +2788,7 @@ fontFamily: '"Futura PT Book"',
         isOpen={showCancelConfirmModal}
         onClose={() => setShowCancelConfirmModal(false)}
         onConfirm={confirmCancelSubscription}
-        title="CANCEL SUBSCRIPTION?"
+        title="CANCEL SUBSCRIPTION"
         message={`YOUR ${getSubscriptionTierName()} SUBSCRIPTION WILL END ON ${getSubscriptionEndDate()}.`}
         confirmText="CONFIRM"
         cancelText="CANCEL"

@@ -1887,7 +1887,7 @@ export default function AdminClients() {
                           style={{
                             display: 'block',
                             filter:
-                              'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)',
+                              'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
                           }}
                         />
                       </button>
@@ -2838,7 +2838,7 @@ export default function AdminClients() {
                                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                                       aria-label="Close"
                                     >
-                                      <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                                      <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                     </button>
                                   </div>
                                   <div
@@ -3184,7 +3184,7 @@ export default function AdminClients() {
                                     <div style={{ marginTop: '24px' }}>
                                       <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
                                         <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>REWARDS</h4>
-                                        <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                                        <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                       </div>
                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         <div className="flex justify-between items-center">
@@ -3805,7 +3805,7 @@ export default function AdminClients() {
             else if (returnTo !== 'meetings') navigate('/admin/clients');
           }
         }}
-        title="BLOCK CLIENT?"
+        title="BLOCK CLIENT"
         message="YOU WILL BAN THIS CLIENT AND ANY SIMILAR ACCOUNTS."
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -3845,7 +3845,7 @@ export default function AdminClients() {
           setExpandedOrderId(null);
           setShowCancelOrderConfirm(false);
         }}
-        title="CANCEL ORDER?"
+        title="CANCEL ORDER"
         message="THIS ORDER WILL BE MARKED AS CANCELLED AND REFUNDED."
         confirmText="CONFIRM"
         cancelText="CANCEL"
@@ -3973,7 +3973,7 @@ export default function AdminClients() {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 aria-label="Close"
               >
-                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
               </button>
             </div>
             <div
@@ -4078,11 +4078,11 @@ export default function AdminClients() {
                         height: '18px',
                         display: 'block',
                         filter:
-                          'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                          'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
                       }}
                     />
                   ) : (
-                    <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+                    <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                   )}
                 </button>
               </div>

@@ -1,16 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../components/SocialMenuIcons';
-import { BRAND_MENU_ITEMS } from '../../constants/brandMenu';
+import { getBrandCardHeaderTitle, getBrandNavTitle } from '../../constants/brandMenu';
 import { clearAppAuth } from '../../utils/adminAuth';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import BrandAboutUsBody from '../../components/brand/BrandAboutUsBody';
+import BrandContactSection from '../../components/brand/BrandContactSection';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
+import BrandMemberSection from '../../components/brand/BrandMemberSection';
+import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
+import BrandFaqPageContent from '../../components/brand/BrandFaqPageContent';
+import BrandTermsBody from '../../components/brand/BrandTermsBody';
+import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
+import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
+import { isMockDataAccount } from '../../utils/adminAuth';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
+
+/** Max height when brand main card scrolls (contact form, member premium chart). */
+const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
+
+/** Empty FAQ / Reviews / Terms shells use the same main card height as About Us. */
+const BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT = new Set(['reviews']);
 
 function BrandPage() {
   const navigate = useNavigate();
@@ -35,16 +52,86 @@ function BrandPage() {
       return false;
     }
   });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [showContactSuccessModal, setShowContactSuccessModal] = useState(false);
+  const [faqQuestionSubmitting, setFaqQuestionSubmitting] = useState(false);
+  const [showFaqQuestionSuccessModal, setShowFaqQuestionSuccessModal] = useState(false);
+
+  const memberHasPremiumSubscription = (() => {
+    if (!isSignedIn) return false;
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) return false;
+      const user = JSON.parse(currentUser);
+      return (
+        (Boolean(user?.subscriptionTier) && user?.membershipType === 'PREMIUM') ||
+        (isMockDataAccount(user) && (user?.membershipType === 'PREMIUM' || user?.membershipType === 'Premium'))
+      );
+    } catch {
+      return false;
+    }
+  })();
+
+
+  const memberPremium = usePremiumSubscriptionUpgrade({
+    hasPremiumSubscription: memberHasPremiumSubscription,
+  });
+
+  useEffect(() => {
+    if (slug !== 'member' && memberPremium.showPremiumChart) {
+      memberPremium.closePremiumChart();
+    }
+  }, [slug, memberPremium.showPremiumChart, memberPremium.closePremiumChart]);
+
+  const handleMemberUpgradeClick = () => {
+    if (!isSignedIn) {
+      navigate(signInHrefWithReturnTo(location));
+      return;
+    }
+    memberPremium.handleUpgradeAction();
+  };
+  const handleBrandSubmitReviewClick = () => {
+    if (isSignedIn) {
+      navigate('/account/orders');
+      return;
+    }
+    navigate(`/sign-in?returnTo=${encodeURIComponent('/account/orders')}`);
+  };
+
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
-  const navTitle = validSlug
-    ? (['about', 'member', 'terms'].includes(slug)
-        ? slug.toUpperCase()
-        : (BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`)?.label ?? slug.toUpperCase()))
-    : 'ABOUT';
-  const cardHeaderTitle = validSlug
-    ? (BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`)?.label ?? slug.toUpperCase())
-    : 'ABOUT US';
+  const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
+  const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'MISSION STATEMENT';
+
+  /** Tall content only: cap card height and scroll inside; short pages hug content (no viewport gap). */
+  const brandMainCardScrollable =
+    slug === 'contact' || slug === 'faq' || slug === 'terms' || (slug === 'member' && memberPremium.showPremiumChart);
+
+  const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
+
+  const brandMainCardMatchAboutHeight = BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT.has(slug);
+
+  const aboutMainCardMeasureRef = useRef<HTMLDivElement>(null);
+  const [aboutMainCardMinHeightPx, setAboutMainCardMinHeightPx] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const node = aboutMainCardMeasureRef.current;
+    if (!node) return;
+
+    const measure = () => {
+      setAboutMainCardMinHeightPx(node.offsetHeight);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
 
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
@@ -109,7 +196,41 @@ function BrandPage() {
         }}
       />
       <div className="relative z-10">
-        <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible' }}>
+        <div
+          className="flex flex-col py-5 px-4"
+          style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', position: 'relative' }}
+        >
+          <div
+            ref={aboutMainCardMeasureRef}
+            aria-hidden
+            className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
+            style={{
+              borderWidth: '1.3px',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              visibility: 'hidden',
+              pointerEvents: 'none',
+              zIndex: -1,
+            }}
+          >
+            <p
+              style={{
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '12px',
+                color: '#EB1C24',
+                margin: '0 0 8px 0',
+                textTransform: 'uppercase',
+                fontWeight: '500',
+                flexShrink: 0,
+              }}
+            >
+              MISSION STATEMENT
+            </p>
+            <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
+            <BrandAboutUsBody />
+          </div>
           {/* HEADER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
@@ -166,7 +287,7 @@ function BrandPage() {
           {showMobileMenu ? (
             <div
               className="border border-black flex flex-col pt-6 pb-4 px-5 bg-white/60 backdrop-blur-sm w-full"
-              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: 'calc(100dvh - 80px)', height: 'calc(100dvh - 80px)' }}
+              style={{ borderWidth: '1.3px', minWidth: '100%', maxWidth: 'none', overflow: 'visible', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT, height: BRAND_PAGE_MAIN_CARD_HEIGHT }}
             >
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', paddingTop: '20px', flex: 1, minHeight: 0, position: 'relative' }}>
                 <div className="flex justify-center gap-8" style={{ marginBottom: '30px' }}>
@@ -228,27 +349,178 @@ function BrandPage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-4 mb-5">
+            <>
+            <div className="flex flex-col gap-4">
               <div
-                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full"
-                style={{ borderWidth: '1.3px', minHeight: '280px' }}
+                className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
+                style={{
+                  borderWidth: '1.3px',
+                  ...(brandMainCardScrollable
+                    ? {
+                        maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
+                        overflow: 'hidden',
+                      }
+                    : brandMainCardMatchAboutHeight && aboutMainCardMinHeightPx != null
+                      ? { minHeight: aboutMainCardMinHeightPx }
+                      : {}),
+                }}
               >
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: '#EB1C24',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    fontWeight: '500'
-                  }}
+                {!hideMemberCardHeader ? (
+                  <>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '12px',
+                        color: '#EB1C24',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {cardHeaderTitle}
+                    </p>
+                    <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
+                  </>
+                ) : null}
+                <div
+                  style={
+                    brandMainCardScrollable
+                      ? { flex: 1, minHeight: 0, overflowY: 'auto' }
+                      : slug === 'reviews'
+                        ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }
+                        : undefined
+                  }
                 >
-                  {cardHeaderTitle}
-                </p>
-                <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px' }} />
-                {/* Empty main card - content to be added later */}
+                  {slug === 'about' ? (
+                    <BrandAboutUsBody />
+                  ) : slug === 'member' ? (
+                    memberPremium.showPremiumChart ? (
+                      <PremiumSubscriptionUpgradeChart
+                        embedded
+                        onClose={memberPremium.closePremiumChart}
+                        hasPremiumSubscription={memberHasPremiumSubscription}
+                        selectedTier={memberPremium.selectedTier}
+                        setSelectedTier={memberPremium.setSelectedTier}
+                        showAllBenefits={memberPremium.showAllBenefits}
+                        setShowAllBenefits={memberPremium.setShowAllBenefits}
+                        formatPrice={memberPremium.formatPrice}
+                        subscriptionTiers={memberPremium.subscriptionTiers}
+                      />
+                    ) : (
+                      <BrandMemberSection />
+                    )
+                  ) : slug === 'contact' ? (
+                    <BrandContactSection
+                      formId="brand-contact-form"
+                      onSubmittingChange={setContactSubmitting}
+                      onSubmitted={() => setShowContactSuccessModal(true)}
+                    />
+                  ) : slug === 'reviews' ? (
+                    <BrandReviewsEmptyState />
+                  ) : slug === 'faq' ? (
+                    <BrandFaqPageContent
+                      formId="brand-faq-question-form"
+                      onSubmittingChange={setFaqQuestionSubmitting}
+                      onSubmitted={() => setShowFaqQuestionSuccessModal(true)}
+                    />
+                  ) : slug === 'terms' ? (
+                    <BrandTermsBody />
+                  ) : null}
+                </div>
               </div>
             </div>
+            {slug === 'about' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={() => navigate('/lobby')}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  HOME PAGE
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            {slug === 'contact' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="submit"
+                  form="brand-contact-form"
+                  disabled={contactSubmitting}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
+                  style={pageActionButtonStyle}
+                >
+                  {contactSubmitting ? 'SENDING…' : 'SEND MESSAGE'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            {slug === 'member' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={handleMemberUpgradeClick}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  {memberPremium.showPremiumChart ? 'CONFIRM SUBSCRIPTION' : 'UPGRADE SUBSCRIPTION'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            {slug === 'reviews' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={handleBrandSubmitReviewClick}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  SUBMIT REVIEW
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            {slug === 'faq' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="submit"
+                  form="brand-faq-question-form"
+                  disabled={faqQuestionSubmitting}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
+                  style={pageActionButtonStyle}
+                >
+                  {faqQuestionSubmitting ? 'SUBMITTING…' : 'SUBMIT'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            <ConfirmationModal
+              isOpen={memberPremium.showValidationModal}
+              onClose={() => memberPremium.setShowValidationModal(false)}
+              onConfirm={() => memberPremium.setShowValidationModal(false)}
+              title="FORGETTING SOMETHING?"
+              message="PLEASE SELECT A SUBSCRIPTION TIER TO CONTINUE."
+              confirmText="OK"
+              cancelText=""
+              dataAttribute="subscription-validation"
+            />
+            <ConfirmationModal
+              isOpen={showContactSuccessModal}
+              onClose={() => setShowContactSuccessModal(false)}
+              onConfirm={() => setShowContactSuccessModal(false)}
+              title="MESSAGE SENT"
+              message="YOUR MESSAGE HAS BEEN SUBMITTED. PLEASE ALLOW AT LEAST 72 HOURS FOR A RESPONSE."
+              confirmText="OK"
+              cancelText=""
+            />
+            <ConfirmationModal
+              isOpen={showFaqQuestionSuccessModal}
+              onClose={() => setShowFaqQuestionSuccessModal(false)}
+              onConfirm={() => setShowFaqQuestionSuccessModal(false)}
+              title="QUESTION SENT"
+              message="YOUR QUESTION HAS BEEN SUBMITTED. IF SELECTED, IT MAY BE ADDED TO OUR FAQ. PLEASE ALLOW AT LEAST 72 HOURS FOR A RESPONSE."
+              confirmText="OK"
+              cancelText=""
+            />
+            </>
           )}
         </div>
       </div>

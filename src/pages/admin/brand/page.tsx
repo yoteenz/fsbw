@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import BrandAlertsPanel, { type BrandAlertsPanelHandle } from '../components/BrandAlertsPanel';
+import BrandContactInquiriesPanel from '../components/BrandContactInquiriesPanel';
 import BrandExpiresDatePicker from '../../../components/BrandExpiresDatePicker';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { getAdminBrand, getAdminAnalytics } from '../../../utils/api';
@@ -24,7 +25,7 @@ import {
   type BrandPromoCode,
 } from '../../../utils/adminBrandCodes';
 
-const BRAND_TABS = ['OVERVIEW', 'ALERTS', 'CODES', 'ANALYTICS'] as const;
+const BRAND_TABS = ['OVERVIEW', 'ALERTS', 'INQUIRIES', 'CODES', 'ANALYTICS'] as const;
 const ANALYTICS_SUB_TABS = ['SUMMARY', 'BY PLATFORM', 'BY SOURCE'] as const;
 
 const PLATFORM_LABEL: Record<SocialPlatform, string> = {
@@ -97,6 +98,10 @@ export default function AdminBrand() {
   const [alertsStats, setAlertsStats] = useState({ clientsWithNotifs: 0, totalSent: 0 });
   const onAlertsStats = useCallback((stats: { clientsWithNotifs: number; totalSent: number }) => {
     setAlertsStats(stats);
+  }, []);
+  const [inquiriesStats, setInquiriesStats] = useState({ newCount: 0, total: 0 });
+  const onInquiriesStats = useCallback((stats: { newCount: number; total: number }) => {
+    setInquiriesStats(stats);
   }, []);
   const brandAlertsPanelRef = useRef<BrandAlertsPanelHandle>(null);
   const [alertsSendFooter, setAlertsSendFooter] = useState({
@@ -291,7 +296,7 @@ export default function AdminBrand() {
                             marginTop: '-2px',
                             display: 'block',
                             filter:
-                              'invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                              'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
                           }}
                         />
                       </button>
@@ -695,6 +700,15 @@ export default function AdminBrand() {
                   <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>{analyticsSummary.total}</p>
                   <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>TOTAL CLICKS</p>
                 </div>
+              ) : activeTab === 'INQUIRIES' ? (
+                <div className="text-center py-4 px-5">
+                  <p className="font-covered-by-your-grace text-4xl" style={{ color: '#EB1C24', fontSize: '40px' }}>
+                    {inquiriesStats.newCount}
+                  </p>
+                  <p className="text-xs font-futura mt-2" style={{ color: '#808080' }}>
+                    NEW CONTACT INQUIRIES
+                  </p>
+                </div>
               ) : activeTab === 'ALERTS' ? (
                 <div className="grid grid-cols-2 gap-4 px-5 py-4">
                   <div
@@ -813,6 +827,9 @@ export default function AdminBrand() {
                     onStatsChange={onAlertsStats}
                     onSendFooterState={setAlertsSendFooter}
                   />
+                )}
+                {activeTab === 'INQUIRIES' && (
+                  <BrandContactInquiriesPanel onStatsChange={onInquiriesStats} />
                 )}
                 {activeTab === 'ANALYTICS' && (
                   <>

@@ -280,11 +280,11 @@ export function orderStripTitleFontPx(item: any): string {
   return '21px';
 }
 
-/** Gift / membership / generic digital rows use the tighter vertical stack treatment (not A/C or BCF). */
+/** Gift cards use the tighter vertical stack (-25px title nudge). Membership upgrade uses standard spacing below the thumb. */
 export function orderStripUseDigitalStackLayout(item: any, isSubscriptionUpgrade: boolean): boolean {
   if (item.name === 'GIFT CARD' || item.type === 'gift-card') return true;
-  if (item.type === 'digital' && isSubscriptionUpgrade) return true;
-  return isMembershipTierStripItem(item, isSubscriptionUpgrade);
+  if (isMembershipTierStripItem(item, isSubscriptionUpgrade)) return false;
+  return false;
 }
 
 /**

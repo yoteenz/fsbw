@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { loadUserLists, saveUserLists, type UserList } from './AddToListModal';
+import {
+  clampUserListNameInput,
+  loadUserLists,
+  saveUserLists,
+  USER_LIST_NAME_MAX_LENGTH,
+  type UserList,
+} from './AddToListModal';
 
 interface CreateNewListModalProps {
   isOpen: boolean;
@@ -28,6 +34,10 @@ export default function CreateNewListModal({
     const trimmed = newListName.trim();
     if (!trimmed) {
       setErrorMessage('PLEASE ENTER A LIST NAME.');
+      return;
+    }
+    if (trimmed.length > USER_LIST_NAME_MAX_LENGTH) {
+      setErrorMessage('LIST NAME MUST BE 10 CHARACTERS OR FEWER.');
       return;
     }
     const lists = loadUserLists();
@@ -103,9 +113,10 @@ export default function CreateNewListModal({
             type="text"
             value={newListName}
             onChange={(e) => {
-              setNewListName(e.target.value);
+              setNewListName(clampUserListNameInput(e.target.value));
               setErrorMessage('');
             }}
+            maxLength={USER_LIST_NAME_MAX_LENGTH}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleCreate();
               if (e.key === 'Escape') onClose();

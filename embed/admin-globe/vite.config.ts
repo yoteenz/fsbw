@@ -12,6 +12,8 @@ export default defineConfig({
       '@fsbw/adminGlobeNe110mLand': path.resolve(__dirname, '../../src/utils/adminGlobeNe110mLand.ts'),
       '@fsbw/adminGlobeBoundaryPaths': path.resolve(__dirname, '../../src/utils/adminGlobeBoundaryPaths.ts'),
       '@fsbw/adminGlobePlaceLabel': path.resolve(__dirname, '../../src/utils/adminGlobePlaceLabel.ts'),
+      '@fsbw/adminGlobeGeographicLandmark': path.resolve(__dirname, '../../src/utils/adminGlobeGeographicLandmark.ts'),
+      '@fsbw/adminGlobeOrderPillarColor': path.resolve(__dirname, '../../src/utils/adminGlobeOrderPillarColor.ts'),
     },
   },
   base: '/',

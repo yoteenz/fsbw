@@ -423,7 +423,7 @@ function PaymentPage() {
               height: '14.5px',
               cursor: 'pointer',
               pointerEvents: 'auto',
-              filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+              filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
             }}
           />
         </button>
@@ -806,7 +806,7 @@ function PaymentPage() {
             setPaymentToRemove(null);
           }
         }}
-        title="REMOVE CARD?"
+        title="REMOVE CARD"
         message={<>ARE YOU SURE YOU WANT TO REMOVE THIS CARD?<br />YOU CAN ADD IT AGAIN LATER.</>}
         confirmText="CONFIRM"
         cancelText="CANCEL"

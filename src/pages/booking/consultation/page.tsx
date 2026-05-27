@@ -1091,7 +1091,7 @@ export default function BookingConsultationPage() {
       onConfirm={() => {
         confirmRemoveInspoItem();
       }}
-      title="REMOVE PHOTO?"
+      title="REMOVE PHOTO"
       message="REMOVE THIS HAIR INSPO PHOTO?"
       confirmText="REMOVE"
       cancelText="CANCEL"
@@ -1108,7 +1108,7 @@ export default function BookingConsultationPage() {
         setShowConsultAccessModal(false);
         navigate(BOOKING_PATHS.STANDARD_CONSULT, { replace: true });
       }}
-      title="UPGRADE YOUR SUBSCRIPTION?"
+      title="UPGRADE YOUR SUBSCRIPTION"
       message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
       confirmText="GO TO STANDARD CONSULT"
       cancelText="CANCEL"
@@ -1127,7 +1127,7 @@ export default function BookingConsultationPage() {
         }
         navigate(signInHrefWithReturnTo(location));
       }}
-      title="UPGRADE YOUR SUBSCRIPTION?"
+      title="UPGRADE YOUR SUBSCRIPTION"
       message="YOU MUST BE A PREMIUM MEMBER TO USE THIS FEATURE."
       confirmText="UPGRADE"
       cancelText="CANCEL"

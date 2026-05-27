@@ -1,15 +1,37 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { trackActivity } from '../../../utils/activity';
+import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { loadUserLists, saveUserLists, type UserList } from '../../../components/AddToListModal';
 import CreateNewListModal from '../../../components/CreateNewListModal';
+import ShareListLinkModal from '../../../components/ShareListLinkModal';
+import { getCurrentUser } from '../../../utils/adminAuth';
+import {
+  getUserListVisibilityLabel,
+  prepareListForShare,
+  publishSharedListSnapshot,
+  republishSharedSnapshotsForLists,
+  syncUserListsSharedStatus,
+} from '../../../utils/wishlistListShare';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  buildWishlistItemDetailsHtml,
+  formatWishlistListItemPrice,
+  getWishlistItemDisplayPrice,
+  getWishlistItemProductName,
+  wishlistItemHasViewDetails,
+} from '../../../utils/wishlistListItemDetails';
+import {
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
+} from '../wishlistExpandedListLineClasses';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -29,6 +51,201 @@ function getLeafBrickFrontImage(item: any): string {
   }
   return '/assets/natural front.png';
 }
+
+/** Canonical empty-list thumb (Supabase live-preview). */
+const EMPTY_LIST_THUMB_SUPABASE_URL =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/6KLNd6QdTtVWqfXcnpOsc_cChNXN8z.jpeg';
+
+/** Thumbnail when a user list has no items (lists overview row only). */
+const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
+
+/** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
+const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
+/** Text column sits this many px higher than the thumb (thumb column gets matching marginTop). */
+const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
+/** Gray rule + spacing between overview list rows and expanded line items. */
+const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
+const LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
+
+function listRowDividerStyles(index: number, total: number, options?: { insetBelowDivider?: boolean }): React.CSSProperties {
+  const isLast = index >= total - 1;
+  return {
+    paddingBottom: '16px',
+    ...(options?.insetBelowDivider && index > 0
+      ? { paddingTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px` }
+      : {}),
+    marginBottom: isLast ? '16px' : `${LIST_ROW_GAP_BELOW_DIVIDER_PX}px`,
+    borderBottom: isLast ? 'none' : LIST_ROW_DIVIDER_BORDER,
+  };
+}
+
+/** Expanded created-list item thumbs (line/grid); 20% larger than 88×110 overview size. */
+const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
+const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
+const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
+/** Extra vertical gap between grid rows (added above row 2+; symmetrical between all rows). */
+const EXPANDED_LIST_GRID_ROW_GAP_BASE_PX = 20;
+const EXPANDED_LIST_GRID_ROW_GAP_EXTRA_PX = 8;
+const EXPANDED_LIST_GRID_ROW_GAP_PX = EXPANDED_LIST_GRID_ROW_GAP_BASE_PX + EXPANDED_LIST_GRID_ROW_GAP_EXTRA_PX;
+const EXPANDED_LIST_GRID_COL_GAP_PX = 16;
+
+const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
+const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
+/** Gap between script product name and red RAW line. */
+const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
+
+const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
+  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+  fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
+  color: '#000',
+  margin: `0 0 ${EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX}px 0`,
+  padding: 0,
+  lineHeight: 1,
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
+
+const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX}px`,
+};
+
+const EXPANDED_LIST_NO_REVIEWS_LABEL = 'NO REVIEWS SUBMITTED';
+const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
+
+function ExpandedListItemNoReviewStars({ centered }: { centered?: boolean }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '2px',
+        marginBottom: '6px',
+        ...(centered ? { justifyContent: 'center' } : {}),
+      }}
+    >
+      {[...Array(5)].map((_, idx) => (
+        <img
+          key={idx}
+          src="/assets/NOIR/star-symbol.png"
+          alt=""
+          style={{
+            width: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            height: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            filter: EXPANDED_LIST_STAR_STROKE_FILTER,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
+};
+
+const EXPANDED_LIST_LINE_RAW_MARGIN_STYLE: React.CSSProperties = {
+  margin: '0 0 5px 0',
+};
+const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
+const EXPANDED_LIST_RATING_FONT_PX = 9;
+
+const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '10px',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: `${EXPANDED_LIST_RATING_FONT_PX}px`,
+  color: '#000000',
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontSize: '9px',
+  color: '#999999',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: 0,
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_LINE_PRICE_FONT_PX = 12;
+
+const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: `${EXPANDED_LIST_LINE_PRICE_FONT_PX}px`,
+  color: '#808080',
+  textTransform: 'uppercase',
+  margin: '3px 0 0 0',
+};
+
+const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Book", Futura, sans-serif',
+  color: '#000000',
+  textTransform: 'uppercase',
+  fontSize: '9px',
+  marginTop: '2px',
+  marginBottom: '0',
+  lineHeight: '1.44',
+  wordBreak: 'break-word',
+};
+
+function getExpandedListItemKey(item: any, index: number): string {
+  if (item?.id != null && item.id !== '') return String(item.id);
+  return `expanded-list-item-${index}`;
+}
+
+/** Red link under list line thumb — matches CartDropdown EDIT IN BUILD-A-WIG placement. */
+const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+  fontSize: '8.5px',
+  marginTop: '8px',
+  marginBottom: 0,
+  lineHeight: '1.1',
+  textAlign: 'center',
+  cursor: 'pointer',
+  width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
+};
+
+const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
+  ...LIST_LINE_BAG_ADD_STYLE,
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  color: '#999999',
+};
+
+function readCartItems(): any[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Inset white ring + inner art area (non-empty list thumbs). */
+const LIST_THUMB_FRAME_INSET_PX = 3;
+
+/** Empty list thumb white ring (thinner than non-empty). */
+const EMPTY_LIST_THUMB_FRAME_INSET_PX = 0.3;
+
+/** Empty-list thumb art sits low in frame; nudge up inside the inner art area. */
+const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
+/** Empty-list thumb scale (10% smaller than prior 0.88 → 0.792). */
+const EMPTY_LIST_THUMB_SCALE = 0.792;
 
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
@@ -60,8 +277,30 @@ function getHairOrigin(productName: string): string {
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [legacySearchParams] = useSearchParams();
+  /** Path segment `/wishlist/lists/:listId` — pushes history so browser Back returns to overview. */
+  const { listId: expandedListId } = useParams<{ listId?: string }>();
+
+  const openExpandedList = (listId: string) => {
+    navigate(`/wishlist/lists/${encodeURIComponent(listId)}`);
+  };
+
+  const closeExpandedList = (options?: { replace?: boolean }) => {
+    if (options?.replace || !expandedListId) {
+      navigate('/wishlist/lists', { replace: true });
+      return;
+    }
+    navigate(-1);
+  };
+
+  /** Migrate old `?list=` bookmarks to path-based URLs without an extra back step. */
+  useEffect(() => {
+    const legacyListId = legacySearchParams.get('list');
+    if (legacyListId && !expandedListId) {
+      navigate(`/wishlist/lists/${encodeURIComponent(legacyListId)}`, { replace: true });
+    }
+  }, [legacySearchParams, expandedListId, navigate]);
   const [lists, setLists] = useState<UserList[]>([]);
-  const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -69,6 +308,8 @@ export default function ViewListsPage() {
       return 0;
     }
   });
+  const [cartSyncVersion, setCartSyncVersion] = useState(0);
+  const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
     const pathname = window.location.pathname;
@@ -86,23 +327,25 @@ export default function ViewListsPage() {
   });
   const [showDeleteListConfirm, setShowDeleteListConfirm] = useState(false);
   const [listToDelete, setListToDelete] = useState<string | null>(null);
+  const [showRemoveListItemConfirm, setShowRemoveListItemConfirm] = useState(false);
+  const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
-  /** list.id = expanded list; null = show list of lists */
-  const [expandedListId, setExpandedListId] = useState<string | null>(null);
-  const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('grid');
+  const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
+  const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
+  const [showShareListModal, setShowShareListModal] = useState(false);
+  const [shareListUrl, setShareListUrl] = useState('');
+
+  useEffect(() => {
+    setViewingDetailsItemKey(null);
+  }, [expandedListId]);
 
   const refreshLists = () => {
-    setLists(loadUserLists());
-  };
-
-  const refreshWishlistCount = () => {
-    try {
-      const raw = localStorage.getItem('wishlistItems');
-      const arr = raw ? JSON.parse(raw) : [];
-      setWishlistCount(Array.isArray(arr) ? arr.length : 0);
-    } catch {
-      setWishlistCount(0);
-    }
+    const loaded = loadUserLists();
+    const synced = syncUserListsSharedStatus(loaded);
+    const ownerEmail = getCurrentUser()?.email;
+    if (ownerEmail) republishSharedSnapshotsForLists(synced, ownerEmail);
+    if (synced !== loaded) saveUserLists(synced);
+    setLists(synced);
   };
 
   const handleMobileMenuToggle = () => setShowMobileMenu((m) => !m);
@@ -123,35 +366,136 @@ export default function ViewListsPage() {
       setLists(next);
       setListToDelete(null);
       setShowDeleteListConfirm(false);
-      if (expandedListId === listToDelete) setExpandedListId(null);
+      if (expandedListId === listToDelete) closeExpandedList({ replace: true });
     }
+  };
+
+  const handleAddToBag = (item: any) => {
+    try {
+      const existing = cartItems.find((ci: any) => ci.id === item.id);
+      let updatedItems;
+      if (existing) {
+        updatedItems = cartItems.map((ci: any) =>
+          ci.id === item.id ? { ...ci, quantity: (ci.quantity || 1) + (item.quantity || 1) } : ci
+        );
+      } else {
+        updatedItems = [{ ...item, quantity: item.quantity || 1 }, ...cartItems];
+      }
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      setCartSyncVersion((v) => v + 1);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      const pname = (item?.name || item?.productName || '').toString();
+      trackActivity('add_to_cart', { source: 'wishlist_list', productName: pname || undefined });
+    } catch (e) {
+      console.error('Error adding to bag:', e);
+    }
+  };
+
+  const handleRemoveFromBag = (item: any) => {
+    try {
+      const pname = (item?.name || item?.productName || '').toString().trim();
+      const updatedItems = cartItems.filter((ci: any) => ci.id !== item.id);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+      localStorage.setItem('cartCount', newCount.toString());
+      setCartCount(newCount);
+      setCartSyncVersion((v) => v + 1);
+      window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
+      trackActivity('remove_from_cart', {
+        source: 'wishlist_list',
+        change: 'removed_line',
+        productName: pname || undefined,
+      });
+    } catch (e) {
+      console.error('Error removing from bag:', e);
+    }
+  };
+
+  const removeItemFromExpandedList = (item: any) => {
+    if (!expandedListId) return;
+    const expandedList = lists.find((l) => l.id === expandedListId);
+    if (!expandedList) return;
+    const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
+    const ownerEmail = getCurrentUser()?.email;
+    const nextLists = lists.map((l) => {
+      if (l.id !== expandedList.id) return l;
+      let updated: UserList = { ...l, items: nextItems };
+      if (updated.shareToken && ownerEmail) {
+        updated = publishSharedListSnapshot(updated, ownerEmail);
+      }
+      return updated;
+    });
+    saveUserLists(nextLists);
+    setLists(nextLists);
+    if (nextItems.length === 0) closeExpandedList({ replace: true });
+  };
+
+  const handleConfirmRemoveListItem = () => {
+    if (!listItemToRemove) return;
+    removeItemFromExpandedList(listItemToRemove);
+    setShowRemoveListItemConfirm(false);
+    setListItemToRemove(null);
+  };
+
+  const requestRemoveListItemConfirm = (item: any) => {
+    setListItemToRemove(item);
+    setShowRemoveListItemConfirm(true);
+  };
+
+  const handleShareListClick = () => {
+    if (!expandedListId) return;
+    const list = lists.find((l) => l.id === expandedListId);
+    if (!list) return;
+    const ownerEmail = getCurrentUser()?.email;
+    if (!ownerEmail) {
+      navigate(signInHrefWithReturnTo(location));
+      return;
+    }
+    const { list: updated, shareUrl } = prepareListForShare(list, ownerEmail);
+    const next = lists.map((l) => (l.id === updated.id ? updated : l));
+    saveUserLists(next);
+    setLists(next);
+    setShareListUrl(shareUrl);
+    setShowShareListModal(true);
   };
 
   useEffect(() => {
     refreshLists();
-    refreshWishlistCount();
-    const handleUpdate = () => {
-      refreshLists();
-      refreshWishlistCount();
-    };
+    const handleUpdate = () => refreshLists();
     window.addEventListener('userListsUpdated', handleUpdate);
+    window.addEventListener('wishlistSharedRegistryUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
-    window.addEventListener('wishlistUpdated', handleUpdate);
     return () => {
       window.removeEventListener('userListsUpdated', handleUpdate);
+      window.removeEventListener('wishlistSharedRegistryUpdated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
-      window.removeEventListener('wishlistUpdated', handleUpdate);
     };
   }, []);
 
   useEffect(() => {
-    const handleCartCountUpdate = (e: CustomEvent) => setCartCount(e.detail);
+    if (expandedListId && lists.length > 0 && !lists.some((l) => l.id === expandedListId)) {
+      closeExpandedList({ replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to URL/list data mismatch
+  }, [expandedListId, lists]);
+
+  useEffect(() => {
+    const handleCartCountUpdate = (e: CustomEvent) => {
+      setCartCount(e.detail);
+      setCartSyncVersion((v) => v + 1);
+    };
     const handleStorage = () => {
       try {
         setCartCount(parseInt(localStorage.getItem('cartCount') || '0', 10));
       } catch {
         setCartCount(0);
       }
+      setCartSyncVersion((v) => v + 1);
     };
     window.addEventListener('cartCountUpdated', handleCartCountUpdate as EventListener);
     window.addEventListener('cartUpdated', handleStorage);
@@ -202,7 +546,7 @@ export default function ViewListsPage() {
                 </>
               ) : (
                 <button
-                  onClick={() => (expandedListId ? setExpandedListId(null) : navigate('/wishlist'))}
+                  onClick={() => (expandedListId ? closeExpandedList() : navigate('/wishlist'))}
                   className="cursor-pointer"
                   style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                 >
@@ -220,7 +564,7 @@ export default function ViewListsPage() {
                 </>
               ) : expandedListId ? (
                 <>
-                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => setExpandedListId(null)}>
+                  <span style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }} onClick={() => closeExpandedList()}>
                     LISTS &gt;
                   </span>{' '}
                   <span style={{ color: '#EB1C24', fontFamily: '"Futura PT Medium"', fontWeight: '500' }}>
@@ -342,13 +686,17 @@ export default function ViewListsPage() {
               </div>
             ) : (
               <>
-                {/* Page-specific header: list name when expanded (e.g. VACATION), otherwise LISTS */}
+                {/* Page-specific header: PRIVATE/SHARED when expanded, otherwise LISTS */}
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
                 {(() => {
                   const expandedList = expandedListId ? lists.find((l) => l.id === expandedListId) : null;
                   const expandedItemCount = expandedList ? (expandedList.items?.length ?? 0) : 0;
-                  const headerLabel = expandedListId && expandedList ? (expandedList.name ?? '').toUpperCase() : 'LISTS';
-                  const headerCount = expandedListId && expandedList ? expandedItemCount : lists.length + (wishlistCount > 0 ? 1 : 0);
+                  const headerLabel =
+                    expandedListId && expandedList
+                      ? getUserListVisibilityLabel(expandedList)
+                      : 'LISTS';
+                  const headerCount =
+                    expandedListId && expandedList ? expandedItemCount : lists.length;
                   return (
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ flexShrink: 0 }}>
                       <span
@@ -371,31 +719,29 @@ export default function ViewListsPage() {
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
                 {expandedListId ? (
                   (() => {
-                    const isWishlist = expandedListId === 'wishlist';
-                    const expandedList = isWishlist ? null : lists.find((l) => l.id === expandedListId);
-                    const expandedItems: any[] = isWishlist
-                      ? (() => { try { return JSON.parse(localStorage.getItem('wishlistItems') || '[]'); } catch { return []; } })()
-                      : (expandedList?.items ?? []);
-                    const removeFromList = (item: any) => {
-                      if (isWishlist) {
-                        const raw = localStorage.getItem('wishlistItems');
-                        const arr = raw ? JSON.parse(raw) : [];
-                        const next = Array.isArray(arr) ? arr.filter((i: any) => i.id !== item.id) : [];
-                        localStorage.setItem('wishlistItems', JSON.stringify(next));
-                        window.dispatchEvent(new CustomEvent('wishlistUpdated'));
-                        refreshWishlistCount();
-                        if (next.length === 0) setExpandedListId(null);
-                      } else if (expandedList) {
-                        const nextItems = (expandedList.items || []).filter((i: any) => i.id !== item.id);
-                        const nextLists = lists.map((l) => l.id === expandedList.id ? { ...l, items: nextItems } : l);
-                        saveUserLists(nextLists);
-                        setLists(nextLists);
-                        if (nextItems.length === 0) setExpandedListId(null);
-                      }
-                    };
+                    const expandedList = lists.find((l) => l.id === expandedListId);
+                    if (!expandedList) return null;
+                    const expandedItems: any[] = expandedList.items ?? [];
                     return (
-                      <div style={{ paddingTop: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '16px' }}>
+                      <div
+                        style={{
+                          paddingTop: '8px',
+                          flex: 1,
+                          minHeight: 0,
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            marginTop: '6px',
+                            marginBottom: expandedItems.length === 0 ? 0 : '16px',
+                            flexShrink: 0,
+                          }}
+                        >
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'line' ? '#EB1C24' : '#000' }} aria-label="Line view">
                               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
@@ -413,52 +759,181 @@ export default function ViewListsPage() {
                           </div>
                         </div>
                         {expandedItems.length === 0 ? (
-                          <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textAlign: 'center', padding: '24px 0', textTransform: 'uppercase', margin: '0' }}>THERE ARE NO ITEMS IN THIS LIST.</p>
+                          <div
+                            style={{
+                              flex: 1,
+                              minHeight: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <p
+                              style={{
+                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                fontSize: '11px',
+                                color: '#808080',
+                                textAlign: 'center',
+                                textTransform: 'uppercase',
+                                margin: 0,
+                                padding: '0 20px',
+                              }}
+                            >
+                              THERE ARE NO ITEMS IN THIS LIST.
+                            </p>
+                          </div>
                         ) : expandedViewMode === 'line' ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const itemKey = getExpandedListItemKey(item, index);
+                              const isViewingDetails = viewingDetailsItemKey === itemKey;
+                              const showViewDetailsLink = wishlistItemHasViewDetails(item);
+                              const itemPriceLabel = formatWishlistListItemPrice(
+                                getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
+                              );
+                              const isInBag = cartItems.some((ci: any) => ci.id === item.id);
+                              const isOutOfStock = (item.stockStatus || 'in_stock') === 'out_of_stock';
                               return (
-                                <div key={item.id || index} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingBottom: '16px', marginBottom: '16px', borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer flex-shrink-0" style={{ width: '88px', height: '110px', backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
-                                    <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
-                                  </div>
-                                  <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 6px 0', textTransform: 'uppercase' }}>{itemLength} RAW {itemHairOrigin}</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '4px' }}>
-                                      {[...Array(5)].map((_, idx) => (
-                                        <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
-                                      ))}
+                                <div
+                                  key={item.id || index}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '16px',
+                                    paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
+                                    ...listRowDividerStyles(index, expandedItems.length),
+                                  }}
+                                >
+                                  <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                      <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                     </div>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
+                                    {isOutOfStock ? (
+                                      <p
+                                        style={{
+                                          ...LIST_LINE_BAG_ADD_STYLE,
+                                          color: '#808080',
+                                          cursor: 'default',
+                                        }}
+                                      >
+                                        OUT OF STOCK
+                                      </p>
+                                    ) : isInBag ? (
+                                      <p
+                                        className="font-bold hover:opacity-80 transition-opacity"
+                                        style={LIST_LINE_BAG_REMOVE_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRemoveFromBag(item);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            e.stopPropagation();
+                                            handleRemoveFromBag(item);
+                                          }
+                                        }}
+                                      >
+                                        REMOVE FROM BAG
+                                      </p>
+                                    ) : (
+                                      <p
+                                        className="font-bold hover:opacity-80 transition-opacity"
+                                        style={LIST_LINE_BAG_ADD_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleAddToBag(item);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            e.stopPropagation();
+                                            handleAddToBag(item);
+                                          }
+                                        }}
+                                      >
+                                        ADD TO BAG
+                                      </p>
+                                    )}
                                   </div>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
-                                    <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
-                                  </button>
+                                  <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
+                                    <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>{itemLength} RAW {itemHairOrigin}</p>
+                                    {isViewingDetails ? (
+                                      <p
+                                        style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
+                                        dangerouslySetInnerHTML={{
+                                          __html: buildWishlistItemDetailsHtml(item, { omitLength: true }),
+                                        }}
+                                      />
+                                    ) : (
+                                      <ExpandedListItemNoReviewStars />
+                                    )}
+                                    {!isViewingDetails && (
+                                      <p
+                                        className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
+                                        style={EXPANDED_LIST_LINE_PRICE_STYLE}
+                                      >
+                                        {itemPriceLabel}
+                                      </p>
+                                    )}
+                                    {showViewDetailsLink && (
+                                      <span
+                                        role="button"
+                                        tabIndex={0}
+                                        className={WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                          }
+                                        }}
+                                      >
+                                        {isViewingDetails ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               );
                             })}
                           </div>
                         ) : (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px 16px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: `repeat(auto-fill, minmax(${EXPANDED_LIST_GRID_MIN_COL_PX}px, 1fr))`,
+                              rowGap: `${EXPANDED_LIST_GRID_ROW_GAP_PX}px`,
+                              columnGap: `${EXPANDED_LIST_GRID_COL_GAP_PX}px`,
+                              paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
+                              paddingTop: '10px',
+                            }}
+                          >
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+                              const itemLength = item.length || '24"';
+                              const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: '88px', height: '110px', backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '14px', color: '#000', margin: '8px 0 2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '4px' }}>
-                                    {[...Array(5)].map((_, idx) => (
-                                      <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
-                                    ))}
-                                  </div>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
-                                  <button type="button" onClick={() => removeFromList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
+                                  <ExpandedListItemNoReviewStars centered />
+                                  <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>
+                                    {EXPANDED_LIST_NO_REVIEWS_LABEL}
+                                  </p>
+                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={EXPANDED_LIST_GRID_REMOVE_STYLE}>REMOVE</button>
                                 </div>
                               );
                             })}
@@ -469,134 +944,166 @@ export default function ViewListsPage() {
                   })()
                 ) : (
                 <>
-                {/* List rows: when no user lists created, show only message (no default WISHLIST row); otherwise WISHLIST row + user lists */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '20.8px', ...(lists.length === 0 ? { flex: 1, alignItems: 'center', justifyContent: 'center' } : {}) }}>
-                  {/* When no lists created: only show message (no default WISHLIST row) */}
+                {/* List rows: user-created lists only (main wishlist lives on /wishlist) */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 0,
+                    paddingTop: '20.8px',
+                    ...(lists.length === 0
+                      ? { flex: 1, alignItems: 'center', justifyContent: 'center' }
+                      : {}),
+                  }}
+                >
                   {lists.length === 0 && !showCreateListModal ? (
                     <div style={{ textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                       <p
                         style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
-                        dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY LISTS YET.<br>CREATE A NEW ONE BELOW!" }}
-                      />
+                      >
+                        YOU DON&apos;T HAVE ANY LISTS YET.
+                      </p>
                     </div>
                   ) : (
-                  <>
-                  {/* Primary list: WISHLIST (only when wishlist has items and there are user lists) */}
-                  {wishlistCount > 0 && (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => navigate('/wishlist')}
-                    onKeyDown={(e) => e.key === 'Enter' && navigate('/wishlist')}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '16px',
-                      cursor: 'pointer',
-                      paddingBottom: '16px'
-                    }}
-                  >
-                    <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateX(-2px)' }}>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => { e.stopPropagation(); navigate('/wishlist'); }}
-                        onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); navigate('/wishlist'); } }}
-                        className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                        style={{
-                          width: '88px',
-                          height: '110px',
-                          backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          backgroundRepeat: 'no-repeat',
-                          border: '1.3px solid #000',
-                          boxShadow: 'inset 0 0 0 3px #fff',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        {(() => {
-                          try {
-                            const wi = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-                            const first = wi[0];
-                            const src = first ? getLeafBrickFrontImage(first) : '/assets/natural front.png';
-                            return <img src={src} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />;
-                          } catch {
-                            return <img src="/assets/natural front.png" alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />;
-                          }
-                        })()}
-                      </div>
-                      <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
-                        {wishlistCount} {wishlistCount === 1 ? 'ITEM' : 'ITEMS'}
-                      </span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, paddingTop: '4px', transform: 'translateX(-2px)' }}>
-                      <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>WISHLIST</span>
-                      <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#EB1C24', margin: '2px 0 0 0', textTransform: 'uppercase' }}>DEFAULT</p>
-                    </div>
-                  </div>
-                  )}
-
-                  {/* Secondary lists (user-created) with delete */}
-                  {lists.length === 0 ? null : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                      {lists.map((list) => {
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                      {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
-                        const isVacation = list.name?.toLowerCase() === 'vacation';
-                        const emptyThumb = isVacation ? '/assets/2D WAVY FRONT.png' : '/assets/natural front.png';
-                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : emptyThumb;
+                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
                         return (
                           <div
                             key={list.id}
                             role="button"
                             tabIndex={0}
-                            onClick={() => setExpandedListId(list.id)}
-                            onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}
+                            onClick={() => openExpandedList(list.id)}
+                            onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}
                             style={{
                               display: 'flex',
                               alignItems: 'flex-start',
                               gap: '16px',
-                              paddingBottom: '16px',
-                              cursor: 'pointer'
+                              paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
+                              ...listRowDividerStyles(index, lists.length, { insetBelowDivider: true }),
+                              cursor: 'pointer',
                             }}
                           >
-                            <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateX(-2px)' }}>
+                            <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                               <div
                                 role="button"
                                 tabIndex={0}
-                                onClick={(e) => { e.stopPropagation(); setExpandedListId(list.id); }}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setExpandedListId(list.id); } }}
+                                onClick={(e) => { e.stopPropagation(); openExpandedList(list.id); }}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openExpandedList(list.id); } }}
                                 className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                                 style={{
                                   width: '88px',
                                   height: '110px',
-                                  backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                                  backgroundSize: 'cover',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat',
-                                  border: '1.3px solid #000',
-                                  boxShadow: 'inset 0 0 0 3px #fff',
-                                  overflow: 'hidden'
+                                  position: 'relative',
+                                  boxSizing: 'border-box',
+                                  ...(firstItem
+                                    ? {
+                                        backgroundImage: "url('/assets/leaf-brick-resize.png')",
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        backgroundRepeat: 'no-repeat',
+                                        border: '1.3px solid #000',
+                                        boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                                        overflow: 'hidden',
+                                      }
+                                    : {
+                                        border: '1.3px solid #000',
+                                        overflow: 'hidden',
+                                      }),
                                 }}
                               >
-                                <img src={thumbSrc} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                {firstItem ? (
+                                  <img
+                                    src={thumbSrc}
+                                    alt=""
+                                    style={{
+                                      position: 'absolute',
+                                      left: '50%',
+                                      bottom: LIST_THUMB_FRAME_INSET_PX,
+                                      transform: 'translateX(-50%)',
+                                      width: 'auto',
+                                      height: '96%',
+                                      maxWidth: '106%',
+                                      objectFit: 'contain',
+                                      objectPosition: 'bottom',
+                                      zIndex: 1,
+                                    }}
+                                  />
+                                ) : (
+                                  <>
+                                    <div
+                                      aria-hidden
+                                      style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        boxShadow: `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                                        pointerEvents: 'none',
+                                        zIndex: 2,
+                                      }}
+                                    />
+                                    <div
+                                      style={{
+                                        position: 'absolute',
+                                        top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                        overflow: 'hidden',
+                                        zIndex: 1,
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          width: '100%',
+                                          height: '100%',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          overflow: 'hidden',
+                                        }}
+                                      >
+                                        <img
+                                          src={thumbSrc}
+                                          alt=""
+                                          style={{
+                                            display: 'block',
+                                            width: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                                            height: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                                            objectFit: 'cover',
+                                            objectPosition: 'center',
+                                            transform: EMPTY_LIST_THUMB_OFFSET_UP_PX
+                                              ? `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px)`
+                                              : undefined,
+                                            flexShrink: 0,
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
                               </div>
-                              <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
+                              <span
+                                style={{
+                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+                                  fontSize: '12px',
+                                  color: '#000',
+                                  textTransform: 'uppercase',
+                                  marginTop: '6px',
+                                }}
+                              >
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}
                               </span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px', transform: 'translateX(-2px)' }} onClick={() => setExpandedListId(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setExpandedListId(list.id)}>
+                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => openExpandedList(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
-                              <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{list.hasBeenShared ? 'SHARED' : 'PRIVATE'}</p>
+                              <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{getUserListVisibilityLabel(list)}</p>
                             </div>
                           </div>
                         );
                       })}
                     </div>
-                  )}
-
-                  </>
                   )}
                 </div>
                 </>
@@ -610,8 +1117,17 @@ export default function ViewListsPage() {
           {/* PAGE ACTIONS: below card only (PAGE_LAYOUT.md) */}
           {!showMobileMenu && (
             <PageActionsBelowCard>
-              {expandedListId && expandedListId !== 'wishlist' ? (
+              {expandedListId ? (
                 <>
+                  <button
+                    type="button"
+                    onClick={handleShareListClick}
+                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+                    style={pageActionButtonStyle}
+                  >
+                    SHARE LIST
+                  </button>
+                  <PageActionsBelowCard.Spacer />
                   <button
                     type="button"
                     onClick={() => { setListToDelete(expandedListId); setShowDeleteListConfirm(true); }}
@@ -619,14 +1135,6 @@ export default function ViewListsPage() {
                     style={pageActionButtonStyle}
                   >
                     DELETE LIST
-                  </button>
-                  <PageActionsBelowCard.Spacer />
-                  <button
-                    type="button"
-                    className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-                    style={pageActionButtonStyle}
-                  >
-                    SHARE LIST
                   </button>
                 </>
               ) : (
@@ -648,16 +1156,32 @@ export default function ViewListsPage() {
         isOpen={showDeleteListConfirm}
         onClose={() => { setShowDeleteListConfirm(false); setListToDelete(null); }}
         onConfirm={handleDeleteList}
-        title="DELETE LIST?"
+        title="DELETE LIST"
         message="ARE YOU SURE YOU WANT TO DELETE THIS LIST?"
         confirmText="CONFIRM"
         cancelText="CANCEL"
         dataAttribute="delete-list-confirm"
       />
+      <ConfirmationModal
+        isOpen={showRemoveListItemConfirm}
+        onClose={() => { setShowRemoveListItemConfirm(false); setListItemToRemove(null); }}
+        onConfirm={handleConfirmRemoveListItem}
+        title="REMOVE FROM LIST"
+        message="REMOVE THIS ITEM FROM YOUR LIST?"
+        confirmText="REMOVE"
+        cancelText="CANCEL"
+        dataAttribute="remove-list-item-confirm"
+      />
       <CreateNewListModal
         isOpen={showCreateListModal}
         onClose={() => setShowCreateListModal(false)}
         onCreated={() => { refreshLists(); setShowCreateListModal(false); }}
+      />
+      <ShareListLinkModal
+        isOpen={showShareListModal}
+        onClose={() => setShowShareListModal(false)}
+        shareUrl={shareListUrl}
+        listName={lists.find((l) => l.id === expandedListId)?.name}
       />
     </div>
   );

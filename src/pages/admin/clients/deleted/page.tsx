@@ -341,7 +341,7 @@ export default function AdminDeletedAccounts() {
             setUserToRestore(null);
           }
         }}
-        title={userToRestore?.blocked ? 'UNBLOCK CLIENT?' : 'RESTORE ACCOUNT?'}
+        title={userToRestore?.blocked ? 'UNBLOCK CLIENT' : 'RESTORE ACCOUNT'}
         message={
           userToRestore?.blocked ? (
             <>

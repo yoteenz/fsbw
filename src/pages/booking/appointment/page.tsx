@@ -1615,7 +1615,7 @@ export default function BookingAppointmentPage() {
         }
         navigate(signInHrefWithReturnTo(location));
       }}
-      title="UPGRADE YOUR SUBSCRIPTION?"
+      title="UPGRADE YOUR SUBSCRIPTION"
       message="YOU MUST BE A PREMIUM MEMBER TO ACCESS THIS AREA."
       confirmText="UPGRADE"
       cancelText="CANCEL"

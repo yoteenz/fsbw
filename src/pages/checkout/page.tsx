@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import BrandTermsBody from '../../components/brand/BrandTermsBody';
 import { handlePaymentOption, PaymentProvider, PaymentData } from '../../utils/paymentHandlers';
 import { createRouteProtection, prepareRouteProtectionData } from '../../utils/routeProtection';
 import { getPointsMultiplier } from '../../constants/tiers';
@@ -54,7 +55,6 @@ import {
 } from '../../utils/adminBrandCodes';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
-import { cartItemsToQuoteLines, fetchCheckoutQuote, type ServerCheckoutQuote } from '../../utils/checkoutQuote';
 import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
 import {
   orderStripRedSubtitle,
@@ -250,7 +250,6 @@ function CheckoutPage() {
     consultClaimBootstrapDoneRef.current = false;
   }, [location.pathname]);
   const [cartItems, setCartItems] = useState<any[]>([]);
-  const [serverQuote, setServerQuote] = useState<ServerCheckoutQuote | null>(null);
   const [cartCount, setCartCount] = useState(() => {
     try {
       return parseInt(localStorage.getItem('cartCount') || '0', 10);
@@ -739,7 +738,6 @@ function CheckoutPage() {
   const [stripeMembershipAvailable, setStripeMembershipAvailable] = useState(false);
   const [hasSupabaseSession, setHasSupabaseSession] = useState(false);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
-  const [stripeAvailabilityLoaded, setStripeAvailabilityLoaded] = useState(false);
 
   // Load cart items from localStorage
   const loadCartItems = () => {
@@ -880,12 +878,10 @@ function CheckoutPage() {
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
       setStripeMembershipAvailable(false);
-      setStripeAvailabilityLoaded(false);
       setHasSupabaseSession(false);
       return;
     }
     let cancelled = false;
-    setStripeAvailabilityLoaded(false);
     void (async () => {
       try {
         const [avail, token] = await Promise.all([fetchStripeMembershipAvailable(), getAccessToken()]);
@@ -893,8 +889,11 @@ function CheckoutPage() {
           setStripeMembershipAvailable(avail);
           setHasSupabaseSession(Boolean(token));
         }
-      } finally {
-        if (!cancelled) setStripeAvailabilityLoaded(true);
+      } catch {
+        if (!cancelled) {
+          setStripeMembershipAvailable(false);
+          setHasSupabaseSession(false);
+        }
       }
     })();
     return () => {
@@ -976,28 +975,6 @@ function CheckoutPage() {
       window.removeEventListener('focus', refreshSession);
     };
   }, [isSubscriptionUpgrade]);
-
-  useEffect(() => {
-    if (isSubscriptionUpgrade) {
-      setServerQuote(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      if (!cartItems.length) {
-        if (!cancelled) setServerQuote(null);
-        return;
-      }
-      const lines = cartItemsToQuoteLines(cartItems);
-      const result = await fetchCheckoutQuote(lines);
-      if (cancelled) return;
-      if (result.ok) setServerQuote(result.quote);
-      else setServerQuote(null);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [cartItems, isSubscriptionUpgrade]);
 
   useEffect(() => {
     if (location.pathname !== '/checkout/upgrade') return;
@@ -3538,7 +3515,7 @@ function CheckoutPage() {
                                   })(),
                                   transform: 'translateY(3px)',
                                   lineHeight: '1.1',
-                                  marginBottom: '0',
+                                  marginBottom: redSubtitle === 'DIGITAL ONLY' ? '2px' : '0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
                                 }}
@@ -5090,22 +5067,6 @@ function CheckoutPage() {
                         </label>
                       </div>
                     )}
-                    {hasBookingAppointmentItems && (
-                      <p
-                        style={{
-                          margin: '-4px 0 0 24px',
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '8px',
-                          color: bookingAutopayStripeReady ? '#808080' : '#EB1C24',
-                          textTransform: 'uppercase',
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        {bookingAutopayStripeReady
-                          ? 'AUTO-DRAFT READY USING YOUR SAVED STRIPE CARD ON FILE.'
-                          : 'AUTO-DRAFT REQUIRES A SUPABASE SIGN-IN WITH A SAVED STRIPE CARD ON FILE.'}
-                      </p>
-                    )}
                   </div>
                 </div>
 
@@ -5306,7 +5267,7 @@ function CheckoutPage() {
                               height: '10.4px', 
                               position: 'absolute', 
                               objectFit: 'contain',
-                              filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                              filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                             }}
                         />
                       </button>
@@ -5701,13 +5662,13 @@ function CheckoutPage() {
                             <img 
                               src="/assets/close-icon.svg" 
                               alt="remove tip" 
-                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
                             />
                           ) : (
                             <img 
                               src="/assets/discount-check.svg" 
                               alt="apply tip" 
-                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
                             />
                           )}
                         </button>
@@ -5737,30 +5698,6 @@ function CheckoutPage() {
                       </span>
                       <span style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', color: '#000000' }} dangerouslySetInnerHTML={formatPrice(orderAmount)}></span>
                     </div>
-                    {serverQuote && serverQuote.totalCents > 0 && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                        <span style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#808080', lineHeight: 1.35 }}>
-                          SERVER LIST (USD, VERIFIED LINES):
-                        </span>
-                        <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#000000', textAlign: 'right' }}>
-                          ${(serverQuote.totalCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
-                          USD
-                        </span>
-                      </div>
-                    )}
-                    {serverQuote && !serverQuote.fullyResolved && serverQuote.warnings.length > 0 && (
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '9px',
-                          color: '#808080',
-                          margin: '4px 0 0',
-                          lineHeight: 1.35
-                        }}
-                      >
-                        Some items (e.g. BCF bundle deals or custom builds) are not fully priced on the server yet. This page total still uses your cart. Currency selector remains display-only for settlement.
-                      </p>
-                    )}
                     {!checkoutSkipsShipping && (
                       <>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -6170,36 +6107,6 @@ function CheckoutPage() {
           {/* Stripe Billing — only on subscription upgrade checkout (`/checkout/upgrade`) */}
           {!showMobileMenu && isSubscriptionUpgrade && (
             <div className="px-0 md:px-0" style={{ marginTop: '8px', marginBottom: '12px' }}>
-              {stripeAvailabilityLoaded && !stripeMembershipAvailable && (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    color: '#808080',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
-                </p>
-              )}
-              {stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    color: '#808080',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  TO PAY WITH CARD VIA STRIPE, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
-                </p>
-              )}
               {stripeMembershipAvailable && hasSupabaseSession && (
                 <>
                   <button
@@ -6216,19 +6123,6 @@ function CheckoutPage() {
                   >
                     {stripeCheckoutLoading ? 'REDIRECTING…' : 'SUBSCRIBE WITH CARD (STRIPE)'}
                   </button>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Book"',
-                      fontSize: '8px',
-                      color: '#808080',
-                      margin: '6px 0 0 0',
-                      textTransform: 'uppercase',
-                      textAlign: 'center',
-                      lineHeight: 1.35,
-                    }}
-                  >
-                    RECURRING BILLING — SAME TIERS AS CHART. IN-APP FORM BELOW STILL AVAILABLE.
-                  </p>
                 </>
               )}
             </div>
@@ -6988,7 +6882,7 @@ function CheckoutPage() {
                   height: '16px',
                   flexShrink: 0,
                   objectFit: 'contain',
-                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                 }}
               />
             </div>
@@ -7100,7 +6994,7 @@ function CheckoutPage() {
                   height: '16px',
                   flexShrink: 0,
                   objectFit: 'contain',
-                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                 }}
               />
             </div>
@@ -7307,7 +7201,6 @@ function CheckoutPage() {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Terms of Service Section */}
           <h3
             style={{
               fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -7321,52 +7214,8 @@ function CheckoutPage() {
           >
             TERMS OF SERVICE
           </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 6px)' }}>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
-                color: '#000000',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                transform: 'translateY(-1px)',
-                margin: 0
-              }}
-            >
-              BY PURCHASING, YOU ARE IN AGREEMENT TO THE FOLLOWING TERMS AND CONDITIONS: YOU HAVE READ + UNDERSTAND THE PRODUCT DETAILS AND CONSENT TO RECEIVING THE PRODUCT. YOU UNDERSTAND AND AGREE TO OUR RETURNS + REFUND POLICY. YOU HAVE VERIFIED YOUR SHIPPING ADDRESS BEFORE SUBMITTING YOUR ORDER & COMPLETED THE ORDER AUTHORIZATION FORM WITHIN 24 HOURS, POST PAYMENT. YOU UNDERSTAND THAT FRONTAL SLAYER IS NOT LIABLE FOR ANY DAMAGES THAT MAY OCCUR DURING SHIPMENT AND WHILE YOUR PRODUCT IS IN TRANSIT. YOU UNDERSTAND THAT ONCE AN ORDER IS SUBMITTED & CONFIRMED, CHANGES OR CANCELLATIONS CAN NOT BE MADE. THIS INCLUDES ITEM & SHIPPING ADDRESS CHANGES.
-            </p>
-          </div>
-
-          {/* Refund + Return Policy Section */}
-          <h3
-            style={{
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-              fontSize: '14px',
-              fontWeight: '500',
-              marginBottom: '16px',
-              marginTop: '20px',
-              textAlign: 'center',
-              color: '#EB1C24',
-              textTransform: 'uppercase'
-            }}
-          >
-            REFUND + RETURN POLICY
-          </h3>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', maxWidth: 'calc(100% - 8px)' }}>
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '10px',
-                color: '#000000',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                transform: 'translateY(-1px)',
-                margin: 0
-              }}
-            >
-              ALL SALES ARE FINAL. WE ARE UNABLE TO OFFER REFUNDS, RETURNS OR EXCHANGES DUE TO THE BESPOKE NATURE OF OUR PRODUCTS & FOR SANITARY REASONS. FRONTAL SLAYER RESERVES THE RIGHT TO REFUSE ALL REFUNDS, RETURNS AND EXCHANGES. IF THERE IS AN ISSUE WITH YOUR ORDER, PLEASE REACH OUT TO <span style={{ color: '#EB1C24' }}>CONTACT@FRONTALSLAYER.COM</span><br />
-              ALL INQUIRIES SHOULD RECEIVE A RESPONSE WITHIN 72 HOURS. CONTACT US IF YOUR ITEM IS DEFECTIVE OR YOU RECEIVED THE WRONG ITEM. WE WILL INVESTIGATE ALL CONCERNS THOROUGHLY AND CORRECT YOUR SHIPMENT OR ISSUE STORE CREDIT IF THE ITEM IS NO LONGER IN STOCK.
-            </p>
+          <div style={{ marginBottom: '20px', width: '100%' }}>
+            <BrandTermsBody />
           </div>
 
           {/* Buttons — primary left, dismiss right */}

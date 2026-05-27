@@ -10,6 +10,7 @@ import {
 } from '../utils/consultOfferFromQuote';
 import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulfillment';
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
+import { BRAND_RED_ICON_CSS_FILTER } from '../constants/brandRedIconFilter';
 import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
 
 type Props = {
@@ -20,7 +21,7 @@ type Props = {
   loading?: boolean;
   error?: string | null;
   locationForSignIn: { pathname: string; search?: string };
-  /** Shown in red header (e.g. ORDER #331); falls back if omitted. */
+  /** Shown in black header (e.g. ORDER #331); falls back if omitted. */
   orderNumberDisplay?: string;
 };
 
@@ -46,39 +47,46 @@ function formatOfferTimeLeftLabel(msRemain: number): string {
   return `${Math.max(0, minutes)}M LEFT`;
 }
 
-const CLOSE_ICON_RED_FILTER =
-  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
-
-/** Shorter legacy default — still treated as “stock” disclaimer (gray) for older offers. */
-const LEGACY_DEFAULT_INSPO_DISCLAIMER =
+/** Opening sentence used in older persisted `admin_message` defaults — keep for matching. */
+const DEFAULT_INSPO_DISCLAIMER_P1_LEGACY =
   'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+
+/** Shorter legacy default — matched for older offers (same text as **P1 legacy**). */
+const LEGACY_DEFAULT_INSPO_DISCLAIMER = DEFAULT_INSPO_DISCLAIMER_P1_LEGACY;
 
 /** Prior long default (2026-04-13) — gray for offers already sent with this copy. */
 const PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER =
   'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK. THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLE MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. TEXTURE, LACE, DENSITY, LENGTH, AND STYLING MAY ALSO VARY SLIGHTLY IN PERSON OR ON THE FINISHED WIG. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPIRATION PHOTO OR ANY IN-PERSON LOOK. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
 
-/** First paragraph of default disclaimer — **red** in modal. */
+/** First paragraph of current default disclaimer — **red** in modal. */
 const DEFAULT_INSPO_DISCLAIMER_P1 =
-  'BASED ON YOUR INSPO AND NOTES, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
+  'BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK.';
 
-/** Second paragraph — **gray** in modal. Persisted `admin_message` is P1 + space + P2 (single field). */
+/** Second paragraph — **gray**, shown below price breakdown in claim modal. Persisted `admin_message` is P1 + space + P2 (single field). */
 const DEFAULT_INSPO_DISCLAIMER_P2 =
+  '2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND YOUR VISUALIZATION.';
+
+/** Same **2D MODEL** paragraph before **YOUR VISUALIZATION** closing — match quotes already stored. */
+const DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR =
   '2D MODEL IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR SLIGHTLY VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION. THIS FEATURE IS PURELY FOR BRANDING AND VISUALIZATION.';
+
+/** Full default with current P1 + **P2** prior to **YOUR** wording (already-sent). */
+const PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR}`;
 
 /** Prior gray (2D image + comma before purely) — two-paragraph layout for already-sent offers. */
 const PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2 =
   'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR UNIT. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION, THIS IS PURELY FOR BRANDING AND VISUALIZATION.';
-const PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2}`;
+const PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1_LEGACY} ${PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Prior default (in person + visualization only) — two-paragraph layout for already-sent offers. */
 const INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2 =
   'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION, THIS IS PURELY FOR VISUALIZATION.';
-const INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2}`;
+const INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1_LEGACY} ${INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Older default (approved specifications sentence) — two-paragraph red/gray layout for already-sent offers. */
 const PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2 =
   'THIS 2D IMAGE IS FOR ILLUSTRATIVE AND MARKETING PURPOSES ONLY. COLORS AND STYLING MAY DIFFER OR VARY FROM THE FINAL CONSTRUCTION OF YOUR FINISHED UNIT IN PERSON. THIS IS NOT A GUARANTEE OF AN EXACT MATCH TO YOUR INSPO IMAGES. HANDCRAFTED UNITS ARE SUBJECT TO ARTISAN VARIATION AND THE LIMITS OF YOUR APPROVED SPECIFICATIONS. THIS IS PURELY FOR VISUALIZATION.';
-const PREVIOUS_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2}`;
+const PREVIOUS_DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1_LEGACY} ${PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2}`;
 
 /** Default admin send-offer copy (one string for DB / `isDefaultInspoDisclaimer` match). */
 const DEFAULT_INSPO_DISCLAIMER = `${DEFAULT_INSPO_DISCLAIMER_P1} ${DEFAULT_INSPO_DISCLAIMER_P2}`;
@@ -103,14 +111,21 @@ export default function ConsultOfferClaimModal({
   orderNumberDisplay,
 }: Props) {
   const navigate = useNavigate();
-  const [tick, setTick] = useState(0);
+  /** Single clock for countdown / expiry / tracking bar so UI stays in sync and advances every second while open. */
+  const [offerClockMs, setOfferClockMs] = useState(() => Date.now());
   const [claimUiTick, setClaimUiTick] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
-    const t = setInterval(() => setTick((x) => x + 1), 1000);
+    setOfferClockMs(Date.now());
+    const t = setInterval(() => setOfferClockMs(Date.now()), 1000);
     return () => clearInterval(t);
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !quote) return;
+    setOfferClockMs(Date.now());
+  }, [isOpen, quote?.expires_at, quote?.id]);
 
   useEffect(() => {
     const bump = () => setClaimUiTick((x) => x + 1);
@@ -129,18 +144,18 @@ export default function ConsultOfferClaimModal({
     return Number.isFinite(ms) ? ms : null;
   }, [quote]);
 
-  const expired = expiresMs != null && expiresMs <= Date.now();
+  const expired = expiresMs != null && expiresMs <= offerClockMs;
 
   const offerLeftMs = useMemo(() => {
     if (expiresMs == null) return 0;
-    return Math.max(0, expiresMs - Date.now());
-  }, [expiresMs, tick]);
+    return Math.max(0, expiresMs - offerClockMs);
+  }, [expiresMs, offerClockMs]);
 
   const offerCountdownText = useMemo(() => {
     if (expiresMs == null) return '—';
-    if (expired) return '';
+    if (expired) return 'EXPIRED';
     return formatOfferTimeLeftLabel(offerLeftMs);
-  }, [expiresMs, expired, offerLeftMs, tick]);
+  }, [expiresMs, expired, offerLeftMs]);
   const thumb =
     typeof quote?.thumbnail_src === 'string' && quote.thumbnail_src.trim()
       ? quote.thumbnail_src.trim()
@@ -149,6 +164,7 @@ export default function ConsultOfferClaimModal({
   const msgU = message.trim().toUpperCase();
   const isDefaultInspoDisclaimer =
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
@@ -156,17 +172,24 @@ export default function ConsultOfferClaimModal({
     msgU === PREVIOUS_LONG_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
   const isCurrentDefaultTwoParagraphDisclaimer =
     msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
+    msgU === PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase() ||
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase();
-  const defaultDisclaimerGrayParagraph =
+  const defaultDisclaimerP2Text =
     msgU === PREVIOUS_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
       ? PREVIOUS_DEFAULT_INSPO_DISCLAIMER_P2
       : msgU === INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
         ? INTERMEDIATE_DEFAULT_INSPO_DISCLAIMER_P2
         : msgU === PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
           ? PREVIOUS_2D_IMAGE_BRANDING_DEFAULT_INSPO_DISCLAIMER_P2
-          : DEFAULT_INSPO_DISCLAIMER_P2;
+          : msgU === PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER.toUpperCase()
+            ? DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR
+            : DEFAULT_INSPO_DISCLAIMER_P2;
+  const defaultDisclaimerP1Display =
+    msgU === DEFAULT_INSPO_DISCLAIMER.toUpperCase()
+      ? DEFAULT_INSPO_DISCLAIMER_P1
+      : DEFAULT_INSPO_DISCLAIMER_P1_LEGACY;
   const code = String(quote?.discount_code || '').trim().toUpperCase();
   const quoteIdForClaim = String(quote?.id || '').trim();
   const claimedSet = readConsultOfferClaimedQuoteIds();
@@ -223,8 +246,8 @@ export default function ConsultOfferClaimModal({
       status: 'PROCESSING',
       placedAt: anchor,
     };
-    return consultDigitalOrderTrackingBarFillPct(sym, Date.now()) ?? 0;
-  }, [quote, expired, tick]);
+    return consultDigitalOrderTrackingBarFillPct(sym, offerClockMs) ?? 0;
+  }, [quote, expired, offerClockMs]);
 
   const handleClaim = async () => {
     if (!quote) return;
@@ -292,7 +315,7 @@ export default function ConsultOfferClaimModal({
             id="consult-offer-title"
             style={{
               fontFamily: '"Futura PT Medium"',
-              color: '#EB1C24',
+              color: '#000000',
               fontSize: '12px',
               margin: 0,
               textTransform: 'uppercase',
@@ -309,7 +332,7 @@ export default function ConsultOfferClaimModal({
             className="shrink-0 cursor-pointer"
             style={{ lineHeight: 0, padding: 0, border: 'none', background: 'none' }}
           >
-            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }} />
+            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block', filter: BRAND_RED_ICON_CSS_FILTER }} />
           </button>
         </div>
         <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '10px', marginBottom: '12px' }} />
@@ -346,19 +369,7 @@ export default function ConsultOfferClaimModal({
                       color: '#EB1C24',
                     }}
                   >
-                    {DEFAULT_INSPO_DISCLAIMER_P1}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '9px',
-                      margin: '8px 0 0',
-                      lineHeight: 1.5,
-                      textTransform: 'uppercase',
-                      color: '#808080',
-                    }}
-                  >
-                    {defaultDisclaimerGrayParagraph}
+                    {defaultDisclaimerP1Display}
                   </p>
                 </div>
               ) : (
@@ -472,11 +483,28 @@ export default function ConsultOfferClaimModal({
               </div>
             </div>
 
+            {isCurrentDefaultTwoParagraphDisclaimer ? (
+              <p
+                style={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '9px',
+                  margin: '12px auto 10px',
+                  maxWidth: 'calc(100% - 10px)',
+                  lineHeight: 1.5,
+                  textTransform: 'uppercase',
+                  color: '#808080',
+                  textAlign: 'center',
+                }}
+              >
+                {defaultDisclaimerP2Text}
+              </p>
+            ) : null}
+
             <p
               style={{
                 fontFamily: '"Futura PT Medium"',
                 fontSize: '9px',
-                color: '#808080',
+                color: '#EB1C24',
                 marginTop: '22px',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
@@ -484,7 +512,7 @@ export default function ConsultOfferClaimModal({
                 lineHeight: 1.4,
               }}
             >
-              $40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE.
+              $40 DISCOUNT ONLY APPLIES WHILE OFFER IS ACTIVE.
             </p>
             <div style={{ marginTop: '0', marginBottom: '4px' }}>
               <div
@@ -522,7 +550,7 @@ export default function ConsultOfferClaimModal({
                 style={{
                   fontFamily: '"Futura PT Medium"',
                   fontSize: '9px',
-                  color: '#EB1C24',
+                  color: '#808080',
                   margin: 0,
                   textTransform: 'uppercase',
                   flex: '1 1 auto',
@@ -531,7 +559,7 @@ export default function ConsultOfferClaimModal({
               >
                 STATUS: {expired ? 'INACTIVE' : 'ACTIVE'}
               </p>
-              {!expired && expiresMs != null ? (
+              {expiresMs != null ? (
                 <p
                   style={{
                     fontFamily: '"Futura PT Medium"',

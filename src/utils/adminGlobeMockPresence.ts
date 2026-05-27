@@ -9,6 +9,7 @@
 
 import type { OrderGlobeClusterCustomer, OrderGlobeClusterPoint } from './adminOrderGlobeClusters';
 import { landmarkForShipKey } from './adminOrderGlobeClusters';
+import { landmarkForGeographicText } from './adminGlobeGeographicLandmark';
 
 export type MockGlobeVisitorPoint = {
   lat: number;
@@ -16,6 +17,9 @@ export type MockGlobeVisitorPoint = {
   label: string;
   placeLine: string;
   placeDetail?: string;
+  /** Postcard chip (filled in **`mergeMockVisitorGlobePoints`**). */
+  landmarkTitle?: string;
+  landmarkSymbol?: string;
 };
 
 export type MockGlobeOrderPoint = {
@@ -422,15 +426,23 @@ export function mergeMockPresenceRows(real: MockPresenceVisitorRow[]): MockPrese
   return [...extra, ...real];
 }
 
+function withVisitorLandmark(p: MockGlobeVisitorPoint): MockGlobeVisitorPoint {
+  const { title, symbol } = landmarkForGeographicText(p.placeLine || p.label, 'visitor');
+  return { ...p, landmarkTitle: title, landmarkSymbol: symbol };
+}
+
 export function mergeMockVisitorGlobePoints(real: MockGlobeVisitorPoint[]): MockGlobeVisitorPoint[] {
-  if (!adminGlobeMockDataEnabled()) return real;
-  const seen = new Set(real.map((p) => `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`));
-  const extra = ADMIN_GLOBE_MOCK_VISITOR_POINTS.filter((p) => {
-    const k = `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
-  return [...extra, ...real];
+  const base = (() => {
+    if (!adminGlobeMockDataEnabled()) return real;
+    const seen = new Set(real.map((p) => `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`));
+    const extra = ADMIN_GLOBE_MOCK_VISITOR_POINTS.filter((p) => {
+      const k = `${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    return [...extra, ...real];
+  })();
+  return base.map(withVisitorLandmark);
 }
 

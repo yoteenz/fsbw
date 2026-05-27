@@ -885,7 +885,11 @@ function WishlistSelection() {
                   const itemQuantity = item.quantity || 1;
 
                   return (
-                    <div key={itemId} className="bg-white border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box' }}>
+                    <div
+                      key={itemId}
+                      className="bg-white border border-gray-200 p-2 mb-2 w-full"
+                      style={{ boxSizing: 'border-box' }}
+                    >
                       <div
                         className="flex items-center justify-start space-x-3"
                         style={{

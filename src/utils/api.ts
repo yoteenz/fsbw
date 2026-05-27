@@ -535,6 +535,15 @@ export async function getWishlist(): Promise<{ items: unknown[] }> {
   return { items: Array.isArray(data.items) ? data.items : [] };
 }
 
+/** Admin-sent alert rows stored on the user's notifications row in Supabase. */
+export async function getNotifications(): Promise<{ items: unknown[] }> {
+  const res = await apiFetch('/api/notifications');
+  if (res.status === 401) return { items: [] };
+  if (!res.ok) throw new Error(await res.text());
+  const data = (await res.json()) as { items?: unknown };
+  return { items: Array.isArray(data.items) ? data.items : [] };
+}
+
 export async function putWishlist(items: unknown[]): Promise<{ items: unknown[] }> {
   const res = await apiFetch('/api/wishlist', { method: 'PUT', body: { items } });
   if (!res.ok) throw new Error(await res.text());
@@ -837,6 +846,90 @@ export async function getAdminLivePresence(): Promise<{
         : 'live-presence returned invalid JSON'
     );
   }
+}
+
+/** Public POST — brand contact form (no auth). */
+export async function postBrandContactSubmit(body: {
+  name: string;
+  email: string;
+  isOrderRelated: 'yes' | 'no';
+  orderNumber: string;
+  message: string;
+}): Promise<{ ok?: boolean; inquiryId?: string; emailSent?: boolean; error?: string }> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/brand/contact-submit` : '/api/brand/contact-submit';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    inquiryId?: string;
+    emailSent?: boolean;
+    error?: string;
+  };
+  if (!res.ok) throw new Error(data.error || 'Could not send message');
+  return data;
+}
+
+
+export async function postBrandFaqQuestionSubmit(body: {
+  name: string;
+  email: string;
+  question: string;
+}): Promise<{ ok?: boolean; questionId?: string; emailSent?: boolean; error?: string }> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/brand/faq-question-submit` : '/api/brand/faq-question-submit';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    questionId?: string;
+    emailSent?: boolean;
+    error?: string;
+  };
+  if (!res.ok) throw new Error(data.error || 'Could not send question');
+  return data;
+}
+
+export type AdminBrandContactInquiry = {
+  id: string;
+  name: string;
+  email: string;
+  isOrderRelated: 'yes' | 'no';
+  orderNumber: string;
+  message: string;
+  status: string;
+  timestamp: string;
+};
+
+/** Admin: list / manage brand contact form submissions. */
+export async function getAdminBrandContactInquiries(): Promise<{
+  inquiries: AdminBrandContactInquiry[];
+  newCount: number;
+  storageAvailable: boolean;
+}> {
+  const res = await apiFetch('/api/admin/brand-contact-inquiries');
+  if (res.status === 403) throw new Error('Forbidden');
+  if (!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  return {
+    inquiries: Array.isArray(data.inquiries) ? data.inquiries : [],
+    newCount: Number(data.newCount) || 0,
+    storageAvailable: Boolean(data.storageAvailable),
+  };
+}
+
+export async function patchAdminBrandContactInquiry(id: string, status: 'read' | 'new' = 'read'): Promise<void> {
+  const res = await apiFetch('/api/admin/brand-contact-inquiries', {
+    method: 'PATCH',
+    body: { id, status },
+  });
+  if (!res.ok) throw new Error(await res.text());
 }
 
 /** Public POST — no auth. Records marketing events (e.g. social clicks) for admin analytics. */

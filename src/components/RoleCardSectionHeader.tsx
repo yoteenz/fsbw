@@ -1,12 +1,10 @@
+import { BRAND_RED_SECTION_HEADER_ICON_CSS_FILTER } from '../constants/brandRedIconFilter';
 import { roleHeaderIconApplyCssFilter } from '../utils/workerRoleHeaderIcon';
 
 /**
  * Section title row matching Account → Concierge cards (e.g. PRIORITY MESSAGES, ORDER TRACKING):
  * Futura PT Medium 12px red label, gray bottom rule, brand-tinted icon on the right.
  */
-
-const ROLE_HEADER_ICON_FILTER =
-  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)';
 
 const DEFAULT_HEADER_ICON_SRC = '/assets/NOIR/account-icon.svg';
 
@@ -47,7 +45,7 @@ export default function RoleCardSectionHeader({
           width: '19.76px',
           height: '19.76px',
           objectFit: 'contain',
-          filter: applyCssFilter ? ROLE_HEADER_ICON_FILTER : undefined,
+          filter: applyCssFilter ? BRAND_RED_SECTION_HEADER_ICON_CSS_FILTER : undefined,
         }}
       />
     </div>

@@ -10,7 +10,9 @@
     "paths": {
       "@fsbw/adminGlobeNe110mLand": ["../../src/utils/adminGlobeNe110mLand.ts"],
       "@fsbw/adminGlobeBoundaryPaths": ["../../src/utils/adminGlobeBoundaryPaths.ts"],
-      "@fsbw/adminGlobePlaceLabel": ["../../src/utils/adminGlobePlaceLabel.ts"]
+      "@fsbw/adminGlobePlaceLabel": ["../../src/utils/adminGlobePlaceLabel.ts"],
+      "@fsbw/adminGlobeGeographicLandmark": ["../../src/utils/adminGlobeGeographicLandmark.ts"],
+      "@fsbw/adminGlobeOrderPillarColor": ["../../src/utils/adminGlobeOrderPillarColor.ts"]
     },
     "strict": true,
     "noEmit": true,

@@ -1,10 +1,22 @@
 import Globe from 'globe.gl';
+import { Group, type Mesh } from 'three';
 import { loadLandSamplesForGlobe } from '@fsbw/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit, type LatLngPair } from '@fsbw/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '@fsbw/adminGlobePlaceLabel';
+import { landmarkForGeographicText } from '@fsbw/adminGlobeGeographicLandmark';
+import { buildHexPrismMesh, ORDER_PRISM_H3_RES, ORDER_PRISM_HEX_MARGIN, snapLatLngToH3Cell } from './orderPrismLayer';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#16a34a';
+
+/**
+ * Bottom of the order/view stack sits on the **same** band as land H3 tops (`hexAltitude` ~0.0058)
+ * so **one** order is a **flat** colored disk on the surface; each extra count adds **`POINT_STACK_STEP`**.
+ */
+const STACK_SURFACE_ALT = 0.00585;
+/** One “pill” layer per order or per view stacked above **`STACK_SURFACE_ALT`**. */
+const POINT_STACK_STEP = 0.00135;
+/** Postcard floats slightly above the top stack layer. */
+const POSTCARD_ABOVE_STACK = 0.0038;
 
 /** Admin UI copy: match storefront uppercase label style (Futura + all-caps). */
 function displayUpper(s: string): string {
@@ -30,6 +42,8 @@ type ClusterCustomer = {
   age?: number | null;
 };
 
+type PostcardMode = 'order' | 'visitor';
+
 type PointRow = {
   lat: number;
   lng: number;
@@ -38,13 +52,25 @@ type PointRow = {
   /** Map line when zoomed in (city, region, country). */
   placeLine?: string;
   placeDetail?: string;
-  /** Order cluster: stable key + landmark + tower height + customers (from parent JSON). */
+  /** Order cluster: stable key + customers (from parent JSON). */
   clusterKey?: string;
   orderCount?: number;
+  /** Postcard: known-for title + symbol (order clusters + standalone visitors from parent). */
   landmarkTitle?: string;
   landmarkSymbol?: string;
   orderTowerHeight?: number;
   clusterCustomers?: ClusterCustomer[];
+  /**
+   * Per-marker altitude (globe radius units) for **stacked** order/visitor points.
+   * Filled in **`applyPayload`**; `pointAltitude` reads this field.
+   */
+  alt?: number;
+  /** One HTML postcard per city for standalone visitors (dedupe). */
+  postcardKey?: string;
+  postcardMode?: PostcardMode;
+  /** Per-layer prism: bottom/top relative altitude (globe radius units). */
+  sliceBottomAlt?: number;
+  sliceTopAlt?: number;
 };
 
 type ArcRow = { startLat: number; startLng: number; endLat: number; endLng: number; color: string | string[] };
@@ -133,21 +159,13 @@ function makeOceanSolidLightGrayDataUrl(): string {
 }
 
 /**
- * Scatter points around **visitors** only for subtle hex hotspots (orders stay flat dots).
+ * Legacy: random jitter for hex **hot** bins. Not used for visitor counts (see **stacked** markers in **`applyPayload`**).
  */
-function buildHotBinJitter(rows: PointRow[], samplesPerRow: number): Weighted[] {
-  const n = Math.max(2, Math.min(20, Math.round(samplesPerRow)));
-  const pts: Weighted[] = [];
-  for (const r of rows) {
-    for (let k = 0; k < n; k++) {
-      pts.push({
-        lat: r.lat + (Math.random() - 0.5) * 0.55,
-        lng: r.lng + (Math.random() - 0.5) * 0.55,
-        w: 1,
-      });
-    }
-  }
-  return pts;
+/**
+ * **Hot** hex bins: legacy; visitor volume is now **stacked** markers, not extra bins here.
+ */
+function buildHotBinJitterForHexBins(_rows: PointRow[], _samplesPerRow: number): Weighted[] {
+  return [];
 }
 
 function buildArcs(visitors: PointRow[], orders: PointRow[]): ArcRow[] {
@@ -307,6 +325,7 @@ function reorderGlobeLabelsAboveHex(): void {
       return null;
     };
     const hexRoot = findRoot('hexBinPoints');
+    const customRoot = findRoot('custom');
     const labelRoot = findRoot('label');
     const htmlRoot = findRoot('html');
     if (!hexRoot) return;
@@ -315,6 +334,10 @@ function reorderGlobeLabelsAboveHex(): void {
     const hexAt = next.indexOf(hexRoot);
     if (hexAt < 0) return;
     let insertAt = hexAt + 1;
+    if (customRoot && !next.includes(customRoot)) {
+      next.splice(insertAt, 0, customRoot);
+      insertAt += 1;
+    }
     if (labelRoot) {
       next.splice(insertAt, 0, labelRoot);
       insertAt += 1;
@@ -417,6 +440,8 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
     }
     if (rows.length) clusterCustomers = rows;
   }
+  const postcardKey = typeof o.postcardKey === 'string' ? o.postcardKey.trim() : undefined;
+  const pm = o.postcardMode === 'visitor' ? 'visitor' : o.postcardMode === 'order' ? 'order' : undefined;
   return {
     lat,
     lng,
@@ -430,11 +455,84 @@ function normalizeIncomingPoint(o: Record<string, unknown>): PointRow | null {
     landmarkSymbol,
     orderTowerHeight,
     clusterCustomers,
+    ...(postcardKey ? { postcardKey } : {}),
+    ...(pm ? { postcardMode: pm } : {}),
   };
 }
 
-function orderRowsForLandmarkHtml(rows: PointRow[]): PointRow[] {
-  return rows.filter((r) => r.kind === 'order' && r.clusterKey && (r.landmarkSymbol || (r.orderCount ?? 0) > 0));
+/**
+ * Reconstruct **one** order-cluster row (embed expands payload to one point per order/view).
+ * Used for postcard + **`activateOrderCluster`**.
+ */
+function clusterOrderRowsFromRaw(raw: PointRow[]): PointRow[] {
+  const m = new Map<string, PointRow>();
+  for (const r of raw) {
+    if (r.kind !== 'order' || !r.clusterKey) continue;
+    if (!m.has(r.clusterKey)) m.set(r.clusterKey, { ...r });
+  }
+  return [...m.values()];
+}
+
+function landmarkFromRow(r: PointRow, mode: PostcardMode): { title: string; symbol: string } {
+  const t = typeof r.landmarkTitle === 'string' ? r.landmarkTitle.trim() : '';
+  const s = typeof r.landmarkSymbol === 'string' ? r.landmarkSymbol.trim() : '';
+  if (t && s) return { title: t, symbol: s };
+  const blob = [r.clusterKey, r.placeLine, r.label].filter(Boolean).join(' ');
+  return landmarkForGeographicText(blob, mode);
+}
+
+/**
+ * **One** postcard per order cluster and per **standalone-visitor** site, **above** the pillar stack.
+ */
+function postcardRowsForCamera(raw: PointRow[]): HtmlLandmarkRow[] {
+  const v = splitPoints(raw).visitors;
+  const clusterBases = clusterOrderRowsFromRaw(raw);
+  const out: HtmlLandmarkRow[] = [];
+  for (const c of clusterBases) {
+    const [snapLat, snapLng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
+    const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
+    const vCount = Math.max(0, Math.floor(countVisitorViewsNear(v, c.lat, c.lng, 100)));
+    const stackH = oCount + vCount;
+    const topAlt =
+      stackH > 0 ? STACK_SURFACE_ALT + (stackH - 1) * POINT_STACK_STEP : STACK_SURFACE_ALT;
+    const { title, symbol } = landmarkFromRow(c, 'order');
+    out.push({
+      lat: snapLat,
+      lng: snapLng,
+      alt: topAlt + POSTCARD_ABOVE_STACK,
+      row: {
+        ...c,
+        kind: 'order',
+        landmarkTitle: title,
+        landmarkSymbol: symbol,
+        postcardMode: 'order',
+      },
+    });
+  }
+  const byStandKey = new Map<string, PointRow>();
+  for (const p of v) {
+    if (p.clusterKey) continue;
+    const k = (p.postcardKey && p.postcardKey.trim()) || `${p.lat.toFixed(2)}|${p.lng.toFixed(2)}`;
+    if (!byStandKey.has(k)) byStandKey.set(k, p);
+  }
+  for (const p of byStandKey.values()) {
+    const [slat, slng] = snapLatLngToH3Cell(p.lat, p.lng, ORDER_PRISM_H3_RES);
+    const { title, symbol } = landmarkFromRow(p, 'visitor');
+    out.push({
+      lat: slat,
+      lng: slng,
+      alt: (p.alt ?? STACK_SURFACE_ALT) + POSTCARD_ABOVE_STACK,
+      row: {
+        ...p,
+        kind: 'visitor',
+        landmarkTitle: title,
+        landmarkSymbol: symbol,
+        postcardMode: 'visitor',
+        placeDetail: p.placeDetail,
+      },
+    });
+  }
+  return out;
 }
 
 /**
@@ -532,13 +630,28 @@ function armAutoRotateOffWhileClusterPanelOpen(): void {
   autoRotateRafId = requestAnimationFrame(armAutoRotateOffWhileClusterPanelOpen);
 }
 
+function orderClusterBaseRowFromPayload(clusterKey: string | undefined): PointRow | null {
+  if (!clusterKey) return null;
+  for (const p of lastRows) {
+    if (p.clusterKey === clusterKey && p.kind === 'order') return p;
+  }
+  return null;
+}
+
+function resolveClusterSourceRow(p: PointRow): PointRow {
+  if (p.kind === 'order' && p.clusterKey) return p;
+  return orderClusterBaseRowFromPayload(p.clusterKey) || p;
+}
+
 function activateOrderCluster(row: PointRow): void {
   const target = window.parent && window.parent !== window ? window.parent : null;
   if (!target) return;
   setGlobeAutoRotateForClusterPanel(true);
   const { visitors } = splitPoints(lastRows);
-  const viewCount = countVisitorViewsNear(visitors, row.lat, row.lng);
-  const customersUpper = (row.clusterCustomers ?? []).map((c) => ({
+  const base = orderClusterBaseRowFromPayload(row.clusterKey) || row;
+  const viewCount = countVisitorViewsNear(visitors, base.lat, base.lng);
+  const totalOrders = Math.max(0, Math.floor(Number(base.orderCount) || 0));
+  const customersUpper = (base.clusterCustomers ?? []).map((c) => ({
     ...c,
     recentUnitName: displayUpper(c.recentUnitName || c.topProduct || '—'),
     ...(c.recentUnitCapSize
@@ -550,12 +663,12 @@ function activateOrderCluster(row: PointRow): void {
   target.postMessage(
     {
       type: MSG_CLUSTER,
-      clusterKey: row.clusterKey ?? '',
-      placeLine: displayUpper(row.placeLine ?? ''),
-      orderCount: row.orderCount ?? 0,
+      clusterKey: base.clusterKey ?? '',
+      placeLine: displayUpper(base.placeLine ?? ''),
+      orderCount: totalOrders,
       viewCount,
-      landmarkTitle: displayUpper(row.landmarkTitle ?? ''),
-      landmarkSymbol: row.landmarkSymbol ?? '',
+      landmarkTitle: displayUpper(base.landmarkTitle ?? ''),
+      landmarkSymbol: base.landmarkSymbol ?? '',
       customers: customersUpper,
     },
     '*'
@@ -568,7 +681,7 @@ function activateOrderCluster(row: PointRow): void {
     clusterPanelHoldUntilLarge = false;
   }, 3200);
   try {
-    globe.pointOfView({ lat: row.lat, lng: row.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
+    globe.pointOfView({ lat: base.lat, lng: base.lng, altitude: CLUSTER_FOCUS_ALTITUDE }, RECENTER_MS);
   } catch {
     /* optional */
   }
@@ -586,16 +699,22 @@ function postcardTiltDeg(seed: string | undefined): number {
   return ((h % 11) - 5) * 0.55;
 }
 
-/** Postcard / hand-stamp landmark chip — soft paper, not glossy emoji tile. */
+/** Postcard / hand-stamp — neutral hairline (pillar color stays on the markers only). */
 function buildLandmarkHtml(row: PointRow): HTMLElement {
   const wrap = document.createElement('button');
   wrap.type = 'button';
   wrap.setAttribute('data-fsbw-landmark', '1');
+  const isVisitor = row.postcardMode === 'visitor';
   const sym = row.landmarkSymbol || '📍';
-  const title = displayUpper(row.landmarkTitle || 'ORDERS');
-  const n = row.orderCount ?? 1;
-  const tilt = postcardTiltDeg(row.clusterKey);
-  wrap.title = `${title} · ${n} ORDER${n === 1 ? '' : 'S'} — TAP FOR BREAKDOWN`;
+  const lmTitle = row.landmarkTitle || (isVisitor ? 'Local views' : 'Orders hub');
+  const titleU = displayUpper(lmTitle);
+  const n = row.orderCount ?? 0;
+  const tilt = postcardTiltDeg(isVisitor ? (row.postcardKey ?? row.placeLine) : row.clusterKey);
+  if (isVisitor) {
+    wrap.title = `${titleU} — LIVE VIEWS`;
+  } else {
+    wrap.title = `${titleU} · ${n} ORDER${n === 1 ? '' : 'S'} — TAP FOR BREAKDOWN`;
+  }
   wrap.setAttribute(
     'style',
     [
@@ -610,8 +729,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
   );
 
   /**
-   * **No** `backdrop-filter` on the shell: blurring the mint/sky hex behind reads as a **tinted frosted tile**.
-   * Truly clear chip: **transparent** fill + optional hairline only. Glyph: **native multi-color emoji** at ~same alpha as prior slate mask (~**0.88**).
+   * **No** `backdrop-filter` on the shell — subtle neutral border only.
    */
   const shell = document.createElement('span');
   shell.setAttribute(
@@ -644,8 +762,7 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
       'font-size:11px',
       'line-height:1',
       'letter-spacing:0.02em',
-      /** Full-color emoji (not `background-clip:text` tint); keep faint over globe mesh. */
-      'opacity:0.62',
+      'opacity:0.72',
       'filter:saturate(1.12) contrast(1.04)',
       'text-shadow:0 0.5px 1px rgba(15,23,42,0.12)',
     ].join(';')
@@ -658,20 +775,30 @@ function buildLandmarkHtml(row: PointRow): HTMLElement {
     if (ev.button !== 0) return;
     ev.stopPropagation();
     ev.preventDefault();
-    activateOrderCluster(row);
+    if (isVisitor) {
+      const target = window.parent && window.parent !== window ? window.parent : null;
+      if (target) {
+        target.postMessage(
+          {
+            type: MSG_POINT,
+            kind: 'visitor' as const,
+            label: displayUpper(row.label),
+            lat: row.lat,
+            lng: row.lng,
+          },
+          '*'
+        );
+      }
+    } else {
+      activateOrderCluster(row);
+    }
   });
   return wrap;
 }
 
-function htmlLandmarkRowsForCamera(rows: PointRow[], show: boolean): HtmlLandmarkRow[] {
+function htmlLandmarkRowsForCamera(rawRows: PointRow[], show: boolean): HtmlLandmarkRow[] {
   if (!show) return [];
-  return orderRowsForLandmarkHtml(rows).map((r) => ({
-    lat: r.lat,
-    lng: r.lng,
-    /** Float above order dot / hex surface. */
-    alt: 0.054,
-    row: r,
-  }));
+  return postcardRowsForCamera(rawRows);
 }
 
 let lastClusterPanelZoom = false;
@@ -752,14 +879,17 @@ const globe = new Globe(root, {
   .hexTransitionDuration(400)
   .pointLat('lat')
   .pointLng('lng')
-  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : ORDER_GREEN))
-  .pointAltitude(0.038)
+  .pointColor((d: object) => ((d as PointRow).kind === 'visitor' ? BRAND_RED : 'rgba(0,0,0,0)'))
+  .pointAltitude((d: object) => (d as PointRow).alt ?? STACK_SURFACE_ALT)
   .pointRadius((d: object) => {
     const r = d as PointRow;
-    if (r.kind === 'order' && r.clusterKey) return 0.62;
-    return 0.52;
+    if (r.kind === 'visitor' && !r.clusterKey) return 0.52;
+    return 0;
   })
   .pointResolution(12)
+  .customLayerData([])
+  .customThreeObject(() => new Group())
+  .customThreeObjectUpdate(updateCustomPrismMesh)
   .arcStartLat('startLat')
   .arcStartLng('startLng')
   .arcEndLat('endLat')
@@ -949,8 +1079,8 @@ requestAnimationFrame(() => {
 
 globe.onPointClick((p: object) => {
   const pr = p as PointRow;
-  if (pr.kind === 'order' && pr.clusterKey) {
-    activateOrderCluster(pr);
+  if (pr.clusterKey && (pr.kind === 'order' || pr.placeDetail === 'VIEW')) {
+    activateOrderCluster(resolveClusterSourceRow(pr));
     return;
   }
   const target = window.parent && window.parent !== window ? window.parent : null;
@@ -967,6 +1097,60 @@ globe.onPointClick((p: object) => {
   );
 });
 
+globe.onCustomLayerClick((obj: object) => {
+  const g = obj as Group & { children?: Mesh[] };
+  const mesh = g.children?.[0] as Mesh | undefined;
+  const row = mesh?.userData?.pointRow as PointRow | undefined;
+  if (!row) return;
+  if (row.clusterKey && (row.kind === 'order' || row.placeDetail === 'VIEW')) {
+    activateOrderCluster(resolveClusterSourceRow(row));
+  }
+});
+
+type CustomPrismRow = PointRow & { sliceBottomAlt: number; sliceTopAlt: number };
+
+let customPrismRows: CustomPrismRow[] = [];
+
+function updateOrderPrismsFromSlices(slices: PointRow[]): void {
+  const rows: CustomPrismRow[] = [];
+  for (const p of slices) {
+    const b = p.sliceBottomAlt;
+    const t = p.sliceTopAlt;
+    if (typeof b !== 'number' || typeof t !== 'number' || !Number.isFinite(b) || !Number.isFinite(t)) continue;
+    if (t <= b) continue;
+    rows.push({ ...p, sliceBottomAlt: b, sliceTopAlt: t });
+  }
+  customPrismRows = rows;
+  try {
+    globe.customLayerData([...customPrismRows]);
+  } catch {
+    /* optional */
+  }
+}
+
+function updateCustomPrismMesh(obj: import('three').Object3D, d: object, globeR?: number): void {
+  const row = d as CustomPrismRow;
+  const g = obj as Group;
+  const R = typeof globeR === 'number' && Number.isFinite(globeR) ? globeR : 100;
+  while (g.children.length) {
+    const ch = g.children[0] as Mesh;
+    ch.geometry?.dispose();
+    g.remove(ch);
+  }
+  const mesh = buildHexPrismMesh(
+    row.lat,
+    row.lng,
+    row.sliceBottomAlt,
+    row.sliceTopAlt,
+    R,
+    ORDER_PRISM_H3_RES,
+    ORDER_PRISM_HEX_MARGIN,
+    row.placeDetail === 'VIEW' || row.kind === 'visitor'
+  );
+  mesh.userData.pointRow = row;
+  g.add(mesh);
+}
+
 let landHexPoints: Weighted[] = [];
 let borderPaths: BorderPathRow[] = [];
 let lastRows: PointRow[] = [];
@@ -977,20 +1161,86 @@ const MAX_BORDER_PATH_ROWS = 10_500;
 function applyPayload(rows: PointRow[]) {
   lastRows = rows;
   const { visitors, orders } = splitPoints(rows);
-  const all: PointRow[] = [...visitors, ...orders];
-  /** Hotspot jitter **visitors only** — orders are flat clickable dots (no raised pillars). */
-  const jitterPerRow = Math.max(4, Math.min(14, Math.floor(220 / Math.max(1, visitors.length || 1))));
-  const hot = buildHotBinJitter(visitors, jitterPerRow);
+
+  /** One row per **order** cluster (same `clusterKey` can be duplicated in payload). */
+  const byCluster = new Map<string, PointRow>();
+  for (const o of orders) {
+    if (o.kind === 'order' && o.clusterKey) {
+      const k = o.clusterKey.trim();
+      if (!k) continue;
+      if (!byCluster.has(k)) byCluster.set(k, o);
+    }
+  }
+  const clusterList = [...byCluster.values()];
+
+  const isNearOrderCluster = (lat: number, lng: number, maxKm: number) => {
+    for (const c of clusterList) {
+      if (haversineKm(lat, lng, c.lat, c.lng) <= maxKm) return true;
+    }
+    return false;
+  };
+
+  const prismSlices: PointRow[] = [];
+  for (const c of clusterList) {
+    const [snapLat, snapLng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
+    const oCount = Math.max(0, Math.floor(Number(c.orderCount) || 0));
+    for (let i = 0; i < oCount; i++) {
+      const bottom = STACK_SURFACE_ALT + i * POINT_STACK_STEP;
+      const top = bottom + POINT_STACK_STEP;
+      prismSlices.push({
+        ...c,
+        lat: snapLat,
+        lng: snapLng,
+        orderCount: oCount,
+        orderTowerHeight: bottom,
+        alt: bottom,
+        sliceBottomAlt: bottom,
+        sliceTopAlt: top,
+      });
+    }
+    const viewN = countVisitorViewsNear(visitors, c.lat, c.lng, 100);
+    const vCount = Math.max(0, Math.floor(viewN));
+    for (let j = 0; j < vCount; j++) {
+      const bottom = STACK_SURFACE_ALT + (oCount + j) * POINT_STACK_STEP;
+      const top = bottom + POINT_STACK_STEP;
+      prismSlices.push({
+        ...c,
+        lat: snapLat,
+        lng: snapLng,
+        kind: 'visitor' as const,
+        label: `VIEW · ${(c.placeLine || c.label).slice(0, 64)}`,
+        placeDetail: 'VIEW',
+        orderCount: 0,
+        orderTowerHeight: bottom,
+        alt: bottom,
+        sliceBottomAlt: bottom,
+        sliceTopAlt: top,
+      });
+    }
+  }
+
+  const clusterArcRows = clusterList.map((c) => {
+    const [slat, slng] = snapLatLngToH3Cell(c.lat, c.lng, ORDER_PRISM_H3_RES);
+    return { ...c, lat: slat, lng: slng };
+  });
+  const standaloneVisitors: PointRow[] = [];
+  for (const v of visitors) {
+    if (isNearOrderCluster(v.lat, v.lng, 5)) continue;
+    standaloneVisitors.push({ ...v, alt: STACK_SURFACE_ALT, orderTowerHeight: STACK_SURFACE_ALT });
+  }
+
+  updateOrderPrismsFromSlices(prismSlices);
+  /** Land mesh; **H3 hex prisms** for orders/views; red dots for standalone visitors only. */
   globe
-    .hexBinPointsData([...landHexPoints, ...hot])
+    .hexBinPointsData([...landHexPoints, ...buildHotBinJitterForHexBins(visitors, 0)])
     .pathsData(borderPaths)
-    .pointsData(all)
-    .arcsData(buildArcs(visitors, orders));
+    .pointsData(standaloneVisitors)
+    .arcsData(buildArcs(standaloneVisitors, clusterArcRows));
   updateMapLabelsFromCamera();
   enforceAutoRotateWhenClusterPanelOpen();
 }
 
-globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]);
+globe.pointsData([]).hexBinPointsData([]).pathsData([]).arcsData([]).labelsData([]).htmlElementsData([]).customLayerData([]);
 
 void (async () => {
   try {

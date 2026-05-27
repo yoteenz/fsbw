@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "globe.gl": "^2.45.3",
+    "h3-js": "^4.1.0",
     "three": "^0.179.0"
   },
   "devDependencies": {

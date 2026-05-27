@@ -4,9 +4,10 @@ import { loadLandSamplesForGlobe } from '../../utils/adminGlobeNe110mLand';
 import { loadCountryAndStateBoundaryPathsSplit } from '../../utils/adminGlobeBoundaryPaths';
 import { orderPlaceFieldsFromGlobeLabel, visitorPlaceFieldsFromHeartbeatLabel } from '../../utils/adminGlobePlaceLabel';
 import { enrichOrderGlobeClusterCustomers } from '../../utils/adminGlobeClusterClientProfile';
+import { landmarkForGeographicText } from '../../utils/adminGlobeGeographicLandmark';
+import { ADMIN_GLOBE_ORDER_PILLAR_RGBA } from '../../utils/adminGlobeOrderPillarColor';
 
 const BRAND_RED = '#EB1C24';
-const ORDER_GREEN = '#16a34a';
 
 /** Protocol with `embed/admin-globe/src/main.ts` */
 const MSG_IN = 'fsbw-admin-globe';
@@ -47,6 +48,8 @@ export type LiveGlobePoint = {
   landmarkSymbol?: string;
   orderTowerHeight?: number;
   clusterCustomers?: GlobeClusterCustomerRow[];
+  /** Dedupe **standalone** visitor postcards in the embed (city + country). */
+  postcardKey?: string;
 };
 
 export type GlobeOrderClusterDetail = {
@@ -77,6 +80,8 @@ type GlobePointInput = {
   customers?: GlobeClusterCustomerRow[];
   /** Alias for embed payload only — prefer **`customers`** from cluster builder. */
   clusterCustomers?: GlobeClusterCustomerRow[];
+  /** Standalone-visitor postcard dedupe (set from **`mergeData`** if omitted). */
+  postcardKey?: string;
 };
 
 type Props = {
@@ -147,7 +152,16 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         p.placeLine && p.placeLine.trim()
           ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
           : visitorPlaceFieldsFromHeartbeatLabel(p.label);
-      return { ...p, ...place, kind: 'visitor' as const };
+      const pl = (place.placeLine && place.placeLine.trim()) || p.placeLine || '';
+      const { title, symbol } =
+        p.landmarkTitle && p.landmarkSymbol
+          ? { title: p.landmarkTitle, symbol: p.landmarkSymbol }
+          : landmarkForGeographicText(`${pl} ${p.postcardKey || ''}`.trim(), 'visitor');
+      const parts = pl.split(/\s*,\s*/);
+      const city = (parts[0] || '').replace(/\d+$/, '').trim() || 'SITE';
+      const ctry = (parts[2] || parts[1] || 'ZZ').toUpperCase().replace(/\d+$/, '').trim();
+      const postcardKey = p.postcardKey && p.postcardKey.trim() ? p.postcardKey : `${city}|${ctry}`;
+      return { ...p, ...place, kind: 'visitor' as const, landmarkTitle: title, landmarkSymbol: symbol, postcardKey };
     }),
     ...orderPoints.map((p) => {
       const place =
@@ -168,6 +182,7 @@ function mergeData(visitorPoints: Props['visitorPoints'], orderPoints: Props['or
         landmarkSymbol: p.landmarkSymbol,
         orderTowerHeight: th,
         clusterCustomers,
+        postcardKey: p.postcardKey,
       };
     }),
   ];
@@ -624,7 +639,23 @@ function AdminRevenueLiveGlobeIframeEmbed({
           p.placeLine && p.placeLine.trim()
             ? { placeLine: p.placeLine.trim(), placeDetail: p.placeDetail?.trim() }
             : visitorPlaceFieldsFromHeartbeatLabel(p.label);
-        return { ...p, ...place, kind: 'visitor' as const };
+        const pl = (place.placeLine && place.placeLine.trim()) || p.placeLine || '';
+        const { title, symbol } =
+          p.landmarkTitle && p.landmarkSymbol
+            ? { title: p.landmarkTitle, symbol: p.landmarkSymbol }
+            : landmarkForGeographicText(`${pl} ${p.postcardKey || ''}`.trim(), 'visitor');
+        const parts = pl.split(/\s*,\s*/);
+        const city = (parts[0] || '').replace(/\d+$/, '').trim() || 'SITE';
+        const ctry = (parts[2] || parts[1] || 'ZZ').toUpperCase().replace(/\d+$/, '').trim();
+        const postcardKey = p.postcardKey && p.postcardKey.trim() ? p.postcardKey : `${city}|${ctry}`;
+        return {
+          ...p,
+          ...place,
+          kind: 'visitor' as const,
+          landmarkTitle: title,
+          landmarkSymbol: symbol,
+          postcardKey,
+        };
       }),
       ...orderPoints.map((p) => {
         const place =
@@ -645,6 +676,7 @@ function AdminRevenueLiveGlobeIframeEmbed({
           landmarkSymbol: p.landmarkSymbol,
           orderTowerHeight: th,
           clusterCustomers,
+          postcardKey: p.postcardKey,
         };
       }),
     ];
@@ -988,7 +1020,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       key={`arc-${i}`}
                       d={d}
                       fill="none"
-                      stroke={ORDER_GREEN}
+                      stroke={ADMIN_GLOBE_ORDER_PILLAR_RGBA}
                       strokeWidth={1.2}
                       strokeLinecap="round"
                       strokeDasharray="6 10"
@@ -1001,7 +1033,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
 
               {points.map((p, i) => {
                 const { leftPct, topPct } = project(p.lat, p.lng);
-                const color = p.kind === 'visitor' ? BRAND_RED : ORDER_GREEN;
+                const color = p.kind === 'visitor' ? BRAND_RED : ADMIN_GLOBE_ORDER_PILLAR_RGBA;
                 return (
                   <button
                     key={`${p.kind}-${i}`}
@@ -1020,7 +1052,7 @@ function AdminRevenueLiveGlobeSvgMap({ orderPoints, visitorPoints, heightPx = 32
                       boxShadow:
                         p.kind === 'visitor'
                           ? `0 0 0 1px rgba(0,0,0,0.2), 0 0 12px ${BRAND_RED}88`
-                          : `0 0 0 1px rgba(0,0,0,0.2), 0 0 10px ${ORDER_GREEN}66`,
+                          : `0 0 0 1px rgba(0,0,0,0.2), 0 0 10px rgba(28,62,108,0.35)`,
                     }}
                     title={p.label}
                     aria-label={p.label}

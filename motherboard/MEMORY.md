@@ -17935,6 +17935,26 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe embed: stacked order/view markers (1 = 1 count)
+
+**Context:** User said the red/green **order vs view** “pillars” were wrong: **one** layer should be **one** order or **one** view (e.g. **10** orders at a location → **10** green stack steps, same for views).
+
+**Changes:** **`embed/admin-globe/src/main.ts`** — Deduplicate order rows by `clusterKey`; for each cluster emit `orderCount` **green** `pointsData` rows and `viewCount` **red** rows (100 km, same as cluster panel) with per-row **`alt`** = **`STACK_SURFACE_ALT` + n × `POINT_STACK_STEP`** (first layer at land-surface altitude; each extra order/view stacks); `pointAltitude` uses **`alt`**; `activateOrderCluster` resolves full order row from `lastRows` for synthetic “VIEW” points; arcs use deduped clusters + stand-alone visitors. **Hot hex jitter** removed. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **embed/admin-globe**; **main** if **docs** matter for that build.
+
+---
+
+## 2026-04-28 — Admin globe: postcard per order + per visitor site; green/red with pillars
+
+**Context:** User wanted **each** order/view **location** to have its own **postcard** (attraction / known-for) and a **red or green** pillar for that location.
+
+**Changes:** **`src/utils/adminGlobeGeographicLandmark.ts`** — shared **`landmarkForGeographicText`**; **`src/utils/adminOrderGlobeClusters.ts`** — **`landmarkForShipKey`** wraps it. **`src/utils/adminGlobeMockPresence.ts`** / **`src/components/admin/AdminRevenueLiveGlobe.tsx`** / **`src/pages/admin/revenue/page.tsx`** — visitor points get **`landmarkTitle`**, **`landmarkSymbol`**, **`postcardKey`** (city|country). **`embed/admin-globe`**: **`postcardRowsForCamera`**, **`buildLandmarkHtml`**, payload fields; Vite + tsconfig alias **`@fsbw/adminGlobeGeographicLandmark`**. Postcard chip borders are **neutral** only (no red/green frame on the postcard).
+
+**Deploy:** Redeploy **main** + **embed**.
+
+---
+
 ## 2026-04-28 — Live View: TOP ORDERS after TOP BUYERS; label **TOP BUYERS**
 
 **Context:** User asked to move **TOP ORDERS** above **TOP VISITORS** and below **TOP BUYER**; rename **TOP BUYER** → **TOP BUYERS**.
@@ -17955,6 +17975,36 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-04-28 — Admin globe: H3-aligned order prisms (blue); SVG fallback matches
+
+**Context:** User wanted order markers shaped like the **land H3 hex** (not cylinders), centered in the cell, and **dark translucent blue** instead of green.
+
+**Changes:** **`embed/admin-globe`** — **`orderPrismLayer.ts`**, **`customLayerData`** + **`customThreeObjectUpdate`** using **`h3-js`** `cellToBoundary` (res **3**, same as **`hexBinResolution(3.55)`**); **`applyPayload`** per-count prism slices; **`onCustomLayerClick`**; **`reorderGlobeLabelsAboveHex`** inserts **custom** after **hexBinPoints**; **`h3-js`** in **`package.json`**; **`vite-env.d.ts`** **`three`** shim. **`src/utils/adminGlobeOrderPillarColor.ts`**; **`AdminRevenueLiveGlobe.tsx`** SVG uses same blue; Vite/tsconfig alias **`@fsbw/adminGlobeOrderPillarColor`**. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **main** + **embed**.
+
+---
+
+## 2026-04-28 — Admin globe prisms: hexMargin + H3 center snap (merge with land cells)
+
+**Context:** User said many markers still not **hex-shaped** / not **merged** on globe hexes — prisms used full **`cellToBoundary`** without land **`hexMargin`**, and stacks used raw ship lat/lng (off cell center); GeoJSON duplicate closing vertex could skew caps.
+
+**Changes:** **`embed/admin-globe/src/orderPrismLayer.ts`** — **`ORDER_PRISM_HEX_MARGIN`** (0.04) lerp to center like three-globe; **`stripClosingDuplicate`**; **`snapLatLngToH3Cell`**; **`buildHexPrismMesh`** takes margin. **`main.ts`** — prism rows + postcards + arc cluster ends use snap; **`updateCustomPrismMesh`** passes margin. **`docs/ADMIN_GLOBE_EMBED.md`**.
+
+**Deploy:** Redeploy **embed**; **main** if docs.
+
+---
+
+## 2026-04-28 — Admin Revenue globe caption: order swatch matches blue pillars
+
+**Context:** Legend dot under the iframe still **green** after prisms went blue.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`ADMIN_GLOBE_ORDER_PILLAR_RGBA`**.
+
+**Deploy:** Redeploy **main**.
+
+---
+
 ## 2026-04-27 — Cluster panel close: smaller ✕, brand red
 
 **Context:** User asked to reduce the **X** close control on the **cluster panel only** by **10%** and set its color to **red**.
@@ -17962,3 +18012,708 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/components/admin/AdminRevenueLiveGlobe.tsx`** — **`ClusterDetailPanel`** close button: **`fontSize` 10px → 9px** (−10%), **`color` → `BRAND_RED` (`#EB1C24`)**; **DetailModal** and other UIs unchanged.
 
 **Deploy:** Redeploy **main**.
+
+---
+
+## 2026-05-05 — Supabase load + Admin Revenue live-globe refresh interval
+
+**Context:** User asked how to track Supabase Disk IO / Query Performance; simplified UI guidance (Total Time vs Calls filter, Indexes tab). User wanted a code change to reduce load from the Admin Revenue **live globe** (previously ~30s polling of `GET /api/admin/live-presence` → `site_analytics_events`).
+
+**Topics covered:** Query Performance; mapping `service_role` + `meta` + `page_view` reads to Admin Revenue OVERVIEW; permanent reduction via slower polling.
+
+**Decisions / outcomes:** Default live-globe refresh set to **2 minutes** to cut API/DB calls while OVERVIEW is open.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — **`LIVE_GLOBE_REFRESH_MS = 120_000`**; **`setInterval`** uses it (was **`30_000`**). File header notes globe polling + DB impact.
+
+**Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`** if aligned with **master**.
+
+---
+
+## 2026-05-05 — Admin Revenue live-globe: 90s refresh (middle ground)
+
+**Context:** User asked for a **middle ground** between original **30s** polling and the **120s** change.
+
+**Decisions / outcomes:** **`LIVE_GLOBE_REFRESH_MS = 90_000`** (1.5 minutes).
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — constant + comment updated.
+
+**Deploy:** Redeploy **main**; **`git push`** **`preview/mobile`**.
+
+---
+
+## 2026-05-07 — Consult offer claim modal: disclaimer placement, colors, order header
+
+**Context:** User wanted the **Account → Orders** consult **VIEW OFFER** modal (**`ConsultOfferClaimModal`**) adjusted: move the long **2D MODEL / illustrative purposes** default disclaimer paragraph **below** the price breakdown; render that paragraph in **brand red** instead of gray; show **ORDER #…** header in **black** on this modal only (not red).
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — for default two-paragraph admin disclaimers, only the first paragraph stays above the breakdown; second paragraph renders after the breakdown box with **`#EB1C24`**; title **`#000000`**; renamed internal **`defaultDisclaimerGrayParagraph`** → **`defaultDisclaimerP2Text`**; JSDoc/prop comment updated.
+
+**Verify:** Modal file lint clean. (**`npm run build`:** revenue page missing import fixed in follow-up entry same day.)
+
+---
+
+## 2026-05-07 — Vercel build: import `enrichOrderGlobeClusterCustomers` on Admin Revenue page
+
+**Context (full chat):** Earlier in this chat, **consult VIEW OFFER** modal (**`ConsultOfferClaimModal`**) was updated (disclaimer P2 below price breakdown, red P2, black **ORDER #** header). User then shared **Vercel** **`preview/mobile`** build failure: **`TS2304: Cannot find name 'enrichOrderGlobeClusterCustomers'`** at **`src/pages/admin/revenue/page.tsx`** line 798.
+
+**Changes:** **`src/pages/admin/revenue/page.tsx`** — added **`import { enrichOrderGlobeClusterCustomers } from '../../../utils/adminGlobeClusterClientProfile'`** (function already implemented in **`adminGlobeClusterClientProfile.ts`** and used from **`AdminRevenueLiveGlobe.tsx`**).
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult default disclaimer: opening sentence copy
+
+**Context (full chat):** Continuation of consult-offer / admin meetings work above. User asked to replace the first sentence of the default consult offer message with: **"BASED ON YOUR NOTES AND THE INSPO YOU SUBMITTED, THESE SELECTIONS WILL GIVE YOU THE CLOSEST MATCH TO YOUR GOAL LOOK."**
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — new **`DEFAULT_INSPO_DISCLAIMER_P1`**; **`DEFAULT_INSPO_DISCLAIMER_P1_LEGACY`** + rebuilt **`PREVIOUS_*`** match strings so older **`admin_message`** rows still match; **`defaultDisclaimerP1Display`** so legacy quotes show the legacy opening in the modal. **`AdminMeetingsHub.tsx`** initial **`quoteMessage`** and **`orders/page.tsx`** **`FOUNDER_DEMO_CONSULT_DEFAULT_ADMIN_MESSAGE`** use the new full default string.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult offer modal: gray 2D paragraph, red $40 line, gray status
+
+**Context (full chat):** Consult offer UI thread (modal layout, copy, revenue import fix, default disclaimer wording). User asked to revert the **2D model** second-paragraph color to **gray** (`#808080`), set **"$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE."** to **red** (`#EB1C24`), and **STATUS: ACTIVE** / **INACTIVE** to **gray** (`#808080`).
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — inline styles only; JSDoc for P2 updated to gray.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult default P2: “BRANDING AND YOUR VISUALIZATION”
+
+**Context (full chat):** Same consult-offer copy thread. User updated the **2D MODEL** gray paragraph closing to **“…BRANDING AND YOUR VISUALIZATION.”** (add **YOUR** before **VISUALIZATION**).
+
+**Changes:** **`DEFAULT_INSPO_DISCLAIMER_P2`** + **`DEFAULT_INSPO_DISCLAIMER`** in **`ConsultOfferClaimModal.tsx`**; **`DEFAULT_INSPO_DISCLAIMER_P2_PRIOR_TO_YOUR`** + **`PREVIOUS_NOTES_INSPO_P1_PRIOR_P2_DEFAULT_INSPO_DISCLAIMER`** so quotes already stored with the prior closing still match **`isDefaultInspoDisclaimer`** / two-paragraph layout and show the stored text. **`AdminMeetingsHub.tsx`** default **`quoteMessage`** and **`orders/page.tsx`** demo message updated.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult offer modal: countdown shows EXPIRED + unified clock
+
+**Context (full chat):** Consult **`ConsultOfferClaimModal`** polish. User wanted the black countdown (e.g. **2D 21H LEFT**) to read **EXPIRED** after **`expires_at`**, and confidence the timer advances (not stuck).
+
+**Changes:** **`ConsultOfferClaimModal.tsx`** — **`offerCountdownText`** returns **`EXPIRED`** when past expiry; right column renders whenever **`expires_at`** is present (was hidden when expired). Replaced tick counter with **`offerClockMs`** state updated every **1s** while modal open + on open / quote change so **`expired`**, **`offerLeftMs`**, countdown label, and tracking bar share one clock (**`consultDigitalOrderTrackingBarFillPct(..., offerClockMs)`**).
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Consult offer modal: $40 discount line copy
+
+**Context (full chat):** Consult offer **`ConsultOfferClaimModal`** copy thread (layout, colors, disclaimer P1/P2, etc.). User changed the red notice line from **"$40 DISCOUNT APPLIES ONLY WHILE OFFER IS ACTIVE."** to **"$40 DISCOUNT ONLY APPLIES WHILE OFFER IS ACTIVE."**
+
+**Changes:** **`src/components/ConsultOfferClaimModal.tsx`** — one string only.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Account Orders: tracking caption DOMESTIC vs INTERNATIONAL SHIPPING
+
+**Context (full chat):** Orders gray line under tracking # on active/archived cards. User first asked for **SHIPPING** wording; then corrected: show **TRACK VIA DOMESTIC SHIPPING** *or* **TRACK VIA INTERNATIONAL SHIPPING** from profile shipping country (US vs non-US), not a combined **DOMESTIC/INTERNATIONAL** string.
+
+**Changes:** **`src/pages/orders/page.tsx`** — same ternary as before static experiment; labels **`DOMESTIC SHIPPING`** / **`INTERNATIONAL SHIPPING`** after **TRACK VIA** (active + archived list blocks).
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-07 — Account Orders: revert list ORDER # to red (header stays black)
+
+**Context (full chat):** Prior change set **ORDER #** in the active/archived **list rows** to black; user clarified only the **card header** when an order is expanded (order “toggle” title bar) should be black; **ORDER #** under the date in the list should stay **brand red** (`#EB1C24`).
+
+**Changes:** **`src/pages/orders/page.tsx`** — restored red on the two clickable **`order.orderNumber`** lines (active + archived lists). Expanded top bar **`ORDER #…`** buttons remain **`#000000`**.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — Page actions below card: 2px top spacing (wishlist parity)
+
+**Context (this chat):** User asked to adjust spacing above **CREATE NEW LIST** on **`/wishlist/lists`** so it matches buttons on the main **wishlist** page (**VIEW LISTS** / **EMPTY WISHLIST**).
+
+**Fix:** **`PageActionsBelowCard`** first-button **`marginTop`** **14px → 2px** (matches **`PAGE_LAYOUT.md`** and **`wishlist/page.tsx`** inline wrappers). Second+ buttons stay **10px** via **`PageActionsBelowCard.Spacer`**.
+
+**Changes:** **`src/layouts/PageActionsBelowCard.tsx`**.
+
+---
+
+## 2026-05-21 — Wishlist lists page: header count 1 vs empty card
+
+**Context (this chat):** User asked why **LISTS** header count showed **1** but the card said **YOU DON'T HAVE ANY LISTS YET.**
+
+**Root cause:** **`headerCount`** = **`lists.length + (wishlistCount > 0 ? 1 : 0)`** (default **WISHLIST** counts as a list). Empty UI used **`lists.length === 0`** only, so saved **wishlistItems** with no user-created lists showed count **1** and empty copy.
+
+**Fix:** Empty state + centered layout only when **`lists.length === 0 && wishlistCount === 0`**; show **WISHLIST** row when **`wishlistCount > 0`** even with no custom lists.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**. Pushed **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-05-21 — NOIR color live preview: swatch highlight stuck on one ThumbBox
+
+**Context (this chat):** User reported that on the NOIR **color** step with **live** preview, tapping different color **ThumbBox** swatches did not move the red highlight — it stayed on one “thumbnail color box” while the live hero could change.
+
+**Root cause:** **`handleColorSelect`** on customize routes writes **`customizeSelectedColor`** (draft) but not **`selectedColor`** until **Confirm**. **`readBuildWigLivePreviewColor`** on **`.../customize/color`** preferred **`selectedColor`** first. Each **`customStorageChange`** from live preview fetches re-ran **`resolveBawCustomizeColorSubPageSwatch`** → old hub-confirmed color → **`setSelectedColor`** overwrote the tap.
+
+**Fix:** On the color sub-page only, **`readBuildWigLivePreviewColor`** now prefers **`customizeSelectedColor`** then **`selectedColor`** (matches CORE: WIP draft on color step). Non-color customize steps unchanged (**`selectedColor`** first).
+
+**Changes:** **`src/utils/buildWigLivePreviewSelections.ts`**. Pushed **`master`** and **`preview/mobile`**.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — Wishlist lists: empty-list row thumbnail (ornate heart)
+
+**Context (full chat):** Continuation of wishlist **lists** page work (header count, WISHLIST removal, spacing, modals, empty copy, etc.). User asked to use an attached ornate red/silver **heart** image as the list-row thumbnail **only when a user list has no items**; lists with items keep **`getLeafBrickFrontImage(firstItem)`**.
+
+**Changes:** Empty list thumb loads from Supabase **`6KLNd6QdTtVWqfXcnpOsc_cChNXN8z.jpeg`** URL in **`EMPTY_LIST_THUMB_SRC`** (not bundled **`empty-list-thumb.jpeg`** — avoids stale/cached first asset). **`src/pages/wishlist/lists/page.tsx`** — **`EMPTY_LIST_THUMB_SRC`**; empty rows omit **leaf-brick** background; empty thumb uses **`object-fit: cover`** inside a **3px** inset (white frame visible; full-bleed img had covered inset shadow); filled lists unchanged (leaf-brick + bottom-aligned wig front).
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-27 — Wishlist lists: share link + PRIVATE → SHARED on view
+
+**Context (this chat):** User asked to confirm **PRIVATE** becomes **SHARED** after a share link is opened by someone (not the owner), and a **share link popup** on **SHARE LIST** to copy the link.
+
+**Decisions / behavior:** **`getUserListVisibilityLabel`** → **SHARED** only when **`viewedByNonOwner`** on global registry snapshot (set when a non-owner opens **`/wishlist/shared/:token`**). Owner copying/opening their own link stays **PRIVATE**. Snapshot published when owner taps **SHARE LIST**.
+
+**Changes:** **`src/utils/wishlistListShare.ts`**, **`ShareListLinkModal.tsx`**, **`src/pages/wishlist/shared/page.tsx`**, **`lists/page.tsx`**, **`App.tsx`** route **`/wishlist/shared/:token`**, **`UserList.shareToken`**.
+
+**Note:** Share registry is **localStorage** (same browser origin); cross-device share needs a future API.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-27 — Account alerts: GET /api/notifications (Supabase hardening)
+
+**Context:** Supabase will require explicit Data API grants on new `public` tables; optional hardening so the client does not call **`supabase.from('notifications')`**.
+
+**Changes:** **`api/notifications.ts`** (GET signed-in user's **`items`**). **`getNotifications()`** in **`api.ts`**. **`account/notifications/page.tsx`** merges admin-sent alerts via API. Same alerts UX; no feature removed.
+
+**Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-21 — Wishlist lists: remove thumb–count divider (vacay test)
+
+**Context (full chat):** Lists overview work (empty-list heart thumb, share list / SHARED label, notifications API hardening, etc.). A **test-only** horizontal rule was added under the list thumbnail and above the item count for lists named **vacay** / **vacation** (gray, then brand red **`#EB1C24`**). User disliked the red line and asked to remove it.
+
+**Decisions / outcomes:** Divider experiment **removed**; overview rows show thumb then item count with no extra rule between them.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — removed **`LIST_THUMB_COUNT_DIVIDER_COLOR`**, **`listShowsThumbCountDividerTest`**, and conditional divider JSX.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown placeholder copy
+
+**Context (full chat):** Wishlist lists UI (empty thumb, share link, divider test removed per user). User wanted **Add to list** popup list **dropdown** default label to **not** repeat **ADD TO LIST** (modal **`h3`** already says that).
+
+**Decisions / outcomes:** When user has existing lists, closed dropdown shows **CREATE A LIST** as placeholder (`value=""`). Empty-state placeholder stays **SELECT A LIST**; **`CREATE A LIST`** option in menu unchanged.
+
+**Changes:** **`src/components/AddToListModal.tsx`** — placeholder option text **`ADD TO LIST` → `CREATE A LIST`** when **`lists.length > 0`**.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown order (CREATE A LIST at top)
+
+**Context (full chat):** Lists UI, divider removed, add-to-list modal copy. User clarified: closed dropdown placeholder stays **ADD TO LIST**; when opened, **CREATE A LIST** should be the **first** menu item (not the placeholder); remove duplicate **CREATE A LIST** at bottom of list.
+
+**Decisions / outcomes:** **`value=""`** → **ADD TO LIST** when lists exist; **`__create__`** option first, then named lists; no second **CREATE A LIST** at end.
+
+**Changes:** **`src/components/AddToListModal.tsx`** — reordered options when **`lists.length > 0`**.
+
+---
+
+## 2026-05-21 — Wishlist list detail: header label + view toggle spacing
+
+**Context (full chat):** Lists overview (empty thumb, share, divider removed), add-to-list dropdown placeholder/order fixes. User asked on **expanded list** (created list) page: **+4px** above line/grid view icons; red **page header** should show **PRIVATE** / **SHARED** (**`getUserListVisibilityLabel`**) not list name (breadcrumb still shows list name in red).
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — view-toggle row **`marginTop` 2px → 6px**; **`headerLabel`** uses visibility label when expanded.
+
+---
+
+## 2026-05-21 — Wishlist list line view: ADD TO BAG under thumb
+
+**Context (full chat):** Lists expanded view (PRIVATE/SHARED header, view toggle spacing), add-to-list dropdown fixes. User wanted **line view only** red **ADD TO BAG** / **REMOVE FROM BAG** under thumbnail (CartDropdown **EDIT IN BUILD-A-WIG** placement: Futura Book 8px **`#EB1C24`**, 4px below thumb) that adds/removes list item via **`cartItems`** / **`cartCount`** localStorage.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`handleAddToBag`**, **`handleRemoveFromBag`**, **`cartSyncVersion`** + **`cartItems`** memo; line-view thumb column only (grid unchanged); **OUT OF STOCK** gray when applicable.
+
+---
+
+## 2026-05-21 — Add to list modal: custom list picker (not native select)
+
+**Context (full chat):** Dropdown should show **ADD TO LIST** when closed, **CREATE A LIST** first when open (no duplicate). **`disabled hidden`** on `<option>` still showed gray **ADD TO LIST** in open menu (browser limitation).
+
+**Fix:** Replaced native `<select>` with button + menu: closed label is display-only; menu items are **CREATE A LIST** then list names only.
+
+**Changes:** **`src/components/AddToListModal.tsx`** — **`listMenuOpen`**, outside-click close, same field styling as before.
+
+---
+
+## 2026-05-21 — Add to list modal: portaled dropdown (no clip)
+
+**Context (full chat):** Custom list picker; user reported open menu clipped by modal **`overflow: auto`**.
+
+**Fix:** Menu **`createPortal`** to **`document.body`** with **`position: fixed`** from trigger **`getBoundingClientRect`**; **`overflowY: auto`** on menu (up to 220px, flips above if needed). Modal body scrolls checklist only (**`overflow: hidden`** shell + inner scroll).
+
+---
+
+## 2026-05-21 — Lists expanded view: thumb/bag/remove spacing
+
+**Context (full chat):** List line view bag links, add-to-list dropdown placeholder fix. User asked on created list **line/grid** view: **10px** above thumbnails; **+2px** above **ADD TO BAG** / **REMOVE FROM BAG** ( **`marginTop` 4→6** ); list-view remove **X** **black** not red.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`paddingTop: 10px`** on line + grid item containers; close icon **`filter: brightness(0)`**.
+
+---
+
+## 2026-05-21 — Lists: browser Back from expanded list
+
+**Context (full chat):** Lists UX (bag links, custom add-to-list picker, spacing). Expanded list was React state only on **`/wishlist/lists`**; browser **Back** skipped overview and went to **`/wishlist`**.
+
+**Fix (initial):** **`?list=<id>`** — query updates could **replace** history in RR 6.8, so **Back** skipped overview → **`/wishlist`**.
+
+**Fix (current):** **`/wishlist/lists/:listId`** path segment (**`useParams`**); **`navigate(\`/wishlist/lists/${id}\`)`** pushes stack entry. Legacy **`?list=`** redirects with **replace**. Routes: **`App.tsx`** **`/wishlist/lists/:listId`** before **`/wishlist/lists`**.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**, **`App.tsx`**.
+
+---
+
+## 2026-05-21 — Lists expanded: line default + grid REMOVE confirm
+
+**Context (full chat):** Lists path URLs, remove confirm on line **X**. User wanted gray grid **REMOVE** to use same **ConfirmationModal**; **line view** default when opening a created list.
+
+**Changes:** **`expandedViewMode`** initial **`'line'`**; grid **REMOVE** → **`requestRemoveListItemConfirm`**.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown spacing + red menu count
+
+**Context (full chat):** Portaled picker, lists expanded UX. User asked **+2px** above add-to-list dropdown; **`(n)`** item count **red** in open menu only (checkbox list stays gray).
+
+**Changes:** **`AddToListModal.tsx`** — **`marginTop: 2px`** on dropdown wrapper; portaled menu option count **`#EB1C24`**.
+
+---
+
+## 2026-05-21 — Add to list modal: dropdown spacing + dot count label
+
+**Context (full chat):** Add-to-list picker polish. User asked **+6px** more above dropdown (**8px** total **`marginTop`**); menu rows **`VACAY · 1`** (middle dot, red count) not **`(1)`** — checkbox list unchanged.
+
+**Changes:** **`AddToListModal.tsx`**
+
+---
+
+## 2026-05-21 — Cart + add-to-list: dot count; dropdown spacing fix
+
+**Context (full chat):** Menu **`VACAY · 1`** format. User wanted same on cart **SHOPPING BAG (2)**; add-to-list **`marginTop`** on dropdown had no effect (**margin collapse** with title).
+
+**Fix:** **`CartDropdown`** — **`SHOPPING BAG · {count}`** (red count). **`AddToListModal`** — title **`paddingBottom: 16px`**, dropdown **`paddingTop: 14px`** (no **`marginTop`**).
+
+---
+
+## 2026-05-21 — Add to list: gap between field and open menu
+
+**Context:** User screenshot — open portaled menu touched the **ADD TO LIST** trigger; prior **`marginTop`/`paddingTop`** on modal section targeted title→field, not field→menu.
+
+**Fix:** **`LIST_MENU_TRIGGER_GAP_PX` (8)** — menu **`top: rect.bottom + gap`**, full border on panel; flip-above accounts for gap.
+
+---
+
+## 2026-05-21 — Add to list: revert mistaken title/field spacing
+
+**Context:** User asked to undo incorrect spacing (title **`paddingBottom`** + wrapper **`paddingTop: 14px`** / **`marginTop`** attempts).
+
+**Reverted:** Title **`marginBottom: 16px`** only; wrapper no extra top padding. **Kept:** field→menu **`LIST_MENU_TRIGGER_GAP_PX`**, dot menu labels, portaled menu, cart **`SHOPPING BAG · n`**.
+
+---
+
+## 2026-05-21 — Add to list modal: smaller list row checkboxes
+
+**Context:** Checkbox rows under dropdown (e.g. BIRTHDAY). User asked **−15%** size.
+
+**Changes:** **`LIST_ROW_CHECKBOX_PX`** = **11.9px** (was **14px**) for box + checkmark in **`AddToListModal.tsx`**.
+
+---
+
+## 2026-05-21 — Lists line view: confirm remove item
+
+**Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
+
+**Changes:** **`ConfirmationModal`** — **REMOVE FROM LIST** / **REMOVE THIS ITEM FROM YOUR LIST?**; **`requestRemoveListItemConfirm`** on X; grid **REMOVE** still immediate.
+
+---
+
+## 2026-05-27 — About Us brand page copy (uppercase)
+
+**Context:** User asked to update the About Us brand page (`/brand/about`) with provided welcome/mission copy, rendered in all uppercase.
+
+**Topics covered (entire conversation so far):**
+- Located storefront brand shell at `src/pages/brand/page.tsx` (main card was empty placeholder).
+- Added `src/constants/brandAboutCopy.ts` with six paragraphs of About Us body copy (stored in uppercase).
+- Rendered paragraphs when `slug === 'about'`: Futura PT Book 10px, black, `textTransform: 'uppercase'`, 12px gap between blocks.
+- Committed on `master` and synced to `preview/mobile`.
+
+**Decisions / outcomes:**
+- `/brand/about` now shows the full About Us narrative; other brand slugs remain without body copy until added later.
+
+**Changes:**
+- `src/constants/brandAboutCopy.ts` (new)
+- `src/pages/brand/page.tsx`
+
+**Conventions:**
+- Brand About Us copy lives in `brandAboutCopy.ts`; page applies uppercase styling even though source strings are uppercase.
+
+---
+
+## 2026-05-21 — Expanded list items: list/grid thumbnail text tuning
+
+**Context (full chat):** Wishlist lists expanded view (line default, path routes, thumbs +20%, typography passes). User requested precise spacing/type on **expanded list item** text only in **`src/pages/wishlist/lists/page.tsx`**.
+
+**List view:** NOIR name **26px** (+4); gap name→RAW **2px** (−2 from 4); RAW→stars **5px** (−1 from 6); stars→rating **5px** (+1 from 4); **ADD/REMOVE FROM BAG** → **Futura PT Medium**; text column (not thumb) **`translate(2px, -10px)`** via **`EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE`**.
+
+**Grid view:** NOIR name **22px** (+4); name bottom margin **0** (−2 above RAW); stars→rating **5px** (+1); gray **REMOVE** → **Futura PT Demi 9px** (was Medium 10px).
+
+**Changes:** Constants **`EXPANDED_LIST_LINE_NAME_FONT_PX`**, **`EXPANDED_LIST_GRID_NAME_FONT_PX`**, **`LIST_LINE_BAG_LINK_STYLE`**, **`EXPANDED_LIST_GRID_REMOVE_STYLE`**, inline margins on line/grid blocks.
+
+---
+
+## 2026-05-21 — Expanded list: line/grid spacing + gray REMOVE FROM BAG
+
+**Context:** User follow-up on **`/wishlist/lists/:listId`** expanded item typography; prior pass left **REMOVE FROM BAG** red and spacing offset wrong.
+
+**List view:** Name→RAW gap **0** (−2px); stars→rating **6px** (+1); text column **`translateY(-8px)`**; **REMOVE FROM BAG** only → gray **`#999999`** (**`LIST_LINE_BAG_REMOVE_STYLE`**); **ADD TO BAG** stays red (**`LIST_LINE_BAG_ADD_STYLE`**).
+
+**Grid view:** Space above NOIR **6px** (−2 from 8); name→RAW **−2px** bottom on name; stars→rating **6px** (+1).
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**.
+
+---
+
+## 2026-05-21 — Expanded list line view: persistent spacing (margin not transform)
+
+**Context:** User reported **RAW tighten** and **text up 8px** not persisting; next row thumb too close to gray divider.
+
+**Cause:** **`translateY`** fought flex **`alignItems: center`**; script name **line-height** left gap above RAW at **`margin: 0`**.
+
+**Fix:** **`marginTop: -8px`** text column; RAW **`marginTop: -2px`** + name **`lineHeight: 1`**; rows with divider **`marginBottom: 18px`** (+2 below border).
+
+**Changes:** **`EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX`**, **`EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX`**, **`EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX`** in **`src/pages/wishlist/lists/page.tsx`**.
+
+---
+
+## 2026-05-27 — Shared wishlist link page: back button, lists line UI parity, cart actions
+
+**Context:** User opened a shared list link and reported a gray box beside SHARED LIST, stale row typography vs their lists page, missing ADD/REMOVE FROM BAG under thumbnails, missing star rating line, and no bulk ADD TO BAG below the card.
+
+**Topics covered (entire conversation so far):**
+- Prior same-chat work on brand/member/about/checkout (mostly already shipped); this turn focused on shared list view only.
+- Gray box was a broken back control referencing non-existent `/assets/back-arrow.svg`. Fixed to `/assets/back-button.svg`.
+- Aligned `src/pages/wishlist/shared/page.tsx` with expanded list line view on `src/pages/wishlist/lists/page.tsx` (typography, stars, thumbs, bag links).
+- Wired visitor cart via localStorage; bottom `PageActionsBelowCard` ADD TO BAG adds all in-stock items not already in bag.
+- Pushed to `master` and `preview/mobile` (commit `3a24c0fc`).
+
+**Decisions / outcomes:**
+- Shared list is read-only for list data but uses the viewer’s local bag.
+- Bulk button disabled when every in-stock item is already in bag.
+
+**Changes:**
+- `src/pages/wishlist/shared/page.tsx`
+
+**Conventions:**
+- Shared list rows match expanded list line view; use `back-button.svg` for header back.
+
+---
+
+## 2026-05-27 — Checkout upgrade spacing (DIGITAL ONLY + confirm button)
+
+**Context:** User asked for 2px below the red DIGITAL ONLY line on `/checkout/upgrade` order strip, and to fix spacing above CONFIRM ORDER after the gray Supabase sign-in hint above Stripe was removed (commit `538767e4`).
+
+**Topics covered (entire conversation so far):**
+- Prior chat: shared wishlist UI, brand/member/checkout work; this turn is checkout spacing only.
+- Order strip red subtitle (`DIGITAL ONLY` for `type: 'digital'` membership lines): `marginBottom` `0` → `2px` when `redSubtitle === 'DIGITAL ONLY'`.
+- CONFIRM ORDER wrapper: `marginTop` `2px` → `10px` on `isSubscriptionUpgrade` to replace lost ~8px from removed sign-in paragraph.
+- Stripe billing block below card: only render when there is content (`!stripeMembershipAvailable` error **or** signed-in Stripe subscribe UI); avoids empty 20px gap when unsigned with Stripe available.
+
+**Changes:** `src/pages/checkout/page.tsx`
+
+**Conventions:** After removing helper copy above primary CTAs, bump the next control’s top margin by the removed block’s bottom margin (~8px) on that route.
+
+---
+
+## 2026-05-27 — About Us opening paragraph copy
+
+**Context:** User supplied replacement text for the first About Us paragraph on `/brand/about`.
+
+**Change:** `src/constants/brandAboutCopy.ts` — first `BRAND_ABOUT_US_PARAGRAPHS` entry now reads: thank-you line; **THIS WEBSITE** (not OUR); **HERE AT FRONTAL SLAYER WE ARE DETERMINED**; **VIRTUAL 3D HAIR SALON THAT OFFERS** (not VIRTUAL SALON). Page still renders copy uppercase via existing brand page mapping.
+
+**Conventions:** About Us body lives in `brandAboutCopy.ts`; edit paragraphs there, not inline in `brand/page.tsx`.
+---
+
+## 2026-05-27 — Brand FAQ / Reviews / Terms main card height matches About Us
+
+**Context (entire chat):** Prior work in this conversation included shared wishlist link parity, checkout upgrade spacing, About Us / Contact / Become a Member copy and UI, loyalty Bohemy sizing, and other brand-page polish. User asked that **Reviews**, **FAQ**, and **Terms of Service** brand main cards match the **About Us** main card height (not viewport-fill, not a short empty shell).
+
+**Topics covered:**
+- `/brand/about` uses content-height card (`brandMainCardScrollable` only for contact + member premium chart); FAQ/Reviews/Terms had no body yet so cards collapsed to header-only.
+- Measured a hidden duplicate About Us card (same chrome + `BrandAboutUsBody`) via `ResizeObserver` and applied `minHeight` to FAQ/Reviews/Terms shells.
+- Extracted `BrandAboutUsBody` so live About page and measurer share one renderer.
+
+**Decisions / outcomes:**
+- FAQ, Reviews, Terms cards now share About's measured height; About itself unchanged (natural content height).
+- Contact/member scroll-cap behavior unchanged.
+
+**Changes:**
+- `src/components/brand/BrandAboutUsBody.tsx` (new)
+- `src/pages/brand/page.tsx` — `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT`, hidden measurer, `minHeight` on matching slugs
+- Pushed `master` and `preview/mobile` (commit `de6d509c`).
+
+**Conventions:**
+- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. For new brand text pages that should match About card size before content exists, add slug to `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT` or give them comparable content height.
+---
+
+## 2026-05-27 — About Us copy updates (curated, founder, experience, closing)
+
+**Context (entire chat):** Continued brand/wishlist/checkout work; user supplied revised About Us paragraphs and closing tagline for `/brand/about`.
+
+**Changes:** `src/constants/brandAboutCopy.ts` — (2) seamless/convenient comma removed before AND; (3) CUSTOMIZING INSTALLS, CEO CREATED FRONTAL SLAYER; (6) SEPARATES US FROM (not APART FROM); (7) LOYALTY POINTS; Bohemy closing `no gimmicks, just pressure.` Mindset, education, and consultation paragraphs unchanged.
+
+**Conventions:** Edit About Us in `brandAboutCopy.ts` only; `BrandAboutUsBody` renders on page and FAQ/Reviews/Terms height measurer.
+---
+
+## 2026-05-27 — About Us mindset line: Bohemy lowercase
+
+**Context:** User asked to style **BECAUSE FRONTAL SLAYER ISN'T JUST A NAME… IT'S A MINDSET.** like the closing tagline (lowercase Bohemy, gray).
+
+**Changes:** `src/constants/brandAboutCopy.ts` — mindset string lowercased; moved from `BRAND_ABOUT_ACCENT_PARAGRAPHS` to `BRAND_ABOUT_BOHEMY_PARAGRAPHS` (16px Bohemy, `#808080`, no uppercase transform). Accent set now empty.
+
+**Conventions:** Bohemy About lines: lowercase in copy + membership in `BRAND_ABOUT_BOHEMY_PARAGRAPHS`.
+---
+
+## 2026-05-27 — Become a Member: red accent lines → lowercase Bohemy
+
+**Context:** User asked for three former red Futura accent lines on `/brand/member` to use lowercase Bohemy like About Us (loyalty rewarded, perks continue, official invite).
+
+**Changes:** `brandMemberCopy.ts` — new `bohemy` variant; three lines lowercased. `BrandMemberSection.tsx` — Bohemy 16px gray, no uppercase transform.
+
+**Conventions:** Member callouts that should match About Bohemy: `variant: 'bohemy'` in `BRAND_MEMBER_BLOCKS`.
+---
+
+## 2026-05-27 — Brand card headers: ABOUT FS / CONTACT FS
+
+**Context:** User wanted red main-card headers on `/brand/about` and `/brand/contact` to read **about fs** and **contact fs** (not ABOUT US / CONTACT US).
+
+**Changes:** `brandMenu.ts` — removed `cardTitle` overrides so `getBrandCardHeaderTitle` uses labels **ABOUT FS** / **CONTACT FS**. `brand/page.tsx` — About height measurer + fallback updated to **ABOUT FS**.
+
+**Conventions:** Brand red card title: `cardTitle` in `BRAND_MENU_ITEMS` or defaults to `label`.
+
+---
+
+## 2026-05-21 — Expanded wishlist list line: price, VIEW DETAILS, grid REMOVE red
+
+**Context (entire chat):** Wishlist lists UX polish—typography, bag links, dividers, no-review stars, shared list parity; final ask on expanded list **line** and **grid** views in `src/pages/wishlist/lists/page.tsx`.
+
+**Topics covered:** Line view stars/rating; bag ADD/REMOVE Futura weights; price placement; VIEW DETAILS toggle (cart rules); grid REMOVE color.
+
+**Decisions / outcomes:**
+- **Line view:** Gray Futura Medium price (`#808080`, 10px) below **NO REVIEWS SUBMITTED**. Red **VIEW DETAILS** below price when `wishlistItemHasViewDetails(item)` (same rules as `CartDropdown`); toggles details HTML in place of stars + review line; **CLOSE DETAILS** restores stars/reviews. Price stays visible in both states.
+- **Grid view:** **REMOVE** → Futura Medium red `#EB1C24` (was gray Demi).
+- Shared util `src/utils/wishlistListItemDetails.ts`: price helpers, `wishlistItemHasViewDetails`, `buildWishlistItemDetailsHtml` (reuses `bookingCartViewDetailsHtml` / `bcfCartViewDetailsHtml`).
+
+**Changes:** `lists/page.tsx` — `viewingDetailsItemKey` state (reset on list change); line UI block; grid `EXPANDED_LIST_GRID_REMOVE_STYLE`. New `wishlistListItemDetails.ts`.
+
+**Conventions:** List-line VIEW DETAILS logic must stay aligned with cart; use util rather than duplicating `hasSpecs` in the page.
+
+---
+
+## 2026-05-21 — Expanded wishlist list grid row spacing
+
+**Context:** Follow-up on expanded list grid view (`/wishlist/lists/:listId`).
+
+**Changes:** `lists/page.tsx` — grid `rowGap` 28px (20px base + 8px extra), `columnGap` 16px; constants `EXPANDED_LIST_GRID_ROW_GAP_*` / `EXPANDED_LIST_GRID_COL_GAP_PX`. Line view unchanged.
+
+**Conventions:** Grid-only layout tweaks use explicit `rowGap`/`columnGap` on the expanded-items grid container.
+
+---
+
+## 2026-05-21 — Expanded wishlist grid: price replaces no-reviews, gray REMOVE
+
+**Context:** Grid view follow-up on `/wishlist/lists/:listId`.
+
+**Changes:** `lists/page.tsx` grid only — **NO REVIEWS SUBMITTED** line → gray Futura Medium price (`EXPANDED_LIST_GRID_PRICE_STYLE`, same formatting as line view). Stars unchanged. **REMOVE** restored to Futura Demi `#999999` (from red Medium).
+
+**Conventions:** Line view still shows no-reviews + price + VIEW DETAILS; grid shows stars + price + gray REMOVE.
+
+---
+
+## 2026-05-21 — Expanded wishlist list line: price/details typography
+
+**Context:** List-view polish on `/wishlist/lists/:listId` (grid unchanged except prior grid price).
+
+**Changes:** Line gray price → Futura Demi **12px** (was Medium 10px). VIEW/CLOSE DETAILS `marginTop` **4px** (was 7px). `wishlistListItemDetails.ts` `formatDetailPrice` → middle dot (` · `) + red `#EB1C24` +/- amounts (Demi), matching list modal dot pattern.
+
+**Conventions:** Grid price stays Medium 10px; detail price HTML only via `formatDetailPrice` in wishlist util.
+
+---
+
+## 2026-05-21 — Shared wishlist link sync + line UI parity
+
+**Context:** User reported `/wishlist/shared/:token` stale after list edits (no price / VIEW DETAILS on refresh).
+
+**Root cause:** Snapshot in `wishlistSharedListsByToken` only updated on Share click or remove-item; `shared/page.tsx` UI lagged expanded list line view.
+
+**Changes:**
+- `wishlistListShare.ts` — `republishSharedSnapshotsForLists` on every `saveUserLists` + lists `refreshLists`; `resolveSharedListForViewer` merges **live owner list** when owner opens own link and refreshes registry.
+- `shared/page.tsx` — line parity: Demi 12px price, VIEW/CLOSE DETAILS, red dot detail deltas; listens to `userListsUpdated`.
+- `AddToListModal.saveUserLists` triggers republish when signed in.
+
+**Conventions:** Any list with `shareToken` must republish on item changes; shared page uses `resolveSharedListForViewer`, not raw registry only. Snapshots remain localStorage (same browser / owner preview).
+
+---
+
+## 2026-05-21 — List line price/details typography tweak
+
+**Changes:** Expanded list **line view** (`lists/page.tsx`) — gray price Futura Medium 12px, `marginTop` 3px (was 4px Demi). VIEW/CLOSE DETAILS `marginTop` 1px (tighter under price). `buildWishlistItemDetailsHtml` — labels only (e.g. `200% DENSITY`), no middle dot or +/- price suffixes.
+
+**Conventions:** Grid/shared line price styles unchanged unless explicitly requested; wishlist detail HTML is label-only.
+
+---
+
+## 2026-05-27 — Brand Contact FS: SUBMISSION FORM header and SEND MESSAGE button
+
+**Context:** User asked to rename the Contact FS red card header to "submission form" and the footer action to "send message" (site pattern: uppercase in UI).
+
+**Topics covered (entire conversation so far):**
+- Continuation from prior brand-page work (About MISSION STATEMENT header, member card copy, red icon filters, FAQ/reviews/terms card height parity).
+- Contact FS card header should read **SUBMISSION FORM** via `cardTitle` while menu label stays **CONTACT FS** and nav breadcrumb stays **CONTACT**.
+- Contact page below-card submit control should read **SEND MESSAGE** with loading **SENDING…** (was SUBMIT MESSAGE / SUBMITTING…).
+
+**Decisions / outcomes:**
+- `brandMenu.ts`: `cardTitle: 'SUBMISSION FORM'` on `/brand/contact`.
+- `brand/page.tsx`: contact `PageActionsBelowCard` button labels updated.
+- Committed on `master` (`965f7429`); merged to `preview/mobile`; both branches pushed.
+
+**Changes:**
+- `src/constants/brandMenu.ts`
+- `src/pages/brand/page.tsx`
+
+**Conventions:** Brand card headers use `cardTitle` in `BRAND_MENU_ITEMS` when they differ from menu `label`; contact nav title remains `navTitle: 'CONTACT'`.
+
+---
+
+## 2026-05-27 — Brand menu: ABOUT US and CONTACT US (not FS)
+
+**Context:** User asked to change About FS and Contact FS on the menu toggle back to ABOUT US and CONTACT US.
+
+**Topics covered (entire conversation so far):**
+- Prior: Contact card header SUBMISSION FORM, button SEND MESSAGE; About card MISSION STATEMENT.
+- Menu BRAND tab labels only: `ABOUT FS` → `ABOUT US`, `CONTACT FS` → `CONTACT US` in `brandMenu.ts`.
+- Card headers unchanged (`cardTitle`: MISSION STATEMENT, SUBMISSION FORM); contact `navTitle` stays CONTACT.
+
+**Changes:** `src/constants/brandMenu.ts` — `label` fields only.
+
+**Conventions:** `label` = mobile menu text; `cardTitle` = red in-card header when different.
+
+---
+
+## 2026-05-27 — Brand member invite line: −2px below spacing
+
+**Context:** User asked to reduce spacing below "THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE." by 2px.
+
+**Change:** `BrandMemberSection.tsx` — invite block `marginBottom` `8px` → `6px` (`block.id === 'invite'`).
+
+**Conventions:** Member copy blocks live in `brandMemberCopy.ts`; per-block spacing overrides stay in `BrandMemberSection.tsx`.
+
+---
+
+## 2026-05-27 — Brand reviews page empty state
+
+**Context:** User asked for vertically centered gray copy on `/brand/reviews`: "UNFORTUNATELY, NO REVIEWS HAVE BEEN SUBMITTED YET." / "PLEASE CHECK BACK SOON." (line break).
+
+**Changes:**
+- `BrandReviewsEmptyState.tsx` — Futura PT Medium 11px `#808080`, flex-centered in card (matches account reviews empty pattern).
+- `brand/page.tsx` — render on `slug === 'reviews'`; content wrapper `flex: 1` so text centers in About-matched card height.
+
+**Conventions:** Use `dangerouslySetInnerHTML` with `<br>` for two-line brand empty copy; keep FAQ/terms shells empty until copy is specified.
+
+---
+
+## 2026-05-27 — Brand reviews: SUBMIT REVIEW button
+
+**Context:** User wanted a below-card **SUBMIT REVIEW** button on `/brand/reviews` with same `PageActionsBelowCard` spacing as other brand pages.
+
+**Behavior:** Signed in → `/account/orders`; not signed in → `/sign-in?returnTo=/account/orders`.
+
+**Changes:** `brand/page.tsx` — `handleBrandSubmitReviewClick`, reviews slug `PageActionsBelowCard` button.
+
+---
+
+## 2026-05-27 — Brand FAQ page content (expandable sections)
+
+**Context:** User supplied stock FAQ Q&A; agent built full `/brand/faq` aligned with site policies (checkout terms, contact 72h/10–6 CST, custom unit 6–8 / 10 / 4–6 week processing, Affirm/Klarna, all sales final, 48h wrong-item window, member referral $20 + $10 newsletter, order form 24h).
+
+**Implementation:**
+- `brandFaqCopy.ts` — 6 sections, 24 items (user 20 + order form, build-a-wig, terms link, account, submit review).
+- `BrandFaqSection.tsx` — red `+`/`−` accordion, left-aligned Futura 10px uppercase.
+- `brand/page.tsx` — render FAQ; `brandMainCardScrollable` includes `faq`; removed `faq` from about-height shell set.
+
+**Conventions:** FAQ copy in constants; policy numbers should match checkout/contact/member copy when updated.
+
+---
+
+## 2026-05-27 — Brand FAQ: submit question form
+
+**Context:** User wanted a section below FAQ accordion for clients to submit questions (name, email, question) with **SEND QUESTION** button below main card (`PageActionsBelowCard` spacing).
+
+**Implementation:**
+- `BrandFaqPageContent` — FAQ accordion + `BrandFaqQuestionSection` form inside scrollable card.
+- `brand/page.tsx` — submit button via `form="brand-faq-question-form"`; success modal **QUESTION SENT**.
+- `postBrandFaqQuestionSubmit` + `/api/brand/faq-question-submit`; `brandFaqQuestions.ts` localStorage fallback; admin email via `sendBrandFaqQuestionNotifyEmail`.
+
+**Conventions:** Match `BrandContactSection` field styles; optional Supabase `brand_faq_questions` table (graceful if missing).
+
+---
+
+## 2026-05-27 — Brand Terms of Service page content
+
+**Context:** User supplied full Terms copy for `/brand/terms`; implemented with policy corrections vs checkout/contact/FAQ/product pages.
+
+**Corrections woven in:** 24h order authorization form; custom unit processing 6–8 / 10 / 4–6 weeks; expedited shipping ≠ processing time; 48h delivery claims; all sales final + 72h inquiry response; 10AM–6PM CST weekdays; contact form path; transit liability; licensed professional for chemical services.
+
+**Files:** `brandTermsCopy.ts`, `BrandTermsBody.tsx`; `brand/page.tsx` scrollable terms (removed from about-height shell).
+
+---
+
+## 2026-05-27 — Checkout terms modal synced with /brand/terms
+
+**Change:** Checkout `showTermsModal` now renders shared `BrandTermsBody` (from `brandTermsCopy.ts`) instead of two hardcoded paragraphs — stays aligned with `/brand/terms` when copy updates.
+
+**File:** `src/pages/checkout/page.tsx`
+
+---
+
+## 2026-05-21 — Hide dev-only gray checkout lines from clients
+
+**Context:** User confirmed they want **all** gray developer/coding lines hidden from shoppers (not just explained), including the checkout **SERVER LIST (USD, VERIFIED LINES)** row and the warning about BCF/custom builds / display-only settlement. Prior chat also covered wishlist line/grid parity, shared list sync, cart CAP SIZE margin, and cart dropdown subtotal alignment.
+
+**Changes:**
+- **`src/pages/checkout/page.tsx`** — Removed `serverQuote` state, `fetchCheckoutQuote` effect, **SERVER LIST** row, and server-pricing warning paragraph. Removed gray Stripe setup copy (secret key / price IDs / SEE DOCS), Supabase local-only sign-in hint, recurring-billing dev note, and booking autopay gray helper under the checkbox. Dropped unused `stripeAvailabilityLoaded` state.
+- **`src/pages/account/consult-offer/page.tsx`** — Replaced `CHECKOUT HOOK TBD` gray line with customer copy: $40 off within 72 hours.
+- **`docs/CHECKOUT_SERVER_QUOTE.md`** — Notes checkout UI no longer shows server quote rows; `POST /api/checkout/quote` remains for future Stripe wiring.
+
+**Conventions:** Legitimate gray UI (loyalty points, CAP SIZE, discount code labels, voucher helper copy) stays; only dev/parity/engineering messages are removed from client-facing pages.
+
+---
+
+## 2026-05-21 — Cart bag vs dropdown: shared price margin above line total
+
+**Context:** User noticed Blanco price sat closer to CAP SIZE on shopping bag than in cart dropdown; asked why, then to align.
+
+**Cause:** Bag used `marginTop: BLANCO ? 0px : 2px` on price; dropdown used inline `hasSpecs` with density compared to `200%` (so default Blanco 250% got 2px). CAP SIZE margin shared `cartCapSizeLineMarginTop` but still treated 250% as non-default.
+
+**Changes:** **`src/utils/cartCapSizeLineMargin.ts`** — `cartItemHasNonDefaultSpecs` (Blanco default density `250%`), `cartLinePriceMarginTop` (Blanco `0px`, else `2px`); CAP SIZE helper uses shared spec check. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** — price blocks use `cartLinePriceMarginTop`.

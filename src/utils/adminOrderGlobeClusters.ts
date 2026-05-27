@@ -5,6 +5,7 @@
 
 import { orderShippingToGlobePoint, type ShippingLike } from './orderShippingToGlobePoint';
 import { orderPlaceFieldsFromGlobeLabel } from './adminGlobePlaceLabel';
+import { landmarkForGeographicText } from './adminGlobeGeographicLandmark';
 
 export type RevenueOrderLike = {
   id?: string;
@@ -138,42 +139,9 @@ function mostRecentLineItem(orders: RevenueOrderLike[]): { name: string; cap: st
   return { name, cap: capSizeFromLineItemOptions(li.options) };
 }
 
-/** Recognizable landmark label + emoji by common English city names (best-effort, no external API). */
+/** Recognizable landmark label + emoji by city/region (see **`landmarkForGeographicText`**). */
 export function landmarkForShipKey(clusterKey: string, placeLine: string): { title: string; symbol: string } {
-  const blob = `${clusterKey} ${placeLine}`.toUpperCase();
-  const rules: Array<{ test: RegExp; title: string; symbol: string }> = [
-    { test: /\bNEW YORK\b|\bNYC\b|\bNY,\s*US\b/, title: 'Statue of Liberty', symbol: '🗽' },
-    { test: /\bLOS ANGELES\b|\bLA,\s*CA\b/, title: 'Hollywood Sign', symbol: '🎬' },
-    { test: /\bSAN FRANCISCO\b|\bGOLDEN GATE\b/, title: 'Golden Gate', symbol: '🌉' },
-    { test: /\bCHICAGO\b/, title: 'Cloud Gate', symbol: '☁️' },
-    { test: /\bSEATTLE\b/, title: 'Space Needle', symbol: '🗼' },
-    { test: /\bMIAMI\b/, title: 'Art Deco Beach', symbol: '🏖️' },
-    { test: /\bLAS VEGAS\b/, title: 'Strip', symbol: '🎰' },
-    { test: /\bWASHINGTON\b|\bDC\b/, title: 'Capitol', symbol: '🏛️' },
-    { test: /\bLONDON\b/, title: 'Big Ben', symbol: '🕰️' },
-    { test: /\bPARIS\b/, title: 'Eiffel Tower', symbol: '🗼' },
-    { test: /\bBERLIN\b/, title: 'Brandenburg Gate', symbol: '🏛️' },
-    { test: /\bTOKYO\b/, title: 'Tokyo Tower', symbol: '🗼' },
-    { test: /\bDUBAI\b/, title: 'Burj Khalifa', symbol: '🏙️' },
-    { test: /\bSYDNEY\b/, title: 'Opera House', symbol: '🎭' },
-    { test: /\bTORONTO\b/, title: 'CN Tower', symbol: '🗼' },
-    { test: /\bMEXICO CITY\b/, title: 'Angel of Independence', symbol: '🪽' },
-    { test: /\bRIO DE JANEIRO\b/, title: 'Christ the Redeemer', symbol: '🗿' },
-    { test: /\bMUMBAI\b/, title: 'Gateway of India', symbol: '🛕' },
-    { test: /\bSINGAPORE\b/, title: 'Marina Bay', symbol: '🦁' },
-    { test: /\bSEOUL\b/, title: 'N Seoul Tower', symbol: '🗼' },
-    { test: /\bMOSCOW\b/, title: 'Saint Basil’s', symbol: '🧅' },
-    { test: /\bCAIRO\b/, title: 'Pyramids', symbol: '🔺' },
-    { test: /\bJOHANNESBURG\b/, title: 'City skyline', symbol: '🏙️' },
-    { test: /\bNASHVILLE\b/, title: 'Music Row', symbol: '🎸' },
-    { test: /\bSTOCKHOLM\b/, title: 'Gamla Stan', symbol: '🏰' },
-    { test: /\bBUENOS AIRES\b/, title: 'Obelisk', symbol: '🗼' },
-    { test: /\bMELBOURNE\b/, title: 'Arts Centre', symbol: '🎭' },
-  ];
-  for (const r of rules) {
-    if (r.test.test(blob)) return { title: r.title, symbol: r.symbol };
-  }
-  return { title: 'Orders hub', symbol: '📍' };
+  return landmarkForGeographicText(`${clusterKey} ${placeLine}`, 'order');
 }
 
 function towerHeightForOrderCount(n: number): number {

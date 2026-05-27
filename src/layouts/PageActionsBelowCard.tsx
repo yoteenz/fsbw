@@ -14,7 +14,8 @@ import React from 'react';
  *     </PageActionsBelowCard>
  *   )}
  */
-const PAGE_ACTION_FIRST_SPACING = { marginTop: '14px' } as const;
+/** Matches wishlist page + PAGE_LAYOUT.md (gap between main card and first action). */
+const PAGE_ACTION_FIRST_SPACING = { marginTop: '2px' } as const;
 const PAGE_ACTION_NEXT_SPACING = { marginTop: '10px' } as const;
 
 export function PageActionsBelowCard({
