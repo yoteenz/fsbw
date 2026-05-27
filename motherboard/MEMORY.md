@@ -18392,3 +18392,26 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Grid view:** Space above NOIR **6px** (−2 from 8); name→RAW **−2px** bottom on name; stars→rating **6px** (+1).
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`**.
+
+---
+
+## 2026-05-27 — Shared wishlist link page: back button, lists line UI parity, cart actions
+
+**Context:** User opened a shared list link and reported a gray box beside SHARED LIST, stale row typography vs their lists page, missing ADD/REMOVE FROM BAG under thumbnails, missing star rating line, and no bulk ADD TO BAG below the card.
+
+**Topics covered (entire conversation so far):**
+- Prior same-chat work on brand/member/about/checkout (mostly already shipped); this turn focused on shared list view only.
+- Gray box was a broken back control referencing non-existent `/assets/back-arrow.svg`. Fixed to `/assets/back-button.svg`.
+- Aligned `src/pages/wishlist/shared/page.tsx` with expanded list line view on `src/pages/wishlist/lists/page.tsx` (typography, stars, thumbs, bag links).
+- Wired visitor cart via localStorage; bottom `PageActionsBelowCard` ADD TO BAG adds all in-stock items not already in bag.
+- Pushed to `master` and `preview/mobile` (commit `3a24c0fc`).
+
+**Decisions / outcomes:**
+- Shared list is read-only for list data but uses the viewer’s local bag.
+- Bulk button disabled when every in-stock item is already in bag.
+
+**Changes:**
+- `src/pages/wishlist/shared/page.tsx`
+
+**Conventions:**
+- Shared list rows match expanded list line view; use `back-button.svg` for header back.
