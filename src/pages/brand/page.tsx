@@ -246,7 +246,25 @@ function BrandPage() {
                   {cardHeaderTitle}
                 </p>
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px' }} />
-                {/* Empty main card - content to be added later */}
+                {slug === 'about' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        style={{
+                          fontFamily: '"Futura PT Book"',
+                          fontSize: '10px',
+                          color: '#000000',
+                          margin: 0,
+                          lineHeight: 1.45,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
           )}
