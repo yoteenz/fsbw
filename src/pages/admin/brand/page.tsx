@@ -296,7 +296,7 @@ export default function AdminBrand() {
                             marginTop: '-2px',
                             display: 'block',
                             filter:
-                              'invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)',
+                              'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
                           }}
                         />
                       </button>

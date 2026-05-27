@@ -460,7 +460,7 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
 
 /** Match rewards / tier-benefits close control (brand red). */
 const CLOSE_ICON_RED_FILTER =
-  'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)';
+  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
 const SESSION_QUOTE_MEETING_ID = 'adminMeetingsQuoteMeetingId';
 const sessionQuoteDraftKey = (meetingId: string) => `adminMeetingsQuoteDraft_${meetingId}`;

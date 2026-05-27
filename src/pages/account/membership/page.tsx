@@ -1245,7 +1245,7 @@ function MembershipPage() {
                             width: '16px',
                             height: '16px',
                             cursor: 'pointer',
-                            filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                     </div>
@@ -1460,7 +1460,7 @@ function MembershipPage() {
                               height: '16px',
                               objectFit: 'contain',
                               filter:
-                                'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                                'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                             }}
                           />
                         </button>
@@ -2020,7 +2020,7 @@ function MembershipPage() {
                           width: '16px',
                           height: '16px',
                           cursor: 'pointer',
-                          filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                          filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                         }}
                       />
                     </div>

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { BRAND_RED_ICON_CSS_FILTER } from '../../constants/brandRedIconFilter';
 import { PREMIUM_BENEFITS_BY_TIER } from '../../constants/premiumBenefitsByTier';
 import {
   BRAND_GRAY,
@@ -76,8 +77,7 @@ export default function PremiumSubscriptionUpgradeChart({
             width: '16px',
             height: '16px',
             objectFit: 'contain',
-            filter:
-              'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+            filter: BRAND_RED_ICON_CSS_FILTER
           }}
         />
       </button>

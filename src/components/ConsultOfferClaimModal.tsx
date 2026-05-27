@@ -10,6 +10,7 @@ import {
 } from '../utils/consultOfferFromQuote';
 import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulfillment';
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
+import { BRAND_RED_ICON_CSS_FILTER } from '../constants/brandRedIconFilter';
 import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
 
 type Props = {
@@ -45,9 +46,6 @@ function formatOfferTimeLeftLabel(msRemain: number): string {
   if (hours > 0) return `${hours}H ${minutes}M LEFT`;
   return `${Math.max(0, minutes)}M LEFT`;
 }
-
-const CLOSE_ICON_RED_FILTER =
-  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
 
 /** Opening sentence used in older persisted `admin_message` defaults — keep for matching. */
 const DEFAULT_INSPO_DISCLAIMER_P1_LEGACY =
@@ -334,7 +332,7 @@ export default function ConsultOfferClaimModal({
             className="shrink-0 cursor-pointer"
             style={{ lineHeight: 0, padding: 0, border: 'none', background: 'none' }}
           >
-            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }} />
+            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block', filter: BRAND_RED_ICON_CSS_FILTER }} />
           </button>
         </div>
         <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '10px', marginBottom: '12px' }} />
