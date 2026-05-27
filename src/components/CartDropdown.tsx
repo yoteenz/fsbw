@@ -1853,18 +1853,30 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
             
             {/* Total Due - only show when cart has items */}
             {cartItems.length > 0 && (
-              <div className="flex items-center justify-center mb-3" style={{ paddingTop: '8px' }}>
-                <span 
-                  style={{ 
-                    fontSize: '12px',
+              <div
+                className="flex items-center justify-between mb-3 w-full"
+                style={{ paddingTop: '8px' }}
+              >
+                <p
+                  style={{
                     fontFamily: '"Futura PT Book"',
+                    fontSize: '12px',
                     fontWeight: '600',
+                    margin: '0',
                     color: '#000000',
-                    textTransform: 'uppercase'
                   }}
-                  dangerouslySetInnerHTML={{
-                    __html: `<span style="font-weight: 600; font-family: 'Futura PT Book', 'Futura PT Medium', 'Covered By Your Grace', 'Covered By Your Grace Preload';">SUBTOTAL: ${formatPrice(getTotalPrice()).__html}</span>`
+                >
+                  SUBTOTAL:
+                </p>
+                <p
+                  style={{
+                    fontFamily: '"Futura PT Book"',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    margin: '0',
+                    color: '#000000',
                   }}
+                  dangerouslySetInnerHTML={formatPrice(getTotalPrice())}
                 />
               </div>
             )}
