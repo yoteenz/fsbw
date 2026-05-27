@@ -351,7 +351,8 @@ export default function AddToListModal({
             fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
             fontSize: '14px',
             fontWeight: 500,
-            marginBottom: '16px',
+            margin: 0,
+            paddingBottom: '16px',
             textTransform: 'uppercase',
             textAlign: 'center',
             color: '#EB1C24',
@@ -361,8 +362,8 @@ export default function AddToListModal({
           ADD TO LIST
         </h3>
 
-        {/* List dropdown or create-new-list text field (same box styling) */}
-        <div style={{ marginTop: '8px', marginBottom: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+        {/* List dropdown or create-new-list text field (paddingTop — marginTop collapses with h3) */}
+        <div style={{ paddingTop: '14px', marginBottom: '16px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
           {isCreatingNewList ? (
             <input
               ref={newListInputRef}

@@ -803,7 +803,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                 fontWeight: '500'
               }}
             >
-              SHOPPING BAG <span style={{ color: '#EB1C24' }}>({cartCount})</span>
+              SHOPPING BAG
+              <span>{' · '}</span>
+              <span style={{ color: '#EB1C24' }}>{cartCount}</span>
             </h3>
               <div className="flex items-center" style={{ gap: '6px', flexWrap: 'wrap' }}>
             <span
