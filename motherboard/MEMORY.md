@@ -18453,3 +18453,25 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** `src/constants/brandAboutCopy.ts` — first `BRAND_ABOUT_US_PARAGRAPHS` entry now reads: thank-you line; **THIS WEBSITE** (not OUR); **HERE AT FRONTAL SLAYER WE ARE DETERMINED**; **VIRTUAL 3D HAIR SALON THAT OFFERS** (not VIRTUAL SALON). Page still renders copy uppercase via existing brand page mapping.
 
 **Conventions:** About Us body lives in `brandAboutCopy.ts`; edit paragraphs there, not inline in `brand/page.tsx`.
+---
+
+## 2026-05-27 — Brand FAQ / Reviews / Terms main card height matches About Us
+
+**Context (entire chat):** Prior work in this conversation included shared wishlist link parity, checkout upgrade spacing, About Us / Contact / Become a Member copy and UI, loyalty Bohemy sizing, and other brand-page polish. User asked that **Reviews**, **FAQ**, and **Terms of Service** brand main cards match the **About Us** main card height (not viewport-fill, not a short empty shell).
+
+**Topics covered:**
+- `/brand/about` uses content-height card (`brandMainCardScrollable` only for contact + member premium chart); FAQ/Reviews/Terms had no body yet so cards collapsed to header-only.
+- Measured a hidden duplicate About Us card (same chrome + `BrandAboutUsBody`) via `ResizeObserver` and applied `minHeight` to FAQ/Reviews/Terms shells.
+- Extracted `BrandAboutUsBody` so live About page and measurer share one renderer.
+
+**Decisions / outcomes:**
+- FAQ, Reviews, Terms cards now share About's measured height; About itself unchanged (natural content height).
+- Contact/member scroll-cap behavior unchanged.
+
+**Changes:**
+- `src/components/brand/BrandAboutUsBody.tsx` (new)
+- `src/pages/brand/page.tsx` — `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT`, hidden measurer, `minHeight` on matching slugs
+- Pushed `master` and `preview/mobile` (commit `de6d509c`).
+
+**Conventions:**
+- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. For new brand text pages that should match About card size before content exists, add slug to `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT` or give them comparable content height.
