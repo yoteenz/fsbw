@@ -14,6 +14,7 @@ import BrandAboutUsBody from '../../components/brand/BrandAboutUsBody';
 import BrandContactSection from '../../components/brand/BrandContactSection';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
+import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
 import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
 import { isMockDataAccount } from '../../utils/adminAuth';
@@ -374,7 +375,9 @@ function BrandPage() {
                   style={
                     brandMainCardScrollable
                       ? { flex: 1, minHeight: 0, overflowY: 'auto' }
-                      : undefined
+                      : slug === 'reviews'
+                        ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }
+                        : undefined
                   }
                 >
                   {slug === 'about' ? (
@@ -401,6 +404,8 @@ function BrandPage() {
                       onSubmittingChange={setContactSubmitting}
                       onSubmitted={() => setShowContactSuccessModal(true)}
                     />
+                  ) : slug === 'reviews' ? (
+                    <BrandReviewsEmptyState />
                   ) : null}
                 </div>
               </div>
