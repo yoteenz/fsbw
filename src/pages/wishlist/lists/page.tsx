@@ -54,6 +54,36 @@ const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
 
+const EXPANDED_LIST_LINE_NAME_FONT_PX = 22;
+const EXPANDED_LIST_GRID_NAME_FONT_PX = 18;
+const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
+const EXPANDED_LIST_RATING_FONT_PX = 9;
+
+const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '10px',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: `${EXPANDED_LIST_RATING_FONT_PX}px`,
+  color: '#000000',
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '10px',
+  color: '#999999',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: 0,
+  textTransform: 'uppercase',
+};
+
 /** Red link under list line thumb — matches CartDropdown EDIT IN BUILD-A-WIG placement. */
 const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Book"',
@@ -681,14 +711,14 @@ export default function ViewListsPage() {
                                     )}
                                   </div>
                                   <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                    <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#EB1C24', margin: '0 0 6px 0', textTransform: 'uppercase' }}>{itemLength} RAW {itemHairOrigin}</p>
+                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`, color: '#000', margin: '0 0 4px 0', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 6px 0' }}>{itemLength} RAW {itemHairOrigin}</p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '4px' }}>
                                       {[...Array(5)].map((_, idx) => (
-                                        <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
+                                        <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
                                       ))}
                                     </div>
-                                    <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
+                                    <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>4.9 OUT OF 5 STARS</p>
                                   </div>
                                 </div>
                               );
@@ -698,19 +728,22 @@ export default function ViewListsPage() {
                           <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${EXPANDED_LIST_GRID_MIN_COL_PX}px, 1fr))`, gap: '20px 16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+                              const itemLength = item.length || '24"';
+                              const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '14px', color: '#000', margin: '8px 0 2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '8px 0 2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
                                   <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginBottom: '4px' }}>
                                     {[...Array(5)].map((_, idx) => (
-                                      <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: '14px', height: '14px', filter: 'drop-shadow(0 0 0 1px black)' }} />
+                                      <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
                                     ))}
                                   </div>
-                                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
-                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
+                                  <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>4.9 OUT OF 5 STARS</p>
+                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={EXPANDED_LIST_GRID_REMOVE_STYLE}>REMOVE</button>
                                 </div>
                               );
                             })}
