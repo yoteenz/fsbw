@@ -18368,3 +18368,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Conventions:**
 - Brand About Us copy lives in `brandAboutCopy.ts`; page applies uppercase styling even though source strings are uppercase.
+
+---
+
+## 2026-05-21 — Expanded list items: list/grid thumbnail text tuning
+
+**Context (full chat):** Wishlist lists expanded view (line default, path routes, thumbs +20%, typography passes). User requested precise spacing/type on **expanded list item** text only in **`src/pages/wishlist/lists/page.tsx`**.
+
+**List view:** NOIR name **26px** (+4); gap name→RAW **2px** (−2 from 4); RAW→stars **5px** (−1 from 6); stars→rating **5px** (+1 from 4); **ADD/REMOVE FROM BAG** → **Futura PT Medium**; text column (not thumb) **`translate(2px, -10px)`** via **`EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE`**.
+
+**Grid view:** NOIR name **22px** (+4); name bottom margin **0** (−2 above RAW); stars→rating **5px** (+1); gray **REMOVE** → **Futura PT Demi 9px** (was Medium 10px).
+
+**Changes:** Constants **`EXPANDED_LIST_LINE_NAME_FONT_PX`**, **`EXPANDED_LIST_GRID_NAME_FONT_PX`**, **`LIST_LINE_BAG_LINK_STYLE`**, **`EXPANDED_LIST_GRID_REMOVE_STYLE`**, inline margins on line/grid blocks.
