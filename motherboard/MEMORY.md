@@ -18174,3 +18174,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Empty list thumb loads from Supabase **`6KLNd6QdTtVWqfXcnpOsc_cChNXN8z.jpeg`** URL in **`EMPTY_LIST_THUMB_SRC`** (not bundled **`empty-list-thumb.jpeg`** — avoids stale/cached first asset). **`src/pages/wishlist/lists/page.tsx`** — **`EMPTY_LIST_THUMB_SRC`**; empty rows omit **leaf-brick** background; empty thumb uses **`object-fit: cover`** inside a **3px** inset (white frame visible; full-bleed img had covered inset shadow); filled lists unchanged (leaf-brick + bottom-aligned wig front).
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-27 — Wishlist lists: share link + PRIVATE → SHARED on view
+
+**Context (this chat):** User asked to confirm **PRIVATE** becomes **SHARED** after a share link is opened by someone (not the owner), and a **share link popup** on **SHARE LIST** to copy the link.
+
+**Decisions / behavior:** **`getUserListVisibilityLabel`** → **SHARED** only when **`viewedByNonOwner`** on global registry snapshot (set when a non-owner opens **`/wishlist/shared/:token`**). Owner copying/opening their own link stays **PRIVATE**. Snapshot published when owner taps **SHARE LIST**.
+
+**Changes:** **`src/utils/wishlistListShare.ts`**, **`ShareListLinkModal.tsx`**, **`src/pages/wishlist/shared/page.tsx`**, **`lists/page.tsx`**, **`App.tsx`** route **`/wishlist/shared/:token`**, **`UserList.shareToken`**.
+
+**Note:** Share registry is **localStorage** (same browser origin); cross-device share needs a future API.
+
+**Verify:** **`npm run build`** succeeds.
