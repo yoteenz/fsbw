@@ -18262,3 +18262,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context (full chat):** List line view bag links, add-to-list dropdown placeholder fix. User asked on created list **line/grid** view: **10px** above thumbnails; **+2px** above **ADD TO BAG** / **REMOVE FROM BAG** ( **`marginTop` 4→6** ); list-view remove **X** **black** not red.
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`paddingTop: 10px`** on line + grid item containers; close icon **`filter: brightness(0)`**.
+
+---
+
+## 2026-05-21 — Lists: browser Back from expanded list
+
+**Context (full chat):** Lists UX (bag links, custom add-to-list picker, spacing). Expanded list was React state only on **`/wishlist/lists`**; browser **Back** skipped overview and went to **`/wishlist`**.
+
+**Fix:** Expanded list uses **`?list=<id>`** (**`useSearchParams`**). Open pushes history entry; **Back** drops query → overview. In-app close uses **`navigate(-1)`**; delete/invalid id uses **`replace`** to clear query.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`openExpandedList`**, **`closeExpandedList`**.
