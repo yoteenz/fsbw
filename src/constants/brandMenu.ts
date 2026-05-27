@@ -1,6 +1,6 @@
 export const BRAND_MENU_ITEMS = [
   { label: 'ABOUT US', route: '/brand/about' },
-  { label: 'CONTACT', route: '/brand/contact' },
+  { label: 'CONTACT US', route: '/brand/contact' },
   { label: 'BECOME A MEMBER', route: '/brand/member' },
   { label: 'REVIEWS', route: '/brand/reviews' },
   { label: 'CAREERS', route: '/brand/careers' },
