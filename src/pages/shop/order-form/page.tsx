@@ -1047,10 +1047,7 @@ function OrderFormPage() {
                     color: '#000000',
                     lineHeight: '1.8',
                     margin: '18px 0 20px 0',
-                    textAlign: 'center',
-                    maxWidth: 'calc(100% - 24px)',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
+                    textAlign: 'left'
                   }}
                 >
                   THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.
@@ -1064,10 +1061,7 @@ function OrderFormPage() {
                     color: '#000000',
                     lineHeight: '1.8',
                     margin: '0 0 20px 0',
-                    textAlign: 'center',
-                    maxWidth: 'calc(100% - 26px)',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
+                    textAlign: 'left'
                   }}
                 >
                   YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO <span style={{ color: '#EB1C24', fontWeight: '600' }}>CONTACT@FRONTALSLAYER.COM</span>
@@ -1081,10 +1075,7 @@ function OrderFormPage() {
                     color: '#000000',
                     lineHeight: '1.8',
                     margin: '0 0 30px 0',
-                    textAlign: 'center',
-                    maxWidth: 'calc(100% - 26px)',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
+                    textAlign: 'left'
                   }}
                 >
                   THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!
@@ -1520,7 +1511,7 @@ function OrderFormPage() {
                             textTransform: 'uppercase',
                             marginTop: '6px',
                             marginBottom: '-18px',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             cursor: 'pointer'
                           }}
                         >
