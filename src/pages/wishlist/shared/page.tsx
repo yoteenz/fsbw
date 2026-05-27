@@ -8,6 +8,8 @@ import {
 } from '../../../utils/wishlistListShare';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
+const SHARED_LIST_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
+const SHARED_LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 22;
@@ -345,8 +347,10 @@ export default function SharedWishlistListPage() {
                             gap: '16px',
                             paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
                             paddingBottom: '16px',
-                            marginBottom: '16px',
-                            borderBottom: index < items.length - 1 ? '1px solid #e5e5e5' : 'none',
+                            marginBottom:
+                              index < items.length - 1 ? `${SHARED_LIST_ROW_GAP_BELOW_DIVIDER_PX}px` : 0,
+                            borderBottom:
+                              index < items.length - 1 ? SHARED_LIST_ROW_DIVIDER_STYLE : 'none',
                           }}
                         >
                           <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
