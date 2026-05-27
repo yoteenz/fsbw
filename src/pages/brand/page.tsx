@@ -86,6 +86,14 @@ function BrandPage() {
     }
     memberPremium.handleUpgradeAction();
   };
+  const handleBrandSubmitReviewClick = () => {
+    if (isSignedIn) {
+      navigate('/account/orders');
+      return;
+    }
+    navigate(`/sign-in?returnTo=${encodeURIComponent('/account/orders')}`);
+  };
+
 
   const validSlug = slug && VALID_SLUGS.includes(slug);
   const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
@@ -447,7 +455,19 @@ function BrandPage() {
                 </button>
               </PageActionsBelowCard>
             ) : null}
-            <ConfirmationModal
+            {slug === 'reviews' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="button"
+                  onClick={handleBrandSubmitReviewClick}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
+                >
+                  SUBMIT REVIEW
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+                        <ConfirmationModal
               isOpen={memberPremium.showValidationModal}
               onClose={() => memberPremium.setShowValidationModal(false)}
               onConfirm={() => memberPremium.setShowValidationModal(false)}
