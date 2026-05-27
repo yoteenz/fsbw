@@ -582,7 +582,8 @@ export default function ViewListsPage() {
                                           bottom: 3,
                                           objectFit: 'cover',
                                           objectPosition: 'center',
-                                          transform: `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px)`,
+                                          transform: `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px) scale(${EMPTY_LIST_THUMB_SCALE})`,
+                                          transformOrigin: 'center center',
                                           zIndex: 1,
                                         }
                                   }
