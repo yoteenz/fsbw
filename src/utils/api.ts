@@ -873,6 +873,29 @@ export async function postBrandContactSubmit(body: {
   return data;
 }
 
+
+export async function postBrandFaqQuestionSubmit(body: {
+  name: string;
+  email: string;
+  question: string;
+}): Promise<{ ok?: boolean; questionId?: string; emailSent?: boolean; error?: string }> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/brand/faq-question-submit` : '/api/brand/faq-question-submit';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    questionId?: string;
+    emailSent?: boolean;
+    error?: string;
+  };
+  if (!res.ok) throw new Error(data.error || 'Could not send question');
+  return data;
+}
+
 export type AdminBrandContactInquiry = {
   id: string;
   name: string;

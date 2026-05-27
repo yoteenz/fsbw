@@ -15,7 +15,7 @@ import BrandContactSection from '../../components/brand/BrandContactSection';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
 import BrandReviewsEmptyState from '../../components/brand/BrandReviewsEmptyState';
-import BrandFaqSection from '../../components/brand/BrandFaqSection';
+import BrandFaqPageContent from '../../components/brand/BrandFaqPageContent';
 import PremiumSubscriptionUpgradeChart from '../../components/membership/PremiumSubscriptionUpgradeChart';
 import { usePremiumSubscriptionUpgrade } from '../../hooks/usePremiumSubscriptionUpgrade';
 import { isMockDataAccount } from '../../utils/adminAuth';
@@ -53,6 +53,8 @@ function BrandPage() {
   });
   const [contactSubmitting, setContactSubmitting] = useState(false);
   const [showContactSuccessModal, setShowContactSuccessModal] = useState(false);
+  const [faqQuestionSubmitting, setFaqQuestionSubmitting] = useState(false);
+  const [showFaqQuestionSuccessModal, setShowFaqQuestionSuccessModal] = useState(false);
 
   const memberHasPremiumSubscription = (() => {
     if (!isSignedIn) return false;
@@ -416,7 +418,11 @@ function BrandPage() {
                   ) : slug === 'reviews' ? (
                     <BrandReviewsEmptyState />
                   ) : slug === 'faq' ? (
-                    <BrandFaqSection />
+                    <BrandFaqPageContent
+                      formId="brand-faq-question-form"
+                      onSubmittingChange={setFaqQuestionSubmitting}
+                      onSubmitted={() => setShowFaqQuestionSuccessModal(true)}
+                    />
                   ) : null}
                 </div>
               </div>
@@ -470,7 +476,20 @@ function BrandPage() {
                 </button>
               </PageActionsBelowCard>
             ) : null}
-                        <ConfirmationModal
+            {slug === 'faq' ? (
+              <PageActionsBelowCard>
+                <button
+                  type="submit"
+                  form="brand-faq-question-form"
+                  disabled={faqQuestionSubmitting}
+                  className="w-full py-2 border border-black text-center cursor-pointer hover:bg-gray-50 disabled:opacity-60"
+                  style={pageActionButtonStyle}
+                >
+                  {faqQuestionSubmitting ? 'SENDING…' : 'SEND QUESTION'}
+                </button>
+              </PageActionsBelowCard>
+            ) : null}
+            <ConfirmationModal
               isOpen={memberPremium.showValidationModal}
               onClose={() => memberPremium.setShowValidationModal(false)}
               onConfirm={() => memberPremium.setShowValidationModal(false)}
@@ -486,6 +505,15 @@ function BrandPage() {
               onConfirm={() => setShowContactSuccessModal(false)}
               title="MESSAGE SENT"
               message="YOUR MESSAGE HAS BEEN SUBMITTED. PLEASE ALLOW AT LEAST 72 HOURS FOR A RESPONSE."
+              confirmText="OK"
+              cancelText=""
+            />
+            <ConfirmationModal
+              isOpen={showFaqQuestionSuccessModal}
+              onClose={() => setShowFaqQuestionSuccessModal(false)}
+              onConfirm={() => setShowFaqQuestionSuccessModal(false)}
+              title="QUESTION SENT"
+              message="YOUR QUESTION HAS BEEN SUBMITTED. IF SELECTED, IT MAY BE ADDED TO OUR FAQ. PLEASE ALLOW AT LEAST 72 HOURS FOR A RESPONSE."
               confirmText="OK"
               cancelText=""
             />
