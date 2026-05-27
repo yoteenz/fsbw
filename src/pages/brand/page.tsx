@@ -10,7 +10,7 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
-import { BRAND_ABOUT_ACCENT_PARAGRAPHS, BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
+import { BRAND_ABOUT_ACCENT_PARAGRAPHS, BRAND_ABOUT_DEMI_GRAY_PARAGRAPHS, BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 import BrandContactSection from '../../components/brand/BrandContactSection';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../layouts/PageActionsBelowCard';
 import BrandMemberSection from '../../components/brand/BrandMemberSection';
@@ -338,14 +338,19 @@ function BrandPage() {
                     >
                       {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => {
                         const isAccent = BRAND_ABOUT_ACCENT_PARAGRAPHS.has(paragraph);
+                        const isDemiGray = BRAND_ABOUT_DEMI_GRAY_PARAGRAPHS.has(paragraph);
                         return (
                         <p
                           key={paragraph}
                           style={{
-                            fontFamily: isAccent ? '"Futura PT Medium"' : '"Futura PT Book"',
+                            fontFamily: isDemiGray
+                              ? '"Futura PT Demi"'
+                              : isAccent
+                                ? '"Futura PT Medium"'
+                                : '"Futura PT Book"',
                             fontSize: '10px',
-                            color: isAccent ? '#EB1C24' : '#000000',
-                            fontWeight: isAccent ? 500 : 400,
+                            color: isDemiGray ? '#808080' : isAccent ? '#EB1C24' : '#000000',
+                            fontWeight: isDemiGray || isAccent ? 500 : 400,
                             margin: 0,
                             lineHeight: 1.45,
                             textTransform: 'uppercase',
