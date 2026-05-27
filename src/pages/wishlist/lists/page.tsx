@@ -685,9 +685,6 @@ export default function ViewListsPage() {
                                     </div>
                                     <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
                                   </div>
-                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Remove from list">
-                                    <img src="/assets/close-icon.svg" alt="Remove" style={{ width: '16px', height: '16px', filter: 'brightness(0)' }} />
-                                  </button>
                                 </div>
                               );
                             })}
