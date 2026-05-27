@@ -141,7 +141,7 @@ export default function ConsultOfferPage() {
         </ul>
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', marginTop: '14px' }}>CONSULT CODE</p>
         <p style={{ fontSize: '14px', letterSpacing: '0.08em' }}>{code}</p>
-        <p style={{ fontSize: '8px', color: '#808080' }}>$40 OFF AT CHECKOUT WHEN APPLIED (72H) — CHECKOUT HOOK TBD</p>
+        <p style={{ fontSize: '8px', color: '#808080' }}>$40 OFF AT CHECKOUT WHEN APPLIED WITHIN 72 HOURS.</p>
         <div className="flex flex-col gap-2 mt-4">
           <button
             type="button"
