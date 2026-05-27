@@ -20,7 +20,7 @@ import { isMockDataAccount } from '../../utils/adminAuth';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
-/** Match menu-toggle card height on brand pages (scroll inside content area). */
+/** Max height when brand main card scrolls (contact form, member premium chart). */
 const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
 
 function BrandPage() {
@@ -85,6 +85,10 @@ function BrandPage() {
   const validSlug = slug && VALID_SLUGS.includes(slug);
   const navTitle = validSlug ? getBrandNavTitle(slug) : 'ABOUT';
   const cardHeaderTitle = validSlug ? getBrandCardHeaderTitle(slug) : 'ABOUT US';
+
+  /** Tall content only: cap card height and scroll inside; short pages hug content (no viewport gap). */
+  const brandMainCardScrollable =
+    slug === 'contact' || (slug === 'member' && memberPremium.showPremiumChart);
 
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
@@ -274,9 +278,12 @@ function BrandPage() {
                 className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
                 style={{
                   borderWidth: '1.3px',
-                  minHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
-                  height: BRAND_PAGE_MAIN_CARD_HEIGHT,
-                  overflow: 'hidden',
+                  ...(brandMainCardScrollable
+                    ? {
+                        maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
+                        overflow: 'hidden',
+                      }
+                    : {}),
                 }}
               >
                 <p
@@ -293,7 +300,13 @@ function BrandPage() {
                   {cardHeaderTitle}
                 </p>
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
-                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+                <div
+                  style={
+                    brandMainCardScrollable
+                      ? { flex: 1, minHeight: 0, overflowY: 'auto' }
+                      : undefined
+                  }
+                >
                   {slug === 'about' ? (
                     <div
                       style={{

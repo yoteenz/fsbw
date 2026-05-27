@@ -37,6 +37,7 @@ const fieldInputStyle: CSSProperties = {
 const fieldTextareaStyle: CSSProperties = {
   width: '100%',
   height: '120px',
+  minHeight: '120px',
   padding: '12px',
   border: '1.3px solid #000000',
   fontFamily: '"Futura PT Book"',
@@ -187,7 +188,7 @@ export default function BrandContactSection({
         </p>
       ) : null}
 
-      <form id={formId} className="flex flex-col" style={{ gap: '12px' }} onSubmit={handleSubmit}>
+      <form id={formId} className="flex flex-col" style={{ gap: '12px', flex: '0 0 auto' }} onSubmit={handleSubmit}>
         <div>
           <label style={fieldLabelStyle}>
             NAME<span style={requiredMarkStyle}>*</span>
