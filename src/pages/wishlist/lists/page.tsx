@@ -59,8 +59,8 @@ const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
 /** Empty-list thumb scale (10% smaller than prior 0.88 → 0.792). */
 const EMPTY_LIST_THUMB_SCALE = 0.792;
 
-/** Test-only: gray rule under thumb, above item count (vacay/vacation lists). */
-const LIST_THUMB_COUNT_DIVIDER_COLOR = '#e5e5e5';
+/** Test-only: rule under thumb, above item count (vacay/vacation lists). */
+const LIST_THUMB_COUNT_DIVIDER_COLOR = '#EB1C24';
 
 function listShowsThumbCountDividerTest(listName: string | undefined): boolean {
   const n = (listName || '').trim().toLowerCase();
