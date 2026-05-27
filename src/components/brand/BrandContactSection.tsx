@@ -48,7 +48,7 @@ function YesNoToggle({
     <div style={{ display: 'flex', gap: '12px' }}>
       {(['yes', 'no'] as const).map((option) => (
         <button
-          key={option}
+          key={option.toUpperCase()}
           type="button"
           onClick={() => onChange(option)}
           style={{
@@ -64,7 +64,7 @@ function YesNoToggle({
             borderRadius: '0',
           }}
         >
-          {option}
+          {option.toUpperCase()}
         </button>
       ))}
     </div>
@@ -149,11 +149,7 @@ export default function BrandContactSection() {
             type="text"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
-            style={{
-              ...fieldInputStyle,
-              opacity: isOrderRelated === 'yes' ? 1 : 0.55,
-            }}
-            disabled={isOrderRelated !== 'yes'}
+            style={fieldInputStyle}
           />
         </div>
 
