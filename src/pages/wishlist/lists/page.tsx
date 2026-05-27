@@ -56,8 +56,31 @@ const EXPANDED_LIST_GRID_MIN_COL_PX = 100 * 1.2;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
-const EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE: React.CSSProperties = {
-  transform: 'translateY(-8px)',
+/** Pull product text column up beside the thumb (margin, not transform — survives flex centering). */
+const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
+/** Tighten gap between script name and red RAW line (font metrics leave extra space at margin 0). */
+const EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX = 2;
+/** Space between row border and the next row’s thumb (was 16px margin only). */
+const EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX = 18;
+
+const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
+  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+  fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
+  color: '#000',
+  margin: 0,
+  padding: 0,
+  lineHeight: 1,
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+  marginTop: `-${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
+};
+
+const EXPANDED_LIST_LINE_RAW_MARGIN_STYLE: React.CSSProperties = {
+  margin: `-${EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX}px 0 5px 0`,
 };
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_RATING_FONT_PX = 9;
@@ -663,7 +686,21 @@ export default function ViewListsPage() {
                               const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                               const isOutOfStock = (item.stockStatus || 'in_stock') === 'out_of_stock';
                               return (
-                                <div key={item.id || index} style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX, paddingBottom: '16px', marginBottom: '16px', borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none' }}>
+                                <div
+                                  key={item.id || index}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                    paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
+                                    paddingBottom: '16px',
+                                    marginBottom:
+                                      index < expandedItems.length - 1
+                                        ? `${EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX}px`
+                                        : '16px',
+                                    borderBottom: index < expandedItems.length - 1 ? '1px solid #e5e5e5' : 'none',
+                                  }}
+                                >
                                   <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                       <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
@@ -718,9 +755,9 @@ export default function ViewListsPage() {
                                       </p>
                                     )}
                                   </div>
-                                  <div style={{ flex: 1, minWidth: 0, ...EXPANDED_LIST_LINE_TEXT_OFFSET_STYLE }}>
-                                    <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`, color: '#000', margin: 0, textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                    <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 5px 0' }}>{itemLength} RAW {itemHairOrigin}</p>
+                                  <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
+                                    <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>{itemLength} RAW {itemHairOrigin}</p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}>
                                       {[...Array(5)].map((_, idx) => (
                                         <img key={idx} src="/assets/NOIR/filled-star.png" alt="Star" style={{ width: `${EXPANDED_LIST_STAR_SIZE_PX}px`, height: `${EXPANDED_LIST_STAR_SIZE_PX}px`, filter: 'drop-shadow(0 0 0 1px black)' }} />
