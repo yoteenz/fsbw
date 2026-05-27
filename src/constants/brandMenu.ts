@@ -1,16 +1,34 @@
-export const BRAND_MENU_ITEMS = [
-  { label: 'ABOUT US', route: '/brand/about' },
-  { label: 'CONTACT', route: '/brand/contact' },
+export type BrandMenuItem = {
+  /** Label in mobile menu (BRAND tab). */
+  label: string;
+  route: string;
+  /** Red card header on the brand page (defaults to label). */
+  cardTitle?: string;
+  /** Nav breadcrumb after BRAND > (defaults per slug rules in getBrandNavTitle). */
+  navTitle?: string;
+};
+
+export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
+  { label: 'ABOUT FS', route: '/brand/about', cardTitle: 'ABOUT US' },
+  { label: 'CONTACT FS', route: '/brand/contact', cardTitle: 'CONTACT US', navTitle: 'CONTACT' },
   { label: 'BECOME A MEMBER', route: '/brand/member', navTitle: 'MEMBERSHIP' },
   { label: 'REVIEWS', route: '/brand/reviews' },
   { label: 'CAREERS', route: '/brand/careers' },
   { label: 'FAQ', route: '/brand/faq' },
-  { label: 'TERMS OF SERVICE', route: '/brand/terms' }
-] as const;
+  { label: 'TERMS OF SERVICE', route: '/brand/terms' },
+];
 
 export const BRAND_SLUGS = ['about', 'contact', 'member', 'reviews', 'careers', 'faq', 'terms'] as const;
 export type BrandSlug = typeof BRAND_SLUGS[number];
 
 export function getBrandNavTitle(slug: string): string {
-  return slug.toUpperCase();
+  const item = BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`);
+  if (item?.navTitle) return item.navTitle;
+  if (['about', 'member', 'terms'].includes(slug)) return slug.toUpperCase();
+  return item?.label ?? slug.toUpperCase();
+}
+
+export function getBrandCardHeaderTitle(slug: string): string {
+  const item = BRAND_MENU_ITEMS.find((i) => i.route === `/brand/${slug}`);
+  return item?.cardTitle ?? item?.label ?? slug.toUpperCase();
 }
