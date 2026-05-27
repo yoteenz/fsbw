@@ -40,8 +40,11 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 
-/** Empty-list thumb art sits low in frame; nudge up inside the brick slot. */
-const EMPTY_LIST_THUMB_OFFSET_UP_PX = 20;
+/** Inset white ring + inner art area (matches non-empty thumb frame). */
+const LIST_THUMB_FRAME_INSET_PX = 3;
+
+/** Empty-list thumb art sits low in frame; nudge up inside the inner art area. */
+const EMPTY_LIST_THUMB_OFFSET_UP_PX = 40;
 /** Empty-list thumb scale (1 − 12% = 88%). */
 const EMPTY_LIST_THUMB_SCALE = 0.88;
 
@@ -564,30 +567,53 @@ export default function ViewListsPage() {
                                       }
                                     : { backgroundColor: '#fff' }),
                                   border: '1.3px solid #000',
-                                  boxShadow: 'inset 0 0 0 3px #fff',
+                                  boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
                                   overflow: 'hidden'
                                 }}
                               >
-                                <img
-                                  src={thumbSrc}
-                                  alt=""
-                                  style={
-                                    firstItem
-                                      ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }
-                                      : {
-                                          position: 'absolute',
-                                          top: 3,
-                                          left: 3,
-                                          right: 3,
-                                          bottom: 3,
-                                          objectFit: 'cover',
-                                          objectPosition: 'center',
-                                          transform: `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px) scale(${EMPTY_LIST_THUMB_SCALE})`,
-                                          transformOrigin: 'center center',
-                                          zIndex: 1,
-                                        }
-                                  }
-                                />
+                                {firstItem ? (
+                                  <img
+                                    src={thumbSrc}
+                                    alt=""
+                                    style={{
+                                      position: 'absolute',
+                                      left: '50%',
+                                      bottom: LIST_THUMB_FRAME_INSET_PX,
+                                      transform: 'translateX(-50%)',
+                                      width: 'auto',
+                                      height: '96%',
+                                      maxWidth: '106%',
+                                      objectFit: 'contain',
+                                      objectPosition: 'bottom',
+                                      zIndex: 1,
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      top: LIST_THUMB_FRAME_INSET_PX,
+                                      left: LIST_THUMB_FRAME_INSET_PX,
+                                      right: LIST_THUMB_FRAME_INSET_PX,
+                                      bottom: LIST_THUMB_FRAME_INSET_PX,
+                                      overflow: 'hidden',
+                                    }}
+                                  >
+                                    <img
+                                      src={thumbSrc}
+                                      alt=""
+                                      style={{
+                                        display: 'block',
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center',
+                                        transform: `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px) scale(${EMPTY_LIST_THUMB_SCALE})`,
+                                        transformOrigin: 'center center',
+                                      }}
+                                    />
+                                  </div>
+                                )}
                               </div>
                               <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '12px', color: '#000', textTransform: 'uppercase', marginTop: '6px' }}>
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}
