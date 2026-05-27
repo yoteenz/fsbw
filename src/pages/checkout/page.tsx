@@ -6185,21 +6185,6 @@ function CheckoutPage() {
                   STRIPE CARD CHECKOUT UNAVAILABLE — SERVER NEEDS STRIPE SECRET KEY + ALL THREE PRICE IDS (SEE DOCS).
                 </p>
               )}
-              {stripeAvailabilityLoaded && stripeMembershipAvailable && !hasSupabaseSession && (
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '9px',
-                    color: '#808080',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    textAlign: 'center',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  TO PAY WITH CARD VIA STRIPE, SIGN IN WITH YOUR SUPABASE EMAIL (NOT LOCAL-ONLY SIGN-IN).
-                </p>
-              )}
               {stripeMembershipAvailable && hasSupabaseSession && (
                 <>
                   <button
