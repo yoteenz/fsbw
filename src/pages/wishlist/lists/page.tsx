@@ -76,6 +76,7 @@ const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
 const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
   flex: 1,
   minWidth: 0,
+  marginTop: '12px',
 };
 
 const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
