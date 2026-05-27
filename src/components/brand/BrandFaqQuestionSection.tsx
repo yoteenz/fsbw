@@ -110,7 +110,7 @@ export default function BrandFaqQuestionSection({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '12px' }} />
+      <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '8px' }} />
 
       {submitError ? <p style={errorTextStyle}>{submitError}</p> : null}
 
