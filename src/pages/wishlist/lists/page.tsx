@@ -42,6 +42,8 @@ const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 
 /** Empty-list thumb art sits low in frame; nudge up inside the brick slot. */
 const EMPTY_LIST_THUMB_OFFSET_UP_PX = 20;
+/** Empty-list thumb scale (1 − 12% = 88%). */
+const EMPTY_LIST_THUMB_SCALE = 0.88;
 
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
