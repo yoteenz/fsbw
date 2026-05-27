@@ -18429,3 +18429,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `src/pages/account/membership/page.tsx` — uses shared chart component (removed duplicate inline chart).
 
 **Conventions:** Reuse `PageActionsBelowCard` / `pageActionButtonStyle` for brand page actions below the main card.
+
+---
+
+## 2026-05-27 — Brand pages: stop main card viewport gap
+
+**Context:** User reported brand main card auto-expanding to full viewport on all slugs, leaving a large empty gap at the bottom; contact message field should stay 120px tall (not stretch in tall card) but remain vertically resizable.
+
+**Decisions / outcomes:**
+- Main brand card no longer uses fixed `height`/`minHeight: calc(100dvh - 80px)` on every slug — short pages (about, member copy, etc.) hug content.
+- Scroll cap only when needed: **contact** form and **member** premium chart use `maxHeight` + inner `overflowY: auto`.
+- Contact textarea: `height`/`minHeight` 120px, `flexShrink: 0`, form `flex: 0 0 auto`; `resize: vertical` kept (no maxHeight lock).
+
+**Changes:** `src/pages/brand/page.tsx`, `src/components/brand/BrandContactSection.tsx`.
