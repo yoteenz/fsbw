@@ -13,6 +13,7 @@ import {
   getUserListVisibilityLabel,
   prepareListForShare,
   publishSharedListSnapshot,
+  republishSharedSnapshotsForLists,
   syncUserListsSharedStatus,
 } from '../../../utils/wishlistListShare';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
@@ -355,6 +356,8 @@ export default function ViewListsPage() {
   const refreshLists = () => {
     const loaded = loadUserLists();
     const synced = syncUserListsSharedStatus(loaded);
+    const ownerEmail = getCurrentUser()?.email;
+    if (ownerEmail) republishSharedSnapshotsForLists(synced, ownerEmail);
     if (synced !== loaded) saveUserLists(synced);
     setLists(synced);
   };

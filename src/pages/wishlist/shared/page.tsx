@@ -3,9 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { trackActivity } from '../../../utils/activity';
 import {
-  getSharedListByToken,
   recordSharedListView,
+  resolveSharedListForViewer,
 } from '../../../utils/wishlistListShare';
+import {
+  buildWishlistItemDetailsHtml,
+  formatWishlistListItemPrice,
+  getWishlistItemDisplayPrice,
+  getWishlistItemProductName,
+  wishlistItemHasViewDetails,
+} from '../../../utils/wishlistListItemDetails';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const SHARED_LIST_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
@@ -62,6 +69,42 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
   color: '#000000',
   textTransform: 'uppercase',
 };
+
+const EXPANDED_LIST_LINE_PRICE_FONT_PX = 12;
+
+const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontSize: `${EXPANDED_LIST_LINE_PRICE_FONT_PX}px`,
+  color: '#808080',
+  textTransform: 'uppercase',
+  margin: '4px 0 0 0',
+};
+
+const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Book", Futura, sans-serif',
+  color: '#000000',
+  textTransform: 'uppercase',
+  fontSize: '9px',
+  marginTop: '2px',
+  marginBottom: '0',
+  lineHeight: '1.44',
+  wordBreak: 'break-word',
+};
+
+const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: '8px',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+  marginTop: '4px',
+  cursor: 'pointer',
+  display: 'inline-block',
+};
+
+function getSharedListItemKey(item: any, index: number): string {
+  if (item?.id != null && item.id !== '') return String(item.id);
+  return `shared-list-item-${index}`;
+}
 
 function ExpandedListItemNoReviewStars() {
   return (
@@ -184,20 +227,29 @@ export default function SharedWishlistListPage() {
     }
   });
   const [cartSyncVersion, setCartSyncVersion] = useState(0);
+  const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
 
   const snapshot = useMemo(() => {
     if (!token) return null;
-    return getSharedListByToken(token);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when registry updates
+    return resolveSharedListForViewer(token);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when registry or lists update
   }, [token, tick]);
+
+  useEffect(() => {
+    setViewingDetailsItemKey(null);
+  }, [token]);
 
   useEffect(() => {
     if (!token) return;
     recordSharedListView(token);
-    const onRegistryUpdate = () => setTick((t) => t + 1);
-    window.addEventListener('wishlistSharedRegistryUpdated', onRegistryUpdate);
-    return () => window.removeEventListener('wishlistSharedRegistryUpdated', onRegistryUpdate);
+    const bump = () => setTick((t) => t + 1);
+    window.addEventListener('wishlistSharedRegistryUpdated', bump);
+    window.addEventListener('userListsUpdated', bump);
+    return () => {
+      window.removeEventListener('wishlistSharedRegistryUpdated', bump);
+      window.removeEventListener('userListsUpdated', bump);
+    };
   }, [token]);
 
   useEffect(() => {
@@ -406,6 +458,12 @@ export default function SharedWishlistListPage() {
                       const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                       const itemLength = item.length || '24"';
                       const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                      const itemKey = getSharedListItemKey(item, index);
+                      const isViewingDetails = viewingDetailsItemKey === itemKey;
+                      const showViewDetailsLink = wishlistItemHasViewDetails(item);
+                      const itemPriceLabel = formatWishlistListItemPrice(
+                        getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
+                      );
                       const inBag = isInBag(item, index);
                       const outOfStock = isItemOutOfStock(item);
                       return (
@@ -507,8 +565,38 @@ export default function SharedWishlistListPage() {
                             <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>
                               {itemLength} RAW {itemHairOrigin}
                             </p>
-                            <ExpandedListItemNoReviewStars />
-                            <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
+                            {isViewingDetails ? (
+                              <p
+                                style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
+                                dangerouslySetInnerHTML={{ __html: buildWishlistItemDetailsHtml(item) }}
+                              />
+                            ) : (
+                              <>
+                                <ExpandedListItemNoReviewStars />
+                                <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
+                              </>
+                            )}
+                            <p style={EXPANDED_LIST_LINE_PRICE_STYLE}>{itemPriceLabel}</p>
+                            {showViewDetailsLink && (
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                style={EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                  }
+                                }}
+                              >
+                                {isViewingDetails ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                              </span>
+                            )}
                           </div>
                         </div>
                       );

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { getCurrentUser } from '../utils/adminAuth';
+import { republishSharedSnapshotsForLists } from '../utils/wishlistListShare';
 
 const USER_LISTS_KEY = 'userLists';
 
@@ -40,6 +42,8 @@ function loadUserLists(): UserList[] {
 
 function saveUserLists(lists: UserList[]) {
   localStorage.setItem(USER_LISTS_KEY, JSON.stringify(lists));
+  const ownerEmail = getCurrentUser()?.email;
+  if (ownerEmail) republishSharedSnapshotsForLists(lists, ownerEmail);
   window.dispatchEvent(new CustomEvent('userListsUpdated'));
 }
 

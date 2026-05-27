@@ -115,6 +115,64 @@ export function getSharedListByToken(token: string): WishlistSharedListSnapshot 
   return registry[token] ?? null;
 }
 
+function findOwnerListForShareToken(ownerEmail: string, token: string, listId: string): UserList | undefined {
+  const perUser = readListsFromKey(userListsStorageKey(ownerEmail));
+  let live = perUser.find((l) => l.shareToken === token || l.id === listId);
+  if (live) return live;
+  const global = readListsFromKey('userLists');
+  return global.find((l) => l.shareToken === token || l.id === listId);
+}
+
+/**
+ * Re-publish every list that already has a share token (keeps `/wishlist/shared/:token` in sync).
+ */
+export function republishSharedSnapshotsForLists(lists: UserList[], ownerEmail: string): void {
+  const email = normalizeEmail(ownerEmail);
+  if (!email) return;
+  let changed = false;
+  const registry = loadRegistry();
+  for (const list of lists) {
+    if (!list.shareToken) continue;
+    const shareToken = ensureListShareToken(list);
+    registry[shareToken] = {
+      ownerEmail: email,
+      listId: list.id,
+      name: list.name,
+      items: Array.isArray(list.items) ? list.items : [],
+      updatedAt: new Date().toISOString(),
+      viewedByNonOwner: registry[shareToken]?.viewedByNonOwner ?? false,
+    };
+    changed = true;
+  }
+  if (changed) saveRegistry(registry);
+}
+
+/**
+ * Public share page: registry snapshot, or live owner list when the signed-in owner opens their link.
+ */
+export function resolveSharedListForViewer(token: string): WishlistSharedListSnapshot | null {
+  const snap = getSharedListByToken(token);
+  if (!snap) return null;
+
+  const viewerEmail = normalizeEmail(getCurrentUser()?.email);
+  const ownerEmail = normalizeEmail(snap.ownerEmail);
+  if (!viewerEmail || viewerEmail !== ownerEmail) return snap;
+
+  const live = findOwnerListForShareToken(ownerEmail, token, snap.listId);
+  if (!live) return snap;
+
+  const fresh: WishlistSharedListSnapshot = {
+    ...snap,
+    name: live.name,
+    items: Array.isArray(live.items) ? live.items : [],
+    updatedAt: new Date().toISOString(),
+  };
+  const registry = loadRegistry();
+  registry[token] = fresh;
+  saveRegistry(registry);
+  return fresh;
+}
+
 /** True when the list should show SHARED (viewed by a non-owner after share). */
 export function isListMarkedShared(list: UserList): boolean {
   if (list.hasBeenShared) return true;
