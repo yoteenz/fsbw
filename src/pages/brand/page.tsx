@@ -11,6 +11,7 @@ import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { BRAND_ABOUT_US_PARAGRAPHS } from '../../constants/brandAboutCopy';
 import BrandContactSection from '../../components/brand/BrandContactSection';
+import { BRAND_MEMBER_PARAGRAPHS } from '../../constants/brandMemberCopy';
 
 const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', 'terms'];
 
@@ -258,7 +259,7 @@ function BrandPage() {
                 </p>
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
                 <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-                  {slug === 'about' ? (
+                  {slug === 'about' || slug === 'member' ? (
                     <div
                       style={{
                         display: 'flex',
@@ -267,7 +268,7 @@ function BrandPage() {
                         textAlign: 'center',
                       }}
                     >
-                      {BRAND_ABOUT_US_PARAGRAPHS.map((paragraph) => (
+                      {(slug === 'about' ? BRAND_ABOUT_US_PARAGRAPHS : BRAND_MEMBER_PARAGRAPHS).map((paragraph) => (
                         <p
                           key={paragraph}
                           style={{
