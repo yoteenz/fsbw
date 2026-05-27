@@ -18272,3 +18272,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Fix:** Expanded list uses **`?list=<id>`** (**`useSearchParams`**). Open pushes history entry; **Back** drops query → overview. In-app close uses **`navigate(-1)`**; delete/invalid id uses **`replace`** to clear query.
 
 **Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`openExpandedList`**, **`closeExpandedList`**.
+
+---
+
+## 2026-05-21 — Lists line view: confirm remove item
+
+**Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
+
+**Changes:** **`ConfirmationModal`** — **REMOVE FROM LIST** / **REMOVE THIS ITEM FROM YOUR LIST?**; **`requestRemoveListItemConfirm`** on X; grid **REMOVE** still immediate.
