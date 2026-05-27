@@ -491,10 +491,21 @@ export default function AddToListModal({
                           textTransform: 'uppercase'
                         }}
                       >
-                        {list.name}
-                        {list.items.length > 0 && (
-                          <span style={{ color: '#808080', fontSize: '12px', fontFamily: '"Futura PT Demi"' }}> ({list.items.length})</span>
-                        )}
+                        {(list.name || '').toUpperCase()}
+                        {list.items.length > 0 ? (
+                          <>
+                            <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '12px' }}>{' · '}</span>
+                            <span
+                              style={{
+                                color: '#EB1C24',
+                                fontSize: '12px',
+                                fontFamily: '"Futura PT Demi"',
+                              }}
+                            >
+                              {list.items.length}
+                            </span>
+                          </>
+                        ) : null}
                       </span>
                     </div>
                   );
