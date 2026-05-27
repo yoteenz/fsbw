@@ -18333,6 +18333,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Add to list modal: smaller list row checkboxes
+
+**Context:** Checkbox rows under dropdown (e.g. BIRTHDAY). User asked **−15%** size.
+
+**Changes:** **`LIST_ROW_CHECKBOX_PX`** = **11.9px** (was **14px**) for box + checkmark in **`AddToListModal.tsx`**.
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
