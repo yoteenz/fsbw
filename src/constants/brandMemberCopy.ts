@@ -10,8 +10,8 @@ export type BrandMemberBlock = {
 export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   {
     id: 'headline',
-    text: 'JOIN THE SLAY SOCIETY!',
-    variant: 'headline',
+    text: 'join the slay society',
+    variant: 'bohemy',
   },
   {
     id: 'vip-experience',
@@ -20,8 +20,8 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'loyalty-rewarded',
-    text: 'and yes… we believe loyalty should actually be rewarded.',
-    variant: 'bohemy',
+    text: 'AND YES… WE BELIEVE LOYALTY SHOULD ACTUALLY BE REWARDED.',
+    variant: 'accent',
   },
   {
     id: 'rewards-program',
@@ -35,8 +35,8 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'perks-continue',
-    text: "but the perks don't stop there…",
-    variant: 'bohemy',
+    text: "BUT THE PERKS DON'T STOP THERE…",
+    variant: 'accent',
   },
   {
     id: 'affiliate',
@@ -50,7 +50,7 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   },
   {
     id: 'invite',
-    text: 'this is your official invite. welcome to the inner circle.',
-    variant: 'bohemy',
+    text: 'THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE.',
+    variant: 'accent',
   },
 ];

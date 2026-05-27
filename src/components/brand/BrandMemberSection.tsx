@@ -31,7 +31,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
       textTransform: 'none',
       fontFamily: '"Bohemy", cursive',
       fontSize: '16px',
-      color: '#EB1C24',
+      color: BRAND_GRAY,
       fontWeight: 400,
     };
   }
@@ -183,7 +183,12 @@ export default function BrandMemberSection({
         textAlign: 'center',
       }}
     >
-      <p style={scriptHeadlineStyle}>JOIN THE SLAY SOCIETY!</p>
+      {(() => {
+        const headlineBlock = BRAND_MEMBER_BLOCKS.find((block) => block.id === 'headline');
+        return headlineBlock ? (
+          <p style={blockStyle('bohemy')}>{headlineBlock.text}</p>
+        ) : null;
+      })()}
 
       {bodyBlocks.map((block) => {
         const variant =
