@@ -166,7 +166,7 @@ export default function ViewListsPage() {
   const [showRemoveListItemConfirm, setShowRemoveListItemConfirm] = useState(false);
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
-  const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('grid');
+  const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
 
@@ -708,7 +708,7 @@ export default function ViewListsPage() {
                                     ))}
                                   </div>
                                   <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: 'black', margin: '0 0 4px 0', textAlign: 'center', textTransform: 'uppercase' }}>4.9 OUT OF 5 STARS</p>
-                                  <button type="button" onClick={() => removeItemFromExpandedList(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
+                                  <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#999', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textTransform: 'uppercase' }}>REMOVE</button>
                                 </div>
                               );
                             })}
