@@ -165,9 +165,9 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
 };
 
 const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontFamily: '"Futura PT Demi", Futura, sans-serif',
   fontSize: '9px',
-  color: '#EB1C24',
+  color: '#999999',
   background: 'none',
   border: 'none',
   cursor: 'pointer',
@@ -181,6 +181,12 @@ const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
   color: '#808080',
   textTransform: 'uppercase',
   margin: '4px 0 0 0',
+};
+
+const EXPANDED_LIST_GRID_PRICE_STYLE: React.CSSProperties = {
+  ...EXPANDED_LIST_LINE_PRICE_STYLE,
+  margin: '0 0 2px 0',
+  textAlign: 'center',
 };
 
 const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
@@ -916,6 +922,9 @@ export default function ViewListsPage() {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const itemPriceLabel = formatWishlistListItemPrice(
+                                getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
+                              );
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
@@ -924,7 +933,7 @@ export default function ViewListsPage() {
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
                                   <ExpandedListItemNoReviewStars centered />
-                                  <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
+                                  <p style={EXPANDED_LIST_GRID_PRICE_STYLE}>{itemPriceLabel}</p>
                                   <button type="button" onClick={() => requestRemoveListItemConfirm(item)} style={EXPANDED_LIST_GRID_REMOVE_STYLE}>REMOVE</button>
                                 </div>
                               );
