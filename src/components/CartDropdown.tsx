@@ -34,6 +34,7 @@ import {
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
+import { cartCapSizeLineMarginTop } from '../utils/cartCapSizeLineMargin';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1544,32 +1545,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               color: '#808080',
                               textTransform: 'uppercase',
                               fontSize: '10px',
-                              marginTop: (() => {
-                                // Check if there's black detail text (specifications)
-                                // Determine default texture based on product type
-                                const isWavyProduct = item.name === 'SOFT WAVE' || item.name === 'BEACH WAVE';
-                                const isCurlyProduct = item.name === 'SOFT CURL' || item.name === 'OCEAN CURL';
-                                const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
-                                const hasSpecs = (item.density && item.density !== '200%') || 
-                                               (item.lace && item.lace !== '13X6') || 
-                                               (item.texture && item.texture !== defaultTexture) || 
-                                               (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                               (item.hairline && item.hairline !== 'NATURAL') || 
-                                               (item.styling && item.styling !== 'NONE') || 
-                                               (item.addOns && item.addOns.length > 0);
-                                const baseMargin = hasSpecs ? '2px' : '0px';
-                                // Add 2px for SOFT WAVE and SOFT CURL only
-                                if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                  const numValue = parseInt(baseMargin);
-                                  return `${numValue + 2}px`;
-                                }
-                                // Add 2px for OCEAN CURL only
-                                if (item.name === 'OCEAN CURL') {
-                                  const numValue = parseInt(baseMargin);
-                                  return `${numValue + 2}px`;
-                                }
-                                return baseMargin;
-                              })(),
+                              marginTop: cartCapSizeLineMarginTop(item),
                               marginBottom: '0',
                               lineHeight: '1.1'
                             }}
