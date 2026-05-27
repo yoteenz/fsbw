@@ -18676,3 +18676,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - `postBrandFaqQuestionSubmit` + `/api/brand/faq-question-submit`; `brandFaqQuestions.ts` localStorage fallback; admin email via `sendBrandFaqQuestionNotifyEmail`.
 
 **Conventions:** Match `BrandContactSection` field styles; optional Supabase `brand_faq_questions` table (graceful if missing).
+
+---
+
+## 2026-05-27 — Brand Terms of Service page content
+
+**Context:** User supplied full Terms copy for `/brand/terms`; implemented with policy corrections vs checkout/contact/FAQ/product pages.
+
+**Corrections woven in:** 24h order authorization form; custom unit processing 6–8 / 10 / 4–6 weeks; expedited shipping ≠ processing time; 48h delivery claims; all sales final + 72h inquiry response; 10AM–6PM CST weekdays; contact form path; transit liability; licensed professional for chemical services.
+
+**Files:** `brandTermsCopy.ts`, `BrandTermsBody.tsx`; `brand/page.tsx` scrollable terms (removed from about-height shell).
