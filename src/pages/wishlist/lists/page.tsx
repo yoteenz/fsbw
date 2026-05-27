@@ -551,7 +551,7 @@ export default function ViewListsPage() {
                                       }
                                     : {}),
                                   border: '1.3px solid #000',
-                                  boxShadow: firstItem ? 'inset 0 0 0 3px #fff' : undefined,
+                                  boxShadow: 'inset 0 0 0 3px #fff',
                                   overflow: 'hidden'
                                 }}
                               >
