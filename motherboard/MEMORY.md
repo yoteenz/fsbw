@@ -18309,6 +18309,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Cart + add-to-list: dot count; dropdown spacing fix
+
+**Context (full chat):** Menu **`VACAY · 1`** format. User wanted same on cart **SHOPPING BAG (2)**; add-to-list **`marginTop`** on dropdown had no effect (**margin collapse** with title).
+
+**Fix:** **`CartDropdown`** — **`SHOPPING BAG · {count}`** (red count). **`AddToListModal`** — title **`paddingBottom: 16px`**, dropdown **`paddingTop: 14px`** (no **`marginTop`**).
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
