@@ -18618,3 +18618,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/constants/brandMenu.ts` — `label` fields only.
 
 **Conventions:** `label` = mobile menu text; `cardTitle` = red in-card header when different.
+
+---
+
+## 2026-05-27 — Brand member invite line: −2px below spacing
+
+**Context:** User asked to reduce spacing below "THIS IS YOUR OFFICIAL INVITE. WELCOME TO THE INNER CIRCLE." by 2px.
+
+**Change:** `BrandMemberSection.tsx` — invite block `marginBottom` `8px` → `6px` (`block.id === 'invite'`).
+
+**Conventions:** Member copy blocks live in `brandMemberCopy.ts`; per-block spacing overrides stay in `BrandMemberSection.tsx`.
