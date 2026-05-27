@@ -18277,9 +18277,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Context (full chat):** Lists UX (bag links, custom add-to-list picker, spacing). Expanded list was React state only on **`/wishlist/lists`**; browser **Back** skipped overview and went to **`/wishlist`**.
 
-**Fix:** Expanded list uses **`?list=<id>`** (**`useSearchParams`**). Open pushes history entry; **Back** drops query → overview. In-app close uses **`navigate(-1)`**; delete/invalid id uses **`replace`** to clear query.
+**Fix (initial):** **`?list=<id>`** — query updates could **replace** history in RR 6.8, so **Back** skipped overview → **`/wishlist`**.
 
-**Changes:** **`src/pages/wishlist/lists/page.tsx`** — **`openExpandedList`**, **`closeExpandedList`**.
+**Fix (current):** **`/wishlist/lists/:listId`** path segment (**`useParams`**); **`navigate(\`/wishlist/lists/${id}\`)`** pushes stack entry. Legacy **`?list=`** redirects with **replace**. Routes: **`App.tsx`** **`/wishlist/lists/:listId`** before **`/wishlist/lists`**.
+
+**Changes:** **`src/pages/wishlist/lists/page.tsx`**, **`App.tsx`**.
 
 ---
 
