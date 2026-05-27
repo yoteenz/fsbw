@@ -5306,7 +5306,7 @@ function CheckoutPage() {
                               height: '10.4px', 
                               position: 'absolute', 
                               objectFit: 'contain',
-                              filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)'
+                              filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                             }}
                         />
                       </button>
@@ -5701,13 +5701,13 @@ function CheckoutPage() {
                             <img 
                               src="/assets/close-icon.svg" 
                               alt="remove tip" 
-                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
                             />
                           ) : (
                             <img 
                               src="/assets/discount-check.svg" 
                               alt="apply tip" 
-                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(7404%) hue-rotate(353deg) brightness(92%) contrast(92%)' }}
+                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
                             />
                           )}
                         </button>
@@ -6988,7 +6988,7 @@ function CheckoutPage() {
                   height: '16px',
                   flexShrink: 0,
                   objectFit: 'contain',
-                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                 }}
               />
             </div>
@@ -7100,7 +7100,7 @@ function CheckoutPage() {
                   height: '16px',
                   flexShrink: 0,
                   objectFit: 'contain',
-                  filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                 }}
               />
             </div>

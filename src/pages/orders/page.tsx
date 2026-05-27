@@ -2328,7 +2328,7 @@ function OrdersPage() {
                           style={{
                             width: '16px',
                             height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                       </button>
@@ -2868,7 +2868,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -3282,7 +3282,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           style={{
                             width: '16px',
                             height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)'
+                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                           }}
                         />
                       </button>
@@ -3822,7 +3822,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(346deg) brightness(92%) contrast(92%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

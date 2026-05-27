@@ -2720,7 +2720,7 @@ function AccountPage() {
               >
                 DIGITAL CASH HISTORY
               </p>
-              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
               <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>
@@ -2824,7 +2824,7 @@ function AccountPage() {
               >
                 VOUCHER HISTORY
               </p>
-              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'invert(27%) sepia(98%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)' }} />
+              <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px', fontFamily: '"Futura PT Medium"', fontWeight: '500', color: '#000000' }}>
               <span style={{ flex: '1 1 0', minWidth: 0, textAlign: 'left' }}>DATE</span>

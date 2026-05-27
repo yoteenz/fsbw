@@ -2097,7 +2097,7 @@ function AffiliatePage() {
                                    style={{
                                      width: '16px',
                                      height: '16px',
-                                     filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                     filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                                    }}
                                  />
                                </button>
@@ -3431,7 +3431,7 @@ function AffiliatePage() {
                                                 objectFit: 'contain',
                                                 display: 'block',
                                                 flexShrink: 0,
-                                                filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                                               }}
                                             />
                                           </button>
@@ -3563,7 +3563,7 @@ function AffiliatePage() {
                                                 objectFit: 'contain',
                                                 display: 'block',
                                                 flexShrink: 0,
-                                                filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                                               }}
                                             />
                                           </button>
@@ -3657,7 +3657,7 @@ function AffiliatePage() {
                                                  objectFit: 'contain',
                                                  display: 'block',
                                                  flexShrink: 0,
-                                                 filter: 'brightness(0) saturate(100%) invert(20%) sepia(93%) saturate(7151%) hue-rotate(349deg) brightness(92%) contrast(92%)'
+                                                 filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
                                                }}
                                              />
                                            </button>
