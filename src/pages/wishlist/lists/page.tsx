@@ -19,6 +19,13 @@ import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/Pa
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import {
+  buildWishlistItemDetailsHtml,
+  formatWishlistListItemPrice,
+  getWishlistItemDisplayPrice,
+  getWishlistItemProductName,
+  wishlistItemHasViewDetails,
+} from '../../../utils/wishlistListItemDetails';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -153,15 +160,49 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
 };
 
 const EXPANDED_LIST_GRID_REMOVE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
-  color: '#999999',
+  color: '#EB1C24',
   background: 'none',
   border: 'none',
   cursor: 'pointer',
   padding: 0,
   textTransform: 'uppercase',
 };
+
+const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: '10px',
+  color: '#808080',
+  textTransform: 'uppercase',
+  margin: '4px 0 0 0',
+};
+
+const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Book", Futura, sans-serif',
+  color: '#000000',
+  textTransform: 'uppercase',
+  fontSize: '9px',
+  marginTop: '2px',
+  marginBottom: '0',
+  lineHeight: '1.44',
+  wordBreak: 'break-word',
+};
+
+const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+  fontSize: '8px',
+  color: '#EB1C24',
+  textTransform: 'uppercase',
+  marginTop: '7px',
+  cursor: 'pointer',
+  display: 'inline-block',
+};
+
+function getExpandedListItemKey(item: any, index: number): string {
+  if (item?.id != null && item.id !== '') return String(item.id);
+  return `expanded-list-item-${index}`;
+}
 
 /** Red link under list line thumb — matches CartDropdown EDIT IN BUILD-A-WIG placement. */
 const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
@@ -287,8 +328,13 @@ export default function ViewListsPage() {
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
+  const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
+
+  useEffect(() => {
+    setViewingDetailsItemKey(null);
+  }, [expandedListId]);
 
   const refreshLists = () => {
     const loaded = loadUserLists();
@@ -737,6 +783,12 @@ export default function ViewListsPage() {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const itemKey = getExpandedListItemKey(item, index);
+                              const isViewingDetails = viewingDetailsItemKey === itemKey;
+                              const showViewDetailsLink = wishlistItemHasViewDetails(item);
+                              const itemPriceLabel = formatWishlistListItemPrice(
+                                getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
+                              );
                               const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                               const isOutOfStock = (item.stockStatus || 'in_stock') === 'out_of_stock';
                               return (
@@ -807,8 +859,38 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>{itemLength} RAW {itemHairOrigin}</p>
-                                    <ExpandedListItemNoReviewStars />
-                                    <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
+                                    {isViewingDetails ? (
+                                      <p
+                                        style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
+                                        dangerouslySetInnerHTML={{ __html: buildWishlistItemDetailsHtml(item) }}
+                                      />
+                                    ) : (
+                                      <>
+                                        <ExpandedListItemNoReviewStars />
+                                        <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
+                                      </>
+                                    )}
+                                    <p style={EXPANDED_LIST_LINE_PRICE_STYLE}>{itemPriceLabel}</p>
+                                    {showViewDetailsLink && (
+                                      <span
+                                        role="button"
+                                        tabIndex={0}
+                                        style={EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                          }
+                                        }}
+                                      >
+                                        {isViewingDetails ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               );
