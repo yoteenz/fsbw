@@ -18686,3 +18686,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Corrections woven in:** 24h order authorization form; custom unit processing 6–8 / 10 / 4–6 weeks; expedited shipping ≠ processing time; 48h delivery claims; all sales final + 72h inquiry response; 10AM–6PM CST weekdays; contact form path; transit liability; licensed professional for chemical services.
 
 **Files:** `brandTermsCopy.ts`, `BrandTermsBody.tsx`; `brand/page.tsx` scrollable terms (removed from about-height shell).
+
+---
+
+## 2026-05-27 — Checkout terms modal synced with /brand/terms
+
+**Change:** Checkout `showTermsModal` now renders shared `BrandTermsBody` (from `brandTermsCopy.ts`) instead of two hardcoded paragraphs — stays aligned with `/brand/terms` when copy updates.
+
+**File:** `src/pages/checkout/page.tsx`
