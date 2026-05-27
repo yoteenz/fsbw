@@ -316,20 +316,40 @@ export default function SharedWishlistListPage() {
                   {items.length}
                 </span>
               </div>
-              <div style={{ paddingTop: '10px', flex: 1, overflowY: 'auto' }}>
+              <div
+                style={{
+                  paddingTop: '10px',
+                  flex: 1,
+                  minHeight: 0,
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
                 {items.length === 0 ? (
-                  <p
+                  <div
                     style={{
-                      fontFamily: '"Futura PT Medium"',
-                      fontSize: '11px',
-                      color: '#808080',
-                      textTransform: 'uppercase',
-                      textAlign: 'center',
-                      margin: '32px 20px',
+                      flex: 1,
+                      minHeight: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    THERE ARE NO ITEMS IN THIS LIST.
-                  </p>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '11px',
+                        color: '#808080',
+                        textTransform: 'uppercase',
+                        textAlign: 'center',
+                        margin: 0,
+                        padding: '0 20px',
+                      }}
+                    >
+                      THERE ARE NO ITEMS IN THIS LIST.
+                    </p>
+                  </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                     {items.map((item: any, index: number) => {
