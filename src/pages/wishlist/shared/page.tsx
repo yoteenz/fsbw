@@ -12,9 +12,42 @@ const SHARED_LIST_ROW_DIVIDER_STYLE = '1px solid #e5e5e5';
 const SHARED_LIST_ROW_GAP_BELOW_DIVIDER_PX = 18;
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
-const EXPANDED_LIST_LINE_NAME_FONT_PX = 22;
+const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
+const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
+const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
+const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_RATING_FONT_PX = 9;
+const EXPANDED_LIST_NO_REVIEWS_LABEL = 'NO REVIEWS SUBMITTED';
+const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
+
+const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
+  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+  fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
+  color: '#000',
+  margin: `0 0 ${EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX}px 0`,
+  padding: 0,
+  lineHeight: 1,
+  textTransform: 'uppercase',
+};
+
+const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX}px`,
+};
+
+const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
+  flexShrink: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
+};
+
+const EXPANDED_LIST_LINE_RAW_MARGIN_STYLE: React.CSSProperties = {
+  margin: '0 0 5px 0',
+};
 
 const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
@@ -30,11 +63,27 @@ const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
-/** Matches unit PDPs (Noir, Blanco, etc.). */
-const UNIT_STAR_RATING_LABEL = '4.97 OUT OF 5 STARS';
+function ExpandedListItemNoReviewStars() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}>
+      {[...Array(5)].map((_, idx) => (
+        <img
+          key={idx}
+          src="/assets/NOIR/star-symbol.png"
+          alt=""
+          style={{
+            width: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            height: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
+            filter: EXPANDED_LIST_STAR_STROKE_FILTER,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
-const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Book"',
+const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8.5px',
@@ -46,9 +95,9 @@ const LIST_LINE_BAG_LINK_STYLE: React.CSSProperties = {
   width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
 };
 
-const LIST_LINE_BAG_REMOVE_LINK_STYLE: React.CSSProperties = {
-  ...LIST_LINE_BAG_LINK_STYLE,
-  color: '#808080',
+const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
+  ...LIST_LINE_BAG_ADD_STYLE,
+  color: '#999999',
 };
 
 function readCartItems(): any[] {
@@ -363,7 +412,7 @@ export default function SharedWishlistListPage() {
                           key={item.id || index}
                           style={{
                             display: 'flex',
-                            alignItems: 'center',
+                            alignItems: 'flex-start',
                             gap: '16px',
                             paddingLeft: LIST_ROW_CONTENT_OFFSET_LEFT_PX,
                             paddingBottom: '16px',
@@ -373,7 +422,7 @@ export default function SharedWishlistListPage() {
                               index < items.length - 1 ? SHARED_LIST_ROW_DIVIDER_STYLE : 'none',
                           }}
                         >
-                          <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
                             <div
                               role="button"
                               tabIndex={0}
@@ -409,13 +458,13 @@ export default function SharedWishlistListPage() {
                               />
                             </div>
                             {outOfStock ? (
-                              <p style={{ ...LIST_LINE_BAG_LINK_STYLE, color: '#808080', cursor: 'default' }}>
+                              <p style={{ ...LIST_LINE_BAG_ADD_STYLE, color: '#808080', cursor: 'default' }}>
                                 OUT OF STOCK
                               </p>
                             ) : inBag ? (
                               <p
-                                className="font-bold hover:opacity-80 transition-opacity"
-                                style={LIST_LINE_BAG_REMOVE_LINK_STYLE}
+                                className="hover:opacity-80 transition-opacity"
+                                style={LIST_LINE_BAG_REMOVE_STYLE}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleRemoveFromBag(item, index);
@@ -433,8 +482,8 @@ export default function SharedWishlistListPage() {
                               </p>
                             ) : (
                               <p
-                                className="font-bold hover:opacity-80 transition-opacity"
-                                style={LIST_LINE_BAG_LINK_STYLE}
+                                className="hover:opacity-80 transition-opacity"
+                                style={LIST_LINE_BAG_ADD_STYLE}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleAddToBag(item, index);
@@ -452,36 +501,13 @@ export default function SharedWishlistListPage() {
                               </p>
                             )}
                           </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <p
-                              style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
-                                fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
-                                color: '#000',
-                                margin: '0 0 4px 0',
-                                textTransform: 'uppercase',
-                              }}
-                            >
-                              {itemName.replace(/WIG/gi, '').trim()}
-                            </p>
-                            <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 6px 0' }}>
+                          <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
+                            <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                            <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>
                               {itemLength} RAW {itemHairOrigin}
                             </p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '4px' }}>
-                              {[...Array(5)].map((_, idx) => (
-                                <img
-                                  key={idx}
-                                  src="/assets/NOIR/filled-star.png"
-                                  alt="Star"
-                                  style={{
-                                    width: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
-                                    height: `${EXPANDED_LIST_STAR_SIZE_PX}px`,
-                                    filter: 'drop-shadow(0 0 0 1px black)',
-                                  }}
-                                />
-                              ))}
-                            </div>
-                            <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{UNIT_STAR_RATING_LABEL}</p>
+                            <ExpandedListItemNoReviewStars />
+                            <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
                           </div>
                         </div>
                       );
@@ -498,9 +524,11 @@ export default function SharedWishlistListPage() {
             <button
               type="button"
               onClick={handleAddAllToBag}
-              disabled={!hasAddableItems}
-              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={pageActionButtonStyle}
+              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+              style={{
+                ...pageActionButtonStyle,
+                color: hasAddableItems ? '#EB1C24' : '#808080',
+              }}
             >
               ADD ITEMS TO BAG
             </button>
