@@ -608,7 +608,9 @@ export default function ViewListsPage() {
                                       }
                                     : { backgroundColor: '#fff' }),
                                   border: '1.3px solid #000',
-                                  boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                                  boxShadow: firstItem
+                                    ? `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`
+                                    : `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
                                   overflow: 'hidden'
                                 }}
                               >
@@ -633,10 +635,10 @@ export default function ViewListsPage() {
                                   <div
                                     style={{
                                       position: 'absolute',
-                                      top: LIST_THUMB_FRAME_INSET_PX,
-                                      left: LIST_THUMB_FRAME_INSET_PX,
-                                      right: LIST_THUMB_FRAME_INSET_PX,
-                                      bottom: LIST_THUMB_FRAME_INSET_PX,
+                                      top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                      left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                      right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+                                      bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
                                       overflow: 'hidden',
                                     }}
                                   >
