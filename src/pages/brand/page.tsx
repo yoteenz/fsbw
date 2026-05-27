@@ -110,6 +110,8 @@ function BrandPage() {
   const brandMainCardScrollable =
     slug === 'contact' || (slug === 'member' && memberPremium.showPremiumChart);
 
+  const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
+
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
       navigate('/brand/about', { replace: true });
@@ -306,20 +308,24 @@ function BrandPage() {
                     : {}),
                 }}
               >
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Medium"',
-                    fontSize: '12px',
-                    color: '#EB1C24',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase',
-                    fontWeight: '500',
-                    flexShrink: 0,
-                  }}
-                >
-                  {cardHeaderTitle}
-                </p>
-                <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
+                {!hideMemberCardHeader ? (
+                  <>
+                    <p
+                      style={{
+                        fontFamily: '"Futura PT Medium"',
+                        fontSize: '12px',
+                        color: '#EB1C24',
+                        margin: '0 0 8px 0',
+                        textTransform: 'uppercase',
+                        fontWeight: '500',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {cardHeaderTitle}
+                    </p>
+                    <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
+                  </>
+                ) : null}
                 <div
                   style={
                     brandMainCardScrollable
