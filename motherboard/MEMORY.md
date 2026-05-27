@@ -18395,6 +18395,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Expanded list line view: persistent spacing (margin not transform)
+
+**Context:** User reported **RAW tighten** and **text up 8px** not persisting; next row thumb too close to gray divider.
+
+**Cause:** **`translateY`** fought flex **`alignItems: center`**; script name **line-height** left gap above RAW at **`margin: 0`**.
+
+**Fix:** **`marginTop: -8px`** text column; RAW **`marginTop: -2px`** + name **`lineHeight: 1`**; rows with divider **`marginBottom: 18px`** (+2 below border).
+
+**Changes:** **`EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX`**, **`EXPANDED_LIST_LINE_RAW_TIGHTEN_ABOVE_PX`**, **`EXPANDED_LIST_LINE_GAP_BELOW_DIVIDER_PX`** in **`src/pages/wishlist/lists/page.tsx`**.
+
+---
+
 ## 2026-05-27 — Shared wishlist link page: back button, lists line UI parity, cart actions
 
 **Context:** User opened a shared list link and reported a gray box beside SHARED LIST, stale row typography vs their lists page, missing ADD/REMOVE FROM BAG under thumbnails, missing star rating line, and no bulk ADD TO BAG below the card.
