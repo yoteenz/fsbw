@@ -18188,3 +18188,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Note:** Share registry is **localStorage** (same browser origin); cross-device share needs a future API.
 
 **Verify:** **`npm run build`** succeeds.
+
+---
+
+## 2026-05-27 — Account alerts: GET /api/notifications (Supabase hardening)
+
+**Context:** Supabase will require explicit Data API grants on new `public` tables; optional hardening so the client does not call **`supabase.from('notifications')`**.
+
+**Changes:** **`api/notifications.ts`** (GET signed-in user's **`items`**). **`getNotifications()`** in **`api.ts`**. **`account/notifications/page.tsx`** merges admin-sent alerts via API. Same alerts UX; no feature removed.
+
+**Verify:** **`npm run build`** succeeds.
