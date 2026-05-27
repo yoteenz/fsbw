@@ -53,6 +53,7 @@ import {
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
+import { cartCapSizeLineMarginTop } from '../../utils/cartCapSizeLineMargin';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -1644,28 +1645,7 @@ function ShoppingBagPage() {
                                     color: '#808080',
                                     textTransform: 'uppercase',
                                     fontSize: '10px',
-                                    marginTop: (() => {
-                                      // Check if there's black detail text (specifications)
-                                      const hasSpecs = (item.density && item.density !== '200%') || 
-                                                     (item.lace && item.lace !== '13X6') || 
-                                                     (item.texture && item.texture !== 'SILKY') || 
-                                                     (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                     (item.hairline && item.hairline !== 'NATURAL') || 
-                                                     (item.styling && item.styling !== 'NONE') || 
-                                                     (item.addOns && item.addOns.length > 0);
-                                      const baseMargin = hasSpecs ? '2px' : '0px';
-                                      // Add 2px for SOFT WAVE and SOFT CURL only
-                                      if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                        const numValue = parseInt(baseMargin);
-                                        return `${numValue + 2}px`;
-                                      }
-                                      // Add 2px for OCEAN CURL only
-                                      if (item.name === 'OCEAN CURL') {
-                                        const numValue = parseInt(baseMargin);
-                                        return `${numValue + 2}px`;
-                                      }
-                                      return baseMargin;
-                                    })(),
+                                    marginTop: cartCapSizeLineMarginTop(item),
                                     marginBottom: '0',
                                     lineHeight: '1.1'
                                   }}
@@ -2228,28 +2208,7 @@ function ShoppingBagPage() {
                                  color: '#808080',
                                  textTransform: 'uppercase',
                                  fontSize: '10px',
-                                 marginTop: (() => {
-                                   // Check if there's black detail text (specifications)
-                                   const hasSpecs = (item.density && item.density !== '200%') || 
-                                                  (item.lace && item.lace !== '13X6') || 
-                                                  (item.texture && item.texture !== 'SILKY') || 
-                                                  (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                  (item.hairline && item.hairline !== 'NATURAL') || 
-                                                  (item.styling && item.styling !== 'NONE') || 
-                                                  (item.addOns && item.addOns.length > 0);
-                                   const baseMargin = hasSpecs ? '2px' : '0px';
-                                   // Add 2px for SOFT WAVE and SOFT CURL only
-                                   if (item.name === 'SOFT WAVE' || item.name === 'SOFT CURL') {
-                                     const numValue = parseInt(baseMargin);
-                                     return `${numValue + 2}px`;
-                                   }
-                                   // Add 2px for OCEAN CURL only
-                                   if (item.name === 'OCEAN CURL') {
-                                     const numValue = parseInt(baseMargin);
-                                     return `${numValue + 2}px`;
-                                   }
-                                   return baseMargin;
-                                 })(),
+                                 marginTop: cartCapSizeLineMarginTop(item),
                                  marginBottom: '0',
                                  lineHeight: '1.1'
                                }}
