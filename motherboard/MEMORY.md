@@ -18317,6 +18317,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — Add to list: gap between field and open menu
+
+**Context:** User screenshot — open portaled menu touched the **ADD TO LIST** trigger; prior **`marginTop`/`paddingTop`** on modal section targeted title→field, not field→menu.
+
+**Fix:** **`LIST_MENU_TRIGGER_GAP_PX` (8)** — menu **`top: rect.bottom + gap`**, full border on panel; flip-above accounts for gap.
+
+---
+
 ## 2026-05-21 — Lists line view: confirm remove item
 
 **Context (full chat):** Lists UX (bag links, custom picker, **`?list=`** back nav). User wanted confirmation before removing an item via the black **X** on **line view**.
