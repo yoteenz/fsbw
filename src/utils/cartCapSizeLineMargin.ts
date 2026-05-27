@@ -39,5 +39,5 @@ export function cartCapSizeLineMarginTop(item: CartLineSpacingItem): string {
 
 /** Margin above line price (below CAP SIZE); bag + cart dropdown parity. */
 export function cartLinePriceMarginTop(item: CartLineSpacingItem): string {
-  return item.name === 'BLANCO' ? '0px' : '2px';
+  return item.name === 'BLANCO' ? '2px' : '2px';
 }
