@@ -31,6 +31,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { ACCOUNT_MAIN_COLUMN_MIN_HEIGHT, MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import { BRAND_RED_HEADER_ICON_FILTER } from '../../../components/RoleCardSectionHeader';
 
 const BRAND_GRAY = '#808080';
 const CHART_BORDER = '0.8px solid #000';
@@ -1242,7 +1243,7 @@ function MembershipPage() {
                             width: '19.76px',
                             height: '19.76px',
                             objectFit: 'contain',
-                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                            filter: BRAND_RED_HEADER_ICON_FILTER,
                           }}
                         />
                         <img
@@ -2073,7 +2074,7 @@ function MembershipPage() {
                         width: '19.76px',
                         height: '19.76px',
                         objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                        filter: BRAND_RED_HEADER_ICON_FILTER,
                       }}
                     />
                   </div>
