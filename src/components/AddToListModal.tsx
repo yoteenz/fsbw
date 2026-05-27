@@ -42,6 +42,42 @@ function saveUserLists(lists: UserList[]) {
   window.dispatchEvent(new CustomEvent('userListsUpdated'));
 }
 
+/** Matches prior native select chrome (custom menu avoids placeholder-in-list bug). */
+const LIST_DROPDOWN_FIELD_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '36px',
+  padding: '8px 28px 8px 8px',
+  border: '1.3px solid #000000',
+  fontFamily: '"Futura PT Demi"',
+  fontSize: '11px',
+  color: '#808080',
+  backgroundColor: '#FFFFFF',
+  boxSizing: 'border-box',
+  borderRadius: '0',
+  textTransform: 'uppercase',
+  backgroundImage: 'url("/assets/dropdown.svg")',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 8px center',
+  backgroundSize: '7.2px',
+  cursor: 'pointer',
+  textAlign: 'left',
+};
+
+const LIST_DROPDOWN_MENU_ITEM_STYLE: React.CSSProperties = {
+  display: 'block',
+  width: '100%',
+  padding: '8px',
+  border: 'none',
+  borderBottom: '1px solid #e5e5e5',
+  background: 'none',
+  textAlign: 'left',
+  fontFamily: '"Futura PT Demi"',
+  fontSize: '11px',
+  color: '#808080',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+};
+
 export default function AddToListModal({
   isOpen,
   onClose,
@@ -50,17 +86,18 @@ export default function AddToListModal({
 }: AddToListModalProps) {
   const [lists, setLists] = useState<UserList[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [listDropdownValue, setListDropdownValue] = useState('');
+  const [listMenuOpen, setListMenuOpen] = useState(false);
   const [saveErrorMessage, setSaveErrorMessage] = useState('');
   const [isCreatingNewList, setIsCreatingNewList] = useState(false);
   const [newListName, setNewListName] = useState('');
   const newListInputRef = useRef<HTMLInputElement>(null);
+  const listMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       const loadedLists = loadUserLists();
       setLists(loadedLists);
-      setListDropdownValue('');
+      setListMenuOpen(false);
       setSaveErrorMessage('');
       setIsCreatingNewList(false);
       setNewListName('');
@@ -82,6 +119,16 @@ export default function AddToListModal({
     }
   }, [isCreatingNewList]);
 
+  useEffect(() => {
+    if (!listMenuOpen) return;
+    const handlePointerDown = (e: MouseEvent) => {
+      if (listMenuRef.current?.contains(e.target as Node)) return;
+      setListMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    return () => document.removeEventListener('mousedown', handlePointerDown);
+  }, [listMenuOpen]);
+
   const toggleList = (id: string) => {
     setSaveErrorMessage('');
     setSelectedIds((prev) => {
@@ -92,17 +139,20 @@ export default function AddToListModal({
     });
   };
 
-  const handleListDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setListDropdownValue(''); // reset so user can select again
+  const handlePickCreateList = () => {
+    setListMenuOpen(false);
     setSaveErrorMessage('');
-    if (value === '__create__') {
-      setIsCreatingNewList(true);
-      setNewListName('');
-    } else if (value) {
-      setSelectedIds((prev) => new Set(prev).add(value));
-    }
+    setIsCreatingNewList(true);
+    setNewListName('');
   };
+
+  const handlePickList = (listId: string) => {
+    setListMenuOpen(false);
+    setSaveErrorMessage('');
+    setSelectedIds((prev) => new Set(prev).add(listId));
+  };
+
+  const listDropdownClosedLabel = lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST';
 
   const handleCreateNewListSubmit = () => {
     const trimmed = newListName.trim();
@@ -240,47 +290,56 @@ export default function AddToListModal({
               }}
             />
           ) : (
-            <select
-              value={listDropdownValue}
-              onChange={handleListDropdownChange}
-              className="add-to-list-modal-select"
-              style={{
-                width: '100%',
-                height: '36px',
-                padding: '8px 28px 8px 8px',
-                border: '1.3px solid #000000',
-                fontFamily: '"Futura PT Demi"',
-                fontSize: '11px',
-                color: '#808080',
-                backgroundColor: '#FFFFFF',
-                boxSizing: 'border-box',
-                borderRadius: '0',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-                backgroundImage: 'url("/assets/dropdown.svg")',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 8px center',
-                backgroundSize: '7.2px'
-              }}
-            >
-              <option value="" disabled hidden>
-                {lists.length === 0 ? 'SELECT A LIST' : 'ADD TO LIST'}
-              </option>
-              {lists.length === 0 ? (
-                <option value="__create__">CREATE A LIST</option>
-              ) : (
-                <>
-                  <option value="__create__">CREATE A LIST</option>
+            <div ref={listMenuRef} style={{ position: 'relative', width: '100%' }}>
+              <button
+                type="button"
+                className="add-to-list-modal-select"
+                aria-haspopup="listbox"
+                aria-expanded={listMenuOpen}
+                onClick={() => setListMenuOpen((open) => !open)}
+                style={LIST_DROPDOWN_FIELD_STYLE}
+              >
+                {listDropdownClosedLabel}
+              </button>
+              {listMenuOpen ? (
+                <div
+                  role="listbox"
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    zIndex: 2,
+                    border: '1.3px solid #000000',
+                    borderTop: 'none',
+                    backgroundColor: '#FFFFFF',
+                    maxHeight: '220px',
+                    overflowY: 'auto',
+                  }}
+                >
+                  <button
+                    type="button"
+                    role="option"
+                    style={LIST_DROPDOWN_MENU_ITEM_STYLE}
+                    onClick={handlePickCreateList}
+                  >
+                    CREATE A LIST
+                  </button>
                   {lists.map((list) => (
-                    <option key={list.id} value={list.id}>
+                    <button
+                      key={list.id}
+                      type="button"
+                      role="option"
+                      style={LIST_DROPDOWN_MENU_ITEM_STYLE}
+                      onClick={() => handlePickList(list.id)}
+                    >
                       {list.name.toUpperCase()}
                       {list.items.length > 0 ? ` (${list.items.length})` : ''}
-                    </option>
+                    </button>
                   ))}
-                </>
-              )}
-            </select>
+                </div>
+              ) : null}
+            </div>
           )}
         </div>
 
