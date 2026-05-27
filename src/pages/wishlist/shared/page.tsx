@@ -13,6 +13,10 @@ import {
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
+import {
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
+} from '../wishlistExpandedListLineClasses';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
@@ -98,16 +102,6 @@ const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
   marginBottom: '0',
   lineHeight: '1.44',
   wordBreak: 'break-word',
-};
-
-const EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-  fontSize: '8px',
-  color: '#EB1C24',
-  textTransform: 'uppercase',
-  marginTop: '-3px',
-  cursor: 'pointer',
-  display: 'inline-block',
 };
 
 function getSharedListItemKey(item: any, index: number): string {
@@ -581,12 +575,14 @@ export default function SharedWishlistListPage() {
                                 <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: 0 }}>{EXPANDED_LIST_NO_REVIEWS_LABEL}</p>
                               </>
                             )}
-                            <p style={EXPANDED_LIST_LINE_PRICE_STYLE}>{itemPriceLabel}</p>
+                            <p className={WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} style={EXPANDED_LIST_LINE_PRICE_STYLE}>
+                              {itemPriceLabel}
+                            </p>
                             {showViewDetailsLink && (
                               <span
                                 role="button"
                                 tabIndex={0}
-                                style={EXPANDED_LIST_LINE_VIEW_DETAILS_TOGGLE_STYLE}
+                                className={WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
