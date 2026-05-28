@@ -203,7 +203,7 @@ function BrandPage() {
           <div
             ref={memberMainCardMeasureRef}
             aria-hidden
-            className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
+            className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col mb-2"
             style={{
               borderWidth: '1.3px',
               position: 'absolute',
@@ -361,7 +361,11 @@ function BrandPage() {
                         overflow: 'hidden',
                       }
                     : brandMainCardMatchMemberHeight && memberMainCardMinHeightPx != null
-                      ? { minHeight: memberMainCardMinHeightPx }
+                      ? {
+                          height: memberMainCardMinHeightPx,
+                          minHeight: memberMainCardMinHeightPx,
+                          boxSizing: 'border-box',
+                        }
                       : {}),
                 }}
               >
