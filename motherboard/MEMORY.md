@@ -19006,3 +19006,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Cause:** **SPECIAL OFFER** uses native **`#EB1C24`** SVG (**`special-offer2.svg`**, no CSS filter). Other cards used black **`public/assets/`** SVGs with **`brightness/invert/sepia`** filter + inconsistent **`drop-shadow`** stacks — filter-tinted red ≠ true brand red.
 
 **Fix:** **`src/assets/concierge/`** — red-native SVGs (**`priority-icon-red`**, **`order-tracking-red`**, **`challenge-icon-red`**, **`free-gift-red`**, **`birthday-red`**) + **`conciergeSectionIcons.ts`**. **`ConciergeSectionHeader.tsx`** — shared title row (Futura 12px **`#EB1C24`**, gray rule, unfiltered icon). **`concierge/page.tsx`** — all six section headers use the component + red assets (no filter). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-28 — Wishlist list view: VIEW DETAILS +1px right only
+
+**Context:** User asked to move **VIEW DETAILS** text **1px right** on **list view wishlist only** (`/wishlist/lists/:id` line mode) — **not** **CLOSE DETAILS**, not shared wishlist.
+
+**Change:** **`wishlistExpandedListLineClasses.ts`** — **`wishlist-expanded-list-view-details-toggle--list-view-only`**. **`index.css`** — **`margin-left: 1px`**. **`wishlist/lists/page.tsx`** — class applied only when **`!isViewingDetails`**. Pushed **`master`** + **`preview/mobile`**.
