@@ -1155,6 +1155,7 @@ function ProductsPage() {
 
                               <WigProductPriceDisplay
                                 productName={product.name}
+                                soldOutPriceTreatment="strikethrough-only"
                                 priceHtml={formatPrice(product.price)}
                                 priceStyle={{
                                   fontFamily: '"Futura PT Medium"',

@@ -79,14 +79,18 @@ export function WigProductPriceDisplay({
   priceHtml,
   priceStyle,
   labelStyle,
-  /** PDP: show price normally when sold out; grid keeps strikethrough + label. */
+  /**
+   * PDP main price: `normal` (no strike, no label).
+   * Shop browse grids: `strikethrough-only` (gray strike, no label).
+   * Default `strikethrough`: strike + red OUT OF STOCK (legacy / non-browse).
+   */
   soldOutPriceTreatment = 'strikethrough',
 }: {
   productName: string;
   priceHtml: PriceHtml;
   priceStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  soldOutPriceTreatment?: 'strikethrough' | 'normal';
+  soldOutPriceTreatment?: 'strikethrough' | 'strikethrough-only' | 'normal';
 }) {
   const soldOut = isWigUnitSoldOut(productName);
   if (!soldOut) {
@@ -94,6 +98,19 @@ export function WigProductPriceDisplay({
   }
   if (soldOutPriceTreatment === 'normal') {
     return <p style={priceStyle} dangerouslySetInnerHTML={priceHtml} />;
+  }
+  if (soldOutPriceTreatment === 'strikethrough-only') {
+    return (
+      <p
+        style={{
+          ...priceStyle,
+          color: '#808080',
+          textDecoration: 'line-through',
+          margin: priceStyle?.margin ?? 0,
+        }}
+        dangerouslySetInnerHTML={priceHtml}
+      />
+    );
   }
   return (
     <div style={{ textAlign: 'center' }}>
