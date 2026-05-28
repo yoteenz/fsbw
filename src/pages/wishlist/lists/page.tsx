@@ -27,7 +27,11 @@ import {
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
-import { WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS } from '../wishlistExpandedListLineClasses';
+import {
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
+} from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../../components/shop/WigStockPrice';
@@ -188,7 +192,7 @@ const EXPANDED_LIST_LINE_PRICE_STYLE: React.CSSProperties = {
   fontSize: `${EXPANDED_LIST_LINE_PRICE_FONT_PX}px`,
   color: '#808080',
   textTransform: 'uppercase',
-  margin: '3px 0 0 0',
+  margin: 0,
 };
 
 const EXPANDED_LIST_LINE_DETAILS_HTML_STYLE: React.CSSProperties = {
@@ -894,6 +898,7 @@ export default function ViewListsPage() {
                                         item={item}
                                         priceHtml={{ __html: itemPriceLabel }}
                                         priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
+                                        priceClassName={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
                                       />
                                       </CartLineTextLayer>
                                     )}

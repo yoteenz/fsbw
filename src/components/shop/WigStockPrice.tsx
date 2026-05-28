@@ -18,6 +18,7 @@ export function WigLineStockPrice({
   productName,
   priceHtml,
   priceStyle,
+  priceClassName,
   layout = 'stack',
   outOfStockLabel = 'OUT OF STOCK',
 }: {
@@ -25,6 +26,7 @@ export function WigLineStockPrice({
   productName?: string;
   priceHtml: PriceHtml;
   priceStyle?: CSSProperties;
+  priceClassName?: string;
   layout?: 'stack' | 'inline';
   outOfStockLabel?: string;
 }) {
@@ -37,11 +39,12 @@ export function WigLineStockPrice({
         : false;
 
   if (!out) {
-    return <span style={priceStyle} dangerouslySetInnerHTML={priceHtml} />;
+    return <span className={priceClassName} style={priceStyle} dangerouslySetInnerHTML={priceHtml} />;
   }
 
   const struckPrice = (
     <span
+      className={priceClassName}
       style={{
         ...priceStyle,
         color: '#808080',
