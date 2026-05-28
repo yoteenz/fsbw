@@ -18996,3 +18996,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Cause:** **`writeGiftCardSelectionForCheckoutSession`** persisted **`cartItems = [giftLine]`** only (see MEMORY 2026-04-08) with **no backup** of non–gift-card lines.
 
 **Fix:** **`giftCardCheckoutSession.ts`** — before replacing the bag, save non–gift-card lines to **`localStorage`** key **`giftCardCheckoutCartBackup`** (do not overwrite if cart is already gift-only mid-flow). **`restoreGiftCardCheckoutCartFromBackup`** / **`maybeRestoreGiftCardCheckoutCartAfterAbandon`** restore on abandon. **`clearGiftCardCheckoutCartBackup`** after successful gift-card-only order. Wired restore into **`checkout/page.tsx`** back navigation + empty gift-checkout redirect; **`shopping-bag/page.tsx`** remove line; **`CartDropdown.tsx`** remove confirm. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-28 — Concierge section header icons: match Special Offer red
+
+**Context:** User reported **red header icon color mismatch** on **Account → Concierge** — **SPECIAL OFFER** looked correct but **PRIORITY MESSAGES**, **ORDER TRACKING**, **SLAY CHALLENGE**, **FREE GIFT**, and **BIRTHDAY GIFT** did not.
+
+**Cause:** **SPECIAL OFFER** uses native **`#EB1C24`** SVG (**`special-offer2.svg`**, no CSS filter). Other cards used black **`public/assets/`** SVGs with **`brightness/invert/sepia`** filter + inconsistent **`drop-shadow`** stacks — filter-tinted red ≠ true brand red.
+
+**Fix:** **`src/assets/concierge/`** — red-native SVGs (**`priority-icon-red`**, **`order-tracking-red`**, **`challenge-icon-red`**, **`free-gift-red`**, **`birthday-red`**) + **`conciergeSectionIcons.ts`**. **`ConciergeSectionHeader.tsx`** — shared title row (Futura 12px **`#EB1C24`**, gray rule, unfiltered icon). **`concierge/page.tsx`** — all six section headers use the component + red assets (no filter). Pushed **`master`** + **`preview/mobile`**.
