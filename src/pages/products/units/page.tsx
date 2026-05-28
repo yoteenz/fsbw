@@ -13,11 +13,18 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import {
+  attachStockStatusToLineItem,
+  isWigUnitSoldOut,
+} from '../../../utils/productInventoryAvailability';
 
 function ProductsUnitsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  useProductInventorySnapshot();
 
   /** TEMP: green outlines — outer = flex column (half-slot), inner = padded band. Set `false` to hide. */
   const DEBUG_PRODUCT_FLEX_BOUNDS = false;
@@ -409,11 +416,12 @@ function ProductsUnitsPage() {
           window.dispatchEvent(new Event('cartUpdated'));
         }, 100);
       } else {
+        if (isWigUnitSoldOut(product.name)) return;
         // Add to cart
         const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
         
         // Create cart item with product details and selected cap size
-        const cartItem = {
+        const cartItem = attachStockStatusToLineItem({
           id: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           name: product.name,
           price: product.price + capSizePrice,
@@ -429,8 +437,8 @@ function ProductsUnitsPage() {
           hairline: 'NATURAL',
           styling: 'NONE',
           partSelection: 'MIDDLE',
-          addOns: []
-        };
+          addOns: [],
+        });
 
         // Add new item at the beginning (newest first)
         const updatedCartItems = [cartItem, ...cartItems];
@@ -758,8 +766,11 @@ function ProductsUnitsPage() {
                           {product.length} RAW {product.hairOrigin}
                         </p>
 
-                        <p
-                          style={{
+                        <WigProductPriceDisplay
+                          productName={product.name}
+                          soldOutPriceTreatment="strikethrough-only"
+                          priceHtml={formatPrice(product.price)}
+                          priceStyle={{
                             fontFamily: '"Futura PT Medium"',
                             fontSize: '12px',
                             color: 'black',
@@ -767,9 +778,9 @@ function ProductsUnitsPage() {
                             margin: '0 0 5px 0',
                             fontWeight: '500',
                             lineHeight: '0.84',
-                            transform: 'translateY(1px)'
+                            transform: 'translateY(1px)',
+                            textAlign: 'center',
                           }}
-                          dangerouslySetInnerHTML={formatPrice(product.price)}
                         />
 
                         <div
