@@ -18941,4 +18941,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked for **2px spacing above** the gray price on wishlist **list (line) view** (`/wishlist/lists/:id` line mode + shared list).
 
 **Change:** **`index.css`** — `.wishlist-expanded-list-line-price--list` **`margin-top: 2px`**. **`WigLineStockPrice`** — optional **`priceClassName`**; line view passes **`wishlist-expanded-list-line-price`** + **`--list`** on **`lists/page.tsx`** and **`shared/page.tsx`** (overrides `.cart-line-text-layer > *` zero margin).
+<<<<<<< HEAD
+>>>>>>> master
+=======
+
+---
+
+## 2026-05-21 — Wishlist grid view: RAW subtitle up 2px
+
+**Context:** User asked to move the red **RAW** subtitle line **up 2px** on **grid view only** (`/wishlist/lists/:id` expanded grid).
+
+**Change:** **`lists/page.tsx`** — **`EXPANDED_LIST_GRID_RAW_TEXT_STYLE`** (`position: relative`, **`top: -2`**) used on grid RAW `<p>` only; line view keeps **`EXPANDED_LIST_RAW_TEXT_STYLE`** unchanged.
 >>>>>>> master
