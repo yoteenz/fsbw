@@ -2338,7 +2338,7 @@ function NoirSelection() {
                   display: 'flex',
                   alignItems: 'stretch',
                   justifyContent: 'center',
-                  gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)',
+                  gap: '4px',
                   marginBottom: 'clamp(12px, 1.5vw, 16px)',
                   overflow: 'visible',
                   transform: 'translateY(0)',
@@ -2410,7 +2410,7 @@ function NoirSelection() {
                   style={{
                     width: 'clamp(100px, 26vw, 175px)',
                     alignSelf: 'stretch',
-                    gap: 'clamp(6px, 1.2vw, 12px)',
+                    gap: '4px',
                     minHeight: 'clamp(290px, 72.5vw, 464px)',
                   }}
                 >
