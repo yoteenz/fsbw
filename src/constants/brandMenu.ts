@@ -14,7 +14,11 @@ export const BRAND_MENU_ITEMS: BrandMenuItem[] = [
   { label: 'BECOME A MEMBER', route: '/brand/member', navTitle: 'MEMBERSHIP' },
   { label: 'REVIEWS', route: '/brand/reviews' },
   { label: 'CAREERS', route: '/brand/careers' },
-  { label: 'FAQ', route: '/brand/faq' },
+  {
+    label: 'FAQ',
+    route: '/brand/faq',
+    cardTitle: 'FREQUENTLY ASKED QUESTIONS',
+  },
   { label: 'TERMS OF SERVICE', route: '/brand/terms' },
 ];
 
