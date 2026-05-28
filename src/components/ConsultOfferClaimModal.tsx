@@ -10,7 +10,6 @@ import {
 } from '../utils/consultOfferFromQuote';
 import { consultDigitalOrderTrackingBarFillPct } from '../utils/digitalOrderFulfillment';
 import type { ConsultOrderLike } from '../utils/consultOrderLifecycle';
-import { BRAND_RED_ICON_CSS_FILTER } from '../constants/brandRedIconFilter';
 import { expandStylingBreakdownLineForDisplay, type SpecialOfferBreakdownLine } from '../utils/specialOfferPrice';
 
 type Props = {
@@ -332,7 +331,7 @@ export default function ConsultOfferClaimModal({
             className="shrink-0 cursor-pointer"
             style={{ lineHeight: 0, padding: 0, border: 'none', background: 'none' }}
           >
-            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block', filter: BRAND_RED_ICON_CSS_FILTER }} />
+            <img src="/assets/close-icon.svg" alt="" width={16} height={16} style={{ display: 'block' }} />
           </button>
         </div>
         <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '10px', marginBottom: '12px' }} />

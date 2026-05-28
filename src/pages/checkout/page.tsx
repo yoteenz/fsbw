@@ -5295,9 +5295,7 @@ function CheckoutPage() {
                               width: '10.4px', 
                               height: '10.4px', 
                               position: 'absolute', 
-                              objectFit: 'contain',
-                              filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                            }}
+                              objectFit: 'contain'}}
                         />
                       </button>
                     </div>
@@ -5691,13 +5689,13 @@ function CheckoutPage() {
                             <img 
                               src="/assets/close-icon.svg" 
                               alt="remove tip" 
-                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
+                              style={{ width: '16px', height: '16px', position: 'absolute', objectFit: 'contain'}}
                             />
                           ) : (
                             <img 
                               src="/assets/discount-check.svg" 
                               alt="apply tip" 
-                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }}
+                              style={{ width: '10.4px', height: '10.4px', position: 'absolute', objectFit: 'contain'}}
                             />
                           )}
                         </button>
@@ -6910,9 +6908,7 @@ function CheckoutPage() {
                   width: '16px',
                   height: '16px',
                   flexShrink: 0,
-                  objectFit: 'contain',
-                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                }}
+                  objectFit: 'contain'}}
               />
             </div>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '16px', textTransform: 'uppercase' }}>
@@ -7022,9 +7018,7 @@ function CheckoutPage() {
                   width: '16px',
                   height: '16px',
                   flexShrink: 0,
-                  objectFit: 'contain',
-                  filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                }}
+                  objectFit: 'contain'}}
               />
             </div>
             <p style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#000', marginBottom: '8px', textTransform: 'uppercase' }}>

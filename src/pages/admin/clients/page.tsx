@@ -1885,9 +1885,7 @@ export default function AdminClients() {
                           width={16}
                           height={16}
                           style={{
-                            display: 'block',
-                            filter:
-                              'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                            display: 'block'
                           }}
                         />
                       </button>
@@ -2838,7 +2836,7 @@ export default function AdminClients() {
                                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                                       aria-label="Close"
                                     >
-                                      <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                      <img src="/assets/close-icon.svg" alt="Close" style={{ width: '16px', height: '16px' }} />
                                     </button>
                                   </div>
                                   <div
@@ -3184,7 +3182,7 @@ export default function AdminClients() {
                                     <div style={{ marginTop: '24px' }}>
                                       <div className="flex items-center justify-between pb-1 border-b border-gray-200" style={{ marginBottom: '10px' }}>
                                         <h4 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', margin: 0, textTransform: 'uppercase' }}>REWARDS</h4>
-                                        <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                        <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1}} />
                                       </div>
                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         <div className="flex justify-between items-center">
@@ -3973,7 +3971,7 @@ export default function AdminClients() {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 aria-label="Close"
               >
-                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain'}} />
               </button>
             </div>
             <div
@@ -4076,13 +4074,11 @@ export default function AdminClients() {
                       style={{
                         width: '18px',
                         height: '18px',
-                        display: 'block',
-                        filter:
-                          'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                        display: 'block'
                       }}
                     />
                   ) : (
-                    <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                    <img src="/assets/points-history.svg" alt="" style={{ width: '16px', height: '16px', flexShrink: 0, objectFit: 'contain'}} />
                   )}
                 </button>
               </div>

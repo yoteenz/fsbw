@@ -664,9 +664,7 @@ export default function BrandCareersPage() {
                       height: '16px',
                       display: 'block',
                       flexShrink: 0,
-                      objectFit: 'contain',
-                      filter:
-                        'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                      objectFit: 'contain'
                     }}
                   />
                 </button>
