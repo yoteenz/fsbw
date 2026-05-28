@@ -18805,6 +18805,7 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+<<<<<<< HEAD
 ## 2026-05-21 — Admin hub: restore 10px below-card button spacing
 
 **Context (full chat):** Cart line layers, NOIR RAW trim, NEW LIST label, cart dropdown view-details red dot. User reported **button top spacing broken** on admin pages (Revenue, Reviews, Referrals, etc.).
@@ -18812,3 +18813,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Cause:** **`PageActionsBelowCard`** first-button gap was changed **14px → 2px** for wishlist parity (**MEMORY** 2026-05-21); admin hub pages still expect **10px** (same as Brand **CREATE CODE** / **SEND NOTIFICATION** wrappers).
 
 **Fix:** **`PageActionsBelowCard`** optional **`adminHub`** prop → **`marginTop: 10px`**. Applied on admin Revenue, Pending, Reviews, Referrals, Marketing, Brand (export), Analytics, Meetings schedule. Revenue multi-button actions use **`PageActionsBelowCard.Spacer`** instead of per-button **`marginTop: 10px`**.
+=======
+## 2026-05-27 — Brand terms: merged limitation of liability intro
+
+**Context:** User asked to merge two paragraphs in LIMITATION OF LIABILITY so discretion/risk line precedes the damages sentence in one block.
+
+**Changes:** `brandTermsCopy.ts` — single intro paragraph: "USE OF OUR PRODUCTS AND WEBSITE IS AT YOUR OWN DISCRETION AND RISK. FRONTAL SLAYER SHALL NOT BE HELD LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL OR ACCIDENTAL DAMAGES RESULTING FROM:"; removed `limitation-liability-close` section.
+
+**Git:** `54ef8a3d` on `master` and `preview/mobile`.
+>>>>>>> 93ece214f3bf6308b1cd39434b05f4f5db6ab655
