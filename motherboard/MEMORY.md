@@ -18738,3 +18738,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Conventions:** Prefer layers for vertical rhythm on cart/bag/wishlist product text; use **`normalizeCartLineProductName(item)`** for name font size (22px NOIR vs 21px others). **`cartCapSizeLineMargin.ts`** margin helpers may remain for other callers but cart line UI should not reintroduce per-line `marginTop` on RAW/CAP/price when layers are present.
 
 **Git:** Committed on **`preview/mobile`** and merged to **`master`**; both branches pushed (`master`, `preview/mobile`).
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: remove Oxford commas before AND
+
+**Context:** User asked to remove commas immediately before "and" on the Terms and FAQ brand pages (e.g. "POLICIES, AND NOTICES" → "POLICIES AND NOTICES").
+
+**Changes:** `src/constants/brandTermsCopy.ts` and `src/constants/brandFaqCopy.ts` — all ", AND" list joiners in body copy updated (13 FAQ + 7 terms instances). Checkout terms modal uses shared `BrandTermsBody`, so it picks up the same wording.
+
+**Git:** Commit on `master`; merged into `preview/mobile`. Remote already had equivalent patch on rebase (duplicate commit dropped); `preview/mobile` pushed after `git pull --rebase`.
+
+**Conventions:** Brand legal/FAQ copy uses "X AND Y" without a comma before AND unless the user requests otherwise.
