@@ -2830,7 +2830,7 @@ width: 'clamp(200px, 50vw, 320px)',
         </div>
 
           {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
-          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '12px' }}>
+          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '8px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
@@ -3053,7 +3053,7 @@ width: 'clamp(200px, 50vw, 320px)',
             </div>
 
               {/* Tabs Section */}
-              <div className="mt-4" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
+              <div style={{ marginTop: '13px', paddingTop: '4px', paddingBottom: '4px' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
