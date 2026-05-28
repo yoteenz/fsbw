@@ -949,7 +949,7 @@ export default function AdminBrand() {
                   </button>
                 </div>
               ) : (
-                <PageActionsBelowCard>
+                <PageActionsBelowCard adminHub>
                   <button
                     type="button"
                     onClick={() => {

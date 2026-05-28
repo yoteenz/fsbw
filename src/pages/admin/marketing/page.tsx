@@ -197,7 +197,7 @@ export default function AdminMarketing() {
             </div>
 
             {activeTab === 'NEWSLETTER' && (
-              <PageActionsBelowCard>
+              <PageActionsBelowCard adminHub>
                 <button
                   type="button"
                   onClick={() => newsletterRef.current?.openSendConfirm()}
@@ -211,7 +211,7 @@ export default function AdminMarketing() {
             )}
 
             {activeTab === 'SPECIAL OFFERS' && (
-              <PageActionsBelowCard>
+              <PageActionsBelowCard adminHub>
                 <button
                   type="button"
                   onClick={() => specialOfferRef.current?.save()}

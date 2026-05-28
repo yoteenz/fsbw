@@ -1030,7 +1030,7 @@ export default function AdminReviews() {
               </div>
             </div>
 
-            <PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>
               <button
                 type="button"
                 onClick={() => navigate('/admin/pending?tab=reviews')}

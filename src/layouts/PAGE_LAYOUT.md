@@ -12,7 +12,7 @@ Standard structure for app pages (wishlist, lists, shopping bag, etc.) so layout
    - **No primary action buttons inside the card.**
 5. **Page actions (below the card)** – primary buttons for the page (VIEW LISTS, EMPTY WISHLIST, CREATE NEW LIST, etc.)
    - Sibling of the main card, same parent as the card.
-   - First button: `marginTop: '2px'`. Additional buttons: `marginTop: '10px'` (or use `PageActionsBelowCard`).
+   - First button: `marginTop: '2px'` (shop/wishlist) or **`PageActionsBelowCard` with `adminHub`** (`10px` below card on Admin Revenue, Reviews, Referrals, etc.). Additional buttons: `marginTop: '10px'` via `PageActionsBelowCard.Spacer`.
    - Styling: full width, `border border-black` 1.3px, red text `#EB1C24`, Futura PT Medium, 11px, uppercase.
 
 ## Rule

@@ -373,7 +373,7 @@ export default function AdminMeetingsSchedule() {
               </div>
             </div>
 
-            <PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>
               <button
                 type="button"
                 disabled={saving || !firstName.trim() || !date || !time || (!isConsultation && services.length === 0)}

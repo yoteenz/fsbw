@@ -281,7 +281,7 @@ export default function AdminAnalytics() {
               </div>
             </div>
 
-            <PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>
               <button
                 type="button"
                 onClick={() => {

@@ -1454,7 +1454,7 @@ export default function AdminPending() {
               </div>
             </div>
 
-            <PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>
               <button
                 type="button"
                 onClick={() => navigate('/admin/reviews')}

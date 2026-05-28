@@ -7,7 +7,7 @@ import React from 'react';
  * Usage:
  *   <div>Main card content only</div>
  *   {!showMobileMenu && (
- *     <PageActionsBelowCard>
+ *     <PageActionsBelowCard>  // or adminHub for Admin hub pages (10px below card)
  *       <button ...>VIEW LISTS</button>
  *       <PageActionsBelowCard.Spacer />
  *       <button ...>EMPTY WISHLIST</button>
@@ -16,21 +16,26 @@ import React from 'react';
  */
 /** Matches wishlist page + PAGE_LAYOUT.md (gap between main card and first action). */
 const PAGE_ACTION_FIRST_SPACING = { marginTop: '2px' } as const;
+/** Admin hub pages (Revenue, Reviews, Referrals, …): gap below tall main card. */
+const ADMIN_PAGE_ACTION_FIRST_SPACING = { marginTop: '10px' } as const;
 const PAGE_ACTION_NEXT_SPACING = { marginTop: '10px' } as const;
 
 export function PageActionsBelowCard({
   children,
   className = '',
-  style = {}
+  style = {},
+  adminHub = false,
 }: {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  /** Use on Admin → Revenue / Reviews / Referrals / Pending / Marketing / etc. (10px below card). */
+  adminHub?: boolean;
 }) {
   return (
     <div
       className={`px-0 md:px-0 ${className}`.trim()}
-      style={{ ...PAGE_ACTION_FIRST_SPACING, ...style }}
+      style={{ ...(adminHub ? ADMIN_PAGE_ACTION_FIRST_SPACING : PAGE_ACTION_FIRST_SPACING), ...style }}
     >
       {children}
     </div>

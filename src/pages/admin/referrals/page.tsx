@@ -248,7 +248,7 @@ export default function AdminReferralsPage() {
               )}
             </div>
 
-            <PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>
               <button
                 type="button"
                 onClick={() => {}}

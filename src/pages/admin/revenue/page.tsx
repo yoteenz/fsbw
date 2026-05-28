@@ -1005,6 +1005,7 @@ export default function AdminRevenue() {
             >
               SAVE TRACKING
             </button>
+            <PageActionsBelowCard.Spacer />
             <button
               type="button"
               onClick={() => {
@@ -1012,7 +1013,7 @@ export default function AdminRevenue() {
                 setTrackingDraft(expandedOrder ? fillTrackingDraftFromOrder(expandedOrder) : emptyTrackingDraft());
               }}
               className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-              style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+              style={pageActionButtonStyle}
             >
               CANCEL EDIT
             </button>
@@ -1029,6 +1030,7 @@ export default function AdminRevenue() {
           >
             COPY
           </button>
+          <PageActionsBelowCard.Spacer />
           <button
             type="button"
             onClick={() => {
@@ -1036,7 +1038,7 @@ export default function AdminRevenue() {
               setEditTrackingMode(true);
             }}
             className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-            style={{ ...pageActionButtonStyle, marginTop: '10px' }}
+            style={pageActionButtonStyle}
           >
             EDIT TRACKING
           </button>
@@ -1593,7 +1595,7 @@ export default function AdminRevenue() {
             </>
             )}
 
-            <PageActionsBelowCard>{revenuePageActions}</PageActionsBelowCard>
+            <PageActionsBelowCard adminHub>{revenuePageActions}</PageActionsBelowCard>
           </div>
         </div>
       </div>
