@@ -906,11 +906,7 @@ export default function ViewListsPage() {
                                         }}
                                       />
                                       </CartLineTextLayer>
-                                    ) : (
-                                      <CartLineTextLayer slot="meta">
-                                      <ExpandedListItemNoReviewStars listView />
-                                      </CartLineTextLayer>
-                                    )}
+                                    ) : null}
                                     {!isViewingDetails && (
                                       <CartLineTextLayer
                                         slot="price"
@@ -922,6 +918,11 @@ export default function ViewListsPage() {
                                         priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, color: '#000000', ...cartLineLayerInnerStyle() }}
                                         priceClassName={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
                                       />
+                                      </CartLineTextLayer>
+                                    )}
+                                    {!isViewingDetails && (
+                                      <CartLineTextLayer slot="meta">
+                                      <ExpandedListItemNoReviewStars listView />
                                       </CartLineTextLayer>
                                     )}
                                     {showViewDetailsLink && (

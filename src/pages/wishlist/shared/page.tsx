@@ -584,11 +584,7 @@ export default function SharedWishlistListPage() {
                                 }}
                               />
                               </CartLineTextLayer>
-                            ) : (
-                              <CartLineTextLayer slot="meta">
-                              <ExpandedListItemNoReviewStars />
-                              </CartLineTextLayer>
-                            )}
+                            ) : null}
                             {!isViewingDetails && (
                               <CartLineTextLayer
                                 slot="price"
@@ -600,6 +596,11 @@ export default function SharedWishlistListPage() {
                                 priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, color: '#000000', ...cartLineLayerInnerStyle() }}
                                 priceClassName={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
                               />
+                              </CartLineTextLayer>
+                            )}
+                            {!isViewingDetails && (
+                              <CartLineTextLayer slot="meta">
+                              <ExpandedListItemNoReviewStars />
                               </CartLineTextLayer>
                             )}
                             {showViewDetailsLink && (
