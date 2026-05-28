@@ -29,6 +29,8 @@ const BULLET_STYLE = {
   paddingLeft: '12px',
 };
 
+const BULLET_MARK_STYLE = { color: '#EB1C24' };
+
 const EMAIL_STYLE = {
   ...BODY_STYLE,
   color: '#EB1C24',
@@ -82,7 +84,7 @@ export default function BrandTermsBody() {
               )}
               {section.bullets?.map((bullet, index) => (
                 <p key={`${section.id}-b-${index}`} style={BULLET_STYLE}>
-                  • {bullet}
+                  <span style={BULLET_MARK_STYLE}>•</span> {bullet}
                 </p>
               ))}
             </div>
