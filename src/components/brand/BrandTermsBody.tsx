@@ -8,6 +8,7 @@ import {
   BRAND_TERMS_INTRO_PARAGRAPHS,
   BRAND_TERMS_SECTIONS,
 } from '../../constants/brandTermsCopy';
+import { BRAND_HERE_LINK_STYLE } from './BrandInlineHereLink';
 
 const BODY_STYLE = {
   fontFamily: '"Futura PT Book"',
@@ -37,14 +38,6 @@ const BULLET_STYLE = {
 
 const BULLET_MARK_STYLE = { color: '#EB1C24' };
 
-const CONTACT_FORM_LINK_STYLE = {
-  color: '#808080',
-  fontFamily: '"Futura PT Medium"',
-  fontWeight: 500,
-  textDecoration: 'underline',
-  textTransform: 'uppercase',
-};
-
 const EMAIL_STYLE = {
   ...BODY_STYLE,
   color: '#EB1C24',
@@ -64,7 +57,7 @@ function renderParagraph(text: string, key: string) {
     return (
       <p key={key} style={BODY_STYLE}>
         {BRAND_TERMS_CONTACT_FORM_LINE_PREFIX}
-        <Link to="/brand/contact" style={CONTACT_FORM_LINK_STYLE}>
+        <Link to="/brand/contact" style={BRAND_HERE_LINK_STYLE}>
           {BRAND_TERMS_CONTACT_FORM_LINK_LABEL}
         </Link>
         .

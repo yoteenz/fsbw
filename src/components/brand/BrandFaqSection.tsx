@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { BRAND_FAQ_SECTIONS } from '../../constants/brandFaqCopy';
+import { getBrandInlineLinkConfig } from '../../constants/brandPageLinks';
+import BrandInlineHereLink from './BrandInlineHereLink';
 
 const QUESTION_STYLE = {
   fontFamily: '"Futura PT Medium"',
@@ -107,11 +109,23 @@ export default function BrandFaqSection() {
                         paddingLeft: '18px',
                       }}
                     >
-                      {item.answerParagraphs.map((paragraph, paragraphIndex) => (
-                        <p key={`${item.id}-${paragraphIndex}`} style={ANSWER_STYLE}>
-                          {paragraph}
-                        </p>
-                      ))}
+                      {item.answerParagraphs.map((paragraph, paragraphIndex) => {
+                        const linkConfig = getBrandInlineLinkConfig(paragraph);
+                        if (linkConfig) {
+                          return (
+                            <BrandInlineHereLink
+                              key={`${item.id}-${paragraphIndex}`}
+                              config={linkConfig}
+                              style={ANSWER_STYLE}
+                            />
+                          );
+                        }
+                        return (
+                          <p key={`${item.id}-${paragraphIndex}`} style={ANSWER_STYLE}>
+                            {paragraph}
+                          </p>
+                        );
+                      })}
                     </div>
                   ) : null}
                 </div>
