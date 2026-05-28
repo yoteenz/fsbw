@@ -4128,3 +4128,7 @@ p.bcf-bundles-pdp-product-name {
   position: relative !important;
   top: 0 !important;
 }
+
+.wishlist-expanded-list-view-details-toggle--list {
+  margin-top: 3px !important;
+}

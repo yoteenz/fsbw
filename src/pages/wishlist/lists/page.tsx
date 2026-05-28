@@ -31,6 +31,7 @@ import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
@@ -129,6 +130,7 @@ function ExpandedListItemNoReviewStars({ centered }: { centered?: boolean }) {
         display: 'flex',
         alignItems: 'center',
         gap: '2px',
+        marginTop: '2px',
         marginBottom: '6px',
         ...(centered ? { justifyContent: 'center' } : {}),
       }}
@@ -915,7 +917,7 @@ export default function ViewListsPage() {
                                       <span
                                         role="button"
                                         tabIndex={0}
-                                        className={WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS}
+                                        className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}`}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
