@@ -18792,3 +18792,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`src/components/AddToListModal.tsx`** — portal dropdown first option **`CREATE A LIST` → `NEW LIST`** (uppercase, same styling).
 
 **Git:** `ba4e70d3` on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-05-21 — Cart dropdown VIEW DETAILS: red dot before price deltas
+
+**Context (full chat):** Layered cart line text, NOIR RAW trim, add-to-list **NEW LIST** label. User asked cart dropdown **VIEW DETAILS** customization lines to use a **red middle dot** before each price instead of a **+** prefix.
+
+**Change:** **`CartDropdown.tsx`** — `formatPriceDisplay` in view-details HTML: positive deltas use **` · `** (`#EB1C24`) then black amount; negatives keep **`-`** on the amount (no `+`).
+
+**Git:** `9e7dc70e` on **`master`** and **`preview/mobile`**.
