@@ -18760,3 +18760,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `src/constants/brandTermsCopy.ts` (8) and `src/constants/brandFaqCopy.ts` (2) — replaced `, OR` with ` OR` where OR is the list conjunction (regex `, OR\b`), e.g. "MODIFY, OR CHANGE" → "MODIFY OR CHANGE", "SITE MENU, OR GO TO" → "SITE MENU OR GO TO". Did not alter words like ORDERS/ORDER where the comma precedes a longer token.
 
 **Git:** `fcee29db` on `master`; merged and pushed `preview/mobile`.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: colons on gray section headers
+
+**Context:** User asked for colons on gray Bohemy section titles on Terms and FAQ (e.g. order agreement, processing + shipping).
+
+**Changes:** `BrandTermsBody.tsx` and `BrandFaqSection.tsx` — render `{section.title}:` so headers display as "order agreement:", "processing + shipping:", etc. (lowercase via existing CSS). Checkout terms modal uses same `BrandTermsBody`. Matches order-form subhead pattern (`THIS FORM SERVES AS:`).
+
+**Git:** `2f3e4d81` on `master` and `preview/mobile`.
