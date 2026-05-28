@@ -2340,14 +2340,14 @@ function NoirSelection() {
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       display: 'flex',
-                      alignItems: 'center',
+                      alignItems: 'flex-end',
                       justifyContent: 'center',
 width: 'clamp(200px, 50vw, 320px)',
                     height: 'clamp(290px, 72.5vw, 464px)',
                     backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.hero : '/assets/leaf-brick-resize.png'}')`,
                       backgroundRepeat: 'repeat',
-                      overflow: 'visible',
-                      cursor: 'pointer'
+                      overflow: 'hidden',
+                      cursor: 'pointer',
                     }}
                     onClick={() => {
                       const allImages = is3DView 
@@ -2362,20 +2362,20 @@ width: 'clamp(200px, 50vw, 320px)',
                     <img
                       src={currentImages.hero}
                       alt=""
-                      style={{ 
+                      style={{
                         position: 'absolute',
                         left: '50%',
-                        top: 'calc(50% - 10.601px + 12px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
+                        bottom: 0,
+                        transform: 'translateX(-50%)',
                         zIndex: '10',
-width: 'clamp(230px, 57.5vw, 368px)',
-                      height: 'auto',
-                      maxHeight: 'min(610px, 85vh)',
-                      minWidth: 'clamp(230px, 57.5vw, 368px)',
+                        width: 'clamp(230px, 57.5vw, 368px)',
+                        height: 'auto',
+                        maxHeight: 'min(610px, 85vh)',
+                        minWidth: 'clamp(230px, 57.5vw, 368px)',
                         minHeight: 'auto',
                         display: is3DView ? 'none' : 'block',
                         cursor: 'pointer',
-                        pointerEvents: is3DView ? 'none' : 'auto'
+                        pointerEvents: is3DView ? 'none' : 'auto',
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -2391,11 +2391,14 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   </div>
                 </div>
                 
-                {/* Top and Bottom Mannequins - Right Side */}
-                <div className="flex flex-col" style={{ height: 'clamp(290px, 72.5vw, 464px)', justifyContent: 'space-between', gap: 'clamp(6px, 1.2vw, 12px)' }}>
+                {/* Top and Bottom Mannequins - Right Side (natural height; row flex-end aligns bottom thumb with hero) */}
+                <div
+                  className="flex flex-col flex-shrink-0"
+                  style={{ gap: 'clamp(6px, 1.2vw, 12px)', justifyContent: 'flex-start' }}
+                >
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer overflow-hidden"
                       style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleTopThumbnailClick}
                     >
@@ -2404,11 +2407,26 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   </div>
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
+                      className="relative bg-cover bg-center flex items-end justify-center cursor-pointer overflow-hidden"
+                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center bottom', backgroundRepeat: 'no-repeat' }}
                       onClick={handleBottomThumbnailClick}
                     >
-                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      <img
+                        src={currentImages.bottom}
+                        alt=""
+                        className="absolute z-10"
+                        style={{
+                          left: '50%',
+                          bottom: 0,
+                          transform: 'translateX(-50%)',
+                          width: 'clamp(112px, 29vw, 196px)',
+                          height: 'auto',
+                          maxWidth: 'none',
+                          maxHeight: 'none',
+                          minWidth: 'clamp(112px, 29vw, 196px)',
+                          display: is3DView ? 'none' : 'block',
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -3029,8 +3047,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
 
-          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 30px above */}
-          <div className="flex justify-center w-full" style={{ marginTop: '30px' }}>
+          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 20px above */}
+          <div className="flex justify-center w-full" style={{ marginTop: '20px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
