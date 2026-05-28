@@ -2409,7 +2409,7 @@ width: 'clamp(200px, 50vw, 320px)',
                       <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
-                  <div className="flex-shrink-0 relative" style={{ transform: 'translateY(-2px)' }}>
+                  <div className="flex-shrink-0 relative" style={{ transform: 'translateY(-4px)' }}>
                     <div
                       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                       style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
@@ -2928,7 +2928,7 @@ width: 'clamp(200px, 50vw, 320px)',
         />
 
           <div
-            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-1 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
             style={{
               borderWidth: '1.3px',
               minWidth: '100%',
