@@ -18973,6 +18973,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 ---
 
+## 2026-05-21 — NOIR two-card PDP spacing fixes
+
+**Context:** After NOIR layout split, user reported excess space below quantity, product-shots card overlapping cart buttons, excess space above shot images, and tab copy spilling outside the lower card.
+
+**Changes (`noir/page.tsx` only):** Tighter main card bottom padding + negative margin on qty row; **14px** gap before details card; reduced product-shots `paddingTop`/image `translateY` and carousel height so shots don’t bleed upward; second card `overflow: hidden`; removed tab content **`marginBottom: -93px`** so DETAILS/SHIPPING text stays inside the card.
+
+---
+
 ## 2026-05-21 — Tools gift card strip: shop UNITS snap + alignment
 
 **Context:** User asked **`/tools`** (home/tools) gift card marble carousel to use the same **measured snap scroll** as **home/shop UNITS**, and to fix **misaligned gift card images**.
