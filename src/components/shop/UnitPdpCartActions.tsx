@@ -42,10 +42,8 @@ export function UnitPdpCartActions({
           }`}
           style={{
             borderWidth: '1.3px',
-            color: soldOut ? '#808080' : '#EB1C24',
-            fontFamily: soldOut
-              ? '"Futura PT Demi", Futura, sans-serif'
-              : buttonFontFamily,
+            color: '#EB1C24',
+            fontFamily: buttonFontFamily,
             backgroundColor: '#FFFFFF',
           }}
         >
@@ -74,8 +72,10 @@ export function UnitPdpCartActions({
           className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
           style={{
             borderWidth: '1.3px',
-            color: '#EB1C24',
-            fontFamily: buttonFontFamily,
+            color: soldOut ? '#808080' : '#EB1C24',
+            fontFamily: soldOut
+              ? '"Futura PT Demi", Futura, sans-serif'
+              : buttonFontFamily,
           }}
         >
           {soldOut ? 'NOTIFY ME WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
