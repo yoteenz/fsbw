@@ -19298,6 +19298,25 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-28 — NOIR two-card PDP layout: beach-wave, soft-wave, soft-curl, ocean-curl
+
+**Context:** User asked to apply the same NOIR two-card PDP layout changes already done on `src/pages/straight/blanco/page.tsx` to four unit PDPs: beach-wave, soft-wave, soft-curl, and ocean-curl. Shared pieces live in `UnitPdpWigPreviewImages.tsx` and `unitPdpLayoutConstants.ts`. Do not modify `noir/page.tsx`.
+
+**Topics covered:** Imports for shared layout constants; main card `UNIT_PDP_MAIN_CARD_STYLE`; cap-size header / quantity / cap-chart constant styles; replace inline `product-wig-preview-images` with `<UnitPdpWigPreviewImages />` preserving each page's `/assets/${...}` 3D URL pattern and `SOFT_WAVE_2D_VIEWER_DOWNLOADS` on soft-wave; two-card split (close main card after cap chart, `<UnitPdpCartActions />` between cards, second bordered details card with `mt-2 mb-4` product shots + `UNIT_PDP_TABS_SECTION_STYLE` / `UNIT_PDP_TAB_CONTENT_STYLE`; end tabs with exactly 3 closing divs).
+
+**Changes:**
+- `src/pages/wavy/beach-wave/page.tsx` — full layout port; 3D viewer arrays use `/assets/${current3DImages.*}`.
+- `src/pages/wavy/soft-wave/page.tsx` — same; `onOpenHeroViewer` keeps `SOFT_WAVE_2D_VIEWER_DOWNLOADS` + `showAdminFounder2dDownloads`.
+- `src/pages/curly/ocean-curl/page.tsx` — same as beach-wave URL pattern.
+- `src/pages/curly/soft-curl/page.tsx` — same layout; soft-curl's mobile-menu ternary required closing the main card fragment after cap chart and placing cart actions + second card inside `{!showMobileMenu && (<> ...)}`.
+- Committed shared components `src/components/shop/UnitPdpWigPreviewImages.tsx` and `src/components/shop/unitPdpLayoutConstants.ts` (were untracked locally).
+
+**Build:** `npm run build` passed (tsc + vite). Pushed `master` and `preview/mobile`.
+
+**Conventions:** When porting unit PDP layout from blanco, reuse `unitPdpLayoutConstants` and `UnitPdpWigPreviewImages`; preserve per-page 3D asset path patterns and any `*_2D_VIEWER_DOWNLOADS` constant names in `onOpenHeroViewer`.
+
+---
+
 ## 2026-05-28 — Wishlist/edit fixes, premium live tracking, and native-red header icons
 
 **Context:** This single chat covered a sequence of storefront/account polish fixes and consistency updates. The user first reported that the red **EDIT IN BUILD-A-WIG** link on the main wishlist page routed to the product PDP instead of the product’s Build-a-Wig edit flow with selections loaded. Then the user requested sold-out wording updates on product pages and wishlist, updated copy in the stock-notify popup, adding **LIVE ORDER TRACKING** to **3 MONTHS PREMIUM** with chart/order consistency updates, and finally a site-wide correction because red header icons (especially the red close X icons) did not match the native red used on the concierge page. The final request was to update **all website header icons** to the correct red color instead of leaving mismatched filtered icons in place.
