@@ -19412,3 +19412,17 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Note:** `getDepletedInventory` per-order packaging *consumption* was left unchanged (still subtracts the full unit set per physical order, and override mode bypasses it entirely). Only the **gating** uses the per-kind requirement maps. If auto-compute (no override) ever needs BCF to stop consuming label/flyer/dust bag, that's a follow-up in `adminRevenueStats.ts`.
 
 **Verified (headless, 390px, via `adminInventoryOverride`):** all stocked → NOIR + BCF in stock; **MAILER BOXES=0** → both SOLD OUT; **DUST BAGS+LABELS+CAMPAIGN FLYERS=0** → NOIR SOLD OUT, **BCF still in stock** (BCF doesn't use those). Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-28 — Cart dropdown + bag: sold-out copy placement
+
+**Context:** User wanted out-of-stock styling cleaned up: (cart dropdown) remove the red **OUT OF STOCK** text below the price and instead replace the **QTY: n** count with the sold-out text; (bag page) remove the red **OUT OF STOCK** below the price and change the **OUT OF STOCK** text below the quantity counter to **SOLD OUT**.
+
+**`WigLineStockPrice`** (`src/components/shop/WigStockPrice.tsx`) already supported `outOfStockLabel={null}` to suppress the red label below the (strikethrough) price.
+
+**Changes:**
+- **`src/components/CartDropdown.tsx`** — imported `isLineItemOutOfStock`; passed `outOfStockLabel={null}` to `WigLineStockPrice` (price still strikes through, no red label); the **QTY: {n}** span now renders **SOLD OUT** (red `#EB1C24`) when `isLineItemOutOfStock(item)`, else `QTY: {n}` (black).
+- **`src/pages/shopping-bag/page.tsx`** — both `WigLineStockPrice` usages (active cart + saved-for-later) now `outOfStockLabel={null}`; the two **OUT OF STOCK** labels that replace SAVE FOR LATER / MOVE TO CART below the quantity counter changed to **SOLD OUT**.
+
+**Verified (headless, 390px, NOIR + MAILER BOXES=0):** cart dropdown shows **SOLD OUT** in place of QTY with **0** "OUT OF STOCK" occurrences; bag page shows **SOLD OUT** below the qty counter with **0** "OUT OF STOCK" occurrences. Typecheck passes. Pushed `master` + `preview/mobile`.

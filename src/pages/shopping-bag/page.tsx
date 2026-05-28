@@ -1652,6 +1652,7 @@ function ShoppingBagPage() {
                               <WigLineStockPrice
                                 item={item}
                                 priceHtml={formatPrice(itemPrice)}
+                                outOfStockLabel={null}
                                 priceStyle={{
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
@@ -1820,7 +1821,7 @@ function ShoppingBagPage() {
                                         textAlign: 'center',
                                       }}
                                     >
-                                      OUT OF STOCK
+                                      SOLD OUT
                                     </span>
                                   ) : (
                                     <button
@@ -2179,6 +2180,7 @@ function ShoppingBagPage() {
                            <WigLineStockPrice
                              item={item}
                              priceHtml={formatPrice(itemPrice)}
+                             outOfStockLabel={null}
                              priceStyle={{
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',
@@ -2317,7 +2319,7 @@ function ShoppingBagPage() {
                                  textAlign: 'center',
                                }}
                              >
-                               OUT OF STOCK
+                               SOLD OUT
                              </span>
                            ) : (
                              <button

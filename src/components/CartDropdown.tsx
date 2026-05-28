@@ -45,7 +45,7 @@ import {
 import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
-import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
+import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../utils/productInventoryAvailability';
 import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
 import { prepareBuildAWigEditSession } from '../utils/buildAWigEditSession';
 
@@ -1551,6 +1551,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             <WigLineStockPrice
                               item={item}
                               priceHtml={formatPrice(linePrice)}
+                              outOfStockLabel={null}
                               priceStyle={{
                                 fontFamily: '"Futura PT Book"',
                                 color: '#000000',
@@ -1573,12 +1574,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         style={{
                           fontFamily: '"Futura PT Medium"',
                           fontSize: '8px',
-                          color: '#000000',
+                          color: isLineItemOutOfStock(item) ? '#EB1C24' : '#000000',
                           textTransform: 'uppercase',
                           marginBottom: '6px'
                         }}
                       >
-                        QTY: {item.quantity ?? 1}
+                        {isLineItemOutOfStock(item) ? 'SOLD OUT' : `QTY: ${item.quantity ?? 1}`}
                       </span>
                       <button
                         onClick={() => handleRemoveItemClick(item.id)}
