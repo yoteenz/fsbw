@@ -45,6 +45,7 @@ import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
 import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
+import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -679,20 +680,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
 
   // updateQuantity function removed - not currently used
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
-      if (isGiftCardCartLine(item)) return total + giftCardLineTotalUsd(item);
-      return total + (item.price || 0) * (item.quantity || 1);
-    }, 0);
-  };
+  const getTotalPrice = () => cartBillableSubtotal(cartItems);
 
-  // Points-eligible amount (exclude gift cards and digital) for loyalty line
-  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
-    const isGiftCard = item.name === 'GIFT CARD' || (item as any).type === 'gift-card';
-    const isDigital = (item as any).type === 'digital';
-    if (isGiftCard || isDigital) return sum;
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
+  // Points-eligible amount (exclude gift cards, digital, sold-out wig units) for loyalty line
+  const pointsEligibleAmount = cartBillablePointsEligibleSubtotal(cartItems);
 
   const isSignedIn = typeof window !== 'undefined' && localStorage.getItem('isSignedIn') === 'true';
 

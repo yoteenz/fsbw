@@ -39,7 +39,6 @@ import {
 } from '../../utils/bookingCheckout';
 import {
   filterGiftCardCartLines,
-  giftCardLineTotalUsd,
   isGiftCardCartLine,
   isGiftCardCheckoutPath,
 } from '../../utils/giftCardCheckout';
@@ -81,7 +80,16 @@ import {
   getCheckoutProcessingTimePersistentLabel,
 } from '../../utils/checkoutBcfProcessing';
 import { cartRequiresGiftCardIdentityForm } from '../../utils/giftCardFirstPurchaseForm';
-import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
+import {
+  cartBillableQuantityUnits,
+  cartBillableSubtotal,
+  cartBillableSubtotalExcludingSpecialOffer,
+  cartBillableTaxableSubtotal,
+  cartLineExtendedPriceUsd,
+  filterBillableCartLines,
+  isBillableCartLine,
+} from '../../utils/cartBillableLines';
+import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 
 /** Special-offer-only cart: block codes, referral, gift card, service vouchers (COLOR/HAIRLINE/STYLING); free gifts stay combinable. */
 const SPECIAL_OFFER_CHECKOUT_COMBO_MESSAGE =
@@ -236,6 +244,7 @@ function buildAppliedVoucherQuantitiesFromModal(
 }
 
 function CheckoutPage() {
+  const inventory = useProductInventorySnapshot();
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
@@ -262,13 +271,17 @@ function CheckoutPage() {
     const path = location.pathname;
     if (path === '/checkout/upgrade') return undefined;
     if (path.includes('/checkout/bookings') || path.includes('/checkout/gift-card')) return undefined;
-    const fromLines = cartTotalQuantityUnits(cartItems);
+    const fromLines = cartBillableQuantityUnits(cartItems);
     return cartItems.length > 0 ? fromLines : undefined;
-  }, [cartItems, location.pathname]);
-  /** Horizontal strip: one tile per unit (qty &gt; 1 → repeated tiles); no QUANTITY line. */
+  }, [cartItems, location.pathname, inventory.version]);
+  const billableCartItems = useMemo(
+    () => filterBillableCartLines(cartItems),
+    [cartItems, inventory.version]
+  );
+  /** Horizontal strip: one tile per unit (qty &gt; 1 → repeated tiles); sold-out wig units omitted. */
   const orderStripExpandedEntries = useMemo(
-    () => expandCartLinesForOrderStrip(cartItems),
-    [cartItems]
+    () => expandCartLinesForOrderStrip(billableCartItems),
+    [billableCartItems]
   );
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
@@ -1880,30 +1893,12 @@ function CheckoutPage() {
     }
   };
 
-  // Calculate order totals
-  const orderAmount = cartItems.reduce((sum, item) => {
-    if (isGiftCardCartLine(item)) return sum + giftCardLineTotalUsd(item);
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
-  const orderAmountExcludingSpecialOffer = cartItems.reduce((sum, item) => {
-    if (item.isSpecialOffer) return sum;
-    if (isGiftCardCartLine(item)) return sum + giftCardLineTotalUsd(item);
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
-  
-  // Calculate taxable amount (exclude gift cards, digital items, and bookings-only A/C checkout — same as digital flow)
-  const taxableAmount = isBookingsOnlyCheckout
-    ? 0
-    : cartItems.reduce((sum, item) => {
-        const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-        const isDigital = item.type === 'digital';
+  // Calculate order totals (sold-out wig units remain in bag but do not count toward payment)
+  const orderAmount = cartBillableSubtotal(cartItems);
+  const orderAmountExcludingSpecialOffer = cartBillableSubtotalExcludingSpecialOffer(cartItems);
 
-        if (isGiftCard || isDigital) {
-          return sum;
-        }
-
-        return sum + (item.price || 0) * (item.quantity || 1);
-      }, 0);
+  // Calculate taxable amount (exclude gift cards, digital items, sold-out units, and bookings-only A/C checkout)
+  const taxableAmount = isBookingsOnlyCheckout ? 0 : cartBillableTaxableSubtotal(cartItems);
 
   const taxesProcessing = taxableAmount * 0.10; // 10% sales tax on taxable amount only (excluding gift cards, digital items, shipping & discounts)
   
@@ -2090,8 +2085,9 @@ function CheckoutPage() {
           ? orderAmountExcludingSpecialOffer
           : orderAmount;
       const bookingPortion = cartItems.reduce((sum, item: { price?: number; quantity?: number; type?: string }) => {
+        if (!isBillableCartLine(item)) return sum;
         if (item?.type === 'booking-appointment' || item?.type === 'booking-consult') {
-          return sum + (item.price || 0) * (item.quantity || 1);
+          return sum + cartLineExtendedPriceUsd(item);
         }
         return sum;
       }, 0);
@@ -2435,8 +2431,9 @@ function CheckoutPage() {
         ? orderAmountExcludingSpecialOffer
         : orderAmount;
     const bookingPortion = cartItems.reduce((sum, item: { price?: number; quantity?: number; type?: string }) => {
+      if (!isBillableCartLine(item)) return sum;
       if (item?.type === 'booking-appointment' || item?.type === 'booking-consult') {
-        return sum + (item.price || 0) * (item.quantity || 1);
+        return sum + cartLineExtendedPriceUsd(item);
       }
       return sum;
     }, 0);
@@ -2620,7 +2617,7 @@ function CheckoutPage() {
             productImage: bookingOrderThumb ?? '/assets/natural front.png',
             total: subtotal,
             subtotal: orderAmount,
-            items: cartItems.reduce((sum: number, i: any) => sum + (i.quantity || 1), 0),
+            items: cartBillableQuantityUnits(cartItems),
             placedAt: Date.now(),
             pointsEarned,
             requiresOrderAuthorizationForm,
@@ -2715,7 +2712,7 @@ function CheckoutPage() {
     return {
       amount: totalAmount,
       currency: selectedCurrency,
-      items: cartItems.map(item => ({
+      items: filterBillableCartLines(cartItems).map((item) => ({
         name: item.name || 'Product',
         quantity: item.quantity || 1,
         price: (item.price || 0) * currency.rate
@@ -3322,12 +3319,12 @@ function CheckoutPage() {
                     className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                     style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px' }}
                   >
-                    {cartTotalQuantityUnits(cartItems)}
+                    {cartBillableQuantityUnits(cartItems)}
                   </span>
                 </div>
 
                 {/* SHOPPING BAG CARD */}
-                {cartItems.length > 0 && (
+                {billableCartItems.length > 0 && (
                   <div
                     className="flex flex-col"
                     style={{ 

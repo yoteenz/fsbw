@@ -64,6 +64,7 @@ import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin'
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
+import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../../utils/cartBillableLines';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -579,13 +580,8 @@ function ShoppingBagPage() {
     };
   }, [currencyRates, selectedCurrency]);
 
-  // Points-eligible amount (exclude gift cards and digital) for loyalty line
-  const pointsEligibleAmount = cartItems.reduce((sum, item) => {
-    const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-    const isDigital = item.type === 'digital';
-    if (isGiftCard || isDigital) return sum;
-    return sum + (item.price || 0) * (item.quantity || 1);
-  }, 0);
+  // Points-eligible amount (exclude gift cards, digital, sold-out wig units) for loyalty line
+  const pointsEligibleAmount = cartBillablePointsEligibleSubtotal(cartItems);
 
   const getPointsMultiplierForUser = (): number => {
     if (!isSignedIn) return 1;
@@ -1130,8 +1126,8 @@ function ShoppingBagPage() {
     setShowMobileMenu(false);
   };
 
-  // Calculate subtotal
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+  // Calculate subtotal (sold-out wig units still shown but not counted)
+  const subtotal = cartBillableSubtotal(cartItems);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative', minHeight: '100vh' }}>

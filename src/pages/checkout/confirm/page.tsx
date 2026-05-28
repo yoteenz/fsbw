@@ -52,7 +52,14 @@ import {
   cartHasAnyLoyaltyEarningLine,
   isMembershipSubscriptionCartLine,
 } from '../../../utils/loyaltyPointsEligibleNet';
-import { cartTotalQuantityUnits } from '../../../utils/cartTotalQuantityUnits';
+import {
+  cartBillablePointsEligibleSubtotal,
+  cartBillableQuantityUnits,
+  cartBillableSubtotal,
+  cartBillableTaxableSubtotal,
+  filterBillableCartLines,
+} from '../../../utils/cartBillableLines';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 
 /** Line item is a premium subscription tier (matches checkout upgrade cart shape). */
 function isMembershipTierCartItem(item: any): boolean {
@@ -72,6 +79,7 @@ function summaryScrollItemWidthPx(item: any, isSubscriptionUpgrade: boolean): nu
 }
 
 function CheckoutConfirmPage() {
+  const inventory = useProductInventorySnapshot();
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
@@ -270,9 +278,14 @@ function CheckoutConfirmPage() {
     [cartItems, orderData]
   );
 
+  const billableCartItems = useMemo(
+    () => filterBillableCartLines(cartItems),
+    [cartItems, inventory.version]
+  );
+
   const orderStripExpandedEntries = useMemo(
-    () => expandCartLinesForOrderStrip(cartItems),
-    [cartItems]
+    () => expandCartLinesForOrderStrip(billableCartItems),
+    [billableCartItems]
   );
 
   const isOnlyDigitalProductsSummary = React.useMemo(
@@ -556,24 +569,10 @@ function CheckoutConfirmPage() {
     // If no order data from location state, populate with mock data
     if (!location.state) {
       // Calculate order total from cart items (use 1290 as default if cart is empty)
-      const calculatedTotal = cartItems.length > 0 
-        ? cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0)
-        : 1290;
-      
-      // Calculate taxable amount (exclude gift cards and digital items)
-      const taxableAmount = cartItems.length > 0
-        ? cartItems.reduce((sum, item) => {
-            // Skip gift cards and digital items
-            const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-            const isDigital = item.type === 'digital';
-            
-            if (isGiftCard || isDigital) {
-              return sum; // Don't add to taxable amount
-            }
-            
-            return sum + (item.price || 0) * (item.quantity || 1);
-          }, 0)
-        : 1290; // Default taxable amount if cart is empty
+      const calculatedTotal = billableCartItems.length > 0 ? cartBillableSubtotal(cartItems) : 1290;
+
+      const taxableAmount =
+        billableCartItems.length > 0 ? cartBillableTaxableSubtotal(cartItems) : 1290;
       
       // Use pointsEarned from location.state (passed from checkout page) when available so summary always matches checkout
       const pointsEarnedFromState = location.state?.pointsEarned;
@@ -583,15 +582,8 @@ function CheckoutConfirmPage() {
       // Only recalculate when not passed from checkout; use same formula as checkout page
       if (pointsEarned === undefined) {
         // Points-eligible amount: exclude gift cards and digital items; 0 when cart empty (match checkout)
-        const pointsEligibleAmount = cartItems.length > 0
-          ? cartItems.reduce((sum, item) => {
-              const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-              const isDigital = item.type === 'digital';
-              const isConsultBooking = item.type === 'booking-consult';
-              if (isGiftCard || isDigital || isConsultBooking || isMembershipSubscriptionCartLine(item)) return sum;
-              return sum + (item.price || 0) * (item.quantity || 1);
-            }, 0)
-          : 0;
+        const pointsEligibleAmount =
+          billableCartItems.length > 0 ? cartBillablePointsEligibleSubtotal(cartItems) : 0;
 
         let multiplier = 1;
         try {
@@ -740,7 +732,7 @@ function CheckoutConfirmPage() {
         processingTime: processingTime
       }));
     }
-  }, [location.state, cartItems]);
+  }, [location.state, cartItems, billableCartItems, inventory.version]);
 
   // Horizontal scroll handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -1210,7 +1202,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                   className="text-black font-bold text-lg flex-shrink-0 ml-2 uppercase"
                   style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif', fontSize: '15px' }}
                 >
-                  {cartTotalQuantityUnits(cartItems)}
+                  {cartBillableQuantityUnits(cartItems)}
                 </span>
               </div>
 

@@ -18849,3 +18849,18 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Alerts page:** Panels **TOTAL URGENT** / **TOTAL ORDERS**; tabs **ALERTS** (ALERTS/SALES/BOOKINGS/CLIENTS/REMINDERS), **ORDERS**, **SYSTEM** (OPERATIONAL/SYSTEM/BRAND); colored category labels from **`adminHeaderNotificationsData`**.
 
 **Shared:** **`AdminHubPageShell`**, **`adminMessagesHub.ts`**, **`adminNotificationsHub.ts`**, read-state in localStorage; **`AdminHeader`** dropdowns navigate to new routes and sync read with hub keys.
+
+---
+
+## 2026-05-21 — Billable cart lines: exclude sold-out from totals and checkout summary
+
+**Context (full chat):** Storefront inventory (OUT OF STOCK, strikethrough); admin messages/alerts hubs; cart/bag text layers and UI polish. User asked that **out-of-stock** lines in **cart** and **shopping bag** must **not** count toward displayed prices/totals, and must **not** appear in **checkout** order summary (horizontal product strip + cost breakdown).
+
+**Implementation:**
+- **`src/utils/cartBillableLines.ts`** — `isBillableCartLine` / `filterBillableCartLines` (excludes `isLineItemOutOfStock`); `cartBillableSubtotal`, `cartBillableSubtotalExcludingSpecialOffer`, `cartBillableTaxableSubtotal`, `cartBillablePointsEligibleSubtotal`, `cartBillableQuantityUnits`, `cartLineExtendedPriceUsd`.
+- **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** — subtotal and points-eligible amounts use billable helpers (OOS lines still visible with sold-out UI).
+- **`loyaltyPointsEligibleNet.ts`** — skips OOS lines in points math and `cartHasAnyLoyaltyEarningLine`.
+- **`checkout/page.tsx`** — `useProductInventorySnapshot`; order strip, header count, `orderAmount` / tax / consult booking portion / `preparePaymentData` items use billable lines only; strip hidden when no billable lines.
+- **`checkout/confirm/page.tsx`** — same billable strip, count, and fallback mock totals/points when no `location.state`.
+
+**Convention:** Sold-out wig units remain in cart storage for UX but are non-billable everywhere totals and checkout summary are computed.

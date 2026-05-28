@@ -8,6 +8,7 @@
  */
 
 import { isSubscriptionTierId } from '../constants/subscriptionPricing';
+import { isBillableCartLine } from './cartBillableLines';
 
 type CartItemLike = {
   name?: string;
@@ -53,6 +54,7 @@ export function isMembershipSubscriptionCartLine(item: CartItemLike | null | und
 export function cartHasAnyLoyaltyEarningLine(cartItems: CartItemLike[] | null | undefined): boolean {
   if (!cartItems || cartItems.length === 0) return false;
   for (const item of cartItems) {
+    if (!isBillableCartLine(item)) continue;
     if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     if (item.type === 'booking-consult') continue;
     return true;
@@ -82,6 +84,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peBookingForMerchSplit = 0;
   let peAppointmentBooking = 0;
   for (const item of cartItems) {
+    if (!isBillableCartLine(item)) continue;
     if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     const lt = lineTotal(item);
     peGross += lt;
@@ -113,6 +116,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peSpecialPhysical = 0;
   let pePool = 0;
   for (const item of cartItems) {
+    if (!isBillableCartLine(item)) continue;
     if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     const lt = lineTotal(item);
     if (item.isSpecialOffer) peSpecialPhysical += lt;
@@ -122,6 +126,7 @@ export function computePointsEligibleNetUsd(p: PointsEligibleNetParams): number 
   let peAppointmentBookingInPool = 0;
   let peConsultInPool = 0;
   for (const item of cartItems) {
+    if (!isBillableCartLine(item)) continue;
     if (isGiftCard(item) || isDigital(item) || isMembershipSubscriptionCartLine(item)) continue;
     if (item.isSpecialOffer) continue;
     if (isAppointmentBookingLine(item)) peAppointmentBookingInPool += lineTotal(item);
