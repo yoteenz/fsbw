@@ -18970,3 +18970,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`src/pages/straight/noir/page.tsx`** only. Other unit PDPs unchanged.
 
 **Conventions:** If user approves, replicate pattern to Blanco / wave units; until then treat as NOIR-only experiment.
+
+---
+
+## 2026-05-21 — Tools gift card strip: shop UNITS snap + alignment
+
+**Context:** User asked **`/tools`** (home/tools) gift card marble carousel to use the same **measured snap scroll** as **home/shop UNITS**, and to fix **misaligned gift card images**.
+
+**Change:** **`src/pages/tools/page.tsx`** — Rebuilt gift card strip to match **`products/page.tsx` UNITS** pattern: `useMarbleStripSnapStep` on viewport, `translateX(-page × snapPx)`, row width `pairCount × 100%`, cells `flex: 0 0 calc(100% / n)` (two visible per page), `overflow-x: clip`, centered divider line, overlay arrows (prev/next page, no wrap). Removed per-index `translateX` hacks and old drag handlers. Gift card image uses UNITS-style **79.2%** centered thumb in padded cell band.
