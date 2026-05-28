@@ -3,6 +3,8 @@ import {
   BRAND_TERMS_CONTACT_FORM_LINE_PREFIX,
   BRAND_TERMS_CONTACT_FORM_LINK_LABEL,
   BRAND_TERMS_CONTACT_FORM_LINK_SENTINEL,
+  BRAND_TERMS_BUSINESS_HOURS_SENTINEL,
+  BRAND_TERMS_BUSINESS_HOURS_HTML,
   BRAND_TERMS_INTRO_PARAGRAPHS,
   BRAND_TERMS_SECTIONS,
 } from '../../constants/brandTermsCopy';
@@ -67,6 +69,15 @@ function renderParagraph(text: string, key: string) {
         </Link>
         .
       </p>
+    );
+  }
+  if (text === BRAND_TERMS_BUSINESS_HOURS_SENTINEL) {
+    return (
+      <p
+        key={key}
+        style={BODY_STYLE}
+        dangerouslySetInnerHTML={{ __html: BRAND_TERMS_BUSINESS_HOURS_HTML }}
+      />
     );
   }
   return (
