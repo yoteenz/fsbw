@@ -4122,8 +4122,9 @@ p.bcf-bundles-pdp-product-name {
   display: inline-block !important;
   cursor: pointer !important;
   margin: 0 !important;
+  margin-top: 4px !important;
   padding: 0 !important;
   line-height: 1 !important;
   position: relative !important;
-  top: -4px !important;
+  top: 0 !important;
 }
