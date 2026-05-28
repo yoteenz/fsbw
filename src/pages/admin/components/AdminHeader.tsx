@@ -5,6 +5,7 @@ import { isAdminFounderAccount } from '../../../utils/adminAuth';
 import { ADMIN_HEADER_NOTIFICATIONS } from '../../../utils/adminHeaderNotificationsData';
 import { loadConciergePriorityMessages, markAdminHubMessageRead } from '../../../utils/adminMessagesHub';
 import { markAdminHubNotificationRead } from '../../../utils/adminNotificationsHub';
+import { ADMIN_MAIN_CARD_TOP_OFFSET_PX } from '../../../utils/adminLayoutConstants';
 
 /** Debug: long-press (500ms) on messages/notifications icons toggles active/inactive for testing "no new" state */
 const LONG_PRESS_MS = 500;
@@ -679,7 +680,10 @@ export default function AdminHeader({
 
       {/* Messages Dropdown */}
       {showMessagesDropdown && (
-        <div className="fixed inset-x-0 top-0 pt-16 px-4 z-[99999] pointer-events-none">
+        <div
+          className="fixed inset-x-0 top-0 px-4 z-[99999] pointer-events-none"
+          style={{ paddingTop: ADMIN_MAIN_CARD_TOP_OFFSET_PX }}
+        >
           <div className="max-w-md mx-auto pointer-events-auto">
             <div
               data-dropdown-content
@@ -794,7 +798,10 @@ export default function AdminHeader({
 
       {/* Notifications Dropdown */}
       {showNotificationsDropdown && (
-        <div className="fixed inset-x-0 top-0 pt-16 px-4 z-[99999] pointer-events-none">
+        <div
+          className="fixed inset-x-0 top-0 px-4 z-[99999] pointer-events-none"
+          style={{ paddingTop: ADMIN_MAIN_CARD_TOP_OFFSET_PX }}
+        >
           <div className="max-w-md mx-auto pointer-events-auto">
             <div
               data-dropdown-content

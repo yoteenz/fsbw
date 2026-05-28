@@ -18877,3 +18877,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`adminNotificationsHubSort.ts`** — ALERTS (urgent, by category), ORDERS (urgent + A–Z), SYSTEM (by category + A–Z).
 - **`adminHubTimestampSort.ts`** + **`sortTime`** on notification hub rows for time-based sorts.
 - **`admin/messages/page.tsx`**, **`admin/alerts/page.tsx`** — dropdown above list when rows exist; sort preference remembered per tab in component state.
+
+---
+
+## 2026-05-21 — Admin header dropdown Y aligned with meetings main card
+
+**Context:** User asked to confirm **messages** and **notifications** nav dropdowns on admin dashboard share the same **Y axis** as the **main card** on **admin meetings**.
+
+**Finding:** Dropdowns used `pt-16` (64px); meetings hub card top is **72px** (`AdminHeader` `py-4` + `h-10` + `py-4`).
+
+**Fix:** **`adminLayoutConstants.ts`** — `ADMIN_MAIN_CARD_TOP_OFFSET_PX = 72`; **`AdminHeader.tsx`** messages/notifications fixed panels use `paddingTop: 72` (same `max-w-md mx-auto px-4` as meetings card row).
