@@ -18739,4 +18739,48 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Git:** Committed on **`preview/mobile`** and merged to **`master`**; both branches pushed (`master`, `preview/mobile`).
 
+<<<<<<< HEAD
 **Follow-up (same chat):** User asked to reduce **top spacing above NOIR’s red RAW line only** by **2px** (other units unchanged). **`cartLineSubtitleLayerStyle(productName)`** in **`cartLineProductLayers.ts`** sets subtitle layer **`paddingTop: 0`** for NOIR (was **`CART_LINE_LAYER_PAD_Y_PX`** 2). **`CartLineTextLayer`** accepts optional **`productName`** on **`slot="subtitle"`**; cart dropdown, bag, wishlist pass normalized name.
+=======
+---
+
+## 2026-05-27 — Brand terms & FAQ: remove Oxford commas before AND
+
+**Context:** User asked to remove commas immediately before "and" on the Terms and FAQ brand pages (e.g. "POLICIES, AND NOTICES" → "POLICIES AND NOTICES").
+
+**Changes:** `src/constants/brandTermsCopy.ts` and `src/constants/brandFaqCopy.ts` — all ", AND" list joiners in body copy updated (13 FAQ + 7 terms instances). Checkout terms modal uses shared `BrandTermsBody`, so it picks up the same wording.
+
+**Git:** Commit on `master`; merged into `preview/mobile`. Remote already had equivalent patch on rebase (duplicate commit dropped); `preview/mobile` pushed after `git pull --rebase`.
+
+**Conventions:** Brand legal/FAQ copy uses "X AND Y" without a comma before AND unless the user requests otherwise.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: remove commas before OR
+
+**Context:** User asked to apply the same Oxford-comma cleanup for "OR" as was done for "AND" on Terms and FAQ pages.
+
+**Changes:** `src/constants/brandTermsCopy.ts` (8) and `src/constants/brandFaqCopy.ts` (2) — replaced `, OR` with ` OR` where OR is the list conjunction (regex `, OR\b`), e.g. "MODIFY, OR CHANGE" → "MODIFY OR CHANGE", "SITE MENU, OR GO TO" → "SITE MENU OR GO TO". Did not alter words like ORDERS/ORDER where the comma precedes a longer token.
+
+**Git:** `fcee29db` on `master`; merged and pushed `preview/mobile`.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: colons on gray section headers
+
+**Context:** User asked for colons on gray Bohemy section titles on Terms and FAQ (e.g. order agreement, processing + shipping).
+
+**Changes:** `BrandTermsBody.tsx` and `BrandFaqSection.tsx` — render `{section.title}:` so headers display as "order agreement:", "processing + shipping:", etc. (lowercase via existing CSS). Checkout terms modal uses same `BrandTermsBody`. Matches order-form subhead pattern (`THIS FORM SERVES AS:`).
+
+**Git:** `2f3e4d81` on `master` and `preview/mobile`.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: reverted section header colons
+
+**Context:** User disliked colons on gray Bohemy section headers; asked to remove them after brief trial.
+
+**Changes:** Reverted `BrandTermsBody.tsx` and `BrandFaqSection.tsx` to render `{section.title}` without trailing colon (same as pre-colon state).
+
+**Git:** `6e007fb9` on `master` and `preview/mobile`.
+>>>>>>> 42ac755948d8c35dda86396b45df3604cb2b73bf
