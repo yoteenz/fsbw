@@ -2332,8 +2332,20 @@ function NoirSelection() {
                   <span className="product-view-toggle-text" style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                 </div>
               </div>
-              <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(6px, 1.2vw, 12px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
-                <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
+              <div
+                className="product-wig-preview-images"
+                style={{
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  justifyContent: 'center',
+                  gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)',
+                  marginBottom: 'clamp(12px, 1.5vw, 16px)',
+                  overflow: 'visible',
+                  transform: 'translateY(0)',
+                  minHeight: 'clamp(290px, 72.5vw, 464px)',
+                }}
+              >
+                <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0', display: 'flex', alignSelf: 'stretch' }}>
                   <div
                     style={{
                       position: 'relative',
@@ -2342,11 +2354,12 @@ function NoirSelection() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-width: 'clamp(208px, 52vw, 333px)',
-                    height: 'clamp(300px, 75.1vw, 480px)',
-                    backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.hero : '/assets/leaf-brick-resize.png'}')`,
+                      width: 'clamp(200px, 50vw, 320px)',
+                      height: '100%',
+                      minHeight: 'clamp(290px, 72.5vw, 464px)',
+                      backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.hero : '/assets/leaf-brick-resize.png'}')`,
                       backgroundRepeat: 'repeat',
-                      overflow: 'visible',
+                      overflow: 'hidden',
                       cursor: 'pointer',
                     }}
                     onClick={() => {
@@ -2368,10 +2381,10 @@ width: 'clamp(208px, 52vw, 333px)',
                         top: 'calc(50% - 10.601px + 12px)',
                         transform: 'translateX(-50%) translateY(-50%)',
                         zIndex: '10',
-                        width: 'clamp(239px, 59.75vw, 383px)',
+                        width: 'clamp(230px, 57.5vw, 368px)',
                         height: 'auto',
-                        maxHeight: 'min(634px, 85vh)',
-                        minWidth: 'clamp(239px, 59.75vw, 383px)',
+                        maxHeight: '100%',
+                        minWidth: 'clamp(230px, 57.5vw, 368px)',
                         minHeight: 'auto',
                         display: is3DView ? 'none' : 'block',
                         cursor: 'pointer',
@@ -2391,31 +2404,32 @@ width: 'clamp(208px, 52vw, 333px)',
                   </div>
                 </div>
                 
-                {/* Top and Bottom Mannequins - Right Side (column height matches hero frame; space-between aligns tops/bottoms) */}
+                {/* Top and Bottom Mannequins - Right Side (equal flex halves + gap; tops/bottoms align with hero) */}
                 <div
                   className="flex flex-col flex-shrink-0"
                   style={{
-                    height: 'clamp(300px, 75.1vw, 480px)',
-                    justifyContent: 'space-between',
+                    width: 'clamp(100px, 26vw, 175px)',
+                    alignSelf: 'stretch',
                     gap: 'clamp(6px, 1.2vw, 12px)',
+                    minHeight: 'clamp(290px, 72.5vw, 464px)',
                   }}
                 >
-                  <div className="flex-shrink-0 relative">
+                  <div className="relative" style={{ flex: '1 1 0', minHeight: 0 }}>
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
+                      style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleTopThumbnailClick}
                     >
-                      <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: '100%', maxHeight: '100%', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
-                  <div className="flex-shrink-0 relative">
+                  <div className="relative" style={{ flex: '1 1 0', minHeight: 0 }}>
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer h-full w-full"
+                      style={{ backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleBottomThumbnailClick}
                     >
-                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
+                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: '100%', maxHeight: '100%', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
                 </div>
