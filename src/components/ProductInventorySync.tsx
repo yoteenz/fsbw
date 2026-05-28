@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { PRODUCT_INVENTORY_UPDATED_EVENT } from '../utils/productInventoryAvailability';
 import { syncStoredLinesStockStatus } from '../utils/syncStoredLinesStockStatus';
 import { processUnitStockNotifyWaitlistOnInventoryUpdate } from '../utils/unitStockNotify';
+import { processWishlistStockAlertsForSignedInUser } from '../utils/wishlistStockAlerts';
 
 /** Keeps cart / wishlist `stockStatus` aligned with admin inventory. */
 export default function ProductInventorySync() {
@@ -9,15 +10,22 @@ export default function ProductInventorySync() {
     const run = () => {
       syncStoredLinesStockStatus();
       processUnitStockNotifyWaitlistOnInventoryUpdate();
+      processWishlistStockAlertsForSignedInUser();
     };
     run();
     window.addEventListener('focus', run);
     window.addEventListener('cartUpdated', run);
+    window.addEventListener('wishlistUpdated', run);
+    window.addEventListener('userListsUpdated', run);
+    window.addEventListener('signInStateChanged', run);
     window.addEventListener('storage', run);
     window.addEventListener(PRODUCT_INVENTORY_UPDATED_EVENT, run);
     return () => {
       window.removeEventListener('focus', run);
       window.removeEventListener('cartUpdated', run);
+      window.removeEventListener('wishlistUpdated', run);
+      window.removeEventListener('userListsUpdated', run);
+      window.removeEventListener('signInStateChanged', run);
       window.removeEventListener('storage', run);
       window.removeEventListener(PRODUCT_INVENTORY_UPDATED_EVENT, run);
     };
