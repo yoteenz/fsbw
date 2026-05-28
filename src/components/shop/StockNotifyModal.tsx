@@ -95,7 +95,7 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
             fontWeight: 500,
           }}
         >
-          THIS ITEM IS CURRENTLY OUT OF STOCK. ENTER YOUR EMAIL ADDRESS AND WE&apos;LL LET YOU KNOW ONCE IT&apos;S BACK IN STOCK AGAIN.
+          THIS ITEM IS CURRENTLY SOLD OUT. ENTER YOUR EMAIL ADDRESS AND WE&apos;LL LET YOU KNOW ONCE IT&apos;S BACK IN STOCK.
         </p>
 
         {!success ? (
