@@ -4123,7 +4123,8 @@ p.bcf-bundles-pdp-product-name {
 }
 
 .wishlist-expanded-list-line-stars--list {
-  margin-top: 2px !important;
+  margin-top: 1px !important;
+  margin-bottom: 8px !important;
 }
 
 .wishlist-expanded-list-view-details-toggle {
