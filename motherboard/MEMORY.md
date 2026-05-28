@@ -18802,3 +18802,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`CartDropdown.tsx`** — `formatPriceDisplay` in view-details HTML: positive deltas use **` · `** (`#EB1C24`) then black amount; negatives keep **`-`** on the amount (no `+`).
 
 **Git:** `9e7dc70e` on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-05-27 — Brand terms: merged limitation of liability intro
+
+**Context:** User asked to merge two paragraphs in LIMITATION OF LIABILITY so discretion/risk line precedes the damages sentence in one block.
+
+**Changes:** `brandTermsCopy.ts` — single intro paragraph: "USE OF OUR PRODUCTS AND WEBSITE IS AT YOUR OWN DISCRETION AND RISK. FRONTAL SLAYER SHALL NOT BE HELD LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL OR ACCIDENTAL DAMAGES RESULTING FROM:"; removed `limitation-liability-close` section.
+
+**Git:** `54ef8a3d` on `master` and `preview/mobile`.
