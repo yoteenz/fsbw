@@ -2,8 +2,9 @@ import type { CSSProperties, ReactNode } from 'react';
 import { isLineItemOutOfStock, isWigUnitSoldOut } from '../../utils/productInventoryAvailability';
 
 const OUT_OF_STOCK_LABEL_STYLE: CSSProperties = {
-  fontFamily: '"Futura PT Demi", Futura, sans-serif',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
+  fontWeight: 500,
   color: '#EB1C24',
   textTransform: 'uppercase',
   margin: 0,
