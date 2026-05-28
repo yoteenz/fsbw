@@ -19199,3 +19199,15 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 - Any surface that opens Build-a-Wig edit for an existing saved/carted/wishlisted unit should seed the shared edit session first and navigate to the product-specific `/build-a-wig/{unit}/edit` route instead of sending the user back to the unit PDP.
 - When wishlist needs sold-out price treatment without extra stock copy, suppress the shared `WigLineStockPrice` label at the call site instead of changing cart/bag stock wording globally.
 - Use **SOLD OUT** for shopper-facing sold-out action copy where the user explicitly requested that wording, while the notify popup should say **SOLD OUT** / **BACK IN STOCK** in its explanatory sentence.
+
+---
+
+## 2026-05-28 — Wishlist lists overview: EDIT LIST NAME (line view) + grid PRIVATE spacing
+
+**Context:** On `/wishlist/lists` overview, user wanted (1) a red **EDIT LIST NAME** link below the gray visibility label (**PRIVATE** / **SHARED**) in **line view only**, opening a popup to edit/save the list name; and (2) in **grid view only**, reduce the spacing **above and below** the visibility (PRIVATE) text by **1px**.
+
+**Changes:**
+- **New `src/components/RenameListModal.tsx`** — modeled on `CreateNewListModal` (same marble popup shell, EDIT LIST NAME heading, **Save**/**Cancel**). Pre-fills the current name; validates non-empty, ≤10 chars (`USER_LIST_NAME_MAX_LENGTH`), and no duplicate among **other** lists (excludes the list being renamed by `id`). On save it maps the list, `saveUserLists(next)` (which republishes shared snapshots + dispatches `userListsUpdated`), then `onRenamed`.
+- **`src/pages/wishlist/lists/page.tsx`** — imported `RenameListModal`; added `listToRename` state (`UserList | null`). Line-view row text column now renders a red **EDIT LIST NAME** span (`LIST_OVERVIEW_EDIT_NAME_STYLE`, `#EB1C24`, 11px, Futura PT Medium) below the visibility `<p>`; its onClick `stopPropagation`s (so the row's open-list handler doesn't fire) and sets `listToRename`. Rendered `<RenameListModal>` near the other modals (open when `listToRename !== null`; `onRenamed` → `refreshLists`). **Grid view only:** visibility `<p>` `marginTop 2px → 1px` (above) and count `<span>` `marginTop 4px → 3px` (below). Line view spacing unchanged.
+
+Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
