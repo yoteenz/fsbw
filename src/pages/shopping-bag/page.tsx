@@ -57,6 +57,7 @@ import {
   cartCapSizeLineMarginTop,
   cartLinePriceMarginTop,
   cartLineRawSubtitleMarginTop,
+  withNormalizedCartLineName,
 } from '../../utils/cartCapSizeLineMargin';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
@@ -1575,7 +1576,7 @@ function ShoppingBagPage() {
                                   color: '#EB1C24',
                                   textTransform: 'uppercase',
                                   fontSize: '9px',
-                                  marginTop: cartLineRawSubtitleMarginTop(item),
+                                  marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
                                   marginBottom: '0',
                                   lineHeight: '1.1'
                                 }}
@@ -1649,7 +1650,7 @@ function ShoppingBagPage() {
                                     color: '#808080',
                                     textTransform: 'uppercase',
                                     fontSize: '10px',
-                                    marginTop: cartCapSizeLineMarginTop(item),
+                                    marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
                                     marginBottom: '0',
                                     lineHeight: '1.1'
                                   }}
@@ -1663,7 +1664,7 @@ function ShoppingBagPage() {
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: cartLinePriceMarginTop(item),
+                                    marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                     marginBottom: '0',
                                     fontWeight: '600',
                                     textAlign: 'left',
@@ -1695,7 +1696,7 @@ function ShoppingBagPage() {
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: cartLinePriceMarginTop(item),
+                                    marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                     marginBottom: '0',
                                     fontWeight: '600',
                                     display: 'flex',
@@ -1722,7 +1723,7 @@ function ShoppingBagPage() {
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
                                   fontSize: '12px',
-                                  marginTop: cartLinePriceMarginTop(item),
+                                  marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                   marginBottom: '0',
                                   marginLeft: '0',
                                   marginRight: '0',
@@ -2137,7 +2138,7 @@ function ShoppingBagPage() {
                                color: '#EB1C24',
                                textTransform: 'uppercase',
                                fontSize: '9px',
-                               marginTop: cartLineRawSubtitleMarginTop(item),
+                               marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
                                marginBottom: '0',
                                lineHeight: '1.1'
                              }}
@@ -2212,7 +2213,7 @@ function ShoppingBagPage() {
                                  color: '#808080',
                                  textTransform: 'uppercase',
                                  fontSize: '10px',
-                                 marginTop: cartCapSizeLineMarginTop(item),
+                                 marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
                                  marginBottom: '0',
                                  lineHeight: '1.1'
                                }}
@@ -2226,7 +2227,7 @@ function ShoppingBagPage() {
                                  fontFamily: '"Futura PT Book"',
                                  color: '#000000',
                                  fontSize: '12px',
-                                 marginTop: cartLinePriceMarginTop(item),
+                                 marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                  marginBottom: '0',
                                  fontWeight: '600',
                                  display: 'flex',
@@ -2255,7 +2256,7 @@ function ShoppingBagPage() {
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',
                                fontSize: '12px',
-                               marginTop: cartLinePriceMarginTop(item),
+                               marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                marginBottom: '0',
                                marginLeft: '0',
                                marginRight: '0',

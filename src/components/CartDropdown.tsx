@@ -38,6 +38,7 @@ import {
   cartCapSizeLineMarginTop,
   cartLinePriceMarginTop,
   cartLineRawSubtitleMarginTop,
+  withNormalizedCartLineName,
 } from '../utils/cartCapSizeLineMargin';
 
 interface CartDropdownProps {
@@ -1254,7 +1255,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontSize: '9px',
-                            marginTop: cartLineRawSubtitleMarginTop(item),
+                            marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
                             marginBottom: '0',
                             lineHeight: '1.1'
                           }}
@@ -1549,7 +1550,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               color: '#808080',
                               textTransform: 'uppercase',
                               fontSize: '10px',
-                              marginTop: cartCapSizeLineMarginTop(item),
+                              marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
                               marginBottom: '0',
                               lineHeight: '1.1'
                             }}
@@ -1560,7 +1561,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         {(item as CartItem).bcfBundleDeal ? (
                           <div
                             style={{
-                              marginTop: cartLinePriceMarginTop(item),
+                              marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                               marginBottom: '0',
                               width: '100%',
                               display: 'flex',
@@ -1622,7 +1623,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                   textTransform: 'uppercase',
                                   fontSize: '12px',
                                   fontWeight: '600',
-                                  marginTop: cartLinePriceMarginTop(item),
+                                  marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                                   marginBottom: '0',
                                   display: 'flex',
                                   flexDirection: 'column',
@@ -1652,7 +1653,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             textTransform: 'uppercase',
                             fontSize: '12px',
                             fontWeight: '600',
-                            marginTop: cartLinePriceMarginTop(item),
+                            marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
                             marginBottom: '0',
                             marginLeft: '0',
                             marginRight: '0'

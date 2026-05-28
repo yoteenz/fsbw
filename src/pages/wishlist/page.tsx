@@ -13,7 +13,11 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { WishlistItemCapSizeLine } from '../../components/wishlist/WishlistItemCapSizeLine';
-import { cartLinePriceMarginTop, cartLineRawSubtitleMarginTop } from '../../utils/cartCapSizeLineMargin';
+import {
+  cartLinePriceMarginTop,
+  cartLineRawSubtitleMarginTop,
+  withNormalizedCartLineName,
+} from '../../utils/cartCapSizeLineMargin';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -966,20 +970,20 @@ function WishlistSelection() {
                               color: '#EB1C24',
                               textTransform: 'uppercase',
                               fontSize: '9px',
-                              marginTop: cartLineRawSubtitleMarginTop(item),
+                              marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item, itemName)),
                               marginBottom: '0',
                               lineHeight: '1.1'
                             }}
                           >
                             {itemLength} RAW {itemHairOrigin}
                           </p>
-                          <WishlistItemCapSizeLine item={item} />
+                          <WishlistItemCapSizeLine item={item} displayName={itemName} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               fontSize: '12px',
-                              marginTop: cartLinePriceMarginTop(item),
+                              marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item, itemName)),
                               marginBottom: '0',
                               fontWeight: '600'
                             }}
