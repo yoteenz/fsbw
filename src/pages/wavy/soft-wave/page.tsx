@@ -1746,44 +1746,6 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 </div>
               </div>
 
-              {showAdminFounder2dDownloads ? (
-                <div
-                  className="flex flex-col items-center gap-1 px-2"
-                  style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
-                >
-                  <p
-                    style={{
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                      fontSize: '9px',
-                      color: '#808080',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      margin: 0,
-                    }}
-                  >
-                    download 2d angles (png)
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-                    {SOFT_WAVE_2D_ANGLE_DOWNLOAD_ROWS.map(({ href, label, download }) => (
-                      <a
-                        key={href}
-                        href={href}
-                        download={download}
-                        style={{
-                          fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                          fontSize: '10px',
-                          color: '#EB1C24',
-                          textDecoration: 'underline',
-                          textUnderlineOffset: '2px',
-                        }}
-                      >
-                        {label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
               {/* Tabs Section */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
                 {/* Tab Navigation */}
