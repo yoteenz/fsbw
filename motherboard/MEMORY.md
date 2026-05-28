@@ -18822,3 +18822,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `brandTermsCopy.ts` — single intro paragraph: "USE OF OUR PRODUCTS AND WEBSITE IS AT YOUR OWN DISCRETION AND RISK. FRONTAL SLAYER SHALL NOT BE HELD LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL OR ACCIDENTAL DAMAGES RESULTING FROM:"; removed `limitation-liability-close` section.
 
 **Git:** `54ef8a3d` on `master` and `preview/mobile`.
+
+---
+
+## 2026-05-21 — Storefront inventory aligned with admin depleted stock
+
+**Context (full chat):** Checkout dev UI hidden; cart/bag/wishlist fixed-height text layers; NOIR RAW trim; add-to-list **NEW LIST**; cart dropdown view-details red dot; admin hub **10px** button spacing. User confirmed inventory counts (e.g. **NOIR 0** in admin) should drive shopper availability everywhere: **OUT OF STOCK** in **#EB1C24**, price **strikethrough** on cart, bag, wishlist, lists, shared lists, shop grid, and all six unit PDPs; block add-to-bag when sold out.
+
+**Implementation:**
+- **`productInventoryAvailability.ts`** — `getWigProductRemainingUnits` / `getWigProductStockStatus` / `isWigUnitSoldOut` / `getLineItemStockStatus` / `attachStockStatusToLineItem`; `PRODUCT_INVENTORY_UPDATED_EVENT`.
+- **`syncStoredLinesStockStatus.ts`** + **`ProductInventorySync`** in **`App.tsx`** — persist `stockStatus` on cart, wishlist, saved-for-later, user lists.
+- **`useProductInventorySnapshot`** — re-sync on focus / cart / wishlist / inventory events.
+- **`WigStockPrice.tsx`** — `WigLineStockPrice` (lines), `WigProductPriceDisplay` (PDP/grid).
+- Wired: **`CartDropdown`**, **`shopping-bag`**, **`wishlist`**, **`wishlist/lists`**, **`wishlist/shared`**, **`products`** (units grid), PDPs **`straight/noir`**, **`straight/blanco`**, **`wavy/soft-wave`**, **`wavy/beach-wave`**, **`curly/soft-curl`**, **`curly/ocean-curl`**; **`setInventoryOverride`** dispatches inventory-updated event.
