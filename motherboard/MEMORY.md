@@ -19393,3 +19393,22 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 - Use **SOLD OUT** for shopper-facing sold-out action copy where the user explicitly requested that wording, while the notify popup should say **SOLD OUT** / **BACK IN STOCK** in its explanatory sentence.
 - Premium tier benefit lists should come from the shared `src/constants/premiumBenefitsByTier.ts` source so the rewards page, brand chart, and upgrade chart stay aligned.
 - For red header/title icons, prefer native `#EB1C24` SVG assets over CSS filter tinting; the filter path produced a mismatched red compared with concierge’s native-red icons.
+
+---
+
+## 2026-05-28 — Packaging/supplies inventory now gates sold-out (units + BCF)
+
+**Context:** User set **MAILER BOXES = 0** in admin Edit Inventory but products stayed in stock. Sold-out was computed **only** from the 6 wig SKU `products` counts; packaging (mailer box, dust bag, etc.) was tracked/depleted for admin display but **never** affected storefront availability, and **BCF (bundles/closures/frontals) had no sold-out path at all** (`getLineItemStockStatus` hardcoded `in_stock` for `shop-texture-category`).
+
+**Spec from user (packaging consumed per order):** Unit = 1 mailer box, 1 dust bag, 2 business cards, 1 hang tag, 1 label, 1 envelope, 1 thank you note, 1 flyer, 1 pouch, 2 hair ties, 2 duck clips, 1 lashes. **BCF = same EXCEPT no label, flyer, or dust bag** (BCF has its own pouch/packaging → keeps MESH POUCH).
+
+**Approach:** A physical product is shippable only if **every** packaging item it needs still has enough for one order; if any required item is depleted the product is **sold out** even when hair units remain. Implemented as a packaging "shippable limit" = `min(floor(remaining / perOrder))` across required items, then `min(unitRemaining, packagingLimit)` for wig units; BCF availability is **purely** its packaging limit (no per-unit hair cap).
+
+**Changes:**
+- **`src/utils/productInventoryAvailability.ts`** — added `UNIT_PACKAGING_PER_ORDER` + `BCF_PACKAGING_PER_ORDER` maps (qty mirrors `getDepletedInventory`'s packaging block), `getPackagingShippableUnits(req)`, `stockStatusFromCount`, made **`getWigProductStockStatus`** factor `min(units, unitPackagingLimit)`, added **`getBcfStockStatus`** / **`isBcfSoldOut`**, and changed `getLineItemStockStatus` so `shop-texture-category` → `getBcfStockStatus()` (was hardcoded `in_stock`). Reads packaging from `getDepletedInventory(...).packaging` so it respects the admin `adminInventoryOverride`.
+- **`src/utils/syncStoredLinesStockStatus.ts`** — `mapLines` now also enriches **BCF** cart/wishlist/saved/list lines (`type === 'shop-texture-category'`), not just wig units, so their `stockStatus` updates (→ OUT OF STOCK in cart/bag/wishlist + excluded from checkout via existing `isLineItemOutOfStock`/`filterBillableCartLines`).
+- **`src/pages/shop/texture-category-product/page.tsx`** (BCF PDP) — added `useProductInventorySnapshot()` + `const bcfSoldOut = isBcfSoldOut()`; guarded `handleAddToBag` and `handleBundleDealToBag`; **ADD TO BAG** and **BUNDLE DEAL** buttons show **SOLD OUT** (gray, disabled) when `bcfSoldOut`.
+
+**Note:** `getDepletedInventory` per-order packaging *consumption* was left unchanged (still subtracts the full unit set per physical order, and override mode bypasses it entirely). Only the **gating** uses the per-kind requirement maps. If auto-compute (no override) ever needs BCF to stop consuming label/flyer/dust bag, that's a follow-up in `adminRevenueStats.ts`.
+
+**Verified (headless, 390px, via `adminInventoryOverride`):** all stocked → NOIR + BCF in stock; **MAILER BOXES=0** → both SOLD OUT; **DUST BAGS+LABELS+CAMPAIGN FLYERS=0** → NOIR SOLD OUT, **BCF still in stock** (BCF doesn't use those). Typecheck passes. Pushed `master` + `preview/mobile`.

@@ -1,9 +1,15 @@
 import { attachStockStatusToLineItem, isWigUnitProductName } from './productInventoryAvailability';
 
+/** Wig-unit lines and BCF (`shop-texture-category`) lines both get packaging-aware stock status. */
+function lineTracksStock(line: Record<string, unknown>): boolean {
+  if (String(line.type || '').toLowerCase() === 'shop-texture-category') return true;
+  return isWigUnitProductName(String(line.name ?? line.productName ?? ''));
+}
+
 function mapLines<T extends Record<string, unknown>>(lines: T[]): { next: T[]; changed: boolean } {
   let changed = false;
   const next = lines.map((line) => {
-    if (!isWigUnitProductName(String(line.name ?? line.productName ?? ''))) return line;
+    if (!lineTracksStock(line)) return line;
     const enriched = attachStockStatusToLineItem(line);
     if (line.stockStatus !== enriched.stockStatus) changed = true;
     return enriched as T;
