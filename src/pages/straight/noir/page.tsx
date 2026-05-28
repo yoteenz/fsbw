@@ -2409,7 +2409,7 @@ width: 'clamp(200px, 50vw, 320px)',
                       <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
-                  <div className="flex-shrink-0 relative">
+                  <div className="flex-shrink-0 relative" style={{ transform: 'translateY(-2px)' }}>
                     <div
                       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                       style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
@@ -2936,7 +2936,7 @@ width: 'clamp(200px, 50vw, 320px)',
               overflow: 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               paddingBottom: '16px',
-              marginTop: '20px',
+              marginTop: '24px',
             }}
           >
           {/* PRODUCT SHOTS SECTION — same viewport / row / image metrics as Blanco, Beach Wave, etc. */}
