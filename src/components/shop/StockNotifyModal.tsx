@@ -25,8 +25,6 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
 
   if (!isOpen) return null;
 
-  const unitLabel = String(productName || '').trim().toUpperCase();
-
   const handleSubmit = () => {
     setError('');
     const result = registerUnitStockNotifyRequest(productName, email);
@@ -96,7 +94,7 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
             lineHeight: 1.4,
           }}
         >
-          {unitLabel} IS OUT OF STOCK. ENTER YOUR EMAIL AND WE&apos;LL LET YOU KNOW WHEN IT&apos;S BACK.
+          THIS ITEM IS CURRENTLY OUT OF STOCK. ENTER YOUR EMAIL AND WE&apos;LL LET YOU KNOW ONCE IT&apos;S BACK.
         </p>
 
         {!success ? (
@@ -123,8 +121,9 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
               className="w-full border border-black bg-white/80 px-3 py-2 uppercase"
               style={{
                 borderWidth: '1.3px',
-                fontFamily: '"Futura PT Book", Futura, sans-serif',
+                fontFamily: '"Futura PT Demi", Futura, sans-serif',
                 fontSize: '11px',
+                color: '#808080',
                 marginBottom: error ? '8px' : '16px',
               }}
             />
