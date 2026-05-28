@@ -2933,9 +2933,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
             }}
           >
           {/* PRODUCT SHOTS SECTION — same viewport / row / image metrics as Blanco, Beach Wave, etc. */}
-          <div className="mt-0 mb-4">
+          <div className="mt-2 mb-4">
             {/* Product Images with Drag/Swipe Scroll */}
-            <div className="relative overflow-hidden" style={{ height: '260px', minHeight: '260px', paddingTop: '24px' }}>
+            <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
               <div 
                 className="flex transition-transform duration-300 ease-out"
                 style={{ 
@@ -2957,7 +2957,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir left.png"
                   alt="NOIR Left View"
                   className="object-cover"
-                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
@@ -2975,7 +2975,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir front.png"
                   alt="NOIR Front View"
                   className="object-cover"
-                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
@@ -2993,7 +2993,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir right.png"
                   alt="NOIR Right View"
                   className="object-cover"
-                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
