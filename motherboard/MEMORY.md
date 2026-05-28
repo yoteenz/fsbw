@@ -18739,9 +18739,8 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Git:** Committed on **`preview/mobile`** and merged to **`master`**; both branches pushed (`master`, `preview/mobile`).
 
-<<<<<<< HEAD
 **Follow-up (same chat):** User asked to reduce **top spacing above NOIR’s red RAW line only** by **2px** (other units unchanged). **`cartLineSubtitleLayerStyle(productName)`** in **`cartLineProductLayers.ts`** sets subtitle layer **`paddingTop: 0`** for NOIR (was **`CART_LINE_LAYER_PAD_Y_PX`** 2). **`CartLineTextLayer`** accepts optional **`productName`** on **`slot="subtitle"`**; cart dropdown, bag, wishlist pass normalized name.
-=======
+
 ---
 
 ## 2026-05-27 — Brand terms & FAQ: remove Oxford commas before AND
@@ -18783,4 +18782,3 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Reverted `BrandTermsBody.tsx` and `BrandFaqSection.tsx` to render `{section.title}` without trailing colon (same as pre-colon state).
 
 **Git:** `6e007fb9` on `master` and `preview/mobile`.
->>>>>>> 42ac755948d8c35dda86396b45df3604cb2b73bf
