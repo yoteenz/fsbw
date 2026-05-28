@@ -18931,3 +18931,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked for **4px spacing above** the red **VIEW DETAILS** / **CLOSE DETAILS** link on the **list (line) view** of wishlist expanded lists (`/wishlist/lists/:id` line mode and `/wishlist/shared/:token`).
 
 **Change:** **`src/index.css`** — `.wishlist-expanded-list-view-details-toggle`: **`margin-top: 4px`**, **`top: 0`** (was **`top: -4px`**, which pulled the link up against the price line).
+
+---
+
+## 2026-05-21 — Wishlist list line: 2px above gray price
+
+**Context:** User asked for **2px spacing above** the gray price on wishlist **list (line) view** (`/wishlist/lists/:id` line mode + shared list).
+
+**Change:** **`index.css`** — `.wishlist-expanded-list-line-price--list` **`margin-top: 2px`**. **`WigLineStockPrice`** — optional **`priceClassName`**; line view passes **`wishlist-expanded-list-line-price`** + **`--list`** on **`lists/page.tsx`** and **`shared/page.tsx`** (overrides `.cart-line-text-layer > *` zero margin).
