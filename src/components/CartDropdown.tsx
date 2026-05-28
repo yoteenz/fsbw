@@ -1361,15 +1361,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
                             // Convert price to selected currency
                             const convertedPrice = price * currency.rate;
-                            // Show negative sign for negative prices, positive sign for positive prices
-                            const sign = price > 0 ? '+' : '-';
-                            // Format the converted price
+                            // Format the converted price (negative amounts keep leading minus)
                             const priceStr = Math.abs(convertedPrice).toLocaleString('en-US', {
                               minimumFractionDigits: 0,
                               maximumFractionDigits: 0
                             });
-                            // Explicitly construct the HTML string to prevent minification issues
-                            return ' <span style="color: #000000;">' + sign + currency.symbol + priceStr + '</span>';
+                            const amountSign = price < 0 ? '-' : '';
+                            // Red middle dot before price (replaces "+" for positive deltas)
+                            return (
+                              ' <span style="color: #EB1C24;"> · </span>' +
+                              '<span style="color: #000000;">' +
+                              amountSign +
+                              currency.symbol +
+                              priceStr +
+                              '</span>'
+                            );
                           };
                           
                           // Build text with each item on its own line and prices in red
