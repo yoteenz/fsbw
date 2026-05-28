@@ -2304,7 +2304,7 @@ function NoirSelection() {
             maxWidth: 'none', 
             overflow: 'visible',
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            paddingBottom: '34px'
+            paddingBottom: '20px'
           }}
         >
           {/* WIG PREVIEW - wishlist/2D-3D text hamburgered with images; text near hero & thumbnail edges */}
@@ -2751,7 +2751,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
 
           {/* QUANTITY SELECTOR */}
-          <div className="flex justify-center mb-6" style={{ transform: 'translateY(-30px)' }}>
+          <div className="flex justify-center mb-2" style={{ transform: 'translateY(-30px)' }}>
             <button 
               onClick={handleQuantityDecrease}
               disabled={quantity <= 1}
@@ -2821,20 +2821,118 @@ width: 'clamp(230px, 57.5vw, 368px)',
               <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '11px' }}>+</span>
             </button>
         </div>
-
-          {/* CAP SIZE CHART IMAGE - responsive: scales up on larger screens */}
-          <div className="flex justify-center mt-4 w-full" style={{ transform: 'translateX(4px) translateY(-27px)' }}>
-            <img
-              src="/assets/NOIR/cap-size-chart.png"
-              alt="Cap Size Chart"
-              className="max-w-full h-auto object-contain"
-              style={{ maxWidth: 'clamp(136px, 14.85vw, 180px)', maxHeight: 'clamp(106px, 11.8vw, 140px)', width: '100%', cursor: 'pointer' }}
-              onClick={handleChartClick}
-            />
           </div>
+        </div>
 
+        <UnitPdpCartActions
+          productName="NOIR"
+          soldOut={isNoirSoldOut('NOIR')}
+          addToBagState={addToBagState}
+          onAddToBag={handleAddToBag}
+          onCustomize={() => {
+                if (!isSignedIn) {
+                  setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
+                  setShowBawFeatureSignInModal(true);
+                  return;
+                }
+                if (addToBagState === 'added') {
+                  try {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                    let matchingItem: any = null;
+                    for (const item of cartItems) {
+                      if (matchesDefaultConfiguration(item)) {
+                        matchingItem = item;
+                        break;
+                      }
+                    }
+                  if (matchingItem) {
+                    localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
+                    localStorage.setItem('editingCartItemId', matchingItem.id);
+                    navigate('/build-a-wig/noir/edit');
+                    return;
+                  }
+                } catch (e) {
+                  console.error('Error setting up edit mode:', e);
+                }
+              }
+              const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
+              if (capSizeToSave) {
+                localStorage.setItem('selectedCapSize', capSizeToSave);
+                localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
+                localStorage.setItem('selectedCapSizePrice', '0');
+                localStorage.setItem('customizeSelectedCapSizePrice', '0');
+              }
+              const defaults = {
+                length: '24"',
+                density: '200%',
+                lace: '13X6',
+                texture: 'SILKY',
+                color: 'OFF BLACK',
+                hairline: 'NATURAL',
+                styling: 'NONE',
+                addOns: [],
+              };
+              localStorage.setItem('selectedLength', defaults.length);
+              localStorage.setItem('selectedDensity', defaults.density);
+              localStorage.setItem('selectedLace', defaults.lace);
+              localStorage.setItem('selectedTexture', defaults.texture);
+              localStorage.setItem('selectedColor', defaults.color);
+              localStorage.setItem('selectedHairline', defaults.hairline);
+              localStorage.setItem('selectedStyling', defaults.styling);
+              localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+              localStorage.setItem('customizeSelectedLength', defaults.length);
+              localStorage.setItem('customizeSelectedDensity', defaults.density);
+              localStorage.setItem('customizeSelectedLace', defaults.lace);
+              localStorage.setItem('customizeSelectedTexture', defaults.texture);
+              localStorage.setItem('customizeSelectedColor', defaults.color);
+              localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+              localStorage.setItem('customizeSelectedStyling', defaults.styling);
+              localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
+              localStorage.setItem('selectedLengthPrice', '0');
+              localStorage.setItem('selectedDensityPrice', '0');
+              localStorage.setItem('selectedLacePrice', '0');
+              localStorage.setItem('selectedTexturePrice', '0');
+              localStorage.setItem('selectedColorPrice', '0');
+              localStorage.setItem('selectedHairlinePrice', '0');
+              localStorage.setItem('selectedStylingPrice', '0');
+              localStorage.setItem('selectedAddOnsPrice', '0');
+              localStorage.setItem('customizeSelectedLengthPrice', '0');
+              localStorage.setItem('customizeSelectedDensityPrice', '0');
+              localStorage.setItem('customizeSelectedLacePrice', '0');
+              localStorage.setItem('customizeSelectedTexturePrice', '0');
+              localStorage.setItem('customizeSelectedColorPrice', '0');
+              localStorage.setItem('customizeSelectedHairlinePrice', '0');
+              localStorage.setItem('customizeSelectedStylingPrice', '0');
+              localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+              localStorage.removeItem('editingCartItem');
+              localStorage.removeItem('editingCartItemId');
+              clearPendingBawNoirLiveColorWigViews();
+              clearBawNoirLiveColorWigViews();
+              clearBawNoirLiveStylingWigViews();
+              clearBawNoirLiveBangsWigViews();
+              try {
+                sessionStorage.setItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE, '1');
+              } catch {
+                /* ignore */
+              }
+              console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+              navigate('/build-a-wig/noir/customize');
+          }}
+        />
+
+          <div
+            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            style={{
+              borderWidth: '1.3px',
+              minWidth: '100%',
+              maxWidth: 'none',
+              overflow: 'visible',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              paddingBottom: '34px',
+            }}
+          >
           {/* PRODUCT SHOTS SECTION — same viewport / row / image metrics as Blanco, Beach Wave, etc. */}
-          <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
+          <div className="mt-8 mb-6" style={{ transform: 'translateY(0)' }}>
             {/* Product Images with Drag/Swipe Scroll */}
             <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
               <div 
@@ -2930,8 +3028,19 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
 
-              {/* Tabs Section — inside mt-8 mb-6 so translateY(-34px) matches Blanco / Beach Wave */}
-              <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
+          {/* CAP SIZE CHART IMAGE */}
+          <div className="flex justify-center mt-4 w-full">
+            <img
+              src="/assets/NOIR/cap-size-chart.png"
+              alt="Cap Size Chart"
+              className="max-w-full h-auto object-contain"
+              style={{ maxWidth: 'clamp(136px, 14.85vw, 180px)', maxHeight: 'clamp(106px, 11.8vw, 140px)', width: '100%', cursor: 'pointer' }}
+              onClick={handleChartClick}
+            />
+          </div>
+
+              {/* Tabs Section */}
+              <div className="mt-6" style={{ paddingTop: '10px' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
@@ -3415,130 +3524,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
           </div>
-          </div>
         </div>
-
-        <UnitPdpCartActions
-          productName="NOIR"
-          soldOut={isNoirSoldOut('NOIR')}
-          addToBagState={addToBagState}
-          onAddToBag={handleAddToBag}
-          onCustomize={() => {
-                if (!isSignedIn) {
-                  setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
-                  setShowBawFeatureSignInModal(true);
-                  return;
-                }
-                // Check if item is in the bag (default configuration)
-                if (addToBagState === 'added') {
-                  // Item is in bag - enter edit mode
-                  try {
-                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-                    
-                    // Find the matching cart item with default configuration
-                    let matchingItem: any = null;
-                    for (const item of cartItems) {
-                      if (matchesDefaultConfiguration(item)) {
-                        matchingItem = item;
-                        break;
-                      }
-                    }
-                  
-                  if (matchingItem) {
-                    // Set up edit mode
-                    localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
-                    localStorage.setItem('editingCartItemId', matchingItem.id);
-                    
-                    // Navigate to edit mode
-                    navigate('/build-a-wig/noir/edit');
-                    return;
-                  }
-                } catch (e) {
-                  console.error('Error setting up edit mode:', e);
-                }
-              }
-              
-              // Item is NOT in bag - enter customize mode
-              // Store the selected cap size in localStorage for customize page
-              // Save to both selectedCapSize and customizeSelectedCapSize for consistency
-              const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
-              if (capSizeToSave) {
-                localStorage.setItem('selectedCapSize', capSizeToSave);
-                localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
-                localStorage.setItem('selectedCapSizePrice', '0'); // Custom cap has no additional price
-                localStorage.setItem('customizeSelectedCapSizePrice', '0');
-              }
-              
-              // Set defaults for other selections so customize page loads with defaults + selected cap
-              const defaults = {
-                length: '24"',
-                density: '200%',
-                lace: '13X6',
-                texture: 'SILKY',
-                color: 'OFF BLACK',
-                hairline: 'NATURAL',
-                styling: 'NONE',
-                addOns: [],
-              };
-              
-              // Save to both selected* and customizeSelected* keys
-              localStorage.setItem('selectedLength', defaults.length);
-              localStorage.setItem('selectedDensity', defaults.density);
-              localStorage.setItem('selectedLace', defaults.lace);
-              localStorage.setItem('selectedTexture', defaults.texture);
-              localStorage.setItem('selectedColor', defaults.color);
-              localStorage.setItem('selectedHairline', defaults.hairline);
-              localStorage.setItem('selectedStyling', defaults.styling);
-              localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
-              
-              localStorage.setItem('customizeSelectedLength', defaults.length);
-              localStorage.setItem('customizeSelectedDensity', defaults.density);
-              localStorage.setItem('customizeSelectedLace', defaults.lace);
-              localStorage.setItem('customizeSelectedTexture', defaults.texture);
-              localStorage.setItem('customizeSelectedColor', defaults.color);
-              localStorage.setItem('customizeSelectedHairline', defaults.hairline);
-              localStorage.setItem('customizeSelectedStyling', defaults.styling);
-              localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
-              
-              // Set all default prices to 0
-              localStorage.setItem('selectedLengthPrice', '0');
-              localStorage.setItem('selectedDensityPrice', '0');
-              localStorage.setItem('selectedLacePrice', '0');
-              localStorage.setItem('selectedTexturePrice', '0');
-              localStorage.setItem('selectedColorPrice', '0');
-              localStorage.setItem('selectedHairlinePrice', '0');
-              localStorage.setItem('selectedStylingPrice', '0');
-              localStorage.setItem('selectedAddOnsPrice', '0');
-              
-              localStorage.setItem('customizeSelectedLengthPrice', '0');
-              localStorage.setItem('customizeSelectedDensityPrice', '0');
-              localStorage.setItem('customizeSelectedLacePrice', '0');
-              localStorage.setItem('customizeSelectedTexturePrice', '0');
-              localStorage.setItem('customizeSelectedColorPrice', '0');
-              localStorage.setItem('customizeSelectedHairlinePrice', '0');
-              localStorage.setItem('customizeSelectedStylingPrice', '0');
-              localStorage.setItem('customizeSelectedAddOnsPrice', '0');
-              
-              // Clear any existing editing state
-              localStorage.removeItem('editingCartItem');
-              localStorage.removeItem('editingCartItemId');
-
-              // Fresh customize from shop: drop stale fal/WebP triples so hero shows default mannequin, not last session color
-              clearPendingBawNoirLiveColorWigViews();
-              clearBawNoirLiveColorWigViews();
-              clearBawNoirLiveStylingWigViews();
-              clearBawNoirLiveBangsWigViews();
-              try {
-                sessionStorage.setItem(SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE, '1');
-              } catch {
-                /* ignore */
-              }
-              
-              console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
-              
-              navigate('/build-a-wig/noir/customize');
-          }}
-        />
 
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', paddingTop: '0px' }}>
         {/* SIMILAR PRODUCTS SECTION */}
