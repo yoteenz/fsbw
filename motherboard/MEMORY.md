@@ -19031,3 +19031,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Conventions:** Expanded list inside a list still uses **`expandedViewMode`**; overview toggle is separate. View mode is not persisted to localStorage unless requested later.
 
 Pushed **`master`** + **`preview/mobile`** (`2117e232`).
+
+---
+
+## 2026-05-21 — NOIR PDP: bottom thumb + product shots card gap
+
+**Context:** User asked for another **2px up** on the bottom-right **2D/3D** thumbnail and **4px less** space below the **product shots** bordered card (NOIR two-card layout only).
+
+**Changes (`src/pages/straight/noir/page.tsx`):** Bottom thumb wrapper **`translateY(-2px)` → `-4px`**. Second card **`mb-2` → `mb-1`** (8px → 4px margin below card). Pushed **`master`** + **`preview/mobile`** (`34c460c7`).
