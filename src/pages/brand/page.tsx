@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -25,9 +25,6 @@ const VALID_SLUGS: string[] = ['about', 'contact', 'member', 'faq', 'reviews', '
 
 /** Max height when brand main card scrolls (contact form, member premium chart). */
 const BRAND_PAGE_MAIN_CARD_HEIGHT = 'calc(100dvh - 80px)';
-
-/** Empty FAQ / Reviews / Terms shells use the same main card height as About Us. */
-const BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT = new Set(['reviews']);
 
 function BrandPage() {
   const navigate = useNavigate();
@@ -109,30 +106,6 @@ function BrandPage() {
 
   const hideMemberCardHeader = slug === 'member' && memberPremium.showPremiumChart;
 
-  const brandMainCardMatchAboutHeight = BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT.has(slug);
-
-  const aboutMainCardMeasureRef = useRef<HTMLDivElement>(null);
-  const [aboutMainCardMinHeightPx, setAboutMainCardMinHeightPx] = useState<number | null>(null);
-
-  useLayoutEffect(() => {
-    const node = aboutMainCardMeasureRef.current;
-    if (!node) return;
-
-    const measure = () => {
-      setAboutMainCardMinHeightPx(node.offsetHeight);
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    window.addEventListener('resize', measure);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, []);
-
   useEffect(() => {
     if (slug && !VALID_SLUGS.includes(slug)) {
       navigate('/brand/about', { replace: true });
@@ -200,37 +173,6 @@ function BrandPage() {
           className="flex flex-col py-5 px-4"
           style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', position: 'relative' }}
         >
-          <div
-            ref={aboutMainCardMeasureRef}
-            aria-hidden
-            className="border border-black bg-white/60 backdrop-blur-sm p-4 w-full flex flex-col"
-            style={{
-              borderWidth: '1.3px',
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: '100%',
-              visibility: 'hidden',
-              pointerEvents: 'none',
-              zIndex: -1,
-            }}
-          >
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '12px',
-                color: '#EB1C24',
-                margin: '0 0 8px 0',
-                textTransform: 'uppercase',
-                fontWeight: '500',
-                flexShrink: 0,
-              }}
-            >
-              MISSION STATEMENT
-            </p>
-            <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
-            <BrandAboutUsBody />
-          </div>
           {/* HEADER */}
           <div
             className="border-solid border-black flex justify-center items-center py-3 w-full mb-5 px-5 bg-white/60 backdrop-blur-sm relative"
@@ -360,9 +302,7 @@ function BrandPage() {
                         maxHeight: BRAND_PAGE_MAIN_CARD_HEIGHT,
                         overflow: 'hidden',
                       }
-                    : brandMainCardMatchAboutHeight && aboutMainCardMinHeightPx != null
-                      ? { minHeight: aboutMainCardMinHeightPx }
-                      : {}),
+                    : {}),
                 }}
               >
                 {!hideMemberCardHeader ? (
@@ -383,15 +323,7 @@ function BrandPage() {
                     <div style={{ borderBottom: '1px solid #e5e7eb', marginBottom: '12px', flexShrink: 0 }} />
                   </>
                 ) : null}
-                <div
-                  style={
-                    brandMainCardScrollable
-                      ? { flex: 1, minHeight: 0, overflowY: 'auto' }
-                      : slug === 'reviews'
-                        ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }
-                        : undefined
-                  }
-                >
+                <div style={brandMainCardScrollable ? { flex: 1, minHeight: 0, overflowY: 'auto' } : undefined}>
                   {slug === 'about' ? (
                     <BrandAboutUsBody />
                   ) : slug === 'member' ? (
