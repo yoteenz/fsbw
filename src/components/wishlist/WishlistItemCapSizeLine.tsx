@@ -1,21 +1,18 @@
-import {
-  cartLineCapSizeParagraphStyle,
-  type CartLineSpacingItem,
-  withNormalizedCartLineName,
-} from '../../utils/cartCapSizeLineMargin';
+import { CartLineTextLayer } from '../cart/CartLineProductTextStack';
+import { cartLineCapSizeTextStyle } from '../../utils/cartLineProductLayers';
 
 type WishlistItemCapSizeLineProps = {
-  item: CartLineSpacingItem & { capSize?: string };
-  /** Uppercase line title when `item.name` / `productName` is missing or stale. */
-  displayName?: string;
+  item: { capSize?: string };
 };
 
-/** Gray CAP SIZE row — same spacing rules as shopping bag / cart dropdown. */
-export function WishlistItemCapSizeLine({ item, displayName }: WishlistItemCapSizeLineProps) {
+/** Gray CAP SIZE row — fixed cap layer (cart / bag / wishlist parity). */
+export function WishlistItemCapSizeLine({ item }: WishlistItemCapSizeLineProps) {
   if (!item.capSize) return null;
   return (
-    <p className="font-semibold" style={cartLineCapSizeParagraphStyle(withNormalizedCartLineName(item, displayName))}>
-      CAP SIZE: {item.capSize}
-    </p>
+    <CartLineTextLayer slot="cap">
+      <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
+        CAP SIZE: {item.capSize}
+      </p>
+    </CartLineTextLayer>
   );
 }

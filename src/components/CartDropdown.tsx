@@ -34,12 +34,14 @@ import {
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
+import { CartLineProductTextStack, CartLineTextLayer } from './cart/CartLineProductTextStack';
 import {
-  cartCapSizeLineMarginTop,
-  cartLinePriceMarginTop,
-  cartLineRawSubtitleMarginTop,
-  withNormalizedCartLineName,
-} from '../utils/cartCapSizeLineMargin';
+  cartLineCapSizeTextStyle,
+  cartLineLayerInnerStyle,
+  cartLineProductNameTextStyle,
+  cartLineRedSubtitleTextStyle,
+} from '../utils/cartLineProductLayers';
+import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1212,23 +1214,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         // Base 6px, add 4px for each detail after the first (detailCount - 1)
                         return `${6 + (detailCount - 1) * 4}px`;
                       })() : 'auto' }}>
+                        <CartLineProductTextStack>
+                        <CartLineTextLayer slot="name">
                         <p 
                           className="font-medium truncate cart-product-name"
-                          style={{ 
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            color: '#000000',
-                            textTransform: 'uppercase',
-                            fontSize: (() => {
-                              if (item.name === 'NOIR') {
-                                return '22px';
-                              }
-                              return '21px';
-                            })(),
-                            lineHeight: '1.1',
-                            margin: '0',
-                            marginTop: '0',
-                            paddingTop: '0'
-                          }}
+                          style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                         >
                           {(() => {
                             if (item.type === 'booking-appointment') {
@@ -1248,17 +1238,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             return item.name.replace(/WIG/gi, '').trim();
                           })()}
                         </p>
+                        </CartLineTextLayer>
+                        <CartLineTextLayer slot="subtitle">
                         <p 
                           className="font-bold"
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            fontSize: '9px',
-                            marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
-                            marginBottom: '0',
-                            lineHeight: '1.1'
-                          }}
+                          style={cartLineRedSubtitleTextStyle()}
                         >
                         {(() => {
                           // Gift card shows "DIGITAL ONLY"
@@ -1294,18 +1278,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           return `${item.length || '24"'} RAW ${getHairOrigin(item.name)}`;
                         })()}
                         </p>
+                        </CartLineTextLayer>
                         {viewingDetailsFor === item.id && (
+                          <CartLineTextLayer slot="details">
                           <p 
                             className="font-bold"
                             style={{ 
+                              ...cartLineLayerInnerStyle(),
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               textTransform: 'uppercase',
                               fontSize: '9px',
-                              marginTop: '2px',
-                              marginBottom: '12px',
+                              marginBottom: '10px',
                               marginRight: '20px',
-                              lineHeight: '1.44',
+                              lineHeight: 1.44,
                               wordBreak: 'break-word',
                               maxWidth: 'calc(100% - 20px)'
                             }}
@@ -1541,28 +1527,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           })()
                         }}
                           />
+                          </CartLineTextLayer>
                         )}
                         {item.capSize && (
-                          <p 
-                            className="font-semibold"
-                            style={{ 
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#808080',
-                              textTransform: 'uppercase',
-                              fontSize: '10px',
-                              marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
-                              marginBottom: '0',
-                              lineHeight: '1.1'
-                            }}
-                          >
+                          <CartLineTextLayer slot="cap">
+                          <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
                             CAP SIZE: {item.capSize}
                           </p>
+                          </CartLineTextLayer>
                         )}
+                        <CartLineTextLayer slot="price">
                         {(item as CartItem).bcfBundleDeal ? (
                           <div
                             style={{
-                              marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                              marginBottom: '0',
+                              margin: 0,
                               width: '100%',
                               display: 'flex',
                               flexDirection: 'column',
@@ -1623,8 +1601,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                                   textTransform: 'uppercase',
                                   fontSize: '12px',
                                   fontWeight: '600',
-                                  marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                                  marginBottom: '0',
+                                  margin: 0,
                                   display: 'flex',
                                   flexDirection: 'column',
                                   alignItems: 'flex-start',
@@ -1653,10 +1630,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             textTransform: 'uppercase',
                             fontSize: '12px',
                             fontWeight: '600',
-                            marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                            marginBottom: '0',
-                            marginLeft: '0',
-                            marginRight: '0'
+                            margin: 0,
                           }}
                           dangerouslySetInnerHTML={formatPrice(
                             isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0
@@ -1664,6 +1638,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         />
                           );
                         })()}
+                        </CartLineTextLayer>
+                        </CartLineProductTextStack>
                       </div>
                     </div>
                   

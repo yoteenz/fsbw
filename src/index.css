@@ -4084,16 +4084,33 @@ p.bcf-bundles-pdp-product-name {
   animation: admin-revenue-globe-arc-shift 14s linear infinite;
 }
 
-/* Wishlist expanded list line (lists page + shared) — price / VIEW DETAILS */
+/* Cart / bag / wishlist product line — fixed-height layers (symmetrical to NOIR) */
+.cart-line-product-text-stack,
+.wishlist-line-product-text-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.cart-line-text-layer > * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Wishlist expanded list line (lists page + shared) — price in price layer */
 .wishlist-expanded-list-line-price {
-  margin-top: 3px !important;
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding: 0 !important;
   line-height: 1.1 !important;
 }
 
 .wishlist-expanded-list-line-price--list {
-  margin-top: 6px !important;
+  margin-top: 0 !important;
 }
 
 .wishlist-expanded-list-view-details-toggle {
