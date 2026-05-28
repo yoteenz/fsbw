@@ -53,7 +53,11 @@ import {
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
-import { cartCapSizeLineMarginTop, cartLinePriceMarginTop } from '../../utils/cartCapSizeLineMargin';
+import {
+  cartCapSizeLineMarginTop,
+  cartLinePriceMarginTop,
+  cartLineRawSubtitleMarginTop,
+} from '../../utils/cartCapSizeLineMargin';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -1571,7 +1575,7 @@ function ShoppingBagPage() {
                                   color: '#EB1C24',
                                   textTransform: 'uppercase',
                                   fontSize: '9px',
-                                  marginTop: '2px',
+                                  marginTop: cartLineRawSubtitleMarginTop(item),
                                   marginBottom: '0',
                                   lineHeight: '1.1'
                                 }}
@@ -2133,7 +2137,7 @@ function ShoppingBagPage() {
                                color: '#EB1C24',
                                textTransform: 'uppercase',
                                fontSize: '9px',
-                               marginTop: '2px',
+                               marginTop: cartLineRawSubtitleMarginTop(item),
                                marginBottom: '0',
                                lineHeight: '1.1'
                              }}
