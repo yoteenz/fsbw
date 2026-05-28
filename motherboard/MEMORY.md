@@ -19058,11 +19058,11 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 
 ---
 
-## 2026-05-21 — NOIR PDP: cap chart vs quantity overlap fix
+## 2026-05-21 — Motherboard: NOIR cap chart quantity overlap fix
 
-**Context:** Cap chart below quantity overlapped **- / 1 / +** (negative **`marginBottom: -24px`** on qty + **`translateY(-21px)`** on chart).
+**Context:** Completed the chat that moved NOIR’s cap chart below quantity and adjusted the bottom thumb 1px.
 
-**Fix:** Qty **`marginBottom: 0`**; chart **`marginTop: 12px`**, **`translateX(4px)`** only (no upward translate). Pushed **`master`** + **`preview/mobile`**.
+**Changes:** This **`motherboard/MEMORY.md`** entry only (documents the chat outcome).
 
 ---
 
@@ -19071,3 +19071,34 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Context:** User asked to move the red **VIEW DETAILS** text on the wishlist **lists** page (`/wishlist/lists/:id` line view) **1px to the right** (explicitly **not** CLOSE DETAILS) and **decrease the spacing above the text by 1px**.
 
 **Change:** **`src/index.css`** — `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only when showing **VIEW DETAILS**, not CLOSE DETAILS, via `!isViewingDetails` in `wishlist/lists/page.tsx`): **`margin-left: 1px → 2px`** (right nudge) and added **`margin-top: 1px`** (overrides `--list` `margin-top: 2px` so spacing above drops by 1px). CLOSE DETAILS keeps `--list` `margin-top: 2px` and no left margin. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-28 — Wishlist Build-a-Wig edit should use product edit flow with saved selections
+
+**Context:** User reported that the red **EDIT IN BUILD-A-WIG** text on the main wishlist page was routing to the product PDP instead of the product-specific Build-a-Wig edit route, so the saved selections were not loading like they do from cart and bag edit flows.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and reviewed branch / mobile-only / Build-a-Wig flow rules.
+- Traced the wishlist edit path and compared it with the cart dropdown and shopping bag edit implementations.
+- Confirmed the wishlist page had a special-case path for `addedFrom === 'unit'` that navigated to the unit PDP instead of product-specific Build-a-Wig edit, and that wishlist was not preloading the same edit localStorage keys as cart/bag.
+- Consolidated the repeated edit-session seeding logic into a shared helper so wishlist, cart dropdown, and shopping bag all open the same product-specific Build-a-Wig edit mode with selections restored.
+- Installed missing local dependencies in the cloud workspace (`npm ci`) so verification could run, then fixed a follow-up cart dropdown import / replacement issue and re-ran the production build successfully.
+
+**Decisions / outcomes:**
+- Wishlist edit now enters the product-specific Build-a-Wig **edit** flow instead of the product PDP, including for items originally added from unit pages.
+- Existing line-item selections are now seeded consistently before navigation across wishlist, cart dropdown, and shopping bag.
+- Wishlist-origin edits still mark `editingSource = 'wishlist'`, so saving in Build-a-Wig updates the wishlist item in place rather than behaving like a cart edit.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+  - Added shared helpers to resolve the correct product-specific Build-a-Wig edit route and seed edit/localStorage state from an existing line item.
+- `src/pages/wishlist/page.tsx`
+  - Replaced wishlist-only edit routing with the shared Build-a-Wig edit-session helper so red edit links always open product-specific edit mode with selections loaded.
+- `src/pages/shopping-bag/page.tsx`
+  - Reused the shared helper for bag edit entry to keep behavior aligned with wishlist/cart.
+- `src/components/CartDropdown.tsx`
+  - Reused the shared helper for cart dropdown edit entry to keep product-specific routing and seeded selections aligned.
+
+**Conventions:**
+- Any surface that opens Build-a-Wig edit for an existing saved/carted/wishlisted unit should seed the shared edit session first and navigate to the product-specific `/build-a-wig/{unit}/edit` route instead of sending the user back to the unit PDP.

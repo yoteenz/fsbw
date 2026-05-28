@@ -47,6 +47,7 @@ import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapsho
 import { WigLineStockPrice } from './shop/WigStockPrice';
 import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
+import { prepareBuildAWigEditSession } from '../utils/buildAWigEditSession';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1092,99 +1093,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             const signedIn =
                               typeof window !== 'undefined' &&
                               localStorage.getItem('isSignedIn') === 'true';
-                            // Store the current item details for editing
-                            localStorage.setItem('editingCartItem', JSON.stringify(item));
-                            localStorage.setItem('editingCartItemId', item.id);
-                            localStorage.removeItem('editingSource'); // edit opened from cart → save updates cart
-                            
-                            // CRITICAL: Store individual customization options with BOTH selected* and editSelected* prefixes
-                            // This ensures consistency when loading edit mode
-                            const capSize = item.capSize || 'M';
-                            const length = item.length || '24"';
-                            const density = item.density || '200%';
-                            // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
-                            let color = item.color;
-                            if (item.name === 'BLANCO') {
-                              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-                              if (!color || !validBlancoColors.includes(color)) {
-                                color = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
-                              }
-                            } else {
-                              color = color || 'OFF BLACK';
-                            }
-                            const texture = item.texture || 'SILKY';
-                            const lace = item.lace || '13X6';
-                            const hairline = item.hairline || 'NATURAL';
-                            const partSelection = item.partSelection || 'MIDDLE';
-                            const styling = item.styling || 'NONE';
-                            const addOns = item.addOns || [];
-                            
-                            // CRITICAL: Calculate capSizePrice based on capSize from cart item
-                            const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
-                            
-                            console.log('[FLEX_CAP_DEBUG] CartDropdown Edit Button - Setting capSizePrice:', {
-                              capSize,
-                              capSizePrice,
-                              isFlexible: capSize === 'XXS/XS/S' || capSize === 'S/M/L',
-                              timestamp: new Date().toISOString()
-                            });
-                            
-                            // Store with selected* prefix (for sub-pages)
-                            localStorage.setItem('selectedCapSize', capSize);
-                            localStorage.setItem('selectedCapSizePrice', capSizePrice);
-                            localStorage.setItem('selectedLength', length);
-                            localStorage.setItem('selectedDensity', density);
-                            localStorage.setItem('selectedColor', color);
-                            localStorage.setItem('selectedTexture', texture);
-                            localStorage.setItem('selectedLace', lace);
-                            localStorage.setItem('selectedHairline', hairline);
-                            localStorage.setItem('selectedPartSelection', partSelection);
-                            localStorage.setItem('selectedStyling', styling);
-                            localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
-                            
-                            // CRITICAL: Also store with editSelected* prefix (for edit mode sub-pages)
-                            localStorage.setItem('editSelectedCapSize', capSize);
-                            localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
-                            localStorage.setItem('editSelectedLength', length);
-                            localStorage.setItem('editSelectedDensity', density);
-                            localStorage.setItem('editSelectedColor', color);
-                            localStorage.setItem('editSelectedTexture', texture);
-                            localStorage.setItem('editSelectedLace', lace);
-                            localStorage.setItem('editSelectedHairline', hairline);
-                            localStorage.setItem('editSelectedStyling', styling);
-                            localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
-                            
-                            console.log('Stored localStorage values:', {
-                              capSize,
-                              length,
-                              density,
-                              color,
-                              texture,
-                              lace,
-                              hairline,
-                              partSelection,
-                              styling,
-                              addOns
-                            });
-                            
-                            // Dispatch custom event to notify edit page of item change
-                            window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
-                            
-                            // Determine the correct edit route based on product name
-                            let editRoute = '/build-a-wig/edit'; // Default fallback
-                            if (item.name === 'NOIR') {
-                              editRoute = '/build-a-wig/noir/edit';
-                            } else if (item.name === 'BLANCO') {
-                              editRoute = '/build-a-wig/blanco/edit';
-                            } else if (item.name === 'SOFT WAVE') {
-                              editRoute = '/build-a-wig/soft-wave/edit';
-                            } else if (item.name === 'SOFT CURL') {
-                              editRoute = '/build-a-wig/soft-curl/edit';
-                            } else if (item.name === 'BEACH WAVE') {
-                              editRoute = '/build-a-wig/beach-wave/edit';
-                            } else if (item.name === 'OCEAN CURL') {
-                              editRoute = '/build-a-wig/ocean-curl/edit';
-                            }
+                            const { editRoute } = prepareBuildAWigEditSession(item);
 
                             onClose(); // Close the dropdown first
                             if (!signedIn) {
