@@ -18986,3 +18986,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked **`/tools`** (home/tools) gift card marble carousel to use the same **measured snap scroll** as **home/shop UNITS**, and to fix **misaligned gift card images**.
 
 **Change:** **`src/pages/tools/page.tsx`** — Rebuilt gift card strip to match **`products/page.tsx` UNITS** pattern: `useMarbleStripSnapStep` on viewport, `translateX(-page × snapPx)`, row width `pairCount × 100%`, cells `flex: 0 0 calc(100% / n)` (two visible per page), `overflow-x: clip`, centered divider line, overlay arrows (prev/next page, no wrap). Removed per-index `translateX` hacks and old drag handlers. Gift card image uses UNITS-style **79.2%** centered thumb in padded cell band.
+
+---
+
+## 2026-05-28 — Gift card checkout cancel: restore prior bag
+
+**Context:** User reported **PROCEED TO CHECKOUT** on the gift card PDP replaced their whole bag with a single gift-card line (intentional isolated **`/checkout/gift-card`** flow). After canceling checkout and removing the gift card, the **previous cart was gone** instead of restored.
+
+**Cause:** **`writeGiftCardSelectionForCheckoutSession`** persisted **`cartItems = [giftLine]`** only (see MEMORY 2026-04-08) with **no backup** of non–gift-card lines.
+
+**Fix:** **`giftCardCheckoutSession.ts`** — before replacing the bag, save non–gift-card lines to **`localStorage`** key **`giftCardCheckoutCartBackup`** (do not overwrite if cart is already gift-only mid-flow). **`restoreGiftCardCheckoutCartFromBackup`** / **`maybeRestoreGiftCardCheckoutCartAfterAbandon`** restore on abandon. **`clearGiftCardCheckoutCartBackup`** after successful gift-card-only order. Wired restore into **`checkout/page.tsx`** back navigation + empty gift-checkout redirect; **`shopping-bag/page.tsx`** remove line; **`CartDropdown.tsx`** remove confirm. Pushed **`master`** + **`preview/mobile`**.
