@@ -34,7 +34,11 @@ import {
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
-import { cartCapSizeLineMarginTop, cartLinePriceMarginTop } from '../utils/cartCapSizeLineMargin';
+import {
+  cartCapSizeLineMarginTop,
+  cartLinePriceMarginTop,
+  cartLineRawSubtitleMarginTop,
+} from '../utils/cartCapSizeLineMargin';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1250,7 +1254,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             color: '#EB1C24',
                             textTransform: 'uppercase',
                             fontSize: '9px',
-                            marginTop: '2px',
+                            marginTop: cartLineRawSubtitleMarginTop(item),
                             marginBottom: '0',
                             lineHeight: '1.1'
                           }}

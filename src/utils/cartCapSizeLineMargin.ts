@@ -1,4 +1,20 @@
 /** Fields used for cart line spacing (CAP SIZE line + price). */
+export type CartLineRedSubtitleItem = {
+  name?: string;
+  type?: string;
+};
+
+/** Gap above red RAW line under script product name (cart, bag, wishlist list). */
+export const CART_LINE_RAW_GAP_ABOVE_PX = 3;
+
+/** margin-top on cart/bag red subtitle (RAW build-a-wig units; gift/booking/BCF unchanged at 2px). */
+export function cartLineRawSubtitleMarginTop(item?: CartLineRedSubtitleItem): string {
+  if (item?.type === 'gift-card' || item?.name === 'GIFT CARD') return '2px';
+  if (item?.type === 'booking-consult' || item?.type === 'booking-appointment') return '2px';
+  if (item?.type === 'shop-texture-category') return '2px';
+  return `${CART_LINE_RAW_GAP_ABOVE_PX}px`;
+}
+
 export type CartLineSpacingItem = {
   name?: string;
   density?: string;

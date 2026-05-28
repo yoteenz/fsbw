@@ -33,6 +33,7 @@ import {
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
+import { CART_LINE_RAW_GAP_ABOVE_PX } from '../../../utils/cartCapSizeLineMargin';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -92,8 +93,8 @@ const EXPANDED_LIST_GRID_COL_GAP_PX = 16;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
-/** Gap between script product name and red RAW line. */
-const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
+/** Gap between script product name and red RAW line (matches cart/bag +1px). */
+const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = CART_LINE_RAW_GAP_ABOVE_PX;
 
 const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
@@ -930,7 +931,7 @@ export default function ViewListsPage() {
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
+                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, margin: '0 0 4px 0', marginTop: '1px', textAlign: 'center' }}>{itemLength} RAW {itemHairOrigin}</p>
                                   <ExpandedListItemNoReviewStars centered />
                                   <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>
                                     {EXPANDED_LIST_NO_REVIEWS_LABEL}

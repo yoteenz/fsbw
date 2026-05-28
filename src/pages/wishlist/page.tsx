@@ -13,7 +13,7 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { WishlistItemCapSizeLine } from '../../components/wishlist/WishlistItemCapSizeLine';
-import { cartLinePriceMarginTop } from '../../utils/cartCapSizeLineMargin';
+import { cartLinePriceMarginTop, cartLineRawSubtitleMarginTop } from '../../utils/cartCapSizeLineMargin';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -966,7 +966,7 @@ function WishlistSelection() {
                               color: '#EB1C24',
                               textTransform: 'uppercase',
                               fontSize: '9px',
-                              marginTop: '2px',
+                              marginTop: cartLineRawSubtitleMarginTop(item),
                               marginBottom: '0',
                               lineHeight: '1.1'
                             }}

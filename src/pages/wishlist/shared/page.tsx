@@ -19,6 +19,7 @@ import {
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
+import { CART_LINE_RAW_GAP_ABOVE_PX } from '../../../utils/cartCapSizeLineMargin';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
@@ -36,7 +37,7 @@ const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
-const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = 2;
+const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = CART_LINE_RAW_GAP_ABOVE_PX;
 const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
