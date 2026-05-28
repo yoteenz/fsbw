@@ -18719,3 +18719,22 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** **`src/utils/cartCapSizeLineMargin.ts`** — `cartItemHasNonDefaultSpecs` (Blanco default density `250%`), `cartLinePriceMarginTop` (Blanco `0px`, else `2px`); CAP SIZE helper uses shared spec check. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** — price blocks use `cartLinePriceMarginTop`.
 
 **Follow-up (same chat):** User asked for +2px on Blanco (still tight at `0px`). **`cartLinePriceMarginTop`** — Blanco `0px` → **`2px`** (bag + cart dropdown).
+
+---
+
+## 2026-05-21 — Cart/bag/wishlist: fixed-height product text layers (NOIR-aligned spacing)
+
+**Context:** Long thread on cart line spacing — hide dev checkout gray lines, Blanco price gap vs dropdown, CAP SIZE on wishlist, +1px / +2px RAW gaps above red subtitle, Blanco name normalization. User’s final ask: put **all product text in separate layers/containers** on cart dropdown, shopping bag, and wishlist so rows are **symmetrical to NOIR** with the same top/bottom padding regardless of font size (stop relying on per-unit `marginTop`).
+
+**Approach:** Each logical row (name, RAW subtitle, view-details HTML, CAP SIZE, price, stars/meta) sits in a **fixed `minHeight` flex layer** with **`CART_LINE_LAYER_PAD_Y_PX = 2`** top and bottom. Heights tuned from NOIR reference: name **28px**, subtitle **15px**, cap **15px**, price **18px**, meta **14px**. Inner `<p>` tags use **`margin: 0`** (CSS `.cart-line-text-layer > *`).
+
+**New files:**
+- **`src/utils/cartLineProductLayers.ts`** — layer box styles, text style helpers (`cartLineProductNameTextStyle`, `cartLineRedSubtitleTextStyle`, `cartLineCapSizeTextStyle`, etc.).
+- **`src/components/cart/CartLineProductTextStack.tsx`** — `CartLineProductTextStack`, `CartLineTextLayer` (`slot`: name | subtitle | details | cap | price | meta).
+- **`src/components/wishlist/WishlistLineProductTextStack.tsx`** — thin wrapper.
+
+**Updated surfaces:** **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** (active + saved-for-later lines), **`wishlist/page.tsx`**, **`wishlist/lists/page.tsx`** (expanded list + grid RAW in subtitle layer), **`wishlist/shared/page.tsx`**, **`WishlistItemCapSizeLine.tsx`** (cap inside `CartLineTextLayer`), **`index.css`** (stack + layer margin reset; wishlist price classes drop extra `margin-top`).
+
+**Conventions:** Prefer layers for vertical rhythm on cart/bag/wishlist product text; use **`normalizeCartLineProductName(item)`** for name font size (22px NOIR vs 21px others). **`cartCapSizeLineMargin.ts`** margin helpers may remain for other callers but cart line UI should not reintroduce per-line `marginTop` on RAW/CAP/price when layers are present.
+
+**Git:** Committed on **`preview/mobile`** and merged to **`master`**; both branches pushed (`master`, `preview/mobile`).
