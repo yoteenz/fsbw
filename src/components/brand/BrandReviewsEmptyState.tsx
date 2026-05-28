@@ -1,7 +1,17 @@
-/** Empty state for `/brand/reviews` — compact centered gray copy (card hugs content). */
+/** Empty state for `/brand/reviews` — centered in a card sized like Become a Member. */
 export default function BrandReviewsEmptyState() {
   return (
-    <div style={{ textAlign: 'center', padding: '24px 12px' }}>
+    <div
+      style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: '24px 12px',
+        minHeight: 0,
+      }}
+    >
       <p
         style={{
           fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',

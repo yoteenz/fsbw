@@ -18474,7 +18474,7 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - Pushed `master` and `preview/mobile` (commit `de6d509c`).
 
 **Conventions:**
-- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. **Reviews** empty state is compact (`BrandReviewsEmptyState`); no longer forced to About card `minHeight`.
+- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. **Reviews** empty shell uses hidden **Become a Member** measurer (`BrandMemberSection`) + `minHeight` on reviews card; message centered with `flex: 1` (not About height).
 ---
 
 ## 2026-05-27 — About Us copy updates (curated, founder, experience, closing)
