@@ -33,6 +33,8 @@ import {
   type BcfOriginId
 } from '../../../utils/bcfProductOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { isBcfSoldOut } from '../../../utils/productInventoryAvailability';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -268,6 +270,10 @@ export default function ShopTextureCategoryProductPage() {
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
   const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
+  // Recompute when admin inventory / packaging changes (focus, productInventoryUpdated, etc.).
+  useProductInventorySnapshot();
+  /** BCF availability is gated by its packaging supplies (mailer box, pouch, etc.). */
+  const bcfSoldOut = isBcfSoldOut();
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -601,6 +607,7 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleAddToBag = () => {
     if (!category) return;
+    if (bcfSoldOut) return;
     setAddToBagState('adding');
     setTimeout(() => {
       try {
@@ -642,6 +649,7 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleBundleDealToBag = () => {
     if (category !== 'bundles') return;
+    if (bcfSoldOut) return;
     if (!isPremiumMemberForGatedFeatures()) {
       setShowBcfColorUpgradeModal(true);
       return;
@@ -1798,57 +1806,73 @@ export default function ShopTextureCategoryProductPage() {
                 <button
                   type="button"
                   onClick={handleAddToBag}
-                  disabled={addToBagState === 'adding'}
+                  disabled={bcfSoldOut || addToBagState === 'adding'}
                   className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                    addToBagState === 'adding'
+                    bcfSoldOut
                       ? 'bg-white cursor-not-allowed'
-                      : addToBagState === 'added'
-                        ? 'bg-white cursor-pointer'
-                        : 'bg-white cursor-pointer hover:bg-gray-50'
+                      : addToBagState === 'adding'
+                        ? 'bg-white cursor-not-allowed'
+                        : addToBagState === 'added'
+                          ? 'bg-white cursor-pointer'
+                          : 'bg-white cursor-pointer hover:bg-gray-50'
                   }`}
                   style={{
                     borderWidth: '1.3px',
-                    color: '#EB1C24',
+                    color: bcfSoldOut ? '#808080' : '#EB1C24',
                     fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
                     backgroundColor: '#FFFFFF'
                   }}
                 >
-                  {addToBagState === 'idle' && 'ADD TO BAG'}
-                  {addToBagState === 'adding' && 'ADDING...'}
-                  {addToBagState === 'added' && (
-                    <span className="flex items-center justify-center gap-1">
-                      <img src="/assets/check.svg" alt="" width={9} height={9} />
-                      <span style={{ color: '#808080' }}>IN THE BAG</span>
-                    </span>
-                  )}
+                  {bcfSoldOut
+                    ? 'SOLD OUT'
+                    : (
+                      <>
+                        {addToBagState === 'idle' && 'ADD TO BAG'}
+                        {addToBagState === 'adding' && 'ADDING...'}
+                        {addToBagState === 'added' && (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="" width={9} height={9} />
+                            <span style={{ color: '#808080' }}>IN THE BAG</span>
+                          </span>
+                        )}
+                      </>
+                    )}
                 </button>
                 {category === 'bundles' && (
                   <button
                     type="button"
                     onClick={handleBundleDealToBag}
-                    disabled={bundleDealState === 'adding' || addToBagState === 'adding'}
+                    disabled={bcfSoldOut || bundleDealState === 'adding' || addToBagState === 'adding'}
                     className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold mt-2 ${
-                      bundleDealState === 'adding'
+                      bcfSoldOut
                         ? 'bg-white cursor-not-allowed'
-                        : bundleDealState === 'added'
-                          ? 'bg-white cursor-pointer'
-                          : 'bg-white cursor-pointer hover:bg-gray-50'
+                        : bundleDealState === 'adding'
+                          ? 'bg-white cursor-not-allowed'
+                          : bundleDealState === 'added'
+                            ? 'bg-white cursor-pointer'
+                            : 'bg-white cursor-pointer hover:bg-gray-50'
                     }`}
                     style={{
                       borderWidth: '1.3px',
-                      color: '#EB1C24',
+                      color: bcfSoldOut ? '#808080' : '#EB1C24',
                       fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    {bundleDealState === 'idle' && 'BUNDLE DEAL'}
-                    {bundleDealState === 'adding' && 'ADDING...'}
-                    {bundleDealState === 'added' && (
-                      <span className="flex items-center justify-center gap-1">
-                        <img src="/assets/check.svg" alt="" width={9} height={9} />
-                        <span style={{ color: '#808080' }}>IN THE BAG</span>
-                      </span>
-                    )}
+                    {bcfSoldOut
+                      ? 'SOLD OUT'
+                      : (
+                        <>
+                          {bundleDealState === 'idle' && 'BUNDLE DEAL'}
+                          {bundleDealState === 'adding' && 'ADDING...'}
+                          {bundleDealState === 'added' && (
+                            <span className="flex items-center justify-center gap-1">
+                              <img src="/assets/check.svg" alt="" width={9} height={9} />
+                              <span style={{ color: '#808080' }}>IN THE BAG</span>
+                            </span>
+                          )}
+                        </>
+                      )}
                   </button>
                 )}
               </div>

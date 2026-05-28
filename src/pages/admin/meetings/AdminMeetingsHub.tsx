@@ -458,10 +458,6 @@ function viewAllHeaderTitle(mode: 'bookings' | 'consults' | null, uniqueClientCo
   return `${uniqueClientCount} CLIENT ${uniqueClientCount === 1 ? 'CONSULT' : 'CONSULTS'}`;
 }
 
-/** Match rewards / tier-benefits close control (brand red). */
-const CLOSE_ICON_RED_FILTER =
-  'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
-
 const SESSION_QUOTE_MEETING_ID = 'adminMeetingsQuoteMeetingId';
 const sessionQuoteDraftKey = (meetingId: string) => `adminMeetingsQuoteDraft_${meetingId}`;
 
@@ -1977,7 +1973,7 @@ export default function AdminMeetingsHub() {
                         alt=""
                         width={16}
                         height={16}
-                        style={{ display: 'block', filter: CLOSE_ICON_RED_FILTER }}
+                        style={{ display: 'block' }}
                       />
                     </button>
                   </div>

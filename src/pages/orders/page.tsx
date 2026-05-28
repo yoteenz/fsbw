@@ -2327,9 +2327,7 @@ function OrdersPage() {
                           alt="Close"
                           style={{
                             width: '16px',
-                            height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                          }}
+                            height: '16px'}}
                         />
                       </button>
                     </>
@@ -2631,7 +2629,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                      ORDER STATUS
                                    </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18}} />
                                  </div>
                                  {!(
                                    expandedOrder.bookingFlowType === 'appointment' ||
@@ -2815,7 +2813,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                      ORDER TRACKING
                                    </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18}} />
                                  </div>
                                  {(() => {
                                    const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
@@ -2868,7 +2866,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1}} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -3281,9 +3279,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                           alt="Close"
                           style={{
                             width: '16px',
-                            height: '16px',
-                            filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                          }}
+                            height: '16px'}}
                         />
                       </button>
                     </>
@@ -3585,7 +3581,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                      ORDER STATUS
                                    </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18}} />
                                  </div>
                                  {!(
                                    expandedOrder.bookingFlowType === 'appointment' ||
@@ -3769,7 +3765,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                    <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                      ORDER TRACKING
                                    </h2>
-                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                   <img src="/assets/order-tracking.svg" alt="" style={{ width: 18, height: 18}} />
                                  </div>
                                  {(() => {
                                    const st = getOrderTrackingStageFromOrder(expandedOrder as unknown as Record<string, unknown>);
@@ -3822,7 +3818,7 @@ fontFamily: '"Futura PT Demi", Futura, Inter, sans-serif',
                                  <h2 style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: '#EB1C24', fontWeight: '500', textTransform: 'uppercase', margin: '0' }}>
                                    REWARDS
                                  </h2>
-                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1, filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' }} />
+                                 <img src="/assets/rewards-icon.svg" alt="" style={{ width: 15, height: 15, opacity: 1}} />
                                </div>
                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -615,10 +615,7 @@ function LoadCardPage() {
                           style={{
                             width: '14.5px',
                             height: '14.5px',
-                            display: 'block',
-                            filter:
-                              'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
-                          }}
+                            display: 'block'}}
                         />
                       </button>
                     </div>
