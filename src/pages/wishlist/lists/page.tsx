@@ -271,6 +271,216 @@ const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
 /** Empty-list thumb scale (10% smaller than prior 0.88 → 0.792). */
 const EMPTY_LIST_THUMB_SCALE = 0.792;
 
+const LIST_OVERVIEW_THUMB_WIDTH_PX = 88;
+const LIST_OVERVIEW_THUMB_HEIGHT_PX = 110;
+const LISTS_OVERVIEW_GRID_MIN_COL_PX = 100;
+const LISTS_OVERVIEW_GRID_ROW_GAP_PX = 20;
+const LISTS_OVERVIEW_GRID_COL_GAP_PX = 16;
+
+const LIST_OVERVIEW_NAME_STYLE: React.CSSProperties = {
+  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+  fontSize: '18px',
+  color: '#000',
+  textTransform: 'uppercase',
+};
+
+const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '11px',
+  color: '#666',
+  margin: '2px 0 0 0',
+  textTransform: 'uppercase',
+};
+
+const LIST_OVERVIEW_COUNT_STYLE: React.CSSProperties = {
+  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+  fontSize: '12px',
+  color: '#000',
+  textTransform: 'uppercase',
+};
+
+function WishlistViewModeToggle({
+  mode,
+  onModeChange,
+}: {
+  mode: 'line' | 'grid';
+  onModeChange: (mode: 'line' | 'grid') => void;
+}) {
+  return (
+    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <button
+        type="button"
+        onClick={() => onModeChange('line')}
+        style={{
+          padding: '4px',
+          border: mode === 'line' ? '1px solid #EB1C24' : '1px solid #ccc',
+          background: 'none',
+          cursor: 'pointer',
+          borderRadius: 0,
+          color: mode === 'line' ? '#EB1C24' : '#000',
+        }}
+        aria-label="Line view"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
+          <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+          <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+          <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
+        </div>
+      </button>
+      <button
+        type="button"
+        onClick={() => onModeChange('grid')}
+        style={{
+          padding: '4px',
+          border: mode === 'grid' ? '1px solid #EB1C24' : '1px solid #ccc',
+          background: 'none',
+          cursor: 'pointer',
+          borderRadius: 0,
+          color: mode === 'grid' ? '#EB1C24' : '#000',
+        }}
+        aria-label="Grid view"
+      >
+        <div
+          style={{
+            width: '12px',
+            height: '12px',
+            border: '1px solid currentColor',
+            backgroundColor: 'white',
+            position: 'relative',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              height: '1px',
+              transform: 'translateY(-50%)',
+              backgroundColor: 'currentColor',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: 0,
+              bottom: 0,
+              width: '1px',
+              transform: 'translateX(-50%)',
+              backgroundColor: 'currentColor',
+            }}
+          />
+        </div>
+      </button>
+    </div>
+  );
+}
+
+function WishlistListOverviewThumb({
+  firstItem,
+  thumbSrc,
+}: {
+  firstItem: any | undefined;
+  thumbSrc: string;
+}) {
+  return (
+    <div
+      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+      style={{
+        width: `${LIST_OVERVIEW_THUMB_WIDTH_PX}px`,
+        height: `${LIST_OVERVIEW_THUMB_HEIGHT_PX}px`,
+        position: 'relative',
+        boxSizing: 'border-box',
+        ...(firstItem
+          ? {
+              backgroundImage: "url('/assets/leaf-brick-resize.png')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              border: '1.3px solid #000',
+              boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+              overflow: 'hidden',
+            }
+          : {
+              border: '1.3px solid #000',
+              overflow: 'hidden',
+            }),
+      }}
+    >
+      {firstItem ? (
+        <img
+          src={thumbSrc}
+          alt=""
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: LIST_THUMB_FRAME_INSET_PX,
+            transform: 'translateX(-50%)',
+            width: 'auto',
+            height: '96%',
+            maxWidth: '106%',
+            objectFit: 'contain',
+            objectPosition: 'bottom',
+            zIndex: 1,
+          }}
+        />
+      ) : (
+        <>
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              boxShadow: `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+              left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+              right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+              bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
+              overflow: 'hidden',
+              zIndex: 1,
+            }}
+          >
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+              }}
+            >
+              <img
+                src={thumbSrc}
+                alt=""
+                style={{
+                  display: 'block',
+                  width: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                  height: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transform: EMPTY_LIST_THUMB_OFFSET_UP_PX
+                    ? `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px)`
+                    : undefined,
+                  flexShrink: 0,
+                }}
+              />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 /** Route to product/unit page. */
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
@@ -356,6 +566,7 @@ export default function ViewListsPage() {
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
+  const [listsOverviewViewMode, setListsOverviewViewMode] = useState<'grid' | 'line'>('line');
   const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
@@ -768,21 +979,7 @@ export default function ViewListsPage() {
                             flexShrink: 0,
                           }}
                         >
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button type="button" onClick={() => setExpandedViewMode('line')} style={{ padding: '4px', border: expandedViewMode === 'line' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'line' ? '#EB1C24' : '#000' }} aria-label="Line view">
-                              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '12px', gap: '3px' }}>
-                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
-                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
-                                <div style={{ width: '12px', height: '1px', backgroundColor: 'currentColor' }} />
-                              </div>
-                            </button>
-                            <button type="button" onClick={() => setExpandedViewMode('grid')} style={{ padding: '4px', border: expandedViewMode === 'grid' ? '1px solid #EB1C24' : '1px solid #ccc', background: 'none', cursor: 'pointer', borderRadius: 0, color: expandedViewMode === 'grid' ? '#EB1C24' : '#000' }} aria-label="Grid view">
-                              <div style={{ width: '12px', height: '12px', border: '1px solid currentColor', backgroundColor: 'white', position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', transform: 'translateY(-50%)', backgroundColor: 'currentColor' }} />
-                                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', transform: 'translateX(-50%)', backgroundColor: 'currentColor' }} />
-                              </div>
-                            </button>
-                          </div>
+                          <WishlistViewModeToggle mode={expandedViewMode} onModeChange={setExpandedViewMode} />
                         </div>
                         {expandedItems.length === 0 ? (
                           <div
@@ -995,13 +1192,30 @@ export default function ViewListsPage() {
                   })()
                 ) : (
                 <>
-                {/* List rows: user-created lists only (main wishlist lives on /wishlist) */}
+                {lists.length > 0 && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      marginTop: '6px',
+                      marginBottom: '16px',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <WishlistViewModeToggle
+                      mode={listsOverviewViewMode}
+                      onModeChange={setListsOverviewViewMode}
+                    />
+                  </div>
+                )}
+                {/* List rows or grid: user-created lists only (main wishlist lives on /wishlist) */}
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 0,
-                    paddingTop: '20.8px',
+                    paddingTop: lists.length > 0 ? '0' : '20.8px',
                     ...(lists.length === 0
                       ? { flex: 1, alignItems: 'center', justifyContent: 'center' }
                       : {}),
@@ -1015,7 +1229,7 @@ export default function ViewListsPage() {
                         YOU DON&apos;T HAVE ANY LISTS YET.
                       </p>
                     </div>
-                  ) : (
+                  ) : listsOverviewViewMode === 'line' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                       {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
@@ -1041,116 +1255,97 @@ export default function ViewListsPage() {
                               <div
                                 role="button"
                                 tabIndex={0}
-                                onClick={(e) => { e.stopPropagation(); openExpandedList(list.id); }}
-                                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openExpandedList(list.id); } }}
-                                className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                                style={{
-                                  width: '88px',
-                                  height: '110px',
-                                  position: 'relative',
-                                  boxSizing: 'border-box',
-                                  ...(firstItem
-                                    ? {
-                                        backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        backgroundRepeat: 'no-repeat',
-                                        border: '1.3px solid #000',
-                                        boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
-                                        overflow: 'hidden',
-                                      }
-                                    : {
-                                        border: '1.3px solid #000',
-                                        overflow: 'hidden',
-                                      }),
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openExpandedList(list.id);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.stopPropagation();
+                                    openExpandedList(list.id);
+                                  }
                                 }}
                               >
-                                {firstItem ? (
-                                  <img
-                                    src={thumbSrc}
-                                    alt=""
-                                    style={{
-                                      position: 'absolute',
-                                      left: '50%',
-                                      bottom: LIST_THUMB_FRAME_INSET_PX,
-                                      transform: 'translateX(-50%)',
-                                      width: 'auto',
-                                      height: '96%',
-                                      maxWidth: '106%',
-                                      objectFit: 'contain',
-                                      objectPosition: 'bottom',
-                                      zIndex: 1,
-                                    }}
-                                  />
-                                ) : (
-                                  <>
-                                    <div
-                                      aria-hidden
-                                      style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        boxShadow: `inset 0 0 0 ${EMPTY_LIST_THUMB_FRAME_INSET_PX}px #fff`,
-                                        pointerEvents: 'none',
-                                        zIndex: 2,
-                                      }}
-                                    />
-                                    <div
-                                      style={{
-                                        position: 'absolute',
-                                        top: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                        left: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                        right: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                        bottom: EMPTY_LIST_THUMB_FRAME_INSET_PX,
-                                        overflow: 'hidden',
-                                        zIndex: 1,
-                                      }}
-                                    >
-                                      <div
-                                        style={{
-                                          width: '100%',
-                                          height: '100%',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          overflow: 'hidden',
-                                        }}
-                                      >
-                                        <img
-                                          src={thumbSrc}
-                                          alt=""
-                                          style={{
-                                            display: 'block',
-                                            width: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
-                                            height: `${EMPTY_LIST_THUMB_SCALE * 100}%`,
-                                            objectFit: 'cover',
-                                            objectPosition: 'center',
-                                            transform: EMPTY_LIST_THUMB_OFFSET_UP_PX
-                                              ? `translateY(-${EMPTY_LIST_THUMB_OFFSET_UP_PX}px)`
-                                              : undefined,
-                                            flexShrink: 0,
-                                          }}
-                                        />
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
+                                <WishlistListOverviewThumb firstItem={firstItem} thumbSrc={thumbSrc} />
                               </div>
-                              <span
-                                style={{
-                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
-                                  fontSize: '12px',
-                                  color: '#000',
-                                  textTransform: 'uppercase',
-                                  marginTop: '6px',
-                                }}
-                              >
+                              <span style={{ ...LIST_OVERVIEW_COUNT_STYLE, marginTop: '6px' }}>
                                 {count} {count === 1 ? 'ITEM' : 'ITEMS'}
                               </span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0, paddingTop: '4px' }} onClick={() => openExpandedList(list.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}>
-                              <span style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: '18px', color: '#000', textTransform: 'uppercase' }}>{list.name}</span>
-                              <p style={{ fontFamily: '"Futura PT Medium", Futura, sans-serif', fontSize: '11px', color: '#666', margin: '2px 0 0 0', textTransform: 'uppercase' }}>{getUserListVisibilityLabel(list)}</p>
+                            <div
+                              style={{ flex: 1, minWidth: 0, paddingTop: '4px' }}
+                              onClick={() => openExpandedList(list.id)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}
+                            >
+                              <span style={LIST_OVERVIEW_NAME_STYLE}>{list.name}</span>
+                              <p style={LIST_OVERVIEW_VISIBILITY_STYLE}>{getUserListVisibilityLabel(list)}</p>
                             </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(auto-fill, minmax(${LISTS_OVERVIEW_GRID_MIN_COL_PX}px, 1fr))`,
+                        rowGap: `${LISTS_OVERVIEW_GRID_ROW_GAP_PX}px`,
+                        columnGap: `${LISTS_OVERVIEW_GRID_COL_GAP_PX}px`,
+                        paddingTop: '10px',
+                        paddingLeft: `${LIST_ROW_CONTENT_OFFSET_LEFT_PX}px`,
+                      }}
+                    >
+                      {lists.map((list) => {
+                        const firstItem = list.items?.[0];
+                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
+                        const count = list.items?.length ?? 0;
+                        return (
+                          <div
+                            key={list.id}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => openExpandedList(list.id)}
+                            onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              cursor: 'pointer',
+                              minWidth: 0,
+                            }}
+                          >
+                            <WishlistListOverviewThumb firstItem={firstItem} thumbSrc={thumbSrc} />
+                            <span
+                              style={{
+                                ...LIST_OVERVIEW_NAME_STYLE,
+                                marginTop: '8px',
+                                textAlign: 'center',
+                                width: '100%',
+                              }}
+                            >
+                              {list.name}
+                            </span>
+                            <p
+                              style={{
+                                ...LIST_OVERVIEW_VISIBILITY_STYLE,
+                                textAlign: 'center',
+                                width: '100%',
+                              }}
+                            >
+                              {getUserListVisibilityLabel(list)}
+                            </p>
+                            <span
+                              style={{
+                                ...LIST_OVERVIEW_COUNT_STYLE,
+                                marginTop: '4px',
+                                textAlign: 'center',
+                                width: '100%',
+                              }}
+                            >
+                              {count} {count === 1 ? 'ITEM' : 'ITEMS'}
+                            </span>
                           </div>
                         );
                       })}
