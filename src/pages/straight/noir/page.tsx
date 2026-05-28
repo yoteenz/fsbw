@@ -2868,7 +2868,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(0);
-                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
+                    setViewerModalDownloads(null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2886,7 +2886,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(1);
-                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
+                    setViewerModalDownloads(null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2904,7 +2904,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                     ];
                     setViewerImages(productShotImages);
                     setViewerCurrentIndex(2);
-                    setViewerModalDownloads(showAdminFounder2dDownloads ? NOIR_2D_VIEWER_DOWNLOADS : null);
+                    setViewerModalDownloads(null);
                     setShowImageViewer(true);
                   }}
                 />
@@ -2929,49 +2929,6 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 product shots
               </div>
             </div>
-
-            {/* 2D mannequin angles — founder admin only; same brick-background PNGs as hero 2D view */}
-            {showAdminFounder2dDownloads ? (
-            <div
-              className="flex flex-col items-center gap-1 px-2"
-              style={{ transform: 'translateY(-26px)', marginTop: '4px' }}
-            >
-              <p
-                style={{
-                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                  fontSize: '9px',
-                  color: '#808080',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                  margin: 0,
-                }}
-              >
-                download 2d angles (png)
-              </p>
-              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1" style={{ maxWidth: '100%' }}>
-                {NOIR_2D_COMPOSITE_DOWNLOAD_SPECS.map(({ mannequinSrc, label, download }) => (
-                  <button
-                    key={mannequinSrc}
-                    type="button"
-                    onClick={() => void downloadCompositeLeafBrickPng(mannequinSrc, download)}
-                    style={{
-                      fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                      fontSize: '10px',
-                      color: '#EB1C24',
-                      textDecoration: 'underline',
-                      textUnderlineOffset: '2px',
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            ) : null}
 
               {/* Tabs Section — inside mt-8 mb-6 so translateY(-34px) matches Blanco / Beach Wave */}
               <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
