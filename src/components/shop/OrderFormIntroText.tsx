@@ -27,6 +27,7 @@ const SUBHEAD_STYLE: CSSProperties = {
   ...PARA_STYLE,
   fontFamily: '"Futura PT Medium"',
   fontWeight: 500,
+  color: '#808080',
   margin: '0 0 10px 0',
 };
 
@@ -36,6 +37,16 @@ const BULLET_STYLE: CSSProperties = {
   paddingLeft: '12px',
 };
 
+const BULLET_MARK_STYLE: CSSProperties = { color: '#EB1C24' };
+
+function BulletLine({ line }: { line: string }) {
+  return (
+    <p style={BULLET_STYLE}>
+      <span style={BULLET_MARK_STYLE}>•</span> {line}
+    </p>
+  );
+}
+
 /** Intro copy block for the Order Authorization Form main card. */
 export default function OrderFormIntroText() {
   return (
@@ -44,18 +55,14 @@ export default function OrderFormIntroText() {
 
       <p style={SUBHEAD_STYLE}>{ORDER_FORM_INTRO_PURPOSE_TITLE}</p>
       {ORDER_FORM_INTRO_PURPOSE_BULLETS.map((line) => (
-        <p key={line} style={BULLET_STYLE}>
-          • {line}
-        </p>
+        <BulletLine key={line} line={line} />
       ))}
 
       <p style={{ ...PARA_STYLE, margin: '12px 0 20px 0' }}>{ORDER_FORM_INTRO_MATCH_INFO}</p>
 
       <p style={SUBHEAD_STYLE}>{ORDER_FORM_INTRO_PLEASE_NOTE_TITLE}</p>
       {ORDER_FORM_INTRO_PLEASE_NOTE_BULLETS.map((line) => (
-        <p key={line} style={BULLET_STYLE}>
-          • {line}
-        </p>
+        <BulletLine key={line} line={line} />
       ))}
 
       <p style={{ ...PARA_STYLE, margin: '12px 0 20px 0' }}>{ORDER_FORM_INTRO_AUTHORIZATION}</p>
