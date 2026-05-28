@@ -42,8 +42,10 @@ export function UnitPdpCartActions({
           }`}
           style={{
             borderWidth: '1.3px',
-            color: '#EB1C24',
-            fontFamily: buttonFontFamily,
+            color: soldOut ? '#808080' : '#EB1C24',
+            fontFamily: soldOut
+              ? '"Futura PT Demi", Futura, sans-serif'
+              : buttonFontFamily,
             backgroundColor: '#FFFFFF',
           }}
         >
