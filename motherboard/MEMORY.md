@@ -18906,6 +18906,6 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User specified Account → Alerts copy when wishlisted wig units change inventory:
 
 - **LOW STOCK:** title `LOW STOCK: ACT FAST!`, body `YOUR WISHLIST ITEM IS LOW IN STOCK.`, link `VIEW PRODUCT`
-- **BACK IN STOCK:** title `BACK IN STOCK: ACT FAST!`, body `YOUR WISHLIST ITEM IS BACK IN STOCK.`, link `VIEW PRODUCT`
+- **BACK IN STOCK:** title `BACK IN STOCK: SHOP NOW!`, body `YOUR WISHLIST ITEM IS BACK IN STOCK.`, link `VIEW PRODUCT`
 
 **Implementation:** **`wishlistStockAlerts.ts`** — tracks last `stockStatus` per unit per signed-in email; on transition **in_stock → low_stock** or **out_of_stock/low_stock → in_stock**, appends **`StoredNotification`** to `notifications_{email}` with PDP route via **`wigUnitProductRoutes.ts`**. Runs from **`ProductInventorySync`** (inventory, focus, wishlist/lists updates, sign-in). Wishlist + **userLists** wig SKUs included.
