@@ -99,7 +99,7 @@ const REQUIRED_EDUCATION_OPTIONS = [
   'JD / LAW DEGREE',
   'DOCTORATE / PROFESSIONAL (E.G. PHD, MD)',
   'CERTIFICATION / LICENSE ONLY (COSMETOLOGY, MUA, ETC.)',
-  'OTHER — SEE COVER LETTER',
+  'OTHER, SEE COVER LETTER',
 ] as const;
 
 export default function BrandCareersPage() {
@@ -672,7 +672,7 @@ export default function BrandCareersPage() {
                 </button>
                 <div className="flex-1 overflow-y-auto min-h-0 pr-1" style={{ paddingTop: '8px' }}>
                   <RoleCardSectionHeader
-                    title={`Apply — ${activeJob.role}`}
+                    title={`Apply, ${activeJob.role}`}
                     className="pr-12"
                     iconSrc={workerRoleHeaderIconSrc(activeJob.id)}
                   />
@@ -817,7 +817,7 @@ export default function BrandCareersPage() {
                       </label>
                       <label>
                         <span style={checkoutLabelStyle}>
-                          RÉSUMÉ (PDF/DOC — OPTIONAL BUT RECOMMENDED, MAX ~1.5MB)
+                          RÉSUMÉ (PDF/DOC, OPTIONAL BUT RECOMMENDED, MAX ~1.5MB)
                         </span>
                         <div
                           className="mt-1 flex items-center"

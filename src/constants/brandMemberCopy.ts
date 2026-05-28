@@ -1,4 +1,4 @@
-/** Become a Member body copy for `/brand/member` — displayed in uppercase on the page. */
+/** Become a Member body copy for `/brand/member`, displayed in uppercase on the page. */
 export type BrandMemberBlockVariant = 'body' | 'accent' | 'demiGray' | 'bohemy';
 
 export type BrandMemberBlock = {

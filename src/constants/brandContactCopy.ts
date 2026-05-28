@@ -1,4 +1,4 @@
-/** Contact Us intro copy for `/brand/contact` — displayed in uppercase on the page. */
+/** Contact Us intro copy for `/brand/contact`, displayed in uppercase on the page. */
 export const BRAND_CONTACT_EMAIL = 'CONTACT@FRONTALSLAYER.COM';
 
 export const BRAND_CONTACT_INTRO_LINE_1_PREFIX =
