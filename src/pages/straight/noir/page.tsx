@@ -2830,7 +2830,7 @@ width: 'clamp(200px, 50vw, 320px)',
         </div>
 
           {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
-          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '8px' }}>
+          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '4px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
