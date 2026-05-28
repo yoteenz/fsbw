@@ -44,6 +44,9 @@ import {
   clearPendingBawNoirLiveColorWigViews,
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../../utils/bawNoirLivePreviewStorage';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
   id: string;
@@ -74,6 +77,7 @@ function NoirSelection() {
   const location = useLocation();
   
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  const { isSoldOut: isNoirSoldOut } = useProductInventorySnapshot();
   // Fix for window.REACT_APP_NAVIGATE - use navigate hook instead
   const [selectedDensity, setSelectedDensity] = useState(() => {
     return localStorage.getItem('selectedDensity') || '200%';
@@ -1507,6 +1511,7 @@ function NoirSelection() {
 
   const handleAddToBag = async () => {
     if (addToBagState === 'adding' || addToBagState === 'added') return;
+    if (isWigUnitSoldOut('NOIR') || isNoirSoldOut('NOIR')) return;
     
     setAddToBagState('adding');
     
@@ -1607,7 +1612,7 @@ function NoirSelection() {
 
       // Get existing cart items and add new item
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [...existingCartItems, cartItem];
+      const updatedCartItems = [...existingCartItems, attachStockStatusToLineItem(cartItem)];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
 
       // Update cart count
@@ -2515,16 +2520,18 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </p>
 
             {/* PRICE */}
-            <p
-              className="text-center text-black mb-1"
-              style={{ 
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                fontSize: '21px',
-                fontWeight: '500',
-                transform: 'translateY(-16px)'
-              }}
-              dangerouslySetInnerHTML={formatPrice(totalPrice)}
-            />
+            <div className="text-center mb-1" style={{ transform: 'translateY(-16px)' }}>
+              <WigProductPriceDisplay
+                productName="NOIR"
+                priceHtml={formatPrice(totalPrice)}
+                priceStyle={{
+                  fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                  fontSize: '21px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                }}
+              />
+            </div>
 
             {/* TAX DISCLAIMER */}
             <p
@@ -3456,9 +3463,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
         <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
               onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
+              disabled={addToBagState === 'adding' || isNoirSoldOut('NOIR')}
               className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'adding' || isNoirSoldOut('NOIR') ? 'bg-white cursor-not-allowed' : 
                 addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
               }`}
               style={{ 
@@ -3468,9 +3475,12 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 backgroundColor: '#FFFFFF'
               }}
             >
-            {addToBagState === 'idle' && 'ADD TO BAG'}
-            {addToBagState === 'adding' && 'ADDING...'}
-            {addToBagState === 'added' && (
+            {isNoirSoldOut('NOIR') && addToBagState === 'idle' && (
+              <span style={{ color: '#EB1C24' }}>OUT OF STOCK</span>
+            )}
+            {!isNoirSoldOut('NOIR') && addToBagState === 'idle' && 'ADD TO BAG'}
+            {!isNoirSoldOut('NOIR') && addToBagState === 'adding' && 'ADDING...'}
+            {!isNoirSoldOut('NOIR') && addToBagState === 'added' && (
               <span className="flex items-center justify-center gap-1">
                 <img src="/assets/check.svg" alt="Check" width="9" height="9" />
                 <span style={{ color: '#808080' }}>IN THE BAG</span>

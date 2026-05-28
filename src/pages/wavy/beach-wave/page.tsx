@@ -32,11 +32,15 @@ import {
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 function BeachWaveSelection() {
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  const { isSoldOut: isUnitSoldOut } = useProductInventorySnapshot();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
@@ -774,6 +778,7 @@ function BeachWaveSelection() {
 
   const handleAddToBag = async () => {
     if (addToBagState === 'adding' || addToBagState === 'added') return;
+    if (isWigUnitSoldOut('BEACH WAVE') || isUnitSoldOut('BEACH WAVE')) return;
     
     setAddToBagState('adding');
     
@@ -840,7 +845,7 @@ function BeachWaveSelection() {
       
       // Add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [cartItem, ...existingCartItems];
+      const updatedCartItems = [attachStockStatusToLineItem(cartItem), ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
@@ -1293,16 +1298,18 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </p>
 
             {/* PRICE */}
-            <p
-              className="text-center text-black mb-1"
-              style={{ 
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '20px',
-                fontWeight: '500',
-                transform: 'translateY(-16px)'
-              }}
-              dangerouslySetInnerHTML={formatPrice(totalPrice)}
-            />
+            <div className="text-center mb-1" style={{ transform: 'translateY(-16px)' }}>
+              <WigProductPriceDisplay
+                productName="BEACH WAVE"
+                priceHtml={formatPrice(totalPrice)}
+                priceStyle={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '20px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                }}
+              />
+            </div>
 
             {/* TAX DISCLAIMER */}
             <p
@@ -1914,9 +1921,9 @@ fontSize: '11px',
           <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
               onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
+              disabled={addToBagState === 'adding' || isUnitSoldOut('BEACH WAVE')}
               className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'adding' || isUnitSoldOut('BEACH WAVE') ? 'bg-white cursor-not-allowed' : 
                 addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
               }`}
               style={{ 
@@ -1926,9 +1933,12 @@ fontSize: '11px',
                 backgroundColor: '#FFFFFF'
               }}
             >
-              {addToBagState === 'idle' && 'ADD TO BAG'}
-              {addToBagState === 'adding' && 'ADDING...'}
-              {addToBagState === 'added' && (
+              {isUnitSoldOut('BEACH WAVE') && addToBagState === 'idle' && (
+                <span style={{ color: '#EB1C24' }}>OUT OF STOCK</span>
+              )}
+              {!isUnitSoldOut('BEACH WAVE') && addToBagState === 'idle' && 'ADD TO BAG'}
+              {!isUnitSoldOut('BEACH WAVE') && addToBagState === 'adding' && 'ADDING...'}
+              {!isUnitSoldOut('BEACH WAVE') && addToBagState === 'added' && (
                 <span className="flex items-center justify-center gap-1">
                   <img src="/assets/check.svg" alt="Check" width="9" height="9" />
                   <span style={{ color: '#808080' }}>IN THE BAG</span>

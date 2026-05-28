@@ -42,6 +42,9 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
+import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
+import { WigLineStockPrice } from './shop/WigStockPrice';
+import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -50,6 +53,7 @@ interface CartDropdownProps {
 }
 
 export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdownProps) {
+  useProductInventorySnapshot();
   const navigate = useNavigate();
   const location = useLocation();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -239,6 +243,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
           // Recalculating would use current localStorage values, causing all items to show the same price
           // This applies to ALL product types (NOIR, BLANCO, SOFT CURL, SOFT WAVE)
           const itemsWithCorrectPrices = items.map((item: any, index: number) => {
+            const withStock = attachStockStatusToLineItem(item);
             // Get base price fallback based on product name
             const getBasePrice = (productName: string) => {
               switch (productName) {
@@ -278,7 +283,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               finalPrice: finalPrice
             });
             
-            return { ...item, price: finalPrice };
+            return attachStockStatusToLineItem({ ...withStock, price: finalPrice });
           });
           
           console.log('[CART DROPDOWN] Loading cart items with saved prices:', itemsWithCorrectPrices);
@@ -1628,20 +1633,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               </div>
                             );
                           }
+                          const linePrice = isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0;
                           return (
-                        <p 
-                          style={{ 
-                            fontFamily: '"Futura PT Book"',
-                            color: '#000000',
-                            textTransform: 'uppercase',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            margin: 0,
-                          }}
-                          dangerouslySetInnerHTML={formatPrice(
-                            isGiftCardCartLine(item) ? giftCardLineTotalUsd(item) : item.price || 0
-                          )}
-                        />
+                            <WigLineStockPrice
+                              item={item}
+                              priceHtml={formatPrice(linePrice)}
+                              priceStyle={{
+                                fontFamily: '"Futura PT Book"',
+                                color: '#000000',
+                                textTransform: 'uppercase',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                margin: 0,
+                              }}
+                            />
                           );
                         })()}
                         </CartLineTextLayer>

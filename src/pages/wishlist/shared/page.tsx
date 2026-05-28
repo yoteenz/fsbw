@@ -13,11 +13,7 @@ import {
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
-import {
-  WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
-  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
-  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
-} from '../wishlistExpandedListLineClasses';
+import { WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 import { CartLineTextLayer } from '../../../components/cart/CartLineProductTextStack';
 import { WishlistLineProductTextStack } from '../../../components/wishlist/WishlistLineProductTextStack';
@@ -26,6 +22,12 @@ import {
   cartLineProductNameTextStyle,
   cartLineRedSubtitleTextStyle,
 } from '../../../utils/cartLineProductLayers';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigLineStockPrice } from '../../../components/shop/WigStockPrice';
+import {
+  attachStockStatusToLineItem,
+  isLineItemOutOfStock,
+} from '../../../utils/productInventoryAvailability';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
@@ -198,10 +200,6 @@ function getHairOrigin(productName: string): string {
   }
 }
 
-function isItemOutOfStock(item: any): boolean {
-  return (item.stockStatus || 'in_stock') === 'out_of_stock';
-}
-
 function cartItemKey(item: any, index: number): string {
   if (item?.id != null && item.id !== '') return String(item.id);
   const name = (item?.name || item?.productName || 'NOIR').toString();
@@ -223,6 +221,7 @@ export default function SharedWishlistListPage() {
   const [cartSyncVersion, setCartSyncVersion] = useState(0);
   const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
+  useProductInventorySnapshot();
 
   const snapshot = useMemo(() => {
     if (!token) return null;
@@ -285,15 +284,16 @@ export default function SharedWishlistListPage() {
     cartItems.some((ci: any) => ci.id === cartItemKey(item, index));
 
   const handleAddToBag = (item: any, index: number) => {
+    if (isLineItemOutOfStock(item)) return;
     try {
       const cartId = cartItemKey(item, index);
-      const payload = { ...item, id: cartId };
+      const payload = attachStockStatusToLineItem({ ...item, id: cartId });
       const existing = cartItems.find((ci: any) => ci.id === cartId);
       const updatedItems = existing
         ? cartItems.map((ci: any) =>
             ci.id === cartId ? { ...ci, quantity: (ci.quantity || 1) + (item.quantity || 1) } : ci
           )
-        : [{ ...payload, quantity: item.quantity || 1 }, ...cartItems];
+        : [attachStockStatusToLineItem({ ...payload, quantity: item.quantity || 1 }), ...cartItems];
       persistCart(updatedItems);
       const pname = (item?.name || item?.productName || '').toString();
       trackActivity('add_to_cart', { source: 'wishlist_shared', productName: pname || undefined });
@@ -322,10 +322,13 @@ export default function SharedWishlistListPage() {
       let updatedItems = [...cartItems];
       let added = 0;
       items.forEach((item: any, index: number) => {
-        if (isItemOutOfStock(item)) return;
+        if (isLineItemOutOfStock(item)) return;
         const cartId = cartItemKey(item, index);
         if (updatedItems.some((ci: any) => ci.id === cartId)) return;
-        updatedItems = [{ ...item, id: cartId, quantity: item.quantity || 1 }, ...updatedItems];
+        updatedItems = [
+          attachStockStatusToLineItem({ ...item, id: cartId, quantity: item.quantity || 1 }),
+          ...updatedItems,
+        ];
         added += 1;
       });
       if (added > 0) {
@@ -337,7 +340,7 @@ export default function SharedWishlistListPage() {
     }
   };
 
-  const hasAddableItems = items.some((item, index) => !isItemOutOfStock(item) && !isInBag(item, index));
+  const hasAddableItems = items.some((item, index) => !isLineItemOutOfStock(item) && !isInBag(item, index));
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -460,7 +463,7 @@ export default function SharedWishlistListPage() {
                         getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                       );
                       const inBag = isInBag(item, index);
-                      const outOfStock = isItemOutOfStock(item);
+                      const outOfStock = isLineItemOutOfStock(item);
                       return (
                         <div
                           key={item.id || index}
@@ -508,7 +511,7 @@ export default function SharedWishlistListPage() {
                               />
                             </div>
                             {outOfStock ? (
-                              <p style={{ ...LIST_LINE_BAG_ADD_STYLE, color: '#808080', cursor: 'default' }}>
+                              <p style={{ ...LIST_LINE_BAG_ADD_STYLE, color: '#EB1C24', cursor: 'default' }}>
                                 OUT OF STOCK
                               </p>
                             ) : inBag ? (
@@ -578,12 +581,11 @@ export default function SharedWishlistListPage() {
                             )}
                             {!isViewingDetails && (
                               <CartLineTextLayer slot="price">
-                              <p
-                                className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
-                                style={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
-                              >
-                                {itemPriceLabel}
-                              </p>
+                              <WigLineStockPrice
+                                item={item}
+                                priceHtml={{ __html: itemPriceLabel }}
+                                priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
+                              />
                               </CartLineTextLayer>
                             )}
                             {showViewDetailsLink && (

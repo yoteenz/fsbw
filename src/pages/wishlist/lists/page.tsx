@@ -27,12 +27,14 @@ import {
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
-import {
-  WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
-  WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
-  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
-} from '../wishlistExpandedListLineClasses';
+import { WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigLineStockPrice } from '../../../components/shop/WigStockPrice';
+import {
+  attachStockStatusToLineItem,
+  isLineItemOutOfStock,
+} from '../../../utils/productInventoryAvailability';
 import { CartLineTextLayer } from '../../../components/cart/CartLineProductTextStack';
 import { WishlistLineProductTextStack } from '../../../components/wishlist/WishlistLineProductTextStack';
 import {
@@ -308,6 +310,7 @@ export default function ViewListsPage() {
   });
   const [cartSyncVersion, setCartSyncVersion] = useState(0);
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
+  useProductInventorySnapshot();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
     const pathname = window.location.pathname;
@@ -369,6 +372,7 @@ export default function ViewListsPage() {
   };
 
   const handleAddToBag = (item: any) => {
+    if (isLineItemOutOfStock(item)) return;
     try {
       const existing = cartItems.find((ci: any) => ci.id === item.id);
       let updatedItems;
@@ -377,7 +381,7 @@ export default function ViewListsPage() {
           ci.id === item.id ? { ...ci, quantity: (ci.quantity || 1) + (item.quantity || 1) } : ci
         );
       } else {
-        updatedItems = [{ ...item, quantity: item.quantity || 1 }, ...cartItems];
+        updatedItems = [attachStockStatusToLineItem({ ...item, quantity: item.quantity || 1 }), ...cartItems];
       }
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
       const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -793,7 +797,7 @@ export default function ViewListsPage() {
                                 getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                               );
                               const isInBag = cartItems.some((ci: any) => ci.id === item.id);
-                              const isOutOfStock = (item.stockStatus || 'in_stock') === 'out_of_stock';
+                              const isOutOfStock = isLineItemOutOfStock(item);
                               return (
                                 <div
                                   key={item.id || index}
@@ -813,7 +817,7 @@ export default function ViewListsPage() {
                                       <p
                                         style={{
                                           ...LIST_LINE_BAG_ADD_STYLE,
-                                          color: '#808080',
+                                          color: '#EB1C24',
                                           cursor: 'default',
                                         }}
                                       >
@@ -886,12 +890,11 @@ export default function ViewListsPage() {
                                     )}
                                     {!isViewingDetails && (
                                       <CartLineTextLayer slot="price">
-                                      <p
-                                        className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
-                                        style={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
-                                      >
-                                        {itemPriceLabel}
-                                      </p>
+                                      <WigLineStockPrice
+                                        item={item}
+                                        priceHtml={{ __html: itemPriceLabel }}
+                                        priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
+                                      />
                                       </CartLineTextLayer>
                                     )}
                                     {showViewDetailsLink && (

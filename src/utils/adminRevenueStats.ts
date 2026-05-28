@@ -178,6 +178,9 @@ export function getInventoryOverride(): DepletedInventory | null {
 export function setInventoryOverride(data: { products: Record<string, number>; packaging: Record<string, number> }): void {
   try {
     localStorage.setItem(INVENTORY_OVERRIDE_KEY, JSON.stringify(data));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('productInventoryUpdated'));
+    }
   } catch {
     /* ignore */
   }

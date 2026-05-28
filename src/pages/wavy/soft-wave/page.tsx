@@ -32,6 +32,9 @@ import {
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
+import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 /** 2D Soft Wave mannequin PNGs (brick background) — not the 3D SOFT-WAVE renders. */
 const SOFT_WAVE_2D_ANGLE_DOWNLOAD_ROWS: { href: string; label: string; download: string }[] = [
@@ -49,6 +52,7 @@ function SoftWaveSelection() {
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  const { isSoldOut: isUnitSoldOut } = useProductInventorySnapshot();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedCustomCap, setSelectedCustomCap] = useState('M');
   const [selectedFlexibleCap, setSelectedFlexibleCap] = useState('');
@@ -776,6 +780,7 @@ function SoftWaveSelection() {
 
   const handleAddToBag = async () => {
     if (addToBagState === 'adding' || addToBagState === 'added') return;
+    if (isWigUnitSoldOut('SOFT WAVE') || isUnitSoldOut('SOFT WAVE')) return;
     
     setAddToBagState('adding');
     
@@ -842,7 +847,7 @@ function SoftWaveSelection() {
       
       // Add new item at the beginning (newest first)
       const existingCartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const updatedCartItems = [cartItem, ...existingCartItems];
+      const updatedCartItems = [attachStockStatusToLineItem(cartItem), ...existingCartItems];
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       
       const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
@@ -1297,16 +1302,18 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </p>
 
             {/* PRICE */}
-            <p
-              className="text-center text-black mb-1"
-              style={{ 
-                fontFamily: '"Futura PT Medium"',
-                fontSize: '20px',
-                fontWeight: '500',
-                transform: 'translateY(-16px)'
-              }}
-              dangerouslySetInnerHTML={formatPrice(totalPrice)}
-            />
+            <div className="text-center mb-1" style={{ transform: 'translateY(-16px)' }}>
+              <WigProductPriceDisplay
+                productName="SOFT WAVE"
+                priceHtml={formatPrice(totalPrice)}
+                priceStyle={{
+                  fontFamily: '"Futura PT Medium"',
+                  fontSize: '20px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                }}
+              />
+            </div>
 
             {/* TAX DISCLAIMER */}
             <p
@@ -1959,9 +1966,9 @@ width: 'clamp(230px, 57.5vw, 368px)',
           <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
             <button
               onClick={handleAddToBag}
-              disabled={addToBagState === 'adding'}
+              disabled={addToBagState === 'adding' || isUnitSoldOut('SOFT WAVE')}
               className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' ? 'bg-white cursor-not-allowed' : 
+                addToBagState === 'adding' || isUnitSoldOut('SOFT WAVE') ? 'bg-white cursor-not-allowed' : 
                 addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
               }`}
               style={{ 
@@ -1971,9 +1978,12 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 backgroundColor: '#FFFFFF'
               }}
             >
-              {addToBagState === 'idle' && 'ADD TO BAG'}
-              {addToBagState === 'adding' && 'ADDING...'}
-              {addToBagState === 'added' && (
+              {isUnitSoldOut('SOFT WAVE') && addToBagState === 'idle' && (
+                <span style={{ color: '#EB1C24' }}>OUT OF STOCK</span>
+              )}
+              {!isUnitSoldOut('SOFT WAVE') && addToBagState === 'idle' && 'ADD TO BAG'}
+              {!isUnitSoldOut('SOFT WAVE') && addToBagState === 'adding' && 'ADDING...'}
+              {!isUnitSoldOut('SOFT WAVE') && addToBagState === 'added' && (
                 <span className="flex items-center justify-center gap-1">
                   <img src="/assets/check.svg" alt="Check" width="9" height="9" />
                   <span style={{ color: '#808080' }}>IN THE BAG</span>

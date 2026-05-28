@@ -18,11 +18,18 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
+import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
+import {
+  attachStockStatusToLineItem,
+  isWigUnitSoldOut,
+} from '../../utils/productInventoryAvailability';
 
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
+  useProductInventorySnapshot();
 
   /** TEMP: green outlines on home/shop product flex cells — set `false` to hide. */
   const DEBUG_PRODUCT_FLEX_BOUNDS = false;
@@ -570,11 +577,12 @@ function ProductsPage() {
           window.dispatchEvent(new Event('cartUpdated'));
         }, 100);
     } else {
+        if (isWigUnitSoldOut(product.name)) return;
         // Add to cart
         const capSizePrice = 0; // Standard cap sizes (XS, S, M, L) have no additional price
         
         // Create cart item with product details and selected cap size
-        const cartItem = {
+        const cartItem = attachStockStatusToLineItem({
           id: `${product.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           name: product.name,
           price: product.price + capSizePrice,
@@ -582,7 +590,7 @@ function ProductsPage() {
           image: product.image,
           capSize: selectedCapSize,
           route: product.route
-        };
+        });
         
         const updatedCartItems = [cartItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
@@ -1145,17 +1153,21 @@ function ProductsPage() {
                                 {product.length} RAW {product.hairOrigin}
                               </p>
 
-                              <p style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '12px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateY(1px)'
-                              }}
-                              dangerouslySetInnerHTML={formatPrice(product.price)}
+                              <WigProductPriceDisplay
+                                productName={product.name}
+                                priceHtml={formatPrice(product.price)}
+                                priceStyle={{
+                                  fontFamily: '"Futura PT Medium"',
+                                  fontSize: '12px',
+                                  color: 'black',
+                                  textTransform: 'uppercase',
+                                  margin: '0 0 5px 0',
+                                  fontWeight: '500',
+                                  lineHeight: '0.84',
+                                  transform: 'translateY(1px)',
+                                  textAlign: 'center',
+                                }}
+                                labelStyle={{ transform: 'translateY(1px)' }}
                               />
 
                               <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>

@@ -61,6 +61,9 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
+import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
+import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
+import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -277,6 +280,7 @@ function ShoppingBagLineThumb({
 }
 
 function ShoppingBagPage() {
+  useProductInventorySnapshot();
   const navigate = useNavigate();
   const location = useLocation();
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
@@ -431,7 +435,7 @@ function ShoppingBagPage() {
             window.dispatchEvent(new CustomEvent('cartItemsChanged'));
             window.dispatchEvent(new Event('cartUpdated'));
           }
-          setCartItems(sortCartPremiumBookingFirst(strip.next));
+          setCartItems(sortCartPremiumBookingFirst(strip.next.map((row: any) => attachStockStatusToLineItem(row))));
         }
       }
     } catch (e) {
@@ -467,7 +471,7 @@ function ShoppingBagPage() {
             localStorage.setItem('savedForLater', JSON.stringify(stripSaved.next));
             window.dispatchEvent(new Event('savedItemsChanged'));
           }
-          setSavedForLater(stripSaved.next);
+          setSavedForLater(stripSaved.next.map((row: any) => attachStockStatusToLineItem(row)));
         }
       }
     } catch (e) {
@@ -1697,15 +1701,16 @@ function ShoppingBagPage() {
                                   <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(consultOfferLineTotUsd)} />
                                 </div>
                               ) : (
-                              <p
-                                style={{
+                              <WigLineStockPrice
+                                item={item}
+                                priceHtml={formatPrice(itemPrice)}
+                                priceStyle={{
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
                                   fontSize: '12px',
                                   margin: 0,
-                                  fontWeight: '600'
+                                  fontWeight: '600',
                                 }}
-                                dangerouslySetInnerHTML={formatPrice(itemPrice)}
                               />
                               )}
                               </CartLineTextLayer>
@@ -1988,8 +1993,10 @@ function ShoppingBagPage() {
 
               {/* Stock status line - same spacing as cart dropdown "you're earning" (when saved items exist) */}
               {savedForLater.length > 0 && (() => {
-                const outOfStockCount = savedForLater.filter((i: any) => (i.stockStatus || 'in_stock') === 'out_of_stock').length;
-                const lowStockCount = savedForLater.filter((i: any) => (i.stockStatus || 'in_stock') === 'low_stock').length;
+                const outOfStockCount = savedForLater.filter((i: any) => isLineItemOutOfStock(i)).length;
+                const lowStockCount = savedForLater.filter(
+                  (i: any) => !isLineItemOutOfStock(i) && (i.stockStatus || 'in_stock') === 'low_stock'
+                ).length;
                 const allInStock = outOfStockCount === 0 && lowStockCount === 0;
                 if (allInStock) {
                   return (
@@ -2205,15 +2212,16 @@ function ShoppingBagPage() {
                                <span style={{ whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={formatPrice(savedBundleLineTot)} />
                              </div>
                            ) : (
-                           <p
-                             style={{
+                           <WigLineStockPrice
+                             item={item}
+                             priceHtml={formatPrice(itemPrice)}
+                             priceStyle={{
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',
                                fontSize: '12px',
                                margin: 0,
-                               fontWeight: '600'
+                               fontWeight: '600',
                              }}
-                             dangerouslySetInnerHTML={formatPrice(itemPrice)}
                            />
                            )}
                            </CartLineTextLayer>
@@ -2333,12 +2341,12 @@ function ShoppingBagPage() {
                                </div>
                              </>
                            )}
-                           {(item.stockStatus || 'in_stock') === 'out_of_stock' ? (
+                           {isLineItemOutOfStock(item) ? (
                              <span
                                style={{
                                  fontFamily: '"Futura PT Demi"',
                                  fontSize: '9px',
-                                 color: '#808080',
+                                 color: '#EB1C24',
                                  textTransform: 'uppercase',
                                  marginTop: '6px',
                                  textAlign: 'center'

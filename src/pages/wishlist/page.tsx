@@ -21,6 +21,9 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
+import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
+import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
+import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -61,6 +64,7 @@ function WishlistSelection() {
   const [itemToRemoveId, setItemToRemoveId] = useState<string | null>(null);
   const [addToListModalOpen, setAddToListModalOpen] = useState(false);
   const [addToListModalItem, setAddToListModalItem] = useState<any>(null);
+  useProductInventorySnapshot();
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -125,7 +129,7 @@ function WishlistSelection() {
       if (stored) {
         const items = JSON.parse(stored);
         if (Array.isArray(items) && items.length > 0) {
-          setWishlistItems(items);
+          setWishlistItems(items.map((row: any) => attachStockStatusToLineItem(row)));
           return;
         }
       }
@@ -305,6 +309,7 @@ function WishlistSelection() {
   };
 
   const handleAddToBag = (item: any) => {
+    if (isLineItemOutOfStock(item)) return;
     try {
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const existingItem = cartItems.find((ci: any) => ci.id === item.id);
@@ -315,7 +320,7 @@ function WishlistSelection() {
         );
       } else {
         // Add new item at the beginning (newest first)
-        updatedItems = [{ ...item, quantity: item.quantity || 1 }, ...cartItems];
+        updatedItems = [attachStockStatusToLineItem({ ...item, quantity: item.quantity || 1 }), ...cartItems];
       }
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
       const newCount = updatedItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
@@ -795,8 +800,10 @@ function WishlistSelection() {
 
                 {/* Stock status line - same top spacing as cart dropdown "you're earning" (when items exist) */}
                 {wishlistItems.length > 0 && (() => {
-                  const outOfStockCount = wishlistItems.filter((i: any) => (i.stockStatus || 'in_stock') === 'out_of_stock').length;
-                  const lowStockCount = wishlistItems.filter((i: any) => (i.stockStatus || 'in_stock') === 'low_stock').length;
+                  const outOfStockCount = wishlistItems.filter((i: any) => isLineItemOutOfStock(i)).length;
+                  const lowStockCount = wishlistItems.filter(
+                    (i: any) => !isLineItemOutOfStock(i) && (i.stockStatus || 'in_stock') === 'low_stock'
+                  ).length;
                   const allInStock = outOfStockCount === 0 && lowStockCount === 0;
                   if (allInStock) {
                     return (
@@ -968,15 +975,16 @@ function WishlistSelection() {
                           </CartLineTextLayer>
                           <WishlistItemCapSizeLine item={item} />
                           <CartLineTextLayer slot="price">
-                          <p
-                            style={{
+                          <WigLineStockPrice
+                            item={item}
+                            priceHtml={formatPrice(itemPrice)}
+                            priceStyle={{
                               ...cartLineLayerInnerStyle(),
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               fontSize: '12px',
-                              fontWeight: '600'
+                              fontWeight: '600',
                             }}
-                            dangerouslySetInnerHTML={formatPrice(itemPrice)}
                           />
                           </CartLineTextLayer>
                         </WishlistLineProductTextStack>
@@ -1092,12 +1100,12 @@ function WishlistSelection() {
                               <img src="/assets/check.svg" alt="Check" width="9" height="9" />
                               <span>IN THE BAG</span>
                             </button>
-                          ) : (item.stockStatus || 'in_stock') === 'out_of_stock' ? (
+                          ) : isLineItemOutOfStock(item) ? (
                             <span
                               style={{
                                 fontFamily: '"Futura PT Demi"',
                                 fontSize: '9px',
-                                color: '#808080',
+                                color: '#EB1C24',
                                 textTransform: 'uppercase',
                                 marginTop: '6px',
                                 textAlign: 'center'
