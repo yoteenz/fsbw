@@ -2140,7 +2140,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/wave-thumb.png"
                               alt="SOFT WAVE"
                               style={{
-                                width: '50%',
+                                width: '79.2%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2235,7 +2235,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/curl-thumb.png"
                               alt="SOFT CURL"
                               style={{
-                                width: '50%',
+                                width: '79.2%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2330,7 +2330,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/noir-thumb.png"
                               alt="NOIR"
                               style={{
-                                width: '50%',
+                                width: '79.2%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2425,7 +2425,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/blanco-thumb.png"
                               alt="BLANCO"
                               style={{
-                                width: '50%',
+                                width: '79.2%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',

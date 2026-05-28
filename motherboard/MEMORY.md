@@ -19102,3 +19102,13 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 
 **Conventions:**
 - Any surface that opens Build-a-Wig edit for an existing saved/carted/wishlisted unit should seed the shared edit session first and navigate to the product-specific `/build-a-wig/{unit}/edit` route instead of sending the user back to the unit PDP.
+
+---
+
+## 2026-05-28 — BCF pages: recently-viewed thumbnail size matched to Noir strip
+
+**Context:** User asked to fix the thumbnail/image sizes in the **SIMILAR PRODUCTS** and **RECENTLY VIEWED** containers on the **BCF** (bundles / closures / frontals) pages (`/shop/bundles`, `/shop/closures`, `/shop/frontals` → `src/pages/shop/texture-category-product/page.tsx`) so they're **symmetrical** with the same strips on the **Noir** PDP (`src/pages/straight/noir/page.tsx`).
+
+**Finding:** Both strips share `marbleStrip*` helpers (`src/utils/marbleStripStyles.ts`). Noir + the BCF **SIMILAR PRODUCTS** strip render thumbs via `marbleStripThumbImg(is3D)` — **2D width `79.2%`**. But the BCF **RECENTLY VIEWED** strip used hand-rolled inline cells with thumb `width: '50%'` (4 cells), so its images were noticeably smaller than Noir.
+
+**Change:** `texture-category-product/page.tsx` — all four RECENTLY VIEWED thumb `<img>` widths **`50% → 79.2%`** (matches `marbleStripThumbImg` 2D). SIMILAR PRODUCTS already matched (no change). Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
