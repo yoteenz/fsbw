@@ -251,10 +251,10 @@ const BRAND_FAQ_SECTIONS_LIST: BrandFaqSection[] = [
 /** Display order for FAQ accordion sections on `/brand/faq`. */
 export const BRAND_FAQ_SECTION_DISPLAY_ORDER = [
   'general',
-  'ordering-processing',
   'membership-rewards',
   'hair-quality',
   'wigs-customization',
+  'ordering-processing',
   'returns-policies',
 ] as const;
 
