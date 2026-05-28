@@ -19211,3 +19211,20 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 - **`src/pages/wishlist/lists/page.tsx`** — imported `RenameListModal`; added `listToRename` state (`UserList | null`). Line-view row text column now renders a red **EDIT LIST NAME** span (`LIST_OVERVIEW_EDIT_NAME_STYLE`, `#EB1C24`, 11px, Futura PT Medium) below the visibility `<p>`; its onClick `stopPropagation`s (so the row's open-list handler doesn't fire) and sets `listToRename`. Rendered `<RenameListModal>` near the other modals (open when `listToRename !== null`; `onRenamed` → `refreshLists`). **Grid view only:** visibility `<p>` `marginTop 2px → 1px` (above) and count `<span>` `marginTop 4px → 3px` (below). Line view spacing unchanged.
 
 Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-28 — BCF SIMILAR strip was 1 giant thumb (real cause of asymmetry) + recently breakout
+
+**Context:** Follow-up: user said the earlier recently-viewed `50% → 79.2%` change "did nothing / something is overwriting it". Measured both pages headlessly (puppeteer-core + system google-chrome, 390px mobile viewport): `texture-category-product/page.tsx` (BCF) vs `straight/noir/page.tsx`.
+
+**Findings (measured rendered `<img>` widths):** Noir SIMILAR & RECENTLY thumbs = **122px** (2-up). BCF RECENTLY = **~125px** — so the prior `79.2%` fix *did* work. The real asymmetry was **BCF SIMILAR PRODUCTS ≈ 288px** (one giant thumb per view). Cause: SIMILAR maps `otherTextures`, which is **always exactly 2** items (3 textures − current), but the shared `marbleStripScrollRowStyle` row is **`width: 200%`** (built for 4 items / 2 visible). With 2 cells (`flex: 1 1 0`) in a 200% row, each cell = **100% of the viewport** → one huge thumbnail. Secondary asymmetry: SIMILAR card had full-width breakout margins (`marginLeft/Right:-16px`, `width:calc(100% + 32px)`) like the Noir cards, but the RECENTLY card did **not** (narrower cells); and RECENTLY inner padding was `10px` horizontal vs the shared `cellBand` `12px`.
+
+**Changes (`src/pages/shop/texture-category-product/page.tsx`):**
+- SIMILAR scroll row: override to **`width: '100%'`** (spread `marbleStripScrollRowStyle` then set width) so the 2 cells render half-viewport each (2-up, ~135px) instead of one ~288px giant. Shared `marbleStripStyles` helper left unchanged (Noir still uses 200% for its 4 items).
+- RECENTLY card: added the same **breakout margins** as SIMILAR/Noir.
+- RECENTLY thumb inner padding `10px 10px 4px 10px` → **`10px 12px 4px 12px`** (×4 cells) to match `cellBand` 12px horizontal.
+
+**Result (re-measured):** Both BCF strips now identical at **134.6px** thumbs (cell 194, 2-up), proportionally matching Noir's `79.2%` rule. They are absolutely ~12px wider than Noir's 122px only because the BCF page content area is wider than the Noir PDP's; forcing 122px absolute would make BCF thumbs proportionally *smaller* (extra whitespace), so proportional parity + internal symmetry is the correct "match". Typecheck passes. Pushed `master` + `preview/mobile`.
+
+**Convention:** When a marble carousel (`marbleStrip*`) renders a **variable/small** item count, override the scroll-row `width` so each cell stays half-viewport (2-up). The shared `marbleStripScrollRowStyle` assumes 4 items (`width: 200%`); a 2-item strip needs `width: 100%`.

@@ -1929,7 +1929,11 @@ export default function ShopTextureCategoryProductPage() {
                         }}
                       />
                       <div ref={setSimilarStripViewportRef} style={marbleStripViewportStyle}>
-                        <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
+                        {/* Only 2 "other texture" items: use a 100%-wide row so each cell is half the
+                            viewport (2 thumbs visible at ~122px), matching the Noir similar/recently
+                            strips. The shared 200% row (built for 4 items) made each cell fill the
+                            whole viewport, blowing the similar thumbnails up to ~288px. */}
+                        <div style={{ ...marbleStripScrollRowStyle(similarProductsScroll), width: '100%' }}>
                           {otherTextures.map((ot) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
@@ -2045,7 +2049,20 @@ export default function ShopTextureCategoryProductPage() {
               </div>
 
               {/* RECENTLY VIEWED — same strip as gift card */}
-              <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
+              {/* Full-width breakout margins match the SIMILAR strip + Noir strips so both BCF
+                  carousels render identical cell/thumbnail widths. */}
+              <div
+                className="px-0 md:px-0"
+                style={{
+                  marginTop: '20px',
+                  marginBottom: '20px',
+                  minWidth: '100%',
+                  maxWidth: 'none',
+                  marginLeft: '-16px',
+                  marginRight: '-16px',
+                  width: 'calc(100% + 32px)'
+                }}
+              >
                 <div
                   className="backdrop-blur-sm"
                   style={{
@@ -2130,7 +2147,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 10px 4px 10px',
+                                padding: '10px 12px 4px 12px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2225,7 +2242,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 10px 4px 10px',
+                                padding: '10px 12px 4px 12px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2320,7 +2337,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 10px 4px 10px',
+                                padding: '10px 12px 4px 12px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2415,7 +2432,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 10px 4px 10px',
+                                padding: '10px 12px 4px 12px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
