@@ -23,7 +23,15 @@ import {
 } from '../../../utils/digitalOrderFulfillment';
 import { BookingConsultHairInspoThumb } from '../../../utils/bookingConsultHairInspoThumb';
 import { getSpecialOfferAdminConfig } from '../../../utils/api';
-import specialOfferIconUrl from '../../../assets/special-offer2.svg?url';
+import {
+  CONCIERGE_BIRTHDAY_ICON,
+  CONCIERGE_FREE_GIFT_ICON,
+  CONCIERGE_ORDER_TRACKING_ICON,
+  CONCIERGE_PRIORITY_ICON,
+  CONCIERGE_SLAY_CHALLENGE_ICON,
+  CONCIERGE_SPECIAL_OFFER_ICON,
+} from '../../../assets/concierge/conciergeSectionIcons';
+import ConciergeSectionHeader from '../../../components/account/ConciergeSectionHeader';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -2405,30 +2413,13 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      PRIORITY MESSAGES
-                    </h2>
-                    <img
-                      src="/assets/priority2.svg"
-                      alt="Priority Messages"
-                      style={{
-                        width: '19.76px',
-                        height: '19.76px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)'
-                      }}
-                    />
-                  </div>
+                  <ConciergeSectionHeader
+                    title="PRIORITY MESSAGES"
+                    iconSrc={CONCIERGE_PRIORITY_ICON}
+                    iconWidth="19.76px"
+                    iconHeight="19.76px"
+                    iconAlt="Priority Messages"
+                  />
                   
                   {/* IS THIS ORDER RELATED? Prompt */}
                   <div style={{ marginBottom: '12px' }}>
@@ -2619,29 +2610,14 @@ function ConciergePage() {
                         backgroundColor: 'rgba(255, 255, 255, 0.6)'
                       }}
                     >
-                      <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '14px' }}>
-                        <h2
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            color: '#EB1C24',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            margin: '0',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          SPECIAL OFFER
-                        </h2>
-                        <img
-                          src={specialOfferIconUrl}
-                          alt="Special Offer"
-                          style={{
-                            width: '18.76px',
-                            height: '18.76px',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
+                      <ConciergeSectionHeader
+                        title="SPECIAL OFFER"
+                        iconSrc={CONCIERGE_SPECIAL_OFFER_ICON}
+                        iconWidth="18.76px"
+                        iconHeight="18.76px"
+                        marginBottom="14px"
+                        iconAlt="Special Offer"
+                      />
                       <p style={{ fontFamily: '"Futura PT Book"', color: '#000', fontSize: '10px', margin: '0 0 25px 0', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.45 }}>
                         CAN NOT BE COMBINED WITH SERVICE VOUCHER OR DISCOUNT CODE. FREE GIFTS MAY STILL BE APPLIED.
                         <br />
@@ -2767,30 +2743,14 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '12px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      ORDER TRACKING
-                    </h2>
-                    <img
-                      src="/assets/order-tracking.svg"
-                      alt="Order Tracking"
-                      style={{
-                        width: '22.4px',
-                        height: '22.4px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
-                      }}
-                    />
-                  </div>
+                  <ConciergeSectionHeader
+                    title="ORDER TRACKING"
+                    iconSrc={CONCIERGE_ORDER_TRACKING_ICON}
+                    iconWidth="22.4px"
+                    iconHeight="22.4px"
+                    marginBottom="12px"
+                    iconAlt="Order Tracking"
+                  />
                   {(activeOrders.length > 0) ? (
                     <>
                       <select
@@ -4877,31 +4837,15 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      SLAY CHALLENGE
-                    </h2>
-                    <img
-                      src="/assets/challenge-icon.svg"
-                      alt="Slay Challenge"
-                      style={{
-                        width: '17.26px',
-                        height: '17.26px',
-                        objectFit: 'contain',
-                        transform: 'translateY(-1.5px)',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.1px #EB1C24) drop-shadow(0 0 0.2px #EB1C24)'
-                      }}
-                    />
-                  </div>
+                  <ConciergeSectionHeader
+                    title="SLAY CHALLENGE"
+                    iconSrc={CONCIERGE_SLAY_CHALLENGE_ICON}
+                    iconWidth="17.26px"
+                    iconHeight="17.26px"
+                    marginBottom="16px"
+                    iconTransform="translateY(-1.5px)"
+                    iconAlt="Slay Challenge"
+                  />
                   {isSlayChallengeAdmin && (
                     <div style={{ marginBottom: '12px' }}>
                       <label style={{ fontFamily: '"Futura PT Book"', fontSize: '10px', color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Test stage (admin)</label>
@@ -5093,30 +5037,13 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      FREE GIFT
-                    </h2>
-                    <img
-                      src="/assets/Free Gift.svg"
-                      alt="Free Gift"
-                      style={{
-                        width: '13.3px',
-                        height: '13.3px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
-                      }}
-                    />
-                  </div>
+                  <ConciergeSectionHeader
+                    title="FREE GIFT"
+                    iconSrc={CONCIERGE_FREE_GIFT_ICON}
+                    iconWidth="13.3px"
+                    iconHeight="13.3px"
+                    iconAlt="Free Gift"
+                  />
                   
                   <p
                     style={{
@@ -5253,30 +5180,13 @@ function ConciergePage() {
                     backgroundColor: 'rgba(255, 255, 255, 0.6)'
                   }}
                 >
-                  <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '22px' }}>
-                    <h2
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        color: '#EB1C24',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        margin: '0',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      BIRTHDAY GIFT
-                    </h2>
-                    <img
-                      src="/assets/birthday1.svg"
-                      alt="Birthday Gift"
-                      style={{
-                        width: '16px',
-                        height: '16px',
-                        objectFit: 'contain',
-                        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%) drop-shadow(0 0 0.15px #EB1C24) drop-shadow(0 0 0.15px #EB1C24)'
-                      }}
-                    />
-                  </div>
+                  <ConciergeSectionHeader
+                    title="BIRTHDAY GIFT"
+                    iconSrc={CONCIERGE_BIRTHDAY_ICON}
+                    iconWidth="16px"
+                    iconHeight="16px"
+                    iconAlt="Birthday Gift"
+                  />
                   
                   <p
                     style={{
