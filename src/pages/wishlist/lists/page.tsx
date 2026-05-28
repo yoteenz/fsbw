@@ -30,6 +30,7 @@ import {
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS,
 } from '../wishlistExpandedListLineClasses';
@@ -123,14 +124,21 @@ const EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE: React.CSSProperties = {
 const EXPANDED_LIST_NO_REVIEWS_LABEL = 'NO REVIEWS SUBMITTED';
 const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
 
-function ExpandedListItemNoReviewStars({ centered }: { centered?: boolean }) {
+function ExpandedListItemNoReviewStars({
+  centered,
+  listView,
+}: {
+  centered?: boolean;
+  listView?: boolean;
+}) {
   return (
     <div
+      className={listView ? WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS : undefined}
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: '2px',
-        marginTop: '2px',
+        marginTop: listView ? undefined : '2px',
         marginBottom: '6px',
         ...(centered ? { justifyContent: 'center' } : {}),
       }}
@@ -899,7 +907,7 @@ export default function ViewListsPage() {
                                       </CartLineTextLayer>
                                     ) : (
                                       <CartLineTextLayer slot="meta">
-                                      <ExpandedListItemNoReviewStars />
+                                      <ExpandedListItemNoReviewStars listView />
                                       </CartLineTextLayer>
                                     )}
                                     {!isViewingDetails && (
@@ -907,7 +915,7 @@ export default function ViewListsPage() {
                                       <WigLineStockPrice
                                         item={item}
                                         priceHtml={{ __html: itemPriceLabel }}
-                                        priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
+                                        priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, color: '#000000', ...cartLineLayerInnerStyle() }}
                                         priceClassName={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
                                       />
                                       </CartLineTextLayer>

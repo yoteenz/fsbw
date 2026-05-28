@@ -4111,6 +4111,11 @@ p.bcf-bundles-pdp-product-name {
 
 .wishlist-expanded-list-line-price--list {
   margin-top: 2px !important;
+  color: #000000 !important;
+}
+
+.wishlist-expanded-list-line-stars--list {
+  margin-top: 2px !important;
 }
 
 .wishlist-expanded-list-view-details-toggle {
@@ -4130,5 +4135,5 @@ p.bcf-bundles-pdp-product-name {
 }
 
 .wishlist-expanded-list-view-details-toggle--list {
-  margin-top: 3px !important;
+  margin-top: 2px !important;
 }

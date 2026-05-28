@@ -16,7 +16,9 @@ import {
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 import { CartLineTextLayer } from '../../../components/cart/CartLineProductTextStack';
@@ -108,7 +110,10 @@ function getSharedListItemKey(item: any, index: number): string {
 
 function ExpandedListItemNoReviewStars() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}>
+    <div
+      className={WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS}
+      style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '6px' }}
+    >
       {[...Array(5)].map((_, idx) => (
         <img
           key={idx}
@@ -588,7 +593,7 @@ export default function SharedWishlistListPage() {
                               <WigLineStockPrice
                                 item={item}
                                 priceHtml={{ __html: itemPriceLabel }}
-                                priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
+                                priceStyle={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, color: '#000000', ...cartLineLayerInnerStyle() }}
                                 priceClassName={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
                               />
                               </CartLineTextLayer>
@@ -598,7 +603,7 @@ export default function SharedWishlistListPage() {
                               <span
                                 role="button"
                                 tabIndex={0}
-                                className={WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS}
+                                className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}`}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
