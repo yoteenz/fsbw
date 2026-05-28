@@ -1856,24 +1856,40 @@ function ShoppingBagPage() {
                                       <span style={{ fontFamily: 'Cascadia Code, monospace', fontSize: '8.25px' }}>+</span>
                                     </button>
                                   </div>
-                                  <button
-                                    onClick={() => handleSaveForLater(item)}
-                                    style={{
-                                      fontFamily: '"Futura PT Demi"',
-                                      fontSize: '9px',
-                                      color: '#808080',
-                                      background: 'none',
-                                      border: 'none',
-                                      cursor: 'pointer',
-                                      padding: '0',
-                                      textTransform: 'uppercase',
-                                      marginTop: '6px',
-                                      textAlign: 'center'
-                                    }}
-                                    type="button"
-                                  >
-                                    SAVE FOR LATER
-                                  </button>
+                                  {isLineItemOutOfStock(item) ? (
+                                    <span
+                                      style={{
+                                        fontFamily: '"Futura PT Medium"',
+                                        fontSize: '9px',
+                                        fontWeight: 500,
+                                        color: '#EB1C24',
+                                        textTransform: 'uppercase',
+                                        marginTop: '6px',
+                                        textAlign: 'center',
+                                      }}
+                                    >
+                                      OUT OF STOCK
+                                    </span>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleSaveForLater(item)}
+                                      style={{
+                                        fontFamily: '"Futura PT Demi"',
+                                        fontSize: '9px',
+                                        color: '#808080',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '0',
+                                        textTransform: 'uppercase',
+                                        marginTop: '6px',
+                                        textAlign: 'center',
+                                      }}
+                                      type="button"
+                                    >
+                                      SAVE FOR LATER
+                                    </button>
+                                  )}
                                 </>
                               )}
                             </div>
@@ -2340,12 +2356,13 @@ function ShoppingBagPage() {
                            {isLineItemOutOfStock(item) ? (
                              <span
                                style={{
-                                 fontFamily: '"Futura PT Demi"',
+                                 fontFamily: '"Futura PT Medium"',
                                  fontSize: '9px',
+                                 fontWeight: 500,
                                  color: '#EB1C24',
                                  textTransform: 'uppercase',
                                  marginTop: '6px',
-                                 textAlign: 'center'
+                                 textAlign: 'center',
                                }}
                              >
                                OUT OF STOCK
