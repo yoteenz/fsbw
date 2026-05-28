@@ -53,12 +53,14 @@ import {
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
+import { CartLineProductTextStack, CartLineTextLayer } from '../../components/cart/CartLineProductTextStack';
 import {
-  cartCapSizeLineMarginTop,
-  cartLinePriceMarginTop,
-  cartLineRawSubtitleMarginTop,
-  withNormalizedCartLineName,
-} from '../../utils/cartCapSizeLineMargin';
+  cartLineCapSizeTextStyle,
+  cartLineLayerInnerStyle,
+  cartLineProductNameTextStyle,
+  cartLineRedSubtitleTextStyle,
+} from '../../utils/cartLineProductLayers';
+import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
 
 /** Match `CartDropdown` thumb sizes / booking + BCF layout. */
 const BAG_UNIT_THUMB_PX = 88;
@@ -1550,56 +1552,41 @@ function ShoppingBagPage() {
 
                           {/* Item Details - Matching cart dropdown */}
                           <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: '100%' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <CartLineProductTextStack>
+                              <CartLineTextLayer slot="name">
                               <p 
                                 className="font-medium truncate cart-product-name"
-                                style={{ 
-                                  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                  color: '#000000',
-                                  textTransform: 'uppercase',
-                                  fontSize: (() => {
-                                    if (item.name === 'NOIR') {
-                                      return '22px';
-                                    }
-                                    return '21px';
-                                  })(),
-                                  lineHeight: '1.1',
-                                  margin: '0'
-                                }}
+                                style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                               >
                                 {bagProductTitleLine(item)}
                               </p>
+                              </CartLineTextLayer>
+                              <CartLineTextLayer slot="subtitle">
                               <p 
                                 className="font-bold"
-                                style={{ 
-                                  fontFamily: '"Futura PT Book"',
-                                  color: '#EB1C24',
-                                  textTransform: 'uppercase',
-                                  fontSize: '9px',
-                                  marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
-                                  marginBottom: '0',
-                                  lineHeight: '1.1'
-                                }}
+                                style={cartLineRedSubtitleTextStyle()}
                               >
                                 {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                               </p>
+                              </CartLineTextLayer>
                               {(() => {
                                 const detailsKey = `c-${itemId}`;
                                 const showBookingDetailsOnBag = isBookingLine;
                                 return (
                                   <>
                                     {bagViewDetailsFor === detailsKey && showBookingDetailsOnBag && (
+                                      <CartLineTextLayer slot="details">
                                       <p
                                         className="font-bold"
                                         style={{
+                                          ...cartLineLayerInnerStyle(),
                                           fontFamily: '"Futura PT Book"',
                                           color: '#000000',
                                           textTransform: 'uppercase',
                                           fontSize: '9px',
-                                          marginTop: '2px',
-                                          marginBottom: '6px',
+                                          marginBottom: '4px',
                                           marginRight: '20px',
-                                          lineHeight: '1.44',
+                                          lineHeight: 1.44,
                                           wordBreak: 'break-word',
                                           maxWidth: 'calc(100% - 20px)'
                                         }}
@@ -1607,8 +1594,10 @@ function ShoppingBagPage() {
                                           __html: bookingCartViewDetailsHtml(item)
                                         }}
                                       />
+                                      </CartLineTextLayer>
                                     )}
                                     {showBookingDetailsOnBag && (
+                                      <CartLineTextLayer slot="meta">
                                       <span
                                         role="button"
                                         tabIndex={0}
@@ -1625,8 +1614,7 @@ function ShoppingBagPage() {
                                           fontSize: '8px',
                                           color: '#EB1C24',
                                           textTransform: 'uppercase',
-                                          marginTop: '2px',
-                                          marginBottom: '0',
+                                          margin: 0,
                                           cursor: 'pointer',
                                           display: 'inline-block'
                                         }}
@@ -1638,34 +1626,26 @@ function ShoppingBagPage() {
                                       >
                                         {bagViewDetailsFor === detailsKey ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
                                       </span>
+                                      </CartLineTextLayer>
                                     )}
                                   </>
                                 );
                               })()}
                               {item.capSize && (
-                                <p 
-                                  className="font-semibold"
-                                  style={{ 
-                                    fontFamily: '"Futura PT Medium"',
-                                    color: '#808080',
-                                    textTransform: 'uppercase',
-                                    fontSize: '10px',
-                                    marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
-                                    marginBottom: '0',
-                                    lineHeight: '1.1'
-                                  }}
-                                >
+                                <CartLineTextLayer slot="cap">
+                                <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
                                   CAP SIZE: {item.capSize}
                                 </p>
+                                </CartLineTextLayer>
                               )}
+                              <CartLineTextLayer slot="price">
                               {isBundleDealLine ? (
                                 <div
                                   style={{
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                                    marginBottom: '0',
+                                    margin: 0,
                                     fontWeight: '600',
                                     textAlign: 'left',
                                     display: 'flex',
@@ -1696,8 +1676,7 @@ function ShoppingBagPage() {
                                     fontFamily: '"Futura PT Book"',
                                     color: '#000000',
                                     fontSize: '12px',
-                                    marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                                    marginBottom: '0',
+                                    margin: 0,
                                     fontWeight: '600',
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -1723,16 +1702,14 @@ function ShoppingBagPage() {
                                   fontFamily: '"Futura PT Book"',
                                   color: '#000000',
                                   fontSize: '12px',
-                                  marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                                  marginBottom: '0',
-                                  marginLeft: '0',
-                                  marginRight: '0',
+                                  margin: 0,
                                   fontWeight: '600'
                                 }}
                                 dangerouslySetInnerHTML={formatPrice(itemPrice)}
                               />
                               )}
-                            </div>
+                              </CartLineTextLayer>
+                            </CartLineProductTextStack>
 
                             {/* Booking + bundle deal: QTY + × only (same inset as cart dropdown booking) */}
                             <div
@@ -2112,56 +2089,41 @@ function ShoppingBagPage() {
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0 flex flex-col justify-center" style={{ marginLeft: '18px', position: 'relative', height: '100%' }}>
-                         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                         <CartLineProductTextStack>
+                           <CartLineTextLayer slot="name">
                            <p 
                              className="font-medium truncate cart-product-name"
-                             style={{ 
-                               fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                               color: '#000000',
-                               textTransform: 'uppercase',
-                               fontSize: (() => {
-                                 if (item.name === 'NOIR') {
-                                   return '22px';
-                                 }
-                                 return '21px';
-                               })(),
-                               lineHeight: '1.1',
-                               margin: '0'
-                             }}
+                             style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                            >
                              {bagProductTitleLine(item)}
                            </p>
+                           </CartLineTextLayer>
+                           <CartLineTextLayer slot="subtitle">
                            <p 
                              className="font-bold"
-                             style={{ 
-                               fontFamily: '"Futura PT Book"',
-                               color: '#EB1C24',
-                               textTransform: 'uppercase',
-                               fontSize: '9px',
-                               marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item)),
-                               marginBottom: '0',
-                               lineHeight: '1.1'
-                             }}
+                             style={cartLineRedSubtitleTextStyle()}
                            >
                              {bagProductRedSubtitle(item, itemLength, bagHairOriginForProductName)}
                            </p>
+                           </CartLineTextLayer>
                            {(() => {
                              const detailsKey = `s-${itemId}`;
                              const showBookingDetailsOnBag = isSavedBookingLine;
                              return (
                                <>
                                  {bagViewDetailsFor === detailsKey && showBookingDetailsOnBag && (
+                                   <CartLineTextLayer slot="details">
                                    <p
                                      className="font-bold"
                                      style={{
+                                       ...cartLineLayerInnerStyle(),
                                        fontFamily: '"Futura PT Book"',
                                        color: '#000000',
                                        textTransform: 'uppercase',
                                        fontSize: '9px',
-                                       marginTop: '2px',
-                                       marginBottom: '6px',
+                                       marginBottom: '4px',
                                        marginRight: '20px',
-                                       lineHeight: '1.44',
+                                       lineHeight: 1.44,
                                        wordBreak: 'break-word',
                                        maxWidth: 'calc(100% - 20px)'
                                      }}
@@ -2169,8 +2131,10 @@ function ShoppingBagPage() {
                                        __html: bookingCartViewDetailsHtml(item)
                                      }}
                                    />
+                                   </CartLineTextLayer>
                                  )}
                                  {showBookingDetailsOnBag && (
+                                   <CartLineTextLayer slot="meta">
                                    <span
                                      role="button"
                                      tabIndex={0}
@@ -2187,8 +2151,7 @@ function ShoppingBagPage() {
                                        fontSize: '8px',
                                        color: '#EB1C24',
                                        textTransform: 'uppercase',
-                                       marginTop: '2px',
-                                       marginBottom: '0',
+                                       margin: 0,
                                        cursor: 'pointer',
                                        display: 'inline-block'
                                      }}
@@ -2200,35 +2163,26 @@ function ShoppingBagPage() {
                                    >
                                      {bagViewDetailsFor === detailsKey ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
                                    </span>
+                                   </CartLineTextLayer>
                                  )}
                                </>
                              );
                            })()}
-                           {/* Removed black detail text for symmetry */}
                            {item.capSize && (
-                             <p 
-                               className="font-semibold"
-                               style={{ 
-                                 fontFamily: '"Futura PT Medium"',
-                                 color: '#808080',
-                                 textTransform: 'uppercase',
-                                 fontSize: '10px',
-                                 marginTop: cartCapSizeLineMarginTop(withNormalizedCartLineName(item)),
-                                 marginBottom: '0',
-                                 lineHeight: '1.1'
-                               }}
-                             >
+                             <CartLineTextLayer slot="cap">
+                             <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
                                CAP SIZE: {item.capSize}
                              </p>
+                             </CartLineTextLayer>
                            )}
+                           <CartLineTextLayer slot="price">
                            {isSavedBundleDeal ? (
                              <div
                                style={{
                                  fontFamily: '"Futura PT Book"',
                                  color: '#000000',
                                  fontSize: '12px',
-                                 marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                                 marginBottom: '0',
+                                 margin: 0,
                                  fontWeight: '600',
                                  display: 'flex',
                                  flexDirection: 'column',
@@ -2256,16 +2210,14 @@ function ShoppingBagPage() {
                                fontFamily: '"Futura PT Book"',
                                color: '#000000',
                                fontSize: '12px',
-                               marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item)),
-                               marginBottom: '0',
-                               marginLeft: '0',
-                               marginRight: '0',
+                               margin: 0,
                                fontWeight: '600'
                              }}
                              dangerouslySetInnerHTML={formatPrice(itemPrice)}
                            />
                            )}
-                         </div>
+                           </CartLineTextLayer>
+                         </CartLineProductTextStack>
 
                          {/* Quantity / +LIST — booking + bundle deal: QTY only (like bag); else full controls */}
                          <div

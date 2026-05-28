@@ -13,11 +13,14 @@ import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab'
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { WishlistItemCapSizeLine } from '../../components/wishlist/WishlistItemCapSizeLine';
+import { CartLineTextLayer } from '../../components/cart/CartLineProductTextStack';
+import { WishlistLineProductTextStack } from '../../components/wishlist/WishlistLineProductTextStack';
 import {
-  cartLinePriceMarginTop,
-  cartLineRawSubtitleMarginTop,
-  withNormalizedCartLineName,
-} from '../../utils/cartCapSizeLineMargin';
+  cartLineLayerInnerStyle,
+  cartLineProductNameTextStyle,
+  cartLineRedSubtitleTextStyle,
+} from '../../utils/cartLineProductLayers';
+import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -949,47 +952,34 @@ function WishlistSelection() {
 
                       {/* Item Details - matching cart */}
                       <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: '100%' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <WishlistLineProductTextStack>
+                          <CartLineTextLayer slot="name">
                           <p
                             className="font-medium truncate"
-                            style={{
-                              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                              color: '#000000',
-                              textTransform: 'uppercase',
-                              fontSize: itemName === 'NOIR' ? '22px' : '21px',
-                              lineHeight: '1.1',
-                              margin: '0'
-                            }}
+                            style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                           >
                             {itemName.replace(/WIG/gi, '').trim()}
                           </p>
-                          <p
-                            className="font-bold"
-                            style={{
-                              fontFamily: '"Futura PT Book"',
-                              color: '#EB1C24',
-                              textTransform: 'uppercase',
-                              fontSize: '9px',
-                              marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item, itemName)),
-                              marginBottom: '0',
-                              lineHeight: '1.1'
-                            }}
-                          >
+                          </CartLineTextLayer>
+                          <CartLineTextLayer slot="subtitle">
+                          <p className="font-bold" style={cartLineRedSubtitleTextStyle()}>
                             {itemLength} RAW {itemHairOrigin}
                           </p>
-                          <WishlistItemCapSizeLine item={item} displayName={itemName} />
+                          </CartLineTextLayer>
+                          <WishlistItemCapSizeLine item={item} />
+                          <CartLineTextLayer slot="price">
                           <p
                             style={{
+                              ...cartLineLayerInnerStyle(),
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               fontSize: '12px',
-                              marginTop: cartLinePriceMarginTop(withNormalizedCartLineName(item, itemName)),
-                              marginBottom: '0',
                               fontWeight: '600'
                             }}
                             dangerouslySetInnerHTML={formatPrice(itemPrice)}
                           />
-                        </div>
+                          </CartLineTextLayer>
+                        </WishlistLineProductTextStack>
 
                         {/* + LIST, counter, ADD TO BAG - right side like cart (+ LIST / counter / SAVE FOR LATER) */}
                         <div className="flex flex-col items-center justify-center absolute" style={{ right: '8px', top: '0', bottom: '0', marginLeft: 'auto' }}>

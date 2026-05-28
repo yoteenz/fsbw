@@ -33,10 +33,13 @@ import {
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
+import { CartLineTextLayer } from '../../../components/cart/CartLineProductTextStack';
+import { WishlistLineProductTextStack } from '../../../components/wishlist/WishlistLineProductTextStack';
 import {
-  cartLineRawSubtitleMarginTop,
-  withNormalizedCartLineName,
-} from '../../../utils/cartCapSizeLineMargin';
+  cartLineLayerInnerStyle,
+  cartLineProductNameTextStyle,
+  cartLineRedSubtitleTextStyle,
+} from '../../../utils/cartLineProductLayers';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -96,15 +99,11 @@ const EXPANDED_LIST_GRID_COL_GAP_PX = 16;
 
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_GRID_NAME_FONT_PX = 22;
-const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
-  fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
+const EXPANDED_LIST_LINE_NAME_TEXT_STYLE = (productName: string): React.CSSProperties => ({
+  ...cartLineProductNameTextStyle(productName),
   fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
   color: '#000',
-  margin: 0,
-  padding: 0,
-  lineHeight: 1.1,
-  textTransform: 'uppercase',
-};
+});
 
 const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
 
@@ -152,17 +151,14 @@ const EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE: React.CSSProperties = {
   marginTop: `${EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX}px`,
 };
 
-const EXPANDED_LIST_LINE_RAW_MARGIN_STYLE: React.CSSProperties = {
-  margin: '0 0 5px 0',
-};
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_RATING_FONT_PX = 9;
 
 const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
+  ...cartLineRedSubtitleTextStyle(),
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '10px',
-  color: '#EB1C24',
-  textTransform: 'uppercase',
+  fontWeight: 500,
 };
 
 const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
@@ -864,38 +860,42 @@ export default function ViewListsPage() {
                                     )}
                                   </div>
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
-                                    <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                    <p
-                                      style={{
-                                        ...EXPANDED_LIST_RAW_TEXT_STYLE,
-                                        ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE,
-                                        marginTop: cartLineRawSubtitleMarginTop(
-                                          withNormalizedCartLineName(item, itemName)
-                                        ),
-                                      }}
-                                    >
+                                    <WishlistLineProductTextStack>
+                                    <CartLineTextLayer slot="name">
+                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    </CartLineTextLayer>
+                                    <CartLineTextLayer slot="subtitle">
+                                    <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
                                       {itemLength} RAW {itemHairOrigin}
                                     </p>
-                                    <WishlistItemCapSizeLine item={item} displayName={itemName} />
+                                    </CartLineTextLayer>
+                                    <WishlistItemCapSizeLine item={item} />
                                     {isViewingDetails ? (
+                                      <CartLineTextLayer slot="details">
                                       <p
                                         style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
                                         dangerouslySetInnerHTML={{
                                           __html: buildWishlistItemDetailsHtml(item, { omitLength: true }),
                                         }}
                                       />
+                                      </CartLineTextLayer>
                                     ) : (
+                                      <CartLineTextLayer slot="meta">
                                       <ExpandedListItemNoReviewStars />
+                                      </CartLineTextLayer>
                                     )}
                                     {!isViewingDetails && (
+                                      <CartLineTextLayer slot="price">
                                       <p
                                         className={`${WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS} ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS}`}
-                                        style={EXPANDED_LIST_LINE_PRICE_STYLE}
+                                        style={{ ...EXPANDED_LIST_LINE_PRICE_STYLE, ...cartLineLayerInnerStyle() }}
                                       >
                                         {itemPriceLabel}
                                       </p>
+                                      </CartLineTextLayer>
                                     )}
                                     {showViewDetailsLink && (
+                                      <CartLineTextLayer slot="meta">
                                       <span
                                         role="button"
                                         tabIndex={0}
@@ -914,7 +914,9 @@ export default function ViewListsPage() {
                                       >
                                         {isViewingDetails ? 'CLOSE DETAILS' : 'VIEW DETAILS'}
                                       </span>
+                                      </CartLineTextLayer>
                                     )}
+                                    </WishlistLineProductTextStack>
                                   </div>
                                 </div>
                               );
@@ -941,16 +943,11 @@ export default function ViewListsPage() {
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <p
-                                    style={{
-                                      ...EXPANDED_LIST_RAW_TEXT_STYLE,
-                                      margin: '0 0 4px 0',
-                                      marginTop: cartLineRawSubtitleMarginTop(withNormalizedCartLineName(item, itemName)),
-                                      textAlign: 'center',
-                                    }}
-                                  >
+                                  <CartLineTextLayer slot="subtitle" style={{ alignItems: 'center' }}>
+                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, textAlign: 'center' }}>
                                     {itemLength} RAW {itemHairOrigin}
                                   </p>
+                                  </CartLineTextLayer>
                                   <ExpandedListItemNoReviewStars centered />
                                   <p style={{ ...EXPANDED_LIST_RATING_TEXT_STYLE, margin: '0 0 2px 0', textAlign: 'center' }}>
                                     {EXPANDED_LIST_NO_REVIEWS_LABEL}
