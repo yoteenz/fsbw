@@ -18738,3 +18738,5 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Conventions:** Prefer layers for vertical rhythm on cart/bag/wishlist product text; use **`normalizeCartLineProductName(item)`** for name font size (22px NOIR vs 21px others). **`cartCapSizeLineMargin.ts`** margin helpers may remain for other callers but cart line UI should not reintroduce per-line `marginTop` on RAW/CAP/price when layers are present.
 
 **Git:** Committed on **`preview/mobile`** and merged to **`master`**; both branches pushed (`master`, `preview/mobile`).
+
+**Follow-up (same chat):** User asked to reduce **top spacing above NOIR’s red RAW line only** by **2px** (other units unchanged). **`cartLineSubtitleLayerStyle(productName)`** in **`cartLineProductLayers.ts`** sets subtitle layer **`paddingTop: 0`** for NOIR (was **`CART_LINE_LAYER_PAD_Y_PX`** 2). **`CartLineTextLayer`** accepts optional **`productName`** on **`slot="subtitle"`**; cart dropdown, bag, wishlist pass normalized name.
