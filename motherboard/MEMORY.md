@@ -18923,3 +18923,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`BrandReviewsEmptyState.tsx`** — compact centered uppercase gray copy.
 
 **Convention:** Brand FAQ/Terms use scrollable viewport cap; Reviews empty state matches Member card, not About.
+
+---
+
+## 2026-05-21 — Wishlist list line: 4px above VIEW/CLOSE DETAILS
+
+**Context:** User asked for **4px spacing above** the red **VIEW DETAILS** / **CLOSE DETAILS** link on the **list (line) view** of wishlist expanded lists (`/wishlist/lists/:id` line mode and `/wishlist/shared/:token`).
+
+**Change:** **`src/index.css`** — `.wishlist-expanded-list-view-details-toggle`: **`margin-top: 4px`**, **`top: 0`** (was **`top: -4px`**, which pulled the link up against the price line).
