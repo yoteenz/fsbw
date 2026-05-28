@@ -2332,7 +2332,7 @@ function NoirSelection() {
                   <span className="product-view-toggle-text" style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                 </div>
               </div>
-              <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
+              <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
                 <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
                   <div
                     style={{
@@ -2586,7 +2586,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
 
           {/* CAP SIZE SELECTION HEADER */}
-          <div style={{ transform: 'translateY(-10px)' }}>
+          <div style={{ transform: 'translateY(-10px)', marginTop: '20px' }}>
             <p
               className="text-center text-black uppercase mb-4"
               style={{ 
@@ -3029,8 +3029,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
 
-          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 10px above */}
-          <div className="flex justify-center w-full" style={{ marginTop: '10px' }}>
+          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 30px above */}
+          <div className="flex justify-center w-full" style={{ marginTop: '30px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
