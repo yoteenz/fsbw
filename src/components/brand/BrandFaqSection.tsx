@@ -59,7 +59,7 @@ export default function BrandFaqSection() {
     >
       {BRAND_FAQ_SECTIONS.map((section, sectionIndex) => (
         <div key={section.id}>
-          <p style={SECTION_TITLE_STYLE}>{section.title}:</p>
+          <p style={SECTION_TITLE_STYLE}>{section.title}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {section.items.map((item) => {
               const isOpen = openIds.has(item.id);
