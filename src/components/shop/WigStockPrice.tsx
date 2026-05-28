@@ -29,7 +29,7 @@ export function WigLineStockPrice({
   priceStyle?: CSSProperties;
   priceClassName?: string;
   layout?: 'stack' | 'inline';
-  outOfStockLabel?: string;
+  outOfStockLabel?: string | null;
 }) {
   const name = productName ?? item?.name ?? item?.productName;
   const out =
@@ -55,7 +55,8 @@ export function WigLineStockPrice({
     />
   );
 
-  const label = <span style={OUT_OF_STOCK_LABEL_STYLE}>{outOfStockLabel}</span>;
+  const label =
+    outOfStockLabel != null ? <span style={OUT_OF_STOCK_LABEL_STYLE}>{outOfStockLabel}</span> : null;
 
   if (layout === 'inline') {
     return (

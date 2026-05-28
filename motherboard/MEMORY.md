@@ -19112,3 +19112,44 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Finding:** Both strips share `marbleStrip*` helpers (`src/utils/marbleStripStyles.ts`). Noir + the BCF **SIMILAR PRODUCTS** strip render thumbs via `marbleStripThumbImg(is3D)` — **2D width `79.2%`**. But the BCF **RECENTLY VIEWED** strip used hand-rolled inline cells with thumb `width: '50%'` (4 cells), so its images were noticeably smaller than Noir.
 
 **Change:** `texture-category-product/page.tsx` — all four RECENTLY VIEWED thumb `<img>` widths **`50% → 79.2%`** (matches `marbleStripThumbImg` 2D). SIMILAR PRODUCTS already matched (no change). Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-28 — Wishlist edit flow fix + sold-out wording updates
+
+**Context:** This chat began with a wishlist Build-a-Wig editing bug: the red **EDIT IN BUILD-A-WIG** link on the main wishlist page was routing to the product PDP instead of the product-specific Build-a-Wig edit flow with saved selections loaded. After that was fixed, the user asked for sold-out wording updates: change out-of-stock product-page buttons to **SOLD OUT**, remove the red out-of-stock text on the main wishlist page, and change the wishlist action text below the quantity counter from **OUT OF STOCK** to **SOLD OUT**.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context and traced the wishlist edit path against cart dropdown and shopping bag edit behavior.
+- Confirmed the main wishlist page had a special-case route back to the unit PDP for some items and was not seeding the same edit-session storage keys used by cart and bag.
+- Added a shared Build-a-Wig edit-session helper so wishlist, cart dropdown, and shopping bag all open product-specific `/build-a-wig/{unit}/edit` routes with existing selections restored and with wishlist edits still saving back to the wishlist item in place.
+- Installed missing local dependencies in the cloud workspace (`npm ci`) so verification could run, fixed a follow-up cart dropdown helper wiring issue, and verified the edit-flow changes with a successful production build.
+- In the second task, updated the shared unit PDP cart action component so sold-out product-page primary buttons read **SOLD OUT**.
+- Updated the main wishlist page so the red stock label next to the struck-through price is suppressed there, while the text below the quantity counter now reads **SOLD OUT**.
+- Rebased both changes onto the moving canonical `master` branch as upstream commits landed, keeping `master` and `preview/mobile` in sync.
+
+**Decisions / outcomes:**
+- Main wishlist edits now use the same seeded product-specific Build-a-Wig edit flow as cart and bag.
+- Wishlist-origin Build-a-Wig saves still update the existing wishlist item instead of behaving like a cart edit.
+- Unit PDP sold-out buttons now say **SOLD OUT**.
+- On the main wishlist page, the red out-of-stock label near the price is removed, and the right-side sold-out action copy under the quantity counter now reads **SOLD OUT**.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+  - Added shared helpers to resolve product-specific Build-a-Wig edit routes and seed edit state from existing line items.
+- `src/pages/wishlist/page.tsx`
+  - Replaced wishlist-only edit routing with the shared edit-session helper.
+  - Suppressed the red stock label in the price stack on the main wishlist page.
+  - Changed the out-of-stock action text below the quantity counter to **SOLD OUT**.
+- `src/pages/shopping-bag/page.tsx`
+  - Reused the shared Build-a-Wig edit-session helper for bag edit entry.
+- `src/components/CartDropdown.tsx`
+  - Reused the shared Build-a-Wig edit-session helper for cart dropdown edit entry.
+- `src/components/shop/WigStockPrice.tsx`
+  - Allowed the line-item out-of-stock label to be suppressed per usage (`outOfStockLabel={null}`).
+- `src/components/shop/UnitPdpCartActions.tsx`
+  - Changed the sold-out primary PDP button text from **OUT OF STOCK** to **SOLD OUT**.
+
+**Conventions:**
+- Any surface that opens Build-a-Wig edit for an existing saved/carted/wishlisted unit should seed the shared edit session first and navigate to the product-specific `/build-a-wig/{unit}/edit` route instead of sending the user back to the unit PDP.
+- When wishlist needs sold-out price treatment without extra stock copy, suppress the shared `WigLineStockPrice` label at the call site instead of changing cart/bag stock wording globally.

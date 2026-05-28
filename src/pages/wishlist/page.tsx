@@ -24,7 +24,6 @@ import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin'
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
-import { prepareBuildAWigEditSession } from '../../utils/buildAWigEditSession';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -369,7 +368,35 @@ function WishlistSelection() {
 
   const handleEdit = (item: any) => {
     try {
-      const { editRoute } = prepareBuildAWigEditSession(item, { source: 'wishlist' });
+      const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+      const fromUnit = item.addedFrom === 'unit';
+
+      if (fromUnit) {
+        // Added from product/unit page: go to unit page (default or unit cap selections)
+        const unitRoutes: Record<string, string> = {
+          NOIR: '/straight/noir',
+          BLANCO: '/straight/blanco',
+          'SOFT WAVE': '/wavy/soft-wave',
+          'BEACH WAVE': '/wavy/beach-wave',
+          'SOFT CURL': '/curly/soft-curl',
+          'OCEAN CURL': '/curly/ocean-curl'
+        };
+        const route = unitRoutes[name] || '/build-a-wig/edit';
+        navigate(route);
+        return;
+      }
+
+      // Added from cart/bag or editing from wishlist: go to build-a-wig edit with item
+      localStorage.setItem('editingCartItem', JSON.stringify(item));
+      localStorage.setItem('editingCartItemId', String(item.id ?? ''));
+      localStorage.setItem('editingSource', 'wishlist'); // so build-a-wig save updates wishlist, not cart
+      let editRoute = '/build-a-wig/edit';
+      if (name === 'NOIR') editRoute = '/build-a-wig/noir/edit';
+      else if (name === 'BLANCO') editRoute = '/build-a-wig/blanco/edit';
+      else if (name === 'SOFT WAVE') editRoute = '/build-a-wig/soft-wave/edit';
+      else if (name === 'SOFT CURL') editRoute = '/build-a-wig/soft-curl/edit';
+      else if (name === 'BEACH WAVE') editRoute = '/build-a-wig/beach-wave/edit';
+      else if (name === 'OCEAN CURL') editRoute = '/build-a-wig/ocean-curl/edit';
       navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
@@ -951,6 +978,7 @@ function WishlistSelection() {
                           <WigLineStockPrice
                             item={item}
                             priceHtml={formatPrice(itemPrice)}
+                            outOfStockLabel={null}
                             priceStyle={{
                               ...cartLineLayerInnerStyle(),
                               fontFamily: '"Futura PT Book"',
@@ -1084,7 +1112,7 @@ function WishlistSelection() {
                                 textAlign: 'center'
                               }}
                             >
-                              OUT OF STOCK
+                              SOLD OUT
                             </span>
                           ) : (
                             <button

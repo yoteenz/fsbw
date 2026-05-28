@@ -47,7 +47,7 @@ export function UnitPdpCartActions({
             backgroundColor: '#FFFFFF',
           }}
         >
-          {soldOut && 'OUT OF STOCK'}
+          {soldOut && 'SOLD OUT'}
           {!soldOut && addToBagState === 'idle' && 'ADD TO BAG'}
           {!soldOut && addToBagState === 'adding' && 'ADDING...'}
           {!soldOut && addToBagState === 'added' && (
