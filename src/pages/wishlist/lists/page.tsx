@@ -167,6 +167,14 @@ const EXPANDED_LIST_RAW_TEXT_STYLE: React.CSSProperties = {
   fontWeight: 500,
 };
 
+/** Grid view only — nudge red RAW line 2px up (line view unchanged). */
+const EXPANDED_LIST_GRID_RAW_TEXT_STYLE: React.CSSProperties = {
+  ...EXPANDED_LIST_RAW_TEXT_STYLE,
+  textAlign: 'center',
+  position: 'relative',
+  top: -2,
+};
+
 const EXPANDED_LIST_RATING_TEXT_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: `${EXPANDED_LIST_RATING_FONT_PX}px`,
@@ -952,7 +960,7 @@ export default function ViewListsPage() {
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
-                                  <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, textAlign: 'center' }}>
+                                  <p style={EXPANDED_LIST_GRID_RAW_TEXT_STYLE}>
                                     {itemLength} RAW {itemHairOrigin}
                                   </p>
                                   </CartLineTextLayer>
