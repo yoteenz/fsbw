@@ -18864,3 +18864,16 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`checkout/confirm/page.tsx`** — same billable strip, count, and fallback mock totals/points when no `location.state`.
 
 **Convention:** Sold-out wig units remain in cart storage for UX but are non-billable everywhere totals and checkout summary are computed.
+
+---
+
+## 2026-05-21 — Admin messages & notifications hub sort dropdowns
+
+**Context (full chat):** Billable cart lines; inventory/messages hubs. User asked for **sort dropdowns** like **admin meetings** on **`/admin/messages`** and **`/admin/alerts`** (notifications), with **relevant options per tab**.
+
+**Implementation:**
+- **`AdminHubSortDropdown.tsx`** — shared UI matching meetings hub (uppercase labels, red chevron).
+- **`adminMessagesHubSort.ts`** — per-tab options: INBOX (unread/read + A–Z), FAQ/CONTACT, REVIEWS (rating high/low), CONTACT (order-related first).
+- **`adminNotificationsHubSort.ts`** — ALERTS (urgent, by category), ORDERS (urgent + A–Z), SYSTEM (by category + A–Z).
+- **`adminHubTimestampSort.ts`** + **`sortTime`** on notification hub rows for time-based sorts.
+- **`admin/messages/page.tsx`**, **`admin/alerts/page.tsx`** — dropdown above list when rows exist; sort preference remembered per tab in component state.

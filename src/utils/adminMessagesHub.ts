@@ -30,6 +30,8 @@ export type AdminHubMessageRow = {
   isPriority: boolean;
   clientEmail?: string;
   meta?: string;
+  /** Product review tab only (for rating sorts). */
+  rating?: number;
 };
 
 const READ_IDS_KEY = 'adminHubReadMessageIds';
@@ -174,6 +176,7 @@ function reviewRows(readIds: Set<string>): AdminHubMessageRow[] {
       isPriority: false,
       clientEmail: r.email,
       meta: `★ ${r.rating}/5 · PENDING APPROVAL`,
+      rating: r.rating,
     };
   });
 }

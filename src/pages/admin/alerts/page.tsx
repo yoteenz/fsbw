@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminHubPageShell } from '../../../components/admin/AdminHubPageShell';
+import { AdminHubSortDropdown } from '../../../components/admin/AdminHubSortDropdown';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import {
@@ -15,6 +16,12 @@ import {
   markAdminHubNotificationRead,
   type AdminHubNotificationRow,
 } from '../../../utils/adminNotificationsHub';
+import {
+  ADMIN_NOTIFICATIONS_DEFAULT_SORT,
+  adminNotificationsSortOptionsForTab,
+  sortAdminNotificationsByOption,
+  type AdminNotificationsSortOption,
+} from '../../../utils/adminNotificationsHubSort';
 
 const ALERT_TABS = ['ALERTS', 'ORDERS', 'SYSTEM'] as const;
 
@@ -49,6 +56,7 @@ export default function AdminAlertsPage() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const [rows, setRows] = useState<AdminHubNotificationRow[]>([]);
+  const [sortByTab, setSortByTab] = useState<Partial<Record<AdminNotificationHubTab, AdminNotificationsSortOption>>>({});
 
   const [activeTab, setActiveTab] = usePersistentQueryState<(typeof ALERT_TABS)[number]>({
     queryKey: 'tab',
@@ -56,6 +64,23 @@ export default function AdminAlertsPage() {
     defaultValue: 'ALERTS',
     allowedValues: ALERT_TABS,
   });
+
+  const sortOptions = useMemo(
+    () => adminNotificationsSortOptionsForTab(activeTab as AdminNotificationHubTab),
+    [activeTab]
+  );
+  const sortOption = useMemo(() => {
+    const stored = sortByTab[activeTab as AdminNotificationHubTab];
+    if (stored && sortOptions.includes(stored)) return stored;
+    return ADMIN_NOTIFICATIONS_DEFAULT_SORT;
+  }, [activeTab, sortByTab, sortOptions]);
+
+  const setSortOption = useCallback(
+    (next: AdminNotificationsSortOption) => {
+      setSortByTab((prev) => ({ ...prev, [activeTab as AdminNotificationHubTab]: next }));
+    },
+    [activeTab]
+  );
 
   const refresh = useCallback(() => {
     setRows(loadAdminNotificationsHubRows());
@@ -76,10 +101,10 @@ export default function AdminAlertsPage() {
     ];
   }, [rows]);
 
-  const tabRows = useMemo(
-    () => filterAdminNotificationsByTab(rows, activeTab as AdminNotificationHubTab),
-    [rows, activeTab]
-  );
+  const tabRows = useMemo(() => {
+    const filtered = filterAdminNotificationsByTab(rows, activeTab as AdminNotificationHubTab);
+    return sortAdminNotificationsByOption(filtered, sortOption);
+  }, [rows, activeTab, sortOption]);
 
   const handleOpenRow = (row: AdminHubNotificationRow) => {
     markAdminHubNotificationRead(row.hubId);
@@ -110,6 +135,16 @@ export default function AdminAlertsPage() {
       onTabChange={(t) => setActiveTab(t as AdminNotificationHubTab)}
       onBack={() => navigate('/admin/dashboard')}
     >
+      {tabRows.length > 0 && (
+        <div className="flex items-center justify-start" style={{ marginTop: '8px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+          <AdminHubSortDropdown
+            value={sortOption}
+            options={sortOptions}
+            onChange={(opt) => setSortOption(opt as AdminNotificationsSortOption)}
+            ariaLabel="Sort notifications"
+          />
+        </div>
+      )}
       {tabRows.length === 0 ? (
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
           NO NOTIFICATIONS IN THIS TAB.

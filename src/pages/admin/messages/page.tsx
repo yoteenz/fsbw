@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AdminHubPageShell } from '../../../components/admin/AdminHubPageShell';
+import { AdminHubSortDropdown } from '../../../components/admin/AdminHubSortDropdown';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { patchAdminBrandContactInquiry } from '../../../utils/api';
@@ -14,6 +15,12 @@ import {
   type AdminHubMessageRow,
   type AdminMessagesTab,
 } from '../../../utils/adminMessagesHub';
+import {
+  ADMIN_MESSAGES_DEFAULT_SORT,
+  adminMessagesSortOptionsForTab,
+  sortAdminMessagesByOption,
+  type AdminMessagesSortOption,
+} from '../../../utils/adminMessagesHubSort';
 
 const MESSAGE_TABS = ['INBOX', 'FAQ', 'CONTACT', 'REVIEWS'] as const;
 
@@ -25,6 +32,7 @@ export default function AdminMessagesPage() {
   const [searchParams] = useSearchParams();
   const [rows, setRows] = useState<AdminHubMessageRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortByTab, setSortByTab] = useState<Partial<Record<AdminMessagesTab, AdminMessagesSortOption>>>({});
 
   const [activeTab, setActiveTab] = usePersistentQueryState<(typeof MESSAGE_TABS)[number]>({
     queryKey: 'tab',
@@ -32,6 +40,20 @@ export default function AdminMessagesPage() {
     defaultValue: 'INBOX',
     allowedValues: MESSAGE_TABS,
   });
+
+  const sortOptions = useMemo(() => adminMessagesSortOptionsForTab(activeTab), [activeTab]);
+  const sortOption = useMemo(() => {
+    const stored = sortByTab[activeTab];
+    if (stored && sortOptions.includes(stored)) return stored;
+    return ADMIN_MESSAGES_DEFAULT_SORT;
+  }, [activeTab, sortByTab, sortOptions]);
+
+  const setSortOption = useCallback(
+    (next: AdminMessagesSortOption) => {
+      setSortByTab((prev) => ({ ...prev, [activeTab]: next }));
+    },
+    [activeTab]
+  );
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -72,7 +94,10 @@ export default function AdminMessagesPage() {
     ];
   }, [rows]);
 
-  const tabRows = useMemo(() => filterAdminMessagesByTab(rows, activeTab), [rows, activeTab]);
+  const tabRows = useMemo(() => {
+    const filtered = filterAdminMessagesByTab(rows, activeTab);
+    return sortAdminMessagesByOption(filtered, sortOption);
+  }, [rows, activeTab, sortOption]);
 
   const handleOpenRow = (row: AdminHubMessageRow) => {
     markAdminHubMessageRead(row.id);
@@ -104,6 +129,16 @@ export default function AdminMessagesPage() {
       onTabChange={(t) => setActiveTab(t as AdminMessagesTab)}
       onBack={() => navigate('/admin/dashboard')}
     >
+      {!loading && tabRows.length > 0 && (
+        <div className="flex items-center justify-start" style={{ marginTop: '8px', marginBottom: '10px', position: 'relative', zIndex: 3 }}>
+          <AdminHubSortDropdown
+            value={sortOption}
+            options={sortOptions}
+            onChange={(opt) => setSortOption(opt as AdminMessagesSortOption)}
+            ariaLabel="Sort messages"
+          />
+        </div>
+      )}
       {loading ? (
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: '#808080', margin: '12px 0', textAlign: 'center' }}>
           LOADING…

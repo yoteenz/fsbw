@@ -5,11 +5,13 @@ import {
   type AdminHeaderNotification,
   type AdminNotificationHubTab,
 } from './adminHeaderNotificationsData';
+import { parseAdminHubTimestampLabel } from './adminHubTimestampSort';
 
 export type AdminHubNotificationRow = AdminHeaderNotification & {
   hubId: string;
   hubTab: AdminNotificationHubTab;
   isUnread: boolean;
+  sortTime: number;
 };
 
 const READ_IDS_KEY = 'adminHubReadNotificationIds';
@@ -69,6 +71,7 @@ export function loadAdminNotificationsHubRows(): AdminHubNotificationRow[] {
       hubId,
       hubTab: adminNotificationHubTabForCategory(n.category),
       isUnread,
+      sortTime: parseAdminHubTimestampLabel(n.timestamp),
     };
   });
 }
