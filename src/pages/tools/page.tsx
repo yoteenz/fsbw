@@ -13,6 +13,8 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import { marbleStripViewportStyle } from '../../utils/marbleStripStyles';
+
 function ToolsPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -101,11 +103,20 @@ function ToolsPage() {
   const giftCardPairCount = Math.ceil(giftCardProducts.length / 2);
   const giftCardMaxPage = Math.max(0, giftCardPairCount - 1);
   const giftCardScrollPx = -giftCardPage * giftCardSnapPx;
-  const [isGiftCardDragging, setIsGiftCardDragging] = useState(false);
+  const giftCardStripUsesSnap = giftCardProducts.length >= 4;
+  const giftCardCellFlexBasis = giftCardStripUsesSnap
+    ? `calc(100% / ${giftCardProducts.length})`
+    : '50%';
 
   useEffect(() => {
     setGiftCardPage((p) => Math.min(p, giftCardMaxPage));
   }, [giftCardMaxPage]);
+
+  useEffect(() => {
+    const handleResize = () => setGiftCardPage(0);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -245,34 +256,9 @@ function ToolsPage() {
     setShowMobileMenu(false);
   };
 
-  // Gift card scroll handlers
-  const handleGiftCardMouseMove = () => {
-    if (!isGiftCardDragging) return;
-    // Drag scrolling removed - this handler is kept for compatibility but never executes
-  };
-
-  const handleGiftCardMouseUp = () => {
-    setIsGiftCardDragging(false);
-  };
-
-  const handleGiftCardLeftArrow = () => {
-    setGiftCardPage(0);
-  };
-
-  const handleGiftCardRightArrow = () => {
-    setGiftCardPage((p) => (p >= giftCardMaxPage ? 0 : p + 1));
-  };
-
-  useEffect(() => {
-    if (isGiftCardDragging) {
-      window.addEventListener('mousemove', handleGiftCardMouseMove as any);
-      window.addEventListener('mouseup', handleGiftCardMouseUp);
-      return () => {
-        window.removeEventListener('mousemove', handleGiftCardMouseMove as any);
-        window.removeEventListener('mouseup', handleGiftCardMouseUp);
-      };
-    }
-  }, [isGiftCardDragging]);
+  const handleGiftCardLeftArrow = () => setGiftCardPage((p) => Math.max(0, p - 1));
+  const handleGiftCardRightArrow = () =>
+    setGiftCardPage((p) => Math.min(giftCardMaxPage, p + 1));
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -559,192 +545,251 @@ function ToolsPage() {
                 </h3>
               </div>
               
-              {/* Content Area */}
-              <div 
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}
-              >
-                <button 
-                  onClick={handleGiftCardLeftArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(10px) translateY(-10px)',
-                    zIndex: 100
-                  }}>
-                  <img
-                    src="/assets/NOIR/left-facing-arrow.svg"
-                    alt="Left Arrow"
-                    style={{ width: '14px', height: '14px', display: 'block' }}
+              {/* Strip — same measured snap + 2-up layout as home/shop UNITS */}
+              <div style={{ position: 'relative', width: '100%', overflow: 'visible', boxSizing: 'border-box' }}>
+                <div style={{ width: '100%', position: 'relative', overflow: 'visible', minWidth: 0, boxSizing: 'border-box' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '6px',
+                      bottom: '0',
+                      width: '1px',
+                      backgroundColor: 'black',
+                      zIndex: 20,
+                      transform: 'translateX(-50%)',
+                    }}
                   />
-                </button>
-                
-                {/* Product Thumbnails Container with Static Vertical Line */}
-                <div style={{ flex: '1', position: 'relative' }}>
-                  {/* Single Center Line with Masking */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '1px',
-                    backgroundColor: 'black',
-                    zIndex: 20,
-                    transform: 'translateX(-50%)'
-                  }}></div>
-                  
-                  {/* Masking Overlay for Tunnel Effect */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '0',
-                    bottom: '0',
-                    width: '10px',
-                    backgroundColor: 'transparent',
-                    zIndex: 15,
-                    transform: 'translateX(-50%)',
-                    pointerEvents: 'none'
-                  }}></div>
-                  
-                  {/* Scrolling Product Thumbnails Container */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '6px',
+                      bottom: '0',
+                      width: '10px',
+                      backgroundColor: 'transparent',
+                      zIndex: 15,
+                      transform: 'translateX(-50%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
                   <div
                     ref={setGiftCardStripViewportRef}
                     style={{
-                      overflowX: 'hidden',
                       width: '100%',
                       position: 'relative',
-                      maxWidth: '100%'
+                      maxWidth: '100%',
+                      marginTop: 0,
+                      paddingTop: '10px',
+                      overflow: 'visible',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <div 
-                      style={{ 
-                        display: 'flex', 
-                        gap: '0',
-                        transform: `translateX(${giftCardScrollPx}px) translateY(-5px)`,
-                        transition: 'none',
-                        width: `${giftCardPairCount * 100}%`
+                    <div
+                      style={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        ...marbleStripViewportStyle,
                       }}
                     >
-                      {giftCardProducts.map((product, index) => (
-                        <div 
-                          key={product.id}
-                          style={{ 
-                            padding: '5px 0px 4px 0px',
-                            textAlign: 'center',
-                            transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)'
-                          }}
-                        >
-                          {/* Gift Card Image */}
-                          <img
-                            src="/assets/gift-card asset.png"
-                            alt="Gift Card"
-                            onClick={() => navigate('/tools/gift-card')}
-                            style={{ 
-                              width: '60%', 
-                              height: 'auto',
-                              marginBottom: '5px',
-                              marginLeft: '10px',
-                              maxWidth: '100%',
-                              cursor: 'pointer'
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'nowrap',
+                          alignItems: 'stretch',
+                          gap: '0',
+                          transform: `translateX(${giftCardScrollPx}px)`,
+                          transition: 'none',
+                          width: giftCardStripUsesSnap ? `${giftCardPairCount * 100}%` : '100%',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        {giftCardProducts.map((product) => (
+                          <div
+                            key={product.id}
+                            style={{
+                              padding: 0,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'stretch',
+                              flex: `0 0 ${giftCardCellFlexBasis}`,
+                              boxSizing: 'border-box',
+                              position: 'relative',
+                              overflow: 'visible',
+                              minWidth: 0,
                             }}
-                          />
-                          
-                          {/* Product Name */}
-                          <p style={{ 
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            fontSize: '18px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '-10px 0 -3px 0',
-                            fontWeight: '500',
-                            transform: 'translateX(10px)'
-                          }}>
-                            {product.name}
-                          </p>
-                          
-                          {/* Digital Only */}
-                          <p style={{ 
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            margin: '0 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84',
-                            transform: 'translateX(10px)'
-                          }}>
-                            DIGITAL ONLY
-                          </p>
-                          
-                          {/* Price */}
-                          <p style={{ 
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '12px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '0 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84',
-                            transform: 'translateX(10px)'
-                          }}
-                          dangerouslySetInnerHTML={formatPrice(product.price)}
-                          />
-                          
-                          {/* Star Ratings */}
-                          <div style={{ 
-                            display: 'flex', 
-                            justifyContent: 'center', 
-                            gap: '2px', 
-                            marginTop: '2px',
-                            transform: 'translateX(10px)'
-                          }}>
-                            {[...Array(5)].map((_, index) => (
-                              <img
-                                key={index}
-                                src="/assets/NOIR/star-symbol.png"
-                                alt="Star Rating"
-                                style={{ 
-                                  width: '10px', 
-                                  height: '10px',
-                                  filter: 'drop-shadow(0 0 0 1px black)',
-                                  stroke: '1px black'
+                          >
+                            <div
+                              style={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                boxSizing: 'border-box',
+                                padding: '5px 12px 4px 12px',
+                                transform: 'translateY(-10px)',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  marginBottom: '8px',
                                 }}
-                              />
-                            ))}
+                              >
+                                <img
+                                  src="/assets/gift-card asset.png"
+                                  alt="Gift Card"
+                                  onClick={() => navigate('/tools/gift-card')}
+                                  style={{
+                                    width: '79.2%',
+                                    height: 'auto',
+                                    maxWidth: '100%',
+                                    display: 'block',
+                                    margin: 0,
+                                    cursor: 'pointer',
+                                  }}
+                                />
+                              </div>
+
+                              <div style={{ width: '100%', textAlign: 'center', boxSizing: 'border-box' }}>
+                                <p
+                                  style={{
+                                    fontFamily:
+                                      '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                                    fontSize: '18px',
+                                    color: 'black',
+                                    textTransform: 'uppercase',
+                                    margin: 0,
+                                    fontWeight: '500',
+                                    lineHeight: 1.05,
+                                    minHeight: '22px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {product.name}
+                                </p>
+
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '10px',
+                                    color: '#EB1C24',
+                                    textTransform: 'uppercase',
+                                    margin: '2px 0 5px 0',
+                                    fontWeight: '500',
+                                    lineHeight: '0.84',
+                                    minHeight: '12px',
+                                  }}
+                                >
+                                  DIGITAL ONLY
+                                </p>
+
+                                <p
+                                  style={{
+                                    fontFamily: '"Futura PT Medium"',
+                                    fontSize: '12px',
+                                    color: 'black',
+                                    textTransform: 'uppercase',
+                                    margin: '0 0 5px 0',
+                                    fontWeight: '500',
+                                    lineHeight: '0.84',
+                                    textAlign: 'center',
+                                  }}
+                                  dangerouslySetInnerHTML={formatPrice(product.price)}
+                                />
+
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: '2px',
+                                    marginTop: '2px',
+                                    marginBottom: '5px',
+                                  }}
+                                >
+                                  {[...Array(5)].map((_, starIndex) => (
+                                    <img
+                                      key={starIndex}
+                                      src="/assets/NOIR/star-symbol.png"
+                                      alt="Star Rating"
+                                      style={{
+                                        width: '10px',
+                                        height: '10px',
+                                        filter: 'drop-shadow(0 0 0 1px black)',
+                                        stroke: '1px black',
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-                
-                <button 
-                  onClick={handleGiftCardRightArrow}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    padding: '5px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    minHeight: '50px',
-                    transform: 'translateX(-10px) translateY(-10px)',
-                    zIndex: 100
-                  }}>
-                  <img
-                    src="/assets/NOIR/right-facing-arrow.svg"
-                    alt="Right Arrow"
-                    style={{ width: '14px', height: '14px', display: 'block' }}
-                  />
-                </button>
+
+                {giftCardMaxPage > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleGiftCardLeftArrow}
+                      aria-label="Previous gift cards"
+                      style={{
+                        position: 'absolute',
+                        left: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <img
+                        src="/assets/NOIR/left-facing-arrow.svg"
+                        alt=""
+                        style={{ width: '14px', height: '14px', display: 'block' }}
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGiftCardRightArrow}
+                      aria-label="Next gift cards"
+                      style={{
+                        position: 'absolute',
+                        right: 6,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        zIndex: 25,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <img
+                        src="/assets/NOIR/right-facing-arrow.svg"
+                        alt=""
+                        style={{ width: '14px', height: '14px', display: 'block' }}
+                      />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
