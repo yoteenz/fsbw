@@ -1,4 +1,10 @@
 /** FAQ sections for `/brand/faq` — displayed in uppercase on the page. */
+import {
+  BRAND_INLINE_LINK_CONTACT_SENTINEL,
+  BRAND_INLINE_LINK_MEMBER_SENTINEL,
+  BRAND_INLINE_LINK_TERMS_SENTINEL,
+} from './brandPageLinks';
+
 export type BrandFaqItem = {
   id: string;
   question: string;
@@ -180,7 +186,7 @@ const BRAND_FAQ_SECTIONS_LIST: BrandFaqSection[] = [
         id: 'terms-link',
         question: 'WHERE CAN I READ THE FULL TERMS OF SERVICE?',
         answerParagraphs: [
-          'VISIT THE TERMS OF SERVICE PAGE UNDER BRAND IN THE SITE MENU OR GO TO /BRAND/TERMS FOR COMPLETE TERMS, REFUND POLICY AND PURCHASE CONDITIONS.',
+          BRAND_INLINE_LINK_TERMS_SENTINEL,
         ],
       },
     ],
@@ -214,7 +220,7 @@ const BRAND_FAQ_SECTIONS_LIST: BrandFaqSection[] = [
         id: 'create-account',
         question: 'DO I NEED AN ACCOUNT TO SHOP?',
         answerParagraphs: [
-          'YOU CAN BROWSE WITHOUT AN ACCOUNT, BUT CREATING ONE UNLOCKS ORDER TRACKING, WISHLIST, LOYALTY REWARDS, REFERRALS AND MEMBER-ONLY UPDATES. VISIT BECOME A MEMBER UNDER BRAND TO LEARN MORE.',
+          BRAND_INLINE_LINK_MEMBER_SENTINEL,
         ],
       },
     ],
@@ -227,7 +233,7 @@ const BRAND_FAQ_SECTIONS_LIST: BrandFaqSection[] = [
         id: 'contact-support',
         question: 'HOW CAN I CONTACT CUSTOMER SUPPORT?',
         answerParagraphs: [
-          'REACH OUR TEAM THROUGH THE CONTACT FORM ON OUR WEBSITE (/BRAND/CONTACT) OR EMAIL CONTACT@FRONTALSLAYER.COM.',
+          BRAND_INLINE_LINK_CONTACT_SENTINEL,
           'PLEASE ALLOW AT LEAST 72 HOURS TO RECEIVE A RESPONSE FOR SUBMITTED INQUIRIES. BUSINESS HOURS ARE 10AM–6PM CST ON WEEKDAYS; MAJOR U.S. HOLIDAYS EXCLUDED.',
         ],
       },
