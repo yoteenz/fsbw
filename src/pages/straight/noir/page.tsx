@@ -3029,13 +3029,18 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
             </div>
 
-          {/* CAP SIZE CHART IMAGE */}
-          <div className="flex justify-center mt-2 w-full">
+          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 10px above */}
+          <div className="flex justify-center w-full" style={{ marginTop: '10px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
               className="max-w-full h-auto object-contain"
-              style={{ maxWidth: 'clamp(136px, 14.85vw, 180px)', maxHeight: 'clamp(106px, 11.8vw, 140px)', width: '100%', cursor: 'pointer' }}
+              style={{
+                maxWidth: 'clamp(115.6px, 12.62vw, 153px)',
+                maxHeight: 'clamp(90.1px, 10.03vw, 119px)',
+                width: '100%',
+                cursor: 'pointer',
+              }}
               onClick={handleChartClick}
             />
           </div>
