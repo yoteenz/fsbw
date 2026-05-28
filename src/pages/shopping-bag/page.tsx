@@ -52,6 +52,7 @@ import {
   isGiftCardCartLine,
   migrateGiftCardCartLinesForStorage,
 } from '../../utils/giftCardCheckout';
+import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../../utils/giftCardCheckoutSession';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
 import { CartLineProductTextStack, CartLineTextLayer } from '../../components/cart/CartLineProductTextStack';
 import {
@@ -732,13 +733,25 @@ function ShoppingBagPage() {
       const removed = cartItems.find((i) => i.id === itemId);
       const nm = cartLineLabel(removed);
       const newItems = cartItems.filter(i => i.id !== itemId);
-      setCartItems(newItems);
       localStorage.setItem('cartItems', JSON.stringify(newItems));
       window.dispatchEvent(new CustomEvent('cartItemsChanged'));
-      
-      // Update cart count
-      const newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
-      localStorage.setItem('cartCount', newCount.toString());
+
+      const restoredCount = maybeRestoreGiftCardCheckoutCartAfterAbandon(newItems);
+      let finalItems = newItems;
+      let newCount: number;
+      if (restoredCount != null) {
+        try {
+          finalItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        } catch {
+          finalItems = newItems;
+        }
+        newCount = restoredCount;
+      } else {
+        newCount = newItems.reduce((sum: number, ci: any) => sum + (ci.quantity || 1), 0);
+        localStorage.setItem('cartCount', newCount.toString());
+      }
+
+      setCartItems(finalItems);
       setCartCount(newCount);
       window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
       window.dispatchEvent(new CustomEvent('cartUpdated'));

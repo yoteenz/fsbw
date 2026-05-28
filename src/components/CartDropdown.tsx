@@ -34,6 +34,7 @@ import {
 } from '../utils/bookingAppointmentFormDraft';
 import { checkoutPathForCartItems } from '../utils/checkoutNavigatePath';
 import { giftCardLineTotalUsd, isGiftCardCartLine } from '../utils/giftCardCheckout';
+import { maybeRestoreGiftCardCheckoutCartAfterAbandon } from '../utils/giftCardCheckoutSession';
 import { CartLineProductTextStack, CartLineTextLayer } from './cart/CartLineProductTextStack';
 import {
   cartLineCapSizeTextStyle,
@@ -659,16 +660,28 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
       setViewingDetailsFor(null);
     }
     const updatedItems = cartItems.filter(item => item.id !== itemToRemove);
-    setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    
-    // Update cart count
-    const newCount = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
-    localStorage.setItem('cartCount', newCount.toString());
+
+    const restoredCount = maybeRestoreGiftCardCheckoutCartAfterAbandon(updatedItems);
+    let finalItems = updatedItems;
+    let newCount: number;
+    if (restoredCount != null) {
+      try {
+        finalItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      } catch {
+        finalItems = updatedItems;
+      }
+      newCount = restoredCount;
+    } else {
+      newCount = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
+      localStorage.setItem('cartCount', newCount.toString());
+    }
+
+    setCartItems(finalItems);
     
     // Dispatch both events to ensure all components are notified
     window.dispatchEvent(new CustomEvent('cartCountUpdated', { detail: newCount }));
-    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: updatedItems, count: newCount } }));
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: finalItems, count: newCount } }));
 
     trackActivity('remove_from_cart', { source: 'cart_dropdown', productName });
     

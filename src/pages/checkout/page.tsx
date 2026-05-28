@@ -42,6 +42,10 @@ import {
   isGiftCardCartLine,
   isGiftCardCheckoutPath,
 } from '../../utils/giftCardCheckout';
+import {
+  clearGiftCardCheckoutCartBackup,
+  maybeRestoreGiftCardCheckoutCartAfterAbandon,
+} from '../../utils/giftCardCheckoutSession';
 import { syncProfileFromApi } from '../../utils/syncFromApi';
 import { pushLocalUserOrdersAfterCheckout } from '../../utils/checkoutOrderServerSync';
 import {
@@ -871,6 +875,7 @@ function CheckoutPage() {
         /* ignore */
       }
       if (giftLines.length > 0) return;
+      maybeRestoreGiftCardCheckoutCartAfterAbandon([]);
       navigate('/tools/gift-card', { replace: true });
     };
     const t = window.setTimeout(run, 0);
@@ -887,6 +892,30 @@ function CheckoutPage() {
     }
     navigate('/account/rewards');
   }, [navigate]);
+
+  const handleCheckoutBack = useCallback(() => {
+    if (isSubscriptionUpgrade) {
+      goBackToMembershipUpgradeChart();
+      return;
+    }
+    if (isGiftCardCheckoutRoute) {
+      let giftLines: { type?: string; name?: string }[] = [];
+      try {
+        const stored = localStorage.getItem('cartItems');
+        const parsed = stored ? JSON.parse(stored) : [];
+        giftLines = filterGiftCardCartLines(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        /* ignore */
+      }
+      const restoredCount = maybeRestoreGiftCardCheckoutCartAfterAbandon(giftLines);
+      if (restoredCount != null) {
+        setCartCount(restoredCount);
+      }
+      navigate('/bag');
+      return;
+    }
+    navigate('/bag');
+  }, [goBackToMembershipUpgradeChart, isGiftCardCheckoutRoute, isSubscriptionUpgrade, navigate]);
 
   useEffect(() => {
     if (!isSubscriptionUpgrade) {
@@ -2569,6 +2598,9 @@ function CheckoutPage() {
               (i: any) =>
                 i?.name === 'GIFT CARD' || i?.type === 'gift-card' || i?.type === 'digital'
             );
+          if (onlyGiftOrDigital && cartItems.every((i: any) => isGiftCardCartLine(i))) {
+            clearGiftCardCheckoutCartBackup();
+          }
           const digitalFulfillmentOnly = Boolean(onlyGiftOrDigital);
           const bookingsOnlyAc = isBookingsOnlyCheckoutState(location.pathname, cartItems);
           const useDigitalTimeline = digitalFulfillmentOnly || bookingsOnlyAc;
@@ -3096,7 +3128,7 @@ function CheckoutPage() {
               ) : (
                 <>
                   <button 
-                    onClick={() => (isSubscriptionUpgrade ? goBackToMembershipUpgradeChart() : navigate('/bag'))}
+                    onClick={handleCheckoutBack}
                     className="cursor-pointer"
                     style={{ height: '15px !important', width: '21px !important', padding: '0 !important', border: 'none !important', background: 'none !important' }}
                   >
@@ -3140,7 +3172,7 @@ function CheckoutPage() {
                 <>
                   <span 
                     style={{ fontFamily: '"Futura PT Book"', fontWeight: '400', cursor: 'pointer' }}
-                    onClick={() => (isSubscriptionUpgrade ? goBackToMembershipUpgradeChart() : navigate('/bag'))}
+                    onClick={handleCheckoutBack}
                   >
                     CHECKOUT &gt;
                   </span>{' '}
