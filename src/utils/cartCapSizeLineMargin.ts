@@ -41,3 +41,24 @@ export function cartCapSizeLineMarginTop(item: CartLineSpacingItem): string {
 export function cartLinePriceMarginTop(item: CartLineSpacingItem): string {
   return item.name === 'BLANCO' ? '2px' : '2px';
 }
+
+/** Gray CAP SIZE line styles (cart, bag, wishlist). */
+export function cartLineCapSizeParagraphStyle(item: CartLineSpacingItem): {
+  fontFamily: string;
+  color: string;
+  textTransform: 'uppercase';
+  fontSize: string;
+  marginTop: string;
+  marginBottom: string;
+  lineHeight: number;
+} {
+  return {
+    fontFamily: '"Futura PT Medium"',
+    color: '#808080',
+    textTransform: 'uppercase',
+    fontSize: '10px',
+    marginTop: cartCapSizeLineMarginTop(item),
+    marginBottom: '0',
+    lineHeight: 1.1,
+  };
+}

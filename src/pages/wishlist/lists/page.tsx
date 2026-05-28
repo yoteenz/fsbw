@@ -32,6 +32,7 @@ import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
+import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -864,6 +865,7 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>{itemLength} RAW {itemHairOrigin}</p>
+                                    <WishlistItemCapSizeLine item={item} />
                                     {isViewingDetails ? (
                                       <p
                                         style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
