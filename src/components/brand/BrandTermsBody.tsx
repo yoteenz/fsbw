@@ -1,4 +1,8 @@
+import { Link } from 'react-router-dom';
 import {
+  BRAND_TERMS_CONTACT_FORM_LINE_PREFIX,
+  BRAND_TERMS_CONTACT_FORM_LINK_LABEL,
+  BRAND_TERMS_CONTACT_FORM_LINK_SENTINEL,
   BRAND_TERMS_INTRO_PARAGRAPHS,
   BRAND_TERMS_SECTIONS,
 } from '../../constants/brandTermsCopy';
@@ -31,6 +35,14 @@ const BULLET_STYLE = {
 
 const BULLET_MARK_STYLE = { color: '#EB1C24' };
 
+const CONTACT_FORM_LINK_STYLE = {
+  color: '#808080',
+  fontFamily: '"Futura PT Medium"',
+  fontWeight: 500,
+  textDecoration: 'underline',
+  textTransform: 'uppercase',
+};
+
 const EMAIL_STYLE = {
   ...BODY_STYLE,
   color: '#EB1C24',
@@ -43,6 +55,17 @@ function renderParagraph(text: string, key: string) {
     return (
       <p key={key} style={EMAIL_STYLE}>
         {text}
+      </p>
+    );
+  }
+  if (text === BRAND_TERMS_CONTACT_FORM_LINK_SENTINEL) {
+    return (
+      <p key={key} style={BODY_STYLE}>
+        {BRAND_TERMS_CONTACT_FORM_LINE_PREFIX}
+        <Link to="/brand/contact" style={CONTACT_FORM_LINK_STYLE}>
+          {BRAND_TERMS_CONTACT_FORM_LINK_LABEL}
+        </Link>
+        .
       </p>
     );
   }
