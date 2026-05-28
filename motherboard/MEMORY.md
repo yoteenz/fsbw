@@ -19039,3 +19039,11 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Context:** User asked for another **2px up** on the bottom-right **2D/3D** thumbnail and **4px less** space below the **product shots** bordered card (NOIR two-card layout only).
 
 **Changes (`src/pages/straight/noir/page.tsx`):** Bottom thumb wrapper **`translateY(-2px)` → `-4px`**. Second card **`mb-2` → `mb-1`** (8px → 4px margin below card). Pushed **`master`** + **`preview/mobile`** (`34c460c7`).
+
+---
+
+## 2026-05-21 — NOIR PDP: cap chart below details tabs
+
+**Context:** User asked to move the **cap size chart** **below** the **DETAILS / SHIPPING / …** tabs in the NOIR second card (was above tabs).
+
+**Change:** **`src/pages/straight/noir/page.tsx`** — order is now **product shots → tabs → cap chart** (click still opens chart modal).
