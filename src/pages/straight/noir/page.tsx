@@ -2332,7 +2332,7 @@ function NoirSelection() {
                   <span className="product-view-toggle-text" style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif' : '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                 </div>
               </div>
-              <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
+              <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
                 <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
                   <div
                     style={{
@@ -2340,13 +2340,13 @@ function NoirSelection() {
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       display: 'flex',
-                      alignItems: 'flex-end',
+                      alignItems: 'center',
                       justifyContent: 'center',
 width: 'clamp(200px, 50vw, 320px)',
                     height: 'clamp(290px, 72.5vw, 464px)',
                     backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.hero : '/assets/leaf-brick-resize.png'}')`,
                       backgroundRepeat: 'repeat',
-                      overflow: 'hidden',
+                      overflow: 'visible',
                       cursor: 'pointer',
                     }}
                     onClick={() => {
@@ -2365,8 +2365,8 @@ width: 'clamp(200px, 50vw, 320px)',
                       style={{
                         position: 'absolute',
                         left: '50%',
-                        bottom: 0,
-                        transform: 'translateX(-50%)',
+                        top: 'calc(50% - 10.601px + 12px)',
+                        transform: 'translateX(-50%) translateY(-50%)',
                         zIndex: '10',
                         width: 'clamp(230px, 57.5vw, 368px)',
                         height: 'auto',
@@ -2391,14 +2391,18 @@ width: 'clamp(200px, 50vw, 320px)',
                   </div>
                 </div>
                 
-                {/* Top and Bottom Mannequins - Right Side (natural height; row flex-end aligns bottom thumb with hero) */}
+                {/* Top and Bottom Mannequins - Right Side (same height as hero; tops/bottoms of frames align) */}
                 <div
                   className="flex flex-col flex-shrink-0"
-                  style={{ gap: 'clamp(6px, 1.2vw, 12px)', justifyContent: 'flex-start' }}
+                  style={{
+                    height: 'clamp(290px, 72.5vw, 464px)',
+                    justifyContent: 'space-between',
+                    gap: 'clamp(6px, 1.2vw, 12px)',
+                  }}
                 >
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer overflow-hidden"
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                       style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.top : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleTopThumbnailClick}
                     >
@@ -2407,26 +2411,11 @@ width: 'clamp(200px, 50vw, 320px)',
                   </div>
                   <div className="flex-shrink-0 relative">
                     <div
-                      className="relative bg-cover bg-center flex items-end justify-center cursor-pointer overflow-hidden"
-                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center bottom', backgroundRepeat: 'no-repeat' }}
+                      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+                      style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('${is3DView ? '/assets/NOIR/' + current3DImages.bottom : '/assets/leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center', backgroundRepeat: 'no-repeat' }}
                       onClick={handleBottomThumbnailClick}
                     >
-                      <img
-                        src={currentImages.bottom}
-                        alt=""
-                        className="absolute z-10"
-                        style={{
-                          left: '50%',
-                          bottom: 0,
-                          transform: 'translateX(-50%)',
-                          width: 'clamp(112px, 29vw, 196px)',
-                          height: 'auto',
-                          maxWidth: 'none',
-                          maxHeight: 'none',
-                          minWidth: 'clamp(112px, 29vw, 196px)',
-                          display: is3DView ? 'none' : 'block',
-                        }}
-                      />
+                      <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
                     </div>
                   </div>
                 </div>
@@ -2947,7 +2936,7 @@ width: 'clamp(200px, 50vw, 320px)',
               overflow: 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
               paddingBottom: '16px',
-              marginTop: '14px',
+              marginTop: '20px',
             }}
           >
           {/* PRODUCT SHOTS SECTION — same viewport / row / image metrics as Blanco, Beach Wave, etc. */}
