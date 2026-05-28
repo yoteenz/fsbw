@@ -85,13 +85,14 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
         </h3>
         <p
           style={{
-            fontFamily: '"Futura PT Demi", Futura, sans-serif',
+            fontFamily: '"Futura PT Medium", Futura, sans-serif',
             fontSize: '10px',
-            color: '#808080',
+            color: '#000000',
             textAlign: 'center',
             marginBottom: '16px',
             textTransform: 'uppercase',
             lineHeight: 1.4,
+            fontWeight: 500,
           }}
         >
           THIS ITEM IS CURRENTLY OUT OF STOCK. ENTER YOUR EMAIL AND WE&apos;LL LET YOU KNOW ONCE IT&apos;S BACK.
@@ -164,7 +165,7 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
                   borderWidth: '1.3px',
                   fontFamily: '"Futura PT Medium", Futura, sans-serif',
                   fontSize: '11px',
-                  color: '#808080',
+                  color: '#000000',
                   backgroundColor: '#fff',
                 }}
               >
