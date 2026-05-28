@@ -34,8 +34,11 @@ export function withNormalizedCartLineName<T extends { name?: string; productNam
   return { ...item, name };
 }
 
-/** Gap above red RAW line under script product name (cart, bag, wishlist list). */
+/** Gap above red RAW line for NOIR (reference spacing — cart, bag, wishlist). */
 export const CART_LINE_RAW_GAP_ABOVE_PX = 3;
+
+/** All other build-a-wig units: +2px above RAW vs NOIR (Blanco, curls, waves, etc.). */
+export const CART_LINE_RAW_GAP_ABOVE_NON_NOIR_PX = CART_LINE_RAW_GAP_ABOVE_PX + 2;
 
 /** margin-top on cart/bag red subtitle (RAW build-a-wig units; gift/booking/BCF unchanged at 2px). */
 export function cartLineRawSubtitleMarginTop(item?: CartLineRedSubtitleItem): string {
@@ -44,7 +47,8 @@ export function cartLineRawSubtitleMarginTop(item?: CartLineRedSubtitleItem): st
   if (type === 'gift-card' || name === 'GIFT CARD') return '2px';
   if (type === 'booking-consult' || type === 'booking-appointment') return '2px';
   if (type === 'shop-texture-category') return '2px';
-  return `${CART_LINE_RAW_GAP_ABOVE_PX}px`;
+  if (name === 'NOIR') return `${CART_LINE_RAW_GAP_ABOVE_PX}px`;
+  return `${CART_LINE_RAW_GAP_ABOVE_NON_NOIR_PX}px`;
 }
 
 /** True when the line has non-default build specs (Blanco default density = 250%). */
