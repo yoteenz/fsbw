@@ -19047,3 +19047,11 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Context:** User asked to move the **cap size chart** **below** the **DETAILS / SHIPPING / …** tabs in the NOIR second card (was above tabs).
 
 **Change:** **`src/pages/straight/noir/page.tsx`** — order is now **product shots → tabs → cap chart** (click still opens chart modal).
+
+---
+
+## 2026-05-21 — NOIR PDP: thumb nudge + cap chart under quantity
+
+**Context:** User asked to move bottom-right **2D/3D** thumb **down 1px** and place **cap size chart** **below the quantity counter** (main card), not in the product-shots/tabs card.
+
+**Changes (`noir/page.tsx`):** Bottom thumb **`translateY(-4px)` → `-3px`**. Cap chart removed from second card; inserted in main card after quantity (Blanco-style **`translateY(-21px)`**, 15% smaller chart clamps). Second card: **product shots → tabs** only.
