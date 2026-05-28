@@ -18470,11 +18470,11 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 
 **Changes:**
 - `src/components/brand/BrandAboutUsBody.tsx` (new)
-- `src/pages/brand/page.tsx` — `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT`, hidden measurer, `minHeight` on matching slugs
+- `src/pages/brand/page.tsx` — tall pages use `brandMainCardScrollable` + `maxHeight: calc(100dvh - 80px)`; short pages (About, Member, Reviews) hug content
 - Pushed `master` and `preview/mobile` (commit `de6d509c`).
 
 **Conventions:**
-- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. For new brand text pages that should match About card size before content exists, add slug to `BRAND_SLUGS_MATCH_ABOUT_CARD_HEIGHT` or give them comparable content height.
+- Brand About body: `BrandAboutUsBody` + `brandAboutCopy.ts`. **Reviews** empty state is compact (`BrandReviewsEmptyState`); no longer forced to About card `minHeight`.
 ---
 
 ## 2026-05-27 — About Us copy updates (curated, founder, experience, closing)
