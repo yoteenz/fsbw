@@ -18,6 +18,7 @@ import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
+import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
@@ -557,6 +558,7 @@ export default function SharedWishlistListPage() {
                             <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>
                               {itemLength} RAW {itemHairOrigin}
                             </p>
+                            <WishlistItemCapSizeLine item={item} />
                             {isViewingDetails ? (
                               <p
                                 style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}

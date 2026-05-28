@@ -12,6 +12,8 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
+import { WishlistItemCapSizeLine } from '../../components/wishlist/WishlistItemCapSizeLine';
+import { cartLinePriceMarginTop } from '../../utils/cartCapSizeLineMargin';
 
 function WishlistSelection() {
   const navigate = useNavigate();
@@ -971,28 +973,13 @@ function WishlistSelection() {
                           >
                             {itemLength} RAW {itemHairOrigin}
                           </p>
-                          {item.capSize && (
-                            <p
-                              className="font-semibold"
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                color: '#808080',
-                                textTransform: 'uppercase',
-                                fontSize: '10px',
-                                marginTop: '2px',
-                                marginBottom: '0',
-                                lineHeight: '1.1'
-                              }}
-                            >
-                              CAP SIZE: {item.capSize}
-                            </p>
-                          )}
+                          <WishlistItemCapSizeLine item={item} />
                           <p
                             style={{
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               fontSize: '12px',
-                              marginTop: '2px',
+                              marginTop: cartLinePriceMarginTop(item),
                               marginBottom: '0',
                               fontWeight: '600'
                             }}
