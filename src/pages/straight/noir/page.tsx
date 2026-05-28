@@ -2758,7 +2758,7 @@ width: 'clamp(200px, 50vw, 320px)',
           </div>
 
           {/* QUANTITY SELECTOR */}
-          <div className="flex justify-center" style={{ transform: 'translateY(-30px)', marginBottom: '-24px' }}>
+          <div className="flex justify-center" style={{ transform: 'translateY(-30px)', marginBottom: '0' }}>
             <button 
               onClick={handleQuantityDecrease}
               disabled={quantity <= 1}
@@ -2830,7 +2830,7 @@ width: 'clamp(200px, 50vw, 320px)',
         </div>
 
           {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
-          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px) translateY(-21px)' }}>
+          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '12px' }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
