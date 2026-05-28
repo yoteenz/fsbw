@@ -4110,8 +4110,16 @@ p.bcf-bundles-pdp-product-name {
 }
 
 .wishlist-expanded-list-line-price--list {
-  margin-top: 2px !important;
   color: #000000 !important;
+}
+
+.cart-line-text-layer--price.wishlist-expanded-list-line-price-layer--list {
+  margin-top: 2px !important;
+}
+
+.cart-line-text-layer--price.wishlist-expanded-list-line-price-layer--list
+  > .wishlist-expanded-list-line-price--list {
+  margin-top: 0 !important;
 }
 
 .wishlist-expanded-list-line-stars--list {

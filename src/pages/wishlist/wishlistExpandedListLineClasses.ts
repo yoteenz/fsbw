@@ -2,6 +2,9 @@
 export const WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS = 'wishlist-expanded-list-line-price';
 /** Expanded list line (lists + shared): spacing above black price. */
 export const WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS = 'wishlist-expanded-list-line-price--list';
+/** List line view — 2px above the price row (price layer; beats cart-line child margin reset). */
+export const WISHLIST_EXPANDED_LIST_LINE_PRICE_LAYER_LIST_CLASS =
+  'wishlist-expanded-list-line-price-layer--list';
 /** List line view only — extra spacing above star row. */
 export const WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS = 'wishlist-expanded-list-line-stars--list';
 export const WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS = 'wishlist-expanded-list-view-details-toggle';

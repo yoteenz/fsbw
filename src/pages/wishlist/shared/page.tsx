@@ -16,6 +16,7 @@ import {
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_LINE_PRICE_LAYER_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS,
@@ -589,7 +590,10 @@ export default function SharedWishlistListPage() {
                               </CartLineTextLayer>
                             )}
                             {!isViewingDetails && (
-                              <CartLineTextLayer slot="price">
+                              <CartLineTextLayer
+                                slot="price"
+                                className={`cart-line-text-layer cart-line-text-layer--price ${WISHLIST_EXPANDED_LIST_LINE_PRICE_LAYER_LIST_CLASS}`}
+                              >
                               <WigLineStockPrice
                                 item={item}
                                 priceHtml={{ __html: itemPriceLabel }}
