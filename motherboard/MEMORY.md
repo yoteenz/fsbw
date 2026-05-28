@@ -18952,4 +18952,15 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked to move the red **RAW** subtitle line **up 2px** on **grid view only** (`/wishlist/lists/:id` expanded grid).
 
 **Change:** **`lists/page.tsx`** — **`EXPANDED_LIST_GRID_RAW_TEXT_STYLE`** (`position: relative`, **`top: -2`**) used on grid RAW `<p>` only; line view keeps **`EXPANDED_LIST_RAW_TEXT_STYLE`** unchanged.
+<<<<<<< HEAD
+=======
+
+---
+
+## 2026-05-21 — Stock notify modal: gray Demi input + copy
+
+**Context:** Sold-out unit PDP **NOTIFY ME WHEN AVAILABLE** popup (`StockNotifyModal`).
+
+**Changes:** Email **input** typed text → **Futura Demi** **`#808080`** (was Book/black). Body copy → **THIS ITEM IS CURRENTLY OUT OF STOCK. ENTER YOUR EMAIL AND WE'LL LET YOU KNOW ONCE IT'S BACK.** (generic, no unit name in message).
+>>>>>>> master
 >>>>>>> master
