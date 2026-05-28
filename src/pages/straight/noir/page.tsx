@@ -45,7 +45,7 @@ import {
   SESSION_BAW_NOIR_RESET_LIVE_ON_CUSTOMIZE,
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
-import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
@@ -3672,7 +3672,7 @@ function NoirSelection() {
                   }}>
                     24" RAW RUSSIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="BLANCO" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -3682,7 +3682,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $820 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3739,7 +3739,7 @@ function NoirSelection() {
                   }}>
                     24" RAW INDIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="SOFT WAVE" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -3749,7 +3749,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $760 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3806,7 +3806,7 @@ function NoirSelection() {
                   }}>
                     24" RAW INDONESIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="BEACH WAVE" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -3816,7 +3816,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $760 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -3873,7 +3873,7 @@ function NoirSelection() {
                   }}>
                     24" RAW FILIPINO
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="SOFT CURL" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -3883,7 +3883,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $780 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -4041,7 +4041,7 @@ function NoirSelection() {
                   }}>
                     24" RAW INDONESIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="SOFT WAVE" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -4051,7 +4051,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $760 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -4108,7 +4108,7 @@ function NoirSelection() {
                   }}>
                     24" RAW VIETNAMESE
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="OCEAN CURL" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -4118,7 +4118,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $780 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -4175,7 +4175,7 @@ function NoirSelection() {
                   }}>
                     24" RAW CAMBODIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="NOIR" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -4185,7 +4185,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $740 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
@@ -4242,7 +4242,7 @@ function NoirSelection() {
                   }}>
                     24" RAW RUSSIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="BLANCO" style={{ 
                     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                     fontSize: '12px',
                     color: 'black',
@@ -4252,7 +4252,7 @@ function NoirSelection() {
                     lineHeight: '0.84',
                   }}>
                     $820 USD
-                  </p>
+                  </WigStripPrice>
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
                       <img
