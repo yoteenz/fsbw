@@ -16,7 +16,7 @@ export const BRAND_MEMBER_BLOCKS: BrandMemberBlock[] = [
   {
     id: 'loyalty-rewarded',
     text: 'AND YES… WE BELIEVE LOYALTY SHOULD ACTUALLY BE REWARDED.',
-    variant: 'accent',
+    variant: 'demiGray',
   },
   {
     id: 'rewards-program',

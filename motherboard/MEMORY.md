@@ -18909,3 +18909,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **BACK IN STOCK:** title `BACK IN STOCK: SHOP NOW!`, body `YOUR WISHLIST ITEM IS BACK IN STOCK.`, link `VIEW PRODUCT`
 
 **Implementation:** **`wishlistStockAlerts.ts`** — tracks last `stockStatus` per unit per signed-in email; on transition **in_stock → low_stock** or **out_of_stock/low_stock → in_stock**, appends **`StoredNotification`** to `notifications_{email}` with PDP route via **`wigUnitProductRoutes.ts`**. Runs from **`ProductInventorySync`** (inventory, focus, wishlist/lists updates, sign-in). Wishlist + **userLists** wig SKUs included.
+
+---
+
+## 2026-05-21 — Brand Reviews empty card height = Become a Member (not About)
+
+**Context (full chat):** Billable cart (exclude OOS from totals/checkout); admin messages/alerts hub sort dropdowns; admin header dropdown Y = meetings card (72px); unit PDP sold-out (normal price, NOTIFY ME, no bag add); wishlist low/back-in-stock Account Alerts (`BACK IN STOCK: SHOP NOW!`). User clarified **`/brand/reviews`** empty main card must match **`/brand/member`** main card height (centered gray empty copy)—**not** About height (too tall).
+
+**Implementation (`src/pages/brand/page.tsx`):**
+- Hidden off-screen measurer clones **Become a Member** card (member header + **`BrandMemberSection`**); **`ResizeObserver`** sets pixel height.
+- **`BRAND_SLUGS_MATCH_MEMBER_CARD_HEIGHT`** = **`reviews`** only; visible reviews card uses measured **`height`** + **`minHeight`** + **`boxSizing: border-box`** so it cannot exceed member card on tall viewports.
+- Inner content **`flex: 1`** + **`BrandReviewsEmptyState`** centers message vertically.
+- **`BrandReviewsEmptyState.tsx`** — compact centered uppercase gray copy.
+
+**Convention:** Brand FAQ/Terms use scrollable viewport cap; Reviews empty state matches Member card, not About.
