@@ -19,7 +19,10 @@ import {
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
-import { CART_LINE_RAW_GAP_ABOVE_PX } from '../../../utils/cartCapSizeLineMargin';
+import {
+  cartLineRawSubtitleMarginTop,
+  withNormalizedCartLineName,
+} from '../../../utils/cartCapSizeLineMargin';
 
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 const LIST_ROW_DIVIDER_BORDER = '1px solid #e5e5e5';
@@ -37,7 +40,6 @@ const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
-const EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX = CART_LINE_RAW_GAP_ABOVE_PX;
 const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
 const EXPANDED_LIST_STAR_SIZE_PX = 14 * 0.8;
 const EXPANDED_LIST_STAR_STROKE_FILTER = 'drop-shadow(0 0 0 1px black)';
@@ -46,9 +48,9 @@ const EXPANDED_LIST_LINE_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive',
   fontSize: `${EXPANDED_LIST_LINE_NAME_FONT_PX}px`,
   color: '#000',
-  margin: `0 0 ${EXPANDED_LIST_LINE_RAW_GAP_ABOVE_PX}px 0`,
+  margin: 0,
   padding: 0,
-  lineHeight: 1,
+  lineHeight: 1.1,
   textTransform: 'uppercase',
 };
 
@@ -556,10 +558,18 @@ export default function SharedWishlistListPage() {
                           </div>
                           <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                             <p style={EXPANDED_LIST_LINE_NAME_STYLE}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                            <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE }}>
+                            <p
+                              style={{
+                                ...EXPANDED_LIST_RAW_TEXT_STYLE,
+                                ...EXPANDED_LIST_LINE_RAW_MARGIN_STYLE,
+                                marginTop: cartLineRawSubtitleMarginTop(
+                                  withNormalizedCartLineName(item, itemName)
+                                ),
+                              }}
+                            >
                               {itemLength} RAW {itemHairOrigin}
                             </p>
-                            <WishlistItemCapSizeLine item={item} />
+                            <WishlistItemCapSizeLine item={item} displayName={itemName} />
                             {isViewingDetails ? (
                               <p
                                 style={EXPANDED_LIST_LINE_DETAILS_HTML_STYLE}
