@@ -18931,6 +18931,8 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked for **4px spacing above** the red **VIEW DETAILS** / **CLOSE DETAILS** link on the **list (line) view** of wishlist expanded lists (`/wishlist/lists/:id` line mode and `/wishlist/shared/:token`).
 
 **Change:** **`src/index.css`** — `.wishlist-expanded-list-view-details-toggle`: **`margin-top: 4px`**, **`top: 0`** (was **`top: -4px`**, which pulled the link up against the price line).
+<<<<<<< HEAD
+=======
 
 ---
 
@@ -18939,6 +18941,9 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked for **2px spacing above** the gray price on wishlist **list (line) view** (`/wishlist/lists/:id` line mode + shared list).
 
 **Change:** **`index.css`** — `.wishlist-expanded-list-line-price--list` **`margin-top: 2px`**. **`WigLineStockPrice`** — optional **`priceClassName`**; line view passes **`wishlist-expanded-list-line-price`** + **`--list`** on **`lists/page.tsx`** and **`shared/page.tsx`** (overrides `.cart-line-text-layer > *` zero margin).
+<<<<<<< HEAD
+>>>>>>> master
+=======
 
 ---
 
@@ -18947,3 +18952,12 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked to move the red **RAW** subtitle line **up 2px** on **grid view only** (`/wishlist/lists/:id` expanded grid).
 
 **Change:** **`lists/page.tsx`** — **`EXPANDED_LIST_GRID_RAW_TEXT_STYLE`** (`position: relative`, **`top: -2`**) used on grid RAW `<p>` only; line view keeps **`EXPANDED_LIST_RAW_TEXT_STYLE`** unchanged.
+
+---
+
+## 2026-05-21 — Stock notify modal: gray Demi input + copy
+
+**Context:** Sold-out unit PDP **NOTIFY ME WHEN AVAILABLE** popup (`StockNotifyModal`).
+
+**Changes:** Email **input** typed text → **Futura Demi** **`#808080`** (was Book/black). Body copy → **THIS ITEM IS CURRENTLY OUT OF STOCK. ENTER YOUR EMAIL AND WE'LL LET YOU KNOW ONCE IT'S BACK.** (generic, no unit name in message).
+>>>>>>> master
