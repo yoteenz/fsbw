@@ -186,7 +186,7 @@ export const BRAND_TERMS_SECTIONS: BrandTermsSection[] = [
   },
   {
     id: 'contact',
-    title: 'CONTACT INFORMATION',
+    title: '',
     paragraphs: [
       'FOR ALL CUSTOMER SERVICE INQUIRIES, PLEASE CONTACT:',
       'CONTACT@FRONTALSLAYER.COM',
