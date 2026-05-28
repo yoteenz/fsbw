@@ -13,9 +13,6 @@ import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
-import { trackActivity } from '../../utils/activity';
-import { writeGiftCardSelectionForCheckoutSession } from '../../utils/giftCardCheckoutSession';
-
 function ToolsPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -264,26 +261,6 @@ function ToolsPage() {
 
   const handleGiftCardRightArrow = () => {
     setGiftCardPage((p) => (p >= giftCardMaxPage ? 0 : p + 1));
-  };
-
-  const handleGiftCardProceedToCheckout = (
-    product: { id: string; price: number },
-    e?: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    e?.stopPropagation();
-    e?.preventDefault();
-    try {
-      const newCartCount = writeGiftCardSelectionForCheckoutSession({
-        balanceUsd: product.price,
-        image: '/assets/gift-card asset.png',
-      });
-      setCartCount(newCartCount);
-      trackActivity('add_to_cart', { source: 'tools_gift_strip', productName: 'GIFT CARD', balance: product.price });
-      trackActivity('cart_navigate', { destination: 'checkout_gift_card' });
-      navigate('/checkout/gift-card');
-    } catch (error) {
-      console.error('Error proceeding to gift card checkout:', error);
-    }
   };
 
   useEffect(() => {
@@ -663,31 +640,6 @@ function ToolsPage() {
                             transform: index === 0 ? 'translateX(-2.5px)' : 'translateX(13px)'
                           }}
                         >
-                          {/* Checkout CTA — same flow as gift card PDP (isolated /checkout/gift-card) */}
-                          <button
-                            type="button"
-                            onClick={(e) => handleGiftCardProceedToCheckout(product, e)}
-                            style={{
-                              position: 'absolute',
-                              top: '6px',
-                              ...(index % 2 === 0 ? { left: '6px' } : { right: '6px' }),
-                              zIndex: 10,
-                              maxWidth: 'calc(50% - 8px)',
-                              padding: '4px 6px',
-                              border: '1px solid #000',
-                              background: '#fff',
-                              cursor: 'pointer',
-                              fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                              fontSize: '7px',
-                              color: '#EB1C24',
-                              textTransform: 'uppercase',
-                              lineHeight: 1.15,
-                              textAlign: 'center',
-                            }}
-                          >
-                            PROCEED TO CHECKOUT
-                          </button>
-
                           {/* Gift Card Image */}
                           <img
                             src="/assets/gift-card asset.png"
