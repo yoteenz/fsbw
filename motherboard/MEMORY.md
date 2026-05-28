@@ -18717,3 +18717,5 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Cause:** Bag used `marginTop: BLANCO ? 0px : 2px` on price; dropdown used inline `hasSpecs` with density compared to `200%` (so default Blanco 250% got 2px). CAP SIZE margin shared `cartCapSizeLineMarginTop` but still treated 250% as non-default.
 
 **Changes:** **`src/utils/cartCapSizeLineMargin.ts`** — `cartItemHasNonDefaultSpecs` (Blanco default density `250%`), `cartLinePriceMarginTop` (Blanco `0px`, else `2px`); CAP SIZE helper uses shared spec check. **`CartDropdown.tsx`**, **`shopping-bag/page.tsx`** — price blocks use `cartLinePriceMarginTop`.
+
+**Follow-up (same chat):** User asked for +2px on Blanco (still tight at `0px`). **`cartLinePriceMarginTop`** — Blanco `0px` → **`2px`** (bag + cart dropdown).
