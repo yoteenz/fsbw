@@ -33,7 +33,7 @@ import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
-import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { UnitPdpWigPreviewImages } from '../../../components/shop/UnitPdpWigPreviewImages';
 import {
@@ -2123,7 +2123,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW INDONESIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="BEACH WAVE" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2132,7 +2132,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(760)}
+                  priceHtml={formatPrice(760)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2190,7 +2190,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW CAMBODIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="NOIR" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2199,7 +2199,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(740)}
+                  priceHtml={formatPrice(740)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2257,7 +2257,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW FILIPINO
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="SOFT CURL" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2266,7 +2266,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(780)}
+                  priceHtml={formatPrice(780)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2324,7 +2324,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW VIETNAMESE
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="OCEAN CURL" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2333,7 +2333,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(780)}
+                  priceHtml={formatPrice(780)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2491,7 +2491,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW INDIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="SOFT WAVE" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2500,7 +2500,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(760)}
+                  priceHtml={formatPrice(760)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2558,7 +2558,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW VIETNAMESE
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="OCEAN CURL" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2567,7 +2567,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(780)}
+                  priceHtml={formatPrice(780)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2625,7 +2625,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW CAMBODIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="NOIR" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2634,7 +2634,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(740)}
+                  priceHtml={formatPrice(740)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
@@ -2692,7 +2692,7 @@ function SoftWaveSelection() {
                   }}>
                     24" RAW RUSSIAN
                   </p>
-                  <p style={{ 
+                  <WigStripPrice productName="BLANCO" style={{ 
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '12px',
                     color: 'black',
@@ -2701,7 +2701,7 @@ function SoftWaveSelection() {
                     fontWeight: '500',
                     lineHeight: '0.84',
                   }}
-                  dangerouslySetInnerHTML={formatPrice(820)}
+                  priceHtml={formatPrice(820)}
                   />
                   <div style={marbleStripStarsRowStyle(is3DView)}>
                     {[...Array(5)].map((_, index) => (
