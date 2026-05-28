@@ -18782,3 +18782,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** Reverted `BrandTermsBody.tsx` and `BrandFaqSection.tsx` to render `{section.title}` without trailing colon (same as pre-colon state).
 
 **Git:** `6e007fb9` on `master` and `preview/mobile`.
+
+---
+
+## 2026-05-21 — Add to list dropdown: NEW LIST label
+
+**Context (full chat):** Cart/bag/wishlist fixed-height product text layers (NOIR-aligned spacing); NOIR-only **2px** trim above red RAW subtitle (`cartLineSubtitleLayerStyle`). User asked to rename the add-to-list menu’s create action.
+
+**Change:** **`src/components/AddToListModal.tsx`** — portal dropdown first option **`CREATE A LIST` → `NEW LIST`** (uppercase, same styling).
+
+**Git:** `ba4e70d3` on **`master`** and **`preview/mobile`**.
