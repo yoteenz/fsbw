@@ -83,7 +83,7 @@ function appendWishlistStockAlert(
   unitName: string
 ): void {
   const id = `wishlist_${kind}_${unitName.replace(/\s+/g, '_')}`;
-  const title = kind === 'low_stock' ? 'LOW STOCK: ACT FAST!' : 'BACK IN STOCK: ACT FAST!';
+  const title = kind === 'low_stock' ? 'LOW STOCK: ACT FAST!' : 'BACK IN STOCK: SHOP NOW!';
   const message =
     kind === 'low_stock'
       ? 'YOUR WISHLIST ITEM IS LOW IN STOCK.'
