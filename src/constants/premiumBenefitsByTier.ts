@@ -7,6 +7,7 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',
+      'LIVE ORDER TRACKING',
       'MEMBER REWARDS'
     ],
     '6months': [
@@ -17,9 +18,9 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',
+      'LIVE ORDER TRACKING',
       'PRIORITY MESSAGES',
-      'MEMBER REWARDS',
-      'LIVE ORDER TRACKING'
+      'MEMBER REWARDS'
     ],
     '12months': [
       'BIRTHDAY GIFT',
@@ -29,9 +30,9 @@ export const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
       'FAST TRACK CUSTOMER SUPPORT',
       'PRIORITY BOOKING',
       'CHALLENGES',
+      'LIVE ORDER TRACKING',
       'PRIORITY MESSAGES',
       'MEMBER REWARDS',
-      'LIVE ORDER TRACKING',
       'SPECIAL OFFERS',
       '2X LOYALTY POINTS'
     ]

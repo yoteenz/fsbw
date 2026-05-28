@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties, 
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import { PREMIUM_BENEFITS_BY_TIER } from '../../../constants/premiumBenefitsByTier';
 import { getWelcomeDiscountAmount } from '../../../constants/tiers';
 import { SUBSCRIPTION_TIERS, type SubscriptionTierId } from '../../../constants/subscriptionPricing';
 import { SOCIAL_EARN_LINKS } from '../../../constants/socialLinks';
@@ -613,46 +614,6 @@ function MembershipPage() {
       { name: SUBSCRIPTION_TIERS[k].name, price: SUBSCRIPTION_TIERS[k].priceUsd },
     ])
   ) as Record<SubscriptionTierId, { name: string; price: number }>;
-
-  /** Benefits included per premium tier (matches premium upgrade chart: 3mo, 6mo, 12mo). */
-  const PREMIUM_BENEFITS_BY_TIER: Record<string, string[]> = {
-    '3months': [
-      'BIRTHDAY GIFT',
-      'DISCOUNTED SHIPPING',
-      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
-      'FAST TRACK CUSTOMER SUPPORT',
-      'PRIORITY BOOKING',
-      'CHALLENGES',
-      'MEMBER REWARDS'
-    ],
-    '6months': [
-      'BIRTHDAY GIFT',
-      'DISCOUNTED SHIPPING',
-      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
-      'FAST TRACK CUSTOMER SUPPORT',
-      'PRIORITY BOOKING',
-      'CHALLENGES',
-      'PRIORITY MESSAGES',
-      'MEMBER REWARDS',
-      'LIVE ORDER TRACKING'
-    ],
-    '12months': [
-      'BIRTHDAY GIFT',
-      'DISCOUNTED SHIPPING',
-      'PREMIUM 3D WIG CUSTOMIZATION OPTIONS',
-      'ENTRY TO VIP MEMBERS ONLY LOUNGE',
-      'FAST TRACK CUSTOMER SUPPORT',
-      'PRIORITY BOOKING',
-      'CHALLENGES',
-      'PRIORITY MESSAGES',
-      'MEMBER REWARDS',
-      'LIVE ORDER TRACKING',
-      'SPECIAL OFFERS',
-      '2X LOYALTY POINTS'
-    ]
-  };
 
   // Currency state - per user
   const [selectedCurrency, setSelectedCurrency] = useState<string>(() => {
@@ -1797,32 +1758,8 @@ function MembershipPage() {
                                 </td>
                               </tr>
                               <PremiumChartBenefitRow label="CHALLENGES" m3 m6 m12 />
+                              <PremiumChartBenefitRow label="LIVE ORDER TRACKING" m3 m6 m12 />
                               <PremiumChartBenefitRow label="PRIORITY MESSAGES" m3={false} m6 m12 />
-                              <tr>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>LIVE ORDER TRACKING</span></td>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
-                                  </div>
-                                </td>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <img src="/assets/premium-x.svg" alt="Not included" style={{ width: '15.2px', height: '15.2px' }} />
-                                  </div>
-                                </td>
-                                <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
-                                  </div>
-                                </td>
-                                <td style={{ borderBottom: CHART_BORDER, fontFamily: '"Futura PT Book"', padding: '6px 4px', textAlign: 'center' }}>
-                                  <span style={{ display: 'inline-block', marginLeft: '12px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                      <img src="/assets/premium-check.svg" alt="Included" style={{ width: '10px', height: '10px' }} />
-                                    </div>
-                                  </span>
-                                </td>
-                              </tr>
                               <PremiumChartBenefitRow label="SPECIAL OFFERS" m3={false} m6={false} m12 />
                               <tr>
                                 <td style={{ borderRight: CHART_BORDER, borderBottom: CHART_BORDER, fontFamily: '"Futura PT Medium"', padding: '6px 4px', textTransform: 'uppercase', color: BRAND_GRAY, textAlign: 'center', minWidth: '68px', maxWidth: '68px', lineHeight: '1.25' }}><span style={{ display: 'inline-block', marginLeft: '-12px' }}>EXCLUSIVE REWARDS</span></td>
