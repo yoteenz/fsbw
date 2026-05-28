@@ -18802,3 +18802,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Change:** **`CartDropdown.tsx`** — `formatPriceDisplay` in view-details HTML: positive deltas use **` · `** (`#EB1C24`) then black amount; negatives keep **`-`** on the amount (no `+`).
 
 **Git:** `9e7dc70e` on **`master`** and **`preview/mobile`**.
+
+---
+
+## 2026-05-21 — Admin hub: restore 10px below-card button spacing
+
+**Context (full chat):** Cart line layers, NOIR RAW trim, NEW LIST label, cart dropdown view-details red dot. User reported **button top spacing broken** on admin pages (Revenue, Reviews, Referrals, etc.).
+
+**Cause:** **`PageActionsBelowCard`** first-button gap was changed **14px → 2px** for wishlist parity (**MEMORY** 2026-05-21); admin hub pages still expect **10px** (same as Brand **CREATE CODE** / **SEND NOTIFICATION** wrappers).
+
+**Fix:** **`PageActionsBelowCard`** optional **`adminHub`** prop → **`marginTop: 10px`**. Applied on admin Revenue, Pending, Reviews, Referrals, Marketing, Brand (export), Analytics, Meetings schedule. Revenue multi-button actions use **`PageActionsBelowCard.Spacer`** instead of per-button **`marginTop: 10px`**.
