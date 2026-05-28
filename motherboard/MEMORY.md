@@ -18898,3 +18898,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`WigProductPriceDisplay`** — `soldOutPriceTreatment="normal"` on six unit PDPs (grid keeps strikethrough default).
 - **`UnitPdpCartActions`** + **`StockNotifyModal`** + **`unitStockNotify.ts`** — waitlist in localStorage; signup alert on Account → Alerts for registered/signed-in emails; **back-in-stock** alert when inventory restocks (`ProductInventorySync`).
 - All six unit PDPs wired: noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl.
+
+---
+
+## 2026-05-21 — Wishlist low stock / back in stock → Account Alerts
+
+**Context:** User specified Account → Alerts copy when wishlisted wig units change inventory:
+
+- **LOW STOCK:** title `LOW STOCK: ACT FAST!`, body `YOUR WISHLIST ITEM IS LOW IN STOCK.`, link `VIEW PRODUCT`
+- **BACK IN STOCK:** title `BACK IN STOCK: ACT FAST!`, body `YOUR WISHLIST ITEM IS BACK IN STOCK.`, link `VIEW PRODUCT`
+
+**Implementation:** **`wishlistStockAlerts.ts`** — tracks last `stockStatus` per unit per signed-in email; on transition **in_stock → low_stock** or **out_of_stock/low_stock → in_stock**, appends **`StoredNotification`** to `notifications_{email}` with PDP route via **`wigUnitProductRoutes.ts`**. Runs from **`ProductInventorySync`** (inventory, focus, wishlist/lists updates, sign-in). Wishlist + **userLists** wig SKUs included.
