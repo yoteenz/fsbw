@@ -19055,3 +19055,11 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Context:** User asked to move bottom-right **2D/3D** thumb **down 1px** and place **cap size chart** **below the quantity counter** (main card), not in the product-shots/tabs card.
 
 **Changes (`noir/page.tsx`):** Bottom thumb **`translateY(-4px)` → `-3px`**. Cap chart removed from second card; inserted in main card after quantity (Blanco-style **`translateY(-21px)`**, 15% smaller chart clamps). Second card: **product shots → tabs** only.
+
+---
+
+## 2026-05-21 — NOIR PDP: cap chart vs quantity overlap fix
+
+**Context:** Cap chart below quantity overlapped **- / 1 / +** (negative **`marginBottom: -24px`** on qty + **`translateY(-21px)`** on chart).
+
+**Fix:** Qty **`marginBottom: 0`**; chart **`marginTop: 12px`**, **`translateX(4px)`** only (no upward translate). Pushed **`master`** + **`preview/mobile`**.
