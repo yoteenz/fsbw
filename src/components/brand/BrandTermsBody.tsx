@@ -111,7 +111,7 @@ export default function BrandTermsBody() {
         }
         return (
           <div key={section.id}>
-            {section.title ? <p style={SECTION_TITLE_STYLE}>{section.title}</p> : null}
+            {section.title ? <p style={SECTION_TITLE_STYLE}>{section.title}:</p> : null}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {section.paragraphs.map((paragraph, index) =>
                 renderParagraph(paragraph, `${section.id}-p-${index}`)
