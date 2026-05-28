@@ -19063,3 +19063,11 @@ Pushed **`master`** + **`preview/mobile`** (`2117e232`).
 **Context:** Cap chart below quantity overlapped **- / 1 / +** (negative **`marginBottom: -24px`** on qty + **`translateY(-21px)`** on chart).
 
 **Fix:** Qty **`marginBottom: 0`**; chart **`marginTop: 12px`**, **`translateX(4px)`** only (no upward translate). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-28 — Wishlist lists: nudge VIEW DETAILS right 1px + tighten spacing above
+
+**Context:** User asked to move the red **VIEW DETAILS** text on the wishlist **lists** page (`/wishlist/lists/:id` line view) **1px to the right** (explicitly **not** CLOSE DETAILS) and **decrease the spacing above the text by 1px**.
+
+**Change:** **`src/index.css`** — `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only when showing **VIEW DETAILS**, not CLOSE DETAILS, via `!isViewingDetails` in `wishlist/lists/page.tsx`): **`margin-left: 1px → 2px`** (right nudge) and added **`margin-top: 1px`** (overrides `--list` `margin-top: 2px` so spacing above drops by 1px). CLOSE DETAILS keeps `--list` `margin-top: 2px` and no left margin. Pushed `master` + `preview/mobile`.
