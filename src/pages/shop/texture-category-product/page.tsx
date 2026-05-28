@@ -155,6 +155,13 @@ const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 8
  */
 const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
 
+/**
+ * Thumbnail width for the BCF SIMILAR + RECENTLY strips. The shared 2D `marbleStripThumbImg`
+ * uses 79.2%, but the BCF page content area is wider than the Noir PDP, so 79.2% renders these
+ * ~135px (vs Noir's 122px). Drop to 71.8% so both BCF strips match Noir's absolute thumbnail size.
+ */
+const BCF_STRIP_THUMB_WIDTH = '71.8%';
+
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   return Math.round(
     BUNDLE_HERO_BASE_MAX_WIDTH_PX *
@@ -1965,6 +1972,7 @@ export default function ShopTextureCategoryProductPage() {
                                       }}
                                       style={{
                                         ...marbleStripThumbImg(false),
+                                        width: BCF_STRIP_THUMB_WIDTH,
                                         cursor: 'pointer',
                                         pointerEvents: 'none'
                                       }}
@@ -2157,7 +2165,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/wave-thumb.png"
                               alt="SOFT WAVE"
                               style={{
-                                width: '79.2%',
+                                width: BCF_STRIP_THUMB_WIDTH,
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2252,7 +2260,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/curl-thumb.png"
                               alt="SOFT CURL"
                               style={{
-                                width: '79.2%',
+                                width: BCF_STRIP_THUMB_WIDTH,
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2347,7 +2355,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/noir-thumb.png"
                               alt="NOIR"
                               style={{
-                                width: '79.2%',
+                                width: BCF_STRIP_THUMB_WIDTH,
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2442,7 +2450,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/blanco-thumb.png"
                               alt="BLANCO"
                               style={{
-                                width: '79.2%',
+                                width: BCF_STRIP_THUMB_WIDTH,
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',

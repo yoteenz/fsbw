@@ -19285,3 +19285,13 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 - When wishlist needs sold-out price treatment without extra stock copy, suppress the shared `WigLineStockPrice` label at the call site instead of changing cart/bag stock wording globally.
 - Use **SOLD OUT** for shopper-facing sold-out action copy where the user explicitly requested that wording, while the notify popup should say **SOLD OUT** / **BACK IN STOCK** in its explanatory sentence.
 - Premium tier benefit lists should come from the shared `src/constants/premiumBenefitsByTier.ts` source so the rewards page, brand chart, and upgrade chart stay aligned.
+
+---
+
+## 2026-05-28 — BCF strips: shrink thumbnails to Noir's absolute 122px
+
+**Context:** After making the BCF SIMILAR/RECENTLY strips symmetric (both ~135px, proportional 79.2%), the user said the images were **still a bit too big** (screenshot of `/shop/bundles` similar products). They want them at Noir's absolute thumbnail size, not just proportional.
+
+**Change (`src/pages/shop/texture-category-product/page.tsx`):** Added const **`BCF_STRIP_THUMB_WIDTH = '71.8%'`** and applied it to **both** strips — SIMILAR img (override after `...marbleStripThumbImg(false)`) and all **4** RECENTLY thumbs (replacing inline `79.2%`). 79.2% rendered ~135px because the BCF page content area is wider than the Noir PDP; 71.8% brings them to **122px**, matching Noir exactly.
+
+**Verified (headless, 390px):** NOIR 122px; BCF bundles/frontals SIMILAR **122px** (bundle/frontal photos stay taller only due to their tall product-shot aspect ratio — width now matches), RECENTLY **122px / 112 tall** (identical to Noir mannequins). Earlier note about "proportional parity being correct / 122 absolute adds whitespace" is superseded: the user wants absolute Noir parity. Typecheck passes. Pushed `master` + `preview/mobile`.
