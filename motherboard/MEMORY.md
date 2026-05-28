@@ -19014,3 +19014,20 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Context:** User asked to move **VIEW DETAILS** text **1px right** on **list view wishlist only** (`/wishlist/lists/:id` line mode) — **not** **CLOSE DETAILS**, not shared wishlist.
 
 **Change:** **`wishlistExpandedListLineClasses.ts`** — **`wishlist-expanded-list-view-details-toggle--list-view-only`**. **`index.css`** — **`margin-left: 1px`**. **`wishlist/lists/page.tsx`** — class applied only when **`!isViewingDetails`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-21 — Wishlist lists overview: line/grid view toggle
+
+**Context:** User asked for **list view** and **grid view** icons on **`/wishlist/lists`** (all-lists overview, not inside an expanded list) to switch between row layout and a grid of list cards.
+
+**Changes (`src/pages/wishlist/lists/page.tsx`):**
+- **`WishlistViewModeToggle`** — same line/grid icon buttons as expanded list view (red border when active).
+- **`listsOverviewViewMode`** state (`'line' | 'grid'`, default **`line`**); toggle shown top-right when **`!expandedListId && lists.length > 0`**.
+- **`WishlistListOverviewThumb`** — shared 88×110 thumb (empty vs first-item art) for line rows and grid cells.
+- **Line view** — existing row layout refactored to shared thumb + **`LIST_OVERVIEW_*`** typography constants.
+- **Grid view** — CSS grid (`auto-fill`, min 100px columns): centered column per list with thumb → name (18px script) → **PRIVATE/SHARED** (11px Futura #666) → item count (12px script) below thumbnail.
+
+**Conventions:** Expanded list inside a list still uses **`expandedViewMode`**; overview toggle is separate. View mode is not persisted to localStorage unless requested later.
+
+Pushed **`master`** + **`preview/mobile`** (`2117e232`).
