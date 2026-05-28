@@ -18770,3 +18770,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Changes:** `BrandTermsBody.tsx` and `BrandFaqSection.tsx` — render `{section.title}:` so headers display as "order agreement:", "processing + shipping:", etc. (lowercase via existing CSS). Checkout terms modal uses same `BrandTermsBody`. Matches order-form subhead pattern (`THIS FORM SERVES AS:`).
 
 **Git:** `2f3e4d81` on `master` and `preview/mobile`.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: reverted section header colons
+
+**Context:** User disliked colons on gray Bohemy section headers; asked to remove them after brief trial.
+
+**Changes:** Reverted `BrandTermsBody.tsx` and `BrandFaqSection.tsx` to render `{section.title}` without trailing colon (same as pre-colon state).
+
+**Git:** `6e007fb9` on `master` and `preview/mobile`.
