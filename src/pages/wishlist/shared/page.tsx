@@ -556,7 +556,7 @@ export default function SharedWishlistListPage() {
                             <CartLineTextLayer slot="name">
                             <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
                             </CartLineTextLayer>
-                            <CartLineTextLayer slot="subtitle">
+                            <CartLineTextLayer slot="subtitle" productName={itemName}>
                             <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
                               {itemLength} RAW {itemHairOrigin}
                             </p>

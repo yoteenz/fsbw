@@ -1,7 +1,11 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
 
 /** Symmetric vertical padding inside each text layer (top + bottom). */
 export const CART_LINE_LAYER_PAD_Y_PX = 2;
+
+/** NOIR only: less space above the red RAW line (subtitle layer top padding). */
+export const CART_LINE_NOIR_RAW_LAYER_TOP_TRIM_PX = 2;
 
 /** Fixed layer heights tuned to NOIR (22px name, 9px subtitle) so all units align. */
 export const CART_LINE_NAME_LAYER_MIN_HEIGHT_PX = 28;
@@ -42,12 +46,24 @@ export function cartLineProductStackStyle(extra?: CSSProperties): CSSProperties 
   };
 }
 
+/** Subtitle layer (red RAW). NOIR gets 2px less top padding so RAW sits closer to the script name. */
+export function cartLineSubtitleLayerStyle(productName?: string): CSSProperties {
+  const base = layerBox(CART_LINE_SUBTITLE_LAYER_MIN_HEIGHT_PX);
+  if (normalizeCartLineProductName({ name: productName, productName }) === 'NOIR') {
+    return {
+      ...base,
+      paddingTop: Math.max(0, CART_LINE_LAYER_PAD_Y_PX - CART_LINE_NOIR_RAW_LAYER_TOP_TRIM_PX),
+    };
+  }
+  return base;
+}
+
 export function cartLineLayerStyle(slot: CartLineLayerSlot): CSSProperties {
   switch (slot) {
     case 'name':
       return layerBox(CART_LINE_NAME_LAYER_MIN_HEIGHT_PX);
     case 'subtitle':
-      return layerBox(CART_LINE_SUBTITLE_LAYER_MIN_HEIGHT_PX);
+      return cartLineSubtitleLayerStyle();
     case 'cap':
       return layerBox(CART_LINE_CAP_LAYER_MIN_HEIGHT_PX);
     case 'price':

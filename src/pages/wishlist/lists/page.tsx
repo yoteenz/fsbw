@@ -864,7 +864,7 @@ export default function ViewListsPage() {
                                     <CartLineTextLayer slot="name">
                                     <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     </CartLineTextLayer>
-                                    <CartLineTextLayer slot="subtitle">
+                                    <CartLineTextLayer slot="subtitle" productName={itemName}>
                                     <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
                                       {itemLength} RAW {itemHairOrigin}
                                     </p>
@@ -943,7 +943,7 @@ export default function ViewListsPage() {
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <CartLineTextLayer slot="subtitle" style={{ alignItems: 'center' }}>
+                                  <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
                                   <p style={{ ...EXPANDED_LIST_RAW_TEXT_STYLE, textAlign: 'center' }}>
                                     {itemLength} RAW {itemHairOrigin}
                                   </p>

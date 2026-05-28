@@ -961,7 +961,7 @@ function WishlistSelection() {
                             {itemName.replace(/WIG/gi, '').trim()}
                           </p>
                           </CartLineTextLayer>
-                          <CartLineTextLayer slot="subtitle">
+                          <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
                           <p className="font-bold" style={cartLineRedSubtitleTextStyle()}>
                             {itemLength} RAW {itemHairOrigin}
                           </p>

@@ -1561,7 +1561,7 @@ function ShoppingBagPage() {
                                 {bagProductTitleLine(item)}
                               </p>
                               </CartLineTextLayer>
-                              <CartLineTextLayer slot="subtitle">
+                              <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
                               <p 
                                 className="font-bold"
                                 style={cartLineRedSubtitleTextStyle()}
@@ -2098,7 +2098,7 @@ function ShoppingBagPage() {
                              {bagProductTitleLine(item)}
                            </p>
                            </CartLineTextLayer>
-                           <CartLineTextLayer slot="subtitle">
+                           <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
                            <p 
                              className="font-bold"
                              style={cartLineRedSubtitleTextStyle()}

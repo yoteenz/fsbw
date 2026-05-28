@@ -1239,7 +1239,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           })()}
                         </p>
                         </CartLineTextLayer>
-                        <CartLineTextLayer slot="subtitle">
+                        <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
                         <p 
                           className="font-bold"
                           style={cartLineRedSubtitleTextStyle()}
