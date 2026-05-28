@@ -78,7 +78,7 @@ export function UnitPdpCartActions({
               : buttonFontFamily,
           }}
         >
-          {soldOut ? 'NOTIFY ME WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
+          {soldOut ? 'NOTIFY WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
         </button>
       </div>
 

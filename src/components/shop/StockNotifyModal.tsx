@@ -81,7 +81,7 @@ export default function StockNotifyModal({ isOpen, onClose, productName }: Stock
             color: '#EB1C24',
           }}
         >
-          NOTIFY ME WHEN AVAILABLE
+          NOTIFY WHEN AVAILABLE
         </h3>
         <p
           style={{
