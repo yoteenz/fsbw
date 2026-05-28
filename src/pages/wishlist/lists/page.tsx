@@ -34,6 +34,7 @@ import {
   WISHLIST_EXPANDED_LIST_LINE_STARS_LIST_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS,
   WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS,
+  WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_VIEW_ONLY_CLASS,
 } from '../wishlistExpandedListLineClasses';
 import { WishlistItemCapSizeLine } from '../../../components/wishlist/WishlistItemCapSizeLine';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
@@ -930,7 +931,7 @@ export default function ViewListsPage() {
                                       <span
                                         role="button"
                                         tabIndex={0}
-                                        className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}`}
+                                        className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}${!isViewingDetails ? ` ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_VIEW_ONLY_CLASS}` : ''}`}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           setViewingDetailsItemKey(isViewingDetails ? null : itemKey);

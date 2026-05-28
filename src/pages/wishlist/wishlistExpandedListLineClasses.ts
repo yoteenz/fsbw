@@ -11,3 +11,6 @@ export const WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS = 'wishlist-expand
 /** List line view only — tighter above VIEW/CLOSE DETAILS than default toggle. */
 export const WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS =
   'wishlist-expanded-list-view-details-toggle--list';
+/** List line view only — nudge VIEW DETAILS 1px right (not CLOSE DETAILS). */
+export const WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_VIEW_ONLY_CLASS =
+  'wishlist-expanded-list-view-details-toggle--list-view-only';
