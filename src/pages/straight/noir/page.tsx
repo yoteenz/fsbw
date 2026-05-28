@@ -3036,22 +3036,6 @@ width: 'clamp(200px, 50vw, 320px)',
               </div>
             </div>
 
-          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; 20px above */}
-          <div className="flex justify-center w-full" style={{ marginTop: '20px' }}>
-            <img
-              src="/assets/NOIR/cap-size-chart.png"
-              alt="Cap Size Chart"
-              className="max-w-full h-auto object-contain"
-              style={{
-                maxWidth: 'clamp(115.6px, 12.62vw, 153px)',
-                maxHeight: 'clamp(90.1px, 10.03vw, 119px)',
-                width: '100%',
-                cursor: 'pointer',
-              }}
-              onClick={handleChartClick}
-            />
-          </div>
-
               {/* Tabs Section */}
               <div className="mt-4" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
                 {/* Tab Navigation */}
@@ -3536,6 +3520,22 @@ width: 'clamp(200px, 50vw, 320px)',
                 )}
               </div>
             </div>
+
+          {/* CAP SIZE CHART IMAGE — 15% smaller than Blanco baseline; below details tabs */}
+          <div className="flex justify-center w-full" style={{ marginTop: '20px' }}>
+            <img
+              src="/assets/NOIR/cap-size-chart.png"
+              alt="Cap Size Chart"
+              className="max-w-full h-auto object-contain"
+              style={{
+                maxWidth: 'clamp(115.6px, 12.62vw, 153px)',
+                maxHeight: 'clamp(90.1px, 10.03vw, 119px)',
+                width: '100%',
+                cursor: 'pointer',
+              }}
+              onClick={handleChartClick}
+            />
+          </div>
           </div>
         </div>
 
