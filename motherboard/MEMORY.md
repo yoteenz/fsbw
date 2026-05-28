@@ -18887,3 +18887,14 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Finding:** Dropdowns used `pt-16` (64px); meetings hub card top is **72px** (`AdminHeader` `py-4` + `h-10` + `py-4`).
 
 **Fix:** **`adminLayoutConstants.ts`** — `ADMIN_MAIN_CARD_TOP_OFFSET_PX = 72`; **`AdminHeader.tsx`** messages/notifications fixed panels use `paddingTop: 72` (same `max-w-md mx-auto px-4` as meetings card row).
+
+---
+
+## 2026-05-21 — Unit PDP sold-out: normal price, notify me, no bag add
+
+**Context (full chat):** Billable cart, admin hub sorts, header dropdown alignment. User asked unit **product pages** when **out of stock**: no price strikethrough; **ADD TO BAG** → **OUT OF STOCK** (disabled); **CUSTOMIZE** → **NOTIFY ME WHEN AVAILABLE** with email popup; account **Alerts** when applicable; alert when unit restocks.
+
+**Implementation:**
+- **`WigProductPriceDisplay`** — `soldOutPriceTreatment="normal"` on six unit PDPs (grid keeps strikethrough default).
+- **`UnitPdpCartActions`** + **`StockNotifyModal`** + **`unitStockNotify.ts`** — waitlist in localStorage; signup alert on Account → Alerts for registered/signed-in emails; **back-in-stock** alert when inventory restocks (`ProductInventorySync`).
+- All six unit PDPs wired: noir, blanco, soft-wave, beach-wave, soft-curl, ocean-curl.

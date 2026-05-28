@@ -46,6 +46,7 @@ import {
 } from '../../../utils/bawNoirLivePreviewStorage';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 interface DensityOption {
@@ -2523,6 +2524,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
             <div className="text-center mb-1" style={{ transform: 'translateY(-16px)' }}>
               <WigProductPriceDisplay
                 productName="NOIR"
+                soldOutPriceTreatment="normal"
                 priceHtml={formatPrice(totalPrice)}
                 priceStyle={{
                   fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
@@ -3459,40 +3461,12 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
         </div>
 
-        {/* ADD TO BAG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-            <button
-              onClick={handleAddToBag}
-              disabled={addToBagState === 'adding' || isNoirSoldOut('NOIR')}
-              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' || isNoirSoldOut('NOIR') ? 'bg-white cursor-not-allowed' : 
-                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-              }`}
-              style={{ 
-                borderWidth: '1.3px', 
-                color: '#EB1C24',
-                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                backgroundColor: '#FFFFFF'
-              }}
-            >
-            {isNoirSoldOut('NOIR') && addToBagState === 'idle' && (
-              <span style={{ color: '#EB1C24' }}>OUT OF STOCK</span>
-            )}
-            {!isNoirSoldOut('NOIR') && addToBagState === 'idle' && 'ADD TO BAG'}
-            {!isNoirSoldOut('NOIR') && addToBagState === 'adding' && 'ADDING...'}
-            {!isNoirSoldOut('NOIR') && addToBagState === 'added' && (
-              <span className="flex items-center justify-center gap-1">
-                <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                <span style={{ color: '#808080' }}>IN THE BAG</span>
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-            <button
-            onClick={() => {
+        <UnitPdpCartActions
+          productName="NOIR"
+          soldOut={isNoirSoldOut('NOIR')}
+          addToBagState={addToBagState}
+          onAddToBag={handleAddToBag}
+          onCustomize={() => {
                 if (!isSignedIn) {
                   setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
                   setShowBawFeatureSignInModal(true);
@@ -3606,17 +3580,8 @@ width: 'clamp(230px, 57.5vw, 368px)',
               console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
               
               navigate('/build-a-wig/noir/customize');
-            }}
-            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-            style={{ 
-              borderWidth: '1.3px', 
-              color: '#EB1C24',
-              fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif'
-            }}
-          >
-            CUSTOMIZE IN BUILD-A-WIG
-            </button>
-        </div>
+          }}
+        />
 
         <div className="flex flex-col py-5 px-4" style={{ minWidth: '100%', maxWidth: 'none', overflow: 'visible', paddingTop: '0px' }}>
         {/* SIMILAR PRODUCTS SECTION */}

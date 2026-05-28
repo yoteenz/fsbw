@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { PRODUCT_INVENTORY_UPDATED_EVENT } from '../utils/productInventoryAvailability';
 import { syncStoredLinesStockStatus } from '../utils/syncStoredLinesStockStatus';
+import { processUnitStockNotifyWaitlistOnInventoryUpdate } from '../utils/unitStockNotify';
 
 /** Keeps cart / wishlist `stockStatus` aligned with admin inventory. */
 export default function ProductInventorySync() {
   useEffect(() => {
     const run = () => {
       syncStoredLinesStockStatus();
+      processUnitStockNotifyWaitlistOnInventoryUpdate();
     };
     run();
     window.addEventListener('focus', run);

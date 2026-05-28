@@ -34,6 +34,7 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
+import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 function OceanCurlSelection() {
@@ -1351,6 +1352,7 @@ function OceanCurlSelection() {
             <div className="text-center mb-1" style={{ transform: 'translateY(-16px)' }}>
               <WigProductPriceDisplay
                 productName="OCEAN CURL"
+                soldOutPriceTreatment="normal"
                 priceHtml={formatPrice(totalPrice)}
                 priceStyle={{
                   fontFamily: '"Futura PT Medium"',
@@ -1967,40 +1969,13 @@ function OceanCurlSelection() {
             </div>
           </div>
 
-          {/* ADD TO BAG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-            <button
-              onClick={handleAddToBag}
-              disabled={addToBagState === 'adding' || isUnitSoldOut('OCEAN CURL')}
-              className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                addToBagState === 'adding' || isUnitSoldOut('OCEAN CURL') ? 'bg-white cursor-not-allowed' : 
-                addToBagState === 'added' ? 'bg-white cursor-pointer' : 'bg-white cursor-pointer hover:bg-gray-50'
-              }`}
-              style={{ 
-                borderWidth: '1.3px', 
-                color: '#EB1C24',
-                fontFamily: '"Futura PT Medium"',
-                backgroundColor: '#FFFFFF'
-              }}
-            >
-              {isUnitSoldOut('OCEAN CURL') && addToBagState === 'idle' && (
-                <span style={{ color: '#EB1C24' }}>OUT OF STOCK</span>
-              )}
-              {!isUnitSoldOut('OCEAN CURL') && addToBagState === 'idle' && 'ADD TO BAG'}
-              {!isUnitSoldOut('OCEAN CURL') && addToBagState === 'adding' && 'ADDING...'}
-              {!isUnitSoldOut('OCEAN CURL') && addToBagState === 'added' && (
-                <span className="flex items-center justify-center gap-1">
-                  <img src="/assets/check.svg" alt="Check" width="9" height="9" />
-                  <span style={{ color: '#808080' }}>IN THE BAG</span>
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* CUSTOMIZE IN BUILD-A-WIG BUTTON */}
-          <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-            <button
-              onClick={() => {
+          <UnitPdpCartActions
+            productName="OCEAN CURL"
+            soldOut={isUnitSoldOut('OCEAN CURL')}
+            addToBagState={addToBagState}
+            onAddToBag={handleAddToBag}
+            buttonFontFamily='"Futura PT Medium"'
+            onCustomize={() => {
                 if (!isSignedIn) {
                   setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
                   setShowBawFeatureSignInModal(true);
@@ -2111,17 +2086,8 @@ function OceanCurlSelection() {
                 console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
                 
                 navigate('/build-a-wig/ocean-curl/customize');
-              }}
-              className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-              style={{ 
-                borderWidth: '1.3px', 
-                color: '#EB1C24',
-                fontFamily: '"Futura PT Medium"'
-              }}
-            >
-              CUSTOMIZE IN BUILD-A-WIG
-            </button>
-          </div>
+            }}
+          />
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>

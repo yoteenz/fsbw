@@ -76,14 +76,20 @@ export function WigProductPriceDisplay({
   priceHtml,
   priceStyle,
   labelStyle,
+  /** PDP: show price normally when sold out; grid keeps strikethrough + label. */
+  soldOutPriceTreatment = 'strikethrough',
 }: {
   productName: string;
   priceHtml: PriceHtml;
   priceStyle?: CSSProperties;
   labelStyle?: CSSProperties;
+  soldOutPriceTreatment?: 'strikethrough' | 'normal';
 }) {
   const soldOut = isWigUnitSoldOut(productName);
   if (!soldOut) {
+    return <p style={priceStyle} dangerouslySetInnerHTML={priceHtml} />;
+  }
+  if (soldOutPriceTreatment === 'normal') {
     return <p style={priceStyle} dangerouslySetInnerHTML={priceHtml} />;
   }
   return (
