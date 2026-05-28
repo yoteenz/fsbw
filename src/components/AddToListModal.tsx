@@ -244,7 +244,7 @@ export default function AddToListModal({
           style={LIST_DROPDOWN_MENU_ITEM_STYLE}
           onClick={handlePickCreateList}
         >
-          CREATE A LIST
+          NEW LIST
         </button>
         {lists.map((list) => (
           <button
