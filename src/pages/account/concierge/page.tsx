@@ -2007,7 +2007,8 @@ function ConciergePage() {
       };
       messages.unshift(newMessage);
       localStorage.setItem('adminPriorityMessages', JSON.stringify(messages));
-      
+      window.dispatchEvent(new CustomEvent('adminMessagesHubUpdated'));
+
       setPriorityMessage('');
       setSuccessMessage('PRIORITY MESSAGE SUBMITTED SUCCESSFULLY');
       setShowSuccessModal(true);

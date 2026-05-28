@@ -18835,3 +18835,17 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 - **`useProductInventorySnapshot`** — re-sync on focus / cart / wishlist / inventory events.
 - **`WigStockPrice.tsx`** — `WigLineStockPrice` (lines), `WigProductPriceDisplay` (PDP/grid).
 - Wired: **`CartDropdown`**, **`shopping-bag`**, **`wishlist`**, **`wishlist/lists`**, **`wishlist/shared`**, **`products`** (units grid), PDPs **`straight/noir`**, **`straight/blanco`**, **`wavy/soft-wave`**, **`wavy/beach-wave`**, **`curly/soft-curl`**, **`curly/ocean-curl`**; **`setInventoryOverride`** dispatches inventory-updated event.
+
+---
+
+## 2026-05-21 — Admin messages & notifications hub pages (pending layout)
+
+**Context (full chat):** Inventory storefront wiring; prior checkout/layers/admin spacing work. User requested **admin messages** and **admin notifications** pages matching **admin pending** layout, linked from nav dropdown **VIEW ALL MESSAGES** / **VIEW ALL NOTIFICATIONS**.
+
+**Routes:** **`/admin/messages`** (`AdminMessagesPage`), **`/admin/alerts`** (header title NOTIFICATIONS; inbox for nav alerts). Existing **`/admin/notifications`** unchanged (send notification to client).
+
+**Messages page:** Panels **UNREAD PRIORITY** / **TOTAL UNREAD**; tabs **INBOX** (concierge `adminPriorityMessages`), **FAQ** (`adminBrandFaqQuestions`), **CONTACT** (brand contact API + local), **REVIEWS** (pending mock reviews → link **`/admin/pending?tab=REVIEWS`**).
+
+**Alerts page:** Panels **TOTAL URGENT** / **TOTAL ORDERS**; tabs **ALERTS** (ALERTS/SALES/BOOKINGS/CLIENTS/REMINDERS), **ORDERS**, **SYSTEM** (OPERATIONAL/SYSTEM/BRAND); colored category labels from **`adminHeaderNotificationsData`**.
+
+**Shared:** **`AdminHubPageShell`**, **`adminMessagesHub.ts`**, **`adminNotificationsHub.ts`**, read-state in localStorage; **`AdminHeader`** dropdowns navigate to new routes and sync read with hub keys.

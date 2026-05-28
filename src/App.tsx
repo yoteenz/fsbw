@@ -83,6 +83,8 @@ const AdminReferrals = lazyWithRetry(() => import('./pages/admin/referrals/page'
 const AdminAnalytics = lazyWithRetry(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
 const AdminUsers = lazyWithRetry(() => import('./pages/admin/users/page'), 'AdminUsers');
 const AdminNotifications = lazyWithRetry(() => import('./pages/admin/notifications/page'), 'AdminNotifications');
+const AdminMessages = lazyWithRetry(() => import('./pages/admin/messages/page'), 'AdminMessages');
+const AdminAlerts = lazyWithRetry(() => import('./pages/admin/alerts/page'), 'AdminAlerts');
 const AdminAudit = lazyWithRetry(() => import('./pages/admin/audit/page'), 'AdminAudit');
 const AdminSpecialOffer = lazyWithRetry(() => import('./pages/admin/special-offer/page'), 'AdminSpecialOffer');
 const AdminWorkers = lazyWithRetry(() => import('./pages/admin/workers/page'), 'AdminWorkers');
@@ -420,6 +422,16 @@ function App() {
           <Route path="pending" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminPending />
+            </Suspense>
+          } />
+          <Route path="messages" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminMessages />
+            </Suspense>
+          } />
+          <Route path="alerts" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminAlerts />
             </Suspense>
           } />
           <Route path="revenue/accounting-report" element={

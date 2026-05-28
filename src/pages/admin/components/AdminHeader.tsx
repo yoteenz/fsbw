@@ -2,133 +2,60 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAdminFounderAccount } from '../../../utils/adminAuth';
+import { ADMIN_HEADER_NOTIFICATIONS } from '../../../utils/adminHeaderNotificationsData';
+import { loadConciergePriorityMessages, markAdminHubMessageRead } from '../../../utils/adminMessagesHub';
+import { markAdminHubNotificationRead } from '../../../utils/adminNotificationsHub';
 
 /** Debug: long-press (500ms) on messages/notifications icons toggles active/inactive for testing "no new" state */
 const LONG_PRESS_MS = 500;
 
-const notifications = [
-  { id: 1, text: "LOW INVENTORY - RESTOCK (5) ITEMS", urgent: true, unread: true, timestamp: "2 MIN AGO", category: "ALERTS" },
-  { id: 2, text: "NEW PURCHASE ORDER - DECEMBER 19TH", urgent: false, unread: true, timestamp: "5 MIN AGO", category: "ORDERS" },
-  { id: 4, text: "ORDER #17 NEEDS ORDER FORM (24 HOURS)", urgent: true, unread: true, timestamp: "8 MIN AGO", category: "ALERTS" },
-  // Account alerts (for confirmation – match account profile alerts page)
-  { id: 50, text: "ACCOUNT ALERT - VOUCHER (VIEW VOUCHERS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 51, text: "ACCOUNT ALERT - DIGITAL CASH (VIEW BALANCE)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 52, text: "ACCOUNT ALERT - LOYALTY POINTS (VIEW REWARDS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 53, text: "ACCOUNT ALERT - TIER STATUS (VIEW TIER)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 54, text: "ACCOUNT ALERT - MEMBERSHIP (VIEW MEMBERSHIP)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 55, text: "ACCOUNT ALERT - ORDERS (VIEW ORDERS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 56, text: "ACCOUNT ALERT - REWARDS (VIEW REWARDS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 57, text: "ACCOUNT ALERT - SALES & OFFERS (SHOP)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 58, text: "ACCOUNT ALERT - REFERRALS (VIEW REFERRALS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 59, text: "ACCOUNT ALERT - SHIPPING & PAYMENT (MANAGE)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 60, text: "ACCOUNT ALERT - SETTINGS (OPEN SETTINGS)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 61, text: "ACCOUNT ALERT - AFFILIATE (VIEW AFFILIATE)", urgent: false, unread: true, timestamp: "JUST NOW", category: "ALERTS" },
-  { id: 6, text: "APPOINTMENT CONFLICT - DOUBLE BOOKING DETECTED", urgent: true, unread: false, timestamp: "15 MIN AGO", category: "BOOKINGS" },
-  { id: 7, text: "CLIENT COMPLAINT - PRIORITY RESPONSE NEEDED", urgent: true, unread: false, timestamp: "22 MIN AGO", category: "CLIENTS" },
-  { id: 8, text: "SHIPPING DELAY - 12 ORDERS AFFECTED", urgent: false, unread: false, timestamp: "35 MIN AGO", category: "ORDERS" },
-  { id: 9, text: "REFUND REQUEST - CUSTOMER ID #789", urgent: false, unread: false, timestamp: "1 HOUR AGO", category: "ORDERS" },
-  { id: 10, text: "EQUIPMENT FAILURE - PRINTER OFFLINE", urgent: false, unread: false, timestamp: "2 HOURS AGO", category: "OPERATIONAL" },
-  { id: 35, text: "BULK ORDER PROCESSING - ORDER #23", urgent: false, unread: true, timestamp: "3 HOURS AGO", category: "ORDERS" },
-  { id: 36, text: "ORDER MODIFICATION REQUEST - ORDER #19", urgent: false, unread: true, timestamp: "4 HOURS AGO", category: "ORDERS" },
-  { id: 37, text: "ORDER SHIPPED - #ORD-2024-089", urgent: false, unread: false, timestamp: "5 HOURS AGO", category: "ORDERS" },
-  { id: 38, text: "PAYMENT RECEIVED - $1,250", urgent: false, unread: true, timestamp: "6 HOURS AGO", category: "SALES" },
-  { id: 39, text: "QUOTE APPROVED - ENTERPRISE CLIENT", urgent: false, unread: false, timestamp: "7 HOURS AGO", category: "SALES" },
-  { id: 40, text: "PAYMENT RECEIVED - $850", urgent: false, unread: false, timestamp: "8 HOURS AGO", category: "SALES" },
-  { id: 41, text: "APPOINTMENT CONFIRMED - MICHAEL T.", urgent: false, unread: true, timestamp: "9 HOURS AGO", category: "BOOKINGS" },
-  { id: 42, text: "BOOKING CANCELLATION - JENNIFER S.", urgent: false, unread: false, timestamp: "10 HOURS AGO", category: "BOOKINGS" },
-  { id: 43, text: "FOLLOW-UP SCHEDULED - LISA W.", urgent: false, unread: false, timestamp: "12 HOURS AGO", category: "BOOKINGS" }
-];
+type HeaderPriorityMessage = {
+  id: number | string;
+  clientName: string;
+  tier: string;
+  message: string;
+  timestamp: string;
+  unread: boolean;
+  priority: string;
+  avatar: string;
+  photo?: string;
+};
 
-const priorityMessages = [
-  {
-    id: 1,
-    clientName: "SARAH JOHNSON",
-    tier: "BLACK TIER",
-    message: "URGENT - Need to reschedule my installation appointment for this Saturday. Family emergency came up.",
-    timestamp: "3 MIN AGO",
-    unread: true,
-    priority: "urgent",
-    avatar: "SJ",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 2,
-    clientName: "MARIA RODRIGUEZ",
-    tier: "BLACK TIER",
-    message: "Hi! Just wanted to confirm my consultation tomorrow at 2 PM. Also, can we discuss the new hair texture options?",
-    timestamp: "8 MIN AGO",
-    unread: true,
-    priority: "high",
-    avatar: "MR",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 3,
-    clientName: "ASHLEY WILLIAMS",
-    tier: "BLACK TIER",
-    message: "The wig you installed last week is absolutely perfect! My friends keep asking where I got it done. Thank you!",
-    timestamp: "15 MIN AGO",
-    unread: false,
-    priority: "medium",
-    avatar: "AW",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 4,
-    clientName: "JENNIFER DAVIS",
-    tier: "BLACK TIER",
-    message: "I'm having some issues with the maintenance routine you recommended. Could we schedule a quick virtual check-in?",
-    timestamp: "22 MIN AGO",
-    unread: true,
-    priority: "high",
-    avatar: "JD",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 5,
-    clientName: "LISA MARTINEZ",
-    tier: "BLACK TIER",
-    message: "Thank you for the amazing service! I'm referring my sister - she'll be calling soon for an appointment.",
-    timestamp: "35 MIN AGO",
-    unread: false,
-    priority: "medium",
-    avatar: "LM",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 6,
-    clientName: "MICHELLE BROWN",
-    tier: "BLACK TIER",
-    message: "Can we discuss upgrading to the premium package? I'm interested in the monthly maintenance plan.",
-    timestamp: "1 HOUR AGO",
-    unread: true,
-    priority: "high",
-    avatar: "MB",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 7,
-    clientName: "SAMANTHA JONES",
-    tier: "BLACK TIER",
-    message: "Love the new hair! Quick question about washing frequency - is twice a week too much for this texture?",
-    timestamp: "2 HOURS AGO",
-    unread: false,
-    priority: "low",
-    avatar: "SJ",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  },
-  {
-    id: 8,
-    clientName: "NICOLE TAYLOR",
-    tier: "BLACK TIER",
-    message: "Hi! I'm traveling to Miami next month. Do you have any stylist recommendations there for emergency touch-ups?",
-    timestamp: "3 HOURS AGO",
-    unread: false,
-    priority: "medium",
-    avatar: "NT",
-    photo: "https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png"
-  }
-];
+function buildHeaderPriorityMessages(): HeaderPriorityMessage[] {
+  const concierge = loadConciergePriorityMessages().map((m, index) => {
+    const initials = (m.userName || 'C')
+      .split(/\s+/)
+      .map((p) => p[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+    return {
+      id: m.id || `concierge-${index}`,
+      clientName: (m.userName || 'CLIENT').toUpperCase(),
+      tier: 'PRIORITY',
+      message: m.message,
+      timestamp: new Date(m.timestamp).toLocaleString(),
+      unread: m.status === 'new',
+      priority: 'urgent',
+      avatar: initials || 'PM',
+    };
+  });
+  if (concierge.length > 0) return concierge;
+  return [
+    {
+      id: 1,
+      clientName: 'SARAH JOHNSON',
+      tier: 'BLACK TIER',
+      message:
+        'URGENT - Need to reschedule my installation appointment for this Saturday. Family emergency came up.',
+      timestamp: '3 MIN AGO',
+      unread: true,
+      priority: 'urgent',
+      avatar: 'SJ',
+      photo: 'https://static.readdy.ai/image/315e13a2042f092242ff6698f0b32192/ce4ab885708daff01cd1b4c775509dc2.png',
+    },
+  ];
+}
 
 // System notifications - kept for future use
 // const systemNotifications = [
@@ -193,8 +120,10 @@ export default function AdminHeader({
 }: AdminHeaderProps) {
   const navigate = useNavigate();
 
+  const priorityMessages = useMemo(() => buildHeaderPriorityMessages(), []);
+
   const headerNotifications = useMemo(() => {
-    const base = [...notifications];
+    const base = [...ADMIN_HEADER_NOTIFICATIONS];
     let email: string | null = null;
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem('currentUser') : null;
@@ -236,7 +165,7 @@ export default function AdminHeader({
   const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
   const [showMessagesDropdown, setShowMessagesDropdown] = useState(false);
   const [readNotifications, setReadNotifications] = useState<number[]>([]);
-  const [readMessages, setReadMessages] = useState<number[]>([]);
+  const [readMessages, setReadMessages] = useState<Array<number | string>>([]);
 
   // Long press detection (debug: toggle active/inactive for testing)
   const [showInactiveNotifications, setShowInactiveNotifications] = useState(false);
@@ -442,17 +371,19 @@ export default function AdminHeader({
 
   // Mark notification as read
   const markAsRead = (notificationId: number) => {
-    setReadNotifications(prev => [...prev, notificationId]);
+    setReadNotifications((prev) => [...prev, notificationId]);
+    markAdminHubNotificationRead(`notif-${notificationId}`);
   };
 
   // Mark message as read
-  const markMessageAsRead = (messageId: number) => {
-    setReadMessages(prev => [...prev, messageId]);
+  const markMessageAsRead = (messageId: number | string) => {
+    setReadMessages((prev) => [...prev, messageId]);
+    markAdminHubMessageRead(`inbox-${messageId}`);
   };
 
   // Get unread notifications count - always show count regardless of inactive state
-  const unreadCount = notifications.filter(
-    n => n.unread && !readNotifications.includes(n.id)
+  const unreadCount = headerNotifications.filter(
+    (n) => n.unread && !readNotifications.includes(n.id)
   ).length;
 
   // Get unread messages count - always show count regardless of inactive state
@@ -850,7 +781,7 @@ export default function AdminHeader({
                   style={{ color: '#EB1C24' }}
                   onClick={() => {
                     setShowMessagesDropdown(false);
-                    navigate('/admin/overview');
+                    navigate('/admin/messages');
                   }}
                 >
                   <span style={{ fontSize: '10px' }}>VIEW ALL MESSAGES</span>
@@ -945,7 +876,7 @@ export default function AdminHeader({
                   style={{ color: '#EB1C24' }}
                   onClick={() => {
                     setShowNotificationsDropdown(false);
-                    navigate('/admin/overview');
+                    navigate('/admin/alerts');
                   }}
                 >
                   <span style={{ fontSize: '10px' }}>VIEW ALL NOTIFICATIONS</span>

@@ -27,3 +27,10 @@ export function appendBrandFaqQuestionLocal(entry: BrandFaqQuestionRecord): void
   localStorage.setItem(BRAND_FAQ_QUESTIONS_STORAGE_KEY, JSON.stringify(list.slice(0, 500)));
   window.dispatchEvent(new CustomEvent('brandFaqQuestionsUpdated'));
 }
+
+export function markBrandFaqQuestionReadLocal(id: string): void {
+  const list = loadBrandFaqQuestionsLocal();
+  const next = list.map((row) => (row.id === id ? { ...row, status: 'read' as const } : row));
+  localStorage.setItem(BRAND_FAQ_QUESTIONS_STORAGE_KEY, JSON.stringify(next));
+  window.dispatchEvent(new CustomEvent('brandFaqQuestionsUpdated'));
+}
