@@ -18750,3 +18750,13 @@ Summary of the **whole conversation so far** in this chat: continued **Build-a-W
 **Git:** Commit on `master`; merged into `preview/mobile`. Remote already had equivalent patch on rebase (duplicate commit dropped); `preview/mobile` pushed after `git pull --rebase`.
 
 **Conventions:** Brand legal/FAQ copy uses "X AND Y" without a comma before AND unless the user requests otherwise.
+
+---
+
+## 2026-05-27 — Brand terms & FAQ: remove commas before OR
+
+**Context:** User asked to apply the same Oxford-comma cleanup for "OR" as was done for "AND" on Terms and FAQ pages.
+
+**Changes:** `src/constants/brandTermsCopy.ts` (8) and `src/constants/brandFaqCopy.ts` (2) — replaced `, OR` with ` OR` where OR is the list conjunction (regex `, OR\b`), e.g. "MODIFY, OR CHANGE" → "MODIFY OR CHANGE", "SITE MENU, OR GO TO" → "SITE MENU OR GO TO". Did not alter words like ORDERS/ORDER where the comma precedes a longer token.
+
+**Git:** `fcee29db` on `master`; merged and pushed `preview/mobile`.
