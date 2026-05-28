@@ -66,7 +66,7 @@ type BrandFaqQuestionSectionProps = {
   onSubmittingChange?: (submitting: boolean) => void;
 };
 
-/** FAQ question submission form — fields inside main card; submit button lives in `PageActionsBelowCard`. */
+/** FAQ question submission form, fields inside main card; submit button lives in `PageActionsBelowCard`. */
 export default function BrandFaqQuestionSection({
   formId = 'brand-faq-question-form',
   onSubmitted,

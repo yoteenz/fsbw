@@ -51,7 +51,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
   };
 }
 
-/** Become a Member marketing copy only — no included-benefits or unlock-rewards blocks on `/brand/member`. */
+/** Become a Member marketing copy only, no included-benefits or unlock-rewards blocks on `/brand/member`. */
 export default function BrandMemberSection() {
   const bodyBlocks = BRAND_MEMBER_BLOCKS;
 

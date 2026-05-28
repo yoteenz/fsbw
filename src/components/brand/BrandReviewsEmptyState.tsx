@@ -1,4 +1,4 @@
-/** Empty state for `/brand/reviews` — centered in a card sized like Become a Member. */
+/** Empty state for `/brand/reviews`, centered in a card sized like Become a Member. */
 export default function BrandReviewsEmptyState() {
   return (
     <div
