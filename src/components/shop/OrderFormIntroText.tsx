@@ -24,11 +24,14 @@ const PARA_STYLE: CSSProperties = {
 };
 
 const SUBHEAD_STYLE: CSSProperties = {
-  ...PARA_STYLE,
-  fontFamily: '"Futura PT Medium"',
-  fontWeight: 500,
+  fontFamily: '"Bohemy", cursive',
+  fontSize: '18px',
   color: '#808080',
+  fontWeight: 400,
   margin: '0 0 10px 0',
+  textAlign: 'left',
+  textTransform: 'lowercase',
+  lineHeight: 1.45,
 };
 
 const BULLET_STYLE: CSSProperties = {
