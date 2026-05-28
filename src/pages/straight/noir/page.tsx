@@ -2297,14 +2297,14 @@ function NoirSelection() {
             <>
           {/* MAIN BUILD AREA */}
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className="border border-black flex flex-col pt-6 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
           style={{ 
             borderWidth: '1.3px', 
             minWidth: '100%', 
             maxWidth: 'none', 
             overflow: 'visible',
             backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            paddingBottom: '20px'
+            paddingBottom: '6px'
           }}
         >
           {/* WIG PREVIEW - wishlist/2D-3D text hamburgered with images; text near hero & thumbnail edges */}
@@ -2751,7 +2751,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
 
           {/* QUANTITY SELECTOR */}
-          <div className="flex justify-center mb-2" style={{ transform: 'translateY(-30px)' }}>
+          <div className="flex justify-center" style={{ transform: 'translateY(-30px)', marginBottom: '-24px' }}>
             <button 
               onClick={handleQuantityDecrease}
               disabled={quantity <= 1}
@@ -2921,20 +2921,21 @@ width: 'clamp(230px, 57.5vw, 368px)',
         />
 
           <div
-            className="border border-black flex flex-col pt-6 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-2 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
             style={{
               borderWidth: '1.3px',
               minWidth: '100%',
               maxWidth: 'none',
-              overflow: 'visible',
+              overflow: 'hidden',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              paddingBottom: '34px',
+              paddingBottom: '16px',
+              marginTop: '14px',
             }}
           >
           {/* PRODUCT SHOTS SECTION — same viewport / row / image metrics as Blanco, Beach Wave, etc. */}
-          <div className="mt-8 mb-6" style={{ transform: 'translateY(0)' }}>
+          <div className="mt-0 mb-4">
             {/* Product Images with Drag/Swipe Scroll */}
-            <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
+            <div className="relative overflow-hidden" style={{ height: '260px', minHeight: '260px', paddingTop: '24px' }}>
               <div 
                 className="flex transition-transform duration-300 ease-out"
                 style={{ 
@@ -2956,7 +2957,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir left.png"
                   alt="NOIR Left View"
                   className="object-cover"
-                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
@@ -2974,7 +2975,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir front.png"
                   alt="NOIR Front View"
                   className="object-cover"
-                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
@@ -2992,7 +2993,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   src="/assets/NOIR/noir right.png"
                   alt="NOIR Right View"
                   className="object-cover"
-                  style={{ width: '18%', height: '290px', maxHeight: '290px', flexShrink: 0, transform: 'translateY(-55px)', cursor: 'pointer' }}
+                  style={{ width: '18%', height: '240px', maxHeight: '240px', flexShrink: 0, transform: 'translateY(-8px)', cursor: 'pointer' }}
                   draggable={false}
                   onClick={() => {
                     const productShotImages = [
@@ -3029,7 +3030,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </div>
 
           {/* CAP SIZE CHART IMAGE */}
-          <div className="flex justify-center mt-4 w-full">
+          <div className="flex justify-center mt-2 w-full">
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
@@ -3040,7 +3041,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
           </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ paddingTop: '10px' }}>
+              <div className="mt-4" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                 <button
@@ -3081,7 +3082,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: 0 }}>
                 {activeTab === 'DETAILS' && (
                   <>
                     <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
