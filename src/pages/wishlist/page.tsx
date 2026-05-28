@@ -1104,7 +1104,8 @@ function WishlistSelection() {
                           ) : isLineItemOutOfStock(item) ? (
                             <span
                               style={{
-                                fontFamily: '"Futura PT Demi"',
+                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+                                fontWeight: '500',
                                 fontSize: '9px',
                                 color: '#EB1C24',
                                 textTransform: 'uppercase',
