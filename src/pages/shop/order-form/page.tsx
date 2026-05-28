@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
+import OrderFormIntroText from '../../../components/shop/OrderFormIntroText';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
@@ -1039,47 +1040,7 @@ function OrderFormPage() {
                   </h2>
                 </div>
 
-                {/* Paragraph 1 */}
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '12px',
-                    color: '#000000',
-                    lineHeight: '1.8',
-                    margin: '18px 0 20px 0',
-                    textAlign: 'left'
-                  }}
-                >
-                  THIS FORM SERVES AS PROTECTION AGAINST FRAUD, CHARGEBACKS & AS AN AUTHORIZATION OF PURCHASE FROM THE CLIENT TO FRONTAL SLAYER. THIS FORM MUST BE COMPLETED AFTER PURCHASING HAIR RELATED PRODUCTS TO ENSURE A SMOOTH PROCESS & TO AVOID CANCELLATIONS OR DELAYS. ALL PROVIDED INFORMATION MUST MATCH YOUR ORDER DETAILS.
-                </p>
-
-                {/* Paragraph 2 */}
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '12px',
-                    color: '#000000',
-                    lineHeight: '1.8',
-                    margin: '0 0 20px 0',
-                    textAlign: 'left'
-                  }}
-                >
-                  YOUR ORDER WILL NOT BE PROCESSED OR SHIPPED UNTIL THIS FORM IS COMPLETED & SUBMITTED. IF THIS FORM IS NOT FILLED OUT WITHIN 24 HOURS OF PURCHASE, YOUR ORDER WILL BE REFUNDED & CANCELLED. IF YOU HAVE ANY INQUIRIES, SUGGESTIONS OR CONCERNS PLEASE REACH OUT TO <span style={{ color: '#EB1C24', fontWeight: '600' }}>CONTACT@FRONTALSLAYER.COM</span>
-                </p>
-
-                {/* Paragraph 3 */}
-                <p
-                  style={{
-                    fontFamily: '"Futura PT Book"',
-                    fontSize: '12px',
-                    color: '#000000',
-                    lineHeight: '1.8',
-                    margin: '0 0 30px 0',
-                    textAlign: 'left'
-                  }}
-                >
-                  THIS DOCUMENT WILL BE RECORDED & A COPY WILL BE SENT TO YOU UPON REQUEST. AS ALWAYS, YOUR BUSINESS IS GREATLY APPRECIATED. THANK YOU SO MUCH FOR SHOPPING WITH US!
-                </p>
+                <OrderFormIntroText />
 
                 {/* Form Inputs */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
