@@ -35,6 +35,15 @@ import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { UnitPdpWigPreviewImages } from '../../../components/shop/UnitPdpWigPreviewImages';
+import {
+  UNIT_PDP_CAP_CHART_IMG_STYLE,
+  UNIT_PDP_CAP_CHART_ROW_STYLE,
+  UNIT_PDP_CAP_SIZE_HEADER_STYLE,
+  UNIT_PDP_MAIN_CARD_STYLE,
+  UNIT_PDP_TAB_CONTENT_STYLE,
+  UNIT_PDP_TABS_SECTION_STYLE,
+} from '../../../components/shop/unitPdpLayoutConstants';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 /** 2D Soft Wave mannequin PNGs (brick background) — not the 3D SOFT-WAVE renders. */
@@ -1142,7 +1151,7 @@ function SoftWaveSelection() {
               maxWidth: 'none', 
               overflow: 'visible',
               backgroundColor: 'rgba(255, 255, 255, 0.6)',
-              paddingBottom: '34px'
+              ...UNIT_PDP_MAIN_CARD_STYLE,
             }}
           >
             {/* WIG PREVIEW - wishlist/2D-3D text hamburgered with images; text near hero & thumbnail edges */}
@@ -1175,85 +1184,24 @@ function SoftWaveSelection() {
                     <span style={{ color: is3DView ? '#EB1C24' : '#000000', fontFamily: is3DView ? '"Futura PT Medium"' : '"Futura PT Book"', fontSize: '11px', fontWeight: is3DView ? '500' : '400', margin: '0' }}>3D VIEW</span>
                   </div>
                 </div>
-                <div className="product-wig-preview-images" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: is3DView ? 'clamp(6px, 1.2vw, 12px)' : 'clamp(4px, 0.8vw, 8px)', marginBottom: 'clamp(12px, 1.5vw, 16px)', overflow: 'visible', transform: 'translateY(0)' }}>
-                  <div style={{ position: 'relative', overflow: 'visible', flexShrink: '0' }}>
-                    <div
-                      style={{
-                        position: 'relative',
-                        backgroundSize: 'cover',
-                        backgroundPosition: is3DView ? 'center calc(50% + 5px)' : 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 'clamp(200px, 50vw, 320px)',
-                        height: 'clamp(290px, 72.5vw, 464px)',
-                        backgroundImage: `url('/assets/${is3DView ? current3DImages.hero : 'leaf-brick-resize.png'}')`,
-                        backgroundRepeat: 'repeat',
-                        overflow: 'visible',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        const allImages = is3DView 
-                          ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
-                          : [currentImages.hero, currentImages.top, currentImages.bottom];
-                        setViewerImages(allImages);
-                        setViewerCurrentIndex(0);
-                        setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? SOFT_WAVE_2D_VIEWER_DOWNLOADS : null);
-                        setShowImageViewer(true);
-                      }}
-                    >
-                      <img
-                        src={currentImages.hero}
-                        alt=""
-                        style={{ 
-                          position: 'absolute',
-                          left: '50%',
-                          top: 'calc(50% - 10.601px + 12px)',
-                          transform: 'translateX(-50%) translateY(-50%)',
-                          zIndex: '10',
-width: 'clamp(230px, 57.5vw, 368px)',
-                        height: 'auto',
-                        maxHeight: 'min(610px, 85vh)',
-                        minWidth: 'clamp(230px, 57.5vw, 368px)',
-                          minHeight: 'auto',
-                          display: is3DView ? 'none' : 'block',
-                          cursor: 'pointer',
-                          pointerEvents: is3DView ? 'none' : 'auto'
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const allImages = is3DView 
-                            ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
-                            : [currentImages.hero, currentImages.top, currentImages.bottom];
-                          setViewerImages(allImages);
-                          setViewerCurrentIndex(0);
-                          setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? SOFT_WAVE_2D_VIEWER_DOWNLOADS : null);
-                          setShowImageViewer(true);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col" style={{ height: 'clamp(290px, 72.5vw, 464px)', justifyContent: 'space-between', gap: 'clamp(6px, 1.2vw, 12px)' }}>
-                    <div className="flex-shrink-0 relative">
-                      <div
-                        className="relative bg-cover flex items-center justify-center cursor-pointer"
-                        style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.top : 'leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 10px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                        onClick={handleTopThumbnailClick}
-                      >
-                        <img src={currentImages.top} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0 relative">
-                      <div
-                        className="relative bg-cover flex items-center justify-center cursor-pointer"
-                        style={{ width: 'clamp(100px, 26vw, 175px)', height: 'clamp(140px, 36vw, 245px)', backgroundImage: `url('/assets/${is3DView ? current3DImages.bottom : 'leaf-brick-resize.png'}')`, backgroundSize: 'cover', backgroundPosition: is3DView ? 'center calc(50% + 10px)' : 'center', backgroundRepeat: 'no-repeat' }}
-                        onClick={handleBottomThumbnailClick}
-                      >
-                        <img src={currentImages.bottom} alt="" className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={{ top: 'calc(50% - 6.1px + 7.2px + 10px - 3px - 6px - 0.6px - 1px - 0.5px - 0.5px)', width: 'clamp(112px, 29vw, 196px)', height: 'auto', maxWidth: 'none', maxHeight: 'none', minWidth: 'clamp(112px, 29vw, 196px)', display: is3DView ? 'none' : 'block' }} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                                <UnitPdpWigPreviewImages
+                  is3DView={is3DView}
+                  currentImages={currentImages}
+                  heroFrameBackgroundImage={`url('/assets/${is3DView ? current3DImages.hero : 'leaf-brick-resize.png'}')`}
+                  topThumbBackgroundImage={`url('/assets/${is3DView ? current3DImages.top : 'leaf-brick-resize.png'}')`}
+                  bottomThumbBackgroundImage={`url('/assets/${is3DView ? current3DImages.bottom : 'leaf-brick-resize.png'}')`}
+                  onOpenHeroViewer={() => {
+                    const allImages = is3DView
+                      ? [`/assets/${current3DImages.hero}`, `/assets/${current3DImages.top}`, `/assets/${current3DImages.bottom}`]
+                      : [currentImages.hero, currentImages.top, currentImages.bottom];
+                    setViewerImages(allImages);
+                    setViewerCurrentIndex(0);
+                    setViewerModalDownloads(!is3DView && showAdminFounder2dDownloads ? SOFT_WAVE_2D_VIEWER_DOWNLOADS : null);
+                    setShowImageViewer(true);
+                  }}
+                  onTopThumbnailClick={handleTopThumbnailClick}
+                  onBottomThumbnailClick={handleBottomThumbnailClick}
+                />
               </div>
 
               {/* DISCLAIMER TEXT */}
@@ -1362,7 +1310,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
             </p>
 
             {/* CAP SIZE SELECTION HEADER */}
-            <div style={{ transform: 'translateY(-10px)' }}>
+            <div style={UNIT_PDP_CAP_SIZE_HEADER_STYLE}>
               <p
                 className="text-center text-black uppercase mb-4"
                 style={{ 
@@ -1527,7 +1475,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
 
               {/* QUANTITY SELECTOR */}
-              <div className="flex justify-center mb-6" style={{ transform: 'translateY(-30px)' }}>
+              <div className="flex justify-center" style={{ transform: 'translateY(-30px)', marginBottom: '0' }}>
                 <button 
                   onClick={handleQuantityDecrease}
                   disabled={quantity <= 1}
@@ -1590,12 +1538,12 @@ width: 'clamp(230px, 57.5vw, 368px)',
               </div>
 
               {/* CAP SIZE CHART IMAGE - responsive: scales up on larger screens */}
-              <div className="flex justify-center mt-4 w-full" style={{ transform: 'translateX(4px) translateY(-21px)' }}>
+              <div className="flex justify-center w-full" style={UNIT_PDP_CAP_CHART_ROW_STYLE}>
                 <img
                   src="/assets/NOIR/cap-size-chart.png"
                   alt="Cap Size Chart"
                   className="max-w-full h-auto object-contain"
-                  style={{ maxWidth: 'clamp(136px, 14.85vw, 180px)', maxHeight: 'clamp(106px, 11.8vw, 140px)', width: '100%', cursor: 'pointer' }}
+                  style={UNIT_PDP_CAP_CHART_IMG_STYLE}
                   onClick={handleChartClick}
                 />
               </div>
@@ -1647,10 +1595,142 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 </div>,
                 document.body
               )}
-            </div>
+          </div>
+        </div>
+          <UnitPdpCartActions
+            productName="SOFT WAVE"
+            soldOut={isUnitSoldOut('SOFT WAVE')}
+            addToBagState={addToBagState}
+            onAddToBag={handleAddToBag}
+            buttonFontFamily='"Futura PT Medium"'
+            onCustomize={() => {
+                if (!isSignedIn) {
+                  setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
+                  setShowBawFeatureSignInModal(true);
+                  return;
+                }
+                // Check if item is in the bag (default configuration)
+                if (addToBagState === 'added') {
+                  // Item is in bag - enter edit mode
+                  try {
+                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+                    
+                    // Find the matching cart item with default configuration
+                    let matchingItem: any = null;
+                    for (const item of cartItems) {
+                      if (matchesDefaultConfiguration(item)) {
+                        matchingItem = item;
+                        break;
+                      }
+                    }
+                    
+                    if (matchingItem) {
+                      // Set up edit mode
+                      localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
+                      localStorage.setItem('editingCartItemId', matchingItem.id);
+                      
+                      // Navigate to edit mode
+                      navigate('/build-a-wig/soft-wave/edit');
+                      return;
+                    }
+                  } catch (e) {
+                    console.error('Error setting up edit mode:', e);
+                  }
+                }
+                
+                // Item is NOT in bag - enter customize mode
+                // Store the selected cap size in localStorage for customize page
+                // Save to both selectedCapSize and customizeSelectedCapSize for consistency
+                const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
+                if (capSizeToSave) {
+                  if (typeof window !== 'undefined') {
+                    try {
+                      localStorage.setItem('selectedCapSize', capSizeToSave);
+                      localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
+                      const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
+                      const capSizePrice = isFlexibleCap ? '40' : '0';
+                      localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                      localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
+                    } catch (e) {
+                      console.error('Error saving cap size:', e);
+                    }
+                  }
+                }
+                
+                // Set defaults for other selections so customize page loads with defaults + selected cap
+                const defaults = {
+                  length: '24"',
+                  density: '200%',
+                  lace: '13X6',
+                  texture: 'SILKY',
+                  color: 'OFF BLACK',
+                  hairline: 'NATURAL',
+                  styling: 'NONE',
+                  addOns: [],
+                };
+                
+                // Save to both selected* and customizeSelected* keys
+                localStorage.setItem('selectedLength', defaults.length);
+                localStorage.setItem('selectedDensity', defaults.density);
+                localStorage.setItem('selectedLace', defaults.lace);
+                localStorage.setItem('selectedTexture', defaults.texture);
+                localStorage.setItem('selectedColor', defaults.color);
+                localStorage.setItem('selectedHairline', defaults.hairline);
+                localStorage.setItem('selectedStyling', defaults.styling);
+                localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
+                
+                localStorage.setItem('customizeSelectedLength', defaults.length);
+                localStorage.setItem('customizeSelectedDensity', defaults.density);
+                localStorage.setItem('customizeSelectedLace', defaults.lace);
+                localStorage.setItem('customizeSelectedTexture', defaults.texture);
+                localStorage.setItem('customizeSelectedColor', defaults.color);
+                localStorage.setItem('customizeSelectedHairline', defaults.hairline);
+                localStorage.setItem('customizeSelectedStyling', defaults.styling);
+                localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
+                
+                // Set all default prices to 0
+                localStorage.setItem('selectedLengthPrice', '0');
+                localStorage.setItem('selectedDensityPrice', '0');
+                localStorage.setItem('selectedLacePrice', '0');
+                localStorage.setItem('selectedTexturePrice', '0');
+                localStorage.setItem('selectedColorPrice', '0');
+                localStorage.setItem('selectedHairlinePrice', '0');
+                localStorage.setItem('selectedStylingPrice', '0');
+                localStorage.setItem('selectedAddOnsPrice', '0');
+                
+                localStorage.setItem('customizeSelectedLengthPrice', '0');
+                localStorage.setItem('customizeSelectedDensityPrice', '0');
+                localStorage.setItem('customizeSelectedLacePrice', '0');
+                localStorage.setItem('customizeSelectedTexturePrice', '0');
+                localStorage.setItem('customizeSelectedColorPrice', '0');
+                localStorage.setItem('customizeSelectedHairlinePrice', '0');
+                localStorage.setItem('customizeSelectedStylingPrice', '0');
+                localStorage.setItem('customizeSelectedAddOnsPrice', '0');
+                
+                // Clear any existing editing state
+                localStorage.removeItem('editingCartItem');
+                localStorage.removeItem('editingCartItemId');
+                
+                console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
+                
+                navigate('/build-a-wig/soft-wave/customize');
+            }}
+          />
 
+          <div
+            className="border border-black flex flex-col pt-4 pb-4 px-5 mb-1 bg-white/60 backdrop-blur-sm transition-all duration-300 ease-out"
+            style={{
+              borderWidth: '1.3px',
+              minWidth: '100%',
+              maxWidth: 'none',
+              overflow: 'hidden',
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              paddingBottom: '16px',
+              marginTop: '24px',
+            }}
+          >
             {/* PRODUCT SHOTS SECTION */}
-            <div className="mt-8 mb-6" style={{ transform: 'translateY(-34px)' }}>
+            <div className="mt-2 mb-4">
               {/* Product Images with Drag/Swipe Scroll */}
               <div className="relative overflow-hidden" style={{ height: '310px', minHeight: '310px', paddingTop: '70px' }}>
                 <div 
@@ -1745,9 +1825,10 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   product shots
                 </div>
               </div>
+            </div>
 
               {/* Tabs Section */}
-              <div className="mt-6" style={{ transform: 'translateY(-20px)', paddingTop: '10px' }}>
+              <div style={UNIT_PDP_TABS_SECTION_STYLE}>
                 {/* Tab Navigation */}
                 <div className="flex justify-center" style={{ gap: '16px' }}>
                   <button
@@ -1788,7 +1869,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                 </div>
 
                 {/* Tab Content */}
-                <div className="mt-4 space-y-4" style={{ maxWidth: 'none', width: '100%', marginBottom: '-93px' }}>
+                <div className="mt-4 space-y-4" style={UNIT_PDP_TAB_CONTENT_STYLE}>
                   {activeTab === 'DETAILS' && (
                     <>
                       <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7.7px', color: 'black', whiteSpace: 'nowrap' }}>
@@ -1923,128 +2004,7 @@ width: 'clamp(230px, 57.5vw, 368px)',
                   )}
                 </div>
               </div>
-            </div>
           </div>
-
-          <UnitPdpCartActions
-            productName="SOFT WAVE"
-            soldOut={isUnitSoldOut('SOFT WAVE')}
-            addToBagState={addToBagState}
-            onAddToBag={handleAddToBag}
-            buttonFontFamily='"Futura PT Medium"'
-            onCustomize={() => {
-                if (!isSignedIn) {
-                  setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });
-                  setShowBawFeatureSignInModal(true);
-                  return;
-                }
-                // Check if item is in the bag (default configuration)
-                if (addToBagState === 'added') {
-                  // Item is in bag - enter edit mode
-                  try {
-                    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-                    
-                    // Find the matching cart item with default configuration
-                    let matchingItem: any = null;
-                    for (const item of cartItems) {
-                      if (matchesDefaultConfiguration(item)) {
-                        matchingItem = item;
-                        break;
-                      }
-                    }
-                    
-                    if (matchingItem) {
-                      // Set up edit mode
-                      localStorage.setItem('editingCartItem', JSON.stringify(matchingItem));
-                      localStorage.setItem('editingCartItemId', matchingItem.id);
-                      
-                      // Navigate to edit mode
-                      navigate('/build-a-wig/soft-wave/edit');
-                      return;
-                    }
-                  } catch (e) {
-                    console.error('Error setting up edit mode:', e);
-                  }
-                }
-                
-                // Item is NOT in bag - enter customize mode
-                // Store the selected cap size in localStorage for customize page
-                // Save to both selectedCapSize and customizeSelectedCapSize for consistency
-                const capSizeToSave = selectedCustomCap || selectedFlexibleCap;
-                if (capSizeToSave) {
-                  if (typeof window !== 'undefined') {
-                    try {
-                      localStorage.setItem('selectedCapSize', capSizeToSave);
-                      localStorage.setItem('customizeSelectedCapSize', capSizeToSave);
-                      const isFlexibleCap = capSizeToSave === 'XXS/XS/S' || capSizeToSave === 'S/M/L';
-                      const capSizePrice = isFlexibleCap ? '40' : '0';
-                      localStorage.setItem('selectedCapSizePrice', capSizePrice);
-                      localStorage.setItem('customizeSelectedCapSizePrice', capSizePrice);
-                    } catch (e) {
-                      console.error('Error saving cap size:', e);
-                    }
-                  }
-                }
-                
-                // Set defaults for other selections so customize page loads with defaults + selected cap
-                const defaults = {
-                  length: '24"',
-                  density: '200%',
-                  lace: '13X6',
-                  texture: 'SILKY',
-                  color: 'OFF BLACK',
-                  hairline: 'NATURAL',
-                  styling: 'NONE',
-                  addOns: [],
-                };
-                
-                // Save to both selected* and customizeSelected* keys
-                localStorage.setItem('selectedLength', defaults.length);
-                localStorage.setItem('selectedDensity', defaults.density);
-                localStorage.setItem('selectedLace', defaults.lace);
-                localStorage.setItem('selectedTexture', defaults.texture);
-                localStorage.setItem('selectedColor', defaults.color);
-                localStorage.setItem('selectedHairline', defaults.hairline);
-                localStorage.setItem('selectedStyling', defaults.styling);
-                localStorage.setItem('selectedAddOns', JSON.stringify(defaults.addOns));
-                
-                localStorage.setItem('customizeSelectedLength', defaults.length);
-                localStorage.setItem('customizeSelectedDensity', defaults.density);
-                localStorage.setItem('customizeSelectedLace', defaults.lace);
-                localStorage.setItem('customizeSelectedTexture', defaults.texture);
-                localStorage.setItem('customizeSelectedColor', defaults.color);
-                localStorage.setItem('customizeSelectedHairline', defaults.hairline);
-                localStorage.setItem('customizeSelectedStyling', defaults.styling);
-                localStorage.setItem('customizeSelectedAddOns', JSON.stringify(defaults.addOns));
-                
-                // Set all default prices to 0
-                localStorage.setItem('selectedLengthPrice', '0');
-                localStorage.setItem('selectedDensityPrice', '0');
-                localStorage.setItem('selectedLacePrice', '0');
-                localStorage.setItem('selectedTexturePrice', '0');
-                localStorage.setItem('selectedColorPrice', '0');
-                localStorage.setItem('selectedHairlinePrice', '0');
-                localStorage.setItem('selectedStylingPrice', '0');
-                localStorage.setItem('selectedAddOnsPrice', '0');
-                
-                localStorage.setItem('customizeSelectedLengthPrice', '0');
-                localStorage.setItem('customizeSelectedDensityPrice', '0');
-                localStorage.setItem('customizeSelectedLacePrice', '0');
-                localStorage.setItem('customizeSelectedTexturePrice', '0');
-                localStorage.setItem('customizeSelectedColorPrice', '0');
-                localStorage.setItem('customizeSelectedHairlinePrice', '0');
-                localStorage.setItem('customizeSelectedStylingPrice', '0');
-                localStorage.setItem('customizeSelectedAddOnsPrice', '0');
-                
-                // Clear any existing editing state
-                localStorage.removeItem('editingCartItem');
-                localStorage.removeItem('editingCartItemId');
-                
-                console.log('Customize page - Starting fresh customization with cap size:', capSizeToSave);
-                
-                navigate('/build-a-wig/soft-wave/customize');
-            }}
-          />
 
         {/* SIMILAR PRODUCTS SECTION */}
         <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
