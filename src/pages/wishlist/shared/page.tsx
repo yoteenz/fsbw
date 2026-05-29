@@ -9,9 +9,11 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
+  getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -162,6 +164,8 @@ function readCartItems(): any[] {
 
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
+  const bcfThumb = getWishlistBcfThumbSrc(item);
+  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();
@@ -176,20 +180,6 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
-}
-
-function getProductRoute(name: string): string {
-  const n = (name || 'NOIR').toString().toUpperCase();
-  const routes: Record<string, string> = {
-    NOIR: '/straight/noir',
-    BLANCO: '/straight/blanco',
-    'SOFT WAVE': '/wavy/soft-wave',
-    'BEACH WAVE': '/wavy/beach-wave',
-    'SOFT CURL': '/curly/soft-curl',
-    'OCEAN CURL': '/curly/ocean-curl',
-    'GIFT CARD': '/tools/gift-card',
-  };
-  return routes[n] || '/build-a-wig';
 }
 
 function getHairOrigin(productName: string): string {
@@ -490,8 +480,8 @@ export default function SharedWishlistListPage() {
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => navigate(getProductRoute(itemName))}
-                              onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))}
+                              onClick={() => navigate(getWishlistItemRoute(item))}
+                              onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))}
                               className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                               style={{
                                 width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,

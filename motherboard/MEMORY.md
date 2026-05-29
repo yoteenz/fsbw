@@ -19798,6 +19798,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist BCF rows: route to product page + product-photo thumbnail
+
+**Context:** BCF (`shop-texture-category`) wishlist items routed to the build-a-wig hub / NOIR and showed the NOIR mannequin thumbnail. User wants them to route to their **`/shop/{category}?texture={texture}`** product page and use the **product photo** as the thumbnail.
+
+**Changes:**
+- **`src/utils/wishlistListItemDetails.ts`** — new `getWishlistItemRoute(item)` (BCF → `/shop/${category}?texture=${texture||'straight'}`; units → PDP; gift card → tool; else build-a-wig) and `getWishlistBcfThumbSrc(item)` (BCF → `shopTextureCategoryThumbSrc(texture, category)` e.g. `bundle-wavy.png`/`frontal-curly.png`, fallback `item.image`; null for non-BCF). Imported `shopTextureCategoryThumbSrc` + its texture/category types.
+- **`src/pages/wishlist/lists/page.tsx`** — `getLeafBrickFrontImage` returns the BCF thumb first (so line/grid/overview thumbs use the product photo); thumb click/keydown use `getWishlistItemRoute(item)` (was `getProductRoute(itemName)`, ×4). Removed now-unused local `getProductRoute`.
+- **`src/pages/wishlist/shared/page.tsx`** — same: `getLeafBrickFrontImage` BCF branch; thumb click uses `getWishlistItemRoute(item)`; removed local `getProductRoute`. (Main `/wishlist` page unchanged — BCF can't be added there, only via "+ LIST" to lists.)
+
+**Verified (headless):** BCF list thumbs render `/assets/bundle-wavy.png` + `/assets/frontal-curly.png`; clicking the bundles thumb navigates to `/shop/bundles?texture=wavy`. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.
