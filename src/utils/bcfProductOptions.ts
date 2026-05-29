@@ -200,7 +200,7 @@ export interface BcfLaceTreatmentOption {
 /** Closures/frontals only — lace treatments. Same prices as build-a-wig add-ons (premium-only). */
 export const BCF_LACE_TREATMENT_OPTIONS: BcfLaceTreatmentOption[] = [
   { id: 'PLUCK', label: 'PLUCK HAIRLINE', price: 80, premium: true },
-  { id: 'BLEACH', label: 'BLEACH KNOTS', price: 60, premium: true }
+  { id: 'BLEACH', label: 'BLEACH/TINT KNOTS', price: 60, premium: true }
 ];
 
 /** Total upcharge for the selected lace treatments. */
