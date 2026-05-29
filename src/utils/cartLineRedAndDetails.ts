@@ -154,6 +154,7 @@ export function bcfCartViewDetailsHtml(item: {
   color?: string;
   lace?: string;
   hairWeight?: string;
+  laceTreatment?: string[];
   bcfBundleDeal?: boolean;
   quantity?: number;
 }): string {
@@ -162,6 +163,12 @@ export function bcfCartViewDetailsHtml(item: {
   if (item.texture) lines.push(`TEXTURE: ${esc(item.texture)}`);
   if (item.hairWeight) lines.push(`WEIGHT: ${esc(item.hairWeight)}`);
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
+  if (Array.isArray(item.laceTreatment) && item.laceTreatment.length) {
+    const labels = item.laceTreatment
+      .map((id) => (id === 'PLUCK' ? 'PLUCK HAIRLINE' : id === 'BLEACH' ? 'BLEACH KNOTS' : String(id)))
+      .join(', ');
+    lines.push(`LACE TREATMENT: ${esc(labels)}`);
+  }
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);
   return lines.join('<br/>') || 'PRODUCT DETAILS';

@@ -22,6 +22,8 @@ import {
   BCF_TEXTURE_LABELS,
   BCF_WEIGHT_OPTIONS,
   BCF_DEFAULT_WEIGHT_ID,
+  BCF_LACE_TREATMENT_OPTIONS,
+  bcfLaceTreatmentPrice,
   bcfColorOptionsForOrigin,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
@@ -297,6 +299,8 @@ export default function ShopTextureCategoryProductPage() {
   const [bcfColor, setBcfColor] = useState('OFF BLACK');
   /** Bundles only — hair weight (100G default; 150G is +$60 and premium-only). */
   const [bcfHairWeight, setBcfHairWeight] = useState(BCF_DEFAULT_WEIGHT_ID);
+  /** Closures/frontals only — premium-only lace treatments (PLUCK / BLEACH), multi-select. */
+  const [bcfLaceTreatment, setBcfLaceTreatment] = useState<string[]>([]);
   const [bcfLace, setBcfLace] = useState(() => {
     if (typeof window === 'undefined') return '13X6';
     const cat = parseShopBcfCategory(window.location.pathname);
@@ -570,6 +574,19 @@ export default function ShopTextureCategoryProductPage() {
     setBcfHairWeight(weightId);
   }, []);
 
+  /** Lace treatments (closures/frontals): premium-only, multi-select toggle. */
+  const handleBcfLaceTreatmentToggle = React.useCallback((id: string) => {
+    const opt = BCF_LACE_TREATMENT_OPTIONS.find((o) => o.id === id);
+    if (!opt) return;
+    if (opt.premium && !isPremiumMemberForGatedFeatures()) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
+    setBcfLaceTreatment((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }, []);
+
   const handleBcfColorUpgradeConfirm = () => {
     setShowBcfColorUpgradeModal(false);
     prepareMembershipUpgradeNavigation();
@@ -600,9 +617,10 @@ export default function ShopTextureCategoryProductPage() {
         bcfColor,
         category === 'bundles' ? null : bcfLace,
         category === 'bundles' ? bcfHairWeight : null
-      )
+      ) +
+      (category === 'bundles' ? 0 : bcfLaceTreatmentPrice(bcfLaceTreatment))
     );
-  }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight]);
+  }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight, bcfLaceTreatment]);
   /** Premium gate for member-only options (e.g. 150G hair weight chip grays out for standard members). */
   const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
 
@@ -630,13 +648,15 @@ export default function ShopTextureCategoryProductPage() {
         if (String(ci.color || '') !== bcfColor) return false;
         if (category === 'bundles') {
           if (String(ci.hairWeight || BCF_DEFAULT_WEIGHT_ID) !== bcfHairWeight) return false;
-        } else if (String(ci.lace || '') !== bcfLace) {
-          return false;
+        } else {
+          if (String(ci.lace || '') !== bcfLace) return false;
+          const ciTreat = Array.isArray(ci.laceTreatment) ? [...ci.laceTreatment].sort().join(',') : '';
+          if (ciTreat !== [...bcfLaceTreatment].sort().join(',')) return false;
         }
         return Boolean(ci.bcfBundleDeal) === bundleDeal;
       });
     },
-    [cartLinesForInBag, category, texture, bcfOrigin, bcfLength, bcfColor, bcfHairWeight, bcfLace]
+    [cartLinesForInBag, category, texture, bcfOrigin, bcfLength, bcfColor, bcfHairWeight, bcfLace, bcfLaceTreatment]
   );
 
   const regularInBag = bcfSelectionInBag(false);
@@ -685,7 +705,9 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          ...(category === 'bundles' ? { hairWeight: bcfHairWeight } : { lace: bcfLace })
+          ...(category === 'bundles'
+            ? { hairWeight: bcfHairWeight }
+            : { lace: bcfLace, ...(bcfLaceTreatment.length ? { laceTreatment: bcfLaceTreatment } : {}) })
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -1770,6 +1792,35 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
+                      {(category === 'closures' || category === 'frontals') && (
+                        <>
+                          <p style={{ ...bcfBohemySubLabelStyle, margin: '6px 0 8px' }}>lace treatment</p>
+                          <div className="flex flex-wrap justify-center gap-3 mb-3">
+                            {BCF_LACE_TREATMENT_OPTIONS.map((t) => {
+                              const sel = bcfLaceTreatment.includes(t.id);
+                              // Premium-only treatments render grayed/disabled for standard members
+                              // (still tappable to surface the upgrade modal).
+                              const locked = !!t.premium && !isBcfPremiumMember;
+                              return (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  onClick={() => handleBcfLaceTreatmentToggle(t.id)}
+                                  style={{
+                                    ...bcfOptionBtnTypography,
+                                    ...bcfOptionSelectedChrome(sel),
+                                    ...(locked && !sel
+                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
+                                      : {})
+                                  }}
+                                >
+                                  {t.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
