@@ -19858,6 +19858,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Verified (headless):** non-premium taps 150G → price stays $330, upgrade modal shown (blocked); premium taps 150G → $330 → $390 (+$60). 100G default. Typecheck passes. Pushed `master` + `preview/mobile`.
 
+**Follow-up — 150G grayed for standard members:** added `isBcfPremiumMember = isPremiumMemberForGatedFeatures()` (computed each render) in `texture-category-product/page.tsx`; the weight chip applies a locked style `{ color:'#9ca3af', border:'1.3px solid #9ca3af', opacity:0.5 }` when `w.premium && !isBcfPremiumMember` (still tappable → upgrade modal). Verified headless: standard 150G = gray `rgb(156,163,175)` opacity 0.5; premium 150G = black opacity 1. Pushed `master` + `preview/mobile`.
+
 ---
 
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
