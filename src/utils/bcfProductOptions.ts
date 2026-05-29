@@ -348,6 +348,9 @@ export function shopBcfCartLineThumbnailSrc(item: {
 
   const isBundleLine = c === 'bundles' || Boolean(item.bcfBundleDeal);
   if (isBundleLine) {
+    if (t === 'straight') {
+      return 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
+    }
     return shopTextureCategoryThumbSrc(t, 'bundles');
   }
 
