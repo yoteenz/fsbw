@@ -603,6 +603,8 @@ export default function ShopTextureCategoryProductPage() {
       )
     );
   }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight]);
+  /** Premium gate for member-only options (e.g. 150G hair weight chip grays out for standard members). */
+  const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
@@ -1579,6 +1581,9 @@ export default function ShopTextureCategoryProductPage() {
                           <div className="flex flex-wrap justify-center gap-3 mb-3">
                             {BCF_WEIGHT_OPTIONS.map((w) => {
                               const sel = bcfHairWeight === w.id;
+                              // Premium-only weights (150G) render grayed/disabled for standard members
+                              // (still tappable to surface the upgrade modal).
+                              const locked = !!w.premium && !isBcfPremiumMember;
                               return (
                                 <button
                                   key={w.id}
@@ -1586,7 +1591,10 @@ export default function ShopTextureCategoryProductPage() {
                                   onClick={() => handleBcfWeightSelect(w.id)}
                                   style={{
                                     ...bcfOptionBtnTypography,
-                                    ...bcfOptionSelectedChrome(sel)
+                                    ...bcfOptionSelectedChrome(sel),
+                                    ...(locked
+                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
+                                      : {})
                                   }}
                                 >
                                   {w.label}
