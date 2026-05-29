@@ -19829,6 +19829,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — BCF VIEW DETAILS: ORIGIN above TEXTURE
+
+**Change:** `src/utils/cartLineRedAndDetails.ts` `bcfCartViewDetailsHtml` — swapped so **ORIGIN** line is pushed before **TEXTURE** (order now: ORIGIN, TEXTURE, LACE, LENGTH, COLOR). Shared by the lists/shared wishlist BCF details and the cart dropdown. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.

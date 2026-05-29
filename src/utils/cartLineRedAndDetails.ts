@@ -157,8 +157,8 @@ export function bcfCartViewDetailsHtml(item: {
   quantity?: number;
 }): string {
   const lines: string[] = [];
-  if (item.texture) lines.push(`TEXTURE: ${esc(item.texture)}`);
   if (item.hairOrigin) lines.push(`ORIGIN: ${esc(item.hairOrigin)}`);
+  if (item.texture) lines.push(`TEXTURE: ${esc(item.texture)}`);
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);
