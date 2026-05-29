@@ -57,6 +57,24 @@ type AffiliateCopySection = {
   closingParagraphs?: string[];
 };
 
+/** Match `/brand/terms` bullet rows (`BrandTermsBody`). */
+const AFFILIATE_PROGRAM_BODY_STYLE = {
+  fontFamily: '"Futura PT Book"',
+  fontSize: '10px',
+  color: '#000000',
+  fontWeight: 400,
+  margin: 0,
+  lineHeight: 1.45,
+  textTransform: 'uppercase' as const,
+};
+
+const AFFILIATE_PROGRAM_BULLET_STYLE = {
+  ...AFFILIATE_PROGRAM_BODY_STYLE,
+  paddingLeft: '12px',
+};
+
+const AFFILIATE_PROGRAM_BULLET_MARK_STYLE = { color: '#EB1C24' };
+
 const AFFILIATE_REWARDS_OVERVIEW = [
   'Turn your content into rewards.',
   'As a Frontal Slayer Affiliate Member, you can earn loyalty points simply by sharing your experience, creating content, referring friends, and engaging with the brand you already love. Every approved action helps you unlock exclusive rewards, discounts, VIP perks, and savings on future purchases.',
@@ -3928,43 +3946,18 @@ function AffiliatePage() {
                             <div
                               style={{
                                 margin: '0 0 10px 0',
-                                padding: 0,
-                                color: '#000000',
-                                textTransform: 'uppercase'
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '6px',
                               }}
                             >
                               {section.bullets.map((bullet, bulletIndex) => (
-                                <div
+                                <p
                                   key={`${section.title}-bullet-${bulletIndex}`}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '6px',
-                                    marginBottom: bulletIndex === section.bullets!.length - 1 ? '0' : '6px',
-                                  }}
+                                  style={AFFILIATE_PROGRAM_BULLET_STYLE}
                                 >
-                                  <span
-                                    aria-hidden="true"
-                                    style={{
-                                      color: '#EB1C24',
-                                      flexShrink: 0,
-                                      lineHeight: '1.45',
-                                    }}
-                                  >
-                                    •
-                                  </span>
-                                  <span
-                                    style={{
-                                      fontFamily: '"Futura PT Book"',
-                                      color: '#000000',
-                                      fontSize: '10px',
-                                      lineHeight: '1.45',
-                                      textTransform: 'uppercase'
-                                    }}
-                                  >
-                                    {bullet}
-                                  </span>
-                                </div>
+                                  <span style={AFFILIATE_PROGRAM_BULLET_MARK_STYLE}>•</span> {bullet}
+                                </p>
                               ))}
                             </div>
                           )}
