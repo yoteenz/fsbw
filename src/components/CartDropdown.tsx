@@ -54,6 +54,61 @@ interface CartDropdownProps {
   cartCount: number;
 }
 
+const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
+
+function countDetailHtmlRows(html: string): number {
+  return html.split(/<br\s*\/?>/i).filter((line) => line.trim().length > 0).length;
+}
+
+function cartDropdownUnitDetailRowCount(item: CartItem): number {
+  let rowCount = 0;
+
+  if (item.length && item.length !== '24"') rowCount++;
+
+  const defaultDensity = item.name === 'BLANCO' ? '250%' : '200%';
+  if (item.density && item.density !== defaultDensity) rowCount++;
+
+  if (item.lace && item.lace !== '13X6') rowCount++;
+
+  let itemColor = item.color;
+  if (item.name === 'BLANCO') {
+    const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+    if (!itemColor || !validBlancoColors.includes(itemColor)) {
+      itemColor = 'PLATINUM';
+    }
+  }
+  const blancoDefaultColors = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
+  const isDefaultColor = item.name === 'BLANCO'
+    ? blancoDefaultColors.includes(itemColor || '')
+    : itemColor === 'OFF BLACK';
+  if (itemColor && !isDefaultColor) rowCount++;
+
+  if (item.hairline && item.hairline !== 'NATURAL') rowCount++;
+
+  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+  if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
+    rowCount++;
+  }
+
+  if (Array.isArray(item.addOns)) {
+    rowCount += item.addOns.length;
+  } else if (item.addOns) {
+    rowCount++;
+  }
+
+  return rowCount;
+}
+
+function cartDropdownDetailTextRowCount(item: CartItem): number {
+  if (item.type === 'booking-consult' || item.type === 'booking-appointment') {
+    return countDetailHtmlRows(bookingCartViewDetailsHtml(item as CartItem & Record<string, unknown>));
+  }
+  if (item.type === 'shop-texture-category') {
+    return countDetailHtmlRows(bcfCartViewDetailsHtml(item as CartItem & Record<string, unknown>));
+  }
+  return cartDropdownUnitDetailRowCount(item);
+}
+
 export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdownProps) {
   useProductInventorySnapshot();
   const navigate = useNavigate();
@@ -898,9 +953,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
+                    const isViewingDetails = viewingDetailsFor === item.id;
+                    const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
+                    const productTextTransform =
+                      isViewingDetails && detailTextRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD
+                        ? 'translateY(-14px)'
+                        : 'translateY(-4px)';
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
-                      viewingDetailsFor === item.id &&
+                      isViewingDetails &&
                       (isBcfShopItem || isWigUnitProductName(item.name));
                     /** Cart dropdown: booking badge ~66px (appointment +5%), centered in 88px column. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
                     const unitThumbPx = 88;
@@ -918,8 +979,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             ? bcfCartThumbPx
                             : unitThumbPx;
                     return (
-                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(viewingDetailsFor === item.id ? { paddingBottom: '16px' } : {}) }}>
-                    <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: viewingDetailsFor === item.id ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
+                    <div key={item.id} className="bg-transparent border border-gray-200 p-2 mb-2 w-full" style={{ boxSizing: 'border-box', ...(isViewingDetails ? { paddingBottom: '16px' } : {}) }}>
+                    <div className="flex items-center justify-start space-x-3" style={{ minHeight: '120px', height: isViewingDetails ? 'auto' : '120px', paddingTop: '0', paddingBottom: '0' }}>
                     {/* Thumbnail Container */}
                     <div
                       className="flex flex-col items-center justify-center"
@@ -1206,8 +1267,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                     {/* Item Details */}
-                   <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: viewingDetailsFor === item.id ? 'auto' : '100%', minHeight: viewingDetailsFor === item.id ? '120px' : '100%' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: viewingDetailsFor === item.id ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: viewingDetailsFor === item.id ? 'translateY(-14px)' : 'translateY(-4px)', height: viewingDetailsFor === item.id ? 'auto' : '100%', position: viewingDetailsFor === item.id ? 'relative' : 'static', top: viewingDetailsFor === item.id ? (() => {
+                   <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: isViewingDetails ? 'auto' : '100%', minHeight: isViewingDetails ? '120px' : '100%' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: isViewingDetails ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: productTextTransform, height: isViewingDetails ? 'auto' : '100%', position: isViewingDetails ? 'relative' : 'static', top: isViewingDetails ? (() => {
                         // Count detail selections
                         let detailCount = 0;
                         if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) detailCount++;
