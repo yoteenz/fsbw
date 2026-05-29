@@ -19881,6 +19881,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — cart/wishlist VIEW DETAILS copy:** `bcfCartViewDetailsHtml` line changed from `LACE TREATMENT: PLUCK HAIRLINE / BLEACH/TINT KNOTS` to **`TREATMENT: PLUCK` / `BLEACH/TINT`** (shorter labels in the details panel only; chip labels on the PDP unchanged). Pushed `master` + `preview/mobile`.
 
+**Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
+
 ---
 
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
