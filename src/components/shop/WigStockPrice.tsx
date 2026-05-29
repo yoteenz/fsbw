@@ -130,6 +130,33 @@ export function WigProductPriceDisplay({
   );
 }
 
+/**
+ * Cross-sell strip price (SIMILAR PRODUCTS / RECENTLY VIEWED on product pages). When the
+ * referenced product is sold out, the price is shown gray + strikethrough with **no** red
+ * "SOLD OUT" / "OUT OF STOCK" label. Pass `productName` for a wig unit, or an explicit
+ * `soldOut` boolean (e.g. BCF products gated by packaging).
+ */
+export function WigStripPrice({
+  productName,
+  soldOut: soldOutProp,
+  style,
+  priceHtml,
+  children,
+}: {
+  productName?: string;
+  soldOut?: boolean;
+  style?: CSSProperties;
+  priceHtml?: PriceHtml;
+  children?: ReactNode;
+}) {
+  const soldOut = soldOutProp ?? (productName ? isWigUnitSoldOut(productName) : false);
+  const finalStyle: CSSProperties | undefined = soldOut
+    ? { ...style, color: '#808080', textDecoration: 'line-through' }
+    : style;
+  if (priceHtml) return <p style={finalStyle} dangerouslySetInnerHTML={priceHtml} />;
+  return <p style={finalStyle}>{children}</p>;
+}
+
 export function WigOutOfStockActionLabel({
   children,
   style,
