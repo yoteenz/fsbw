@@ -19522,6 +19522,8 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 **Change:** `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **480 → 430** (`bcfProductOptions.ts`). Wavy/curly bundles follow texture deltas (+20 / +40). Pushed `master` + `preview/mobile`.
 
+**Follow-up:** Bundles straight base **430 → 370** (−$60).
+
 ---
 
 ## 2026-05-21 — Shop menu: close drawer on BUNDLES (and static SHOP links)
