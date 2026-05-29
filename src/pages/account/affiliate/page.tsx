@@ -3857,7 +3857,7 @@ function AffiliatePage() {
                      })()
                    ) : (
                      <>
-                      {/* Card 1: AFFILIATE REWARDS PROGRAM */}
+                      {/* Card 1: AFFILIATE PROGRAM */}
                   <div className="w-full mb-4 transition-all duration-300 ease-out overflow-hidden" style={{ borderWidth: '1.3px', borderStyle: 'solid', borderColor: '#000', boxSizing: 'border-box' }}>
                     <div className="bg-white/60 backdrop-blur-sm w-full" style={{ padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '100%' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
@@ -3871,7 +3871,7 @@ function AffiliatePage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        AFFILIATE REWARDS PROGRAM
+                        AFFILIATE PROGRAM
                       </h2>
                       <img src={moreWaysIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
@@ -3881,11 +3881,12 @@ function AffiliatePage() {
                           <p
                             key={`affiliate-overview-${index}`}
                             style={{
-                              fontFamily: index === 0 ? '"Futura PT Medium"' : '"Futura PT Book"',
-                              color: '#000000',
+                              fontFamily: index === 0 ? '"Futura PT Demi"' : '"Futura PT Book"',
+                              color: index === 0 ? '#808080' : '#000000',
                               fontSize: index === 0 ? '11px' : '10px',
                               margin: index === AFFILIATE_REWARDS_OVERVIEW.length - 1 ? '0' : '0 0 10px 0',
-                              lineHeight: '1.45'
+                              lineHeight: '1.45',
+                              textTransform: 'uppercase'
                             }}
                           >
                             {paragraph}
@@ -3897,13 +3898,13 @@ function AffiliatePage() {
                         <div key={section.title}>
                           <p
                             style={{
-                              fontFamily: '"Futura PT Medium"',
-                              color: '#EB1C24',
-                              fontSize: '10px',
+                              fontFamily: '"Bohemy", cursive',
+                              color: '#808080',
+                              fontSize: '18px',
                               margin: '0 0 8px 0',
-                              textTransform: 'uppercase',
-                              fontWeight: '500',
-                              lineHeight: '1.35'
+                              textTransform: 'lowercase',
+                              fontWeight: 400,
+                              lineHeight: '1.1'
                             }}
                           >
                             {section.title}
@@ -3916,7 +3917,8 @@ function AffiliatePage() {
                                 color: '#000000',
                                 fontSize: '10px',
                                 margin: '0 0 10px 0',
-                                lineHeight: '1.45'
+                                lineHeight: '1.45',
+                                textTransform: 'uppercase'
                               }}
                             >
                               {paragraph}
@@ -3927,7 +3929,8 @@ function AffiliatePage() {
                               style={{
                                 margin: '0 0 10px 18px',
                                 padding: 0,
-                                color: '#000000'
+                                color: '#000000',
+                                textTransform: 'uppercase'
                               }}
                             >
                               {section.bullets.map((bullet, bulletIndex) => (
@@ -3938,7 +3941,8 @@ function AffiliatePage() {
                                     color: '#000000',
                                     fontSize: '10px',
                                     lineHeight: '1.45',
-                                    marginBottom: bulletIndex === section.bullets!.length - 1 ? '0' : '6px'
+                                    marginBottom: bulletIndex === section.bullets!.length - 1 ? '0' : '6px',
+                                    textTransform: 'uppercase'
                                   }}
                                 >
                                   {bullet}
@@ -3954,7 +3958,8 @@ function AffiliatePage() {
                                 color: '#000000',
                                 fontSize: '10px',
                                 margin: paragraphIndex === section.closingParagraphs!.length - 1 ? '0' : '0 0 10px 0',
-                                lineHeight: '1.45'
+                                lineHeight: '1.45',
+                                textTransform: 'uppercase'
                               }}
                             >
                               {paragraph}

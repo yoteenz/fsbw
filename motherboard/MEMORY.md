@@ -20842,3 +20842,56 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - For wishlist line-view spacing tweaks, audit all contributing sources together: page-level inline style constants (`lists/page.tsx`, `shared/page.tsx`) and global class rules in `src/index.css`, because either side can drift and silently undo the intended visual result.
 - When a user reports a styling tweak “didn’t persist,” verify exact on-disk values directly instead of relying only on patch success responses.
+
+---
+
+## 2026-05-29 — Full conversation summary: wishlist/edit parity, sold-out + premium consistency, BCF tuning, affiliate rewards copy, BLANCO NONE icon fix, wishlist spacing persistence, and affiliate typography recast
+
+**Context:** This chat covered a long sequence of storefront/account polish requests: Build-a-Wig edit parity from wishlist, sold-out copy consistency, premium chart/benefits updates, header icon red corrections, BCF detail/spacing fixes across checkout/cart/bag, wishlist list/shared spacing/thumb cleanup, a full affiliate-program copy rewrite, a BLANCO edit-mode `NONE` icon fix, re-persisting wishlist line-view spacing that had reverted in source, and finally an affiliate-page typography restyle request.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig edit routing/state seeding so wishlist and account wishlist edits behave like cart/bag edits and return users to the correct `/build-a-wig/{unit}/edit` flow with prior selections loaded.
+- Standardized sold-out wording and related stock-notify copy across product/wishlist surfaces.
+- Updated premium membership benefits/chart ordering so `LIVE ORDER TRACKING` is included for 3-month premium and appears above `PRIORITY MESSAGES` consistently.
+- Corrected shared header/title icon red rendering by moving away from old CSS tint/filter behavior and aligning assets/defaults with the site’s intended brand red.
+- Refined BCF details/order/spacing behavior across cart dropdown, bag, checkout, and checkout confirm: bundle grouping parity, stacked prices, removed extra placeholder gaps, aligned red RAW/price rows, and tuned non-bundled BCF spacing.
+- Split PDP 2D/3D disclaimer copy and corrected the 3D phrasing to include `A` in `WEARING A FULLY CUSTOMIZED & STYLED UNIT`.
+- Tightened wishlist list/shared line-view spacing and removed leaf-brick backgrounds from BCF thumbnails; later re-applied those exact spacing values after the user noticed the earlier source changes had not actually persisted.
+- Replaced the account affiliate page’s old promo copy with the structured new Frontal Slayer affiliate-program content and renamed the adjacent tracker card to `CONTENT SUBMISSIONS`.
+- Fixed BLANCO edit-mode styling tile logic so the `NONE` icon size/position follows the actual rendered icon (`/assets/none-icon.svg`) rather than only the raw styling token.
+- Re-audited wishlist list/shared spacing after the user reported it still had not persisted; found the old values back in source (`8px` thumb-action margin and `2px !important` view-details top margin), then force-restored:
+  - `src/pages/wishlist/lists/page.tsx` `LIST_LINE_BAG_ADD_STYLE.marginTop` to `5px`
+  - `src/pages/wishlist/shared/page.tsx` `LIST_LINE_BAG_ADD_STYLE.marginTop` to `5px`
+  - `src/index.css` `.wishlist-expanded-list-view-details-toggle--list margin-top` to `0 !important`
+- Latest follow-up: user wanted the account affiliate page typography restyled without changing the underlying program content:
+  - page copy should render uppercase,
+  - top header should say `AFFILIATE PROGRAM` (remove `REWARDS`),
+  - section labels such as `PHOTO SUBMISSIONS`, `VIDEO SUBMISSIONS`, `CONTENT SUBMISSIONS`, etc. should no longer be red uppercase Futura and instead render as lowercase gray `Bohemy`,
+  - `Turn your content into rewards.` should render gray demi.
+- Implemented that typography pass in the shared affiliate copy-render block so it applies to the whole informational card in one place:
+  - top card header text changed from `AFFILIATE REWARDS PROGRAM` to `AFFILIATE PROGRAM`,
+  - first overview line now uses gray `Futura PT Demi`,
+  - remaining overview/body/closing paragraphs and bullets render uppercase,
+  - section labels now use gray `Bohemy`, lowercase, instead of red uppercase Futura.
+- Ran `npm run build` successfully after the affiliate typography update.
+
+**Decisions / outcomes:**
+- All prior requests in this chat remain implemented: wishlist/account-wishlist Build-a-Wig edit parity, sold-out copy, premium benefit ordering, header icon color corrections, BCF grouped-display/spacing/order fixes, wishlist list/shared spacing + BCF thumbnail cleanup, affiliate program copy rewrite, BLANCO `NONE` icon sizing, and the re-persisted wishlist spacing values.
+- Affiliate page informational-card header now reads `AFFILIATE PROGRAM`.
+- Affiliate page informational-card body now visually follows the new typography rules:
+  - body copy uppercase,
+  - `Turn your content into rewards.` gray demi,
+  - section labels lowercase gray `Bohemy`.
+
+**Changes:**
+- Previous work in this chat touched Build-a-Wig helpers/surfaces, sold-out/notify copy files, premium benefit/chart files, header icon helpers/assets, cart/checkout BCF helpers/pages, product-page disclaimer files, wishlist list/shared pages plus `src/index.css`, `src/pages/account/affiliate/page.tsx`, and `src/pages/build-a-wig/page.tsx`.
+- Latest follow-up change:
+  - `src/pages/account/affiliate/page.tsx`
+    - top card comment/header text changed to `AFFILIATE PROGRAM`
+    - first overview paragraph style changed to gray `Futura PT Demi`
+    - overview/body/closing paragraphs + bullets set to uppercase rendering
+    - section label style changed from red uppercase Futura to gray lowercase `Bohemy`
+
+**Conventions:**
+- For long structured copy sections like the affiliate info card, keep content centralized in the section-data arrays and change casing/typography in the shared render map instead of editing each text string manually.
+- When users request script-label styling like “Bohemy,” use the project’s existing `"Bohemy", cursive` font family convention and apply lowercase styling explicitly at the section-label level while leaving body text casing controlled separately.
