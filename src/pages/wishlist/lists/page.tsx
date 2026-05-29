@@ -24,9 +24,11 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
+  getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -56,6 +58,8 @@ import {
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
+  const bcfThumb = getWishlistBcfThumbSrc(item);
+  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();
@@ -508,20 +512,6 @@ function getListRecency(list: UserList): number {
     return Number.isFinite(t) && t > mx ? t : mx;
   }, 0);
   return Math.max(Number(list.updatedAt) || 0, itemMax, getListIdTimestamp(list.id));
-}
-
-function getProductRoute(name: string): string {
-  const n = (name || 'NOIR').toString().toUpperCase();
-  const routes: Record<string, string> = {
-    NOIR: '/straight/noir',
-    BLANCO: '/straight/blanco',
-    'SOFT WAVE': '/wavy/soft-wave',
-    'BEACH WAVE': '/wavy/beach-wave',
-    'SOFT CURL': '/curly/soft-curl',
-    'OCEAN CURL': '/curly/ocean-curl',
-    'GIFT CARD': '/tools/gift-card'
-  };
-  return routes[n] || '/build-a-wig';
 }
 
 function getHairOrigin(productName: string): string {
@@ -1088,7 +1078,7 @@ export default function ViewListsPage() {
                                   }}
                                 >
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
-                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                       <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                     </div>
                                     {isOutOfStock ? (
@@ -1225,7 +1215,7 @@ export default function ViewListsPage() {
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                  <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{getWishlistItemDisplayName(item)}</p>

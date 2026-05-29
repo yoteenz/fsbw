@@ -1,4 +1,9 @@
 import { bcfCartViewDetailsHtml, bookingCartViewDetailsHtml } from './cartLineRedAndDetails';
+import {
+  shopTextureCategoryThumbSrc,
+  type ShopTextureCategoryThumbCategory,
+  type ShopTextureCategoryThumbTexture,
+} from './shopTextureCategoryThumb';
 
 const DEFAULT_UNIT_PRICES: Record<string, number> = {
   NOIR: 740,
@@ -12,6 +17,41 @@ const DEFAULT_UNIT_PRICES: Record<string, number> = {
 
 export function getWishlistItemProductName(item: any): string {
   return (item?.name || item?.productName || 'NOIR').toString().toUpperCase();
+}
+
+/**
+ * Product-page route for a wishlist item. BCF (`shop-texture-category`) lines route to their
+ * `/shop/{category}?texture={texture}` page (not the build-a-wig hub / NOIR). Units route to their
+ * PDP; gift cards to the gift-card tool.
+ */
+export function getWishlistItemRoute(item: any): string {
+  if (item?.type === 'shop-texture-category' && item.category) {
+    const texture = item.texture || 'straight';
+    return `/shop/${item.category}?texture=${texture}`;
+  }
+  const name = getWishlistItemProductName(item);
+  const routes: Record<string, string> = {
+    NOIR: '/straight/noir',
+    BLANCO: '/straight/blanco',
+    'SOFT WAVE': '/wavy/soft-wave',
+    'BEACH WAVE': '/wavy/beach-wave',
+    'SOFT CURL': '/curly/soft-curl',
+    'OCEAN CURL': '/curly/ocean-curl',
+    'GIFT CARD': '/tools/gift-card',
+  };
+  return routes[name] || '/build-a-wig';
+}
+
+/** BCF product photo for wishlist thumbnails (same image family as the product page). Null for non-BCF. */
+export function getWishlistBcfThumbSrc(item: any): string | null {
+  if (item?.type !== 'shop-texture-category') return null;
+  if (item.category && item.texture) {
+    return shopTextureCategoryThumbSrc(
+      item.texture as ShopTextureCategoryThumbTexture,
+      item.category as ShopTextureCategoryThumbCategory
+    );
+  }
+  return item.image || null;
 }
 
 /**
