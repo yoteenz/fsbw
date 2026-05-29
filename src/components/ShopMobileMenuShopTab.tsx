@@ -56,11 +56,16 @@ export function ShopMobileMenuShopTab({
   duplicateRowClickForStaticLinks = false,
   arrowImgAlt = 'Arrow'
 }: ShopMobileMenuShopTabProps) {
+  const closeMenuAfterNav = () => {
+    closeSubItemMenu();
+    closeAfterStaticNav?.();
+  };
+
   const handleLabelActivate = (item: Item) => {
     if (item.isExpandable) {
       if (item.label === 'UNITS' && mobileMenuExpandedItems.includes(item.label)) {
         navigate('/shop/units');
-        closeAfterStaticNav?.();
+        closeMenuAfterNav();
       } else {
         handleMobileMenuItemToggle(item.label);
       }
@@ -73,7 +78,7 @@ export function ShopMobileMenuShopTab({
     const path = staticNavPath(item.label, buildAWigPath);
     if (path) {
       navigate(path);
-      closeAfterStaticNav?.();
+      closeMenuAfterNav();
     }
   };
 

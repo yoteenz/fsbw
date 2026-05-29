@@ -516,6 +516,11 @@ export default function ShopTextureCategoryProductPage() {
     else setMobileMenuActiveTab('SHOP');
   }, [showMobileMenu, location.pathname]);
 
+  /** Same component serves bundles / closures / frontals — collapse menu when route changes. */
+  useEffect(() => {
+    setShowMobileMenu(false);
+  }, [location.pathname, location.search]);
+
   const formatPrice = React.useCallback(
     (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
     [currencyRates, selectedCurrency]
