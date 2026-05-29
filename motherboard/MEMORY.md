@@ -20960,3 +20960,34 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - Keep Build-a-Wig edit entry logic centralized so wishlist/cart/bag/account wishlist all preload and save consistently.
 - For wishlist list surfaces, preserve the reduced red-action / gray-details spacing and use BCF-specific thumbnail rendering (no leaf-brick background, full image visible via centered contain fit) instead of reusing wig thumbnail framing.
 - When BCF issues reappear, inspect both data shaping and visual spacing; several earlier bugs came from unit-wig assumptions leaking into BCF rendering.
+
+---
+
+## 2026-05-29 — Full conversation summary update: restored wishlist list action spacing and gray VIEW DETAILS styling
+
+**Context:** This chat has been a long storefront/account consistency pass spanning wishlist Build-a-Wig edit behavior, sold-out copy, stock-notify wording, premium-benefit accuracy, native-red icons, BCF cart/checkout/list rendering, affiliate-program copy/typography, Blanco edit-mode icon sizing, and wishlist list-view spacing/thumb regressions. The latest follow-up corrected a fresh regression where the wishlist list red thumb action spacing drifted back, the text was perceived as removed, and `VIEW DETAILS` reverted from gray back to red with the old list-only top margin.
+
+**Topics covered (entire conversation so far):**
+- Fixed wishlist/account-wishlist Build-a-Wig edit routing so edits open the correct Build-a-Wig edit flow with selections loaded and save back in place like cart/bag.
+- Standardized sold-out labeling and notify-modal copy across PDP and wishlist surfaces.
+- Added `LIVE ORDER TRACKING` to the 3-month premium tier, reordered chart rows, and updated related membership displays.
+- Replaced mismatched filtered red header/title icons with native `#EB1C24` assets.
+- Updated BCF cart dropdown/view-details ordering plus multiple checkout layout/spacing issues, including grouped bundle rendering and non-bundled BCF price spacing.
+- Reworked affiliate program copy and typography, and fixed Blanco edit-mode `NONE` icon sizing.
+- Removed leaf-brick backgrounds from wishlist BCF thumbs, then corrected the resulting zoom/crop by giving BCF thumbs their own full-image fit behavior.
+- Latest correction in this same chat: restored the wishlist list red thumb action spacing from `8px` back to `5px` in both `src/pages/wishlist/lists/page.tsx` and `src/pages/wishlist/shared/page.tsx`, and restored gray `VIEW DETAILS` styling plus the list-only top-margin override from `2px` back to `0 !important` in `src/index.css`.
+
+**Decisions / outcomes:**
+- The red thumb action text remains present and should keep the reduced `5px` top spacing on wishlist list surfaces.
+- `VIEW DETAILS` / `CLOSE DETAILS` on wishlist list line view should remain gray, not red.
+- The list-only `VIEW DETAILS` spacing override should remain `margin-top: 0 !important`.
+- These restore values were re-applied after the user reported the regression.
+
+**Changes:**
+- `src/pages/wishlist/lists/page.tsx`
+- `src/pages/wishlist/shared/page.tsx`
+- `src/index.css`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For wishlist list surfaces, preserve the previously requested reduced spacing values and gray `VIEW DETAILS` treatment; avoid reverting these to older red/`8px`/`2px` defaults during unrelated thumb or layout work.
