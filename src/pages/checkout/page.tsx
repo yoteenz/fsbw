@@ -3528,19 +3528,11 @@ function CheckoutPage() {
                                     fontSize: '8px',
                                   color: '#EB1C24',
                                   marginTop: (() => {
-                                    const hasSpecs = (item.density && item.density !== '200%') || 
-                                                   (item.lace && item.lace !== '13X6') || 
-                                                   (item.color && item.color !== (item.name === 'BLANCO' ? 'PLATINUM' : 'OFF BLACK')) || 
-                                                   (item.hairline && item.hairline !== 'NATURAL') || 
-                                                   (item.styling && item.styling !== 'NONE') || 
-                                                   (item.addOns && item.addOns.length > 0) ||
-                                                   (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
-                                                   (item.length && item.length !== '24"');
                                     const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                                    const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                                    const isNoirProduct = String(item?.name || '').trim().toUpperCase() === 'NOIR';
                                     if (isGiftCard) return '-2px';
-                                    if (isBlancoNoSpecs) return '-2px';
-                                    return '-2px';
+                                    if (isNoirProduct) return '-2px';
+                                    return '0px';
                                   })(),
                                   transform: 'translateY(3px)',
                                   lineHeight: '1.1',
