@@ -20,6 +20,8 @@ export interface UserList {
   shareToken?: string;
   /** If true, show "SHARED" on view lists page; otherwise "PRIVATE" */
   hasBeenShared?: boolean;
+  /** Epoch ms of the most recent item add — used to sort lists (most recent first). */
+  updatedAt?: number;
 }
 
 interface AddToListModalProps {
@@ -300,7 +302,12 @@ export default function AddToListModal({
       if (selectedIds.has(list.id)) {
         if (alreadyHas) return list;
         const addedFrom = item.addedFrom || (String(item.id || '').startsWith('build-a-wig-') ? 'cart' : 'unit');
-        return { ...list, items: [...list.items, { ...item, quantity: item.quantity ?? 1, addedFrom }] };
+        const addedAt = Date.now();
+        return {
+          ...list,
+          updatedAt: addedAt,
+          items: [...list.items, { ...item, quantity: item.quantity ?? 1, addedFrom, addedAt }],
+        };
       }
       if (!alreadyHas) return list;
       return { ...list, items: list.items.filter((i: any) => i.id !== itemId) };

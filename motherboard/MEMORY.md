@@ -19757,3 +19757,15 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - Premium tier benefit lists should come from the shared `src/constants/premiumBenefitsByTier.ts` source so the rewards page, brand chart, and upgrade chart stay aligned.
 - For red header/title icons, prefer native `#EB1C24` SVG assets over CSS filter tinting; the filter path produced a mismatched red compared with concierge’s native-red icons.
 - Shared BCF VIEW DETAILS line ordering comes from `src/utils/cartLineRedAndDetails.ts`; closures/frontals/bundles cart-dropdown detail-order changes should be made there so reused BCF detail views stay consistent.
+
+---
+
+## 2026-05-29 — Wishlist lists overview: sort by most recently added item first
+
+**Context:** `/wishlist/lists` overview rendered user lists in stored (creation/oldest-first) order. User wants the list with the **most recently added item** listed first.
+
+**Change:**
+- **`src/components/AddToListModal.tsx`** — `UserList` gains `updatedAt?: number`; `handleSave` now stamps each added item with `addedAt: Date.now()` and sets the target list's `updatedAt: Date.now()` (only on add, not removal). (Item-add via this modal is the single append path from wishlist/bag/PDP.)
+- **`src/pages/wishlist/lists/page.tsx`** — added `getListRecency(list)` = max of `updatedAt`, newest item `addedAt`, and the creation time parsed from the list id (`list-<epochMs>-<rand>` via `getListIdTimestamp`). New `overviewLists` `useMemo` sorts `[...lists]` by recency **descending**; both overview renders (line + grid) map `overviewLists` instead of `lists`. Expanded-list lookups still use `lists.find` (unaffected). Existing lists/items without timestamps fall back to the id creation time (newest-created first).
+
+**Verified (headless):** lists with recency [DDD updatedAt 9999, BBB id 9000, AAA item 5000, CCC id 3000] render in order DDD > BBB > AAA > CCC. Typecheck passes. Pushed `master` + `preview/mobile`.
