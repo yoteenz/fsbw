@@ -45,49 +45,20 @@ export function formatWishlistListItemPrice(price: number): string {
 }
 
 /**
- * Same rules as cart dropdown VIEW DETAILS visibility.
- * `omitLength`: list/shared list line view shows the length in the RAW line and omits it from the
- * details panel, so a length-only customization must NOT count toward showing VIEW DETAILS there
- * (otherwise the link opens an empty "PRODUCT DETAILS" panel). Mirror the details rendered.
+ * Whether to show the VIEW DETAILS link. Tied directly to the rendered details so the link only
+ * shows when the panel will actually have content — never an empty "PRODUCT DETAILS" panel. (The
+ * old field-by-field check counted customizations like `texture` that `buildWishlistItemDetailsHtml`
+ * does not render, so length-only / texture-only units opened an empty panel.)
+ * Bookings + BCF always have a details view. `omitLength` mirrors the list/shared line view, which
+ * shows length in the RAW line and omits it from the panel.
  */
 export function wishlistItemHasViewDetails(item: any, options?: WishlistItemDetailsHtmlOptions): boolean {
   if (!item) return false;
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') return true;
   if (item.type === 'shop-texture-category') return true;
 
-  const name = getWishlistItemProductName(item);
-  const isBlanco = name === 'BLANCO';
-  const isOceanCurl = name === 'OCEAN CURL';
-  const hasFlexCap = !isBlanco && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
-  const hasFlexCapForOceanCurl = isOceanCurl && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
-  const hasCustomLength = !options?.omitLength && item.length && item.length !== '24"';
-  const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
-  const hasCustomDensity = item.density && item.density !== defaultDensity;
-  const hasCustomLace = item.lace && item.lace !== '13X6';
-  const isWavyProduct = name === 'SOFT WAVE' || name === 'BEACH WAVE';
-  const isCurlyProduct = name === 'SOFT CURL' || name === 'OCEAN CURL';
-  const defaultTexture = isWavyProduct ? 'WAVY' : isCurlyProduct ? 'CURLY' : 'SILKY';
-  const hasCustomTexture = item.texture && item.texture !== defaultTexture;
-  const blancoDefaultColors = ['PLATINUM', 'OFF WHITE', 'OFF BLACK'];
-  const hasCustomColor =
-    name === 'BLANCO' ? item.color && !blancoDefaultColors.includes(item.color) : item.color && item.color !== 'OFF BLACK';
-  const hasCustomHairline = item.hairline && item.hairline !== 'NATURAL';
-  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-  const hasCustomStyling =
-    item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection;
-  const hasAddOns = Array.isArray(item.addOns) && item.addOns.length > 0;
-
-  return (
-    (isOceanCurl ? hasFlexCapForOceanCurl : hasFlexCap) ||
-    hasCustomLength ||
-    hasCustomDensity ||
-    hasCustomLace ||
-    hasCustomTexture ||
-    hasCustomColor ||
-    hasCustomHairline ||
-    hasCustomStyling ||
-    hasAddOns
-  );
+  const html = buildWishlistItemDetailsHtml(item, options).trim();
+  return html !== '' && html.toUpperCase() !== 'PRODUCT DETAILS';
 }
 
 export type WishlistItemDetailsHtmlOptions = {
