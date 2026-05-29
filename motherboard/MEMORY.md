@@ -19860,7 +19860,20 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — 150G grayed for standard members:** added `isBcfPremiumMember = isPremiumMemberForGatedFeatures()` (computed each render) in `texture-category-product/page.tsx`; the weight chip applies a locked style `{ color:'#9ca3af', border:'1.3px solid #9ca3af', opacity:0.5 }` when `w.premium && !isBcfPremiumMember` (still tappable → upgrade modal). Verified headless: standard 150G = gray `rgb(156,163,175)` opacity 0.5; premium 150G = black opacity 1. Pushed `master` + `preview/mobile`.
 
-**Follow-up — bundle-deal button persistent IN THE BAG:** the BUNDLE DEAL button reverted to "BUNDLE DEAL" after the 2s timer even while its lines were in the cart. Added cart-based detection in `texture-category-product/page.tsx`: `cartLinesForInBag` (useMemo on `cartCount`), `bcfSelectionInBag(bundleDeal)` matching the CURRENT selection (type `shop-texture-category`, same category/texture/origin/length/color, bundles also `hairWeight` else `lace`, and `Boolean(ci.bcfBundleDeal) === bundleDeal`), then `regularInBag` / `bundleInBag`. Both ADD TO BAG and BUNDLE DEAL now show **IN THE BAG** (checkmark) when `state === 'added' || <inBag>` — persistent while that exact config is in the cart, reverting to ADD TO BAG / BUNDLE DEAL when the selection changes or the line is removed. Verified headless: bundle-deal btn stays "IN THE BAG" past the 2.6s revert window (cartCount 3). Pushed `master` + `preview/mobile`.
+**Follow-up — bundle-deal button persistent IN THE BAG:** the BUNDLE DEAL button reverted to "BUNDLE DEAL" after the 2s timer even while its lines were in the cart. Added cart-based detection in `texture-category-product/page.tsx`: `cartLinesForInBag` (useMemo on `cartCount`), `bcfSelectionInBag(bundleDeal)` matching the CURRENT selection (type `shop-texture-category`, same category/texture/origin/length/color, bundles also `hairWeight` else `lace` + `laceTreatment`, and `Boolean(ci.bcfBundleDeal) === bundleDeal`), then `regularInBag` / `bundleInBag`. Both ADD TO BAG and BUNDLE DEAL now show **IN THE BAG** (checkmark) when `state === 'added' || <inBag>` — persistent while that exact config is in the cart, reverting to ADD TO BAG / BUNDLE DEAL when the selection changes or the line is removed. Verified headless: bundle-deal btn stays "IN THE BAG" past the 2.6s revert window (cartCount 3). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Closures/frontals PDP: LACE TREATMENT (PLUCK/BLEACH, premium-only)
+
+**Context:** Add a LACE TREATMENT section below HAIR COLOR on **closures/frontals** with **PLUCK HAIRLINE** ($80) and **BLEACH KNOTS** ($60) — same prices as build-a-wig add-ons (BLEACH 60 / PLUCK 80) — premium-members-only (grayed/disabled for standard, like 150G), multi-select.
+
+**Changes:**
+- **`src/utils/bcfProductOptions.ts`** — `BCF_LACE_TREATMENT_OPTIONS` (`PLUCK` 80, `BLEACH` 60, both `premium: true`) + `bcfLaceTreatmentPrice(ids[])` (sum).
+- **`src/pages/shop/texture-category-product/page.tsx`** — `bcfLaceTreatment: string[]` state; `handleBcfLaceTreatmentToggle` (premium gate → reuse `showBcfColorUpgradeModal`; else toggle in/out). `displayPrice` adds `category !== 'bundles' ? bcfLaceTreatmentPrice(bcfLaceTreatment) : 0`. New **closures/frontals-only** multi-select chip row after HAIR COLOR (premium-locked chips grayed `#9ca3af`/opacity 0.5 when not selected, via `isBcfPremiumMember`). `handleAddToBag` non-bundles spread adds `laceTreatment` when any selected. In-bag matcher (`bcfSelectionInBag`) compares sorted `laceTreatment`.
+- **`src/utils/cartLineRedAndDetails.ts`** — `bcfCartViewDetailsHtml` adds `laceTreatment?: string[]` → `LACE TREATMENT: PLUCK HAIRLINE, BLEACH KNOTS` line.
+
+**Verified (headless):** closures non-premium → section shown, chips gray, tap blocked + upgrade modal, price unchanged; frontals premium → PLUCK+BLEACH = +$140 ($345→$485); bundles → no section. Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 

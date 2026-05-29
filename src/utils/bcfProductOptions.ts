@@ -189,6 +189,28 @@ export const BCF_WEIGHT_OPTIONS: BcfWeightOption[] = [
 
 export const BCF_DEFAULT_WEIGHT_ID = '100G';
 
+export interface BcfLaceTreatmentOption {
+  id: string;
+  label: string;
+  price: number;
+  /** Premium-members-only (blocked + upgrade modal, grayed for standard members). */
+  premium?: boolean;
+}
+
+/** Closures/frontals only — lace treatments. Same prices as build-a-wig add-ons (premium-only). */
+export const BCF_LACE_TREATMENT_OPTIONS: BcfLaceTreatmentOption[] = [
+  { id: 'PLUCK', label: 'PLUCK HAIRLINE', price: 80, premium: true },
+  { id: 'BLEACH', label: 'BLEACH KNOTS', price: 60, premium: true }
+];
+
+/** Total upcharge for the selected lace treatments. */
+export function bcfLaceTreatmentPrice(ids: string[]): number {
+  return ids.reduce(
+    (sum, id) => sum + (BCF_LACE_TREATMENT_OPTIONS.find((o) => o.id === id)?.price ?? 0),
+    0
+  );
+}
+
 export function bcfPriceAdjustments(
   lengthId: string,
   colorId: string,
