@@ -19875,6 +19875,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Verified (headless):** closures non-premium → section shown, chips gray, tap blocked + upgrade modal, price unchanged; frontals premium → PLUCK+BLEACH = +$140 ($345→$485); bundles → no section. Typecheck passes. Pushed `master` + `preview/mobile`.
 
+**Follow-up — label:** BLEACH option label renamed **BLEACH KNOTS → BLEACH/TINT KNOTS** (`BCF_LACE_TREATMENT_OPTIONS` + the details-label map in `cartLineRedAndDetails.ts`). Id stays `BLEACH` (cart/price unchanged). Pushed `master` + `preview/mobile`.
+
 ---
 
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
