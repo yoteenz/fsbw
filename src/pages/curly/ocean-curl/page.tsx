@@ -1216,7 +1216,15 @@ function OceanCurlSelection() {
                   color: 'black'
                 }}
               >
-                (3D MODEL IS WEARING <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>FULLY CUSTOMIZED & STYLED</span> UNIT)
+                {is3DView ? (
+                  <>
+                    (3D MODEL IS WEARING <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>FULLY CUSTOMIZED & STYLED</span> UNIT)
+                  </>
+                ) : (
+                  <>
+                    (2D MODEL IS FOR <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+                  </>
+                )}
               </p>
             </div>
             </div>
