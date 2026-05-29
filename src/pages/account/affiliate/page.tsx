@@ -50,6 +50,173 @@ interface Order {
   submittedSocials?: Array<{ id: string; platform: string; link: string; status: 'pending' | 'approved' | 'rejected'; points?: number; submittedDate: string; rejectionReason?: string }>;
 }
 
+type AffiliateCopySection = {
+  title: string;
+  paragraphs?: string[];
+  bullets?: string[];
+  closingParagraphs?: string[];
+};
+
+const AFFILIATE_REWARDS_OVERVIEW = [
+  'Turn your content into rewards.',
+  'As a Frontal Slayer Affiliate Member, you can earn loyalty points simply by sharing your experience, creating content, referring friends, and engaging with the brand you already love. Every approved action helps you unlock exclusive rewards, discounts, VIP perks, and savings on future purchases.',
+  'The more you participate, the more you earn.',
+];
+
+const AFFILIATE_REWARDS_SECTIONS: AffiliateCopySection[] = [
+  {
+    title: 'CONTENT SUBMISSIONS',
+    paragraphs: ['Earn points by submitting original photos and videos directly to Frontal Slayer for review.'],
+  },
+  {
+    title: 'PHOTO SUBMISSIONS',
+    paragraphs: ['Earn 400 Loyalty Points for each approved photo submission featuring your Frontal Slayer product.'],
+  },
+  {
+    title: 'VIDEO SUBMISSIONS',
+    paragraphs: [
+      'Earn 600 Loyalty Points for each approved video submission featuring your Frontal Slayer product.',
+      'Maximum Earnings: Up to 5,000 points per unit during each 6-month reward cycle.',
+    ],
+  },
+  {
+    title: 'SUBMISSION REQUIREMENTS',
+    paragraphs: ['To qualify, content must:'],
+    bullets: [
+      'Clearly showcase a Frontal Slayer product',
+      'Be original content created by you',
+      'Be high quality and well lit',
+      'Have minimal or no filters',
+      'Accurately represent the product',
+      'Meet our quality and brand standards',
+    ],
+  },
+  {
+    title: 'VIDEO REQUIREMENTS',
+    bullets: [
+      'Minimum length: 10 seconds',
+      'Clear audio and video quality',
+      'Good angles and lighting',
+      'Product must be visible and featured throughout the content',
+      'No excessive filters or alterations',
+    ],
+  },
+  {
+    title: 'EXAMPLES INCLUDE',
+    bullets: [
+      'Unboxings',
+      'Install videos',
+      'Styling tutorials',
+      'Product reviews',
+      'Before and after transformations',
+      'Day to day wear content',
+    ],
+    closingParagraphs: [
+      'Approved content may be featured on our website, social media platforms, email campaigns, advertisements, and other marketing materials.',
+    ],
+  },
+  {
+    title: 'SOCIAL MEDIA TAG REWARDS',
+    paragraphs: ['Earn additional points when you post your Frontal Slayer content on social media and tag our brand.'],
+  },
+  {
+    title: 'ELIGIBLE PLATFORMS',
+    bullets: ['Instagram', 'TikTok', 'YouTube', 'Facebook', 'X (formerly Twitter)'],
+  },
+  {
+    title: 'REWARD STRUCTURE',
+    paragraphs: ['Earn 600 Loyalty Points per approved platform, per unit when you:'],
+    bullets: [
+      'Post qualifying content featuring your Frontal Slayer product',
+      'Tag Frontal Slayer in the post, reel, video, short, or upload',
+      'Submit a direct link to the published content for review',
+    ],
+    closingParagraphs: ['Maximum Earnings: Up to 3,000 points per product across all eligible social media platforms.'],
+  },
+  {
+    title: 'SOCIAL CONTENT REQUIREMENTS',
+    paragraphs: ['To qualify for Social Media Tag Rewards:'],
+    bullets: [
+      'Content must be publicly accessible during review',
+      'Frontal Slayer must be tagged or mentioned',
+      'The product must be clearly featured',
+      'Content must comply with platform guidelines and our brand standards',
+      'A direct URL link must be provided for verification',
+    ],
+    closingParagraphs: ['Please note that direct content submissions and social media tag rewards are separate earning opportunities and may both qualify for points.'],
+  },
+  {
+    title: 'FEATURED CREATOR BONUS',
+    paragraphs: [
+      'Exceptional content deserves exceptional rewards.',
+      'If your photo, video, tutorial, transformation, review, or social content is selected for use in a Frontal Slayer marketing campaign, homepage feature, product page, email campaign, advertisement, or social media promotion, you may receive a Featured Creator Bonus of up to 1,500 additional Loyalty Points.',
+      'Featured creators may also receive:',
+    ],
+    bullets: [
+      'Exclusive VIP rewards',
+      'Early access to product launches',
+      'Priority access to giveaways',
+      'Bonus loyalty point opportunities',
+      'Future collaboration opportunities',
+      'Complimentary products or surprise gifts (when available)',
+    ],
+    closingParagraphs: ['Selection is based on content quality, creativity, engagement and overall brand fit.'],
+  },
+  {
+    title: 'REFERRAL REWARDS',
+    paragraphs: [
+      'Love your hair? Put your friends on!',
+      'Every Affiliate Member receives a personalized referral code that can be shared with friends, family, clients, and followers.',
+      'When a new customer uses your referral code:',
+    ],
+    bullets: [
+      'They receive $20 OFF their first purchase',
+      'You receive $20 digital cash for every successful referral',
+    ],
+    closingParagraphs: [
+      'There is no limit to the number of referrals you can make.',
+      'The more people you refer, the more rewards you unlock.',
+    ],
+  },
+  {
+    title: 'VIP TIER REWARDS',
+    paragraphs: [
+      'The most active members may unlock additional perks based on lifetime participation and engagement.',
+      'Potential VIP benefits include:',
+    ],
+    bullets: [
+      'Increased point earning opportunities',
+      'Exclusive discounts',
+      'Early access to new drops and restocks',
+      'Birthday rewards',
+      'Double Point Events',
+      'Members only giveaways',
+      'Limited edition product access',
+      'Concierge level customer support',
+    ],
+  },
+  {
+    title: 'CONTENT APPROVAL GUIDELINES',
+    paragraphs: ['To maximize your chances of approval, we recommend submitting content that is:'],
+    bullets: [
+      'Clear and high resolution',
+      'Well lit and properly focused',
+      'Authentic and minimally edited',
+      "Representative of the product's true appearance",
+      'Suitable for public marketing and promotional use',
+    ],
+    closingParagraphs: ['The better the quality, the higher the likelihood that your content may be selected for future marketing campaigns and featured across Frontal Slayer platforms.'],
+  },
+  {
+    title: 'REVIEW PROCESS',
+    paragraphs: [
+      'All submissions are reviewed for authenticity, quality, eligibility and compliance with program requirements.',
+      'Please allow up to 72 business hours for content review and point allocation.',
+      'Frontal Slayer reserves the right to approve, deny, remove, or modify rewards at its sole discretion. Point values, eligibility requirements, earning limits, and program terms may be updated or discontinued at any time without prior notice.',
+    ],
+  },
+];
+
 function AffiliatePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -480,7 +647,7 @@ function AffiliatePage() {
           platform: 'Twitter',
           link: 'https://twitter.com/user/status/1234567890',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() // 4 days ago
         },
         {
@@ -488,7 +655,7 @@ function AffiliatePage() {
           platform: 'Instagram',
           link: 'https://instagram.com/p/abcdefghij',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
         },
         {
@@ -496,7 +663,7 @@ function AffiliatePage() {
           platform: 'TikTok',
           link: 'https://tiktok.com/@user/video/1234567890',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
         }
       ]
@@ -538,7 +705,7 @@ function AffiliatePage() {
           platform: 'Instagram',
           link: 'https://instagram.com/p/xyz123456',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString() // 9 days ago
         },
         {
@@ -603,7 +770,7 @@ function AffiliatePage() {
           platform: 'Twitter',
           link: 'https://twitter.com/user/status/9876543210',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() // 8 days ago
         },
         {
@@ -611,7 +778,7 @@ function AffiliatePage() {
           platform: 'Instagram',
           link: 'https://instagram.com/p/xyz123456',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
         },
         {
@@ -619,7 +786,7 @@ function AffiliatePage() {
           platform: 'TikTok',
           link: 'https://tiktok.com/@user/video/9876543210',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
         },
         {
@@ -627,7 +794,7 @@ function AffiliatePage() {
           platform: 'YouTube',
           link: 'https://youtube.com/watch?v=9876543210',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
         },
         {
@@ -635,7 +802,7 @@ function AffiliatePage() {
           platform: 'Facebook',
           link: 'https://facebook.com/user/posts/9876543210',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString() // 4 days ago
         }
       ]
@@ -730,7 +897,7 @@ function AffiliatePage() {
           platform: 'Twitter',
           link: 'https://twitter.com/user/status/2222222222',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 19 * 24 * 60 * 60 * 1000).toISOString() // 19 days ago
         },
         {
@@ -738,7 +905,7 @@ function AffiliatePage() {
           platform: 'Instagram',
           link: 'https://instagram.com/p/bbbb2222',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString() // 18 days ago
         },
         {
@@ -746,7 +913,7 @@ function AffiliatePage() {
           platform: 'TikTok',
           link: 'https://tiktok.com/@user/video/2222222222',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString() // 17 days ago
         },
         {
@@ -754,7 +921,7 @@ function AffiliatePage() {
           platform: 'YouTube',
           link: 'https://youtube.com/watch?v=2222222222',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString() // 16 days ago
         },
         {
@@ -762,7 +929,7 @@ function AffiliatePage() {
           platform: 'Facebook',
           link: 'https://facebook.com/user/posts/2222222222',
           status: 'approved',
-          points: 400,
+          points: 600,
           submittedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() // 15 days ago
         }
       ]
@@ -2096,7 +2263,9 @@ function AffiliatePage() {
                                    alt="Close"
                                    style={{
                                      width: '16px',
-                                     height: '16px'}}
+                                     height: '16px',
+                                     filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                                   }}
                                  />
                                </button>
                              </div>
@@ -3428,7 +3597,9 @@ function AffiliatePage() {
                                                 height: '12px',
                                                 objectFit: 'contain',
                                                 display: 'block',
-                                                flexShrink: 0}}
+                                                flexShrink: 0,
+                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                                              }}
                                             />
                                           </button>
                                         )}
@@ -3558,7 +3729,9 @@ function AffiliatePage() {
                                                 height: '12px',
                                                 objectFit: 'contain',
                                                 display: 'block',
-                                                flexShrink: 0}}
+                                                flexShrink: 0,
+                                                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                                              }}
                                             />
                                           </button>
                                         )}
@@ -3650,7 +3823,9 @@ function AffiliatePage() {
                                                  height: '11px',
                                                  objectFit: 'contain',
                                                  display: 'block',
-                                                 flexShrink: 0}}
+                                                 flexShrink: 0,
+                                                 filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+                                               }}
                                              />
                                            </button>
                                          )}
@@ -3682,7 +3857,7 @@ function AffiliatePage() {
                      })()
                    ) : (
                      <>
-                       {/* Card 1: BECOME AN AFFILIATE */}
+                      {/* Card 1: AFFILIATE REWARDS PROGRAM */}
                   <div className="w-full mb-4 transition-all duration-300 ease-out overflow-hidden" style={{ borderWidth: '1.3px', borderStyle: 'solid', borderColor: '#000', boxSizing: 'border-box' }}>
                     <div className="bg-white/60 backdrop-blur-sm w-full" style={{ padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '100%' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
@@ -3696,117 +3871,102 @@ function AffiliatePage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        BECOME AN AFFILIATE
+                        AFFILIATE REWARDS PROGRAM
                       </h2>
                       <img src={moreWaysIcon} alt="" style={{ width: '18px', height: '18px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
-                    
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#EB1C24',
-                          fontSize: '10px',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500'
-                        }}
-                      >
-                        APPROVED PHOTO + VIDEO:
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 12px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        RECEIVE <span style={{ color: '#EB1C24' }}>500 PTS</span> FOR EACH APPROVED PHOTO AND <span style={{ color: '#EB1C24' }}>500 PTS</span> FOR EACH APPROVED VIDEO PER PRODUCT (<span style={{ color: '#EB1C24' }}>1,000 PTS</span> TOTAL PER UNIT)*
-                      </p>
-                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                      <div>
+                        {AFFILIATE_REWARDS_OVERVIEW.map((paragraph, index) => (
+                          <p
+                            key={`affiliate-overview-${index}`}
+                            style={{
+                              fontFamily: index === 0 ? '"Futura PT Medium"' : '"Futura PT Book"',
+                              color: '#000000',
+                              fontSize: index === 0 ? '11px' : '10px',
+                              margin: index === AFFILIATE_REWARDS_OVERVIEW.length - 1 ? '0' : '0 0 10px 0',
+                              lineHeight: '1.45'
+                            }}
+                          >
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
 
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          color: '#EB1C24',
-                          fontSize: '10px',
-                          margin: '0 0 8px 0',
-                          textTransform: 'uppercase',
-                          fontWeight: '500'
-                        }}
-                      >
-                        SOCIAL TAGS:
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '10px',
-                          margin: '0 0 12px 0',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        EARN <span style={{ color: '#EB1C24' }}>200 PTS</span> PER SOCIAL PLATFORM WHEN YOU TAG US ON YOUR POSTS OR VIDEOS/REELS. PLATFORMS INCLUDE: TWITTER/X, INSTAGRAM, FACEBOOK, YOUTUBE, TIKTOK (<span style={{ color: '#EB1C24' }}>UP TO 1,000 PTS</span> PER PRODUCT)*
-                      </p>
+                      {AFFILIATE_REWARDS_SECTIONS.map((section) => (
+                        <div key={section.title}>
+                          <p
+                            style={{
+                              fontFamily: '"Futura PT Medium"',
+                              color: '#EB1C24',
+                              fontSize: '10px',
+                              margin: '0 0 8px 0',
+                              textTransform: 'uppercase',
+                              fontWeight: '500',
+                              lineHeight: '1.35'
+                            }}
+                          >
+                            {section.title}
+                          </p>
+                          {section.paragraphs?.map((paragraph, paragraphIndex) => (
+                            <p
+                              key={`${section.title}-paragraph-${paragraphIndex}`}
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                color: '#000000',
+                                fontSize: '10px',
+                                margin: '0 0 10px 0',
+                                lineHeight: '1.45'
+                              }}
+                            >
+                              {paragraph}
+                            </p>
+                          ))}
+                          {section.bullets && (
+                            <ul
+                              style={{
+                                margin: '0 0 10px 18px',
+                                padding: 0,
+                                color: '#000000'
+                              }}
+                            >
+                              {section.bullets.map((bullet, bulletIndex) => (
+                                <li
+                                  key={`${section.title}-bullet-${bulletIndex}`}
+                                  style={{
+                                    fontFamily: '"Futura PT Book"',
+                                    color: '#000000',
+                                    fontSize: '10px',
+                                    lineHeight: '1.45',
+                                    marginBottom: bulletIndex === section.bullets!.length - 1 ? '0' : '6px'
+                                  }}
+                                >
+                                  {bullet}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {section.closingParagraphs?.map((paragraph, paragraphIndex) => (
+                            <p
+                              key={`${section.title}-closing-${paragraphIndex}`}
+                              style={{
+                                fontFamily: '"Futura PT Book"',
+                                color: '#000000',
+                                fontSize: '10px',
+                                margin: paragraphIndex === section.closingParagraphs!.length - 1 ? '0' : '0 0 10px 0',
+                                lineHeight: '1.45'
+                              }}
+                            >
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      ))}
                     </div>
-
-                    <div style={{ marginBottom: '12px' }}>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '9px',
-                          margin: '0 0 4px 0'
-                        }}
-                      >
-                        *SUBMITTED PHOTOS/VIDEOS THAT ARE APPROVED/ELIGIBLE FOR AFFILIATE POINTS SHOULD HAVE GOOD LIGHTING WITH NO FILTERS, IN CASE WE WANT TO FEATURE IT ON OUR SOCIALS OR FOR MARKETING.
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '9px',
-                          margin: '0 0 4px 0'
-                        }}
-                      >
-                        *TAG INCLUDES CONTENT VIA TWITTER/X, FACEBOOK, INSTAGRAM, TIKTOK + YOUTUBE, PER APPROVAL
-                      </p>
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          color: '#000000',
-                          fontSize: '9px',
-                          margin: '0 0 12px 0'
-                        }}
-                      >
-                        *VIDEO MUST BE AT LEAST 10-60 SECONDS IN DURATION, PER APPROVAL
-                      </p>
-                    </div>
-
-                  {/* Content Approval Instructions */}
-                  <div style={{ marginBottom: '24px' }}>
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Book", "Futura PT Medium", "Covered By Your Grace", "Covered By Your Grace Preload"',
-                        color: '#000000',
-                        fontSize: '10px',
-                        margin: '-4px 0 24px 0',
-                        textTransform: 'uppercase',
-                        fontWeight: '500',
-                        lineHeight: '1.4',
-                        textAlign: 'left'
-                      }}
-                    >
-                      IN ORDER TO HAVE THE HIGHEST CHANCE FOR CONTENT APPROVAL PLEASE SUBMIT CLEAR, WELL LIT PHOTOS/VIDEOS. PREFERABLY WITH NO FILTERS OR EDITS IN ORDER TO SHOWCASE THE PRODUCT IN ITS MOST AUTHENTIC STATE. ALLOW UP TO 72 HOURS FOR YOUR CONTENT TO BE REVIEWED AND APPROVED.
-                    </p>
-                  </div>
                   </div>
                   </div>
 
-                  {/* Card 2: AFFILIATE PROGRAM */}
+                  {/* Card 2: CONTENT SUBMISSIONS */}
                   <div className="w-full mb-4 transition-all duration-300 ease-out overflow-hidden" style={{ borderWidth: '1.3px', borderStyle: 'solid', borderColor: '#000', boxSizing: 'border-box' }}>
                     <div className="bg-white/60 backdrop-blur-sm w-full" style={{ padding: '20px', backgroundColor: 'rgba(255, 255, 255, 0.6)', minHeight: '100%' }}>
                     <div className="flex items-center justify-between -mt-1 pb-1 border-b border-gray-200" style={{ marginBottom: '16px' }}>
@@ -3820,7 +3980,7 @@ function AffiliatePage() {
                           textTransform: 'uppercase'
                         }}
                       >
-                        AFFILIATE PROGRAM
+                        CONTENT SUBMISSIONS
                       </h2>
                       <img src={affiliateIcon} alt="" style={{ width: '17px', height: '17px', flexShrink: 0, objectFit: 'contain' }} />
                     </div>
@@ -3829,7 +3989,7 @@ function AffiliatePage() {
                       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', color: '#000' }}>
                         <p
                           style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', textTransform: 'uppercase', margin: '0' }}
-                          dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT.<br>CHECK BACK SOON!" }}
+                          dangerouslySetInnerHTML={{ __html: "YOU DON'T HAVE ANY ORDERS ELIGIBLE FOR CONTENT SUBMISSIONS.<br>CHECK BACK SOON!" }}
                         />
                       </div>
                     ) : (

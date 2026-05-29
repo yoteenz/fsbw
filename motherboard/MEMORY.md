@@ -20703,3 +20703,46 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - Wishlist BCF thumbnails should use their own category artwork directly and must not be wrapped in the unit leaf-brick background treatment.
 - For wishlist list/shared spacing asks, prefer the local list action style and the dedicated expanded-list CSS classes before changing broader cart/wishlist text-layer defaults.
+
+---
+
+## 2026-05-29 — Full conversation summary: wishlist Build-a-Wig parity, sold-out copy, premium/icon cleanup, BCF checkout tuning, wishlist visuals, and affiliate rewards program copy
+
+**Context:** User spent this chat refining multiple mobile storefront/account details for consistency across wishlist, cart, bag, checkout, product pages, membership, icons, and account surfaces. Requests included fixing Build-a-Wig edit behavior from wishlist/account wishlist, standardizing sold-out wording, updating stock-notify copy, changing premium tier benefits/chart behavior, correcting header icon red color, tuning BCF detail order and price spacing across checkout/cart/bag, adjusting 2D/3D disclaimer text, refining wishlist list spacing/thumb backgrounds, and finally replacing the account affiliate page copy with a new Frontal Slayer Affiliate Rewards Program description.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig wishlist editing so wishlist/account wishlist edits seed the same localStorage edit session as cart/bag, route to the product-specific `/build-a-wig/{unit}/edit` page, preload prior selections, and save back to the originating wishlist item.
+- Standardized sold-out wording by changing unit PDP out-of-stock CTA copy to `SOLD OUT`, removing the red out-of-stock wishlist label, and changing the wishlist stock text beneath the quantity counter to `SOLD OUT`.
+- Updated stock-notify modal copy to: `THIS ITEM IS CURRENTLY SOLD OUT. ENTER YOUR EMAIL ADDRESS AND WE'LL LET YOU KNOW ONCE IT'S BACK IN STOCK.`
+- Updated premium benefits so `LIVE ORDER TRACKING` appears for the 3-month tier, shows a checkmark on the premium upgrade chart, and is ordered above `PRIORITY MESSAGES` everywhere the premium benefits list/chart renders.
+- Reworked site header/title icons to use the correct brand red by moving away from CSS tint filters toward native red SVG assets/defaults for shared section headers and related account/admin/header icon surfaces.
+- Adjusted cart dropdown/details copy for BCF lines so bundle-deal details no longer show `BUNDLE DEAL: 3 LINES`, origin appears above texture, and `LACE` appears above `LENGTH` for closures/frontals.
+- Split product-page disclaimer copy by view state so 2D keeps `VISUAL & AESTHETIC PURPOSES ONLY` and 3D shows `(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)`, including the later correction to restore the missing `A` in `WEARING A FULLY...`.
+- Iteratively corrected checkout display for BCF items: stacked black current price below gray strikeout text, grouped BCF bundle deals into one checkout strip line like cart, removed extra placeholder gaps, aligned red RAW and price rows with units, added non-Noir red subtitle spacing, set non-bundled BCF checkout price spacing to 5px, and reduced non-bundled BCF price spacing on cart dropdown + bag by 2px.
+- Refined wishlist list/shared list presentation by reducing spacing above the red edit/list action text and gray `VIEW DETAILS`, and removing the leaf-brick background behind BCF thumbnails on wishlist list/shared pages.
+- Replaced the account affiliate page’s old `BECOME AN AFFILIATE` / `AFFILIATE PROGRAM` promo copy with a structured `AFFILIATE REWARDS PROGRAM` content block covering content submissions, social tag rewards, featured creator bonus, referral rewards, VIP tiers, content approval guidelines, and review process; also renamed the adjacent tracker card to `CONTENT SUBMISSIONS` and aligned mock social reward points with the 600-point-per-platform program.
+
+**Decisions / outcomes:**
+- Wishlist/account wishlist Build-a-Wig edit behavior now matches cart/bag edit flow instead of dropping users back on the standard PDP.
+- `SOLD OUT` is the consistent shopper-facing wording across affected product/wishlist surfaces, and the notify modal uses the updated sold-out messaging.
+- Premium membership displays now consistently treat `LIVE ORDER TRACKING` as a 3-month benefit and show it before `PRIORITY MESSAGES`.
+- Header icons now follow the concierge red more accurately via native-red asset usage instead of relying on old CSS filters.
+- Checkout/cart/bag BCF display now matches requested stacking/grouping/order/spacing rules, especially for grouped bundle deals and non-bundled price offsets.
+- Wishlist list/shared list BCF items no longer show the leaf-brick background and use tighter requested text spacing.
+- Account affiliate page now reflects the new Affiliate Rewards Program messaging and visible submission tracker labels/counters align with the updated 600-point social reward structure.
+
+**Changes:**
+- Build-a-Wig edit/session + wishlist/account wishlist/cart/bag flow: `src/utils/buildAWigEditSession.ts`, `src/pages/wishlist/page.tsx`, `src/pages/shopping-bag/page.tsx`, `src/components/CartDropdown.tsx`.
+- Sold-out / notify copy: `src/components/shop/UnitPdpCartActions.tsx`, `src/components/shop/WigStockPrice.tsx`, `src/components/shop/StockNotifyModal.tsx`, `src/pages/wishlist/page.tsx`.
+- Premium benefit/chart consistency: `src/constants/premiumBenefitsByTier.ts`, `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`, `src/pages/account/membership/page.tsx`.
+- Header/icon red cleanup: `src/components/RoleCardSectionHeader.tsx`, `src/utils/workerRoleHeaderIcon.ts`, multiple account/admin/page icon usages, `public/assets/close-icon.svg`, `public/assets/order-tracking.svg`, `public/assets/points-history.svg`, `public/assets/rewards-icon.svg`, `public/assets/NOIR/account-icon-red.svg`.
+- Cart/details + checkout/cart/bag BCF logic/spacing: `src/utils/cartLineRedAndDetails.ts`, `src/utils/checkoutOrderStripDisplay.ts`, `src/pages/checkout/page.tsx`, `src/pages/checkout/confirm/page.tsx`, `src/components/CartDropdown.tsx`, `src/pages/shopping-bag/page.tsx`.
+- Product-page 2D/3D disclaimer copy: `src/pages/straight/noir/page.tsx`, `src/pages/straight/blanco/page.tsx`, `src/pages/wavy/soft-wave/page.tsx`, `src/pages/wavy/beach-wave/page.tsx`, `src/pages/curly/soft-curl/page.tsx`, `src/pages/curly/ocean-curl/page.tsx`.
+- Wishlist lists/shared visuals: `src/pages/wishlist/lists/page.tsx`, `src/pages/wishlist/shared/page.tsx`, `src/index.css`.
+- Affiliate program page rewrite: `src/pages/account/affiliate/page.tsx`.
+
+**Conventions:**
+- For Build-a-Wig editing from any cart/bag/wishlist surface, preserve parity by seeding the same edit-session localStorage keys and routing to the unit-specific `/build-a-wig/{unit}/edit` path.
+- For premium/feature lists shown in multiple places, prefer a shared constant/source of truth so tier inclusion and row order stay consistent across account/chart surfaces.
+- For BCF checkout/cart/bag tuning, preserve grouped bundle-deal display parity with cart and use narrow, surface-specific spacing adjustments rather than broad global typography changes.
+- For long program/policy copy on account surfaces, prefer structured section data rendered in JSX so future edits are easier than patching large hardcoded text blocks inline.
