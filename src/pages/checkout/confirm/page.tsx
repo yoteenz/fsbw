@@ -1364,7 +1364,9 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                                              (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
                                              (item.length && item.length !== '24"');
                               const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
+                              const isBcf = item.type === 'shop-texture-category';
                               if (useDigitalStack) return '-2px';
+                              if (isBcf) return '4px';
                               if (isBlancoNoSpecs) return '-2px';
                               return '-2px';
                             })(),
