@@ -605,6 +605,42 @@ export default function ShopTextureCategoryProductPage() {
   }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight]);
   /** Premium gate for member-only options (e.g. 150G hair weight chip grays out for standard members). */
   const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
+
+  /** Cart lines (re-read when cart count changes) for persistent "IN THE BAG" button state. */
+  const cartLinesForInBag = React.useMemo(() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-read on cart count change
+  }, [cartCount]);
+
+  /** Does a cart line match the CURRENT BCF selection (regular vs bundle-deal)? */
+  const bcfSelectionInBag = React.useCallback(
+    (bundleDeal: boolean): boolean => {
+      if (!category) return false;
+      return cartLinesForInBag.some((ci: any) => {
+        if (ci?.type !== 'shop-texture-category') return false;
+        if (ci.category !== category) return false;
+        if (String(ci.texture || '') !== texture) return false;
+        if (String(ci.hairOrigin || '') !== bcfOrigin) return false;
+        if (String(ci.length || '') !== bcfLength) return false;
+        if (String(ci.color || '') !== bcfColor) return false;
+        if (category === 'bundles') {
+          if (String(ci.hairWeight || BCF_DEFAULT_WEIGHT_ID) !== bcfHairWeight) return false;
+        } else if (String(ci.lace || '') !== bcfLace) {
+          return false;
+        }
+        return Boolean(ci.bcfBundleDeal) === bundleDeal;
+      });
+    },
+    [cartLinesForInBag, category, texture, bcfOrigin, bcfLength, bcfColor, bcfHairWeight, bcfLace]
+  );
+
+  const regularInBag = bcfSelectionInBag(false);
+  const bundleInBag = bcfSelectionInBag(true);
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
@@ -1867,18 +1903,16 @@ export default function ShopTextureCategoryProductPage() {
                 >
                   {bcfSoldOut
                     ? 'SOLD OUT'
-                    : (
-                      <>
-                        {addToBagState === 'idle' && 'ADD TO BAG'}
-                        {addToBagState === 'adding' && 'ADDING...'}
-                        {addToBagState === 'added' && (
-                          <span className="flex items-center justify-center gap-1">
-                            <img src="/assets/check.svg" alt="" width={9} height={9} />
-                            <span style={{ color: '#808080' }}>IN THE BAG</span>
-                          </span>
-                        )}
-                      </>
-                    )}
+                    : addToBagState === 'adding'
+                      ? 'ADDING...'
+                      : (addToBagState === 'added' || regularInBag) ? (
+                        <span className="flex items-center justify-center gap-1">
+                          <img src="/assets/check.svg" alt="" width={9} height={9} />
+                          <span style={{ color: '#808080' }}>IN THE BAG</span>
+                        </span>
+                      ) : (
+                        'ADD TO BAG'
+                      )}
                 </button>
                 {category === 'bundles' && (
                   <button
@@ -1903,18 +1937,16 @@ export default function ShopTextureCategoryProductPage() {
                   >
                     {bcfSoldOut
                       ? 'SOLD OUT'
-                      : (
-                        <>
-                          {bundleDealState === 'idle' && 'BUNDLE DEAL'}
-                          {bundleDealState === 'adding' && 'ADDING...'}
-                          {bundleDealState === 'added' && (
-                            <span className="flex items-center justify-center gap-1">
-                              <img src="/assets/check.svg" alt="" width={9} height={9} />
-                              <span style={{ color: '#808080' }}>IN THE BAG</span>
-                            </span>
-                          )}
-                        </>
-                      )}
+                      : bundleDealState === 'adding'
+                        ? 'ADDING...'
+                        : (bundleDealState === 'added' || bundleInBag) ? (
+                          <span className="flex items-center justify-center gap-1">
+                            <img src="/assets/check.svg" alt="" width={9} height={9} />
+                            <span style={{ color: '#808080' }}>IN THE BAG</span>
+                          </span>
+                        ) : (
+                          'BUNDLE DEAL'
+                        )}
                   </button>
                 )}
               </div>
