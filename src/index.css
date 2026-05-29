@@ -4145,6 +4145,8 @@ p.bcf-bundles-pdp-product-name {
 
 .wishlist-expanded-list-view-details-toggle--list {
   margin-top: 2px !important;
+  color: #808080 !important;
+  font-family: 'Futura PT Demi', Futura, sans-serif !important;
 }
 
 .wishlist-expanded-list-view-details-toggle--list-view-only {

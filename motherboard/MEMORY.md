@@ -19823,6 +19823,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist list VIEW/CLOSE DETAILS: gray Futura Demi (was red)
+
+**Change:** `src/index.css` — `.wishlist-expanded-list-view-details-toggle--list` now adds `color: #808080 !important` and `font-family: 'Futura PT Demi', Futura, sans-serif !important`, overriding the red `#eb1c24` / Futura PT Medium base. Affects both **VIEW DETAILS** and **CLOSE DETAILS** in the list line view (lists + shared pages, which both apply `--list`). Verified headless: computed `rgb(128,128,128)` + `"Futura PT Demi"`. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.
