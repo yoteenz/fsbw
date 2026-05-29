@@ -139,7 +139,7 @@ const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8.5px',
-  marginTop: '8px',
+  marginTop: '5px',
   marginBottom: 0,
   lineHeight: '1.1',
   textAlign: 'center',
@@ -180,6 +180,10 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
+}
+
+function wishlistThumbUsesLeafBrick(item: any): boolean {
+  return !getWishlistBcfThumbSrc(item);
 }
 
 function getHairOrigin(productName: string): string {
@@ -465,6 +469,7 @@ export default function SharedWishlistListPage() {
                       );
                       const inBag = isInBag(item, index);
                       const outOfStock = isLineItemOutOfStock(item);
+                      const useLeafBrickThumb = wishlistThumbUsesLeafBrick(item);
                       return (
                         <div
                           key={item.id || index}
@@ -486,29 +491,41 @@ export default function SharedWishlistListPage() {
                               style={{
                                 width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
                                 height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`,
-                                backgroundImage: "url('/assets/leaf-brick-resize.png')",
+                                backgroundImage: useLeafBrickThumb ? "url('/assets/leaf-brick-resize.png')" : 'none',
+                                backgroundColor: useLeafBrickThumb ? undefined : '#ffffff',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 border: '1.3px solid #000',
-                                boxShadow: 'inset 0 0 0 3px #fff',
+                                boxShadow: useLeafBrickThumb ? 'inset 0 0 0 3px #fff' : undefined,
                                 overflow: 'hidden',
                               }}
                             >
                               <img
                                 src={getLeafBrickFrontImage(item)}
                                 alt=""
-                                style={{
-                                  position: 'absolute',
-                                  left: '50%',
-                                  bottom: 3,
-                                  transform: 'translateX(-50%)',
-                                  width: 'auto',
-                                  height: '96%',
-                                  maxWidth: '106%',
-                                  objectFit: 'contain',
-                                  objectPosition: 'bottom',
-                                  zIndex: 1,
-                                }}
+                                style={
+                                  useLeafBrickThumb
+                                    ? {
+                                        position: 'absolute',
+                                        left: '50%',
+                                        bottom: 3,
+                                        transform: 'translateX(-50%)',
+                                        width: 'auto',
+                                        height: '96%',
+                                        maxWidth: '106%',
+                                        objectFit: 'contain',
+                                        objectPosition: 'bottom',
+                                        zIndex: 1,
+                                      }
+                                    : {
+                                        position: 'absolute',
+                                        inset: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        zIndex: 1,
+                                      }
+                                }
                               />
                             </div>
                             {outOfStock ? (
