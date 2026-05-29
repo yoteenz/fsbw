@@ -19835,6 +19835,18 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — BCF wishlist thumbnail = PDP hero product photo (per texture)
+
+**Context:** Earlier BCF wishlist thumbnails used `shopTextureCategoryThumbSrc` (`/assets/{cat}-{texture}.png`, the marble-grid thumb). User wants the **BCF PDP hero photo** for that specific texture instead.
+
+**Change:**
+- **`src/utils/shopTextureCategoryThumb.ts`** — new `shopTextureCategoryHeroPhotoSrc(texture, category)` → `/assets/{texture}-{bundle|closure|frontal}-product.JPG` (mirrors `BUNDLE_PHOTO_BY_TEXTURE` / `BCF_CF_PHOTO` in `texture-category-product/page.tsx`; all 9 assets exist, `.JPG` uppercase).
+- **`src/utils/wishlistListItemDetails.ts`** — `getWishlistBcfThumbSrc` now returns the hero photo via that helper (was `shopTextureCategoryThumbSrc`). Used by lists + shared `getLeafBrickFrontImage`.
+
+**Verified (headless):** BCF list thumbs render `/assets/wavy-bundle-product.JPG`, `/assets/curly-closure-product.JPG`, `/assets/straight-frontal-product.JPG` and load (naturalWidth > 0). Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.
