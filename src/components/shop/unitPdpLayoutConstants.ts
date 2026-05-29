@@ -26,7 +26,7 @@ export const UNIT_PDP_CAP_SIZE_HEADER_STYLE: CSSProperties = {
 
 export const UNIT_PDP_CAP_CHART_ROW_STYLE: CSSProperties = {
   transform: 'translateX(4px)',
-  marginTop: 0,
+  marginTop: '-4px',
 };
 
 export const UNIT_PDP_CAP_CHART_IMG_STYLE: CSSProperties = {
