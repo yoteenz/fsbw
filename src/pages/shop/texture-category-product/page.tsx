@@ -20,6 +20,8 @@ import {
   BCF_LENGTH_OPTIONS,
   BCF_ORIGIN_OPTIONS,
   BCF_TEXTURE_LABELS,
+  BCF_WEIGHT_OPTIONS,
+  BCF_DEFAULT_WEIGHT_ID,
   bcfColorOptionsForOrigin,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
@@ -293,6 +295,8 @@ export default function ShopTextureCategoryProductPage() {
   );
   const [bcfLength, setBcfLength] = useState('24"');
   const [bcfColor, setBcfColor] = useState('OFF BLACK');
+  /** Bundles only — hair weight (100G default; 150G is +$60 and premium-only). */
+  const [bcfHairWeight, setBcfHairWeight] = useState(BCF_DEFAULT_WEIGHT_ID);
   const [bcfLace, setBcfLace] = useState(() => {
     if (typeof window === 'undefined') return '13X6';
     const cat = parseShopBcfCategory(window.location.pathname);
@@ -555,6 +559,17 @@ export default function ShopTextureCategoryProductPage() {
     setBcfColor(colorId);
   }, [bcfOrigin]);
 
+  /** Hair weight (bundles): 100G free/default; 150G is premium-only (+$60). */
+  const handleBcfWeightSelect = React.useCallback((weightId: string) => {
+    const opt = BCF_WEIGHT_OPTIONS.find((o) => o.id === weightId);
+    if (!opt) return;
+    if (opt.premium && !isPremiumMemberForGatedFeatures()) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
+    setBcfHairWeight(weightId);
+  }, []);
+
   const handleBcfColorUpgradeConfirm = () => {
     setShowBcfColorUpgradeModal(false);
     prepareMembershipUpgradeNavigation();
@@ -580,9 +595,14 @@ export default function ShopTextureCategoryProductPage() {
     if (!category) return 0;
     return (
       basePrice +
-      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace)
+      bcfPriceAdjustments(
+        bcfLength,
+        bcfColor,
+        category === 'bundles' ? null : bcfLace,
+        category === 'bundles' ? bcfHairWeight : null
+      )
     );
-  }, [category, basePrice, bcfLength, bcfColor, bcfLace]);
+  }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight]);
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
@@ -627,7 +647,7 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          ...(category === 'bundles' ? {} : { lace: bcfLace })
+          ...(category === 'bundles' ? { hairWeight: bcfHairWeight } : { lace: bcfLace })
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -675,6 +695,7 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
+          hairWeight: bcfHairWeight,
           bcfBundleDeal: true,
           bcfBundleDealListSubtotal: listSubtotal
         };
@@ -1552,6 +1573,29 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
+                      {category === 'bundles' && (
+                        <>
+                          <p style={{ ...bcfBohemySubLabelStyle, margin: '26px 0 8px' }}>hair weight</p>
+                          <div className="flex flex-wrap justify-center gap-3 mb-3">
+                            {BCF_WEIGHT_OPTIONS.map((w) => {
+                              const sel = bcfHairWeight === w.id;
+                              return (
+                                <button
+                                  key={w.id}
+                                  type="button"
+                                  onClick={() => handleBcfWeightSelect(w.id)}
+                                  style={{
+                                    ...bcfOptionBtnTypography,
+                                    ...bcfOptionSelectedChrome(sel)
+                                  }}
+                                >
+                                  {w.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
                       {(category === 'closures' || category === 'frontals') && (
                         <>
                           <p
