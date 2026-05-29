@@ -1819,7 +1819,6 @@ fontSize: '11px',
                   product shots
                 </div>
               </div>
-            </div>
 
               {/* Tabs Section */}
               <div style={UNIT_PDP_TABS_SECTION_STYLE}>
@@ -1998,6 +1997,7 @@ fontSize: '11px',
                   )}
                 </div>
               </div>
+            </div>
           </div>
 
         {/* SIMILAR PRODUCTS SECTION */}
