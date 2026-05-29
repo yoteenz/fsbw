@@ -19675,3 +19675,85 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist list line: tighten space above VIEW DETAILS 2px (list view only)
 
 **Change:** `src/index.css` — `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only to the **VIEW DETAILS** state in list/line view, not CLOSE DETAILS) `margin-top: 1px → -1px` (−2px). CLOSE DETAILS keeps `--list` `margin-top: 2px`. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Full chat summary: wishlist/edit fixes through BCF closures/frontals detail order
+
+**Context:** This ongoing chat covered a sequence of storefront and account consistency fixes. It started with a wishlist Build-a-Wig edit routing bug, then sold-out wording and stock-notify copy changes, then a premium-membership update to include **LIVE ORDER TRACKING** for **3 MONTHS PREMIUM**, then a site-wide native-red header icon cleanup, then BCF bundle-deal detail ordering cleanup in the cart dropdown, and finally a follow-up cart dropdown detail-order adjustment for **closures & frontals** so **LACE** appears above **LENGTH** in VIEW DETAILS.
+
+**Topics covered (entire conversation so far):**
+- Traced the main wishlist red **EDIT IN BUILD-A-WIG** link against cart dropdown and shopping bag edit behavior.
+- Confirmed the main wishlist page had a special-case path back to the unit PDP for some items and was not seeding the same edit localStorage keys used by cart and bag.
+- Added a shared Build-a-Wig edit-session helper so wishlist, cart dropdown, and shopping bag all open product-specific `/build-a-wig/{unit}/edit` routes with saved selections restored and with wishlist edits still saving back to the wishlist item in place.
+- Installed missing local dependencies in the cloud workspace (`npm ci`) so verification could run, fixed a cart dropdown helper wiring issue, and verified the edit-flow changes with successful production builds.
+- Updated sold-out wording on the shared unit PDP cart actions so the disabled out-of-stock primary button reads **SOLD OUT**.
+- Updated the main wishlist page so the red stock label next to the struck-through price is suppressed there, while the text below the quantity counter now reads **SOLD OUT**.
+- Updated the stock-notify popup body copy to: **THIS ITEM IS CURRENTLY SOLD OUT. ENTER YOUR EMAIL ADDRESS AND WE'LL LET YOU KNOW ONCE IT'S BACK IN STOCK.**
+- Traced premium-tier feature copy across the shared premium chart component, the duplicated membership/rewards page implementation, and the shared `PREMIUM_BENEFITS_BY_TIER` constant.
+- Added **LIVE ORDER TRACKING** to the shared `3months` benefits list, moved it above **PRIORITY MESSAGES** where both appear, removed the duplicated local benefits constant from `account/membership/page.tsx`, and updated both chart tables so 3-month premium shows a checkmark for live tracking.
+- Audited all remaining red header/icon treatments across the site, starting from the mismatched close X icons versus concierge’s native-red icons.
+- Identified that the wrong-red issue came from a small set of shared assets and filter-tinted usages: `close-icon.svg`, `order-tracking.svg`, `points-history.svg`, `rewards-icon.svg`, plus the generic `RoleCardSectionHeader` fallback icon/filter logic.
+- Converted those shared header assets to native `#EB1C24`, added a native-red fallback account header icon asset for `RoleCardSectionHeader`, removed the legacy red CSS-filter path from the role header component, and stripped the hardcoded red-filter style from website header usages that referenced those shared assets.
+- Traced BCF cart-dropdown VIEW DETAILS to the shared `bcfCartViewDetailsHtml()` helper and first removed the `BUNDLE DEAL: 3 LINES` line while moving **ORIGIN** above **TEXTURE**.
+- For the latest follow-up, updated the same shared BCF details helper so **LACE** appears above **LENGTH** for closures/frontals in the cart dropdown VIEW DETAILS.
+- Rebased work onto moving upstream `master` / `preview/mobile` heads throughout the chat and kept the fixes moving across the two canonical branches.
+
+**Decisions / outcomes:**
+- Main wishlist edits now use the same seeded product-specific Build-a-Wig edit flow as cart and bag.
+- Wishlist-origin Build-a-Wig saves still update the existing wishlist item instead of behaving like a cart edit.
+- Unit PDP sold-out buttons now say **SOLD OUT**.
+- On the main wishlist page, the red out-of-stock label near the price is removed, and the right-side sold-out action copy under the quantity counter now reads **SOLD OUT**.
+- The stock-notify popup now uses the new sold-out/back-in-stock sentence requested by the user.
+- **LIVE ORDER TRACKING** is now included for **3 MONTHS PREMIUM** in the shared premium benefits source and in both upgrade chart tables, and the row/list order now places live order tracking above priority messages.
+- Header/title icons across the site that were intended to be red now use native-red assets instead of the old tint filter, so they match the concierge page’s true brand red more closely.
+- The close X icons now inherit that same native-red treatment site-wide.
+- Shared BCF VIEW DETAILS no longer shows the bundle-count line, shows **ORIGIN** above **TEXTURE**, and now shows **LACE** above **LENGTH** for closures/frontals/cart-dropdown usage.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+  - Added shared helpers to resolve product-specific Build-a-Wig edit routes and seed edit state from existing line items.
+- `src/pages/wishlist/page.tsx`
+  - Replaced wishlist-only edit routing with the shared edit-session helper.
+  - Suppressed the red stock label in the price stack on the main wishlist page.
+  - Changed the out-of-stock action text below the quantity counter to **SOLD OUT**.
+- `src/pages/shopping-bag/page.tsx`
+  - Reused the shared Build-a-Wig edit-session helper for bag edit entry.
+- `src/components/CartDropdown.tsx`
+  - Reused the shared Build-a-Wig edit-session helper for cart dropdown edit entry.
+  - Participated in the native-red close-icon cleanup.
+- `src/components/shop/WigStockPrice.tsx`
+  - Allowed the line-item out-of-stock label to be suppressed per usage (`outOfStockLabel={null}`).
+- `src/components/shop/UnitPdpCartActions.tsx`
+  - Changed the sold-out primary PDP button text from **OUT OF STOCK** to **SOLD OUT**.
+- `src/components/shop/StockNotifyModal.tsx`
+  - Updated the notify popup body copy to the new sold-out/back-in-stock wording.
+- `src/constants/premiumBenefitsByTier.ts`
+  - Added **LIVE ORDER TRACKING** to `3months` and reordered live tracking above priority messages for higher tiers.
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`
+  - Moved the live-order-tracking row above priority messages and changed 3-month premium from an X to a checkmark for that benefit.
+  - Participated in the native-red close-icon cleanup.
+- `src/pages/account/membership/page.tsx`
+  - Switched to the shared `PREMIUM_BENEFITS_BY_TIER` constant and updated the duplicated comparison table row order / 3-month live-tracking inclusion.
+  - Participated in the native-red close-icon cleanup.
+- Shared native-red asset/icon cleanup:
+  - `public/assets/close-icon.svg`
+  - `public/assets/order-tracking.svg`
+  - `public/assets/points-history.svg`
+  - `public/assets/rewards-icon.svg`
+  - `public/assets/NOIR/account-icon-red.svg`
+  - `src/components/RoleCardSectionHeader.tsx`
+  - `src/utils/workerRoleHeaderIcon.ts`
+  - plus additional page/component usages that removed the old red filter styling.
+- `src/utils/cartLineRedAndDetails.ts`
+  - Removed `BUNDLE DEAL: {q} LINES` from shared BCF VIEW DETAILS.
+  - Reordered shared BCF VIEW DETAILS lines so `ORIGIN` renders before `TEXTURE`.
+  - Reordered shared BCF VIEW DETAILS lines so `LACE` renders above `LENGTH`.
+
+**Conventions:**
+- Any surface that opens Build-a-Wig edit for an existing saved/carted/wishlisted unit should seed the shared edit session first and navigate to the product-specific `/build-a-wig/{unit}/edit` route instead of sending the user back to the unit PDP.
+- When wishlist needs sold-out price treatment without extra stock copy, suppress the shared `WigLineStockPrice` label at the call site instead of changing cart/bag stock wording globally.
+- Use **SOLD OUT** for shopper-facing sold-out action copy where the user explicitly requested that wording, while the notify popup should say **SOLD OUT** / **BACK IN STOCK** in its explanatory sentence.
+- Premium tier benefit lists should come from the shared `src/constants/premiumBenefitsByTier.ts` source so the rewards page, brand chart, and upgrade chart stay aligned.
+- For red header/title icons, prefer native `#EB1C24` SVG assets over CSS filter tinting; the filter path produced a mismatched red compared with concierge’s native-red icons.
+- Shared BCF VIEW DETAILS line ordering comes from `src/utils/cartLineRedAndDetails.ts`; closures/frontals/bundles cart-dropdown detail-order changes should be made there so reused BCF detail views stay consistent.
