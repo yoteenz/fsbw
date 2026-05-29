@@ -24,6 +24,7 @@ import {
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
   bcfInitialOriginFromPathname,
+  bcfBasePriceUsd,
   bcfLaceOptionsForCategory,
   bcfOptionSelectedChrome,
   bcfPriceAdjustments,
@@ -68,12 +69,6 @@ const CATEGORY_TITLE: Record<Category, string> = {
   bundles: 'BUNDLES',
   closures: 'CLOSURES',
   frontals: 'FRONTALS'
-};
-
-const PRICE_BY_CATEGORY: Record<Category, number> = {
-  bundles: 680,
-  closures: 445,
-  frontals: 565
 };
 
 function parseShopBcfCategory(pathname: string): Category | null {
@@ -575,7 +570,7 @@ export default function ShopTextureCategoryProductPage() {
   const navCrumb = displayProductName;
   /** Cart / receipts: category first, texture after · for disambiguation. */
   const cartLineName = category ? `${categoryTitle} · ${meta.label}` : '';
-  const basePrice = category ? PRICE_BY_CATEGORY[category] : 0;
+  const basePrice = category ? bcfBasePriceUsd(category, texture) : 0;
   const displayPrice = React.useMemo(() => {
     if (!category) return 0;
     return (
@@ -2033,7 +2028,7 @@ export default function ShopTextureCategoryProductPage() {
                                         fontWeight: '500',
                                         lineHeight: '0.84'
                                       }}
-                                      priceHtml={formatPrice(PRICE_BY_CATEGORY[category])}
+                                      priceHtml={formatPrice(bcfBasePriceUsd(category, ot))}
                                     />
                                     <div style={marbleStripStarsRowStyle(false)}>
                                       {[...Array(5)].map((_, si) => (

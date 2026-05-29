@@ -175,6 +175,51 @@ export function bcfPriceAdjustments(
   return (len?.price ?? 0) + (col?.price ?? 0) + (lace?.price ?? 0);
 }
 
+/** Straight-texture base (USD) before length / color / lace. Bundles −$200; closures & frontals −$120 vs prior list. */
+export const BCF_STRAIGHT_BASE_PRICE_USD: Record<ShopTextureCategoryThumbCategory, number> = {
+  bundles: 480,
+  closures: 325,
+  frontals: 445
+};
+
+const BCF_TEXTURE_PRICE_DELTA_USD: Record<ShopTextureCategoryThumbTexture, number> = {
+  straight: 0,
+  wavy: 20,
+  curly: 40
+};
+
+/** PDP base at route texture (add `bcfPriceAdjustments` for length / color / lace). */
+export function bcfBasePriceUsd(
+  category: ShopTextureCategoryThumbCategory,
+  texture: ShopTextureCategoryThumbTexture
+): number {
+  return BCF_STRAIGHT_BASE_PRICE_USD[category] + BCF_TEXTURE_PRICE_DELTA_USD[texture];
+}
+
+/** Min/max PDP total for shop grid price ranges (all length / color / lace combos). */
+export function bcfPdpPriceRangeUsd(
+  category: ShopTextureCategoryThumbCategory,
+  texture: ShopTextureCategoryThumbTexture
+): { minUsd: number; maxUsd: number } {
+  const base = bcfBasePriceUsd(category, texture);
+  const lenPrices = BCF_LENGTH_OPTIONS.map((o) => o.price);
+  const colPrices = BCF_COLOR_OPTIONS.map((o) => o.price);
+  const lenMin = Math.min(...lenPrices);
+  const lenMax = Math.max(...lenPrices);
+  const colMin = Math.min(...colPrices);
+  const colMax = Math.max(...colPrices);
+  if (category === 'bundles') {
+    return { minUsd: base + lenMin + colMin, maxUsd: base + lenMax + colMax };
+  }
+  const lacePrices = bcfLaceOptionsForCategory(category).map((o) => o.price);
+  const laceMin = Math.min(...lacePrices);
+  const laceMax = Math.max(...lacePrices);
+  return {
+    minUsd: base + lenMin + colMin + laceMin,
+    maxUsd: base + lenMax + colMax + laceMax
+  };
+}
+
 /** PDP URL for `/shop/bundles|closures|frontals?texture=…`. */
 export function shopBcfPdpHref(category: string, texture: string): string {
   return `/shop/${category}?texture=${texture}`;
