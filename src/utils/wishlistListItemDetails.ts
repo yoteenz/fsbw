@@ -31,8 +31,13 @@ export function formatWishlistListItemPrice(price: number): string {
   return `$${n.toLocaleString('en-US', { maximumFractionDigits: 0, minimumFractionDigits: 0 })} USD`;
 }
 
-/** Same rules as cart dropdown VIEW DETAILS visibility. */
-export function wishlistItemHasViewDetails(item: any): boolean {
+/**
+ * Same rules as cart dropdown VIEW DETAILS visibility.
+ * `omitLength`: list/shared list line view shows the length in the RAW line and omits it from the
+ * details panel, so a length-only customization must NOT count toward showing VIEW DETAILS there
+ * (otherwise the link opens an empty "PRODUCT DETAILS" panel). Mirror the details rendered.
+ */
+export function wishlistItemHasViewDetails(item: any, options?: WishlistItemDetailsHtmlOptions): boolean {
   if (!item) return false;
   if (item.type === 'booking-consult' || item.type === 'booking-appointment') return true;
   if (item.type === 'shop-texture-category') return true;
@@ -42,7 +47,7 @@ export function wishlistItemHasViewDetails(item: any): boolean {
   const isOceanCurl = name === 'OCEAN CURL';
   const hasFlexCap = !isBlanco && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
   const hasFlexCapForOceanCurl = isOceanCurl && item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L');
-  const hasCustomLength = item.length && item.length !== '24"';
+  const hasCustomLength = !options?.omitLength && item.length && item.length !== '24"';
   const defaultDensity = name === 'BLANCO' ? '250%' : '200%';
   const hasCustomDensity = item.density && item.density !== defaultDensity;
   const hasCustomLace = item.lace && item.lace !== '13X6';

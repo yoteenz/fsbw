@@ -1026,7 +1026,7 @@ export default function ViewListsPage() {
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               const itemKey = getExpandedListItemKey(item, index);
                               const isViewingDetails = viewingDetailsItemKey === itemKey;
-                              const showViewDetailsLink = wishlistItemHasViewDetails(item);
+                              const showViewDetailsLink = wishlistItemHasViewDetails(item, { omitLength: true });
                               const itemPriceLabel = formatWishlistListItemPrice(
                                 getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                               );
