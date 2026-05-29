@@ -1217,7 +1217,7 @@ function SoftWaveSelection() {
               >
                 {is3DView ? (
                   <>
-                    (3D MODEL IS WEARING <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>FULLY CUSTOMIZED & STYLED</span> UNIT)
+                    (3D MODEL IS WEARING A <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>FULLY CUSTOMIZED & STYLED</span> UNIT)
                   </>
                 ) : (
                   <>
