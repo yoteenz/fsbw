@@ -153,12 +153,14 @@ export function bcfCartViewDetailsHtml(item: {
   length?: string;
   color?: string;
   lace?: string;
+  hairWeight?: string;
   bcfBundleDeal?: boolean;
   quantity?: number;
 }): string {
   const lines: string[] = [];
   if (item.hairOrigin) lines.push(`ORIGIN: ${esc(item.hairOrigin)}`);
   if (item.texture) lines.push(`TEXTURE: ${esc(item.texture)}`);
+  if (item.hairWeight) lines.push(`WEIGHT: ${esc(item.hairWeight)}`);
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);

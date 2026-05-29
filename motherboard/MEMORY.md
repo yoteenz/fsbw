@@ -19847,6 +19847,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Bundles PDP: HAIR WEIGHT option (100G default / 150G +$60 premium-only)
+
+**Context:** Add a HAIR WEIGHT section below HAIR TEXTURE on the **bundles** product page: **100G** (default, free) and **150G** (+$60, **premium-members-only**).
+
+**Changes:**
+- **`src/utils/bcfProductOptions.ts`** — `BCF_WEIGHT_OPTIONS` (`100G` price 0; `150G` price 60, `premium: true`) + `BCF_DEFAULT_WEIGHT_ID = '100G'`. `bcfPriceAdjustments(lengthId, colorId, laceId, weightId?)` gained an optional 4th `weightId` arg that adds the weight option's price.
+- **`src/pages/shop/texture-category-product/page.tsx`** — `bcfHairWeight` state (default 100G); `handleBcfWeightSelect` mirrors `handleBcfColorSelect` (premium options blocked → reuses `showBcfColorUpgradeModal`). `displayPrice` passes `category === 'bundles' ? bcfHairWeight : null` to `bcfPriceAdjustments`. New **bundles-only** HAIR WEIGHT chip row (same `bcfOptionBtnTypography` + `bcfOptionSelectedChrome`) inserted after HAIR TEXTURE, before lace. Both cart objects (`handleAddToBag` bundles spread + `handleBundleDealToBag`) include `hairWeight: bcfHairWeight` (price already baked into `displayPrice`, which also drives bundle-deal `listSubtotal = 3 × displayPrice`).
+- **`src/utils/cartLineRedAndDetails.ts`** — `bcfCartViewDetailsHtml` adds optional `hairWeight` → `WEIGHT:` line (after TEXTURE).
+
+**Verified (headless):** non-premium taps 150G → price stays $330, upgrade modal shown (blocked); premium taps 150G → $330 → $390 (+$60). 100G default. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.

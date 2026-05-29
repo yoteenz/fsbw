@@ -173,15 +173,33 @@ export const BCF_LACE_OPTIONS: BcfLaceOption[] = [
   { id: 'FULL', label: 'FULL', price: 240 }
 ];
 
+export interface BcfWeightOption {
+  id: string;
+  label: string;
+  price: number;
+  /** Premium-members-only option (blocked + upgrade modal for non-premium). */
+  premium?: boolean;
+}
+
+/** Bundles only — hair weight. 100G is default/free; 150G is +$60 and premium-members-only. */
+export const BCF_WEIGHT_OPTIONS: BcfWeightOption[] = [
+  { id: '100G', label: '100G', price: 0 },
+  { id: '150G', label: '150G', price: 60, premium: true }
+];
+
+export const BCF_DEFAULT_WEIGHT_ID = '100G';
+
 export function bcfPriceAdjustments(
   lengthId: string,
   colorId: string,
-  laceId: string | null
+  laceId: string | null,
+  weightId?: string | null
 ): number {
   const len = BCF_LENGTH_OPTIONS.find((o) => o.id === lengthId);
   const col = BCF_COLOR_OPTIONS.find((o) => o.id === colorId);
   const lace = laceId ? BCF_LACE_OPTIONS.find((o) => o.id === laceId) : null;
-  return (len?.price ?? 0) + (col?.price ?? 0) + (lace?.price ?? 0);
+  const weight = weightId ? BCF_WEIGHT_OPTIONS.find((o) => o.id === weightId) : null;
+  return (len?.price ?? 0) + (col?.price ?? 0) + (lace?.price ?? 0) + (weight?.price ?? 0);
 }
 
 /** Straight-texture base (USD) before length / color / lace. Bundles −$200; closures & frontals −$120 vs prior list. */
