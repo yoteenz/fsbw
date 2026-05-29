@@ -21,7 +21,6 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
-import { getWishlistItemDisplayName } from '../../utils/wishlistListItemDetails';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
@@ -370,53 +369,27 @@ function WishlistSelection() {
   const handleEdit = (item: any) => {
     try {
       const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+      const fromUnit = item.addedFrom === 'unit';
+
+      if (fromUnit) {
+        // Added from product/unit page: go to unit page (default or unit cap selections)
+        const unitRoutes: Record<string, string> = {
+          NOIR: '/straight/noir',
+          BLANCO: '/straight/blanco',
+          'SOFT WAVE': '/wavy/soft-wave',
+          'BEACH WAVE': '/wavy/beach-wave',
+          'SOFT CURL': '/curly/soft-curl',
+          'OCEAN CURL': '/curly/ocean-curl'
+        };
+        const route = unitRoutes[name] || '/build-a-wig/edit';
+        navigate(route);
+        return;
+      }
+
+      // Added from cart/bag or editing from wishlist: go to build-a-wig edit with item
       localStorage.setItem('editingCartItem', JSON.stringify(item));
       localStorage.setItem('editingCartItemId', String(item.id ?? ''));
-      localStorage.setItem('editingSource', 'wishlist'); // edit opened from wishlist -> save updates wishlist
-
-      const capSize = item.capSize || 'M';
-      const length = item.length || '24"';
-      const density = item.density || '200%';
-      let color = item.color;
-      if (name === 'BLANCO') {
-        const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
-        if (!color || !validBlancoColors.includes(color)) color = 'PLATINUM';
-      } else {
-        color = color || 'OFF BLACK';
-      }
-      const texture = item.texture || 'SILKY';
-      const lace = item.lace || '13X6';
-      const hairline = item.hairline || 'NATURAL';
-      const partSelection = item.partSelection || 'MIDDLE';
-      const styling = item.styling || 'NONE';
-      const addOns = item.addOns || [];
-      const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
-
-      localStorage.setItem('selectedCapSize', capSize);
-      localStorage.setItem('selectedCapSizePrice', capSizePrice);
-      localStorage.setItem('selectedLength', length);
-      localStorage.setItem('selectedDensity', density);
-      localStorage.setItem('selectedColor', color);
-      localStorage.setItem('selectedTexture', texture);
-      localStorage.setItem('selectedLace', lace);
-      localStorage.setItem('selectedHairline', hairline);
-      localStorage.setItem('selectedPartSelection', partSelection);
-      localStorage.setItem('selectedStyling', styling);
-      localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
-
-      localStorage.setItem('editSelectedCapSize', capSize);
-      localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
-      localStorage.setItem('editSelectedLength', length);
-      localStorage.setItem('editSelectedDensity', density);
-      localStorage.setItem('editSelectedColor', color);
-      localStorage.setItem('editSelectedTexture', texture);
-      localStorage.setItem('editSelectedLace', lace);
-      localStorage.setItem('editSelectedHairline', hairline);
-      localStorage.setItem('editSelectedStyling', styling);
-      localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
-
-      window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
-
+      localStorage.setItem('editingSource', 'wishlist'); // so build-a-wig save updates wishlist, not cart
       let editRoute = '/build-a-wig/edit';
       if (name === 'NOIR') editRoute = '/build-a-wig/noir/edit';
       else if (name === 'BLANCO') editRoute = '/build-a-wig/blanco/edit';
@@ -881,6 +854,24 @@ function WishlistSelection() {
                     if (itemName === 'GIFT CARD' || item.type === 'gift-card') {
                       return '/assets/gift-card asset.png';
                     }
+                    if (item.type === 'shop-texture-category') {
+                      const itemId = String(item.id || '').toLowerCase();
+                      const itemTexture = String(item.texture || '').toLowerCase();
+                      const itemCategory = String(item.category || '').toLowerCase();
+                      const isStraightBundle =
+                        (itemCategory === 'bundles' ||
+                          itemId.includes('-bundles') ||
+                          itemName.includes('BUNDLES')) &&
+                        (itemTexture === 'straight' ||
+                          itemId.includes('shop-straight-') ||
+                          itemName.includes('STRAIGHT'));
+                      if (isStraightBundle) {
+                        return 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
+                      }
+                      if (typeof item.image === 'string' && item.image.trim()) {
+                        return item.image;
+                      }
+                    }
                     const hairline = (item.hairline || 'NATURAL').toUpperCase();
                     const hasPeak = hairline.includes('PEAK');
                     const hasLagos = hairline.includes('LAGOS');
@@ -992,7 +983,7 @@ function WishlistSelection() {
                             className="font-medium truncate"
                             style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                           >
-                            {getWishlistItemDisplayName(item)}
+                            {itemName.replace(/WIG/gi, '').trim()}
                           </p>
                           </CartLineTextLayer>
                           <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
@@ -1005,7 +996,6 @@ function WishlistSelection() {
                           <WigLineStockPrice
                             item={item}
                             priceHtml={formatPrice(itemPrice)}
-                            outOfStockLabel={null}
                             priceStyle={{
                               ...cartLineLayerInnerStyle(),
                               fontFamily: '"Futura PT Book"',
@@ -1131,8 +1121,7 @@ function WishlistSelection() {
                           ) : isLineItemOutOfStock(item) ? (
                             <span
                               style={{
-                                fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                fontWeight: '500',
+                                fontFamily: '"Futura PT Demi"',
                                 fontSize: '9px',
                                 color: '#EB1C24',
                                 textTransform: 'uppercase',
@@ -1140,7 +1129,7 @@ function WishlistSelection() {
                                 textAlign: 'center'
                               }}
                             >
-                              SOLD OUT
+                              OUT OF STOCK
                             </span>
                           ) : (
                             <button
