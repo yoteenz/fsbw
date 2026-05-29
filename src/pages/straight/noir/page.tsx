@@ -2844,7 +2844,7 @@ function NoirSelection() {
         </div>
 
           {/* CAP SIZE CHART IMAGE — below quantity; 15% smaller than Blanco baseline */}
-          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: '4px' }}>
+          <div className="flex justify-center w-full" style={{ transform: 'translateX(4px)', marginTop: 0 }}>
             <img
               src="/assets/NOIR/cap-size-chart.png"
               alt="Cap Size Chart"
