@@ -29,6 +29,7 @@ import {
   cartLineProductNameTextStyle,
   cartLineRedSubtitleTextStyle,
 } from '../../../utils/cartLineProductLayers';
+import { shopBcfCartLineThumbnailSrc } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../../components/shop/WigStockPrice';
 import {
@@ -50,6 +51,7 @@ function listRowDividerStyles(index: number, total: number): React.CSSProperties
 }
 const EXPANDED_LIST_ITEM_THUMB_WIDTH_PX = 88 * 1.2;
 const EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX = 110 * 1.2;
+const EXPANDED_LIST_THUMB_FRAME_INSET_PX = 3;
 const EXPANDED_LIST_LINE_NAME_FONT_PX = 26;
 const EXPANDED_LIST_LINE_TEXT_SHIFT_UP_PX = 8;
 const EXPANDED_LIST_LINE_TEXT_MARGIN_TOP_PX = 16;
@@ -175,6 +177,64 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
+}
+
+function wishlistItemUsesBcfThumb(item: any): boolean {
+  return item?.type === 'shop-texture-category';
+}
+
+function getWishlistSharedThumbSrc(item: any): string {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return item?.image || shopBcfCartLineThumbnailSrc(item) || '/assets/NOIR/noir-thumb.png';
+  }
+  return getLeafBrickFrontImage(item);
+}
+
+function wishlistSharedThumbFrameStyle(item: any): React.CSSProperties {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return {
+      backgroundColor: '#ffffff',
+      border: '1.3px solid #000',
+      boxShadow: `inset 0 0 0 ${EXPANDED_LIST_THUMB_FRAME_INSET_PX}px #fff`,
+      overflow: 'hidden',
+    };
+  }
+
+  return {
+    backgroundImage: "url('/assets/leaf-brick-resize.png')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    border: '1.3px solid #000',
+    boxShadow: `inset 0 0 0 ${EXPANDED_LIST_THUMB_FRAME_INSET_PX}px #fff`,
+    overflow: 'hidden',
+  };
+}
+
+function wishlistSharedThumbImageStyle(item: any): React.CSSProperties {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return {
+      display: 'block',
+      width: '100%',
+      height: '100%',
+      padding: `${EXPANDED_LIST_THUMB_FRAME_INSET_PX}px`,
+      boxSizing: 'border-box',
+      objectFit: 'contain',
+      objectPosition: 'center',
+    };
+  }
+
+  return {
+    position: 'absolute',
+    left: '50%',
+    bottom: EXPANDED_LIST_THUMB_FRAME_INSET_PX,
+    transform: 'translateX(-50%)',
+    width: 'auto',
+    height: '96%',
+    maxWidth: '106%',
+    objectFit: 'contain',
+    objectPosition: 'bottom',
+    zIndex: 1,
+  };
 }
 
 function getProductRoute(name: string): string {
@@ -495,29 +555,13 @@ export default function SharedWishlistListPage() {
                               style={{
                                 width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
                                 height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`,
-                                backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                border: '1.3px solid #000',
-                                boxShadow: 'inset 0 0 0 3px #fff',
-                                overflow: 'hidden',
+                                ...wishlistSharedThumbFrameStyle(item),
                               }}
                             >
                               <img
-                                src={getLeafBrickFrontImage(item)}
+                                src={getWishlistSharedThumbSrc(item)}
                                 alt=""
-                                style={{
-                                  position: 'absolute',
-                                  left: '50%',
-                                  bottom: 3,
-                                  transform: 'translateX(-50%)',
-                                  width: 'auto',
-                                  height: '96%',
-                                  maxWidth: '106%',
-                                  objectFit: 'contain',
-                                  objectPosition: 'bottom',
-                                  zIndex: 1,
-                                }}
+                                style={wishlistSharedThumbImageStyle(item)}
                               />
                             </div>
                             {outOfStock ? (

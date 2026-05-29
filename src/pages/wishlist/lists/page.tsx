@@ -50,6 +50,7 @@ import {
   cartLineProductNameTextStyle,
   cartLineRedSubtitleTextStyle,
 } from '../../../utils/cartLineProductLayers';
+import { shopBcfCartLineThumbnailSrc } from '../../../utils/bcfProductOptions';
 
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
@@ -68,6 +69,17 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
+}
+
+function wishlistItemUsesBcfThumb(item: any): boolean {
+  return item?.type === 'shop-texture-category';
+}
+
+function getWishlistListThumbSrc(item: any): string {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return item?.image || shopBcfCartLineThumbnailSrc(item) || '/assets/NOIR/noir-thumb.png';
+  }
+  return getLeafBrickFrontImage(item);
 }
 
 /** Canonical empty-list thumb (Supabase live-preview). */
@@ -271,6 +283,54 @@ const EMPTY_LIST_THUMB_OFFSET_UP_PX = 0;
 /** Empty-list thumb scale (10% smaller than prior 0.88 → 0.792). */
 const EMPTY_LIST_THUMB_SCALE = 0.792;
 
+function wishlistListThumbFrameStyle(item: any): React.CSSProperties {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return {
+      backgroundColor: '#ffffff',
+      border: '1.3px solid #000',
+      boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+      overflow: 'hidden',
+    };
+  }
+
+  return {
+    backgroundImage: "url('/assets/leaf-brick-resize.png')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    border: '1.3px solid #000',
+    boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+    overflow: 'hidden',
+  };
+}
+
+function wishlistListThumbImageStyle(item: any): React.CSSProperties {
+  if (wishlistItemUsesBcfThumb(item)) {
+    return {
+      display: 'block',
+      width: '100%',
+      height: '100%',
+      padding: `${LIST_THUMB_FRAME_INSET_PX}px`,
+      boxSizing: 'border-box',
+      objectFit: 'contain',
+      objectPosition: 'center',
+    };
+  }
+
+  return {
+    position: 'absolute',
+    left: '50%',
+    bottom: LIST_THUMB_FRAME_INSET_PX,
+    transform: 'translateX(-50%)',
+    width: 'auto',
+    height: '96%',
+    maxWidth: '106%',
+    objectFit: 'contain',
+    objectPosition: 'bottom',
+    zIndex: 1,
+  };
+}
+
 const LIST_OVERVIEW_THUMB_WIDTH_PX = 88;
 const LIST_OVERVIEW_THUMB_HEIGHT_PX = 110;
 const LISTS_OVERVIEW_GRID_MIN_COL_PX = 100;
@@ -393,15 +453,7 @@ function WishlistListOverviewThumb({
         position: 'relative',
         boxSizing: 'border-box',
         ...(firstItem
-          ? {
-              backgroundImage: "url('/assets/leaf-brick-resize.png')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              border: '1.3px solid #000',
-              boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
-              overflow: 'hidden',
-            }
+          ? wishlistListThumbFrameStyle(firstItem)
           : {
               border: '1.3px solid #000',
               overflow: 'hidden',
@@ -412,18 +464,7 @@ function WishlistListOverviewThumb({
         <img
           src={thumbSrc}
           alt=""
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: LIST_THUMB_FRAME_INSET_PX,
-            transform: 'translateX(-50%)',
-            width: 'auto',
-            height: '96%',
-            maxWidth: '106%',
-            objectFit: 'contain',
-            objectPosition: 'bottom',
-            zIndex: 1,
-          }}
+          style={wishlistListThumbImageStyle(firstItem)}
         />
       ) : (
         <>
@@ -1031,8 +1072,8 @@ export default function ViewListsPage() {
                                   }}
                                 >
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
-                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
-                                      <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, ...wishlistListThumbFrameStyle(item) }}>
+                                      <img src={getWishlistListThumbSrc(item)} alt="" style={wishlistListThumbImageStyle(item)} />
                                     </div>
                                     {isOutOfStock ? (
                                       <p
@@ -1168,8 +1209,8 @@ export default function ViewListsPage() {
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
-                                    <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
+                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, ...wishlistListThumbFrameStyle(item) }}>
+                                    <img src={getWishlistListThumbSrc(item)} alt="" style={wishlistListThumbImageStyle(item)} />
                                   </div>
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
@@ -1233,7 +1274,7 @@ export default function ViewListsPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                       {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
-                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
+                        const thumbSrc = firstItem ? getWishlistListThumbSrc(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
                         return (
                           <div
@@ -1299,7 +1340,7 @@ export default function ViewListsPage() {
                     >
                       {lists.map((list) => {
                         const firstItem = list.items?.[0];
-                        const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
+                        const thumbSrc = firstItem ? getWishlistListThumbSrc(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
                         return (
                           <div
