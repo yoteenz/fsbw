@@ -293,9 +293,9 @@ export function orderStripUseDigitalStackLayout(item: any, isSubscriptionUpgrade
  */
 export type OrderStripExpandedEntry = {
   item: any;
-  /** Per-unit price for this tile (USD, same currency as stored `price`). */
+  /** Display price for this tile (USD). Usually per-unit; bundle deals may use grouped line total. */
   displayUnitPriceUsd: number;
-  /** BCF bundle: optional list (pre-deal) price per unit for strikethrough; null if unknown or N/A. */
+  /** BCF bundle: optional list (pre-deal) display price for strikethrough; null if unknown or N/A. */
   bundleDealListUnitUsd: number | null;
   stripKey: string;
 };
@@ -311,16 +311,12 @@ export function expandCartLinesForOrderStrip(cartItems: any[] | null | undefined
       const q = Math.max(1, Math.floor(Number(item.quantity) || 1));
       const lineTotal = (Number(item.price) || 0) * q;
       const listTotal = bcfBundleDealResolvedListSubtotal(item);
-      const listPerUnit =
-        listTotal != null && listTotal > lineTotal && q > 0 ? listTotal / q : null;
-      for (let u = 0; u < q; u++) {
-        out.push({
-          item,
-          displayUnitPriceUsd: Number(item.price) || 0,
-          bundleDealListUnitUsd: listPerUnit,
-          stripKey: `${baseId}-bcf-${u}`,
-        });
-      }
+      out.push({
+        item,
+        displayUnitPriceUsd: lineTotal,
+        bundleDealListUnitUsd: listTotal != null && listTotal > lineTotal ? listTotal : null,
+        stripKey: `${baseId}-bcf-bundle`,
+      });
       return;
     }
 
