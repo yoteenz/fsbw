@@ -19883,6 +19883,16 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — Re-applied: hide cap size + price layers during cart details (units & BCF)
+
+**Context:** User reported cap size + price STILL showing in the cart unit details — "something's overriding." Cause: a rebase/merge from a concurrent agent **reverted** the earlier `hideMetaForDetails` change in `CartDropdown.tsx` (and dropped the `isWigUnitProductName` import). The unit details *text* fix (no cap/price/dot) survived, but the separate **CAP SIZE** layer and **price** layer reappeared during details.
+
+**Re-applied (`src/components/CartDropdown.tsx`):** re-imported `isWigUnitProductName`; re-added per-item `hideMetaForDetails = viewingDetailsFor === item.id && (isBcfShopItem || isWigUnitProductName(item.name))`; re-gated the cap-size layer (`item.capSize && !hideMetaForDetails`) and wrapped the whole price `CartLineTextLayer slot="price"` in `{!hideMetaForDetails && (...)}`. (Kept the concurrent agent's BCF price-layer `paddingTop` style + the BCF remove-column 60px narrowing.)
+
+**Verified headless:** unit (flex cap, all-else default) during details shows only NOIR / RAW line / QTY / × / CLOSE DETAILS — no CAP SIZE, no `$`, no `·`, no FLEX CAP. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — AddToList modal: selected-list count gray (was red)
 
 **Change:** `src/components/AddToListModal.tsx` — the list-row count next to the checkbox (e.g. `VACAY · 9` below the closed ADD TO LIST dropdown) changed from red `#EB1C24` → gray **`#808080`** (already Futura PT Demi). The dropdown-menu items' red count (lines ~263) left unchanged. Typecheck passes. Pushed `master` + `preview/mobile`.
