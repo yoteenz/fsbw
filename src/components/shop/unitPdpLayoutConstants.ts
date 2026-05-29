@@ -36,6 +36,9 @@ export const UNIT_PDP_CAP_CHART_IMG_STYLE: CSSProperties = {
   cursor: 'pointer',
 };
 
+/** Product shots + details tabs share `mt-2 mb-4`; tabs must stay inside that wrapper (NOIR layout). */
+export const UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS = 'mt-2 mb-4';
+
 export const UNIT_PDP_TABS_SECTION_STYLE: CSSProperties = {
   marginTop: '13px',
   paddingTop: '4px',

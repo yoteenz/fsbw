@@ -1825,7 +1825,6 @@ function SoftWaveSelection() {
                   product shots
                 </div>
               </div>
-            </div>
 
               {/* Tabs Section */}
               <div style={UNIT_PDP_TABS_SECTION_STYLE}>
@@ -2004,6 +2003,7 @@ function SoftWaveSelection() {
                   )}
                 </div>
               </div>
+            </div>
           </div>
 
         {/* SIMILAR PRODUCTS SECTION */}
