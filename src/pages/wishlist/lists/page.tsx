@@ -298,7 +298,7 @@ const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
   color: '#EB1C24',
-  margin: '-4px 0 0 0',
+  margin: '-8px 0 0 0',
   textTransform: 'uppercase',
   cursor: 'pointer',
   display: 'inline-block',
