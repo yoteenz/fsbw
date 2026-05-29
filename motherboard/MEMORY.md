@@ -19485,3 +19485,11 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Fix:** Moved closing `</div>` for `mt-2 mb-4` to after the tabs section on `wavy/beach-wave`, `wavy/soft-wave`, `curly/soft-curl`, `curly/ocean-curl`. Documented wrapper rule in `unitPdpLayoutConstants.ts` (`UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS`). Blanco already matched NOIR structure.
 
 **Tab metrics (all six):** `UNIT_PDP_TABS_SECTION_STYLE` — `marginTop: 13px`, `paddingTop/Bottom: 4px`; `UNIT_PDP_TAB_CONTENT_STYLE` — `marginBottom: 0`, `mt-4` on content row.
+
+---
+
+## 2026-05-21 — Cap chart spacing −4px on all unit PDPs
+
+**Context:** User asked to reduce spacing above the cap size chart on all product pages by 4px.
+
+**Change:** `UNIT_PDP_CAP_CHART_ROW_STYLE.marginTop` `4px` → `0` in `unitPdpLayoutConstants.ts` (Blanco, Beach Wave, Soft Wave, Soft Curl, Ocean Curl). NOIR inline cap-chart row `marginTop: '4px'` → `0`. Pushed `master` + `preview/mobile`.
