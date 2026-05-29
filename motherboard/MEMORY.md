@@ -19503,3 +19503,5 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Context:** User: on the frontals product page (`/shop/frontals`), only lace sizes **13×4** and **13×6** should be offered.
 
 **Change:** `bcfLaceOptionsForCategory('frontals')` in `utils/bcfProductOptions.ts` — `frontalOnly` set was `13X4`, `13X6`, `360`, `FULL`; now only `13X4`, `13X6`. Closures get all other `BCF_LACE_OPTIONS` (including 360, FULL). Existing PDP effect resets invalid `bcfLace` when switching category or after deploy.
+
+**Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
