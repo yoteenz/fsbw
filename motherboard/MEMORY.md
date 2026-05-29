@@ -19473,3 +19473,15 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Fix (already on remote):** `export function WigStripPrice` in `src/components/shop/WigStockPrice.tsx` — sold-out strip prices gray + strikethrough, no red label; supports `productName`, `soldOut`, `priceHtml`, `children`. Commits `74bc0778` / `05df93ac` on `master`, merged to `preview/mobile` at `ea5b9bdc`.
 
 **Verified this chat:** `npm run build` passes locally; `origin/preview/mobile` is ahead of `7b880bd` and contains the fix. Redeploy `preview/mobile` (latest tip) for Vercel green.
+
+---
+
+## 2026-05-21 — Unit PDP details tabs spacing aligned with NOIR
+
+**Context:** User reported spacing above/below the DETAILS/SHIPPING/… tabs on the five non-NOIR unit PDPs did not match NOIR.
+
+**Root cause:** On Beach Wave, Soft Wave, Soft Curl, and Ocean Curl, the `mt-2 mb-4` product-shots wrapper was closed **before** the tabs block, so Tailwind `mb-4` (16px) sat between product shots and tabs in addition to `UNIT_PDP_TABS_SECTION_STYLE` `marginTop: 13px`. NOIR (and Blanco) keep tabs **inside** the same `mt-2 mb-4` wrapper so only the 13px + 4px padding applies above tabs and `mb-4` sits below the whole tabs block.
+
+**Fix:** Moved closing `</div>` for `mt-2 mb-4` to after the tabs section on `wavy/beach-wave`, `wavy/soft-wave`, `curly/soft-curl`, `curly/ocean-curl`. Documented wrapper rule in `unitPdpLayoutConstants.ts` (`UNIT_PDP_PRODUCT_SHOTS_SECTION_CLASS`). Blanco already matched NOIR structure.
+
+**Tab metrics (all six):** `UNIT_PDP_TABS_SECTION_STYLE` — `marginTop: 13px`, `paddingTop/Bottom: 4px`; `UNIT_PDP_TAB_CONTENT_STYLE` — `marginBottom: 0`, `mt-4` on content row.
