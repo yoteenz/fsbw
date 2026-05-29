@@ -20608,3 +20608,37 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For Build-a-Wig edit entry points, reuse the shared edit-session helper instead of duplicating localStorage setup.
 - For cart/bag/wishlist line-alignment tweaks, prefer targeted `CartLineTextLayer` slot overrides on the affected surface instead of changing the shared global layer rhythm when the request is product/surface-specific.
 - For site-wide brand-red icon fixes, prefer native-red SVG assets over CSS filter tinting.
+
+---
+
+## 2026-05-29 — Full conversation summary update: account wishlist Build-a-Wig edit now matches cart/bag edit mode
+
+**Context:** This same long chat focused on polishing storefront consistency across wishlist, cart, bag, Build-a-Wig editing, sold-out wording, premium membership benefits, header icon color, 2D/3D PDP disclaimer copy, and BCF cart/checkout spacing. After those earlier fixes, the user reported one remaining gap: on the account wishlist page, the red **EDIT IN BUILD A WIG** text was still routing some items back to the product page instead of entering product-specific Build-a-Wig edit mode.
+
+**Topics covered (entire conversation so far):**
+- Unified Build-a-Wig editing across wishlist, cart dropdown, and shopping bag so items should open the product-specific `/build-a-wig/{unit}/edit` flow with their saved selections restored.
+- Standardized sold-out copy to **SOLD OUT** on relevant wishlist/PDP surfaces and updated stock-notify copy.
+- Updated premium 3-month benefits to include **LIVE ORDER TRACKING**, reordered the chart rows, and aligned all related displays.
+- Converted header icons to native brand-red assets instead of CSS filters.
+- Refined cart dropdown BCF detail ordering and removed the bundle-deal details line.
+- Split unit PDP disclaimer copy so 2D and 3D views show different text, including the corrected “A” in “WEARING A FULLY...”.
+- Iteratively tuned BCF checkout/cart/bag spacing and checkout bundle grouping to match the requested layout.
+- Final follow-up in this exchange:
+  - traced `/wishlist` (the account-guarded wishlist route) to `src/pages/wishlist/page.tsx`,
+  - found that its `handleEdit` still kept an old `fromUnit` branch that sent unit-added wishlist items to the unit PDP instead of BAW edit mode,
+  - replaced that fallback with the same edit-session seeding used by cart/bag: `editingCartItem`, `editingCartItemId`, `editingSource: 'wishlist'`, plus the relevant `selected*` and `editSelected*` customization keys,
+  - kept the wishlist-specific sold-out display state intact while making the edit fix.
+
+**Decisions / outcomes:**
+- The account wishlist’s red edit link now always routes qualifying unit items into the correct product-specific Build-a-Wig edit route instead of bouncing back to the PDP.
+- Wishlist edits continue to mark `editingSource` as `wishlist`, so saves update the wishlist item rather than the cart flow.
+- Build verification passed after the final wishlist edit fix.
+
+**Changes:**
+- `src/pages/wishlist/page.tsx`
+  - removed the old `fromUnit` PDP redirect behavior from `handleEdit`,
+  - seeded BAW edit localStorage state from wishlist items to mirror cart/bag edit mode,
+  - kept wishlist sold-out label behavior aligned with prior requests while fixing the edit path.
+
+**Conventions:**
+- Wishlist Build-a-Wig edit links should follow the same localStorage edit-session setup as cart/bag and should not special-case `addedFrom === 'unit'` by routing back to the PDP.
