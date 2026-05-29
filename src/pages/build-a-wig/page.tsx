@@ -3054,26 +3054,23 @@ export default function BuildAWigPage() {
     return '/assets/none-icon.svg';
   };
 
+  const stylingUsesNoneIcon = () => getStylingIcon() === '/assets/none-icon.svg';
+
   const getStylingIconSize = () => {
-    const selectedHairStyling = customization.styling || 'NONE';
-    
-    // If no hair styling is selected, return smaller size for none icon
-    if (!selectedHairStyling || selectedHairStyling === 'NONE') {
+    // Size should follow the icon being rendered, not only the raw styling token.
+    if (stylingUsesNoneIcon()) {
       return '35px'; // Reduced by 45px from default 80px
     }
-    
+
     // Return default size for selected styling icons
     return '80px';
   };
 
   const getStylingIconTopPosition = () => {
-    const selectedHairStyling = customization.styling || 'NONE';
-    
-    // If no hair styling is selected, return original position for none icon
-    if (!selectedHairStyling || selectedHairStyling === 'NONE') {
+    if (stylingUsesNoneIcon()) {
       return '55%'; // Original position for none icon
     }
-    
+
     // Return moved-up position for selected styling icons
     return '52.5%'; // Moved up 2px (2.5% of 80px container)
   };

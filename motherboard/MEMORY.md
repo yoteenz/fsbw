@@ -20746,3 +20746,40 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For premium/feature lists shown in multiple places, prefer a shared constant/source of truth so tier inclusion and row order stay consistent across account/chart surfaces.
 - For BCF checkout/cart/bag tuning, preserve grouped bundle-deal display parity with cart and use narrow, surface-specific spacing adjustments rather than broad global typography changes.
 - For long program/policy copy on account surfaces, prefer structured section data rendered in JSX so future edits are easier than patching large hardcoded text blocks inline.
+
+---
+
+## 2026-05-29 — Full conversation summary: wishlist/edit parity, sold-out and premium consistency, BCF tuning, affiliate rewards copy, and Blanco edit-mode NONE icon fix
+
+**Context:** This long chat focused on polishing Build-a-Wig, wishlist/cart/bag parity, sold-out copy, premium chart consistency, header icon color, BCF detail/spacing behavior across checkout/cart/bag, wishlist list visuals, the account affiliate rewards program copy, and a final follow-up fixing the oversized `NONE` styling icon in BLANCO edit mode so it matches the other products.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig edit flow from wishlist/account wishlist so it behaves like cart/bag edits: preloads saved selections, routes to the correct unit-specific `/build-a-wig/{unit}/edit` page, and saves updates back to the same source item.
+- Standardized sold-out terminology and stock messaging across product pages, wishlist, and stock-notify modal copy.
+- Updated premium membership benefits/chart behavior so `LIVE ORDER TRACKING` is included for 3 months, shows a checkmark, and appears above `PRIORITY MESSAGES` consistently.
+- Corrected header/title icon red color site-wide by moving shared icon rendering away from outdated CSS tinting and toward native-red assets/defaults.
+- Adjusted BCF dropdown/detail ordering plus checkout/cart/bag rendering: grouped bundle-deal checkout rows, stacked prices correctly, removed extra gaps, aligned red RAW + price spacing, and tuned non-bundled BCF spacing on checkout/cart/bag as requested.
+- Split 2D vs 3D model disclaimer copy on product pages and corrected the 3D wording to include `A` in `WEARING A FULLY CUSTOMIZED & STYLED UNIT`.
+- Tightened wishlist list/shared list spacing and removed the leaf-brick background from BCF thumbnails on those pages.
+- Replaced the account affiliate page’s old promo copy with the new structured `AFFILIATE REWARDS PROGRAM` copy, renamed the tracker card to `CONTENT SUBMISSIONS`, and aligned mock social rewards with the 600-point social-platform rule.
+- Final follow-up: diagnosed the BLANCO edit-mode styling tile showing an oversized `none-icon.svg`. Root cause was the size/top-position helpers checking only whether the raw styling token equaled `NONE`, while BLANCO edit mode could still render `none-icon.svg` via fallback logic with the larger selected-style dimensions.
+- Updated the styling icon size/top-position logic so it keys off the actual icon being rendered (`none-icon.svg`) rather than only the raw styling token, which makes the BLANCO edit-mode `NONE` icon match the other products.
+- Ran `npm run build` successfully after the BLANCO none-icon fix.
+
+**Decisions / outcomes:**
+- Build-a-Wig edit parity now holds across wishlist, cart, and bag sources.
+- Sold-out / premium / icon / BCF / wishlist list / affiliate-program updates remain in place from this chat.
+- BLANCO edit mode now uses the same reduced `NONE` styling icon footprint as the other products when the none icon is what is actually rendered.
+- The sizing fix is intentionally based on the rendered icon path, making it robust even when edit-mode state falls back to `none-icon.svg` through a non-`NONE` token path.
+
+**Changes:**
+- Prior work in this chat touched: `src/utils/buildAWigEditSession.ts`, `src/pages/wishlist/page.tsx`, `src/pages/shopping-bag/page.tsx`, `src/components/CartDropdown.tsx`, `src/components/shop/UnitPdpCartActions.tsx`, `src/components/shop/WigStockPrice.tsx`, `src/components/shop/StockNotifyModal.tsx`, `src/constants/premiumBenefitsByTier.ts`, `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`, `src/pages/account/membership/page.tsx`, multiple native-red SVG/icon assets and shared header icon helpers, `src/utils/cartLineRedAndDetails.ts`, `src/utils/checkoutOrderStripDisplay.ts`, `src/pages/checkout/page.tsx`, `src/pages/checkout/confirm/page.tsx`, unit PDP files for disclaimer copy, wishlist list/shared files, `src/index.css`, and `src/pages/account/affiliate/page.tsx`.
+- Latest follow-up fix:
+  - `src/pages/build-a-wig/page.tsx`
+    - added `stylingUsesNoneIcon()` helper
+    - changed `getStylingIconSize()` to shrink whenever the rendered styling icon is `/assets/none-icon.svg`
+    - changed `getStylingIconTopPosition()` to use the none-icon position whenever the rendered styling icon is `/assets/none-icon.svg`
+
+**Conventions:**
+- For Build-a-Wig hub tiles, size/position decisions should follow the actual rendered icon/fallback state rather than only the stored selection token, especially in edit-mode flows where fallback icons may be shown for legacy or mismatched values.
+- Continue keeping Build-a-Wig edit behavior, premium benefit ordering, and BCF grouped-display behavior consistent across all surfaces by using shared helpers/constants where possible.
