@@ -20991,3 +20991,30 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Conventions:**
 - For wishlist list surfaces, preserve the previously requested reduced spacing values and gray `VIEW DETAILS` treatment; avoid reverting these to older red/`8px`/`2px` defaults during unrelated thumb or layout work.
+
+---
+
+## 2026-05-29 — Full conversation summary update: affiliate page bullet rows now use red dot markers
+
+**Context:** This same long chat has covered storefront and account consistency work across wishlist Build-a-Wig edit behavior, sold-out/notify wording, premium-benefit accuracy, red header icons, multiple BCF cart/checkout/list refinements, affiliate copy + typography changes, Blanco edit-mode icon sizing, BCF thumbnail rendering on wishlist lists, and subsequent wishlist spacing/color restores. The latest follow-up requested that the bullet points on the account affiliate page have red dots next to them.
+
+**Topics covered (entire conversation so far):**
+- Fixed wishlist/account-wishlist Build-a-Wig edit routing to mirror cart/bag edit mode with selections preloaded and updates saved in place.
+- Standardized sold-out terminology and notify copy across PDP and wishlist surfaces.
+- Added `LIVE ORDER TRACKING` to the 3-month premium tier, updated checkmarks/order, and aligned related membership displays.
+- Replaced filtered red header icons with native brand-red assets.
+- Updated BCF cart dropdown/view-details ordering, checkout grouping/layout, and several BCF-specific spacing adjustments across checkout, bag, cart dropdown, and wishlist list surfaces.
+- Reworked affiliate page copy/typography, fixed Blanco `NONE` edit icon sizing, removed leaf-brick backgrounds from wishlist BCF thumbnails, corrected BCF thumb fit, and then re-restored wishlist list red action spacing plus gray `VIEW DETAILS` styling after a regression.
+- Latest affiliate-page follow-up: replaced the literal asterisk-style bullet prefixes in the affiliate explainer card with real visual bullet rows by adding small red circular markers beside the three instruction lines and keeping the existing copy/typography intact.
+
+**Decisions / outcomes:**
+- Affiliate bullet/instruction rows on the account affiliate page should use red dot markers instead of plain leading asterisks.
+- The underlying affiliate bullet copy remains unchanged; only the marker treatment was updated.
+- The page still uses the approved typography/casing rules from earlier in this chat.
+
+**Changes:**
+- `src/pages/account/affiliate/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For affiliate explainer bullet rows, prefer visual marker elements (small red dots) over literal text prefixes when the user requests branded bullet styling.
