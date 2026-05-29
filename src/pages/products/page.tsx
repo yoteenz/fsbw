@@ -17,6 +17,7 @@ import {
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
+import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
@@ -258,30 +259,7 @@ function ProductsPage() {
     []
   );
 
-  type HomeShopCategorySlug = 'bundles' | 'closures' | 'frontals';
-  type HomeShopTextureSlug = (typeof shopTextureStripItems)[number]['slug'];
-
-  /** Home/shop BUNDLES / CLOSURES / FRONTALS — UNITS-style red line + range; USD → `formatPriceRangeUsd` */
-  const shopCategoryTextureLines: Record<
-    HomeShopCategorySlug,
-    Record<HomeShopTextureSlug, { redLine: string; priceMinUsd: number; priceMaxUsd: number }>
-  > = {
-    bundles: {
-      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 100, priceMaxUsd: 300 },
-      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 120, priceMaxUsd: 400 },
-      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 160, priceMaxUsd: 500 }
-    },
-    closures: {
-      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 100, priceMaxUsd: 300 },
-      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 120, priceMaxUsd: 400 },
-      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 140, priceMaxUsd: 500 }
-    },
-    frontals: {
-      straight: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 200, priceMaxUsd: 600 },
-      wavy: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 220, priceMaxUsd: 700 },
-      curly: { redLine: 'RAW HUMAN HAIR', priceMinUsd: 240, priceMaxUsd: 800 }
-    }
-  };
+  const bcfShopTextureRedLine = 'RAW HUMAN HAIR';
 
   const shopCategoryMarbleCards = React.useMemo(
     () =>
@@ -1559,7 +1537,7 @@ function ProductsPage() {
                                           boxSizing: 'border-box'
                                         }}
                                       >
-                                        {shopCategoryTextureLines[categorySlug][t.slug].redLine}
+                                        {bcfShopTextureRedLine}
                                       </p>
                                       <p
                                         style={{
@@ -1577,8 +1555,8 @@ function ProductsPage() {
                                           boxSizing: 'border-box'
                                         }}
                                         dangerouslySetInnerHTML={formatShopTextureRange(
-                                          shopCategoryTextureLines[categorySlug][t.slug].priceMinUsd,
-                                          shopCategoryTextureLines[categorySlug][t.slug].priceMaxUsd
+                                          bcfPdpPriceRangeUsd(categorySlug, t.slug).minUsd,
+                                          bcfPdpPriceRangeUsd(categorySlug, t.slug).maxUsd
                                         )}
                                       />
                                     </>
