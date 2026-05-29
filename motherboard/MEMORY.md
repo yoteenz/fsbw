@@ -20662,3 +20662,44 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Conventions:**
 - Wishlist Build-a-Wig edit links should follow the same localStorage edit-session setup as cart/bag and should not special-case `addedFrom === 'unit'` by routing back to the PDP.
+
+---
+
+## 2026-05-29 — Full conversation summary update: wishlist/lists spacing tightened and BCF thumbs no longer use leaf-brick backgrounds
+
+**Context:** This same long chat continued refining storefront consistency across wishlist, cart, bag, Build-a-Wig edit flows, sold-out wording, premium benefits, header icon color, 2D/3D product-page disclaimer copy, and BCF spacing/layout. After the account wishlist edit-routing fix, the user requested another wishlist-specific polish pass on `/wishlist/lists`: tighten spacing above the red thumb action text and gray VIEW DETAILS text, and remove the leaf-brick background behind BCF thumbnails on wishlist list views.
+
+**Topics covered (entire conversation so far):**
+- Unified Build-a-Wig edit behavior across wishlist, cart dropdown, and shopping bag so items edit in the correct product-specific BAW route with selections restored.
+- Standardized SOLD OUT / stock-notify copy and related wishlist/PDP wording.
+- Updated premium 3-month benefits to include LIVE ORDER TRACKING, reordered the comparison chart rows, and aligned all related displays.
+- Converted header icons to native brand-red assets.
+- Refined BCF detail ordering in cart dropdowns and fixed multiple checkout/cart/bag BCF spacing/layout issues over several iterations.
+- Corrected PDP 2D vs 3D disclaimer copy and the missing article in the 3D sentence.
+- Fixed the account wishlist red edit link so it no longer routes unit-added items back to the PDP and instead enters Build-a-Wig edit mode with wishlist edit-session state.
+- Final follow-up in this exchange:
+  - traced `/wishlist/lists` spacing to the list thumb action style (`LIST_LINE_BAG_ADD_STYLE`) and the shared list VIEW DETAILS CSS class in `index.css`,
+  - reduced the red thumb action top margin by 3px (`8px` -> `5px`) on wishlist lists/shared line views,
+  - reduced the gray VIEW DETAILS top spacing by 2px via the shared list toggle class (`2px` -> `0`),
+  - found that wishlist list/shared BCF thumbnails were still being rendered inside the unit leaf-brick frame,
+  - kept unit thumbs on leaf-brick but branched BCF thumbs to render without the brick background on list overview thumbs, expanded list line items, grid items, and shared list line items.
+
+**Decisions / outcomes:**
+- Wishlist lists/shared red thumb action text now sits 3px closer to the thumbnail.
+- Wishlist lists/shared VIEW DETAILS text now sits 2px closer to the content above it.
+- BCF thumbnails on wishlist list/shared surfaces no longer show the leaf-brick background behind them; unit thumbs still use the existing leaf-brick presentation.
+- `npm run build` passed after the final wishlist/lists spacing and BCF thumbnail changes.
+
+**Changes:**
+- `src/pages/wishlist/lists/page.tsx`
+  - reduced thumb action top spacing from `8px` to `5px`,
+  - added a BCF-vs-unit thumbnail branch so BCF list overview, line-view, and grid-view thumbs render without the leaf-brick background.
+- `src/pages/wishlist/shared/page.tsx`
+  - reduced the shared-list thumb action top spacing from `8px` to `5px`,
+  - added a BCF-vs-unit thumbnail branch so shared-list BCF line-view thumbs render without the leaf-brick background.
+- `src/index.css`
+  - reduced `.wishlist-expanded-list-view-details-toggle--list` top margin from `2px` to `0`.
+
+**Conventions:**
+- Wishlist BCF thumbnails should use their own category artwork directly and must not be wrapped in the unit leaf-brick background treatment.
+- For wishlist list/shared spacing asks, prefer the local list action style and the dedicated expanded-list CSS classes before changing broader cart/wishlist text-layer defaults.
