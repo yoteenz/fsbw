@@ -19522,6 +19522,14 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 **Change:** `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **480 → 430** (`bcfProductOptions.ts`). Wavy/curly bundles follow texture deltas (+20 / +40). Pushed `master` + `preview/mobile`.
 
+---
+
+## 2026-05-21 — Shop menu: close drawer on BUNDLES (and static SHOP links)
+
+**Context:** Tapping **BUNDLES** in the menu toggle left the drawer open (hard to see navigation). Root cause: `ShopMobileMenuShopTab` only called optional `closeAfterStaticNav` for BUNDLES/BUILD-A-WIG, but most pages only pass `closeSubItemMenu`. Same `ShopTextureCategoryProductPage` instance is reused across `/shop/bundles|closures|frontals`, so menu state could persist across BCF route changes.
+
+**Fix:** `ShopMobileMenuShopTab` — `closeMenuAfterNav()` calls `closeSubItemMenu` + `closeAfterStaticNav` on BUNDLES, BUILD-A-WIG, and UNITS→/shop/units. `texture-category-product/page.tsx` + `products/page.tsx` — `useEffect` closes menu on `location.pathname` / `search` change.
+
 **Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
 
 ---
