@@ -3537,8 +3537,10 @@ function CheckoutPage() {
                                                    (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
                                                    (item.length && item.length !== '24"');
                                     const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
+                                    const isBcf = item.type === 'shop-texture-category';
                                     const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
                                     if (isGiftCard) return '-2px';
+                                    if (isBcf) return '4px';
                                     if (isBlancoNoSpecs) return '-2px';
                                     return '-2px';
                                   })(),
