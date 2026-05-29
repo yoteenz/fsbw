@@ -668,6 +668,10 @@ function ProductsPage() {
   }, [showMobileMenu, location.pathname]);
 
   useEffect(() => {
+    setShowMobileMenu(false);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
     if (isGiftCardDragging) {
       window.addEventListener('mousemove', handleGiftCardMouseMove as any);
       window.addEventListener('mouseup', handleGiftCardMouseUp);
