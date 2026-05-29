@@ -162,9 +162,5 @@ export function bcfCartViewDetailsHtml(item: {
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);
-  if (item.bcfBundleDeal) {
-    const q = item.quantity ?? 3;
-    lines.push(`BUNDLE DEAL: ${q} LINES`);
-  }
   return lines.join('<br/>') || 'PRODUCT DETAILS';
 }
