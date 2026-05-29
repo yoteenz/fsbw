@@ -287,7 +287,7 @@ const LIST_OVERVIEW_NAME_STYLE: React.CSSProperties = {
 
 const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '11px',
+  fontSize: '10px',
   color: '#666',
   margin: '0',
   textTransform: 'uppercase',
@@ -298,7 +298,7 @@ const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
   color: '#EB1C24',
-  margin: '0',
+  margin: '-2px 0 0 0',
   textTransform: 'uppercase',
   cursor: 'pointer',
   display: 'inline-block',
@@ -995,7 +995,7 @@ export default function ViewListsPage() {
                     return (
                       <div
                         style={{
-                          paddingTop: '8px',
+                          paddingTop: '0',
                           flex: 1,
                           minHeight: 0,
                           display: 'flex',
