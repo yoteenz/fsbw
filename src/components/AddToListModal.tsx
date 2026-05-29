@@ -510,7 +510,7 @@ export default function AddToListModal({
                             <span style={{ fontFamily: '"Futura PT Demi"', fontSize: `${LIST_ROW_LABEL_FONT_PX}px` }}>{' · '}</span>
                             <span
                               style={{
-                                color: '#EB1C24',
+                                color: '#808080',
                                 fontSize: `${LIST_ROW_LABEL_FONT_PX}px`,
                                 fontFamily: '"Futura PT Demi"',
                               }}
