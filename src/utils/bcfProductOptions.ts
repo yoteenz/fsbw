@@ -65,9 +65,9 @@ export function bcfDefaultColorIdForOrigin(origin: BcfOriginId): string {
   return origin === 'RUSSIAN' ? 'PLATINUM' : 'OFF BLACK';
 }
 
-/** Frontals: 13×4, 13×6, 360, FULL. Closures: lace sizes excluding those four. */
+/** Frontals: 13×4 and 13×6 only. Closures: all other lace sizes from `BCF_LACE_OPTIONS`. */
 export function bcfLaceOptionsForCategory(category: 'closures' | 'frontals'): BcfLaceOption[] {
-  const frontalOnly = new Set(['13X4', '13X6', '360', 'FULL']);
+  const frontalOnly = new Set(['13X4', '13X6']);
   if (category === 'frontals') {
     return BCF_LACE_OPTIONS.filter((l) => frontalOnly.has(l.id));
   }

@@ -19495,3 +19495,11 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Change:** `UNIT_PDP_CAP_CHART_ROW_STYLE.marginTop` `4px` → `0` in `unitPdpLayoutConstants.ts` (Blanco, Beach Wave, Soft Wave, Soft Curl, Ocean Curl). NOIR inline cap-chart row `marginTop: '4px'` → `0`. Pushed `master` + `preview/mobile`.
 
 **Follow-up:** User asked for another −4px above cap chart → `marginTop: '-4px'` on shared constant + NOIR inline row (total −8px from original `4px`).
+
+---
+
+## 2026-05-21 — Frontals PDP: lace sizes 13×4 & 13×6 only
+
+**Context:** User: on the frontals product page (`/shop/frontals`), only lace sizes **13×4** and **13×6** should be offered.
+
+**Change:** `bcfLaceOptionsForCategory('frontals')` in `utils/bcfProductOptions.ts` — `frontalOnly` set was `13X4`, `13X6`, `360`, `FULL`; now only `13X4`, `13X6`. Closures get all other `BCF_LACE_OPTIONS` (including 360, FULL). Existing PDP effect resets invalid `bcfLace` when switching category or after deploy.
