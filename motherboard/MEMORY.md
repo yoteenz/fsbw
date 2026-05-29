@@ -19445,3 +19445,19 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 - **`src/pages/shopping-bag/page.tsx`** — both `WigLineStockPrice` usages (active cart + saved-for-later) now `outOfStockLabel={null}`; the two **OUT OF STOCK** labels that replace SAVE FOR LATER / MOVE TO CART below the quantity counter changed to **SOLD OUT**.
 
 **Verified (headless, 390px, NOIR + MAILER BOXES=0):** cart dropdown shows **SOLD OUT** in place of QTY with **0** "OUT OF STOCK" occurrences; bag page shows **SOLD OUT** below the qty counter with **0** "OUT OF STOCK" occurrences. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-28 — Cross-sell strips (SIMILAR / RECENTLY): strikethrough sold-out prices, no label
+
+**Context:** User: sold-out products in the **SIMILAR PRODUCTS** and **RECENTLY VIEWED** carousels on the product pages should show their price **strikethrough** with **no** red SOLD OUT / OUT OF STOCK text. These strips previously had no sold-out treatment (plain price).
+
+**New component:** `WigStripPrice` in `src/components/shop/WigStockPrice.tsx` — renders a `<p>` (price); when the referenced product is sold out it applies gray `#808080` + `line-through`, **no** label. Props: `productName` (wig unit → `isWigUnitSoldOut`), or explicit `soldOut` boolean (BCF, packaging-gated), plus `style` and either `priceHtml` (`{__html}`) or `children`. `finalStyle` typed `CSSProperties | undefined` (style optional).
+
+**Wiring (per cell, productName derived from the cell's `navigate('/ROUTE')`, NOT the `24" RAW <ORIGIN>` text which is inconsistent in some recently cells):**
+- All 6 unit PDPs (`straight/noir`, `straight/blanco`, `wavy/soft-wave`, `wavy/beach-wave`, `curly/soft-curl`, `curly/ocean-curl`): each SIMILAR + RECENTLY price `<p>` (8 per page) → `<WigStripPrice productName="…" …>`. Import added alongside existing `WigProductPriceDisplay` from `components/shop/WigStockPrice`. (Done via parallel subagents, one per file.)
+- BCF `shop/texture-category-product/page.tsx`: SIMILAR strip (other-texture BCF products, mapped) → `<WigStripPrice soldOut={bcfSoldOut} priceHtml={formatPrice(PRICE_BY_CATEGORY[category])} …>`; RECENTLY 4 wig-unit prices → `productName` per route (SOFT WAVE/SOFT CURL/NOIR/BLANCO). Main product price + Klarna untouched.
+
+**Note:** noir/beach-wave/ocean-curl page edits were committed+pushed by their subagents before the shared `WigStripPrice` component was committed (briefly broke remote); fixed by committing the component + remaining pages right after. Final `tsc --noEmit` clean.
+
+**Verified (headless, 390px, MAILER BOXES=0 → all sold out):** NOIR PDP 8/8 strip prices strikethrough, OCEAN CURL 8/8, BCF bundles 6/6; **0** SOLD OUT/OUT OF STOCK text inside the strips on all. Pushed `master` + `preview/mobile`.

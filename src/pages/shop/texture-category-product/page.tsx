@@ -35,6 +35,7 @@ import {
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { isBcfSoldOut } from '../../../utils/productInventoryAvailability';
+import { WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -2033,7 +2034,8 @@ export default function ShopTextureCategoryProductPage() {
                                     >
                                       {categoryTitle} · RAW HUMAN HAIR
                                     </p>
-                                    <p
+                                    <WigStripPrice
+                                      soldOut={bcfSoldOut}
                                       style={{
                                         fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                         fontSize: '12px',
@@ -2043,7 +2045,7 @@ export default function ShopTextureCategoryProductPage() {
                                         fontWeight: '500',
                                         lineHeight: '0.84'
                                       }}
-                                      dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
+                                      priceHtml={formatPrice(PRICE_BY_CATEGORY[category])}
                                     />
                                     <div style={marbleStripStarsRowStyle(false)}>
                                       {[...Array(5)].map((_, si) => (
@@ -2226,7 +2228,8 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW INDONESIAN
                             </p>
-                            <p
+                            <WigStripPrice
+                              productName="SOFT WAVE"
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2237,7 +2240,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              dangerouslySetInnerHTML={formatPrice(760)}
+                              priceHtml={formatPrice(760)}
                             />
                             <div
                               style={{
@@ -2321,7 +2324,8 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW FILIPINO
                             </p>
-                            <p
+                            <WigStripPrice
+                              productName="SOFT CURL"
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2332,7 +2336,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              dangerouslySetInnerHTML={formatPrice(780)}
+                              priceHtml={formatPrice(780)}
                             />
                             <div
                               style={{
@@ -2416,7 +2420,8 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW CAMBODIAN
                             </p>
-                            <p
+                            <WigStripPrice
+                              productName="NOIR"
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2427,7 +2432,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              dangerouslySetInnerHTML={formatPrice(740)}
+                              priceHtml={formatPrice(740)}
                             />
                             <div
                               style={{
@@ -2511,7 +2516,8 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW RUSSIAN
                             </p>
-                            <p
+                            <WigStripPrice
+                              productName="BLANCO"
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2522,7 +2528,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              dangerouslySetInnerHTML={formatPrice(820)}
+                              priceHtml={formatPrice(820)}
                             />
                             <div
                               style={{
