@@ -21075,3 +21075,36 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Conventions:**
 - When matching bullet-marker size to the terms page, copy the actual terms-page marker approach (red bullet character in body text) rather than approximating with custom pixel circles.
+
+---
+
+## 2026-05-29 — Full conversation summary update: restored wishlist EDIT LIST NAME control and lists-page details typography
+
+**Context:** This same long chat has continued refining wishlist list behavior, affiliate-page content/typography, and several regression fixes after prior passes. The latest follow-up clarified that the wishlist/lists page was still missing the restored red `EDIT LIST NAME` text and that the `VIEW/CLOSE DETAILS` text on the lists page should be gray Futura Demi.
+
+**Topics covered (entire conversation so far):**
+- Earlier in the chat: fixed wishlist/account-wishlist Build-a-Wig edit flows, standardized sold-out wording, updated premium upgrade benefits/chart, replaced filtered red icons, corrected multiple BCF cart/checkout/list behaviors, refreshed affiliate-program copy/typography, fixed Blanco `NONE` icon sizing, restored wishlist list spacing, repaired affiliate regressions, and matched affiliate bullet markers to terms-page sizing.
+- Audited the current wishlist/lists source and confirmed two issues:
+  - the shared `wishlist-expanded-list-view-details-toggle` styles had drifted back to red with the old list margin,
+  - the red `EDIT LIST NAME` control/render path had been removed entirely from the wishlist/lists overview.
+- Retrieved the last working implementation from the earlier wishlist lists revision that still had the rename flow.
+- Restored the red `EDIT LIST NAME` link in the wishlist/lists overview line view, including its state wiring and modal trigger.
+- Restored the missing `RenameListModal` component so the red `EDIT LIST NAME` text opens a working rename flow again instead of being dead text.
+- Updated the list-details class styling so lists-page `VIEW DETAILS` / `CLOSE DETAILS` now use gray Futura Demi with `margin-top: 0 !important`.
+- Rebuilt successfully after the restore.
+
+**Decisions / outcomes:**
+- Wishlist/lists overview line view once again shows the red `EDIT LIST NAME` control beneath the gray visibility label.
+- The rename action is functional again via the restored rename modal.
+- Lists-page `VIEW/CLOSE DETAILS` now use gray Futura Demi with the tighter top spacing.
+- This pass restores the intended wishlist lists behavior without touching the separate affiliate-page work from earlier in the chat.
+
+**Changes:**
+- `src/pages/wishlist/lists/page.tsx`
+- `src/components/RenameListModal.tsx`
+- `src/index.css`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For wishlist/lists overview actions, preserve the dedicated red `EDIT LIST NAME` rename control and its modal flow rather than collapsing it into name-only display.
+- For lists-page details text, use the list-specific override (gray Futura Demi + tighter top spacing) instead of relying on the shared red base toggle style.

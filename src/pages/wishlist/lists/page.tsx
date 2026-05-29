@@ -7,6 +7,7 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { loadUserLists, saveUserLists, type UserList } from '../../../components/AddToListModal';
 import CreateNewListModal from '../../../components/CreateNewListModal';
+import RenameListModal from '../../../components/RenameListModal';
 import ShareListLinkModal from '../../../components/ShareListLinkModal';
 import { getCurrentUser } from '../../../utils/adminAuth';
 import {
@@ -237,7 +238,7 @@ const LIST_LINE_BAG_ADD_STYLE: React.CSSProperties = {
   color: '#EB1C24',
   textTransform: 'uppercase',
   fontSize: '8.5px',
-  marginTop: '5px',
+  marginTop: '8px',
   marginBottom: 0,
   lineHeight: '1.1',
   textAlign: 'center',
@@ -290,6 +291,17 @@ const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   color: '#666',
   margin: '2px 0 0 0',
   textTransform: 'uppercase',
+};
+
+/** Red "EDIT LIST NAME" link below the gray visibility label (list view only). */
+const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '9px',
+  color: '#EB1C24',
+  margin: '-4px 0 0 0',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  display: 'inline-block',
 };
 
 const LIST_OVERVIEW_COUNT_STYLE: React.CSSProperties = {
@@ -565,6 +577,7 @@ export default function ViewListsPage() {
   const [showRemoveListItemConfirm, setShowRemoveListItemConfirm] = useState(false);
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
+  const [listToRename, setListToRename] = useState<UserList | null>(null);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
   const [listsOverviewViewMode, setListsOverviewViewMode] = useState<'grid' | 'line'>('line');
   const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
@@ -1281,6 +1294,26 @@ export default function ViewListsPage() {
                             >
                               <span style={LIST_OVERVIEW_NAME_STYLE}>{list.name}</span>
                               <p style={LIST_OVERVIEW_VISIBILITY_STYLE}>{getUserListVisibilityLabel(list)}</p>
+                              <p style={{ margin: 0 }}>
+                                <span
+                                  role="button"
+                                  tabIndex={0}
+                                  style={LIST_OVERVIEW_EDIT_NAME_STYLE}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setListToRename(list);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      setListToRename(list);
+                                    }
+                                  }}
+                                >
+                                  EDIT LIST NAME
+                                </span>
+                              </p>
                             </div>
                           </div>
                         );
@@ -1422,6 +1455,12 @@ export default function ViewListsPage() {
         isOpen={showCreateListModal}
         onClose={() => setShowCreateListModal(false)}
         onCreated={() => { refreshLists(); setShowCreateListModal(false); }}
+      />
+      <RenameListModal
+        isOpen={listToRename !== null}
+        list={listToRename}
+        onClose={() => setListToRename(null)}
+        onRenamed={() => { refreshLists(); setListToRename(null); }}
       />
       <ShareListLinkModal
         isOpen={showShareListModal}

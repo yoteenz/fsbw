@@ -74,7 +74,7 @@ export default function RenameListModal({
         WebkitBackdropFilter: 'blur(3px)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
       onClick={onClose}
     >
@@ -91,7 +91,7 @@ export default function RenameListModal({
           backgroundImage: 'url(/assets/popup-marble.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -103,7 +103,7 @@ export default function RenameListModal({
             marginBottom: '16px',
             textTransform: 'uppercase',
             textAlign: 'center',
-            color: '#EB1C24'
+            color: '#EB1C24',
           }}
         >
           EDIT LIST NAME
@@ -134,7 +134,7 @@ export default function RenameListModal({
               backgroundColor: '#FFFFFF',
               boxSizing: 'border-box',
               borderRadius: '0',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
             }}
           />
         </div>
@@ -147,7 +147,7 @@ export default function RenameListModal({
               color: '#EB1C24',
               marginBottom: '12px',
               textAlign: 'center',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
             }}
           >
             {errorMessage}
@@ -166,7 +166,7 @@ export default function RenameListModal({
               backgroundColor: '#FFFFFF',
               color: '#EB1C24',
               textTransform: 'uppercase',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Save
@@ -180,7 +180,7 @@ export default function RenameListModal({
               fontSize: '11px',
               fontFamily: '"Futura PT Medium"',
               color: '#000000',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
             }}
           >
             Cancel
