@@ -38,18 +38,11 @@ export function shopTextureCategoryThumbSrc(
   return `/assets/${texture}-${suffix}.png`;
 }
 
-/**
- * Hero product photo shown on the BCF PDP for a given texture/category
- * (`/assets/{texture}-{bundle|closure|frontal}-product.JPG`). Matches `BUNDLE_PHOTO_BY_TEXTURE`
- * / `BCF_CF_PHOTO` in `texture-category-product/page.tsx`. Used for wishlist BCF thumbnails.
- */
 export function shopTextureCategoryHeroPhotoSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): string {
-  const suffix =
-    category === 'bundles' ? 'bundle' : category === 'closures' ? 'closure' : 'frontal';
-  return `/assets/${texture}-${suffix}-product.JPG`;
+  return shopTextureCategoryThumbSrc(texture, category);
 }
 
 export const shopTextureCategoryThumbFallbackSrc: Record<ShopTextureCategoryThumbTexture, string> = {

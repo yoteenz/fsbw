@@ -21108,3 +21108,69 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - For wishlist/lists overview actions, preserve the dedicated red `EDIT LIST NAME` rename control and its modal flow rather than collapsing it into name-only display.
 - For lists-page details text, use the list-specific override (gray Futura Demi + tighter top spacing) instead of relying on the shared red base toggle style.
+
+---
+
+## 2026-05-29 — Full conversation summary
+
+**Context:** The user spent this chat refining Build-a-Wig / storefront UX consistency across wishlist, cart, bag, checkout, product pages, account surfaces, and BCF product visuals, with repeated follow-ups to fix regressions and preserve exact typography, spacing, routing, and imagery.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig edit parity so wishlist/account wishlist edit actions route into the product-specific `/build-a-wig/{unit}/edit` flow with selections restored, matching cart and bag behavior.
+- Standardized sold-out language and stock-notify copy: PDP buttons now use `SOLD OUT`, wishlist red stock messaging was adjusted/suppressed appropriately, and the notify modal copy was rewritten to the requested sold-out wording.
+- Updated premium membership benefits and chart consistency so `LIVE ORDER TRACKING` appears for the 3-month tier, sits above `PRIORITY MESSAGES`, and shows the correct checkmark everywhere.
+- Corrected header/icon brand-red consistency by replacing filter-based red treatments with native `#EB1C24` assets/usages.
+- Tuned BCF cart dropdown and checkout details/layout: reordered closures/frontals details (`LACE` above `LENGTH`), removed bundle-deal extra text, stacked BCF black price under gray strikeout text, grouped bundle deals on checkout like cart, removed extra placeholder spacing, and refined checkout/cart/bag BCF subtitle/price spacing with several exact pixel adjustments.
+- Updated unit PDP 2D/3D disclaimer behavior so 2D retains the original visual/aesthetic disclaimer and 3D shows `(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)` with the missing `A` restored.
+- Repeatedly fixed wishlist/lists styling regressions: restored Build-a-Wig edit behavior, reduced red action spacing and gray `VIEW/CLOSE DETAILS` spacing, forced lists-page details text to gray Futura Demi, restored red `EDIT LIST NAME`, and brought back the rename flow/modal when it had been removed.
+- Removed the leaf-brick background from BCF wishlist thumbnails, then fixed the resulting zoom/cropping by changing those BCF thumbs to a full-image-fit treatment.
+- Reworked the account affiliate page multiple times: replaced the copy with the new affiliate program text, changed casing/typography per section, restored that newer content after a regression, added red bullets, and matched the bullet style/size to the brand terms page.
+- Fixed the Blanco edit-mode `NONE` styling icon sizing so it matches the other products.
+- Updated BCF product-page photos for all three categories/textures by replacing the shared mapping in `src/utils/shopTextureCategoryThumb.ts` with the provided Supabase URLs for bundles, closures, and frontals (straight, wavy, curly). While validating, restored a missing helper export alias (`shopTextureCategoryHeroPhotoSrc`) so existing consumers still compile against the shared mapping.
+
+**Decisions / outcomes:**
+- Build-a-Wig edit entry points should behave identically across wishlist, bag, and cart, always preserving edit-session selections.
+- The site should use exact user-specified copy, typography, and pixel spacing on wishlist, checkout, and affiliate/account surfaces, with gray Futura Demi for lists-page `VIEW/CLOSE DETAILS` and native brand-red icon assets.
+- BCF bundle deals should render as a single grouped checkout/cart concept, and BCF thumbnails/product photos should use the intended product imagery without the old brick-backed framing.
+- The latest BCF PDP imagery now comes from the provided live-preview Supabase URLs instead of legacy local `/assets` PNGs.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+- `src/pages/wishlist/page.tsx`
+- `src/pages/shopping-bag/page.tsx`
+- `src/components/CartDropdown.tsx`
+- `src/components/shop/UnitPdpCartActions.tsx`
+- `src/components/shop/WigStockPrice.tsx`
+- `src/components/shop/StockNotifyModal.tsx`
+- `src/constants/premiumBenefitsByTier.ts`
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`
+- `src/pages/account/membership/page.tsx`
+- `public/assets/close-icon.svg`
+- `public/assets/order-tracking.svg`
+- `public/assets/points-history.svg`
+- `public/assets/rewards-icon.svg`
+- `public/assets/NOIR/account-icon-red.svg`
+- `src/components/RoleCardSectionHeader.tsx`
+- `src/utils/workerRoleHeaderIcon.ts`
+- `src/utils/cartLineRedAndDetails.ts`
+- `src/pages/straight/noir/page.tsx`
+- `src/pages/straight/blanco/page.tsx`
+- `src/pages/wavy/soft-wave/page.tsx`
+- `src/pages/wavy/beach-wave/page.tsx`
+- `src/pages/curly/soft-curl/page.tsx`
+- `src/pages/curly/ocean-curl/page.tsx`
+- `src/pages/checkout/page.tsx`
+- `src/pages/checkout/confirm/page.tsx`
+- `src/utils/checkoutOrderStripDisplay.ts`
+- `src/pages/wishlist/lists/page.tsx`
+- `src/pages/wishlist/shared/page.tsx`
+- `src/index.css`
+- `src/pages/account/affiliate/page.tsx`
+- `src/pages/build-a-wig/page.tsx`
+- `src/components/RenameListModal.tsx`
+- `src/utils/shopTextureCategoryThumb.ts`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- For BCF imagery reused across PDP and related surfaces, update the shared `shopTextureCategoryThumb` helper instead of patching individual pages.
+- When a build exposes a stale helper import during a targeted UI change, prefer restoring a compatibility alias in the shared util when that preserves current call sites without altering behavior.
