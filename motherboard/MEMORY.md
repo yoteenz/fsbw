@@ -19493,3 +19493,5 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked to reduce spacing above the cap size chart on all product pages by 4px.
 
 **Change:** `UNIT_PDP_CAP_CHART_ROW_STYLE.marginTop` `4px` → `0` in `unitPdpLayoutConstants.ts` (Blanco, Beach Wave, Soft Wave, Soft Curl, Ocean Curl). NOIR inline cap-chart row `marginTop: '4px'` → `0`. Pushed `master` + `preview/mobile`.
+
+**Follow-up:** User asked for another −4px above cap chart → `marginTop: '-4px'` on shared constant + NOIR inline row (total −8px from original `4px`).
