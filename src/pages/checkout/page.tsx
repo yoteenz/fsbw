@@ -3537,10 +3537,8 @@ function CheckoutPage() {
                                                    (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) ||
                                                    (item.length && item.length !== '24"');
                                     const isGiftCard = item.name === 'GIFT CARD' || item.type === 'gift-card';
-                                    const isBcf = item.type === 'shop-texture-category';
                                     const isBlancoNoSpecs = item.name === 'BLANCO' && !hasSpecs;
                                     if (isGiftCard) return '-2px';
-                                    if (isBcf) return '4px';
                                     if (isBlancoNoSpecs) return '-2px';
                                     return '-2px';
                                   })(),
@@ -3554,13 +3552,21 @@ function CheckoutPage() {
                                 {redSubtitle}
                               </p>
                                 {item.type === 'shop-texture-category' && !item.capSize && (
-                                  <div
+                                  <p
                                     aria-hidden="true"
                                     style={{
+                                      fontFamily: '"Futura PT Demi"',
+                                      fontSize: '9px',
+                                      color: 'transparent',
+                                      visibility: 'hidden',
                                       margin: '7px 0 0 0',
-                                      minHeight: '10px'
+                                      textTransform: 'uppercase',
+                                      lineHeight: '1.1',
+                                      textAlign: 'center'
                                     }}
-                                  />
+                                  >
+                                    CAP SIZE: M
+                                  </p>
                                 )}
                                 {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
                                   <p
