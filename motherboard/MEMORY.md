@@ -19811,6 +19811,18 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Cart VIEW DETAILS: remove "BUNDLE DEAL: 3 LINES" + hide price/cap for units & BCF
+
+**Context:** (1) "BUNDLE DEAL: 3 LINES" still appeared in cart BCF VIEW DETAILS — must be removed. (2) When viewing details for **units & BCF** lines in the cart dropdown, the **price** and **cap size** rows should be hidden.
+
+**Changes:**
+- **`src/utils/cartLineRedAndDetails.ts`** — `bcfCartViewDetailsHtml` no longer pushes the `BUNDLE DEAL: ${q} LINES` line (removed the `item.bcfBundleDeal` block). Shared with the wishlist BCF details too.
+- **`src/components/CartDropdown.tsx`** — imported `isWigUnitProductName`; added per-item `hideMetaForDetails = viewingDetailsFor === item.id && (isBcfShopItem || isWigUnitProductName(item.name))`. The cap-size layer is gated `item.capSize && !hideMetaForDetails`, and the entire price `CartLineTextLayer slot="price"` is wrapped in `{!hideMetaForDetails && (...)}`. Bookings/gift cards unaffected (price stays during their details).
+
+**Verified (headless):** cart card shows price+cap before opening details (`hasPrice/hasCap true`), both hidden during details (`false`); no "BUNDLE DEAL: 3 LINES" anywhere. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
 
 **Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.

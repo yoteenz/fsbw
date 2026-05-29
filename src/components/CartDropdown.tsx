@@ -45,7 +45,7 @@ import {
 import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
-import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../utils/productInventoryAvailability';
+import { attachStockStatusToLineItem, isLineItemOutOfStock, isWigUnitProductName } from '../utils/productInventoryAvailability';
 import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
 import { prepareBuildAWigEditSession } from '../utils/buildAWigEditSession';
 
@@ -899,6 +899,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
+                    /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
+                    const hideMetaForDetails =
+                      viewingDetailsFor === item.id &&
+                      (isBcfShopItem || isWigUnitProductName(item.name));
                     /** Cart dropdown: booking badge ~66px (appointment +5%), centered in 88px column. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
                     const unitThumbPx = 88;
                     const bcfCartThumbPx = Math.round(unitThumbPx * 0.85 * 1.05);
@@ -1453,13 +1457,14 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           />
                           </CartLineTextLayer>
                         )}
-                        {item.capSize && (
+                        {item.capSize && !hideMetaForDetails && (
                           <CartLineTextLayer slot="cap">
                           <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
                             CAP SIZE: {item.capSize}
                           </p>
                           </CartLineTextLayer>
                         )}
+                        {!hideMetaForDetails && (
                         <CartLineTextLayer slot="price">
                         {(item as CartItem).bcfBundleDeal ? (
                           <div
@@ -1564,6 +1569,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           );
                         })()}
                         </CartLineTextLayer>
+                        )}
                         </CartLineProductTextStack>
                       </div>
                     </div>
