@@ -20895,3 +20895,68 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - For long structured copy sections like the affiliate info card, keep content centralized in the section-data arrays and change casing/typography in the shared render map instead of editing each text string manually.
 - When users request script-label styling like “Bohemy,” use the project’s existing `"Bohemy", cursive` font family convention and apply lowercase styling explicitly at the section-label level while leaving body text casing controlled separately.
+
+---
+
+## 2026-05-29 — Wishlist / Build-a-Wig / BCF / affiliate consistency full conversation summary
+
+**Context:** User spent this chat doing a broad UX and consistency pass across the storefront and account surfaces, with repeated follow-ups to correct regressions or missed states. The core goals were to make wishlist/cart/bag Build-a-Wig editing behave consistently, standardize sold-out and premium/icon copy, tune multiple BCF layout/details cases, refine affiliate-program typography/content, and keep wishlist list spacing/thumb visuals aligned with brand expectations.
+
+**Topics covered (entire conversation so far):**
+- Fixed wishlist and account-wishlist `EDIT IN BUILD-A-WIG` flows so Build-a-Wig items enter the correct edit route with selections preloaded and save back in place like cart/bag.
+- Standardized sold-out wording by changing PDP out-of-stock CTAs to `SOLD OUT`, suppressing the red wishlist out-of-stock line where requested, and updating below-counter stock copy / notify-modal text.
+- Added `LIVE ORDER TRACKING` to the 3-month premium tier, reordered it above `PRIORITY MESSAGES`, and updated the upgrade chart / related membership surfaces so the 3-month column now shows a checkmark.
+- Replaced mismatched filtered red header/title icons with native brand-red assets (`#EB1C24`) across the site.
+- Updated cart dropdown BCF VIEW DETAILS ordering/removal rules: origin line above texture for bundle deals, removed `BUNDLE DEAL: 3 LINES`, and placed `LACE` above `LENGTH` for closures/frontals.
+- Split PDP 2D vs 3D disclaimers so 2D keeps `(2D MODEL IS FOR VISUAL & AESTHETIC PURPOSES ONLY)` while 3D shows `(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)`, including the later typo correction adding the missing `A`.
+- Reworked checkout BCF rendering so non-bundled / bundled lines stack correctly, bundle deals stay grouped as one line like cart, the black price sits below gray strikeout text, placeholder rows were removed, and the requested red RAW / price spacing adjustments were applied (including Noir exception handling and 5px non-bundled BCF price spacing at checkout, plus 2px reduction on bag/cart dropdown only).
+- Repaired wishlist list-view spacing regressions by restoring the reduced gap above the red thumb action text and the reduced top margin above gray `VIEW DETAILS` text when those values were later overridden.
+- Replaced the affiliate page copy with the requested affiliate rewards program content, updated nearby mock values, then restyled the page so the header reads `AFFILIATE PROGRAM`, body copy is uppercase, section-label subheads are lowercase gray Bohemy, and `Turn your content into rewards.` is gray Demi.
+- Fixed the oversized `NONE` styling icon in Blanco Build-a-Wig edit mode by keying size/position off the actual rendered none-icon asset rather than only the raw styling token.
+- Latest follow-up: after removing the leaf-brick background from BCF thumbnails on wishlist list surfaces, adjusted those BCF thumbs to use a dedicated full-image fit path so bundles / closures / frontals are no longer zoomed/cropped while the background stays removed on list overview thumbs, expanded list line-view thumbs, expanded list grid-view thumbs, and shared wishlist list line-view thumbs.
+
+**Decisions / outcomes:**
+- Wishlist, cart, and bag edit behavior should share one Build-a-Wig edit-session setup pattern.
+- BCF products should follow category-specific layout/detail rules instead of being forced through unit-wig display assumptions.
+- Premium tier copy, sold-out wording, and header icon color must stay consistent across every surfaced instance.
+- Wishlist list surfaces now keep the spacing reductions already requested and use BCF-specific thumbnail fit behavior rather than the old wig/leaf-brick crop math.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+- `src/pages/wishlist/page.tsx`
+- `src/pages/shopping-bag/page.tsx`
+- `src/components/CartDropdown.tsx`
+- `src/components/shop/UnitPdpCartActions.tsx`
+- `src/components/shop/WigStockPrice.tsx`
+- `src/components/shop/StockNotifyModal.tsx`
+- `src/constants/premiumBenefitsByTier.ts`
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`
+- `src/pages/account/membership/page.tsx`
+- `public/assets/close-icon.svg`
+- `public/assets/order-tracking.svg`
+- `public/assets/points-history.svg`
+- `public/assets/rewards-icon.svg`
+- `public/assets/NOIR/account-icon-red.svg`
+- `src/components/RoleCardSectionHeader.tsx`
+- `src/utils/workerRoleHeaderIcon.ts`
+- `src/utils/cartLineRedAndDetails.ts`
+- `src/pages/straight/noir/page.tsx`
+- `src/pages/straight/blanco/page.tsx`
+- `src/pages/wavy/soft-wave/page.tsx`
+- `src/pages/wavy/beach-wave/page.tsx`
+- `src/pages/curly/soft-curl/page.tsx`
+- `src/pages/curly/ocean-curl/page.tsx`
+- `src/pages/checkout/page.tsx`
+- `src/pages/checkout/confirm/page.tsx`
+- `src/utils/checkoutOrderStripDisplay.ts`
+- `src/pages/wishlist/lists/page.tsx`
+- `src/pages/wishlist/shared/page.tsx`
+- `src/index.css`
+- `src/pages/account/affiliate/page.tsx`
+- `src/pages/build-a-wig/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- Keep Build-a-Wig edit entry logic centralized so wishlist/cart/bag/account wishlist all preload and save consistently.
+- For wishlist list surfaces, preserve the reduced red-action / gray-details spacing and use BCF-specific thumbnail rendering (no leaf-brick background, full image visible via centered contain fit) instead of reusing wig thumbnail framing.
+- When BCF issues reappear, inspect both data shaping and visual spacing; several earlier bugs came from unit-wig assumptions leaking into BCF rendering.
