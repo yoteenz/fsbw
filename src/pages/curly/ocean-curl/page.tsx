@@ -1216,7 +1216,7 @@ function OceanCurlSelection() {
                   color: 'black'
                 }}
               >
-                (2D MODEL IS FOR <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>VISUAL & AESTHETIC</span> PURPOSES ONLY)
+                (3D MODEL IS WEARING <span style={{ color: '#808080', fontFamily: '"Futura PT Demi"' }}>FULLY CUSTOMIZED & STYLED</span> UNIT)
               </p>
             </div>
             </div>
