@@ -124,24 +124,30 @@ export interface BcfColorOption {
   swatch: string;
 }
 
+/**
+ * Premium hair-color upcharge on BCF PDPs (bundles / closures / frontals).
+ * Build-a-wig unit color sub-page uses $120 separately — do not conflate.
+ */
+export const BCF_PREMIUM_COLOR_UPCHARGE_USD = 80;
+
 /** Noir build-a-wig palette + Blanco trio (GOLDEN / PLATINUM / ASH). */
 export const BCF_COLOR_OPTIONS: BcfColorOption[] = [
-  { id: 'JET BLACK', label: 'JET BLACK', price: 80, swatch: '#000000' },
+  { id: 'JET BLACK', label: 'JET BLACK', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#000000' },
   { id: 'OFF BLACK', label: 'OFF BLACK', price: 0, swatch: '#160604' },
-  { id: 'ESPRESSO', label: 'ESPRESSO', price: 80, swatch: '#3B1301' },
-  { id: 'CHESTNUT', label: 'CHESTNUT', price: 80, swatch: '#6C2D11' },
-  { id: 'HONEY', label: 'HONEY', price: 80, swatch: '#C58628' },
-  { id: 'AUBURN', label: 'AUBURN', price: 80, swatch: '#9C5617' },
-  { id: 'COPPER', label: 'COPPER', price: 80, swatch: '#802F02' },
-  { id: 'GINGER', label: 'GINGER', price: 80, swatch: '#F64F07' },
-  { id: 'SANGRIA', label: 'SANGRIA', price: 80, swatch: '#7E0A1E' },
-  { id: 'CHERRY', label: 'CHERRY', price: 80, swatch: '#FF1400' },
-  { id: 'RASPBERRY', label: 'RASPBERRY', price: 80, swatch: '#DA3063' },
-  { id: 'PLUM', label: 'PLUM', price: 80, swatch: '#640E82' },
-  { id: 'COBALT', label: 'COBALT', price: 80, swatch: '#290481' },
-  { id: 'TEAL', label: 'TEAL', price: 80, swatch: '#46EBCA' },
-  { id: 'SLIME', label: 'SLIME', price: 80, swatch: '#03D92A' },
-  { id: 'CITRINE', label: 'CITRINE', price: 80, swatch: '#E2E91C' },
+  { id: 'ESPRESSO', label: 'ESPRESSO', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#3B1301' },
+  { id: 'CHESTNUT', label: 'CHESTNUT', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#6C2D11' },
+  { id: 'HONEY', label: 'HONEY', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#C58628' },
+  { id: 'AUBURN', label: 'AUBURN', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#9C5617' },
+  { id: 'COPPER', label: 'COPPER', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#802F02' },
+  { id: 'GINGER', label: 'GINGER', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#F64F07' },
+  { id: 'SANGRIA', label: 'SANGRIA', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#7E0A1E' },
+  { id: 'CHERRY', label: 'CHERRY', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#FF1400' },
+  { id: 'RASPBERRY', label: 'RASPBERRY', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#DA3063' },
+  { id: 'PLUM', label: 'PLUM', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#640E82' },
+  { id: 'COBALT', label: 'COBALT', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#290481' },
+  { id: 'TEAL', label: 'TEAL', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#46EBCA' },
+  { id: 'SLIME', label: 'SLIME', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#03D92A' },
+  { id: 'CITRINE', label: 'CITRINE', price: BCF_PREMIUM_COLOR_UPCHARGE_USD, swatch: '#E2E91C' },
   { id: 'GOLDEN', label: 'GOLDEN', price: -20, swatch: '#FBF08B' },
   { id: 'PLATINUM', label: 'PLATINUM', price: 0, swatch: '#F6F3D2' },
   { id: 'ASH', label: 'ASH', price: 20, swatch: '#E5E3CB' }
