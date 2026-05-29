@@ -165,9 +165,9 @@ export function bcfCartViewDetailsHtml(item: {
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
   if (Array.isArray(item.laceTreatment) && item.laceTreatment.length) {
     const labels = item.laceTreatment
-      .map((id) => (id === 'PLUCK' ? 'PLUCK HAIRLINE' : id === 'BLEACH' ? 'BLEACH/TINT KNOTS' : String(id)))
+      .map((id) => (id === 'PLUCK' ? 'PLUCK' : id === 'BLEACH' ? 'BLEACH/TINT' : String(id)))
       .join(', ');
-    lines.push(`LACE TREATMENT: ${esc(labels)}`);
+    lines.push(`TREATMENT: ${esc(labels)}`);
   }
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);
