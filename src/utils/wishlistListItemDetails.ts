@@ -1,6 +1,6 @@
 import { bcfCartViewDetailsHtml, bookingCartViewDetailsHtml } from './cartLineRedAndDetails';
 import {
-  shopTextureCategoryThumbSrc,
+  shopTextureCategoryHeroPhotoSrc,
   type ShopTextureCategoryThumbCategory,
   type ShopTextureCategoryThumbTexture,
 } from './shopTextureCategoryThumb';
@@ -42,11 +42,11 @@ export function getWishlistItemRoute(item: any): string {
   return routes[name] || '/build-a-wig';
 }
 
-/** BCF product photo for wishlist thumbnails (same image family as the product page). Null for non-BCF. */
+/** BCF wishlist thumbnail = the BCF PDP hero product photo for that texture/category. Null for non-BCF. */
 export function getWishlistBcfThumbSrc(item: any): string | null {
   if (item?.type !== 'shop-texture-category') return null;
   if (item.category && item.texture) {
-    return shopTextureCategoryThumbSrc(
+    return shopTextureCategoryHeroPhotoSrc(
       item.texture as ShopTextureCategoryThumbTexture,
       item.category as ShopTextureCategoryThumbCategory
     );
