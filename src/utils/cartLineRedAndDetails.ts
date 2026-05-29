@@ -167,7 +167,8 @@ export function bcfCartViewDetailsHtml(item: {
     const labels = item.laceTreatment
       .map((id) => (id === 'PLUCK' ? 'PLUCK' : id === 'BLEACH' ? 'BLEACH/TINT' : String(id)))
       .join(', ');
-    lines.push(`TREATMENT: ${esc(labels)}`);
+    // Keep the treatment values together so BLEACH/TINT never drops below PLUCK in the narrow column.
+    lines.push(`TREATMENT: <span style="white-space:nowrap">${esc(labels)}</span>`);
   }
   if (item.length) lines.push(`LENGTH: ${esc(item.length)}`);
   if (item.color) lines.push(`COLOR: ${esc(item.color)}`);
