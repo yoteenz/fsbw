@@ -1429,8 +1429,8 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                             margin:
                               useDigitalStack
                                 ? '4px 0 0 0'
-                                : item.type === 'shop-texture-category'
-                                  ? '3px 0 0 0'
+                                : item.type === 'shop-texture-category' && !isBcfBundleDeal
+                                  ? '5px 0 0 0'
                                   : '1px 0 0 0',
                             textTransform: 'uppercase',
                             textAlign: 'center'
