@@ -1318,10 +1318,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           
                           // Build array of items to determine what comes after each
                           const items = [];
-                          // Add cap size if it's a flexible cap (XXS/XS/S or S/M/L)
-                          if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) {
-                            items.push({ type: 'capSize', value: item.capSize, fullName: 'FLEX CAP' });
-                          }
+                          // Cap size intentionally omitted from the unit VIEW DETAILS list.
                           // Add length if it's not the default 24"
                           if (item.length && item.length !== '24"') {
                             items.push({ type: 'length', value: item.length, fullName: item.length });
@@ -1360,33 +1357,8 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           const customizableItems = items.filter(item => item.type !== 'density' && item.type !== 'lace');
                           const useFullNames = customizableItems.length === 1;
                           
-                          // Helper function to format price with red color and currency conversion
-                          // CRITICAL: This function must not be optimized away in production builds
-                          const formatPriceDisplay = (price: number): string => {
-                            // Explicitly check for zero to prevent optimization issues
-                            if (price === 0 || price === null || price === undefined || isNaN(price)) {
-                              return '';
-                            }
-                            // Get currency info
-                            const currency = currencyRates[selectedCurrency as keyof typeof currencyRates] || currencyRates.USD;
-                            // Convert price to selected currency
-                            const convertedPrice = price * currency.rate;
-                            // Format the converted price (negative amounts keep leading minus)
-                            const priceStr = Math.abs(convertedPrice).toLocaleString('en-US', {
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 0
-                            });
-                            const amountSign = price < 0 ? '-' : '';
-                            // Red middle dot before price (replaces "+" for positive deltas)
-                            return (
-                              ' <span style="color: #EB1C24;"> · </span>' +
-                              '<span style="color: #000000;">' +
-                              amountSign +
-                              currency.symbol +
-                              priceStr +
-                              '</span>'
-                            );
-                          };
+                          // Unit VIEW DETAILS shows option labels only — no middle dot, no price delta.
+                          const formatPriceDisplay = (_price: number): string => '';
                           
                           // Build text with each item on its own line and prices in red
                           items.forEach((itemData) => {

@@ -19883,6 +19883,20 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — Cart unit VIEW DETAILS: no cap size, no price, no middle dot
+
+**Context:** The black unit details text in the cart dropdown listed selections with a red middle dot `·` + price delta (e.g. `26" ADDED · $50`, `FLEX CAP · $40`). User: unit details should NOT show cap size or price, and remove the middle dot + price from each selection.
+
+**Change (`src/components/CartDropdown.tsx`, unit details inline builder):**
+- Removed the `capSize` push entirely (no `FLEX CAP` line in unit details).
+- Replaced `formatPriceDisplay` with a no-op (`(_price) => ''`) so every selection line renders the label only — no ` · ` middle dot and no `$` price delta. (Per-option price helpers still run but their output is no longer appended.)
+
+Verified headless: a unit with flex cap / 26" / custom color / hairline / bleach+pluck renders `2" ADDED · 13X4 LACE · BURGUNDY COLOR · LAGOS HAIRLINE · BLEACH KNOTS · PLUCK HAIRLINE` as plain labels — no FLEX CAP, no `·`, no `$`. (The separate price + CAP SIZE layers were already hidden during details for units/BCF.) Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart BCF TREATMENT line on one row (continued from earlier)
+
 **Follow-up — whole line on one row:** user wanted all of `TREATMENT: PLUCK, BLEACH/TINT` on a single row. The details `<p>` was capped to ~105px (`maxWidth: calc(100% - 20px)` + `marginRight: 20px`) inside a ~125px flex text column. For **BCF lines only** (`item.type === 'shop-texture-category'`) in `CartDropdown.tsx`: details `<p>` now `whiteSpace: nowrap`, `marginRight: 0`, `maxWidth: none`, `wordBreak: normal`, `fontSize: 8px`; and the remove/QTY column narrows `80px → 60px` while viewing BCF details so the flex text column grows. Net: treatment renders on one row with no overlap of the remove column. Verified headless at 390px (pRight 249 < removeLeft 284) and 360px (249 < 254) — one line, no overlap. Unit/booking detail styling unchanged (still 9px, wraps as before). Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
