@@ -21243,3 +21243,31 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For BCF imagery reused across PDP and related surfaces, update the shared helper rather than patching individual pages.
 - When the user wants a wishlist-only BCF thumb change, scope it inside `shopBcfCartLineThumbnailSrc()` so cart/bag/wishlist BCF thumbnail logic stays centralized and texture/category targeting stays explicit.
 - When a build exposes stale or missing shared BCF exports during a small UI change, restore the shared util API surface rather than patching downstream import sites.
+
+---
+
+## 2026-05-29 — Full conversation summary: cart dropdown long-details upward shift threshold
+
+**Context:** The user asked to refine the cart dropdown detail layout so product text shifts upward by an additional 10px only when there are 6+ rows of detail text, preserving the normal/non-details positioning.
+
+**Topics covered:**
+- Loaded the required motherboard project context at chat start.
+- Inspected `src/components/CartDropdown.tsx` and confirmed the current implementation had already changed the product text transform from `translateY(-4px)` to `translateY(-14px)` for every details view.
+- Adjusted the behavior so the extra `-10px` shift is conditional on the rendered detail text row count reaching 6+ rows.
+- Counted unit detail rows to match the unit details renderer, including multiple add-ons as separate rows; booking and BCF detail rows are counted from their existing `<br/>`-separated detail HTML helpers.
+
+**Decisions / outcomes:**
+- Cart dropdown product text now uses `translateY(-14px)` only for detail views with 6+ rendered detail rows.
+- Shorter detail views and non-details views use the normal `translateY(-4px)` positioning.
+- The change stays scoped to the cart dropdown and does not alter bag, wishlist, or checkout line stacks.
+
+**Changes:**
+- `src/components/CartDropdown.tsx`
+- `motherboard/MEMORY.md`
+
+**Verification:**
+- Ran `npm ci` because dependencies were not installed in the cloud checkout.
+- Ran `npm run build` successfully.
+
+**Conventions:**
+- For cart dropdown long-detail spacing, base extra vertical translation on the actual rendered detail text row count, not simply on whether details are open.
