@@ -24,6 +24,7 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
@@ -992,6 +993,21 @@ export default function ViewListsPage() {
                     const expandedList = lists.find((l) => l.id === expandedListId);
                     if (!expandedList) return null;
                     const expandedItems: any[] = expandedList.items ?? [];
+                    // Show the most recently added item first: prefer `addedAt`, fall back to
+                    // reverse insertion order (items are appended on add) for older untimestamped items.
+                    const orderedExpandedItems: any[] = expandedItems
+                      .map((it, i) => ({ it, i }))
+                      .sort((a, b) => {
+                        const ta = Number(a.it?.addedAt);
+                        const tb = Number(b.it?.addedAt);
+                        const aHas = Number.isFinite(ta) && ta > 0;
+                        const bHas = Number.isFinite(tb) && tb > 0;
+                        if (aHas && bHas) return tb - ta;
+                        if (aHas) return -1;
+                        if (bHas) return 1;
+                        return b.i - a.i;
+                      })
+                      .map((x) => x.it);
                     return (
                       <div
                         style={{
@@ -1040,7 +1056,7 @@ export default function ViewListsPage() {
                           </div>
                         ) : expandedViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
-                            {expandedItems.map((item: any, index: number) => {
+                            {orderedExpandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
@@ -1120,7 +1136,7 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <WishlistLineProductTextStack>
                                     <CartLineTextLayer slot="name">
-                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{getWishlistItemDisplayName(item)}</p>
                                     </CartLineTextLayer>
                                     <CartLineTextLayer slot="subtitle" productName={itemName}>
                                     <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
@@ -1195,7 +1211,7 @@ export default function ViewListsPage() {
                               paddingTop: '10px',
                             }}
                           >
-                            {expandedItems.map((item: any, index: number) => {
+                            {orderedExpandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
@@ -1204,7 +1220,7 @@ export default function ViewListsPage() {
                                   <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{getWishlistItemDisplayName(item)}</p>
                                   <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
                                   <p style={EXPANDED_LIST_GRID_RAW_TEXT_STYLE}>
                                     {itemLength} RAW {itemHairOrigin}

@@ -21,6 +21,7 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
+import { getWishlistItemDisplayName } from '../../utils/wishlistListItemDetails';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
@@ -965,7 +966,7 @@ function WishlistSelection() {
                             className="font-medium truncate"
                             style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                           >
-                            {itemName.replace(/WIG/gi, '').trim()}
+                            {getWishlistItemDisplayName(item)}
                           </p>
                           </CartLineTextLayer>
                           <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>

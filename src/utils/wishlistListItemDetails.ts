@@ -14,6 +14,19 @@ export function getWishlistItemProductName(item: any): string {
   return (item?.name || item?.productName || 'NOIR').toString().toUpperCase();
 }
 
+/**
+ * Name shown on wishlist rows. BCF (`shop-texture-category`) lines show just the category
+ * (BUNDLES / CLOSURES / FRONTALS) — not the cart label "BUNDLES · WAVY". Unit names drop "WIG".
+ */
+export function getWishlistItemDisplayName(item: any): string {
+  const raw = getWishlistItemProductName(item);
+  if (item?.type === 'shop-texture-category') {
+    const cat = item?.category ? String(item.category) : raw.split('·')[0];
+    return cat.toUpperCase().trim();
+  }
+  return raw.replace(/WIG/gi, '').trim();
+}
+
 export function getWishlistItemDefaultPrice(productName: string): number {
   return DEFAULT_UNIT_PRICES[productName] ?? 580;
 }
