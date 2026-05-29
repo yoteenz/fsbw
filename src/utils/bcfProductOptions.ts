@@ -65,13 +65,16 @@ export function bcfDefaultColorIdForOrigin(origin: BcfOriginId): string {
   return origin === 'RUSSIAN' ? 'PLATINUM' : 'OFF BLACK';
 }
 
-/** Frontals: 13×4 and 13×6 only. Closures: all other lace sizes from `BCF_LACE_OPTIONS`. */
+const BCF_FRONTAL_LACE_IDS = new Set(['13X4', '13X6']);
+/** Closures: closure lace grid only — no frontals sizes or 360 / FULL. */
+const BCF_CLOSURE_EXCLUDED_LACE_IDS = new Set(['13X4', '13X6', '360', 'FULL']);
+
+/** Frontals: 13×4 and 13×6 only. Closures: 2×6 through 7×7 (six sizes). */
 export function bcfLaceOptionsForCategory(category: 'closures' | 'frontals'): BcfLaceOption[] {
-  const frontalOnly = new Set(['13X4', '13X6']);
   if (category === 'frontals') {
-    return BCF_LACE_OPTIONS.filter((l) => frontalOnly.has(l.id));
+    return BCF_LACE_OPTIONS.filter((l) => BCF_FRONTAL_LACE_IDS.has(l.id));
   }
-  return BCF_LACE_OPTIONS.filter((l) => !frontalOnly.has(l.id));
+  return BCF_LACE_OPTIONS.filter((l) => !BCF_CLOSURE_EXCLUDED_LACE_IDS.has(l.id));
 }
 
 /** Match PDP URL so first paint uses an origin that allows the selected texture (avoids redirect flash). */

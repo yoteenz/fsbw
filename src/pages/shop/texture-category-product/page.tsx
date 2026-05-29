@@ -1562,11 +1562,10 @@ export default function ShopTextureCategoryProductPage() {
                             lace size
                           </p>
                           <div
-                            className="flex flex-wrap justify-center gap-3 mb-3"
-                            style={
+                            className={
                               category === 'closures'
-                                ? { maxHeight: '100px', overflowY: 'auto' }
-                                : undefined
+                                ? 'grid w-full grid-cols-3 gap-3 mb-3 max-w-[min(100%,300px)] mx-auto'
+                                : 'flex flex-wrap justify-center gap-3 mb-3'
                             }
                           >
                             {bcfLaceOptions.map((l) => {
@@ -1579,7 +1578,9 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{
                                     ...bcfOptionBtnTypography,
                                     ...bcfOptionSelectedChrome(sel),
-                                    minWidth: 'clamp(72px, 18vw, 130px)'
+                                    ...(category === 'frontals'
+                                      ? { minWidth: 'clamp(72px, 18vw, 130px)' }
+                                      : { width: '100%' })
                                   }}
                                 >
                                   {l.label}

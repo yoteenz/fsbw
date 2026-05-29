@@ -19504,6 +19504,8 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 **Change:** `bcfLaceOptionsForCategory('frontals')` in `utils/bcfProductOptions.ts` — `frontalOnly` set was `13X4`, `13X6`, `360`, `FULL`; now only `13X4`, `13X6`. Closures get all other `BCF_LACE_OPTIONS` (including 360, FULL). Existing PDP effect resets invalid `bcfLace` when switching category or after deploy.
 
+**Follow-up:** Closures PDP — removed **360** & **FULL** from lace options (`BCF_CLOSURE_EXCLUDED_LACE_IDS`); six sizes remain (2×6–7×7). Lace UI: dropped scrollable `maxHeight` box; closures use centered **3×2 grid** (`grid-cols-3`, `max-w 300px`); frontals keep flex-centered pair.
+
 **Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
 
 ---
