@@ -3551,6 +3551,15 @@ function CheckoutPage() {
                               >
                                 {redSubtitle}
                               </p>
+                                {item.type === 'shop-texture-category' && !item.capSize && (
+                                  <div
+                                    aria-hidden="true"
+                                    style={{
+                                      margin: '7px 0 0 0',
+                                      minHeight: '10px'
+                                    }}
+                                  />
+                                )}
                                 {!(item.name === 'GIFT CARD' || item.type === 'gift-card') && item.capSize && (
                                   <p
                                       style={{

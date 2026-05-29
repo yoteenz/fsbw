@@ -1377,6 +1377,15 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         >
                           {redSubtitle}
                         </p>
+                        {item.type === 'shop-texture-category' && !item.capSize && (
+                          <div
+                            aria-hidden="true"
+                            style={{
+                              margin: '7px 0 0 0',
+                              minHeight: '10px'
+                            }}
+                          />
+                        )}
                         {!useDigitalStack && item.capSize && (
                           <p
                               style={{
