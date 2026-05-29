@@ -1728,6 +1728,35 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
+                      {(category === 'closures' || category === 'frontals') && (
+                        <>
+                          <p style={bcfBohemySubLabelStyle}>lace treatment</p>
+                          <div className="flex flex-wrap justify-center gap-3 mb-3">
+                            {BCF_LACE_TREATMENT_OPTIONS.map((t) => {
+                              const sel = bcfLaceTreatment.includes(t.id);
+                              // Premium-only treatments render grayed/disabled for standard members
+                              // (still tappable to surface the upgrade modal).
+                              const locked = !!t.premium && !isBcfPremiumMember;
+                              return (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  onClick={() => handleBcfLaceTreatmentToggle(t.id)}
+                                  style={{
+                                    ...bcfOptionBtnTypography,
+                                    ...bcfOptionSelectedChrome(sel),
+                                    ...(locked && !sel
+                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
+                                      : {})
+                                  }}
+                                >
+                                  {t.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
                       <p style={bcfBohemySubLabelStyle}>hair color</p>
                       <div className="flex flex-wrap justify-center gap-x-3 gap-y-3 mb-6">
                         {bcfColorsAvailable.map((c) => {
@@ -1792,35 +1821,6 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
-                      {(category === 'closures' || category === 'frontals') && (
-                        <>
-                          <p style={{ ...bcfBohemySubLabelStyle, margin: '6px 0 8px' }}>lace treatment</p>
-                          <div className="flex flex-wrap justify-center gap-3 mb-3">
-                            {BCF_LACE_TREATMENT_OPTIONS.map((t) => {
-                              const sel = bcfLaceTreatment.includes(t.id);
-                              // Premium-only treatments render grayed/disabled for standard members
-                              // (still tappable to surface the upgrade modal).
-                              const locked = !!t.premium && !isBcfPremiumMember;
-                              return (
-                                <button
-                                  key={t.id}
-                                  type="button"
-                                  onClick={() => handleBcfLaceTreatmentToggle(t.id)}
-                                  style={{
-                                    ...bcfOptionBtnTypography,
-                                    ...bcfOptionSelectedChrome(sel),
-                                    ...(locked && !sel
-                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
-                                      : {})
-                                  }}
-                                >
-                                  {t.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
                     </div>
                   </div>
 
