@@ -494,6 +494,21 @@ function WishlistListOverviewThumb({
 }
 
 /** Route to product/unit page. */
+/** Creation time encoded in the list id (`list-<epochMs>-<rand>`); 0 if absent. */
+function getListIdTimestamp(id: string): number {
+  const m = /^list-(\d+)-/.exec(id || '');
+  return m ? Number(m[1]) : 0;
+}
+
+/** Recency of a list = newest of its item add times / updatedAt / creation time. */
+function getListRecency(list: UserList): number {
+  const itemMax = (list.items || []).reduce((mx: number, it: any) => {
+    const t = Number(it?.addedAt);
+    return Number.isFinite(t) && t > mx ? t : mx;
+  }, 0);
+  return Math.max(Number(list.updatedAt) || 0, itemMax, getListIdTimestamp(list.id));
+}
+
 function getProductRoute(name: string): string {
   const n = (name || 'NOIR').toString().toUpperCase();
   const routes: Record<string, string> = {
@@ -556,6 +571,11 @@ export default function ViewListsPage() {
   });
   const [cartSyncVersion, setCartSyncVersion] = useState(0);
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
+  /** Overview ordering: list with the most recently added item first. */
+  const overviewLists = useMemo(
+    () => [...lists].sort((a, b) => getListRecency(b) - getListRecency(a)),
+    [lists]
+  );
   useProductInventorySnapshot();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
@@ -1244,7 +1264,7 @@ export default function ViewListsPage() {
                     </div>
                   ) : listsOverviewViewMode === 'line' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                      {lists.map((list, index) => {
+                      {overviewLists.map((list, index) => {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
@@ -1330,7 +1350,7 @@ export default function ViewListsPage() {
                         paddingLeft: `${LIST_ROW_CONTENT_OFFSET_LEFT_PX}px`,
                       }}
                     >
-                      {lists.map((list) => {
+                      {overviewLists.map((list) => {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
