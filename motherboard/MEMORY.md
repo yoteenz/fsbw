@@ -19534,6 +19534,14 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-21 — BCF bundles / closures / frontals straight base −$40 each
+
+**Context:** User: reduce bundles, closures, and frontals price by **$40** each.
+
+**Change:** `BCF_STRAIGHT_BASE_PRICE_USD` — bundles **370 → 330**, closures **285 → 245**, frontals **405 → 365** (`bcfProductOptions.ts`). Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-21 — Shop menu: close drawer on BUNDLES (and static SHOP links)
 
 **Context:** Tapping **BUNDLES** in the menu toggle left the drawer open (hard to see navigation). Root cause: `ShopMobileMenuShopTab` only called optional `closeAfterStaticNav` for BUNDLES/BUILD-A-WIG, but most pages only pass `closeSubItemMenu`. Same `ShopTextureCategoryProductPage` instance is reused across `/shop/bundles|closures|frontals`, so menu state could persist across BCF route changes.
