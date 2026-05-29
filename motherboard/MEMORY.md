@@ -21018,3 +21018,35 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Conventions:**
 - For affiliate explainer bullet rows, prefer visual marker elements (small red dots) over literal text prefixes when the user requests branded bullet styling.
+
+---
+
+## 2026-05-29 — Full conversation summary update: restored affiliate program page after bad bullet-dot rollback, wishlist restore values preserved
+
+**Context:** This long chat has covered storefront/account consistency fixes across wishlist Build-a-Wig edit behavior, sold-out wording, premium chart accuracy, red header icons, multiple BCF layout/thumb/spacing passes, affiliate page copy + typography recast, Blanco edit-mode icon sizing, and repeated wishlist list-view spacing regressions. After a prior affiliate bullet-dot change, the user reported two regressions: the wishlist restore seemed lost again and, more importantly, the newer affiliate-program page content had been rolled back to the older `BECOME AN AFFILIATE` layout.
+
+**Topics covered (entire conversation so far):**
+- Earlier in the chat: fixed wishlist/account-wishlist Build-a-Wig edit mode, standardized sold-out / notify copy, updated premium benefit tiers/chart, replaced filtered red icons with native red assets, corrected BCF cart/checkout/list details + spacing, refreshed affiliate page copy/typography, fixed Blanco `NONE` sizing, removed leaf-brick BCF list backgrounds, corrected BCF thumb fit, and re-restored wishlist list red action spacing plus gray `VIEW DETAILS` treatment.
+- Audited live source after the user’s regression report and confirmed:
+  - wishlist list files still had the requested restore values (`marginTop: '5px'` on the red thumb action text in `lists` and `shared`),
+  - `src/index.css` still had gray `VIEW DETAILS` and list-only `margin-top: 0 !important`,
+  - but the affiliate page had indeed been reverted to the older `BECOME AN AFFILIATE` block-based content by the last bullet-dot commit.
+- Restored `src/pages/account/affiliate/page.tsx` from the immediately previous good revision that contained the newer `AFFILIATE PROGRAM` copy structure (`Turn your content into rewards.`, `CONTENT SUBMISSIONS`, `PHOTO SUBMISSIONS`, `VIDEO SUBMISSIONS`, etc.).
+- Reapplied the requested red bullet-dot treatment correctly on the real bullet-list renderer inside the restored affiliate program content by replacing the default list bullets with custom small red circular markers.
+- Rebuilt successfully after the restore/correct pass.
+
+**Decisions / outcomes:**
+- Wishlist restore values remain in place as previously requested:
+  - red thumb action spacing stays `5px` in both wishlist list files,
+  - `VIEW DETAILS` stays gray,
+  - list-only `VIEW DETAILS` top spacing stays `0 !important`.
+- The affiliate page is back on the newer approved content/typography version, not the older `BECOME AN AFFILIATE` fallback layout.
+- Red bullet dots are now applied to the restored affiliate program bullet list without reverting the newer page content.
+
+**Changes:**
+- `src/pages/account/affiliate/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- When adding visual bullet markers to the affiliate page, modify the bullet renderer inside the current affiliate-program content structure rather than restoring or reusing the old `BECOME AN AFFILIATE` card layout.
+- When a user reports a restore regression, verify live source values directly before changing unrelated files; in this case the wishlist restore values were already present while the real regression was the affiliate-page rollback.
