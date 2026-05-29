@@ -299,7 +299,7 @@ const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
   color: '#EB1C24',
-  margin: '-2px 0 0 0',
+  margin: '-4px 0 0 0',
   textTransform: 'uppercase',
   cursor: 'pointer',
   display: 'inline-block',
@@ -1019,7 +1019,7 @@ export default function ViewListsPage() {
                     return (
                       <div
                         style={{
-                          paddingTop: '0',
+                          paddingTop: '8px',
                           flex: 1,
                           minHeight: 0,
                           display: 'flex',
@@ -1255,7 +1255,7 @@ export default function ViewListsPage() {
                       display: 'flex',
                       justifyContent: 'flex-end',
                       alignItems: 'center',
-                      marginTop: '6px',
+                      marginTop: '14px',
                       marginBottom: '16px',
                       flexShrink: 0,
                     }}

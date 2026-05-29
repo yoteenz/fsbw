@@ -19798,6 +19798,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
+
+**Context:** Correction to the earlier toggle-spacing change. The **expanded list** view ("lists page") had the **correct** toggle spacing (wrapper `paddingTop: 8px` → toggle sits ~14px from scroll-area top); my prior edit wrongly zeroed it. User wants that reverted and the **overview** matched to it instead.
+
+**Change (`src/pages/wishlist/lists/page.tsx`):**
+- Reverted expanded content wrapper `paddingTop: '0' → '8px'` (restore correct spacing).
+- Overview toggle container `marginTop: '6px' → '14px'` so it matches the expanded toggle's effective top (8px wrapper + 6px). Verified headless: toggle top = **146px** on both the overview and an opened list.
+- `LIST_OVERVIEW_EDIT_NAME_STYLE` `margin: '-2px 0 0 0' → '-4px 0 0 0'` (reduce space above EDIT LIST NAME by another 2px).
+
+Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: edit-name spacing, toggle alignment, smaller PRIVATE text
 
 **Context:** Three tweaks on `/wishlist/lists` (`src/pages/wishlist/lists/page.tsx`):
