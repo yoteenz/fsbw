@@ -19769,3 +19769,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - **`src/pages/wishlist/lists/page.tsx`** — added `getListRecency(list)` = max of `updatedAt`, newest item `addedAt`, and the creation time parsed from the list id (`list-<epochMs>-<rand>` via `getListIdTimestamp`). New `overviewLists` `useMemo` sorts `[...lists]` by recency **descending**; both overview renders (line + grid) map `overviewLists` instead of `lists`. Expanded-list lookups still use `lists.find` (unaffected). Existing lists/items without timestamps fall back to the id creation time (newest-created first).
 
 **Verified (headless):** lists with recency [DDD updatedAt 9999, BBB id 9000, AAA item 5000, CCC id 3000] render in order DDD > BBB > AAA > CCC. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists: edit-name spacing, toggle alignment, smaller PRIVATE text
+
+**Context:** Three tweaks on `/wishlist/lists` (`src/pages/wishlist/lists/page.tsx`):
+1. Reduce spacing above red **EDIT LIST NAME** by 2px.
+2. Make the line/grid view-toggle icon spacing consistent between the lists **overview** and an **expanded list** (it sat 8px lower in the expanded view).
+3. Reduce the gray **PRIVATE/SHARED** text size by 1px on both list + grid views.
+
+**Changes:**
+- `LIST_OVERVIEW_EDIT_NAME_STYLE` `margin: '0' → '-2px 0 0 0'` (−2px above EDIT LIST NAME).
+- Expanded-list content wrapper `paddingTop: '8px' → '0'` so the toggle sits at the same offset as the overview toggle (both `marginTop: 6px` from the scroll-area top). Verified headless: toggle offset 52px in both overview and expanded (was 8px lower in expanded).
+- `LIST_OVERVIEW_VISIBILITY_STYLE` `fontSize: '11px' → '10px'` (shared by list + grid views).
+
+Typecheck passes. Pushed `master` + `preview/mobile`.
