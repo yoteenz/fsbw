@@ -151,7 +151,7 @@ export function WigStripPrice({
 }) {
   const soldOut = soldOutProp ?? (productName ? isWigUnitSoldOut(productName) : false);
   const finalStyle: CSSProperties | undefined = soldOut
-    ? { ...style, color: '#808080', textDecoration: 'line-through' }
+    ? { ...style, color: '#808080', textDecoration: 'line-through', margin: style?.margin ?? 0 }
     : style;
   if (priceHtml) return <p style={finalStyle} dangerouslySetInnerHTML={priceHtml} />;
   return <p style={finalStyle}>{children}</p>;
