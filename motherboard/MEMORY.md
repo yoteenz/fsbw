@@ -19883,6 +19883,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — Cart details: shift product text up 10px (view-details only)
+
+**Context:** With long detail lists (e.g. BLANCO with 7 detail lines), the cart-dropdown details text was cut off at the bottom without scroll. **Change (`CartDropdown.tsx`):** the product-text container `transform` is now `translateY(-14px)` when `viewingDetailsFor === item.id` (was `-4px`), i.e. shifted up an extra 10px only in details view; non-details stays `-4px`. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Re-applied: hide cap size + price layers during cart details (units & BCF)
 
 **Context:** User reported cap size + price STILL showing in the cart unit details — "something's overriding." Cause: a rebase/merge from a concurrent agent **reverted** the earlier `hideMetaForDetails` change in `CartDropdown.tsx` (and dropped the `isWigUnitProductName` import). The unit details *text* fix (no cap/price/dot) survived, but the separate **CAP SIZE** layer and **price** layer reappeared during details.
