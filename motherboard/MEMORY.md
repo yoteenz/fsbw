@@ -19883,6 +19883,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — AddToList modal: selected-list count gray (was red)
+
+**Change:** `src/components/AddToListModal.tsx` — the list-row count next to the checkbox (e.g. `VACAY · 9` below the closed ADD TO LIST dropdown) changed from red `#EB1C24` → gray **`#808080`** (already Futura PT Demi). The dropdown-menu items' red count (lines ~263) left unchanged. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Cart unit VIEW DETAILS: no cap size, no price, no middle dot
 
 **Context:** The black unit details text in the cart dropdown listed selections with a red middle dot `·` + price delta (e.g. `26" ADDED · $50`, `FLEX CAP · $40`). User: unit details should NOT show cap size or price, and remove the middle dot + price from each selection.
