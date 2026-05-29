@@ -1377,23 +1377,6 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         >
                           {redSubtitle}
                         </p>
-                        {item.type === 'shop-texture-category' && !item.capSize && (
-                          <p
-                            aria-hidden="true"
-                            style={{
-                              fontFamily: '"Futura PT Demi"',
-                              fontSize: '9px',
-                              color: 'transparent',
-                              visibility: 'hidden',
-                              margin: '7px 0 0 0',
-                              textTransform: 'uppercase',
-                              lineHeight: '1.1',
-                              textAlign: 'center'
-                            }}
-                          >
-                            CAP SIZE: M
-                          </p>
-                        )}
                         {!useDigitalStack && item.capSize && (
                           <p
                               style={{
@@ -1412,10 +1395,12 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                         {isBcfBundleDeal ? (
                           <div
                             style={{
-                              margin: '1px 0 0 0',
+                              margin: '7px 0 0 0',
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
+                              gap: '2px',
+                              lineHeight: '1.15',
                               textAlign: 'center',
                               textTransform: 'uppercase'
                             }}
@@ -1427,8 +1412,7 @@ ${ORDER_TRACKING_PULSATE_KEYFRAMES_CSS}
                                   fontSize: '9px',
                                   fontWeight: '500',
                                   color: '#808080',
-                                  textDecoration: 'line-through',
-                                  marginBottom: '1px'
+                                  textDecoration: 'line-through'
                                 }}
                                 dangerouslySetInnerHTML={formatPrice(bundleDealListUnit)}
                               />
