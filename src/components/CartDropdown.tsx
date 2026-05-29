@@ -1207,7 +1207,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                   
                     {/* Item Details */}
                    <div className="flex-1 min-w-0 flex flex-col relative justify-center" style={{ marginLeft: '18px', height: viewingDetailsFor === item.id ? 'auto' : '100%', minHeight: viewingDetailsFor === item.id ? '120px' : '100%' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: viewingDetailsFor === item.id ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: 'translateY(-4px)', height: viewingDetailsFor === item.id ? 'auto' : '100%', position: viewingDetailsFor === item.id ? 'relative' : 'static', top: viewingDetailsFor === item.id ? (() => {
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: viewingDetailsFor === item.id ? 'flex-start' : 'center', alignItems: 'flex-start', margin: '0', padding: '0', transform: viewingDetailsFor === item.id ? 'translateY(-14px)' : 'translateY(-4px)', height: viewingDetailsFor === item.id ? 'auto' : '100%', position: viewingDetailsFor === item.id ? 'relative' : 'static', top: viewingDetailsFor === item.id ? (() => {
                         // Count detail selections
                         let detailCount = 0;
                         if (item.capSize && (item.capSize === 'XXS/XS/S' || item.capSize === 'S/M/L')) detailCount++;
