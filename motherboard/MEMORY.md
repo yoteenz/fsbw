@@ -19506,6 +19506,14 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up:** Closures PDP — removed **360** & **FULL** from lace options (`BCF_CLOSURE_EXCLUDED_LACE_IDS`); six sizes remain (2×6–7×7). Lace UI: dropped scrollable `maxHeight` box; closures use centered **3×2 grid** (`grid-cols-3`, `max-w 300px`); frontals keep flex-centered pair.
 
+---
+
+## 2026-05-21 — BCF premium hair color upcharge $80 (not BAW $120)
+
+**Context:** User: BCF color price should be **$80** instead of **$120**.
+
+**Change:** `BCF_PREMIUM_COLOR_UPCHARGE_USD = 80` in `bcfProductOptions.ts`; all noir palette entries in `BCF_COLOR_OPTIONS` reference it (defaults OFF BLACK / Blanco trio unchanged). PDP `displayPrice` + shop grid ranges use `bcfPriceAdjustments` / `bcfPdpPriceRangeUsd` from this list. Build-a-wig unit color page remains **$120** — separate code path.
+
 **Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
 
 ---
