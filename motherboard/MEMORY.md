@@ -21409,3 +21409,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked to increase the size of the gray **VIEW DETAILS** link on wishlist expanded list line view (`/wishlist/lists/:id`) by 1px. That text uses `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only when `!isViewingDetails`); **CLOSE DETAILS** is unaffected.
 
 **Change:** `src/index.css` — `.wishlist-expanded-list-view-details-toggle--list-view-only` added `font-size: 9px !important` (base toggle is 8px). Existing `margin-left: 1px` and `margin-top: -2px` unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Affiliate program bullets: match brand terms dots (size + first-line row)
+
+**Context:** User asked for red dots on the account affiliate page (`/account/affiliate` AFFILIATE PROGRAM card) to match the brand terms page (`/brand/terms`): same dot size, and aligned on the first text line (not vertically centered across multi-line bullets).
+
+**Change:** `src/pages/account/affiliate/page.tsx` — replaced flex row bullet layout (separate dot + text spans) with the same pattern as `BrandTermsBody`: 10px Futura PT Book `<p>` with `paddingLeft: 12px`, red `•` inline before the text so the marker inherits body font size and sits on the first line when copy wraps. Pushed `master` + `preview/mobile`.
