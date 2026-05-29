@@ -19514,6 +19514,14 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 
 **Change:** `BCF_PREMIUM_COLOR_UPCHARGE_USD = 80` in `bcfProductOptions.ts`; all noir palette entries in `BCF_COLOR_OPTIONS` reference it (defaults OFF BLACK / Blanco trio unchanged). PDP `displayPrice` + shop grid ranges use `bcfPriceAdjustments` / `bcfPdpPriceRangeUsd` from this list. Build-a-wig unit color page remains **$120** — separate code path.
 
+---
+
+## 2026-05-21 — BCF bundles straight base −$50
+
+**Context:** User: reduce bundled price by **$50**.
+
+**Change:** `BCF_STRAIGHT_BASE_PRICE_USD.bundles` **480 → 430** (`bcfProductOptions.ts`). Wavy/curly bundles follow texture deltas (+20 / +40). Pushed `master` + `preview/mobile`.
+
 **Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
 
 ---
