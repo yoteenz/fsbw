@@ -19657,3 +19657,15 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - Premium tier benefit lists should come from the shared `src/constants/premiumBenefitsByTier.ts` source so the rewards page, brand chart, and upgrade chart stay aligned.
 - For red header/title icons, prefer native `#EB1C24` SVG assets over CSS filter tinting; the filter path produced a mismatched red compared with concierge’s native-red icons.
 - Shared BCF VIEW DETAILS line ordering comes from `src/utils/cartLineRedAndDetails.ts`; cart-dropdown bundle-detail presentation changes should be made there so the rendered details stay consistent for BCF line items.
+
+---
+
+## 2026-05-29 — Wishlist list line VIEW DETAILS: hide for length-only units (empty panel)
+
+**Context:** In the expanded list **line view** (`/wishlist/lists/:id` + shared `/wishlist/shared/:token`), every unit with a non-default **length** showed **VIEW DETAILS** but opened an empty "PRODUCT DETAILS" panel — because the line view builds details with `omitLength: true` (length is already shown in the `24" RAW <ORIGIN>` line). So a length-only customization triggered the link with no rows.
+
+**Root cause:** `wishlistItemHasViewDetails(item)` counted `hasCustomLength`, but `buildWishlistItemDetailsHtml(item, { omitLength: true })` omits the length row → link shown with empty content.
+
+**Fix (`src/utils/wishlistListItemDetails.ts`):** added `options?: { omitLength?: boolean }` to `wishlistItemHasViewDetails`; when `omitLength`, exclude `hasCustomLength`. **`wishlist/lists/page.tsx`** + **`wishlist/shared/page.tsx`** now call it with `{ omitLength: true }` (matching the details they render). VIEW DETAILS now shows only for units with a real non-length custom selection (cap/density/lace/color/hairline/styling/add-ons); default + length-only units show no link.
+
+**Verified (headless):** list [default NOIR, minimal SOFT WAVE, custom-color NOIR, length-only BLANCO] → only the custom-color unit shows VIEW DETAILS (2→1 after fix). Typecheck passes. Pushed `master` + `preview/mobile`.

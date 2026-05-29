@@ -468,7 +468,7 @@ export default function SharedWishlistListPage() {
                       const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                       const itemKey = getSharedListItemKey(item, index);
                       const isViewingDetails = viewingDetailsItemKey === itemKey;
-                      const showViewDetailsLink = wishlistItemHasViewDetails(item);
+                      const showViewDetailsLink = wishlistItemHasViewDetails(item, { omitLength: true });
                       const itemPriceLabel = formatWishlistListItemPrice(
                         getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                       );
