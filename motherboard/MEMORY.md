@@ -19669,3 +19669,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Fix (`src/utils/wishlistListItemDetails.ts`):** added `options?: { omitLength?: boolean }` to `wishlistItemHasViewDetails`; when `omitLength`, exclude `hasCustomLength`. **`wishlist/lists/page.tsx`** + **`wishlist/shared/page.tsx`** now call it with `{ omitLength: true }` (matching the details they render). VIEW DETAILS now shows only for units with a real non-length custom selection (cap/density/lace/color/hairline/styling/add-ons); default + length-only units show no link.
 
 **Verified (headless):** list [default NOIR, minimal SOFT WAVE, custom-color NOIR, length-only BLANCO] → only the custom-color unit shows VIEW DETAILS (2→1 after fix). Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist list line: tighten space above VIEW DETAILS 2px (list view only)
+
+**Change:** `src/index.css` — `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only to the **VIEW DETAILS** state in list/line view, not CLOSE DETAILS) `margin-top: 1px → -1px` (−2px). CLOSE DETAILS keeps `--list` `margin-top: 2px`. Pushed `master` + `preview/mobile`.
