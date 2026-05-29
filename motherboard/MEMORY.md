@@ -19877,6 +19877,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — label:** BLEACH option label renamed **BLEACH KNOTS → BLEACH/TINT KNOTS** (`BCF_LACE_TREATMENT_OPTIONS` + the details-label map in `cartLineRedAndDetails.ts`). Id stays `BLEACH` (cart/price unchanged). Pushed `master` + `preview/mobile`.
 
+**Follow-up — order:** moved the LACE TREATMENT section **above** HAIR COLOR (now LACE SIZE → HAIR LENGTH → LACE TREATMENT → HAIR COLOR on closures/frontals); label uses standard `bcfBohemySubLabelStyle` margin. Verified headless. Pushed `master` + `preview/mobile`.
+
 ---
 
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
