@@ -19904,3 +19904,46 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For cross-site premium benefits, keep one shared constant as the source of truth and render all membership UIs from it.
 - For storefront/header icon color parity, prefer native-colored SVG assets over CSS filters when the final red must exactly match brand red/concierge icons.
 - For repeated product-page microcopy like the 3D disclaimer, keep the emphasized middle phrase in gray to preserve the visual emphasis pattern used on unit PDPs.
+
+---
+
+## 2026-05-29 — Full conversation summary (including BCF checkout price stack follow-up)
+
+**Context:** User asked for a series of storefront UX/content consistency fixes across Build-a-Wig, wishlist/cart/bag editing, premium membership messaging, icon color parity, cart detail ordering, product-page 3D model copy, and then followed up with a checkout layout fix for BCF pricing.
+
+**Topics covered (entire conversation so far):**
+- Fixed wishlist **EDIT IN BUILD-A-WIG** so it behaves like cart/bag edit mode: routes to the correct product-specific `/build-a-wig/{unit}/edit` page, preloads saved selections, and updates the existing wishlist item in place.
+- Unified Build-a-Wig edit-session setup across wishlist, cart dropdown, and shopping bag with a shared helper that stores edit source, line id, and all selected customization values in `localStorage` before navigation/sign-in gating.
+- Standardized sold-out wording by changing unit PDP sold-out CTA text to **SOLD OUT**, removing the red out-of-stock label on wishlist lines, and updating the sold-out status text under the wishlist quantity counter.
+- Updated the stock-notify modal description to: **THIS ITEM IS CURRENTLY SOLD OUT. ENTER YOUR EMAIL ADDRESS AND WE'LL LET YOU KNOW ONCE IT'S BACK IN STOCK.**
+- Added **LIVE ORDER TRACKING** to the **3 Months Premium** tier and updated all premium-benefits displays so the chart/checkmarks/order match everywhere, with live tracking listed above priority messages.
+- Corrected website header/title icon color parity by moving shared red icons to native **`#EB1C24`** assets and removing old CSS-filter tinting from the affected UI.
+- Updated cart dropdown / bag detail formatting for BCF items: removed the **BUNDLE DEAL: 3 LINES** line, placed **ORIGIN** above **TEXTURE** for bundle deals, and placed **LACE** above **LENGTH** for closures/frontals details.
+- Updated unit PDP 3D disclaimer text from **(2D MODEL IS FOR VISUAL & AESTHETIC PURPOSES ONLY)** to **(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)**, keeping **FULLY CUSTOMIZED & STYLED** styled in gray like the previous emphasized phrase.
+- Follow-up checkout fix: for BCF bundle-deal pricing on checkout, moved the black active price to a second line beneath the gray struck-through list price instead of rendering both on the same line; mirrored the same order-strip tile adjustment on checkout confirm for consistency.
+
+**Decisions / outcomes:**
+- Build-a-Wig edit entry is now consistent across wishlist, cart dropdown, and bag via a shared edit-session helper.
+- Premium-benefit data now comes from a shared source of truth to avoid drift between chart and account membership displays.
+- Shared header icons should use native red SVG assets instead of filter-based recoloring when parity with concierge/header reds is required.
+- Cart-detail ordering changes were applied in the shared formatter so all consumers inherit the same copy/order.
+- All six unit product pages now show the new 3D model disclaimer copy with the requested gray emphasis.
+- BCF bundle-deal tiles on checkout now stack **gray struck-through price first** and **black current price below**.
+
+**Changes:**
+- Added `src/utils/buildAWigEditSession.ts` and refactored related wishlist/cart/bag edit handlers.
+- Updated wishlist/cart/bag/unit stock UI and stock-notify modal copy in the relevant storefront components/pages.
+- Updated premium-benefit constants and account/rewards chart rendering.
+- Recolored shared SVG assets in `public/assets/` and removed legacy icon-filter usage across affected components/pages.
+- Updated shared cart detail formatter in `src/utils/cartLineRedAndDetails.ts`.
+- Updated the 3D disclaimer text in all six unit PDP files under `src/pages/straight/`, `src/pages/wavy/`, and `src/pages/curly/`.
+- Updated BCF checkout-strip bundle pricing layout in:
+  - `src/pages/checkout/page.tsx`
+  - `src/pages/checkout/confirm/page.tsx`
+
+**Conventions:**
+- For Build-a-Wig edit flows, prefer shared session-preparation helpers over duplicating localStorage setup logic in each entry point.
+- For cross-site premium benefits, keep one shared constant as the source of truth and render all membership UIs from it.
+- For storefront/header icon color parity, prefer native-colored SVG assets over CSS filters when the final red must exactly match brand red/concierge icons.
+- For repeated product-page microcopy like the 3D disclaimer, keep the emphasized middle phrase in gray to preserve the visual emphasis pattern used on unit PDPs.
+- For BCF bundle-deal pricing in checkout strip tiles, render list price above current price when both are shown so the discount reads vertically instead of side-by-side.
