@@ -21050,3 +21050,28 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - When adding visual bullet markers to the affiliate page, modify the bullet renderer inside the current affiliate-program content structure rather than restoring or reusing the old `BECOME AN AFFILIATE` card layout.
 - When a user reports a restore regression, verify live source values directly before changing unrelated files; in this case the wishlist restore values were already present while the real regression was the affiliate-page rollback.
+
+---
+
+## 2026-05-29 — Full conversation summary update: affiliate bullet markers now match brand terms bullet size exactly
+
+**Context:** This same chat has involved repeated storefront/account consistency fixes across wishlist edit behavior, sold-out wording, premium chart accuracy, BCF layout/thumb/spacing issues, affiliate page copy/typography, and several regression corrections. After restoring the correct affiliate-program page and reapplying bullet markers, the user requested one more refinement: make the red dots on the account affiliate page the same size as the red dots on the brand terms page.
+
+**Topics covered (entire conversation so far):**
+- Earlier in this chat: fixed wishlist/account-wishlist Build-a-Wig edit mode, standardized sold-out/notify copy, updated premium benefits, replaced filtered red icons, corrected BCF cart/checkout/list details and spacing, restored the newer affiliate-program content/typography, repaired affiliate regressions, and re-preserved the wishlist list spacing/color restore values.
+- Inspected the real terms-page implementation in `src/components/brand/BrandTermsBody.tsx` to avoid guessing the dot size.
+- Confirmed the terms page does not use a pixel-sized custom circle; it uses a red bullet character (`•`) inside the same 10px body-text context.
+- Updated the affiliate page bullet renderer to use the same red bullet-character treatment rather than the custom 5px circular marker, so the affiliate markers now match the terms-page bullet size exactly.
+- Rebuilt successfully after the marker-style update.
+
+**Decisions / outcomes:**
+- Affiliate bullets now match the brand terms bullet size by using the same red bullet-character approach instead of a custom small circle div.
+- The affiliate-program copy and typography remain on the newer approved version; only the marker style changed.
+- Wishlist restore values remain untouched in this pass.
+
+**Changes:**
+- `src/pages/account/affiliate/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- When matching bullet-marker size to the terms page, copy the actual terms-page marker approach (red bullet character in body text) rather than approximating with custom pixel circles.
