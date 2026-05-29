@@ -45,9 +45,8 @@ import {
 import { normalizeCartLineProductName } from '../utils/cartCapSizeLineMargin';
 import { useProductInventorySnapshot } from '../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from './shop/WigStockPrice';
-import { attachStockStatusToLineItem, isLineItemOutOfStock, isWigUnitProductName } from '../utils/productInventoryAvailability';
+import { attachStockStatusToLineItem } from '../utils/productInventoryAvailability';
 import { cartBillablePointsEligibleSubtotal, cartBillableSubtotal } from '../utils/cartBillableLines';
-import { prepareBuildAWigEditSession } from '../utils/buildAWigEditSession';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -899,10 +898,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBookingCartThumb =
                       item.type === 'booking-consult' || item.type === 'booking-appointment';
                     const isBcfShopItem = item.type === 'shop-texture-category';
-                    /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
-                    const hideMetaForDetails =
-                      viewingDetailsFor === item.id &&
-                      (isBcfShopItem || isWigUnitProductName(item.name));
                     /** Cart dropdown: booking badge ~66px (appointment +5%), centered in 88px column. BCF: 85% × 1.05 of unit thumb, +4px right nudge, object-contain. */
                     const unitThumbPx = 88;
                     const bcfCartThumbPx = Math.round(unitThumbPx * 0.85 * 1.05);
@@ -1097,7 +1092,99 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             const signedIn =
                               typeof window !== 'undefined' &&
                               localStorage.getItem('isSignedIn') === 'true';
-                            const { editRoute } = prepareBuildAWigEditSession(item);
+                            // Store the current item details for editing
+                            localStorage.setItem('editingCartItem', JSON.stringify(item));
+                            localStorage.setItem('editingCartItemId', item.id);
+                            localStorage.removeItem('editingSource'); // edit opened from cart → save updates cart
+                            
+                            // CRITICAL: Store individual customization options with BOTH selected* and editSelected* prefixes
+                            // This ensures consistency when loading edit mode
+                            const capSize = item.capSize || 'M';
+                            const length = item.length || '24"';
+                            const density = item.density || '200%';
+                            // CRITICAL: Validate BLANCO colors - if item.color is invalid for BLANCO, use PLATINUM
+                            let color = item.color;
+                            if (item.name === 'BLANCO') {
+                              const validBlancoColors = ['GOLDEN', 'PLATINUM', 'ASH'];
+                              if (!color || !validBlancoColors.includes(color)) {
+                                color = 'PLATINUM'; // Default to PLATINUM for invalid/missing BLANCO colors
+                              }
+                            } else {
+                              color = color || 'OFF BLACK';
+                            }
+                            const texture = item.texture || 'SILKY';
+                            const lace = item.lace || '13X6';
+                            const hairline = item.hairline || 'NATURAL';
+                            const partSelection = item.partSelection || 'MIDDLE';
+                            const styling = item.styling || 'NONE';
+                            const addOns = item.addOns || [];
+                            
+                            // CRITICAL: Calculate capSizePrice based on capSize from cart item
+                            const capSizePrice = (capSize === 'XXS/XS/S' || capSize === 'S/M/L') ? '40' : '0';
+                            
+                            console.log('[FLEX_CAP_DEBUG] CartDropdown Edit Button - Setting capSizePrice:', {
+                              capSize,
+                              capSizePrice,
+                              isFlexible: capSize === 'XXS/XS/S' || capSize === 'S/M/L',
+                              timestamp: new Date().toISOString()
+                            });
+                            
+                            // Store with selected* prefix (for sub-pages)
+                            localStorage.setItem('selectedCapSize', capSize);
+                            localStorage.setItem('selectedCapSizePrice', capSizePrice);
+                            localStorage.setItem('selectedLength', length);
+                            localStorage.setItem('selectedDensity', density);
+                            localStorage.setItem('selectedColor', color);
+                            localStorage.setItem('selectedTexture', texture);
+                            localStorage.setItem('selectedLace', lace);
+                            localStorage.setItem('selectedHairline', hairline);
+                            localStorage.setItem('selectedPartSelection', partSelection);
+                            localStorage.setItem('selectedStyling', styling);
+                            localStorage.setItem('selectedAddOns', JSON.stringify(addOns));
+                            
+                            // CRITICAL: Also store with editSelected* prefix (for edit mode sub-pages)
+                            localStorage.setItem('editSelectedCapSize', capSize);
+                            localStorage.setItem('editSelectedCapSizePrice', capSizePrice);
+                            localStorage.setItem('editSelectedLength', length);
+                            localStorage.setItem('editSelectedDensity', density);
+                            localStorage.setItem('editSelectedColor', color);
+                            localStorage.setItem('editSelectedTexture', texture);
+                            localStorage.setItem('editSelectedLace', lace);
+                            localStorage.setItem('editSelectedHairline', hairline);
+                            localStorage.setItem('editSelectedStyling', styling);
+                            localStorage.setItem('editSelectedAddOns', JSON.stringify(addOns));
+                            
+                            console.log('Stored localStorage values:', {
+                              capSize,
+                              length,
+                              density,
+                              color,
+                              texture,
+                              lace,
+                              hairline,
+                              partSelection,
+                              styling,
+                              addOns
+                            });
+                            
+                            // Dispatch custom event to notify edit page of item change
+                            window.dispatchEvent(new CustomEvent('editingCartItemChanged', { detail: { itemId: item.id } }));
+                            
+                            // Determine the correct edit route based on product name
+                            let editRoute = '/build-a-wig/edit'; // Default fallback
+                            if (item.name === 'NOIR') {
+                              editRoute = '/build-a-wig/noir/edit';
+                            } else if (item.name === 'BLANCO') {
+                              editRoute = '/build-a-wig/blanco/edit';
+                            } else if (item.name === 'SOFT WAVE') {
+                              editRoute = '/build-a-wig/soft-wave/edit';
+                            } else if (item.name === 'SOFT CURL') {
+                              editRoute = '/build-a-wig/soft-curl/edit';
+                            } else if (item.name === 'BEACH WAVE') {
+                              editRoute = '/build-a-wig/beach-wave/edit';
+                            } else if (item.name === 'OCEAN CURL') {
+                              editRoute = '/build-a-wig/ocean-curl/edit';
+                            }
 
                             onClose(); // Close the dropdown first
                             if (!signedIn) {
@@ -1457,15 +1544,21 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           />
                           </CartLineTextLayer>
                         )}
-                        {item.capSize && !hideMetaForDetails && (
+                        {item.capSize && (
                           <CartLineTextLayer slot="cap">
                           <p className="font-semibold" style={cartLineCapSizeTextStyle()}>
                             CAP SIZE: {item.capSize}
                           </p>
                           </CartLineTextLayer>
                         )}
-                        {!hideMetaForDetails && (
-                        <CartLineTextLayer slot="price">
+                        <CartLineTextLayer
+                          slot="price"
+                          style={
+                            item.type === 'shop-texture-category' && !(item as CartItem).bcfBundleDeal
+                              ? { paddingTop: 0 }
+                              : undefined
+                          }
+                        >
                         {(item as CartItem).bcfBundleDeal ? (
                           <div
                             style={{
@@ -1556,7 +1649,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                             <WigLineStockPrice
                               item={item}
                               priceHtml={formatPrice(linePrice)}
-                              outOfStockLabel={null}
                               priceStyle={{
                                 fontFamily: '"Futura PT Book"',
                                 color: '#000000',
@@ -1569,7 +1661,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           );
                         })()}
                         </CartLineTextLayer>
-                        )}
                         </CartLineProductTextStack>
                       </div>
                     </div>
@@ -1580,12 +1671,12 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                         style={{
                           fontFamily: '"Futura PT Medium"',
                           fontSize: '8px',
-                          color: isLineItemOutOfStock(item) ? '#EB1C24' : '#000000',
+                          color: '#000000',
                           textTransform: 'uppercase',
                           marginBottom: '6px'
                         }}
                       >
-                        {isLineItemOutOfStock(item) ? 'SOLD OUT' : `QTY: ${item.quantity ?? 1}`}
+                        QTY: {item.quantity ?? 1}
                       </span>
                       <button
                         onClick={() => handleRemoveItemClick(item.id)}
@@ -1885,7 +1976,9 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
               alt="Close"
               style={{
                 width: '12.32px',
-                height: '12.32px'}}
+                height: '12.32px',
+                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)'
+              }}
             />
           </button>
         </div>
