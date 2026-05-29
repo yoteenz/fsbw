@@ -21401,3 +21401,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - When a requested visual change appears not to apply, trace the actual rendered source path before assuming a shared helper is the active source of truth.
 - For BCF product-page photo updates, verify whether the visible hero/photo assets come from page-level constants versus shared thumbnail helpers.
 - For `/wishlist`, confirm whether the page is using a local thumbnail resolver or a shared utility before patching BCF image behavior.
+
+---
+
+## 2026-05-29 — Wishlist lists: gray VIEW DETAILS font +1px (list view only)
+
+**Context:** User asked to increase the size of the gray **VIEW DETAILS** link on wishlist expanded list line view (`/wishlist/lists/:id`) by 1px. That text uses `.wishlist-expanded-list-view-details-toggle--list-view-only` (applied only when `!isViewingDetails`); **CLOSE DETAILS** is unaffected.
+
+**Change:** `src/index.css` — `.wishlist-expanded-list-view-details-toggle--list-view-only` added `font-size: 9px !important` (base toggle is 8px). Existing `margin-left: 1px` and `margin-top: -2px` unchanged. Pushed `master` + `preview/mobile`.
