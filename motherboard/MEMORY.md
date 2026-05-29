@@ -19883,6 +19883,18 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — Wishlist lists: EDIT LIST NAME −4px above, gray VIEW DETAILS −2px above
+
+**Context:** (A parallel agent had already re-restored EDIT LIST NAME + BCF thumbnails + gray toggle on master via `1022fda6`/`dc8a4a5f`, so no manual restore was needed — just applied the spacing on top of latest master.)
+
+**Change:**
+- `src/pages/wishlist/lists/page.tsx` `LIST_OVERVIEW_EDIT_NAME_STYLE` margin `-4px 0 0 0 → -8px 0 0 0` (reduce above EDIT LIST NAME by 4px).
+- `src/index.css` `.wishlist-expanded-list-view-details-toggle--list-view-only` added `margin-top: -2px` (the gray **VIEW DETAILS** state's above-spacing 0 → −2px; CLOSE DETAILS keeps `--list` value, unaffected).
+
+Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Cart details: shift product text up 10px (view-details only)
 
 **Context:** With long detail lists (e.g. BLANCO with 7 detail lines), the cart-dropdown details text was cut off at the bottom without scroll. **Change (`CartDropdown.tsx`):** the product-text container `transform` is now `translateY(-14px)` when `viewingDetailsFor === item.id` (was `-4px`), i.e. shifted up an extra 10px only in details view; non-details stays `-4px`. Typecheck passes. Pushed `master` + `preview/mobile`.
@@ -21243,3 +21255,76 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For BCF imagery reused across PDP and related surfaces, update the shared helper rather than patching individual pages.
 - When the user wants a wishlist-only BCF thumb change, scope it inside `shopBcfCartLineThumbnailSrc()` so cart/bag/wishlist BCF thumbnail logic stays centralized and texture/category targeting stays explicit.
 - When a build exposes stale or missing shared BCF exports during a small UI change, restore the shared util API surface rather than patching downstream import sites.
+
+---
+
+## 2026-05-29 — Full conversation summary
+
+**Context:** The user used this chat to refine Build-a-Wig, wishlist, checkout, affiliate, and BCF storefront behavior across multiple follow-ups, ending with a report that the requested BCF product-page photo swap and straight-bundles wishlist thumbnail change had not actually appeared in the live UI.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig edit parity so wishlist/account wishlist edit actions route into the product-specific `/build-a-wig/{unit}/edit` flow with selections restored, matching cart and bag behavior.
+- Standardized sold-out language and stock-notify copy: PDP buttons now use `SOLD OUT`, wishlist stock wording was adjusted/suppressed appropriately, and the notify modal copy was rewritten to the requested sold-out wording.
+- Updated premium membership benefits/chart behavior so `LIVE ORDER TRACKING` appears for the 3-month tier, sits above `PRIORITY MESSAGES`, and shows the correct checkmark everywhere.
+- Corrected header/icon brand-red consistency by replacing filter-based red treatments with native `#EB1C24` assets/usages.
+- Tuned BCF cart dropdown and checkout details/layout: reordered closures/frontals details, removed bundle-deal extra text, stacked BCF black price under gray strikeout text, grouped bundle deals on checkout like cart, removed extra placeholder spacing, and refined BCF subtitle/price spacing across checkout/cart/bag with exact pixel changes.
+- Updated unit PDP 2D/3D disclaimer behavior so 2D retains the original disclaimer and 3D shows `(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)` with the missing `A` restored.
+- Repeatedly fixed wishlist/lists styling regressions: restored Build-a-Wig edit behavior, reduced red action spacing and gray `VIEW/CLOSE DETAILS` spacing, forced lists-page details text to gray Futura Demi, restored red `EDIT LIST NAME`, and brought back the rename flow/modal when it had been removed.
+- Removed the leaf-brick background from BCF wishlist thumbnails, then fixed the resulting zoom/cropping by changing those BCF thumbs to a full-image-fit treatment.
+- Reworked the account affiliate page multiple times: replaced the copy with the new affiliate program text, changed casing/typography per section, restored that newer content after a regression, added red bullets, and matched the bullet style/size to the brand terms page.
+- Fixed the Blanco edit-mode `NONE` styling icon sizing so it matches the other products.
+- Attempted to update BCF product-page photos and a straight-bundles wishlist thumbnail by editing shared BCF helper files; later user feedback showed those changes had not affected the visible UI because the live surfaces were reading from different code paths.
+- Audited the actual runtime sources and found:
+  - BCF product pages use local constants `BUNDLE_PHOTO_BY_TEXTURE` and `BCF_CF_PHOTO` inside `src/pages/shop/texture-category-product/page.tsx`.
+  - The main `/wishlist` page uses an inline `getItemImage()` resolver in `src/pages/wishlist/page.tsx`, not the shared BCF thumbnail helper.
+- Applied the real fixes in those live code paths:
+  - Replaced all 9 BCF PDP photo constants (bundles / closures / frontals across straight / wavy / curly) with the requested Supabase URLs in `texture-category-product/page.tsx`.
+  - Added a BCF-aware branch to `wishlist/page.tsx` so a straight bundle wishlist item resolves to the requested Supabase thumbnail URL, while other BCF wishlist items can fall back to their stored line image instead of defaulting to a NOIR thumb.
+- Rebuilt successfully after the runtime-path corrections.
+
+**Decisions / outcomes:**
+- The BCF PDP photo request must be implemented in `texture-category-product/page.tsx` itself because that page does not use the previously edited shared helper for its visible hero/photo assets.
+- The main wishlist page must handle BCF thumbnails inside its own `getItemImage()` resolver because it ignores the shared BCF cart/bag thumbnail helper for the rendered thumbnail.
+- Straight bundle wishlist thumbnail now points to the user-provided Supabase image on `/wishlist`, and BCF PDP hero/photo assets now point to the provided Supabase images on the actual product pages.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+- `src/pages/wishlist/page.tsx`
+- `src/pages/shopping-bag/page.tsx`
+- `src/components/CartDropdown.tsx`
+- `src/components/shop/UnitPdpCartActions.tsx`
+- `src/components/shop/WigStockPrice.tsx`
+- `src/components/shop/StockNotifyModal.tsx`
+- `src/constants/premiumBenefitsByTier.ts`
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`
+- `src/pages/account/membership/page.tsx`
+- `public/assets/close-icon.svg`
+- `public/assets/order-tracking.svg`
+- `public/assets/points-history.svg`
+- `public/assets/rewards-icon.svg`
+- `public/assets/NOIR/account-icon-red.svg`
+- `src/components/RoleCardSectionHeader.tsx`
+- `src/utils/workerRoleHeaderIcon.ts`
+- `src/utils/cartLineRedAndDetails.ts`
+- `src/pages/straight/noir/page.tsx`
+- `src/pages/straight/blanco/page.tsx`
+- `src/pages/wavy/soft-wave/page.tsx`
+- `src/pages/wavy/beach-wave/page.tsx`
+- `src/pages/curly/soft-curl/page.tsx`
+- `src/pages/curly/ocean-curl/page.tsx`
+- `src/pages/checkout/page.tsx`
+- `src/pages/checkout/confirm/page.tsx`
+- `src/utils/checkoutOrderStripDisplay.ts`
+- `src/pages/wishlist/lists/page.tsx`
+- `src/pages/wishlist/shared/page.tsx`
+- `src/index.css`
+- `src/pages/account/affiliate/page.tsx`
+- `src/pages/build-a-wig/page.tsx`
+- `src/components/RenameListModal.tsx`
+- `src/pages/shop/texture-category-product/page.tsx`
+- `motherboard/MEMORY.md`
+
+**Conventions:**
+- When a requested visual change appears not to apply, trace the actual rendered source path before assuming a shared helper is the active source of truth.
+- For BCF product-page photo updates, verify whether the visible hero/photo assets come from page-level constants versus shared thumbnail helpers.
+- For `/wishlist`, confirm whether the page is using a local thumbnail resolver or a shared utility before patching BCF image behavior.

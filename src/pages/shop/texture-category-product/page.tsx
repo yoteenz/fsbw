@@ -20,15 +20,10 @@ import {
   BCF_LENGTH_OPTIONS,
   BCF_ORIGIN_OPTIONS,
   BCF_TEXTURE_LABELS,
-  BCF_WEIGHT_OPTIONS,
-  BCF_DEFAULT_WEIGHT_ID,
-  BCF_LACE_TREATMENT_OPTIONS,
-  bcfLaceTreatmentPrice,
   bcfColorOptionsForOrigin,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
   bcfInitialOriginFromPathname,
-  bcfBasePriceUsd,
   bcfLaceOptionsForCategory,
   bcfOptionSelectedChrome,
   bcfPriceAdjustments,
@@ -38,9 +33,6 @@ import {
   type BcfOriginId
 } from '../../../utils/bcfProductOptions';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../../utils/premiumMemberAccess';
-import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
-import { isBcfSoldOut } from '../../../utils/productInventoryAvailability';
-import { WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
@@ -75,6 +67,12 @@ const CATEGORY_TITLE: Record<Category, string> = {
   frontals: 'FRONTALS'
 };
 
+const PRICE_BY_CATEGORY: Record<Category, number> = {
+  bundles: 680,
+  closures: 445,
+  frontals: 565
+};
+
 function parseShopBcfCategory(pathname: string): Category | null {
   const m = pathname.match(/^\/shop\/(bundles|closures|frontals)$/);
   if (!m) return null;
@@ -94,11 +92,11 @@ function shopBcfUrl(category: Category, texture: Texture): string {
 
 const TEXTURE_ORDER: Texture[] = ['straight', 'wavy', 'curly'];
 
-/** Bundles PDP only — `public/assets` (wavy video on disk: `wavy-bundle-video.MP4`, same pattern as straight/curly). */
+/** Bundles PDP photo URLs (video files remain local). */
 const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
-  straight: '/assets/straight-bundle-product.JPG',
-  wavy: '/assets/wavy-bundle-product.JPG',
-  curly: '/assets/curly-bundle-product.JPG'
+  straight: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/_6biiXliVwiLZhD23zVMx_ikG2kkur.jpeg',
+  wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/8XBa-oP-wP7tmQSFYMN62_9tFh7bo7.jpeg',
+  curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/opLZf4GQ8_KuizHCa_5gZ_QGYh1ZNb.jpeg'
 };
 
 const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
@@ -107,20 +105,17 @@ const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
   curly: '/assets/curly-bundle-video.MP4'
 };
 
-/**
- * Closures & frontals hero — paths must match `public/assets` filenames exactly (case-sensitive on Linux).
- * Videos: straight uses `.mp4` lowercase; wavy frontal uses `.mov` lowercase per repo.
- */
+/** Closures & frontals PDP photo URLs (video files remain local). */
 const BCF_CF_PHOTO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   closures: {
-    straight: '/assets/straight-closure-product.JPG',
-    wavy: '/assets/wavy-closure-product.JPG',
-    curly: '/assets/curly-closure-product.JPG'
+    straight: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/uzxxkL1smy3pZ2ObGuiEx_nuxYnKn5.jpeg'
   },
   frontals: {
-    straight: '/assets/straight-frontal-product.JPG',
-    wavy: '/assets/wavy-frontal-product.JPG',
-    curly: '/assets/curly-frontal-product.JPG'
+    straight: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg'
   }
 };
 
@@ -156,13 +151,6 @@ const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 8
  * button row (~`py-2` + 11px label) + SIMILAR `marginTop` 20px (BCF has no customize button).
  */
 const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
-
-/**
- * Thumbnail width for the BCF SIMILAR + RECENTLY strips. The shared 2D `marbleStripThumbImg`
- * uses 79.2%, but the BCF page content area is wider than the Noir PDP, so 79.2% renders these
- * ~135px (vs Noir's 122px). Drop to 71.8% so both BCF strips match Noir's absolute thumbnail size.
- */
-const BCF_STRIP_THUMB_WIDTH = '71.8%';
 
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   return Math.round(
@@ -270,10 +258,6 @@ export default function ShopTextureCategoryProductPage() {
   const [recentlyViewedScroll, setRecentlyViewedScroll] = useState(0);
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
   const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
-  // Recompute when admin inventory / packaging changes (focus, productInventoryUpdated, etc.).
-  useProductInventorySnapshot();
-  /** BCF availability is gated by its packaging supplies (mailer box, pouch, etc.). */
-  const bcfSoldOut = isBcfSoldOut();
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -297,10 +281,6 @@ export default function ShopTextureCategoryProductPage() {
   );
   const [bcfLength, setBcfLength] = useState('24"');
   const [bcfColor, setBcfColor] = useState('OFF BLACK');
-  /** Bundles only — hair weight (100G default; 150G is +$60 and premium-only). */
-  const [bcfHairWeight, setBcfHairWeight] = useState(BCF_DEFAULT_WEIGHT_ID);
-  /** Closures/frontals only — premium-only lace treatments (PLUCK / BLEACH), multi-select. */
-  const [bcfLaceTreatment, setBcfLaceTreatment] = useState<string[]>([]);
   const [bcfLace, setBcfLace] = useState(() => {
     if (typeof window === 'undefined') return '13X6';
     const cat = parseShopBcfCategory(window.location.pathname);
@@ -524,11 +504,6 @@ export default function ShopTextureCategoryProductPage() {
     else setMobileMenuActiveTab('SHOP');
   }, [showMobileMenu, location.pathname]);
 
-  /** Same component serves bundles / closures / frontals — collapse menu when route changes. */
-  useEffect(() => {
-    setShowMobileMenu(false);
-  }, [location.pathname, location.search]);
-
   const formatPrice = React.useCallback(
     (price: number) => formatPriceUsd(price, selectedCurrency, currencyRates as CurrencyRatesRecord),
     [currencyRates, selectedCurrency]
@@ -563,30 +538,6 @@ export default function ShopTextureCategoryProductPage() {
     setBcfColor(colorId);
   }, [bcfOrigin]);
 
-  /** Hair weight (bundles): 100G free/default; 150G is premium-only (+$60). */
-  const handleBcfWeightSelect = React.useCallback((weightId: string) => {
-    const opt = BCF_WEIGHT_OPTIONS.find((o) => o.id === weightId);
-    if (!opt) return;
-    if (opt.premium && !isPremiumMemberForGatedFeatures()) {
-      setShowBcfColorUpgradeModal(true);
-      return;
-    }
-    setBcfHairWeight(weightId);
-  }, []);
-
-  /** Lace treatments (closures/frontals): premium-only, multi-select toggle. */
-  const handleBcfLaceTreatmentToggle = React.useCallback((id: string) => {
-    const opt = BCF_LACE_TREATMENT_OPTIONS.find((o) => o.id === id);
-    if (!opt) return;
-    if (opt.premium && !isPremiumMemberForGatedFeatures()) {
-      setShowBcfColorUpgradeModal(true);
-      return;
-    }
-    setBcfLaceTreatment((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  }, []);
-
   const handleBcfColorUpgradeConfirm = () => {
     setShowBcfColorUpgradeModal(false);
     prepareMembershipUpgradeNavigation();
@@ -607,60 +558,14 @@ export default function ShopTextureCategoryProductPage() {
   const navCrumb = displayProductName;
   /** Cart / receipts: category first, texture after · for disambiguation. */
   const cartLineName = category ? `${categoryTitle} · ${meta.label}` : '';
-  const basePrice = category ? bcfBasePriceUsd(category, texture) : 0;
+  const basePrice = category ? PRICE_BY_CATEGORY[category] : 0;
   const displayPrice = React.useMemo(() => {
     if (!category) return 0;
     return (
       basePrice +
-      bcfPriceAdjustments(
-        bcfLength,
-        bcfColor,
-        category === 'bundles' ? null : bcfLace,
-        category === 'bundles' ? bcfHairWeight : null
-      ) +
-      (category === 'bundles' ? 0 : bcfLaceTreatmentPrice(bcfLaceTreatment))
+      bcfPriceAdjustments(bcfLength, bcfColor, category === 'bundles' ? null : bcfLace)
     );
-  }, [category, basePrice, bcfLength, bcfColor, bcfLace, bcfHairWeight, bcfLaceTreatment]);
-  /** Premium gate for member-only options (e.g. 150G hair weight chip grays out for standard members). */
-  const isBcfPremiumMember = isPremiumMemberForGatedFeatures();
-
-  /** Cart lines (re-read when cart count changes) for persistent "IN THE BAG" button state. */
-  const cartLinesForInBag = React.useMemo(() => {
-    try {
-      const parsed = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-read on cart count change
-  }, [cartCount]);
-
-  /** Does a cart line match the CURRENT BCF selection (regular vs bundle-deal)? */
-  const bcfSelectionInBag = React.useCallback(
-    (bundleDeal: boolean): boolean => {
-      if (!category) return false;
-      return cartLinesForInBag.some((ci: any) => {
-        if (ci?.type !== 'shop-texture-category') return false;
-        if (ci.category !== category) return false;
-        if (String(ci.texture || '') !== texture) return false;
-        if (String(ci.hairOrigin || '') !== bcfOrigin) return false;
-        if (String(ci.length || '') !== bcfLength) return false;
-        if (String(ci.color || '') !== bcfColor) return false;
-        if (category === 'bundles') {
-          if (String(ci.hairWeight || BCF_DEFAULT_WEIGHT_ID) !== bcfHairWeight) return false;
-        } else {
-          if (String(ci.lace || '') !== bcfLace) return false;
-          const ciTreat = Array.isArray(ci.laceTreatment) ? [...ci.laceTreatment].sort().join(',') : '';
-          if (ciTreat !== [...bcfLaceTreatment].sort().join(',')) return false;
-        }
-        return Boolean(ci.bcfBundleDeal) === bundleDeal;
-      });
-    },
-    [cartLinesForInBag, category, texture, bcfOrigin, bcfLength, bcfColor, bcfHairWeight, bcfLace, bcfLaceTreatment]
-  );
-
-  const regularInBag = bcfSelectionInBag(false);
-  const bundleInBag = bcfSelectionInBag(true);
+  }, [category, basePrice, bcfLength, bcfColor, bcfLace]);
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
@@ -686,7 +591,6 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleAddToBag = () => {
     if (!category) return;
-    if (bcfSoldOut) return;
     setAddToBagState('adding');
     setTimeout(() => {
       try {
@@ -705,9 +609,7 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          ...(category === 'bundles'
-            ? { hairWeight: bcfHairWeight }
-            : { lace: bcfLace, ...(bcfLaceTreatment.length ? { laceTreatment: bcfLaceTreatment } : {}) })
+          ...(category === 'bundles' ? {} : { lace: bcfLace })
         };
         const updated = [newItem, ...cartItems];
         localStorage.setItem('cartItems', JSON.stringify(updated));
@@ -730,7 +632,6 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleBundleDealToBag = () => {
     if (category !== 'bundles') return;
-    if (bcfSoldOut) return;
     if (!isPremiumMemberForGatedFeatures()) {
       setShowBcfColorUpgradeModal(true);
       return;
@@ -755,7 +656,6 @@ export default function ShopTextureCategoryProductPage() {
           hairOrigin: bcfOrigin,
           length: bcfLength,
           color: bcfColor,
-          hairWeight: bcfHairWeight,
           bcfBundleDeal: true,
           bcfBundleDealListSubtotal: listSubtotal
         };
@@ -1633,35 +1533,6 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
-                      {category === 'bundles' && (
-                        <>
-                          <p style={{ ...bcfBohemySubLabelStyle, margin: '26px 0 8px' }}>hair weight</p>
-                          <div className="flex flex-wrap justify-center gap-3 mb-3">
-                            {BCF_WEIGHT_OPTIONS.map((w) => {
-                              const sel = bcfHairWeight === w.id;
-                              // Premium-only weights (150G) render grayed/disabled for standard members
-                              // (still tappable to surface the upgrade modal).
-                              const locked = !!w.premium && !isBcfPremiumMember;
-                              return (
-                                <button
-                                  key={w.id}
-                                  type="button"
-                                  onClick={() => handleBcfWeightSelect(w.id)}
-                                  style={{
-                                    ...bcfOptionBtnTypography,
-                                    ...bcfOptionSelectedChrome(sel),
-                                    ...(locked
-                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
-                                      : {})
-                                  }}
-                                >
-                                  {w.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
                       {(category === 'closures' || category === 'frontals') && (
                         <>
                           <p
@@ -1678,13 +1549,19 @@ export default function ShopTextureCategoryProductPage() {
                           </p>
                           <div
                             className={
-                              category === 'closures'
-                                ? 'grid w-full grid-cols-3 gap-3 mb-3 max-w-[min(100%,300px)] mx-auto'
+                              category === 'frontals'
+                                ? 'grid w-full grid-cols-4 gap-2 sm:gap-3 mb-3 max-w-[min(100%,400px)] mx-auto'
                                 : 'flex flex-wrap justify-center gap-3 mb-3'
+                            }
+                            style={
+                              category === 'frontals'
+                                ? undefined
+                                : { maxHeight: '100px', overflowY: 'auto' }
                             }
                           >
                             {bcfLaceOptions.map((l) => {
                               const sel = bcfLace === l.id;
+                              const isFrontalRow = category === 'frontals';
                               return (
                                 <button
                                   key={l.id}
@@ -1693,9 +1570,14 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{
                                     ...bcfOptionBtnTypography,
                                     ...bcfOptionSelectedChrome(sel),
-                                    ...(category === 'frontals'
-                                      ? { minWidth: 'clamp(72px, 18vw, 130px)' }
-                                      : { width: '100%' })
+                                    ...(isFrontalRow
+                                      ? {
+                                          width: '100%',
+                                          minWidth: 0,
+                                          paddingLeft: 'clamp(4px, 1.2vw, 12px)',
+                                          paddingRight: 'clamp(4px, 1.2vw, 12px)'
+                                        }
+                                      : { minWidth: 'clamp(72px, 18vw, 130px)' })
                                   }}
                                 >
                                   {l.label}
@@ -1728,35 +1610,6 @@ export default function ShopTextureCategoryProductPage() {
                           );
                         })}
                       </div>
-                      {(category === 'closures' || category === 'frontals') && (
-                        <>
-                          <p style={bcfBohemySubLabelStyle}>lace treatment</p>
-                          <div className="flex flex-wrap justify-center gap-3 mb-3">
-                            {BCF_LACE_TREATMENT_OPTIONS.map((t) => {
-                              const sel = bcfLaceTreatment.includes(t.id);
-                              // Premium-only treatments render grayed/disabled for standard members
-                              // (still tappable to surface the upgrade modal).
-                              const locked = !!t.premium && !isBcfPremiumMember;
-                              return (
-                                <button
-                                  key={t.id}
-                                  type="button"
-                                  onClick={() => handleBcfLaceTreatmentToggle(t.id)}
-                                  style={{
-                                    ...bcfOptionBtnTypography,
-                                    ...bcfOptionSelectedChrome(sel),
-                                    ...(locked && !sel
-                                      ? { color: '#9ca3af', border: '1.3px solid #9ca3af', opacity: 0.5 }
-                                      : {})
-                                  }}
-                                >
-                                  {t.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
                       <p style={bcfBohemySubLabelStyle}>hair color</p>
                       <div className="flex flex-wrap justify-center gap-x-3 gap-y-3 mb-6">
                         {bcfColorsAvailable.map((c) => {
@@ -1935,69 +1788,57 @@ export default function ShopTextureCategoryProductPage() {
                 <button
                   type="button"
                   onClick={handleAddToBag}
-                  disabled={bcfSoldOut || addToBagState === 'adding'}
+                  disabled={addToBagState === 'adding'}
                   className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                    bcfSoldOut
+                    addToBagState === 'adding'
                       ? 'bg-white cursor-not-allowed'
-                      : addToBagState === 'adding'
-                        ? 'bg-white cursor-not-allowed'
-                        : addToBagState === 'added'
-                          ? 'bg-white cursor-pointer'
-                          : 'bg-white cursor-pointer hover:bg-gray-50'
+                      : addToBagState === 'added'
+                        ? 'bg-white cursor-pointer'
+                        : 'bg-white cursor-pointer hover:bg-gray-50'
                   }`}
                   style={{
                     borderWidth: '1.3px',
-                    color: bcfSoldOut ? '#808080' : '#EB1C24',
+                    color: '#EB1C24',
                     fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
                     backgroundColor: '#FFFFFF'
                   }}
                 >
-                  {bcfSoldOut
-                    ? 'SOLD OUT'
-                    : addToBagState === 'adding'
-                      ? 'ADDING...'
-                      : (addToBagState === 'added' || regularInBag) ? (
-                        <span className="flex items-center justify-center gap-1">
-                          <img src="/assets/check.svg" alt="" width={9} height={9} />
-                          <span style={{ color: '#808080' }}>IN THE BAG</span>
-                        </span>
-                      ) : (
-                        'ADD TO BAG'
-                      )}
+                  {addToBagState === 'idle' && 'ADD TO BAG'}
+                  {addToBagState === 'adding' && 'ADDING...'}
+                  {addToBagState === 'added' && (
+                    <span className="flex items-center justify-center gap-1">
+                      <img src="/assets/check.svg" alt="" width={9} height={9} />
+                      <span style={{ color: '#808080' }}>IN THE BAG</span>
+                    </span>
+                  )}
                 </button>
                 {category === 'bundles' && (
                   <button
                     type="button"
                     onClick={handleBundleDealToBag}
-                    disabled={bcfSoldOut || bundleDealState === 'adding' || addToBagState === 'adding'}
+                    disabled={bundleDealState === 'adding' || addToBagState === 'adding'}
                     className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold mt-2 ${
-                      bcfSoldOut
+                      bundleDealState === 'adding'
                         ? 'bg-white cursor-not-allowed'
-                        : bundleDealState === 'adding'
-                          ? 'bg-white cursor-not-allowed'
-                          : bundleDealState === 'added'
-                            ? 'bg-white cursor-pointer'
-                            : 'bg-white cursor-pointer hover:bg-gray-50'
+                        : bundleDealState === 'added'
+                          ? 'bg-white cursor-pointer'
+                          : 'bg-white cursor-pointer hover:bg-gray-50'
                     }`}
                     style={{
                       borderWidth: '1.3px',
-                      color: bcfSoldOut ? '#808080' : '#EB1C24',
+                      color: '#EB1C24',
                       fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
                       backgroundColor: '#FFFFFF'
                     }}
                   >
-                    {bcfSoldOut
-                      ? 'SOLD OUT'
-                      : bundleDealState === 'adding'
-                        ? 'ADDING...'
-                        : (bundleDealState === 'added' || bundleInBag) ? (
-                          <span className="flex items-center justify-center gap-1">
-                            <img src="/assets/check.svg" alt="" width={9} height={9} />
-                            <span style={{ color: '#808080' }}>IN THE BAG</span>
-                          </span>
-                        ) : (
-                          'BUNDLE DEAL'
-                        )}
+                    {bundleDealState === 'idle' && 'BUNDLE DEAL'}
+                    {bundleDealState === 'adding' && 'ADDING...'}
+                    {bundleDealState === 'added' && (
+                      <span className="flex items-center justify-center gap-1">
+                        <img src="/assets/check.svg" alt="" width={9} height={9} />
+                        <span style={{ color: '#808080' }}>IN THE BAG</span>
+                      </span>
+                    )}
                   </button>
                 )}
               </div>
@@ -2085,11 +1926,7 @@ export default function ShopTextureCategoryProductPage() {
                         }}
                       />
                       <div ref={setSimilarStripViewportRef} style={marbleStripViewportStyle}>
-                        {/* Only 2 "other texture" items: use a 100%-wide row so each cell is half the
-                            viewport (2 thumbs visible at ~122px), matching the Noir similar/recently
-                            strips. The shared 200% row (built for 4 items) made each cell fill the
-                            whole viewport, blowing the similar thumbnails up to ~288px. */}
-                        <div style={{ ...marbleStripScrollRowStyle(similarProductsScroll), width: '100%' }}>
+                        <div style={marbleStripScrollRowStyle(similarProductsScroll)}>
                           {otherTextures.map((ot) => {
                             const om = TEXTURE_META[ot];
                             const simTitle = `${om.label} ${categoryTitle}`;
@@ -2121,7 +1958,6 @@ export default function ShopTextureCategoryProductPage() {
                                       }}
                                       style={{
                                         ...marbleStripThumbImg(false),
-                                        width: BCF_STRIP_THUMB_WIDTH,
                                         cursor: 'pointer',
                                         pointerEvents: 'none'
                                       }}
@@ -2158,8 +1994,7 @@ export default function ShopTextureCategoryProductPage() {
                                     >
                                       {categoryTitle} · RAW HUMAN HAIR
                                     </p>
-                                    <WigStripPrice
-                                      soldOut={bcfSoldOut}
+                                    <p
                                       style={{
                                         fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
                                         fontSize: '12px',
@@ -2169,7 +2004,7 @@ export default function ShopTextureCategoryProductPage() {
                                         fontWeight: '500',
                                         lineHeight: '0.84'
                                       }}
-                                      priceHtml={formatPrice(bcfBasePriceUsd(category, ot))}
+                                      dangerouslySetInnerHTML={formatPrice(PRICE_BY_CATEGORY[category])}
                                     />
                                     <div style={marbleStripStarsRowStyle(false)}>
                                       {[...Array(5)].map((_, si) => (
@@ -2207,20 +2042,7 @@ export default function ShopTextureCategoryProductPage() {
               </div>
 
               {/* RECENTLY VIEWED — same strip as gift card */}
-              {/* Full-width breakout margins match the SIMILAR strip + Noir strips so both BCF
-                  carousels render identical cell/thumbnail widths. */}
-              <div
-                className="px-0 md:px-0"
-                style={{
-                  marginTop: '20px',
-                  marginBottom: '20px',
-                  minWidth: '100%',
-                  maxWidth: 'none',
-                  marginLeft: '-16px',
-                  marginRight: '-16px',
-                  width: 'calc(100% + 32px)'
-                }}
-              >
+              <div className="px-0 md:px-0" style={{ marginTop: '20px', marginBottom: '20px' }}>
                 <div
                   className="backdrop-blur-sm"
                   style={{
@@ -2305,7 +2127,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 12px 4px 12px',
+                                padding: '10px 10px 4px 10px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2315,7 +2137,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/wave-thumb.png"
                               alt="SOFT WAVE"
                               style={{
-                                width: BCF_STRIP_THUMB_WIDTH,
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2352,8 +2174,7 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW INDONESIAN
                             </p>
-                            <WigStripPrice
-                              productName="SOFT WAVE"
+                            <p
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2364,7 +2185,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              priceHtml={formatPrice(760)}
+                              dangerouslySetInnerHTML={formatPrice(760)}
                             />
                             <div
                               style={{
@@ -2401,7 +2222,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 12px 4px 12px',
+                                padding: '10px 10px 4px 10px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2411,7 +2232,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/curl-thumb.png"
                               alt="SOFT CURL"
                               style={{
-                                width: BCF_STRIP_THUMB_WIDTH,
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2448,8 +2269,7 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW FILIPINO
                             </p>
-                            <WigStripPrice
-                              productName="SOFT CURL"
+                            <p
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2460,7 +2280,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              priceHtml={formatPrice(780)}
+                              dangerouslySetInnerHTML={formatPrice(780)}
                             />
                             <div
                               style={{
@@ -2497,7 +2317,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 12px 4px 12px',
+                                padding: '10px 10px 4px 10px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2507,7 +2327,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/noir-thumb.png"
                               alt="NOIR"
                               style={{
-                                width: BCF_STRIP_THUMB_WIDTH,
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2544,8 +2364,7 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW CAMBODIAN
                             </p>
-                            <WigStripPrice
-                              productName="NOIR"
+                            <p
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2556,7 +2375,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              priceHtml={formatPrice(740)}
+                              dangerouslySetInnerHTML={formatPrice(740)}
                             />
                             <div
                               style={{
@@ -2593,7 +2412,7 @@ export default function ShopTextureCategoryProductPage() {
                           >
                             <div
                               style={{
-                                padding: '10px 12px 4px 12px',
+                                padding: '10px 10px 4px 10px',
                                 textAlign: 'center',
                                 width: '100%',
                                 boxSizing: 'border-box'
@@ -2603,7 +2422,7 @@ export default function ShopTextureCategoryProductPage() {
                               src="/assets/NOIR/blanco-thumb.png"
                               alt="BLANCO"
                               style={{
-                                width: BCF_STRIP_THUMB_WIDTH,
+                                width: '50%',
                                 height: 'auto',
                                 marginBottom: '10px',
                                 marginLeft: 'auto',
@@ -2640,8 +2459,7 @@ export default function ShopTextureCategoryProductPage() {
                             >
                               24&quot; RAW RUSSIAN
                             </p>
-                            <WigStripPrice
-                              productName="BLANCO"
+                            <p
                               style={{
                                 fontFamily: '"Futura PT Medium"',
                                 fontSize: '12px',
@@ -2652,7 +2470,7 @@ export default function ShopTextureCategoryProductPage() {
                                 lineHeight: '0.84',
                                 transform: 'translateX(10px) translateY(-1px)'
                               }}
-                              priceHtml={formatPrice(820)}
+                              dangerouslySetInnerHTML={formatPrice(820)}
                             />
                             <div
                               style={{
