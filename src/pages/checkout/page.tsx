@@ -3601,7 +3601,12 @@ function CheckoutPage() {
                                     fontSize: '10px',
                                     fontWeight: '500',
                                     color: '#000000',
-                                    margin: useDigitalStack ? '4px 0 0 0' : '1px 0 0 0',
+                                    margin:
+                                      useDigitalStack
+                                        ? '4px 0 0 0'
+                                        : item.type === 'shop-texture-category'
+                                          ? '3px 0 0 0'
+                                          : '1px 0 0 0',
                                     textTransform: 'uppercase',
                                     textAlign: 'center'
                                   }}
