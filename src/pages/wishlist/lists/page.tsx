@@ -601,12 +601,20 @@ export default function ViewListsPage() {
   const [listToRename, setListToRename] = useState<UserList | null>(null);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
   const [listsOverviewViewMode, setListsOverviewViewMode] = useState<'grid' | 'line'>('line');
-  const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
+  /** Keys of items whose details are open. Multiple can be open at once; only manual toggle closes. */
+  const [viewingDetailsKeys, setViewingDetailsKeys] = useState<Set<string>>(() => new Set());
+  const toggleViewingDetails = (key: string) =>
+    setViewingDetailsKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
 
   useEffect(() => {
-    setViewingDetailsItemKey(null);
+    setViewingDetailsKeys(new Set());
   }, [expandedListId]);
 
   const refreshLists = () => {
@@ -1061,7 +1069,7 @@ export default function ViewListsPage() {
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               const itemKey = getExpandedListItemKey(item, index);
-                              const isViewingDetails = viewingDetailsItemKey === itemKey;
+                              const isViewingDetails = viewingDetailsKeys.has(itemKey);
                               const showViewDetailsLink = wishlistItemHasViewDetails(item, { omitLength: true });
                               const itemPriceLabel = formatWishlistListItemPrice(
                                 getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
@@ -1180,13 +1188,13 @@ export default function ViewListsPage() {
                                         className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}${!isViewingDetails ? ` ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_VIEW_ONLY_CLASS}` : ''}`}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                          toggleViewingDetails(itemKey);
                                         }}
                                         onKeyDown={(e) => {
                                           if (e.key === 'Enter' || e.key === ' ') {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
+                                            toggleViewingDetails(itemKey);
                                           }
                                         }}
                                       >

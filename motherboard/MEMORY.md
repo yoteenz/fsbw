@@ -19785,6 +19785,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — VIEW DETAILS: content-tied visibility (texture-only fix) + multiple panels stay open
+
+**Context:** Two follow-ups on `/wishlist/lists`: (1) a **SOFT WAVE** still showed VIEW DETAILS with an empty "PRODUCT DETAILS" panel; (2) opening details on one item auto-closed the previously opened item — user wants multiple to stay open until manually closed.
+
+**Issue 1 root cause:** `wishlistItemHasViewDetails` counted `hasCustomTexture` (texture ≠ product default), but `buildWishlistItemDetailsHtml` renders **no texture row** (also a couple of BLANCO color edge cases). So texture-only (and previously length-only) customizations triggered the link with an empty panel.
+**Fix (`src/utils/wishlistListItemDetails.ts`):** rewrote `wishlistItemHasViewDetails` to be **content-tied** — bookings/BCF always true; for units it returns `buildWishlistItemDetailsHtml(item, options)` is non-empty and not the `PRODUCT DETAILS` fallback. Eliminates all field/render mismatches permanently (texture, length via `omitLength`, blanco color edge cases). Removed the duplicated field-by-field logic.
+
+**Issue 2 fix (`src/pages/wishlist/lists/page.tsx`):** replaced single `viewingDetailsItemKey: string|null` with `viewingDetailsKeys: Set<string>` + `toggleViewingDetails(key)`; `isViewingDetails = viewingDetailsKeys.has(itemKey)`; reset to `new Set()` on `expandedListId` change. Each item's VIEW DETAILS toggles independently; multiple panels stay open until manually closed.
+
+**Verified (headless):** list with [SOFT WAVE texture-only, NOIR custom color, BLANCO custom hairline] shows **2** VIEW DETAILS links (texture-only hidden); opening both keeps **2** CLOSE DETAILS open simultaneously. Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: edit-name spacing, toggle alignment, smaller PRIVATE text
 
 **Context:** Three tweaks on `/wishlist/lists` (`src/pages/wishlist/lists/page.tsx`):
