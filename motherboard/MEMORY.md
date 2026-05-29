@@ -19557,3 +19557,16 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Context:** User: closures & frontals **−$120** straight base; bundles **−$200**; wavy **+$20** vs straight; curly **+$40** vs straight.
 
 **Change:** `utils/bcfProductOptions.ts` — `BCF_STRAIGHT_BASE_PRICE_USD` (bundles **480**, closures **325**, frontals **445**); `bcfBasePriceUsd(category, texture)` adds texture delta (0 / 20 / 40). `bcfPdpPriceRangeUsd` for shop grid min–max (length/color/lace combos). **`texture-category-product/page.tsx`**: hero/cart/similar strip use `bcfBasePriceUsd`. **`products/page.tsx`**: BCF marble cards use `bcfPdpPriceRangeUsd` instead of hardcoded ranges. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists overview: tighten PRIVATE spacing + smaller EDIT LIST NAME
+
+**Context:** On `/wishlist/lists` overview, user asked to decrease the spacing **above and below** the gray visibility (**PRIVATE**/**SHARED**) text by **2px** on **both** list view and grid view, and decrease the red **EDIT LIST NAME** text size by **2px** on list view.
+
+**Change (`src/pages/wishlist/lists/page.tsx`):**
+- `LIST_OVERVIEW_VISIBILITY_STYLE` `margin: '2px 0 0 0' → '0'` → list-view above-PRIVATE 2px→0 (grid overrides its own `marginTop`, so unaffected by this base change).
+- `LIST_OVERVIEW_EDIT_NAME_STYLE` (list view only) `margin: '2px 0 0 0' → '0'` (below-PRIVATE 2px→0) and `fontSize: '11px' → '9px'` (−2px).
+- Grid view: visibility `<p>` `marginTop '1px' → '-1px'` (above −2px), count `<span>` `marginTop '3px' → '1px'` (below −2px).
+
+Typecheck passes. Pushed `master` + `preview/mobile`.
