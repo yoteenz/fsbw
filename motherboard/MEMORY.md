@@ -19883,6 +19883,18 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+## 2026-05-29 — Wishlist lists: EDIT LIST NAME −4px above, gray VIEW DETAILS −2px above
+
+**Context:** (A parallel agent had already re-restored EDIT LIST NAME + BCF thumbnails + gray toggle on master via `1022fda6`/`dc8a4a5f`, so no manual restore was needed — just applied the spacing on top of latest master.)
+
+**Change:**
+- `src/pages/wishlist/lists/page.tsx` `LIST_OVERVIEW_EDIT_NAME_STYLE` margin `-4px 0 0 0 → -8px 0 0 0` (reduce above EDIT LIST NAME by 4px).
+- `src/index.css` `.wishlist-expanded-list-view-details-toggle--list-view-only` added `margin-top: -2px` (the gray **VIEW DETAILS** state's above-spacing 0 → −2px; CLOSE DETAILS keeps `--list` value, unaffected).
+
+Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Cart details: shift product text up 10px (view-details only)
 
 **Context:** With long detail lists (e.g. BLANCO with 7 detail lines), the cart-dropdown details text was cut off at the bottom without scroll. **Change (`CartDropdown.tsx`):** the product-text container `transform` is now `translateY(-14px)` when `viewingDetailsFor === item.id` (was `-4px`), i.e. shifted up an extra 10px only in details view; non-details stays `-4px`. Typecheck passes. Pushed `master` + `preview/mobile`.
