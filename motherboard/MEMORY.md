@@ -19505,3 +19505,11 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Change:** `bcfLaceOptionsForCategory('frontals')` in `utils/bcfProductOptions.ts` — `frontalOnly` set was `13X4`, `13X6`, `360`, `FULL`; now only `13X4`, `13X6`. Closures get all other `BCF_LACE_OPTIONS` (including 360, FULL). Existing PDP effect resets invalid `bcfLace` when switching category or after deploy.
 
 **Follow-up:** Lace size row on frontals (2 chips) was left-aligned in a 4-col grid → `flex flex-wrap justify-center gap-3` (same as hair texture); closures keep scrollable max-height on that flex row.
+
+---
+
+## 2026-05-21 — BCF pricing: category cuts + texture premiums
+
+**Context:** User: closures & frontals **−$120** straight base; bundles **−$200**; wavy **+$20** vs straight; curly **+$40** vs straight.
+
+**Change:** `utils/bcfProductOptions.ts` — `BCF_STRAIGHT_BASE_PRICE_USD` (bundles **480**, closures **325**, frontals **445**); `bcfBasePriceUsd(category, texture)` adds texture delta (0 / 20 / 40). `bcfPdpPriceRangeUsd` for shop grid min–max (length/color/lace combos). **`texture-category-product/page.tsx`**: hero/cart/similar strip use `bcfBasePriceUsd`. **`products/page.tsx`**: BCF marble cards use `bcfPdpPriceRangeUsd` instead of hardcoded ranges. Pushed `master` + `preview/mobile`.
