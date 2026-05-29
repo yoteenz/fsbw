@@ -3946,14 +3946,13 @@ function AffiliatePage() {
                                   <span
                                     aria-hidden="true"
                                     style={{
-                                      width: '5px',
-                                      height: '5px',
-                                      borderRadius: '999px',
-                                      backgroundColor: '#EB1C24',
+                                      color: '#EB1C24',
                                       flexShrink: 0,
-                                      marginTop: '5px',
+                                      lineHeight: '1.45',
                                     }}
-                                  />
+                                  >
+                                    •
+                                  </span>
                                   <span
                                     style={{
                                       fontFamily: '"Futura PT Book"',
