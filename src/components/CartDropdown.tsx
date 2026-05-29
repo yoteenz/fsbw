@@ -1297,12 +1297,13 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               fontFamily: '"Futura PT Book"',
                               color: '#000000',
                               textTransform: 'uppercase',
-                              fontSize: '9px',
                               marginBottom: '10px',
-                              marginRight: '20px',
                               lineHeight: 1.44,
-                              wordBreak: 'break-word',
-                              maxWidth: 'calc(100% - 20px)'
+                              // BCF detail lines (e.g. TREATMENT: PLUCK, BLEACH/TINT) must stay on one row:
+                              // drop the right cap + let it use the full (widened) column with no wrap.
+                              ...(item.type === 'shop-texture-category'
+                                ? { fontSize: '8px', whiteSpace: 'nowrap', marginRight: '0', maxWidth: 'none', wordBreak: 'normal' }
+                                : { fontSize: '9px', marginRight: '20px', wordBreak: 'break-word', maxWidth: 'calc(100% - 20px)' })
                             }}
                           dangerouslySetInnerHTML={{
                           __html: (() => {
@@ -1666,7 +1667,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                   {/* Remove Button */}
-                    <div className="flex flex-col items-center flex-shrink-0" style={{ transform: 'translateX(-8px)', width: '80px', alignItems: 'center' }}>
+                    <div className="flex flex-col items-center flex-shrink-0" style={{ transform: 'translateX(-8px)', width: (item.type === 'shop-texture-category' && viewingDetailsFor === item.id) ? '60px' : '80px', alignItems: 'center' }}>
                       <span
                         style={{
                           fontFamily: '"Futura PT Medium"',
