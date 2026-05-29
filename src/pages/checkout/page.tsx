@@ -3570,6 +3570,9 @@ function CheckoutPage() {
                                   <div
                                     style={{
                                       margin: '1px 0 0 0',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      alignItems: 'center',
                                       textAlign: 'center',
                                       textTransform: 'uppercase'
                                     }}
@@ -3583,7 +3586,7 @@ function CheckoutPage() {
                                             fontWeight: '500',
                                             color: '#808080',
                                             textDecoration: 'line-through',
-                                            marginRight: '6px'
+                                            marginBottom: '1px'
                                           }}
                                           dangerouslySetInnerHTML={formatPrice(bundleDealListUnit)}
                                         />
