@@ -19461,3 +19461,15 @@ Typecheck (`tsc --noEmit`) passes. Pushed `master` + `preview/mobile`.
 **Note:** noir/beach-wave/ocean-curl page edits were committed+pushed by their subagents before the shared `WigStripPrice` component was committed (briefly broke remote); fixed by committing the component + remaining pages right after. Final `tsc --noEmit` clean.
 
 **Verified (headless, 390px, MAILER BOXES=0 → all sold out):** NOIR PDP 8/8 strip prices strikethrough, OCEAN CURL 8/8, BCF bundles 6/6; **0** SOLD OUT/OUT OF STOCK text inside the strips on all. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-21 — Vercel build TS2305: WigStripPrice export (verified)
+
+**Context:** Vercel deploy on `preview/mobile` at commit `7b880bd` failed `tsc --noEmit` with `TS2305`: `WigStripPrice` not exported from `components/shop/WigStockPrice` (imports in `noir`, `beach-wave`, `ocean-curl` PDPs).
+
+**Root cause:** Unit PDP pages were updated to import `WigStripPrice` before the shared export landed on that branch tip.
+
+**Fix (already on remote):** `export function WigStripPrice` in `src/components/shop/WigStockPrice.tsx` — sold-out strip prices gray + strikethrough, no red label; supports `productName`, `soldOut`, `priceHtml`, `children`. Commits `74bc0778` / `05df93ac` on `master`, merged to `preview/mobile` at `ea5b9bdc`.
+
+**Verified this chat:** `npm run build` passes locally; `origin/preview/mobile` is ahead of `7b880bd` and contains the fix. Redeploy `preview/mobile` (latest tip) for Vercel green.
