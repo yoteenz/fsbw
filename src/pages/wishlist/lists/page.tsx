@@ -289,16 +289,16 @@ const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '11px',
   color: '#666',
-  margin: '2px 0 0 0',
+  margin: '0',
   textTransform: 'uppercase',
 };
 
 /** Red "EDIT LIST NAME" link below the gray visibility label (list view only). */
 const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '11px',
+  fontSize: '9px',
   color: '#EB1C24',
-  margin: '2px 0 0 0',
+  margin: '0',
   textTransform: 'uppercase',
   cursor: 'pointer',
   display: 'inline-block',
@@ -1363,7 +1363,7 @@ export default function ViewListsPage() {
                             <p
                               style={{
                                 ...LIST_OVERVIEW_VISIBILITY_STYLE,
-                                marginTop: '1px',
+                                marginTop: '-1px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
@@ -1373,7 +1373,7 @@ export default function ViewListsPage() {
                             <span
                               style={{
                                 ...LIST_OVERVIEW_COUNT_STYLE,
-                                marginTop: '3px',
+                                marginTop: '1px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
