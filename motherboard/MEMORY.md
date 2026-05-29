@@ -20793,3 +20793,46 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Conventions:**
 - For Build-a-Wig hub tiles, size/position decisions should follow the actual rendered icon/fallback state rather than only the stored selection token, especially in edit-mode flows where fallback icons may be shown for legacy or mismatched values.
 - Continue keeping Build-a-Wig edit behavior, premium benefit ordering, and BCF grouped-display behavior consistent across all surfaces by using shared helpers/constants where possible.
+
+---
+
+## 2026-05-29 — Full conversation summary: wishlist/edit parity, sold-out + premium consistency, BCF tuning, affiliate rewards copy, Blanco NONE icon fix, and re-persisted wishlist list spacing
+
+**Context:** This chat continued a broad polish pass across Build-a-Wig, wishlist/cart/bag parity, sold-out messaging, premium benefits/chart consistency, header icon color, BCF line/detail spacing, wishlist list visuals, affiliate rewards copy, and final UI follow-ups when earlier wishlist list spacing changes and the BLANCO edit-mode `NONE` styling icon behavior did not appear to persist exactly as requested.
+
+**Topics covered (entire conversation so far):**
+- Fixed Build-a-Wig edit behavior from wishlist/account wishlist so edits route to the correct unit-specific `/build-a-wig/{unit}/edit` page, preload selections like cart/bag, and save back to the original wishlist item.
+- Standardized sold-out wording/copy on PDPs, wishlist, and stock-notify modal text.
+- Updated premium membership benefits/chart ordering so `LIVE ORDER TRACKING` is included for 3-month premium and appears above `PRIORITY MESSAGES` consistently.
+- Corrected shared header/title icon red rendering by moving icon usage away from outdated CSS filters toward native-red assets/defaults where needed.
+- Refined cart dropdown/detail ordering and BCF checkout/cart/bag display: bundle grouping on checkout, stacked strike/list prices, removed extra bundle spacing, aligned red RAW/price rows, and tuned non-bundled BCF spacing across checkout/cart/bag.
+- Split product-page 2D/3D disclaimer copy and corrected the missing `A` in the 3D message.
+- Tightened wishlist list/shared-list spacing and removed leaf-brick backgrounds from BCF thumbnails.
+- Replaced account affiliate promo copy with the new structured `AFFILIATE REWARDS PROGRAM` content, renamed the tracker card to `CONTENT SUBMISSIONS`, and aligned social reward values with the 600-point-per-platform program.
+- Fixed the BLANCO edit-mode styling tile so the `NONE` icon size/position follows the actual rendered icon (`/assets/none-icon.svg`) instead of only the raw styling token.
+- User then reported the earlier wishlist/lists spacing change had not persisted and suspected an override. Re-audited the exact sources and found the intended values were not actually present in the live files: `src/pages/wishlist/lists/page.tsx` and `src/pages/wishlist/shared/page.tsx` still had `marginTop: '8px'` for the red line-view thumb action text, and `src/index.css` still had `.wishlist-expanded-list-view-details-toggle--list { margin-top: 2px !important; }`.
+- Reapplied the spacing fix deterministically to the live files and verified on disk (not just via patch metadata):
+  - red thumb action text margin restored from `8px` to `5px` in both list/shared pages,
+  - gray `VIEW DETAILS` list-view class restored from `2px !important` to `0 !important` in `src/index.css`.
+- Rebuilt successfully after the forced rewrite to ensure the persisted spacing fix is what ships.
+
+**Decisions / outcomes:**
+- All earlier major requests in this chat remain implemented: Build-a-Wig edit parity, sold-out wording, premium benefit order, header icon red consistency, BCF spacing/grouping/order, wishlist BCF thumbnail cleanup, affiliate rewards copy, and BLANCO `NONE` icon sizing.
+- The wishlist list-view spacing issue was not a runtime-only override; the old values had reappeared in source. The fix was re-applied directly to the exact files and verified from disk.
+- Current requested list-view spacing is now explicitly restored:
+  - wishlist/lists + wishlist/shared line-view red thumb action text = `5px` top spacing,
+  - wishlist list-view gray `VIEW DETAILS` toggle class = `0 !important` top margin.
+
+**Changes:**
+- Prior files touched earlier in this chat included Build-a-Wig edit/session helpers and surfaces, sold-out/notify components, premium benefits/chart files, native-red icon assets/helpers, BCF cart/checkout utilities and pages, PDP disclaimer pages, wishlist list/shared files, `src/index.css`, account affiliate page, and Build-a-Wig hub styling-icon logic.
+- Latest follow-up persistence fix:
+  - `src/pages/wishlist/lists/page.tsx`
+    - `LIST_LINE_BAG_ADD_STYLE.marginTop`: `8px` -> `5px`
+  - `src/pages/wishlist/shared/page.tsx`
+    - `LIST_LINE_BAG_ADD_STYLE.marginTop`: `8px` -> `5px`
+  - `src/index.css`
+    - `.wishlist-expanded-list-view-details-toggle--list margin-top`: `2px !important` -> `0 !important`
+
+**Conventions:**
+- For wishlist line-view spacing tweaks, audit all contributing sources together: page-level inline style constants (`lists/page.tsx`, `shared/page.tsx`) and global class rules in `src/index.css`, because either side can drift and silently undo the intended visual result.
+- When a user reports a styling tweak “didn’t persist,” verify exact on-disk values directly instead of relying only on patch success responses.

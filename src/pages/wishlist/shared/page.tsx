@@ -9,11 +9,8 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
-  getWishlistBcfThumbSrc,
-  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
-  getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -164,8 +161,6 @@ function readCartItems(): any[] {
 
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
-  const bcfThumb = getWishlistBcfThumbSrc(item);
-  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();
@@ -182,8 +177,18 @@ function getLeafBrickFrontImage(item: any): string {
   return '/assets/natural front.png';
 }
 
-function wishlistThumbUsesLeafBrick(item: any): boolean {
-  return !getWishlistBcfThumbSrc(item);
+function getProductRoute(name: string): string {
+  const n = (name || 'NOIR').toString().toUpperCase();
+  const routes: Record<string, string> = {
+    NOIR: '/straight/noir',
+    BLANCO: '/straight/blanco',
+    'SOFT WAVE': '/wavy/soft-wave',
+    'BEACH WAVE': '/wavy/beach-wave',
+    'SOFT CURL': '/curly/soft-curl',
+    'OCEAN CURL': '/curly/ocean-curl',
+    'GIFT CARD': '/tools/gift-card',
+  };
+  return routes[n] || '/build-a-wig';
 }
 
 function getHairOrigin(productName: string): string {
@@ -463,13 +468,12 @@ export default function SharedWishlistListPage() {
                       const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                       const itemKey = getSharedListItemKey(item, index);
                       const isViewingDetails = viewingDetailsItemKey === itemKey;
-                      const showViewDetailsLink = wishlistItemHasViewDetails(item, { omitLength: true });
+                      const showViewDetailsLink = wishlistItemHasViewDetails(item);
                       const itemPriceLabel = formatWishlistListItemPrice(
                         getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                       );
                       const inBag = isInBag(item, index);
                       const outOfStock = isLineItemOutOfStock(item);
-                      const useLeafBrickThumb = wishlistThumbUsesLeafBrick(item);
                       return (
                         <div
                           key={item.id || index}
@@ -485,47 +489,35 @@ export default function SharedWishlistListPage() {
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => navigate(getWishlistItemRoute(item))}
-                              onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))}
+                              onClick={() => navigate(getProductRoute(itemName))}
+                              onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))}
                               className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                               style={{
                                 width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
                                 height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`,
-                                backgroundImage: useLeafBrickThumb ? "url('/assets/leaf-brick-resize.png')" : 'none',
-                                backgroundColor: useLeafBrickThumb ? undefined : '#ffffff',
+                                backgroundImage: "url('/assets/leaf-brick-resize.png')",
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 border: '1.3px solid #000',
-                                boxShadow: useLeafBrickThumb ? 'inset 0 0 0 3px #fff' : undefined,
+                                boxShadow: 'inset 0 0 0 3px #fff',
                                 overflow: 'hidden',
                               }}
                             >
                               <img
                                 src={getLeafBrickFrontImage(item)}
                                 alt=""
-                                style={
-                                  useLeafBrickThumb
-                                    ? {
-                                        position: 'absolute',
-                                        left: '50%',
-                                        bottom: 3,
-                                        transform: 'translateX(-50%)',
-                                        width: 'auto',
-                                        height: '96%',
-                                        maxWidth: '106%',
-                                        objectFit: 'contain',
-                                        objectPosition: 'bottom',
-                                        zIndex: 1,
-                                      }
-                                    : {
-                                        position: 'absolute',
-                                        inset: 0,
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        zIndex: 1,
-                                      }
-                                }
+                                style={{
+                                  position: 'absolute',
+                                  left: '50%',
+                                  bottom: 3,
+                                  transform: 'translateX(-50%)',
+                                  width: 'auto',
+                                  height: '96%',
+                                  maxWidth: '106%',
+                                  objectFit: 'contain',
+                                  objectPosition: 'bottom',
+                                  zIndex: 1,
+                                }}
                               />
                             </div>
                             {outOfStock ? (
@@ -575,7 +567,7 @@ export default function SharedWishlistListPage() {
                           <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                             <WishlistLineProductTextStack>
                             <CartLineTextLayer slot="name">
-                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{getWishlistItemDisplayName(item)}</p>
+                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
                             </CartLineTextLayer>
                             <CartLineTextLayer slot="subtitle" productName={itemName}>
                             <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
