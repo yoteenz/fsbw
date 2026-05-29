@@ -9,6 +9,7 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
   wishlistItemHasViewDetails,
@@ -567,7 +568,7 @@ export default function SharedWishlistListPage() {
                           <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                             <WishlistLineProductTextStack>
                             <CartLineTextLayer slot="name">
-                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{getWishlistItemDisplayName(item)}</p>
                             </CartLineTextLayer>
                             <CartLineTextLayer slot="subtitle" productName={itemName}>
                             <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>

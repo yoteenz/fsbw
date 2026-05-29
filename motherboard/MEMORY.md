@@ -19772,6 +19772,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Expanded list items newest-first + BCF wishlist name = category only
+
+**Context:** (1) Inside an opened list (e.g. `lists/vacay`), items still showed oldest-first; user wants the most recently added item at the **top**. (2) BCF lines on the wishlist showed the cart label "BUNDLES · WAVY" — should show just **BUNDLES** / **CLOSURES** / **FRONTALS**.
+
+**Changes:**
+- **`src/pages/wishlist/lists/page.tsx`** — added `orderedExpandedItems`: sort the expanded list's items by `addedAt` desc, falling back to **reverse insertion order** for older untimestamped items (items are appended on add, so reverse = newest-first). Both line + grid maps now iterate `orderedExpandedItems` (was `expandedItems`; length checks still use `expandedItems`).
+- **`src/utils/wishlistListItemDetails.ts`** — new `getWishlistItemDisplayName(item)`: for `type === 'shop-texture-category'` returns the **category** uppercased (from `item.category`, fallback split on "·"); otherwise the unit name with "WIG" stripped.
+- Replaced `itemName.replace(/WIG/gi,'').trim()` with `getWishlistItemDisplayName(item)` in **lists** (line + grid), **shared** (`wishlist/shared/page.tsx`), and **main wishlist** (`wishlist/page.tsx`) name rows.
+
+**Verified (headless):** list [NOIR addedAt 1000, BLANCO 2000, BUNDLES·WAVY 3000] renders top→bottom as **BUNDLES, BLANCO, NOIR** — newest first, and the BCF row shows **BUNDLES** (not "BUNDLES · WAVY"). Typecheck passes. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists: edit-name spacing, toggle alignment, smaller PRIVATE text
 
 **Context:** Three tweaks on `/wishlist/lists` (`src/pages/wishlist/lists/page.tsx`):
