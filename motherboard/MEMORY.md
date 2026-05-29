@@ -19883,6 +19883,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Follow-up — no wrap between values:** the cart VIEW DETAILS column is only ~105px wide, so `TREATMENT: PLUCK, BLEACH/TINT` broke between PLUCK and BLEACH/TINT. Wrapped the values in `<span style="white-space:nowrap">` so the two treatments always stay on the same row (the `TREATMENT:` label sits on the line above since all of it can't fit in 105px). Pushed `master` + `preview/mobile`.
 
+**Follow-up — whole line on one row:** user wanted all of `TREATMENT: PLUCK, BLEACH/TINT` on a single row. The details `<p>` was capped to ~105px (`maxWidth: calc(100% - 20px)` + `marginRight: 20px`) inside a ~125px flex text column. For **BCF lines only** (`item.type === 'shop-texture-category'`) in `CartDropdown.tsx`: details `<p>` now `whiteSpace: nowrap`, `marginRight: 0`, `maxWidth: none`, `wordBreak: normal`, `fontSize: 8px`; and the remove/QTY column narrows `80px → 60px` while viewing BCF details so the flex text column grows. Net: treatment renders on one row with no overlap of the remove column. Verified headless at 390px (pRight 249 < removeLeft 284) and 360px (249 < 254) — one line, no overlap. Unit/booking detail styling unchanged (still 9px, wraps as before). Typecheck passes. Pushed `master` + `preview/mobile`.
+
 ---
 
 ## 2026-05-29 — Wishlist lists: toggle spacing reverted (match overview to expanded) + EDIT NAME −2px more
