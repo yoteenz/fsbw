@@ -20456,3 +20456,103 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 - For storefront/header icon color parity, prefer native-colored SVG assets over CSS filters when the final red must exactly match brand red/concierge icons.
 - For unit PDP disclaimers, tie the copy to the existing 2D/3D view state: 3D view gets the customized-unit message, 2D view keeps the visual/aesthetic disclaimer, and the 3D sentence must include **A** before the emphasized phrase.
 - For checkout BCF tile spacing, keep non-bundled and bundled rows separate: when adjusting non-bundled BCF price spacing, change only that row’s margin and leave grouped bundle pricing layout untouched.
+
+---
+
+## 2026-05-29 — Full conversation summary: wishlist Build-a-Wig edits, sold-out copy, premium chart/icons, 2D/3D PDP disclaimer split, and BCF cart/checkout spacing refinements
+
+**Context:** User spent this chat tightening storefront consistency across wishlist, cart, bag, PDPs, premium membership displays, header icons, and BCF cart/checkout presentation. The thread began with Build-a-Wig edit behavior from wishlist not matching cart/bag and continued through a long sequence of wording, icon-color, line-order, disclaimer, and spacing refinements.
+
+**Topics covered (entire conversation so far):**
+- Unified **Build-a-Wig edit flow** across wishlist, cart dropdown, and shopping bag:
+  - created `src/utils/buildAWigEditSession.ts` to centralize edit-session setup,
+  - updated wishlist, cart dropdown, and bag edit actions to route to the product-specific `/build-a-wig/{unit}/edit` page with selections restored from storage and edits saved back in place.
+- Standardized **sold-out wording** and stock-notify copy:
+  - PDP sold-out CTA changed to **SOLD OUT**,
+  - wishlist red out-of-stock label removed and below-counter text changed to **SOLD OUT**,
+  - stock-notify popup body updated to “THIS ITEM IS CURRENTLY SOLD OUT. ENTER YOUR EMAIL ADDRESS AND WE'LL LET YOU KNOW ONCE IT'S BACK IN STOCK.”
+- Updated **premium subscription benefits** site-wide:
+  - added **LIVE ORDER TRACKING** to the 3-month tier,
+  - changed the upgrade chart 3-month cell from X to check,
+  - moved LIVE ORDER TRACKING above PRIORITY MESSAGES everywhere and reused the shared tier constant.
+- Corrected **header icon red** across the site:
+  - replaced filter-based red tinting with native `#EB1C24` SVG assets,
+  - updated shared/default account header icon handling and removed legacy filter usage across affected headers/modals/pages.
+- Refined **BCF cart dropdown detail text**:
+  - removed “BUNDLE DEAL: 3 LINES,”
+  - moved ORIGIN above TEXTURE for bundle deals,
+  - moved LACE above LENGTH for closures/frontals.
+- Split **product-page 2D/3D disclaimer text** correctly:
+  - 2D view remains “(2D MODEL IS FOR VISUAL & AESTHETIC PURPOSES ONLY)” with VISUAL & AESTHETIC gray,
+  - 3D view shows “(3D MODEL IS WEARING A FULLY CUSTOMIZED & STYLED UNIT)” with FULLY CUSTOMIZED & STYLED gray,
+  - corrected the missing “A” in the 3D sentence on all relevant unit PDPs.
+- Reworked **BCF checkout presentation** through multiple iterations:
+  - stacked black price below gray strikeout for BCF pricing,
+  - fixed checkout bundle deals so BCF bundles render as a single grouped line like cart rather than per-unit entries,
+  - removed leftover placeholder spacing above grouped bundle pricing,
+  - added 2px above red RAW text for all non-Noir checkout products,
+  - increased non-bundled BCF checkout price spacing to 5px after user refinement.
+- Final follow-up in this chat:
+  - reduced spacing by **2px above non-bundled BCF price only on cart dropdown and bag page** by overriding the shared `price` text-layer top padding only for non-bundled BCF rows on those surfaces.
+
+**Decisions / outcomes:**
+- Build-a-Wig editing now follows the same product-specific edit-session flow from wishlist, cart, and bag.
+- SOLD OUT terminology is now consistent across PDP, wishlist, and stock-notify copy.
+- Premium benefits are consistent across the chart and account membership displays, including 3-month live tracking.
+- Header icons now use native brand-red artwork instead of CSS filters.
+- PDP disclaimers now switch correctly between 2D and 3D views and use the requested wording.
+- Checkout BCF bundle display now matches cart structure and the strikeout/current-price layout is vertically stacked.
+- Non-bundled BCF spacing now differs by surface as requested:
+  - checkout non-bundled BCF price retains the later 5px top spacing,
+  - cart dropdown and bag non-bundled BCF price were moved up by 2px via the price-layer padding override.
+- `npm run build` passed after the final cart/bag spacing adjustment.
+
+**Changes:**
+- `src/utils/buildAWigEditSession.ts`
+  - added shared Build-a-Wig edit-session preparation helper.
+- `src/pages/wishlist/page.tsx`
+  - switched wishlist edit flow to the shared helper; adjusted sold-out wording/display.
+- `src/pages/shopping-bag/page.tsx`
+  - switched bag edit flow to the shared helper;
+  - final step in this chat: reduced non-bundled BCF price spacing on bag rows by overriding `CartLineTextLayer slot="price"` top padding only for non-bundled BCF items.
+- `src/components/CartDropdown.tsx`
+  - switched cart dropdown edit flow to the shared helper;
+  - final step in this chat: reduced non-bundled BCF price spacing by overriding `CartLineTextLayer slot="price"` top padding only for non-bundled BCF items.
+- `src/components/shop/UnitPdpCartActions.tsx`
+  - changed sold-out CTA text to SOLD OUT.
+- `src/components/shop/WigStockPrice.tsx`
+  - added optional `outOfStockLabel` support for suppressing/replacing cart-line stock labels.
+- `src/components/shop/StockNotifyModal.tsx`
+  - updated sold-out notification copy.
+- `src/constants/premiumBenefitsByTier.ts`
+  - added/reordered LIVE ORDER TRACKING benefits.
+- `src/components/membership/PremiumSubscriptionUpgradeChart.tsx`
+  - updated chart checkmarks/order and removed legacy icon filters.
+- `src/pages/account/membership/page.tsx`
+  - reused shared premium-benefit constants and updated chart order/content.
+- `src/components/RoleCardSectionHeader.tsx`
+- `src/utils/workerRoleHeaderIcon.ts`
+- `public/assets/close-icon.svg`
+- `public/assets/order-tracking.svg`
+- `public/assets/points-history.svg`
+- `public/assets/rewards-icon.svg`
+- `public/assets/NOIR/account-icon-red.svg`
+  - migrated header icon rendering to native red assets.
+- `src/utils/cartLineRedAndDetails.ts`
+  - updated BCF/cart detail-line ordering and removed bundle-deal line text.
+- `src/pages/straight/noir/page.tsx`
+- `src/pages/straight/blanco/page.tsx`
+- `src/pages/wavy/soft-wave/page.tsx`
+- `src/pages/wavy/beach-wave/page.tsx`
+- `src/pages/curly/soft-curl/page.tsx`
+- `src/pages/curly/ocean-curl/page.tsx`
+  - implemented conditional 2D/3D disclaimer copy and corrected the 3D sentence.
+- `src/pages/checkout/page.tsx`
+- `src/pages/checkout/confirm/page.tsx`
+- `src/utils/checkoutOrderStripDisplay.ts`
+  - adjusted BCF checkout grouping, strikeout/current-price stacking, subtitle spacing, and non-bundled BCF checkout price spacing.
+
+**Conventions:**
+- For Build-a-Wig edit entry points, reuse the shared edit-session helper instead of duplicating localStorage setup.
+- For cart/bag/wishlist line-alignment tweaks, prefer targeted `CartLineTextLayer` slot overrides on the affected surface instead of changing the shared global layer rhythm when the request is product/surface-specific.
+- For site-wide brand-red icon fixes, prefer native-red SVG assets over CSS filter tinting.
