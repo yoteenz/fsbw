@@ -7,7 +7,6 @@ import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { loadUserLists, saveUserLists, type UserList } from '../../../components/AddToListModal';
 import CreateNewListModal from '../../../components/CreateNewListModal';
-import RenameListModal from '../../../components/RenameListModal';
 import ShareListLinkModal from '../../../components/ShareListLinkModal';
 import { getCurrentUser } from '../../../utils/adminAuth';
 import {
@@ -24,11 +23,8 @@ import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
-  getWishlistBcfThumbSrc,
-  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
-  getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -58,8 +54,6 @@ import {
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
-  const bcfThumb = getWishlistBcfThumbSrc(item);
-  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();
@@ -74,10 +68,6 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
-}
-
-function wishlistThumbUsesLeafBrick(item: any): boolean {
-  return !getWishlistBcfThumbSrc(item);
 }
 
 /** Canonical empty-list thumb (Supabase live-preview). */
@@ -296,21 +286,10 @@ const LIST_OVERVIEW_NAME_STYLE: React.CSSProperties = {
 
 const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '10px',
+  fontSize: '11px',
   color: '#666',
-  margin: '0',
+  margin: '2px 0 0 0',
   textTransform: 'uppercase',
-};
-
-/** Red "EDIT LIST NAME" link below the gray visibility label (list view only). */
-const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
-  fontFamily: '"Futura PT Medium", Futura, sans-serif',
-  fontSize: '9px',
-  color: '#EB1C24',
-  margin: '-4px 0 0 0',
-  textTransform: 'uppercase',
-  cursor: 'pointer',
-  display: 'inline-block',
 };
 
 const LIST_OVERVIEW_COUNT_STYLE: React.CSSProperties = {
@@ -405,7 +384,6 @@ function WishlistListOverviewThumb({
   firstItem: any | undefined;
   thumbSrc: string;
 }) {
-  const useLeafBrick = Boolean(firstItem && wishlistThumbUsesLeafBrick(firstItem));
   return (
     <div
       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
@@ -416,13 +394,12 @@ function WishlistListOverviewThumb({
         boxSizing: 'border-box',
         ...(firstItem
           ? {
-              backgroundImage: useLeafBrick ? "url('/assets/leaf-brick-resize.png')" : 'none',
-              backgroundColor: useLeafBrick ? undefined : '#ffffff',
+              backgroundImage: "url('/assets/leaf-brick-resize.png')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               border: '1.3px solid #000',
-              boxShadow: useLeafBrick ? `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff` : undefined,
+              boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
               overflow: 'hidden',
             }
           : {
@@ -435,29 +412,18 @@ function WishlistListOverviewThumb({
         <img
           src={thumbSrc}
           alt=""
-          style={
-            useLeafBrick
-              ? {
-                  position: 'absolute',
-                  left: '50%',
-                  bottom: LIST_THUMB_FRAME_INSET_PX,
-                  transform: 'translateX(-50%)',
-                  width: 'auto',
-                  height: '96%',
-                  maxWidth: '106%',
-                  objectFit: 'contain',
-                  objectPosition: 'bottom',
-                  zIndex: 1,
-                }
-              : {
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  zIndex: 1,
-                }
-          }
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: LIST_THUMB_FRAME_INSET_PX,
+            transform: 'translateX(-50%)',
+            width: 'auto',
+            height: '96%',
+            maxWidth: '106%',
+            objectFit: 'contain',
+            objectPosition: 'bottom',
+            zIndex: 1,
+          }}
         />
       ) : (
         <>
@@ -516,19 +482,18 @@ function WishlistListOverviewThumb({
 }
 
 /** Route to product/unit page. */
-/** Creation time encoded in the list id (`list-<epochMs>-<rand>`); 0 if absent. */
-function getListIdTimestamp(id: string): number {
-  const m = /^list-(\d+)-/.exec(id || '');
-  return m ? Number(m[1]) : 0;
-}
-
-/** Recency of a list = newest of its item add times / updatedAt / creation time. */
-function getListRecency(list: UserList): number {
-  const itemMax = (list.items || []).reduce((mx: number, it: any) => {
-    const t = Number(it?.addedAt);
-    return Number.isFinite(t) && t > mx ? t : mx;
-  }, 0);
-  return Math.max(Number(list.updatedAt) || 0, itemMax, getListIdTimestamp(list.id));
+function getProductRoute(name: string): string {
+  const n = (name || 'NOIR').toString().toUpperCase();
+  const routes: Record<string, string> = {
+    NOIR: '/straight/noir',
+    BLANCO: '/straight/blanco',
+    'SOFT WAVE': '/wavy/soft-wave',
+    'BEACH WAVE': '/wavy/beach-wave',
+    'SOFT CURL': '/curly/soft-curl',
+    'OCEAN CURL': '/curly/ocean-curl',
+    'GIFT CARD': '/tools/gift-card'
+  };
+  return routes[n] || '/build-a-wig';
 }
 
 function getHairOrigin(productName: string): string {
@@ -579,11 +544,6 @@ export default function ViewListsPage() {
   });
   const [cartSyncVersion, setCartSyncVersion] = useState(0);
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
-  /** Overview ordering: list with the most recently added item first. */
-  const overviewLists = useMemo(
-    () => [...lists].sort((a, b) => getListRecency(b) - getListRecency(a)),
-    [lists]
-  );
   useProductInventorySnapshot();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
@@ -605,23 +565,14 @@ export default function ViewListsPage() {
   const [showRemoveListItemConfirm, setShowRemoveListItemConfirm] = useState(false);
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
-  const [listToRename, setListToRename] = useState<UserList | null>(null);
   const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
   const [listsOverviewViewMode, setListsOverviewViewMode] = useState<'grid' | 'line'>('line');
-  /** Keys of items whose details are open. Multiple can be open at once; only manual toggle closes. */
-  const [viewingDetailsKeys, setViewingDetailsKeys] = useState<Set<string>>(() => new Set());
-  const toggleViewingDetails = (key: string) =>
-    setViewingDetailsKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
+  const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
 
   useEffect(() => {
-    setViewingDetailsKeys(new Set());
+    setViewingDetailsItemKey(null);
   }, [expandedListId]);
 
   const refreshLists = () => {
@@ -1008,21 +959,6 @@ export default function ViewListsPage() {
                     const expandedList = lists.find((l) => l.id === expandedListId);
                     if (!expandedList) return null;
                     const expandedItems: any[] = expandedList.items ?? [];
-                    // Show the most recently added item first: prefer `addedAt`, fall back to
-                    // reverse insertion order (items are appended on add) for older untimestamped items.
-                    const orderedExpandedItems: any[] = expandedItems
-                      .map((it, i) => ({ it, i }))
-                      .sort((a, b) => {
-                        const ta = Number(a.it?.addedAt);
-                        const tb = Number(b.it?.addedAt);
-                        const aHas = Number.isFinite(ta) && ta > 0;
-                        const bHas = Number.isFinite(tb) && tb > 0;
-                        if (aHas && bHas) return tb - ta;
-                        if (aHas) return -1;
-                        if (bHas) return 1;
-                        return b.i - a.i;
-                      })
-                      .map((x) => x.it);
                     return (
                       <div
                         style={{
@@ -1071,19 +1007,18 @@ export default function ViewListsPage() {
                           </div>
                         ) : expandedViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
-                            {orderedExpandedItems.map((item: any, index: number) => {
+                            {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
                               const itemKey = getExpandedListItemKey(item, index);
-                              const isViewingDetails = viewingDetailsKeys.has(itemKey);
-                              const showViewDetailsLink = wishlistItemHasViewDetails(item, { omitLength: true });
+                              const isViewingDetails = viewingDetailsItemKey === itemKey;
+                              const showViewDetailsLink = wishlistItemHasViewDetails(item);
                               const itemPriceLabel = formatWishlistListItemPrice(
                                 getWishlistItemDisplayPrice(item, getWishlistItemProductName(item))
                               );
                               const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                               const isOutOfStock = isLineItemOutOfStock(item);
-                              const useLeafBrickThumb = wishlistThumbUsesLeafBrick(item);
                               return (
                                 <div
                                   key={item.id || index}
@@ -1096,8 +1031,8 @@ export default function ViewListsPage() {
                                   }}
                                 >
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
-                                    <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: useLeafBrickThumb ? "url('/assets/leaf-brick-resize.png')" : 'none', backgroundColor: useLeafBrickThumb ? undefined : '#ffffff', backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: useLeafBrickThumb ? 'inset 0 0 0 3px #fff' : undefined, overflow: 'hidden' }}>
-                                      <img src={getLeafBrickFrontImage(item)} alt="" style={useLeafBrickThumb ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 } : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                      <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                     </div>
                                     {isOutOfStock ? (
                                       <p
@@ -1152,7 +1087,7 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <WishlistLineProductTextStack>
                                     <CartLineTextLayer slot="name">
-                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{getWishlistItemDisplayName(item)}</p>
+                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                     </CartLineTextLayer>
                                     <CartLineTextLayer slot="subtitle" productName={itemName}>
                                     <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
@@ -1196,13 +1131,13 @@ export default function ViewListsPage() {
                                         className={`${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_CLASS} ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_CLASS}${!isViewingDetails ? ` ${WISHLIST_EXPANDED_LIST_VIEW_DETAILS_TOGGLE_LIST_VIEW_ONLY_CLASS}` : ''}`}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          toggleViewingDetails(itemKey);
+                                          setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
                                         }}
                                         onKeyDown={(e) => {
                                           if (e.key === 'Enter' || e.key === ' ') {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            toggleViewingDetails(itemKey);
+                                            setViewingDetailsItemKey(isViewingDetails ? null : itemKey);
                                           }
                                         }}
                                       >
@@ -1227,17 +1162,16 @@ export default function ViewListsPage() {
                               paddingTop: '10px',
                             }}
                           >
-                            {orderedExpandedItems.map((item: any, index: number) => {
+                            {expandedItems.map((item: any, index: number) => {
                               const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
                               const itemLength = item.length || '24"';
                               const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
-                              const useLeafBrickThumb = wishlistThumbUsesLeafBrick(item);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: useLeafBrickThumb ? "url('/assets/leaf-brick-resize.png')" : 'none', backgroundColor: useLeafBrickThumb ? undefined : '#ffffff', backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: useLeafBrickThumb ? 'inset 0 0 0 3px #fff' : undefined, overflow: 'hidden' }}>
-                                    <img src={getLeafBrickFrontImage(item)} alt="" style={useLeafBrickThumb ? { position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 } : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                    <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{getWishlistItemDisplayName(item)}</p>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
                                   <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
                                   <p style={EXPANDED_LIST_GRID_RAW_TEXT_STYLE}>
                                     {itemLength} RAW {itemHairOrigin}
@@ -1264,7 +1198,7 @@ export default function ViewListsPage() {
                       display: 'flex',
                       justifyContent: 'flex-end',
                       alignItems: 'center',
-                      marginTop: '14px',
+                      marginTop: '6px',
                       marginBottom: '16px',
                       flexShrink: 0,
                     }}
@@ -1297,7 +1231,7 @@ export default function ViewListsPage() {
                     </div>
                   ) : listsOverviewViewMode === 'line' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                      {overviewLists.map((list, index) => {
+                      {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
@@ -1347,26 +1281,6 @@ export default function ViewListsPage() {
                             >
                               <span style={LIST_OVERVIEW_NAME_STYLE}>{list.name}</span>
                               <p style={LIST_OVERVIEW_VISIBILITY_STYLE}>{getUserListVisibilityLabel(list)}</p>
-                              <p style={{ margin: 0 }}>
-                                <span
-                                  role="button"
-                                  tabIndex={0}
-                                  style={LIST_OVERVIEW_EDIT_NAME_STYLE}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setListToRename(list);
-                                  }}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      setListToRename(list);
-                                    }
-                                  }}
-                                >
-                                  EDIT LIST NAME
-                                </span>
-                              </p>
                             </div>
                           </div>
                         );
@@ -1383,7 +1297,7 @@ export default function ViewListsPage() {
                         paddingLeft: `${LIST_ROW_CONTENT_OFFSET_LEFT_PX}px`,
                       }}
                     >
-                      {overviewLists.map((list) => {
+                      {lists.map((list) => {
                         const firstItem = list.items?.[0];
                         const thumbSrc = firstItem ? getLeafBrickFrontImage(firstItem) : EMPTY_LIST_THUMB_SRC;
                         const count = list.items?.length ?? 0;
@@ -1406,7 +1320,7 @@ export default function ViewListsPage() {
                             <span
                               style={{
                                 ...LIST_OVERVIEW_NAME_STYLE,
-                                marginTop: '8px',
+                                marginTop: '5px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
@@ -1416,7 +1330,6 @@ export default function ViewListsPage() {
                             <p
                               style={{
                                 ...LIST_OVERVIEW_VISIBILITY_STYLE,
-                                marginTop: '-1px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
@@ -1426,7 +1339,7 @@ export default function ViewListsPage() {
                             <span
                               style={{
                                 ...LIST_OVERVIEW_COUNT_STYLE,
-                                marginTop: '1px',
+                                marginTop: '4px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
@@ -1509,12 +1422,6 @@ export default function ViewListsPage() {
         isOpen={showCreateListModal}
         onClose={() => setShowCreateListModal(false)}
         onCreated={() => { refreshLists(); setShowCreateListModal(false); }}
-      />
-      <RenameListModal
-        isOpen={listToRename !== null}
-        list={listToRename}
-        onClose={() => setListToRename(null)}
-        onRenamed={() => { refreshLists(); setListToRename(null); }}
       />
       <ShareListLinkModal
         isOpen={showShareListModal}
