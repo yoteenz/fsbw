@@ -21834,3 +21834,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists: BCF thumbs +20%
 
 **Change:** **`lists/page.tsx`** — **`LISTS_PAGE_BCF_THUMB_SCALE`** **`0.9` → `0.9 * 1.2` (1.08)** for overview + expanded line/grid BCF frames on **`/wishlist/lists`** only. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — BCF PDP default hair length 16"
+
+**Change:** **`BCF_DEFAULT_LENGTH_ID = '16"'`** in **`bcfProductOptions.ts`**; **`texture-category-product/page.tsx`** initial **`bcfLength`** uses it (was **`24"`**). Base price on load reflects 16" length adjustment (−$50 vs 24"). Pushed **`master`** + **`preview/mobile`**.
