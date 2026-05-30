@@ -21822,3 +21822,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Cause:** Remote Supabase **`.mov`** files are multi‑MB (e.g. ~6MB vs ~2MB hero JPG); hero waited on **`onCanPlay`** with video **`opacity: 0`** and **`backgroundColor: #FFFFFF`** after JPG underlay was removed (commit **`5c4bc158`**, zoom fix). **`poster`** alone does not cover the slot reliably while transparent.
 
 **Changes:** **`BCF_CF_VIDEO.frontals.wavy`** → **`_78091.mov`**. Restored **`<img>` underlay** (same JPG as PHOTO) + **`bcfPdpHeroVideoUnderlayStyle`**; video **`backgroundColor: transparent`**. Bundles/closures/frontals VIDEO use shared sizing helpers. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Order form: no colons on gray Bohemy subheads
+
+**Change:** **`orderFormIntroCopy.ts`** — **`ORDER_FORM_INTRO_PURPOSE_TITLE`** and **`ORDER_FORM_INTRO_PLEASE_NOTE_TITLE`** no trailing colon (displayed via **`OrderFormIntroText`** Bohemy **`#808080`** subheads on **`/tools/order-form`**). Pushed **`master`** + **`preview/mobile`**.
