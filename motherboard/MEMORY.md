@@ -21675,3 +21675,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
 
 **Change:** **`adminUnitStockNotifyWaitlist.ts`** — **`buildWaitlistCatalogSections`**, **`enrichWaitlistGroupsWithMockSignups`** (2 mock emails per SKU, deduped). **`view-waitlist/page.tsx`** — meetings-style summary tiles, white category panels, panel swap + **`WaitlistSignupTable`**. **`lists/page.tsx`** — single **`listsViewMode`** in **`sessionStorage`** (`wishlist_lists_view_mode`) for overview + expanded. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists: overview line/grid toggle spacing matches expanded list
+
+**Context:** On **`/wishlist/lists`** (all-lists overview), spacing above and below the line/grid view icons did not match the expanded list view (user’s correct reference).
+
+**Change:** **`lists/page.tsx`** — shared constants **`LISTS_VIEW_MODE_TOGGLE_SECTION_PADDING_TOP_PX` (8)**, row margins **6 / 16**; **`ListsViewModeToggleBar`** used in both overview (`includeSectionPaddingTop`) and expanded list. Overview was missing the **8px** section pad above the toggle row. Pushed `master` + `preview/mobile`.
