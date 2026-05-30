@@ -22165,3 +22165,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Open:** Grow on curtains ready only; hand after **`tvGrowDone`** (**`HAND_REVEAL_MS`**); **`STATIC_DELAY_MS` 500** after **`handRevealDone`**; then static → content.
 
 **Close:** **`closePhase`**: **`zap`** (content off, hand visible) → **`hand-out`** (hand **`HAND_HIDE_MS`** fade, black screen) → **`shrink`** (**`animatedIn` false**, **`ANIM_MS`**) → **`onClose`**. Hand not tied to **`poweringOff`** flag alone.
+
+---
+
+## 2026-05-29 — Lounge TV sidebar subcategories left-aligned
+
+**Context:** User wanted TV sidebar labels (New Drops, Campaigns, etc.) **left-aligned**, not centered.
+
+**Change:** **`LoungeTvScreen`** aside in **`LoungeTvOverlay.tsx`**: **`alignItems: 'flex-start'`**; subcategory buttons **`textAlign: 'left'`**, **`width: '100%'`**. Commit **`765a92b4`**.
