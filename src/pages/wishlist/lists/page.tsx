@@ -284,7 +284,7 @@ const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
-/** Lists overview grid — tighter above/below gray PRIVATE/SHARED label (−2px each). */
+/** Lists overview grid — tighter above/below gray PRIVATE/SHARED label (−2px above via margin-top 0). */
 const LIST_OVERVIEW_VISIBILITY_GRID_STYLE: React.CSSProperties = {
   ...LIST_OVERVIEW_VISIBILITY_STYLE,
   margin: '0 0 -2px 0',
@@ -1361,7 +1361,7 @@ export default function ViewListsPage() {
                             <span
                               style={{
                                 ...LIST_OVERVIEW_COUNT_STYLE,
-                                marginTop: '2px',
+                                marginTop: '3px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
