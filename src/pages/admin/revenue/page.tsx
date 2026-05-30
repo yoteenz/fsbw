@@ -1071,14 +1071,25 @@ export default function AdminRevenue() {
     }
     if (activeTab === 'PRODUCTS') {
       return (
-        <button
-          type="button"
-          onClick={() => navigate('/admin/revenue/edit-inventory')}
-          className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
-          style={pageActionButtonStyle}
-        >
-          EDIT INVENTORY
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => navigate('/admin/revenue/edit-inventory')}
+            className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+            style={pageActionButtonStyle}
+          >
+            EDIT INVENTORY
+          </button>
+          <PageActionsBelowCard.Spacer />
+          <button
+            type="button"
+            onClick={() => navigate('/admin/revenue/view-waitlist')}
+            className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+            style={pageActionButtonStyle}
+          >
+            VIEW WAITLIST
+          </button>
+        </>
       );
     }
     return (

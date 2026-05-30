@@ -78,6 +78,7 @@ const AdminAccountingReport = lazyWithRetry(() => import('./pages/admin/revenue/
 const AdminFulfilledOrders = lazyWithRetry(() => import('./pages/admin/revenue/fulfilled-orders/page'), 'AdminFulfilledOrders');
 const AdminFraudAnalysis = lazyWithRetry(() => import('./pages/admin/revenue/fraud-analysis/page'), 'AdminFraudAnalysis');
 const AdminEditInventory = lazyWithRetry(() => import('./pages/admin/revenue/edit-inventory/page'), 'AdminEditInventory');
+const AdminViewWaitlist = lazyWithRetry(() => import('./pages/admin/revenue/view-waitlist/page'), 'AdminViewWaitlist');
 const AdminReviews = lazyWithRetry(() => import('./pages/admin/reviews/page'), 'AdminReviews');
 const AdminReferrals = lazyWithRetry(() => import('./pages/admin/referrals/page'), 'AdminReferrals');
 const AdminAnalytics = lazyWithRetry(() => import('./pages/admin/analytics/page'), 'AdminAnalytics');
@@ -452,6 +453,11 @@ function App() {
           <Route path="revenue/edit-inventory" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminEditInventory />
+            </Suspense>
+          } />
+          <Route path="revenue/view-waitlist" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminViewWaitlist />
             </Suspense>
           } />
           <Route path="revenue" element={
