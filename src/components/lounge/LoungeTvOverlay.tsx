@@ -270,21 +270,57 @@ function LoungeTvScreen({
   );
 }
 
+function preloadImage(src: string): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+    img.src = src;
+  });
+}
+
 export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlayProps) {
   const [animatedIn, setAnimatedIn] = useState(false);
+  const [curtainsReady, setCurtainsReady] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
 
   useEffect(() => {
     if (!isOpen) {
       setAnimatedIn(false);
+      setCurtainsReady(false);
+      setShowContent(false);
       return;
     }
+    let cancelled = false;
+    Promise.all([
+      preloadImage(LOUNGE_CURTAIN_LEFT_SRC),
+      preloadImage(LOUNGE_CURTAIN_RIGHT_SRC),
+    ]).then(() => {
+      if (!cancelled) setCurtainsReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !curtainsReady) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => setAnimatedIn(true));
     });
     return () => cancelAnimationFrame(id);
-  }, [isOpen]);
+  }, [isOpen, curtainsReady]);
+
+  useEffect(() => {
+    if (!isOpen || !animatedIn || !curtainsReady) {
+      if (!isOpen) setShowContent(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setShowContent(true), ANIM_MS);
+    return () => window.clearTimeout(timer);
+  }, [isOpen, animatedIn, curtainsReady]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -371,13 +407,21 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
       <div style={frameStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
-        <div style={screenStyle}>
-        <LoungeTvScreen
-          mainTab={mainTab}
-          sidebarId={sidebarId}
-          onMainTabChange={handleMainTab}
-          onSidebarChange={setSidebarId}
-        />
+        <div
+          style={{
+            ...screenStyle,
+            opacity: showContent ? 1 : 0,
+            transition: showContent ? 'opacity 280ms ease' : 'none',
+          }}
+        >
+          {showContent ? (
+            <LoungeTvScreen
+              mainTab={mainTab}
+              sidebarId={sidebarId}
+              onMainTabChange={handleMainTab}
+              onSidebarChange={setSidebarId}
+            />
+          ) : null}
         </div>
       </div>
     </div>,
