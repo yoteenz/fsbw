@@ -21650,6 +21650,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — PDP similar/recently viewed strip price +2px
+
+**Change:** **`marble-strip-product-price`** in **`index.css`** (`margin-top: 2px !important`). **`WigStripPrice`** applies class (all unit PDP similar/recently viewed strips). BCF **`texture-category-product/page.tsx`** strip prices use **`marbleStripProductPriceStyle`**. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
