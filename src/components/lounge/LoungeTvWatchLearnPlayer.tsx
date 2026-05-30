@@ -270,37 +270,38 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           </div>
         ) : null}
 
-        <button
-          type="button"
-          aria-label="Full screen"
-          onPointerDown={handleFullscreenPress}
-          onPointerUp={(e) => e.stopPropagation()}
-          onClick={handleFullscreenPress}
-          style={{
-            position: 'absolute',
-            right: '5px',
-            bottom: paused ? '20px' : '5px',
-            zIndex: 10,
-            width: '22px',
-            height: '22px',
-            margin: 0,
-            padding: 0,
-            border: 'none',
-            borderRadius: '2px',
-            background: 'rgba(0,0,0,0.5)',
-            color: '#ffffff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            WebkitTapHighlightColor: 'transparent',
-            touchAction: 'manipulation',
-            transition: 'bottom 0.15s ease',
-            pointerEvents: 'auto',
-          }}
-        >
-          <FullscreenExpandIcon />
-        </button>
+        {!paused ? (
+          <button
+            type="button"
+            aria-label="Full screen"
+            onPointerDown={handleFullscreenPress}
+            onPointerUp={(e) => e.stopPropagation()}
+            onClick={handleFullscreenPress}
+            style={{
+              position: 'absolute',
+              right: '5px',
+              bottom: '5px',
+              zIndex: 10,
+              width: '22px',
+              height: '22px',
+              margin: 0,
+              padding: 0,
+              border: 'none',
+              borderRadius: '2px',
+              background: 'rgba(0,0,0,0.5)',
+              color: '#ffffff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              WebkitTapHighlightColor: 'transparent',
+              touchAction: 'manipulation',
+              pointerEvents: 'auto',
+            }}
+          >
+            <FullscreenExpandIcon />
+          </button>
+        ) : null}
       </div>
 
       <div
