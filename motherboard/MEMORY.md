@@ -21374,3 +21374,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists overview: EDIT LIST NAME spacing −4px above
 
 **Change:** `src/pages/wishlist/lists/page.tsx` — `LIST_OVERVIEW_EDIT_NAME_STYLE` `margin-top` `-8px → -12px` (4px tighter above red **EDIT LIST NAME** on list overview line view). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist: straight bundle thumb matches shop BCF hero
+
+**Context:** User asked to update the straight **bundle** thumbnail on `/wishlist` and wishlist **lists** pages to match the home/shop marble (not a separate hardcoded `ZYNxZol48…` URL). Cart still uses `ZYNxZol48` via `shopBcfCartLineThumbnailSrc` in `bcfProductOptions.ts` — wishlist aligns with `/products` shop grid.
+
+**Change:** `wishlistListItemDetails.ts` — infer BCF category/texture from item id/name; `getWishlistBcfThumbSrc()` returns `shopTextureCategoryHeroPhotoSrc` (bundles.straight → `_6biiXliVwiLZhD23zVMx_ikG2kkur.jpeg` from `shopTextureCategoryThumb.ts`). `wishlist/page.tsx` removed inline straight-bundle override; `lists/page.tsx` + `shared/page.tsx` — `getLeafBrickFrontImage()` prefers BCF thumb before wig front image. Pushed `master` + `preview/mobile`.
