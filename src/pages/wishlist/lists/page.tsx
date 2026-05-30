@@ -300,8 +300,8 @@ const EMPTY_LIST_THUMB_SCALE = 0.792;
 const LIST_OVERVIEW_THUMB_WIDTH_PX = 88;
 const LIST_OVERVIEW_THUMB_HEIGHT_PX = 110;
 
-/** BCF thumbs on `/wishlist/lists` only (not main wishlist or shared list). +44% vs original 0.9 scale (two +20% bumps). */
-const LISTS_PAGE_BCF_THUMB_SCALE = 0.9 * 1.2 * 1.2;
+/** BCF thumbs on `/wishlist/lists` only (not main wishlist or shared list). +20% vs prior 0.9 scale. */
+const LISTS_PAGE_BCF_THUMB_SCALE = 0.9 * 1.2;
 /** Letterbox / inset band above-below BCF art inside the black frame (not gray frosted card). */
 const LISTS_PAGE_BCF_THUMB_FRAME_BG = '#FFFFFF';
 
