@@ -38,6 +38,8 @@ import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsT
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
 import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBar';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
+import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
   marbleStripCellOuter,
@@ -150,6 +152,7 @@ const BUNDLE_COPY_MARGIN_TOP_PX = Math.round(100 * BUNDLE_HERO_LAYOUT_SCALE) - 8
  * Space above SIMILAR strip vs ADD TO BAG: matches Noir stack — CUSTOMIZE `marginTop` 10px +
  * button row (~`py-2` + 11px label) + SIMILAR `marginTop` 20px (BCF has no customize button).
  */
+/** Unit PDP: customize row + ADD TO BAG + SIMILAR; BCF: NOTIFY row when sold out + ADD TO BAG + SIMILAR. */
 const BCF_SIMILAR_STRIP_MARGIN_TOP_PX = 10 + 40 + 20;
 
 function bundlePdpHeroMaxWidthPx(tex: Texture): number {
@@ -247,6 +250,8 @@ export default function ShopTextureCategoryProductPage() {
     return <Navigate to="/shop/bundles?texture=straight" replace />;
   }
   const texture: Texture = parseTextureSearch(location.search) ?? 'straight';
+  const inventory = useProductInventorySnapshot();
+  const bcfSoldOut = inventory.isBcfSoldOut();
 
   const [activeTab, setActiveTab] = usePersistentQueryState<BcfProductTab>({
     queryKey: 'tab',
@@ -585,7 +590,7 @@ export default function ShopTextureCategoryProductPage() {
   const bcfPdpCopyTy = (px: number) => (bcfUsesBundleStyleHero ? 0 : px);
 
   const handleAddToBag = () => {
-    if (!category) return;
+    if (!category || bcfSoldOut) return;
     setAddToBagState('adding');
     setTimeout(() => {
       try {
@@ -625,7 +630,7 @@ export default function ShopTextureCategoryProductPage() {
   const BUNDLE_DEAL_QTY = 3;
 
   const handleBundleDealToBag = () => {
-    if (category !== 'bundles') return;
+    if (category !== 'bundles' || bcfSoldOut) return;
     if (!isPremiumMemberForGatedFeatures()) {
       setShowBcfColorUpgradeModal(true);
       return;
@@ -1778,41 +1783,22 @@ export default function ShopTextureCategoryProductPage() {
                 </div>
               </div>
 
-              <div className="px-0 md:px-0" style={{ marginTop: '2px' }}>
-                <button
-                  type="button"
-                  onClick={handleAddToBag}
-                  disabled={addToBagState === 'adding'}
-                  className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold ${
-                    addToBagState === 'adding'
-                      ? 'bg-white cursor-not-allowed'
-                      : addToBagState === 'added'
-                        ? 'bg-white cursor-pointer'
-                        : 'bg-white cursor-pointer hover:bg-gray-50'
-                  }`}
-                  style={{
-                    borderWidth: '1.3px',
-                    color: '#EB1C24',
-                    fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
-                    backgroundColor: '#FFFFFF'
-                  }}
-                >
-                  {addToBagState === 'idle' && 'ADD TO BAG'}
-                  {addToBagState === 'adding' && 'ADDING...'}
-                  {addToBagState === 'added' && (
-                    <span className="flex items-center justify-center gap-1">
-                      <img src="/assets/check.svg" alt="" width={9} height={9} />
-                      <span style={{ color: '#808080' }}>IN THE BAG</span>
-                    </span>
-                  )}
-                </button>
-                {category === 'bundles' && (
+              <UnitPdpCartActions
+                variant="bcf"
+                productName={cartLineName}
+                soldOut={bcfSoldOut}
+                addToBagState={addToBagState}
+                onAddToBag={handleAddToBag}
+                onCustomize={() => {}}
+                buttonFontFamily='"Futura PT Medium", Futura, Inter, sans-serif'
+              >
+                {category === 'bundles' ? (
                   <button
                     type="button"
                     onClick={handleBundleDealToBag}
-                    disabled={bundleDealState === 'adding' || addToBagState === 'adding'}
+                    disabled={bcfSoldOut || bundleDealState === 'adding' || addToBagState === 'adding'}
                     className={`border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold mt-2 ${
-                      bundleDealState === 'adding'
+                      bcfSoldOut || bundleDealState === 'adding'
                         ? 'bg-white cursor-not-allowed'
                         : bundleDealState === 'added'
                           ? 'bg-white cursor-pointer'
@@ -1822,26 +1808,27 @@ export default function ShopTextureCategoryProductPage() {
                       borderWidth: '1.3px',
                       color: '#EB1C24',
                       fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
-                      backgroundColor: '#FFFFFF'
+                      backgroundColor: '#FFFFFF',
                     }}
                   >
-                    {bundleDealState === 'idle' && 'BUNDLE DEAL'}
-                    {bundleDealState === 'adding' && 'ADDING...'}
-                    {bundleDealState === 'added' && (
+                    {bcfSoldOut && 'SOLD OUT'}
+                    {!bcfSoldOut && bundleDealState === 'idle' && 'BUNDLE DEAL'}
+                    {!bcfSoldOut && bundleDealState === 'adding' && 'ADDING...'}
+                    {!bcfSoldOut && bundleDealState === 'added' && (
                       <span className="flex items-center justify-center gap-1">
                         <img src="/assets/check.svg" alt="" width={9} height={9} />
                         <span style={{ color: '#808080' }}>IN THE BAG</span>
                       </span>
                     )}
                   </button>
-                )}
-              </div>
+                ) : null}
+              </UnitPdpCartActions>
 
               {/* SIMILAR — other textures; spacing + thumb sizing aligned with Noir 2D similar strip */}
               <div
                 className="px-0 md:px-0"
                 style={{
-                  marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX}px`,
+                  marginTop: `${BCF_SIMILAR_STRIP_MARGIN_TOP_PX + (bcfSoldOut ? 50 : 0)}px`,
                   marginBottom: '20px',
                   minWidth: '100%',
                   maxWidth: 'none',

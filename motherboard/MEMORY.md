@@ -21585,3 +21585,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted **VIEW WAITLIST** below **EDIT INVENTORY** on Admin → Revenue **Products** tab (same button styling), listing each unit SKU + signup count from **`unitStockNotifyWaitlist_v1`**; expand row shows **NAME** (client details / **NULL**), **EMAIL**, **VIEW CLIENT** or **NULL** → `/admin/clients/overview?email=`.
 
 **Change:** `adminUnitStockNotifyWaitlist.ts`, `revenue/view-waitlist/page.tsx`, route in **`App.tsx`**, Products tab actions in **`revenue/page.tsx`**. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF PDP notify-me + admin waitlist (9 BCF SKUs)
+
+**Context:** Extend sold-out **NOTIFY WHEN AVAILABLE** waitlist to BCF PDPs (`/shop/bundles|closures|frontals`) and Admin **VIEW WAITLIST**.
+
+**Change:** `unitStockNotify.ts` — BCF keys `BUNDLES · STRAIGHT` etc. (`BCF_NOTIFY_PRODUCT_NAMES`), `isProductSoldOutForStockNotify` uses `isBcfSoldOut()`, PDP routes on account alerts. `UnitPdpCartActions` **`variant="bcf"`** on `texture-category-product/page.tsx` (SOLD OUT + notify row; bundle deal disabled when OOS). `useProductInventorySnapshot` exposes **`isBcfSoldOut()`**. Admin waitlist lists 6 units + 9 BCF lines. Pushed `master` + `preview/mobile`.

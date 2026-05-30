@@ -3,6 +3,7 @@ import {
   PRODUCT_INVENTORY_UPDATED_EVENT,
   getWigProductRemainingUnits,
   getWigProductStockStatus,
+  isBcfSoldOut,
   isWigUnitSoldOut,
   type ProductStockStatus,
 } from '../utils/productInventoryAvailability';
@@ -37,6 +38,7 @@ export function useProductInventorySnapshot() {
       version,
       getStatus: (productName?: string): ProductStockStatus => getWigProductStockStatus(productName),
       isSoldOut: (productName?: string): boolean => isWigUnitSoldOut(productName),
+      isBcfSoldOut: (): boolean => isBcfSoldOut(),
       remainingUnits: (productName?: string): number => getWigProductRemainingUnits(productName),
     }),
     [version]

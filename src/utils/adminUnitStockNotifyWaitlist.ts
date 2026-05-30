@@ -2,7 +2,10 @@ import { getMockClientsForAyoteenz } from '../pages/admin/clients/page';
 import { WIG_UNIT_PRODUCT_NAMES } from './productInventoryAvailability';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
 import {
+  BCF_NOTIFY_PRODUCT_NAMES,
+  isBcfNotifyProductName,
   loadUnitStockNotifyWaitlist,
+  stockNotifyProductActionRoute,
   type UnitStockNotifyWaitlistEntry,
   UNIT_STOCK_NOTIFY_UPDATED_EVENT,
 } from './unitStockNotify';
@@ -26,8 +29,18 @@ function normalizeEmail(email: string): string {
 }
 
 function normalizeProductName(raw: string): string {
-  return normalizeCartLineProductName({ name: raw, productName: raw }) || String(raw || '').trim().toUpperCase();
+  const upper = String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s*·\s*/g, ' · ');
+  if (isBcfNotifyProductName(upper)) return upper;
+  return normalizeCartLineProductName({ name: raw, productName: raw }) || upper;
 }
+
+export const ALL_NOTIFY_WAITLIST_PRODUCT_NAMES = [
+  ...WIG_UNIT_PRODUCT_NAMES,
+  ...BCF_NOTIFY_PRODUCT_NAMES,
+];
 
 type ClientRow = { email?: string; firstName?: string; lastName?: string };
 
@@ -84,11 +97,11 @@ function groupWaitlistEntries(entries: UnitStockNotifyWaitlistEntry[]): Map<stri
   return byProduct;
 }
 
-/** Products with waitlist signups, fixed unit order then any extras alphabetically. */
+/** Products with waitlist signups, fixed unit + BCF order then any extras alphabetically. */
 export function buildWaitlistProductGroups(): WaitlistProductGroup[] {
   const byProduct = groupWaitlistEntries(loadUnitStockNotifyWaitlist());
   const ordered: string[] = [];
-  for (const name of WIG_UNIT_PRODUCT_NAMES) {
+  for (const name of ALL_NOTIFY_WAITLIST_PRODUCT_NAMES) {
     if (byProduct.has(name)) ordered.push(name);
   }
   const extras = [...byProduct.keys()].filter((k) => !ordered.includes(k)).sort();
@@ -105,11 +118,11 @@ export function buildWaitlistProductGroups(): WaitlistProductGroup[] {
   });
 }
 
-/** All six units for display (count 0 when no signups). */
+/** All wig units + BCF SKUs for display (count 0 when no signups). */
 export function buildWaitlistProductGroupsWithZeros(): WaitlistProductGroup[] {
   const withSignups = buildWaitlistProductGroups();
   const byName = new Map(withSignups.map((g) => [g.productName, g]));
-  return WIG_UNIT_PRODUCT_NAMES.map((productName) => {
+  return ALL_NOTIFY_WAITLIST_PRODUCT_NAMES.map((productName) => {
     return (
       byName.get(productName) ?? {
         productName,
@@ -118,4 +131,8 @@ export function buildWaitlistProductGroupsWithZeros(): WaitlistProductGroup[] {
       }
     );
   });
+}
+
+export function waitlistProductShopRoute(productName: string): string {
+  return stockNotifyProductActionRoute(productName);
 }

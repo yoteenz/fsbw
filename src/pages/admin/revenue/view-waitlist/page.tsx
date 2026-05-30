@@ -160,7 +160,7 @@ export default function AdminViewWaitlistPage() {
                 textTransform: 'uppercase',
               }}
             >
-              NOTIFY-ME SIGNUPS WHEN UNITS ARE SOLD OUT. TAP A PRODUCT TO VIEW NAMES, EMAILS, AND OPEN CLIENT DETAILS.
+              NOTIFY-ME SIGNUPS WHEN WIG UNITS OR BCF (BUNDLES / CLOSURES / FRONTALS) ARE SOLD OUT. TAP A PRODUCT TO VIEW NAMES, EMAILS, AND OPEN CLIENT DETAILS.
             </p>
             <div className="space-y-0">
               {groups.map((group) => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import StockNotifyModal from './StockNotifyModal';
 
 type AddToBagState = 'idle' | 'adding' | 'added';
@@ -10,6 +10,10 @@ type UnitPdpCartActionsProps = {
   onAddToBag: () => void;
   onCustomize: () => void;
   buttonFontFamily?: string;
+  /** `bcf`: no customize row when in stock; notify row only when sold out. */
+  variant?: 'unit' | 'bcf';
+  /** Rendered below ADD TO BAG (e.g. BUNDLE DEAL) when `variant="bcf"`. */
+  children?: ReactNode;
 };
 
 const defaultFont =
@@ -23,8 +27,11 @@ export function UnitPdpCartActions({
   onAddToBag,
   onCustomize,
   buttonFontFamily = defaultFont,
+  variant = 'unit',
+  children,
 }: UnitPdpCartActionsProps) {
   const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const showNotifyRow = variant === 'unit' || (variant === 'bcf' && soldOut);
 
   return (
     <>
@@ -57,30 +64,33 @@ export function UnitPdpCartActions({
             </span>
           )}
         </button>
+        {children}
       </div>
 
-      <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
-        <button
-          type="button"
-          onClick={() => {
-            if (soldOut) {
-              setShowNotifyModal(true);
-              return;
-            }
-            onCustomize();
-          }}
-          className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
-          style={{
-            borderWidth: '1.3px',
-            color: soldOut ? '#808080' : '#EB1C24',
-            fontFamily: soldOut
-              ? '"Futura PT Demi", Futura, sans-serif'
-              : buttonFontFamily,
-          }}
-        >
-          {soldOut ? 'NOTIFY WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
-        </button>
-      </div>
+      {showNotifyRow ? (
+        <div className="px-0 md:px-0" style={{ marginTop: '10px' }}>
+          <button
+            type="button"
+            onClick={() => {
+              if (soldOut) {
+                setShowNotifyModal(true);
+                return;
+              }
+              onCustomize();
+            }}
+            className="border border-black font-futura w-full max-w-m text-center py-2 text-[11px] font-semibold bg-white cursor-pointer hover:bg-gray-50"
+            style={{
+              borderWidth: '1.3px',
+              color: soldOut ? '#808080' : '#EB1C24',
+              fontFamily: soldOut
+                ? '"Futura PT Demi", Futura, sans-serif'
+                : buttonFontFamily,
+            }}
+          >
+            {soldOut ? 'NOTIFY WHEN AVAILABLE' : 'CUSTOMIZE IN BUILD-A-WIG'}
+          </button>
+        </div>
+      ) : null}
 
       <StockNotifyModal
         isOpen={showNotifyModal}

@@ -1,5 +1,9 @@
 import { getNotificationsStorageKeyForUserEmail, type StoredNotification } from './orderAccountAlerts';
-import { isWigUnitSoldOut, PRODUCT_INVENTORY_UPDATED_EVENT } from './productInventoryAvailability';
+import {
+  isBcfSoldOut,
+  isWigUnitSoldOut,
+  PRODUCT_INVENTORY_UPDATED_EVENT,
+} from './productInventoryAvailability';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
 
 export const UNIT_STOCK_NOTIFY_WAITLIST_KEY = 'unitStockNotifyWaitlist_v1';
@@ -11,8 +15,68 @@ export type UnitStockNotifyWaitlistEntry = {
   createdAt: number;
 };
 
+const BCF_NOTIFY_PRODUCT_PATTERN = /^(BUNDLES|CLOSURES|FRONTALS)\s*·\s*(STRAIGHT|WAVY|CURLY)$/;
+
+/** Cart / PDP label for BCF notify waitlist (e.g. `BUNDLES · STRAIGHT`). */
+export function buildBcfNotifyProductName(
+  category: 'bundles' | 'closures' | 'frontals',
+  texture: 'straight' | 'wavy' | 'curly'
+): string {
+  const cat = category.toUpperCase();
+  const tex = texture.toUpperCase();
+  if (cat === 'BUNDLES') return `BUNDLES · ${tex}`;
+  if (cat === 'CLOSURES') return `CLOSURES · ${tex}`;
+  return `FRONTALS · ${tex}`;
+}
+
+export const BCF_NOTIFY_PRODUCT_NAMES: string[] = (
+  ['BUNDLES', 'CLOSURES', 'FRONTALS'] as const
+).flatMap((cat) =>
+  (['STRAIGHT', 'WAVY', 'CURLY'] as const).map((tex) => {
+    if (cat === 'BUNDLES') return `BUNDLES · ${tex}`;
+    if (cat === 'CLOSURES') return `CLOSURES · ${tex}`;
+    return `FRONTALS · ${tex}`;
+  })
+);
+
+export function isBcfNotifyProductName(productName: string): boolean {
+  const n = String(productName || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s*·\s*/g, ' · ');
+  return BCF_NOTIFY_PRODUCT_PATTERN.test(n);
+}
+
+function normalizeNotifyProductName(productName: string): string {
+  const raw = String(productName || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s*·\s*/g, ' · ');
+  if (isBcfNotifyProductName(raw)) return raw;
+  return normalizeCartLineProductName({ name: raw, productName: raw });
+}
+
 function normalizeUnitName(productName: string): string {
-  return normalizeCartLineProductName({ name: productName, productName }) || String(productName || '').trim().toUpperCase();
+  return normalizeNotifyProductName(productName);
+}
+
+export function isProductSoldOutForStockNotify(productName: string): boolean {
+  const name = normalizeNotifyProductName(productName);
+  if (isBcfNotifyProductName(name)) return isBcfSoldOut();
+  return isWigUnitSoldOut(name);
+}
+
+export function stockNotifyProductActionRoute(productName: string): string {
+  const name = normalizeNotifyProductName(productName);
+  const m = name.match(/^(BUNDLES|CLOSURES|FRONTALS)\s*·\s*(STRAIGHT|WAVY|CURLY)$/);
+  if (m) {
+    const cat = m[1].toLowerCase();
+    const tex = m[2].toLowerCase();
+    if (cat === 'bundles' || cat === 'closures' || cat === 'frontals') {
+      return `/shop/${cat}?texture=${tex}`;
+    }
+  }
+  return '/home/shop';
 }
 
 function normalizeEmail(email: string): string {
@@ -67,7 +131,7 @@ function appendStockNotifySignupAlert(email: string, unitName: string): void {
     title: `${unitName} — BACK IN STOCK`,
     message: `WE'LL NOTIFY YOU WHEN ${unitName} IS AVAILABLE AGAIN.`,
     actionText: 'VIEW SHOP',
-    actionRoute: '/home/shop',
+    actionRoute: stockNotifyProductActionRoute(unitName),
     date: todayMdy(),
     sortAt: Date.now(),
     isRead: false,
@@ -92,7 +156,7 @@ function appendBackInStockAlert(email: string, unitName: string): void {
     title: `${unitName} IS BACK IN STOCK`,
     message: `${unitName} IS AVAILABLE NOW — SHOP BEFORE IT SELLS OUT.`,
     actionText: 'SHOP NOW',
-    actionRoute: '/home/shop',
+    actionRoute: stockNotifyProductActionRoute(unitName),
     date: todayMdy(),
     sortAt: Date.now(),
     isRead: false,
@@ -127,7 +191,7 @@ export function registerUnitStockNotifyRequest(
   const email = normalizeEmail(emailInput);
   if (!unitName) return { ok: false, message: 'INVALID PRODUCT.' };
   if (!isValidEmail(email)) return { ok: false, message: 'ENTER A VALID EMAIL ADDRESS.' };
-  if (!isWigUnitSoldOut(unitName)) {
+  if (!isProductSoldOutForStockNotify(unitName)) {
     return { ok: false, message: `${unitName} IS IN STOCK — YOU CAN ADD IT TO YOUR BAG.` };
   }
 
@@ -160,7 +224,7 @@ export function processUnitStockNotifyWaitlistOnInventoryUpdate(): void {
   const stillWaiting: UnitStockNotifyWaitlistEntry[] = [];
   for (const entry of list) {
     const unit = normalizeUnitName(entry.productName);
-    if (isWigUnitSoldOut(unit)) {
+    if (isProductSoldOutForStockNotify(unit)) {
       stillWaiting.push(entry);
       continue;
     }
