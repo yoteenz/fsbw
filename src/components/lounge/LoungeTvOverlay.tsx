@@ -115,7 +115,7 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '1px',
+  gap: 0,
   padding: '4px',
   textAlign: 'center',
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
