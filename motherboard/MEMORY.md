@@ -21737,3 +21737,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted product text lower than **−10px** net translate for long BCF detail blocks.
 
 **Change:** **`CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX` `25` → `33`** (7 lines **−10px → −2px**). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists BCF thumbs: white letterbox bands (#FFFFFF)
+
+**Context:** Gray strips above/below BCF art inside black frames on **`/wishlist/lists`** (overview + expanded line/grid).
+
+**Change:** **`LISTS_PAGE_BCF_THUMB_FRAME_BG` `#FFFFFF`** on **`WishlistListOverviewThumb`** + **`WishlistItemThumb`** (`bcfFrameBackgroundColor`, lists page only). Inset ring + frame background match. Shared/main wishlist unchanged. Pushed `master` + `preview/mobile`.
