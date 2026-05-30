@@ -22065,3 +22065,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
 
 **Change:** Reverted vw **`top` + `translateY(-100%)`** to restored **`top: 50%`**, **`translate(calc(-50% + 25px), calc(-50% + 290px))`**, **`height: 160px`** (mobile/tablet). **`@media (min-width: 1024px)`** adds **`+52px`** Y (**`342px`** total). Tunables in **`loungeSceneLayout.ts`**.
+
+---
+
+## 2026-05-30 — Lounge TV play color + chairs lg+10px
+
+**Context:** User wanted lounge TV **play** control **`#535453`** (not white) and salon chairs **10px lower on large screens only**.
+
+**Change:** **`LOUNGE_TV_PLAY_BUTTON_COLOR`** in **`loungeTvFrame.tsx`**; lobby play uses CSS **mask** on **`play-button.png`**. **`LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX`** **`52` → `62`** (**`352px`** total Y at **1024px+**).
