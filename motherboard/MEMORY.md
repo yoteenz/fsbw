@@ -22205,3 +22205,18 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted **Watch + Learn** thumbnails to expand in-place to a **video** (stock placeholder), with **title** left / **duration** right, **description** below; **tap** pause, **double-tap** fullscreen; tap **Watch + Learn** tab again returns to thumbnail grid.
 
 **Change:** **`LoungeTvWatchLearnPlayer.tsx`**; **`loungeTvContent.ts`** adds **`videoSrc`**, **`durationLabel`**, **`description`** for watch-learn tiles (placeholder MP4 from GCS sample bucket). **`LoungeTvScreen`** **`selectedVideoId`** state; grid only on watch-learn with **`videoSrc`**. Commit **`e71e1929`**.
+
+---
+
+## 2026-05-29 — Admin lounge TV CONTENT tab + brand tabs one row
+
+**Context (full chat arc):** Lounge TV overlay polish (curtains, static, hand timing, play button, chairs), thumbnail labels (*NEW* / gray-white), Watch + Learn in-place player, Vercel build fix for thumb label naming. Latest ask: **CONTENT** tab on **`/admin/backend`** listing each TV category (main tab · sidebar) as an **accordion** (tap expands in place, one open at a time) to upload **photo/video** with **title** and **body**; persist like special-offer config. Also **admin brand** page tabs on **one row** (no wrap).
+
+**Decisions / outcomes:**
+- **`loungeTvAdminConfig.ts`**: types, default seed from **`getLoungeTvTilesStatic`**, localStorage **`loungeTvAdminConfig`**, **`resolveLoungeTvTiles`**, **`hydrateLoungeTvAdminConfig`**, **`LOUNGE_TV_CONFIG_UPDATED_EVENT`** on save.
+- **API**: **`GET /api/lounge-tv-config`**, **`PUT /api/admin/lounge-tv-config`** → Supabase **`app_config`** key **`lounge_tv_admin`**; client **`getLoungeTvAdminConfig`** / **`putAdminLoungeTvConfig`** in **`api.ts`**.
+- **Admin UI**: **`AdminLoungeTvContentPanel`** on backend **CONTENT** tab; per-category save; FileReader uploads (videos capped ~4MB inline, else URL).
+- **Lobby TV**: **`LoungeTvOverlay`** hydrates config on mount; **`LoungeTvScreen`** refreshes tiles on config-updated event.
+- **Brand admin**: both tab rows use **`flexWrap: 'nowrap'`**, smaller font, horizontal scroll.
+
+**Changes:** `src/utils/loungeTvAdminConfig.ts`, `api/lounge-tv-config.ts`, `api/admin/lounge-tv-config.ts`, `src/utils/api.ts`, `src/pages/admin/components/AdminLoungeTvContentPanel.tsx`, `src/pages/admin/backend/page.tsx`, `src/pages/admin/brand/page.tsx`, `src/components/lounge/LoungeTvOverlay.tsx`, `src/components/lounge/loungeTvContent.ts` (`getLoungeTvTilesStatic` rename).
