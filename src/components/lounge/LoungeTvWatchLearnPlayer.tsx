@@ -334,7 +334,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             fontFamily: BODY_FONT,
             fontSize: '7px',
             letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.92)',
+            color: BRAND_RED,
             textTransform: 'uppercase',
             lineHeight: 1,
             flexShrink: 0,
@@ -352,7 +352,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           fontFamily: BODY_FONT,
           fontSize: '7px',
           lineHeight: 1.35,
-          color: '#b5b5b5',
+          color: BODY_GRAY,
           textAlign: 'left',
         }}
       >
