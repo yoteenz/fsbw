@@ -248,7 +248,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               right: 0,
               bottom: 0,
               zIndex: 2,
-              padding: '4px 28px 6px 6px',
+              padding: '4px 6px 6px',
               background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
               boxSizing: 'border-box',
             }}
