@@ -402,6 +402,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
 
   if (!visible || typeof document === 'undefined') return null;
 
+  /** Keep black glass visible while shrinking back to lobby (only hide during initial open grow). */
+  const showTvBlackScreen = animatedIn || !isOpen;
+
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   let targetScreenW = Math.min(vw * 0.92, 380) * LOUNGE_TV_OVERLAY_SIZE_SCALE;
@@ -463,8 +466,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           closeVisible={animatedIn && !poweringOff}
           onClose={() => requestClose()}
           screenStyle={{
-            opacity: animatedIn ? 1 : 0,
-            transition: animatedIn ? 'opacity 220ms ease' : 'none',
+            opacity: showTvBlackScreen ? 1 : 0,
+            transition: 'opacity 220ms ease',
           }}
         >
           <LoungeTvPowerOnStatic active={animatedIn && !showContent && !poweringOff} />
