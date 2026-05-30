@@ -21967,3 +21967,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User supplied new 10–12 pleat curtain JPEG pair; hand/remote was clipped at bottom-right on mobile.
 
 **Changes:** Replaced **`lounge-curtain-left.jpeg`** / **`right.jpeg`** (Supabase **`1rmzkVKNKkP6hpLD9gOVF_41oSopA5`**, **`rnAnKKGlJDhcNOHJZNbRC_ftDz6eCk`**). **`LoungeTvRemoteHand`**: smaller **`min(38vw, 240px)`**, **`maxHeight min(26vh, 220px)`**, bottom safe inset, centered under TV via **`translate(-38%, 0)`** so full hand fits in viewport.
+
+---
+
+## 2026-05-30 — Lounge TV: tv-screen asset, affiliate close, hand down
+
+**Context:** Hand too close to TV; close X hard to see; overlay should use same **`tv-screen.png`** as lobby, not CSS gray bezel card.
+
+**Changes:** **`LoungeTvOverlay`** — animates **`LOUNGE_TV_FRAME_SRC`** (`/assets/tv-screen.png`) with UI in screen inset; close = affiliate style (white circle, black ring, brand filter on **`close-icon.svg`**). **`LoungeTvRemoteHand`**: **`bottom - 20px`**. Pushed **`master`** + **`preview/mobile`**.
