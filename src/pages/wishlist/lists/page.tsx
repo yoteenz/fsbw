@@ -72,6 +72,22 @@ const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 
 const WISHLIST_LISTS_VIEW_MODE_STORAGE_KEY = 'wishlist_lists_view_mode';
 
+/** Match expanded-list scroll content: section pad + row margins around line/grid toggle. */
+const LISTS_VIEW_MODE_TOGGLE_SECTION_PADDING_TOP_PX = 8;
+const LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_TOP_PX = 6;
+const LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_BOTTOM_PX = 16;
+
+function listsViewModeToggleRowStyle(marginBottomPx: number): React.CSSProperties {
+  return {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: `${LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_TOP_PX}px`,
+    marginBottom: marginBottomPx === 0 ? 0 : `${marginBottomPx}px`,
+    flexShrink: 0,
+  };
+}
+
 function readPersistedListsViewMode(): 'grid' | 'line' {
   if (typeof window === 'undefined') return 'line';
   try {
@@ -366,6 +382,31 @@ const LIST_OVERVIEW_COUNT_STYLE: React.CSSProperties = {
   color: '#000',
   textTransform: 'uppercase',
 };
+
+function ListsViewModeToggleBar({
+  mode,
+  onModeChange,
+  marginBottomPx = LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_BOTTOM_PX,
+  includeSectionPaddingTop = false,
+}: {
+  mode: 'line' | 'grid';
+  onModeChange: (mode: 'line' | 'grid') => void;
+  marginBottomPx?: number;
+  /** Overview has no outer content pad; expanded list wraps the whole panel with 8px top. */
+  includeSectionPaddingTop?: boolean;
+}) {
+  const row = (
+    <div style={listsViewModeToggleRowStyle(marginBottomPx)}>
+      <WishlistViewModeToggle mode={mode} onModeChange={onModeChange} />
+    </div>
+  );
+  if (!includeSectionPaddingTop) return row;
+  return (
+    <div style={{ paddingTop: `${LISTS_VIEW_MODE_TOGGLE_SECTION_PADDING_TOP_PX}px`, flexShrink: 0 }}>
+      {row}
+    </div>
+  );
+}
 
 function WishlistViewModeToggle({
   mode,
@@ -1035,25 +1076,20 @@ export default function ViewListsPage() {
                     return (
                       <div
                         style={{
-                          paddingTop: '8px',
+                          paddingTop: `${LISTS_VIEW_MODE_TOGGLE_SECTION_PADDING_TOP_PX}px`,
                           flex: 1,
                           minHeight: 0,
                           display: 'flex',
                           flexDirection: 'column',
                         }}
                       >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                            marginTop: '6px',
-                            marginBottom: expandedItems.length === 0 ? 0 : '16px',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <WishlistViewModeToggle mode={listsViewMode} onModeChange={setListsViewModePersisted} />
-                        </div>
+                        <ListsViewModeToggleBar
+                          mode={listsViewMode}
+                          onModeChange={setListsViewModePersisted}
+                          marginBottomPx={
+                            expandedItems.length === 0 ? 0 : LISTS_VIEW_MODE_TOGGLE_ROW_MARGIN_BOTTOM_PX
+                          }
+                        />
                         {expandedItems.length === 0 ? (
                           <div
                             style={{
@@ -1284,21 +1320,11 @@ export default function ViewListsPage() {
                 ) : (
                 <>
                 {lists.length > 0 && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                      marginTop: '6px',
-                      marginBottom: '16px',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <WishlistViewModeToggle
-                      mode={listsViewMode}
-                      onModeChange={setListsViewModePersisted}
-                    />
-                  </div>
+                  <ListsViewModeToggleBar
+                    mode={listsViewMode}
+                    onModeChange={setListsViewModePersisted}
+                    includeSectionPaddingTop
+                  />
                 )}
                 {/* List rows or grid: user-created lists only (main wishlist lives on /wishlist) */}
                 <div
