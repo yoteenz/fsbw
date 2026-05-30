@@ -7,6 +7,26 @@ export const shopProductGridTextColStyle: CSSProperties = {
   boxSizing: 'border-box',
 };
 
+/** Home/shop marble cell inner band (UNITS + BCF) — keeps thumb-to-copy rhythm identical. */
+export const shopProductGridCellBandStyle: CSSProperties = {
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  padding: '5px 12px 4px 12px',
+  transform: 'translateY(-14px)',
+};
+
+/** Thumb row above product copy on home/shop grids. */
+export const shopProductGridThumbWrapStyle: CSSProperties = {
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: '5px',
+};
+
 /** Product name (Covered By Your Grace). */
 export function shopProductGridNameStyle(extra?: CSSProperties): CSSProperties {
   return {

@@ -27,10 +27,12 @@ import {
 } from '../../utils/productInventoryAvailability';
 import {
   shopProductGridCapSizeRowStyle,
+  shopProductGridCellBandStyle,
   shopProductGridNameStyle,
   shopProductGridPriceStyle,
   shopProductGridRedLineStyle,
   shopProductGridTextColStyle,
+  shopProductGridThumbWrapStyle,
 } from '../../utils/shopProductGridCopyStyles';
 
 function ProductsPage() {
@@ -1075,27 +1077,8 @@ function ProductsPage() {
                             ...dbgProductCol
                           }}
                         >
-                          <div
-                            style={{
-                              width: '100%',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              boxSizing: 'border-box',
-                              padding: '5px 12px 4px 12px',
-                              transform: 'translateY(-14px)',
-                              ...dbgProductBand
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '5px'
-                              }}
-                            >
+                          <div style={{ ...shopProductGridCellBandStyle, ...dbgProductBand }}>
+                            <div style={shopProductGridThumbWrapStyle}>
                               <img
                                 src={product.image}
                                 alt={product.name}
@@ -1427,28 +1410,8 @@ function ProductsPage() {
                                 ...dbgProductCol
                               }}
                             >
-                              <div
-                                style={{
-                                  width: '100%',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  boxSizing: 'border-box',
-                                  padding: '5px 12px 4px 12px',
-                                  transform: 'translateY(-2px)',
-                                  ...dbgProductBand
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginBottom: '5px',
-                                    transform: 'translateY(3px)'
-                                  }}
-                                >
+                              <div style={{ ...shopProductGridCellBandStyle, ...dbgProductBand }}>
+                                <div style={shopProductGridThumbWrapStyle}>
                                   <img
                                     src={shopTextureCategoryThumbSrc(t.slug, categorySlug)}
                                     alt={t.label}
@@ -1472,32 +1435,23 @@ function ProductsPage() {
                                   />
                                 </div>
                                 <div style={shopProductGridTextColStyle}>
-                                  <p
-                                    style={shopProductGridNameStyle({
-                                      pointerEvents: 'none',
-                                    })}
-                                  >
-                                    {t.label}
-                                  </p>
+                                  <p style={shopProductGridNameStyle()}>{t.label}</p>
                                   {(categorySlug === 'bundles' ||
                                     categorySlug === 'closures' ||
                                     categorySlug === 'frontals') && (
                                     <>
-                                      <p
-                                        style={shopProductGridRedLineStyle({
-                                          pointerEvents: 'none',
-                                        })}
-                                      >
+                                      <p style={shopProductGridRedLineStyle()}>
                                         {bcfShopTextureRedLine}
                                       </p>
-                                      <p
-                                        style={shopProductGridPriceStyle({
-                                          pointerEvents: 'none',
-                                        })}
-                                        dangerouslySetInnerHTML={formatShopTextureRange(
+                                      <WigProductPriceDisplay
+                                        productName={`bcf-${categorySlug}-${t.slug}`}
+                                        soldOutPriceTreatment="strikethrough-only"
+                                        priceHtml={formatShopTextureRange(
                                           bcfPdpPriceRangeUsd(categorySlug, t.slug).minUsd,
                                           bcfPdpPriceRangeUsd(categorySlug, t.slug).maxUsd
                                         )}
+                                        priceStyle={shopProductGridPriceStyle()}
+                                        labelStyle={{ transform: 'translateY(1px)' }}
                                       />
                                     </>
                                   )}
