@@ -20,7 +20,10 @@ import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
 
 const BRAND_RED = '#EB1C24';
+/** TV frame grow + curtain close + remote hand reveal. */
 const ANIM_MS = 1400;
+/** CRT static on screen after grow/hand, before menu content. */
+const STATIC_PHASE_MS = 1400;
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
 const CURTAIN_PANEL_WIDTH = '54vw';
 /** Velvet tone — must match curtain art so any sliver at the hem is invisible. */
@@ -313,7 +316,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [animatedIn, setAnimatedIn] = useState(false);
   const [curtainsReady, setCurtainsReady] = useState(false);
   const [remoteHandReady, setRemoteHandReady] = useState(false);
-  const [staticPhaseDone, setStaticPhaseDone] = useState(false);
+  const [tvGrowDone, setTvGrowDone] = useState(false);
+  const [showStatic, setShowStatic] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [poweringOff, setPoweringOff] = useState(false);
   const isClosingRef = useRef(false);
@@ -328,6 +332,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     }
     isClosingRef.current = true;
     setShowContent(false);
+    setShowStatic(false);
     setPoweringOff(true);
   }, [poweringOff, animatedIn, onClose]);
 
@@ -347,7 +352,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   useEffect(() => {
     if (!isOpen) {
       setShowContent(false);
-      setStaticPhaseDone(false);
+      setShowStatic(false);
+      setTvGrowDone(false);
       setRemoteHandReady(false);
       setPoweringOff(false);
       setAnimatedIn(false);
@@ -358,7 +364,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     setPoweringOff(false);
     setCurtainsReady(false);
     setRemoteHandReady(false);
-    setStaticPhaseDone(false);
+    setTvGrowDone(false);
+    setShowStatic(false);
     let cancelled = false;
     Promise.all([preloadImage(LOUNGE_CURTAIN_LEFT_SRC), preloadImage(LOUNGE_CURTAIN_RIGHT_SRC)]).then(() => {
       if (!cancelled) setCurtainsReady(true);
@@ -376,37 +383,48 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     const timer = window.setTimeout(() => {
       setVisible(false);
       setCurtainsReady(false);
-      setStaticPhaseDone(false);
+      setTvGrowDone(false);
+      setShowStatic(false);
       setRemoteHandReady(false);
     }, ANIM_MS);
     return () => window.clearTimeout(timer);
   }, [isOpen, visible]);
 
+  /** Grow TV + reveal hand together once curtains and hand asset are ready. */
   useEffect(() => {
-    if (!isOpen || !curtainsReady || isClosingRef.current || poweringOff) return;
+    if (!isOpen || !curtainsReady || !remoteHandReady || isClosingRef.current || poweringOff) return;
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (!isClosingRef.current && !poweringOff) setAnimatedIn(true);
       });
     });
     return () => cancelAnimationFrame(id);
-  }, [isOpen, curtainsReady, poweringOff]);
+  }, [isOpen, curtainsReady, remoteHandReady, poweringOff]);
 
   useEffect(() => {
-    if (!isOpen || !animatedIn || !curtainsReady || isClosingRef.current || poweringOff) return;
+    if (!isOpen || !animatedIn || isClosingRef.current || poweringOff) return;
     const timer = window.setTimeout(() => {
-      if (!isClosingRef.current && !poweringOff) setStaticPhaseDone(true);
+      if (!isClosingRef.current && !poweringOff) setTvGrowDone(true);
     }, ANIM_MS);
     return () => window.clearTimeout(timer);
-  }, [isOpen, animatedIn, curtainsReady, poweringOff]);
+  }, [isOpen, animatedIn, poweringOff]);
+
+  /** Static only after TV is full size and hand has finished its reveal. */
+  useEffect(() => {
+    if (!tvGrowDone || !remoteHandReady || isClosingRef.current || poweringOff || showContent) return;
+    setShowStatic(true);
+  }, [tvGrowDone, remoteHandReady, poweringOff, showContent]);
 
   useEffect(() => {
-    if (!staticPhaseDone || !remoteHandReady || isClosingRef.current || poweringOff) {
-      if (!isOpen) setShowContent(false);
-      return;
-    }
-    setShowContent(true);
-  }, [staticPhaseDone, remoteHandReady, isOpen, poweringOff]);
+    if (!showStatic || isClosingRef.current || poweringOff) return;
+    const timer = window.setTimeout(() => {
+      if (!isClosingRef.current && !poweringOff) {
+        setShowStatic(false);
+        setShowContent(true);
+      }
+    }, STATIC_PHASE_MS);
+    return () => window.clearTimeout(timer);
+  }, [showStatic, poweringOff]);
 
   const handleRemoteHandLoaded = useCallback(() => {
     setRemoteHandReady(true);
@@ -486,7 +504,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
       <LoungeTvRemoteHand
-        visible={showContent && !poweringOff}
+        visible={animatedIn && remoteHandReady && !poweringOff}
+        revealDurationMs={ANIM_MS}
         onLoaded={handleRemoteHandLoaded}
       />
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
@@ -499,7 +518,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
             transition: 'opacity 220ms ease',
           }}
         >
-          <LoungeTvPowerOnStatic active={animatedIn && !showContent && !poweringOff} />
+          <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
           <LoungeTvPowerOffEffect active={poweringOff} />
           {showContent && !poweringOff ? (
             <div
