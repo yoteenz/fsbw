@@ -2,14 +2,22 @@ import { LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
 
 type LoungeTvRemoteHandProps = {
   visible: boolean;
-  /** Fade/slide duration — should match TV grow (`ANIM_MS`). */
+  /** Fade/slide in after TV grow. */
   revealDurationMs?: number;
+  /** Fade/slide out after power-off screen is black. */
+  hideDurationMs?: number;
   onLoaded?: () => void;
 };
 
 /** Hand + remote composited at bottom of viewport (chroma-keyed asset). */
-export function LoungeTvRemoteHand({ visible, revealDurationMs = 1400, onLoaded }: LoungeTvRemoteHandProps) {
-  const transition = `opacity ${revealDurationMs}ms ease, transform ${revealDurationMs}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+export function LoungeTvRemoteHand({
+  visible,
+  revealDurationMs = 1400,
+  hideDurationMs = 1400,
+  onLoaded,
+}: LoungeTvRemoteHandProps) {
+  const durationMs = visible ? revealDurationMs : hideDurationMs;
+  const transition = `opacity ${durationMs}ms ease, transform ${durationMs}ms cubic-bezier(0.4, 0, 0.2, 1)`;
 
   return (
     <img
