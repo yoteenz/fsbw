@@ -28,7 +28,7 @@ const ANSWER_STYLE = {
 
 const SECTION_TITLE_STYLE = {
   fontFamily: '"Bohemy", cursive',
-  fontSize: '18px',
+  fontSize: '19px',
   color: '#808080',
   fontWeight: 400,
   margin: '0 0 8px 0',

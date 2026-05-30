@@ -21352,3 +21352,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User provided Supabase URLs for bundles/closures/frontals × straight/wavy/curly and asked to update **product page** BCF thumbnails. PDP hero constants in `texture-category-product/page.tsx` (`BUNDLE_PHOTO_BY_TEXTURE`, `BCF_CF_PHOTO`) already matched; shop grid/similar-strip thumbs still used local `/assets/*.png` via `shopTextureCategoryThumbSrc`.
 
 **Change:** `src/utils/shopTextureCategoryThumb.ts` — `BCF_THUMB_PHOTO_BY_TEXTURE` map with all 9 URLs; `shopTextureCategoryThumbSrc` now returns those (fixes `/products` BCF marbles + any surface using the util). `texture-category-product/page.tsx` — SIMILAR strip uses `bcfHeroThumbSrcForTexture`; add-to-bag `image` uses hero/bundle photo URLs instead of legacy PNG thumbs. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Gray Bohemy section titles +1px (brand pages + affiliate)
+
+**Context:** User asked to increase gray Bohemy text by 1px on brand pages and the account affiliate program card.
+
+**Change:** `BrandTermsBody.tsx` + `BrandFaqSection.tsx` section titles `#808080` Bohemy `18px → 19px`; `BrandMemberSection.tsx` `bohemy` variant `16px → 17px`; `affiliate/page.tsx` AFFILIATE PROGRAM section headings `18px → 19px`. Pushed `master` + `preview/mobile`.
