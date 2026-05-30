@@ -21686,6 +21686,14 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — EDIT IN BUILD-A-WIG: Futura PT Book 8.5px
+
+**Context:** User wanted **EDIT IN BUILD-A-WIG** (not **EDIT LIST NAME** / **+ LIST**) back to **Futura PT Book** **8.5px** instead of **9px Medium**.
+
+**Change:** **`bookingEditLinkStyle`** + **`.edit-in-build-text`** in **`index.css`**. Cart, wishlist, bag, **EDIT APPOINTMENT** share token. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
