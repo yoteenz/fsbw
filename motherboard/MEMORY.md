@@ -21633,3 +21633,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User provided a Supabase live-preview URL for the **straight bundle** thumb on wishlist and lists pages only, keeping the existing black border + white inset ring.
 
 **Change:** `wishlistListItemDetails.ts` — **`WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC`** (`ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg`); **`getWishlistBcfThumbSrc`** returns it when texture is **straight** and category **bundles**; other BCF lines still use marble PNGs via **`shopTextureCategoryHeroPhotoSrc`**. **`WishlistItemThumb`** / overview thumb unchanged (border via **`THUMB_BORDER_FRAME_STYLE`**). Cart/bag/shop grid unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists line spacing: EDIT LIST NAME + VIEW DETAILS
+
+**Context:** On `/wishlist/lists` overview **line** view, move red **EDIT LIST NAME** down **2px** (no override fights). On expanded list **line** view, reduce space above gray **VIEW DETAILS** by **1px** (lists page only).
+
+**Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-2px` → `0`** (`!important`). `.wishlist-expanded-list-view-details-toggle--list-view-only` **`margin-top` `-2px` → `-3px`** (VIEW DETAILS only; CLOSE DETAILS unchanged). `lists/page.tsx` — **`LIST_OVERVIEW_EDIT_NAME_STYLE`** sets **`margin: 0`**, **`position: static`** so inline style does not fight wrap. Pushed `master` + `preview/mobile`.
