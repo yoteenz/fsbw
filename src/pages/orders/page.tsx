@@ -380,7 +380,7 @@ function OrdersPage() {
     if (opts.hairline && opts.hairline !== 'NATURAL') {
       lines.push(fmt('hairline', opts.hairline)); // e.g. "hairline: lagos" or "hairline: lagos + peak"
     }
-    const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS', 'WAND CURLS', 'DEFINE'];
     if (opts.styling && opts.styling !== 'NONE' && hairStylingOptions.includes(opts.styling)) {
       lines.push(fmt('styling', opts.styling));
     }
