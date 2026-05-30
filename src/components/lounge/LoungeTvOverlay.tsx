@@ -160,7 +160,7 @@ function LoungeTvScreen({
           <button
             key={tab.id}
             type="button"
-            style={navLinkStyle(mainTab === tab.id)}
+            style={mainTabNavStyle(mainTab === tab.id)}
             onClick={() => onMainTabChange(tab.id)}
           >
             {tab.label}
