@@ -21617,3 +21617,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Cause:** (1) Row **`items-center`**, middle column **`justify-center`**, and **`cartLineProductStackStyle` `justifyContent: center`** still vertically centered the product block inside the line card. (2) **`-14px` lift** was too small vs the old **`top`** offset (~30px for 7 lines). (3) Line count for threshold used a duplicate counter that could diverge from rendered VIEW DETAILS rows (add-ons as multiple `<br>` lines).
 
 **Change:** `CartDropdown.tsx` — when details open: **`items-start`** on row, **`justify-start`** on middle column, **`minHeight: 0`** (was 120px), stack **`justifyContent: flex-start`**. Shared **`buildUnitCartViewDetailItemDescriptors`** + **`cartDropdownUnitViewDetailsLineCount`** (add-ons = one row each). **`cartDropdownProductTextTranslateY`**: 6+ lines → scaled lift (base **32px** + **3px** per extra line; e.g. 7 lines ≈ **-35px**). Removed unused **`cartDropdownUnitDetailRowCount`**. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists: BCF thumbnails 10% smaller
+
+**Context:** User asked to decrease BCF thumbnail size by **10%** on **lists pages only**.
+
+**Change:** `src/pages/wishlist/lists/page.tsx` — **`LISTS_PAGE_BCF_THUMB_SCALE = 0.9`** applied when `getWishlistBcfThumbSrc(item)` is set: overview **`WishlistListOverviewThumb`** (88×110 → 79×99), expanded line/grid **`WishlistItemThumb`** (106×132 → 95×119), bag link width under line thumbs matches scaled frame. Main **`/wishlist`**, **`/wishlist/shared`**, cart, and bag unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist straight bundle thumbnail (Supabase)
+
+**Context:** User provided a Supabase live-preview URL for the **straight bundle** thumb on wishlist and lists pages only, keeping the existing black border + white inset ring.
+
+**Change:** `wishlistListItemDetails.ts` — **`WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC`** (`ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg`); **`getWishlistBcfThumbSrc`** returns it when texture is **straight** and category **bundles**; other BCF lines still use marble PNGs via **`shopTextureCategoryHeroPhotoSrc`**. **`WishlistItemThumb`** / overview thumb unchanged (border via **`THUMB_BORDER_FRAME_STYLE`**). Cart/bag/shop grid unchanged. Pushed `master` + `preview/mobile`.
