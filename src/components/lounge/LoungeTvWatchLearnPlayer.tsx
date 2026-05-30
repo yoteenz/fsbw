@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { LoungeTvVideoTile } from './loungeTvContent';
+import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const TAP_DELAY_MS = 280;
@@ -34,7 +35,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     const video = videoRef.current;
     if (!video) return;
     setCurrentTime(video.currentTime);
-    if (Number.isFinite(video.duration)) setDuration(video.duration);
+    if (Number.isFinite(video.duration) && video.duration > 0) setDuration(video.duration);
   }, []);
 
   useEffect(() => {
@@ -133,6 +134,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   if (!tile.videoSrc) return null;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
+  const durationDisplay = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
 
   return (
     <div
@@ -169,6 +171,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           }}
           onTimeUpdate={syncTimeFromVideo}
           onLoadedMetadata={syncTimeFromVideo}
+          onLoadedData={syncTimeFromVideo}
           onDurationChange={syncTimeFromVideo}
           onPointerUp={handleVideoPointerUp}
           onDoubleClick={handleVideoDoubleClick}
@@ -245,6 +248,26 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           </div>
         ) : null}
 
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            right: '32px',
+            bottom: paused ? '24px' : '7px',
+            zIndex: 3,
+            fontFamily: BODY_FONT,
+            fontSize: '7px',
+            letterSpacing: '0.06em',
+            color: 'rgba(255,255,255,0.92)',
+            textTransform: 'uppercase',
+            pointerEvents: 'none',
+            textShadow: '0 1px 2px rgba(0,0,0,0.85)',
+            transition: 'bottom 0.15s ease',
+          }}
+        >
+          {durationDisplay}
+        </span>
+
         <button
           type="button"
           aria-label="Full screen"
@@ -277,15 +300,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         </button>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          gap: '8px',
-          width: '100%',
-        }}
-      >
+      <div style={{ width: '100%' }}>
         <span
           style={{
             fontFamily: BODY_FONT,
@@ -294,23 +309,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             color: '#ffffff',
             textTransform: 'uppercase',
             textAlign: 'left',
-            flex: 1,
-            minWidth: 0,
+            display: 'block',
           }}
         >
           {tile.title}
-        </span>
-        <span
-          style={{
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            letterSpacing: '0.06em',
-            color: '#9a9a9a',
-            textTransform: 'uppercase',
-            flexShrink: 0,
-          }}
-        >
-          {tile.durationLabel ?? '—'}
         </span>
       </div>
 

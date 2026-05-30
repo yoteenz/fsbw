@@ -17,14 +17,15 @@ export type LoungeTvVideoTile = {
   description?: string;
 };
 
-import { LOUNGE_TV_CONTENT_VIDEO_SRC } from './loungeTvAssets';
+import { LOUNGE_TV_CONTENT_VIDEO_SRC, LOUNGE_TV_PLUCKING_LACE_TILE_ID } from './loungeTvAssets';
 
 /** Stock clip for non–plucking-lace Watch + Learn tiles (remote fallback). */
 export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
-function watchLearnVideoSrcForTile(tileId: string): string {
-  return tileId === 'plucking-lace' ? LOUNGE_TV_CONTENT_VIDEO_SRC : LOUNGE_TV_PLACEHOLDER_VIDEO_SRC;
+function watchLearnVideoSrcForTile(tileId: string): string | undefined {
+  if (tileId === LOUNGE_TV_PLUCKING_LACE_TILE_ID) return LOUNGE_TV_CONTENT_VIDEO_SRC;
+  return LOUNGE_TV_PLACEHOLDER_VIDEO_SRC;
 }
 
 export const LOUNGE_TV_MAIN_TABS: { id: LoungeTvMainTab; label: string }[] = [
@@ -111,11 +112,12 @@ function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[
       durationLabel: '4:32',
       description: 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE FROM THE FRONTAL SLAYER TEAM.',
     };
+    const videoSrc = watchLearnVideoSrcForTile(tile.id);
     return {
       ...tile,
-      videoSrc: watchLearnVideoSrcForTile(tile.id),
-      durationLabel: copy.durationLabel,
+      videoSrc,
       description: copy.description,
+      ...(tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID ? {} : { durationLabel: copy.durationLabel }),
     };
   });
 }
