@@ -242,7 +242,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               right: 0,
               bottom: 0,
               zIndex: 2,
-              padding: '4px 30px 6px 6px',
+              padding: '4px 28px 6px 6px',
               background: 'linear-gradient(transparent, rgba(0,0,0,0.72))',
               boxSizing: 'border-box',
             }}
@@ -264,26 +264,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           </div>
         ) : null}
 
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            right: '32px',
-            bottom: paused ? '24px' : '7px',
-            zIndex: 3,
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.92)',
-            textTransform: 'uppercase',
-            pointerEvents: 'none',
-            textShadow: '0 1px 2px rgba(0,0,0,0.85)',
-            transition: 'bottom 0.15s ease',
-          }}
-        >
-          {durationDisplay}
-        </span>
-
         <button
           type="button"
           aria-label="Full screen"
@@ -293,7 +273,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           style={{
             position: 'absolute',
             right: '5px',
-            bottom: paused ? '22px' : '5px',
+            bottom: paused ? '20px' : '5px',
             zIndex: 10,
             width: '22px',
             height: '22px',
@@ -315,6 +295,27 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         >
           <FullscreenExpandIcon />
         </button>
+      </div>
+
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: BODY_FONT,
+            fontSize: '7px',
+            letterSpacing: '0.06em',
+            color: 'rgba(255,255,255,0.92)',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+          }}
+        >
+          {durationDisplay}
+        </span>
       </div>
 
       <div style={{ width: '100%' }}>

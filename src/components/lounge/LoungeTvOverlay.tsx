@@ -131,11 +131,20 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
+const loungeTvThumbTitleBlockStyle: React.CSSProperties = {
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  marginTop: '4px',
+};
+
 const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '4px',
+  bottom: '100%',
   left: 0,
   right: 0,
+  marginBottom: '1px',
   textAlign: 'center',
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '8px',
@@ -167,20 +176,22 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
 
   return (
     <span style={loungeTvThumbLabelBase}>
-      {isNew ? (
-        <span style={loungeTvNewBadgeOverlayStyle}>
-          <span style={{ color: BRAND_RED }}>*NEW*</span>
+      <span style={loungeTvThumbTitleBlockStyle}>
+        {isNew ? (
+          <span style={loungeTvNewBadgeOverlayStyle}>
+            <span style={{ color: BRAND_RED }}>*NEW*</span>
+          </span>
+        ) : null}
+        <span style={loungeTvThumbTitleStackStyle}>
+          {split ? (
+            <>
+              <span style={{ color: titleColor }}>{split.head}</span>
+              <span style={{ color: titleColor }}>{split.trail}</span>
+            </>
+          ) : (
+            <span style={{ color: titleColor }}>{title}</span>
+          )}
         </span>
-      ) : null}
-      <span style={loungeTvThumbTitleStackStyle}>
-        {split ? (
-          <>
-            <span style={{ color: titleColor }}>{split.head}</span>
-            <span style={{ color: titleColor }}>{split.trail}</span>
-          </>
-        ) : (
-          <span style={{ color: titleColor }}>{title}</span>
-        )}
       </span>
     </span>
   );
