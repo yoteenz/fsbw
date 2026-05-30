@@ -22173,3 +22173,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted TV sidebar labels (New Drops, Campaigns, etc.) **left-aligned**, not centered.
 
 **Change:** **`LoungeTvScreen`** aside in **`LoungeTvOverlay.tsx`**: **`alignItems: 'flex-start'`**; subcategory buttons **`textAlign: 'left'`**, **`width: '100%'`**. Commit **`765a92b4`**.
+
+---
+
+## 2026-05-30 — Lounge TV grid + main tab colors
+
+**Context:** User wanted **3 thumbnails per row** (not 4) and main categories (**Brand**, **Slay Tips**, etc.) **gray** when inactive, **white** when active (not red).
+
+**Change:** **`LoungeTvOverlay.tsx`** — **`gridTemplateColumns: repeat(3, …)`**; **`mainTabNavStyle`** (**`#9a9a9a`** / **`#ffffff`**). Sidebar subcategories still use red/white via **`navLinkStyle`**. Commits **`444e8f57`**, **`afce65c9`**.
