@@ -48,16 +48,40 @@ export function getWishlistItemRoute(item: any): string {
   return routes[name] || '/build-a-wig';
 }
 
-/** BCF wishlist thumbnail = the BCF PDP hero product photo for that texture/category. Null for non-BCF. */
+function inferWishlistBcfCategory(item: any): ShopTextureCategoryThumbCategory | null {
+  const raw = item?.category ? String(item.category).toLowerCase() : '';
+  if (raw === 'bundles' || raw === 'closures' || raw === 'frontals') return raw;
+  const id = String(item?.id || '').toLowerCase();
+  const name = getWishlistItemProductName(item);
+  if (id.includes('-bundles') || name.includes('BUNDLES')) return 'bundles';
+  if (id.includes('-closures') || name.includes('CLOSURES')) return 'closures';
+  if (id.includes('-frontals') || name.includes('FRONTALS')) return 'frontals';
+  return null;
+}
+
+function inferWishlistBcfTexture(item: any): ShopTextureCategoryThumbTexture | null {
+  const raw = item?.texture ? String(item.texture).toLowerCase() : '';
+  if (raw === 'straight' || raw === 'wavy' || raw === 'curly') return raw;
+  const id = String(item?.id || '').toLowerCase();
+  const name = getWishlistItemProductName(item);
+  if (id.includes('shop-straight-') || name.includes('STRAIGHT')) return 'straight';
+  if (id.includes('shop-wavy-') || name.includes('WAVY')) return 'wavy';
+  if (id.includes('shop-curly-') || name.includes('CURLY')) return 'curly';
+  return null;
+}
+
+/**
+ * BCF thumbnail on `/wishlist` and `/wishlist/lists` — same image as `/products` shop marble
+ * (`shopTextureCategoryThumbSrc`), including straight bundles. Null for non-BCF.
+ */
 export function getWishlistBcfThumbSrc(item: any): string | null {
   if (item?.type !== 'shop-texture-category') return null;
-  if (item.category && item.texture) {
-    return shopTextureCategoryHeroPhotoSrc(
-      item.texture as ShopTextureCategoryThumbTexture,
-      item.category as ShopTextureCategoryThumbCategory
-    );
+  const category = inferWishlistBcfCategory(item);
+  const texture = inferWishlistBcfTexture(item);
+  if (category && texture) {
+    return shopTextureCategoryHeroPhotoSrc(texture, category);
   }
-  return item.image || null;
+  return typeof item?.image === 'string' && item.image.trim() ? item.image : null;
 }
 
 /**
