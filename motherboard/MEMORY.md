@@ -21563,3 +21563,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted BCF thumbnails on the lists page to match unit framing (black outer border + white inset ring), without duplicating the gray leaf-brick background (BCF marbles already include marble).
 
 **Change:** `WishlistItemThumb.tsx` — BCF branch uses shared `THUMB_BORDER_FRAME_STYLE` (`1.3px solid #000`, `inset 0 0 0 3px #fff` via `frameInsetPx`); units keep leaf-brick + same border/inset. `lists/page.tsx` — `WishlistListOverviewThumb` BCF first-item preview gets same border/inset as units (no leaf-brick). Expanded list line/grid on `/wishlist/lists` and shared list page pick up via component. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME down 6px
+
+**Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-10px` → `-4px`** (`!important`; longhand margins on wrap, no inline margin on span). Lists overview **line** view only; grid unchanged. Pushed `master` + `preview/mobile`.
