@@ -295,7 +295,6 @@ const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
   color: '#EB1C24',
-  margin: '-16px 0 0 0',
   textTransform: 'uppercase',
   cursor: 'pointer',
   display: 'inline-block',
@@ -1283,10 +1282,11 @@ export default function ViewListsPage() {
                             >
                               <span style={LIST_OVERVIEW_NAME_STYLE}>{list.name}</span>
                               <p style={LIST_OVERVIEW_VISIBILITY_STYLE}>{getUserListVisibilityLabel(list)}</p>
-                              <p style={{ margin: 0 }}>
+                              <p className="wishlist-lists-overview-edit-list-name-wrap">
                                 <span
                                   role="button"
                                   tabIndex={0}
+                                  className="wishlist-lists-overview-edit-list-name"
                                   style={LIST_OVERVIEW_EDIT_NAME_STYLE}
                                   onClick={(e) => {
                                     e.stopPropagation();
