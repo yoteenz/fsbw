@@ -7,9 +7,12 @@ import {
   loungeTvAcademyMessage,
   type LoungeTvMainTab,
 } from './loungeTvContent';
+import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC } from './loungeTvAssets';
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
+/** Each panel covers half the viewport; slight overlap hides center seam. */
+const CURTAIN_PANEL_WIDTH = '51vw';
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -17,28 +20,50 @@ type LoungeTvOverlayProps = {
   onClose: () => void;
 };
 
-const curtainPanelStyle = (side: 'left' | 'right', closed: boolean): React.CSSProperties => ({
-  position: 'fixed',
-  top: 0,
-  bottom: 0,
-  width: '52vw',
-  maxWidth: '280px',
-  zIndex: 100,
-  backgroundColor: '#e4e4e4',
-  backgroundImage:
-    'repeating-linear-gradient(90deg, #d0d0d0 0px, #d0d0d0 2px, #ececec 2px, #ececec 14px)',
-  boxShadow: side === 'left' ? '4px 0 24px rgba(0,0,0,0.12)' : '-4px 0 24px rgba(0,0,0,0.12)',
-  transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-  transform:
-    side === 'left'
-      ? closed
-        ? 'translateX(0)'
-        : 'translateX(-105%)'
-      : closed
-        ? 'translateX(0)'
-        : 'translateX(105%)',
-  ...(side === 'left' ? { left: 0 } : { right: 0 }),
-});
+function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSProperties {
+  return {
+    position: 'fixed',
+    top: 0,
+    bottom: 0,
+    width: CURTAIN_PANEL_WIDTH,
+    zIndex: 100,
+    overflow: 'hidden',
+    backgroundColor: '#000000',
+    boxShadow: side === 'left' ? '6px 0 28px rgba(0,0,0,0.35)' : '-6px 0 28px rgba(0,0,0,0.35)',
+    transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+    transform:
+      side === 'left'
+        ? closed
+          ? 'translateX(0)'
+          : 'translateX(-105%)'
+        : closed
+          ? 'translateX(0)'
+          : 'translateX(105%)',
+    ...(side === 'left' ? { left: 0 } : { right: 0 }),
+  };
+}
+
+function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: boolean }) {
+  const src = side === 'left' ? LOUNGE_CURTAIN_LEFT_SRC : LOUNGE_CURTAIN_RIGHT_SRC;
+  return (
+    <div style={curtainPanelStyle(side, closed)} aria-hidden>
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          objectFit: 'cover',
+          objectPosition: side === 'left' ? 'right center' : 'left center',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      />
+    </div>
+  );
+}
 
 function LoungeTvScreen({
   mainTab,
@@ -313,8 +338,8 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           transition: `background ${ANIM_MS}ms ease`,
         }}
       />
-      <div style={curtainPanelStyle('left', animatedIn)} aria-hidden />
-      <div style={curtainPanelStyle('right', animatedIn)} aria-hidden />
+      <LoungeCurtainPanel side="left" closed={animatedIn} />
+      <LoungeCurtainPanel side="right" closed={animatedIn} />
       <div style={screenStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
         <LoungeTvScreen
           mainTab={mainTab}
