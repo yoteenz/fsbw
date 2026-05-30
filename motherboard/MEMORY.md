@@ -22236,3 +22236,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **`<video>` preview** for embedded or HTTPS URLs.
 
 **User workflow:** Select **VIDEO** (or pick a video file — type auto-detects), upload or paste URL, **SAVE CATEGORY**. Clips over ~4MB need Supabase/public URL paste, not inline embed.
+
+---
+
+## 2026-05-29 — Lounge TV thumb labels: align title rows with/without *NEW*
+
+**Context:** User wanted **CUTTING YOUR LACE**, **TINTING YOUR LACE**, etc. on the **same text rows** whether or not **\*NEW\*** appears above.
+
+**Fix:** **`LoungeTvTileLabel`** in **`LoungeTvOverlay.tsx`** — fixed-height **\*NEW\*** row (`minHeight: 8px`, empty when not new); title lines always below; label stack **`justifyContent: flex-end`** on thumb overlay.
