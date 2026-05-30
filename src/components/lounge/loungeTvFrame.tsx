@@ -1,7 +1,7 @@
 import type React from 'react';
 
 /** Charcoal plastic bezel (shared by lounge lobby TV + overlay animation). */
-export const LOUNGE_TV_BEZEL = { top: 11, right: 11, bottom: 16, left: 11 };
+export const LOUNGE_TV_BEZEL = { top: 5, right: 5, bottom: 8, left: 5 };
 
 /** Inner glass aspect (width × height). */
 export const LOUNGE_TV_SCREEN_ASPECT = 0.72;
@@ -43,7 +43,7 @@ export function loungeTvFrameShellStyle(overrides?: React.CSSProperties): React.
     borderRadius: 0,
     border: '1px solid #0a0a0a',
     boxShadow:
-      '0 14px 42px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 4px rgba(0,0,0,0.45)',
+      '0 10px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 2px rgba(0,0,0,0.35)',
     ...overrides,
   };
 }
@@ -56,7 +56,7 @@ export function loungeTvScreenStyle(overrides?: React.CSSProperties): React.CSSP
     boxSizing: 'border-box',
     overflow: 'hidden',
     borderRadius: 0,
-    boxShadow: 'inset 0 0 28px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06)',
+    boxShadow: 'inset 0 0 16px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.05)',
     position: 'relative',
     ...overrides,
   };
