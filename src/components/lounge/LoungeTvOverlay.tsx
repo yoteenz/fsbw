@@ -240,7 +240,8 @@ function LoungeTvScreen({
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                gap: '6px',
+                columnGap: '12px',
+                rowGap: '6px',
                 width: '100%',
               }}
             >
