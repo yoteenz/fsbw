@@ -22068,6 +22068,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge loading + chairs: force global CSS, hide carousel until loaded
+
+**Context:** User reported **no visible change** to loading viewport cover or salon chair position (likely inline/portal sizing not winning or stale deploy).
+
+**Change:** **`LoadingScreen`** — dual-layer **`loading-screen-root__backdrop`** at **150dvh** in **`index.css`**; no inline viewport height. **`LobbyApp`** — carousel **`display: none`** until **`showLoading`** false (nothing to peek under loader). **Chairs** — rules moved from inline **`<style>`** to **`index.css`** (**.lounge-page** + CSS variables from **`loungeSceneLayout.ts`**); large **1024px+** uses **`--lounge-chairs-offset-y-large`** (**352px**).
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
