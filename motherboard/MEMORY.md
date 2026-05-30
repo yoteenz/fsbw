@@ -21344,3 +21344,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked for red dots on the account affiliate page (`/account/affiliate` AFFILIATE PROGRAM card) to match the brand terms page (`/brand/terms`): same dot size, and aligned on the first text line (not vertically centered across multi-line bullets).
 
 **Change:** `src/pages/account/affiliate/page.tsx` — replaced flex row bullet layout (separate dot + text spans) with the same pattern as `BrandTermsBody`: 10px Futura PT Book `<p>` with `paddingLeft: 12px`, red `•` inline before the text so the marker inherits body font size and sits on the first line when copy wraps. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF product page thumbnails: Supabase photos (all 9)
+
+**Context:** User provided Supabase URLs for bundles/closures/frontals × straight/wavy/curly and asked to update **product page** BCF thumbnails. PDP hero constants in `texture-category-product/page.tsx` (`BUNDLE_PHOTO_BY_TEXTURE`, `BCF_CF_PHOTO`) already matched; shop grid/similar-strip thumbs still used local `/assets/*.png` via `shopTextureCategoryThumbSrc`.
+
+**Change:** `src/utils/shopTextureCategoryThumb.ts` — `BCF_THUMB_PHOTO_BY_TEXTURE` map with all 9 URLs; `shopTextureCategoryThumbSrc` now returns those (fixes `/products` BCF marbles + any surface using the util). `texture-category-product/page.tsx` — SIMILAR strip uses `bcfHeroThumbSrcForTexture`; add-to-bag `image` uses hero/bundle photo URLs instead of legacy PNG thumbs. Pushed `master` + `preview/mobile`.
