@@ -4262,7 +4262,7 @@ html[data-loading-screen='true'] #root {
   .lounge-page .lounge-salon-chairs-anchor {
     transform: translate(
       calc(-50% + var(--lounge-chairs-offset-x, 25px)),
-      calc(-50% + var(--lounge-chairs-offset-y-large, 352px))
+      calc(-50% + var(--lounge-chairs-offset-y-large, 372px))
     ) !important;
   }
 }
