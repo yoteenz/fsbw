@@ -11,8 +11,8 @@ import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC } from './loungeTvAss
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
-/** Each panel covers half the viewport; slight overlap hides center seam. */
-const CURTAIN_PANEL_WIDTH = '51vw';
+/** Panels overlap at center so fabric meets (assets should have no inner black gap). */
+const CURTAIN_PANEL_WIDTH = '54vw';
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -28,7 +28,7 @@ function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSPr
     width: CURTAIN_PANEL_WIDTH,
     zIndex: 100,
     overflow: 'hidden',
-    backgroundColor: '#000000',
+    backgroundColor: '#3a3a3a',
     boxShadow: side === 'left' ? '6px 0 28px rgba(0,0,0,0.35)' : '-6px 0 28px rgba(0,0,0,0.35)',
     transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     transform:
@@ -45,6 +45,7 @@ function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSPr
 
 function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: boolean }) {
   const src = side === 'left' ? LOUNGE_CURTAIN_LEFT_SRC : LOUNGE_CURTAIN_RIGHT_SRC;
+  const isLeft = side === 'left';
   return (
     <div style={curtainPanelStyle(side, closed)} aria-hidden>
       <img
@@ -52,11 +53,18 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
         alt=""
         draggable={false}
         style={{
-          width: '100%',
-          height: '100%',
+          position: 'absolute',
+          top: '50%',
+          height: '88%',
+          width: 'auto',
+          minWidth: '135%',
+          maxWidth: 'none',
           display: 'block',
           objectFit: 'cover',
-          objectPosition: side === 'left' ? 'right center' : 'left center',
+          objectPosition: isLeft ? 'left center' : 'right center',
+          transform: `translateY(-50%) ${isLeft ? 'translateX(-4%)' : 'translateX(4%)'}`,
+          transformOrigin: isLeft ? 'left center' : 'right center',
+          ...(isLeft ? { left: 0 } : { right: 0 }),
           pointerEvents: 'none',
           userSelect: 'none',
         }}
