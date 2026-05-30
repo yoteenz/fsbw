@@ -21775,3 +21775,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Straight bundle VIDEO on `/shop/bundles` did not play; Supabase URL returned **404 Object not found** (file not in `live-preview` bucket at that path).
 
 **Change:** **`texture-category-product/page.tsx`** — keep **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** as primary; **`onError`** → **`/assets/straight-bundle-video.MP4`**; reset remote URL when re-opening VIDEO / switching texture. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-30 — Bundles straight VIDEO URL fix (_51488.mov)
+
+**Context:** Correct Kling file is **`make_this_image_shake_the_hair_Kling_30__51488.mov`** (not **`_36738`**, which 404’d).
+
+**Change:** **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** updated; remote URL verified **200**. Local MP4 fallback kept. Pushed `master` + `preview/mobile`.
