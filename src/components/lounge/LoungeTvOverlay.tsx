@@ -23,8 +23,8 @@ import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
 const ANIM_MS = 1400;
-/** Remote hand fade-in after TV has finished growing (slower than TV grow). */
-const HAND_REVEAL_MS = 2200;
+/** Remote hand fade-in after TV grow; with {@link STATIC_DELAY_MS} ≈1s until static. */
+const HAND_REVEAL_MS = 960;
 /** Hand fade-out after screen is blank on power-off. */
 const HAND_HIDE_MS = 850;
 /** Pause after hand is visible before CRT static (~80% shorter than 200ms). */
