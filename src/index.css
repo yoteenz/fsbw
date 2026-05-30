@@ -4138,9 +4138,9 @@ p.marble-strip-product-price,
   margin-bottom: 8px !important;
 }
 
-/* /wishlist/lists/:id line view — +2px above star row vs shared list (1px). */
+/* /wishlist/lists/:id line view — +1px above star row vs shared list (1px). */
 .wishlist-expanded-list-line-stars--list.wishlist-lists-page-expanded-line-stars {
-  margin-top: 4px !important;
+  margin-top: 3px !important;
 }
 
 .wishlist-expanded-list-view-details-toggle {
