@@ -62,6 +62,9 @@ const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX = 3;
 /** Pull product block down after view-details lift (netY = this − liftPx; 7 detail lines → +5px). */
 const CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 40;
 
+/** Details-open rows use items-start; nudge QTY / × / VIEW DETAILS to 120px-row vertical center. */
+const CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX = 30;
+
 type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
 
 /** Same option list as unit VIEW DETAILS HTML (one row per option; add-ons = one row each). */
@@ -1733,7 +1736,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     </div>
                   
                   {/* Remove Button */}
-                    <div className="flex flex-col items-center flex-shrink-0" style={{ transform: 'translateX(-8px)', width: (item.type === 'shop-texture-category' && viewingDetailsFor === item.id) ? '60px' : '80px', alignItems: 'center' }}>
+                    <div
+                      className="flex flex-col items-center flex-shrink-0"
+                      style={{
+                        transform: 'translateX(-8px)',
+                        width:
+                          item.type === 'shop-texture-category' && viewingDetailsFor === item.id
+                            ? '60px'
+                            : '80px',
+                        alignItems: 'center',
+                        ...(isViewingDetails
+                          ? { alignSelf: 'flex-start', marginTop: `${CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX}px` }
+                          : {}),
+                      }}
+                    >
                       <span
                         style={{
                           fontFamily: '"Futura PT Medium"',

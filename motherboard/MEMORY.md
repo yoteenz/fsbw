@@ -21759,3 +21759,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** On bundles (and BCF) PDP, VIDEO mode showed PHOTO behind a smaller video.
 
 **Change:** **`texture-category-product/page.tsx`** — removed JPG underlay; **`poster`** only while buffering; **`bcfPdpHeroVideoStyle`** fills hero slot (`width` + `height: 100%`, `object-fit: contain`); bundles **straight** **`scale(1.22)`** for Kling `.mov`. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart dropdown: QTY / × / DETAILS link vertical align when expanded
+
+**Context:** With VIEW DETAILS open, QTY + remove + CLOSE DETAILS sat at row top; compact list had them vertically centered on the 120px row.
+
+**Change:** **`CartDropdown.tsx`** — **`CART_DROPDOWN_RIGHT_COL_TOP_WHEN_DETAILS_PX` (30)** on right column when details open. Pushed `master` + `preview/mobile`.
