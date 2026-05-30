@@ -1,4 +1,43 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
+
+/** Extra px below viewport — covers mobile browser chrome / 100vh gaps. */
+const LOADING_SCREEN_BOTTOM_BLEED_PX = 32;
+
+const loadingOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 99999,
+  backgroundColor: '#ffffff',
+  width: '100%',
+  minHeight: `calc(100dvh + ${LOADING_SCREEN_BOTTOM_BLEED_PX}px)`,
+  height: `calc(100% + ${LOADING_SCREEN_BOTTOM_BLEED_PX}px)`,
+  paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${LOADING_SCREEN_BOTTOM_BLEED_PX}px)`,
+  margin: 0,
+  boxSizing: 'border-box',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden',
+  touchAction: 'none',
+};
+
+const loadingGifStyle: React.CSSProperties = {
+  width: '405px',
+  height: '405px',
+  maxWidth: 'min(405px, 92vw)',
+  maxHeight: 'min(405px, 70dvh)',
+  objectFit: 'contain',
+  display: 'block',
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  pointerEvents: 'none',
+  userSelect: 'none',
+};
 
 /** Optional: when true, loading screen auto-hides after 4s (e.g. for initial app load). When false/undefined, stays visible until content loads (e.g. Suspense fallback for checkout). */
 export default function LoadingScreen({ autoHideAfterMs }: { autoHideAfterMs?: number } = {}) {
@@ -12,104 +51,20 @@ export default function LoadingScreen({ autoHideAfterMs }: { autoHideAfterMs?: n
 
   if (!isVisible) return null;
 
-  return (
-    <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
-        <img
-          src="/assets/load-screen.gif"
-          alt="Loading..."
-          width="405"
-          height="405"
-          style={{
-            width: '405px',
-            height: '405px',
-            objectFit: 'contain',
-          display: 'block',
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate3d(-50%, -50%, 0)',
-          margin: 0,
-          padding: 0,
-          border: 'none',
-          outline: 'none',
-          backfaceVisibility: 'hidden',
-          willChange: 'auto',
-          // Lock size completely
-          minWidth: '405px',
-          maxWidth: '405px',
-          minHeight: '405px',
-          maxHeight: '405px',
-          // Prevent any layout shifts
-          contain: 'layout style paint',
-          isolation: 'isolate',
-          // Force stable rendering
-          transformOrigin: '0 0',
-          scale: 1,
-          rotate: '0deg',
-          translate: '0 0',
-          // Prevent GIF animation from affecting layout
-          imageRendering: 'pixelated',
-          // Completely disable all transitions and animations
-          transition: 'none',
-          animation: 'none',
-          transitionProperty: 'none',
-          transitionDuration: '0s',
-          transitionDelay: '0s',
-          transitionTimingFunction: 'none',
-          // Force immediate rendering
-          animationDuration: '0s',
-          animationDelay: '0s',
-          animationIterationCount: '1',
-          animationFillMode: 'none',
-          animationPlayState: 'paused',
-          // Prevent any browser optimizations
-          transformStyle: 'flat',
-          perspective: 'none',
-          perspectiveOrigin: '50% 50%',
-          // Lock all properties
-          boxSizing: 'border-box',
-          verticalAlign: 'baseline',
-          textAlign: 'left',
-          direction: 'ltr',
-          unicodeBidi: 'normal',
-          writingMode: 'horizontal-tb',
-          textOrientation: 'mixed',
-          textCombineUpright: 'none',
-          textEmphasis: 'none',
-          textIndent: '0',
-          textShadow: 'none',
-          textTransform: 'none',
-          textDecoration: 'none',
-          textUnderlinePosition: 'auto',
-          textDecorationSkipInk: 'auto',
-          textDecorationThickness: 'auto',
-          textUnderlineOffset: 'auto',
-          // Force stable layout
-          float: 'none',
-          clear: 'none',
-          zIndex: 'auto',
-          overflow: 'visible',
-          clip: 'auto',
-          clipPath: 'none',
-          mask: 'none',
-          filter: 'none',
-          backdropFilter: 'none',
-          mixBlendMode: 'normal',
-          // Prevent any size changes
-          resize: 'none',
-          cursor: 'default',
-          userSelect: 'none',
-          pointerEvents: 'none',
-          touchAction: 'none'
-          }}
-          onError={(e) => {
-            console.error('Loading screen image failed to load:', e);
-            console.error('Image src:', '/assets/load-screen.gif');
-          }}
-          onLoad={() => {
-            console.log('Loading screen image loaded successfully');
-          }}
-        />
+  const overlay = (
+    <div role="status" aria-live="polite" aria-label="Loading" style={loadingOverlayStyle}>
+      <img
+        src="/assets/load-screen.gif"
+        alt=""
+        width={405}
+        height={405}
+        style={loadingGifStyle}
+        draggable={false}
+      />
     </div>
   );
+
+  if (typeof document === 'undefined') return overlay;
+
+  return createPortal(overlay, document.body);
 }
