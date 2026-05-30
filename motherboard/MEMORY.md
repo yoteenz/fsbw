@@ -22220,3 +22220,19 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 - **Brand admin**: both tab rows use **`flexWrap: 'nowrap'`**, smaller font, horizontal scroll.
 
 **Changes:** `src/utils/loungeTvAdminConfig.ts`, `api/lounge-tv-config.ts`, `api/admin/lounge-tv-config.ts`, `src/utils/api.ts`, `src/pages/admin/components/AdminLoungeTvContentPanel.tsx`, `src/pages/admin/backend/page.tsx`, `src/pages/admin/brand/page.tsx`, `src/components/lounge/LoungeTvOverlay.tsx`, `src/components/lounge/loungeTvContent.ts` (`getLoungeTvTilesStatic` rename).
+
+---
+
+## 2026-05-29 — Admin CONTENT video picker: nothing happens on iPhone
+
+**Context:** User reported choosing a video on **`/admin/backend` → CONTENT** did nothing (no preview, no feedback). Prior chat had drafted a fix locally but it was uncommitted.
+
+**Root cause:** Mobile Safari often leaves **`file.type` empty** for `.mp4`/`.mov`, so **`file.type.startsWith('video/')`** failed and the upload was rejected; errors were easy to miss.
+
+**Fix (`AdminLoungeTvContentPanel.tsx`, commit `e9f36b2f` on `master` / `preview/mobile`):**
+- **`fileLooksLikeVideo` / `fileLooksLikeImage`** with extension fallback (`.mp4`, `.mov`, etc.).
+- Auto-detect media type from picked file (video vs photo).
+- Red **CHOOSE VIDEO FILE** button, **LOADING FILE…**, green success notice, visible red error box (includes file size; **>4MB** must use hosted URL).
+- **`<video>` preview** for embedded or HTTPS URLs.
+
+**User workflow:** Select **VIDEO** (or pick a video file — type auto-detects), upload or paste URL, **SAVE CATEGORY**. Clips over ~4MB need Supabase/public URL paste, not inline embed.
