@@ -33,6 +33,33 @@ export function markLoungeTvTileViewed(tileId: string): void {
   if (ids.has(tileId)) return;
   ids.add(tileId);
   saveViewedTileIdSet(ids);
+  dispatchViewedUpdated();
+}
+
+/** Admin re-enabled *NEW* — allow badge/blur to show again on the lounge TV. */
+export function clearLoungeTvTileViewed(tileId: string): void {
+  if (!tileId) return;
+  const ids = loadViewedTileIdSet();
+  if (!ids.delete(tileId)) return;
+  saveViewedTileIdSet(ids);
+  dispatchViewedUpdated();
+}
+
+type AdminNewItem = { id: string; isNew?: boolean };
+
+/** After admin save: any tile marked new should not stay in the "already viewed" list. */
+export function resetLoungeTvViewedForNewAdminItems(items: AdminNewItem[]): void {
+  const ids = loadViewedTileIdSet();
+  let changed = false;
+  for (const item of items) {
+    if (item.isNew && ids.delete(item.id)) changed = true;
+  }
+  if (!changed) return;
+  saveViewedTileIdSet(ids);
+  dispatchViewedUpdated();
+}
+
+function dispatchViewedUpdated(): void {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(LOUNGE_TV_VIEWED_UPDATED_EVENT));
   }

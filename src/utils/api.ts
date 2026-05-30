@@ -427,7 +427,22 @@ export async function getLoungeTvAdminConfig(): Promise<Record<string, unknown> 
 /** Admin: upsert lounge TV content JSON to Supabase via API (requires admin session). */
 export async function putAdminLoungeTvConfig(config: Record<string, unknown>): Promise<void> {
   const res = await apiFetch('/api/admin/lounge-tv-config', { method: 'PUT', body: config });
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    const raw = await res.text();
+    let msg = raw;
+    try {
+      const parsed = JSON.parse(raw) as { error?: string };
+      if (parsed.error) msg = parsed.error;
+    } catch {
+      /* plain text */
+    }
+    if (res.status === 403) {
+      throw new Error(
+        `Admin access denied (${msg}). Sign out and sign in with an admin Supabase email on this device.`
+      );
+    }
+    throw new Error(msg || `HTTP ${res.status}`);
+  }
 }
 
 /** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */

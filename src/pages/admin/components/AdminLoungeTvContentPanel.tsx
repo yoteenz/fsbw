@@ -17,6 +17,10 @@ import {
   type LoungeTvAdminPlacement,
 } from '../../../utils/loungeTvAdminConfig';
 import { getLoungeTvAdminConfig, putAdminLoungeTvConfig } from '../../../utils/api';
+import {
+  clearLoungeTvTileViewed,
+  resetLoungeTvViewedForNewAdminItems,
+} from '../../../utils/loungeTvViewedTiles';
 
 /** Inline embed limit (localStorage + JSON config); larger files must use a hosted URL. */
 const MAX_INLINE_VIDEO_BYTES = 4 * 1024 * 1024;
@@ -330,7 +334,11 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         <input
           type="checkbox"
           checked={Boolean(item.isNew)}
-          onChange={(e) => onChange({ ...item, isNew: e.target.checked })}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            if (checked) clearLoungeTvTileViewed(item.id);
+            onChange({ ...item, isNew: checked });
+          }}
         />
         SHOW *NEW* BADGE
       </label>
@@ -403,16 +411,22 @@ export default function AdminLoungeTvContentPanel() {
       setSaving(true);
       setFeedback(null);
       const stamped = touchLoungeTvAdminConfigUpdatedAt(next);
+      resetLoungeTvViewedForNewAdminItems(
+        stamped.placements.flatMap((placement) => placement.items)
+      );
       saveLoungeTvAdminConfigToStorage(stamped);
       setConfig(stamped);
       try {
         await putAdminLoungeTvConfig(stamped as unknown as Record<string, unknown>);
         setFeedback({ type: 'success', msg: 'CONTENT SAVED.' });
       } catch (e) {
-        const detail = e instanceof Error ? e.message : 'SAVE FAILED';
+        const detail = (e instanceof Error ? e.message : 'SAVE FAILED').toUpperCase();
+        const forbidden = /FORBIDDEN|403|ADMIN ACCESS DENIED/i.test(detail);
         setFeedback({
           type: 'error',
-          msg: `SAVED ON THIS DEVICE — SERVER SYNC FAILED (${detail.toUpperCase()}). TV USES THIS DEVICE COPY; FOR OTHER DEVICES USE A HOSTED HTTPS VIDEO URL.`,
+          msg: forbidden
+            ? `SAVED ON THIS DEVICE — SERVER SYNC DENIED (${detail}). SIGN OUT AND SIGN IN WITH YOUR ADMIN SUPABASE EMAIL, THEN SAVE AGAIN. LOUNGE TV ON THIS PHONE USES THE LOCAL COPY.`
+            : `SAVED ON THIS DEVICE — SERVER SYNC FAILED (${detail}). TV USES THIS DEVICE COPY; FOR OTHER DEVICES USE A HOSTED HTTPS VIDEO URL.`,
         });
       } finally {
         setSaving(false);
