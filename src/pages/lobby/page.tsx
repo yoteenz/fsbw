@@ -20,10 +20,9 @@ import {
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
   LOUNGE_SALON_CHAIRS_HEIGHT_PX,
-  LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX,
-  LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX,
   LOUNGE_SALON_CHAIRS_OFFSET_X_PX,
   LOUNGE_SALON_CHAIRS_OFFSET_Y_PX,
+  LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX,
 } from '../../utils/loungeSceneLayout';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
@@ -491,29 +490,23 @@ const LoungePage: React.FC = () => {
   }, []);
   
   return (
-    <div className="bg-white relative lounge-page" style={{ minHeight: '105vh', width: '100vw', overflow: 'visible', display: 'block', margin: 0, padding: 0, flexShrink: 0, backgroundColor: 'white' }}>
-      <style>{`
-        .lounge-salon-chairs-anchor {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}px));
-          z-index: 10;
-          width: fit-content;
-        }
-        .lounge-salon-chairs-anchor img.lounge-salon-chairs-img {
-          width: auto;
-          height: ${LOUNGE_SALON_CHAIRS_HEIGHT_PX}px;
-          margin: 0;
-          padding: 0;
-          display: block;
-        }
-        @media (min-width: ${LOUNGE_SALON_CHAIRS_LARGE_MIN_WIDTH_PX}px) {
-          .lounge-salon-chairs-anchor {
-            transform: translate(calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px), calc(-50% + ${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX + LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX}px));
-          }
-        }
-      `}</style>
+    <div
+      className="bg-white relative lounge-page"
+      style={{
+        minHeight: '105vh',
+        width: '100vw',
+        overflow: 'visible',
+        display: 'block',
+        margin: 0,
+        padding: 0,
+        flexShrink: 0,
+        backgroundColor: 'white',
+        ['--lounge-chairs-offset-x' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px`,
+        ['--lounge-chairs-offset-y' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}px`,
+        ['--lounge-chairs-offset-y-large' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX}px`,
+        ['--lounge-chairs-height' as string]: `${LOUNGE_SALON_CHAIRS_HEIGHT_PX}px`,
+      }}
+    >
       {/* Background Image - Using landing2-background */}
       <div 
         style={{ 
@@ -847,28 +840,29 @@ const LobbyApp: React.FC = () => {
 
   return (
     <>
-      {showLoading && <LoadingScreen bleedPx={96} />}
+      {showLoading && <LoadingScreen />}
       <div
         style={{
           width: '100vw',
           height: '100vh',
           overflowX: 'hidden',
-          overflowY: showLoading ? 'hidden' : 'auto',
+          overflowY: 'auto',
           position: 'relative',
           backgroundColor: 'transparent',
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'auto',
+          display: showLoading ? 'none' : 'block',
         }}
       >
-        {/* Slide Container */}
-        <div 
+        {/* Slide Container — not painted until loading screen hides (no peek-through) */}
+        <div
           style={{
             display: 'flex',
             width: `${pages.length * 100}vw`,
             minHeight: '105vh',
             transform: `translateX(-${currentPage * 100}vw)`,
             transition: isTransitioning ? 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-            willChange: isTransitioning ? 'transform' : 'auto'
+            willChange: isTransitioning ? 'transform' : 'auto',
           }}
         >
           {pages.map((page, index) => (
@@ -877,7 +871,7 @@ const LobbyApp: React.FC = () => {
               style={{
                 width: '100vw',
                 flexShrink: 0,
-                minHeight: index === 0 ? '100vh' : '105vh'
+                minHeight: index === 0 ? '100vh' : '105vh',
               }}
             >
               {page}

@@ -4194,34 +4194,39 @@ p.marble-strip-product-price,
   top: 0 !important;
 }
 
-/* Full-viewport loading overlay (portal on document.body) — !important beats page inline z-index */
+/* Full-viewport loading overlay (portal on document.body) */
 .loading-screen-root {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483646 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+}
+
+/* Taller than any viewport metric + safe area — prevents lounge/lobby peeking at bottom */
+.loading-screen-root__backdrop {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
   min-width: 100vw !important;
-  max-width: none !important;
-  min-height: calc(100vh + 80px) !important;
-  min-height: calc(100dvh + 80px) !important;
-  min-height: calc(100lvh + 80px) !important;
-  height: calc(100vh + 80px) !important;
-  height: calc(100dvh + 80px) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-  box-sizing: border-box !important;
-  z-index: 2147483646 !important;
+  height: 150vh !important;
+  height: 150dvh !important;
+  height: 150lvh !important;
+  min-height: calc(100vh + 120px + env(safe-area-inset-bottom, 0px)) !important;
+  min-height: calc(100dvh + 120px + env(safe-area-inset-bottom, 0px)) !important;
   background-color: #ffffff !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-  transform: none !important;
-  pointer-events: auto !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
 }
 
 html[data-loading-screen='true'],
@@ -4229,4 +4234,35 @@ html[data-loading-screen='true'] body,
 html[data-loading-screen='true'] #root {
   overflow: hidden !important;
   overscroll-behavior: none !important;
+  background-color: #ffffff !important;
+}
+
+/* Lounge salon chairs — values from loungeSceneLayout.ts via CSS variables on .lounge-page */
+.lounge-page .lounge-salon-chairs-anchor {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(
+    calc(-50% + var(--lounge-chairs-offset-x, 25px)),
+    calc(-50% + var(--lounge-chairs-offset-y, 290px))
+  ) !important;
+  z-index: 10 !important;
+  width: fit-content !important;
+}
+
+.lounge-page .lounge-salon-chairs-anchor .lounge-salon-chairs-img {
+  width: auto !important;
+  height: var(--lounge-chairs-height, 160px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+@media (min-width: 1024px) {
+  .lounge-page .lounge-salon-chairs-anchor {
+    transform: translate(
+      calc(-50% + var(--lounge-chairs-offset-x, 25px)),
+      calc(-50% + var(--lounge-chairs-offset-y-large, 352px))
+    ) !important;
+  }
 }
