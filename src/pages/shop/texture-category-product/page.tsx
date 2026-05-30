@@ -151,7 +151,7 @@ const BCF_CF_VIDEO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   frontals: {
     straight:
       'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79719.mov',
-    wavy: '/assets/wavy-frontal-video.mov',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_slowly_showcas_Kling_30__78091.mov',
     curly:
       'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79392.mov'
   }
@@ -202,9 +202,48 @@ function bundlePdpHeroMediaStyle(texture: Texture): React.CSSProperties {
   };
 }
 
+/** Same JPG as PHOTO mode, behind hero video until first frame (avoids white flash while `.mov` buffers). */
+function bcfPdpHeroVideoUnderlayStyle(texture: Texture, category: Category): React.CSSProperties {
+  if (category === 'bundles') {
+    return {
+      ...bundlePdpHeroMediaStyle(texture),
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      pointerEvents: 'none',
+      userSelect: 'none',
+      zIndex: 0,
+    };
+  }
+  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+  const transform =
+    y != null ? `translate(-50%, calc(-50% + ${y}px))` : 'translate(-50%, -50%)';
+  return {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform,
+    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+    maxHeight: '100%',
+    width: 'auto',
+    height: 'auto',
+    objectFit: 'contain',
+    pointerEvents: 'none',
+    userSelect: 'none',
+    zIndex: 0,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  };
+}
+
 function bcfPdpHeroVideoStyle(texture: Texture, category: Category): React.CSSProperties {
   if (category === 'bundles') {
-    return bundlePdpHeroMediaStyle(texture);
+    return {
+      ...bundlePdpHeroMediaStyle(texture),
+      position: 'relative',
+      zIndex: 1,
+    };
   }
   const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
   const transform =
@@ -337,7 +376,7 @@ export default function ShopTextureCategoryProductPage() {
   const [bcfCfShowVideo, setBcfCfShowVideo] = useState(false);
   const bundleVideoRef = useRef<HTMLVideoElement>(null);
   const bcfCfVideoRef = useRef<HTMLVideoElement>(null);
-  /** Until true, hero video stays transparent so `poster` shows while buffering (no JPG underlay). */
+  /** Until true, hero video stays transparent so the JPG underlay shows while the `.mov` buffers. */
   const [bcfHeroVideoPaintReady, setBcfHeroVideoPaintReady] = useState(false);
   const [bundleStraightVideoSrc, setBundleStraightVideoSrc] = useState(BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC);
 
@@ -1185,6 +1224,13 @@ export default function ShopTextureCategoryProductPage() {
                                   overflow: 'hidden',
                                 }}
                               >
+                                <img
+                                  src={BUNDLE_PHOTO_BY_TEXTURE[texture]}
+                                  alt=""
+                                  aria-hidden
+                                  draggable={false}
+                                  style={bcfPdpHeroVideoUnderlayStyle(texture, 'bundles')}
+                                />
                                 <video
                                   key={`${texture}-video-${texture === 'straight' ? bundleStraightVideoSrc : 'default'}`}
                                   ref={bundleVideoRef}
@@ -1210,7 +1256,7 @@ export default function ShopTextureCategoryProductPage() {
                                     ...bcfPdpHeroVideoStyle(texture, 'bundles'),
                                     opacity: bcfHeroVideoPaintReady ? 1 : 0,
                                     transition: 'opacity 0.2s ease-out',
-                                    backgroundColor: '#FFFFFF',
+                                    backgroundColor: 'transparent',
                                   }}
                                 />
                               </div>
@@ -1251,6 +1297,13 @@ export default function ShopTextureCategoryProductPage() {
                                   overflow: 'hidden',
                                 }}
                               >
+                                <img
+                                  src={BCF_CF_PHOTO[category][texture]}
+                                  alt=""
+                                  aria-hidden
+                                  draggable={false}
+                                  style={bcfPdpHeroVideoUnderlayStyle(texture, category)}
+                                />
                                 <video
                                   key={`${category}-${texture}-video`}
                                   ref={bcfCfVideoRef}
@@ -1267,7 +1320,7 @@ export default function ShopTextureCategoryProductPage() {
                                     ...bcfPdpHeroVideoStyle(texture, category),
                                     opacity: bcfHeroVideoPaintReady ? 1 : 0,
                                     transition: 'opacity 0.2s ease-out',
-                                    backgroundColor: '#FFFFFF',
+                                    backgroundColor: 'transparent',
                                   }}
                                 />
                               </div>
