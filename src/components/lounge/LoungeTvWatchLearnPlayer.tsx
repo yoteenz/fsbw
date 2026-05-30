@@ -4,7 +4,6 @@ import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
 const TAP_DELAY_MS = 280;
-const BRAND_RED = '#EB1C24';
 
 type LoungeTvWatchLearnPlayerProps = {
   tile: LoungeTvVideoTile;
@@ -24,7 +23,17 @@ function FullscreenExpandIcon() {
   );
 }
 
+type VideoWithIosFullscreen = HTMLVideoElement & {
+  webkitEnterFullscreen?: () => void;
+  webkitDisplayingFullscreen?: boolean;
+};
+
+type ElementWithLegacyFullscreen = HTMLElement & {
+  webkitRequestFullscreen?: () => Promise<void> | void;
+};
+
 export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps) {
+  const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [paused, setPaused] = useState(false);
@@ -73,15 +82,28 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   }, [syncTimeFromVideo]);
 
   const enterFullscreen = useCallback(() => {
-    const video = videoRef.current;
+    const video = videoRef.current as VideoWithIosFullscreen | null;
+    const shell = shellRef.current;
     if (!video) return;
-    if (document.fullscreenElement) return;
-    const request =
-      video.requestFullscreen ??
-      (video as HTMLVideoElement & { webkitRequestFullscreen?: () => void }).webkitRequestFullscreen;
-    if (request) {
-      void Promise.resolve(request.call(video)).catch(() => undefined);
+
+    try {
+      if (typeof video.webkitEnterFullscreen === 'function') {
+        video.webkitEnterFullscreen();
+        return;
+      }
+    } catch {
+      /* iOS may throw if not allowed */
     }
+
+    const target: ElementWithLegacyFullscreen = (shell ?? video) as ElementWithLegacyFullscreen;
+    if (document.fullscreenElement === target) return;
+
+    const request =
+      target.requestFullscreen?.bind(target) ??
+      target.webkitRequestFullscreen?.bind(target);
+    if (!request) return;
+
+    void Promise.resolve(request()).catch(() => undefined);
   }, []);
 
   const cancelPendingTap = useCallback(() => {
@@ -108,8 +130,8 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
     [cancelPendingTap, enterFullscreen]
   );
 
-  const handleFullscreenClick = useCallback(
-    (e: React.MouseEvent) => {
+  const handleFullscreenPress = useCallback(
+    (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
       cancelPendingTap();
@@ -148,6 +170,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       }}
     >
       <div
+        ref={shellRef}
         style={{
           position: 'relative',
           width: '100%',
@@ -226,6 +249,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
           >
             <input
               type="range"
+              className="lounge-tv-seek-range"
               min={0}
               max={seekMax}
               step={0.1}
@@ -236,14 +260,6 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
               aria-valuemin={0}
               aria-valuemax={seekMax}
               aria-valuenow={currentTime}
-              style={{
-                width: '100%',
-                margin: 0,
-                height: '14px',
-                accentColor: BRAND_RED,
-                cursor: 'pointer',
-                display: 'block',
-              }}
             />
           </div>
         ) : null}
@@ -271,14 +287,14 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         <button
           type="button"
           aria-label="Full screen"
-          onPointerDown={handleControlsPointerDown}
+          onPointerDown={handleFullscreenPress}
           onPointerUp={(e) => e.stopPropagation()}
-          onClick={handleFullscreenClick}
+          onClick={handleFullscreenPress}
           style={{
             position: 'absolute',
             right: '5px',
             bottom: paused ? '22px' : '5px',
-            zIndex: 3,
+            zIndex: 10,
             width: '22px',
             height: '22px',
             margin: 0,
@@ -294,6 +310,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             WebkitTapHighlightColor: 'transparent',
             touchAction: 'manipulation',
             transition: 'bottom 0.15s ease',
+            pointerEvents: 'auto',
           }}
         >
           <FullscreenExpandIcon />

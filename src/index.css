@@ -4352,6 +4352,63 @@ html[data-loading-screen='true'] #root {
   }
 }
 
+/* Watch + Learn player — thin red seek track, narrow white thumb (no track border) */
+.lounge-tv-seek-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lounge-tv-seek-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #eb1c24;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.lounge-tv-seek-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 5px;
+  height: 9px;
+  margin-top: -4px;
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.lounge-tv-seek-range::-moz-range-track {
+  height: 2px;
+  background: #eb1c24;
+  border: none;
+  border-radius: 0;
+}
+
+.lounge-tv-seek-range::-moz-range-thumb {
+  width: 5px;
+  height: 9px;
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.lounge-tv-seek-range:focus {
+  outline: none;
+}
+
+.lounge-tv-seek-range:focus::-webkit-slider-thumb {
+  box-shadow: none;
+}
+
 /* Lounge TV overlay — CRT power off (horizontal zap only, no static) */
 .lounge-tv-power-off {
   position: absolute;
