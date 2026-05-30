@@ -21569,3 +21569,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME down 6px
 
 **Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-10px` → `-4px`** (`!important`; longhand margins on wrap, no inline margin on span). Lists overview **line** view only; grid unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist stock alerts wired to Account → Alerts
+
+**Context:** User wanted low/back-in-stock wishlist alerts to actually appear on Account → Alerts (not only the wishlist banner). Prior logic required `in_stock → low_stock` transition and skipped first baseline; BCF was not tracked.
+
+**Change:** `wishlistStockAlerts.ts` — track wig units + **`BCF`** key when any `shop-texture-category` on wishlist/`userLists`; use `getBcfStockStatus()` / `getWishlistItemRoute` for BCF **VIEW PRODUCT**; alert on transition **or** first seen while already **`low_stock`**; stable ids `wishlist_low_stock_*` / `wishlist_back_in_stock_*` in `notifications_{email}`. `notifications/page.tsx` listens to **`wishlistStockAlertsUpdated`** to refresh list. Still requires signed-in user; runs via **`ProductInventorySync`**. Pushed `master` + `preview/mobile`.
