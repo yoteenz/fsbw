@@ -21607,3 +21607,13 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** With 6+ detail lines open, product name/subtitle block should shift up (`translateY(-14px)`), but a legacy positive **`top`** on the same wrapper (6px + 4px per detail) pushed content down (~+30px for 7 lines), canceling the lift.
 
 **Change:** `CartDropdown.tsx` — removed dynamic positive `top` when viewing details; lift uses **`productTextTransform`** only (`-4px`, or `-14px` when `cartDropdownDetailTextRowCount >= 6`). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart dropdown: product text still low with 6+ VIEW DETAILS (override fix)
+
+**Context:** User reported BLANCO with 7 selection lines in cart dropdown VIEW DETAILS still had product name/options sitting too low after prior `top` removal + `translateY(-14px)` fix.
+
+**Cause:** (1) Row **`items-center`**, middle column **`justify-center`**, and **`cartLineProductStackStyle` `justifyContent: center`** still vertically centered the product block inside the line card. (2) **`-14px` lift** was too small vs the old **`top`** offset (~30px for 7 lines). (3) Line count for threshold used a duplicate counter that could diverge from rendered VIEW DETAILS rows (add-ons as multiple `<br>` lines).
+
+**Change:** `CartDropdown.tsx` — when details open: **`items-start`** on row, **`justify-start`** on middle column, **`minHeight: 0`** (was 120px), stack **`justifyContent: flex-start`**. Shared **`buildUnitCartViewDetailItemDescriptors`** + **`cartDropdownUnitViewDetailsLineCount`** (add-ons = one row each). **`cartDropdownProductTextTranslateY`**: 6+ lines → scaled lift (base **32px** + **3px** per extra line; e.g. 7 lines ≈ **-35px**). Removed unused **`cartDropdownUnitDetailRowCount`**. Pushed `master` + `preview/mobile`.
