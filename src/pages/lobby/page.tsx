@@ -15,6 +15,7 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
+import { LoungeTvFrame, loungeTvDimensionsFromFrameHeight } from '../../components/lounge/loungeTvFrame';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -465,7 +466,9 @@ const LoungePage: React.FC = () => {
   const closeLoungeTv = useCallback(() => {
     setTvOpen(false);
   }, []);
-  
+
+  const loungeLobbyTvFrame = loungeTvDimensionsFromFrameHeight(146);
+
   const handlePrevious = useCallback(() => {
     // This will be handled by parent component
     window.dispatchEvent(new CustomEvent('lobby-navigate-previous'));
@@ -535,48 +538,47 @@ const LoungePage: React.FC = () => {
            width: 'fit-content',
          }}
        >
-         <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-           <img
-             src="/assets/tv-screen.png"
-             alt="TV Screen"
-             style={{
-               width: 'auto',
-               height: '146px',
-               margin: 0,
-               padding: 0,
-               display: 'block',
-               maxWidth: 'none',
-               opacity: tvOpen ? 0.35 : 1,
-               transition: 'opacity 0.4s ease',
-             }}
-           />
-           {!tvOpen && (
-             <button
-               type="button"
-               onClick={openLoungeTv}
-               aria-label="Play lounge media"
-               style={{
-                 position: 'absolute',
-                 left: '50%',
-                 top: '50%',
-                 transform: 'translate(-50%, -50%)',
-                 margin: 0,
-                 padding: '12px',
-                 border: 'none',
-                 background: 'transparent',
-                 cursor: 'pointer',
-                 WebkitTapHighlightColor: 'transparent',
-                 touchAction: 'manipulation',
-                 zIndex: 2,
-               }}
-             >
-               <img
-                 src="/assets/play-button.png"
-                 alt=""
-                 style={{ width: 'auto', height: '15px', display: 'block', pointerEvents: 'none' }}
-               />
-             </button>
-           )}
+         <div
+           style={{
+             display: 'inline-block',
+             position: 'relative',
+             width: 'fit-content',
+             opacity: tvOpen ? 0.35 : 1,
+             transition: 'opacity 0.4s ease',
+           }}
+         >
+           <LoungeTvFrame
+             frameWidth={loungeLobbyTvFrame.frameW}
+             frameHeight={loungeLobbyTvFrame.frameH}
+           >
+             {!tvOpen && (
+               <button
+                 type="button"
+                 onClick={openLoungeTv}
+                 aria-label="Play lounge media"
+                 style={{
+                   position: 'absolute',
+                   left: '50%',
+                   top: '50%',
+                   transform: 'translate(-50%, -50%)',
+                   margin: 0,
+                   padding: '12px',
+                   border: 'none',
+                   background: 'transparent',
+                   cursor: 'pointer',
+                   WebkitTapHighlightColor: 'transparent',
+                   touchAction: 'manipulation',
+                   zIndex: 2,
+                 }}
+               >
+                 <img
+                   src="/assets/play-button.png"
+                   alt=""
+                   style={{ width: 'auto', height: '15px', display: 'block', pointerEvents: 'none' }}
+                 />
+               </button>
+             )}
+           </LoungeTvFrame>
          </div>
        </div>
 

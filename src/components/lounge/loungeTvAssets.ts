@@ -2,9 +2,6 @@
 export const LOUNGE_CURTAIN_LEFT_SRC = '/assets/lounge-curtain-left.jpeg';
 export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 
-/** Same TV hardware image as lounge lobby (`LoungePage`). */
-export const LOUNGE_TV_FRAME_SRC = '/assets/tv-screen.png';
-
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
