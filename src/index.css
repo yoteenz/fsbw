@@ -4193,3 +4193,40 @@ p.marble-strip-product-price,
   position: relative !important;
   top: 0 !important;
 }
+
+/* Full-viewport loading overlay (portal on document.body) — !important beats page inline z-index */
+.loading-screen-root {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  min-width: 100vw !important;
+  max-width: none !important;
+  min-height: calc(100vh + 80px) !important;
+  min-height: calc(100dvh + 80px) !important;
+  min-height: calc(100lvh + 80px) !important;
+  height: calc(100vh + 80px) !important;
+  height: calc(100dvh + 80px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  box-sizing: border-box !important;
+  z-index: 2147483646 !important;
+  background-color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+html[data-loading-screen='true'],
+html[data-loading-screen='true'] body,
+html[data-loading-screen='true'] #root {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}

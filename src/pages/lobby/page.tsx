@@ -847,17 +847,19 @@ const LobbyApp: React.FC = () => {
 
   return (
     <>
-      <div style={{ 
-        width: '100vw', 
-        height: '100vh',
-        overflowX: 'hidden',
-        overflowY: 'auto',
-        position: 'relative',
-        backgroundColor: 'transparent',
-        WebkitOverflowScrolling: 'touch',
-        scrollBehavior: 'auto'
-      }}>
-        {showLoading && <LoadingScreen />}
+      {showLoading && <LoadingScreen bleedPx={96} />}
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          overflowX: 'hidden',
+          overflowY: showLoading ? 'hidden' : 'auto',
+          position: 'relative',
+          backgroundColor: 'transparent',
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'auto',
+        }}
+      >
         {/* Slide Container */}
         <div 
           style={{
