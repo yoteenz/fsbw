@@ -26,8 +26,10 @@ const ANIM_MS = 1400;
 const HAND_REVEAL_MS = 2200;
 /** Hand fade-out after screen is blank on power-off. */
 const HAND_HIDE_MS = 850;
-/** Pause after hand is visible, then CRT static on screen — same duration for both beats. */
-const STATIC_BEAT_MS = 500;
+/** Pause after hand is visible before CRT static (60% shorter than prior 500ms beat). */
+const STATIC_DELAY_MS = 200;
+/** CRT static on screen before menu content. */
+const STATIC_ON_MS = 500;
 
 type LoungeTvClosePhase = 'idle' | 'zap' | 'hand-out' | 'shrink';
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
