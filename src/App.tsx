@@ -24,7 +24,11 @@ import { schedulePushCartWishlistToCloud } from './utils/pushCartWishlistToCloud
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue';
 import { registerGlobalClientActivityListeners } from './utils/clientActivityBootstrap';
 import { startLivePresenceHeartbeat } from './utils/livePresenceHeartbeat';
-import { hardReloadOnceForStaleChunks, isDynamicImportChunkFailure } from './utils/chunkLoadRecovery';
+import {
+  forceReloadForStaleChunks,
+  isDynamicImportChunkFailure,
+  reloadForStaleChunks,
+} from './utils/chunkLoadRecovery';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -49,12 +53,12 @@ const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
             continue;
           }
           if (chunkFail) {
-            if (!hardReloadOnceForStaleChunks()) {
-              throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
+            if (reloadForStaleChunks()) {
+              return new Promise(() => {
+                /* page reload in progress */
+              });
             }
-            return new Promise(() => {
-              /* page reload in progress */
-            });
+            throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
           }
           throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
         }
@@ -152,12 +156,15 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
     if (isDynamicImportChunkFailure(error)) {
-      hardReloadOnceForStaleChunks();
+      reloadForStaleChunks();
     }
   }
 
   handleRetry = () => {
-    // Clear caches and reset error state
+    if (this.state.error && isDynamicImportChunkFailure(this.state.error)) {
+      forceReloadForStaleChunks();
+      return;
+    }
     if (typeof window !== 'undefined' && 'caches' in window) {
       caches.keys().then(cacheNames => {
         return Promise.all(cacheNames.map(name => caches.delete(name)));
@@ -188,12 +195,19 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           justifyContent: 'center',
           gap: '20px'
         }}>
-          <h1>ERROR: Component Failed to Load</h1>
-          <p>{this.state.error?.message}</p>
-          {isChunkError && (
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button 
-                onClick={this.handleRetry}
+          <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0 }}>
+            {isChunkError ? 'UPDATING THE APP' : 'ERROR: COMPONENT FAILED TO LOAD'}
+          </h1>
+          <p style={{ fontSize: '14px', textAlign: 'center', maxWidth: '320px', lineHeight: 1.4, margin: 0 }}>
+            {isChunkError
+              ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
+              : this.state.error?.message}
+          </p>
+          {isChunkError ? (
+            <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+              <button
+                type="button"
+                onClick={() => forceReloadForStaleChunks()}
                 style={{
                   padding: '10px 20px',
                   fontSize: '16px',
@@ -201,28 +215,30 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                   color: 'red',
                   border: 'none',
                   cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                Retry
-              </button>
-              <button 
-                onClick={() => window.location.reload()}
-                style={{
-                  padding: '10px 20px',
-                  fontSize: '16px',
-                  backgroundColor: 'white',
-                  color: 'red',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
                 }}
               >
                 Reload Page
               </button>
             </div>
+          ) : (
+            <button
+              type="button"
+              onClick={this.handleRetry}
+              style={{
+                padding: '10px 20px',
+                fontSize: '16px',
+                backgroundColor: 'white',
+                color: 'red',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                marginTop: '8px',
+              }}
+            >
+              Retry
+            </button>
           )}
-          <pre style={{ fontSize: '12px', maxWidth: '90%', overflow: 'auto' }}>{this.state.error?.stack}</pre>
         </div>
       );
     }

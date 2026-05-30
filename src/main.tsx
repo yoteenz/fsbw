@@ -8,6 +8,9 @@ import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnc
 import { tryServerSessionRestore } from './utils/sessionRestore'
 import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
+import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
+
+registerGlobalChunkLoadRecovery()
 
 // Restore app auth from backup if something (e.g. Supabase token refresh) cleared isSignedIn/currentUser
 ensureAuthRestoredFromBackup()
