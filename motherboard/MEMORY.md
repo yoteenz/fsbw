@@ -21951,3 +21951,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted chroma-keyed hand holding remote at bottom of screen after TV/curtains finish; supplied Supabase JPEG.
 
 **Changes:** Green-screen **`DqaxvQ6qq4XteORiCsfiW_kPRRBKiq.jpeg`** → bundled **`public/assets/lounge-tv-remote-hand.png`**. **`LoungeTvRemoteHand.tsx`** fixed bottom, fades in with **`showContent`**. Remote URL in **`LOUNGE_TV_REMOTE_HAND_SRC_REMOTE`**. Preload with curtains. Commit **`908e09c4`** on **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge curtain Fal prompts: 10–12 pleats
+
+**Context:** User said current curtains have too many pleats; refine from prior **14–18** guidance.
+
+**Change:** **`loungeCurtainFalPrompts.ts`** — style lock **10–12 folds**, ~**5–6 per half**; negatives for **15+ / dense micro-pleats**; Workflow B notes updated. Regen LEFT then RIGHT from LEFT PNG, replace **`lounge-curtain-*.jpeg`**.
