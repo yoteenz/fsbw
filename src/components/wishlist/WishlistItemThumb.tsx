@@ -42,6 +42,8 @@ type WishlistItemThumbProps = {
   bcfThumbOptions?: WishlistBcfThumbOptions;
   /** `/wishlist/lists` BCF frames — white letterbox bands above/below `object-fit: contain` art. */
   bcfFrameBackgroundColor?: string;
+  /** Scale BCF art inside the frame only (frame `widthPx` / `heightPx` unchanged). */
+  bcfImageScale?: number;
 };
 
 export function WishlistItemThumb({
@@ -52,6 +54,7 @@ export function WishlistItemThumb({
   frameInsetPx = 3,
   bcfThumbOptions,
   bcfFrameBackgroundColor,
+  bcfImageScale = 1,
 }: WishlistItemThumbProps) {
   const bcfThumb = getWishlistBcfThumbSrc(item, bcfThumbOptions);
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -82,10 +85,11 @@ export function WishlistItemThumb({
           src={bcfThumb}
           alt=""
           style={{
-            width: '100%',
-            height: '100%',
+            width: `${bcfImageScale * 100}%`,
+            height: `${bcfImageScale * 100}%`,
             objectFit: 'contain',
             objectPosition: 'center',
+            flexShrink: 0,
             ...(bcfFrameBackgroundColor ? { backgroundColor: bcfFrameBackgroundColor } : {}),
           }}
         />
