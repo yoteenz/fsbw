@@ -133,6 +133,19 @@ function LoungeTvScreen({
     whiteSpace: 'nowrap',
   });
 
+  const mainTabNavStyle = (active: boolean): React.CSSProperties => ({
+    fontFamily: '"Futura PT Medium", Futura, sans-serif',
+    fontSize: '9px',
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+    color: active ? '#ffffff' : '#9a9a9a',
+    background: 'none',
+    border: 'none',
+    padding: '2px 0',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  });
+
   return (
     <div
       style={{
@@ -226,7 +239,7 @@ function LoungeTvScreen({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
                 gap: '6px',
                 width: '100%',
               }}
