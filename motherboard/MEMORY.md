@@ -21433,3 +21433,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked to increase gray Bohemy text by 1px on brand pages and the account affiliate program card.
 
 **Change:** `BrandTermsBody.tsx` + `BrandFaqSection.tsx` section titles `#808080` Bohemy `18px → 19px`; `BrandMemberSection.tsx` `bohemy` variant `16px → 17px`; `affiliate/page.tsx` AFFILIATE PROGRAM section headings `18px → 19px`. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists: BCF names + EDIT IN BUILD-A-WIG edit mode
+
+**Context:** User asked for BCF lines on wishlist **lists** (`/wishlist/lists/:id`, shared list) to show only **BUNDLES** / **CLOSURES** / **FRONTALS** (not `BUNDLES · WAVY`). Red **EDIT IN BUILD-A-WIG** was opening unit PDPs instead of Build-a-Wig edit mode when `addedFrom === 'unit'`.
+
+**Change:** `wishlistListItemDetails.ts` — `getWishlistItemDisplayName`, `getWishlistItemRedSubtitle`, `isWishlistBuildAWigEditableItem`. **lists/page.tsx**, **shared/page.tsx**, **wishlist/page.tsx** — use those helpers for name/subtitle/route; lists line view adds **EDIT IN BUILD-A-WIG** under thumb for unit wigs; all edit clicks use `prepareBuildAWigEditSession(item, { source: 'wishlist' })` (no PDP redirect). Pushed `master` + `preview/mobile`.
