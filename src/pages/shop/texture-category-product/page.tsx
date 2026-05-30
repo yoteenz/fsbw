@@ -104,9 +104,10 @@ const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
 };
 
 const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
-  straight: '/assets/straight-bundle-video.MP4',
+  straight:
+    'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/make_this_image_shake_the_hair_Kling_30__36738.mov',
   wavy: '/assets/wavy-bundle-video.MP4',
-  curly: '/assets/curly-bundle-video.MP4'
+  curly: '/assets/curly-bundle-video.MP4',
 };
 
 /** Closures & frontals PDP photo URLs (video files remain local). */
