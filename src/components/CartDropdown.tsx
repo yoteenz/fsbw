@@ -59,8 +59,8 @@ const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
 const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX = 28;
 /** Per detail line beyond threshold (keeps long lists from sitting low in the card). */
 const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX = 3;
-/** Pull product block down after view-details lift was too aggressive (name + subtitle + detail lines). */
-const CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 14;
+/** Pull product block down after view-details lift (netY = this − liftPx; 7 detail lines → −10px). */
+const CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 25;
 
 type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
 
