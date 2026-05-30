@@ -156,7 +156,10 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   if (!tile.videoSrc) return null;
 
   const seekMax = duration > 0 ? duration : Math.max(currentTime, 1);
-  const durationDisplay = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
+  const elapsedLabel = formatLoungeTvVideoDuration(currentTime);
+  const totalLabel = duration > 0 ? formatLoungeTvVideoDuration(duration) : '—';
+  const progressLabel =
+    duration > 0 ? `${elapsedLabel}/${totalLabel}` : elapsedLabel !== '—' ? `${elapsedLabel}/—` : '—';
 
   return (
     <div
@@ -301,24 +304,12 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
         style={{
           width: '100%',
           display: 'flex',
-          justifyContent: 'flex-end',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: '8px',
+          minWidth: 0,
         }}
       >
-        <span
-          style={{
-            fontFamily: BODY_FONT,
-            fontSize: '7px',
-            letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.92)',
-            textTransform: 'uppercase',
-            lineHeight: 1,
-          }}
-        >
-          {durationDisplay}
-        </span>
-      </div>
-
-      <div style={{ width: '100%' }}>
         <span
           style={{
             fontFamily: BODY_FONT,
@@ -327,10 +318,29 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
             color: '#ffffff',
             textTransform: 'uppercase',
             textAlign: 'left',
-            display: 'block',
+            flex: '1 1 auto',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {tile.title}
+        </span>
+        <span
+          style={{
+            fontFamily: BODY_FONT,
+            fontSize: '7px',
+            letterSpacing: '0.06em',
+            color: 'rgba(255,255,255,0.92)',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+          }}
+          aria-label={`Playback ${progressLabel}`}
+        >
+          {progressLabel}
         </span>
       </div>
 

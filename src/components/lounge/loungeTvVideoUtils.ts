@@ -1,6 +1,6 @@
 /** Format seconds as M:SS or H:MM:SS for lounge TV player chrome. */
 export function formatLoungeTvVideoDuration(seconds: number): string {
-  if (!Number.isFinite(seconds) || seconds <= 0) return '—';
+  if (!Number.isFinite(seconds) || seconds < 0) return '—';
   const total = Math.floor(seconds);
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor((total % 3600) / 60);

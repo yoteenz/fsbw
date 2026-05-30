@@ -141,7 +141,7 @@ const loungeTvThumbTitleBlockStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  marginTop: '4px',
+  marginTop: '8px',
 };
 
 const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
