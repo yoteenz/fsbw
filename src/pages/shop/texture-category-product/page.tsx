@@ -110,10 +110,15 @@ const BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC =
 /** Used when Supabase object is missing (404) or `.mov` fails in-browser. */
 const BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC = '/assets/straight-bundle-video.MP4';
 
+const BUNDLE_WAVY_VIDEO_SUPABASE_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__98237.mov';
+const BUNDLE_CURLY_VIDEO_SUPABASE_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__24695.mov';
+
 const BUNDLE_VIDEO_BY_TEXTURE: Record<Texture, string> = {
   straight: BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC,
-  wavy: '/assets/wavy-bundle-video.MP4',
-  curly: '/assets/curly-bundle-video.MP4',
+  wavy: BUNDLE_WAVY_VIDEO_SUPABASE_SRC,
+  curly: BUNDLE_CURLY_VIDEO_SUPABASE_SRC,
 };
 
 function bundleHeroVideoSrc(texture: Texture, straightOverride?: string): string {
@@ -121,7 +126,7 @@ function bundleHeroVideoSrc(texture: Texture, straightOverride?: string): string
   return BUNDLE_VIDEO_BY_TEXTURE[texture];
 }
 
-/** Closures & frontals PDP photo URLs (video files remain local). */
+/** Closures & frontals PDP photo URLs (hero videos: Supabase Kling `.mov` under `wig-preview-live/`). */
 const BCF_CF_PHOTO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   closures: {
     straight: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg',
@@ -137,14 +142,18 @@ const BCF_CF_PHOTO: Record<'closures' | 'frontals', Record<Texture, string>> = {
 
 const BCF_CF_VIDEO: Record<'closures' | 'frontals', Record<Texture, string>> = {
   closures: {
-    straight: '/assets/straight-closure-video.mp4',
-    wavy: '/assets/wavy-closure-video.MP4',
-    curly: '/assets/curly-closure-video.MP4'
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__27854.mov',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__49906.mov',
+    curly:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__28643.mov'
   },
   frontals: {
-    straight: '/assets/straight-frontal-video.mp4',
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79719.mov',
     wavy: '/assets/wavy-frontal-video.mov',
-    curly: '/assets/curly-frontal-video.MP4'
+    curly:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__79392.mov'
   }
 };
 
