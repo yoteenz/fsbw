@@ -55,6 +55,8 @@ interface CartDropdownProps {
 }
 
 const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
+/** Lift unit VIEW DETAILS / CLOSE DETAILS when many option lines add space below the title block. */
+const CART_DROPDOWN_UNIT_VIEW_DETAILS_LIFT_PX = 10;
 
 function countDetailHtmlRows(html: string): number {
   return html.split(/<br\s*\/?>/i).filter((line) => line.trim().length > 0).length;
@@ -1815,6 +1817,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           // Add spacer to maintain consistent height and alignment
                           return <div style={{ height: '20px', marginTop: '6px' }}></div>;
                         }
+
+                        const unitDetailRowCount = cartDropdownUnitDetailRowCount(item);
+                        const liftUnitViewDetails =
+                          unitDetailRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
                         
                         return (
                           <span
@@ -1824,7 +1830,10 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               color: '#EB1C24',
                               textTransform: 'uppercase',
                               marginTop: '7px',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              ...(liftUnitViewDetails
+                                ? { transform: `translateY(-${CART_DROPDOWN_UNIT_VIEW_DETAILS_LIFT_PX}px)` }
+                                : {}),
                             }}
                             onClick={(e) => {
                               e.stopPropagation();

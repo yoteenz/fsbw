@@ -21412,3 +21412,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — BCF cart VIEW DETAILS: TREATMENT PLUCK + BLEACH/TINT
 
 **Change:** `cartLineRedAndDetails.ts` — `bcfCartViewDetailsHtml` lace-treatment line now **`TREATMENT: PLUCK + BLEACH/TINT`** (join with ` + `, PLUCK before BLEACH/TINT). Cart dropdown, bag, wishlist BCF details. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart unit VIEW DETAILS lift for 6+ options
+
+**Change:** `CartDropdown.tsx` — unit **VIEW DETAILS** / **CLOSE DETAILS** uses `translateY(-10px)` when `cartDropdownUnitDetailRowCount(item) >= 6` (matches `CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD`). Pushed `master` + `preview/mobile`.
