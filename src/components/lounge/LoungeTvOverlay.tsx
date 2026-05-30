@@ -28,7 +28,7 @@ const HAND_REVEAL_MS = 2200;
 const HAND_HIDE_MS = 850;
 /** Pause after hand is visible before CRT static (60% shorter than prior 500ms beat). */
 const STATIC_DELAY_MS = 200;
-/** CRT static on screen before menu content. */
+/** How long CRT static stays on screen before menu content. */
 const STATIC_ON_MS = 500;
 
 type LoungeTvClosePhase = 'idle' | 'zap' | 'hand-out' | 'shrink';
