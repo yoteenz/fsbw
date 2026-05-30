@@ -178,16 +178,28 @@ function bundlePdpHeroMaxWidthPx(tex: Texture): number {
   );
 }
 
-/** Bundles straight Kling .mov is letterboxed in-file — scale so VIDEO matches PHOTO footprint. */
-const BUNDLE_STRAIGHT_VIDEO_HERO_SCALE = 1.22;
+/** Bundles hero photo + video share the same contain sizing (no extra scale on video). */
+function bundlePdpHeroMediaStyle(texture: Texture): React.CSSProperties {
+  return {
+    position: 'relative',
+    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
+    maxHeight: '100%',
+    width: 'auto',
+    height: 'auto',
+    display: 'block',
+    objectFit: 'contain',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  };
+}
 
 function bcfPdpHeroVideoStyle(texture: Texture, category: Category): React.CSSProperties {
-  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
-  let transform =
-    y != null ? `translate(-50%, calc(-50% + ${y}px))` : 'translate(-50%, -50%)';
-  if (category === 'bundles' && texture === 'straight') {
-    transform += ` scale(${BUNDLE_STRAIGHT_VIDEO_HERO_SCALE})`;
+  if (category === 'bundles') {
+    return bundlePdpHeroMediaStyle(texture);
   }
+  const y = shopTextureCategoryCurlyThumbTranslateYPx(texture, category);
+  const transform =
+    y != null ? `translate(-50%, calc(-50% + ${y}px))` : 'translate(-50%, -50%)';
   return {
     position: 'absolute',
     left: '50%',
@@ -1213,17 +1225,7 @@ export default function ShopTextureCategoryProductPage() {
                                     img.setAttribute('data-fallback-tried', '1');
                                     img.src = shopTextureCategoryThumbFallbackSrc[texture];
                                   }}
-                                  style={{
-                                    position: 'relative',
-                                    maxWidth: `${bundlePdpHeroMaxWidthPx(texture)}px`,
-                                    maxHeight: '100%',
-                                    width: 'auto',
-                                    height: 'auto',
-                                    display: 'block',
-                                    objectFit: 'contain',
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto'
-                                  }}
+                                  style={bundlePdpHeroMediaStyle(texture)}
                                 />
                               </div>
                             )
