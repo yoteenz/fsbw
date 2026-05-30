@@ -21943,3 +21943,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User supplied new narrower-pleat curtain JPEGs (may still be dense); square TV edges; top-right **X** to close and return curtains to lounge.
 
 **Changes:** **`lounge-curtain-left.jpeg`** / **`right.jpeg`** from Supabase Untitled folder URLs; removed old PNGs; **`loungeTvAssets.ts`** paths/remotes updated. **`LoungeTvOverlay`**: **`borderRadius: 0`** on frame/screen; **`/assets/close-icon.svg`** button on TV (stops propagation); **`visible`** state keeps portal mounted during **1.4s** close so curtains/TV animate out before unmount. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge TV: hand + remote (green-screen composite)
+
+**Context:** User wanted chroma-keyed hand holding remote at bottom of screen after TV/curtains finish; supplied Supabase JPEG.
+
+**Changes:** Green-screen **`DqaxvQ6qq4XteORiCsfiW_kPRRBKiq.jpeg`** → bundled **`public/assets/lounge-tv-remote-hand.png`**. **`LoungeTvRemoteHand.tsx`** fixed bottom, fades in with **`showContent`**. Remote URL in **`LOUNGE_TV_REMOTE_HAND_SRC_REMOTE`**. Preload with curtains. Commit **`908e09c4`** on **`master`** + **`preview/mobile`**.
