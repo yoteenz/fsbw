@@ -21935,3 +21935,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted TV nav/tiles hidden until TV grow and curtain close animation finish (and assets ready).
 
 **Change:** **`LoungeTvOverlay.tsx`** — preload left/right curtain PNGs; start **`animatedIn`** after load; **`showContent`** after **`ANIM_MS`** (1.4s) with fade-in; black bezel/screen only during animation; content unmounts/hides on close.
+
+---
+
+## 2026-05-30 — Lounge curtains JPEG trial, square TV, close X
+
+**Context:** User supplied new narrower-pleat curtain JPEGs (may still be dense); square TV edges; top-right **X** to close and return curtains to lounge.
+
+**Changes:** **`lounge-curtain-left.jpeg`** / **`right.jpeg`** from Supabase Untitled folder URLs; removed old PNGs; **`loungeTvAssets.ts`** paths/remotes updated. **`LoungeTvOverlay`**: **`borderRadius: 0`** on frame/screen; **`/assets/close-icon.svg`** button on TV (stops propagation); **`visible`** state keeps portal mounted during **1.4s** close so curtains/TV animate out before unmount. Pushed **`master`** + **`preview/mobile`**.
