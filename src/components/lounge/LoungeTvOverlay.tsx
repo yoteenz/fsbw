@@ -158,25 +158,49 @@ function LoungeTvScreen({
     >
       <nav
         style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'flex-start',
-          gap: '6px 10px',
+          display: 'grid',
+          gridTemplateColumns: 'auto 1fr auto',
+          alignItems: 'center',
+          width: '100%',
           marginBottom: '10px',
           flexShrink: 0,
         }}
         aria-label="Lounge TV categories"
       >
-        {LOUNGE_TV_MAIN_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            style={mainTabNavStyle(mainTab === tab.id)}
-            onClick={() => onMainTabChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <button
+          type="button"
+          style={mainTabNavStyle(mainTab === 'brand')}
+          onClick={() => onMainTabChange('brand')}
+        >
+          BRAND
+        </button>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px',
+            minWidth: 0,
+          }}
+        >
+          {LOUNGE_TV_MAIN_TABS.filter((tab) => tab.id === 'slay-tips' || tab.id === 'watch-learn').map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              style={mainTabNavStyle(mainTab === tab.id)}
+              onClick={() => onMainTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          style={{ ...mainTabNavStyle(mainTab === 'academy'), justifySelf: 'end' }}
+          onClick={() => onMainTabChange('academy')}
+        >
+          ACADEMY
+        </button>
       </nav>
 
       <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '8px' }}>
