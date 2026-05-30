@@ -21491,3 +21491,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Cart unit VIEW DETAILS lift for 6+ options
 
 **Change:** `CartDropdown.tsx` — unit **VIEW DETAILS** / **CLOSE DETAILS** uses `translateY(-10px)` when `cartDropdownUnitDetailRowCount(item) >= 6` (matches `CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD`). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME −4px more
+
+**Change:** `/wishlist/lists` overview **line** view — **EDIT LIST NAME** `margin-top` **-16px → -20px** via `.wishlist-lists-overview-edit-list-name` in `index.css` (`!important`); wrapper `.wishlist-lists-overview-edit-list-name-wrap`. Inline style no longer sets margin (avoids override fights). Grid view unchanged. Pushed `master` + `preview/mobile`.
