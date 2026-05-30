@@ -40,6 +40,8 @@ type WishlistItemThumbProps = {
   /** Overview list thumbs use a 3px inset ring; expanded line/grid use the same. */
   frameInsetPx?: number;
   bcfThumbOptions?: WishlistBcfThumbOptions;
+  /** `/wishlist/lists` BCF frames — white letterbox bands above/below `object-fit: contain` art. */
+  bcfFrameBackgroundColor?: string;
 };
 
 export function WishlistItemThumb({
@@ -49,6 +51,7 @@ export function WishlistItemThumb({
   onActivate,
   frameInsetPx = 3,
   bcfThumbOptions,
+  bcfFrameBackgroundColor,
 }: WishlistItemThumbProps) {
   const bcfThumb = getWishlistBcfThumbSrc(item, bcfThumbOptions);
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,13 +70,24 @@ export function WishlistItemThumb({
           width: widthPx,
           height: heightPx,
           ...THUMB_BORDER_FRAME_STYLE,
-          boxShadow: `inset 0 0 0 ${frameInsetPx}px #fff`,
+          ...(bcfFrameBackgroundColor
+            ? {
+                backgroundColor: bcfFrameBackgroundColor,
+                boxShadow: `inset 0 0 0 ${frameInsetPx}px ${bcfFrameBackgroundColor}`,
+              }
+            : { boxShadow: `inset 0 0 0 ${frameInsetPx}px #fff` }),
         }}
       >
         <img
           src={bcfThumb}
           alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center',
+            ...(bcfFrameBackgroundColor ? { backgroundColor: bcfFrameBackgroundColor } : {}),
+          }}
         />
       </div>
     );

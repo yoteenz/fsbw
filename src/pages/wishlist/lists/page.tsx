@@ -302,6 +302,8 @@ const LIST_OVERVIEW_THUMB_HEIGHT_PX = 110;
 
 /** BCF marble thumbs on `/wishlist/lists` only (not main wishlist or shared list). */
 const LISTS_PAGE_BCF_THUMB_SCALE = 0.9;
+/** Letterbox / inset band above-below BCF art inside the black frame (not gray frosted card). */
+const LISTS_PAGE_BCF_THUMB_FRAME_BG = '#FFFFFF';
 
 function listsPageBcfThumbWidthPx(baseWidthPx: number): number {
   return Math.round(baseWidthPx * LISTS_PAGE_BCF_THUMB_SCALE);
@@ -502,7 +504,11 @@ function WishlistListOverviewThumb({
     : LIST_OVERVIEW_THUMB_HEIGHT_PX;
   return (
     <div
-      className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
+      className={
+        bcfThumb
+          ? 'relative flex items-center justify-center cursor-pointer'
+          : 'relative bg-cover bg-center flex items-center justify-center cursor-pointer'
+      }
       style={{
         width: `${frameWidthPx}px`,
         height: `${frameHeightPx}px`,
@@ -512,7 +518,8 @@ function WishlistListOverviewThumb({
           ? bcfThumb
             ? {
                 border: '1.3px solid #000',
-                boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px #fff`,
+                backgroundColor: LISTS_PAGE_BCF_THUMB_FRAME_BG,
+                boxShadow: `inset 0 0 0 ${LIST_THUMB_FRAME_INSET_PX}px ${LISTS_PAGE_BCF_THUMB_FRAME_BG}`,
                 overflow: 'hidden',
               }
             : {
@@ -1151,6 +1158,7 @@ export default function ViewListsPage() {
                                       widthPx={thumbSize.widthPx}
                                       heightPx={thumbSize.heightPx}
                                       onActivate={() => navigate(getWishlistItemRoute(item))}
+                                      bcfFrameBackgroundColor={LISTS_PAGE_BCF_THUMB_FRAME_BG}
                                     />
                                     {isOutOfStock ? (
                                       <p
@@ -1297,6 +1305,7 @@ export default function ViewListsPage() {
                                     widthPx={thumbSize.widthPx}
                                     heightPx={thumbSize.heightPx}
                                     onActivate={() => navigate(getWishlistItemRoute(item))}
+                                    bcfFrameBackgroundColor={LISTS_PAGE_BCF_THUMB_FRAME_BG}
                                   />
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemDisplayName}</p>
                                   <CartLineTextLayer slot="subtitle" productName={itemProductName} style={{ alignItems: 'center' }}>
