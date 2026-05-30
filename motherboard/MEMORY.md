@@ -21494,6 +21494,14 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Cart: VIEW DETAILS position fix; product text 6+ lift
+
+**Context:** Prior change wrongly lifted the red **VIEW/CLOSE DETAILS** toggle; intent was to lift the **product text** block (name, subtitle, detail lines) when 6+ options with details open.
+
+**Change:** `CartDropdown.tsx` — removed `translateY` on unit VIEW DETAILS link. Product column: `translateY(-4px)` when details open; **`translateY(-14px)`** when open + `cartDropdownDetailTextRowCount >= 6`; no transform when collapsed. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME −4px more
 
 **Change:** `/wishlist/lists` overview **line** view — **EDIT LIST NAME** `margin-top` **-16px → -20px** via `.wishlist-lists-overview-edit-list-name` in `index.css` (`!important`); wrapper `.wishlist-lists-overview-edit-list-name-wrap`. Inline style no longer sets margin (avoids override fights). Grid view unchanged. Pushed `master` + `preview/mobile`.
