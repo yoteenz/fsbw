@@ -17,6 +17,7 @@ import {
 } from './loungeTvFrame';
 import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
+import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
@@ -305,12 +306,29 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [animatedIn, setAnimatedIn] = useState(false);
   const [curtainsReady, setCurtainsReady] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [poweringOff, setPoweringOff] = useState(false);
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
 
   const requestClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
+    if (poweringOff) return;
+    if (!animatedIn) {
+      onClose();
+      return;
+    }
+    setShowContent(false);
+    setPoweringOff(true);
+  }, [poweringOff, animatedIn, onClose]);
+
+  useEffect(() => {
+    if (!poweringOff) return;
+    const timer = window.setTimeout(() => {
+      setPoweringOff(false);
+      setAnimatedIn(false);
+      onClose();
+    }, LOUNGE_TV_POWER_OFF_MS);
+    return () => window.clearTimeout(timer);
+  }, [poweringOff, onClose]);
 
   useEffect(() => {
     if (isOpen) setVisible(true);
@@ -319,9 +337,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   useEffect(() => {
     if (!isOpen) {
       setShowContent(false);
-      setAnimatedIn(false);
+      setPoweringOff(false);
+      if (!poweringOff) setAnimatedIn(false);
       return;
     }
+    setPoweringOff(false);
     setCurtainsReady(false);
     let cancelled = false;
     Promise.all([
@@ -334,7 +354,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, poweringOff]);
 
   useEffect(() => {
     if (isOpen || !visible) return;
@@ -429,19 +449,20 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       />
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
-      <LoungeTvRemoteHand visible={showContent} />
+      <LoungeTvRemoteHand visible={showContent && !poweringOff} />
       <div style={framePositionStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
         <LoungeTvFrame
           fill
-          closeVisible={animatedIn}
+          closeVisible={animatedIn && !poweringOff}
           onClose={() => requestClose()}
           screenStyle={{
             opacity: animatedIn ? 1 : 0,
             transition: animatedIn ? 'opacity 220ms ease' : 'none',
           }}
         >
-          <LoungeTvPowerOnStatic active={animatedIn && !showContent} />
-          {showContent ? (
+          <LoungeTvPowerOnStatic active={animatedIn && !showContent && !poweringOff} />
+          <LoungeTvPowerOffEffect active={poweringOff} />
+          {showContent && !poweringOff ? (
             <div
               style={{
                 position: 'relative',
