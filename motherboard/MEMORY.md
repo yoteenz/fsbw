@@ -21895,6 +21895,8 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 
 **Changes:** **`src/components/lounge/LoungeTvOverlay.tsx`**, **`loungeTvContent.ts`**, **`lobby/page.tsx`** (`LoungePage`). Play opens portal overlay (~1.4s animation); **Escape** or backdrop tap closes. Pushed **`master`** + **`preview/mobile`**.
 
+**Follow-up:** Fal **Flux 2 Max** left/right curtain PNGs wired into overlay — **`public/assets/lounge-curtain-left.png`**, **`lounge-curtain-right.png`** (Supabase sources in **`loungeTvAssets.ts`**). Panels **51vw**, **`object-fit: cover`**, seam at center; TV **z-index** above curtains.
+
 ---
 
 ## 2026-05-30 — Home/shop BCF copy spacing matches UNITS row
