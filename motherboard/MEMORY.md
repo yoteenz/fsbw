@@ -21531,3 +21531,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Line-view **EDIT LIST NAME** did not move despite `.wishlist-lists-overview-edit-list-name { margin-top: -20px }` — lift was on inner span inside a second `<p>`; block sibling gap below PRIVATE stayed. Wrapper had `margin: 0 !important` which also blocked margin-top on the wrap.
 
 **Change:** `index.css` — `margin-top: -20px !important` on `.wishlist-lists-overview-edit-list-name-wrap`; span margins zeroed (display inline-block on span). Comment documents why. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF shop marbles restored (cart/bag vs PDP heroes)
+
+**Context:** Cart/bag/checkout showed PDP hero JPEGs because `04671a25` copied PDP straight-bundle + curly-closure URLs into `BCF_THUMB_PHOTO_BY_TEXTURE`. Home/shop marbles (eb76274d) use `_6biiXli…` straight bundle and `uzxxkL1s…` curly closure.
+
+**Change:** `shopTextureCategoryThumb.ts` — restored those two marble URLs; comment clarifies separation from PDP. `texture-category-product/page.tsx` — add-to-bag/bundle-deal `image` uses `shopTextureCategoryThumbSrc` (marble), not `BUNDLE_PHOTO`/`BCF_CF_PHOTO`. Pushed `master` + `preview/mobile`.
