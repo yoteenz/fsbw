@@ -21,6 +21,13 @@ import {
   cartLineRedSubtitleTextStyle,
 } from '../../utils/cartLineProductLayers';
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
+import { prepareBuildAWigEditSession } from '../../utils/buildAWigEditSession';
+import {
+  getWishlistItemDisplayName,
+  getWishlistItemRedSubtitle,
+  getWishlistItemRoute,
+  isWishlistBuildAWigEditableItem,
+} from '../../utils/wishlistListItemDetails';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigLineStockPrice } from '../../components/shop/WigStockPrice';
 import { attachStockStatusToLineItem, isLineItemOutOfStock } from '../../utils/productInventoryAvailability';
@@ -351,52 +358,9 @@ function WishlistSelection() {
     }
   };
 
-  /** Route to product/unit page for viewing (not edit). */
-  const getProductRoute = (name: string): string => {
-    const n = (name || 'NOIR').toString().toUpperCase();
-    const routes: Record<string, string> = {
-      NOIR: '/straight/noir',
-      BLANCO: '/straight/blanco',
-      'SOFT WAVE': '/wavy/soft-wave',
-      'BEACH WAVE': '/wavy/beach-wave',
-      'SOFT CURL': '/curly/soft-curl',
-      'OCEAN CURL': '/curly/ocean-curl',
-      'GIFT CARD': '/tools/gift-card'
-    };
-    return routes[n] || '/build-a-wig';
-  };
-
   const handleEdit = (item: any) => {
     try {
-      const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-      const fromUnit = item.addedFrom === 'unit';
-
-      if (fromUnit) {
-        // Added from product/unit page: go to unit page (default or unit cap selections)
-        const unitRoutes: Record<string, string> = {
-          NOIR: '/straight/noir',
-          BLANCO: '/straight/blanco',
-          'SOFT WAVE': '/wavy/soft-wave',
-          'BEACH WAVE': '/wavy/beach-wave',
-          'SOFT CURL': '/curly/soft-curl',
-          'OCEAN CURL': '/curly/ocean-curl'
-        };
-        const route = unitRoutes[name] || '/build-a-wig/edit';
-        navigate(route);
-        return;
-      }
-
-      // Added from cart/bag or editing from wishlist: go to build-a-wig edit with item
-      localStorage.setItem('editingCartItem', JSON.stringify(item));
-      localStorage.setItem('editingCartItemId', String(item.id ?? ''));
-      localStorage.setItem('editingSource', 'wishlist'); // so build-a-wig save updates wishlist, not cart
-      let editRoute = '/build-a-wig/edit';
-      if (name === 'NOIR') editRoute = '/build-a-wig/noir/edit';
-      else if (name === 'BLANCO') editRoute = '/build-a-wig/blanco/edit';
-      else if (name === 'SOFT WAVE') editRoute = '/build-a-wig/soft-wave/edit';
-      else if (name === 'SOFT CURL') editRoute = '/build-a-wig/soft-curl/edit';
-      else if (name === 'BEACH WAVE') editRoute = '/build-a-wig/beach-wave/edit';
-      else if (name === 'OCEAN CURL') editRoute = '/build-a-wig/ocean-curl/edit';
+      const { editRoute } = prepareBuildAWigEditSession(item, { source: 'wishlist' });
       navigate(editRoute);
     } catch (e) {
       console.error('Error setting edit item:', e);
@@ -847,11 +811,14 @@ function WishlistSelection() {
                     return wishlistItems.map((item, index) => {
                   const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                   const itemId = item.id || `wishlist-item-${index}`;
-                  const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+                  const itemProductName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
+                  const itemDisplayName = getWishlistItemDisplayName(item);
+                  const itemRedSubtitle = getWishlistItemRedSubtitle(item);
+                  const showBuildAWigEdit = isWishlistBuildAWigEditableItem(item);
 
                   // Thumbnail by product name only (ignore item.image so wrong stored paths never override)
                   const getItemImage = () => {
-                    if (itemName === 'GIFT CARD' || item.type === 'gift-card') {
+                    if (itemProductName === 'GIFT CARD' || item.type === 'gift-card') {
                       return '/assets/gift-card asset.png';
                     }
                     if (item.type === 'shop-texture-category') {
@@ -861,10 +828,10 @@ function WishlistSelection() {
                       const isStraightBundle =
                         (itemCategory === 'bundles' ||
                           itemId.includes('-bundles') ||
-                          itemName.includes('BUNDLES')) &&
+                          itemProductName.includes('BUNDLES')) &&
                         (itemTexture === 'straight' ||
                           itemId.includes('shop-straight-') ||
-                          itemName.includes('STRAIGHT'));
+                          itemProductName.includes('STRAIGHT'));
                       if (isStraightBundle) {
                         return 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
                       }
@@ -875,34 +842,19 @@ function WishlistSelection() {
                     const hairline = (item.hairline || 'NATURAL').toUpperCase();
                     const hasPeak = hairline.includes('PEAK');
                     const hasLagos = hairline.includes('LAGOS');
-                    if (itemName === 'NOIR') {
+                    if (itemProductName === 'NOIR') {
                       if (hasPeak) return '/assets/noir-peak-thumb.png';
                       if (hasLagos) return '/assets/noir-lagos-thumb.png';
                       return '/assets/NOIR/noir-thumb.png';
                     }
-                    if (itemName === 'BLANCO') return '/assets/NOIR/blanco-thumb.png';
-                    if (itemName === 'SOFT WAVE') return '/assets/NOIR/wave-thumb.png';
-                    if (itemName === 'BEACH WAVE') return '/assets/NOIR/wave-thumb.png';
-                    if (itemName === 'SOFT CURL' || itemName === 'OCEAN CURL') return '/assets/NOIR/curl-thumb.png';
+                    if (itemProductName === 'BLANCO') return '/assets/NOIR/blanco-thumb.png';
+                    if (itemProductName === 'SOFT WAVE') return '/assets/NOIR/wave-thumb.png';
+                    if (itemProductName === 'BEACH WAVE') return '/assets/NOIR/wave-thumb.png';
+                    if (itemProductName === 'SOFT CURL' || itemProductName === 'OCEAN CURL') return '/assets/NOIR/curl-thumb.png';
                     return '/assets/NOIR/noir-thumb.png';
                   };
                   const itemImage = getItemImage();
 
-                  // Hair origin: use stored value from product page, else product default (matches product page defaults)
-                  const getHairOrigin = (productName: string) => {
-                    switch (productName) {
-                      case 'NOIR': return 'CAMBODIAN';
-                      case 'BLANCO': return 'RUSSIAN';
-                      case 'SOFT WAVE': return 'INDIAN';
-                      case 'BEACH WAVE': return 'INDONESIAN';
-                      case 'SOFT CURL': return 'VIETNAMESE';
-                      case 'OCEAN CURL': return 'FILIPINO';
-                      default: return 'CAMBODIAN';
-                    }
-                  };
-                  const itemLength = item.length || '24"';
-                  // BLANCO must show RUSSIAN; never show NOIR's default (CAMBODIAN) for BLANCO
-                  const itemHairOrigin = (itemName === 'BLANCO' && item.hairOrigin === 'CAMBODIAN') ? getHairOrigin('BLANCO') : (item.hairOrigin || getHairOrigin(itemName));
                   const getDefaultPrice = (productName: string) => {
                     switch (productName) {
                       case 'NOIR': return 740;
@@ -915,7 +867,7 @@ function WishlistSelection() {
                       default: return 580;
                     }
                   };
-                  const itemPrice = item.price ?? getDefaultPrice(itemName);
+                  const itemPrice = item.price ?? getDefaultPrice(itemProductName);
                   const itemQuantity = item.quantity || 1;
 
                   return (
@@ -940,19 +892,19 @@ function WishlistSelection() {
                           <div
                             role="button"
                             tabIndex={0}
-                            onClick={() => navigate(getProductRoute(itemName))}
-                            onKeyDown={(e) => { if (e.key === 'Enter') navigate(getProductRoute(itemName)); }}
+                            onClick={() => navigate(getWishlistItemRoute(item))}
+                            onKeyDown={(e) => { if (e.key === 'Enter') navigate(getWishlistItemRoute(item)); }}
                             className="flex items-center justify-center cursor-pointer"
                             style={{ width: '88px', height: '88px', margin: '0' }}
                           >
                             <img
                               src={itemImage}
-                              alt={itemName}
+                              alt={itemDisplayName}
                               className="object-cover rounded"
                               style={{ width: '88px', height: '88px' }}
                             />
                           </div>
-                          {(itemName.toLowerCase().includes('noir') || itemName.toLowerCase().includes('blanco') || itemName.toLowerCase().includes('soft wave')) && (
+                          {showBuildAWigEdit && (
                             <p
                               className="font-bold text-center cursor-pointer hover:opacity-80 transition-opacity"
                               style={{
@@ -983,12 +935,12 @@ function WishlistSelection() {
                             className="font-medium truncate"
                             style={cartLineProductNameTextStyle(normalizeCartLineProductName(item))}
                           >
-                            {itemName.replace(/WIG/gi, '').trim()}
+                            {itemDisplayName}
                           </p>
                           </CartLineTextLayer>
                           <CartLineTextLayer slot="subtitle" productName={normalizeCartLineProductName(item)}>
                           <p className="font-bold" style={cartLineRedSubtitleTextStyle()}>
-                            {itemLength} RAW {itemHairOrigin}
+                            {itemRedSubtitle}
                           </p>
                           </CartLineTextLayer>
                           <WishlistItemCapSizeLine item={item} />

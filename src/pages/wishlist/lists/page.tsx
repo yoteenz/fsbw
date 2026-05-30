@@ -21,11 +21,16 @@ import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/Pa
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { prepareBuildAWigEditSession } from '../../../utils/buildAWigEditSession';
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
+  getWishlistItemRedSubtitle,
+  getWishlistItemRoute,
+  isWishlistBuildAWigEditableItem,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -250,6 +255,12 @@ const LIST_LINE_BAG_REMOVE_STYLE: React.CSSProperties = {
   ...LIST_LINE_BAG_ADD_STYLE,
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   color: '#999999',
+};
+
+/** Red EDIT IN BUILD-A-WIG under list line thumb (matches cart dropdown). */
+const LIST_LINE_EDIT_BAW_STYLE: React.CSSProperties = {
+  ...LIST_LINE_BAG_ADD_STYLE,
+  marginTop: '4px',
 };
 
 function readCartItems(): any[] {
@@ -493,36 +504,18 @@ function WishlistListOverviewThumb({
   );
 }
 
-/** Route to product/unit page. */
-function getProductRoute(name: string): string {
-  const n = (name || 'NOIR').toString().toUpperCase();
-  const routes: Record<string, string> = {
-    NOIR: '/straight/noir',
-    BLANCO: '/straight/blanco',
-    'SOFT WAVE': '/wavy/soft-wave',
-    'BEACH WAVE': '/wavy/beach-wave',
-    'SOFT CURL': '/curly/soft-curl',
-    'OCEAN CURL': '/curly/ocean-curl',
-    'GIFT CARD': '/tools/gift-card'
-  };
-  return routes[n] || '/build-a-wig';
-}
-
-function getHairOrigin(productName: string): string {
-  switch (productName) {
-    case 'NOIR': return 'CAMBODIAN';
-    case 'BLANCO': return 'RUSSIAN';
-    case 'SOFT WAVE': return 'INDIAN';
-    case 'BEACH WAVE': return 'INDONESIAN';
-    case 'SOFT CURL': return 'VIETNAMESE';
-    case 'OCEAN CURL': return 'FILIPINO';
-    default: return 'CAMBODIAN';
-  }
-}
-
 export default function ViewListsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleEditInBuildAWig = (item: any) => {
+    try {
+      const { editRoute } = prepareBuildAWigEditSession(item, { source: 'wishlist' });
+      navigate(editRoute);
+    } catch (e) {
+      console.error('Error setting edit item:', e);
+    }
+  };
   const [legacySearchParams] = useSearchParams();
   /** Path segment `/wishlist/lists/:listId` — pushes history so browser Back returns to overview. */
   const { listId: expandedListId } = useParams<{ listId?: string }>();
@@ -1021,9 +1014,10 @@ export default function ViewListsPage() {
                         ) : expandedViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
-                              const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-                              const itemLength = item.length || '24"';
-                              const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const itemProductName = getWishlistItemProductName(item);
+                              const itemDisplayName = getWishlistItemDisplayName(item);
+                              const itemRedSubtitle = getWishlistItemRedSubtitle(item);
+                              const showBuildAWigEdit = isWishlistBuildAWigEditableItem(item);
                               const itemKey = getExpandedListItemKey(item, index);
                               const isViewingDetails = viewingDetailsItemKey === itemKey;
                               const showViewDetailsLink = wishlistItemHasViewDetails(item);
@@ -1044,9 +1038,29 @@ export default function ViewListsPage() {
                                   }}
                                 >
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
-                                    <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                    <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                       <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                     </div>
+                                    {showBuildAWigEdit ? (
+                                      <p
+                                        className="font-bold hover:opacity-80 transition-opacity"
+                                        style={LIST_LINE_EDIT_BAW_STYLE}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleEditInBuildAWig(item);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            e.stopPropagation();
+                                            handleEditInBuildAWig(item);
+                                          }
+                                        }}
+                                      >
+                                        EDIT IN BUILD-A-WIG
+                                      </p>
+                                    ) : null}
                                     {isOutOfStock ? (
                                       <p
                                         style={{
@@ -1079,7 +1093,10 @@ export default function ViewListsPage() {
                                     ) : (
                                       <p
                                         className="font-bold hover:opacity-80 transition-opacity"
-                                        style={LIST_LINE_BAG_ADD_STYLE}
+                                        style={{
+                                          ...LIST_LINE_BAG_ADD_STYLE,
+                                          marginTop: showBuildAWigEdit ? '4px' : LIST_LINE_BAG_ADD_STYLE.marginTop,
+                                        }}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleAddToBag(item);
@@ -1100,11 +1117,11 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                                     <WishlistLineProductTextStack>
                                     <CartLineTextLayer slot="name">
-                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                                    <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemProductName)}>{itemDisplayName}</p>
                                     </CartLineTextLayer>
-                                    <CartLineTextLayer slot="subtitle" productName={itemName}>
+                                    <CartLineTextLayer slot="subtitle" productName={itemProductName}>
                                     <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
-                                      {itemLength} RAW {itemHairOrigin}
+                                      {itemRedSubtitle}
                                     </p>
                                     </CartLineTextLayer>
                                     <WishlistItemCapSizeLine item={item} />
@@ -1176,18 +1193,18 @@ export default function ViewListsPage() {
                             }}
                           >
                             {expandedItems.map((item: any, index: number) => {
-                              const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-                              const itemLength = item.length || '24"';
-                              const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                              const itemProductName = getWishlistItemProductName(item);
+                              const itemDisplayName = getWishlistItemDisplayName(item);
+                              const itemRedSubtitle = getWishlistItemRedSubtitle(item);
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div role="button" tabIndex={0} onClick={() => navigate(getProductRoute(itemName))} onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
+                                  <div role="button" tabIndex={0} onClick={() => navigate(getWishlistItemRoute(item))} onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))} className="relative bg-cover bg-center flex items-center justify-center cursor-pointer" style={{ width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`, height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`, backgroundImage: "url('/assets/leaf-brick-resize.png')", backgroundSize: 'cover', backgroundPosition: 'center', border: '1.3px solid #000', boxShadow: 'inset 0 0 0 3px #fff', overflow: 'hidden' }}>
                                     <img src={getLeafBrickFrontImage(item)} alt="" style={{ position: 'absolute', left: '50%', bottom: 3, transform: 'translateX(-50%)', width: 'auto', height: '96%', maxWidth: '106%', objectFit: 'contain', objectPosition: 'bottom', zIndex: 1 }} />
                                   </div>
-                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemName.replace(/WIG/gi, '').trim()}</p>
-                                  <CartLineTextLayer slot="subtitle" productName={itemName} style={{ alignItems: 'center' }}>
+                                  <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemDisplayName}</p>
+                                  <CartLineTextLayer slot="subtitle" productName={itemProductName} style={{ alignItems: 'center' }}>
                                   <p style={EXPANDED_LIST_GRID_RAW_TEXT_STYLE}>
-                                    {itemLength} RAW {itemHairOrigin}
+                                    {itemRedSubtitle}
                                   </p>
                                   </CartLineTextLayer>
                                   <ExpandedListItemNoReviewStars centered />
