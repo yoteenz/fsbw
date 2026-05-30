@@ -444,6 +444,7 @@ export default function SharedWishlistListPage() {
                               widthPx={EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}
                               heightPx={EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}
                               onActivate={() => navigate(getWishlistItemRoute(item))}
+                              bcfThumbOptions={{ preferShopMarbleThumbs: true }}
                             />
                             {outOfStock ? (
                               <p style={{ ...LIST_LINE_BAG_ADD_STYLE, color: '#EB1C24', cursor: 'default' }}>

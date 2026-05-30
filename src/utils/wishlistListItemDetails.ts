@@ -70,23 +70,51 @@ function inferWishlistBcfTexture(item: any): ShopTextureCategoryThumbTexture | n
   return null;
 }
 
-/** Straight bundles only — `/wishlist` + `/wishlist/lists` (not cart/bag/shop grid). */
+/** Straight bundles — `/wishlist` + `/wishlist/lists` only (not cart/bag/shop grid). */
 export const WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
 
+const WISHLIST_LIST_BCF_THUMB_SRC: Record<
+  ShopTextureCategoryThumbCategory,
+  Record<ShopTextureCategoryThumbTexture, string>
+> = {
+  bundles: {
+    straight: WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC,
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/7Mf9srGxpS_skmyYiV5mI_7eJa6wRd.jpeg',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/W4nOfazWBnvkcmPGXdmJZ_gnh31kdA.jpeg',
+  },
+  closures: {
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/chjVLl5HIn5yAyPWMcJUM_VPNWXjc9.jpeg',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eA59TyRU3MxkTHS4QcsW7_WReECpdX.jpeg',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/il_kSgoIRdUqnyZRWFypH_RVLkNwRA.jpeg',
+  },
+  frontals: {
+    straight:
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eP9NXe1XTyyPYGnfVGFYE_l0dScaAM.jpeg',
+    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/rEzHR8AixKR1Fq4XQaCLf_GBhMA1Dz.jpeg',
+    curly: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/MIgAQSauyPZYQ8wyRqYAk_ggLCO2uj.jpeg',
+  },
+};
+
+export type WishlistBcfThumbOptions = {
+  /** `/wishlist/shared` keeps shop marble PNGs; account wishlist + lists use Supabase URLs above. */
+  preferShopMarbleThumbs?: boolean;
+};
+
 /**
- * BCF thumbnail on `/wishlist` and `/wishlist/lists`. Most lines use shop marble PNGs;
- * straight bundles use {@link WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC}. Null for non-BCF.
+ * BCF thumbnail on `/wishlist` and `/wishlist/lists` (Supabase live-preview per texture × category).
+ * Pass `preferShopMarbleThumbs` for `/wishlist/shared`. Null for non-BCF.
  */
-export function getWishlistBcfThumbSrc(item: any): string | null {
+export function getWishlistBcfThumbSrc(item: any, options?: WishlistBcfThumbOptions): string | null {
   if (item?.type !== 'shop-texture-category') return null;
   const category = inferWishlistBcfCategory(item);
   const texture = inferWishlistBcfTexture(item);
   if (category && texture) {
-    if (texture === 'straight' && category === 'bundles') {
-      return WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC;
+    if (options?.preferShopMarbleThumbs) {
+      return shopTextureCategoryHeroPhotoSrc(texture, category);
     }
-    return shopTextureCategoryHeroPhotoSrc(texture, category);
+    return WISHLIST_LIST_BCF_THUMB_SRC[category][texture];
   }
   return typeof item?.image === 'string' && item.image.trim() ? item.image : null;
 }

@@ -1,5 +1,9 @@
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { getWishlistBcfThumbSrc, getWishlistUnitThumbImage } from '../../utils/wishlistListItemDetails';
+import {
+  getWishlistBcfThumbSrc,
+  getWishlistUnitThumbImage,
+  type WishlistBcfThumbOptions,
+} from '../../utils/wishlistListItemDetails';
 
 const LEAF_BRICK_UNIT_IMG_STYLE: CSSProperties = {
   position: 'absolute',
@@ -35,6 +39,7 @@ type WishlistItemThumbProps = {
   onActivate: () => void;
   /** Overview list thumbs use a 3px inset ring; expanded line/grid use the same. */
   frameInsetPx?: number;
+  bcfThumbOptions?: WishlistBcfThumbOptions;
 };
 
 export function WishlistItemThumb({
@@ -43,8 +48,9 @@ export function WishlistItemThumb({
   heightPx,
   onActivate,
   frameInsetPx = 3,
+  bcfThumbOptions,
 }: WishlistItemThumbProps) {
-  const bcfThumb = getWishlistBcfThumbSrc(item);
+  const bcfThumb = getWishlistBcfThumbSrc(item, bcfThumbOptions);
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter') onActivate();
   };
