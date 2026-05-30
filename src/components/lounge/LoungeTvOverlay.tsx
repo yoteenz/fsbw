@@ -173,6 +173,7 @@ function LoungeTvScreen({
           style={{
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'flex-start',
             gap: '6px',
             flexShrink: 0,
             width: '72px',
@@ -184,7 +185,11 @@ function LoungeTvScreen({
             <button
               key={item.id}
               type="button"
-              style={navLinkStyle(sidebarId === item.id, item.id === 'new-drops' && sidebarId === item.id)}
+              style={{
+                ...navLinkStyle(sidebarId === item.id, item.id === 'new-drops' && sidebarId === item.id),
+                width: '100%',
+                textAlign: 'left',
+              }}
               onClick={() => onSidebarChange(item.id)}
             >
               {item.label}
