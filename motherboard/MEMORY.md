@@ -22191,3 +22191,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Timings:** **`HAND_REVEAL_MS` 2200**, **`STATIC_DELAY_MS` 280**, **`STATIC_PHASE_MS` 900**, **`HAND_HIDE_MS` 850**.
 
 **Close fixes:** **`showTvBlackScreen`** while **`closePhase !== 'idle'`** (includes shrink); **`onClose()`** when shrink starts so lobby **`tvOpen`** false and play shows; overlay **`setVisible(false)`** after shrink (no extra delay); backdrop **`pointerEvents: none`** during close; reset state only when **`!visible && !isOpen`**.
+
+---
+
+## 2026-05-30 — Lounge TV thumbnail column spacing
+
+**Change:** TV content grid **`columnGap: 12px`** (was **`6px`** uniform); **`rowGap: 6px`**. Commit **`92ab16d9`**.
