@@ -9,6 +9,7 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
@@ -164,6 +165,8 @@ function readCartItems(): any[] {
 
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
+  const bcfThumb = getWishlistBcfThumbSrc(item);
+  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();

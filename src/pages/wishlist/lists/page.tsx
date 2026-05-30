@@ -25,6 +25,7 @@ import { prepareBuildAWigEditSession } from '../../../utils/buildAWigEditSession
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
@@ -60,6 +61,8 @@ import {
 /** Build-a-wig style: front view image in front of leaf-brick (same as wigViews[1] on build-a-wig page). */
 function getLeafBrickFrontImage(item: any): string {
   if (!item) return '/assets/natural front.png';
+  const bcfThumb = getWishlistBcfThumbSrc(item);
+  if (bcfThumb) return bcfThumb;
   const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
   const hairline = (item.hairline || 'NATURAL').toUpperCase();

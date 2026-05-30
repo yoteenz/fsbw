@@ -23,6 +23,7 @@ import {
 import { normalizeCartLineProductName } from '../../utils/cartCapSizeLineMargin';
 import { prepareBuildAWigEditSession } from '../../utils/buildAWigEditSession';
 import {
+  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemRedSubtitle,
   getWishlistItemRoute,
@@ -822,22 +823,8 @@ function WishlistSelection() {
                       return '/assets/gift-card asset.png';
                     }
                     if (item.type === 'shop-texture-category') {
-                      const itemId = String(item.id || '').toLowerCase();
-                      const itemTexture = String(item.texture || '').toLowerCase();
-                      const itemCategory = String(item.category || '').toLowerCase();
-                      const isStraightBundle =
-                        (itemCategory === 'bundles' ||
-                          itemId.includes('-bundles') ||
-                          itemProductName.includes('BUNDLES')) &&
-                        (itemTexture === 'straight' ||
-                          itemId.includes('shop-straight-') ||
-                          itemProductName.includes('STRAIGHT'));
-                      if (isStraightBundle) {
-                        return 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
-                      }
-                      if (typeof item.image === 'string' && item.image.trim()) {
-                        return item.image;
-                      }
+                      const bcfThumb = getWishlistBcfThumbSrc(item);
+                      if (bcfThumb) return bcfThumb;
                     }
                     const hairline = (item.hairline || 'NATURAL').toUpperCase();
                     const hasPeak = hairline.includes('PEAK');
