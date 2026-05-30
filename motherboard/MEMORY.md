@@ -21851,6 +21851,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-30 — Curly BAW styling: WAND CURLS + DEFINE
+
+**Change:** **`soft-curl`** / **`ocean-curl`** build-a-wig styling step — **CRIMPS → WAND CURLS ($80)**, **LAYERS → DEFINE ($60)**. Shared **`bawUnitStylingOptions.ts`**; pricing wired through styling page, hub, cart, checkout. Legacy **CRIMPS/LAYERS** cart values map to new ids on curly flows. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-05-30 — BCF PDP default hair length 16"
 
 **Change:** **`BCF_DEFAULT_LENGTH_ID = '16"'`** in **`bcfProductOptions.ts`**; **`texture-category-product/page.tsx`** initial **`bcfLength`** uses it (was **`24"`**). Base price on load reflects 16" length adjustment (−$50 vs 24"). Pushed **`master`** + **`preview/mobile`**.
