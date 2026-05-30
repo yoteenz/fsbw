@@ -21549,3 +21549,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Cause:** `eb76274d` replaced PNG `shopTextureCategoryThumbSrc` with Supabase `BCF_THUMB_PHOTO_BY_TEXTURE` (JPEG product shots, no marble frame).
 
 **Change:** `shopTextureCategoryThumb.ts` — full restore of nine explicit **`/assets/*.png`** paths; removed Supabase map. Cart/bag/checkout/wishlist/`/products` grid use PNGs; `texture-category-product` PDP heroes unchanged (`BUNDLE_PHOTO_BY_TEXTURE`, `BCF_CF_PHOTO`). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME down 10px
+
+**Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-20px` → `-10px`** (`!important`). Grid view unchanged. Pushed `master` + `preview/mobile`.
