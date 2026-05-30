@@ -21503,3 +21503,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists grid: +1px below PRIVATE
 
 **Change:** `lists/page.tsx` grid overview — item count `marginTop` **2px → 3px** under gray PRIVATE/SHARED (line view unchanged). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists expanded line: +1px above stars
+
+**Change:** `/wishlist/lists/:id` **line** view only — star row `margin-top` **1px → 2px** via `.wishlist-lists-page-expanded-line-stars` (shared list + grid unchanged). Pushed `master` + `preview/mobile`.
