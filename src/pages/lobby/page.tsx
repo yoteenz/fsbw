@@ -1,5 +1,9 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  lobbyCarouselIndexFromPath,
+  lobbyCarouselPathFromIndex,
+} from '../../utils/lobbyCarouselRoutes';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { onSignInSuccess } from '../../utils/adminAuth';
@@ -694,7 +698,8 @@ const LoungePage: React.FC = () => {
 const LobbyApp: React.FC = () => {
   console.log('🎯 LOBBY PAGE LOADING - This should show when visiting root path');
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState<number>(0); // 0 = Lobby, 1 = Lounge
+  const location = useLocation();
+  const currentPage = lobbyCarouselIndexFromPath(location.pathname);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(true);
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
@@ -738,21 +743,26 @@ const LobbyApp: React.FC = () => {
 
   const pages = [<LobbyPage key="lobby" />, <LoungePage key="lounge" />];
 
-  const handlePrevious = useCallback(() => {
-    if (currentPage > 0 && !isTransitioning) {
+  const goToCarouselPage = useCallback(
+    (pageIndex: number) => {
+      if (isTransitioning || pageIndex === currentPage) return;
+      const path = lobbyCarouselPathFromIndex(pageIndex);
       setIsTransitioning(true);
-      setCurrentPage(currentPage - 1);
+      if (location.pathname !== path) {
+        navigate(path, { replace: true });
+      }
       setTimeout(() => setIsTransitioning(false), 800);
-    }
-  }, [currentPage, isTransitioning]);
+    },
+    [currentPage, isTransitioning, location.pathname, navigate]
+  );
+
+  const handlePrevious = useCallback(() => {
+    if (currentPage > 0) goToCarouselPage(currentPage - 1);
+  }, [currentPage, goToCarouselPage]);
 
   const handleNext = useCallback(() => {
-    if (currentPage < pages.length - 1 && !isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentPage(currentPage + 1);
-      setTimeout(() => setIsTransitioning(false), 800);
-    }
-  }, [currentPage, isTransitioning, pages.length]);
+    if (currentPage < pages.length - 1) goToCarouselPage(currentPage + 1);
+  }, [currentPage, goToCarouselPage, pages.length]);
 
   // Handle keyboard arrow keys
   useEffect(() => {
@@ -770,30 +780,21 @@ const LobbyApp: React.FC = () => {
 
   // Listen for navigation events from page components
   useEffect(() => {
-    const handleNext = () => {
-      if (currentPage < pages.length - 1 && !isTransitioning) {
-        setIsTransitioning(true);
-        setCurrentPage(currentPage + 1);
-        setTimeout(() => setIsTransitioning(false), 800);
-      }
+    const onNext = () => {
+      if (currentPage < pages.length - 1) goToCarouselPage(currentPage + 1);
     };
-    
-    const handlePrevious = () => {
-      if (currentPage > 0 && !isTransitioning) {
-        setIsTransitioning(true);
-        setCurrentPage(currentPage - 1);
-        setTimeout(() => setIsTransitioning(false), 800);
-      }
+    const onPrevious = () => {
+      if (currentPage > 0) goToCarouselPage(currentPage - 1);
     };
 
-    window.addEventListener('lobby-navigate-next', handleNext);
-    window.addEventListener('lobby-navigate-previous', handlePrevious);
-    
+    window.addEventListener('lobby-navigate-next', onNext);
+    window.addEventListener('lobby-navigate-previous', onPrevious);
+
     return () => {
-      window.removeEventListener('lobby-navigate-next', handleNext);
-      window.removeEventListener('lobby-navigate-previous', handlePrevious);
+      window.removeEventListener('lobby-navigate-next', onNext);
+      window.removeEventListener('lobby-navigate-previous', onPrevious);
     };
-  }, [currentPage, isTransitioning, pages.length]);
+  }, [currentPage, goToCarouselPage, pages.length]);
 
   // Hide loading screen after assets have time to load
   useEffect(() => {

@@ -384,6 +384,8 @@ function App() {
       <Routes>
         <Route index element={<Navigate to="/home/shop" replace />} />
         <Route path="/" element={<Navigate to="/home/shop" replace />} />
+        <Route path="/lobby/lounge" element={<LobbyPage />} />
+        <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />
         {/* Admin routes - protected by AdminGuard (sign-in required, admin role only) */}
         <Route path="/admin" element={<AdminGuard />}>
