@@ -21599,3 +21599,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME down 2px more
 
 **Change:** `index.css` — `.wishlist-lists-overview-edit-list-name-wrap` **`margin-top` `-4px` → `-2px`** (`!important`). Line overview only. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart dropdown: 6+ VIEW DETAILS product text lift fix
+
+**Context:** With 6+ detail lines open, product name/subtitle block should shift up (`translateY(-14px)`), but a legacy positive **`top`** on the same wrapper (6px + 4px per detail) pushed content down (~+30px for 7 lines), canceling the lift.
+
+**Change:** `CartDropdown.tsx` — removed dynamic positive `top` when viewing details; lift uses **`productTextTransform`** only (`-4px`, or `-14px` when `cartDropdownDetailTextRowCount >= 6`). Pushed `master` + `preview/mobile`.
