@@ -22181,3 +22181,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted **3 thumbnails per row** (not 4) and main categories (**Brand**, **Slay Tips**, etc.) **gray** when inactive, **white** when active (not red).
 
 **Change:** **`LoungeTvOverlay.tsx`** — **`gridTemplateColumns: repeat(3, …)`**; **`mainTabNavStyle`** (**`#9a9a9a`** / **`#ffffff`**). Sidebar subcategories still use red/white via **`navLinkStyle`**. Commits **`444e8f57`**, **`afce65c9`**.
+
+---
+
+## 2026-05-30 — Lounge TV timing + close regressions (black screen, play button)
+
+**Context:** User tuned open/close: slower hand fade-in; shorter pause before static and shorter static; faster hand-out before shrink; black screen missing on shrink-back; play button not returning after close.
+
+**Timings:** **`HAND_REVEAL_MS` 2200**, **`STATIC_DELAY_MS` 280**, **`STATIC_PHASE_MS` 900**, **`HAND_HIDE_MS` 850**.
+
+**Close fixes:** **`showTvBlackScreen`** while **`closePhase !== 'idle'`** (includes shrink); **`onClose()`** when shrink starts so lobby **`tvOpen`** false and play shows; overlay **`setVisible(false)`** after shrink (no extra delay); backdrop **`pointerEvents: none`** during close; reset state only when **`!visible && !isOpen`**.
