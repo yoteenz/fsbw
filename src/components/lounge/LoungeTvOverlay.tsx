@@ -125,25 +125,36 @@ const loungeTvThumbLabelStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-/** "CUTTING YOUR LACE" → "YOUR LACE"; "EXTENDING YOUR INSTALL" → "YOUR INSTALL". */
-function loungeTvTitleYourLine(title: string): string {
+/** "TINTING YOUR LACE" → { head: "TINTING", trail: "YOUR LACE" }. */
+function loungeTvTitleSplit(title: string): { head: string; trail: string } | null {
   const marker = ' YOUR ';
   const i = title.indexOf(marker);
-  if (i === -1) return title;
-  return title.slice(i + 1);
+  if (i === -1) return null;
+  return { head: title.slice(0, i), trail: title.slice(i + 1) };
 }
 
 function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean }) {
-  if (!isNew) {
-    return <span style={loungeTvThumbLabelStyle}>{title}</span>;
+  const split = loungeTvTitleSplit(title);
+
+  if (isNew) {
+    return (
+      <span style={loungeTvThumbLabelStyle}>
+        <span style={{ color: BRAND_RED }}>*NEW*</span>
+        <span>{split?.trail ?? title}</span>
+      </span>
+    );
   }
 
-  return (
-    <span style={loungeTvThumbLabelStyle}>
-      <span style={{ color: BRAND_RED }}>*NEW*</span>
-      <span>{loungeTvTitleYourLine(title)}</span>
-    </span>
-  );
+  if (split) {
+    return (
+      <span style={loungeTvThumbLabelStyle}>
+        <span>{split.head}</span>
+        <span>{split.trail}</span>
+      </span>
+    );
+  }
+
+  return <span style={loungeTvThumbLabelStyle}>{title}</span>;
 }
 
 function LoungeTvScreen({
