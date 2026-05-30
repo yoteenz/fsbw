@@ -1,5 +1,6 @@
 import { getNotificationsStorageKeyForUserEmail, type StoredNotification } from './orderAccountAlerts';
 import {
+  getBcfStockStatus,
   getWigProductStockStatus,
   isWigUnitProductName,
   PRODUCT_INVENTORY_UPDATED_EVENT,
@@ -7,9 +8,13 @@ import {
 } from './productInventoryAvailability';
 import { normalizeCartLineProductName } from './cartCapSizeLineMargin';
 import { getSignedInUserEmail } from './unitStockNotify';
+import { getWishlistItemRoute } from './wishlistListItemDetails';
 import { getWigUnitProductRoute } from './wigUnitProductRoutes';
 
 export const WISHLIST_STOCK_ALERTS_UPDATED_EVENT = 'wishlistStockAlertsUpdated';
+
+/** Single tracked key when any BCF line is on wishlist (BCF shares one packaging pool). */
+export const WISHLIST_BCF_TRACK_KEY = 'BCF';
 
 const STATUS_KEY_PREFIX = 'wishlistStockAlertLastStatus_';
 
@@ -33,34 +38,71 @@ function readJsonArray(key: string): Record<string, unknown>[] {
   }
 }
 
+function isBcfWishlistLine(item: Record<string, unknown>): boolean {
+  return String(item.type || '').toLowerCase() === 'shop-texture-category';
+}
+
 function normalizeUnitName(raw: unknown): string {
   return normalizeCartLineProductName({ name: String(raw ?? ''), productName: String(raw ?? '') });
 }
 
-/** Unique wig unit names on the active user's wishlist + saved lists. */
-export function collectWishlistWigUnitNames(): string[] {
-  const names = new Set<string>();
-  for (const item of readJsonArray('wishlistItems')) {
-    const n = normalizeUnitName(item.name ?? item.productName);
-    if (n && isWigUnitProductName(n)) names.add(n);
-  }
+function iterWishlistAndListItems(): Record<string, unknown>[] {
+  const out: Record<string, unknown>[] = [];
+  out.push(...readJsonArray('wishlistItems'));
   try {
     const listsRaw = localStorage.getItem('userLists');
     const lists = listsRaw ? JSON.parse(listsRaw) : [];
     if (Array.isArray(lists)) {
       for (const list of lists) {
         const items = (list as { items?: Record<string, unknown>[] })?.items;
-        if (!Array.isArray(items)) continue;
-        for (const item of items) {
-          const n = normalizeUnitName(item.name ?? item.productName);
-          if (n && isWigUnitProductName(n)) names.add(n);
-        }
+        if (Array.isArray(items)) out.push(...items);
       }
     }
   } catch {
     /* ignore */
   }
+  return out;
+}
+
+/** Unique wig unit names on the active user's wishlist + saved lists. */
+export function collectWishlistWigUnitNames(): string[] {
+  const names = new Set<string>();
+  for (const item of iterWishlistAndListItems()) {
+    const n = normalizeUnitName(item.name ?? item.productName);
+    if (n && isWigUnitProductName(n)) names.add(n);
+  }
   return [...names];
+}
+
+function hasWishlistBcfItems(): boolean {
+  return iterWishlistAndListItems().some(isBcfWishlistLine);
+}
+
+function getFirstWishlistBcfItem(): Record<string, unknown> | null {
+  for (const item of iterWishlistAndListItems()) {
+    if (isBcfWishlistLine(item)) return item;
+  }
+  return null;
+}
+
+/** Wig unit SKUs + optional BCF aggregate key for wishlist stock alert tracking. */
+export function collectWishlistStockTrackKeys(): string[] {
+  const keys = collectWishlistWigUnitNames();
+  if (hasWishlistBcfItems()) keys.push(WISHLIST_BCF_TRACK_KEY);
+  return keys;
+}
+
+function stockStatusForTrackKey(trackKey: string): ProductStockStatus {
+  if (trackKey === WISHLIST_BCF_TRACK_KEY) return getBcfStockStatus();
+  return getWigProductStockStatus(trackKey);
+}
+
+function actionRouteForTrackKey(trackKey: string): string {
+  if (trackKey === WISHLIST_BCF_TRACK_KEY) {
+    const bcf = getFirstWishlistBcfItem();
+    return bcf ? getWishlistItemRoute(bcf) : '/home/shop';
+  }
+  return getWigUnitProductRoute(trackKey);
 }
 
 function loadLastStatuses(email: string): Record<string, ProductStockStatus> {
@@ -80,9 +122,9 @@ function saveLastStatuses(email: string, state: Record<string, ProductStockStatu
 function appendWishlistStockAlert(
   email: string,
   kind: 'low_stock' | 'back_in_stock',
-  unitName: string
+  trackKey: string
 ): void {
-  const id = `wishlist_${kind}_${unitName.replace(/\s+/g, '_')}`;
+  const id = `wishlist_${kind}_${trackKey.replace(/\s+/g, '_')}`;
   const title = kind === 'low_stock' ? 'LOW STOCK: ACT FAST!' : 'BACK IN STOCK: SHOP NOW!';
   const message =
     kind === 'low_stock'
@@ -94,7 +136,7 @@ function appendWishlistStockAlert(
     title,
     message,
     actionText: 'VIEW PRODUCT',
-    actionRoute: getWigUnitProductRoute(unitName),
+    actionRoute: actionRouteForTrackKey(trackKey),
     date: todayMdy(),
     sortAt: Date.now(),
     isRead: false,
@@ -115,8 +157,11 @@ function appendWishlistStockAlert(
   }
 }
 
+/** Low-stock alert on transition or when first tracked while already low (matches wishlist banner). */
 function shouldAlertLowStock(prev: ProductStockStatus | undefined, current: ProductStockStatus): boolean {
-  return prev === 'in_stock' && current === 'low_stock';
+  if (current !== 'low_stock') return false;
+  if (prev === undefined) return true;
+  return prev === 'in_stock';
 }
 
 function shouldAlertBackInStock(prev: ProductStockStatus | undefined, current: ProductStockStatus): boolean {
@@ -124,44 +169,48 @@ function shouldAlertBackInStock(prev: ProductStockStatus | undefined, current: P
   return prev === 'out_of_stock' || prev === 'low_stock';
 }
 
+function processTrackKey(
+  email: string,
+  trackKey: string,
+  prevByKey: Record<string, ProductStockStatus>,
+  nextByKey: Record<string, ProductStockStatus>
+): void {
+  const current = stockStatusForTrackKey(trackKey);
+  const prev = prevByKey[trackKey];
+
+  if (shouldAlertLowStock(prev, current)) {
+    appendWishlistStockAlert(email, 'low_stock', trackKey);
+  } else if (shouldAlertBackInStock(prev, current)) {
+    appendWishlistStockAlert(email, 'back_in_stock', trackKey);
+  }
+
+  nextByKey[trackKey] = current;
+}
+
 /**
- * Compare wishlist unit inventory to last-seen status; append Account → Alerts rows on transitions.
- * Requires a signed-in user with wishlisted wig units.
+ * Compare wishlist inventory to last-seen status; append Account → Alerts rows.
+ * Wig units + BCF (when on wishlist/lists). Alerts on transition and when first seen already low.
  */
 export function processWishlistStockAlertsForSignedInUser(): void {
   if (typeof window === 'undefined') return;
   const email = getSignedInUserEmail();
   if (!email) return;
 
-  const units = collectWishlistWigUnitNames();
-  const prevByUnit = loadLastStatuses(email);
-  const nextByUnit: Record<string, ProductStockStatus> = { ...prevByUnit };
+  const trackKeys = collectWishlistStockTrackKeys();
+  const prevByKey = loadLastStatuses(email);
+  const nextByKey: Record<string, ProductStockStatus> = { ...prevByKey };
 
-  for (const unit of units) {
-    const current = getWigProductStockStatus(unit);
-    const prev = prevByUnit[unit];
-
-    if (prev === undefined) {
-      nextByUnit[unit] = current;
-      continue;
-    }
-
-    if (shouldAlertLowStock(prev, current)) {
-      appendWishlistStockAlert(email, 'low_stock', unit);
-    } else if (shouldAlertBackInStock(prev, current)) {
-      appendWishlistStockAlert(email, 'back_in_stock', unit);
-    }
-
-    nextByUnit[unit] = current;
+  for (const trackKey of trackKeys) {
+    processTrackKey(email, trackKey, prevByKey, nextByKey);
   }
 
-  for (const key of Object.keys(nextByUnit)) {
-    if (!units.includes(key)) {
-      delete nextByUnit[key];
+  for (const key of Object.keys(nextByKey)) {
+    if (!trackKeys.includes(key)) {
+      delete nextByKey[key];
     }
   }
 
-  saveLastStatuses(email, nextByUnit);
+  saveLastStatuses(email, nextByKey);
 }
 
 export function subscribeWishlistStockAlertsListeners(): () => void {

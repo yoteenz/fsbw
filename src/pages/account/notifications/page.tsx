@@ -16,6 +16,7 @@ import { isSupabaseConfigured } from '../../../utils/supabase';
 import { ShopMobileMenuShopTab } from '../../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../../components/ShopMobileMenuToolsTab';
 import { signInHrefWithReturnTo } from '../../../utils/signInReturnTo';
+import { WISHLIST_STOCK_ALERTS_UPDATED_EVENT } from '../../../utils/wishlistStockAlerts';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 
@@ -668,10 +669,12 @@ function NotificationsPage() {
     window.addEventListener('storage', sync);
     window.addEventListener('signInStateChanged', sync);
     window.addEventListener('focus', sync);
+    window.addEventListener(WISHLIST_STOCK_ALERTS_UPDATED_EVENT, sync);
     return () => {
       window.removeEventListener('storage', sync);
       window.removeEventListener('signInStateChanged', sync);
       window.removeEventListener('focus', sync);
+      window.removeEventListener(WISHLIST_STOCK_ALERTS_UPDATED_EVENT, sync);
     };
   }, []);
 
