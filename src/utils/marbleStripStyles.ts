@@ -1,4 +1,10 @@
 import type { CSSProperties } from 'react';
+import {
+  shopProductGridNameStyle,
+  shopProductGridPriceStyle,
+  shopProductGridRedLineStyle,
+  shopProductGridTextColStyle,
+} from './shopProductGridCopyStyles';
 
 /** Inner horizontal row for similar / recently viewed (4 cells in 200% width). */
 export function marbleStripScrollRowStyle(scrollPx: number): CSSProperties {
@@ -118,9 +124,7 @@ export function marbleStripThumbImg(is3D: boolean): CSSProperties {
 }
 
 export const marbleStripTextCol: CSSProperties = {
-  width: '100%',
-  textAlign: 'center',
-  boxSizing: 'border-box',
+  ...shopProductGridTextColStyle,
 };
 
 /** Class for similar / recently viewed black price — +2px top in index.css (beats inline margin shorthand). */
@@ -128,16 +132,24 @@ export const MARBLE_STRIP_PRODUCT_PRICE_CLASS = 'marble-strip-product-price';
 
 /** Default black price line styles for marble strips (margin top applied via class). */
 export function marbleStripProductPriceStyle(extra?: CSSProperties): CSSProperties {
-  return {
+  return shopProductGridPriceStyle({
     fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-    fontSize: '12px',
-    color: 'black',
-    textTransform: 'uppercase',
-    margin: '0 0 5px 0',
-    fontWeight: '500',
-    lineHeight: '0.84',
     ...extra,
-  };
+  });
+}
+
+export function marbleStripProductNameStyle(extra?: CSSProperties): CSSProperties {
+  return shopProductGridNameStyle({
+    fontFamily: '"Covered By Your Grace", cursive',
+    ...extra,
+  });
+}
+
+export function marbleStripProductRedLineStyle(extra?: CSSProperties): CSSProperties {
+  return shopProductGridRedLineStyle({
+    fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
+    ...extra,
+  });
 }
 
 /**

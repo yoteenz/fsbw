@@ -17,6 +17,13 @@ import {
   attachStockStatusToLineItem,
   isWigUnitSoldOut,
 } from '../../../utils/productInventoryAvailability';
+import {
+  shopProductGridCapSizeRowStyle,
+  shopProductGridNameStyle,
+  shopProductGridPriceStyle,
+  shopProductGridRedLineStyle,
+  shopProductGridTextColStyle,
+} from '../../../utils/shopProductGridCopyStyles';
 
 function CurlyUnitsPage() {
   const navigate = useNavigate();
@@ -819,85 +826,34 @@ function CurlyUnitsPage() {
                       />
                     </div>
 
-                    {/* Product Name */}
-                    <p
-                      style={{
-                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                        fontSize: product.name === 'NOIR' ? '19px' : '18px',
-                        color: 'black',
-                        textTransform: 'uppercase',
-                        margin: '-10px 0 -3px 0',
-                        fontWeight: '500',
-                        transform: 'translateY(4px)',
-                        width: '100%',
-                        textAlign: 'center'
-                      }}
-                    >
-                      {product.name}
-                    </p>
-
-                    {/* Hair Details */}
-                    <p
-                      style={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '10px',
-                        color: '#EB1C24',
-                        textTransform: 'uppercase',
-                        margin: '2px 0 7px 0',
-                        fontWeight: '500',
-                        lineHeight: '0.84',
-                        transform: 'translateY(4px)',
-                        width: '100%',
-                        textAlign: 'center'
-                      }}
-                    >
-                      {product.length} RAW {product.hairOrigin}
-                    </p>
-
-                    {/* Price */}
-                    <WigProductPriceDisplay
-                      productName={product.name}
-                      soldOutPriceTreatment="strikethrough-only"
-                      priceHtml={formatPrice(product.price)}
-                      priceStyle={{
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '12px',
-                        color: 'black',
-                        textTransform: 'uppercase',
-                        margin: '0 0 5px 0',
-                        fontWeight: '500',
-                        lineHeight: '0.84',
-                        transform: 'translateY(4px)',
-                        width: '100%',
-                        textAlign: 'center',
-                      }}
-                    />
-
-                    {/* Cap Size Options */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '14px',
-                        marginTop: '2px',
-                        transform: 'translateY(3px)',
-                        width: '100%'
-                      }}
-                    >
-                      {['XS', 'S', 'M', 'L'].map(size => (
-                        <span
-                          key={size}
-                          onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
-                          style={{
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            fontSize: '12px',
-                            color: product.selectedSize === size ? '#EB1C24' : 'black',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {size}
-                        </span>
-                      ))}
+                    <div style={shopProductGridTextColStyle}>
+                      <p style={shopProductGridNameStyle()}>{product.name}</p>
+                      <p style={shopProductGridRedLineStyle()}>
+                        {product.length} RAW {product.hairOrigin}
+                      </p>
+                      <WigProductPriceDisplay
+                        productName={product.name}
+                        soldOutPriceTreatment="strikethrough-only"
+                        priceHtml={formatPrice(product.price)}
+                        priceStyle={shopProductGridPriceStyle()}
+                        labelStyle={{ transform: 'translateY(1px)' }}
+                      />
+                      <div style={shopProductGridCapSizeRowStyle}>
+                        {['XS', 'S', 'M', 'L'].map(size => (
+                          <span
+                            key={size}
+                            onClick={(e) => { e.stopPropagation(); handleSizeSelect(product.id, size); }}
+                            style={{
+                              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                              fontSize: '12px',
+                              color: product.selectedSize === size ? '#EB1C24' : 'black',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

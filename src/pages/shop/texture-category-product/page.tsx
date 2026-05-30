@@ -54,7 +54,9 @@ import {
   marbleStripThumbWrap,
   marbleStripViewportStyle,
   MARBLE_STRIP_PRODUCT_PRICE_CLASS,
+  marbleStripProductNameStyle,
   marbleStripProductPriceStyle,
+  marbleStripProductRedLineStyle,
 } from '../../../utils/marbleStripStyles';
 
 type Texture = 'straight' | 'wavy' | 'curly';
@@ -1986,34 +1988,8 @@ export default function ShopTextureCategoryProductPage() {
                                     />
                                   </div>
                                   <div style={marbleStripTextColStrip(false)}>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Covered By Your Grace", cursive',
-                                        fontSize: '18px',
-                                        color: 'black',
-                                        textTransform: 'uppercase',
-                                        margin: '0 0 2px 0',
-                                        fontWeight: '500',
-                                        lineHeight: 1.05,
-                                        minHeight: '22px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                      }}
-                                    >
-                                      {simTitle}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif',
-                                        fontSize: '10px',
-                                        color: '#EB1C24',
-                                        textTransform: 'uppercase',
-                                        margin: '2px 0 5px 0',
-                                        fontWeight: '500',
-                                        lineHeight: '0.84'
-                                      }}
-                                    >
+                                    <p style={marbleStripProductNameStyle()}>{simTitle}</p>
+                                    <p style={marbleStripProductRedLineStyle()}>
                                       {categoryTitle} · RAW HUMAN HAIR
                                     </p>
                                     <p
@@ -2162,49 +2138,15 @@ export default function ShopTextureCategoryProductPage() {
                                 pointerEvents: 'none'
                               }}
                             />
-                            <p
-                              style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                fontSize: '18px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '-10px 0 -3px 0',
-                                fontWeight: '500',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
-                              SOFT WAVE
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(1px)'
-                              }}
-                            >
-                              24&quot; RAW INDONESIAN
-                            </p>
+                            <div style={marbleStripTextColStrip(false)}>
+                            <p style={marbleStripProductNameStyle()}>SOFT WAVE</p>
+                            <p style={marbleStripProductRedLineStyle()}>24&quot; RAW INDONESIAN</p>
                             <p
                               className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
-                              style={marbleStripProductPriceStyle({
-                                transform: 'translateX(10px) translateY(-1px)',
-                              })}
+                              style={marbleStripProductPriceStyle()}
                               dangerouslySetInnerHTML={formatPrice(760)}
                             />
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '2px',
-                                marginTop: '2px',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
+                            <div style={marbleStripStarsRowStyle(false)}>
                               {[...Array(5)].map((_, ri) => (
                                 <img
                                   key={ri}
@@ -2213,6 +2155,7 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{ width: '10px', height: '10px', filter: 'drop-shadow(0 0 0 1px black)' }}
                                 />
                               ))}
+                            </div>
                             </div>
                           </div>
                           </div>
@@ -2251,49 +2194,15 @@ export default function ShopTextureCategoryProductPage() {
                                 pointerEvents: 'none'
                               }}
                             />
-                            <p
-                              style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                fontSize: '18px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '-10px 0 -3px 0',
-                                fontWeight: '500',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
-                              SOFT CURL
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(1px)'
-                              }}
-                            >
-                              24&quot; RAW FILIPINO
-                            </p>
+                            <div style={marbleStripTextColStrip(false)}>
+                            <p style={marbleStripProductNameStyle()}>SOFT CURL</p>
+                            <p style={marbleStripProductRedLineStyle()}>24&quot; RAW FILIPINO</p>
                             <p
                               className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
-                              style={marbleStripProductPriceStyle({
-                                transform: 'translateX(10px) translateY(-1px)',
-                              })}
+                              style={marbleStripProductPriceStyle()}
                               dangerouslySetInnerHTML={formatPrice(780)}
                             />
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '2px',
-                                marginTop: '2px',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
+                            <div style={marbleStripStarsRowStyle(false)}>
                               {[...Array(5)].map((_, ri) => (
                                 <img
                                   key={ri}
@@ -2302,6 +2211,7 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{ width: '10px', height: '10px', filter: 'drop-shadow(0 0 0 1px black)' }}
                                 />
                               ))}
+                            </div>
                             </div>
                           </div>
                           </div>
@@ -2340,49 +2250,15 @@ export default function ShopTextureCategoryProductPage() {
                                 pointerEvents: 'none'
                               }}
                             />
-                            <p
-                              style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                fontSize: '19px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '-10px 0 -3px 0',
-                                fontWeight: '500',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
-                              NOIR
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(1px)'
-                              }}
-                            >
-                              24&quot; RAW CAMBODIAN
-                            </p>
+                            <div style={marbleStripTextColStrip(false)}>
+                            <p style={marbleStripProductNameStyle()}>NOIR</p>
+                            <p style={marbleStripProductRedLineStyle()}>24&quot; RAW CAMBODIAN</p>
                             <p
                               className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
-                              style={marbleStripProductPriceStyle({
-                                transform: 'translateX(10px) translateY(-1px)',
-                              })}
+                              style={marbleStripProductPriceStyle()}
                               dangerouslySetInnerHTML={formatPrice(740)}
                             />
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '2px',
-                                marginTop: '2px',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
+                            <div style={marbleStripStarsRowStyle(false)}>
                               {[...Array(5)].map((_, ri) => (
                                 <img
                                   key={ri}
@@ -2391,6 +2267,7 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{ width: '10px', height: '10px', filter: 'drop-shadow(0 0 0 1px black)' }}
                                 />
                               ))}
+                            </div>
                             </div>
                           </div>
                           </div>
@@ -2429,49 +2306,15 @@ export default function ShopTextureCategoryProductPage() {
                                 pointerEvents: 'none'
                               }}
                             />
-                            <p
-                              style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                fontSize: '18px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: '-10px 0 -3px 0',
-                                fontWeight: '500',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
-                              BLANCO
-                            </p>
-                            <p
-                              style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                margin: '0 0 5px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                transform: 'translateX(10px) translateY(1px)'
-                              }}
-                            >
-                              24&quot; RAW RUSSIAN
-                            </p>
+                            <div style={marbleStripTextColStrip(false)}>
+                            <p style={marbleStripProductNameStyle()}>BLANCO</p>
+                            <p style={marbleStripProductRedLineStyle()}>24&quot; RAW RUSSIAN</p>
                             <p
                               className={MARBLE_STRIP_PRODUCT_PRICE_CLASS}
-                              style={marbleStripProductPriceStyle({
-                                transform: 'translateX(10px) translateY(-1px)',
-                              })}
+                              style={marbleStripProductPriceStyle()}
                               dangerouslySetInnerHTML={formatPrice(820)}
                             />
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '2px',
-                                marginTop: '2px',
-                                transform: 'translateX(10px)'
-                              }}
-                            >
+                            <div style={marbleStripStarsRowStyle(false)}>
                               {[...Array(5)].map((_, ri) => (
                                 <img
                                   key={ri}
@@ -2480,6 +2323,7 @@ export default function ShopTextureCategoryProductPage() {
                                   style={{ width: '10px', height: '10px', filter: 'drop-shadow(0 0 0 1px black)' }}
                                 />
                               ))}
+                            </div>
                             </div>
                           </div>
                           </div>

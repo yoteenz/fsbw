@@ -19,6 +19,13 @@ import {
   attachStockStatusToLineItem,
   isWigUnitSoldOut,
 } from '../../../utils/productInventoryAvailability';
+import {
+  shopProductGridCapSizeRowStyle,
+  shopProductGridNameStyle,
+  shopProductGridPriceStyle,
+  shopProductGridRedLineStyle,
+  shopProductGridTextColStyle,
+} from '../../../utils/shopProductGridCopyStyles';
 
 function ProductsUnitsPage() {
   const navigate = useNavigate();
@@ -725,73 +732,19 @@ function ProductsUnitsPage() {
                         />
                       </div>
 
-                      <div
-                        style={{
-                          width: '100%',
-                          textAlign: 'center',
-                          boxSizing: 'border-box'
-                        }}
-                      >
-                        <p
-                          style={{
-                            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                            fontSize: '18px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: 0,
-                            fontWeight: '500',
-                            lineHeight: 1.05,
-                            minHeight: '22px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          {product.name}
-                        </p>
-
-                        <p
-                          style={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '10px',
-                            color: '#EB1C24',
-                            textTransform: 'uppercase',
-                            margin: '2px 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84',
-                            minHeight: '12px',
-                            transform: 'translateY(1px)'
-                          }}
-                        >
+                      <div style={shopProductGridTextColStyle}>
+                        <p style={shopProductGridNameStyle()}>{product.name}</p>
+                        <p style={shopProductGridRedLineStyle()}>
                           {product.length} RAW {product.hairOrigin}
                         </p>
-
                         <WigProductPriceDisplay
                           productName={product.name}
                           soldOutPriceTreatment="strikethrough-only"
                           priceHtml={formatPrice(product.price)}
-                          priceStyle={{
-                            fontFamily: '"Futura PT Medium"',
-                            fontSize: '12px',
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '0 0 5px 0',
-                            fontWeight: '500',
-                            lineHeight: '0.84',
-                            transform: 'translateY(1px)',
-                            textAlign: 'center',
-                          }}
+                          priceStyle={shopProductGridPriceStyle()}
+                          labelStyle={{ transform: 'translateY(1px)' }}
                         />
-
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '14px',
-                            marginTop: '2px',
-                            transform: 'translateY(1px)'
-                          }}
-                        >
+                        <div style={shopProductGridCapSizeRowStyle}>
                           {['XS', 'S', 'M', 'L'].map((size) => (
                             <span
                               key={size}

@@ -25,6 +25,13 @@ import {
   attachStockStatusToLineItem,
   isWigUnitSoldOut,
 } from '../../utils/productInventoryAvailability';
+import {
+  shopProductGridCapSizeRowStyle,
+  shopProductGridNameStyle,
+  shopProductGridPriceStyle,
+  shopProductGridRedLineStyle,
+  shopProductGridTextColStyle,
+} from '../../utils/shopProductGridCopyStyles';
 
 function ProductsPage() {
   const navigate = useNavigate();
@@ -1104,34 +1111,12 @@ function ProductsPage() {
                               />
                             </div>
 
-                            <div style={{ width: '100%', textAlign: 'center', boxSizing: 'border-box' }}>
-                              <p style={{
-                                fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                fontSize: '18px',
-                                color: 'black',
-                                textTransform: 'uppercase',
-                                margin: 0,
-                                fontWeight: '500',
-                                lineHeight: 1.05,
-                                minHeight: '22px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}>
+                            <div style={shopProductGridTextColStyle}>
+                              <p style={shopProductGridNameStyle()}>
                                 {product.name}
                               </p>
 
-                              <p style={{
-                                fontFamily: '"Futura PT Medium"',
-                                fontSize: '10px',
-                                color: '#EB1C24',
-                                textTransform: 'uppercase',
-                                margin: '2px 0 3px 0',
-                                fontWeight: '500',
-                                lineHeight: '0.84',
-                                minHeight: '12px',
-                                transform: 'translateY(1px)'
-                              }}>
+                              <p style={shopProductGridRedLineStyle()}>
                                 {product.length} RAW {product.hairOrigin}
                               </p>
 
@@ -1139,21 +1124,11 @@ function ProductsPage() {
                                 productName={product.name}
                                 soldOutPriceTreatment="strikethrough-only"
                                 priceHtml={formatPrice(product.price)}
-                                priceStyle={{
-                                  fontFamily: '"Futura PT Medium"',
-                                  fontSize: '12px',
-                                  color: 'black',
-                                  textTransform: 'uppercase',
-                                  margin: '0 0 5px 0',
-                                  fontWeight: '500',
-                                  lineHeight: '0.84',
-                                  transform: 'translateY(1px)',
-                                  textAlign: 'center',
-                                }}
+                                priceStyle={shopProductGridPriceStyle()}
                                 labelStyle={{ transform: 'translateY(1px)' }}
                               />
 
-                              <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginTop: '2px', transform: 'translateY(1px)' }}>
+                              <div style={shopProductGridCapSizeRowStyle}>
                                 {['XS', 'S', 'M', 'L'].map(size => (
                                   <span
                                     key={size}
@@ -1496,27 +1471,11 @@ function ProductsPage() {
                                     }}
                                   />
                                 </div>
-                                <div
-                                  className={t.slug === 'curly' ? 'shop-bcf-curly-product-copy-lift' : undefined}
-                                >
+                                <div style={shopProductGridTextColStyle}>
                                   <p
-                                    style={{
-                                      fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                                      fontSize: '18px',
-                                      color: 'black',
-                                      textTransform: 'uppercase',
-                                      margin: 0,
-                                      fontWeight: '500',
-                                      lineHeight: 1.05,
-                                      minHeight: '22px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
+                                    style={shopProductGridNameStyle({
                                       pointerEvents: 'none',
-                                      width: '100%',
-                                      textAlign: 'center',
-                                      boxSizing: 'border-box'
-                                    }}
+                                    })}
                                   >
                                     {t.label}
                                   </p>
@@ -1525,39 +1484,16 @@ function ProductsPage() {
                                     categorySlug === 'frontals') && (
                                     <>
                                       <p
-                                        style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          fontSize: '10px',
-                                          color: '#EB1C24',
-                                          textTransform: 'uppercase',
-                                          margin: '2px 0 3px 0',
-                                          fontWeight: '500',
-                                          lineHeight: '0.84',
-                                          minHeight: '12px',
-                                          transform: 'translateY(1px)',
+                                        style={shopProductGridRedLineStyle({
                                           pointerEvents: 'none',
-                                          width: '100%',
-                                          textAlign: 'center',
-                                          boxSizing: 'border-box'
-                                        }}
+                                        })}
                                       >
                                         {bcfShopTextureRedLine}
                                       </p>
                                       <p
-                                        style={{
-                                          fontFamily: '"Futura PT Medium"',
-                                          fontSize: '12px',
-                                          color: 'black',
-                                          textTransform: 'uppercase',
-                                          margin: '0 0 5px 0',
-                                          fontWeight: '500',
-                                          lineHeight: '0.84',
-                                          transform: 'translateY(1px)',
+                                        style={shopProductGridPriceStyle({
                                           pointerEvents: 'none',
-                                          width: '100%',
-                                          textAlign: 'center',
-                                          boxSizing: 'border-box'
-                                        }}
+                                        })}
                                         dangerouslySetInnerHTML={formatShopTextureRange(
                                           bcfPdpPriceRangeUsd(categorySlug, t.slug).minUsd,
                                           bcfPdpPriceRangeUsd(categorySlug, t.slug).maxUsd
