@@ -1366,7 +1366,7 @@ export default function ViewListsPage() {
                             <span
                               style={{
                                 ...LIST_OVERVIEW_COUNT_STYLE,
-                                marginTop: '3px',
+                                marginTop: '4px',
                                 textAlign: 'center',
                                 width: '100%',
                               }}
