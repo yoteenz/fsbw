@@ -3918,7 +3918,7 @@ function AffiliatePage() {
                             style={{
                               fontFamily: '"Bohemy", cursive',
                               color: '#808080',
-                              fontSize: '18px',
+                              fontSize: '19px',
                               margin: '0 0 8px 0',
                               textTransform: 'lowercase',
                               fontWeight: 400,

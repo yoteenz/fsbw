@@ -17,7 +17,7 @@ function blockStyle(variant: 'body' | 'accent' | 'demiGray' | 'bohemy'): CSSProp
       lineHeight: 1.45,
       textTransform: 'none',
       fontFamily: '"Bohemy", cursive',
-      fontSize: '16px',
+      fontSize: '17px',
       color: BRAND_GRAY,
       fontWeight: 400,
     };
