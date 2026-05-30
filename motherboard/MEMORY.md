@@ -21812,3 +21812,13 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Frontals wavy:** User paste was **`3D%20images/rEzHR8AixKR1Fq4XQaCLf_GBhMA1Dz.jpeg`** (same as wishlist list thumb photo)—not a `.mov`. **`BCF_CF_VIDEO.frontals.wavy`** left on **`/assets/wavy-frontal-video.mov`** until a Kling URL is supplied.
 
 **Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_VIDEO_BY_TEXTURE`** wavy/curly + all **`BCF_CF_VIDEO`** closures textures + frontals straight/curly → Supabase. Pushed **`master`** + **`preview/mobile`** (`577ac53c`).
+
+---
+
+## 2026-05-29 — Frontals wavy VIDEO + restore hero underlay (no white flash)
+
+**Context:** User supplied correct frontals wavy Kling **`.mov`** (`make_this_image_slowly_showcas_Kling_30__78091.mov`). Asked why VIDEO mode flashes white before playing — unlike before when local assets loaded fast.
+
+**Cause:** Remote Supabase **`.mov`** files are multi‑MB (e.g. ~6MB vs ~2MB hero JPG); hero waited on **`onCanPlay`** with video **`opacity: 0`** and **`backgroundColor: #FFFFFF`** after JPG underlay was removed (commit **`5c4bc158`**, zoom fix). **`poster`** alone does not cover the slot reliably while transparent.
+
+**Changes:** **`BCF_CF_VIDEO.frontals.wavy`** → **`_78091.mov`**. Restored **`<img>` underlay** (same JPG as PHOTO) + **`bcfPdpHeroVideoUnderlayStyle`**; video **`backgroundColor: transparent`**. Bundles/closures/frontals VIDEO use shared sizing helpers. Pushed **`master`** + **`preview/mobile`**.
