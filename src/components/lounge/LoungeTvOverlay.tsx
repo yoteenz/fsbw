@@ -106,7 +106,9 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
-const loungeTvThumbLabelStyle: React.CSSProperties = {
+const LOUNGE_TV_THUMB_LABEL_GRAY = '#9a9a9a';
+
+const loungeTvThumbLabelBase: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
   display: 'flex',
@@ -119,7 +121,6 @@ const loungeTvThumbLabelStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '8px',
   lineHeight: 1,
-  color: '#fff',
   textTransform: 'uppercase',
   background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
   boxSizing: 'border-box',
@@ -138,7 +139,7 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
 
   if (isNew) {
     return (
-      <span style={loungeTvThumbLabelStyle}>
+      <span style={{ ...loungeTvThumbLabelBase, color: '#ffffff' }}>
         <span style={{ color: BRAND_RED }}>*NEW*</span>
         <span>{split?.trail ?? title}</span>
       </span>
@@ -147,14 +148,14 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
 
   if (split) {
     return (
-      <span style={loungeTvThumbLabelStyle}>
+      <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>
         <span>{split.head}</span>
         <span>{split.trail}</span>
       </span>
     );
   }
 
-  return <span style={loungeTvThumbLabelStyle}>{title}</span>;
+  return <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>{title}</span>;
 }
 
 function LoungeTvScreen({
