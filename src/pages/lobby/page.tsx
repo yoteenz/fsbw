@@ -19,10 +19,9 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import {
-  LOUNGE_SALON_CHAIRS_HEIGHT_PX,
-  LOUNGE_SALON_CHAIRS_OFFSET_X_PX,
-  LOUNGE_SALON_CHAIRS_OFFSET_Y_PX,
-  LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX,
+  loungeSalonChairsAnchorStyle,
+  loungeSalonChairsImageStyle,
+  useLoungeLargeViewport,
 } from '../../utils/loungeSceneLayout';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
 import {
@@ -483,6 +482,7 @@ const LoungePage: React.FC = () => {
   }, []);
 
   const loungeLobbyTvFrame = loungeTvDimensionsFromFrameHeight(146);
+  const isLargeLoungeViewport = useLoungeLargeViewport();
 
   const handlePrevious = useCallback(() => {
     // This will be handled by parent component
@@ -501,10 +501,6 @@ const LoungePage: React.FC = () => {
         padding: 0,
         flexShrink: 0,
         backgroundColor: 'white',
-        ['--lounge-chairs-offset-x' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_X_PX}px`,
-        ['--lounge-chairs-offset-y' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_Y_PX}px`,
-        ['--lounge-chairs-offset-y-large' as string]: `${LOUNGE_SALON_CHAIRS_OFFSET_Y_LARGE_PX}px`,
-        ['--lounge-chairs-height' as string]: `${LOUNGE_SALON_CHAIRS_HEIGHT_PX}px`,
       }}
     >
       {/* Background Image - Using landing2-background */}
@@ -628,15 +624,10 @@ const LoungePage: React.FC = () => {
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
       
-      {/* Salon Chairs — viewport-centered; large screens nudged down via .lounge-salon-chairs-anchor */}
-      <div className="lounge-salon-chairs-anchor">
+      {/* Salon Chairs — inline placement (large viewport uses larger Y offset from loungeSceneLayout) */}
+      <div style={loungeSalonChairsAnchorStyle(isLargeLoungeViewport)}>
         <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img
-            src="/assets/salon-chairs.png"
-            alt="Salon Chairs"
-            className="lounge-salon-chairs-img"
-            style={{ cursor: 'pointer' }}
-          />
+          <img src="/assets/salon-chairs.png" alt="Salon Chairs" style={loungeSalonChairsImageStyle()} />
         </div>
       </div>
       

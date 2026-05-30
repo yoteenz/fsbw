@@ -4237,35 +4237,7 @@ html[data-loading-screen='true'] #root {
   background-color: #ffffff !important;
 }
 
-/* Lounge salon chairs — values from loungeSceneLayout.ts via CSS variables on .lounge-page */
-.lounge-page .lounge-salon-chairs-anchor {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(
-    calc(-50% + var(--lounge-chairs-offset-x, 25px)),
-    calc(-50% + var(--lounge-chairs-offset-y, 290px))
-  ) !important;
-  z-index: 10 !important;
-  width: fit-content !important;
-}
-
-.lounge-page .lounge-salon-chairs-anchor .lounge-salon-chairs-img {
-  width: auto !important;
-  height: var(--lounge-chairs-height, 160px) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
-}
-
-@media (min-width: 1024px) {
-  .lounge-page .lounge-salon-chairs-anchor {
-    transform: translate(
-      calc(-50% + var(--lounge-chairs-offset-x, 25px)),
-      calc(-50% + var(--lounge-chairs-offset-y-large, 372px))
-    ) !important;
-  }
-}
+/* Lounge salon chairs: position via inline styles in loungeSceneLayout.ts (not here — !important blocked updates) */
 
 /* Lounge TV overlay — CRT static before menu content loads */
 .lounge-tv-power-on-static {
