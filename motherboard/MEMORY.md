@@ -22100,6 +22100,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge TV close shrink: restore black screen in bezel
+
+**Context:** Shrinking TV back to lobby showed **gray frame only** — inner black glass hidden.
+
+**Cause:** **`screenStyle.opacity`** was **`animatedIn ? 1 : 0`**, so when **`animatedIn`** went false for the reverse animation the black panel disappeared.
+
+**Change:** **`showTvBlackScreen = animatedIn || !isOpen`** in **`LoungeTvOverlay`** so glass stays visible during close shrink.
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
