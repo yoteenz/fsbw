@@ -9,6 +9,7 @@ import {
   getLoungeTvAdminPlacement,
   hydrateLoungeTvAdminConfig,
   saveLoungeTvAdminConfigToStorage,
+  touchLoungeTvAdminConfigUpdatedAt,
   upsertLoungeTvAdminPlacement,
   type LoungeTvAdminConfig,
   type LoungeTvAdminItem,
@@ -401,15 +402,17 @@ export default function AdminLoungeTvContentPanel() {
     async (next: LoungeTvAdminConfig) => {
       setSaving(true);
       setFeedback(null);
+      const stamped = touchLoungeTvAdminConfigUpdatedAt(next);
+      saveLoungeTvAdminConfigToStorage(stamped);
+      setConfig(stamped);
       try {
-        saveLoungeTvAdminConfigToStorage(next);
-        setConfig(next);
-        await putAdminLoungeTvConfig(next as unknown as Record<string, unknown>);
+        await putAdminLoungeTvConfig(stamped as unknown as Record<string, unknown>);
         setFeedback({ type: 'success', msg: 'CONTENT SAVED.' });
       } catch (e) {
+        const detail = e instanceof Error ? e.message : 'SAVE FAILED';
         setFeedback({
           type: 'error',
-          msg: (e instanceof Error ? e.message : 'SAVE FAILED').toUpperCase(),
+          msg: `SAVED ON THIS DEVICE — SERVER SYNC FAILED (${detail.toUpperCase()}). TV USES THIS DEVICE COPY; FOR OTHER DEVICES USE A HOSTED HTTPS VIDEO URL.`,
         });
       } finally {
         setSaving(false);

@@ -118,7 +118,7 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   inset: 0,
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-end',
+  justifyContent: 'center',
   alignItems: 'center',
   gap: 0,
   padding: '4px',
@@ -131,14 +131,26 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-/** Fixed-height row so titles align whether or not *NEW* is shown above. */
-const loungeTvNewBadgeRowStyle: React.CSSProperties = {
-  minHeight: '8px',
+const loungeTvNewBadgeOverlayStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '4px',
+  left: 0,
+  right: 0,
+  textAlign: 'center',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '8px',
   lineHeight: 1,
+  textTransform: 'uppercase',
+  pointerEvents: 'none',
+};
+
+const loungeTvThumbTitleStackStyle: React.CSSProperties = {
   display: 'flex',
-  alignItems: 'flex-end',
+  flexDirection: 'column',
+  alignItems: 'center',
   justifyContent: 'center',
-  width: '100%',
+  gap: 0,
+  textAlign: 'center',
 };
 
 /** "TINTING YOUR LACE" → { head: "TINTING", trail: "YOUR LACE" }. */
@@ -155,17 +167,21 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
 
   return (
     <span style={loungeTvThumbLabelBase}>
-      <span style={loungeTvNewBadgeRowStyle} aria-hidden={!isNew}>
-        {isNew ? <span style={{ color: BRAND_RED }}>*NEW*</span> : null}
+      {isNew ? (
+        <span style={loungeTvNewBadgeOverlayStyle}>
+          <span style={{ color: BRAND_RED }}>*NEW*</span>
+        </span>
+      ) : null}
+      <span style={loungeTvThumbTitleStackStyle}>
+        {split ? (
+          <>
+            <span style={{ color: titleColor }}>{split.head}</span>
+            <span style={{ color: titleColor }}>{split.trail}</span>
+          </>
+        ) : (
+          <span style={{ color: titleColor }}>{title}</span>
+        )}
       </span>
-      {split ? (
-        <>
-          <span style={{ color: titleColor }}>{split.head}</span>
-          <span style={{ color: titleColor }}>{split.trail}</span>
-        </>
-      ) : (
-        <span style={{ color: titleColor }}>{title}</span>
-      )}
     </span>
   );
 }
@@ -492,8 +508,9 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     void hydrateLoungeTvAdminConfig(getLoungeTvAdminConfig);
-  }, []);
+  }, [isOpen]);
 
   const resetOverlayState = useCallback(() => {
     setShowContent(false);

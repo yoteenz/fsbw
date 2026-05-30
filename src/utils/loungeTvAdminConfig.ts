@@ -30,6 +30,8 @@ export type LoungeTvAdminPlacement = {
 
 export type LoungeTvAdminConfig = {
   version: 1;
+  /** Milliseconds since epoch; set on each admin save for merge/hydrate. */
+  updatedAt?: number;
   placements: LoungeTvAdminPlacement[];
 };
 
@@ -111,7 +113,79 @@ function normalizeConfig(raw: unknown): LoungeTvAdminConfig | null {
     }
     placements.push({ mainTab, sidebarId, items });
   }
-  return { version: 1, placements };
+  const updatedAt = typeof o.updatedAt === 'number' && Number.isFinite(o.updatedAt) ? o.updatedAt : undefined;
+  return { version: 1, updatedAt, placements };
+}
+
+function mergeAdminItem(primary: LoungeTvAdminItem, secondary: LoungeTvAdminItem): LoungeTvAdminItem {
+  return {
+    ...primary,
+    title: primary.title || secondary.title,
+    body: primary.body || secondary.body,
+    mediaUrl: primary.mediaUrl?.trim() ? primary.mediaUrl : secondary.mediaUrl,
+    thumbSrc: primary.thumbSrc?.trim() ? primary.thumbSrc : secondary.thumbSrc,
+    mediaType:
+      primary.mediaType === 'video' || secondary.mediaType === 'video' ? 'video' : primary.mediaType,
+    isNew: primary.isNew ?? secondary.isNew,
+    durationLabel: primary.durationLabel ?? secondary.durationLabel,
+  };
+}
+
+function mergeAdminItemLists(
+  primary: LoungeTvAdminItem[],
+  secondary: LoungeTvAdminItem[]
+): LoungeTvAdminItem[] {
+  const secondaryById = new Map(secondary.map((item) => [item.id, item]));
+  const merged = primary.map((item) => {
+    const other = secondaryById.get(item.id);
+    return other ? mergeAdminItem(item, other) : item;
+  });
+  const primaryIds = new Set(primary.map((item) => item.id));
+  for (const item of secondary) {
+    if (!primaryIds.has(item.id)) merged.push(item);
+  }
+  return merged;
+}
+
+function mergeAdminPlacements(
+  primary: LoungeTvAdminPlacement[],
+  secondary: LoungeTvAdminPlacement[]
+): LoungeTvAdminPlacement[] {
+  const byKey = new Map<string, LoungeTvAdminPlacement>();
+  for (const placement of primary) {
+    byKey.set(placementKey(placement.mainTab, placement.sidebarId), {
+      ...placement,
+      items: [...placement.items],
+    });
+  }
+  for (const placement of secondary) {
+    const key = placementKey(placement.mainTab, placement.sidebarId);
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, placement);
+      continue;
+    }
+    byKey.set(key, {
+      ...existing,
+      items: mergeAdminItemLists(existing.items, placement.items),
+    });
+  }
+  return [...byKey.values()];
+}
+
+/** Prefer newer `updatedAt`; always fill empty media fields from the other copy. */
+export function mergeLoungeTvAdminConfigs(
+  a: LoungeTvAdminConfig,
+  b: LoungeTvAdminConfig
+): LoungeTvAdminConfig {
+  const aTs = a.updatedAt ?? 0;
+  const bTs = b.updatedAt ?? 0;
+  const [primary, secondary] = aTs >= bTs ? [a, b] : [b, a];
+  return {
+    version: 1,
+    updatedAt: Math.max(aTs, bTs) || undefined,
+    placements: mergeAdminPlacements(primary.placements, secondary.placements),
+  };
 }
 
 let runtimeCache: LoungeTvAdminConfig | null = null;
@@ -142,6 +216,10 @@ export function saveLoungeTvAdminConfigToStorage(config: LoungeTvAdminConfig): v
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(LOUNGE_TV_CONFIG_UPDATED_EVENT));
   }
+}
+
+export function touchLoungeTvAdminConfigUpdatedAt(config: LoungeTvAdminConfig): LoungeTvAdminConfig {
+  return { ...config, updatedAt: Date.now() };
 }
 
 export function getLoungeTvAdminPlacement(
@@ -175,13 +253,14 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
   if (item.body.trim()) tile.description = item.body.trim().toUpperCase();
   if (mainTab === 'watch-learn') {
     if (item.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) {
-      tile.videoSrc = LOUNGE_TV_CONTENT_VIDEO_SRC;
+      const customSrc = item.mediaType === 'video' && item.mediaUrl.trim() ? item.mediaUrl.trim() : '';
+      tile.videoSrc = customSrc || LOUNGE_TV_CONTENT_VIDEO_SRC;
       if (!tile.description) {
         tile.description =
           item.body.trim().toUpperCase() || 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.';
       }
-    } else if (item.mediaType === 'video') {
-      tile.videoSrc = item.mediaUrl;
+    } else if (item.mediaType === 'video' && item.mediaUrl.trim()) {
+      tile.videoSrc = item.mediaUrl.trim();
       if (!tile.description) {
         tile.description =
           item.body.trim().toUpperCase() || 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE.';
@@ -197,11 +276,15 @@ function applyWatchLearnTileOverrides(
   tiles: LoungeTvVideoTile[] | null
 ): LoungeTvVideoTile[] | null {
   if (!tiles || mainTab !== 'watch-learn') return tiles;
-  return tiles.map((tile) =>
-    tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID
-      ? { ...tile, videoSrc: LOUNGE_TV_CONTENT_VIDEO_SRC, durationLabel: undefined }
-      : tile
-  );
+  return tiles.map((tile) => {
+    if (tile.id !== LOUNGE_TV_PLUCKING_LACE_TILE_ID) return tile;
+    const hasCustom = Boolean(tile.videoSrc && tile.videoSrc !== LOUNGE_TV_CONTENT_VIDEO_SRC);
+    return {
+      ...tile,
+      videoSrc: tile.videoSrc || LOUNGE_TV_CONTENT_VIDEO_SRC,
+      ...(hasCustom ? {} : { durationLabel: undefined }),
+    };
+  });
 }
 
 export function getLoungeTvTilesFromAdminConfig(
@@ -225,22 +308,26 @@ export function resolveLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string
 export async function hydrateLoungeTvAdminConfig(
   fetchRemote: () => Promise<Record<string, unknown> | null>
 ): Promise<LoungeTvAdminConfig> {
+  const stored = loadLoungeTvAdminConfigFromStorage();
+  let remoteNormalized: LoungeTvAdminConfig | null = null;
   try {
     const remote = await fetchRemote();
-    const normalized = remote ? normalizeConfig(remote) : null;
-    if (normalized) {
-      saveLoungeTvAdminConfigToStorage(normalized);
-      return normalized;
-    }
+    remoteNormalized = remote ? normalizeConfig(remote) : null;
   } catch {
     /* ignore */
   }
-  const stored = loadLoungeTvAdminConfigFromStorage();
-  if (stored) {
-    runtimeCache = stored;
-    return stored;
+
+  let merged: LoungeTvAdminConfig;
+  if (stored && remoteNormalized) {
+    merged = mergeLoungeTvAdminConfigs(stored, remoteNormalized);
+  } else if (remoteNormalized) {
+    merged = remoteNormalized;
+  } else if (stored) {
+    merged = stored;
+  } else {
+    merged = buildDefaultLoungeTvAdminConfig();
   }
-  const defaults = buildDefaultLoungeTvAdminConfig();
-  saveLoungeTvAdminConfigToStorage(defaults);
-  return defaults;
+
+  saveLoungeTvAdminConfigToStorage(merged);
+  return merged;
 }
