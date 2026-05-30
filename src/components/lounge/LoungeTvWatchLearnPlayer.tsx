@@ -3,6 +3,8 @@ import type { LoungeTvVideoTile } from './loungeTvContent';
 import { formatLoungeTvVideoDuration } from './loungeTvVideoUtils';
 
 const BODY_FONT = '"Futura PT Medium", Futura, sans-serif';
+const BRAND_RED = '#EB1C24';
+const BODY_GRAY = '#808080';
 const TAP_DELAY_MS = 280;
 
 type LoungeTvWatchLearnPlayerProps = {
