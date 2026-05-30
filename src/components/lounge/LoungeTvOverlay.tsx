@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
-  loungeTvAcademyMessage,
   type LoungeTvMainTab,
 } from './loungeTvContent';
 import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
@@ -239,7 +238,6 @@ function LoungeTvScreen({
     if (!selectedVideoId) return;
     markLoungeTvTileViewed(selectedVideoId);
   }, [selectedVideoId]);
-  const academy = mainTab === 'academy';
   const isWatchLearn = mainTab === 'watch-learn';
   const selectedTile =
     isWatchLearn && selectedVideoId && tiles
@@ -371,26 +369,12 @@ function LoungeTvScreen({
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: academy || tiles?.length === 0 ? 'center' : 'flex-start',
+            justifyContent: 'flex-start',
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          {academy ? (
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                fontSize: '11px',
-                color: BRAND_RED,
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                margin: 0,
-                letterSpacing: '0.06em',
-              }}
-            >
-              {loungeTvAcademyMessage(sidebarId)}
-            </p>
-          ) : selectedTile ? (
+          {selectedTile ? (
             <LoungeTvWatchLearnPlayer tile={selectedTile} />
           ) : tiles && tiles.length > 0 ? (
             <div
@@ -444,20 +428,7 @@ function LoungeTvScreen({
               );
               })}
             </div>
-          ) : (
-            <p
-              style={{
-                fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                fontSize: '10px',
-                color: '#888',
-                textTransform: 'uppercase',
-                textAlign: 'center',
-                margin: 0,
-              }}
-            >
-              COMING SOON
-            </p>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
