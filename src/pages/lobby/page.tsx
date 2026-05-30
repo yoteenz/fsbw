@@ -19,7 +19,11 @@ import {
 } from '../../utils/syncFromApi';
 import { registerServerSessionCookie } from '../../utils/sessionRestore';
 import { LoungeTvOverlay } from '../../components/lounge/LoungeTvOverlay';
-import { LoungeTvFrame, loungeTvDimensionsFromFrameHeight } from '../../components/lounge/loungeTvFrame';
+import {
+  LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX,
+  LoungeTvFrame,
+  loungeTvDimensionsFromFrameHeight,
+} from '../../components/lounge/loungeTvFrame';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -552,7 +556,7 @@ const LoungePage: React.FC = () => {
            }}
          >
            <LoungeTvFrame
-             frameWidth={loungeLobbyTvFrame.frameW}
+             frameWidth={loungeLobbyTvFrame.frameW + LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX}
              frameHeight={loungeLobbyTvFrame.frameH}
            >
              {!tvOpen && (

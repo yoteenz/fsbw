@@ -6,6 +6,12 @@ export const LOUNGE_TV_BEZEL = { top: 11, right: 11, bottom: 16, left: 11 };
 /** Inner glass aspect (width × height). */
 export const LOUNGE_TV_SCREEN_ASPECT = 0.72;
 
+/** Lobby lounge slide static TV — extra outer width (px). */
+export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 12;
+
+/** Expanded overlay TV size multiplier (1 = full computed size). */
+export const LOUNGE_TV_OVERLAY_SIZE_SCALE = 0.8;
+
 /** Matches affiliate photo delete control (`account/affiliate/page.tsx`). */
 export const AFFILIATE_CLOSE_ICON_FILTER =
   'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)';
