@@ -21783,3 +21783,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Correct Kling file is **`make_this_image_shake_the_hair_Kling_30__51488.mov`** (not **`_36738`**, which 404’d).
 
 **Change:** **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** updated; remote URL verified **200**. Local MP4 fallback kept. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-30 — Bundles straight VIDEO: wig-preview-live path
+
+**Change:** **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** → **`live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov`** (200). Pushed `master` + `preview/mobile`.
