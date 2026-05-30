@@ -21897,6 +21897,8 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 
 **Follow-up:** Fal **Flux 2 Max** left/right curtain PNGs wired into overlay — **`public/assets/lounge-curtain-left.png`**, **`lounge-curtain-right.png`** (Supabase sources in **`loungeTvAssets.ts`**). Panels **51vw**, **`object-fit: cover`**, seam at center; TV **z-index** above curtains.
 
+**Follow-up (closed / scale):** Inner **black bands** in Fal outputs + **`object-position: right/left`** toward center caused an **open-gap** illusion. **`loungeCurtainFalPrompts.ts`** — regen prompts: **closed** fabric to center seam, **no black TV hole in PNG**, **5–7 pleats** medium-wide scale. **`LoungeTvOverlay`** interim: anchor **outer** edges, **88%** height, **54vw** overlap. Replace PNGs after regen.
+
 ---
 
 ## 2026-05-30 — Home/shop BCF copy spacing matches UNITS row
