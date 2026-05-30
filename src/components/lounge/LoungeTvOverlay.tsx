@@ -141,7 +141,14 @@ function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean })
     return (
       <span style={{ ...loungeTvThumbLabelBase, color: '#ffffff' }}>
         <span style={{ color: BRAND_RED }}>*NEW*</span>
-        <span>{split?.trail ?? title}</span>
+        {split ? (
+          <>
+            <span>{split.head}</span>
+            <span>{split.trail}</span>
+          </>
+        ) : (
+          <span>{title}</span>
+        )}
       </span>
     );
   }
