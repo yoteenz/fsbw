@@ -22015,3 +22015,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** On **`/lobby`** load, landing imagery peeked below white loading screen (mobile **`100vh`** / browser chrome gap).
 
 **Change:** **`LoadingScreen.tsx`** — portal to **`document.body`**, **`min-height: calc(100dvh + 32px)`**, safe-area padding, bottom bleed; flex-centered GIF (removed over-specified img styles).
+
+---
+
+## 2026-05-30 — Lounge salon chairs responsive floor alignment
+
+**Context:** On large screens salon chairs floated above floor line; fixed **`translate(-50%, calc(-50% + 290px))`** did not scale with **`landing2-background`** (`100% auto`).
+
+**Change:** **`loungeSceneLayout.ts`** — top **`calc(100vw * bgAspect * 0.538)`**, **`translateY(-100%)`** on bases; chair height **`clamp` + vw**. Tune **`LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO`** if art changes.
