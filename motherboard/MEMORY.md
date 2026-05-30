@@ -21424,3 +21424,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists line view: EDIT LIST NAME −4px more
 
 **Change:** `/wishlist/lists` overview **line** view — **EDIT LIST NAME** `margin-top` **-16px → -20px** via `.wishlist-lists-overview-edit-list-name` in `index.css` (`!important`); wrapper `.wishlist-lists-overview-edit-list-name-wrap`. Inline style no longer sets margin (avoids override fights). Grid view unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists grid: +1px below PRIVATE
+
+**Change:** `lists/page.tsx` grid overview — item count `marginTop` **2px → 3px** under gray PRIVATE/SHARED (line view unchanged). Pushed `master` + `preview/mobile`.
