@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   getLoungeTvTiles,
@@ -307,15 +307,17 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   const [curtainsReady, setCurtainsReady] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [poweringOff, setPoweringOff] = useState(false);
+  const isClosingRef = useRef(false);
   const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
   const [sidebarId, setSidebarId] = useState('new-drops');
 
   const requestClose = useCallback(() => {
-    if (poweringOff) return;
+    if (poweringOff || isClosingRef.current) return;
     if (!animatedIn) {
       onClose();
       return;
     }
+    isClosingRef.current = true;
     setShowContent(false);
     setPoweringOff(true);
   }, [poweringOff, animatedIn, onClose]);
@@ -324,7 +326,6 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     if (!poweringOff) return;
     const timer = window.setTimeout(() => {
       setPoweringOff(false);
-      setAnimatedIn(false);
       onClose();
     }, LOUNGE_TV_POWER_OFF_MS);
     return () => window.clearTimeout(timer);
@@ -338,9 +339,11 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     if (!isOpen) {
       setShowContent(false);
       setPoweringOff(false);
-      if (!poweringOff) setAnimatedIn(false);
+      setAnimatedIn(false);
+      isClosingRef.current = false;
       return;
     }
+    isClosingRef.current = false;
     setPoweringOff(false);
     setCurtainsReady(false);
     let cancelled = false;
@@ -354,7 +357,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     return () => {
       cancelled = true;
     };
-  }, [isOpen, poweringOff]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen || !visible) return;
@@ -366,18 +369,22 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   }, [isOpen, visible]);
 
   useEffect(() => {
-    if (!isOpen || !curtainsReady) return;
+    if (!isOpen || !curtainsReady || isClosingRef.current || poweringOff) return;
     const id = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setAnimatedIn(true));
+      requestAnimationFrame(() => {
+        if (!isClosingRef.current && !poweringOff) setAnimatedIn(true);
+      });
     });
     return () => cancelAnimationFrame(id);
-  }, [isOpen, curtainsReady]);
+  }, [isOpen, curtainsReady, poweringOff]);
 
   useEffect(() => {
-    if (!isOpen || !animatedIn || !curtainsReady) return;
-    const timer = window.setTimeout(() => setShowContent(true), ANIM_MS);
+    if (!isOpen || !animatedIn || !curtainsReady || isClosingRef.current || poweringOff) return;
+    const timer = window.setTimeout(() => {
+      if (!isClosingRef.current && !poweringOff) setShowContent(true);
+    }, ANIM_MS);
     return () => window.clearTimeout(timer);
-  }, [isOpen, animatedIn, curtainsReady]);
+  }, [isOpen, animatedIn, curtainsReady, poweringOff]);
 
   useEffect(() => {
     if (!visible) return;
