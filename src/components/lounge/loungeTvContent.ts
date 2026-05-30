@@ -17,8 +17,10 @@ export type LoungeTvVideoTile = {
   description?: string;
 };
 
-export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+import { LOUNGE_TV_CONTENT_VIDEO_SRC } from './loungeTvAssets';
+
+/** Default Watch + Learn player source (bundled under `public/assets/`). */
+export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC = LOUNGE_TV_CONTENT_VIDEO_SRC;
 
 export const LOUNGE_TV_MAIN_TABS: { id: LoungeTvMainTab; label: string }[] = [
   { id: 'brand', label: 'BRAND' },

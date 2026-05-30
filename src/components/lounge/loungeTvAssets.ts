@@ -5,6 +5,9 @@ export const LOUNGE_CURTAIN_RIGHT_SRC = '/assets/lounge-curtain-right.jpeg';
 /** Chroma-keyed hand + remote (bottom of lounge TV overlay). */
 export const LOUNGE_TV_REMOTE_HAND_SRC = '/assets/lounge-tv-remote-hand.png';
 
+/** Stock Watch + Learn clip (`public/assets/tv-content-video.mp4`). */
+export const LOUNGE_TV_CONTENT_VIDEO_SRC = '/assets/tv-content-video.mp4';
+
 /** Supabase green-screen original (for re-baking `lounge-tv-remote-hand.png`). */
 export const LOUNGE_TV_REMOTE_HAND_SRC_REMOTE =
   'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/DqaxvQ6qq4XteORiCsfiW_kPRRBKiq.jpeg';
