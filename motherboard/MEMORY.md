@@ -22023,3 +22023,9 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** On large screens salon chairs floated above floor line; fixed **`translate(-50%, calc(-50% + 290px))`** did not scale with **`landing2-background`** (`100% auto`).
 
 **Change:** **`loungeSceneLayout.ts`** — top **`calc(100vw * bgAspect * 0.538)`**, **`translateY(-100%)`** on bases; chair height **`clamp` + vw**. Tune **`LOUNGE_SALON_CHAIRS_FLOOR_Y_RATIO`** if art changes.
+
+---
+
+## 2026-05-30 — Lounge TV: lobby +20px width, overlay +12%
+
+**Context:** User wanted lounge static TV **20px wider** ( **`LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX`** `12` → `32` ) and animated overlay **12% larger** ( **`LOUNGE_TV_OVERLAY_SIZE_SCALE`** `0.8` → `0.896` ).
