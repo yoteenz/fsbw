@@ -21368,3 +21368,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked for BCF lines on wishlist **lists** (`/wishlist/lists/:id`, shared list) to show only **BUNDLES** / **CLOSURES** / **FRONTALS** (not `BUNDLES · WAVY`). Red **EDIT IN BUILD-A-WIG** was opening unit PDPs instead of Build-a-Wig edit mode when `addedFrom === 'unit'`.
 
 **Change:** `wishlistListItemDetails.ts` — `getWishlistItemDisplayName`, `getWishlistItemRedSubtitle`, `isWishlistBuildAWigEditableItem`. **lists/page.tsx**, **shared/page.tsx**, **wishlist/page.tsx** — use those helpers for name/subtitle/route; lists line view adds **EDIT IN BUILD-A-WIG** under thumb for unit wigs; all edit clicks use `prepareBuildAWigEditSession(item, { source: 'wishlist' })` (no PDP redirect). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist lists overview: EDIT LIST NAME spacing −4px above
+
+**Change:** `src/pages/wishlist/lists/page.tsx` — `LIST_OVERVIEW_EDIT_NAME_STYLE` `margin-top` `-8px → -12px` (4px tighter above red **EDIT LIST NAME** on list overview line view). Pushed `master` + `preview/mobile`.
