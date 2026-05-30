@@ -21927,3 +21927,11 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 - **`loungeTvFalPrompts.ts`** — Fal prompts for flat-panel TV (dark empty screen for UI overlay); notes lounge uses **`tv-screen.png`** + CSS bezel in app.
 
 Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs via Workflow B.
+
+---
+
+## 2026-05-30 — Lounge TV: defer UI until animation + curtains ready
+
+**Context:** User wanted TV nav/tiles hidden until TV grow and curtain close animation finish (and assets ready).
+
+**Change:** **`LoungeTvOverlay.tsx`** — preload left/right curtain PNGs; start **`animatedIn`** after load; **`showContent`** after **`ANIM_MS`** (1.4s) with fade-in; black bezel/screen only during animation; content unmounts/hides on close.
