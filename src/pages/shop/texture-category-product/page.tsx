@@ -17,6 +17,7 @@ import {
   shopTextureCategoryThumbSrc
 } from '../../../utils/shopTextureCategoryThumb';
 import {
+  BCF_DEFAULT_LENGTH_ID,
   BCF_LENGTH_OPTIONS,
   BCF_ORIGIN_OPTIONS,
   BCF_TEXTURE_LABELS,
@@ -385,7 +386,7 @@ export default function ShopTextureCategoryProductPage() {
       ? bcfInitialOriginFromPathname(window.location.pathname, window.location.search)
       : 'CAMBODIAN'
   );
-  const [bcfLength, setBcfLength] = useState('24"');
+  const [bcfLength, setBcfLength] = useState(BCF_DEFAULT_LENGTH_ID);
   const [bcfColor, setBcfColor] = useState('OFF BLACK');
   const [bcfLace, setBcfLace] = useState(() => {
     if (typeof window === 'undefined') return '13X6';

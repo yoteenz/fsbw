@@ -101,6 +101,9 @@ export interface BcfLengthOption {
   price: number;
 }
 
+/** Default length on BCF PDPs (`/shop/bundles|closures|frontals`). */
+export const BCF_DEFAULT_LENGTH_ID = '16"';
+
 /** Matches build-a-wig length page (`/build-a-wig/length`) — 16"–40". */
 export const BCF_LENGTH_OPTIONS: BcfLengthOption[] = [
   { id: '16"', label: '16"', price: -50 },
