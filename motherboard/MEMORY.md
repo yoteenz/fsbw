@@ -21845,6 +21845,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-30 — Concierge ORDER TRACKING dropdown default
+
+**Change:** **`concierge/page.tsx`** — removed auto-select of first active order, unseen tracking alert, and mock order #999 on load. Dropdown stays **`SELECT AN ORDER`** unless **`?orderId=`** in URL (orders page / checkout deep link). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
 ## 2026-05-30 — BCF PDP default hair length 16"
 
 **Change:** **`BCF_DEFAULT_LENGTH_ID = '16"'`** in **`bcfProductOptions.ts`**; **`texture-category-product/page.tsx`** initial **`bcfLength`** uses it (was **`24"`**). Base price on load reflects 16" length adjustment (−$50 vs 24"). Pushed **`master`** + **`preview/mobile`**.
