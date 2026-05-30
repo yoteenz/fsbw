@@ -22133,3 +22133,17 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted lounge TV **play** control **`#535453`** (not white) and salon chairs **10px lower on large screens only**.
 
 **Change:** **`LOUNGE_TV_PLAY_BUTTON_COLOR`** in **`loungeTvFrame.tsx`**; lobby play uses CSS **mask** on **`play-button.png`**. **`LOUNGE_SALON_CHAIRS_LARGE_EXTRA_Y_PX`** **`52` → `62`** (**`352px`** total Y at **1024px+**).
+
+---
+
+## 2026-05-29 — Lounge TV content gate + salon chairs floor anchor (large screens)
+
+**Context:** Continued lounge polish: TV menu must not show until **remote hand** is fully loaded; salon chairs still not moving down on large screens despite TS constant tweaks.
+
+**TV overlay:** Split curtain preload from hand preload. **`remoteHandReady`** after **`Image` load + `decode()`** (and **`LoungeTvRemoteHand` `onLoad`** backup). **`staticPhaseDone`** after power-on **`ANIM_MS`**; **`showContent`** only when both static phase and hand are ready — menu and hand appear together after static.
+
+**Chairs root cause:** **`.lounge-page`** was only **`105vh`** tall while **`landing2-background`** at **`100% auto`** is **`~100vw × 3376/1560`**. Chairs at **`top: 50%`** were anchored to the short box, so extra **`translateY`** pixels barely moved them relative to the art floor on wide viewports. Background layer also used **`contain: layout style paint`** and **`height: 100%`** on that short box.
+
+**Chairs fix:** **`loungePageMinHeightCss()`** = **`max(105vh, art height)`** on lounge page + carousel slide. Background layer height = full art height; removed **`contain`**. Large screens (**1024px+**): **`top: calc(artHeight * 0.538)`**, **`translateY(-100% + 82px)`**; mobile keeps viewport-center **`290px`** offset.
+
+**Files:** **`loungeSceneLayout.ts`**, **`LoungeTvOverlay.tsx`**, **`LoungeTvRemoteHand.tsx`**, **`src/pages/lobby/page.tsx`**. Commit **`62c3b39a`** on **`master`** / **`preview/mobile`**.
