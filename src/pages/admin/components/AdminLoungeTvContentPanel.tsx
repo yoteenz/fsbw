@@ -610,10 +610,6 @@ export default function AdminLoungeTvContentPanel() {
         </div>
       ) : null}
 
-      <p className="text-xs text-gray-600 mb-3" style={{ fontFamily: '"Futura PT Medium"', lineHeight: 1.4 }}>
-        TAP A CATEGORY TO MANAGE TILES. UPLOAD A PHOTO OR VIDEO, SET TITLE AND BODY, THEN SAVE.
-      </p>
-
       <div className="space-y-3">
         {LOUNGE_TV_MAIN_TABS.map((tab) => {
           const sectionCategories = TV_CATEGORIES.filter((c) => c.mainTab === tab.id);
@@ -622,8 +618,8 @@ export default function AdminLoungeTvContentPanel() {
           return (
             <div
               key={tab.id}
-              className="border border-gray-300 rounded"
-              style={{ backgroundColor: 'rgba(255,255,255,0.85)', padding: '10px' }}
+              className="border border-gray-300"
+              style={{ backgroundColor: 'rgba(255,255,255,0.85)', padding: '10px', borderRadius: 0 }}
             >
               <p
                 style={{
