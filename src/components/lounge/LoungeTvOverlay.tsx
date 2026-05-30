@@ -20,8 +20,12 @@ const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
 /** Panels overlap at center so fabric meets (assets should have no inner black gap). */
 const CURTAIN_PANEL_WIDTH = '54vw';
-/** Scale curtain art inside panel to hide bottom gap. */
-const CURTAIN_IMAGE_SCALE = 1.1;
+/** Scale curtain art inside panel so hem covers viewport bottom (no white between pleats). */
+const CURTAIN_IMAGE_SCALE = 1.22;
+const CURTAIN_IMAGE_HEIGHT = '128%';
+const CURTAIN_IMAGE_WIDTH = '114%';
+/** Velvet tone — shows in fold valleys if art does not fully cover. */
+const CURTAIN_PANEL_BG = '#4a4a4a';
 
 type LoungeTvOverlayProps = {
   isOpen: boolean;
@@ -37,7 +41,7 @@ function curtainPanelStyle(side: 'left' | 'right', closed: boolean): React.CSSPr
     width: CURTAIN_PANEL_WIDTH,
     zIndex: 100,
     overflow: 'hidden',
-    backgroundColor: '#3a3a3a',
+    backgroundColor: CURTAIN_PANEL_BG,
     boxShadow: side === 'left' ? '6px 0 28px rgba(0,0,0,0.35)' : '-6px 0 28px rgba(0,0,0,0.35)',
     transition: `transform ${ANIM_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
     transform:
@@ -63,18 +67,33 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
         draggable={false}
         style={{
           position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
+          bottom: 0,
+          left: isLeft ? 0 : undefined,
+          right: isLeft ? undefined : 0,
+          width: CURTAIN_IMAGE_WIDTH,
+          height: CURTAIN_IMAGE_HEIGHT,
+          maxWidth: 'none',
           display: 'block',
           objectFit: 'cover',
           objectPosition: isLeft ? 'left bottom' : 'right bottom',
           transform: isLeft
-            ? `translateX(-3%) scale(${CURTAIN_IMAGE_SCALE})`
-            : `translateX(3%) scale(${CURTAIN_IMAGE_SCALE})`,
+            ? `translateX(-4%) scale(${CURTAIN_IMAGE_SCALE})`
+            : `translateX(4%) scale(${CURTAIN_IMAGE_SCALE})`,
           transformOrigin: isLeft ? 'left bottom' : 'right bottom',
           pointerEvents: 'none',
           userSelect: 'none',
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 28,
+          background: `linear-gradient(to top, ${CURTAIN_PANEL_BG} 70%, transparent)`,
+          pointerEvents: 'none',
         }}
       />
     </div>
