@@ -334,6 +334,12 @@ const LIST_OVERVIEW_VISIBILITY_STYLE: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
+/** Lists overview line view — 2px less space above gray PRIVATE/SHARED (margin-top 0). */
+const LIST_OVERVIEW_VISIBILITY_LINE_STYLE: React.CSSProperties = {
+  ...LIST_OVERVIEW_VISIBILITY_STYLE,
+  marginTop: 0,
+};
+
 /** Lists overview grid — tighter above/below gray PRIVATE/SHARED label (−2px above via margin-top 0). */
 const LIST_OVERVIEW_VISIBILITY_GRID_STYLE: React.CSSProperties = {
   ...LIST_OVERVIEW_VISIBILITY_STYLE,
