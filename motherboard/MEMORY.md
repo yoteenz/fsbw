@@ -21906,3 +21906,11 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 **Context:** User wanted BCF marble text (**STRAIGHT**, **RAW HUMAN HAIR**, price) on **`/home/shop`** to use the same line spacing as the **UNITS** container above.
 
 **Changes:** **`shopProductGridCopyStyles.ts`** — **`shopProductGridCellBandStyle`**, **`shopProductGridThumbWrapStyle`** (shared band **`translateY(-14px)`**, thumb **`marginBottom: 5px`**). **`products/page.tsx`** — BCF cells use same band/thumb as UNITS; BCF price via **`WigProductPriceDisplay`** + **`labelStyle: translateY(1px)`** (was raw **`<p>`** + **`translateY(-2px)`** band / **`translateY(3px)`** thumb nudges). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge curtains: user trial PNGs (wide pleats)
+
+**Context:** User wanted to **try** new left/right Fal curtain exports for the lounge TV animation despite suspecting pleats are **too wide** for realism.
+
+**Changes:** Replaced **`public/assets/lounge-curtain-left.png`** and **`lounge-curtain-right.png`** (576×1024 each) from Supabase **Untitled folder** URLs; updated **`LOUNGE_CURTAIN_*_SRC_REMOTE`** in **`loungeTvAssets.ts`**. **`LoungeTvOverlay`** display settings unchanged (54vw panels, outer **`object-position`**, 88% height) so user can judge pleat scale in situ. Commit **`a70e5f1b`**; pushed **`master`** + **`preview/mobile`**.
