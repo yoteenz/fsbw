@@ -21644,6 +21644,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist spacing: account price, lists stars, VIEW DETAILS
+
+**Change:** Main **`/wishlist`** — **`wishlist-account-page-price-layer`** +2px above black price. **`/wishlist/lists/:id` line** — stars **`margin-top` 2px → 4px** (`.wishlist-lists-page-expanded-line-stars`); gray **VIEW DETAILS** **`margin-top` `-3px` → `-4px`**. Shared list unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
