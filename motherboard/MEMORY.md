@@ -21463,3 +21463,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User provided new Supabase URLs for **straight bundle** and **curly closure** product-page photos.
 
 **Change:** `texture-category-product/page.tsx` — `BUNDLE_PHOTO_BY_TEXTURE.straight` → `bJSeVXN5LlWhbDAM5Vc6A_WV70Nuqw.jpeg`; `BCF_CF_PHOTO.closures.curly` → `LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg`. `shopTextureCategoryThumb.ts` — same two entries in `BCF_THUMB_PHOTO_BY_TEXTURE` (shop grid, similar strip, wishlist BCF thumbs). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Wishlist/lists UI: BCF thumbs, EDIT IN BAW, spacing
+
+**Context:** User asked to (1) remove gray leaf-brick behind BCF on `/wishlist` and `/wishlist/lists`, (2) remove red **EDIT IN BUILD-A-WIG** under thumbs on lists only (keep on `/wishlist`), (3) tighten gray **PRIVATE/SHARED** spacing ±2px on lists overview **grid** only, (4) tighten **EDIT LIST NAME** margin −4px on lists overview **line** view.
+
+**Change:** `WishlistItemThumb.tsx` + `getWishlistUnitThumbImage` — BCF = plain marble; units keep brick. `lists/page.tsx` + `shared/page.tsx` use component; removed list-line **EDIT IN BUILD-A-WIG** and `prepareBuildAWigEditSession` from lists page. `LIST_OVERVIEW_VISIBILITY_GRID_STYLE` + count `marginTop` 2px; `LIST_OVERVIEW_EDIT_NAME_STYLE` margin `-16px`. Pushed `master` + `preview/mobile`.
