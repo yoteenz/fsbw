@@ -270,6 +270,38 @@ const EMPTY_LIST_THUMB_SCALE = 0.792;
 
 const LIST_OVERVIEW_THUMB_WIDTH_PX = 88;
 const LIST_OVERVIEW_THUMB_HEIGHT_PX = 110;
+
+/** BCF marble thumbs on `/wishlist/lists` only (not main wishlist or shared list). */
+const LISTS_PAGE_BCF_THUMB_SCALE = 0.9;
+
+function listsPageBcfThumbWidthPx(baseWidthPx: number): number {
+  return Math.round(baseWidthPx * LISTS_PAGE_BCF_THUMB_SCALE);
+}
+
+function listsPageBcfThumbHeightPx(baseHeightPx: number): number {
+  return Math.round(baseHeightPx * LISTS_PAGE_BCF_THUMB_SCALE);
+}
+
+function listsPageWishlistItemThumbSizePx(
+  item: any,
+  baseWidthPx: number,
+  baseHeightPx: number
+): { widthPx: number; heightPx: number } {
+  if (getWishlistBcfThumbSrc(item)) {
+    return {
+      widthPx: listsPageBcfThumbWidthPx(baseWidthPx),
+      heightPx: listsPageBcfThumbHeightPx(baseHeightPx),
+    };
+  }
+  return { widthPx: baseWidthPx, heightPx: baseHeightPx };
+}
+
+function listLineBagLinkWidthPx(item: any): number {
+  if (getWishlistBcfThumbSrc(item)) {
+    return listsPageBcfThumbWidthPx(EXPANDED_LIST_ITEM_THUMB_WIDTH_PX);
+  }
+  return EXPANDED_LIST_ITEM_THUMB_WIDTH_PX;
+}
 const LISTS_OVERVIEW_GRID_MIN_COL_PX = 100;
 const LISTS_OVERVIEW_GRID_ROW_GAP_PX = 20;
 const LISTS_OVERVIEW_GRID_COL_GAP_PX = 16;
@@ -398,12 +430,18 @@ function WishlistListOverviewThumb({
   thumbSrc: string;
 }) {
   const bcfThumb = firstItem ? getWishlistBcfThumbSrc(firstItem) : null;
+  const frameWidthPx = bcfThumb
+    ? listsPageBcfThumbWidthPx(LIST_OVERVIEW_THUMB_WIDTH_PX)
+    : LIST_OVERVIEW_THUMB_WIDTH_PX;
+  const frameHeightPx = bcfThumb
+    ? listsPageBcfThumbHeightPx(LIST_OVERVIEW_THUMB_HEIGHT_PX)
+    : LIST_OVERVIEW_THUMB_HEIGHT_PX;
   return (
     <div
       className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
       style={{
-        width: `${LIST_OVERVIEW_THUMB_WIDTH_PX}px`,
-        height: `${LIST_OVERVIEW_THUMB_HEIGHT_PX}px`,
+        width: `${frameWidthPx}px`,
+        height: `${frameHeightPx}px`,
         position: 'relative',
         boxSizing: 'border-box',
         ...(firstItem
@@ -1023,6 +1061,12 @@ export default function ViewListsPage() {
                               );
                               const isInBag = cartItems.some((ci: any) => ci.id === item.id);
                               const isOutOfStock = isLineItemOutOfStock(item);
+                              const thumbSize = listsPageWishlistItemThumbSizePx(
+                                item,
+                                EXPANDED_LIST_ITEM_THUMB_WIDTH_PX,
+                                EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX
+                              );
+                              const bagLinkWidthPx = listLineBagLinkWidthPx(item);
                               return (
                                 <div
                                   key={item.id || index}
@@ -1037,14 +1081,15 @@ export default function ViewListsPage() {
                                   <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
                                     <WishlistItemThumb
                                       item={item}
-                                      widthPx={EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}
-                                      heightPx={EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}
+                                      widthPx={thumbSize.widthPx}
+                                      heightPx={thumbSize.heightPx}
                                       onActivate={() => navigate(getWishlistItemRoute(item))}
                                     />
                                     {isOutOfStock ? (
                                       <p
                                         style={{
                                           ...LIST_LINE_BAG_ADD_STYLE,
+                                          width: `${bagLinkWidthPx}px`,
                                           color: '#EB1C24',
                                           cursor: 'default',
                                         }}
@@ -1054,7 +1099,7 @@ export default function ViewListsPage() {
                                     ) : isInBag ? (
                                       <p
                                         className="font-bold hover:opacity-80 transition-opacity"
-                                        style={LIST_LINE_BAG_REMOVE_STYLE}
+                                        style={{ ...LIST_LINE_BAG_REMOVE_STYLE, width: `${bagLinkWidthPx}px` }}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleRemoveFromBag(item);
@@ -1073,7 +1118,7 @@ export default function ViewListsPage() {
                                     ) : (
                                       <p
                                         className="font-bold hover:opacity-80 transition-opacity"
-                                        style={LIST_LINE_BAG_ADD_STYLE}
+                                        style={{ ...LIST_LINE_BAG_ADD_STYLE, width: `${bagLinkWidthPx}px` }}
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleAddToBag(item);
@@ -1173,12 +1218,17 @@ export default function ViewListsPage() {
                               const itemProductName = getWishlistItemProductName(item);
                               const itemDisplayName = getWishlistItemDisplayName(item);
                               const itemRedSubtitle = getWishlistItemRedSubtitle(item);
+                              const thumbSize = listsPageWishlistItemThumbSizePx(
+                                item,
+                                EXPANDED_LIST_ITEM_THUMB_WIDTH_PX,
+                                EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX
+                              );
                               return (
                                 <div key={item.id || index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                   <WishlistItemThumb
                                     item={item}
-                                    widthPx={EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}
-                                    heightPx={EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}
+                                    widthPx={thumbSize.widthPx}
+                                    heightPx={thumbSize.heightPx}
                                     onActivate={() => navigate(getWishlistItemRoute(item))}
                                   />
                                   <p style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", cursive', fontSize: `${EXPANDED_LIST_GRID_NAME_FONT_PX}px`, color: '#000', margin: '6px 0 -2px 0', textAlign: 'center', textTransform: 'uppercase' }}>{itemDisplayName}</p>
