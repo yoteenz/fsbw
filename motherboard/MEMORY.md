@@ -22155,3 +22155,13 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User wanted explicit order: **press play → TV enlarges while hand slowly appears → static (hand “turned on” TV) → content on TV**.
 
 **Change:** **`LoungeTvOverlay`** phases: (1) preload curtains + hand; (2) **`animatedIn`** starts grow + **`LoungeTvRemoteHand`** fade over **`ANIM_MS`** (1400ms); (3) after grow, **`showStatic`** CRT for **`STATIC_PHASE_MS`**; (4) **`showContent`** menu. Static no longer runs during TV grow (black screen only). Hand stays visible through static and content. **`LoungeTvRemoteHand`** accepts **`revealDurationMs`** synced to TV grow.
+
+---
+
+## 2026-05-29 — Lounge TV open/close timing (grow → hand → static; close hand last)
+
+**Context:** User refined sequence: **play → TV enlarge → hand slowly appears → 500ms pause → static → content**. On close: **zap only (no static)**, hand stays until screen is **fully black**, then hand fades, then **TV shrinks + curtains open**.
+
+**Open:** Grow on curtains ready only; hand after **`tvGrowDone`** (**`HAND_REVEAL_MS`**); **`STATIC_DELAY_MS` 500** after **`handRevealDone`**; then static → content.
+
+**Close:** **`closePhase`**: **`zap`** (content off, hand visible) → **`hand-out`** (hand **`HAND_HIDE_MS`** fade, black screen) → **`shrink`** (**`animatedIn` false**, **`ANIM_MS`**) → **`onClose`**. Hand not tied to **`poweringOff`** flag alone.
