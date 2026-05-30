@@ -55,8 +55,8 @@ interface CartDropdownProps {
 }
 
 const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
-/** Lift unit VIEW DETAILS / CLOSE DETAILS when many option lines add space below the title block. */
-const CART_DROPDOWN_UNIT_VIEW_DETAILS_LIFT_PX = 10;
+/** Extra lift for product name/subtitle/details block when many VIEW DETAILS lines (not the toggle). */
+const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX = 10;
 
 function countDetailHtmlRows(html: string): number {
   return html.split(/<br\s*\/?>/i).filter((line) => line.trim().length > 0).length;
@@ -957,10 +957,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                     const isBcfShopItem = item.type === 'shop-texture-category';
                     const isViewingDetails = viewingDetailsFor === item.id;
                     const detailTextRowCount = isViewingDetails ? cartDropdownDetailTextRowCount(item) : 0;
-                    const productTextTransform =
-                      isViewingDetails && detailTextRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD
-                        ? 'translateY(-14px)'
-                        : 'translateY(-4px)';
+                    const productTextTransform = isViewingDetails
+                      ? detailTextRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD
+                        ? `translateY(-${4 + CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX}px)`
+                        : 'translateY(-4px)'
+                      : undefined;
                     /** While viewing details for a unit or BCF line, hide its price + cap size rows. */
                     const hideMetaForDetails =
                       isViewingDetails &&
@@ -1818,10 +1819,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           return <div style={{ height: '20px', marginTop: '6px' }}></div>;
                         }
 
-                        const unitDetailRowCount = cartDropdownUnitDetailRowCount(item);
-                        const liftUnitViewDetails =
-                          unitDetailRowCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
-                        
                         return (
                           <span
                             style={{
@@ -1831,9 +1828,6 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               textTransform: 'uppercase',
                               marginTop: '7px',
                               cursor: 'pointer',
-                              ...(liftUnitViewDetails
-                                ? { transform: `translateY(-${CART_DROPDOWN_UNIT_VIEW_DETAILS_LIFT_PX}px)` }
-                                : {}),
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
