@@ -21406,3 +21406,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked cart, bag, and checkout BCF thumbnails to use home/shop marbles only (not separate cart URLs or PDP heroes).
 
 **Change:** `bcfProductOptions.ts` — `shopBcfCartLineThumbnailSrc` removed straight-bundle `ZYNxZol48…` override; bundle lines always `shopTextureCategoryThumbSrc(texture, 'bundles')`. Surfaces: `CartDropdown`, `shopping-bag`, `checkoutOrderStripDisplay` / checkout confirm. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF cart VIEW DETAILS: TREATMENT PLUCK + BLEACH/TINT
+
+**Change:** `cartLineRedAndDetails.ts` — `bcfCartViewDetailsHtml` lace-treatment line now **`TREATMENT: PLUCK + BLEACH/TINT`** (join with ` + `, PLUCK before BLEACH/TINT). Cart dropdown, bag, wishlist BCF details. Pushed `master` + `preview/mobile`.

@@ -164,9 +164,13 @@ export function bcfCartViewDetailsHtml(item: {
   if (item.hairWeight) lines.push(`WEIGHT: ${esc(item.hairWeight)}`);
   if (item.lace) lines.push(`LACE: ${esc(item.lace)}`);
   if (Array.isArray(item.laceTreatment) && item.laceTreatment.length) {
-    const labels = item.laceTreatment
+    const order = ['PLUCK', 'BLEACH'] as const;
+    const sorted = [...item.laceTreatment].sort(
+      (a, b) => order.indexOf(a as (typeof order)[number]) - order.indexOf(b as (typeof order)[number])
+    );
+    const labels = sorted
       .map((id) => (id === 'PLUCK' ? 'PLUCK' : id === 'BLEACH' ? 'BLEACH/TINT' : String(id)))
-      .join(', ');
+      .join(' + ');
     // Keep the treatment values together so BLEACH/TINT never drops below PLUCK in the narrow column.
     lines.push(`TREATMENT: <span style="white-space:nowrap">${esc(labels)}</span>`);
   }
