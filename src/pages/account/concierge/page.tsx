@@ -1107,13 +1107,6 @@ function ConciergePage() {
           };
           localStorage.setItem(userOrdersKey, JSON.stringify(updatedOrders));
           
-          // Orders with unseen tracking alerts (for auto-select and badge)
-          const allOrdersForAlerts = [...active, ...past];
-          const unseen = allOrdersForAlerts.filter(
-            (o: any) => o?.id != null && o?.status && CONCIERGE_TRACKING_STATUSES.includes(o.status) && !localStorage.getItem(`conciergeOrderSeen_${o.id}_${o.status}`)
-          );
-          unseen.sort((a: any, b: any) => (a.placedAt || 0) - (b.placedAt || 0));
-
           // Check if orderId is in URL query params (from orders page click)
           const urlParams = new URLSearchParams(location.search);
           const orderIdFromUrl = urlParams.get('orderId');
@@ -1128,32 +1121,8 @@ function ConciergePage() {
               }
               setSelectedOrderId(orderIdFromUrl);
             }
-          } else if (unseen.length > 0) {
-            // Auto-select order with oldest unread tracking update so it appears in dropdown
-            const oldestUnseen = unseen[0];
-            if (past.find((o: any) => o.id === oldestUnseen.id)) {
-              active.push(oldestUnseen);
-            }
-            setSelectedOrderId(oldestUnseen.id);
-          } else if (!selectedOrderId) {
-            // Auto-select order 999 (completed) if it exists and user is Kateena admin, otherwise first active order
-            // Only auto-load order 999 for Kateena admin account (for mock order testing)
-            if (isMockOrdersAccount()) {
-              // First, try to find order 999 in past orders (delivered/completed)
-              const order999 = past.find((order: any) => order.orderNumber === 'ORDER #999');
-              if (order999) {
-                // Add order 999 to active orders temporarily so tracking can display it
-                active.push(order999);
-                setSelectedOrderId(order999.id);
-              } else if (active.length > 0) {
-                // Fall back to first active order if order 999 not found
-                setSelectedOrderId(active[0].id);
-              }
-            } else if (active.length > 0) {
-              // For non-admin accounts, select first active order
-              setSelectedOrderId(active[0].id);
-            }
           }
+          // ORDER TRACKING dropdown defaults to "SELECT AN ORDER" (empty) unless ?orderId= is set.
           
           // Only include active orders (exclude archived/past orders)
           // Priority messages and order tracking should only show active orders
