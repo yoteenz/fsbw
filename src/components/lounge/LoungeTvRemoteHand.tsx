@@ -14,18 +14,19 @@ export function LoungeTvRemoteHand({ visible }: LoungeTvRemoteHandProps) {
       draggable={false}
       style={{
         position: 'fixed',
-        bottom: 0,
-        right: 'max(0px, calc(50% - 210px))',
-        width: 'min(62vw, 400px)',
+        left: '50%',
+        bottom: 'max(10px, env(safe-area-inset-bottom, 0px))',
+        width: 'min(38vw, 240px)',
+        maxWidth: 'calc(100vw - 32px)',
         height: 'auto',
-        maxHeight: '42vh',
+        maxHeight: 'min(26vh, 220px)',
         objectFit: 'contain',
-        objectPosition: 'right bottom',
+        objectPosition: 'center bottom',
         zIndex: 108,
         pointerEvents: 'none',
         userSelect: 'none',
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(10%)',
+        transform: visible ? 'translate(-38%, 0)' : 'translate(-38%, 10%)',
         transition: 'opacity 320ms ease, transform 400ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     />

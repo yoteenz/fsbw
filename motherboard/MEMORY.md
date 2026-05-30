@@ -21959,3 +21959,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** User said current curtains have too many pleats; refine from prior **14–18** guidance.
 
 **Change:** **`loungeCurtainFalPrompts.ts`** — style lock **10–12 folds**, ~**5–6 per half**; negatives for **15+ / dense micro-pleats**; Workflow B notes updated. Regen LEFT then RIGHT from LEFT PNG, replace **`lounge-curtain-*.jpeg`**.
+
+---
+
+## 2026-05-30 — Lounge curtains regen + hand scale fix
+
+**Context:** User supplied new 10–12 pleat curtain JPEG pair; hand/remote was clipped at bottom-right on mobile.
+
+**Changes:** Replaced **`lounge-curtain-left.jpeg`** / **`right.jpeg`** (Supabase **`1rmzkVKNKkP6hpLD9gOVF_41oSopA5`**, **`rnAnKKGlJDhcNOHJZNbRC_ftDz6eCk`**). **`LoungeTvRemoteHand`**: smaller **`min(38vw, 240px)`**, **`maxHeight min(26vh, 220px)`**, bottom safe inset, centered under TV via **`translate(-38%, 0)`** so full hand fits in viewport.

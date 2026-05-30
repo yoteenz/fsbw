@@ -11,6 +11,6 @@ export const LOUNGE_TV_REMOTE_HAND_SRC_REMOTE =
 
 /** Supabase originals (same files as bundled assets). */
 export const LOUNGE_CURTAIN_LEFT_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/7_5x6EewPauDjPR9_Q2Yg_VDLVWNIw.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/1rmzkVKNKkP6hpLD9gOVF_41oSopA5.jpeg';
 export const LOUNGE_CURTAIN_RIGHT_SRC_REMOTE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/AkECgAvOFv5idrqpzkpAN_qHlhamE6.jpeg';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/Untitled%20folder/rnAnKKGlJDhcNOHJZNbRC_ftDz6eCk.jpeg';
