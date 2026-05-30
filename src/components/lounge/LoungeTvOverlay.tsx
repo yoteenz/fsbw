@@ -160,49 +160,25 @@ function LoungeTvScreen({
     >
       <nav
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto 1fr auto',
+          display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           width: '100%',
           marginBottom: '10px',
           flexShrink: 0,
         }}
         aria-label="Lounge TV categories"
       >
-        <button
-          type="button"
-          style={mainTabNavStyle(mainTab === 'brand')}
-          onClick={() => onMainTabChange('brand')}
-        >
-          BRAND
-        </button>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px',
-            minWidth: 0,
-          }}
-        >
-          {LOUNGE_TV_MAIN_TABS.filter((tab) => tab.id === 'slay-tips' || tab.id === 'watch-learn').map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              style={mainTabNavStyle(mainTab === tab.id)}
-              onClick={() => onMainTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          style={{ ...mainTabNavStyle(mainTab === 'academy'), justifySelf: 'end' }}
-          onClick={() => onMainTabChange('academy')}
-        >
-          ACADEMY
-        </button>
+        {LOUNGE_TV_MAIN_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            style={mainTabNavStyle(mainTab === tab.id)}
+            onClick={() => onMainTabChange(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </nav>
 
       <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '8px' }}>
@@ -493,7 +469,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     if (!handRevealDone || closePhase !== 'idle' || showContent || isClosingRef.current) return;
     const timer = window.setTimeout(() => {
       if (closePhase === 'idle' && !isClosingRef.current) setShowStatic(true);
-    }, STATIC_BEAT_MS);
+    }, STATIC_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [handRevealDone, closePhase, showContent]);
 
@@ -504,7 +480,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
         setShowStatic(false);
         setShowContent(true);
       }
-    }, STATIC_BEAT_MS);
+    }, STATIC_ON_MS);
     return () => window.clearTimeout(timer);
   }, [showStatic, closePhase]);
 
