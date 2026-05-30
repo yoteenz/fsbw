@@ -22029,3 +22029,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-05-30 — Lounge TV: lobby +20px width, overlay +12%
 
 **Context:** User wanted lounge static TV **20px wider** ( **`LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX`** `12` → `32` ) and animated overlay **12% larger** ( **`LOUNGE_TV_OVERLAY_SIZE_SCALE`** `0.8` → `0.896` ).
+
+---
+
+## 2026-05-30 — Lounge curtains: remove bottom gray strip
+
+**Context:** Gray horizontal band at bottom of curtain overlay (hem gradient + **`#4a4a4a`** panel showing).
+
+**Change:** **`LoungeTvOverlay`** — removed bottom gradient div; fabric **132%** height overscan; panel fallback **`#1a1a1a`**; **`minHeight: 100dvh`** on panels.
