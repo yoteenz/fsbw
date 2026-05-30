@@ -21828,3 +21828,9 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Order form: no colons on gray Bohemy subheads
 
 **Change:** **`orderFormIntroCopy.ts`** — **`ORDER_FORM_INTRO_PURPOSE_TITLE`** and **`ORDER_FORM_INTRO_PLEASE_NOTE_TITLE`** no trailing colon (displayed via **`OrderFormIntroText`** Bohemy **`#808080`** subheads on **`/tools/order-form`**). Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-29 — Wishlist lists: BCF thumbs +20%
+
+**Change:** **`lists/page.tsx`** — **`LISTS_PAGE_BCF_THUMB_SCALE`** **`0.9` → `0.9 * 1.2` (1.08)** for overview + expanded line/grid BCF frames on **`/wishlist/lists`** only. Pushed **`master`** + **`preview/mobile`**.
