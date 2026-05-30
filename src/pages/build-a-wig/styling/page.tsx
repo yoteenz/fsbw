@@ -38,6 +38,13 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { markBawNavigateToCustomizeHubFromOtherStep } from '../../../utils/bawCrossStepSummary';
+import {
+  computeBawStylingPriceFromSelectionArray,
+  getBawHairStylingOptionsForPath,
+  isCurlyUnitBawPath,
+  normalizeCurlyUnitStylingCsv,
+  normalizeCurlyUnitStylingIds,
+} from '../../../utils/bawUnitStylingOptions';
 
 export default function StylingSelectionPage() {
   const navigate = useNavigate();
@@ -50,12 +57,22 @@ export default function StylingSelectionPage() {
     const pathname = window.location.pathname;
     const isOnEditRoute = pathname.includes('/edit');
     const isOnCustomizeRoute = isBuildAWigCustomizePath(pathname);
-    
+    const normalize = (ids: string[]) =>
+      isCurlyUnitBawPath(pathname) ? normalizeCurlyUnitStylingIds(ids) : ids;
+
     // CRITICAL: Check editSelected* keys first when in edit mode
     if (isOnEditRoute) {
       const editSelectedStyling = localStorage.getItem('editSelectedStyling');
       if (editSelectedStyling) {
-        return [editSelectedStyling];
+        const csv = isCurlyUnitBawPath(pathname)
+          ? normalizeCurlyUnitStylingCsv(editSelectedStyling)
+          : editSelectedStyling;
+        return normalize(
+          csv
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        );
       }
       // Fallback to editingCartItem
       const editingCartItem = localStorage.getItem('editingCartItem');
@@ -63,7 +80,15 @@ export default function StylingSelectionPage() {
         try {
           const item = JSON.parse(editingCartItem);
           if (item.styling) {
-            return [item.styling];
+            const csv = isCurlyUnitBawPath(pathname)
+              ? normalizeCurlyUnitStylingCsv(String(item.styling))
+              : String(item.styling);
+            return normalize(
+              csv
+                .split(',')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            );
           }
         } catch (e) {
           // Ignore parse errors
@@ -73,23 +98,43 @@ export default function StylingSelectionPage() {
     
     // CRITICAL: Check customizeSelected* keys when in customize mode
     if (isOnCustomizeRoute) {
-      const hairCsv =
+      const hairCsvRaw =
         localStorage.getItem('customizeSelectedHairStyling') || localStorage.getItem('selectedHairStyling') || '';
+      const hairCsv = isCurlyUnitBawPath(pathname)
+        ? normalizeCurlyUnitStylingCsv(hairCsvRaw)
+        : hairCsvRaw;
       if (hairCsv.trim()) {
-        return hairCsv
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
+        return normalize(
+          hairCsv
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        );
       }
       const customizeSelectedStyling = localStorage.getItem('customizeSelectedStyling');
       if (customizeSelectedStyling && customizeSelectedStyling !== 'NONE') {
-        return [customizeSelectedStyling];
+        const csv = isCurlyUnitBawPath(pathname)
+          ? normalizeCurlyUnitStylingCsv(customizeSelectedStyling)
+          : customizeSelectedStyling;
+        return normalize(
+          csv
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        );
       }
     }
     
     // Main mode: use selected* keys
-    const stored = localStorage.getItem('selectedHairStyling');
-    return stored ? [stored] : []; // empty array means no hair styling selected
+    const storedRaw = localStorage.getItem('selectedHairStyling');
+    if (!storedRaw) return [];
+    const stored = isCurlyUnitBawPath(pathname) ? normalizeCurlyUnitStylingCsv(storedRaw) : storedRaw;
+    return normalize(
+      stored
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    );
   });
   const [selectedPartSelection, setSelectedPartSelection] = useState(() => {
     const pathname = window.location.pathname;
@@ -691,33 +736,7 @@ export default function StylingSelectionPage() {
     (hasSalonPartLiveStyling || hasBangsOnlyLive);
   const liveStylingAnyLoading = liveStylingLoading || liveBangsLoading;
 
-  // Hair styling options with local assets
-  const hairStylingOptions = [
-    {
-      id: 'BANGS',
-      name: 'BANGS',
-      image: '/assets/Bangs-icon.svg',
-      price: 40
-    },
-    {
-      id: 'CRIMPS',
-      name: 'CRIMPS',
-      image: '/assets/Crimps-icon.svg',
-      price: 80
-    },
-    {
-      id: 'FLAT IRON',
-      name: 'FLAT IRON',
-      image: '/assets/Flat iron-icon.svg',
-      price: 80
-    },
-    {
-      id: 'LAYERS',
-      name: 'LAYERS',
-      image: '/assets/Layers-icon.svg',
-      price: 120
-    }
-  ];
+  const hairStylingOptions = getBawHairStylingOptionsForPath(location.pathname);
 
   // Part selection options
   const partSelectionOptions = [
@@ -884,44 +903,15 @@ export default function StylingSelectionPage() {
   };
 
   const getTotalStylingPrice = () => {
-    if (selectedHairStyling.length === 0) {
-      return 0;
-    }
-
-    const priceForStylingId = (id: string) =>
-      hairStylingOptions.find((opt) => opt.id === id)?.price || 0;
-    
-    const hasBangs = selectedHairStyling.includes('BANGS');
-    const otherStyling = selectedHairStyling.find(id => id !== 'BANGS');
-    
-    // Get selected length from localStorage to check if it's 30" or above
-    const selectedLength = localStorage.getItem('selectedLength') || '';
-    const isLongLength = selectedLength.includes('30') || selectedLength.includes('32') || selectedLength.includes('34') || selectedLength.includes('36');
-    
-    if (hasBangs && otherStyling) {
-      // Bangs + another styling: full price of secondary option + $20 for bangs (reduced from $40)
-      let secondaryPrice = priceForStylingId(otherStyling);
-      
-      // Add $40 for lengths 30" and above for crimps, flat iron, and layers
-      if (isLongLength && (otherStyling === 'CRIMPS' || otherStyling === 'FLAT IRON' || otherStyling === 'LAYERS')) {
-        secondaryPrice += 40;
-      }
-      
-      return secondaryPrice + 20; // $20 for bangs when combined
-    } else if (hasBangs) {
-      // Bangs only: $40 (base price)
-      return 40;
-    } else {
-      // Other styling only: use original price + length surcharge
-      let basePrice = priceForStylingId(selectedHairStyling[0]);
-      
-      // Add $40 for lengths 30" and above for crimps, flat iron, and layers
-      if (isLongLength && (selectedHairStyling[0] === 'CRIMPS' || selectedHairStyling[0] === 'FLAT IRON' || selectedHairStyling[0] === 'LAYERS')) {
-        basePrice += 40;
-      }
-      
-      return basePrice;
-    }
+    const length =
+      localStorage.getItem('editSelectedLength') ||
+      localStorage.getItem('customizeSelectedLength') ||
+      localStorage.getItem('selectedLength') ||
+      '';
+    return computeBawStylingPriceFromSelectionArray(selectedHairStyling, {
+      pathname: location.pathname,
+      length,
+    });
   };
 
   const totalPrice = getTotalStylingPrice();
@@ -1027,11 +1017,14 @@ export default function StylingSelectionPage() {
       );
     }
     
-    // For crimps only
-    if (otherStyling === 'CRIMPS' && !hasBangs) {
+    // For crimps / wand curls only
+    if ((otherStyling === 'CRIMPS' || otherStyling === 'WAND CURLS') && !hasBangs) {
       return (
         <>
-          TEXTURED WAVES USING HOT TOOLS.<br />
+          {otherStyling === 'WAND CURLS'
+            ? 'WAND-CURLED STYLING USING HOT TOOLS.'
+            : 'TEXTURED WAVES USING HOT TOOLS.'}
+          <br />
           EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
         </>
       );
@@ -1047,21 +1040,27 @@ export default function StylingSelectionPage() {
       );
     }
     
-    // For layers only
-    if (otherStyling === 'LAYERS' && !hasBangs) {
+    // For layers / define only
+    if ((otherStyling === 'LAYERS' || otherStyling === 'DEFINE') && !hasBangs) {
       return (
         <>
-          BOUNCY, LAYERED CURLS USING HOT TOOLS.<br />
+          {otherStyling === 'DEFINE'
+            ? 'DEFINED CURL PATTERN USING HOT TOOLS.'
+            : 'BOUNCY, LAYERED CURLS USING HOT TOOLS.'}
+          <br />
           EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
         </>
       );
     }
     
-    // For bangs + crimps combination
-    if (hasBangs && otherStyling === 'CRIMPS') {
+    // For bangs + crimps / wand curls combination
+    if (hasBangs && (otherStyling === 'CRIMPS' || otherStyling === 'WAND CURLS')) {
       return (
         <>
-          CURTAIN BANGS WITH TEXTURED WAVES.<br />
+          {otherStyling === 'WAND CURLS'
+            ? 'CURTAIN BANGS WITH WAND-CURLED STYLING.'
+            : 'CURTAIN BANGS WITH TEXTURED WAVES.'}
+          <br />
           EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
         </>
       );
@@ -1077,11 +1076,14 @@ export default function StylingSelectionPage() {
       );
     }
     
-    // For bangs + layers combination
-    if (hasBangs && otherStyling === 'LAYERS') {
+    // For bangs + layers / define combination
+    if (hasBangs && (otherStyling === 'LAYERS' || otherStyling === 'DEFINE')) {
       return (
         <>
-          CURTAIN BANGS WITH LAYERED CURLS.<br />
+          {otherStyling === 'DEFINE'
+            ? 'CURTAIN BANGS WITH DEFINED CURLS.'
+            : 'CURTAIN BANGS WITH LAYERED CURLS.'}
+          <br />
           EXPECT AN ADDITIONAL WEEK OF PROCESSING TIME.
         </>
       );

@@ -26,6 +26,7 @@ import {
   bcfCartViewDetailsHtml
 } from '../utils/cartLineRedAndDetails';
 import { stripIneligibleBcfBundleDealLines } from '../utils/premiumMemberAccess';
+import { BAW_SALON_STYLING_IDS, computeBawStylingPriceUsd } from '../utils/bawUnitStylingOptions';
 import { DEFAULT_CURRENCY_RATES } from '../utils/defaultCurrencyRates';
 import {
   beginEditAppointmentFromCart,
@@ -97,7 +98,7 @@ function buildUnitCartViewDetailItemDescriptors(item: CartItem): UnitCartDetailD
   if (item.hairline && item.hairline !== 'NATURAL') {
     items.push({ type: 'hairline', value: item.hairline });
   }
-  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+  const hairStylingOptions: string[] = [...BAW_SALON_STYLING_IDS];
   if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
     items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection });
   }
@@ -668,35 +669,15 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
   };
 
   // Helper function to get styling price based on styling
-  const _getStylingPrice = (styling: string) => {
-    if (!styling || styling === 'NONE') return 0;
-    
-    const stylingPrices: { [key: string]: number } = {
-      'BANGS': 40,
-      'CRIMPS': 80,
-      'FLAT IRON': 80,
-      'LAYERS': 120
-    };
-    
-    // Handle multiple styling selections
-    if (styling.includes(',')) {
-      const stylingArray = styling.split(',');
-      const hasBangs = stylingArray.includes('BANGS');
-      const otherStyling = stylingArray.find(s => s !== 'BANGS');
-      
-      if (hasBangs && otherStyling) {
-        return (stylingPrices[otherStyling.trim()] || 0) + 20; // $20 for bangs when combined
-      } else if (hasBangs) {
-        return 40; // Bangs only
-      } else if (otherStyling) {
-        return stylingPrices[otherStyling.trim()] || 0;
-      } else {
-        return 0;
-      }
-    }
-    
-    return stylingPrices[styling] || 0;
-  };
+  const _getStylingPrice = (
+    styling: string,
+    productName?: string,
+    length?: string
+  ) =>
+    computeBawStylingPriceUsd(styling, {
+      productName,
+      length,
+    });
 
   // Helper function to get add-ons price based on add-ons array and lace size
   const _getAddOnsPrice = (addOns: string[], laceSize?: string) => {
@@ -1439,7 +1420,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline, fullName: `${item.hairline} hairline` });
                           
                           // Only show styling if it's a valid styling option (BANGS, CRIMPS, etc.), not a part selection (MIDDLE, LEFT, RIGHT)
-                          const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                          const hairStylingOptions: string[] = [...BAW_SALON_STYLING_IDS];
                           // @ts-expect-error - Variable kept for code clarity/documentation
                           const partSelectionOptions = ['MIDDLE', 'LEFT', 'RIGHT'];
                           if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
@@ -1547,7 +1528,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               text += displayValue.toUpperCase();
                             } else if (itemData.type === 'styling') {
                               const stylingValue = typeof itemData.value === 'string' ? itemData.value : String(itemData.value);
-                              const price = _getStylingPrice(stylingValue);
+                              const price = _getStylingPrice(
+                                stylingValue,
+                                item.name,
+                                item.length || '24"'
+                              );
                               const priceDisplay = formatPriceDisplay(price);
                               
                               if (useFullNames) {
@@ -1842,7 +1827,7 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           : (item.color && item.color !== 'OFF BLACK');
                         const hasCustomHairline = item.hairline && item.hairline !== 'NATURAL';
                         // Styling is only valid if it's a valid styling option AND has partSelection
-                        const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+                        const hairStylingOptions: string[] = [...BAW_SALON_STYLING_IDS];
                         const hasCustomStyling = item.styling && item.styling !== 'NONE' && 
                                                  hairStylingOptions.includes(item.styling) && 
                                                  item.partSelection;

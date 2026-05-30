@@ -26,6 +26,18 @@ export const STYLING_OPTIONS = [
   'BANGS, LAYERS'
 ];
 
+/** Soft-curl & ocean-curl BAW styling (WAND CURLS / DEFINE instead of CRIMPS / LAYERS). */
+export const STYLING_OPTIONS_CURLY = [
+  'NONE',
+  'BANGS',
+  'WAND CURLS',
+  'FLAT IRON',
+  'DEFINE',
+  'BANGS, WAND CURLS',
+  'BANGS, FLAT IRON',
+  'BANGS, DEFINE'
+];
+
 export const ADDON_OPTIONS = ['BLEACH', 'PLUCK', 'BLUNT CUT'];
 
 /** All add-on combinations for marketing dropdown: label and corresponding addOns array. */
@@ -73,7 +85,7 @@ export function getOptionsForUnit(unitId: UnitId) {
     lace: LACE_OPTIONS,
     hairline: HAIRLINE_OPTIONS,
     color: getColorOptionsForUnit(unitId),
-    styling: STYLING_OPTIONS,
+    styling: unitId === 'soft-curl' || unitId === 'ocean-curl' ? STYLING_OPTIONS_CURLY : STYLING_OPTIONS,
     addOns: ADDON_OPTIONS
   };
 }

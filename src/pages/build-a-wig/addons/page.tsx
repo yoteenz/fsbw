@@ -16,15 +16,10 @@ import { useShopNavSearchBar } from '../../../components/shop/useShopNavSearchBa
 import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSubpageLiveNoirCompositeWigViews';
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
+import { isBawSalonStylingValueConfirmed } from '../../../utils/bawUnitStylingOptions';
 
-// Only these count as "styling confirmed" (BLEACH+PLUCK required). NONE or empty = user can select BLEACH+PLUCK alone.
-const VALID_STYLING_OPTIONS = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
-function isStylingValueConfirmed(raw: string | null): boolean {
-  if (!raw || typeof raw !== 'string') return false;
-  const v = raw.trim();
-  if (!v || v === 'NONE') return false;
-  const first = v.split(',')[0]?.trim();
-  return !!first && VALID_STYLING_OPTIONS.includes(first);
+function isStylingValueConfirmed(raw: string | null, pathname: string): boolean {
+  return isBawSalonStylingValueConfirmed(raw, pathname);
 }
 
 export default function AddOnsSelectionPage() {
@@ -84,16 +79,17 @@ export default function AddOnsSelectionPage() {
       const styleConfirmed = isOnEditRoute
         ? (() => {
             const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
-            if (isStylingValueConfirmed(s)) return true;
+            if (isStylingValueConfirmed(s, pathname)) return true;
             try {
               const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-              return isStylingValueConfirmed(item.styling);
+              return isStylingValueConfirmed(item.styling, pathname);
             } catch { return false; }
           })()
         : isStylingValueConfirmed(
             localStorage.getItem('customizeSelectedStyling') ||
             localStorage.getItem('selectedStyling') ||
-            localStorage.getItem('selectedHairStyling')
+            localStorage.getItem('selectedHairStyling'),
+            pathname
           );
       if (styleConfirmed && (!initial.includes('BLEACH') || !initial.includes('PLUCK'))) {
         const merged = [...initial.filter(x => x !== 'BLEACH' && x !== 'PLUCK'), 'BLEACH', 'PLUCK'];
@@ -165,17 +161,17 @@ export default function AddOnsSelectionPage() {
     const styleConfirmed = isOnEditRoute
       ? (() => {
           const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
-          if (isStylingValueConfirmed(s)) return true;
+          if (isStylingValueConfirmed(s, pathname)) return true;
           try {
             const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-            return isStylingValueConfirmed(item.styling);
+            return isStylingValueConfirmed(item.styling, pathname);
           } catch { return false; }
         })()
       : (() => {
           const s = localStorage.getItem('customizeSelectedStyling') ||
             localStorage.getItem('selectedStyling') ||
             localStorage.getItem('selectedHairStyling');
-          return isStylingValueConfirmed(s);
+          return isStylingValueConfirmed(s, pathname);
         })();
 
     if (!styleConfirmed) return;
@@ -197,10 +193,10 @@ export default function AddOnsSelectionPage() {
     location.pathname.includes('/edit')
       ? (() => {
           const s = localStorage.getItem('editSelectedStyling') || localStorage.getItem('selectedStyling');
-          if (isStylingValueConfirmed(s)) return true;
+          if (isStylingValueConfirmed(s, location.pathname)) return true;
           try {
             const item = JSON.parse(localStorage.getItem('editingCartItem') || '{}');
-            return isStylingValueConfirmed(item.styling);
+            return isStylingValueConfirmed(item.styling, location.pathname);
           } catch { return false; }
         })()
       : (() => {
@@ -208,7 +204,7 @@ export default function AddOnsSelectionPage() {
             localStorage.getItem('customizeSelectedStyling') ||
             localStorage.getItem('selectedStyling') ||
             localStorage.getItem('selectedHairStyling');
-          return isStylingValueConfirmed(s);
+          return isStylingValueConfirmed(s, location.pathname);
         })();
   const lockBleachPluck = isOnEditOrCustomize && stylingConfirmedForLock;
   const isStylingConfirmed = lockBleachPluck;

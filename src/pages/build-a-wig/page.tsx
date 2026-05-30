@@ -43,6 +43,7 @@ import {
   mirrorCustomizeDraftKeysFromSelectedHubKeys,
   primaryStylingTokenFromHairCsv,
 } from '../../utils/bawCrossStepSummary';
+import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname } from '../../utils/buildAWigRoutes';
 
 /**
@@ -564,47 +565,10 @@ export default function BuildAWigPage() {
     if (!selections.styling || selections.styling === 'NONE') {
       prices.stylingPrice = 0;
     } else {
-      // Handle comma-separated styling values (combinations like "BANGS,CRIMPS")
-      const stylingArray = selections.styling.split(',').map(s => s.trim());
-      const hasBangs = stylingArray.includes('BANGS');
-      const otherStyling = stylingArray.find(id => id !== 'BANGS');
-      
-      // Get selected length to check for long length surcharge
-      const selectedLength = selections.length || '';
-      const isLongLength = selectedLength.includes('30') || selectedLength.includes('32') || selectedLength.includes('34') || selectedLength.includes('36');
-      
-    const stylingPrices: { [key: string]: number } = {
-      'BANGS': 40,
-        'CRIMPS': 80,
-        'FLAT IRON': 80,
-        'LAYERS': 120
-      };
-      
-      if (hasBangs && otherStyling) {
-        // Bangs + another styling: full price of secondary option + $20 for bangs (reduced from $40)
-        let secondaryPrice = stylingPrices[otherStyling] || 0;
-        
-        // Add $40 for lengths 30" and above for crimps, flat iron, and layers
-        if (isLongLength && (otherStyling === 'CRIMPS' || otherStyling === 'FLAT IRON' || otherStyling === 'LAYERS')) {
-          secondaryPrice += 40;
-        }
-        
-        prices.stylingPrice = secondaryPrice + 20; // $20 for bangs when combined
-      } else if (hasBangs) {
-        // Bangs only: $40 (base price)
-        prices.stylingPrice = 40;
-      } else {
-        // Other styling only: use original price + length surcharge
-        const stylingId = stylingArray[0];
-        let basePrice = stylingPrices[stylingId] || 0;
-        
-        // Add $40 for lengths 30" and above for crimps, flat iron, and layers
-        if (isLongLength && (stylingId === 'CRIMPS' || stylingId === 'FLAT IRON' || stylingId === 'LAYERS')) {
-          basePrice += 40;
-        }
-        
-        prices.stylingPrice = basePrice;
-      }
+      prices.stylingPrice = computeBawStylingPriceUsd(selections.styling, {
+        pathname: location.pathname,
+        length: selections.length,
+      });
     }
     
     // Calculate add-ons price

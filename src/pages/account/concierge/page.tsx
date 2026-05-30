@@ -1655,7 +1655,7 @@ function ConciergePage() {
       return '/assets/none-icon.svg';
     }
     const stylingArray = styling.split(',');
-    const correctOrder = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    const correctOrder = ['BANGS', 'CRIMPS', 'WAND CURLS', 'FLAT IRON', 'LAYERS', 'DEFINE'];
     const sortedSelections = stylingArray.sort((a, b) => {
       const indexA = correctOrder.indexOf(a);
       const indexB = correctOrder.indexOf(b);
@@ -1666,8 +1666,10 @@ function ConciergePage() {
     const hairStylingIconMap: { [key: string]: string } = {
       'BANGS': '/assets/Bangs-icon.svg',
       'CRIMPS': '/assets/Crimps-icon.svg',
+      'WAND CURLS': '/assets/Crimps-icon.svg',
       'FLAT IRON': '/assets/Flat iron-icon.svg',
-      'LAYERS': '/assets/Layers-icon.svg'
+      'LAYERS': '/assets/Layers-icon.svg',
+      'DEFINE': '/assets/Layers-icon.svg',
     };
     
     return hairStylingIconMap[firstStyling] || '/assets/none-icon.svg';
@@ -1729,7 +1731,7 @@ function ConciergePage() {
   const getStylingDisplayText = (styling: string): string => {
     if (!styling || styling === 'NONE') return 'NONE';
     const stylingArray = styling.split(',');
-    const correctOrder = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+    const correctOrder = ['BANGS', 'CRIMPS', 'WAND CURLS', 'FLAT IRON', 'LAYERS', 'DEFINE'];
     const sortedSelections = stylingArray.sort((a, b) => {
       const indexA = correctOrder.indexOf(a);
       const indexB = correctOrder.indexOf(b);

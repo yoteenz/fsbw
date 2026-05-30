@@ -267,7 +267,7 @@ export function buildWishlistItemDetailsHtml(item: any, options?: WishlistItemDe
   if (itemColor && !isDefaultColor) items.push({ type: 'color', value: itemColor });
   if (item.hairline && item.hairline !== 'NATURAL') items.push({ type: 'hairline', value: item.hairline });
 
-  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS'];
+  const hairStylingOptions = ['BANGS', 'CRIMPS', 'FLAT IRON', 'LAYERS', 'WAND CURLS', 'DEFINE'];
   if (item.styling && item.styling !== 'NONE' && hairStylingOptions.includes(item.styling) && item.partSelection) {
     items.push({ type: 'styling', value: item.styling, partSelection: item.partSelection });
   }

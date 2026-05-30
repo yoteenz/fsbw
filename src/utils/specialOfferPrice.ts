@@ -38,7 +38,12 @@ const TEXTURE_PRICES: Record<string, number> = {
 };
 
 const STYLING_PRICES: Record<string, number> = {
-  BANGS: 40, CRIMPS: 80, 'FLAT IRON': 80, LAYERS: 120
+  BANGS: 40,
+  CRIMPS: 80,
+  'FLAT IRON': 80,
+  LAYERS: 120,
+  'WAND CURLS': 80,
+  DEFINE: 60,
 };
 
 const ADDON_PRICES: Record<string, number> = {
@@ -239,14 +244,14 @@ function computeSpecialOfferPriceParts(unitId: string, options: SpecialOfferOpti
       len.includes('30') || len.includes('32') || len.includes('34') || len.includes('36');
     if (hasBangs && other) {
       let sec = STYLING_PRICES[other] ?? 0;
-      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(other)) sec += 40;
+      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS', 'WAND CURLS', 'DEFINE'].includes(other)) sec += 40;
       stylingPrice = sec + 20;
     } else if (hasBangs) {
       stylingPrice = 40;
     } else {
       const first = arr[0];
       let p = STYLING_PRICES[first] ?? 0;
-      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(first)) p += 40;
+      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS', 'WAND CURLS', 'DEFINE'].includes(first)) p += 40;
       stylingPrice = p;
     }
   }

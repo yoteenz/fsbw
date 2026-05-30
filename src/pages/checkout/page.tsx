@@ -59,6 +59,7 @@ import {
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import { stripIneligibleBcfBundleDealLines } from '../../utils/premiumMemberAccess';
+import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import {
   orderStripRedSubtitle,
   orderStripThumbnailSrc,
@@ -172,22 +173,10 @@ function getVoucherAddOnPriceForItem(item: any, type: string): number {
     return total;
   }
   if (type === 'STYLING') {
-    if (!val || val === 'NONE') return 0;
-    const stylingPrices: Record<string, number> = { 'BANGS': 40, 'CRIMPS': 80, 'FLAT IRON': 80, 'LAYERS': 120 };
-    const arr = val.split(',').map((s: string) => s.trim());
-    const hasBangs = arr.includes('BANGS');
-    const other = arr.find((s: string) => s !== 'BANGS');
-    const isLong = item.length && /3[0-6]|40/.test(String(item.length));
-    if (hasBangs && other) {
-      let sec = stylingPrices[other] || 0;
-      if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(other)) sec += 40;
-      return sec + 20;
-    }
-    if (hasBangs) return 40;
-    const first = arr[0];
-    let base = stylingPrices[first] || 0;
-    if (isLong && ['CRIMPS', 'FLAT IRON', 'LAYERS'].includes(first)) base += 40;
-    return base;
+    return computeBawStylingPriceUsd(val, {
+      productName: item?.name,
+      length: item?.length != null ? String(item.length) : undefined,
+    });
   }
   return 0;
 }
