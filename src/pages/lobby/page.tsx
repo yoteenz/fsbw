@@ -24,6 +24,11 @@ import {
   LoungeTvFrame,
   loungeTvDimensionsFromFrameHeight,
 } from '../../components/lounge/loungeTvFrame';
+import {
+  loungeSalonChairsHeightCss,
+  loungeSalonChairsOffsetXCss,
+  loungeSalonChairsTopCss,
+} from '../../utils/loungeSceneLayout';
 
 // Lobby Component
 const LobbyPage: React.FC = () => {
@@ -592,20 +597,29 @@ const LoungePage: React.FC = () => {
 
       <LoungeTvOverlay isOpen={tvOpen} originRect={tvOriginRect} onClose={closeLoungeTv} />
       
-      {/* Salon Chairs - Independent container with absolute positioning */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '50%', 
-        left: '50%', 
-        transform: 'translate(calc(-50% + 25px), calc(-50% + 290px))', 
-        zIndex: 10, 
-        width: 'fit-content'
-      }}>
+      {/* Salon Chairs — Y scales with landing2 background (100% auto), not fixed vh offset */}
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: loungeSalonChairsTopCss(),
+          transform: `translate(${loungeSalonChairsOffsetXCss()}, -100%)`,
+          zIndex: 10,
+          width: 'fit-content',
+        }}
+      >
         <div style={{ display: 'inline-block', position: 'relative', width: 'fit-content' }}>
-          <img 
-            src="/assets/salon-chairs.png" 
-            alt="Salon Chairs" 
-            style={{ width: 'auto', height: '160px', cursor: 'pointer', margin: 0, padding: 0, display: 'block' }}
+          <img
+            src="/assets/salon-chairs.png"
+            alt="Salon Chairs"
+            style={{
+              width: 'auto',
+              height: loungeSalonChairsHeightCss(),
+              cursor: 'pointer',
+              margin: 0,
+              padding: 0,
+              display: 'block',
+            }}
           />
         </div>
       </div>
