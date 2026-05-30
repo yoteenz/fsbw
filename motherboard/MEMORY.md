@@ -21789,3 +21789,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-30 — Bundles straight VIDEO: wig-preview-live path
 
 **Change:** **`BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC`** → **`live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov`** (200). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-30 — Bundles straight VIDEO zoom matches PHOTO
+
+**Context:** Straight bundle VIDEO looked more zoomed in than PHOTO on `/shop/bundles`.
+
+**Change:** Removed **`BUNDLE_STRAIGHT_VIDEO_HERO_SCALE` (1.22)** and **`height: 100%`** fill on bundles video; **`bundlePdpHeroMediaStyle`** shared with photo (`width`/`height` auto, `maxWidth`, `object-fit: contain`). Pushed `master` + `preview/mobile`.
