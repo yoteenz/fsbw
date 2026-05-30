@@ -296,7 +296,7 @@ const LIST_OVERVIEW_VISIBILITY_GRID_STYLE: React.CSSProperties = {
 };
 
 /** Red "EDIT LIST NAME" link below the gray visibility label (list view only).
- * Vertical offset: `.wishlist-lists-overview-edit-list-name-wrap` in index.css (not inline). */
+ * Vertical offset: `.wishlist-lists-overview-edit-list-name-wrap` + `-name` in index.css only (no margin on inline style). */
 const LIST_OVERVIEW_EDIT_NAME_STYLE: React.CSSProperties = {
   fontFamily: '"Futura PT Medium", Futura, sans-serif',
   fontSize: '9px',
