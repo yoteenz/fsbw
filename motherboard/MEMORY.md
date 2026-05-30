@@ -22260,3 +22260,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Label fix:** **\*NEW\*** `position: absolute` at top of thumb overlay; title stack stays **`justifyContent: center`**.
 
 **Commits:** `5c87319e` on **`master`** / **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge TV *NEW* blur until viewed
+
+**Context:** User wanted tiles marked **\*NEW\*** to show a **slight blur** on the thumb until opened; then remove blur and **\*NEW\***.
+
+**Implementation:** **`src/utils/loungeTvViewedTiles.ts`** — `loungeTvViewedTileIds` in localStorage, **`markLoungeTvTileViewed`**, **`loungeTvTileShowsAsNew`**, **`LOUNGE_TV_VIEWED_UPDATED_EVENT`**. **`LoungeTvOverlay`** grid: `blur(4px)` + scale on thumb when unseen; **\*NEW\*** + white title only while unseen; mark viewed on tile tap or Watch + Learn video open.
