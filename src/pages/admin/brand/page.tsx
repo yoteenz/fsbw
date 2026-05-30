@@ -487,16 +487,20 @@ export default function AdminBrand() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap justify-center gap-[14px] px-5 shrink-0">
+                  <div
+                    className="flex justify-center px-5 shrink-0 overflow-x-auto"
+                    style={{ flexWrap: 'nowrap', gap: '8px', WebkitOverflowScrolling: 'touch' }}
+                  >
                     {BRAND_TABS.map((tab) => (
                       <button
                         key={tab}
                         type="button"
                         onClick={() => setActiveTab(tab)}
-                        className="py-3 px-2 font-medium transition-colors"
+                        className="py-3 px-1 font-medium transition-colors shrink-0"
                         style={{
                           fontFamily: '"Futura PT Medium"',
-                          fontSize: '10px',
+                          fontSize: '9px',
+                          whiteSpace: 'nowrap',
                           color: activeTab === tab ? '#EB1C24' : '#808080',
                           border: 'none',
                           paddingBottom: '4px',
@@ -747,16 +751,20 @@ export default function AdminBrand() {
                 </div>
               )}
 
-              <div className="flex flex-wrap justify-center gap-[14px] px-5">
+              <div
+                className="flex justify-center px-5 overflow-x-auto"
+                style={{ flexWrap: 'nowrap', gap: '8px', WebkitOverflowScrolling: 'touch' }}
+              >
                 {BRAND_TABS.map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className="py-3 px-2 font-medium transition-colors"
+                    className="py-3 px-1 font-medium transition-colors shrink-0"
                     style={{
                       fontFamily: '"Futura PT Medium"',
-                      fontSize: '10px',
+                      fontSize: '9px',
+                      whiteSpace: 'nowrap',
                       color: activeTab === tab ? '#EB1C24' : '#808080',
                       border: 'none',
                       paddingBottom: '4px',

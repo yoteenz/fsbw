@@ -408,6 +408,28 @@ export async function putAdminSpecialOfferConfig(config: Record<string, unknown>
   if (!res.ok) throw new Error(await res.text());
 }
 
+/** Public read of lounge TV admin content JSON (no auth). Returns null if missing or API unreachable. */
+export async function getLoungeTvAdminConfig(): Promise<Record<string, unknown> | null> {
+  const base = API_BASE.replace(/\/$/, '');
+  const url = base ? `${base}/api/lounge-tv-config` : '/api/lounge-tv-config';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { config?: unknown };
+    const c = data?.config;
+    if (c != null && typeof c === 'object' && !Array.isArray(c)) return c as Record<string, unknown>;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Admin: upsert lounge TV content JSON to Supabase via API (requires admin session). */
+export async function putAdminLoungeTvConfig(config: Record<string, unknown>): Promise<void> {
+  const res = await apiFetch('/api/admin/lounge-tv-config', { method: 'PUT', body: config });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 /** Delete the current user from Supabase Auth so they cannot sign back in. Call before sign-out when user confirms delete account. Throws if unauthenticated (401), not configured (503), or any API error so the UI does not sign out and pretend success. */
 export async function deleteAccount(options?: { deletedFrom?: string }): Promise<void> {
   const token = await getAccessToken();

@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  getLoungeTvTiles,
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
   loungeTvAcademyMessage,
@@ -19,6 +18,12 @@ import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
 import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
+import {
+  hydrateLoungeTvAdminConfig,
+  LOUNGE_TV_CONFIG_UPDATED_EVENT,
+  resolveLoungeTvTiles,
+} from '../../utils/loungeTvAdminConfig';
+import { getLoungeTvAdminConfig } from '../../utils/api';
 
 const BRAND_RED = '#EB1C24';
 /** TV frame grow + curtain close. */
@@ -177,8 +182,19 @@ function LoungeTvScreen({
   onSidebarChange: (id: string) => void;
 }) {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [tilesRevision, setTilesRevision] = useState(0);
   const sidebar = LOUNGE_TV_SIDEBAR[mainTab];
-  const tiles = getLoungeTvTiles(mainTab, sidebarId);
+  const tiles = useMemo(
+    () => resolveLoungeTvTiles(mainTab, sidebarId),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when admin saves TV content
+    [mainTab, sidebarId, tilesRevision]
+  );
+
+  useEffect(() => {
+    const onConfigUpdated = () => setTilesRevision((n) => n + 1);
+    window.addEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
+    return () => window.removeEventListener(LOUNGE_TV_CONFIG_UPDATED_EVENT, onConfigUpdated);
+  }, []);
   const academy = mainTab === 'academy';
   const isWatchLearn = mainTab === 'watch-learn';
   const selectedTile =
@@ -473,6 +489,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
   useEffect(() => {
     if (isOpen) setVisible(true);
   }, [isOpen]);
+
+  useEffect(() => {
+    void hydrateLoungeTvAdminConfig(getLoungeTvAdminConfig);
+  }, []);
 
   const resetOverlayState = useCallback(() => {
     setShowContent(false);

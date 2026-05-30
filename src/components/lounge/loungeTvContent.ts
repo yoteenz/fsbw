@@ -113,7 +113,7 @@ function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[
   });
 }
 
-export function getLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
+export function getLoungeTvTilesStatic(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
   if (mainTab === 'academy') return null;
   if (mainTab === 'brand' && sidebarId === 'new-drops') return BRAND_NEW_DROPS;
   if (mainTab === 'brand' && sidebarId === 'campaigns') return [];
