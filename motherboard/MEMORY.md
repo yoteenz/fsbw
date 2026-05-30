@@ -21662,6 +21662,14 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Cart dropdown VIEW DETAILS: product text down 14px
+
+**Context:** After view-details lift/align fix, product name + subtitle + detail lines sat too high in the card (e.g. BCF bundle lines).
+
+**Change:** `CartDropdown.tsx` — **`CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 14`** applied in **`cartDropdownProductTextTranslateY`** (`netY = 14 - liftPx`; e.g. 7 lines: **-35px → -21px**). Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
