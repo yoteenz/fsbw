@@ -54,30 +54,12 @@ const adminTvFieldStyle: React.CSSProperties = {
   textTransform: 'uppercase',
 };
 
-type TvCategory = {
-  key: string;
-  mainTab: LoungeTvMainTab;
+export type AdminLoungeTvContentPanelProps = {
+  editingMainTab: LoungeTvMainTab | null;
   sidebarId: string;
-  label: string;
+  onOpenMainTab: (mainTab: LoungeTvMainTab) => void;
+  onCloseEditing: () => void;
 };
-
-function buildTvCategories(): TvCategory[] {
-  const rows: TvCategory[] = [];
-  for (const tab of LOUNGE_TV_MAIN_TABS) {
-    const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
-    for (const sidebar of sidebars) {
-      rows.push({
-        key: `${tab.id}:${sidebar.id}`,
-        mainTab: tab.id,
-        sidebarId: sidebar.id,
-        label: `${tab.label} · ${sidebar.label}`,
-      });
-    }
-  }
-  return rows;
-}
-
-const TV_CATEGORIES = buildTvCategories();
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -369,11 +351,15 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
   );
 }
 
-export default function AdminLoungeTvContentPanel() {
+export default function AdminLoungeTvContentPanel({
+  editingMainTab,
+  sidebarId,
+  onOpenMainTab,
+  onCloseEditing,
+}: AdminLoungeTvContentPanelProps) {
   const [config, setConfig] = useState<LoungeTvAdminConfig>(() => buildDefaultLoungeTvAdminConfig());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedCategoryKey, setSelectedCategoryKey] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [draftItem, setDraftItem] = useState<LoungeTvAdminItem | null>(null);
 
@@ -391,20 +377,15 @@ export default function AdminLoungeTvContentPanel() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategoryKey) setDraftItem(emptyDraft());
+    if (editingMainTab) setDraftItem(emptyDraft());
     else setDraftItem(null);
-  }, [selectedCategoryKey]);
-
-  const openCategory = useCallback((key: string) => {
-    setSelectedCategoryKey(key);
-    setFeedback(null);
-  }, []);
+  }, [editingMainTab, sidebarId]);
 
   const closeCategory = useCallback(() => {
-    setSelectedCategoryKey(null);
+    onCloseEditing();
     setDraftItem(null);
     setFeedback(null);
-  }, []);
+  }, [onCloseEditing]);
 
   const getPlacement = useCallback(
     (mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvAdminPlacement => {
@@ -452,14 +433,14 @@ export default function AdminLoungeTvContentPanel() {
     []
   );
 
-  const selectedCategory = useMemo(
-    () => TV_CATEGORIES.find((c) => c.key === selectedCategoryKey) ?? null,
-    [selectedCategoryKey]
+  const editingMainTabLabel = useMemo(
+    () => LOUNGE_TV_MAIN_TABS.find((t) => t.id === editingMainTab)?.label ?? '',
+    [editingMainTab]
   );
 
   const handleSaveCategory = () => {
-    if (!selectedCategory) return;
-    const placement = getPlacement(selectedCategory.mainTab, selectedCategory.sidebarId);
+    if (!editingMainTab || !sidebarId) return;
+    const placement = getPlacement(editingMainTab, sidebarId);
     let items = [...placement.items];
     if (draftItem && draftItem.title.trim()) {
       items = [
@@ -473,8 +454,8 @@ export default function AdminLoungeTvContentPanel() {
       setDraftItem(null);
     }
     const nextPlacement: LoungeTvAdminPlacement = {
-      mainTab: selectedCategory.mainTab,
-      sidebarId: selectedCategory.sidebarId,
+      mainTab: editingMainTab,
+      sidebarId,
       items,
     };
     const next = upsertLoungeTvAdminPlacement(config, nextPlacement);
@@ -489,8 +470,8 @@ export default function AdminLoungeTvContentPanel() {
     );
   }
 
-  if (selectedCategory) {
-    const placement = getPlacement(selectedCategory.mainTab, selectedCategory.sidebarId);
+  if (editingMainTab && sidebarId) {
+    const placement = getPlacement(editingMainTab, sidebarId);
 
     return (
       <div className="mt-2 flex flex-col min-h-0" style={adminTvUppercaseStyle}>
@@ -512,7 +493,7 @@ export default function AdminLoungeTvContentPanel() {
                 paddingRight: '8px',
               }}
             >
-              {selectedCategory.label}
+              {editingMainTabLabel}
             </h2>
             <button
               type="button"
@@ -553,7 +534,7 @@ export default function AdminLoungeTvContentPanel() {
               <ItemEditor
                 key={item.id}
                 item={item}
-                mainTab={selectedCategory.mainTab}
+                mainTab={editingMainTab}
                 onChange={(updated) => {
                   const items = placement.items.map((row) => (row.id === item.id ? updated : row));
                   updatePlacement({ ...placement, items });
@@ -575,7 +556,7 @@ export default function AdminLoungeTvContentPanel() {
               </p>
               <ItemEditor
                 item={draftItem}
-                mainTab={selectedCategory.mainTab}
+                mainTab={editingMainTab}
                 onChange={setDraftItem}
                 onRemove={() => setDraftItem(emptyDraft())}
               />
@@ -610,69 +591,47 @@ export default function AdminLoungeTvContentPanel() {
         </div>
       ) : null}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {LOUNGE_TV_MAIN_TABS.map((tab) => {
-          const sectionCategories = TV_CATEGORIES.filter((c) => c.mainTab === tab.id);
-          if (sectionCategories.length === 0) return null;
-
+          const sidebars = LOUNGE_TV_SIDEBAR[tab.id] ?? [];
+          const totalItems = sidebars.reduce(
+            (sum, sidebar) => sum + getPlacement(tab.id, sidebar.id).items.length,
+            0
+          );
           return (
-            <div
+            <button
               key={tab.id}
-              className="border border-gray-300"
-              style={{ backgroundColor: 'rgba(255,255,255,0.85)', padding: '10px', borderRadius: 0 }}
+              type="button"
+              onClick={() => onOpenMainTab(tab.id)}
+              className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
+              style={{
+                border: '1px solid #d1d5db',
+                borderRadius: 0,
+                backgroundColor: 'rgba(255,255,255,0.85)',
+                padding: '12px 10px',
+                margin: 0,
+                textAlign: 'left',
+              }}
             >
-              <p
+              <span
                 style={{
                   fontFamily: '"Futura PT Demi"',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   color: '#000',
-                  margin: '0 0 8px 0',
                 }}
               >
                 {tab.label}
-              </p>
-              <div>
-                {sectionCategories.map((cat) => {
-                  const placement = getPlacement(cat.mainTab, cat.sidebarId);
-                  const count = placement.items.length;
-                  return (
-                    <button
-                      key={cat.key}
-                      type="button"
-                      onClick={() => openCategory(cat.key)}
-                      className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
-                      style={{
-                        border: 'none',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: 'none',
-                        padding: '8px 0',
-                        margin: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Medium"',
-                          fontSize: '11px',
-                          color: '#808080',
-                        }}
-                      >
-                        {LOUNGE_TV_SIDEBAR[cat.mainTab]?.find((s) => s.id === cat.sidebarId)?.label ?? cat.sidebarId}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: '"Futura PT Book"',
-                          fontSize: '11px',
-                          color: '#EB1C24',
-                        }}
-                      >
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+              </span>
+              <span
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  fontSize: '11px',
+                  color: '#EB1C24',
+                }}
+              >
+                {totalItems}
+              </span>
+            </button>
           );
         })}
       </div>
