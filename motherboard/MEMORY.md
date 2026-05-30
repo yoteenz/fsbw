@@ -21797,3 +21797,18 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Straight bundle VIDEO looked more zoomed in than PHOTO on `/shop/bundles`.
 
 **Change:** Removed **`BUNDLE_STRAIGHT_VIDEO_HERO_SCALE` (1.22)** and **`height: 100%`** fill on bundles video; **`bundlePdpHeroMediaStyle`** shared with photo (`width`/`height` auto, `maxWidth`, `object-fit: contain`). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF PDP VIDEO: Supabase Kling `.mov` (bundles wavy/curly, closures, frontals)
+
+**Context (this chat):** User asked to update **VIDEO only** on BCF product pages (`/shop/bundles`, `/shop/closures`, `/shop/frontals`) with Supabase **`wig-preview-live`** Kling shake-hair `.mov` URLs. Prior work in the same chat covered wishlist typography/spacing, cart VIEW DETAILS nudge, wishlist BCF JPG thumbs, bundles straight video URL/zoom fixes.
+
+**URLs applied (verified HTTP 200):**
+- **Bundles:** wavy **`_98237.mov`**, curly **`_24695.mov`**; straight unchanged **`_51488.mov`** (+ local MP4 fallback).
+- **Closures:** straight **`_27854`**, wavy **`_49906`**, curly **`_28643`**.
+- **Frontals:** straight **`_79719`**, curly **`_79392`**.
+
+**Frontals wavy:** User paste was **`3D%20images/rEzHR8AixKR1Fq4XQaCLf_GBhMA1Dz.jpeg`** (same as wishlist list thumb photo)—not a `.mov`. **`BCF_CF_VIDEO.frontals.wavy`** left on **`/assets/wavy-frontal-video.mov`** until a Kling URL is supplied.
+
+**Change:** **`texture-category-product/page.tsx`** — **`BUNDLE_VIDEO_BY_TEXTURE`** wavy/curly + all **`BCF_CF_VIDEO`** closures textures + frontals straight/curly → Supabase. Pushed **`master`** + **`preview/mobile`** (`577ac53c`).
