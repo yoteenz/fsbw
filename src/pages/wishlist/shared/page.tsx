@@ -9,7 +9,6 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
-  getWishlistBcfThumbSrc,
   getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
@@ -17,6 +16,7 @@ import {
   getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
+import { WishlistItemThumb } from '../../../components/wishlist/WishlistItemThumb';
 import {
   WISHLIST_EXPANDED_LIST_LINE_PRICE_CLASS,
   WISHLIST_EXPANDED_LIST_LINE_PRICE_LIST_CLASS,
@@ -161,26 +161,6 @@ function readCartItems(): any[] {
   } catch {
     return [];
   }
-}
-
-function getLeafBrickFrontImage(item: any): string {
-  if (!item) return '/assets/natural front.png';
-  const bcfThumb = getWishlistBcfThumbSrc(item);
-  if (bcfThumb) return bcfThumb;
-  const name = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-  if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
-  const hairline = (item.hairline || 'NATURAL').toUpperCase();
-  const hasPeak = hairline.includes('PEAK');
-  const hasLagos = hairline.includes('LAGOS');
-  if (name === 'BLANCO') return '/assets/2D BLANCO FRONT.png';
-  if (name === 'SOFT WAVE' || name === 'BEACH WAVE') return '/assets/2D WAVY FRONT.png';
-  if (name === 'SOFT CURL' || name === 'OCEAN CURL') return '/assets/2D CURLY FRONT.png';
-  if (name === 'NOIR') {
-    if (hasPeak) return '/assets/peak front.png';
-    if (hasLagos) return '/assets/lagos front.png';
-    return '/assets/natural front.png';
-  }
-  return '/assets/natural front.png';
 }
 
 function cartItemKey(item: any, index: number): string {
@@ -459,40 +439,12 @@ export default function SharedWishlistListPage() {
                           }}
                         >
                           <div style={EXPANDED_LIST_LINE_THUMB_COLUMN_STYLE}>
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => navigate(getWishlistItemRoute(item))}
-                              onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))}
-                              className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
-                              style={{
-                                width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
-                                height: `${EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}px`,
-                                backgroundImage: "url('/assets/leaf-brick-resize.png')",
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                border: '1.3px solid #000',
-                                boxShadow: 'inset 0 0 0 3px #fff',
-                                overflow: 'hidden',
-                              }}
-                            >
-                              <img
-                                src={getLeafBrickFrontImage(item)}
-                                alt=""
-                                style={{
-                                  position: 'absolute',
-                                  left: '50%',
-                                  bottom: 3,
-                                  transform: 'translateX(-50%)',
-                                  width: 'auto',
-                                  height: '96%',
-                                  maxWidth: '106%',
-                                  objectFit: 'contain',
-                                  objectPosition: 'bottom',
-                                  zIndex: 1,
-                                }}
-                              />
-                            </div>
+                            <WishlistItemThumb
+                              item={item}
+                              widthPx={EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}
+                              heightPx={EXPANDED_LIST_ITEM_THUMB_HEIGHT_PX}
+                              onActivate={() => navigate(getWishlistItemRoute(item))}
+                            />
                             {outOfStock ? (
                               <p style={{ ...LIST_LINE_BAG_ADD_STYLE, color: '#EB1C24', cursor: 'default' }}>
                                 OUT OF STOCK

@@ -84,6 +84,25 @@ export function getWishlistBcfThumbSrc(item: any): string | null {
   return typeof item?.image === 'string' && item.image.trim() ? item.image : null;
 }
 
+/** Unit wig front image inside the leaf-brick frame (not used for BCF). */
+export function getWishlistUnitThumbImage(item: any): string {
+  if (!item) return '/assets/natural front.png';
+  const name = getWishlistItemProductName(item);
+  if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
+  const hairline = (item.hairline || 'NATURAL').toUpperCase();
+  const hasPeak = hairline.includes('PEAK');
+  const hasLagos = hairline.includes('LAGOS');
+  if (name === 'BLANCO') return '/assets/2D BLANCO FRONT.png';
+  if (name === 'SOFT WAVE' || name === 'BEACH WAVE') return '/assets/2D WAVY FRONT.png';
+  if (name === 'SOFT CURL' || name === 'OCEAN CURL') return '/assets/2D CURLY FRONT.png';
+  if (name === 'NOIR') {
+    if (hasPeak) return '/assets/peak front.png';
+    if (hasLagos) return '/assets/lagos front.png';
+    return '/assets/natural front.png';
+  }
+  return '/assets/natural front.png';
+}
+
 /**
  * Name shown on wishlist rows. BCF (`shop-texture-category`) lines show just the category
  * (BUNDLES / CLOSURES / FRONTALS) — not the cart label "BUNDLES · WAVY". Unit names drop "WIG".
