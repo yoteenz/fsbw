@@ -70,15 +70,22 @@ function inferWishlistBcfTexture(item: any): ShopTextureCategoryThumbTexture | n
   return null;
 }
 
+/** Straight bundles only — `/wishlist` + `/wishlist/lists` (not cart/bag/shop grid). */
+export const WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC =
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/ZYNxZol48_4oGveMYmFeX_eICqb4pI.jpeg';
+
 /**
- * BCF thumbnail on `/wishlist` and `/wishlist/lists` — same image as `/products` shop marble
- * (`shopTextureCategoryThumbSrc` → `/assets/*-{bundle|closure|frontal}.png`). Null for non-BCF.
+ * BCF thumbnail on `/wishlist` and `/wishlist/lists`. Most lines use shop marble PNGs;
+ * straight bundles use {@link WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC}. Null for non-BCF.
  */
 export function getWishlistBcfThumbSrc(item: any): string | null {
   if (item?.type !== 'shop-texture-category') return null;
   const category = inferWishlistBcfCategory(item);
   const texture = inferWishlistBcfTexture(item);
   if (category && texture) {
+    if (texture === 'straight' && category === 'bundles') {
+      return WISHLIST_STRAIGHT_BUNDLE_THUMB_SRC;
+    }
     return shopTextureCategoryHeroPhotoSrc(texture, category);
   }
   return typeof item?.image === 'string' && item.image.trim() ? item.image : null;
