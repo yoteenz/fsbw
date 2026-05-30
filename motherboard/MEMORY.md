@@ -21678,6 +21678,14 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist/lists BCF Supabase thumbnails (bundles/closures/frontals × textures)
+
+**Context:** User supplied live-preview Supabase JPGs for BCF **bundles** (wavy, curly), **closures** (straight/wavy/curly), **frontals** (straight/wavy/curly) on **`/wishlist`** and **`/wishlist/lists`** only.
+
+**Change:** **`wishlistListItemDetails.ts`** — **`WISHLIST_LIST_BCF_THUMB_SRC`** map; **`getWishlistBcfThumbSrc`** uses it by default. Straight bundles keep existing URL. **`/wishlist/shared`** passes **`preferShopMarbleThumbs`** (shop marble PNGs unchanged). Cart/bag/shop grid unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).
