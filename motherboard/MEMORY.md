@@ -21999,3 +21999,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** White still visible between pleats at bottom after 1.1× scale.
 
 **Change:** **`LoungeTvOverlay`** curtains **1.22×** scale, **128%** height / **114%** width anchored bottom, panel bg **`#4a4a4a`**, bottom gradient hem.
+
+---
+
+## 2026-05-30 — Lounge TV sizes: overlay −20%, lobby +12px wide
+
+**Context:** User wanted smaller expanded/animated TV; lounge static TV wider by 12px only (height unchanged).
+
+**Changes:** **`LOUNGE_TV_OVERLAY_SIZE_SCALE`** `0.8` in **`LoungeTvOverlay`**. **`LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX`** `12` on lobby **`LoungeTvFrame`**. Pushed **`master`** + **`preview/mobile`**.
