@@ -7,10 +7,10 @@ export const LOUNGE_TV_BEZEL = { top: 11, right: 11, bottom: 16, left: 11 };
 export const LOUNGE_TV_SCREEN_ASPECT = 0.72;
 
 /** Lobby lounge slide static TV — extra outer width (px). */
-export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 12;
+export const LOUNGE_LOBBY_TV_EXTRA_FRAME_WIDTH_PX = 32;
 
 /** Expanded overlay TV size multiplier (1 = full computed size). */
-export const LOUNGE_TV_OVERLAY_SIZE_SCALE = 0.8;
+export const LOUNGE_TV_OVERLAY_SIZE_SCALE = 0.896;
 
 /** Matches affiliate photo delete control (`account/affiliate/page.tsx`). */
 export const AFFILIATE_CLOSE_ICON_FILTER =
