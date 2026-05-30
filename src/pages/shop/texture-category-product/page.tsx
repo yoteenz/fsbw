@@ -569,14 +569,6 @@ export default function ShopTextureCategoryProductPage() {
   const otherTextures = TEXTURE_ORDER.filter((t) => t !== texture);
   const bcfUsesBundleStyleHero =
     category === 'bundles' || category === 'closures' || category === 'frontals';
-  const heroThumbSrc = ((): string => {
-    if (!category) return shopTextureCategoryThumbSrc(texture, 'bundles');
-    if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[texture];
-    if (category === 'closures' || category === 'frontals') {
-      return BCF_CF_PHOTO[category][texture];
-    }
-    return shopTextureCategoryThumbSrc(texture, category);
-  })();
   const bcfHeroThumbSrcForTexture = (tid: Texture): string => {
     if (!category) return shopTextureCategoryThumbSrc(tid, 'bundles');
     if (category === 'bundles') return BUNDLE_PHOTO_BY_TEXTURE[tid];
@@ -586,6 +578,9 @@ export default function ShopTextureCategoryProductPage() {
     return shopTextureCategoryThumbSrc(tid, category);
   };
   const allowedBcfTextures = bcfTexturesForOrigin(bcfOrigin);
+  const cartLineMarbleThumbSrc = category
+    ? shopTextureCategoryThumbSrc(texture, category)
+    : shopTextureCategoryThumbSrc(texture, 'bundles');
   /** Bundles + closures + frontals: copy stack under hero (no −128px lift). */
   const bcfPdpCopyTy = (px: number) => (bcfUsesBundleStyleHero ? 0 : px);
 
@@ -601,7 +596,7 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: displayPrice,
           quantity: 1,
-          image: heroThumbSrc,
+          image: cartLineMarbleThumbSrc,
           type: 'shop-texture-category',
           texture,
           category,
@@ -648,7 +643,7 @@ export default function ShopTextureCategoryProductPage() {
           name: cartLineName,
           price: unitPrice,
           quantity: BUNDLE_DEAL_QTY,
-          image: BUNDLE_PHOTO_BY_TEXTURE[texture],
+          image: shopTextureCategoryThumbSrc(texture, 'bundles'),
           type: 'shop-texture-category',
           texture,
           category: 'bundles' as const,
