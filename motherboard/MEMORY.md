@@ -21914,3 +21914,16 @@ Pushed **`master`** + **`preview/mobile`** (**`3636adb5`**).
 **Context:** User wanted to **try** new left/right Fal curtain exports for the lounge TV animation despite suspecting pleats are **too wide** for realism.
 
 **Changes:** Replaced **`public/assets/lounge-curtain-left.png`** and **`lounge-curtain-right.png`** (576×1024 each) from Supabase **Untitled folder** URLs; updated **`LOUNGE_CURTAIN_*_SRC_REMOTE`** in **`loungeTvAssets.ts`**. **`LoungeTvOverlay`** display settings unchanged (54vw panels, outer **`object-position`**, 88% height) so user can judge pleat scale in situ. Commit **`a70e5f1b`**; pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge curtains/TV: narrow pleats, gap fix, bezel + Fal TV prompts
+
+**Context:** User reported wide pleats look like stock art; top/bottom **gray gaps** on curtains; overlay TV is a flat black rectangle — wants updated Fal prompts (RIGHT from LEFT output), layout fix, and guidance to make TV read as hardware.
+
+**Changes:**
+- **`loungeCurtainFalPrompts.ts`** — **14–18 narrow pleats**, full-height fabric, negatives for wide folds; **Workflow B** recommended; **`RIGHT_MATCH_LEFT`** must use step-1 LEFT PNG as reference only.
+- **`LoungeTvOverlay.tsx`** — curtain **`img`** **`inset: 0`**, **`height/width 100%`**, **`object-fit: cover`** (removed 88% height that exposed panel `#3a3a3a` bars). TV wrapper: charcoal **bezel** + inset glass shadow around UI screen.
+- **`loungeTvFalPrompts.ts`** — Fal prompts for flat-panel TV (dark empty screen for UI overlay); notes lounge uses **`tv-screen.png`** + CSS bezel in app.
+
+Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs via Workflow B.
