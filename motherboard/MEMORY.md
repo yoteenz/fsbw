@@ -22057,3 +22057,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Cause:** Overlay used **`top/bottom: 0`** plus conflicting **`height: calc(100% + 32px)`**; **`100dvh`** alone did not always match **`window.innerHeight`** on desktop/large viewports; horizontal carousel (**`200vw`**) could peek beside a **`width: 100%`** overlay when the document scrolled.
 
 **Change:** **`LoadingScreen.tsx`** — measure **`visualViewport`** / **`innerWidth`×`innerHeight`** and set explicit pixel **`width`/`height`** (+ **48px** bleed); CSS fallback **`min-height: max(105vh, 100dvh, 100vh)`**; lock **`html`/`body`** **`overflow: hidden`** while visible; **`100vw`** min width; removed conflicting percent height.
+
+---
+
+## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
+
+**Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
+
+**Change:** Reverted vw **`top` + `translateY(-100%)`** to restored **`top: 50%`**, **`translate(calc(-50% + 25px), calc(-50% + 290px))`**, **`height: 160px`** (mobile/tablet). **`@media (min-width: 1024px)`** adds **`+52px`** Y (**`342px`** total). Tunables in **`loungeSceneLayout.ts`**.
