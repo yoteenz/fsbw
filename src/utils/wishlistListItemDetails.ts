@@ -1,4 +1,10 @@
-import { bcfCartViewDetailsHtml, bookingCartViewDetailsHtml } from './cartLineRedAndDetails';
+import {
+  bcfCartViewDetailsHtml,
+  bookingCartRedSubtitle,
+  bookingCartViewDetailsHtml,
+  CART_RED_LINE_BCF_BOOKING,
+} from './cartLineRedAndDetails';
+import { isWigUnitProductName } from './productInventoryAvailability';
 import {
   shopTextureCategoryHeroPhotoSrc,
   type ShopTextureCategoryThumbCategory,
@@ -65,6 +71,50 @@ export function getWishlistItemDisplayName(item: any): string {
     return cat.toUpperCase().trim();
   }
   return raw.replace(/WIG/gi, '').trim();
+}
+
+function getWishlistUnitHairOrigin(productName: string): string {
+  switch (productName) {
+    case 'NOIR':
+      return 'CAMBODIAN';
+    case 'BLANCO':
+      return 'RUSSIAN';
+    case 'SOFT WAVE':
+      return 'INDIAN';
+    case 'BEACH WAVE':
+      return 'INDONESIAN';
+    case 'SOFT CURL':
+      return 'VIETNAMESE';
+    case 'OCEAN CURL':
+      return 'FILIPINO';
+    default:
+      return 'CAMBODIAN';
+  }
+}
+
+/** Collapsed red subtitle on wishlist list rows (matches cart dropdown). */
+export function getWishlistItemRedSubtitle(item: any): string {
+  if (item?.name === 'GIFT CARD' || item?.type === 'gift-card') return 'DIGITAL ONLY';
+  if (item?.type === 'booking-consult' || item?.type === 'booking-appointment') {
+    return bookingCartRedSubtitle(item);
+  }
+  if (item?.type === 'shop-texture-category') return CART_RED_LINE_BCF_BOOKING;
+  const productName = getWishlistItemProductName(item);
+  const length = item?.length || '24"';
+  const hairOrigin =
+    productName === 'BLANCO' && item?.hairOrigin === 'CAMBODIAN'
+      ? getWishlistUnitHairOrigin('BLANCO')
+      : item?.hairOrigin || getWishlistUnitHairOrigin(productName);
+  return `${length} RAW ${hairOrigin}`;
+}
+
+/** Unit wigs only — not BCF, gift cards, or bookings. */
+export function isWishlistBuildAWigEditableItem(item: any): boolean {
+  if (!item) return false;
+  if (item.name === 'GIFT CARD' || item.type === 'gift-card') return false;
+  if (item.type === 'booking-consult' || item.type === 'booking-appointment') return false;
+  if (item.type === 'shop-texture-category') return false;
+  return isWigUnitProductName(item.name || item.productName);
 }
 
 export function getWishlistItemDefaultPrice(productName: string): number {

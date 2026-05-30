@@ -9,8 +9,11 @@ import {
 import {
   buildWishlistItemDetailsHtml,
   formatWishlistListItemPrice,
+  getWishlistItemDisplayName,
   getWishlistItemDisplayPrice,
   getWishlistItemProductName,
+  getWishlistItemRedSubtitle,
+  getWishlistItemRoute,
   wishlistItemHasViewDetails,
 } from '../../../utils/wishlistListItemDetails';
 import {
@@ -175,39 +178,6 @@ function getLeafBrickFrontImage(item: any): string {
     return '/assets/natural front.png';
   }
   return '/assets/natural front.png';
-}
-
-function getProductRoute(name: string): string {
-  const n = (name || 'NOIR').toString().toUpperCase();
-  const routes: Record<string, string> = {
-    NOIR: '/straight/noir',
-    BLANCO: '/straight/blanco',
-    'SOFT WAVE': '/wavy/soft-wave',
-    'BEACH WAVE': '/wavy/beach-wave',
-    'SOFT CURL': '/curly/soft-curl',
-    'OCEAN CURL': '/curly/ocean-curl',
-    'GIFT CARD': '/tools/gift-card',
-  };
-  return routes[n] || '/build-a-wig';
-}
-
-function getHairOrigin(productName: string): string {
-  switch (productName) {
-    case 'NOIR':
-      return 'CAMBODIAN';
-    case 'BLANCO':
-      return 'RUSSIAN';
-    case 'SOFT WAVE':
-      return 'INDIAN';
-    case 'BEACH WAVE':
-      return 'INDONESIAN';
-    case 'SOFT CURL':
-      return 'VIETNAMESE';
-    case 'OCEAN CURL':
-      return 'FILIPINO';
-    default:
-      return 'CAMBODIAN';
-  }
 }
 
 function cartItemKey(item: any, index: number): string {
@@ -463,9 +433,9 @@ export default function SharedWishlistListPage() {
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                     {items.map((item: any, index: number) => {
-                      const itemName = (item.name || item.productName || 'NOIR').toString().toUpperCase();
-                      const itemLength = item.length || '24"';
-                      const itemHairOrigin = item.hairOrigin || getHairOrigin(itemName);
+                      const itemProductName = getWishlistItemProductName(item);
+                      const itemDisplayName = getWishlistItemDisplayName(item);
+                      const itemRedSubtitle = getWishlistItemRedSubtitle(item);
                       const itemKey = getSharedListItemKey(item, index);
                       const isViewingDetails = viewingDetailsItemKey === itemKey;
                       const showViewDetailsLink = wishlistItemHasViewDetails(item);
@@ -489,8 +459,8 @@ export default function SharedWishlistListPage() {
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => navigate(getProductRoute(itemName))}
-                              onKeyDown={(e) => e.key === 'Enter' && navigate(getProductRoute(itemName))}
+                              onClick={() => navigate(getWishlistItemRoute(item))}
+                              onKeyDown={(e) => e.key === 'Enter' && navigate(getWishlistItemRoute(item))}
                               className="relative bg-cover bg-center flex items-center justify-center cursor-pointer"
                               style={{
                                 width: `${EXPANDED_LIST_ITEM_THUMB_WIDTH_PX}px`,
@@ -567,11 +537,11 @@ export default function SharedWishlistListPage() {
                           <div style={EXPANDED_LIST_LINE_TEXT_COLUMN_STYLE}>
                             <WishlistLineProductTextStack>
                             <CartLineTextLayer slot="name">
-                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemName)}>{itemName.replace(/WIG/gi, '').trim()}</p>
+                            <p style={EXPANDED_LIST_LINE_NAME_TEXT_STYLE(itemProductName)}>{itemDisplayName}</p>
                             </CartLineTextLayer>
-                            <CartLineTextLayer slot="subtitle" productName={itemName}>
+                            <CartLineTextLayer slot="subtitle" productName={itemProductName}>
                             <p style={EXPANDED_LIST_RAW_TEXT_STYLE}>
-                              {itemLength} RAW {itemHairOrigin}
+                              {itemRedSubtitle}
                             </p>
                             </CartLineTextLayer>
                             <WishlistItemCapSizeLine item={item} />
