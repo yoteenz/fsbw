@@ -7,7 +7,8 @@ import {
   loungeTvAcademyMessage,
   type LoungeTvMainTab,
 } from './loungeTvContent';
-import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC } from './loungeTvAssets';
+import { LOUNGE_CURTAIN_LEFT_SRC, LOUNGE_CURTAIN_RIGHT_SRC, LOUNGE_TV_REMOTE_HAND_SRC } from './loungeTvAssets';
+import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 
 const BRAND_RED = '#EB1C24';
 const ANIM_MS = 1400;
@@ -306,6 +307,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
     Promise.all([
       preloadImage(LOUNGE_CURTAIN_LEFT_SRC),
       preloadImage(LOUNGE_CURTAIN_RIGHT_SRC),
+      preloadImage(LOUNGE_TV_REMOTE_HAND_SRC),
     ]).then(() => {
       if (!cancelled) setCurtainsReady(true);
     });
@@ -421,6 +423,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
       />
       <LoungeCurtainPanel side="left" closed={animatedIn} />
       <LoungeCurtainPanel side="right" closed={animatedIn} />
+      <LoungeTvRemoteHand visible={showContent} />
       <div style={frameStyle} role="dialog" aria-modal="true" aria-label="Lounge media">
         <button
           type="button"
