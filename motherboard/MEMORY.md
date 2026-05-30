@@ -22084,6 +22084,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge TV: CRT power-off on close
+
+**Context:** User wanted **TV turning off** on close — static zap + horizontal line collapsing before curtains open.
+
+**Change:** **`LoungeTvPowerOffEffect.tsx`** (~520ms): static burst, bright center beam, **`scaleY`** collapse. **`LoungeTvOverlay`** — **`requestClose`** runs power-off first (hides content/hand), then **`animatedIn` false** + **`onClose()`**; curtains/TV shrink after. CSS **`lounge-tv-power-off-*`** in **`index.css`**.
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
