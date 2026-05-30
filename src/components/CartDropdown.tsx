@@ -59,6 +59,8 @@ const CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD = 6;
 const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX = 28;
 /** Per detail line beyond threshold (keeps long lists from sitting low in the card). */
 const CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX = 3;
+/** Pull product block down after view-details lift was too aggressive (name + subtitle + detail lines). */
+const CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX = 14;
 
 type UnitCartDetailDescriptor = { type: string; value?: unknown; partSelection?: string };
 
@@ -116,15 +118,17 @@ function cartDropdownUnitViewDetailsLineCount(item: CartItem): number {
 
 function cartDropdownProductTextTranslateY(detailLineCount: number, isViewingDetails: boolean): string | undefined {
   if (!isViewingDetails) return undefined;
+  let liftPx = 4;
   if (detailLineCount >= CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD) {
     const extraRows = detailLineCount - CART_DROPDOWN_DETAIL_EXTRA_SHIFT_ROW_THRESHOLD;
-    const liftPx =
+    liftPx =
       4 +
       CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PX +
       extraRows * CART_DROPDOWN_PRODUCT_TEXT_EXTRA_SHIFT_PER_ROW_PX;
-    return `translateY(-${liftPx}px)`;
   }
-  return 'translateY(-4px)';
+  const netY = CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX - liftPx;
+  if (netY === 0) return undefined;
+  return `translateY(${netY}px)`;
 }
 
 function countDetailHtmlRows(html: string): number {
