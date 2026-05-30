@@ -21975,3 +21975,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 **Context:** Hand too close to TV; close X hard to see; overlay should use same **`tv-screen.png`** as lobby, not CSS gray bezel card.
 
 **Changes:** **`LoungeTvOverlay`** — animates **`LOUNGE_TV_FRAME_SRC`** (`/assets/tv-screen.png`) with UI in screen inset; close = affiliate style (white circle, black ring, brand filter on **`close-icon.svg`**). **`LoungeTvRemoteHand`**: **`bottom - 20px`**. Pushed **`master`** + **`preview/mobile`**.
+
+---
+
+## 2026-05-30 — Lounge TV bezel restored; curtains scale; layout nudges
+
+**Context:** Curtains showed white at bottom; overlay TV went flat after **`tv-screen.png`** swap; user wanted animated **charcoal bezel** TV on lobby too; hand/close position tweaks.
+
+**Changes:** Shared **`loungeTvFrame.tsx`** (`LoungeTvFrame`) — gradient bezel + black glass on **lobby** and **overlay** (reverts flat PNG overlay). Curtains **`scale(1.1)`** anchored **bottom**. Hand **`bottom - 32px`**. Close **`top/right -8`**. Pushed **`master`** + **`preview/mobile`**.
