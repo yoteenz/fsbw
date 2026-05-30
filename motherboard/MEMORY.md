@@ -22060,6 +22060,14 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Loading screen: fix landing peek (visualViewport + CSS)
+
+**Context:** Landing still visible below white loader on large screens (and mobile); prior fix used **`visualViewport.height`** alone, which can be **shorter** than **`innerHeight`**, leaving a gap.
+
+**Change:** **`readCoverViewport()`** uses **`max(innerHeight, clientHeight, visualViewport)`**; **`index.css`** **`.loading-screen-root`** with **`!important`** full-bleed **`calc(100dvh + 80px)`**; **`html[data-loading-screen]`** locks **`#root`** scroll; **`LobbyApp`** — loader **outside** scroll div, **`overflowY: hidden`** while loading, **`bleedPx={96}`**.
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
