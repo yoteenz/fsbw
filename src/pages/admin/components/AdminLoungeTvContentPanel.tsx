@@ -17,9 +17,31 @@ import {
 } from '../../../utils/loungeTvAdminConfig';
 import { getLoungeTvAdminConfig, putAdminLoungeTvConfig } from '../../../utils/api';
 
+/** Inline embed limit (localStorage + JSON config); larger files must use a hosted URL. */
 const MAX_INLINE_VIDEO_BYTES = 4 * 1024 * 1024;
 
 const adminTvUppercaseStyle: React.CSSProperties = { textTransform: 'uppercase' };
+
+function formatFileSizeMb(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function fileLooksLikeVideo(file: File): boolean {
+  const type = (file.type || '').toLowerCase();
+  if (type.startsWith('video/')) return true;
+  return /\.(mp4|mov|webm|m4v)$/i.test(file.name);
+}
+
+function fileLooksLikeImage(file: File): boolean {
+  const type = (file.type || '').toLowerCase();
+  if (type.startsWith('image/')) return true;
+  return /\.(jpg|jpeg|png|webp|gif|heic)$/i.test(file.name);
+}
+
+const VIDEO_FILE_ACCEPT = 'video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm,.m4v';
+const IMAGE_FILE_ACCEPT = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp,.heic';
 
 const adminTvFieldStyle: React.CSSProperties = {
   fontFamily: '"Futura PT Medium"',
@@ -84,17 +106,28 @@ type ItemEditorProps = {
 
 function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
 
   const handleMediaFile = async (file: File | undefined, kind: 'media' | 'thumb') => {
-    if (!file) return;
-    setUploadError(null);
-    const isVideo = file.type.startsWith('video/');
-    const isImage = file.type.startsWith('image/');
-    if (kind === 'media' && item.mediaType === 'video' && !isVideo) {
-      setUploadError('CHOOSE A VIDEO FILE OR PASTE A URL BELOW.');
+    if (!file || file.size === 0) {
+      setUploadError('NO FILE RECEIVED — TRY AGAIN OR PASTE A URL.');
+      setUploadNotice(null);
       return;
     }
-    if (kind === 'media' && item.mediaType === 'image' && !isImage) {
+    setUploadError(null);
+    setUploadNotice(null);
+    const isVideo = fileLooksLikeVideo(file);
+    const isImage = fileLooksLikeImage(file);
+    const mediaTypeForUpload =
+      kind === 'media' ? (isVideo ? 'video' : isImage ? 'image' : item.mediaType) : item.mediaType;
+    if (kind === 'media' && mediaTypeForUpload === 'video' && !isVideo) {
+      setUploadError(
+        `NOT RECOGNIZED AS VIDEO (${file.name || 'UNNAMED'}). USE .MP4/.MOV OR PASTE A HOSTED URL.`
+      );
+      return;
+    }
+    if (kind === 'media' && mediaTypeForUpload === 'image' && !isImage) {
       setUploadError('CHOOSE AN IMAGE FILE OR PASTE A URL BELOW.');
       return;
     }
@@ -102,24 +135,33 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
       setUploadError('THUMBNAIL MUST BE AN IMAGE.');
       return;
     }
-    if (isVideo && file.size > MAX_INLINE_VIDEO_BYTES) {
-      setUploadError('VIDEO IS TOO LARGE TO EMBED. PASTE A HOSTED URL INSTEAD (MAX ~4MB FOR UPLOAD).');
+    if (kind === 'media' && isVideo && file.size > MAX_INLINE_VIDEO_BYTES) {
+      setUploadError(
+        `VIDEO IS ${formatFileSizeMb(file.size)} — TOO LARGE TO EMBED (MAX ${formatFileSizeMb(MAX_INLINE_VIDEO_BYTES)}). PASTE A SUPABASE OR HOSTED URL ABOVE INSTEAD.`
+      );
       return;
     }
+    setUploading(true);
     try {
       const dataUrl = await readFileAsDataUrl(file);
       if (kind === 'media') {
         onChange({
           ...item,
           mediaUrl: dataUrl,
-          mediaType: isVideo ? 'video' : 'image',
-          thumbSrc: isImage ? dataUrl : item.thumbSrc,
+          mediaType: mediaTypeForUpload,
+          thumbSrc: isImage && mediaTypeForUpload === 'image' ? dataUrl : item.thumbSrc,
         });
+        setUploadNotice(
+          `${isVideo ? 'VIDEO' : 'PHOTO'} ADDED: ${file.name || 'FILE'} (${formatFileSizeMb(file.size)}). TAP SAVE CATEGORY.`
+        );
       } else {
         onChange({ ...item, thumbSrc: dataUrl });
+        setUploadNotice(`THUMBNAIL ADDED: ${file.name || 'FILE'}. TAP SAVE CATEGORY.`);
       }
     } catch {
-      setUploadError('COULD NOT READ FILE.');
+      setUploadError('COULD NOT READ FILE — TRY A SMALLER CLIP OR PASTE A URL.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -188,23 +230,68 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         type="text"
         value={item.mediaUrl.startsWith('data:') ? '' : item.mediaUrl}
         placeholder={item.mediaType === 'video' ? 'HTTPS://…' : 'HTTPS://… OR UPLOAD BELOW'}
-        onChange={(e) => onChange({ ...item, mediaUrl: e.target.value })}
+        onChange={(e) => {
+          setUploadNotice(null);
+          onChange({ ...item, mediaUrl: e.target.value });
+        }}
         className="w-full border border-gray-300 rounded px-2 py-1 text-xs mb-1"
         style={adminTvFieldStyle}
       />
-      <input
-        type="file"
-        accept={item.mediaType === 'video' ? 'video/*' : 'image/*'}
-        className="text-xs mb-2 w-full"
-        onChange={(e) => {
-          void handleMediaFile(e.target.files?.[0], 'media');
-          e.target.value = '';
+      <label
+        className="block w-full text-center py-2 mb-2 text-xs cursor-pointer"
+        style={{
+          fontFamily: '"Futura PT Demi"',
+          backgroundColor: uploading ? '#808080' : '#EB1C24',
+          color: '#fff',
+          opacity: uploading ? 0.7 : 1,
         }}
-      />
-      {item.mediaUrl ? (
-        <p className="text-[10px] text-gray-500 mb-2 truncate">
-          {item.mediaUrl.startsWith('data:') ? 'MEDIA ATTACHED (EMBEDDED)' : item.mediaUrl}
+      >
+        {uploading
+          ? 'LOADING FILE…'
+          : item.mediaType === 'video'
+            ? 'CHOOSE VIDEO FILE'
+            : 'CHOOSE PHOTO FILE'}
+        <input
+          type="file"
+          accept={item.mediaType === 'video' ? VIDEO_FILE_ACCEPT : IMAGE_FILE_ACCEPT}
+          disabled={uploading}
+          className="sr-only"
+          onChange={(e) => {
+            const picked = e.target.files?.[0];
+            e.target.value = '';
+            void handleMediaFile(picked, 'media');
+          }}
+        />
+      </label>
+      {uploadNotice ? (
+        <p className="text-[10px] mb-2 px-2 py-1" style={{ color: '#166534', backgroundColor: 'rgba(34,197,94,0.12)' }}>
+          {uploadNotice}
         </p>
+      ) : null}
+      {item.mediaUrl ? (
+        <div className="mb-2">
+          <p className="text-[10px] text-gray-600 mb-1 truncate">
+            {item.mediaUrl.startsWith('data:')
+              ? `EMBEDDED ${item.mediaType === 'video' ? 'VIDEO' : 'PHOTO'} READY`
+              : item.mediaUrl}
+          </p>
+          {item.mediaType === 'video' && item.mediaUrl ? (
+            <video
+              src={item.mediaUrl}
+              controls
+              playsInline
+              preload="metadata"
+              style={{ width: '100%', maxHeight: '120px', background: '#000' }}
+            />
+          ) : null}
+          {item.mediaType === 'image' && item.mediaUrl.startsWith('data:') ? (
+            <img
+              src={item.mediaUrl}
+              alt=""
+              style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', display: 'block' }}
+            />
+          ) : null}
+        </div>
       ) : null}
 
       {item.mediaType === 'video' ? (
@@ -247,7 +334,11 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         SHOW *NEW* BADGE
       </label>
 
-      {uploadError ? <p className="text-xs text-red-600 mt-2">{uploadError}</p> : null}
+      {uploadError ? (
+        <p className="text-xs text-red-600 mt-2 px-2 py-1" style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
+          {uploadError}
+        </p>
+      ) : null}
     </div>
   );
 }
