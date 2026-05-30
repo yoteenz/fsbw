@@ -21721,3 +21721,19 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User wanted red **EDIT IN BUILD-A-WIG** at **9px** like **EDIT LIST NAME** and **+ LIST** (was **8px** Futura PT Book).
 
 **Change:** **`bookingEditLinkStyle`** → **9px**, **Futura PT Medium**; cart dropdown, **`/wishlist`**, bag use shared style; **`.edit-in-build-text`** in **`index.css`** **9px**. **EDIT APPOINTMENT** under thumbs uses same token. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — EDIT IN BUILD-A-WIG: Futura PT Book 8.5px
+
+**Context:** User wanted **EDIT IN BUILD-A-WIG** at **Futura PT Book** **8.5px** (not **9px Medium**); **EDIT LIST NAME** / **+ LIST** stay **9px Medium**.
+
+**Change:** **`bookingEditLinkStyle`** + **`.edit-in-build-text`**. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — Cart dropdown VIEW DETAILS text: −2px net (was −10px)
+
+**Context:** User wanted product text lower than **−10px** net translate for long BCF detail blocks.
+
+**Change:** **`CART_DROPDOWN_VIEW_DETAILS_TEXT_DOWN_NUDGE_PX` `25` → `33`** (7 lines **−10px → −2px**). Pushed `master` + `preview/mobile`.
