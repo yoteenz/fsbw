@@ -105,7 +105,7 @@ const BUNDLE_PHOTO_BY_TEXTURE: Record<Texture, string> = {
 
 /** Primary straight bundle hero video (upload to this public path when ready). */
 const BUNDLE_STRAIGHT_VIDEO_SUPABASE_SRC =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/make_this_image_shake_the_hair_Kling_30__51488.mov';
+  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/wig-preview-live/make_this_image_shake_the_hair_Kling_30__51488.mov';
 
 /** Used when Supabase object is missing (404) or `.mov` fails in-browser. */
 const BUNDLE_STRAIGHT_VIDEO_LOCAL_SRC = '/assets/straight-bundle-video.MP4';
