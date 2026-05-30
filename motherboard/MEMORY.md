@@ -21835,6 +21835,8 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 **Change:** **`lists/page.tsx`** — **`LISTS_PAGE_BCF_THUMB_SCALE`** **`0.9` → `0.9 * 1.2` (1.08)** for overview + expanded line/grid BCF frames on **`/wishlist/lists`** only. Pushed **`master`** + **`preview/mobile`**.
 
+**Follow-up:** Second +20% → **`0.9 * 1.2 * 1.2` (1.296)**. Overview BCF ~114×143 px; expanded ~138×173 px. Pushed **`9586d657`**.
+
 ---
 
 ## 2026-05-30 — BCF PDP default hair length 16"
