@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import {
+  buildWaitlistCatalogSections,
   buildWaitlistProductGroupsWithZeros,
+  enrichWaitlistGroupsWithMockSignups,
   UNIT_STOCK_NOTIFY_UPDATED_EVENT,
+  type WaitlistCatalogSection,
   type WaitlistProductGroup,
 } from '../../../../utils/adminUnitStockNotifyWaitlist';
 
@@ -40,7 +43,30 @@ const viewClientLinkStyle: React.CSSProperties = {
   textAlign: 'right' as const,
 };
 
-function WaitlistSignupRows({
+const panelStyle: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #d1d5db',
+  borderRadius: 0,
+  padding: '10px',
+};
+
+const textureLabelStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '9px',
+  color: '#808080',
+  margin: '8px 0 4px 0',
+  textTransform: 'uppercase',
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+  fontFamily: '"Futura PT Medium"',
+  fontSize: '10px',
+  color: '#000',
+  margin: 0,
+  textTransform: 'uppercase',
+};
+
+function WaitlistSignupTable({
   group,
   onViewClient,
 }: {
@@ -49,12 +75,12 @@ function WaitlistSignupRows({
 }) {
   if (group.count === 0) {
     return (
-      <p style={{ ...rowLabelStyle, margin: '8px 0 0 0', fontSize: '10px' }}>NO SIGNUPS YET</p>
+      <p style={{ ...rowLabelStyle, margin: '12px 0 0 0', fontSize: '10px' }}>NO SIGNUPS YET</p>
     );
   }
 
   return (
-    <div style={{ marginTop: '8px' }}>
+    <div style={{ marginTop: '12px' }}>
       <div
         className="grid gap-2 py-2"
         style={{
@@ -94,10 +120,55 @@ function WaitlistSignupRows({
   );
 }
 
+function WaitlistCatalogOverview({
+  sections,
+  onSelectProduct,
+}: {
+  sections: WaitlistCatalogSection[];
+  onSelectProduct: (productName: string) => void;
+}) {
+  return (
+    <div className="space-y-3" style={{ marginTop: '12px' }}>
+      {sections.map((section) => (
+        <div key={section.id} style={panelStyle}>
+          <p style={sectionTitleStyle}>{section.label}</p>
+          {section.subsections.map((subsection) => (
+            <div key={subsection.textureLabel ?? 'units'}>
+              {subsection.textureLabel ? (
+                <p style={textureLabelStyle}>{subsection.textureLabel}</p>
+              ) : null}
+              <div>
+                {subsection.products.map((product) => (
+                  <button
+                    key={product.productName}
+                    type="button"
+                    onClick={() => onSelectProduct(product.productName)}
+                    className="w-full flex justify-between items-center cursor-pointer hover:bg-black/[0.04]"
+                    style={{
+                      border: 'none',
+                      borderBottom: '1px solid #e5e7eb',
+                      background: 'none',
+                      padding: '8px 0',
+                      margin: 0,
+                    }}
+                  >
+                    <span style={rowLabelStyle}>{product.productName}</span>
+                    <span style={rowValueStyle}>{product.count}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminViewWaitlistPage() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
@@ -110,7 +181,21 @@ export default function AdminViewWaitlistPage() {
     };
   }, []);
 
-  const groups = useMemo(() => buildWaitlistProductGroupsWithZeros(), [refreshTick]);
+  const groups = useMemo(() => {
+    const base = buildWaitlistProductGroupsWithZeros();
+    return enrichWaitlistGroupsWithMockSignups(base);
+  }, [refreshTick]);
+
+  const sections = useMemo(() => buildWaitlistCatalogSections(groups), [groups]);
+
+  const groupsByName = useMemo(() => new Map(groups.map((g) => [g.productName, g])), [groups]);
+
+  const selectedGroup = selectedProduct ? groupsByName.get(selectedProduct) ?? null : null;
+
+  const totalSignups = useMemo(
+    () => groups.reduce((sum, g) => sum + g.count, 0),
+    [groups]
+  );
 
   const openClientDetails = useCallback(
     (email: string) => {
@@ -124,9 +209,7 @@ export default function AdminViewWaitlistPage() {
     [navigate]
   );
 
-  const toggleProduct = (productName: string) => {
-    setExpandedProduct((prev) => (prev === productName ? null : productName));
-  };
+  const closeProductPanel = () => setSelectedProduct(null);
 
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
@@ -149,50 +232,150 @@ export default function AdminViewWaitlistPage() {
           breadcrumbParentPath="/admin/revenue"
         />
         <div className="pb-8 px-4 max-w-md mx-auto">
-          <div className="bg-white/60 backdrop-blur-sm border border-black p-4" style={{ borderWidth: '1.3px' }}>
-            <p
-              style={{
-                fontFamily: '"Futura PT Book"',
-                fontSize: '9px',
-                color: '#808080',
-                margin: '0 0 12px 0',
-                lineHeight: 1.4,
-                textTransform: 'uppercase',
-              }}
-            >
-              NOTIFY-ME SIGNUPS WHEN WIG UNITS OR BCF (BUNDLES / CLOSURES / FRONTALS) ARE SOLD OUT. TAP A PRODUCT TO VIEW NAMES, EMAILS, AND OPEN CLIENT DETAILS.
-            </p>
-            <div className="space-y-0">
-              {groups.map((group) => {
-                const expanded = expandedProduct === group.productName;
-                return (
-                  <div key={group.productName}>
-                    <button
-                      type="button"
-                      onClick={() => toggleProduct(group.productName)}
-                      className="w-full flex justify-between items-center py-2 cursor-pointer hover:bg-black/5"
+          <div
+            className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
+            style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
+          >
+            {selectedProduct && selectedGroup ? (
+              <>
+                <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
+                  <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
+                    <h2
                       style={{
-                        borderBottom: '1px solid #e5e7eb',
-                        background: 'none',
-                        borderLeft: 'none',
-                        borderRight: 'none',
-                        borderTop: 'none',
-                        paddingLeft: 0,
-                        paddingRight: 0,
+                        fontFamily: '"Futura PT Medium"',
+                        color: '#EB1C24',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        minWidth: 0,
+                        flex: '1 1 auto',
+                        maxWidth: 'calc(100% - 24px)',
+                        paddingRight: '8px',
                       }}
                     >
-                      <span style={rowLabelStyle}>{group.productName}</span>
-                      <span style={rowValueStyle}>{group.count}</span>
+                      {selectedProduct}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={closeProductPanel}
+                      aria-label="Close waitlist signups"
+                      style={{
+                        padding: 0,
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        lineHeight: 0,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <img
+                        src="/assets/close-icon.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        style={{ display: 'block' }}
+                      />
                     </button>
-                    {expanded ? (
-                      <div className="pb-2 px-0">
-                        <WaitlistSignupRows group={group} onViewClient={openClientDetails} />
-                      </div>
-                    ) : null}
                   </div>
-                );
-              })}
-            </div>
+                  <div style={{ borderBottom: '1px solid #d1d5db', marginTop: '8px' }} />
+                </div>
+                <div
+                  className="flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll px-5 pb-4"
+                  style={{ paddingTop: '4px' }}
+                >
+                  <WaitlistSignupTable group={selectedGroup} onViewClient={openClientDetails} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex-shrink-0 px-5" style={{ marginTop: '10px' }}>
+                  <div className="grid grid-cols-2 gap-4" style={{ marginTop: '12px' }}>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '22px',
+                          color: '#000',
+                          margin: 0,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {groups.length}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '9px',
+                          color: '#808080',
+                          margin: '4px 0 0 0',
+                        }}
+                      >
+                        PRODUCTS
+                      </p>
+                    </div>
+                    <div
+                      className="text-center py-3"
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: '"Covered By Your Grace", cursive',
+                          fontSize: '22px',
+                          color: '#EB1C24',
+                          margin: 0,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {totalSignups}
+                      </p>
+                      <p
+                        style={{
+                          fontFamily: '"Futura PT Medium"',
+                          fontSize: '9px',
+                          color: '#808080',
+                          margin: '4px 0 0 0',
+                        }}
+                      >
+                        SIGNUPS
+                      </p>
+                    </div>
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '9px',
+                      color: '#808080',
+                      margin: '12px 0 0 0',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    TAP A PRODUCT TO VIEW NOTIFY-ME SIGNUPS. MOCK CLIENT ROWS ARE INCLUDED FOR UI
+                    TESTING.
+                  </p>
+                </div>
+                <div
+                  className="flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll px-5 pb-4"
+                  style={{ paddingTop: '2px' }}
+                >
+                  <WaitlistCatalogOverview
+                    sections={sections}
+                    onSelectProduct={setSelectedProduct}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

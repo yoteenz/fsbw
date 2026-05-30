@@ -133,6 +133,96 @@ export function buildWaitlistProductGroupsWithZeros(): WaitlistProductGroup[] {
   });
 }
 
+const WAITLIST_TEXTURES = ['STRAIGHT', 'WAVY', 'CURLY'] as const;
+type WaitlistTextureLabel = (typeof WAITLIST_TEXTURES)[number];
+
+export type WaitlistCatalogSubsection = {
+  textureLabel: WaitlistTextureLabel | null;
+  products: WaitlistProductGroup[];
+};
+
+export type WaitlistCatalogSection = {
+  id: 'units' | 'bundles' | 'closures' | 'frontals';
+  label: string;
+  subsections: WaitlistCatalogSubsection[];
+};
+
+function emptyGroup(productName: string): WaitlistProductGroup {
+  return { productName, count: 0, signups: [] };
+}
+
+function groupFor(
+  byName: Map<string, WaitlistProductGroup>,
+  productName: string
+): WaitlistProductGroup {
+  return byName.get(productName) ?? emptyGroup(productName);
+}
+
+/** Units, then BCF categories each with STRAIGHT / WAVY / CURLY subsections. */
+export function buildWaitlistCatalogSections(groups: WaitlistProductGroup[]): WaitlistCatalogSection[] {
+  const byName = new Map(groups.map((g) => [g.productName, g]));
+
+  const bcfSection = (
+    id: 'bundles' | 'closures' | 'frontals',
+    label: 'BUNDLES' | 'CLOSURES' | 'FRONTALS'
+  ): WaitlistCatalogSection => ({
+    id,
+    label,
+    subsections: WAITLIST_TEXTURES.map((textureLabel) => ({
+      textureLabel,
+      products: [groupFor(byName, `${label} · ${textureLabel}`)],
+    })),
+  });
+
+  return [
+    {
+      id: 'units',
+      label: 'UNITS',
+      subsections: [
+        {
+          textureLabel: null,
+          products: WIG_UNIT_PRODUCT_NAMES.map((name) => groupFor(byName, name)),
+        },
+      ],
+    },
+    bcfSection('bundles', 'BUNDLES'),
+    bcfSection('closures', 'CLOSURES'),
+    bcfSection('frontals', 'FRONTALS'),
+  ];
+}
+
+function sortSignups(signups: WaitlistClientLookup[]): WaitlistClientLookup[] {
+  return [...signups].sort((a, b) => {
+    const na = a.displayName || a.email;
+    const nb = b.displayName || b.email;
+    return na.localeCompare(nb);
+  });
+}
+
+/**
+ * Spread mock clients from admin clients overview across products so VIEW WAITLIST UI can be tested.
+ * Merges with real signups (deduped by email).
+ */
+export function enrichWaitlistGroupsWithMockSignups(groups: WaitlistProductGroup[]): WaitlistProductGroup[] {
+  const mocks = getMockClientsForAyoteenz();
+  if (!mocks.length) return groups;
+
+  return groups.map((group, productIdx) => {
+    const existingEmails = new Set(group.signups.map((s) => normalizeEmail(s.email)));
+    const extra: WaitlistClientLookup[] = [];
+    for (let slot = 0; slot < 2; slot += 1) {
+      const mock = mocks[(productIdx * 2 + slot) % mocks.length];
+      const email = normalizeEmail(mock?.email || '');
+      if (!email || existingEmails.has(email)) continue;
+      existingEmails.add(email);
+      extra.push(lookupWaitlistClientByEmail(email));
+    }
+    if (extra.length === 0) return group;
+    const signups = sortSignups([...group.signups, ...extra]);
+    return { ...group, count: signups.length, signups };
+  });
+}
+
 export function waitlistProductShopRoute(productName: string): string {
   return stockNotifyProductActionRoute(productName);
 }

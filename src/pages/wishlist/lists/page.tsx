@@ -70,6 +70,19 @@ const EMPTY_LIST_THUMB_SUPABASE_URL =
 /** Thumbnail when a user list has no items (lists overview row only). */
 const EMPTY_LIST_THUMB_SRC = EMPTY_LIST_THUMB_SUPABASE_URL;
 
+const WISHLIST_LISTS_VIEW_MODE_STORAGE_KEY = 'wishlist_lists_view_mode';
+
+function readPersistedListsViewMode(): 'grid' | 'line' {
+  if (typeof window === 'undefined') return 'line';
+  try {
+    const stored = sessionStorage.getItem(WISHLIST_LISTS_VIEW_MODE_STORAGE_KEY);
+    if (stored === 'grid' || stored === 'line') return stored;
+  } catch {
+    /* ignore */
+  }
+  return 'line';
+}
+
 /** List / expanded line rows: nudge right so thumbs are not clipped by card overflow. */
 const LIST_ROW_CONTENT_OFFSET_LEFT_PX = 10;
 /** Text column sits this many px higher than the thumb (thumb column gets matching marginTop). */
@@ -611,8 +624,16 @@ export default function ViewListsPage() {
   const [listItemToRemove, setListItemToRemove] = useState<any>(null);
   const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [listToRename, setListToRename] = useState<UserList | null>(null);
-  const [expandedViewMode, setExpandedViewMode] = useState<'grid' | 'line'>('line');
-  const [listsOverviewViewMode, setListsOverviewViewMode] = useState<'grid' | 'line'>('line');
+  const [listsViewMode, setListsViewMode] = useState<'grid' | 'line'>(readPersistedListsViewMode);
+
+  const setListsViewModePersisted = (mode: 'grid' | 'line') => {
+    setListsViewMode(mode);
+    try {
+      sessionStorage.setItem(WISHLIST_LISTS_VIEW_MODE_STORAGE_KEY, mode);
+    } catch {
+      /* ignore */
+    }
+  };
   const [viewingDetailsItemKey, setViewingDetailsItemKey] = useState<string | null>(null);
   const [showShareListModal, setShowShareListModal] = useState(false);
   const [shareListUrl, setShareListUrl] = useState('');
@@ -1025,7 +1046,7 @@ export default function ViewListsPage() {
                             flexShrink: 0,
                           }}
                         >
-                          <WishlistViewModeToggle mode={expandedViewMode} onModeChange={setExpandedViewMode} />
+                          <WishlistViewModeToggle mode={listsViewMode} onModeChange={setListsViewModePersisted} />
                         </div>
                         {expandedItems.length === 0 ? (
                           <div
@@ -1051,7 +1072,7 @@ export default function ViewListsPage() {
                               THERE ARE NO ITEMS IN THIS LIST.
                             </p>
                           </div>
-                        ) : expandedViewMode === 'line' ? (
+                        ) : listsViewMode === 'line' ? (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingTop: '10px' }}>
                             {expandedItems.map((item: any, index: number) => {
                               const itemProductName = getWishlistItemProductName(item);
@@ -1268,8 +1289,8 @@ export default function ViewListsPage() {
                     }}
                   >
                     <WishlistViewModeToggle
-                      mode={listsOverviewViewMode}
-                      onModeChange={setListsOverviewViewMode}
+                      mode={listsViewMode}
+                      onModeChange={setListsViewModePersisted}
                     />
                   </div>
                 )}
@@ -1293,7 +1314,7 @@ export default function ViewListsPage() {
                         YOU DON&apos;T HAVE ANY LISTS YET.
                       </p>
                     </div>
-                  ) : listsOverviewViewMode === 'line' ? (
+                  ) : listsViewMode === 'line' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                       {lists.map((list, index) => {
                         const firstItem = list.items?.[0];
