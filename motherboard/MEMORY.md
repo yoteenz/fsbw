@@ -21539,3 +21539,13 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** Cart/bag/checkout showed PDP hero JPEGs because `04671a25` copied PDP straight-bundle + curly-closure URLs into `BCF_THUMB_PHOTO_BY_TEXTURE`. Home/shop marbles (eb76274d) use `_6biiXli…` straight bundle and `uzxxkL1s…` curly closure.
 
 **Change:** `shopTextureCategoryThumb.ts` — restored those two marble URLs; comment clarifies separation from PDP. `texture-category-product/page.tsx` — add-to-bag/bundle-deal `image` uses `shopTextureCategoryThumbSrc` (marble), not `BUNDLE_PHOTO`/`BCF_CF_PHOTO`. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF cart/bag: restore `/assets/*.png` marbles (not Supabase JPEGs)
+
+**Context:** User reported cart/bag/checkout BCF thumbs still wrong (“didn’t have a background”). Prior “restore” only reverted two Supabase URLs in `BCF_THUMB_PHOTO_BY_TEXTURE`; motherboard entries (**4210–4278**, **5803–5839**, **6530**) specify **`/assets/bundle-straight.png`**, **`closure-*.png`**, **`frontal-*.png`** for home/shop/cart — PNGs include marble background; PDP uses separate JPG/Supabase heroes.
+
+**Cause:** `eb76274d` replaced PNG `shopTextureCategoryThumbSrc` with Supabase `BCF_THUMB_PHOTO_BY_TEXTURE` (JPEG product shots, no marble frame).
+
+**Change:** `shopTextureCategoryThumb.ts` — full restore of nine explicit **`/assets/*.png`** paths; removed Supabase map. Cart/bag/checkout/wishlist/`/products` grid use PNGs; `texture-category-product` PDP heroes unchanged (`BUNDLE_PHOTO_BY_TEXTURE`, `BCF_CF_PHOTO`). Pushed `master` + `preview/mobile`.
