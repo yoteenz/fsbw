@@ -22197,3 +22197,11 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 ## 2026-05-30 — Lounge TV thumbnail column spacing
 
 **Change:** TV content grid **`columnGap: 12px`** (was **`6px`** uniform); **`rowGap: 6px`**. Commit **`92ab16d9`**.
+
+---
+
+## 2026-05-30 — Lounge TV Watch + Learn video detail view
+
+**Context:** User wanted **Watch + Learn** thumbnails to expand in-place to a **video** (stock placeholder), with **title** left / **duration** right, **description** below; **tap** pause, **double-tap** fullscreen; tap **Watch + Learn** tab again returns to thumbnail grid.
+
+**Change:** **`LoungeTvWatchLearnPlayer.tsx`**; **`loungeTvContent.ts`** adds **`videoSrc`**, **`durationLabel`**, **`description`** for watch-learn tiles (placeholder MP4 from GCS sample bucket). **`LoungeTvScreen`** **`selectedVideoId`** state; grid only on watch-learn with **`videoSrc`**. Commit **`e71e1929`**.
