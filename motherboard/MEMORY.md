@@ -22110,6 +22110,16 @@ Pushed **`master`** + **`preview/mobile`** after regen user still replaces PNGs 
 
 ---
 
+## 2026-05-30 — Lounge salon chairs: fix large-screen offset (CSS !important override)
+
+**Context:** Chair Y tweaks in **`loungeSceneLayout.ts`** / CSS variables had **no visible effect** on large screens.
+
+**Cause:** **`index.css`** used **`transform: … !important`** on **`.lounge-page .lounge-salon-chairs-anchor`**, which overrides React inline styles and CSS custom properties from TS constants.
+
+**Change:** Removed chair **`transform`** rules from **`index.css`**. **`loungeSalonChairsAnchorStyle(isLargeViewport)`** + **`useLoungeLargeViewport()`** apply pixel offsets inline (**290px** mobile, **372px** at **1024px+**).
+
+---
+
 ## 2026-05-30 — Lounge salon chairs: restore placement; large screens down
 
 **Context:** Salon chairs on **`/lobby/lounge`** sat too high and overlapped TV/neon after vw floor-line layout; user asked to **restore size & position** and move **down on larger screens only**.
