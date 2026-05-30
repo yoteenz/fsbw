@@ -21689,3 +21689,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 ## 2026-05-29 — Wishlist lists line view: stars −1px above
 
 **Change:** **`index.css`** — `.wishlist-lists-page-expanded-line-stars` **`margin-top` `4px` → `3px`** (expanded list **line** view on `/wishlist/lists` only). Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — EDIT IN BUILD-A-WIG 9px everywhere (match + LIST / EDIT LIST NAME)
+
+**Context:** User wanted red **EDIT IN BUILD-A-WIG** at **9px** like **EDIT LIST NAME** and **+ LIST** (was **8px** Futura PT Book).
+
+**Change:** **`bookingEditLinkStyle`** → **9px**, **Futura PT Medium**; cart dropdown, **`/wishlist`**, bag use shared style; **`.edit-in-build-text`** in **`index.css`** **9px**. **EDIT APPOINTMENT** under thumbs uses same token. Pushed `master` + `preview/mobile`.
