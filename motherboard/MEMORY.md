@@ -21382,3 +21382,11 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 **Context:** User asked to update the straight **bundle** thumbnail on `/wishlist` and wishlist **lists** pages to match the home/shop marble (not a separate hardcoded `ZYNxZol48…` URL). Cart still uses `ZYNxZol48` via `shopBcfCartLineThumbnailSrc` in `bcfProductOptions.ts` — wishlist aligns with `/products` shop grid.
 
 **Change:** `wishlistListItemDetails.ts` — infer BCF category/texture from item id/name; `getWishlistBcfThumbSrc()` returns `shopTextureCategoryHeroPhotoSrc` (bundles.straight → `_6biiXliVwiLZhD23zVMx_ikG2kkur.jpeg` from `shopTextureCategoryThumb.ts`). `wishlist/page.tsx` removed inline straight-bundle override; `lists/page.tsx` + `shared/page.tsx` — `getLeafBrickFrontImage()` prefers BCF thumb before wig front image. Pushed `master` + `preview/mobile`.
+
+---
+
+## 2026-05-29 — BCF PDP photos: straight bundle + curly closure
+
+**Context:** User provided new Supabase URLs for **straight bundle** and **curly closure** product-page photos.
+
+**Change:** `texture-category-product/page.tsx` — `BUNDLE_PHOTO_BY_TEXTURE.straight` → `bJSeVXN5LlWhbDAM5Vc6A_WV70Nuqw.jpeg`; `BCF_CF_PHOTO.closures.curly` → `LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg`. `shopTextureCategoryThumb.ts` — same two entries in `BCF_THUMB_PHOTO_BY_TEXTURE` (shop grid, similar strip, wishlist BCF thumbs). Pushed `master` + `preview/mobile`.

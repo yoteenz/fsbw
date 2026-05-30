@@ -9,7 +9,7 @@ const BCF_THUMB_PHOTO_BY_TEXTURE: Record<
 > = {
   bundles: {
     straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/_6biiXliVwiLZhD23zVMx_ikG2kkur.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/bJSeVXN5LlWhbDAM5Vc6A_WV70Nuqw.jpeg',
     wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/8XBa-oP-wP7tmQSFYMN62_9tFh7bo7.jpeg',
     curly:
       'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/opLZf4GQ8_KuizHCa_5gZ_QGYh1ZNb.jpeg',
@@ -19,7 +19,7 @@ const BCF_THUMB_PHOTO_BY_TEXTURE: Record<
       'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg',
     wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg',
     curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/uzxxkL1smy3pZ2ObGuiEx_nuxYnKn5.jpeg',
+      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/3D%20images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg',
   },
   frontals: {
     straight:
