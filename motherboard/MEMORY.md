@@ -21656,6 +21656,12 @@ Typecheck passes. Pushed `master` + `preview/mobile`.
 
 ---
 
+## 2026-05-29 — Wishlist lists line: less space above PRIVATE
+
+**Change:** `/wishlist/lists` overview **line** view — **`LIST_OVERVIEW_VISIBILITY_LINE_STYLE`** with **`marginTop: 0`** (was 2px on shared base style). Grid view unchanged. Pushed `master` + `preview/mobile`.
+
+---
+
 ## 2026-05-29 — Admin VIEW WAITLIST catalog + wishlist lists view mode persist
 
 **Context:** User wanted VIEW WAITLIST organized like admin meetings overview (UNITS; BUNDLES/CLOSURES/FRONTALS × STRAIGHT/WAVY/CURLY); product tap **replaces** main card with close **X** + signup columns (no inline accordion). Mock client rows from **`getMockClientsForAyoteenz()`** for UI testing. **`/wishlist/lists`** list/grid toggle should persist when opening a list (was resetting because overview and expanded used separate state).

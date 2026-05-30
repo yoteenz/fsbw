@@ -1371,7 +1371,7 @@ export default function ViewListsPage() {
                               onKeyDown={(e) => e.key === 'Enter' && openExpandedList(list.id)}
                             >
                               <span style={LIST_OVERVIEW_NAME_STYLE}>{list.name}</span>
-                              <p style={LIST_OVERVIEW_VISIBILITY_STYLE}>{getUserListVisibilityLabel(list)}</p>
+                              <p style={LIST_OVERVIEW_VISIBILITY_LINE_STYLE}>{getUserListVisibilityLabel(list)}</p>
                               <p className="wishlist-lists-overview-edit-list-name-wrap">
                                 <span
                                   role="button"
