@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import ConfirmationModal from '../../../components/ConfirmationModal';
 import {
   LOUNGE_TV_MAIN_TABS,
   LOUNGE_TV_SIDEBAR,
@@ -113,6 +114,8 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadNotice, setUploadNotice] = useState<string | null>(null);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const displayTitle = item.title.trim() ? item.title.trim().toUpperCase() : 'UNTITLED';
 
   const handleMediaFile = async (file: File | undefined, kind: 'media' | 'thumb') => {
     if (!file || file.size === 0) {
@@ -181,13 +184,27 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
         </p>
         <button
           type="button"
-          onClick={onRemove}
+          onClick={() => setShowRemoveConfirm(true)}
           className="text-xs text-red-600 shrink-0"
           style={{ fontFamily: '"Futura PT Medium"' }}
         >
           REMOVE
         </button>
       </div>
+
+      <ConfirmationModal
+        isOpen={showRemoveConfirm}
+        onClose={() => setShowRemoveConfirm(false)}
+        onConfirm={() => {
+          setShowRemoveConfirm(false);
+          onRemove();
+        }}
+        title="REMOVE CONTENT"
+        message={`Remove "${displayTitle}" from this category? Tap SAVE CATEGORY afterward for changes to apply on the lounge TV.`}
+        confirmText="REMOVE"
+        cancelText="CANCEL"
+        dataAttribute="lounge-tv-content-remove-confirm"
+      />
 
       <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
         TITLE
