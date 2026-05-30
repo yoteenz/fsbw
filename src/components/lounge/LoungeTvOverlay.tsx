@@ -17,6 +17,7 @@ import { LoungeTvRemoteHand } from './LoungeTvRemoteHand';
 import { LoungeTvPowerOnStatic } from './LoungeTvPowerOnStatic';
 import { LoungeTvPowerOffEffect, LOUNGE_TV_POWER_OFF_MS } from './LoungeTvPowerOffEffect';
 import { LoungeTvWatchLearnPlayer } from './LoungeTvWatchLearnPlayer';
+import { LoungeTvContentProtection } from './LoungeTvContentProtection';
 import {
   hydrateLoungeTvAdminConfig,
   LOUNGE_TV_CONFIG_UPDATED_EVENT,
@@ -411,6 +412,7 @@ function LoungeTvScreen({
                     <img
                       src={tile.thumbSrc}
                       alt=""
+                      draggable={false}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -420,7 +422,8 @@ function LoungeTvScreen({
                         filter: showNew ? 'blur(4px)' : 'none',
                         transform: showNew ? 'scale(1.06)' : 'none',
                         transition: 'filter 0.25s ease',
-                      }}
+                        WebkitUserDrag: 'none',
+                      } as React.CSSProperties}
                     />
                   ) : null}
                   <LoungeTvTileLabel title={tile.title} showNew={showNew} />
@@ -704,12 +707,10 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
           <LoungeTvPowerOnStatic active={showStatic && !poweringOff} />
           <LoungeTvPowerOffEffect active={poweringOff} />
           {showContent && !poweringOff ? (
-            <div
+            <LoungeTvContentProtection
+              active
               style={{
-                position: 'relative',
                 zIndex: 6,
-                width: '100%',
-                height: '100%',
                 opacity: 1,
                 animation: 'lounge-tv-content-in 0.35s ease forwards',
               }}
@@ -720,7 +721,7 @@ export function LoungeTvOverlay({ isOpen, originRect, onClose }: LoungeTvOverlay
                 onMainTabChange={handleMainTab}
                 onSidebarChange={setSidebarId}
               />
-            </div>
+            </LoungeTvContentProtection>
           ) : null}
         </LoungeTvFrame>
       </div>

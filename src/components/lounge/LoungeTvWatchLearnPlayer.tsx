@@ -35,10 +35,22 @@ type ElementWithLegacyFullscreen = HTMLElement & {
   webkitRequestFullscreen?: () => Promise<void> | void;
 };
 
+function isSameOriginMediaUrl(url: string): boolean {
+  if (!url || url.startsWith('data:') || url.startsWith('blob:')) return true;
+  if (typeof window === 'undefined') return false;
+  try {
+    return new URL(url, window.location.origin).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps) {
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const blobUrlRef = useRef<string | null>(null);
+  const [videoSrc, setVideoSrc] = useState(tile.videoSrc ?? '');
   const [paused, setPaused] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -51,8 +63,45 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
   }, []);
 
   useEffect(() => {
+    const src = tile.videoSrc ?? '';
+    setVideoSrc(src);
+    if (!src) return;
+
+    let cancelled = false;
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
+
+    if (isSameOriginMediaUrl(src)) {
+      void fetch(src)
+        .then((res) => {
+          if (!res.ok) throw new Error('fetch failed');
+          return res.blob();
+        })
+        .then((blob) => {
+          if (cancelled) return;
+          const blobUrl = URL.createObjectURL(blob);
+          blobUrlRef.current = blobUrl;
+          setVideoSrc(blobUrl);
+        })
+        .catch(() => {
+          if (!cancelled) setVideoSrc(src);
+        });
+    }
+
+    return () => {
+      cancelled = true;
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = null;
+      }
+    };
+  }, [tile.id, tile.videoSrc]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video || !tile.videoSrc) return;
+    if (!video || !videoSrc) return;
     video.currentTime = 0;
     setCurrentTime(0);
     setDuration(0);
@@ -63,7 +112,7 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       });
     }
     setPaused(false);
-  }, [tile.id, tile.videoSrc]);
+  }, [tile.id, videoSrc]);
 
   useEffect(() => {
     return () => {
@@ -188,10 +237,14 @@ export function LoungeTvWatchLearnPlayer({ tile }: LoungeTvWatchLearnPlayerProps
       >
         <video
           ref={videoRef}
-          src={tile.videoSrc}
+          src={videoSrc}
           playsInline
           loop
           preload="auto"
+          controls={false}
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          disablePictureInPicture
+          disableRemotePlayback
           aria-label={tile.title}
           onPlay={() => setPaused(false)}
           onPause={() => {
