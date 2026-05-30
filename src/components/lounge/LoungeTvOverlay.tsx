@@ -118,7 +118,7 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   inset: 0,
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
   alignItems: 'center',
   gap: 0,
   padding: '4px',
@@ -131,6 +131,16 @@ const loungeTvThumbLabelBase: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
+/** Fixed-height row so titles align whether or not *NEW* is shown above. */
+const loungeTvNewBadgeRowStyle: React.CSSProperties = {
+  minHeight: '8px',
+  lineHeight: 1,
+  display: 'flex',
+  alignItems: 'flex-end',
+  justifyContent: 'center',
+  width: '100%',
+};
+
 /** "TINTING YOUR LACE" → { head: "TINTING", trail: "YOUR LACE" }. */
 function loungeTvTitleSplit(title: string): { head: string; trail: string } | null {
   const marker = ' YOUR ';
@@ -141,33 +151,23 @@ function loungeTvTitleSplit(title: string): { head: string; trail: string } | nu
 
 function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean }) {
   const split = loungeTvTitleSplit(title);
+  const titleColor = isNew ? '#ffffff' : LOUNGE_TV_THUMB_LABEL_GRAY;
 
-  if (isNew) {
-    return (
-      <span style={{ ...loungeTvThumbLabelBase, color: '#ffffff' }}>
-        <span style={{ color: BRAND_RED }}>*NEW*</span>
-        {split ? (
-          <>
-            <span>{split.head}</span>
-            <span>{split.trail}</span>
-          </>
-        ) : (
-          <span>{title}</span>
-        )}
+  return (
+    <span style={loungeTvThumbLabelBase}>
+      <span style={loungeTvNewBadgeRowStyle} aria-hidden={!isNew}>
+        {isNew ? <span style={{ color: BRAND_RED }}>*NEW*</span> : null}
       </span>
-    );
-  }
-
-  if (split) {
-    return (
-      <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>
-        <span>{split.head}</span>
-        <span>{split.trail}</span>
-      </span>
-    );
-  }
-
-  return <span style={{ ...loungeTvThumbLabelBase, color: LOUNGE_TV_THUMB_LABEL_GRAY }}>{title}</span>;
+      {split ? (
+        <>
+          <span style={{ color: titleColor }}>{split.head}</span>
+          <span style={{ color: titleColor }}>{split.trail}</span>
+        </>
+      ) : (
+        <span style={{ color: titleColor }}>{title}</span>
+      )}
+    </span>
+  );
 }
 
 function LoungeTvScreen({
