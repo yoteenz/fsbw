@@ -105,6 +105,47 @@ function LoungeCurtainPanel({ side, closed }: { side: 'left' | 'right'; closed: 
   );
 }
 
+const loungeTvThumbLabelStyle: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '4px',
+  textAlign: 'center',
+  fontFamily: '"Futura PT Medium", Futura, sans-serif',
+  fontSize: '6px',
+  lineHeight: 1.15,
+  color: '#fff',
+  textTransform: 'uppercase',
+  background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
+  boxSizing: 'border-box',
+};
+
+/** Split titles like "CUTTING YOUR LACE" → lead "CUTTING", trail "YOUR LACE". */
+function loungeTvTitleParts(title: string): { lead: string; trail: string } {
+  const marker = ' YOUR ';
+  const i = title.indexOf(marker);
+  if (i === -1) return { lead: title, trail: '' };
+  return { lead: title.slice(0, i), trail: title.slice(i + 1) };
+}
+
+function LoungeTvTileLabel({ title, isNew }: { title: string; isNew?: boolean }) {
+  if (!isNew) {
+    return <span style={loungeTvThumbLabelStyle}>{title}</span>;
+  }
+
+  const { lead, trail } = loungeTvTitleParts(title);
+  return (
+    <span style={loungeTvThumbLabelStyle}>
+      <span style={{ color: BRAND_RED }}>*NEW*</span>
+      {lead ? <span>{lead}</span> : null}
+      <span>{trail || title}</span>
+    </span>
+  );
+}
+
 function LoungeTvScreen({
   mainTab,
   sidebarId,
@@ -273,32 +314,7 @@ function LoungeTvScreen({
                       }}
                     />
                   ) : null}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '4px',
-                      textAlign: 'center',
-                      fontFamily: '"Futura PT Medium", Futura, sans-serif',
-                      fontSize: '6px',
-                      lineHeight: 1.15,
-                      color: '#fff',
-                      textTransform: 'uppercase',
-                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.65))',
-                    }}
-                  >
-                    {tile.isNew ? (
-                      <>
-                        <span style={{ color: BRAND_RED }}>*NEW* </span>
-                        {tile.title}
-                      </>
-                    ) : (
-                      tile.title
-                    )}
-                  </span>
+                  <LoungeTvTileLabel title={tile.title} isNew={tile.isNew} />
                 </button>
               ))}
             </div>
